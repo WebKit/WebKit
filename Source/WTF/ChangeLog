@@ -1,3 +1,14 @@
+2021-08-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        RISCV64 support in LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=229035
+        <rdar://problem/82120908>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/PlatformEnable.h:
+        Define ENABLE_LLINT_EMBEDDED_OPCODE_ID to 1 for CPU(RISCV64).
+
 2021-08-28  Cameron McCormack  <heycam@apple.com>
 
         Miscellaneous typo fixes

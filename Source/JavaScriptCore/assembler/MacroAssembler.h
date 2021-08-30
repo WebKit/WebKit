@@ -55,6 +55,11 @@ namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 #define TARGET_MACROASSEMBLER MacroAssemblerX86_64
 #include "MacroAssemblerX86_64.h"
 
+#elif CPU(RISCV64)
+#define TARGET_ASSEMBLER RISCV64Assembler
+#define TARGET_MACROASSEMBLER MacroAssemblerRISCV64
+#include "MacroAssemblerRISCV64.h"
+
 #else
 #error "The MacroAssembler is not supported on this platform."
 #endif
@@ -132,7 +137,7 @@ public:
     using MacroAssemblerBase::and32;
     using MacroAssemblerBase::branchAdd32;
     using MacroAssemblerBase::branchMul32;
-#if CPU(ARM64) || CPU(ARM_THUMB2) || CPU(X86_64) || CPU(MIPS)
+#if CPU(ARM64) || CPU(ARM_THUMB2) || CPU(X86_64) || CPU(MIPS) || CPU(RISCV64)
     using MacroAssemblerBase::branchPtr;
 #endif
     using MacroAssemblerBase::branchSub32;
@@ -144,7 +149,7 @@ public:
     using MacroAssemblerBase::urshift32;
     using MacroAssemblerBase::xor32;
 
-#if CPU(ARM64) || CPU(X86_64)
+#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
     using MacroAssemblerBase::and64;
     using MacroAssemblerBase::convertInt32ToDouble;
     using MacroAssemblerBase::store64;
@@ -335,7 +340,7 @@ public:
     static constexpr ptrdiff_t pushToSaveByteOffset() { return sizeof(void*); }
 #endif // !CPU(ARM64)
 
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     void peek64(RegisterID dest, int index = 0)
     {
         load64(Address(stackPointerRegister, (index * sizeof(void*))), dest);
@@ -1706,7 +1711,7 @@ public:
         storePtr(value, addressForPoke(index));
     }
     
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     void poke(Imm64 value, int index = 0)
     {
         store64(value, addressForPoke(index));

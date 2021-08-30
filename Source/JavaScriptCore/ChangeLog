@@ -1,3 +1,107 @@
+2021-08-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        RISCV64 support in LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=229035
+        <rdar://problem/82120908>
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduce RISCV64 support at the LLint level. Along with the necessary
+        offlineasm backend, plenty of miscellaneous code around MacroAssembler
+        infrastructure is also introduced.
+
+        Of the existing supported architectures, RISCV64 is most similar to
+        ARM64, with the same word size and similar register abundance. This is
+        mirrored in most changes around the MacroAssembler infrastructure as
+        well as using same or similar codepaths in LLint for the two ISAs.
+
+        For the MacroAssembler infrastructure, it won't be used until proper JIT
+        support is introduced, but the basic facilities are still necessary to
+        keep things compiling without complicating the configuration matrix.
+        MacroAssemblerRISCV64 class provides no-op methods through C++ templates
+        while RISCV64Assembler is also added in a limited form.
+
+        The riscv64 offlineasm backend covers assembly generation for
+        instructions that are exhibited by LLInt in the current configuration.
+        It doesn't cover instructions that e.g. are only used in the WebAssembly
+        opcodes, and WebAssembly won't be enabled until the higher JIT tiers are
+        supported anyway.
+
+        The offlineasm backend's assembly generation for specific instructions
+        uses pattern matching of operand types for better overview of how
+        resulting assembly is constructed. There's still certain improvements
+        possible, e.g. in how scratch registers for more expansive operations
+        are allocated.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerRISCV64.cpp: Added.
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerRISCV64.h: Added.
+        Distorted auto-generated method list removed. Necessary methods are
+        introduced through no-op templates until actually needed for JIT
+        generation.
+        * assembler/MaxFrameExtentForSlowPathCall.h:
+        * assembler/PerfLog.cpp:
+        * assembler/ProbeContext.h:
+        * assembler/RISCV64Assembler.h: Added.
+        (JSC::RISCV64Assembler::firstRegister):
+        (JSC::RISCV64Assembler::lastRegister):
+        (JSC::RISCV64Assembler::numberOfRegisters):
+        (JSC::RISCV64Assembler::firstSPRegister):
+        (JSC::RISCV64Assembler::lastSPRegister):
+        (JSC::RISCV64Assembler::numberOfSPRegisters):
+        (JSC::RISCV64Assembler::firstFPRegister):
+        (JSC::RISCV64Assembler::lastFPRegister):
+        (JSC::RISCV64Assembler::numberOfFPRegisters):
+        (JSC::RISCV64Assembler::gprName):
+        (JSC::RISCV64Assembler::sprName):
+        (JSC::RISCV64Assembler::fprName):
+        (JSC::RISCV64Assembler::RISCV64Assembler):
+        (JSC::RISCV64Assembler::buffer):
+        (JSC::RISCV64Assembler::invert):
+        (JSC::RISCV64Assembler::getRelocatedAddress):
+        (JSC::RISCV64Assembler::codeSize const):
+        (JSC::RISCV64Assembler::getCallReturnOffset):
+        (JSC::RISCV64Assembler::labelIgnoringWatchpoints):
+        (JSC::RISCV64Assembler::labelForWatchpoint):
+        (JSC::RISCV64Assembler::label):
+        (JSC::RISCV64Assembler::linkJump):
+        (JSC::RISCV64Assembler::linkCall):
+        (JSC::RISCV64Assembler::linkPointer):
+        (JSC::RISCV64Assembler::maxJumpReplacementSize):
+        (JSC::RISCV64Assembler::patchableJumpSize):
+        (JSC::RISCV64Assembler::repatchPointer):
+        (JSC::RISCV64Assembler::relinkJump):
+        (JSC::RISCV64Assembler::relinkJumpToNop):
+        (JSC::RISCV64Assembler::relinkCall):
+        (JSC::RISCV64Assembler::debugOffset):
+        (JSC::RISCV64Assembler::cacheFlush):
+        (JSC::RISCV64Assembler::fillNops):
+        * assembler/RISCV64Registers.h: Added.
+        * jit/FPRInfo.h:
+        (JSC::FPRInfo::toRegister):
+        (JSC::FPRInfo::toArgumentRegister):
+        (JSC::FPRInfo::toIndex):
+        (JSC::FPRInfo::debugName):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toRegister):
+        (JSC::GPRInfo::toArgumentRegister):
+        (JSC::GPRInfo::toIndex):
+        (JSC::GPRInfo::debugName):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::vmCalleeSaveRegisters):
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        * llint/LLIntData.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/backends.rb: Reference the riscv64 backend as required.
+        * offlineasm/registers.rb: List additional possible registers.
+        * offlineasm/riscv64.rb: Added.
+
 2021-08-29  Keith Miller  <keith_miller@apple.com>
 
         Add openFile function to jsc.cpp that links to file backed memory

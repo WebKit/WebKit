@@ -55,6 +55,7 @@ assembler/MacroAssemblerARMv7.cpp
 assembler/MacroAssemblerCodeRef.cpp
 assembler/MacroAssemblerMIPS.cpp
 assembler/MacroAssemblerPrinter.cpp
+assembler/MacroAssemblerRISCV64.cpp
 assembler/MacroAssemblerX86Common.cpp
 assembler/PerfLog.cpp
 assembler/Printer.cpp

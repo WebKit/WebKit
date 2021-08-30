@@ -77,6 +77,8 @@ static constexpr uint32_t elfMachine = EM_MIPS_RS3_LE;
 #else
 static constexpr uint32_t elfMachine = EM_MIPS;
 #endif
+#elif CPU(RISCV64)
+static constexpr uint32_t elfMachine = EM_RISCV;
 #endif
 
 } // namespace Constants

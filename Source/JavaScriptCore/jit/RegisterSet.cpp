@@ -155,6 +155,30 @@ RegisterSet RegisterSet::vmCalleeSaveRegisters()
 #elif CPU(ARM_THUMB2) || CPU(MIPS)
     result.set(GPRInfo::regCS0);
     result.set(GPRInfo::regCS1);
+#elif CPU(RISCV64)
+    result.set(GPRInfo::regCS0);
+    result.set(GPRInfo::regCS1);
+    result.set(GPRInfo::regCS2);
+    result.set(GPRInfo::regCS3);
+    result.set(GPRInfo::regCS4);
+    result.set(GPRInfo::regCS5);
+    result.set(GPRInfo::regCS6);
+    result.set(GPRInfo::regCS7);
+    result.set(GPRInfo::regCS8);
+    result.set(GPRInfo::regCS9);
+    result.set(GPRInfo::regCS10);
+    result.set(FPRInfo::fpRegCS0);
+    result.set(FPRInfo::fpRegCS1);
+    result.set(FPRInfo::fpRegCS2);
+    result.set(FPRInfo::fpRegCS3);
+    result.set(FPRInfo::fpRegCS4);
+    result.set(FPRInfo::fpRegCS5);
+    result.set(FPRInfo::fpRegCS6);
+    result.set(FPRInfo::fpRegCS7);
+    result.set(FPRInfo::fpRegCS8);
+    result.set(FPRInfo::fpRegCS9);
+    result.set(FPRInfo::fpRegCS10);
+    result.set(FPRInfo::fpRegCS11);
 #endif
     return result;
 }
@@ -192,7 +216,7 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #elif CPU(ARM_THUMB2)
     result.set(GPRInfo::regCS0);
     result.set(GPRInfo::regCS1);
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(RISCV64)
     result.set(GPRInfo::regCS6);
     result.set(GPRInfo::regCS7);
     static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister, "");

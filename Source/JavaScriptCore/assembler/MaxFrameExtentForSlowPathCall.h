@@ -50,7 +50,7 @@ static constexpr size_t maxFrameExtentForSlowPathCall = 0;
 // 7 args on stack (28 bytes).
 static constexpr size_t maxFrameExtentForSlowPathCall = 40;
 
-#elif CPU(ARM64) || CPU(ARM64E)
+#elif CPU(ARM64) || CPU(ARM64E) || CPU(RISCV64)
 // All args in registers.
 static constexpr size_t maxFrameExtentForSlowPathCall = 0;
 

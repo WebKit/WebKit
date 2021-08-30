@@ -798,6 +798,113 @@ public:
 
 #endif // CPU(MIPS)
 
+#if CPU(RISCV64)
+
+#define NUMBER_OF_ARGUMENT_REGISTERS 8u
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 23u
+
+class GPRInfo {
+public:
+    typedef GPRReg RegisterType;
+    static constexpr unsigned numberOfRegisters = 13;
+    static constexpr unsigned numberOfArgumentRegisters = 8;
+
+    static constexpr GPRReg callFrameRegister = RISCV64Registers::fp;
+    static constexpr GPRReg numberTagRegister = RISCV64Registers::x25;
+    static constexpr GPRReg notCellMaskRegister = RISCV64Registers::x26;
+
+    static constexpr GPRReg regT0 = RISCV64Registers::x10;
+    static constexpr GPRReg regT1 = RISCV64Registers::x11;
+    static constexpr GPRReg regT2 = RISCV64Registers::x12;
+    static constexpr GPRReg regT3 = RISCV64Registers::x13;
+    static constexpr GPRReg regT4 = RISCV64Registers::x14;
+    static constexpr GPRReg regT5 = RISCV64Registers::x15;
+    static constexpr GPRReg regT6 = RISCV64Registers::x16;
+    static constexpr GPRReg regT7 = RISCV64Registers::x17;
+    static constexpr GPRReg regT8 = RISCV64Registers::x5;
+    static constexpr GPRReg regT9 = RISCV64Registers::x6;
+    static constexpr GPRReg regT10 = RISCV64Registers::x7;
+    static constexpr GPRReg regT11 = RISCV64Registers::x28;
+    static constexpr GPRReg regT12 = RISCV64Registers::x29;
+
+    static constexpr GPRReg regCS0 = RISCV64Registers::x9;
+    static constexpr GPRReg regCS1 = RISCV64Registers::x18;
+    static constexpr GPRReg regCS2 = RISCV64Registers::x19;
+    static constexpr GPRReg regCS3 = RISCV64Registers::x20;
+    static constexpr GPRReg regCS4 = RISCV64Registers::x21;
+    static constexpr GPRReg regCS5 = RISCV64Registers::x22;
+    static constexpr GPRReg regCS6 = RISCV64Registers::x23;
+    static constexpr GPRReg regCS7 = RISCV64Registers::x24;
+    static constexpr GPRReg regCS8 = RISCV64Registers::x25; // numberTag
+    static constexpr GPRReg regCS9 = RISCV64Registers::x26; // notCellMask
+    static constexpr GPRReg regCS10 = RISCV64Registers::x27;
+
+    static constexpr GPRReg argumentGPR0 = RISCV64Registers::x10; // regT0
+    static constexpr GPRReg argumentGPR1 = RISCV64Registers::x11; // regT1
+    static constexpr GPRReg argumentGPR2 = RISCV64Registers::x12; // regT2
+    static constexpr GPRReg argumentGPR3 = RISCV64Registers::x13; // regT3
+    static constexpr GPRReg argumentGPR4 = RISCV64Registers::x14; // regT4
+    static constexpr GPRReg argumentGPR5 = RISCV64Registers::x15; // regT5
+    static constexpr GPRReg argumentGPR6 = RISCV64Registers::x16; // regT6
+    static constexpr GPRReg argumentGPR7 = RISCV64Registers::x17; // regT7
+
+    static constexpr GPRReg nonArgGPR0 = RISCV64Registers::x5; // regT8
+    static constexpr GPRReg nonArgGPR1 = RISCV64Registers::x6; // regT9
+
+    static constexpr GPRReg returnValueGPR = RISCV64Registers::x10; // regT0
+    static constexpr GPRReg returnValueGPR2 = RISCV64Registers::x11; // regT1
+
+    static constexpr GPRReg nonPreservedNonReturnGPR = RISCV64Registers::x12; // regT2
+    static constexpr GPRReg nonPreservedNonArgumentGPR0 = RISCV64Registers::x5; // regT8
+    static constexpr GPRReg nonPreservedNonArgumentGPR1 = RISCV64Registers::x6; // regT9
+
+    static constexpr GPRReg wasmScratchGPR0 = RISCV64Registers::x6; // regT9
+    static constexpr GPRReg wasmScratchGPR1 = RISCV64Registers::x7; // regT10
+
+    static GPRReg toRegister(unsigned index)
+    {
+        ASSERT(index < numberOfRegisters);
+        static const GPRReg registerForIndex[numberOfRegisters] = {
+            regT0, regT1, regT2, regT3, regT4, regT5, regT6, regT7,
+            regT8, regT9, regT10, regT11, regT12,
+        };
+        return registerForIndex[index];
+    }
+
+    static GPRReg toArgumentRegister(unsigned index)
+    {
+        ASSERT(index < numberOfArgumentRegisters);
+        static const GPRReg registerForIndex[numberOfArgumentRegisters] = {
+            argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3,
+            argumentGPR4, argumentGPR5, argumentGPR6, argumentGPR7,
+        };
+        return registerForIndex[index];
+    }
+
+    static unsigned toIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 32);
+        static const unsigned indexForRegister[32] = {
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 8, 9, 10,
+            InvalidIndex, InvalidIndex, 0, 1, 2, 3, 4, 5,
+            6, 7, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex,
+            InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 11, 12, InvalidIndex, InvalidIndex,
+        };
+        return indexForRegister[reg];
+    }
+
+    static const char* debugName(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        return MacroAssembler::gprName(reg);
+    }
+
+    static constexpr unsigned InvalidIndex = 0xffffffff;
+};
+
+#endif // CPU(RISCV64)
+
 // The baseline JIT uses "accumulator" style execution with regT0 (for 64-bit)
 // and regT0 + regT1 (for 32-bit) serving as the accumulator register(s) for
 // passing results of one opcode to the next. Hence:

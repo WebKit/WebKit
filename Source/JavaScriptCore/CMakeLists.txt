@@ -216,6 +216,7 @@ set(OFFLINE_ASM
     offlineasm/parser.rb
     offlineasm/registers.rb
     offlineasm/risc.rb
+    offlineasm/riscv64.rb
     offlineasm/self_hash.rb
     offlineasm/settings.rb
     offlineasm/transform.rb
@@ -273,6 +274,8 @@ else ()
         set(OFFLINE_ASM_BACKEND "ARMv7")
     elseif (WTF_CPU_MIPS)
         set(OFFLINE_ASM_BACKEND "MIPS")
+    elseif (WTF_CPU_RISCV64)
+        set(OFFLINE_ASM_BACKEND "RISCV64")
     endif ()
 
     if (NOT ENABLE_JIT)
@@ -577,9 +580,12 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/MacroAssemblerCodeRef.h
     assembler/MacroAssemblerHelpers.h
     assembler/MacroAssemblerMIPS.h
+    assembler/MacroAssemblerRISCV64.h
     assembler/MacroAssemblerX86Common.h
     assembler/MacroAssemblerX86_64.h
     assembler/Printer.h
+    assembler/RISCV64Assembler.h
+    assembler/RISCV64Registers.h
     assembler/RegisterInfo.h
     assembler/X86Assembler.h
     assembler/X86Registers.h

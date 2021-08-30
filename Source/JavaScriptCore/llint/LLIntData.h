@@ -381,7 +381,7 @@ struct Registers {
 #elif CPU(X86_64) && OS(WINDOWS)
     static constexpr GPRReg metadataTableGPR = GPRInfo::regCS3;
     static constexpr GPRReg pbGPR = GPRInfo::regCS4;
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(RISCV64)
     static constexpr GPRReg metadataTableGPR = GPRInfo::regCS6;
     static constexpr GPRReg pbGPR = GPRInfo::regCS7;
 #elif CPU(MIPS) || CPU(ARM_THUMB2)

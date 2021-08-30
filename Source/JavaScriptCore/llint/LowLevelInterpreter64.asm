@@ -93,7 +93,7 @@ end
 
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
-    if X86_64 or ARM64 or ARM64E
+    if X86_64 or ARM64 or ARM64E or RISCV64
         call function
     elsif X86_64_WIN
         # Note: this implementation is only correct if the return type size is > 8 bytes.
@@ -140,7 +140,7 @@ end
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function)
     checkStackPointerAlignment(t4, 0xbad0c004)
-    if X86_64 or ARM64 or ARM64E
+    if X86_64 or ARM64 or ARM64E or RISCV64
         call function
     elsif X86_64_WIN
         # On Win64, rcx, rdx, r8, and r9 are used for passing the first four parameters.
