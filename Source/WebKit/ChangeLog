@@ -1,5 +1,23 @@
 2021-08-30  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused OptionalCallbackID
+        https://bugs.webkit.org/show_bug.cgi?id=229359
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkProcess.h:
+        * Shared/CallbackID.h:
+        * Shared/OptionalCallbackID.h: Removed.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/WebPage.h:
+
+2021-08-30  Alex Christensen  <achristensen@webkit.org>
+
         Update availability macros for APIs available in iOS 14.5 and macOS 11.3
         https://bugs.webkit.org/show_bug.cgi?id=229466
 

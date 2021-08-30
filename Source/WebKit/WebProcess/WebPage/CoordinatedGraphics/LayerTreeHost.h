@@ -30,7 +30,6 @@
 #include "CallbackID.h"
 #include "CompositingCoordinator.h"
 #include "LayerTreeContext.h"
-#include "OptionalCallbackID.h"
 #include "SimpleViewportController.h"
 #include "ThreadedCompositor.h"
 #include "ThreadedDisplayRefreshMonitor.h"

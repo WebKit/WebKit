@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FindController.h"
 
-#include "CallbackID.h"
 #include "DrawingArea.h"
 #include "PluginView.h"
 #include "ShareableBitmap.h"

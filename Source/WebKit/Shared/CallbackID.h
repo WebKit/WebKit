@@ -100,7 +100,6 @@ private:
 
     friend class CallbackMap;
     template <typename CallbackType> friend class SpecificCallbackMap;
-    friend class OptionalCallbackID;
     friend struct WTF::CallbackIDHash;
     friend HashTraits<WebKit::CallbackID>;
 
