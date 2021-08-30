@@ -28,7 +28,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "BidiResolver.h"
 #include "InlineFormattingState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
@@ -41,8 +40,6 @@
 
 namespace WebCore {
 namespace LayoutIntegration {
-
-#define PROCESS_BIDI_CONTENT 0
 
 inline Layout::LineGeometry::EnclosingTopAndBottom operator+(const Layout::LineGeometry::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
 {
@@ -60,94 +57,6 @@ inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::Inlin
     lineContentLogicalWidth += endPadding;
     return std::max(lineBoxLogicalWidth, lineContentLogicalWidth);
 }
-
-#if PROCESS_BIDI_CONTENT
-class Iterator {
-public:
-    Iterator() = default;
-    Iterator(const Layout::InlineLineRuns* runList, size_t currentRunIndex);
-
-    void increment();
-    unsigned offset() const { return m_offset; }
-    UCharDirection direction() const;
-
-    bool operator==(const Iterator& other) const { return offset() == other.offset(); }
-    bool operator!=(const Iterator& other) const { return offset() != other.offset(); };
-    bool atEnd() const { return !m_runList || m_runIndex == m_runList->size(); };
-
-private:
-    const Layout::LineRun& currentRun() const { return m_runList->at(m_runIndex); }
-
-    const Layout::InlineLineRuns* m_runList { nullptr };
-    size_t m_offset { 0 };
-    size_t m_runIndex { 0 };
-    size_t m_runOffset { 0 };
-};
-
-Iterator::Iterator(const Layout::InlineLineRuns* runList, size_t runIndex)
-    : m_runList(runList)
-    , m_runIndex(runIndex)
-{
-}
-
-UCharDirection Iterator::direction() const
-{
-    ASSERT(m_runList);
-    ASSERT(!atEnd());
-    auto& textContent = currentRun().text();
-    if (!textContent)
-        return U_OTHER_NEUTRAL;
-    return u_charDirection(textContent->content()[textContent->start() + m_runOffset]);
-}
-
-void Iterator::increment()
-{
-    ASSERT(m_runList);
-    ASSERT(!atEnd());
-    ++m_offset;
-    auto& currentRun = this->currentRun();
-    if (auto& textContent = currentRun.text()) {
-        if (++m_runOffset < textContent->length())
-            return;
-    }
-    ++m_runIndex;
-    m_runOffset = 0;
-}
-
-class BidiRun {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    BidiRun(unsigned start, unsigned end, BidiContext*, UCharDirection);
-
-    size_t start() const { return m_start; }
-    size_t end() const { return m_end; }
-    unsigned char level() const { return m_level; }
-
-    BidiRun* next() const { return m_next.get(); }
-    void setNext(std::unique_ptr<BidiRun>&& next) { m_next = WTFMove(next); }
-    std::unique_ptr<BidiRun> takeNext() { return WTFMove(m_next); }
-
-private:
-    std::unique_ptr<BidiRun> m_next;
-    size_t m_start { 0 };
-    size_t m_end { 0 };
-    unsigned char m_level { 0 };
-};
-
-BidiRun::BidiRun(unsigned start, unsigned end, BidiContext* context, UCharDirection direction)
-    : m_start(start)
-    , m_end(end)
-    , m_level(context->level())
-{
-    ASSERT(context);
-    if (direction == U_OTHER_NEUTRAL)
-        direction = context->dir();
-    if (m_level % 2)
-        m_level = (direction == U_LEFT_TO_RIGHT || direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER) ? m_level + 1 : m_level;
-    else
-        m_level = (direction == U_RIGHT_TO_LEFT) ? m_level + 1 : (direction == U_ARABIC_NUMBER || direction == U_EUROPEAN_NUMBER) ? m_level + 2 : m_level;
-}
-#endif
 
 InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutState, const RenderBlockFlow& blockFlow, const BoxTree& boxTree)
     : m_layoutState(layoutState)
@@ -167,15 +76,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
     if (lineRuns.isEmpty())
         return;
 
-#if PROCESS_BIDI_CONTENT
-    BidiResolver<Iterator, BidiRun> bidiResolver;
-    // FIXME: Add support for override.
-    bidiResolver.setStatus(BidiStatus(m_layoutState.root().style().direction(), false));
-    // FIXME: Grab the nested isolates from the previous line.
-    bidiResolver.setPosition(Iterator(&lineRuns, 0), 0);
-    bidiResolver.createBidiRunsForLine(Iterator(&lineRuns, lineRuns.size()));
-#endif
-
     auto createDisplayBoxRun = [&](auto& lineRun) {
         if (lineRun.isRootInlineBox()) {
             // FIXME: Teach the run iterators to ignore the root inline box runs.
@@ -183,8 +83,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
         }
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
-        // Inline boxes are relative to the line box while final runs need to be relative to the parent box
-        // FIXME: Shouldn't we just leave them be relative to the line box?
         auto runRect = FloatRect { lineRun.logicalRect() };
         auto inkOverflow = FloatRect { lineRun.inkOverflow() };
         auto& geometry = m_layoutState.geometryForBox(layoutBox);
@@ -193,8 +91,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             runRect.setY(roundToInt(runRect.y()));
             inkOverflow.setY(roundToInt(inkOverflow.y()));
         }
-        // FIXME: Add support for non-text ink overflow.
-        // FIXME: Add support for cases when the run is after ellipsis.
         if (lineRun.isInlineBox()) {
             auto lineRunRect = lineRun.logicalRect();
             auto hasScrollableContent = [&] {
@@ -231,7 +127,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
 
     inlineContent.runs.reserveInitialCapacity(lineRuns.size());
     for (auto& lineRun : lineRuns) {
-        if (auto& text = lineRun.text())
+        if (lineRun.text())
             createDisplayTextRun(lineRun);
         else
             createDisplayBoxRun(lineRun);

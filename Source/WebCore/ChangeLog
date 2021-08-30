@@ -1,5 +1,33 @@
 2021-08-30  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] Remove unused bidi handling
+        https://bugs.webkit.org/show_bug.cgi?id=229663
+
+        Reviewed by Antti Koivisto.
+
+        Re-introduce it when bidi gets enabled for IFC.
+
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const):
+        (WebCore::LayoutIntegration::Iterator::offset const): Deleted.
+        (WebCore::LayoutIntegration::Iterator::operator== const): Deleted.
+        (WebCore::LayoutIntegration::Iterator::operator!= const): Deleted.
+        (WebCore::LayoutIntegration::Iterator::atEnd const): Deleted.
+        (WebCore::LayoutIntegration::Iterator::currentRun const): Deleted.
+        (): Deleted.
+        (WebCore::LayoutIntegration::Iterator::Iterator): Deleted.
+        (WebCore::LayoutIntegration::Iterator::direction const): Deleted.
+        (WebCore::LayoutIntegration::Iterator::increment): Deleted.
+        (WebCore::LayoutIntegration::BidiRun::start const): Deleted.
+        (WebCore::LayoutIntegration::BidiRun::end const): Deleted.
+        (WebCore::LayoutIntegration::BidiRun::level const): Deleted.
+        (WebCore::LayoutIntegration::BidiRun::next const): Deleted.
+        (WebCore::LayoutIntegration::BidiRun::setNext): Deleted.
+        (WebCore::LayoutIntegration::BidiRun::takeNext): Deleted.
+        (WebCore::LayoutIntegration::BidiRun::BidiRun): Deleted.
+
+2021-08-30  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Move hyphen handling from the integration run to IFC's display run
         https://bugs.webkit.org/show_bug.cgi?id=229662
 
