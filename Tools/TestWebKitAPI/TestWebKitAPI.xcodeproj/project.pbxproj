@@ -301,12 +301,6 @@
 		4908C71126094E41000B1B2F /* PrivateClickMeasurement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4908C70F26094E16000B1B2F /* PrivateClickMeasurement.mm */; };
 		4909EE3A2D09480C88982D56 /* Markable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EC79F168BE454E579E417B05 /* Markable.cpp */; };
 		491AEEF82652E33500D530A8 /* AppPrivacyReportPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 491AEEF42652DDD000D530A8 /* AppPrivacyReportPlugIn.mm */; };
-		491F3D5226027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D4F26027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db */; };
-		491F3D5326027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D5026027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm */; };
-		491F3D5426027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D5126027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal */; };
-		491F3D6126028387000E31F7 /* pcmWithoutReportingColumns.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D5F2602837D000E31F7 /* pcmWithoutReportingColumns.db */; };
-		491F3D6226028388000E31F7 /* pcmWithoutReportingColumns.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D602602837D000E31F7 /* pcmWithoutReportingColumns.db-shm */; };
-		491F3D6326028388000E31F7 /* pcmWithoutReportingColumns.db-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 491F3D5E2602837D000E31F7 /* pcmWithoutReportingColumns.db-wal */; };
 		4952BE5E2578115600B0AEF1 /* WKWebViewDisableSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4952BE5D2578115500B0AEF1 /* WKWebViewDisableSelection.mm */; };
 		4952BE5F257816F800B0AEF1 /* try-text-select-with-disabled-text-interaction.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4952BE5C2578113900B0AEF1 /* try-text-select-with-disabled-text-interaction.html */; };
 		4971B1182451F29A0096994D /* incorrectCreateTableSchema.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4971B1172451F2780096994D /* incorrectCreateTableSchema.db */; };
@@ -1670,12 +1664,6 @@
 				A1409AD91E7254D4004949D9 /* password-protected.pages in Copy Resources */,
 				9BD6D3A71F7B21DC00BD4962 /* paste-image.html in Copy Resources */,
 				9B7D740F1F8378770006C432 /* paste-rtfd.html in Copy Resources */,
-				491F3D5226027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db in Copy Resources */,
-				491F3D5326027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm in Copy Resources */,
-				491F3D5426027E53000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal in Copy Resources */,
-				491F3D6126028387000E31F7 /* pcmWithoutReportingColumns.db in Copy Resources */,
-				491F3D6226028388000E31F7 /* pcmWithoutReportingColumns.db-shm in Copy Resources */,
-				491F3D6326028388000E31F7 /* pcmWithoutReportingColumns.db-wal in Copy Resources */,
 				3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */,
 				F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */,
 				0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */,
@@ -2135,12 +2123,6 @@
 		46FACF7323E883EE00A9EBC6 /* beforeunload-slow.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "beforeunload-slow.html"; sourceTree = "<group>"; };
 		4908C70F26094E16000B1B2F /* PrivateClickMeasurement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurement.mm; sourceTree = "<group>"; };
 		491AEEF42652DDD000D530A8 /* AppPrivacyReportPlugIn.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppPrivacyReportPlugIn.mm; sourceTree = "<group>"; };
-		491F3D4F26027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = pcmWithoutFraudPreventionDatabase.db; sourceTree = "<group>"; };
-		491F3D5026027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pcmWithoutFraudPreventionDatabase.db-shm"; sourceTree = "<group>"; };
-		491F3D5126027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "pcmWithoutFraudPreventionDatabase.db-wal"; sourceTree = "<group>"; };
-		491F3D5E2602837D000E31F7 /* pcmWithoutReportingColumns.db-wal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "pcmWithoutReportingColumns.db-wal"; sourceTree = "<group>"; };
-		491F3D5F2602837D000E31F7 /* pcmWithoutReportingColumns.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = pcmWithoutReportingColumns.db; sourceTree = "<group>"; };
-		491F3D602602837D000E31F7 /* pcmWithoutReportingColumns.db-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pcmWithoutReportingColumns.db-shm"; sourceTree = "<group>"; };
 		4952BE5C2578113900B0AEF1 /* try-text-select-with-disabled-text-interaction.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "try-text-select-with-disabled-text-interaction.html"; sourceTree = "<group>"; };
 		4952BE5D2578115500B0AEF1 /* WKWebViewDisableSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewDisableSelection.mm; sourceTree = "<group>"; };
 		4971B1172451F2780096994D /* incorrectCreateTableSchema.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = incorrectCreateTableSchema.db; sourceTree = "<group>"; };
@@ -3564,12 +3546,6 @@
 				F457A9B6202D5CDC00F7E9D5 /* PasteMixedContent.mm */,
 				9BDD95561F83683600D20C60 /* PasteRTFD.mm */,
 				9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */,
-				491F3D4F26027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db */,
-				491F3D5026027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-shm */,
-				491F3D5126027CFE000E31F7 /* pcmWithoutFraudPreventionDatabase.db-wal */,
-				491F3D5F2602837D000E31F7 /* pcmWithoutReportingColumns.db */,
-				491F3D602602837D000E31F7 /* pcmWithoutReportingColumns.db-shm */,
-				491F3D5E2602837D000E31F7 /* pcmWithoutReportingColumns.db-wal */,
 				51D8C18F2267B26700797E40 /* PDFLinkReferrer.mm */,
 				516281262325C19100BB7E42 /* PDFSnapshot.mm */,
 				3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */,

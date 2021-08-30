@@ -332,8 +332,6 @@ TEST(EventAttribution, DatabaseLocation)
     EXPECT_EQ(webViewToKeepNetworkProcessAlive.get().configuration.websiteDataStore._networkProcessIdentifier, originalNetworkProcessPid);
 }
 
-// FIXME: Write a test that verifies that data is migrated from old ResourceLoadStatistics databases to the new PCM database.
-
 #if HAVE(UI_EVENT_ATTRIBUTION)
 
 TEST(EventAttribution, BasicWithIOSSPI)

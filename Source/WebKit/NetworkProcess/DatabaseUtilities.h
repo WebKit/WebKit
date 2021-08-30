@@ -30,10 +30,14 @@
 #include <wtf/Scope.h>
 
 namespace WebCore {
+class PrivateClickMeasurement;
+class SQLiteStatement;
 class SQLiteStatementAutoResetScope;
 }
 
 namespace WebKit {
+
+enum class PrivateClickMeasurementAttributionType : bool;
 
 class DatabaseUtilities {
 protected:
@@ -49,6 +53,9 @@ protected:
     void interrupt();
     virtual bool createSchema() = 0;
     virtual void destroyStatements() = 0;
+    virtual String getDomainStringFromDomainID(unsigned) const = 0;
+
+    WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType);
 
     const String m_storageFilePath;
     mutable WebCore::SQLiteDatabase m_database;

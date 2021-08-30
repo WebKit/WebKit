@@ -66,7 +66,6 @@ private:
     bool createSchema() final;
     void destroyStatements() final;
     std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&);
-    WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement*, PrivateClickMeasurementAttributionType);
     void removeUnattributed(WebCore::PrivateClickMeasurement&);
     String attributionToStringForTesting(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType);
     void markReportAsSentToDestination(SourceDomainID, DestinationDomainID);
@@ -74,22 +73,23 @@ private:
     std::pair<std::optional<SourceEarliestTimeToSend>, std::optional<DestinationEarliestTimeToSend>> earliestTimesToSend(const WebCore::PrivateClickMeasurement&);
     std::optional<DomainID> ensureDomainID(const WebCore::RegistrableDomain&);
     std::optional<DomainID> domainID(const WebCore::RegistrableDomain&);
-    String getDomainStringFromDomainID(DomainID);
+    String getDomainStringFromDomainID(DomainID) const final;
 
-    std::unique_ptr<WebCore::SQLiteStatement> m_setUnattributedPrivateClickMeasurementAsExpiredStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_findUnattributedStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_findAttributedStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_removeUnattributedStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_allAttributedPrivateClickMeasurementStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_allUnattributedPrivateClickMeasurementAttributionsStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_clearAllPrivateClickMeasurementStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_clearExpiredPrivateClickMeasurementStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_earliestTimesToSendStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_markReportAsSentToSourceStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_markReportAsSentToDestinationStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_domainIDFromStringStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_domainStringFromDomainIDStatement;
-    std::unique_ptr<WebCore::SQLiteStatement> m_insertObservedDomainStatement;
+    using Statement = std::unique_ptr<WebCore::SQLiteStatement>;
+    mutable Statement m_setUnattributedPrivateClickMeasurementAsExpiredStatement;
+    mutable Statement m_findUnattributedStatement;
+    mutable Statement m_findAttributedStatement;
+    mutable Statement m_removeUnattributedStatement;
+    mutable Statement m_allAttributedPrivateClickMeasurementStatement;
+    mutable Statement m_allUnattributedPrivateClickMeasurementAttributionsStatement;
+    mutable Statement m_clearAllPrivateClickMeasurementStatement;
+    mutable Statement m_clearExpiredPrivateClickMeasurementStatement;
+    mutable Statement m_earliestTimesToSendStatement;
+    mutable Statement m_markReportAsSentToSourceStatement;
+    mutable Statement m_markReportAsSentToDestinationStatement;
+    mutable Statement m_domainIDFromStringStatement;
+    mutable Statement m_domainStringFromDomainIDStatement;
+    mutable Statement m_insertObservedDomainStatement;
 };
 
 } // namespace PCM

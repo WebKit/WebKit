@@ -1,5 +1,41 @@
 2021-08-30  Alex Christensen  <achristensen@webkit.org>
 
+        Migrate PrivateClickMeasurements from ResourceLoadStatistics database to new database
+        https://bugs.webkit.org/show_bug.cgi?id=229646
+
+        Reviewed by Kate Cheney.
+
+        In r281721 I moved the PCM database to be separate from the ResourceLoadStatistics database.
+        This patch extracts data from the old database and sends it to the new database.
+
+        I added some tests that create databases in each of the 3 historical schemas then verify that
+        data is successfully migrated to the new database.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::tableExists):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::deleteTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::destroyStatements):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/DatabaseUtilities.cpp:
+        (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase):
+        * NetworkProcess/DatabaseUtilities.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::insertPrivateClickMeasurement):
+        (WebKit::PCM::Database::findPrivateClickMeasurement):
+        (WebKit::PCM::Database::allAttributedPrivateClickMeasurement):
+        (WebKit::PCM::Database::getDomainStringFromDomainID const):
+        (WebKit::PCM::Database::buildPrivateClickMeasurementFromDatabase): Deleted.
+        (WebKit::PCM::Database::getDomainStringFromDomainID): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _dumpPrivateClickMeasurement:]):
+
+2021-08-30  Alex Christensen  <achristensen@webkit.org>
+
         WKWebViewConfiguration._loadsSubresources=NO should prevent preconnecting
         https://bugs.webkit.org/show_bug.cgi?id=229684
 

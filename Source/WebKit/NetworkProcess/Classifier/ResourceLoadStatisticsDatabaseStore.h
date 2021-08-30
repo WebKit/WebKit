@@ -140,12 +140,16 @@ private:
     TableAndIndexPair currentTableAndIndexQueries(const String&);
     bool missingReferenceToObservedDomains();
     void migrateDataToNewTablesIfNecessary();
+    void migrateDataToPCMDatabaseIfNecessary();
+    bool tableExists(StringView);
+    void deleteTable(StringView);
+
     void destroyStatements() final;
 
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
     Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndUpdateSchemaIfNecessary();
-    String getDomainStringFromDomainID(unsigned) const;
+    String getDomainStringFromDomainID(unsigned) const final;
     ASCIILiteral getSubStatisticStatement(const String&) const;
     void appendSubStatisticList(StringBuilder&, const String& tableName, const String& domain) const;
     void mergeStatistic(const ResourceLoadStatistics&);
@@ -254,6 +258,7 @@ private:
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_uniqueRedirectExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_observedDomainsExistsStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_removeAllDataStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_checkIfTableExistsStatement;
 
     PAL::SessionID m_sessionID;
     bool m_isNewResourceLoadStatisticsDatabaseFile { false };

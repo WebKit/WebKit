@@ -353,6 +353,13 @@
     });
 }
 
+- (void)_dumpPrivateClickMeasurement:(void(^)(NSString *))completionHandler
+{
+    _page->dumpPrivateClickMeasurement([completionHandler = makeBlockPtr(completionHandler)](const String& privateClickMeasurement) {
+        completionHandler(privateClickMeasurement);
+    });
+}
+
 - (void)_didShowContextMenu
 {
     // For subclasses to override.
