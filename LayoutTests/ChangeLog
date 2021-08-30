@@ -1,3 +1,45 @@
+2021-08-29  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Update fast/border baselines after r281724
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/borders/border-fit-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/border-fit-expected.txt.
+        * platform/glib/fast/borders/border-image-01-expected.txt:
+        * platform/glib/fast/borders/border-image-longhand-expected.txt:
+        * platform/glib/fast/borders/border-image-massive-scale-expected.txt:
+        * platform/glib/fast/borders/border-image-omit-right-slice-expected.txt:
+        * platform/glib/fast/borders/border-image-outset-expected.txt:
+        * platform/glib/fast/borders/border-image-outset-in-shorthand-expected.txt:
+        * platform/glib/fast/borders/border-image-outset-split-inline-expected.txt:
+        * platform/glib/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt:
+        * platform/glib/fast/borders/border-image-repeat-expected.txt:
+        * platform/glib/fast/borders/border-image-rotate-transform-expected.txt:
+        * platform/glib/fast/borders/border-image-scale-transform-expected.txt:
+        * platform/glib/fast/borders/border-image-scaled-expected.txt:
+        * platform/glib/fast/borders/border-image-scrambled-expected.txt:
+        * platform/glib/fast/borders/border-image-side-reduction-expected.txt:
+        * platform/glib/fast/borders/border-image-slice-constrained-expected.txt:
+        * platform/glib/fast/borders/border-image-slices-expected.txt:
+        * platform/glib/fast/borders/border-image-source-expected.txt:
+        * platform/glib/fast/borders/border-image-trumps-radius-expected.txt: Added.
+        * platform/glib/fast/borders/fieldsetBorderRadius-expected.txt: Renamed from LayoutTests/platform/gtk/fast/borders/fieldsetBorderRadius-expected.txt.
+        * platform/glib/fast/borders/scaled-border-image-expected.txt:
+        * platform/glib/fast/gradients/border-image-gradient-expected.txt: Added.
+        * platform/glib/fast/hidpi/image-set-border-image-comparison-expected.txt:
+        * platform/glib/fast/hidpi/image-set-border-image-dynamic-expected.txt: Renamed from LayoutTests/platform/gtk/fast/hidpi/image-set-border-image-dynamic-expected.txt.
+        * platform/glib/fast/hidpi/image-set-border-image-simple-expected.txt:
+        * platform/glib/fast/writing-mode/border-image-horizontal-bt-expected.txt:
+        * platform/glib/fast/writing-mode/border-image-vertical-lr-expected.txt:
+        * platform/glib/fast/writing-mode/border-image-vertical-rl-expected.txt:
+        * platform/glib/svg/as-border-image/svg-as-border-image-2-expected.txt:
+        * platform/glib/svg/as-border-image/svg-as-border-image-expected.txt:
+        * platform/gtk/fast/borders/border-image-border-radius-expected.txt:
+        * platform/wpe/fast/borders/border-fit-expected.txt: Removed.
+        * platform/wpe/fast/borders/border-image-border-radius-expected.txt:
+        * platform/wpe/fast/borders/fieldsetBorderRadius-expected.txt: Removed.
+        * platform/wpe/fast/hidpi/image-set-border-image-dynamic-expected.txt: Removed.
+
 2021-08-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Run tests in fast/forms/ios by default in EWS
