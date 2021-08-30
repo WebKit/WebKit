@@ -1922,6 +1922,8 @@ webkit.org/b/228094 imported/w3c/web-platform-tests/mathml/presentation-markup/o
 
 webkit.org/b/229424 [ Catalina ] http/tests/media/hls/range-request.html [ Pass Failure ]
 
+webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass Timeout ]
+
 # rdar://66660680 (REGRESSION (20A2327a-20A2348b): media/video-canvas-createPattern.html is failing)
 [ BigSur+ ] media/video-canvas-createPattern.html [ Failure ]
 
