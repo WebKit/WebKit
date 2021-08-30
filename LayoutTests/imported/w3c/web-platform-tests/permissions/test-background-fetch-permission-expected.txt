@@ -1,3 +1,3 @@
 
-FAIL Test Background Fetch Permission. undefined is not an object (evaluating 'navigator.permissions.query')
+PASS Test Background Fetch Permission.
 

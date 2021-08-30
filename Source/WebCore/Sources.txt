@@ -203,6 +203,9 @@ Modules/paymentrequest/PaymentRequest.cpp
 Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
 Modules/paymentrequest/PaymentRequestUtilities.cpp
 Modules/paymentrequest/PaymentResponse.cpp
+Modules/permissions/NavigatorPermissions.cpp
+Modules/permissions/PermissionStatus.cpp
+Modules/permissions/Permissions.cpp
 Modules/pictureinpicture/DocumentPictureInPicture.cpp
 Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
@@ -3273,6 +3276,11 @@ JSPerformanceTiming.cpp
 JSPeriodicWave.cpp
 JSPeriodicWaveConstraints.cpp
 JSPeriodicWaveOptions.cpp
+JSPermissionDescriptor.cpp
+JSPermissionName.cpp
+JSPermissionState.cpp
+JSPermissionStatus.cpp
+JSPermissions.cpp
 JSPictureInPictureWindow.cpp
 JSPlaybackDirection.cpp
 JSPointerEvent.cpp

@@ -1377,6 +1377,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaDevices.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaDevices.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaSession.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaSession.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebXR.cpp
@@ -1583,6 +1585,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveConstraints.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveConstraints.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionName.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionName.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionState.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.cpp

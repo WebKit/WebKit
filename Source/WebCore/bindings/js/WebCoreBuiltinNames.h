@@ -154,6 +154,7 @@ namespace WebCore {
     macro(MockRTCRtpTransform) \
     macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \
+    macro(NavigatorPermissions) \
     macro(NavigatorUserMedia) \
     macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
@@ -182,6 +183,9 @@ namespace WebCore {
     macro(PerformancePaintTiming) \
     macro(PerformanceResourceTiming) \
     macro(PerformanceServerTiming) \
+    macro(PermissionDescriptor) \
+    macro(PermissionStatus) \
+    macro(Permissions) \
     macro(PointerEvent) \
     macro(PublicKeyCredential) \
     macro(ResizeObserver) \

@@ -1498,6 +1498,7 @@
 		93AB9B4E257567E20098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AB9B422574928C0098B10E /* SpeechRecognitionRemoteRealtimeMediaSource.h */; };
 		93AB9B552575A2760098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AB9B4F257589110098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp */; };
 		93AB9B562575A28B0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AB9B51257589110098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp */; };
+		93B0A67526D5ADCF00AA21E4 /* WebPermissionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */; };
 		93B2614D227D149E00B97A76 /* StorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26149227D147200B97A76 /* StorageManager.h */; };
 		93B2614E227D14B100B97A76 /* LocalStorageDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26145227D147000B97A76 /* LocalStorageDatabase.h */; };
 		93B2614F227D14B100B97A76 /* LocalStorageDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B26146227D147100B97A76 /* LocalStorageDatabaseTracker.h */; };
@@ -4924,6 +4925,10 @@
 		93AB9B52257589120098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRemoteRealtimeMediaSourceManagerMessagesReplies.h; sourceTree = "<group>"; };
 		93AB9B53257589120098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRemoteRealtimeMediaSourceManagerMessages.h; sourceTree = "<group>"; };
 		93AB9B54257589120098B10E /* SpeechRecognitionRealtimeMediaSourceManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionRealtimeMediaSourceManagerMessages.h; sourceTree = "<group>"; };
+		93B0A66D26D4515000AA21E4 /* PermissionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PermissionManager.cpp; sourceTree = "<group>"; };
+		93B0A66E26D4515000AA21E4 /* PermissionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PermissionManager.h; sourceTree = "<group>"; };
+		93B0A67326D5A72E00AA21E4 /* WebPermissionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPermissionController.cpp; sourceTree = "<group>"; };
+		93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPermissionController.h; sourceTree = "<group>"; };
 		93B26145227D147000B97A76 /* LocalStorageDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDatabase.h; sourceTree = "<group>"; };
 		93B26146227D147100B97A76 /* LocalStorageDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageDatabaseTracker.h; sourceTree = "<group>"; };
 		93B26147227D147100B97A76 /* LocalStorageDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageDatabaseTracker.cpp; sourceTree = "<group>"; };
@@ -9649,6 +9654,15 @@
 			path = Speech;
 			sourceTree = "<group>";
 		};
+		93B0A66C26D4511F00AA21E4 /* Permission */ = {
+			isa = PBXGroup;
+			children = (
+				93B0A66D26D4515000AA21E4 /* PermissionManager.cpp */,
+				93B0A66E26D4515000AA21E4 /* PermissionManager.h */,
+			);
+			path = Permission;
+			sourceTree = "<group>";
+		};
 		93B26143227D143100B97A76 /* WebStorage */ = {
 			isa = PBXGroup;
 			children = (
@@ -9889,6 +9903,7 @@
 				4A410F4119AF7B27002EBAB5 /* MediaStream */,
 				5105B0D2162F7A5E00E27709 /* Network */,
 				31099974146C8AA80029DEB9 /* Notifications (User) */,
+				93B0A66C26D4511F00AA21E4 /* Permission */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
 				93AB9B482574C5CE0098B10E /* Speech */,
 				5118E9981F295259003EF9F5 /* Storage */,
@@ -9959,6 +9974,8 @@
 				512127C21908239A00DAF35C /* WebPasteboardOverrides.h */,
 				0F850FE41ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp */,
 				0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */,
+				93B0A67326D5A72E00AA21E4 /* WebPermissionController.cpp */,
+				93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */,
 				1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */,
 				1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */,
 				D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */,
@@ -12690,6 +12707,7 @@
 				A1798B4C222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h in Headers */,
 				1AB1F7991D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h in Headers */,
 				0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */,
+				93B0A67526D5ADCF00AA21E4 /* WebPermissionController.h in Headers */,
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,

@@ -13,6 +13,7 @@ navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
+navigator.permissions is OK
 navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK
@@ -36,6 +37,7 @@ navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
+navigator.permissions is OK
 navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK

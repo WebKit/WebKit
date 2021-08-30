@@ -172,6 +172,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/PerformanceLoggingClient.h>
+#include <WebCore/PermissionState.h>
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PublicSuffix.h>
@@ -8496,6 +8497,12 @@ void WebPageProxy::requestGeolocationPermissionForFrame(GeolocationIdentifier ge
 void WebPageProxy::revokeGeolocationAuthorizationToken(const String& authorizationToken)
 {
     m_geolocationPermissionRequestManager.revokeAuthorizationToken(authorizationToken);
+}
+
+void WebPageProxy::requestPermission(const ClientOrigin&, const PermissionDescriptor&, CompletionHandler<void(PermissionState)>&& completionHandler)
+{
+    // FIXME: Show a prompt for user input.
+    completionHandler(PermissionState::Granted);
 }
 
 #if ENABLE(MEDIA_STREAM)

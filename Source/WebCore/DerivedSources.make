@@ -324,6 +324,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/paymentrequest/PaymentShippingOption.idl \
     $(WebCore)/Modules/paymentrequest/PaymentShippingType.idl \
     $(WebCore)/Modules/paymentrequest/PaymentValidationErrors.idl \
+    $(WebCore)/Modules/permissions/Navigator+Permissions.idl \
+    $(WebCore)/Modules/permissions/PermissionDescriptor.idl \
+    $(WebCore)/Modules/permissions/PermissionName.idl \
+    $(WebCore)/Modules/permissions/PermissionState.idl \
+    $(WebCore)/Modules/permissions/PermissionStatus.idl \
+    $(WebCore)/Modules/permissions/Permissions.idl \
     $(WebCore)/Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/Document+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl \

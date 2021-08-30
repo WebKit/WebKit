@@ -295,6 +295,7 @@ struct LinkIcon;
 struct MediaStreamRequest;
 struct MediaUsageInfo;
 struct MockWebAuthenticationConfiguration;
+struct PermissionDescriptor;
 struct PrewarmInformation;
 struct SecurityOriginData;
 struct ShareData;
@@ -2118,6 +2119,7 @@ private:
 
     void requestGeolocationPermissionForFrame(GeolocationIdentifier, FrameInfoData&&);
     void revokeGeolocationAuthorizationToken(const String& authorizationToken);
+    void requestPermission(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, CompletionHandler<void(WebCore::PermissionState)>&&);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void sendMessageToWebView(UserMessage&&);

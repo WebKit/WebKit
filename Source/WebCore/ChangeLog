@@ -1,3 +1,77 @@
+2021-08-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Add stubs for Permissions API
+        https://bugs.webkit.org/show_bug.cgi?id=229339
+        <rdar://problem/82442205>
+
+        Reviewed by Chris Dumez.
+
+        Add bindings code and a feature flag for Permissions API.
+        Spec: https://w3c.github.io/permissions/
+
+        No new tests. Rebaseline existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Modules/permissions/Navigator+Permissions.idl: Added.
+        * Modules/permissions/NavigatorPermissions.cpp: Added.
+        (WebCore::NavigatorPermissions::NavigatorPermissions):
+        (WebCore::NavigatorPermissions::permissions):
+        (WebCore::NavigatorPermissions::from):
+        (WebCore::NavigatorPermissions::supplementName):
+        * Modules/permissions/NavigatorPermissions.h: Added.
+        * Modules/permissions/PermissionController.h: Added.
+        * Modules/permissions/PermissionDescriptor.h: Added.
+        (WebCore::PermissionDescriptor::operator== const):
+        (WebCore::PermissionDescriptor::encode const):
+        (WebCore::PermissionDescriptor::decode):
+        * Modules/permissions/PermissionDescriptor.idl: Added.
+        * Modules/permissions/PermissionName.h: Added.
+        * Modules/permissions/PermissionName.idl: Added.
+        * Modules/permissions/PermissionObserver.h: Added.
+        * Modules/permissions/PermissionState.h: Added.
+        * Modules/permissions/PermissionState.idl: Added.
+        * Modules/permissions/PermissionStatus.cpp: Added.
+        (WebCore::PermissionStatus::create):
+        (WebCore::PermissionStatus::PermissionStatus):
+        (WebCore::PermissionStatus::~PermissionStatus):
+        (WebCore::PermissionStatus::stateChanged):
+        (WebCore::PermissionStatus::activeDOMObjectName const):
+        (WebCore::PermissionStatus::virtualHasPendingActivity const):
+        (WebCore::PermissionStatus::eventListenersDidChange):
+        * Modules/permissions/PermissionStatus.h: Added.
+        * Modules/permissions/PermissionStatus.idl: Added.
+        * Modules/permissions/Permissions.cpp: Added.
+        (WebCore::Permissions::create):
+        (WebCore::Permissions::Permissions):
+        (WebCore::Permissions::navigator):
+        (WebCore::Permissions::query):
+        * Modules/permissions/Permissions.h: Added.
+        * Modules/permissions/Permissions.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::permissionController):
+        * dom/Document.h:
+        * dom/EventTargetFactory.in:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::permissionController):
+        * dom/TaskSource.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        * page/Page.cpp:
+        (WebCore::m_permissionController):
+        (WebCore::Page::permissionController):
+        (WebCore::m_httpsUpgradeEnabled): Deleted.
+        * page/Page.h:
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+
 2021-08-30  Chris Dumez  <cdumez@apple.com>
 
         SubmitEvent.submitter property isn't set for <button type="submit">

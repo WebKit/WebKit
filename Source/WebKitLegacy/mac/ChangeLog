@@ -1,3 +1,15 @@
+2021-08-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Add stubs for Permissions API
+        https://bugs.webkit.org/show_bug.cgi?id=229339
+        <rdar://problem/82442205>
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2021-08-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Implement process-swapping based on Cross-Origin-Opener-Policy HTTP header

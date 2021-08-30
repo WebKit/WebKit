@@ -131,6 +131,7 @@ class PaymentCoordinator;
 class PerformanceLogging;
 class PerformanceLoggingClient;
 class PerformanceMonitor;
+class PermissionController;
 class PluginData;
 class PluginInfoProvider;
 class PluginViewBase;
@@ -872,6 +873,8 @@ public:
     void cacheTextRecognitionResult(const HTMLElement&, const IntRect& containerRect, const TextRecognitionResult&);
 #endif
 
+    WEBCORE_EXPORT PermissionController& permissionController();
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1193,6 +1196,8 @@ private:
 
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
+
+    UniqueRef<PermissionController> m_permissionController;
 
 #if ENABLE(IMAGE_ANALYSIS)
     // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.

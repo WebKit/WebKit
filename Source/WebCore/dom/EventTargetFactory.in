@@ -35,6 +35,7 @@ OffscreenCanvas conditional=OFFSCREEN_CANVAS
 PaymentRequest conditional=PAYMENT_REQUEST
 PaymentResponse conditional=PAYMENT_REQUEST
 Performance
+PermissionStatus
 PictureInPictureWindow conditional=PICTURE_IN_PICTURE_API
 RemotePlayback conditional=WIRELESS_PLAYBACK_TARGET
 RTCDataChannel conditional=WEB_RTC

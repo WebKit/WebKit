@@ -138,6 +138,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PathUtilities.h>
+#include <WebCore/PermissionController.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
@@ -3133,7 +3134,8 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<WebFrameLoaderClient>(webFrame),
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<MediaRecorderProvider>(),
-        WebBroadcastChannelRegistry::getOrCreate(false)
+        WebBroadcastChannelRegistry::getOrCreate(false),
+        makeUniqueRef<DummyPermissionController>()
     );
     configuration.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)

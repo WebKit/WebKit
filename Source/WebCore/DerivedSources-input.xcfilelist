@@ -388,6 +388,12 @@ $(PROJECT_DIR)/Modules/paymentrequest/PaymentResponse.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentShippingOption.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentShippingType.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentValidationErrors.idl
+$(PROJECT_DIR)/Modules/permissions/Navigator+Permissions.idl
+$(PROJECT_DIR)/Modules/permissions/PermissionDescriptor.idl
+$(PROJECT_DIR)/Modules/permissions/PermissionName.idl
+$(PROJECT_DIR)/Modules/permissions/PermissionState.idl
+$(PROJECT_DIR)/Modules/permissions/PermissionStatus.idl
+$(PROJECT_DIR)/Modules/permissions/Permissions.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/Document+PictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl

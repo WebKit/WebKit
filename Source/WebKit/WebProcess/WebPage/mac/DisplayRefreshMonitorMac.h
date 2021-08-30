@@ -50,7 +50,7 @@ private:
     bool startNotificationMechanism() final;
     void stopNotificationMechanism() final;
 
-    void adjustPreferredFramesPerSecond(FramesPerSecond) final;
+    void adjustPreferredFramesPerSecond(WebCore::FramesPerSecond) final;
 
     DisplayLinkObserverID m_observerID;
     std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;

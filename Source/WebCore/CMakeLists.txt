@@ -48,6 +48,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/paymentrequest"
+    "${WEBCORE_DIR}/Modules/permissions"
     "${WEBCORE_DIR}/Modules/pictureinpicture"
     "${WEBCORE_DIR}/Modules/plugins"
     "${WEBCORE_DIR}/Modules/remoteplayback"
@@ -201,6 +202,7 @@ set(WebCore_IDL_INCLUDES
     Modules/model-element
     Modules/notifications
     Modules/paymentrequest
+    Modules/permissions
     Modules/speech
     Modules/streams
     Modules/webaudio
@@ -459,6 +461,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/paymentrequest/PaymentShippingOption.idl
     Modules/paymentrequest/PaymentShippingType.idl
     Modules/paymentrequest/PaymentValidationErrors.idl
+
+    Modules/permissions/Navigator+Permissions.idl
+    Modules/permissions/PermissionDescriptor.idl
+    Modules/permissions/PermissionName.idl
+    Modules/permissions/PermissionState.idl
+    Modules/permissions/PermissionStatus.idl
+    Modules/permissions/Permissions.idl
 
     Modules/pictureinpicture/Document+PictureInPicture.idl
     Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl

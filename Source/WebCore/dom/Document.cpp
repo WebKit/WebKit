@@ -3556,6 +3556,11 @@ IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
     return m_idbConnectionProxy.get();
 }
 
+RefPtr<PermissionController> Document::permissionController()
+{
+    return page() ? &page()->permissionController() : nullptr;
+}
+
 SocketProvider* Document::socketProvider()
 {
     return m_socketProvider.get();

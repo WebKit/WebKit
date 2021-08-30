@@ -99,6 +99,7 @@
 #include "PerformanceLogging.h"
 #include "PerformanceLoggingClient.h"
 #include "PerformanceMonitor.h"
+#include "PermissionController.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
 #include "PlatformStrategies.h"
@@ -325,6 +326,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_loadsSubresources(pageConfiguration.loadsSubresources)
     , m_shouldRelaxThirdPartyCookieBlocking(pageConfiguration.shouldRelaxThirdPartyCookieBlocking)
     , m_httpsUpgradeEnabled(pageConfiguration.httpsUpgradeEnabled)
+    , m_permissionController(WTFMove(pageConfiguration.permissionController))
 {
     updateTimerThrottlingState();
 
@@ -3692,5 +3694,10 @@ void Page::resetTextRecognitionResults()
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+PermissionController& Page::permissionController()
+{
+    return m_permissionController.get();
+}
 
 } // namespace WebCore

@@ -905,6 +905,18 @@ PerformanceResourceTimingSensitivePropertiesEnabled:
     WebCore:
       default: false
 
+PermissionsAPIEnabled:
+  type: bool
+  humanReadableName: "Permissions API"
+  humanReadableDescription: "Enable Permissions API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
   humanReadableName: "Private Click Measurement Debug Mode"

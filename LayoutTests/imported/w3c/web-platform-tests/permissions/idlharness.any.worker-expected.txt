@@ -19,25 +19,25 @@ PASS WorkerNavigator includes NavigatorID: member names are unique
 PASS WorkerNavigator includes NavigatorLanguage: member names are unique
 PASS WorkerNavigator includes NavigatorOnLine: member names are unique
 PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
-FAIL PermissionStatus interface: existence and properties of interface object assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
-FAIL PermissionStatus interface object length assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
-FAIL PermissionStatus interface object name assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
-FAIL PermissionStatus interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
-FAIL PermissionStatus interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
-FAIL PermissionStatus interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
-FAIL PermissionStatus interface: attribute state assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
-FAIL PermissionStatus interface: attribute onchange assert_own_property: self does not have own property "PermissionStatus" expected property "PermissionStatus" missing
+PASS PermissionStatus interface: existence and properties of interface object
+PASS PermissionStatus interface object length
+PASS PermissionStatus interface object name
+PASS PermissionStatus interface: existence and properties of interface prototype object
+PASS PermissionStatus interface: existence and properties of interface prototype object's "constructor" property
+PASS PermissionStatus interface: existence and properties of interface prototype object's @@unscopables property
+PASS PermissionStatus interface: attribute state
+PASS PermissionStatus interface: attribute onchange
 FAIL PermissionStatus must be primary interface of permissionStatus assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: permissionStatus"
 FAIL Stringification of permissionStatus assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: permissionStatus"
 FAIL PermissionStatus interface: permissionStatus must inherit property "state" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: permissionStatus"
 FAIL PermissionStatus interface: permissionStatus must inherit property "onchange" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: permissionStatus"
-FAIL Permissions interface: existence and properties of interface object assert_own_property: self does not have own property "Permissions" expected property "Permissions" missing
-FAIL Permissions interface object length assert_own_property: self does not have own property "Permissions" expected property "Permissions" missing
-FAIL Permissions interface object name assert_own_property: self does not have own property "Permissions" expected property "Permissions" missing
-FAIL Permissions interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Permissions" expected property "Permissions" missing
-FAIL Permissions interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Permissions" expected property "Permissions" missing
-FAIL Permissions interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Permissions" expected property "Permissions" missing
-FAIL Permissions interface: operation query(object) assert_own_property: self does not have own property "Permissions" expected property "Permissions" missing
+PASS Permissions interface: existence and properties of interface object
+PASS Permissions interface object length
+PASS Permissions interface object name
+PASS Permissions interface: existence and properties of interface prototype object
+PASS Permissions interface: existence and properties of interface prototype object's "constructor" property
+PASS Permissions interface: existence and properties of interface prototype object's @@unscopables property
+PASS Permissions interface: operation query(object)
 FAIL Permissions must be primary interface of navigator.permissions assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL Stringification of navigator.permissions assert_equals: wrong typeof object expected "object" but got "undefined"
 FAIL Permissions interface: navigator.permissions must inherit property "query(object)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"

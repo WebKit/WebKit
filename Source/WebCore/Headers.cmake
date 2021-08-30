@@ -129,6 +129,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/notifications/NotificationPermission.h
     Modules/notifications/NotificationPermissionCallback.h
 
+    Modules/permissions/PermissionController.h
+    Modules/permissions/PermissionDescriptor.h
+    Modules/permissions/PermissionName.h
+    Modules/permissions/PermissionObserver.h
+    Modules/permissions/PermissionState.h
+
     Modules/plugins/PluginReplacement.h
     Modules/plugins/YouTubePluginReplacement.h
 

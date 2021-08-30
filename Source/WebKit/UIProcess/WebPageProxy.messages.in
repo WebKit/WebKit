@@ -602,4 +602,6 @@ messages -> WebPageProxy {
 #if HAVE(ARKIT_INLINE_PREVIEW_MAC)
     ModelElementDidCreatePreview(struct WebCore::ElementContext elementContext, URL url, String uuid, WebCore::FloatSize size)
 #endif
+
+    requestPermission(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor) -> (enum:uint8_t WebCore::PermissionState state) Async
 }

@@ -29,6 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
+#include "PermissionController.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ResourceLoaderOptions.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -115,6 +116,7 @@ public:
     virtual void disableWebAssembly(const String& errorMessage) = 0;
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
+    virtual RefPtr<PermissionController> permissionController() { return nullptr; }
 
     virtual SocketProvider* socketProvider() = 0;
 
