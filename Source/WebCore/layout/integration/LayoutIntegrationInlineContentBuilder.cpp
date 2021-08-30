@@ -176,8 +176,6 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
     bidiResolver.createBidiRunsForLine(Iterator(&lineRuns, lineRuns.size()));
 #endif
 
-    Vector<bool> hasAdjustedTrailingLineList(lines.size(), false);
-
     auto createDisplayBoxRun = [&](auto& lineRun) {
         if (lineRun.isRootInlineBox()) {
             // FIXME: Teach the run iterators to ignore the root inline box runs.
@@ -212,8 +210,7 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, { }, { } });
     };
 
-    auto createDisplayTextRunForRange = [&](auto& lineRun, auto startOffset, auto endOffset) {
-        RELEASE_ASSERT(startOffset < endOffset);
+    auto createDisplayTextRun = [&](auto& lineRun) {
         auto& layoutBox = lineRun.layoutBox();
         auto lineIndex = lineRun.lineIndex();
         auto runRect = FloatRect { lineRun.logicalRect() };
@@ -223,26 +220,19 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             inkOverflow.setY(roundToInt(inkOverflow.y()));
         }
 
-        auto& style = layoutBox.style();
         auto text = lineRun.text();
-        auto adjustedContentToRender = [&] {
-            auto originalContent = text->content().substring(text->start(), text->length());
-            if (text->needsHyphen())
-                return makeString(originalContent, style.hyphenString());
-            return String();
-        };
-
-        RELEASE_ASSERT(startOffset >= text->start() && startOffset < text->end());
-        RELEASE_ASSERT(endOffset > text->start() && endOffset <= text->end());
-        auto textContent = Run::TextContent { startOffset, endOffset - startOffset, text->content(), adjustedContentToRender(), text->needsHyphen() };
-        auto expansion = Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion };
-        inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, expansion, textContent });
+        inlineContent.runs.append({ lineIndex
+            , layoutBox
+            , runRect
+            , inkOverflow
+            , Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion }
+            , Run::TextContent { text->start(), text->length(), text->originalContent(), text->renderedContent(), text->hasHyphen() } });
     };
 
     inlineContent.runs.reserveInitialCapacity(lineRuns.size());
     for (auto& lineRun : lineRuns) {
         if (auto& text = lineRun.text())
-            createDisplayTextRunForRange(lineRun, text->start(), text->end());
+            createDisplayTextRun(lineRun);
         else
             createDisplayBoxRun(lineRun);
     }

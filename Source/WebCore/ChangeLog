@@ -1,3 +1,29 @@
+2021-08-30  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move hyphen handling from the integration run to IFC's display run
+        https://bugs.webkit.org/show_bug.cgi?id=229662
+
+        Reviewed by Antti Koivisto.
+
+        Move the rendered content handling (hyphen only atm) over to the IFC display runs.
+        This is in preparation for merging integration and IFC's display runs.
+
+        * display/css/DisplayBoxPainter.cpp:
+        (WebCore::Display::BoxPainter::paintBoxContent):
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::debugDescription const):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::LineRun::Text::originalContent const):
+        (WebCore::Layout::LineRun::Text::renderedContent const):
+        (WebCore::Layout::LineRun::Text::hasHyphen const):
+        (WebCore::Layout::LineRun::Text::Text):
+        (WebCore::Layout::LineRun::Text::content const): Deleted.
+        (WebCore::Layout::LineRun::Text::needsHyphen const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const):
+
 2021-08-30  Chris Dumez  <cdumez@apple.com>
 
         Implement self.reportError()

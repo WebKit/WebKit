@@ -53,7 +53,7 @@ String TextBox::debugDescription() const
     TextStream stream;
 
     stream << boxName() << " " << absoluteBoxRect() << " (" << this << ")";
-    auto textContent = text().content().substring(text().start(), text().length());
+    auto textContent = text().originalContent().substring(text().start(), text().length());
     textContent.replaceWithLiteral('\\', "\\\\");
     textContent.replaceWithLiteral('\n', "\\n");
     const size_t maxPrintedLength = 80;

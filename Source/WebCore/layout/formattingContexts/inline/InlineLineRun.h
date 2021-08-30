@@ -39,20 +39,22 @@ struct LineRun {
     struct Text {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        Text(size_t position, size_t length, const String&, bool needsHyphen = false);
+        Text(size_t position, size_t length, const String& originalContent, String adjustedContentToRender = String(), bool hasHyphen = false);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
-        String content() const { return m_contentString; }
+        String originalContent() const { return m_originalContent; }
+        String renderedContent() const { return m_adjustedContentToRender; }
 
-        bool needsHyphen() const { return m_needsHyphen; }
+        bool hasHyphen() const { return m_hasHyphen; }
 
     private:
         size_t m_start { 0 };
         size_t m_length { 0 };
-        bool m_needsHyphen { false };
-        String m_contentString;
+        bool m_hasHyphen { false };
+        String m_originalContent;
+        String m_adjustedContentToRender;
     };
 
     enum class Type {
@@ -133,11 +135,12 @@ inline LineRun::LineRun(size_t lineIndex, Type type, const Layout::Box& layoutBo
 {
 }
 
-inline LineRun::Text::Text(size_t start, size_t length, const String& contentString, bool needsHyphen)
+inline LineRun::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
     : m_start(start)
     , m_length(length)
-    , m_needsHyphen(needsHyphen)
-    , m_contentString(contentString)
+    , m_hasHyphen(hasHyphen)
+    , m_originalContent(originalContent)
+    , m_adjustedContentToRender(adjustedContentToRender)
 {
 }
 

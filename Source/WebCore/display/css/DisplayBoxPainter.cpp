@@ -80,7 +80,7 @@ void BoxPainter::paintBoxContent(const Box& box, PaintingContext& paintingContex
         auto baseline = textRect.y() + style.fontMetrics().ascent();
         auto expansion = textBox.expansion();
 
-        auto textRun = TextRun { textBox.text().content().substring(textBox.text().start(), textBox.text().length()), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
+        auto textRun = TextRun { textBox.text().originalContent().substring(textBox.text().start(), textBox.text().length()), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         paintingContext.context.drawText(style.fontCascade(), textRun, { textRect.x(), baseline });
         return;
