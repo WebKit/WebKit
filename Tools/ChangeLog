@@ -1,3 +1,16 @@
+2021-08-31  Kate Cheney  <katherine_cheney@apple.com>
+
+        Use after move in ServiceWorkerThreadProxy
+        https://bugs.webkit.org/show_bug.cgi?id=229731
+
+        Reviewed by Chris Dumez.
+
+        While trying to test that this change did not cause regressions,
+        I found a bug in the test code from the mass renaming that happened
+        a few weeks ago. This patch fixes that.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
 2021-08-31  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Automatic rebasing or pull-requests

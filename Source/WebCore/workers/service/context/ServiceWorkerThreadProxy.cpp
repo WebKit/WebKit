@@ -116,9 +116,6 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     m_remoteDebuggable->setRemoteDebuggingAllowed(true);
     m_remoteDebuggable->init();
 #endif
-
-    if (data.lastNavigationWasAppInitiated)
-        setLastNavigationWasAppInitiated(data.lastNavigationWasAppInitiated == LastNavigationWasAppInitiated::Yes);
 }
 
 ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()

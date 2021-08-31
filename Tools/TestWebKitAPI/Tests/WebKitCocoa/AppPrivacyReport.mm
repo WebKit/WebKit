@@ -603,7 +603,7 @@ self.addEventListener('message', async (event) => {
 
 async function queryAppPrivacyReportValue(event, haveSentInitialMessage)
 {
-    var result = await internals.lastNavigationWasAppPrivacyReport();
+    var result = await internals.lastNavigationWasAppInitiated();
     if (result) {
         if (event.data == "FIRST") {
             event.source.postMessage('app initiated');

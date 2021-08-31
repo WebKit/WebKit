@@ -1,3 +1,13 @@
+2021-08-31  Kate Cheney  <katherine_cheney@apple.com>
+
+        Use after move in ServiceWorkerThreadProxy
+        https://bugs.webkit.org/show_bug.cgi?id=229731
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+
 2021-08-31  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Move the implementation of -[WKWebView _dynamicUserInterfaceTraitDidChange] out of the testing category

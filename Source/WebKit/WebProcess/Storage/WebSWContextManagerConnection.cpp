@@ -161,7 +161,13 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 #if !RELEASE_LOG_DISABLED
     auto serviceWorkerIdentifier = data.serviceWorkerIdentifier;
 #endif
+    
+    auto lastNavigationWasAppInitiated = data.lastNavigationWasAppInitiated;
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), WTFMove(data), WTFMove(effectiveUserAgent), WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
+
+    if (lastNavigationWasAppInitiated)
+        serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);
+
     SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));
 
     RELEASE_LOG(ServiceWorker, "Created service worker %" PRIu64 " in process PID %i", serviceWorkerIdentifier.toUInt64(), getCurrentProcessID());
