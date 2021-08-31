@@ -1,5 +1,18 @@
 2021-08-31  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][Integration] Remove unused LayoutIntegation::Run functions
+        https://bugs.webkit.org/show_bug.cgi?id=229711
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/LayoutIntegrationRun.h:
+        (WebCore::LayoutIntegration::Run::image const): Deleted.
+        (WebCore::LayoutIntegration::Run::hasUnderlyingLayout const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::atEnd const):
+
+2021-08-31  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Move integral vertical position adjustment over to createDisplayLines
         https://bugs.webkit.org/show_bug.cgi?id=229679
 

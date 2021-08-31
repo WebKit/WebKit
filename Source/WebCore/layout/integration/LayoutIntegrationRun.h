@@ -79,10 +79,6 @@ struct Run {
     };
     Expansion expansion() const { return m_expansion; }
 
-    CachedImage* image() const { return m_cachedImage; }
-
-    bool hasUnderlyingLayout() const { return !!m_layoutBox; }
-    
     const Layout::Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return m_layoutBox->style(); }
 
@@ -92,7 +88,6 @@ private:
     // FIXME: Find out the Display::Run <-> paint style setup.
     const size_t m_lineIndex;
     WeakPtr<const Layout::Box> m_layoutBox;
-    CachedImage* m_cachedImage { nullptr };
     FloatRect m_rect;
     FloatRect m_inkOverflow;
     Expansion m_expansion;

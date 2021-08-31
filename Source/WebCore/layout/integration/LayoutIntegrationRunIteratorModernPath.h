@@ -194,7 +194,7 @@ public:
 
     bool operator==(const RunIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
 
-    bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
+    bool atEnd() const { return m_runIndex == runs().size(); }
 
     LegacyInlineBox* legacyInlineBox() const
     {
