@@ -1,3 +1,26 @@
+2021-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Enable SharedArrayBuffer support when COOP/COEP headers are used
+        https://bugs.webkit.org/show_bug.cgi?id=229559
+        <rdar://problem/82391945>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline a few web-platform-tests now that window.crossOriginIsolated properly returns
+        true when COOP+COEP are used.
+
+        Note that SharedArrayBuffer are already forcefully enabled by run-webkit-tests.py when running
+        the layout tests, which is why there are not more layout test results changes. At some point,
+        we should stop forcefully enabling SharedArrayBuffer when running web-platform-tests at least,
+        since WPT tests already make sure to use COOP+COEP when testing SharedArrayBuffer.
+
+        * web-platform-tests/IndexedDB/serialize-sharedarraybuffer-throws.https-expected.txt:
+        * web-platform-tests/html/cross-origin-embedder-policy/cross-origin-isolated-permission.https-expected.txt:
+        Note that some subtests are failing because we don't support the Permissions-Policy HTTP header:
+        - https://w3c.github.io/webappsec-permissions-policy/
+
+        * web-platform-tests/html/cross-origin-opener-policy/coep.https-expected.txt:
+
 2021-08-31  Marcos Caceres  <marcos@marcosc.com>
 
         [Payment Request] Calling PaymentRequest's show() should consume user activation

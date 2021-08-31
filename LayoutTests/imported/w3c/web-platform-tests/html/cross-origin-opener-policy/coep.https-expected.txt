@@ -7,5 +7,5 @@ PASS Same-origin popup with coop unsafe-none without coep
 PASS historical: "same-site" popup with coop unsafe-none without coep
 PASS Same-origin popup without coep
 PASS historical: "same-site" popup without coep
-FAIL Bonus: window.crossOriginIsolated assert_true: expected true got false
+PASS Bonus: window.crossOriginIsolated
 

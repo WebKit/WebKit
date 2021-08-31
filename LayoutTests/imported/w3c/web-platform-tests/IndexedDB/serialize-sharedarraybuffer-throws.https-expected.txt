@@ -1,3 +1,5 @@
 
-FAIL IndexedDB: Attempting to serialize a SharedArrayBuffer should throw assert_true: The page is served with COOP and COEP, it should be cross-origin-isolated. expected true got false
+FAIL IndexedDB: Attempting to serialize a SharedArrayBuffer should throw assert_throws_dom: function "() => {
+            rq = objStore.put({sab: sab}, 'key');
+        }" threw object "DataError: Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided." that is not a DOMException DataCloneError: property "code" is equal to 0, expected 25
 

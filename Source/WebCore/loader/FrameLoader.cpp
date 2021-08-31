@@ -413,7 +413,7 @@ void FrameLoader::setDefersLoading(bool defers)
     }
 }
 
-void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyCheckIdentifier identifier, bool needsBrowsingContextGroupSwitch, ContentPolicyDecisionFunction&& function)
+void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyCheckIdentifier identifier, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, ContentPolicyDecisionFunction&& function)
 {
     if (!activeDocumentLoader()) {
         // Load was cancelled
@@ -422,7 +422,7 @@ void FrameLoader::checkContentPolicy(const ResourceResponse& response, PolicyChe
     }
 
     // FIXME: Validate the policy check identifier.
-    client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), identifier, activeDocumentLoader()->downloadAttribute(), needsBrowsingContextGroupSwitch, WTFMove(function));
+    client().dispatchDecidePolicyForResponse(response, activeDocumentLoader()->request(), identifier, activeDocumentLoader()->downloadAttribute(), browsingContextGroupSwitchDecision, WTFMove(function));
 }
 
 void FrameLoader::changeLocation(const URL& url, const String& passedTarget, Event* triggeringEvent, const ReferrerPolicy& referrerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)

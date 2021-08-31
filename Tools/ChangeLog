@@ -1,3 +1,19 @@
+2021-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Enable SharedArrayBuffer support when COOP/COEP headers are used
+        https://bugs.webkit.org/show_bug.cgi?id=229559
+        <rdar://problem/82391945>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage. SharedArrayBuffer support is currently forcefully enabled by
+        run-webkit-tests.py so it would not be practical to write layout tests for this at
+        the moment.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONScheme addMappingFromURLString:toData:withCOOPValue:withCOEPValue:]):
+        (-[PSONScheme webView:startURLSchemeTask:]):
+
 2021-08-31  Kate Cheney  <katherine_cheney@apple.com>
 
         Use after move in ServiceWorkerThreadProxy

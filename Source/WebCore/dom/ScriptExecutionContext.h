@@ -28,6 +28,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "CrossOriginMode.h"
 #include "DOMTimer.h"
 #include "PermissionController.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
@@ -173,6 +174,9 @@ public:
     virtual CSSValuePool& cssValuePool();
     virtual std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
+
+    WEBCORE_EXPORT static void setCrossOriginMode(CrossOriginMode);
+    static CrossOriginMode crossOriginMode();
 
     void ref() { refScriptExecutionContext(); }
     void deref() { derefScriptExecutionContext(); }

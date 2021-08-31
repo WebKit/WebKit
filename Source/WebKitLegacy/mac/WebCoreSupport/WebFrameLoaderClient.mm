@@ -855,7 +855,7 @@ void WebFrameLoaderClient::dispatchShow()
     [[webView _UIDelegateForwarder] webViewShow:webView];
 }
 
-void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, WebCore::PolicyCheckIdentifier identifier, const String&, bool needsBrowsingContextGroupSwitch, WebCore::FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, WebCore::PolicyCheckIdentifier identifier, const String&, WebCore::BrowsingContextGroupSwitchDecision, WebCore::FramePolicyFunction&& function)
 {
     WebView *webView = getWebView(m_webFrame.get());
 

@@ -817,7 +817,7 @@ void EmptyFrameLoaderClient::dispatchShow()
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, PolicyCheckIdentifier, const String&, bool, FramePolicyFunction&&)
+void EmptyFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, PolicyCheckIdentifier, const String&, BrowsingContextGroupSwitchDecision, FramePolicyFunction&&)
 {
 }
 

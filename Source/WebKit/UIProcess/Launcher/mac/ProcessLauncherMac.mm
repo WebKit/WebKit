@@ -205,6 +205,8 @@ void ProcessLauncher::launchProcess()
             xpc_dictionary_set_bool(bootstrapMessage.get(), "configure-jsc-for-testing", true);
         if (!m_client->isJITEnabled())
             xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
+        if (m_client->shouldEnableSharedArrayBuffer())
+            xpc_dictionary_set_bool(bootstrapMessage.get(), "enable-shared-array-buffer", true);
     }
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");

@@ -1,3 +1,32 @@
+2021-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Enable SharedArrayBuffer support when COOP/COEP headers are used
+        https://bugs.webkit.org/show_bug.cgi?id=229559
+        <rdar://problem/82391945>
+
+        Reviewed by Alex Christensen.
+
+        Make sure window.crossOriginIsolated returns true when COOP=same-origin and
+        COEP=require-corp are used. Also make sure that cross-origin-isolates pages
+        are allowed to use SharedArrayBuffer.
+
+        Change is covered by rebaselined layout tests and new API tests.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::toNeedsBrowsingContextGroupSwitch):
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkContentPolicy):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/FrameLoaderTypes.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::crossOriginIsolated const):
+        * page/DOMWindow.idl:
+
 2021-08-31  Kate Cheney  <katherine_cheney@apple.com>
 
         Use after move in ServiceWorkerThreadProxy

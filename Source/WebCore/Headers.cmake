@@ -434,6 +434,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/Comment.h
     dom/ContainerNode.h
     dom/ContextDestructionObserver.h
+    dom/CrossOriginMode.h
     dom/CustomElementReactionQueue.h
     dom/DOMException.h
     dom/DOMHighResTimeStamp.h

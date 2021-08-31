@@ -514,6 +514,8 @@ public:
     static String containerTemporaryDirectory();
 #endif
 
+    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
+
 private:
     void platformInitialize();
 
@@ -524,7 +526,6 @@ private:
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
-    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
     void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);

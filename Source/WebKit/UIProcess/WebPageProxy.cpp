@@ -5620,12 +5620,12 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
 
 void WebPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
     uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute,
-    bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
+    bool wasAllowedByInjectedBundle, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
 {
-    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, needsBrowsingContextGroupSwitch, mainResourceLoadIdentifier, listenerID, userData);
+    decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, browsingContextGroupSwitchDecision, mainResourceLoadIdentifier, listenerID, userData);
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, bool needsBrowsingContextGroupSwitch, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
 {
     PageClientProtector protector(pageClient());
 
@@ -5638,7 +5638,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
     RefPtr<API::Navigation> navigation = navigationID ? m_navigationState->navigation(navigationID) : nullptr;
     auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(WTFMove(frameInfo), this).get(), request, response, canShowMIMEType, downloadAttribute);
 
-    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, needsBrowsingContextGroupSwitch, mainResourceLoadIdentifier, identifier, listenerID, navigation = WTFMove(navigation),
+    auto listener = makeRef(frame->setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), webPageID, frameID, browsingContextGroupSwitchDecision, mainResourceLoadIdentifier, identifier, listenerID, navigation = WTFMove(navigation),
         process, navigationResponse] (PolicyAction policyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
         // FIXME: Assert the API::WebsitePolicies* is nullptr here once clients of WKFramePolicyListenerUseWithPolicies go away.
         RELEASE_ASSERT(processSwapRequestedByClient == ProcessSwapRequestedByClient::No);
@@ -5649,19 +5649,22 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         });
 
         auto willContinueLoadInNewProcess = WillContinueLoadInNewProcess::No;
-        if (policyAction == PolicyAction::Use && needsBrowsingContextGroupSwitch && navigation) {
-            RegistrableDomain responseDomain { navigationResponse->response().url() };
-            // Avoid process-swapping in cases where the process only contains a single page and is origin-clean.
-            if (process->pageCount() > 1 || (process->optionalRegistrableDomain() && *process->optionalRegistrableDomain() != responseDomain)) {
-                WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForResponseShared: Process-swapping due to Cross-Origin-Opener-Policy");
-                websiteDataStore().networkProcess().prepareLoadForWebProcessTransfer(process->coreProcessIdentifier(), mainResourceLoadIdentifier, [this, protectedThis = WTFMove(protectedThis), responseDomain = WTFMove(responseDomain), navigation, navigationResponse = WTFMove(navigationResponse), sender = WTFMove(sender)](auto existingNetworkResourceLoadIdentifierToResume) mutable {
-                    auto processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
-                    continueNavigationInNewProcess(*navigation, nullptr, WTFMove(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision, nullptr, existingNetworkResourceLoadIdentifierToResume);
+        if (policyAction == PolicyAction::Use && browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::StayInGroup && navigation) {
+            WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "decidePolicyForResponseShared: Process-swapping due to Cross-Origin-Opener-Policy, newProcessIsCrossOriginIsolated=%d", browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup);
+            websiteDataStore().networkProcess().prepareLoadForWebProcessTransfer(process->coreProcessIdentifier(), mainResourceLoadIdentifier, [this, protectedThis = WTFMove(protectedThis), navigation, navigationResponse = WTFMove(navigationResponse), sender = WTFMove(sender), browsingContextGroupSwitchDecision](auto existingNetworkResourceLoadIdentifierToResume) mutable {
+                RefPtr<WebProcessProxy> processForNavigation;
+                if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup)
+                    processForNavigation = m_process->processPool().createNewWebProcess(&websiteDataStore(), WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
+                else {
+                    ASSERT(browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewSharedGroup);
+                    RegistrableDomain responseDomain { navigationResponse->response().url() };
+                    processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), this, responseDomain);
+                }
+                continueNavigationInNewProcess(*navigation, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterResponsePolicyDecision, nullptr, existingNetworkResourceLoadIdentifierToResume);
 
-                    receivedPolicyDecision(PolicyAction::Ignore, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender), { }, WillContinueLoadInNewProcess::Yes);
-                });
-                return;
-            }
+                receivedPolicyDecision(PolicyAction::Ignore, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender), { }, WillContinueLoadInNewProcess::Yes);
+            });
+            return;
         }
         
         receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender), { }, willContinueLoadInNewProcess);
