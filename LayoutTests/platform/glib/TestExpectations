@@ -2430,6 +2430,15 @@ webkit.org/b/229665 [ Debug ] fast/mediastream/getDisplayMedia-max-constraints3.
 webkit.org/b/229665 [ Debug ] fast/mediastream/screencapture-user-gesture.html [ Timeout ]
 webkit.org/b/229665 [ Debug ] webrtc/h264-high.html [ Timeout ]
 
+webkit.org/b/229734 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-normal-hyphens-002.html [ ImageOnlyFailure ]
+webkit.org/b/229734 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-strict-hyphens-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/229738 fast/text/whitespace/pre-break-word.html [ Failure ]
+webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
+webkit.org/b/229738 fast/text/word-break.html [ Failure ]
+
+webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,20 @@
+2021-08-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of test failures
+
+        Unreviewed test gardening.
+
+        Report and mark new expected failures and rebase-line a few tests.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/basic-textareas-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative-expected.txt: Added.
+        * platform/wpe/fast/forms/basic-textareas-expected.png: Added.
+        * platform/wpe/fast/forms/basic-textareas-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative-expected.txt: Added.
+
 2021-08-31  Eric Hutchison  <ehutchison@apple.com>
 
         [Big Sur wk2] fast/hidpi/image-srcset-svg-canvas-2x.html is a flaky failure.

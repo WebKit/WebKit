@@ -951,10 +951,13 @@ webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/o
 webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-003.html [ ImageOnlyFailure ]
 webkit.org/b/229347 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-inline-004.html [ ImageOnlyFailure ]
 
+webkit.org/b/229732 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Failure ]
+webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
+
+webkit.org/b/229740 fast/box-shadow/box-shadow-huge-area-crash.html [ ImageOnlyFailure Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
-#
-# Don't add anything above here without a comment explaining why the test SHOULD fail.
 #////////////////////////////////////////////////////////////////////////////////////////
 
 #////////////////////////////////////////////////////////////////////////////////////////

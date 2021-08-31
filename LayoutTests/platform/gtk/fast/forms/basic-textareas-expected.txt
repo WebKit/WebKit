@@ -630,14 +630,11 @@ layer at (0,0) size 785x1996
                 text run at (0,18) width 171: "ABCDEFGHIJKLMNOP"
                 text run at (0,36) width 115: "QRSTUVWXYZ"
                 text run at (0,54) width 169: "abcdefghijklmnopqrstuv"
-        layer at (210,761) size 201x42 clip at (211,762) size 184x40 scrollHeight 76
+        layer at (210,761) size 201x42 clip at (211,762) size 199x25 scrollWidth 601
           RenderTextControl {TEXTAREA} at (3,33) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock {DIV} at (3,3) size 180x72
-              RenderText {#text} at (0,0) size 174x71
-                text run at (0,0) width 174: "Lorem ipsum  dolor ABC"
-                text run at (0,18) width 172: "DEFGHIJKLMNOPQRS"
-                text run at (0,36) width 170: "TUVWXYZ abcdefghijkl"
-                text run at (0,54) width 83: "mnopqrstuv"
+            RenderBlock {DIV} at (3,3) size 195x18
+              RenderText {#text} at (0,0) size 599x17
+                text run at (0,0) width 599: "Lorem ipsum  dolor ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuv"
         layer at (417,761) size 201x42 clip at (418,762) size 184x40 scrollHeight 76
           RenderTextControl {TEXTAREA} at (3,33) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 180x72
@@ -1384,14 +1381,11 @@ layer at (0,0) size 785x1996
                 text run at (0,18) width 171: "ABCDEFGHIJKLMNOP"
                 text run at (0,36) width 115: "QRSTUVWXYZ"
                 text run at (0,54) width 169: "abcdefghijklmnopqrstuv"
-        layer at (210,731) size 201x42 clip at (211,732) size 184x40 scrollHeight 76
+        layer at (210,731) size 201x42 clip at (211,732) size 199x25 scrollWidth 601
           RenderTextControl {TEXTAREA} at (3,33) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock {DIV} at (3,3) size 180x72
-              RenderText {#text} at (0,0) size 174x71
-                text run at (0,0) width 174: "Lorem ipsum  dolor ABC"
-                text run at (0,18) width 172: "DEFGHIJKLMNOPQRS"
-                text run at (0,36) width 170: "TUVWXYZ abcdefghijkl"
-                text run at (0,54) width 83: "mnopqrstuv"
+            RenderBlock {DIV} at (3,3) size 195x18
+              RenderText {#text} at (0,0) size 599x17
+                text run at (0,0) width 599: "Lorem ipsum  dolor ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuv"
         layer at (417,731) size 201x42 clip at (418,732) size 184x40 scrollHeight 76
           RenderTextControl {TEXTAREA} at (3,33) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 180x72
