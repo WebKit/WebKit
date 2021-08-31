@@ -1,3 +1,13 @@
+2021-08-31  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for iOS14 fast/ tests.
+        https://bugs.webkit.org/show_bug.cgi?id=229656.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ipad/TestExpectations:
+
 2021-08-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening of test failures

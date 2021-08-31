@@ -7,6 +7,16 @@ compositing/contents-format/ipad [ Pass ]
 fast/events/ios/ipad [ Pass ]
 fast/forms/ios/ipad [ Pass ]
 
+media/video-background-playback.html [ Pass Crash ]
+fast/forms/ios/scroll-to-reveal-focused-select.html [ Crash Failure ]
+fast/forms/ios/time-picker-value-change.html [ Failure ]
+fast/forms/ios/choose-select-option.html [ Timeout ]
+fast/forms/ios/delete-in-input-in-iframe.html [ Timeout ]
+[ Debug ] fast/forms/ios/form-control-refresh/select/focus-select-in-touchend.html [ Timeout ]
+fast/forms/ios/typing-in-input-in-iframe.html [ Timeout ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Timeout ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Timeout ]
+
 # iPads don't zoom when form elements are focused
 fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]
 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
@@ -70,3 +80,5 @@ webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div
 webkit.org/b/229566 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html [ Pass Failure ]
 
 webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
+
+
