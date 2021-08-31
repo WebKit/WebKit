@@ -99,9 +99,16 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
             parsed = parser.parse_args(args=args)
 
     if parsed.repository.startswith(('https://', 'http://')):
-        repository = remote.Scm.from_url(parsed.repository, contributors=contributors)
+        repository = remote.Scm.from_url(parsed.repository, contributors=None if callable(contributors) else contributors)
     else:
-        repository = local.Scm.from_path(path=parsed.repository, contributors=contributors)
+        repository = local.Scm.from_path(path=parsed.repository, contributors=None if callable(contributors) else contributors)
+
+    if callable(contributors):
+        repository.contributors = contributors(repository)
+    if callable(identifier_template):
+        identifier_template = identifier_template(repository)
+    if callable(subversion):
+        subversion = subversion(repository)
 
     if not getattr(parsed, 'main', None):
         parser.print_help()
