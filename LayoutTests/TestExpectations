@@ -2374,6 +2374,13 @@ webkit.org/b/154203 http/tests/security/contentSecurityPolicy/1.1/frame-ancestor
 webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
 webkit.org/b/158480 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Skip ]
 
+# Skipping youtube-plugin-replacement & quicktime-plugin-replacement tests
+webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html  [ Skip ]
+webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
+webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
+webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
+webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
+
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.
 loader/stateobjects/pushstate-size-iframe.html [ Slow ]
 loader/stateobjects/pushstate-size.html [ Slow ]

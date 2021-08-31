@@ -1,5 +1,15 @@
 2021-08-31  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData) on "youtube-plugin-replacement" & "quicktime-plugin-replacement tests".
+        https://bugs.webkit.org/show_bug.cgi?id=229505
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Moved expectations from mac-wk2 so that the tests skip on all platforms
+        * platform/mac-wk2/TestExpectations:
+
+2021-08-31  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ EWS Catalina Debug ] Fast/* tests are flaky with ASSERTION FAILED: !m_deletionHasBegun.
         https://bugs.webkit.org/show_bug.cgi?id=229714
 
