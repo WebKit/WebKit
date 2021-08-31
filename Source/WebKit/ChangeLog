@@ -1,3 +1,22 @@
+2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Drawing system fallback fonts to canvas causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=229633
+        <rdar://problem/81889036>
+
+        Reviewed by Wenson Hsieh.
+
+        Dot-prefixed font names don't survive the round-trip through
+        CTFontDescriptorCopyAttributes(CTFontCopyFontDescriptor(font)) unless you also
+        pass in the kCTFontOptionsSystemUIFont option.
+
+        Tests: fast/text/system-fallback-canvas.html
+               fast/text/draw-synthetic-system-bold-font-into-canvas.html
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::createCTFont):
+        (IPC::ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData):
+
 2021-08-26  Darin Adler  <darin@apple.com>
 
         Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining

@@ -1,3 +1,13 @@
+2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Drawing system fallback fonts to canvas causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=229633
+        <rdar://problem/81889036>
+
+        Reviewed by Wenson Hsieh.
+
+        * pal/spi/cf/CoreTextSPI.h:
+
 2021-08-26  Darin Adler  <darin@apple.com>
 
         Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining

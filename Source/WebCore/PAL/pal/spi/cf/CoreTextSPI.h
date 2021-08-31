@@ -59,6 +59,10 @@ typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
 };
 
 enum {
+    kCTFontOptionsSystemUIFont = 1 << 1,
+};
+
+enum {
     kCTRunStatusHasOrigins = (1 << 4),
 };
 
@@ -148,6 +152,7 @@ extern const CFStringRef kCTFrameMaximumNumberOfLinesAttributeName;
 
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);
 bool CTFontIsSystemUIFont(CTFontRef);
+CTFontRef CTFontCreateWithFontDescriptorAndOptions(CTFontDescriptorRef, CGFloat size, const CGAffineTransform*, CTFontOptions);
 CTFontRef CTFontCreateForCSS(CFStringRef name, uint16_t weight, CTFontSymbolicTraits, CGFloat size);
 CTFontRef CTFontCreateForCharactersWithLanguage(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CFIndex *coveredLength);
 CTFontRef CTFontCreateForCharactersWithLanguageAndOption(CTFontRef currentFont, const UTF16Char *characters, CFIndex length, CFStringRef language, CTFontFallbackOption, CFIndex *coveredLength);
