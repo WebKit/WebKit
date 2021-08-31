@@ -103,6 +103,8 @@ public:
 
     FloatRect rect() const { return m_rect; }
 
+    void setVerticalPositionIntegral() { m_rect.setY(roundToInt(m_rect.y())); }
+
     bool hasScrollableContent() const { return m_hasScrollableContent; }
 
 private:

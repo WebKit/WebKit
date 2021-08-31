@@ -66,6 +66,8 @@ struct Run {
     const FloatRect& logicalRect() const { return m_rect; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
+    void setVerticalPositionIntegral();
+
     std::optional<Text>& text() { return m_text; }
     const std::optional<Text>& text() const { return m_text; }
     // FIXME: This information should be preserved at Run construction time.
@@ -114,6 +116,12 @@ inline Run::Text::Text(size_t start, size_t length, const String& originalConten
     , m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)
 {
+}
+
+inline void Run::setVerticalPositionIntegral()
+{
+    m_rect.setY(roundToInt(m_rect.y()));
+    m_inkOverflow.setY(roundToInt(m_inkOverflow.y()));
 }
 
 }

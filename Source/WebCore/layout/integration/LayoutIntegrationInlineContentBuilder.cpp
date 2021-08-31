@@ -67,70 +67,35 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 
 void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    createDisplayRuns(inlineFormattingState.lines(), inlineFormattingState.runs(), inlineContent);
+    createDisplayRuns(inlineFormattingState.runs(), inlineContent);
     createDisplayLines(inlineFormattingState.lines(), inlineContent);
 }
 
-void InlineContentBuilder::createDisplayRuns(const Layout::InlineLines& lines, const Layout::InlineRuns& runs, InlineContent& inlineContent) const
+void InlineContentBuilder::createDisplayRuns(const Layout::InlineRuns& runs, InlineContent& inlineContent) const
 {
     if (runs.isEmpty())
         return;
 
-    auto createDisplayBoxRun = [&](auto& run) {
-        if (run.isRootInlineBox()) {
-            // FIXME: Teach the run iterators to ignore the root inline box runs.
-            return;
-        }
-        auto& layoutBox = run.layoutBox();
-        auto lineIndex = run.lineIndex();
-        auto runRect = FloatRect { run.logicalRect() };
-        auto inkOverflow = FloatRect { run.inkOverflow() };
-        auto& geometry = m_layoutState.geometryForBox(layoutBox);
-        runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
-        if (lines[lineIndex].needsIntegralPosition()) {
-            runRect.setY(roundToInt(runRect.y()));
-            inkOverflow.setY(roundToInt(inkOverflow.y()));
-        }
-        if (run.isInlineBox()) {
-            auto runRect = run.logicalRect();
-            auto hasScrollableContent = [&] {
-                // In standards mode, inline boxes always start with an imaginary strut.
-                return m_layoutState.inStandardsMode() || run.hasContent() || geometry.horizontalBorder() || (geometry.horizontalPadding() && geometry.horizontalPadding().value());
-            };
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, runRect, hasScrollableContent() });
-            if (!run.isLineSpanning()) {
-                // FIXME: Run iterators with (text)runs spanning over multiple lines expect no "in-between" runs (e.g. line spanning or root inline boxes).
-                inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, { }, { } });
-            }
-        } else
-            inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, { }, { } });
-    };
-
-    auto createDisplayTextRun = [&](auto& run) {
-        auto& layoutBox = run.layoutBox();
-        auto lineIndex = run.lineIndex();
-        auto runRect = FloatRect { run.logicalRect() };
-        auto inkOverflow = FloatRect { run.inkOverflow() };
-        if (lines[lineIndex].needsIntegralPosition()) {
-            runRect.setY(roundToInt(runRect.y()));
-            inkOverflow.setY(roundToInt(inkOverflow.y()));
-        }
-
-        auto text = run.text();
-        inlineContent.runs.append({ lineIndex
-            , layoutBox
-            , runRect
-            , inkOverflow
-            , Run::Expansion { run.expansion().behavior, run.expansion().horizontalExpansion }
-            , Run::Text { text->start(), text->length(), text->originalContent(), text->renderedContent(), text->hasHyphen() } });
-    };
-
     inlineContent.runs.reserveInitialCapacity(runs.size());
     for (auto& run : runs) {
-        if (run.text())
-            createDisplayTextRun(run);
-        else
-            createDisplayBoxRun(run);
+        if (auto text = run.text()) {
+            inlineContent.runs.append({ run.lineIndex(), run.layoutBox(), run.logicalRect(), run.inkOverflow(), Run::Expansion { run.expansion().behavior, run.expansion().horizontalExpansion }
+                , Run::Text { text->start(), text->length(), text->originalContent(), text->renderedContent(), text->hasHyphen() } });
+        } else if (!run.isRootInlineBox()) {
+            // FIXME: Teach the run iterators to ignore the root inline box runs.
+            auto& geometry = m_layoutState.geometryForBox(run.layoutBox());
+            if (!run.isInlineBox() || !run.isLineSpanning()) {
+                // FIXME: Run iterators with (text)runs spanning over multiple lines expect no "in-between" runs (e.g. line spanning or root inline boxes).
+                inlineContent.runs.append({ run.lineIndex(), run.layoutBox(), run.logicalRect(), run.inkOverflow(), { }, { } });
+            }
+            if (run.isInlineBox()) {
+                auto hasScrollableContent = [&] {
+                    // In standards mode, inline boxes always start with an imaginary strut.
+                    return m_layoutState.inStandardsMode() || run.hasContent() || geometry.horizontalBorder() || (geometry.horizontalPadding() && geometry.horizontalPadding().value());
+                };
+                inlineContent.nonRootInlineBoxes.append({ run.lineIndex(), run.layoutBox(), run.logicalRect(), hasScrollableContent() });
+            }
+        }
     }
 }
 
@@ -152,6 +117,9 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
         // Collect overflow from runs.
         for (; runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex; ++runIndex) {
             auto& run = runs[runIndex];
+            if (line.needsIntegralPosition())
+                run.setVerticalPositionIntegral();
+
             lineInkOverflowRect.unite(run.inkOverflow());
 
             auto& layoutBox = run.layoutBox();
@@ -173,6 +141,10 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
         // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
         while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex) {
             auto& inlineBox = nonRootInlineBoxes[inlineBoxIndex++];
+
+            if (line.needsIntegralPosition())
+                inlineBox.setVerticalPositionIntegral();
+
             if (inlineBox.hasScrollableContent())
                 scrollableOverflowRect.unite(inlineBox.rect());
         }

@@ -46,7 +46,7 @@ public:
     void build(const Layout::InlineFormattingState&, InlineContent&) const;
 
 private:
-    void createDisplayRuns(const Layout::InlineLines&, const Layout::InlineRuns&, InlineContent&) const;
+    void createDisplayRuns(const Layout::InlineRuns&, InlineContent&) const;
     void createDisplayLines(const Layout::InlineLines&, InlineContent&) const;
 
     const Layout::LayoutState& m_layoutState;

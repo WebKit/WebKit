@@ -1,3 +1,22 @@
+2021-08-31  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Move integral vertical position adjustment over to createDisplayLines
+        https://bugs.webkit.org/show_bug.cgi?id=229679
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for not constructing text runs in InlineContentBuilder::createDisplayLineRuns.
+
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.h:
+        * layout/integration/LayoutIntegrationLine.h:
+        (WebCore::LayoutIntegration::NonRootInlineBox::setVerticalPositionIntegral):
+        * layout/integration/LayoutIntegrationRun.h:
+        (WebCore::LayoutIntegration::Run::setVerticalPositionIntegral):
+
 2021-08-31  Chris Dumez  <cdumez@apple.com>
 
         [COOP] html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write.html WPT test is failing
