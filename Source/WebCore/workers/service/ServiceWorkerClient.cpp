@@ -35,6 +35,7 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
 #include "ServiceWorkerWindowClient.h"
+#include "StructuredSerializeOptions.h"
 
 namespace WebCore {
 
@@ -82,7 +83,7 @@ String ServiceWorkerClient::id() const
     return identifier().toString();
 }
 
-ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, PostMessageOptions&& options)
+ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
     Vector<RefPtr<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(globalObject, messageValue, WTFMove(options.transfer), ports, SerializationContext::WorkerPostMessage);

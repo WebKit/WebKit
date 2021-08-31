@@ -1802,17 +1802,6 @@ void DOMWindow::resizeTo(float width, float height) const
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
-void DOMWindow::reportError(JSC::JSGlobalObject& globalObject, JSC::JSValue error)
-{
-    auto& vm = globalObject.vm();
-    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto* exception = JSC::jsDynamicCast<JSC::Exception*>(vm, error);
-    if (!exception)
-        exception = JSC::Exception::create(vm, error);
-
-    reportException(&globalObject, exception);
-}
-
 ExceptionOr<int> DOMWindow::setTimeout(JSC::JSGlobalObject& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     RefPtr context = scriptExecutionContext();

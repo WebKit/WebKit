@@ -31,7 +31,6 @@
 #include "EventTarget.h"
 #include "FetchRequestCredentials.h"
 #include "MessagePort.h"
-#include "PostMessageOptions.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
@@ -52,6 +51,8 @@ class ScriptExecutionContext;
 class WorkerGlobalScopeProxy;
 class WorkerScriptLoader;
 
+struct StructuredSerializeOptions;
+
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
     WTF_MAKE_ISO_ALLOCATED(Worker);
 public:
@@ -63,7 +64,7 @@ public:
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, JSC::RuntimeFlags, const String& url, const Options&);
     virtual ~Worker();
 
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
     void terminate();
     bool wasTerminated() const { return m_wasTerminated; }

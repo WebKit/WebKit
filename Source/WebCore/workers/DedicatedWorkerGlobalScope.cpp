@@ -41,6 +41,7 @@
 #include "RTCTransformEvent.h"
 #include "RequestAnimationFrameCallback.h"
 #include "SecurityOrigin.h"
+#include "StructuredSerializeOptions.h"
 #include "Worker.h"
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "WorkerAnimationController.h"
@@ -78,7 +79,7 @@ void DedicatedWorkerGlobalScope::prepareForDestruction()
     WorkerGlobalScope::prepareForDestruction();
 }
 
-ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, PostMessageOptions&& options)
+ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::JSGlobalObject& state, JSC::JSValue messageValue, StructuredSerializeOptions&& options)
 {
     Vector<RefPtr<MessagePort>> ports;
     auto message = SerializedScriptValue::create(state, messageValue, WTFMove(options.transfer), ports, SerializationContext::WorkerPostMessage);

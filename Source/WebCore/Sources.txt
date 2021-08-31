@@ -1706,6 +1706,7 @@ page/WheelEventDeltaFilter.cpp
 page/WheelEventTestMonitor.cpp
 page/WindowFeatures.cpp
 page/WindowFocusAllowedIndicator.cpp
+page/WindowOrWorkerGlobalScope.cpp
 page/WorkerNavigator.cpp
 page/csp/ContentSecurityPolicy.cpp
 page/csp/ContentSecurityPolicyClient.cpp
@@ -3290,7 +3291,6 @@ JSPopStateEvent.cpp
 JSPositionCallback.cpp
 JSPositionErrorCallback.cpp
 JSPositionOptions.cpp
-JSPostMessageOptions.cpp
 JSPredefinedColorSpace.cpp
 JSProcessingInstruction.cpp
 JSProgressEvent.cpp
@@ -3573,6 +3573,7 @@ JSStaticRange.cpp
 JSStorage.cpp
 JSStorageEvent.cpp
 JSStringCallback.cpp
+JSStructuredSerializeOptions.cpp
 JSStyleMedia.cpp
 JSStylePropertyMap.cpp
 JSStylePropertyMapReadOnly.cpp

@@ -935,7 +935,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PointerCaptureController.h
     page/PointerCharacteristics.h
     page/PointerLockController.h
-    page/PostMessageOptions.h
     page/PrewarmInformation.h
     page/PrintContext.h
     page/ProcessWarming.h
@@ -960,6 +959,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/SpeechRecognitionProvider.h
     page/SpeechSynthesisClient.h
     page/StorageBlockingPolicy.h
+    page/StructuredSerializeOptions.h
     page/SuspendableTimer.h
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
@@ -985,6 +985,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WheelEventDeltaFilter.h
     page/WheelEventTestMonitor.h
     page/WindowFeatures.h
+    page/WindowOrWorkerGlobalScope.h
 
     page/csp/ContentSecurityPolicy.h
     page/csp/ContentSecurityPolicyClient.h

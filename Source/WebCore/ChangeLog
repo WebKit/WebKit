@@ -1,3 +1,59 @@
+2021-08-31  Chris Dumez  <cdumez@apple.com>
+
+        Implement self.structuredClone()
+        https://bugs.webkit.org/show_bug.cgi?id=228331
+        <rdar://problem/81468374>
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement self.structuredClone() as per:
+        - https://html.spec.whatwg.org/#dom-structuredclone
+
+        Tests: imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html
+               imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.worker.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        * dom/MessagePort.h:
+        * dom/MessagePort.idl:
+        * page/Base64Utilities.h:
+        * page/DOMWindow.h:
+        (WebCore::WindowPostMessageOptions::WindowPostMessageOptions):
+        * page/DOMWindow.idl:
+        * page/StructuredSerializeOptions.h: Renamed from Source/WebCore/page/PostMessageOptions.h.
+        (WebCore::StructuredSerializeOptions::StructuredSerializeOptions):
+        * page/StructuredSerializeOptions.idl: Renamed from Source/WebCore/page/PostMessageOptions.idl.
+        * page/WindowOrWorkerGlobalScope.cpp: Copied from Source/WebCore/workers/service/ServiceWorkerClient.h.
+        (WebCore::WindowOrWorkerGlobalScope::reportError):
+        (WebCore::WindowOrWorkerGlobalScope::structuredClone):
+        * page/WindowOrWorkerGlobalScope.h: Copied from Source/WebCore/page/Base64Utilities.h.
+        (WebCore::WindowOrWorkerGlobalScope::structuredClone):
+        * page/WindowOrWorkerGlobalScope.idl:
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::postMessage):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        * workers/WorkerGlobalScope.h:
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerClient.cpp:
+        (WebCore::ServiceWorkerClient::postMessage):
+        * workers/service/ServiceWorkerClient.h:
+        * workers/service/ServiceWorkerClient.idl:
+
 2021-08-31  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Remove unused LayoutIntegation::Run functions

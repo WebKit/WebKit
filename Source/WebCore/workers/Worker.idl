@@ -33,7 +33,7 @@
     undefined terminate();
 
     [CallWith=GlobalObject] undefined postMessage(any message, sequence<object> transfer);
-    [CallWith=GlobalObject] undefined postMessage(any message, optional PostMessageOptions options);
+    [CallWith=GlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
     attribute EventHandler onmessage;
 };
 

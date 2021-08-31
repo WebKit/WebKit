@@ -1177,6 +1177,7 @@ $(PROJECT_DIR)/page/ScrollOptions.idl
 $(PROJECT_DIR)/page/ScrollToOptions.idl
 $(PROJECT_DIR)/page/Settings.yaml
 $(PROJECT_DIR)/page/ShareData.idl
+$(PROJECT_DIR)/page/StructuredSerializeOptions.idl
 $(PROJECT_DIR)/page/UndoItem.idl
 $(PROJECT_DIR)/page/UndoManager.idl
 $(PROJECT_DIR)/page/UserMessageHandler.idl

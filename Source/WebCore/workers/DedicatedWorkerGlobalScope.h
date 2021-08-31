@@ -32,7 +32,6 @@
 #pragma once
 
 #include "MessagePort.h"
-#include "PostMessageOptions.h"
 #include "WorkerGlobalScope.h"
 
 namespace JSC {
@@ -50,6 +49,8 @@ class RTCRtpScriptTransformer;
 class RequestAnimationFrameCallback;
 class SerializedScriptValue;
 
+struct StructuredSerializeOptions;
+
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 class WorkerAnimationController;
 
@@ -66,7 +67,7 @@ public:
 
     const String& name() const { return m_name; }
 
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
     DedicatedWorkerThread& thread();
 

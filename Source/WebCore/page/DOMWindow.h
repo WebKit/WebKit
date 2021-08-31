@@ -33,11 +33,12 @@
 #include "Frame.h"
 #include "FrameDestructionObserver.h"
 #include "ImageBitmap.h"
-#include "PostMessageOptions.h"
 #include "ReducedResolutionSeconds.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
+#include "StructuredSerializeOptions.h"
 #include "Supplementable.h"
+#include "WindowOrWorkerGlobalScope.h"
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Function.h>
@@ -98,10 +99,10 @@ struct WindowFeatures;
 enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class IncludeTargetOrigin { No, Yes };
 
-struct WindowPostMessageOptions : public PostMessageOptions {
+struct WindowPostMessageOptions : public StructuredSerializeOptions {
     WindowPostMessageOptions() = default;
     WindowPostMessageOptions(String&& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
-        : PostMessageOptions(WTFMove(transfer))
+        : StructuredSerializeOptions(WTFMove(transfer))
         , targetOrigin(WTFMove(targetOrigin))
     { }
 
@@ -113,6 +114,7 @@ class DOMWindow final
     : public AbstractDOMWindow
     , public ContextDestructionObserver
     , public Base64Utilities
+    , public WindowOrWorkerGlobalScope
     , public Supplementable<DOMWindow> {
     WTF_MAKE_ISO_ALLOCATED(DOMWindow);
 public:
@@ -385,8 +387,6 @@ public:
     bool shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld&);
     WebKitNamespace* webkitNamespace();
 #endif
-
-    void reportError(JSC::JSGlobalObject&, JSC::JSValue);
 
     // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
     // when its document is no longer the document that is displayed in its

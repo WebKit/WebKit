@@ -134,7 +134,7 @@
 
 [
     ImplementedAs=WindowPostMessageOptions
-] dictionary WindowPostMessageOptions : PostMessageOptions {
+] dictionary WindowPostMessageOptions : StructuredSerializeOptions {
     USVString targetOrigin = "/";
 };
 

@@ -1089,7 +1089,6 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceResourceTiming.idl
     page/PerformanceServerTiming.idl
     page/PerformanceTiming.idl
-    page/PostMessageOptions.idl
     page/RemoteDOMWindow.idl
     page/ResizeObserver.idl
     page/ResizeObserverCallback.idl
@@ -1101,6 +1100,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/ScrollOptions.idl
     page/ScrollToOptions.idl
     page/ShareData.idl
+    page/StructuredSerializeOptions.idl
     page/UndoItem.idl
     page/UndoManager.idl
     page/VisualViewport.idl

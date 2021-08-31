@@ -29,7 +29,6 @@
 
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
-#include "PostMessageOptions.h"
 #include "ServiceWorkerClientData.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
@@ -42,6 +41,8 @@ class JSValue;
 namespace WebCore {
 
 class ServiceWorkerGlobalScope;
+
+struct StructuredSerializeOptions;
 
 class ServiceWorkerClient : public RefCounted<ServiceWorkerClient>, public ContextDestructionObserver {
 public:
@@ -61,7 +62,7 @@ public:
 
     Identifier identifier() const { return m_data.identifier; }
 
-    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, PostMessageOptions&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
 protected:
     ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);

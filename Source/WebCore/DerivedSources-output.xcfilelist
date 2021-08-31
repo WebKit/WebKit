@@ -2201,6 +2201,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStringCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStringCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStructuredSerializeOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStructuredSerializeOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleMedia.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStyleMedia.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStylePropertyMap.cpp

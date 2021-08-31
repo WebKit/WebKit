@@ -548,17 +548,6 @@ void WorkerGlobalScope::deleteJSCodeAndGC(Synchronous synchronous)
 #endif
 }
 
-void WorkerGlobalScope::reportError(JSC::JSGlobalObject& globalObject, JSC::JSValue error)
-{
-    auto& vm = globalObject.vm();
-    RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto* exception = JSC::jsDynamicCast<JSC::Exception*>(vm, error);
-    if (!exception)
-        exception = JSC::Exception::create(vm, error);
-
-    WebCore::reportException(&globalObject, exception);
-}
-
 void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
 {
     Locker locker { allWorkerGlobalScopeIdentifiersLock };

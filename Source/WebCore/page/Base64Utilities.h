@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+// FIXME: We should merge these into WindowOrWorkerGlobalScope.
 class Base64Utilities {
 public:
     static ExceptionOr<String> btoa(const String&);
