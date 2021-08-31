@@ -110,6 +110,7 @@
     macro(dotAll) \
     macro(enumerable) \
     macro(era) \
+    macro(eraYear) \
     macro(errors) \
     macro(eval) \
     macro(events) \
@@ -169,6 +170,7 @@
     macro(minimumSignificantDigits) \
     macro(minute) \
     macro(month) \
+    macro(monthCode) \
     macro(multiline) \
     macro(name) \
     macro(next) \

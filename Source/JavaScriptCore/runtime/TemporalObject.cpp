@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2021 Igalia S.L. All rights reserved.
+ *  Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,15 +21,25 @@
 #include "config.h"
 #include "TemporalObject.h"
 
+#include "FunctionPrototype.h"
 #include "JSCJSValueInlines.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "ObjectPrototype.h"
+#include "TemporalCalendarConstructor.h"
+#include "TemporalCalendarPrototype.h"
 #include "TemporalNow.h"
 
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalObject);
+
+static JSValue createCalendarConstructor(VM& vm, JSObject* object)
+{
+    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    return TemporalCalendarConstructor::create(vm, TemporalCalendarConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalCalendarPrototype*>(globalObject->calendarStructure()->storedPrototypeObject()));
+}
 
 static JSValue createNowObject(VM& vm, JSObject* object)
 {
@@ -45,6 +56,7 @@ namespace JSC {
 
 /* Source for TemporalObject.lut.h
 @begin temporalObjectTable
+  Calendar       createCalendarConstructor       DontEnum|PropertyCallback
   Now            createNowObject                 DontEnum|PropertyCallback
 @end
 */

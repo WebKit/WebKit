@@ -259,7 +259,13 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, UChar*&);
     template<typename CharacterType> static RefPtr<StringImpl> tryCreateUninitialized(unsigned length, CharacterType*&);
 
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const char*, unsigned length);
+    static Ref<StringImpl> createStaticStringImpl(const char* characters, unsigned length)
+    {
+        ASSERT(charactersAreAllASCII(bitwise_cast<const LChar*>(characters), length));
+        return createStaticStringImpl(bitwise_cast<const LChar*>(characters), length);
+    }
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const LChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createStaticStringImpl(const UChar*, unsigned length);
 
     // Reallocate the StringImpl. The originalString must be only owned by the Ref,
     // and the buffer ownership must be BufferInternal. Just like the input pointer of realloc(),

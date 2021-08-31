@@ -1,3 +1,70 @@
+2021-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Temporal.Calendar
+        https://bugs.webkit.org/show_bug.cgi?id=229651
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Temporal.Calendar's simple part. Currently, we do not implement many part of Temporal.Calendar since
+        we do not have Temporal Date-like structures yet, but this patch implemented core part of Temporal.Calendar: keeping calendar
+        identifier.
+
+        We also defer implementing Temporal.Calendar.from's calendar ID parsing part since it requires full-fledged ISO 8601 parser,
+        which will be implemented in a separate patch.
+
+        We use `unsigned` for CalendarID, and this id corresponds to the array index of intlAvailableCalendars, which returns array
+        of String from ICU.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlObject.cpp:
+        (JSC::intlAvailableCalendars):
+        (JSC::iso8601CalendarIDSlow):
+        (JSC::availableCalendars):
+        (JSC::createArrayFromStringVector): Deleted.
+        * runtime/IntlObject.h:
+        (JSC::iso8601CalendarID):
+        * runtime/IntlObjectInlines.h:
+        (JSC::createArrayFromStringVector):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::calendarStructure):
+        * runtime/TemporalCalendar.cpp: Added.
+        (JSC::TemporalCalendar::create):
+        (JSC::TemporalCalendar::createStructure):
+        (JSC::TemporalCalendar::TemporalCalendar):
+        (JSC::TemporalCalendar::isBuiltinCalendar):
+        (JSC::parseTemporalCalendarString):
+        (JSC::TemporalCalendar::from):
+        * runtime/TemporalCalendar.h: Added.
+        * runtime/TemporalCalendarConstructor.cpp: Added.
+        (JSC::TemporalCalendarConstructor::create):
+        (JSC::TemporalCalendarConstructor::createStructure):
+        (JSC::TemporalCalendarConstructor::TemporalCalendarConstructor):
+        (JSC::TemporalCalendarConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalCalendarConstructor.h: Added.
+        * runtime/TemporalCalendarPrototype.cpp: Added.
+        (JSC::TemporalCalendarPrototype::create):
+        (JSC::TemporalCalendarPrototype::createStructure):
+        (JSC::TemporalCalendarPrototype::TemporalCalendarPrototype):
+        (JSC::TemporalCalendarPrototype::finishCreation):
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::defaultMergeFields):
+        * runtime/TemporalCalendarPrototype.h: Added.
+        * runtime/TemporalObject.cpp:
+        (JSC::createCalendarConstructor):
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2021-08-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, add missing include to pre-empt unified source shift.

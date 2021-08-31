@@ -66,6 +66,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalCalendarConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalCalendarPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/UnicodePatternTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmB3IRGeneratorInlines.h

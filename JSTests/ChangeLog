@@ -1,3 +1,15 @@
+2021-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Temporal.Calendar
+        https://bugs.webkit.org/show_bug.cgi?id=229651
+
+        Reviewed by Ross Kirsling.
+
+        * stress/temporal-calendar.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (new.Temporal.Calendar):
+
 2021-08-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Upgrade test262

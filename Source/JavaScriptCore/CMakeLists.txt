@@ -107,6 +107,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
+    runtime/TemporalCalendarConstructor.cpp
+    runtime/TemporalCalendarPrototype.cpp
     runtime/TemporalObject.cpp
 
     wasm/js/JSWebAssembly.cpp

@@ -1010,6 +1010,9 @@ runtime/SymbolObject.cpp
 runtime/SymbolPrototype.cpp
 runtime/SymbolTable.cpp
 runtime/TemplateObjectDescriptor.cpp
+runtime/TemporalCalendar.cpp
+runtime/TemporalCalendarConstructor.cpp
+runtime/TemporalCalendarPrototype.cpp
 runtime/TemporalNow.cpp
 runtime/TemporalObject.cpp
 runtime/TestRunnerUtils.cpp

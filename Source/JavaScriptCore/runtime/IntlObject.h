@@ -101,6 +101,19 @@ inline const LocaleSet& intlPluralRulesAvailableLocales() { return intlAvailable
 inline const LocaleSet& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
 inline const LocaleSet& intlListFormatAvailableLocales() { return intlAvailableLocales(); }
 
+using CalendarID = unsigned;
+const Vector<String>& intlAvailableCalendars();
+
+extern CalendarID iso8601CalendarIDStorage;
+CalendarID iso8601CalendarIDSlow();
+inline CalendarID iso8601CalendarID()
+{
+    unsigned value = iso8601CalendarIDStorage;
+    if (value == std::numeric_limits<CalendarID>::max())
+        return iso8601CalendarIDSlow();
+    return value;
+}
+
 TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
@@ -147,7 +160,5 @@ struct UFieldPositionIteratorDeleter {
 std::optional<String> mapICUCollationKeywordToBCP47(const String&);
 std::optional<String> mapICUCalendarKeywordToBCP47(const String&);
 std::optional<String> mapBCP47ToICUCalendarKeyword(const String&);
-
-JSArray* createArrayFromStringVector(JSGlobalObject*, Vector<String, 1>&&);
 
 } // namespace JSC

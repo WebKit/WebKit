@@ -1847,6 +1847,9 @@
 		E328DAEB1D38D005001A2529 /* BytecodeRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D2642A1D38C042000BE174 /* BytecodeRewriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32C3C6923E94C1E00BC97C0 /* UnlinkedCodeBlockGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E32C3C6823E94C1E00BC97C0 /* UnlinkedCodeBlockGenerator.h */; };
+		E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */; };
+		E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */; };
+		E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */; };
 		E33095DD23210A1B00EB7856 /* JSInternalFieldObjectImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E334CBB521FD96A9000EB178 /* RegExpGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1902,6 +1905,8 @@
 		E39BF39922A2288B00BD183E /* SymbolTableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39BF39822A2288B00BD183E /* SymbolTableInlines.h */; };
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39D8B2E23021E2600265852 /* WasmOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D8B2D23021E1E00265852 /* WasmOperations.h */; };
+		E39DA1DA26DB5E4C00100437 /* TemporalCalendarPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C4630626DB5DE900896336 /* TemporalCalendarPrototype.lut.h */; };
+		E39DA1DB26DB5E5100100437 /* TemporalCalendarConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C4630526DB5DE900896336 /* TemporalCalendarConstructor.lut.h */; };
 		E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E39DA4A51B7E8B7C0084F33A /* JSModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39EEAF322812450008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E39EEAF22281244C008474F4 /* CachedSpecialPropertyAdaptiveStructureWatchpoint.h */; };
 		E39FEBE32339C5D900B40AB0 /* JSAsyncGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E39FEBE22339C5D400B40AB0 /* JSAsyncGenerator.h */; };
@@ -5087,6 +5092,12 @@
 		E3282BB91FE930A300EDAF71 /* YarrErrorCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrErrorCode.cpp; path = yarr/YarrErrorCode.cpp; sourceTree = "<group>"; };
 		E3282BBA1FE930A400EDAF71 /* YarrErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrErrorCode.h; path = yarr/YarrErrorCode.h; sourceTree = "<group>"; };
 		E32C3C6823E94C1E00BC97C0 /* UnlinkedCodeBlockGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedCodeBlockGenerator.h; sourceTree = "<group>"; };
+		E32D4DE026DAFD4200D4533A /* TemporalCalendar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendar.cpp; sourceTree = "<group>"; };
+		E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarPrototype.h; sourceTree = "<group>"; };
+		E32D4DE226DAFD4200D4533A /* TemporalCalendarPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarPrototype.cpp; sourceTree = "<group>"; };
+		E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendar.h; sourceTree = "<group>"; };
+		E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.h; sourceTree = "<group>"; };
+		E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarConstructor.cpp; sourceTree = "<group>"; };
 		E3305FB020B0F78700CEB82B /* InByVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByVariant.cpp; sourceTree = "<group>"; };
 		E3305FB120B0F78800CEB82B /* InByVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByVariant.h; sourceTree = "<group>"; };
 		E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSInternalFieldObjectImpl.h; sourceTree = "<group>"; };
@@ -5202,6 +5213,8 @@
 		E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessCaseSnippetParams.cpp; sourceTree = "<group>"; };
 		E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessCaseSnippetParams.h; sourceTree = "<group>"; };
 		E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPropertyChangeAdaptiveWatchpoint.h; sourceTree = "<group>"; };
+		E3C4630526DB5DE900896336 /* TemporalCalendarConstructor.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.lut.h; sourceTree = "<group>"; };
+		E3C4630626DB5DE900896336 /* TemporalCalendarPrototype.lut.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarPrototype.lut.h; sourceTree = "<group>"; };
 		E3C694B123026873006FBE42 /* WasmOSREntryData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmOSREntryData.h; sourceTree = "<group>"; };
 		E3C694B223026874006FBE42 /* WasmTierUpCount.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTierUpCount.cpp; sourceTree = "<group>"; };
 		E3C73A8F25BFA73400EFE303 /* WasmStreamingPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmStreamingPlan.cpp; sourceTree = "<group>"; };
@@ -7009,6 +7022,8 @@
 				996B73111BD9FA2C00331B84 /* StringConstructor.lut.h */,
 				996B73131BD9FA2C00331B84 /* SymbolConstructor.lut.h */,
 				996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */,
+				E3C4630526DB5DE900896336 /* TemporalCalendarConstructor.lut.h */,
+				E3C4630626DB5DE900896336 /* TemporalCalendarPrototype.lut.h */,
 				F6F150202693D450004B98EF /* TemporalObject.lut.h */,
 				533B15DE1DC7F463004D500A /* WasmOps.h */,
 				AD2FCC0A1DB59C5900B3E736 /* WebAssemblyCompileErrorConstructor.lut.h */,
@@ -7953,6 +7968,12 @@
 				E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */,
 				BDB4B5E099CD4C1BB3C1CF05 /* TemplateObjectDescriptor.cpp */,
 				70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */,
+				E32D4DE026DAFD4200D4533A /* TemporalCalendar.cpp */,
+				E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */,
+				E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */,
+				E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */,
+				E32D4DE226DAFD4200D4533A /* TemporalCalendarPrototype.cpp */,
+				E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */,
 				F6F1501B2693D33E004B98EF /* TemporalNow.cpp */,
 				F6F150182693D33D004B98EF /* TemporalNow.h */,
 				F6F150192693D33E004B98EF /* TemporalObject.cpp */,
@@ -10649,6 +10670,11 @@
 				A784A26411D16622005776AC /* SyntaxChecker.h in Headers */,
 				DC7997831CDE9FA0004D4A09 /* TagRegistersMode.h in Headers */,
 				70ECA6091AFDBEA200449739 /* TemplateObjectDescriptor.h in Headers */,
+				E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */,
+				E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */,
+				E39DA1DB26DB5E5100100437 /* TemporalCalendarConstructor.lut.h in Headers */,
+				E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */,
+				E39DA1DA26DB5E4C00100437 /* TemporalCalendarPrototype.lut.h in Headers */,
 				F6F150212693D450004B98EF /* TemporalObject.lut.h in Headers */,
 				0F24E54F17EE274900ABB217 /* TempRegisterSet.h in Headers */,
 				0F44A7B420BF68D90022B171 /* TerminatedCodeOrigin.h in Headers */,

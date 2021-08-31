@@ -162,6 +162,7 @@
 #include "StructureChain.h"
 #include "StructureInlines.h"
 #include "SymbolObject.h"
+#include "TemporalCalendar.h"
 #include "TestRunnerUtils.h"
 #include "ThunkGenerators.h"
 #include "TypeProfiler.h"
@@ -1584,6 +1585,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(sourceCodeSpace, destructibleCellHeapCel
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolSpace, destructibleCellHeapCellType.get(), Symbol)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(symbolObjectSpace, cellHeapCellType.get(), SymbolObject)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(templateObjectDescriptorSpace, destructibleCellHeapCellType.get(), JSTemplateObjectDescriptor)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(temporalCalendarSpace, cellHeapCellType.get(), TemporalCalendar)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint8ArraySpace, cellHeapCellType.get(), JSUint8Array)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint8ClampedArraySpace, cellHeapCellType.get(), JSUint8ClampedArray)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(uint16ArraySpace, cellHeapCellType.get(), JSUint16Array)

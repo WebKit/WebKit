@@ -193,6 +193,7 @@ class UnlinkedProgramCodeBlock;
 class UnlinkedModuleProgramCodeBlock;
 class VirtualRegister;
 class VMEntryScope;
+class TemporalCalendar;
 class TopLevelGlobalObjectScope;
 class TypeProfiler;
 class TypeProfilerLog;
@@ -591,6 +592,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(templateObjectDescriptorSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalCalendarSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ClampedArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint16ArraySpace)

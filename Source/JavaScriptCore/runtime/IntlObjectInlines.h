@@ -225,4 +225,22 @@ inline JSObject* intlCoerceOptionsToObject(JSGlobalObject* globalObject, JSValue
     return options;
 }
 
+template<typename Container>
+JSArray* createArrayFromStringVector(JSGlobalObject* globalObject, const Container& elements)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), elements.size());
+    if (!result) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    for (unsigned index = 0; index < elements.size(); ++index) {
+        result->putDirectIndex(globalObject, index, jsString(vm, elements[index]));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return result;
+}
+
 } // namespace JSC

@@ -1575,49 +1575,70 @@ JSC_DEFINE_HOST_FUNCTION(intlObjectFuncGetCanonicalLocales, (JSGlobalObject* glo
     return JSValue::encode(localeArray);
 }
 
+const Vector<String>& intlAvailableCalendars()
+{
+    static LazyNeverDestroyed<Vector<String>> availableCalendars;
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        availableCalendars.construct();
+        ASSERT(availableCalendars->isEmpty());
+
+        UErrorCode status = U_ZERO_ERROR;
+        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendars", "und", false, &status));
+        ASSERT(U_SUCCESS(status));
+
+        int32_t count = uenum_count(enumeration.get(), &status);
+        ASSERT(U_SUCCESS(status));
+        availableCalendars->reserveInitialCapacity(count);
+
+        auto createImmortalThreadSafeString = [&](String&& string) {
+            if (string.is8Bit())
+                return StringImpl::createStaticStringImpl(string.characters8(), string.length());
+            return StringImpl::createStaticStringImpl(string.characters16(), string.length());
+        };
+
+        for (int32_t index = 0; index < count; ++index) {
+            int32_t length = 0;
+            const char* pointer = uenum_next(enumeration.get(), &length, &status);
+            ASSERT(U_SUCCESS(status));
+            String calendar(pointer, length);
+            if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
+                availableCalendars->append(createImmortalThreadSafeString(WTFMove(mapped.value())));
+            else
+                availableCalendars->append(createImmortalThreadSafeString(WTFMove(calendar)));
+        }
+
+        // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
+        // values had been sorted using %Array.prototype.sort% using undefined as comparefn
+        std::sort(availableCalendars->begin(), availableCalendars->end(),
+            [](const String& a, const String& b) {
+                return WTF::codePointCompare(a, b) < 0;
+            });
+    });
+    return availableCalendars;
+}
+
+CalendarID iso8601CalendarIDStorage { std::numeric_limits<CalendarID>::max() };
+CalendarID iso8601CalendarIDSlow()
+{
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        const auto& calendars = intlAvailableCalendars();
+        for (unsigned index = 0; index < calendars.size(); ++index) {
+            if (calendars[index] == "iso8601"_s) {
+                iso8601CalendarIDStorage = index;
+                return;
+            }
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    });
+    return iso8601CalendarIDStorage;
+}
+
 // https://tc39.es/proposal-intl-enumeration/#sec-availablecalendars
 static JSArray* availableCalendars(JSGlobalObject* globalObject)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    UErrorCode status = U_ZERO_ERROR;
-    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendars", "und", false, &status));
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "failed to enumerate available calendars"_s);
-        return { };
-    }
-
-    int32_t count = uenum_count(enumeration.get(), &status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "failed to enumerate available calendars"_s);
-        return { };
-    }
-
-    Vector<String, 1> elements;
-    elements.reserveInitialCapacity(count);
-    for (int32_t index = 0; index < count; ++index) {
-        int32_t length = 0;
-        const char* pointer = uenum_next(enumeration.get(), &length, &status);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "failed to enumerate available calendars"_s);
-            return { };
-        }
-        String calendar(pointer, length);
-        if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
-            elements.append(WTFMove(mapped.value()));
-        else
-            elements.append(WTFMove(calendar));
-    }
-
-    // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
-    // values had been sorted using %Array.prototype.sort% using undefined as comparefn
-    std::sort(elements.begin(), elements.end(),
-        [](const String& a, const String& b) {
-            return WTF::codePointCompare(a, b) < 0;
-        });
-
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    return createArrayFromStringVector(globalObject, intlAvailableCalendars());
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availablecollations
@@ -1863,23 +1884,6 @@ JSC_DEFINE_HOST_FUNCTION(intlObjectFuncSupportedValuesOf, (JSGlobalObject* globa
 
     throwRangeError(globalObject, scope, "Unknown key for Intl.supportedValuesOf"_s);
     return { };
-}
-
-JSArray* createArrayFromStringVector(JSGlobalObject* globalObject, Vector<String, 1>&& elements)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), elements.size());
-    if (!result) {
-        throwOutOfMemoryError(globalObject, scope);
-        return nullptr;
-    }
-    for (unsigned index = 0; index < elements.size(); ++index) {
-        result->putDirectIndex(globalObject, index, jsString(vm, WTFMove(elements[index])));
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    return result;
 }
 
 } // namespace JSC
