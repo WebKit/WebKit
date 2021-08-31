@@ -80,7 +80,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmentsPrototypeFuncContaining, (JSGlobalObject* g
 
     auto* segments = jsDynamicCast<IntlSegments*>(vm, callFrame->thisValue());
     if (!segments)
-        return throwVMTypeError(globalObject, scope, "%Segments.prototype%.containing called on value that's not an object initialized as a Segments"_s);
+        return throwVMTypeError(globalObject, scope, "%Segments.prototype%.containing called on value that's not a Segments"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(segments->containing(globalObject, callFrame->argument(0))));
 }
@@ -93,7 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmentsPrototypeFuncIterator, (JSGlobalObject* glo
 
     auto* segments = jsDynamicCast<IntlSegments*>(vm, callFrame->thisValue());
     if (!segments)
-        return throwVMTypeError(globalObject, scope, "%Segments.prototype%[@@iterator] called on value that's not an object initialized as a Segments"_s);
+        return throwVMTypeError(globalObject, scope, "%Segments.prototype%[@@iterator] called on value that's not a Segments"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(segments->createSegmentIterator(globalObject)));
 }

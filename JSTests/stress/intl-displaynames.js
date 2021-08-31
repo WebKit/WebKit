@@ -195,9 +195,9 @@ if ($vm.icuVersion() >= 61) {
 
     shouldThrow(() => {
         Intl.DisplayNames.prototype.of.call({});
-    }, `TypeError: Intl.DisplayNames.prototype.of called on value that's not an object initialized as a DisplayNames`);
+    }, `TypeError: Intl.DisplayNames.prototype.of called on value that's not a DisplayNames`);
 
     shouldThrow(() => {
         Intl.DisplayNames.prototype.resolvedOptions.call({});
-    }, `TypeError: Intl.DisplayNames.prototype.resolvedOptions called on value that's not an object initialized as a DisplayNames`);
+    }, `TypeError: Intl.DisplayNames.prototype.resolvedOptions called on value that's not a DisplayNames`);
 }

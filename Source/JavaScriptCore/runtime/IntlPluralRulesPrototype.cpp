@@ -84,7 +84,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncSelect, (JSGlobalObject* gl
     IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, callFrame->thisValue());
 
     if (!pluralRules)
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.select called on value that's not an object initialized as a PluralRules"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.select called on value that's not a PluralRules"_s));
 
     double value = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncResolvedOptions, (JSGlobalO
     IntlPluralRules* pluralRules = jsDynamicCast<IntlPluralRules*>(vm, callFrame->thisValue());
 
     if (!pluralRules)
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not an object initialized as a PluralRules"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.PluralRules.prototype.resolvedOptions called on value that's not a PluralRules"_s));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->resolvedOptions(globalObject)));
 }

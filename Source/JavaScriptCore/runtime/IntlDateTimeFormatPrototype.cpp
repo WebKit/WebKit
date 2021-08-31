@@ -123,7 +123,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
     RETURN_IF_EXCEPTION(scope, { });
     // 2. ReturnIfAbrupt(dtf).
     if (UNLIKELY(!dtf))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
     JSBoundFunction* boundFormat = dtf->boundFormat();
     // 3. If the [[boundFormat]] internal slot of this DateTimeFormat object is undefined,
@@ -153,7 +153,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatPrototypeFuncFormatToParts, (JSGlobal
     // Do not use unwrapForOldFunctions.
     auto* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, callFrame->thisValue());
     if (UNLIKELY(!dateTimeFormat))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
     double value;
@@ -177,7 +177,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalOb
     // Do not use unwrapForOldFunctions.
     auto* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, callFrame->thisValue());
     if (UNLIKELY(!dateTimeFormat))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRange called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRange called on value that's not a DateTimeFormat"_s));
 
     JSValue startDateValue = callFrame->argument(0);
     JSValue endDateValue = callFrame->argument(1);
@@ -204,7 +204,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSG
     // Do not use unwrapForOldFunctions.
     auto* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(vm, callFrame->thisValue());
     if (UNLIKELY(!dateTimeFormat))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRangeToParts called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRangeToParts called on value that's not a DateTimeFormat"_s));
 
     JSValue startDateValue = callFrame->argument(0);
     JSValue endDateValue = callFrame->argument(1);
@@ -232,7 +232,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatPrototypeFuncResolvedOptions, (JSGlob
     auto* dateTimeFormat = IntlDateTimeFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!dateTimeFormat))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not a DateTimeFormat"_s));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->resolvedOptions(globalObject)));
 }

@@ -79,7 +79,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmentIteratorPrototypeFuncNext, (JSGlobalObject* 
 
     auto* segmentIterator = jsDynamicCast<IntlSegmentIterator*>(vm, callFrame->thisValue());
     if (!segmentIterator)
-        return throwVMTypeError(globalObject, scope, "Intl.SegmentIterator.prototype.next called on value that's not an object initialized as a SegmentIterator"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.SegmentIterator.prototype.next called on value that's not a SegmentIterator"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(segmentIterator->next(globalObject)));
 }

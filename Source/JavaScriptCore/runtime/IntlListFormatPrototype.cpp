@@ -83,7 +83,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormat, (JSGlobalObject* glo
 
     auto* listFormat = jsDynamicCast<IntlListFormat*>(vm, callFrame->thisValue());
     if (!listFormat)
-        return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.format called on value that's not an object initialized as a ListFormat"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.format called on value that's not a ListFormat"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(listFormat->format(globalObject, callFrame->argument(0))));
 }
@@ -96,7 +96,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormatToParts, (JSGlobalObje
 
     auto* listFormat = jsDynamicCast<IntlListFormat*>(vm, callFrame->thisValue());
     if (!listFormat)
-        return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.formatToParts called on value that's not an object initialized as a ListFormat"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.formatToParts called on value that's not a ListFormat"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(listFormat->formatToParts(globalObject, callFrame->argument(0))));
 }
@@ -109,7 +109,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncResolvedOptions, (JSGlobalOb
 
     auto* listFormat = jsDynamicCast<IntlListFormat*>(vm, callFrame->thisValue());
     if (!listFormat)
-        return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.resolvedOptions called on value that's not an object initialized as a ListFormat"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.ListFormat.prototype.resolvedOptions called on value that's not a ListFormat"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(listFormat->resolvedOptions(globalObject)));
 }

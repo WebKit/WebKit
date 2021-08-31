@@ -81,7 +81,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDisplayNamesPrototypeFuncOf, (JSGlobalObject* globa
 
     auto* displayNames = jsDynamicCast<IntlDisplayNames*>(vm, callFrame->thisValue());
     if (!displayNames)
-        return throwVMTypeError(globalObject, scope, "Intl.DisplayNames.prototype.of called on value that's not an object initialized as a DisplayNames"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.DisplayNames.prototype.of called on value that's not a DisplayNames"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(displayNames->of(globalObject, callFrame->argument(0))));
 }
@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDisplayNamesPrototypeFuncResolvedOptions, (JSGlobal
 
     auto* displayNames = jsDynamicCast<IntlDisplayNames*>(vm, callFrame->thisValue());
     if (!displayNames)
-        return throwVMTypeError(globalObject, scope, "Intl.DisplayNames.prototype.resolvedOptions called on value that's not an object initialized as a DisplayNames"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.DisplayNames.prototype.resolvedOptions called on value that's not a DisplayNames"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(displayNames->resolvedOptions(globalObject)));
 }

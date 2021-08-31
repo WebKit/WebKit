@@ -81,7 +81,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmenterPrototypeFuncSegment, (JSGlobalObject* glo
 
     auto* segmenter = jsDynamicCast<IntlSegmenter*>(vm, callFrame->thisValue());
     if (!segmenter)
-        return throwVMTypeError(globalObject, scope, "Intl.Segmenter.prototype.segment called on value that's not an object initialized as a Segmenter"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.Segmenter.prototype.segment called on value that's not a Segmenter"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(segmenter->segment(globalObject, callFrame->argument(0))));
 }
@@ -94,7 +94,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmenterPrototypeFuncResolvedOptions, (JSGlobalObj
 
     auto* segmenter = jsDynamicCast<IntlSegmenter*>(vm, callFrame->thisValue());
     if (!segmenter)
-        return throwVMTypeError(globalObject, scope, "Intl.Segmenter.prototype.resolvedOptions called on value that's not an object initialized as a Segmenter"_s);
+        return throwVMTypeError(globalObject, scope, "Intl.Segmenter.prototype.resolvedOptions called on value that's not a Segmenter"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(segmenter->resolvedOptions(globalObject)));
 }

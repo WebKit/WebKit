@@ -1,3 +1,22 @@
+2021-08-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC][Intl] Errors for .call({}) are too verbose
+        https://bugs.webkit.org/show_bug.cgi?id=229694
+
+        Reviewed by Yusuke Suzuki.
+
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlDisplayNamesPrototype.cpp:
+        * runtime/IntlListFormatPrototype.cpp:
+        * runtime/IntlLocalePrototype.cpp:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/IntlPluralRulesPrototype.cpp:
+        * runtime/IntlRelativeTimeFormatPrototype.cpp:
+        * runtime/IntlSegmentIteratorPrototype.cpp:
+        * runtime/IntlSegmenterPrototype.cpp:
+        * runtime/IntlSegmentsPrototype.cpp:
+
 2021-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement Temporal.Calendar

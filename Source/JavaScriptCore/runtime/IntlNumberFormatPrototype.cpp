@@ -118,7 +118,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
     auto* nf = IntlNumberFormat::unwrapForOldFunctions(globalObject, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!nf))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.format called on value that's not a NumberFormat"_s));
 
     JSBoundFunction* boundFormat = nf->boundFormat();
     // 2. If nf.[[boundFormat]] is undefined,
@@ -148,7 +148,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncFormatToParts, (JSGlobalOb
     // Do not use unwrapForOldFunctions.
     auto* numberFormat = jsDynamicCast<IntlNumberFormat*>(vm, callFrame->thisValue());
     if (UNLIKELY(!numberFormat))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not an object initialized as a NumberFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.formatToParts called on value that's not a NumberFormat"_s));
 
     double value = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -166,7 +166,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncResolvedOptions, (JSGlobal
     auto* numberFormat = IntlNumberFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!numberFormat))
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.NumberFormat.prototype.resolvedOptions called on value that's not a NumberFormat"_s));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->resolvedOptions(globalObject)));
 }

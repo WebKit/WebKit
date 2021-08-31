@@ -83,7 +83,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncFormat, (JSGlobalObj
 
     auto* relativeTimeFormat = jsDynamicCast<IntlRelativeTimeFormat*>(vm, callFrame->thisValue());
     if (!relativeTimeFormat)
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.RelativeTimeFormat.prototype.format called on value that's not an object initialized as a RelativeTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.RelativeTimeFormat.prototype.format called on value that's not a RelativeTimeFormat"_s));
 
     double value = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncFormatToParts, (JSGl
 
     auto* relativeTimeFormat = jsDynamicCast<IntlRelativeTimeFormat*>(vm, callFrame->thisValue());
     if (!relativeTimeFormat)
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.RelativeTimeFormat.prototype.formatToParts called on value that's not an object initialized as a RelativeTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.RelativeTimeFormat.prototype.formatToParts called on value that's not a RelativeTimeFormat"_s));
 
     double value = callFrame->argument(0).toNumber(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -121,7 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatPrototypeFuncResolvedOptions, (JS
 
     auto* relativeTimeFormat = jsDynamicCast<IntlRelativeTimeFormat*>(vm, callFrame->thisValue());
     if (!relativeTimeFormat)
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.RelativeTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a RelativeTimeFormat"_s));
+        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.RelativeTimeFormat.prototype.resolvedOptions called on value that's not a RelativeTimeFormat"_s));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(relativeTimeFormat->resolvedOptions(globalObject)));
 }
