@@ -37,9 +37,11 @@ class WebPage;
 
 class WebPermissionController final : public CanMakeWeakPtr<WebPermissionController>, public WebCore::PermissionController {
 public:
-    explicit WebPermissionController(WebPage&);
+    static Ref<WebPermissionController> create(WebPage&);
 
 private:
+    explicit WebPermissionController(WebPage&);
+
     // WebCore::PermissionController
     WebCore::PermissionState query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&) final;
     void request(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, CompletionHandler<void(WebCore::PermissionState)>&&) final;

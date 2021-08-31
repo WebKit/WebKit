@@ -1195,7 +1195,7 @@ PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<EmptyMediaRecorderProvider>(),
         EmptyBroadcastChannelRegistry::create(),
-        makeUniqueRef<DummyPermissionController>()
+        DummyPermissionController::create()
     };
 
     static NeverDestroyed<EmptyChromeClient> dummyChromeClient;

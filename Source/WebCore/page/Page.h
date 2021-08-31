@@ -1197,7 +1197,7 @@ private:
     const bool m_httpsUpgradeEnabled { true };
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
 
-    UniqueRef<PermissionController> m_permissionController;
+    Ref<PermissionController> m_permissionController;
 
 #if ENABLE(IMAGE_ANALYSIS)
     // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.

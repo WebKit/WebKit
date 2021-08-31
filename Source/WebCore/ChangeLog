@@ -1,3 +1,21 @@
+2021-08-31  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r281771): ASSERTION FAILED: !m_deletionHasBegun under WebCore::Permissions::~Permissions()
+        https://bugs.webkit.org/show_bug.cgi?id=229714
+        <rdar://problem/82581552>
+
+        Reviewed by Chris Dumez.
+
+        PageConfiguration should hold Ref<PermissionController> instead of UniqueRef.
+
+        * Modules/permissions/PermissionController.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        * page/Page.h:
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+
 2021-08-31  Kate Cheney  <katherine_cheney@apple.com>
 
         Loads after session restore marked app initiated in Safari

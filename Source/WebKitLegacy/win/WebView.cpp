@@ -3135,7 +3135,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
         makeUniqueRef<DummySpeechRecognitionProvider>(),
         makeUniqueRef<MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate(false),
-        makeUniqueRef<DummyPermissionController>()
+        WebCore::DummyPermissionController::create()
     );
     configuration.chromeClient = new WebChromeClient(this);
 #if ENABLE(CONTEXT_MENUS)

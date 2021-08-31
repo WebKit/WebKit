@@ -33,6 +33,11 @@
 
 namespace WebKit {
 
+Ref<WebPermissionController> WebPermissionController::create(WebPage& page)
+{
+    return adoptRef(*new WebPermissionController(page));
+}
+
 WebPermissionController::WebPermissionController(WebPage& page)
     : m_page(makeWeakPtr(page))
 {

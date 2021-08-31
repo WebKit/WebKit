@@ -36,16 +36,21 @@ struct ClientOrigin;
 struct PermissionDescriptor;
 
 class PermissionController : public ThreadSafeRefCounted<PermissionController> {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PermissionController() = default;
     virtual PermissionState query(ClientOrigin&&, PermissionDescriptor&&) = 0;
     virtual void request(ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(PermissionState)>&&) = 0;
     virtual void addObserver(PermissionObserver&) = 0;
     virtual void removeObserver(PermissionObserver&) = 0;
+protected:
+    PermissionController() = default;
 };
 
 class DummyPermissionController final : public PermissionController {
+public:
+    static Ref<DummyPermissionController> create() { return adoptRef(*new DummyPermissionController); }
+private:
+    DummyPermissionController() = default;
     PermissionState query(ClientOrigin&&, PermissionDescriptor&&) final { return PermissionState::Denied; }
     void request(ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(PermissionState)>&& completionHandler) final { completionHandler(PermissionState::Denied); }
     void addObserver(PermissionObserver&) final { }

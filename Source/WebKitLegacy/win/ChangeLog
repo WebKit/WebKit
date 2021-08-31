@@ -1,3 +1,14 @@
+2021-08-31  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r281771): ASSERTION FAILED: !m_deletionHasBegun under WebCore::Permissions::~Permissions()
+        https://bugs.webkit.org/show_bug.cgi?id=229714
+        <rdar://problem/82581552>
+
+        Reviewed by Chris Dumez.
+
+        * WebView.cpp:
+        (WebView::initWithFrame):
+
 2021-08-30  Sihui Liu  <sihui_liu@apple.com>
 
         Add stubs for Permissions API
