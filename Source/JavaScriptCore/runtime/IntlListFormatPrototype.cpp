@@ -31,9 +31,9 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormat);
-static JSC_DECLARE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormatToParts);
-static JSC_DECLARE_HOST_FUNCTION(IntlListFormatPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(intlListFormatPrototypeFuncFormat);
+static JSC_DECLARE_HOST_FUNCTION(intlListFormatPrototypeFuncFormatToParts);
+static JSC_DECLARE_HOST_FUNCTION(intlListFormatPrototypeFuncResolvedOptions);
 
 }
 
@@ -45,9 +45,9 @@ const ClassInfo IntlListFormatPrototype::s_info = { "Intl.ListFormat", &Base::s_
 
 /* Source for IntlListFormatPrototype.lut.h
 @begin listFormatPrototypeTable
-  format           IntlListFormatPrototypeFuncFormat             DontEnum|Function 1
-  formatToParts    IntlListFormatPrototypeFuncFormatToParts      DontEnum|Function 1
-  resolvedOptions  IntlListFormatPrototypeFuncResolvedOptions    DontEnum|Function 0
+  format           intlListFormatPrototypeFuncFormat             DontEnum|Function 1
+  formatToParts    intlListFormatPrototypeFuncFormatToParts      DontEnum|Function 1
+  resolvedOptions  intlListFormatPrototypeFuncResolvedOptions    DontEnum|Function 0
 @end
 */
 
@@ -76,7 +76,7 @@ void IntlListFormatPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.prototype.format
-JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlListFormatPrototypeFuncFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -89,7 +89,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormat, (JSGlobalObject* glo
 }
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.prototype.formatToParts
-JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlListFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -102,7 +102,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncFormatToParts, (JSGlobalObje
 }
 
 // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.prototype.resolvedOptions
-JSC_DEFINE_HOST_FUNCTION(IntlListFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlListFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

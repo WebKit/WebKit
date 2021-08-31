@@ -31,8 +31,8 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlSegmenterPrototypeFuncSegment);
-static JSC_DECLARE_HOST_FUNCTION(IntlSegmenterPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(intlSegmenterPrototypeFuncSegment);
+static JSC_DECLARE_HOST_FUNCTION(intlSegmenterPrototypeFuncResolvedOptions);
 
 }
 
@@ -44,8 +44,8 @@ const ClassInfo IntlSegmenterPrototype::s_info = { "Intl.Segmenter", &Base::s_in
 
 /* Source for IntlSegmenterPrototype.lut.h
 @begin segmenterPrototypeTable
-  segment          IntlSegmenterPrototypeFuncSegment            DontEnum|Function 1
-  resolvedOptions  IntlSegmenterPrototypeFuncResolvedOptions    DontEnum|Function 0
+  segment          intlSegmenterPrototypeFuncSegment            DontEnum|Function 1
+  resolvedOptions  intlSegmenterPrototypeFuncResolvedOptions    DontEnum|Function 0
 @end
 */
 
@@ -74,7 +74,7 @@ void IntlSegmenterPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-intl.segmenter.prototype.segment
-JSC_DEFINE_HOST_FUNCTION(IntlSegmenterPrototypeFuncSegment, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlSegmenterPrototypeFuncSegment, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -87,7 +87,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmenterPrototypeFuncSegment, (JSGlobalObject* glo
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-Intl.Segmenter.prototype.resolvedOptions
-JSC_DEFINE_HOST_FUNCTION(IntlSegmenterPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlSegmenterPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -1,5 +1,35 @@
 2021-08-30  Ross Kirsling  <ross.kirsling@sony.com>
 
+        [JSC] Host functions and custom getters should be lowerCamelCase
+        https://bugs.webkit.org/show_bug.cgi?id=229695
+
+        Reviewed by Yusuke Suzuki.
+
+        For some reason, the host functions and custom getters for Intl (and JSONObject) were written in UpperCamelCase.
+
+        * runtime/IntlCollatorConstructor.cpp:
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        * runtime/IntlDisplayNamesPrototype.cpp:
+        * runtime/IntlListFormatConstructor.cpp:
+        * runtime/IntlListFormatPrototype.cpp:
+        * runtime/IntlLocalePrototype.cpp:
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/IntlPluralRulesConstructor.cpp:
+        * runtime/IntlPluralRulesPrototype.cpp:
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        * runtime/IntlRelativeTimeFormatPrototype.cpp:
+        * runtime/IntlSegmentIteratorPrototype.cpp:
+        * runtime/IntlSegmenterConstructor.cpp:
+        * runtime/IntlSegmenterPrototype.cpp:
+        * runtime/IntlSegmentsPrototype.cpp:
+        * runtime/JSONObject.cpp:
+
+2021-08-30  Ross Kirsling  <ross.kirsling@sony.com>
+
         [JSC][Intl] Errors for .call({}) are too verbose
         https://bugs.webkit.org/show_bug.cgi?id=229694
 

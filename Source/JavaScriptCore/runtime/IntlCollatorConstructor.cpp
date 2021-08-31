@@ -37,7 +37,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlCollatorConstructor);
 
-static JSC_DECLARE_HOST_FUNCTION(IntlCollatorConstructorFuncSupportedLocalesOf);
+static JSC_DECLARE_HOST_FUNCTION(intlCollatorConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -52,7 +52,7 @@ const ClassInfo IntlCollatorConstructor::s_info = { "Function", &InternalFunctio
 
 /* Source for IntlCollatorConstructor.lut.h
 @begin collatorConstructorTable
-  supportedLocalesOf             IntlCollatorConstructorFuncSupportedLocalesOf             DontEnum|Function 1
+  supportedLocalesOf             intlCollatorConstructorFuncSupportedLocalesOf             DontEnum|Function 1
 @end
 */
 
@@ -121,7 +121,7 @@ JSC_DEFINE_HOST_FUNCTION(callIntlCollator, (JSGlobalObject* globalObject, CallFr
     return JSValue::encode(collator);
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlCollatorConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlCollatorConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

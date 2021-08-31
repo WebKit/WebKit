@@ -31,26 +31,26 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncMaximize);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncMinimize);
-static JSC_DECLARE_HOST_FUNCTION(IntlLocalePrototypeFuncToString);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterBaseName);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendar);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendars);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCaseFirst);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollation);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollations);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycle);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycles);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumeric);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystem);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystems);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterLanguage);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterScript);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterRegion);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterTimeZones);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterTextInfo);
-static JSC_DECLARE_CUSTOM_GETTER(IntlLocalePrototypeGetterWeekInfo);
+static JSC_DECLARE_HOST_FUNCTION(intlLocalePrototypeFuncMaximize);
+static JSC_DECLARE_HOST_FUNCTION(intlLocalePrototypeFuncMinimize);
+static JSC_DECLARE_HOST_FUNCTION(intlLocalePrototypeFuncToString);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterBaseName);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendar);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendars);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCaseFirst);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCollation);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterCollations);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycle);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycles);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterNumeric);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystem);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystems);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterLanguage);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterScript);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterRegion);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterTimeZones);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterTextInfo);
+static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterWeekInfo);
 
 }
 
@@ -62,26 +62,26 @@ const ClassInfo IntlLocalePrototype::s_info = { "Intl.Locale", &Base::s_info, &l
 
 /* Source for IntlLocalePrototype.lut.h
 @begin localePrototypeTable
-  maximize         IntlLocalePrototypeFuncMaximize           DontEnum|Function 0
-  minimize         IntlLocalePrototypeFuncMinimize           DontEnum|Function 0
-  toString         IntlLocalePrototypeFuncToString           DontEnum|Function 0
-  baseName         IntlLocalePrototypeGetterBaseName         DontEnum|ReadOnly|CustomAccessor
-  calendar         IntlLocalePrototypeGetterCalendar         DontEnum|ReadOnly|CustomAccessor
-  calendars        IntlLocalePrototypeGetterCalendars        DontEnum|ReadOnly|CustomAccessor
-  caseFirst        IntlLocalePrototypeGetterCaseFirst        DontEnum|ReadOnly|CustomAccessor
-  collation        IntlLocalePrototypeGetterCollation        DontEnum|ReadOnly|CustomAccessor
-  collations       IntlLocalePrototypeGetterCollations       DontEnum|ReadOnly|CustomAccessor
-  hourCycle        IntlLocalePrototypeGetterHourCycle        DontEnum|ReadOnly|CustomAccessor
-  hourCycles       IntlLocalePrototypeGetterHourCycles       DontEnum|ReadOnly|CustomAccessor
-  numeric          IntlLocalePrototypeGetterNumeric          DontEnum|ReadOnly|CustomAccessor
-  numberingSystem  IntlLocalePrototypeGetterNumberingSystem  DontEnum|ReadOnly|CustomAccessor
-  numberingSystems IntlLocalePrototypeGetterNumberingSystems DontEnum|ReadOnly|CustomAccessor
-  language         IntlLocalePrototypeGetterLanguage         DontEnum|ReadOnly|CustomAccessor
-  script           IntlLocalePrototypeGetterScript           DontEnum|ReadOnly|CustomAccessor
-  region           IntlLocalePrototypeGetterRegion           DontEnum|ReadOnly|CustomAccessor
-  timeZones        IntlLocalePrototypeGetterTimeZones        DontEnum|ReadOnly|CustomAccessor
-  textInfo         IntlLocalePrototypeGetterTextInfo         DontEnum|ReadOnly|CustomAccessor
-  weekInfo         IntlLocalePrototypeGetterWeekInfo         DontEnum|ReadOnly|CustomAccessor
+  maximize         intlLocalePrototypeFuncMaximize           DontEnum|Function 0
+  minimize         intlLocalePrototypeFuncMinimize           DontEnum|Function 0
+  toString         intlLocalePrototypeFuncToString           DontEnum|Function 0
+  baseName         intlLocalePrototypeGetterBaseName         DontEnum|ReadOnly|CustomAccessor
+  calendar         intlLocalePrototypeGetterCalendar         DontEnum|ReadOnly|CustomAccessor
+  calendars        intlLocalePrototypeGetterCalendars        DontEnum|ReadOnly|CustomAccessor
+  caseFirst        intlLocalePrototypeGetterCaseFirst        DontEnum|ReadOnly|CustomAccessor
+  collation        intlLocalePrototypeGetterCollation        DontEnum|ReadOnly|CustomAccessor
+  collations       intlLocalePrototypeGetterCollations       DontEnum|ReadOnly|CustomAccessor
+  hourCycle        intlLocalePrototypeGetterHourCycle        DontEnum|ReadOnly|CustomAccessor
+  hourCycles       intlLocalePrototypeGetterHourCycles       DontEnum|ReadOnly|CustomAccessor
+  numeric          intlLocalePrototypeGetterNumeric          DontEnum|ReadOnly|CustomAccessor
+  numberingSystem  intlLocalePrototypeGetterNumberingSystem  DontEnum|ReadOnly|CustomAccessor
+  numberingSystems intlLocalePrototypeGetterNumberingSystems DontEnum|ReadOnly|CustomAccessor
+  language         intlLocalePrototypeGetterLanguage         DontEnum|ReadOnly|CustomAccessor
+  script           intlLocalePrototypeGetterScript           DontEnum|ReadOnly|CustomAccessor
+  region           intlLocalePrototypeGetterRegion           DontEnum|ReadOnly|CustomAccessor
+  timeZones        intlLocalePrototypeGetterTimeZones        DontEnum|ReadOnly|CustomAccessor
+  textInfo         intlLocalePrototypeGetterTextInfo         DontEnum|ReadOnly|CustomAccessor
+  weekInfo         intlLocalePrototypeGetterWeekInfo         DontEnum|ReadOnly|CustomAccessor
 @end
 */
 
@@ -110,7 +110,7 @@ void IntlLocalePrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.maximize
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncMaximize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncMaximize, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -126,7 +126,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncMaximize, (JSGlobalObject* globa
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.minimize
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncMinimize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncMinimize, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -142,7 +142,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncMinimize, (JSGlobalObject* globa
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.toString
-JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlLocalePrototypeFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -156,7 +156,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlLocalePrototypeFuncToString, (JSGlobalObject* globa
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.baseName
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterBaseName, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterBaseName, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -170,7 +170,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterBaseName, (JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.calendar
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendar, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendar, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -184,7 +184,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendar, (JSGlobalObject* glo
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.calendars
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendars, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCalendars, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -197,7 +197,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCalendars, (JSGlobalObject* gl
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.caseFirst
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCaseFirst, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCaseFirst, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -211,7 +211,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCaseFirst, (JSGlobalObject* gl
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.collation
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollation, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCollation, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -225,7 +225,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollation, (JSGlobalObject* gl
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.collations
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollations, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterCollations, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -238,7 +238,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterCollations, (JSGlobalObject* g
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.hourCycle
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycle, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycle, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -252,7 +252,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycle, (JSGlobalObject* gl
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.hourcycles
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycles, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterHourCycles, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -265,7 +265,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterHourCycles, (JSGlobalObject* g
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numeric
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumeric, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterNumeric, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -278,7 +278,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumeric, (JSGlobalObject* glob
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.numberingSystem
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystem, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystem, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -292,7 +292,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystem, (JSGlobalObje
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.numberingSystems
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystems, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterNumberingSystems, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -305,7 +305,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterNumberingSystems, (JSGlobalObj
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.language
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterLanguage, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterLanguage, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -319,7 +319,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterLanguage, (JSGlobalObject* glo
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.script
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterScript, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterScript, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -333,7 +333,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterScript, (JSGlobalObject* globa
 }
 
 // https://tc39.es/ecma402/#sec-Intl.Locale.prototype.region
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterRegion, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterRegion, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -347,7 +347,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterRegion, (JSGlobalObject* globa
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.timezones
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterTimeZones, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterTimeZones, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -360,7 +360,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterTimeZones, (JSGlobalObject* gl
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.textInfo
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterTextInfo, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterTextInfo, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -373,7 +373,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterTextInfo, (JSGlobalObject* glo
 }
 
 // https://tc39.es/proposal-intl-locale-info/#sec-Intl.Locale.prototype.weekInfo
-JSC_DEFINE_CUSTOM_GETTER(IntlLocalePrototypeGetterWeekInfo, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlLocalePrototypeGetterWeekInfo, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

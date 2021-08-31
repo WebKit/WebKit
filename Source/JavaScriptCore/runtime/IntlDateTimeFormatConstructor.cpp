@@ -36,7 +36,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlDateTimeFormatConstructor);
 
-static JSC_DECLARE_HOST_FUNCTION(IntlDateTimeFormatConstructorFuncSupportedLocalesOf);
+static JSC_DECLARE_HOST_FUNCTION(intlDateTimeFormatConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -48,7 +48,7 @@ const ClassInfo IntlDateTimeFormatConstructor::s_info = { "Function", &InternalF
 
 /* Source for IntlDateTimeFormatConstructor.lut.h
 @begin dateTimeFormatConstructorTable
-  supportedLocalesOf             IntlDateTimeFormatConstructorFuncSupportedLocalesOf             DontEnum|Function 1
+  supportedLocalesOf             intlDateTimeFormatConstructorFuncSupportedLocalesOf             DontEnum|Function 1
 @end
 */
 
@@ -119,7 +119,7 @@ JSC_DEFINE_HOST_FUNCTION(callIntlDateTimeFormat, (JSGlobalObject* globalObject, 
     }));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlDateTimeFormatConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

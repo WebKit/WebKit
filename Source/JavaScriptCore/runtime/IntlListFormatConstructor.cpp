@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlListFormatConstructor);
 
-static JSC_DECLARE_HOST_FUNCTION(IntlListFormatConstructorSupportedLocalesOf);
+static JSC_DECLARE_HOST_FUNCTION(intlListFormatConstructorSupportedLocalesOf);
 
 }
 
@@ -46,7 +46,7 @@ const ClassInfo IntlListFormatConstructor::s_info = { "Function", &Base::s_info,
 
 /* Source for IntlListFormatConstructor.lut.h
 @begin listFormatConstructorTable
-  supportedLocalesOf             IntlListFormatConstructorSupportedLocalesOf             DontEnum|Function 1
+  supportedLocalesOf             intlListFormatConstructorSupportedLocalesOf             DontEnum|Function 1
 @end
 */
 
@@ -104,7 +104,7 @@ JSC_DEFINE_HOST_FUNCTION(callIntlListFormat, (JSGlobalObject* globalObject, Call
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "ListFormat"));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlListFormatConstructorSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlListFormatConstructorSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

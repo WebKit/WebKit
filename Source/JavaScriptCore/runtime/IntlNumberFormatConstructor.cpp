@@ -36,7 +36,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlNumberFormatConstructor);
 
-static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatConstructorFuncSupportedLocalesOf);
+static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatConstructorFuncSupportedLocalesOf);
 
 }
 
@@ -48,7 +48,7 @@ const ClassInfo IntlNumberFormatConstructor::s_info = { "Function", &Base::s_inf
 
 /* Source for IntlNumberFormatConstructor.lut.h
 @begin numberFormatConstructorTable
-  supportedLocalesOf             IntlNumberFormatConstructorFuncSupportedLocalesOf             DontEnum|Function 1
+  supportedLocalesOf             intlNumberFormatConstructorFuncSupportedLocalesOf             DontEnum|Function 1
 @end
 */
 
@@ -119,7 +119,7 @@ JSC_DEFINE_HOST_FUNCTION(callIntlNumberFormat, (JSGlobalObject* globalObject, Ca
     }));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlNumberFormatConstructorFuncSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -31,8 +31,8 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlDisplayNamesPrototypeFuncOf);
-static JSC_DECLARE_HOST_FUNCTION(IntlDisplayNamesPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(intlDisplayNamesPrototypeFuncOf);
+static JSC_DECLARE_HOST_FUNCTION(intlDisplayNamesPrototypeFuncResolvedOptions);
 
 }
 
@@ -44,8 +44,8 @@ const ClassInfo IntlDisplayNamesPrototype::s_info = { "Intl.DisplayNames", &Base
 
 /* Source for IntlDisplayNamesPrototype.lut.h
 @begin displayNamesPrototypeTable
-  of               IntlDisplayNamesPrototypeFuncOf                 DontEnum|Function 1
-  resolvedOptions  IntlDisplayNamesPrototypeFuncResolvedOptions    DontEnum|Function 0
+  of               intlDisplayNamesPrototypeFuncOf                 DontEnum|Function 1
+  resolvedOptions  intlDisplayNamesPrototypeFuncResolvedOptions    DontEnum|Function 0
 @end
 */
 
@@ -74,7 +74,7 @@ void IntlDisplayNamesPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.prototype.of
-JSC_DEFINE_HOST_FUNCTION(IntlDisplayNamesPrototypeFuncOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlDisplayNamesPrototypeFuncOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -87,7 +87,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDisplayNamesPrototypeFuncOf, (JSGlobalObject* globa
 }
 
 // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.prototype.resolvedOptions
-JSC_DEFINE_HOST_FUNCTION(IntlDisplayNamesPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlDisplayNamesPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

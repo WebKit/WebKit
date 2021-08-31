@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlSegmentIteratorPrototypeFuncNext);
+static JSC_DECLARE_HOST_FUNCTION(intlSegmentIteratorPrototypeFuncNext);
 
 }
 
@@ -43,7 +43,7 @@ const ClassInfo IntlSegmentIteratorPrototype::s_info = { "Segment String Iterato
 
 /* Source for IntlSegmentIteratorPrototype.lut.h
 @begin segmentIteratorPrototypeTable
-  next             IntlSegmentIteratorPrototypeFuncNext               DontEnum|Function 0
+  next             intlSegmentIteratorPrototypeFuncNext               DontEnum|Function 0
 @end
 */
 
@@ -72,7 +72,7 @@ void IntlSegmentIteratorPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-%segmentiteratorprototype%.next
-JSC_DEFINE_HOST_FUNCTION(IntlSegmentIteratorPrototypeFuncNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlSegmentIteratorPrototypeFuncNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

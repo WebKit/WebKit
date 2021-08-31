@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlDisplayNamesConstructor);
 
-static JSC_DECLARE_HOST_FUNCTION(IntlDisplayNamesConstructorSupportedLocalesOf);
+static JSC_DECLARE_HOST_FUNCTION(intlDisplayNamesConstructorSupportedLocalesOf);
 
 }
 
@@ -46,7 +46,7 @@ const ClassInfo IntlDisplayNamesConstructor::s_info = { "Function", &Base::s_inf
 
 /* Source for IntlDisplayNamesConstructor.lut.h
 @begin displayNamesConstructorTable
-  supportedLocalesOf             IntlDisplayNamesConstructorSupportedLocalesOf             DontEnum|Function 1
+  supportedLocalesOf             intlDisplayNamesConstructorSupportedLocalesOf             DontEnum|Function 1
 @end
 */
 
@@ -104,7 +104,7 @@ JSC_DEFINE_HOST_FUNCTION(callIntlDisplayNames, (JSGlobalObject* globalObject, Ca
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "DisplayNames"));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlDisplayNamesConstructorSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlDisplayNamesConstructorSupportedLocalesOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -32,8 +32,8 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncSelect);
-static JSC_DECLARE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelect);
+static JSC_DECLARE_HOST_FUNCTION(intlPluralRulesPrototypeFuncResolvedOptions);
 
 }
 
@@ -45,8 +45,8 @@ const ClassInfo IntlPluralRulesPrototype::s_info = { "Intl.PluralRules", &Base::
 
 /* Source for IntlPluralRulesPrototype.lut.h
 @begin pluralRulesPrototypeTable
-  select           IntlPluralRulesPrototypeFuncSelect           DontEnum|Function 1
-  resolvedOptions  IntlPluralRulesPrototypeFuncResolvedOptions  DontEnum|Function 0
+  select           intlPluralRulesPrototypeFuncSelect           DontEnum|Function 1
+  resolvedOptions  intlPluralRulesPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
 
@@ -74,7 +74,7 @@ void IntlPluralRulesPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncSelect, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncSelect, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -92,7 +92,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncSelect, (JSGlobalObject* gl
     RELEASE_AND_RETURN(scope, JSValue::encode(pluralRules->select(globalObject, value)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlPluralRulesPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

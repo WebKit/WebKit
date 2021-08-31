@@ -33,9 +33,9 @@
 
 namespace JSC {
 
-static JSC_DECLARE_CUSTOM_GETTER(IntlCollatorPrototypeGetterCompare);
-static JSC_DECLARE_HOST_FUNCTION(IntlCollatorPrototypeFuncResolvedOptions);
-static JSC_DECLARE_HOST_FUNCTION(IntlCollatorFuncCompare);
+static JSC_DECLARE_CUSTOM_GETTER(intlCollatorPrototypeGetterCompare);
+static JSC_DECLARE_HOST_FUNCTION(intlCollatorPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(intlCollatorFuncCompare);
 
 }
 
@@ -47,8 +47,8 @@ const ClassInfo IntlCollatorPrototype::s_info = { "Intl.Collator", &Base::s_info
 
 /* Source for IntlCollatorPrototype.lut.h
 @begin collatorPrototypeTable
-  compare          IntlCollatorPrototypeGetterCompare        DontEnum|ReadOnly|CustomAccessor
-  resolvedOptions  IntlCollatorPrototypeFuncResolvedOptions  DontEnum|Function 0
+  compare          intlCollatorPrototypeGetterCompare        DontEnum|ReadOnly|CustomAccessor
+  resolvedOptions  intlCollatorPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
 
@@ -76,7 +76,7 @@ void IntlCollatorPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlCollatorFuncCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlCollatorFuncCompare, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlCollatorFuncCompare, (JSGlobalObject* globalObject,
     RELEASE_AND_RETURN(scope, JSValue::encode(collator->compareStrings(globalObject, xViewWithString.view, yViewWithString.view)));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(IntlCollatorPrototypeGetterCompare, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlCollatorPrototypeGetterCompare, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -122,7 +122,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlCollatorPrototypeGetterCompare, (JSGlobalObject* gl
         JSGlobalObject* globalObject = collator->globalObject(vm);
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 2.
-        JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, "compare"_s, IntlCollatorFuncCompare, NoIntrinsic);
+        JSFunction* targetObject = JSFunction::create(vm, globalObject, 2, "compare"_s, intlCollatorFuncCompare, NoIntrinsic);
 
         // c. Let bc be BoundFunctionCreate(F, «this value»).
         boundCompare = JSBoundFunction::create(vm, globalObject, targetObject, collator, nullptr, 2, nullptr);
@@ -134,7 +134,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlCollatorPrototypeGetterCompare, (JSGlobalObject* gl
     return JSValue::encode(boundCompare);
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlCollatorPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlCollatorPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

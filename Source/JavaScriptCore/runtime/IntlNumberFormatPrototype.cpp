@@ -34,10 +34,10 @@
 
 namespace JSC {
 
-static JSC_DECLARE_CUSTOM_GETTER(IntlNumberFormatPrototypeGetterFormat);
-static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncFormatToParts);
-static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncResolvedOptions);
-static JSC_DECLARE_HOST_FUNCTION(IntlNumberFormatFuncFormat);
+static JSC_DECLARE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat);
+static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts);
+static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatPrototypeFuncResolvedOptions);
+static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatFuncFormat);
 
 }
 
@@ -49,9 +49,9 @@ const ClassInfo IntlNumberFormatPrototype::s_info = { "Intl.NumberFormat", &Base
 
 /* Source for IntlNumberFormatPrototype.lut.h
 @begin numberFormatPrototypeTable
-  format           IntlNumberFormatPrototypeGetterFormat         DontEnum|ReadOnly|CustomAccessor
-  formatToParts    IntlNumberFormatPrototypeFuncFormatToParts    DontEnum|Function 1
-  resolvedOptions  IntlNumberFormatPrototypeFuncResolvedOptions  DontEnum|Function 0
+  format           intlNumberFormatPrototypeGetterFormat         DontEnum|ReadOnly|CustomAccessor
+  formatToParts    intlNumberFormatPrototypeFuncFormatToParts    DontEnum|Function 1
+  resolvedOptions  intlNumberFormatPrototypeFuncResolvedOptions  DontEnum|Function 0
 @end
 */
 
@@ -80,7 +80,7 @@ void IntlNumberFormatPrototype::finishCreation(VM& vm)
 }
 
 // https://tc39.es/ecma402/#sec-number-format-functions
-JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatFuncFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlNumberFormatFuncFormat, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatFuncFormat, (JSGlobalObject* globalObje
     return JSValue::encode(numberFormat->format(globalObject, value));
 }
 
-JSC_DEFINE_CUSTOM_GETTER(IntlNumberFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
+JSC_DEFINE_CUSTOM_GETTER(intlNumberFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -126,7 +126,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
         JSGlobalObject* globalObject = nf->globalObject(vm);
         // a. Let F be a new built-in function object as defined in 11.3.4.
         // b. The value of F’s length property is 1.
-        auto* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, IntlNumberFormatFuncFormat, NoIntrinsic);
+        auto* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, intlNumberFormatFuncFormat, NoIntrinsic);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, nf, nullptr, 1, nullptr);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -137,7 +137,7 @@ JSC_DEFINE_CUSTOM_GETTER(IntlNumberFormatPrototypeGetterFormat, (JSGlobalObject*
     return JSValue::encode(boundFormat);
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -156,7 +156,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncFormatToParts, (JSGlobalOb
     RELEASE_AND_RETURN(scope, JSValue::encode(numberFormat->formatToParts(globalObject, value)));
 }
 
-JSC_DEFINE_HOST_FUNCTION(IntlNumberFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlNumberFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

@@ -31,8 +31,8 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(IntlSegmentsPrototypeFuncContaining);
-static JSC_DECLARE_HOST_FUNCTION(IntlSegmentsPrototypeFuncIterator);
+static JSC_DECLARE_HOST_FUNCTION(intlSegmentsPrototypeFuncContaining);
+static JSC_DECLARE_HOST_FUNCTION(intlSegmentsPrototypeFuncIterator);
 
 }
 
@@ -44,7 +44,7 @@ const ClassInfo IntlSegmentsPrototype::s_info = { "%Segments%", &Base::s_info, &
 
 /* Source for IntlSegmentsPrototype.lut.h
 @begin segmentsPrototypeTable
-  containing       IntlSegmentsPrototypeFuncContaining         DontEnum|Function 1
+  containing       intlSegmentsPrototypeFuncContaining         DontEnum|Function 1
 @end
 */
 
@@ -69,11 +69,11 @@ void IntlSegmentsPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, IntlSegmentsPrototypeFuncIterator, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, intlSegmentsPrototypeFuncIterator, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-%segmentsprototype%.containing
-JSC_DEFINE_HOST_FUNCTION(IntlSegmentsPrototypeFuncContaining, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlSegmentsPrototypeFuncContaining, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -86,7 +86,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmentsPrototypeFuncContaining, (JSGlobalObject* g
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-%segmentsprototype%-@@iterator
-JSC_DEFINE_HOST_FUNCTION(IntlSegmentsPrototypeFuncIterator, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(intlSegmentsPrototypeFuncIterator, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

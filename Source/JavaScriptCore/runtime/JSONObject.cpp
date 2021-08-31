@@ -42,8 +42,8 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSONObject);
 
-static JSC_DECLARE_HOST_FUNCTION(JSONProtoFuncParse);
-static JSC_DECLARE_HOST_FUNCTION(JSONProtoFuncStringify);
+static JSC_DECLARE_HOST_FUNCTION(jsonProtoFuncParse);
+static JSC_DECLARE_HOST_FUNCTION(jsonProtoFuncStringify);
 
 }
 
@@ -588,8 +588,8 @@ const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, &jsonT
 
 /* Source for JSONObject.lut.h
 @begin jsonTable
-  parse         JSONProtoFuncParse             DontEnum|Function 2
-  stringify     JSONProtoFuncStringify         DontEnum|Function 3
+  parse         jsonProtoFuncParse             DontEnum|Function 2
+  stringify     jsonProtoFuncStringify         DontEnum|Function 3
 @end
 */
 
@@ -785,7 +785,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 }
 
 // ECMA-262 v5 15.12.2
-JSC_DEFINE_HOST_FUNCTION(JSONProtoFuncParse, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -827,7 +827,7 @@ JSC_DEFINE_HOST_FUNCTION(JSONProtoFuncParse, (JSGlobalObject* globalObject, Call
 }
 
 // ECMA-262 v5 15.12.3
-JSC_DEFINE_HOST_FUNCTION(JSONProtoFuncStringify, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncStringify, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
