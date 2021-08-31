@@ -726,6 +726,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/StyleSheetList.idl
 
     css/typedom/CSSNumericValue.idl
+    css/typedom/CSSOMVariableReferenceValue.idl
     css/typedom/CSSStyleImageValue.idl
     css/typedom/CSSStyleValue.idl
     css/typedom/CSSUnitValue.idl

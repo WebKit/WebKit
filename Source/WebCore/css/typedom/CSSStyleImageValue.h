@@ -41,25 +41,29 @@ class Document;
 class CSSStyleImageValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSStyleImageValue);
 public:
-    static Ref<CSSStyleImageValue> create(CSSImageValue& cssValue, Document& document)
+    static Ref<CSSStyleImageValue> create(Ref<CSSImageValue>&& cssValue, Document& document)
     {
-        return adoptRef(*new CSSStyleImageValue(cssValue, document));
+        return adoptRef(*new CSSStyleImageValue(WTFMove(cssValue), document));
     }
 
-    String toString() final { return m_cssValue->cssText(); }
+    String toString() const final { return m_cssValue->cssText(); }
 
     CachedImage* image() { return m_cssValue->cachedImage(); }
     Document* document() const;
-
+    
+    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSStyleImageValue; }
+    
 private:
-    CSSStyleImageValue(CSSImageValue&, Document&);
-
-    bool isImageValue() final { return true; }
+    CSSStyleImageValue(Ref<CSSImageValue>&&, Document&);
 
     Ref<CSSImageValue> m_cssValue;
     WeakPtr<Document> m_document;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSStyleImageValue)
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSStyleImageValue; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

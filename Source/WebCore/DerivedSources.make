@@ -612,6 +612,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/typedom/CSSStyleValue.idl \
     $(WebCore)/css/typedom/CSSUnitValue.idl \
     $(WebCore)/css/typedom/CSSUnparsedValue.idl \
+    $(WebCore)/css/typedom/CSSOMVariableReferenceValue.idl \
     $(WebCore)/dom/AbortAlgorithm.idl \
     $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \

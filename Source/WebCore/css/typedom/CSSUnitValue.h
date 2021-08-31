@@ -43,7 +43,7 @@ public:
     }
 
     // FIXME: not correct.
-    String toString() final { return makeString((int) m_value, m_unit); }
+    String toString() const final { return makeString((int) m_value, m_unit); }
 
     double value() const { return m_value; }
     void setValue(double value) { m_value = value; }
@@ -57,7 +57,7 @@ private:
     {
     }
 
-    bool isUnitValue() final { return true; }
+    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSUnitValue; }
 
     double m_value;
     String m_unit;

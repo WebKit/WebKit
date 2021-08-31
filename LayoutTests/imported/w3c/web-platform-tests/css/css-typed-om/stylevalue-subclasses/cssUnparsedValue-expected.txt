@@ -1,5 +1,6 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSVariableReferenceValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSVariableReferenceValue
-
+PASS CSSUnparsedValue can be constructed from no arguments
+PASS CSSUnparsedValue can be constructed from a single empty string
+PASS CSSUnparsedValue can be constructed from a single CSSVariableReferenceValue
+PASS CSSUnparsedValue can be constructed from a mix of strings and CSSVariableReferenceValues
 

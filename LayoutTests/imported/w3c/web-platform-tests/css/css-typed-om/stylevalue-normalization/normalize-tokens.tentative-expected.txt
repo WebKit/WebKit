@@ -1,5 +1,18 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSVariableReferenceValue
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSVariableReferenceValue
-
+FAIL Normalizing "var(--A)" on a CSS property returns correct CSSUnparsedValue var(--A) cannot be parsed as a color
+FAIL Normalizing "var(--A)" on a shorthand returns correct CSSUnparsedValue var(--A) cannot be parsed as a margin
+FAIL Normalizing "var(--A)" on a list-valued property returns correct CSSUnparsedValue var(--A) cannot be parsed as a transition-duration
+FAIL Normalizing "var(--A)" on a custom property returns correct CSSUnparsedValue Property String is not a valid CSS property.
+FAIL Normalizing "var(--A, 1em)" on a CSS property returns correct CSSUnparsedValue var(--A, 1em) cannot be parsed as a color
+FAIL Normalizing "var(--A, 1em)" on a shorthand returns correct CSSUnparsedValue var(--A, 1em) cannot be parsed as a margin
+FAIL Normalizing "var(--A, 1em)" on a list-valued property returns correct CSSUnparsedValue var(--A, 1em) cannot be parsed as a transition-duration
+FAIL Normalizing "var(--A, 1em)" on a custom property returns correct CSSUnparsedValue Property String is not a valid CSS property.
+FAIL Normalizing "var(--A, var(--B))" on a CSS property returns correct CSSUnparsedValue var(--A, var(--B)) cannot be parsed as a color
+FAIL Normalizing "var(--A, var(--B))" on a shorthand returns correct CSSUnparsedValue var(--A, var(--B)) cannot be parsed as a margin
+FAIL Normalizing "var(--A, var(--B))" on a list-valued property returns correct CSSUnparsedValue var(--A, var(--B)) cannot be parsed as a transition-duration
+FAIL Normalizing "var(--A, var(--B))" on a custom property returns correct CSSUnparsedValue Property String is not a valid CSS property.
+FAIL Normalizing "calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px))" on a CSS property returns correct CSSUnparsedValue calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px)) cannot be parsed as a color
+FAIL Normalizing "calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px))" on a shorthand returns correct CSSUnparsedValue calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px)) cannot be parsed as a margin
+FAIL Normalizing "calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px))" on a list-valued property returns correct CSSUnparsedValue calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px)) cannot be parsed as a transition-duration
+FAIL Normalizing "calc(42px + var(--foo, 15em) + var(--bar, var(--far) + 15px))" on a custom property returns correct CSSUnparsedValue Property String is not a valid CSS property.
 

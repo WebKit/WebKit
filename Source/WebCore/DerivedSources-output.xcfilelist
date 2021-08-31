@@ -314,6 +314,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNamespaceRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNamespaceRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericValue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericValue.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSOMVariableReferenceValue.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSOMVariableReferenceValue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSPageRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSPageRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSPaintCallback.cpp

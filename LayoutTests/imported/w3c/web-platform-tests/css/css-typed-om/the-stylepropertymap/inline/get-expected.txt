@@ -2,8 +2,8 @@
 FAIL Getting a custom property not in the inline style returns null assert_equals: expected null but got object ""
 PASS Getting a valid property not in the inline style returns null
 PASS Getting a valid property from inline style returns the correct entry
-PASS Getting a valid custom property from inline style returns the correct entry
-FAIL Getting a list-valued property from inline style returns only the first value assert_equals: expected "CSSUnitValue" but got "CSSUnparsedValue"
+FAIL Getting a valid custom property from inline style returns the correct entry assert_equals: expected "CSSUnparsedValue" but got "CSSStyleValue"
+FAIL Getting a list-valued property from inline style returns only the first value assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
 PASS Declared StylePropertyMap.get is not case-sensitive
 PASS Declared StylePropertyMap.get reflects changes in the inline style
 

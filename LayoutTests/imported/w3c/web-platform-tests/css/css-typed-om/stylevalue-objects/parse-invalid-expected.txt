@@ -1,7 +1,11 @@
 
 PASS CSSStyleValue.parse() with empty property name throws TypeError
 PASS CSSStyleValue.parse() with unsupported property name throws TypeError
-PASS CSSStyleValue.parse() with invalid value for valid property throws TypeError
-PASS CSSStyleValue.parse() with invalid value for shorthand property throws TypeError
+FAIL CSSStyleValue.parse() with invalid value for valid property throws TypeError assert_throws_js: function "() => CSSStyleValue.parse('width', '10deg')" threw object "SyntaxError: 10deg cannot be parsed as a width" ("SyntaxError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL CSSStyleValue.parse() with invalid value for shorthand property throws TypeError assert_throws_js: function "() => CSSStyleValue.parse('margin', '10deg')" threw object "SyntaxError: 10deg cannot be parsed as a margin" ("SyntaxError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 PASS CSSStyleValue.parse() with invalid value for custom property throws TypeError
 

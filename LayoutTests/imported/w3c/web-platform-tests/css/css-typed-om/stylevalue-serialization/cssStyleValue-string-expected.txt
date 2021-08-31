@@ -1,4 +1,4 @@
 
-FAIL CSSStyleValue parsed from string serializes to given string CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('color', 'red')', 'CSSStyleValue.parse' is undefined)
-FAIL Shorthand CSSStyleValue parsed from string serializes to given string CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('background', 'blue')', 'CSSStyleValue.parse' is undefined)
+FAIL CSSStyleValue parsed from string serializes to given string red cannot be parsed as a color
+FAIL Shorthand CSSStyleValue parsed from string serializes to given string blue cannot be parsed as a background
 

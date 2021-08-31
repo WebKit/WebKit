@@ -4,5 +4,5 @@ FAIL Normalizing a <percentage> returns a percent CSSUnitValue CSS.percent is no
 FAIL Normalizing a <dimension> returns a CSSUnitValue with the correct unit CSS.px is not a function. (In 'CSS.px(3.14)', 'CSS.px' is undefined)
 FAIL Normalizing a <number> with a unitless zero returns 0 CSS.number is not a function. (In 'CSS.number(0)', 'CSS.number' is undefined)
 FAIL Normalizing a <calc> returns simplified expression Can't find variable: CSSMathSum
-FAIL Normalizing a <dimension> with a unitless zero returns 0px CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('width', '0px')', 'CSSStyleValue.parse' is undefined)
+FAIL Normalizing a <dimension> with a unitless zero returns 0px 0px cannot be parsed as a width
 

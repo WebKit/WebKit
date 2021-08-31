@@ -1,3 +1,36 @@
+2021-08-30  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Rebaseline for CSS Typed OM, CSSUnparsedValue partially implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=229069
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/css/css-typed-om/idlharness-expected.txt:
+        * web-platform-tests/css/css-typed-om/set-var-reference-thcrash-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-ident.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-image-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-numeric.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-tokens.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parse-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parse-invalid-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parseAll-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parseAll-invalid-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssKeywordValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssPositionValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssStyleValue-cssom-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssStyleValue-string-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssUnitValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssUnparsedValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-indexed-getter-setter-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-iterable-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssUnparsedValue-length-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssVariableReferenceValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssVariableReferenceValue-invalid-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssVariableReferenceValue-variable-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/parse.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get-expected.txt:
+
 2021-08-30  Chris Dumez  <cdumez@apple.com>
 
         Resync COOP / COEP WPT tests from upstream

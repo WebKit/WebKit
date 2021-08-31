@@ -23,12 +23,19 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// FIXME: wrong constructor.
+typedef (USVString or CSSOMVariableReferenceValue) CSSUnparsedSegment;
+
 [
     InterfaceName=CSSUnparsedValue,
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
+    JSGenerateToNativeObject
 ] interface CSSUnparsedValue : CSSStyleValue {
-    constructor(USVString serializedValue);
+    constructor(sequence<CSSUnparsedSegment> members);
+
+    iterable<CSSUnparsedSegment>;
+    readonly attribute unsigned long length;
+    getter CSSUnparsedSegment (unsigned long index);
+    setter CSSUnparsedSegment (unsigned long index, CSSUnparsedSegment val);
 };

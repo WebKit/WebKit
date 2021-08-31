@@ -775,6 +775,7 @@ css/typedom/CSSNumericValue.cpp
 css/typedom/CSSStyleValue.cpp
 css/typedom/CSSUnitValue.cpp
 css/typedom/CSSUnparsedValue.cpp
+css/typedom/CSSOMVariableReferenceValue.cpp
 cssjit/SelectorCompiler.cpp
 display/compositing/DisplayLayerController.cpp
 display/css/DisplayBox.cpp
@@ -3601,6 +3602,7 @@ JSTransitionEvent.cpp
 JSTreeWalker.cpp
 JSCSSStyleImageValue.cpp
 JSCSSNumericValue.cpp
+JSCSSOMVariableReferenceValue.cpp
 JSCSSStyleValue.cpp
 JSCSSUnitValue.cpp
 JSCSSUnparsedValue.cpp

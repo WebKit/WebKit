@@ -33,6 +33,9 @@ namespace WebCore {
 
 class CSSNumericValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericValue);
+    
+    CSSStyleValueType getType() const override { return CSSStyleValueType::CSSNumericValue; }
+
 protected:
     CSSNumericValue() = default;
 };

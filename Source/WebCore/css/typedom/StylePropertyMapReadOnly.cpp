@@ -55,8 +55,7 @@ RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* value, Docu
     if (is<CSSImageValue>(*value))
         return CSSStyleImageValue::create(downcast<CSSImageValue>(*value), document);
 
-    // FIXME: should use raw CSSStyleValue
-    return CSSUnparsedValue::create(value->cssText());
+    return CSSStyleValue::create(makeRefPtr(value));
 }
 
 RefPtr<CSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(const String& name, Document& document, CSSValue* inputValue, Element* element)
@@ -69,7 +68,7 @@ RefPtr<CSSStyleValue> StylePropertyMapReadOnly::customPropertyValueOrDefault(con
             return StylePropertyMapReadOnly::reifyValue(value.get(), document, element);
         }
 
-        return CSSUnparsedValue::create(emptyString());
+        return CSSStyleValue::create();
     }
 
     return StylePropertyMapReadOnly::reifyValue(inputValue, document, element);

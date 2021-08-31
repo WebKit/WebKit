@@ -33,27 +33,33 @@
 
 namespace WebCore {
 
+template<typename> class ExceptionOr;
+class CSSOMVariableReferenceValue;
+using CSSUnparsedSegment = Variant<String, RefPtr<CSSOMVariableReferenceValue>>;
+
 class CSSUnparsedValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSUnparsedValue);
 public:
-    static Ref<CSSUnparsedValue> create(const String& serializedValue)
-    {
-        return adoptRef(*new CSSUnparsedValue(serializedValue));
-    }
+    static Ref<CSSUnparsedValue> create(Vector<CSSUnparsedSegment>&&);
+        
+    size_t length() const { return m_segments.size(); }
+    ExceptionOr<CSSUnparsedSegment> item(size_t);
+    ExceptionOr<CSSUnparsedSegment> setItem(size_t, CSSUnparsedSegment&&);
 
-    String toString() final { return m_serializedValue; }
+    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSUnparsedValue; }
+    String toString() const;
 
 private:
-    explicit CSSUnparsedValue(const String& serializedValue)
-        : m_serializedValue(serializedValue)
-    {
-    }
-
-    bool isUnparsedValue() final { return true; }
-
-    String m_serializedValue;
+    explicit CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments);
+    void serialize(StringBuilder&) const;
+    
+    Vector<CSSUnparsedSegment> m_segments;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSUnparsedValue)
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSUnparsedValue; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

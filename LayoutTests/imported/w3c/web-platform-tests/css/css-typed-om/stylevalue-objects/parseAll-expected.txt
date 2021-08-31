@@ -1,7 +1,7 @@
 
-FAIL CSSStyleValue.parseAll() with a valid property returns a list with a single CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('width', '10px')', 'CSSStyleValue.parseAll' is undefined)
-FAIL CSSStyleValue.parseAll() is not case sensitive CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('WiDtH', '10px')', 'CSSStyleValue.parseAll' is undefined)
-FAIL CSSStyleValue.parseAll() with a valid list-valued property returns a list with a single CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('transition-duration', '1s, 2s, 3s')', 'CSSStyleValue.parseAll' is undefined)
-FAIL CSSStyleValue.parseAll() with a valid shorthand property returns a CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('margin', '1px 2px 3px 4px')', 'CSSStyleValue.parseAll' is undefined)
-FAIL CSSStyleValue.parseAll() with a valid custom property returns a list with a single CSSStyleValue CSSStyleValue.parseAll is not a function. (In 'CSSStyleValue.parseAll('--foo', 'auto')', 'CSSStyleValue.parseAll' is undefined)
+FAIL CSSStyleValue.parseAll() with a valid property returns a list with a single CSSStyleValue assert_equals: Result must be a list with one element expected 1 but got 0
+FAIL CSSStyleValue.parseAll() is not case sensitive assert_equals: Result must be a list with one element expected 1 but got 0
+FAIL CSSStyleValue.parseAll() with a valid list-valued property returns a list with a single CSSStyleValue assert_equals: Result must be a list with three elements expected 3 but got 0
+FAIL CSSStyleValue.parseAll() with a valid shorthand property returns a CSSStyleValue 1px 2px 3px 4px cannot be parsed as a margin
+FAIL CSSStyleValue.parseAll() with a valid custom property returns a list with a single CSSStyleValue Property String is not a valid CSS property.
 

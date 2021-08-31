@@ -29,7 +29,9 @@
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
-    SkipVTableValidation,
+    SkipVTableValidation
 ] interface CSSStyleValue {
     stringifier;
+    [Exposed=Window] static CSSStyleValue parse(USVString property, USVString cssText);
+    [Exposed=Window] static sequence<CSSStyleValue> parseAll(USVString property, USVString cssText);
 };

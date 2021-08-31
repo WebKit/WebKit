@@ -1,8 +1,4 @@
 
-FAIL Constructing a CSSVariableReferenceValue with an empty variable name throws a TypeError assert_throws_js: function "() => new CSSVariableReferenceValue('')" threw object "ReferenceError: Can't find variable: CSSVariableReferenceValue" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSVariableReferenceValue with an invalid variable name throws SyntaxError assert_throws_js: function "() => new CSSVariableReferenceValue('bar')" threw object "ReferenceError: Can't find variable: CSSVariableReferenceValue" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Constructing a CSSVariableReferenceValue with an empty variable name throws a TypeError
+PASS Constructing a CSSVariableReferenceValue with an invalid variable name throws SyntaxError
 

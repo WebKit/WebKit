@@ -1,4 +1,4 @@
 
-FAIL CSS identifiers are normalized from String to CSSKeywordValues CSSStyleValue.parse is not a function. (In 'CSSStyleValue.parse('width', 'auto')', 'CSSStyleValue.parse' is undefined)
+FAIL CSS identifiers are normalized from String to CSSKeywordValues auto cannot be parsed as a width
 FAIL CSS identifiers are normalized from CSSOM to CSSKeywordValues Can't find variable: CSSKeywordValue
 

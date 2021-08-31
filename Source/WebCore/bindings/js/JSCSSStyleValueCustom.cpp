@@ -38,15 +38,17 @@ using namespace JSC;
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<CSSStyleValue>&& value)
 {
-    if (value->isUnitValue())
+    switch (value->getType()) {
+    case CSSStyleValueType::CSSUnitValue:
         return createWrapper<CSSUnitValue>(globalObject, WTFMove(value));
-    if (value->isUnparsedValue())
+    case CSSStyleValueType::CSSUnparsedValue:
         return createWrapper<CSSUnparsedValue>(globalObject, WTFMove(value));
-    if (value->isImageValue())
+    case CSSStyleValueType::CSSStyleImageValue:
         return createWrapper<CSSStyleImageValue>(globalObject, WTFMove(value));
+    default:
+        return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
+    }
 
-    ASSERT_NOT_REACHED();
-    return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSStyleValue& object)

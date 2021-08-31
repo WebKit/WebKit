@@ -34,8 +34,8 @@ PASS CSSStyleValue interface: existence and properties of interface prototype ob
 PASS CSSStyleValue interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSStyleValue interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSStyleValue interface: stringifier
-FAIL CSSStyleValue interface: operation parse(USVString, USVString) assert_own_property: interface object missing static operation expected property "parse" missing
-FAIL CSSStyleValue interface: operation parseAll(USVString, USVString) assert_own_property: interface object missing static operation expected property "parseAll" missing
+PASS CSSStyleValue interface: operation parse(USVString, USVString)
+PASS CSSStyleValue interface: operation parseAll(USVString, USVString)
 PASS StylePropertyMapReadOnly interface: existence and properties of interface object
 PASS StylePropertyMapReadOnly interface object length
 PASS StylePropertyMapReadOnly interface object name
@@ -79,16 +79,16 @@ PASS CSSUnparsedValue interface object name
 PASS CSSUnparsedValue interface: existence and properties of interface prototype object
 PASS CSSUnparsedValue interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSUnparsedValue interface: existence and properties of interface prototype object's @@unscopables property
-FAIL CSSUnparsedValue interface: iterable<CSSUnparsedSegment> undefined is not an object (evaluating 'iteratorDesc.writable')
-FAIL CSSUnparsedValue interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
-FAIL CSSVariableReferenceValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
-FAIL CSSVariableReferenceValue interface object length assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
-FAIL CSSVariableReferenceValue interface object name assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
-FAIL CSSVariableReferenceValue interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
-FAIL CSSVariableReferenceValue interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
-FAIL CSSVariableReferenceValue interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
-FAIL CSSVariableReferenceValue interface: attribute variable assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
-FAIL CSSVariableReferenceValue interface: attribute fallback assert_own_property: self does not have own property "CSSVariableReferenceValue" expected property "CSSVariableReferenceValue" missing
+PASS CSSUnparsedValue interface: iterable<CSSUnparsedSegment>
+PASS CSSUnparsedValue interface: attribute length
+PASS CSSVariableReferenceValue interface: existence and properties of interface object
+PASS CSSVariableReferenceValue interface object length
+PASS CSSVariableReferenceValue interface object name
+PASS CSSVariableReferenceValue interface: existence and properties of interface prototype object
+PASS CSSVariableReferenceValue interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSVariableReferenceValue interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSVariableReferenceValue interface: attribute variable
+PASS CSSVariableReferenceValue interface: attribute fallback
 FAIL CSSKeywordValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
 FAIL CSSKeywordValue interface object length assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing
 FAIL CSSKeywordValue interface object name assert_own_property: self does not have own property "CSSKeywordValue" expected property "CSSKeywordValue" missing

@@ -32,11 +32,60 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSOMVariableReferenceValue.h"
+#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Variant.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSUnparsedValue);
+
+Ref<CSSUnparsedValue> CSSUnparsedValue::create(Vector<CSSUnparsedSegment>&& segments)
+{
+    return adoptRef(*new CSSUnparsedValue(WTFMove(segments)));
+}
+
+CSSUnparsedValue::CSSUnparsedValue(Vector<CSSUnparsedSegment>&& segments)
+    : m_segments(WTFMove(segments))
+{
+}
+
+String CSSUnparsedValue::toString() const
+{
+    StringBuilder builder;
+    serialize(builder);
+    
+    return builder.toString();
+}
+
+void CSSUnparsedValue::serialize(StringBuilder& builder) const
+{
+    for (auto& segment : m_segments) {
+        WTF::visit(WTF::makeVisitor([&] (const String& value) {
+            builder.append(value);
+        }, [&] (const RefPtr<CSSOMVariableReferenceValue>& value) {
+            builder.append(value->toString());
+        }), segment);
+    }
+}
+
+ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::item(size_t index)
+{
+    if (index >= m_segments.size())
+        return Exception { RangeError, makeString("Index ", index, " exceeds index range for unparsed segments.") };
+    return CSSUnparsedSegment { m_segments[index] };
+}
+
+ExceptionOr<CSSUnparsedSegment> CSSUnparsedValue::setItem(size_t index, CSSUnparsedSegment&& val)
+{
+    if (index >= m_segments.size())
+        return Exception { RangeError, makeString("Index ", index, " exceeds index range for unparsed segments.") };
+    m_segments[index] = WTFMove(val);
+    return CSSUnparsedSegment { m_segments[index] };
+}
 
 } // namespace WebCore
 

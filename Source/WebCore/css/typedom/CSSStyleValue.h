@@ -27,24 +27,51 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSPropertyNames.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CSSValue;
+template<typename T> class ExceptionOr;
+
+enum class CSSStyleValueType : uint8_t {
+    CSSStyleValue,
+    CSSStyleImageValue,
+    CSSTransformValue,
+    CSSNumericValue,
+    CSSMathValue,
+    CSSUnitValue,
+    CSSUnparsedValue,
+    CSSKeywordValue
+};
+
 class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(CSSStyleValue);
 public:
-    virtual ~CSSStyleValue() = default;
-    virtual String toString() = 0;
 
-    virtual bool isUnitValue() { return false; }
-    virtual bool isUnparsedValue() { return false; }
-    virtual bool isImageValue() { return false; }
+    virtual String toString() const;
+    virtual ~CSSStyleValue() = default;
+    
+    virtual CSSStyleValueType getType() const { return CSSStyleValueType::CSSStyleValue; }
+        
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseStyleValue(const String&, const String&, bool);
+    static ExceptionOr<Ref<CSSStyleValue>> parse(const String&, const String&);
+    static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseAll(const String&, const String&);
+    
+    static RefPtr<CSSStyleValue> reifyValue(CSSPropertyID, RefPtr<CSSValue>&&);
+    
+    static Ref<CSSStyleValue> create(RefPtr<CSSValue>&&, String&& = String());
+    static Ref<CSSStyleValue> create();
 
 protected:
+    CSSStyleValue(RefPtr<CSSValue>&&, String&& = String());
     CSSStyleValue() = default;
+    
+    String m_customPropertyName;
+    RefPtr<CSSValue> m_propertyValue;
 };
 
 } // namespace WebCore

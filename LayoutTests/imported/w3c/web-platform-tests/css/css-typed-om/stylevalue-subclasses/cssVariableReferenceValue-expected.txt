@@ -1,5 +1,5 @@
 
-FAIL CSSVariableReferenceValue can be constructed with no fallback Can't find variable: CSSVariableReferenceValue
-FAIL CSSVariableReferenceValue can be constructed with null fallback Can't find variable: CSSVariableReferenceValue
-FAIL CSSVariableReferenceValue can be constructed with valid fallback Can't find variable: CSSVariableReferenceValue
+PASS CSSVariableReferenceValue can be constructed with no fallback
+PASS CSSVariableReferenceValue can be constructed with null fallback
+PASS CSSVariableReferenceValue can be constructed with valid fallback
 
