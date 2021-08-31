@@ -1635,4 +1635,6 @@ webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pas
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/229736 fast/hidpi/image-srcset-svg-canvas-2x.html [ Pass Failure ]
+
 webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Slow ]
