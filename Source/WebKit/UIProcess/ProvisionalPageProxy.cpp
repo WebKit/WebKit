@@ -202,7 +202,7 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
         websitePoliciesData = websitePolicies->data();
     
     send(Messages::WebPage::UpdateBackForwardListForReattach(WTFMove(itemStates)));
-    send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, WTFMove(websitePoliciesData)));
+    send(Messages::WebPage::GoToBackForwardItem(navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, WTFMove(websitePoliciesData), m_page.lastNavigationWasAppInitiated()));
     m_process->startResponsivenessTimer();
 }
 

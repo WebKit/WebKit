@@ -32,6 +32,7 @@
     WebKit::SessionState _sessionState;
 }
 
+- (WebKit::SessionState)_sessionStateWithAppInitiatedValue;
 - (instancetype)_initWithSessionState:(WebKit::SessionState)sessionState;
 
 @end

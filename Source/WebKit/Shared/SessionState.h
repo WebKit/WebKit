@@ -158,6 +158,7 @@ struct SessionState {
     BackForwardListState backForwardListState;
     uint64_t renderTreeSize;
     URL provisionalURL;
+    bool isAppInitiated { true };
 };
 
 } // namespace WebKit
