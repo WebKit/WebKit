@@ -662,8 +662,8 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
         const Node* enclosingTableCellForPreviousPosition = enclosingNodeOfType(previousPosition.deepEquivalent(), &isTableCell);
         if (previousPosition.isNull() || enclosingTableCell != enclosingTableCellForPreviousPosition) {
             // When the caret is at the start of the editable area in an empty list item, break out of the list item.
-            if (auto deleteListSelection = shouldBreakOutOfEmptyListItem()) {
-                if (willAddTypingToOpenCommand(DeleteKey, granularity, { }, *deleteListSelection.value().firstRange())) {
+            if (auto deleteListSelection = shouldBreakOutOfEmptyListItem(); !deleteListSelection.isNone()) {
+                if (willAddTypingToOpenCommand(DeleteKey, granularity, { }, deleteListSelection.firstRange())) {
                     breakOutOfEmptyListItem();
                     typingAddedToOpenCommand(DeleteKey);
                 }
