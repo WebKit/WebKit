@@ -1119,6 +1119,19 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 [ BigSur+ ] fast/multicol/pagination/RightToLeft-tb.html [ Failure ]
 [ BigSur+ ] fast/multicol/pagination/RightToLeft-rl.html [ Failure ]
 
+webkit.org/b/229714 [ Catalina Debug ] fast/misc/test-observegc.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/multicol/block-axis-vertical-lr.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/multicol/break-properties.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/multicol/column-count-with-rules.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/multicol/assert-with-nested-columns-and-spanner.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/multicol/column-span-parent-continuation-crash.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/parser/broken-comment-4.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/repaint/erase-overflow.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/repaint/fixed-in-page-scale.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/shapes/parsing/parsing-shape-image-threshold.html [ Pass Crash ]
+webkit.org/b/229714 [ Catalina Debug ] fast/visual-viewport/viewport-dimensions-iframe.html [ Pass Crash ]
+
 # rdar://66868787 ([ Layout Tests ] REGRESSION: fast/images/image-copy-memory-usage.html is a flaky failure)
 [ BigSur+ ] fast/images/image-copy-memory-usage.html [ Failure ]
 

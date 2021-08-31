@@ -1,3 +1,12 @@
+2021-08-31  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ EWS Catalina Debug ] Fast/* tests are flaky with ASSERTION FAILED: !m_deletionHasBegun.
+        https://bugs.webkit.org/show_bug.cgi?id=229714
+
+        Unreveiwed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-08-31  Rob Buis  <rbuis@igalia.com>
 
         Nullptr crash in TypingCommand::willAddTypingToOpenCommand via TypingCommand::deleteKeyPressed
