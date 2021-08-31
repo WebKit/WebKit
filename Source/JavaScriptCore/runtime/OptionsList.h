@@ -542,6 +542,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
     v(Bool, useArrayFindLastMethod, true, Normal, "Expose the findLast() and findLastIndex() methods on Array and %TypedArray%.") \
     v(Bool, useIntlEnumeration, true, Normal, "Expose the Intl enumeration APIs.") \
+    v(Bool, useHasOwn, false, Normal, "Expose the Object.hasOwn method") \
 
 
 enum OptionEquivalence {

@@ -1,3 +1,28 @@
+2021-08-31  Aditi Singh  <asingh@igalia.com>
+
+        Implement Object.hasOwn()
+        https://bugs.webkit.org/show_bug.cgi?id=226291
+
+        Reviewed by Alexey Shvayka.
+        
+        This patch implements Object.hasOwn() method which is a stage 3 proposal. The method is disabled by default and can be enabled using the feature flag.
+        The proposal details can be found here: https://github.com/tc39/proposal-accessible-object-hasownproperty.
+        The patch also refines objectPrototypeHasOwnProperty() to accept JSObject* base rather than JSValue.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * runtime/CommonIdentifiers.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectPrototypeHasOwnProperty):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectPrototype.h:
+        * runtime/OptionsList.h:
+
 2021-08-26  Darin Adler  <darin@apple.com>
 
         Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining

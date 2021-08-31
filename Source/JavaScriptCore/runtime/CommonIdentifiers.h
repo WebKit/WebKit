@@ -133,6 +133,7 @@
     macro(groups) \
     macro(has) \
     macro(hasIndices) \
+    macro(hasOwn) \
     macro(hasOwnProperty) \
     macro(hash) \
     macro(header) \

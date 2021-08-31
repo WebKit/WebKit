@@ -46,6 +46,7 @@ static JSC_DECLARE_HOST_FUNCTION(objectConstructorPreventExtensions);
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorIsSealed);
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorIsFrozen);
 static JSC_DECLARE_HOST_FUNCTION(objectConstructorIsExtensible);
+static JSC_DECLARE_HOST_FUNCTION(objectConstructorHasOwn);
 
 }
 
@@ -100,6 +101,8 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().createPrivateName(), objectConstructorCreate, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().definePropertyPrivateName(), objectConstructorDefineProperty, static_cast<unsigned>(PropertyAttribute::DontEnum), 3);
+    if (Options::useHasOwn())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->hasOwn, objectConstructorHasOwn, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 }
 
 // ES 19.1.1.1 Object([value])
@@ -1009,6 +1012,17 @@ JSObject* constructObjectFromPropertyDescriptorSlow(JSGlobalObject* globalObject
         result->putDirect(vm, vm.propertyNames->configurable, jsBoolean(descriptor.configurable()));
 
     return result;
+}
+
+JSC_DEFINE_HOST_FUNCTION(objectConstructorHasOwn, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSObject* base = callFrame->argument(0).toObject(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto propertyName = callFrame->argument(1).toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(objectPrototypeHasOwnProperty(globalObject, base, propertyName))));
 }
 
 } // namespace JSC

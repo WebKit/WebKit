@@ -1092,7 +1092,9 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_has_own_property)
     JSString* string = asString(GET(bytecode.m_propertyName).jsValue());
     auto propertyName = string->toIdentifier(globalObject);
     CHECK_EXCEPTION();
-    RETURN(jsBoolean(objectPrototypeHasOwnProperty(globalObject, baseValue, propertyName)));
+    JSObject* baseObject = baseValue.toObject(globalObject);
+    CHECK_EXCEPTION();
+    RETURN(jsBoolean(objectPrototypeHasOwnProperty(globalObject, baseObject, propertyName)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_profile_type_clear_log)
