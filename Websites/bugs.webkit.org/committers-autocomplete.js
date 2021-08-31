@@ -24,7 +24,7 @@
 // DAMAGE.
 
 WebKitCommitters = (function() {
-    var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json';
+    var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/metadata/contributors.json';
     var m_committers;
 
     function statusToType(status) {
@@ -40,13 +40,11 @@ WebKitCommitters = (function() {
 
         m_committers = [];
 
-        for (var name in contributors) {
-            var record = contributors[name];
+        for (var contributors in contributors) {
             m_committers.push({
-                name: name,
-                emails: record.emails,
-                irc: record.nicks,
-                type: statusToType(record.status),
+                name: contributors.name,
+                emails: contributors.emails,
+                type: statusToType(contributors.status),
             });
         }
     }
@@ -122,9 +120,6 @@ WebKitCommitters = (function() {
         if (startsWithAny(contact.emails, prefix))
             return true;
 
-        if (contact.irc && startsWithAny(contact.irc, prefix))
-            return true;
-
         var names = contact.name.split(' ');
         for (var i = 0; i < names.length; i++) {
             if (startsWith(names[i], prefix))
@@ -166,8 +161,6 @@ WebKitCommitters = (function() {
             var contact = contacts[i];
             html.push('<div style="padding:1px 2px;" ' + 'email=' +
                 contact.emails[0] + '>' + contact.name + ' - ' + contact.emails[0]);
-            if (contact.irc)
-                html.push(' (:' + contact.irc + ')');
             if (contact.type)
                 html.push(' (' + contact.type + ')');
             html.push('</div>');
