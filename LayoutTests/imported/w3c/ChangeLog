@@ -1,3 +1,16 @@
+2021-08-31  Chris Dumez  <cdumez@apple.com>
+
+        [COOP] html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write.html WPT test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=229692
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write-expected.txt:
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/html/cross-origin-opener-policy/coop-same-origin-allow-popups-document-write.html:
+        Merge typo fix from https://github.com/web-platform-tests/wpt/commit/0adccdd2cd38e2217a11d3d6dd14260f32a8a0a6
+
 2021-08-31  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Compute order correctly for late added sublayers
