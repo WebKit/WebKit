@@ -31,6 +31,7 @@
 
 import fnmatch
 import json
+import os
 import sys
 
 from webkitcorepy import string_utils, unicode
@@ -229,10 +230,12 @@ class CommitterList(object):
         self._accounts_by_login = {}
 
     def load_json(self):
-        filesystem = FileSystem()
-        json_path = filesystem.join(filesystem.dirname(filesystem.path_to_module('webkitpy.common.config')), 'contributors.json')
+        json_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))),
+            'metadata', 'contributors.json',
+        )
         try:
-            contributors = json.loads(filesystem.read_text_file(json_path))
+            contributors = json.loads(FileSystem().read_text_file(json_path))
         except ValueError as e:
             sys.exit('contributors.json is malformed: ' + str(e))
 
@@ -273,9 +276,11 @@ class CommitterList(object):
         return json.dumps(result, sort_keys=True, indent=3, separators=(',', ' : '))
 
     def reformat_in_place(self):
-        filesystem = FileSystem()
-        json_path = filesystem.join(filesystem.dirname(filesystem.path_to_module('webkitpy.common.config')), 'contributors.json')
-        filesystem.write_text_file(json_path, self.as_json())
+        json_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))),
+            'metadata', 'contributors.json',
+        )
+        FileSystem().write_text_file(json_path, self.as_json())
 
     # Contributors who are not in any other category.
     def _exclusive_contributors(self):
