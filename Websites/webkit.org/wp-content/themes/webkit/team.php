@@ -161,16 +161,9 @@ function parseContributorsJSON(text) {
     var contributors = [];
 
     for (var contributor in contributorsJSON) {
-        var data = contributorsJSON[contributor];
-        if (data.class == "bot")
+        if (contributor.class == "bot")
             continue;
-        contributors.push({
-            name: contributor,
-            kind: data.status ? data.status : 'contributor',
-            emails: data.emails,
-            nicks: data.nicks,
-            expertise: data.expertise
-        });
+        contributors.push(contributor);
     }
     return contributors;
 }
@@ -266,7 +259,7 @@ xhr.onload = function () {
     populateContributorList(contributors, 'contributor');
 };
 xhr.onerror = function () { document.getElementById('team').textContent = 'There was an issue loading data for the WebKit Team. not obtain contributors.json'; };
-xhr.open('GET', svnTrunkUrl + 'Tools/Scripts/webkitpy/common/config/contributors.json');
+xhr.open('GET', svnTrunkUrl + 'metadata/contributors.json');
 xhr.send();
 
 </script>
