@@ -1,3 +1,16 @@
+2021-08-31  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer] Fix deadlock tearing down pipeline when using fallback sink
+        https://bugs.webkit.org/show_bug.cgi?id=229619
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Whenever GstGL is disabled for whatever reason the fallback sink might
+        be used and cancelling repaint need to be taken into account in any case.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::cancelRepaint):
+
 2021-08-31  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r281771): ASSERTION FAILED: !m_deletionHasBegun under WebCore::Permissions::~Permissions()
