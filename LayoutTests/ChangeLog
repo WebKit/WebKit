@@ -1,3 +1,13 @@
+2021-08-31  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test baselines after r281771
+        https://bugs.webkit.org/show_bug.cgi?id=229718
+
+        Unreviewed test gardening.
+
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wpe/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2021-08-31  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData) on "youtube-plugin-replacement" & "quicktime-plugin-replacement tests".
