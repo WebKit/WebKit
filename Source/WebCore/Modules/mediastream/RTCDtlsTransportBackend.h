@@ -35,12 +35,15 @@ class ArrayBuffer;
 
 namespace WebCore {
 
+class RTCIceTransportBackend;
+
 class RTCDtlsTransportBackend {
 public:
     virtual ~RTCDtlsTransportBackend() = default;
 
     virtual const void* backend() const = 0;
-    
+    virtual UniqueRef<RTCIceTransportBackend> iceTransportBackend() = 0;
+
     class Client : public CanMakeWeakPtr<Client> {
     public:
         virtual ~Client() = default;

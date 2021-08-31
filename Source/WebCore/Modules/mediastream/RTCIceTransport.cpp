@@ -28,14 +28,67 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "Event.h"
+#include "EventNames.h"
+#include "RTCPeerConnection.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCIceTransport);
 
+RTCIceTransport::RTCIceTransport(ScriptExecutionContext& context, UniqueRef<RTCIceTransportBackend>&& backend, RTCPeerConnection& connection)
+    : ActiveDOMObject(&context)
+    , m_backend(WTFMove(backend))
+    , m_connection(makeWeakPtr(connection))
+{
+    suspendIfNeeded();
+    m_backend->registerClient(*this);
+}
+
 RTCIceTransport::~RTCIceTransport()
 {
+    m_backend->unregisterClient();
+}
+
+void RTCIceTransport::stop()
+{
+    m_isStopped = true;
+    m_transportState = RTCIceTransportState::Closed;
+}
+
+bool RTCIceTransport::virtualHasPendingActivity() const
+{
+    return m_transportState != RTCIceTransportState::Closed && hasEventListeners();
+}
+
+void RTCIceTransport::onStateChanged(RTCIceTransportState state)
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, state]() mutable {
+        if (m_isStopped)
+            return;
+
+        if (m_transportState == state)
+            return;
+
+        m_transportState = state;
+        if (m_connection)
+            m_connection->processIceTransportStateChange(*this);
+    });
+}
+
+void RTCIceTransport::onGatheringStateChanged(RTCIceGatheringState state)
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, state]() mutable {
+        if (m_isStopped)
+            return;
+
+        if (m_gatheringState == state)
+            return;
+
+        m_gatheringState = state;
+        dispatchEvent(Event::create(eventNames().gatheringstatechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    });
 }
 
 } // namespace WebCore

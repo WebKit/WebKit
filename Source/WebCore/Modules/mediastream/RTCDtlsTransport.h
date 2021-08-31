@@ -35,25 +35,27 @@
 namespace WebCore {
 
 class PeerConnectionBackend;
+class RTCIceTransport;
 class RTCPeerConnection;
 class ScriptExecutionContext;
 
 class RTCDtlsTransport final : public RefCounted<RTCDtlsTransport>, public ActiveDOMObject, public EventTargetWithInlineData, public RTCDtlsTransportBackend::Client {
     WTF_MAKE_ISO_ALLOCATED(RTCDtlsTransport);
 public:
-    static Ref<RTCDtlsTransport> create(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend) { return adoptRef(*new RTCDtlsTransport(context, WTFMove(backend))); }
+    static Ref<RTCDtlsTransport> create(ScriptExecutionContext& context, UniqueRef<RTCDtlsTransportBackend>&& backend, Ref<RTCIceTransport>&& iceTransport) { return adoptRef(*new RTCDtlsTransport(context, WTFMove(backend), WTFMove(iceTransport))); }
     ~RTCDtlsTransport();
 
     using RefCounted<RTCDtlsTransport>::ref;
     using RefCounted<RTCDtlsTransport>::deref;
 
+    RTCIceTransport& iceTransport() { return m_iceTransport.get(); }
     RTCDtlsTransportState state() { return m_state; }
     Vector<Ref<JSC::ArrayBuffer>> getRemoteCertificates();
 
     const RTCDtlsTransportBackend& backend() const { return m_backend.get(); }
 
 private:
-    RTCDtlsTransport(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&);
+    RTCDtlsTransport(ScriptExecutionContext&, UniqueRef<RTCDtlsTransportBackend>&&, Ref<RTCIceTransport>&&);
 
     // EventTargetWithInlineData
     EventTargetInterface eventTargetInterface() const final { return RTCDtlsTransportEventTargetInterfaceType; }
@@ -71,6 +73,7 @@ private:
     void onError() final;
 
     UniqueRef<RTCDtlsTransportBackend> m_backend;
+    Ref<RTCIceTransport> m_iceTransport;
     RTCDtlsTransportState m_state { RTCDtlsTransportState::New };
     Vector<Ref<JSC::ArrayBuffer>> m_remoteCertificates;
 };

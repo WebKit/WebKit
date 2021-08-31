@@ -51,6 +51,7 @@ public:
 private:
     // RTCDtlsTransportBackend
     const void* backend() const final { return m_backend.get(); }
+    UniqueRef<RTCIceTransportBackend> iceTransportBackend() final;
     void registerClient(Client&) final;
     void unregisterClient() final;
 

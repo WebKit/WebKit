@@ -137,6 +137,7 @@ namespace WebCore {
     macro(formdata) \
     macro(gamepadconnected) \
     macro(gamepaddisconnected) \
+    macro(gatheringstatechange) \
     macro(gesturechange) \
     macro(gestureend) \
     macro(gesturescrollend) \

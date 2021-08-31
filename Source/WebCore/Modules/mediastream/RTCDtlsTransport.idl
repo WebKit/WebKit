@@ -28,7 +28,7 @@
     EnabledBySetting=PeerConnection,
     Exposed=(Window),
 ] interface RTCDtlsTransport : EventTarget {
-  // [SameObject] readonly attribute RTCIceTransport iceTransport;
+  [SameObject] readonly attribute RTCIceTransport iceTransport;
   readonly attribute RTCDtlsTransportState state;
   sequence<ArrayBuffer> getRemoteCertificates();
   attribute EventHandler onstatechange;

@@ -1,4 +1,4 @@
 
-FAIL not negotiating BUNDLE creates two separate ice and dtls transports assert_not_equals: got disallowed value undefined
+PASS not negotiating BUNDLE creates two separate ice and dtls transports
 PASS bundles on the first transport and closes the second
 

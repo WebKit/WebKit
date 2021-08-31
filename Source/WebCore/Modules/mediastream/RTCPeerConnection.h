@@ -61,6 +61,7 @@ class RTCController;
 class RTCDtlsTransport;
 class RTCDtlsTransportBackend;
 class RTCIceCandidate;
+class RTCIceTransportBackend;
 class RTCPeerConnectionErrorCallback;
 class RTCSessionDescription;
 class RTCStatsCallback;
@@ -188,6 +189,8 @@ public:
     void updateTransceiversAfterSuccessfulLocalDescription();
     void updateTransceiversAfterSuccessfulRemoteDescription();
 
+    void processIceTransportStateChange(RTCIceTransport&);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -219,6 +222,10 @@ private:
     bool virtualHasPendingActivity() const final;
 
     void updateConnectionState();
+    bool updateIceConnectionStateFromIceTransports();
+    RTCIceConnectionState computeIceConnectionStateFromIceTransports();
+    RTCPeerConnectionState computeConnectionState();
+
     bool doClose();
     void doStop();
 
@@ -230,6 +237,7 @@ private:
 
     ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet);
 
+    Ref<RTCIceTransport> getOrCreateIceTransport(UniqueRef<RTCIceTransportBackend>&&);
     RefPtr<RTCDtlsTransport> getOrCreateDtlsTransport(std::unique_ptr<RTCDtlsTransportBackend>&&);
     void updateTransceiverTransports();
 
@@ -256,7 +264,8 @@ private:
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
     bool m_hasPendingOperation { false };
     bool m_shouldFireNegotiationNeededOnceOperationChainIsEmpty { false };
-    Vector<Ref<RTCDtlsTransport>> m_transports;
+    Vector<Ref<RTCDtlsTransport>> m_dtlsTransports;
+    Vector<Ref<RTCIceTransport>> m_iceTransports;
 };
 
 } // namespace WebCore

@@ -41,6 +41,7 @@ RemotePlayback conditional=WIRELESS_PLAYBACK_TARGET
 RTCDataChannel conditional=WEB_RTC
 RTCDtlsTransport conditional=WEB_RTC
 RTCDTMFSender conditional=WEB_RTC
+RTCIceTransport conditional=WEB_RTC
 RTCPeerConnection conditional=WEB_RTC
 RTCRtpSFrameTransform conditional=WEB_RTC
 RTCRtpScriptTransform conditional=WEB_RTC

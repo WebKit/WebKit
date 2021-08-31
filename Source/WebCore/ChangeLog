@@ -1,3 +1,66 @@
+2021-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCIceTransport
+        https://bugs.webkit.org/show_bug.cgi?id=229285
+
+        Reviewed by Eric Carlson.
+
+        Introduce RTCIceTransport as per spec.
+        Reuse the same model as RTCDtlsTransport with a backend and RTCPeerConnection be responsible to reuse or create transports as needed.
+
+        Covered by updated tests.
+
+        * Modules/mediastream/RTCDtlsTransport.cpp:
+        (WebCore::RTCDtlsTransport::RTCDtlsTransport):
+        * Modules/mediastream/RTCDtlsTransport.h:
+        * Modules/mediastream/RTCDtlsTransport.idl:
+        * Modules/mediastream/RTCDtlsTransportBackend.h:
+        * Modules/mediastream/RTCIceTransport.cpp:
+        (WebCore::RTCIceTransport::RTCIceTransport):
+        (WebCore::RTCIceTransport::~RTCIceTransport):
+        (WebCore::RTCIceTransport::stop):
+        (WebCore::RTCIceTransport::virtualHasPendingActivity const):
+        (WebCore::RTCIceTransport::onStateChanged):
+        (WebCore::RTCIceTransport::onGatheringStateChanged):
+        * Modules/mediastream/RTCIceTransport.h:
+        (WebCore::RTCIceTransport::create):
+        (WebCore::RTCIceTransport::state const):
+        (WebCore::RTCIceTransport::backend const):
+        * Modules/mediastream/RTCIceTransport.idl:
+        * Modules/mediastream/RTCIceTransportBackend.h: Added.
+        (WebCore::operator==):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::computeConnectionState):
+        (WebCore::RTCPeerConnection::updateConnectionState):
+        (WebCore::isIceTransportUsedByTransceiver):
+        (WebCore::RTCPeerConnection::computeIceConnectionStateFromIceTransports):
+        (WebCore::RTCPeerConnection::processIceTransportStateChange):
+        (WebCore::RTCPeerConnection::getOrCreateIceTransport):
+        (WebCore::RTCPeerConnection::getOrCreateDtlsTransport):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.cpp:
+        (WebCore::LibWebRTCDtlsTransportBackend::iceTransportBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCIceTransportBackend.cpp: Added.
+        (WebCore::toRTCIceTransportState):
+        (WebCore::toRTCIceGatheringState):
+        (WebCore::LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver):
+        (WebCore::LibWebRTCIceTransportBackendObserver::start):
+        (WebCore::LibWebRTCIceTransportBackendObserver::stop):
+        (WebCore::LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged):
+        (WebCore::LibWebRTCIceTransportBackendObserver::onGatheringStateChanged):
+        (WebCore::LibWebRTCIceTransportBackend::LibWebRTCIceTransportBackend):
+        (WebCore::LibWebRTCIceTransportBackend::~LibWebRTCIceTransportBackend):
+        (WebCore::LibWebRTCIceTransportBackend::registerClient):
+        (WebCore::LibWebRTCIceTransportBackend::unregisterClient):
+        * Modules/mediastream/libwebrtc/LibWebRTCIceTransportBackend.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnIceConnectionChange):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * dom/EventTargetFactory.in:
+
 2021-08-31  Rob Buis  <rbuis@igalia.com>
 
         Nullptr crash in TypingCommand::willAddTypingToOpenCommand via TypingCommand::deleteKeyPressed

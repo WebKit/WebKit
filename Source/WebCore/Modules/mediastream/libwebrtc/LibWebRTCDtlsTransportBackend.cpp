@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
+#include "LibWebRTCIceTransportBackend.h"
 #include "LibWebRTCProvider.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <webrtc/api/dtls_transport_interface.h>
@@ -131,7 +132,6 @@ void LibWebRTCDtlsTransportBackendObserver::OnError(webrtc::RTCError)
     });
 }
 
-
 LibWebRTCDtlsTransportBackend::LibWebRTCDtlsTransportBackend(rtc::scoped_refptr<webrtc::DtlsTransportInterface>&& backend)
     : m_backend(WTFMove(backend))
 {
@@ -142,6 +142,11 @@ LibWebRTCDtlsTransportBackend::~LibWebRTCDtlsTransportBackend()
 {
     if (m_observer)
         m_observer->stop();
+}
+
+UniqueRef<RTCIceTransportBackend> LibWebRTCDtlsTransportBackend::iceTransportBackend()
+{
+    return makeUniqueRef<LibWebRTCIceTransportBackend>(m_backend->ice_transport());
 }
 
 void LibWebRTCDtlsTransportBackend::registerClient(Client& client)

@@ -188,6 +188,7 @@ Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
 Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.cpp
+Modules/mediastream/libwebrtc/LibWebRTCIceTransportBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp

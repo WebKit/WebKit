@@ -598,8 +598,7 @@ void LibWebRTCMediaEndpoint::OnIceConnectionChange(webrtc::PeerConnectionInterfa
     callOnMainThread([protectedThis = makeRef(*this), connectionState] {
         if (protectedThis->isStopped())
             return;
-        if (protectedThis->m_peerConnectionBackend.connection().iceConnectionState() != connectionState)
-            protectedThis->m_peerConnectionBackend.connection().updateIceConnectionState(connectionState);
+        protectedThis->m_peerConnectionBackend.connection().updateIceConnectionState(connectionState);
     });
 }
 

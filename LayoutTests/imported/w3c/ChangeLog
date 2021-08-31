@@ -1,3 +1,13 @@
+2021-08-31  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCIceTransport
+        https://bugs.webkit.org/show_bug.cgi?id=229285
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/idlharness.https.window-expected.txt:
+        * web-platform-tests/webrtc/protocol/bundle.https-expected.txt:
+
 2021-08-30  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Rebaseline for CSS Typed OM, CSSUnparsedValue partially implemented.
