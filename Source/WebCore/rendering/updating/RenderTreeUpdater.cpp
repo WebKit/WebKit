@@ -540,6 +540,8 @@ void RenderTreeUpdater::tearDownRenderers(Element& root)
 void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
 {
     ASSERT(host.shadowRoot());
+    if (!host.renderer() && !host.hasDisplayContents())
+        return;
     auto* view = host.document().renderView();
     if (!view)
         return;
