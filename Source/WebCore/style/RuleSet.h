@@ -150,6 +150,8 @@ public:
 private:
     RuleSet();
 
+    using CascadeLayerIdentifier = unsigned;
+
     struct Builder {
         enum class Mode { Normal, ResolverMutationScan };
 
@@ -158,9 +160,12 @@ private:
         Style::Resolver* resolver { nullptr };
         Mode mode { Mode::Normal };
         CascadeLayerName resolvedCascadeLayerName { };
-        unsigned cascadeLayerOrder { 0 };
+        HashMap<CascadeLayerName, CascadeLayerIdentifier> cascadeLayerIdentifierMap { };
+        CascadeLayerIdentifier currentCascadeLayerIdentifier { 0 };
 
         void addRulesFromSheet(const StyleSheetContents&);
+
+        ~Builder();
         
     private:
         void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
@@ -168,6 +173,7 @@ private:
 
         void pushCascadeLayer(const CascadeLayerName&);
         void popCascadeLayer(const CascadeLayerName&);
+        void updateCascadeLayerOrder();
     };
 
     struct CollectedMediaQueryChanges {
@@ -178,6 +184,14 @@ private:
     CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&, size_t startIndex);
 
     template<typename Function> void traverseRuleDatas(Function&&);
+
+    struct CascadeLayer {
+        CascadeLayerName resolvedName;
+        CascadeLayerIdentifier parentIdentifier;
+        unsigned order { 0 };
+    };
+    CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) { return m_cascadeLayers[identifier - 1]; }
+    const CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) const { return m_cascadeLayers[identifier - 1]; }
 
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
@@ -199,9 +213,9 @@ private:
     HashMap<Vector<size_t>, Ref<const RuleSet>> m_mediaQueryInvalidationRuleSetCache;
     unsigned m_ruleCount { 0 };
 
-    HashMap<CascadeLayerName, unsigned> m_cascadeLayerOrderMap;
-    // This is a side vector to hold layer order without bloating RuleData.
-    Vector<unsigned> m_cascadeLayerOrderForPosition;
+    Vector<CascadeLayer> m_cascadeLayers;
+    // This is a side vector to hold layer identifiers without bloating RuleData.
+    Vector<CascadeLayerIdentifier> m_cascadeLayerIdentifierForRulePosition;
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_autoShrinkToFitEnabled { true };
@@ -220,11 +234,13 @@ inline const RuleSet::RuleDataVector* RuleSet::tagRules(const AtomString& key, b
 
 inline unsigned RuleSet::cascadeLayerOrderFor(const RuleData& ruleData) const
 {
-    if (m_cascadeLayerOrderForPosition.size() > ruleData.position())
-        return m_cascadeLayerOrderForPosition[ruleData.position()];
-    return 0;
+    if (m_cascadeLayerIdentifierForRulePosition.size() <= ruleData.position())
+        return 0;
+    auto identifier = m_cascadeLayerIdentifierForRulePosition[ruleData.position()];
+    if (!identifier)
+        return 0;
+    return cascadeLayerForIdentifier(identifier).order;
 }
-
 
 } // namespace Style
 } // namespace WebCore

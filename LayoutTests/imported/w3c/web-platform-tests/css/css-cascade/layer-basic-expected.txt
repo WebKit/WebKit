@@ -17,20 +17,20 @@ PASS B6 Named layers
 PASS B7 Named layers
 PASS B8 Named layers
 PASS B9 Named layers
-FAIL B10 Named layers assert_equals: B10 Named layers, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS B10 Named layers
 PASS C1 Named layers shorthand
 PASS C2 Named layers shorthand
-FAIL C3 Named layers shorthand assert_equals: C3 Named layers shorthand, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS C3 Named layers shorthand
 PASS C4 Named layers shorthand
-FAIL C5 Named layers shorthand assert_equals: C5 Named layers shorthand, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS C5 Named layers shorthand
 PASS D1 Mixed named and anonymous layers
 PASS D2 Mixed named and anonymous layers
 PASS D3 Mixed named and anonymous layers
-FAIL D4 Mixed named and anonymous layers assert_equals: D4 Mixed named and anonymous layers, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS D4 Mixed named and anonymous layers
 PASS D5 Mixed named and anonymous layers
 PASS E1 Statement syntax
 PASS E2 Statement syntax
 PASS E3 Statement syntax
 PASS E4 Statement syntax
-FAIL E5 Statement syntax assert_equals: E5 Statement syntax, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS E5 Statement syntax
 

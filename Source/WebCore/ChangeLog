@@ -1,3 +1,39 @@
+2021-08-31  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Compute order correctly for late added sublayers
+        https://bugs.webkit.org/show_bug.cgi?id=229666
+
+        Reviewed by Simon Fraser.
+
+        In cases like
+
+            @layer a.b { ... }
+            @layer c { ... }
+            @layer a.d { ... }
+
+        'c' should have higher priority than 'a.d'.
+
+        Replace the per-RuleData layer order vector with references (indexes) to layer entry vector.
+        These entries have order field that can be recomputed.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::addRule):
+        (WebCore::Style::RuleSet::Builder::addStyleRule):
+        (WebCore::Style::RuleSet::Builder::pushCascadeLayer):
+
+        Instead of computing order directly we just give each layer an identifier and add an entry for it to the layer vector.
+
+        (WebCore::Style::RuleSet::Builder::popCascadeLayer):
+        (WebCore::Style::RuleSet::Builder::~Builder):
+
+        Compute layer order after building for all layers.
+
+        (WebCore::Style::RuleSet::shrinkToFit):
+        * style/RuleSet.h:
+        (WebCore::Style::RuleSet::cascadeLayerForIdentifier):
+        (WebCore::Style::RuleSet::cascadeLayerForIdentifier const):
+        (WebCore::Style::RuleSet::cascadeLayerOrderFor const):
+
 2021-08-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, OpenXR build warning fix.
