@@ -33,6 +33,7 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSUnparsedValue.h"
+#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
