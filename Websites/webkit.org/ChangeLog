@@ -1,3 +1,13 @@
+2021-08-31  Jonathan Bedard  <jbedard@apple.com>
+
+        [contributors.json] Replace class=bot with status=bot
+        https://bugs.webkit.org/show_bug.cgi?id=229712
+        <rdar://problem/82579767>
+
+        Reviewed by Aakash Jain.
+
+        * wp-content/themes/webkit/team.php: "bot" is now a status, not a class.
+
 2021-02-17  Ling Ho  <lingho@apple.com>
 
         WebKit nighly archives page not working for Big Sur

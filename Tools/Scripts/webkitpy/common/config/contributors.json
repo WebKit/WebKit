@@ -154,10 +154,10 @@
       "status" : "committer"
    },
    "Adobe Bug Tracker" : {
-      "class" : "bot",
       "emails" : [
          "WebkitBugTracker@adobe.com"
-      ]
+      ],
+      "status" : "bot"
    },
    "Adrian Perez de Castro" : {
       "emails" : [
@@ -1388,10 +1388,10 @@
       ]
    },
    "Commit Queue" : {
-      "class" : "bot",
       "emails" : [
          "commit-queue@webkit.org"
-      ]
+      ],
+      "status" : "bot"
    },
    "Conrad Shultz" : {
       "emails" : [
@@ -4801,10 +4801,10 @@
       ]
    },
    "Radar WebKit Bug Importer" : {
-      "class" : "bot",
       "emails" : [
          "webkit-bug-importer@group.apple.com"
-      ]
+      ],
+      "status" : "bot"
    },
    "Radu Stavila" : {
       "emails" : [
@@ -5873,19 +5873,19 @@
       ]
    },
    "WebKit Review Bot" : {
-      "class" : "bot",
       "emails" : [
          "webkit.review.bot@gmail.com"
       ],
       "nicks" : [
          "sheriff-bot"
-      ]
+      ],
+      "status" : "bot"
    },
    "WebKitGTK Bugs" : {
-      "class" : "bot",
       "emails" : [
          "bugs-noreply@webkitgtk.org"
-      ]
+      ],
+      "status" : "bot"
    },
    "Wenson Hsieh" : {
       "emails" : [

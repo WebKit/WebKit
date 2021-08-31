@@ -189,7 +189,7 @@ class Contributor(object):
             info["expertise"] = self.expertise
 
         if self.is_bot:
-            info["class"] = "bot"
+            info["status"] = "bot"
 
         return info
 
@@ -249,7 +249,7 @@ class CommitterList(object):
             elif status == "committer":
                 contributor = Committer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
                 self._committers.append(contributor)
-            elif data.get('class') == 'bot':
+            elif status == 'bot':
                 contributor = Bot(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
             else:
                 contributor = Contributor(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))

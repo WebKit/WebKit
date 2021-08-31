@@ -162,7 +162,7 @@ function parseContributorsJSON(text) {
 
     for (var contributor in contributorsJSON) {
         var data = contributorsJSON[contributor];
-        if (data.class == "bot")
+        if (data.status == "bot")
             continue;
         contributors.push({
             name: contributor,

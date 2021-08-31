@@ -1,3 +1,16 @@
+2021-08-31  Jonathan Bedard  <jbedard@apple.com>
+
+        [contributors.json] Replace class=bot with status=bot
+        https://bugs.webkit.org/show_bug.cgi?id=229712
+        <rdar://problem/82579767>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.as_dict): bot is now a status, not a class.
+        (CommitterList.load_json): Ditto.
+        * Scripts/webkitpy/common/config/contributors.json: Replace class=bot with status=bot.
+
 2021-08-30  Megan Gardner  <megan_gardner@apple.com>
 
         Fix double-tap-on-editable-content-for-selection-then-drag-* tests.
