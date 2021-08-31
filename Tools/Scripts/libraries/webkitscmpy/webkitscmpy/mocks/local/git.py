@@ -92,6 +92,8 @@ class Git(mocks.Subprocess):
                     '\tlogallrefupdates = true\n'
                     '\tignorecase = true\n'
                     '\tprecomposeunicode = true\n'
+                    '[pull]\n'
+	                '\trebase = true\n'
                     '[remote "origin"]\n'
                     '\turl = {remote}\n'
                     '\tfetch = +refs/heads/*:refs/remotes/origin/*\n'

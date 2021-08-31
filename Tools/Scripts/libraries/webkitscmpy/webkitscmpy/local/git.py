@@ -771,9 +771,14 @@ class Git(Scm):
             cwd=self.root_path,
         ).returncode else self.commit()
 
-    def pull(self):
-        commit = self.commit()
-        code = run([self.executable(), 'pull'], cwd=self.root_path).returncode
+    def pull(self, rebase=None, branch=None):
+        code = run(
+            [self.executable(), 'pull'] + (
+                ['origin', branch] if branch else []
+            ) + (
+                [] if rebase is None else ['--rebase={}'.format('True' if rebase else 'False')]
+            ), cwd=self.root_path,
+        ).returncode
         if not code and self.is_svn:
             return run([
                 self.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '{}:HEAD'.format(commit.revision),
