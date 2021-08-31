@@ -28,13 +28,13 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSPropertyNames.h"
+#include "CSSValue.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSValue;
 template<typename T> class ExceptionOr;
 
 enum class CSSStyleValueType : uint8_t {

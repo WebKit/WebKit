@@ -1,3 +1,10 @@
+2021-08-31  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed build fix for PlayStation following r241123.
+
+        * css/typedom/CSSStyleValue.h:
+        Add missing include.
+
 2021-08-31  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Addition of CSSUnparsedValue. (TypedOM)
