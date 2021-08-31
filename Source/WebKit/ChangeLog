@@ -1,3 +1,20 @@
+2021-08-31  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Move the implementation of -[WKWebView _dynamicUserInterfaceTraitDidChange] out of the testing category
+        https://bugs.webkit.org/show_bug.cgi?id=229735
+
+        Reviewed by Tim Horton.
+
+        r253465 incorrectly moved -[WKWebView _dynamicUserInterfaceTraitDidChange]
+        into the WKTestingIOS category. _dynamicUserInterfaceTraitDidChange is used
+        to respond to trait collection changes that affect dynamic colors, and is
+        not a testing only method. Consequently, the method should be implemented
+        in the WKViewInternalIOS category.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _dynamicUserInterfaceTraitDidChange]):
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+
 2021-08-31  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r281771): ASSERTION FAILED: !m_deletionHasBegun under WebCore::Permissions::~Permissions()

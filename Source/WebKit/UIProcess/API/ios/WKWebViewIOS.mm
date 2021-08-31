@@ -244,6 +244,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return deviceOrientationForUIInterfaceOrientation(orientation);
 }
 
+- (void)_dynamicUserInterfaceTraitDidChange
+{
+    if (!_page)
+        return;
+    _page->effectiveAppearanceDidChange();
+    [self _updateScrollViewBackground];
+}
+
 - (BOOL)_effectiveAppearanceIsDark
 {
     return self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;

@@ -433,14 +433,6 @@ static void dumpUIView(TextStream& ts, UIView *view)
     [_contentView _simulateTextEntered:text];
 }
 
-- (void)_dynamicUserInterfaceTraitDidChange
-{
-    if (!_page)
-        return;
-    _page->effectiveAppearanceDidChange();
-    [self _updateScrollViewBackground];
-}
-
 - (void)_triggerSystemPreviewActionOnElement:(uint64_t)elementID document:(uint64_t)documentID page:(uint64_t)pageID
 {
 #if USE(SYSTEM_PREVIEW)
