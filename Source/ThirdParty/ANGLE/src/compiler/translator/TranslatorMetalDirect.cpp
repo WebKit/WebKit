@@ -20,7 +20,6 @@
 #include "compiler/translator/TranslatorMetalDirect/Name.h"
 #include "compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.h"
 #include "compiler/translator/TranslatorMetalDirect/RewriteCaseDeclarations.h"
-#include "compiler/translator/TranslatorMetalDirect/RewriteGlobalQualifierDecls.h"
 #include "compiler/translator/TranslatorMetalDirect/RewriteKeywords.h"
 #include "compiler/translator/TranslatorMetalDirect/RewriteOutArgs.h"
 #include "compiler/translator/TranslatorMetalDirect/RewritePipelines.h"
@@ -1402,11 +1401,6 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
         return false;
     }
 
-    Invariants invariants;
-    if (!RewriteGlobalQualifierDecls(*this, root, invariants))
-    {
-        return false;
-    }
     const bool needsExplicitBoolCasts = (compileOptions & SH_ADD_EXPLICIT_BOOL_CASTS) != 0;
     if (!AddExplicitTypeCasts(*this, root, symbolEnv, needsExplicitBoolCasts))
     {
@@ -1414,8 +1408,8 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
     }
 
     PipelineStructs pipelineStructs;
-    if (!RewritePipelines(*this, root, idGen, driverUniforms, symbolEnv, invariants,
-                          pipelineStructs))
+    if (!RewritePipelines(*this, root, getInputVaryings(), getOutputVaryings(), idGen,
+                          driverUniforms, symbolEnv, pipelineStructs))
     {
         return false;
     }
@@ -1453,7 +1447,7 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
     {
         return false;
     }
-    if (!EmitMetal(*this, root, idGen, pipelineStructs, invariants, symbolEnv, ppc))
+    if (!EmitMetal(*this, root, idGen, pipelineStructs, symbolEnv, ppc))
     {
         return false;
     }

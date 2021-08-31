@@ -11,7 +11,6 @@
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/TranslatorMetalDirect/IdGen.h"
 #include "compiler/translator/TranslatorMetalDirect/Pipeline.h"
-#include "compiler/translator/TranslatorMetalDirect/RewriteGlobalQualifierDecls.h"
 #include "compiler/translator/TranslatorMetalDirect/SymbolEnv.h"
 
 namespace sh
@@ -34,10 +33,11 @@ namespace sh
 //      from `main`.
 ANGLE_NO_DISCARD bool RewritePipelines(TCompiler &compiler,
                                        TIntermBlock &root,
+                                       const std::vector<sh::ShaderVariable> &inputVaryings,
+                                       const std::vector<sh::ShaderVariable> &outputVariables,
                                        IdGen &idGen,
                                        const TVariable &angleUniformsGlobalInstanceVar,
                                        SymbolEnv &symbolEnv,
-                                       Invariants &invariants,
                                        PipelineStructs &outStructs);
 
 }  // namespace sh

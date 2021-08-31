@@ -1,3 +1,64 @@
+2021-08-31  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223317
+        <rdar://problem/75772659>
+
+        Reviewed by Kenneth Russell.
+
+        The parser maintains invariance metadata for each input and output
+        with the help of the symbol table, during parsing.
+
+        Use this metadata through the collection phase done by CollectVariables
+        section of shader compilation.
+
+        Remove the manual tree rewrite section that collected the invariance
+        information. The implementation had following problems:
+        1) It would declare the variables present. This would fail the test case
+        fixed here, due to the test case using invariant declarations to both
+        FragColor and FragData, which would cause both to be present as outputs
+        to the MSL.
+        2) It would operate on rewritten variables. For example, FragCoord would
+        be replaced with different variable, causing the invariance be marked
+        based on the rewritten name but the later lookup intended to be done
+        with the original name.
+
+        Remove logic to mark FragCoord as invariant, as MSL specification explicitly
+        says that only the vertex [[position]] output can be marked as [[invariant]].
+        As noted above, this never worked.
+
+        Fix cases where the tree rewriters assume that all variable references are
+        done within functions. The global qualifier declarations are now left
+        in the tree and as such can refer to variables but do not belong to any
+        function.
+
+        Fixes:
+        webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html
+        webgl/2.0.y/conformance/glsl/misc/fragcolor-fragdata-invariant.html
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect/DiscoverDependentFunctions.cpp:
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GenMetalTraverser::GenMetalTraverser):
+        (GenMetalTraverser::emitPostQualifier):
+        (GenMetalTraverser::visitGlobalQualifierDeclaration):
+        (sh::EmitMetal):
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.h:
+        * src/compiler/translator/TranslatorMetalDirect/RewriteGlobalQualifierDecls.cpp: Removed.
+        * src/compiler/translator/TranslatorMetalDirect/RewriteGlobalQualifierDecls.h: Removed.
+        * src/compiler/translator/TranslatorMetalDirect/RewritePipelines.cpp:
+        (sh::IsVariableInvariant):
+        (sh::GeneratePipelineStruct::Exec):
+        (sh::GeneratePipelineStruct::GeneratePipelineStruct):
+        (sh::GeneratePipelineStruct::createInternalPipelineStruct):
+        (sh::UpdatePipelineSymbols):
+        (sh::RewritePipeline):
+        (sh::RewritePipelines):
+        * src/compiler/translator/TranslatorMetalDirect/RewritePipelines.h:
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundExpressions.cpp:
+
 2021-08-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal index buffer restart range cache is could be maintained more consistently
