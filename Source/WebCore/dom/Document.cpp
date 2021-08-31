@@ -825,6 +825,7 @@ void Document::removedLastRef()
 
         destroyTreeScopeData();
         removeDetachedChildren();
+        RELEASE_ASSERT(m_topLayerElements.isEmpty());
         m_formController = nullptr;
         
         m_markers->detach();
@@ -8474,24 +8475,19 @@ Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const WTF::Function<bo
     return animations;
 }
 
-void Document::addToTopLayer(Element& element)
+void Document::addTopLayerElement(Element& element)
 {
-    element.isInTopLayerWillChange();
-
+    RELEASE_ASSERT(&element.document() == this && element.isConnected() && !element.isInTopLayer());
     // To add an element to a top layer, remove it from top layer and then append it to top layer.
-    m_topLayerElements.appendOrMoveToLast(element);
-
-    element.isInTopLayerDidChange();
+    auto result = m_topLayerElements.add(element);
+    RELEASE_ASSERT(result.isNewEntry);
 }
 
-void Document::removeFromTopLayer(Element& element)
+void Document::removeTopLayerElement(Element& element)
 {
-    element.isInTopLayerWillChange();
-
-    if (!m_topLayerElements.remove(element))
-        return;
-
-    element.isInTopLayerDidChange();
+    RELEASE_ASSERT(&element.document() == this && element.isInTopLayer());
+    auto didRemove = m_topLayerElements.remove(element);
+    RELEASE_ASSERT(didRemove);
 }
 
 HTMLDialogElement* Document::activeModalDialog() const

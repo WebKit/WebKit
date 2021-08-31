@@ -566,10 +566,10 @@ protected:
         ContainsFullScreenElement = 1 << 24,
 #endif
         IsComputedStyleInvalidFlag = 1 << 25,
-
         HasShadowRootContainingSlots = 1 << 26,
+        IsInTopLayer = 1 << 27,
 
-        // Bits 27-31 are free.
+        // Bits 28-31 are free.
     };
 
     enum class TabIndexState : uint8_t {

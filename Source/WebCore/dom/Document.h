@@ -1517,8 +1517,8 @@ public:
     DocumentTimelinesController* timelinesController() const { return m_timelinesController.get(); }
     WEBCORE_EXPORT DocumentTimelinesController& ensureTimelinesController();
 
-    void addToTopLayer(Element&);
-    void removeFromTopLayer(Element&);
+    void addTopLayerElement(Element&);
+    void removeTopLayerElement(Element&);
     const ListHashSet<Ref<Element>>& topLayerElements() const { return m_topLayerElements; }
 
     HTMLDialogElement* activeModalDialog() const;

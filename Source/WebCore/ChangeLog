@@ -1,3 +1,45 @@
+2021-08-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Re-generalize top layer element concept
+        https://bugs.webkit.org/show_bug.cgi?id=229488
+
+        Reviewed by Antti Koivisto.
+
+        r281548 made the concept of top layer is confined to dialog element to eliminate the runtime cost
+        of making 5+ function calls and looking up the list hash set per removal of every element.
+
+        This patch re-generalize this concept for all elements by introducing a new node flag to avoid
+        the runtime cost so that we may use it in the future for the full screen element.
+
+        No new tests since there should be no observable behavior changes.
+
+        This patch also inverts the relationship between member functions in Element and Document
+        to reduce the number of function calls involved by 1.
+
+        * dom/Document.cpp:
+        (Document::removedLastRef): Make sure the list of top layer elements is empty.
+        (WebCore::Document::addTopLayerElement): Renamed from addToTopLayer. The code to update the layer
+        has been moved to Element::addToTopLayer. Also release-time assert that the element is connected
+        to this document.
+        (WebCore::Document::removeTopLayerElement): Ditto.
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor): Call removeTopLayerElement if this element had a top layer.
+        (WebCore::renderLayerForElement): Added.
+        (WebCore::Element::addToTopLayer): Moved from Document. Set the node flag: IsInTopLayer.
+        (WebCore::Element::removeFromTopLayer): Ditto, clear the node flag.
+        (WebCore::Element::isInTopLayerWillChange): Deleted.
+        (WebCore::Element::isInTopLayerDidChange): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::isInTopLayer const): Rewritten to make use of new node flag.
+        * dom/Node.h:
+        (WebCore::NodeFlag): Added a new node flag: IsInTopLayer.
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::showModal):
+        (WebCore::HTMLDialogElement::close):
+        (WebCore::HTMLDialogElement::removedFromAncestor): Deleted.
+        * html/HTMLDialogElement.h:
+
 2021-08-26  Darin Adler  <darin@apple.com>
 
         Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining
