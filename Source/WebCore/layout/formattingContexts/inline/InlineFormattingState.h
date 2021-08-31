@@ -40,7 +40,7 @@ namespace Layout {
 using InlineItems = Vector<InlineItem>;
 using InlineLines = Vector<LineGeometry>;
 using InlineLineBoxes = Vector<LineBox>;
-using InlineLineRuns = Vector<LineRun>;
+using InlineRuns = Vector<Run>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
 class InlineFormattingState : public FormattingState {
@@ -60,9 +60,9 @@ public:
     const InlineLineBoxes& lineBoxes() const { return m_lineBoxes; }
     void addLineBox(LineBox&& lineBox) { m_lineBoxes.append(WTFMove(lineBox)); }
 
-    const InlineLineRuns& lineRuns() const { return m_lineRuns; }
-    InlineLineRuns& lineRuns() { return m_lineRuns; }
-    void addLineRun(LineRun&& run) { m_lineRuns.append(WTFMove(run)); }
+    const InlineRuns& runs() const { return m_runs; }
+    InlineRuns& runs() { return m_runs; }
+    void addRun(Run&& run) { m_runs.append(WTFMove(run)); }
 
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
@@ -75,7 +75,7 @@ private:
     InlineItems m_inlineItems;
     InlineLines m_lines;
     InlineLineBoxes m_lineBoxes;
-    InlineLineRuns m_lineRuns;
+    InlineRuns m_runs;
     InlineLayoutUnit m_clearGapAfterLastLine { 0 };
 };
 
@@ -89,7 +89,7 @@ inline void InlineFormattingState::clearLineAndRuns()
 {
     m_lines.clear();
     m_lineBoxes.clear();
-    m_lineRuns.clear();
+    m_runs.clear();
     m_clearGapAfterLastLine = { };
 }
 
@@ -98,7 +98,7 @@ inline void InlineFormattingState::shrinkToFit()
     m_inlineItems.shrinkToFit();
     m_lines.shrinkToFit();
     m_lineBoxes.shrinkToFit();
-    m_lineRuns.shrinkToFit();
+    m_runs.shrinkToFit();
 }
 
 }

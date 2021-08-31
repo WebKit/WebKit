@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
-struct LineRun {
+struct Run {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     struct Text {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -67,7 +67,7 @@ struct LineRun {
         GenericInlineLevelBox
     };
     struct Expansion;
-    LineRun(size_t lineIndex, Type, const Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isLineSpanning = false);
+    Run(size_t lineIndex, Type, const Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isLineSpanning = false);
 
     bool isText() const { return m_type == Type::Text; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
@@ -107,6 +107,8 @@ struct LineRun {
     Expansion expansion() const { return m_expansion; }
 
     const Box& layoutBox() const { return *m_layoutBox; }
+    const RenderStyle& style() const { return layoutBox().style(); }
+
     size_t lineIndex() const { return m_lineIndex; }
 
 private:
@@ -122,7 +124,7 @@ private:
     std::optional<Text> m_text;
 };
 
-inline LineRun::LineRun(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, bool isLineSpanning)
+inline Run::Run(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, bool isLineSpanning)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(makeWeakPtr(layoutBox))
@@ -135,7 +137,7 @@ inline LineRun::LineRun(size_t lineIndex, Type type, const Layout::Box& layoutBo
 {
 }
 
-inline LineRun::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
+inline Run::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
     : m_start(start)
     , m_length(length)
     , m_hasHyphen(hasHyphen)

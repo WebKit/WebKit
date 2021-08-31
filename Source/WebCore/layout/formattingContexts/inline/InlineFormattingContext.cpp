@@ -181,7 +181,7 @@ LayoutUnit InlineFormattingContext::usedContentHeight() const
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    formattingState.lineRuns().reserveInitialCapacity(formattingState.inlineItems().size());
+    formattingState.runs().reserveInitialCapacity(formattingState.inlineItems().size());
     InlineLayoutUnit lineLogicalTop = constraints.logicalTop();
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
@@ -266,7 +266,7 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
     // place the out-of-flow box at the logical right position.
     auto& formattingState = this->formattingState();
     auto& lines = formattingState.lines();
-    auto& lineRuns = formattingState.lineRuns();
+    auto& runs = formattingState.runs();
 
     for (auto& outOfFlowBox : outOfFlowBoxes) {
         auto& outOfFlowGeometry = formattingState.boxGeometry(*outOfFlowBox);
@@ -286,8 +286,8 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
         if (!previousContentSkippingFloats) {
             // This is the first (non-float)child. Let's place it to the left of the first run.
             // <div><img style="position: absolute">text content</div>
-            ASSERT(lineRuns.size());
-            outOfFlowGeometry.setLogicalTopLeft({ lineRuns[0].logicalLeft(), lines[0].lineBoxLogicalRect().top() });
+            ASSERT(runs.size());
+            outOfFlowGeometry.setLogicalTopLeft({ runs[0].logicalLeft(), lines[0].lineBoxLogicalRect().top() });
             continue;
         }
 
@@ -303,17 +303,17 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
             // The out-of-flow box should be placed after this inflow box.
             // Skip to the last run of this layout box. The last run's geometry is used to compute the out-of-flow box's static position.
             size_t lastRunIndexOnPreviousLayoutBox = 0;
-            for (; lastRunIndexOnPreviousLayoutBox < lineRuns.size() && &lineRuns[lastRunIndexOnPreviousLayoutBox].layoutBox() != previousContentSkippingFloats; ++lastRunIndexOnPreviousLayoutBox) { }
-            if (lastRunIndexOnPreviousLayoutBox == lineRuns.size()) {
+            for (; lastRunIndexOnPreviousLayoutBox < runs.size() && &runs[lastRunIndexOnPreviousLayoutBox].layoutBox() != previousContentSkippingFloats; ++lastRunIndexOnPreviousLayoutBox) { }
+            if (lastRunIndexOnPreviousLayoutBox == runs.size()) {
                 // FIXME: In very rare cases, the previous box's content might have been completely collapsed and left us with no run.
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return;
             }
-            for (; lastRunIndexOnPreviousLayoutBox < lineRuns.size() && &lineRuns[lastRunIndexOnPreviousLayoutBox].layoutBox() == previousContentSkippingFloats; ++lastRunIndexOnPreviousLayoutBox) { }
+            for (; lastRunIndexOnPreviousLayoutBox < runs.size() && &runs[lastRunIndexOnPreviousLayoutBox].layoutBox() == previousContentSkippingFloats; ++lastRunIndexOnPreviousLayoutBox) { }
                 --lastRunIndexOnPreviousLayoutBox;
             // Let's check if the previous run is the last run on the current line and use the next run's left instead.
-            auto& previousRun = lineRuns[lastRunIndexOnPreviousLayoutBox];
-            auto* nextRun = lastRunIndexOnPreviousLayoutBox + 1 < lineRuns.size() ? &lineRuns[lastRunIndexOnPreviousLayoutBox + 1] : nullptr;
+            auto& previousRun = runs[lastRunIndexOnPreviousLayoutBox];
+            auto* nextRun = lastRunIndexOnPreviousLayoutBox + 1 < runs.size() ? &runs[lastRunIndexOnPreviousLayoutBox + 1] : nullptr;
 
             if (nextRun && nextRun->lineIndex() == previousRun.lineIndex()) {
                 // Previous and next runs are on the same line. The out-of-flow box is right at the previous run's logical right.

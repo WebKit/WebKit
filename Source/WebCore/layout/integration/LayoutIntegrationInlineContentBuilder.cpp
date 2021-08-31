@@ -67,38 +67,38 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 
 void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    createDisplayLineRuns(inlineFormattingState.lines(), inlineFormattingState.lineRuns(), inlineContent);
+    createDisplayRuns(inlineFormattingState.lines(), inlineFormattingState.runs(), inlineContent);
     createDisplayLines(inlineFormattingState.lines(), inlineContent);
 }
 
-void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& lines, const Layout::InlineLineRuns& lineRuns, InlineContent& inlineContent) const
+void InlineContentBuilder::createDisplayRuns(const Layout::InlineLines& lines, const Layout::InlineRuns& runs, InlineContent& inlineContent) const
 {
-    if (lineRuns.isEmpty())
+    if (runs.isEmpty())
         return;
 
-    auto createDisplayBoxRun = [&](auto& lineRun) {
-        if (lineRun.isRootInlineBox()) {
+    auto createDisplayBoxRun = [&](auto& run) {
+        if (run.isRootInlineBox()) {
             // FIXME: Teach the run iterators to ignore the root inline box runs.
             return;
         }
-        auto& layoutBox = lineRun.layoutBox();
-        auto lineIndex = lineRun.lineIndex();
-        auto runRect = FloatRect { lineRun.logicalRect() };
-        auto inkOverflow = FloatRect { lineRun.inkOverflow() };
+        auto& layoutBox = run.layoutBox();
+        auto lineIndex = run.lineIndex();
+        auto runRect = FloatRect { run.logicalRect() };
+        auto inkOverflow = FloatRect { run.inkOverflow() };
         auto& geometry = m_layoutState.geometryForBox(layoutBox);
         runRect.setSize({ geometry.borderBoxWidth(), geometry.borderBoxHeight() });
         if (lines[lineIndex].needsIntegralPosition()) {
             runRect.setY(roundToInt(runRect.y()));
             inkOverflow.setY(roundToInt(inkOverflow.y()));
         }
-        if (lineRun.isInlineBox()) {
-            auto lineRunRect = lineRun.logicalRect();
+        if (run.isInlineBox()) {
+            auto runRect = run.logicalRect();
             auto hasScrollableContent = [&] {
                 // In standards mode, inline boxes always start with an imaginary strut.
-                return m_layoutState.inStandardsMode() || lineRun.hasContent() || geometry.horizontalBorder() || (geometry.horizontalPadding() && geometry.horizontalPadding().value());
+                return m_layoutState.inStandardsMode() || run.hasContent() || geometry.horizontalBorder() || (geometry.horizontalPadding() && geometry.horizontalPadding().value());
             };
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, lineRunRect, hasScrollableContent() });
-            if (!lineRun.isLineSpanning()) {
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, runRect, hasScrollableContent() });
+            if (!run.isLineSpanning()) {
                 // FIXME: Run iterators with (text)runs spanning over multiple lines expect no "in-between" runs (e.g. line spanning or root inline boxes).
                 inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, { }, { } });
             }
@@ -106,31 +106,31 @@ void InlineContentBuilder::createDisplayLineRuns(const Layout::InlineLines& line
             inlineContent.runs.append({ lineIndex, layoutBox, runRect, inkOverflow, { }, { } });
     };
 
-    auto createDisplayTextRun = [&](auto& lineRun) {
-        auto& layoutBox = lineRun.layoutBox();
-        auto lineIndex = lineRun.lineIndex();
-        auto runRect = FloatRect { lineRun.logicalRect() };
-        auto inkOverflow = FloatRect { lineRun.inkOverflow() };
+    auto createDisplayTextRun = [&](auto& run) {
+        auto& layoutBox = run.layoutBox();
+        auto lineIndex = run.lineIndex();
+        auto runRect = FloatRect { run.logicalRect() };
+        auto inkOverflow = FloatRect { run.inkOverflow() };
         if (lines[lineIndex].needsIntegralPosition()) {
             runRect.setY(roundToInt(runRect.y()));
             inkOverflow.setY(roundToInt(inkOverflow.y()));
         }
 
-        auto text = lineRun.text();
+        auto text = run.text();
         inlineContent.runs.append({ lineIndex
             , layoutBox
             , runRect
             , inkOverflow
-            , Run::Expansion { lineRun.expansion().behavior, lineRun.expansion().horizontalExpansion }
-            , Run::TextContent { text->start(), text->length(), text->originalContent(), text->renderedContent(), text->hasHyphen() } });
+            , Run::Expansion { run.expansion().behavior, run.expansion().horizontalExpansion }
+            , Run::Text { text->start(), text->length(), text->originalContent(), text->renderedContent(), text->hasHyphen() } });
     };
 
-    inlineContent.runs.reserveInitialCapacity(lineRuns.size());
-    for (auto& lineRun : lineRuns) {
-        if (lineRun.text())
-            createDisplayTextRun(lineRun);
+    inlineContent.runs.reserveInitialCapacity(runs.size());
+    for (auto& run : runs) {
+        if (run.text())
+            createDisplayTextRun(run);
         else
-            createDisplayBoxRun(lineRun);
+            createDisplayBoxRun(run);
     }
 }
 
@@ -160,13 +160,14 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
 
             // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
             auto& box = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+            auto runLogicalRect = run.logicalRect();
             if (!box.hasSelfPaintingLayer()) {
                 auto childInkOverflow = box.logicalVisualOverflowRectForPropagation(&box.parent()->style());
-                childInkOverflow.move(run.rect().x(), run.rect().y());
+                childInkOverflow.move(runLogicalRect.x(), runLogicalRect.y());
                 lineInkOverflowRect.unite(childInkOverflow);
             }
             auto childScrollableOverflow = box.logicalLayoutOverflowRectForPropagation(&box.parent()->style());
-            childScrollableOverflow.move(run.rect().x(), run.rect().y());
+            childScrollableOverflow.move(runLogicalRect.x(), runLogicalRect.y());
             scrollableOverflowRect.unite(childScrollableOverflow);
         }
         // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.

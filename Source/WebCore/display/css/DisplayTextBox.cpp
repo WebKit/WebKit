@@ -36,7 +36,7 @@ namespace Display {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TextBox);
 
-TextBox::TextBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::LineRun& lineRun)
+TextBox::TextBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle, const Layout::Run& lineRun)
     : Box(tree, borderBox, WTFMove(displayStyle), { TypeFlags::TextBox })
     , m_expansion(lineRun.expansion())
     , m_text(lineRun.text().value())

@@ -143,7 +143,7 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
     return makeUnique<Box>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), flags);
 }
 
-std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::LineRun& run, const Layout::LineGeometry& lineGeometry, const ContainingBlockContext& containingBlockContext) const
+std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::Run& run, const Layout::LineGeometry& lineGeometry, const ContainingBlockContext& containingBlockContext) const
 {
     UNUSED_PARAM(lineGeometry);
     ASSERT(run.text());

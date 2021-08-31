@@ -1,3 +1,130 @@
+2021-08-31  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Make naming more consistent across Layout::Run and Integration::Run structs
+        https://bugs.webkit.org/show_bug.cgi?id=229693
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for merging these 2 structs.
+
+        * display/DisplayTreeBuilder.cpp:
+        (WebCore::Display::TreeBuilder::buildInlineDisplayTree):
+        * display/css/DisplayBoxFactory.cpp:
+        (WebCore::Display::BoxFactory::displayBoxForTextRun const):
+        * display/css/DisplayBoxFactory.h:
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::TextBox):
+        * display/css/DisplayTextBox.h:
+        (WebCore::Display::TextBox::expansion const):
+        (WebCore::Display::TextBox::text const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingNonTextRuns):
+        (WebCore::Layout::checkForMatchingTextRuns):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computeStaticPositionForOutOfFlowContent):
+        * layout/formattingContexts/inline/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::runs const):
+        (WebCore::Layout::InlineFormattingState::runs):
+        (WebCore::Layout::InlineFormattingState::addRun):
+        (WebCore::Layout::InlineFormattingState::clearLineAndRuns):
+        (WebCore::Layout::InlineFormattingState::shrinkToFit):
+        (WebCore::Layout::InlineFormattingState::lineRuns const): Deleted.
+        (WebCore::Layout::InlineFormattingState::lineRuns): Deleted.
+        (WebCore::Layout::InlineFormattingState::addLineRun): Deleted.
+        * layout/formattingContexts/inline/InlineLine.h:
+        (WebCore::Layout::Line::Run::expansion const):
+        (WebCore::Layout::Line::Run::setExpansion):
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::Run::style const):
+        (WebCore::Layout::Run::Run):
+        (WebCore::Layout::Run::Text::Text):
+        (WebCore::Layout::LineRun::Text::start const): Deleted.
+        (WebCore::Layout::LineRun::Text::end const): Deleted.
+        (WebCore::Layout::LineRun::Text::length const): Deleted.
+        (WebCore::Layout::LineRun::Text::originalContent const): Deleted.
+        (WebCore::Layout::LineRun::Text::renderedContent const): Deleted.
+        (WebCore::Layout::LineRun::Text::hasHyphen const): Deleted.
+        (WebCore::Layout::LineRun::isText const): Deleted.
+        (WebCore::Layout::LineRun::isSoftLineBreak const): Deleted.
+        (WebCore::Layout::LineRun::isLineBreakBox const): Deleted.
+        (WebCore::Layout::LineRun::isLineBreak const): Deleted.
+        (WebCore::Layout::LineRun::isAtomicInlineLevelBox const): Deleted.
+        (WebCore::Layout::LineRun::isInlineBox const): Deleted.
+        (WebCore::Layout::LineRun::isNonRootInlineBox const): Deleted.
+        (WebCore::Layout::LineRun::isRootInlineBox const): Deleted.
+        (WebCore::Layout::LineRun::isGenericInlineLevelBox const): Deleted.
+        (WebCore::Layout::LineRun::isInlineLevelBox const): Deleted.
+        (WebCore::Layout::LineRun::isNonRootInlineLevelBox const): Deleted.
+        (WebCore::Layout::LineRun::type const): Deleted.
+        (WebCore::Layout::LineRun::hasContent const): Deleted.
+        (WebCore::Layout::LineRun::isLineSpanning const): Deleted.
+        (WebCore::Layout::LineRun::logicalRect const): Deleted.
+        (WebCore::Layout::LineRun::inkOverflow const): Deleted.
+        (WebCore::Layout::LineRun::logicalTop const): Deleted.
+        (WebCore::Layout::LineRun::logicalBottom const): Deleted.
+        (WebCore::Layout::LineRun::logicalLeft const): Deleted.
+        (WebCore::Layout::LineRun::logicalRight const): Deleted.
+        (WebCore::Layout::LineRun::logicalWidth const): Deleted.
+        (WebCore::Layout::LineRun::logicalHeight const): Deleted.
+        (WebCore::Layout::LineRun::moveVertically): Deleted.
+        (WebCore::Layout::LineRun::text): Deleted.
+        (WebCore::Layout::LineRun::text const): Deleted.
+        (WebCore::Layout::LineRun::expansion const): Deleted.
+        (WebCore::Layout::LineRun::layoutBox const): Deleted.
+        (WebCore::Layout::LineRun::lineIndex const): Deleted.
+        (WebCore::Layout::LineRun::LineRun): Deleted.
+        (WebCore::Layout::LineRun::Text::Text): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::iteratorForTextRun const):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayRuns const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLineRuns const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        (WebCore::LayoutIntegration::LineLayout::paintTextRunUsingPhysicalCoordinates):
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        * layout/integration/LayoutIntegrationRun.h:
+        (WebCore::LayoutIntegration::Run::logicalRect const):
+        (WebCore::LayoutIntegration::Run::text):
+        (WebCore::LayoutIntegration::Run::text const):
+        (WebCore::LayoutIntegration::Run::isLineBreak const):
+        (WebCore::LayoutIntegration::Run::Run):
+        (WebCore::LayoutIntegration::Run::Text::Text):
+        (WebCore::LayoutIntegration::Run::TextContent::start const): Deleted.
+        (WebCore::LayoutIntegration::Run::TextContent::end const): Deleted.
+        (WebCore::LayoutIntegration::Run::TextContent::length const): Deleted.
+        (WebCore::LayoutIntegration::Run::TextContent::originalContent const): Deleted.
+        (WebCore::LayoutIntegration::Run::TextContent::renderedContent const): Deleted.
+        (WebCore::LayoutIntegration::Run::TextContent::hasHyphen const): Deleted.
+        (WebCore::LayoutIntegration::Run::rect const): Deleted.
+        (WebCore::LayoutIntegration::Run::textContent): Deleted.
+        (WebCore::LayoutIntegration::Run::textContent const): Deleted.
+        (WebCore::LayoutIntegration::Run::TextContent::TextContent): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::isText const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::rect const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::hasHyphen const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::text const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::start const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::end const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::length const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traverseNextTextRun):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::showInlineTreeAndRuns):
+
 2021-08-31  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Compute order correctly for late added sublayers

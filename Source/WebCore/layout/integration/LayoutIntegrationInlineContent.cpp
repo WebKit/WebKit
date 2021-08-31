@@ -79,7 +79,7 @@ RunIterator InlineContent::iteratorForRun(const Run& run) const
 
 TextRunIterator InlineContent::iteratorForTextRun(const Run& run) const
 {
-    ASSERT(run.textContent());
+    ASSERT(run.text());
     return { RunIteratorModernPath { *this, static_cast<size_t>(&run - runs.begin()) } };
 }
 

@@ -41,7 +41,7 @@ class Box;
 class BoxGeometry;
 class ContainerBox;
 class LineGeometry;
-struct LineRun;
+struct Run;
 }
 
 namespace Display {
@@ -74,7 +74,7 @@ public:
     std::unique_ptr<Box> displayBoxForBodyBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, RootBackgroundPropagation) const;
     std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&) const;
 
-    std::unique_ptr<Box> displayBoxForTextRun(const Layout::LineRun&, const Layout::LineGeometry&, const ContainingBlockContext&) const;
+    std::unique_ptr<Box> displayBoxForTextRun(const Layout::Run&, const Layout::LineGeometry&, const ContainingBlockContext&) const;
 
 private:
     std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, const RenderStyle* styleForBackground, Style&&) const;

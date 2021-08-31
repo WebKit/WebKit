@@ -38,17 +38,17 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TextBox);
 class TextBox : public Box {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TextBox);
 public:
-    TextBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, const Layout::LineRun&);
+    TextBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, const Layout::Run&);
 
-    Layout::LineRun::Expansion expansion() const { return m_expansion; }
-    const Layout::LineRun::Text& text() const { return m_text; }
+    Layout::Run::Expansion expansion() const { return m_expansion; }
+    const Layout::Run::Text& text() const { return m_text; }
 
 private:
     const char* boxName() const final;
     String debugDescription() const final;
     
-    Layout::LineRun::Expansion m_expansion;
-    Layout::LineRun::Text m_text;
+    Layout::Run::Expansion m_expansion;
+    Layout::Run::Text m_text;
 };
 
 } // namespace Display

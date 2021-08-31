@@ -83,7 +83,7 @@ public:
         InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
         InlineLayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
 
-        const LineRun::Expansion& expansion() const { return m_expansion; }
+        const ::WebCore::Layout::Run::Expansion& expansion() const { return m_expansion; }
 
         bool hasTrailingWhitespace() const { return m_trailingWhitespaceType != TrailingWhitespace::None; }
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
@@ -98,7 +98,7 @@ public:
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
         void shrinkHorizontally(InlineLayoutUnit width) { m_logicalWidth -= width; }
-        void setExpansion(LineRun::Expansion expansion) { m_expansion = expansion; }
+        void setExpansion(::WebCore::Layout::Run::Expansion expansion) { m_expansion = expansion; }
         void setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
         enum class TrailingWhitespace {
@@ -124,7 +124,7 @@ public:
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
         std::optional<Text> m_textContent;
-        LineRun::Expansion m_expansion;
+        ::WebCore::Layout::Run::Expansion m_expansion;
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }

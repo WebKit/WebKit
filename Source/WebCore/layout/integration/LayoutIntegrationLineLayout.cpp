@@ -455,7 +455,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintRect.moveBy(-paintOffset);
 
     for (auto& run : m_inlineContent->runsForRect(paintRect)) {
-        if (run.textContent())
+        if (run.text())
             paintTextRunUsingPhysicalCoordinates(paintInfo, paintOffset, m_inlineContent->lineForRun(run), run);
         else if (auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox()); is<RenderBox>(renderer) && renderer.isReplaced()) {
             auto& renderBox = downcast<RenderBox>(renderer);
@@ -480,7 +480,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
 
         if (is<RenderText>(renderer)) {
-            auto runRect = Layout::toLayoutRect(run.rect());
+            auto runRect = Layout::toLayoutRect(run.logicalRect());
             runRect.moveBy(accumulatedOffset);
 
             if (!locationInContainer.intersects(runRect))
@@ -551,7 +551,7 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
     if (run.style().visibility() != Visibility::Visible)
         return;
 
-    auto& textContent = *run.textContent();
+    auto& textContent = *run.text();
     if (!textContent.length())
         return;
 
@@ -560,7 +560,7 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
     auto physicalPaintOffset = paintOffset;
     if (!blockIsHorizontalWriting) {
         // FIXME: Figure out why this translate is required.
-        physicalPaintOffset.move({ 0, -run.rect().height() });
+        physicalPaintOffset.move({ 0, -run.logicalRect().height() });
     }
 
     auto physicalRect = [&](const auto& rect) {
@@ -592,7 +592,7 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
     // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
     // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
     auto& fontCascade = style.fontCascade();
-    auto xPos = run.rect().x() - (line.lineBoxLeft() + line.contentLeft());
+    auto xPos = run.logicalRect().x() - (line.lineBoxLeft() + line.contentLeft());
     auto textRun = WebCore::TextRun { textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
 
@@ -603,7 +603,7 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
 
     // Painting uses only physical coordinates.
     {
-        auto runRect = physicalRect(run.rect());
+        auto runRect = physicalRect(run.logicalRect());
         auto boxRect = FloatRect { FloatPoint { physicalPaintOffset.x() + runRect.x(), physicalPaintOffset.y() + runRect.y() }, runRect.size() };
         auto textOrigin = FloatPoint { boxRect.x(), roundToDevicePixel(boxRect.y() + fontCascade.fontMetrics().ascent(), formattingContextRoot.document().deviceScaleFactor()) };
 

@@ -40,10 +40,10 @@ namespace LayoutIntegration {
 
 struct Run {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    struct TextContent {
+    struct Text {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        TextContent(size_t position, size_t length, const String&, String adjustedContentToRender, bool hasHyphen);
+        Text(size_t position, size_t length, const String&, String adjustedContentToRender, bool hasHyphen);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
@@ -61,15 +61,15 @@ struct Run {
     };
 
     struct Expansion;
-    Run(size_t lineIndex, const Layout::Box&, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<TextContent> = std::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt);
 
-    const FloatRect& rect() const { return m_rect; }
+    const FloatRect& logicalRect() const { return m_rect; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
-    std::optional<TextContent>& textContent() { return m_textContent; }
-    const std::optional<TextContent>& textContent() const { return m_textContent; }
+    std::optional<Text>& text() { return m_text; }
+    const std::optional<Text>& text() const { return m_text; }
     // FIXME: This information should be preserved at Run construction time.
-    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->originalContent() == "\n" && style().preserveNewline()); }
+    bool isLineBreak() const { return layoutBox().isLineBreakBox() || (text() && text()->originalContent() == "\n" && style().preserveNewline()); }
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
@@ -94,20 +94,20 @@ private:
     FloatRect m_rect;
     FloatRect m_inkOverflow;
     Expansion m_expansion;
-    std::optional<TextContent> m_textContent;
+    std::optional<Text> m_text;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, const FloatRect& inkOverflow, Expansion expansion, std::optional<TextContent> textContent)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, const FloatRect& inkOverflow, Expansion expansion, std::optional<Text> text)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_rect(rect)
     , m_inkOverflow(inkOverflow)
     , m_expansion(expansion)
-    , m_textContent(textContent)
+    , m_text(text)
 {
 }
 
-inline Run::TextContent::TextContent(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
+inline Run::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
     : m_start(start)
     , m_length(length)
     , m_hasHyphen(hasHyphen)

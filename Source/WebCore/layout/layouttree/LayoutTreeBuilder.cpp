@@ -387,7 +387,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
 {
     auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
     auto& lines = inlineFormattingState.lines();
-    auto& lineRuns = inlineFormattingState.lineRuns();
+    auto& runs = inlineFormattingState.runs();
 
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto addSpacing = [&] {
@@ -426,7 +426,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
                 << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")";
             stream.nextLine();
         };
-        for (auto& run : lineRuns) {
+        for (auto& run : runs) {
             if (run.lineIndex() != lineIndex)
                 continue;
             if (!run.layoutBox().isInlineLevelBox())
@@ -437,7 +437,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         addSpacing();
         stream << "  Runs:";
         stream.nextLine();
-        for (auto& run : lineRuns) {
+        for (auto& run : runs) {
             if (run.lineIndex() != lineIndex)
                 continue;
             addSpacing();
