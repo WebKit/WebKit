@@ -31,8 +31,8 @@ namespace WebCore {
 
 class NetworkStorageSession;
 
-WEBCORE_EXPORT void startObservingCookieChanges(const NetworkStorageSession&, WTF::Function<void ()>&&);
-WEBCORE_EXPORT void stopObservingCookieChanges(const NetworkStorageSession&);
+WEBCORE_EXPORT void startObservingCookieChanges(NetworkStorageSession&, WTF::Function<void()>&&);
+WEBCORE_EXPORT void stopObservingCookieChanges(NetworkStorageSession&);
 
 }
 

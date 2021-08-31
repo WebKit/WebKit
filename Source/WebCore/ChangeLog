@@ -1,3 +1,27 @@
+2021-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Assertion in startObservingCookieChanges()
+        https://bugs.webkit.org/show_bug.cgi?id=229708
+
+        Reviewed by Philippe Normand.
+
+        Add an implementation for startObservingCookieChanges() and stopObservingCookieChanges() setting the cookies
+        observer callback on the given storage session.
+
+        * platform/network/CookieStorage.h:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+        * platform/network/curl/CookieStorageCurl.cpp:
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+        * platform/network/mac/CookieStorageMac.mm:
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+        * platform/network/soup/CookieStorageSoup.cpp:
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+
 2021-08-31  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Make naming more consistent across Layout::Run and Integration::Run structs

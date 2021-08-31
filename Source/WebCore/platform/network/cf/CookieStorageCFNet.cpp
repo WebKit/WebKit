@@ -63,7 +63,7 @@ static inline CFRunLoopRef cookieStorageObserverRunLoop()
     return loaderRunLoop();
 }
 
-void startObservingCookieChanges(const NetworkStorageSession& storageSession, WTF::Function<void ()>&& callback)
+void startObservingCookieChanges(NetworkStorageSession& storageSession, WTF::Function<void()>&& callback)
 {
     ASSERT(isMainThread());
 
@@ -80,7 +80,7 @@ void startObservingCookieChanges(const NetworkStorageSession& storageSession, WT
     CFHTTPCookieStorageAddObserver(cookieStorage.get(), runLoop, kCFRunLoopDefaultMode, notifyCookiesChanged, 0);
 }
 
-void stopObservingCookieChanges(const NetworkStorageSession& storageSession)
+void stopObservingCookieChanges(NetworkStorageSession& storageSession)
 {
     ASSERT(isMainThread());
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2012 Igalia S.L.
+ *  Copyright (C) 2021 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,20 @@
 #include "CookieStorage.h"
 
 #if USE(SOUP)
+#include "NetworkStorageSession.h"
 
 namespace WebCore {
 
-void startObservingCookieChanges(const NetworkStorageSession&, WTF::Function<void ()>&&)
+void startObservingCookieChanges(NetworkStorageSession& storageSession, Function<void()>&& callback)
 {
-    ASSERT_NOT_REACHED();
+    storageSession.setCookieObserverHandler(WTFMove(callback));
 }
 
-void stopObservingCookieChanges(const NetworkStorageSession&)
+void stopObservingCookieChanges(NetworkStorageSession& storageSession)
 {
-    ASSERT_NOT_REACHED();
+    storageSession.setCookieObserverHandler(nullptr);
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // USE(SOUP)

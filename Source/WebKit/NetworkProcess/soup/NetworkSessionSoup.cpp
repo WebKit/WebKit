@@ -59,18 +59,12 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSe
     else
         m_networkSession->setCookieJar(storageSession->cookieStorage());
 
-    storageSession->setCookieObserverHandler([this] {
-        this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
-    });
-
     if (!parameters.hstsStorageDirectory.isEmpty())
         m_networkSession->setHSTSPersistentStorage(parameters.hstsStorageDirectory);
 }
 
 NetworkSessionSoup::~NetworkSessionSoup()
 {
-    if (auto* storageSession = networkProcess().storageSession(m_sessionID))
-        storageSession->setCookieObserverHandler(nullptr);
 }
 
 SoupSession* NetworkSessionSoup::soupSession() const
