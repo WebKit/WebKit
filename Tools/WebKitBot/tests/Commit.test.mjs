@@ -30,7 +30,7 @@ import Commit from "../src/Commit.mjs";
 import Contributors from "../src/Contributors.mjs";
 import {rootDirectoryOfWebKit} from "../src/Utility.mjs";
 
-const localContributorsPath = path.resolve(rootDirectoryOfWebKit(), "Tools", "Scripts", "webkitpy", "common", "config", "contributors.json");
+const localContributorsPath = path.resolve(rootDirectoryOfWebKit(), "metadata", "contributors.json");
 const contributors = new Contributors(JSON.parse(readFileSync(localContributorsPath)));
 const readFileAsync = util.promisify(readFile);
 
@@ -44,10 +44,10 @@ test("Commit can parse one having radar and buzilla", async () => {
     expect(commit.radar).toBe(61799040);
     expect(commit.email).toBe("ddkilzer@apple.com");
     expect(commit.title).toBe("Use ObjectIdentifier<> instead of uint64_t for context IDs in VideoFullscreenManagerProxy");
-    expect(commit.author).toBe("David Kilzer (@ddkilzer)");
+    expect(commit.author).toBe("David Kilzer (@David Kilzer)");
     expect(commit.url).toBe("https://trac.webkit.org/r263476");
     expect(commit.message()).toBe(`Use ObjectIdentifier&lt;&gt; instead of uint64_t for context IDs in VideoFullscreenManagerProxy
-https://trac.webkit.org/r263476 by David Kilzer (@ddkilzer)
+https://trac.webkit.org/r263476 by David Kilzer (@David Kilzer)
 https://webkit.org/b/212392 <rdar://problem/61799040>`);
 });
 
@@ -61,10 +61,10 @@ test("Commit can parse one not having radar and buzilla", async () => {
     expect(commit.radar).toBe(null);
     expect(commit.email).toBe("philn@webkit.org");
     expect(commit.title).toBe("Unreviewed GTK gardening");
-    expect(commit.author).toBe("Philippe Normand (@philn)");
+    expect(commit.author).toBe("Philippe Normand (@Philippe Normand)");
     expect(commit.url).toBe("https://trac.webkit.org/r263465");
     expect(commit.message()).toBe(`Unreviewed GTK gardening
-https://trac.webkit.org/r263465 by Philippe Normand (@philn)`);
+https://trac.webkit.org/r263465 by Philippe Normand (@Philippe Normand)`);
 });
 
 test("Commit can parse one having buzilla", async () => {
@@ -77,9 +77,9 @@ test("Commit can parse one having buzilla", async () => {
     expect(commit.radar).toBe(null);
     expect(commit.email).toBe("shvaikalesh@gmail.com");
     expect(commit.title).toBe("Add DFG/FTL fast path for GetPrototypeOf based on OverridesGetPrototype flag");
-    expect(commit.author).toBe("Alexey Shvayka (@shvaikalesh)");
+    expect(commit.author).toBe("Alexey Shvayka (@Alexey Shvayka)");
     expect(commit.url).toBe("https://trac.webkit.org/r263470");
     expect(commit.message()).toBe(`Add DFG/FTL fast path for GetPrototypeOf based on OverridesGetPrototype flag
-https://trac.webkit.org/r263470 by Alexey Shvayka (@shvaikalesh)
+https://trac.webkit.org/r263470 by Alexey Shvayka (@Alexey Shvayka)
 https://webkit.org/b/213191`);
 });

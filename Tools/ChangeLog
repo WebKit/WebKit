@@ -1,3 +1,15 @@
+2021-08-31  Jonathan Bedard  <jbedard@apple.com>
+
+        [contributors.json] Relocation (Part 5)
+        https://bugs.webkit.org/show_bug.cgi?id=229690
+        <rdar://problem/82552403>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebKitBot/src/Commit.mjs: Load contributors from metadata/contributors.json.
+        * WebKitBot/src/Contributors.mjs: Load contributors from metadata/contributors.json, parse as list instead of dictionary.
+        * WebKitBot/tests/Commit.test.mjs: Use name instead of fullName, stop relying on nicks.
+
 2021-08-30  Megan Gardner  <megan_gardner@apple.com>
 
         Fix double-tap-on-editable-content-for-selection-then-drag-* tests.

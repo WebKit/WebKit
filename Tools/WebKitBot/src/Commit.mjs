@@ -39,17 +39,14 @@ function findAndRemove(change, regExp)
 function cleanUpChange(change, contributors)
 {
     for (let entry of contributors.entries) {
-        if (!entry.nicks)
-            continue;
-
-        let nameWithNicks = `${entry.fullName} (@${entry.nicks[0]})`;
-        if (change.includes(entry.fullName)) {
-            change = replaceAll(entry.fullName, nameWithNicks, change);
+        let nameWithAt = `${entry.name} (@${entry.name})`;
+        if (change.includes(entry.name)) {
+            change = replaceAll(entry.name, nameWithAt, change);
             for (let email of entry.emails)
                 change = replaceAll(`<${email}>`, "", change);
         } else {
             for (let email of entry.emails)
-                change = replaceAll(` ${email} `, ` ${nameWithNicks} `, change);
+                change = replaceAll(` ${email} `, ` ${nameWithAt} `, change);
         }
     }
     return change;
@@ -78,8 +75,8 @@ export default class Commit {
             this._author = this._email;
             if (this._email) {
                 let entry = contributors.queryWithEmail(this._email);
-                if (entry && entry.nicks && entry.nicks[0])
-                    this._author = `${entry.fullName} (@${entry.nicks[0]})`;
+                if (entry)
+                    this._author = `${entry.name} (@${entry.name})`;
             }
         }
         if (this._revert) {
