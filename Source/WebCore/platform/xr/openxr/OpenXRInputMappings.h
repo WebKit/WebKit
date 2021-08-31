@@ -115,7 +115,7 @@ constexpr std::array<OpenXRButton, 3> HTCViveButtons {
 };
 
 constexpr std::array<OpenXRAxis, 1> HTCViveAxes {
-    { OpenXRAxisType::Touchpad, "/input/trackpad" }
+    { { OpenXRAxisType::Touchpad, "/input/trackpad" } }
 };
 
 constexpr OpenXRInputProfile HTCViveInputProfile {

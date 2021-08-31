@@ -1,3 +1,9 @@
+2021-08-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, OpenXR build warning fix.
+
+        * platform/xr/openxr/OpenXRInputMappings.h:
+
 2021-08-31  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCIceTransport
