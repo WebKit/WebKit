@@ -363,7 +363,7 @@ PaymentRequest::~PaymentRequest()
     ASSERT(!m_activePaymentHandler);
 }
 
-// https://www.w3.org/TR/payment-request/#show()-method
+// https://www.w3.org/TR/payment-request/#show-method
 void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&& promise)
 {
     if (!document.frame()) {
@@ -371,7 +371,8 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
         return;
     }
 
-    if (!UserGestureIndicator::processingUserGesture()) {
+    auto* window = document.frame()->window();
+    if (!window || !window->consumeTransientActivation()) {
         promise.reject(Exception { SecurityError, "show() must be triggered by user activation." });
         return;
     }

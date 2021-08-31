@@ -71,9 +71,14 @@
       // Sets the "payment-relevant browsing context's payment request is
       // showing boolean" to true and then try to show a second payment sheet in
       // the same window. The second show() should reject.
-      const [showPromise1, showPromise2] = await activateThen(
-        async () => {
-          return [request1.show(), request2.show()];
+      const [showPromise1] = await activateThen(
+        () => {
+          return [request1.show()]
+        }
+      );
+      const [showPromise2] = await activateThen(
+        () => {
+          return [request2.show()]
         }
       );
       await promise_rejects(
@@ -117,12 +122,18 @@
       const iframeRequest = new iframeWindow.PaymentRequest(methods, details);
       const windowRequest = new window.PaymentRequest(methods, details);
 
-      // Let's get some blessed showPromises
-      const [iframeShowPromise, windowShowPromise] = await activateThen(
-        async () => {
-          // iframe sets "is showing boolean", ignore the returned promise.
+      // Let's get blessed promise for the iframe
+      const [iframeShowPromise] = await activateThen(
+        () => {
+          // iframe sets "is showing boolean"
+          return [iframeRequest.show()];
+        }
+      );
+
+      const [windowShowPromise] = await activateThen(
+        () => {
           // The top level window now tries to show() the payment request.
-          return [iframeRequest.show(), windowRequest.show()];
+          return [windowRequest.show()];
         }
       );
 
@@ -130,7 +141,7 @@
         t,
         'AbortError',
         windowShowPromise,
-        'iframe is already showing a payment request.',
+        'iframe is already showing a payment request',
       );
 
       // Cleanup
@@ -154,9 +165,15 @@
       // We first show a payment request via the the top level browsing context,
       // windowRequest.show() sets "is showing boolean" to true. Then we try to
       // show a payment request in the iframe, which should reject.
-      const [windowShowPromise, iframeShowPromise] = await activateThen(
-        async () => {
-          return [windowRequest.show(), iframeRequest.show()];
+      const [windowShowPromise] = await activateThen(
+        () => {
+          return [windowRequest.show()];
+        }
+      );
+
+      const [iframeShowPromise] = await activateThen(
+        () => {
+          return [iframeRequest.show()];
         }
       );
 
@@ -188,15 +205,15 @@
       // Get the showPromise for each browsing context. Doing this in a separate
       // test_driver.bless() is important because the user gesture brings
       // |window| to the foreground, so that the payment sheet can show.
-      const [
-        windowShowPromise,
-        iframeShowPromise,
-      ] = await activateThen(
+      const [windowShowPromise] = await activateThen(
+        () => {
+          return [windowRequest.show()];
+        }
+      );
+
+      const [ iframeShowPromise ] = await activateThen(
         async () => {
-          return [
-            windowRequest.show(),
-            iframeRequest.show(),
-          ];
+          return [iframeRequest.show()];
         }
       );
 
@@ -227,15 +244,14 @@
       // Get the showPromise for each browsing context. Doing this in a separate
       // test_driver.bless() is important because the user gesture brings
       // |window| to the foreground, so that the payment sheet can show.
-      const [
-        iframeShowPromise,
-        windowShowPromise,
-      ] = await activateThen(
-        async () => {
-          return [
-            iframeRequest.show(),
-            windowRequest.show(),
-          ];
+      const [iframeShowPromise] = await activateThen(
+        () => {
+          return [iframeRequest.show()];
+        }
+      );
+      const [windowShowPromise] = await activateThen(
+        () => {
+          return [windowRequest.show()];
         }
       );
 

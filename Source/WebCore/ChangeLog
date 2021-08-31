@@ -1,3 +1,15 @@
+2021-08-31  Marcos Caceres  <marcos@marcosc.com>
+
+        [Payment Request] Calling PaymentRequest's show() should consume user activation
+        https://bugs.webkit.org/show_bug.cgi?id=217365
+
+        Reviewed by Youenn Fablet and Devin Rousso.
+
+        Tested by existing WPT tests.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::show):
+
 2021-08-31  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Fix deadlock tearing down pipeline when using fallback sink

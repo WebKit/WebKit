@@ -1,3 +1,20 @@
+2021-08-31  Marcos Caceres  <marcos@marcosc.com>
+
+        [Payment Request] Calling PaymentRequest's show() should consume user activation
+        https://bugs.webkit.org/show_bug.cgi?id=217365
+
+        Reviewed by Youenn Fablet and Devin Rousso.
+
+        Re-import payment-request tests from WPT c0453ea15be63fc697bdbc141aa6837a1020b114.
+
+        * web-platform-tests/payment-request/payment-is-showing.https.html:
+        * web-platform-tests/payment-request/payment-request-canmakepayment-method.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https-expected.txt:
+        * web-platform-tests/payment-request/payment-request-show-method.https-expected.txt: Added.
+        * web-platform-tests/payment-request/payment-request-show-method.https.html:
+        * web-platform-tests/payment-request/rejects_if_not_active.https.html:
+        * web-platform-tests/payment-request/show-method-optional-promise-rejects.https-expected.txt:
+
 2021-08-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Resync web-platform-tests/shadow-dom

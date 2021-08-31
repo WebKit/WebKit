@@ -1,0 +1,8 @@
+If you find a buggy test, please file a bug and tag one of the suggested reviewers.
+
+PASS Calling show() without being triggered by user interaction throws
+PASS Throws if the promise [[state]] is not 'created'.
+PASS If the user agent's "payment request is showing" boolean is true, then return a promise rejected with an "AbortError" DOMException.
+PASS If payment method consultation produces no supported method of payment, then return a promise rejected with a "NotSupportedError" DOMException.
+PASS Calling show() multiple times always returns a new promise.
+
