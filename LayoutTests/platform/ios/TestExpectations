@@ -22,6 +22,11 @@ remote-layer-tree/ios [ Pass ]
 swipe [ Pass ]
 http/tests/swipe [ Pass ]
 
+fast/events/ios [ Pass ]
+fast/events/ios/ipad [ Skip ]
+fast/forms/ios [ Pass ]
+fast/forms/ios/ipad [ Skip ]
+
 fast/css/appearance-apple-pay-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-default-corners.html [ Pass ]

@@ -92,3 +92,8 @@ fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
 fast/forms/ios/drag-range-thumb.html [ Pass Timeout ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
+
+fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-using-chinese-keyboard.html [ Pass Failure ]
+
+# These tests occasionally crash with debug assertions in iOS 14 simulator
+fast/events/ios/rotation [ Skip ]

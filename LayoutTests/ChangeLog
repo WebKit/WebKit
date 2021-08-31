@@ -1,3 +1,30 @@
+2021-08-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        EWS should run tests in fast/events/ios by default
+        https://bugs.webkit.org/show_bug.cgi?id=229691
+
+        Reviewed by Tim Horton.
+
+        Enable most of the tests in fast/events/ios in open source test runners, so that they can run in pre-commit
+        automation (EWS). We move a handful of tests that have explicit dependencies on touch events out of this
+        directory and into fast/events/touch/ios instead.
+
+        * fast/events/touch/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe-expected.txt: Renamed from LayoutTests/fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe-expected.txt.
+        * fast/events/touch/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe.html: Renamed from LayoutTests/fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe.html.
+        * fast/events/touch/ios/no-touch-events-when-stopping-momentum-scroll-in-overflow-expected.txt: Renamed from LayoutTests/fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-overflow-expected.txt.
+        * fast/events/touch/ios/no-touch-events-when-stopping-momentum-scroll-in-overflow.html: Renamed from LayoutTests/fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-overflow.html.
+        * fast/events/touch/ios/touch-events-during-scroll-deceleration-in-overflow-expected.txt: Renamed from LayoutTests/fast/events/ios/touch-events-during-scroll-deceleration-in-overflow-expected.txt.
+        * fast/events/touch/ios/touch-events-during-scroll-deceleration-in-overflow.html: Renamed from LayoutTests/fast/events/ios/touch-events-during-scroll-deceleration-in-overflow.html.
+        * platform/ios-14/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
+        Mark tests in both fast/events/ios and fast/forms/ios as PASS by default, while skipping the "ipad" directories
+        that are underneath them. These ipad-specific test directories are then marked PASS by default below, in
+        platform/ipad/TestExpectations.
+
+        * platform/ios/TestExpectations:
+        * platform/ipad/TestExpectations:
+
 2021-08-31  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines after r281771

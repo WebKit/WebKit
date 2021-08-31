@@ -1,7 +1,7 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/js-test-pre.js"></script>
     <style>
         body {
             width: 100%;
@@ -42,7 +42,7 @@
     <p>To manually test, swipe down to scroll in the container. The touch count should update to 1. Tap to stop scrolling while decelerating. The touch count should remain at 1. Then tap again in the container. The touch count should be 2.</p>
     <p>The touch count is: <span id="touches">0</span></p>
 </div>
-<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
 <script>
 touchstartEventCount = 0;
 container.scrollTop = 0;
@@ -82,5 +82,5 @@ if (window.testRunner && testRunner.runUIScript) {
     });
 }
 </script>
-<script src="../../../resources/js-test-post.js"></script>
+<script src="../../../../resources/js-test-post.js"></script>
 </body>

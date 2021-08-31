@@ -4,6 +4,9 @@ css-dark-mode/older-systems [ Skip ]
 
 compositing/contents-format/ipad [ Pass ]
 
+fast/events/ios/ipad [ Pass ]
+fast/forms/ios/ipad [ Pass ]
+
 # iPads don't zoom when form elements are focused
 fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]
 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
