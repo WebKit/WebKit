@@ -194,6 +194,8 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(captured.root.log.getvalue(), '''Creating the local development branch 'eng/pr-branch'...
 Creating commit...
     Found 1 commit...
+Rebasing 'eng/pr-branch' on 'main'...
+Rebased 'eng/pr-branch' on 'main!'
 ''')
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
 
@@ -213,6 +215,8 @@ Creating commit...
     Adding modified.txt...
 Creating commit...
     Found 1 commit...
+Rebasing 'eng/pr-branch' on 'main'...
+Rebased 'eng/pr-branch' on 'main!'
 ''')
 
     def test_github(self):
@@ -228,10 +232,12 @@ Creating commit...
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
-            log[:4] + log[7 if sys.version_info > (3, 0) else 5:], [
+            log[:6] + log[9 if sys.version_info > (3, 0) else 7:], [
                 "Creating the local development branch 'eng/pr-branch'...",
                 'Creating commit...',
                 '    Found 1 commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Creating pull-request for 'eng/pr-branch'...",
                 "Created 'PR 1 | Created commit'!",
@@ -257,16 +263,18 @@ Creating commit...
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
-            log[:3] + log[6 if sys.version_info > (3, 0) else 4:], [
+            log[:5] + log[8 if sys.version_info > (3, 0) else 6:], [
                 "Amending commit...",
                 '    Found 1 commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Updating pull-request for 'eng/pr-branch'...",
                 "Updated 'PR 1 | Amended commit'!",
             ],
         )
 
-    def test_stash(self):
+    def test_bitbucket(self):
         with OutputCapture() as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
         )) as repo, mocks.local.Svn():
@@ -280,17 +288,19 @@ Creating commit...
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
-            log[:4] + log[7 if sys.version_info > (3, 0) else 5:], [
+            log[:6] + log[9 if sys.version_info > (3, 0) else 7:], [
                 "Creating the local development branch 'eng/pr-branch'...",
                 'Creating commit...',
                 '    Found 1 commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Creating pull-request for 'eng/pr-branch'...",
                 "Created 'PR 1 | Created commit'!",
             ],
         )
 
-    def test_stash_update(self):
+    def test_bitbucket_update(self):
         with mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],
         )) as repo, mocks.local.Svn():
@@ -311,9 +321,11 @@ Creating commit...
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
-            log[:3] + log[6 if sys.version_info > (3, 0) else 4:], [
+            log[:5] + log[8 if sys.version_info > (3, 0) else 6:], [
                 "Amending commit...",
                 '    Found 1 commit...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
                 "Pushing 'eng/pr-branch' to 'origin'...",
                 "Updating pull-request for 'eng/pr-branch'...",
                 "Updated 'PR 1 | Amended commit'!",

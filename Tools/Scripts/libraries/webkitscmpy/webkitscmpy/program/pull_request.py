@@ -38,9 +38,15 @@ class PullRequest(Command):
     def parser(cls, parser, loggers=None):
         Branch.parser(parser, loggers=loggers)
         parser.add_argument(
-            '--no-add', '--add',
+            '--add', '--no-add',
             dest='will_add', default=None,
             help='When drafting a change, add (or never add) modified files to set of staged changes to be committed',
+            action=arguments.NoAction,
+        )
+        parser.add_argument(
+            '--rebase', '--no-rebase',
+            dest='rebase', default=None,
+            help='Rebase (or do not rebase) the pull-request on the source branch before pushing',
             action=arguments.NoAction,
         )
 
@@ -105,6 +111,12 @@ class PullRequest(Command):
             return result
 
         branch_point = cls.branch_point(args, repository, **kwargs)
+        if args.rebase or (args.rebase is None and repository.config().get('pull.rebase')):
+            log.warning("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
+            if repository.pull(rebase=True, branch=branch_point.branch):
+                sys.stderr.write("Failed to rebase '{}' on '{},' please resolve conflicts\n".format(repository.branch, branch_point.branch))
+                return 1
+            log.warning("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
 
         rmt = repository.remote()
         if not rmt:
