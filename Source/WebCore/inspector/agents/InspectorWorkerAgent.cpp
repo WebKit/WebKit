@@ -28,6 +28,8 @@
 
 #include "Document.h"
 #include "InstrumentingAgents.h"
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 
 namespace WebCore {
@@ -82,7 +84,7 @@ Protocol::ErrorStringOr<void> InspectorWorkerAgent::disable()
 
 Protocol::ErrorStringOr<void> InspectorWorkerAgent::initialized(const String& workerId)
 {
-    WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
+    RefPtr proxy = m_connectedProxies.get(workerId).get();
     if (!proxy)
         return makeUnexpected("Missing worker for given workerId"_s);
 
@@ -96,7 +98,7 @@ Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWorker(const St
     if (!m_enabled)
         return makeUnexpected("Worker domain must be enabled"_s);
 
-    WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
+    RefPtr proxy = m_connectedProxies.get(workerId).get();
     if (!proxy)
         return makeUnexpected("Missing worker for given workerId"_s);
 
@@ -135,22 +137,27 @@ void InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage()
 {
     ASSERT(m_connectedProxies.isEmpty());
 
-    for (auto* proxy : WorkerInspectorProxy::allWorkerInspectorProxies()) {
+    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxies()) {
         if (!is<Document>(proxy->scriptExecutionContext()))
             continue;
 
-        Document& document = downcast<Document>(*proxy->scriptExecutionContext());
+        auto& document = downcast<Document>(*proxy->scriptExecutionContext());
         if (document.page() != &m_page)
             continue;
 
-        connectToWorkerInspectorProxy(*proxy);
+        connectToWorkerInspectorProxy(proxy);
     }
 }
 
 void InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies()
 {
-    for (auto* proxy : copyToVector(m_connectedProxies.values()))
+    for (auto& proxyWeakPtr : copyToVector(m_connectedProxies.values())) {
+        RefPtr proxy = proxyWeakPtr.get();
+        if (!proxy)
+            continue;
+
         proxy->disconnectFromWorkerInspectorController();
+    }
 
     m_connectedProxies.clear();
 }
@@ -159,7 +166,7 @@ void InspectorWorkerAgent::connectToWorkerInspectorProxy(WorkerInspectorProxy& p
 {
     proxy.connectToWorkerInspectorController(*this);
 
-    m_connectedProxies.set(proxy.identifier(), &proxy);
+    m_connectedProxies.set(proxy.identifier(), makeWeakPtr(proxy));
 
     m_frontendDispatcher->workerCreated(proxy.identifier(), proxy.url().string(), proxy.name());
 }

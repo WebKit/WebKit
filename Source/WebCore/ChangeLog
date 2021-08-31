@@ -1,3 +1,31 @@
+2021-08-30  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Refactor `WorkerInspectorAgent` to use weak pointers for `WorkerInspectorProxy`s
+        https://bugs.webkit.org/show_bug.cgi?id=229632
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing tests in LayoutTests/inspector/worker/*
+
+        Make `WorkerInspectorProxy` reference counted, and use `WeakPtr`s to them in `InspectorWorkerAgent`.
+
+        * inspector/agents/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::initialized):
+        (WebCore::InspectorWorkerAgent::sendMessageToWorker):
+        (WebCore::InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage):
+        (WebCore::InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies):
+        (WebCore::InspectorWorkerAgent::connectToWorkerInspectorProxy):
+        * inspector/agents/InspectorWorkerAgent.h:
+        * workers/WorkerInspectorProxy.cpp:
+        (WebCore::WorkerInspectorProxy::allWorkerInspectorProxies):
+        (WebCore::WorkerInspectorProxy::workerStarted):
+        (WebCore::WorkerInspectorProxy::workerTerminated):
+        * workers/WorkerInspectorProxy.h:
+        (WebCore::WorkerInspectorProxy::create):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        * workers/WorkerMessagingProxy.h:
+
 2021-08-30  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Addition of CSSUnparsedValue. (TypedOM)

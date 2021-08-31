@@ -93,7 +93,7 @@ private:
     Worker* workerObject() const { return m_workerObject; }
 
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
-    std::unique_ptr<WorkerInspectorProxy> m_inspectorProxy;
+    RefPtr<WorkerInspectorProxy> m_inspectorProxy;
     Worker* m_workerObject;
     bool m_mayBeDestroyed { false };
     RefPtr<DedicatedWorkerThread> m_workerThread;

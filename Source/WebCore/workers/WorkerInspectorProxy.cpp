@@ -39,9 +39,9 @@
 namespace WebCore {
 using namespace Inspector;
 
-HashSet<WorkerInspectorProxy*>& WorkerInspectorProxy::allWorkerInspectorProxies()
+WeakHashSet<WorkerInspectorProxy>& WorkerInspectorProxy::allWorkerInspectorProxies()
 {
-    static NeverDestroyed<HashSet<WorkerInspectorProxy*>> proxies;
+    static NeverDestroyed<WeakHashSet<WorkerInspectorProxy>> proxies;
     return proxies;
 }
 
@@ -71,7 +71,7 @@ void WorkerInspectorProxy::workerStarted(ScriptExecutionContext* scriptExecution
     m_url = url;
     m_name = name;
 
-    allWorkerInspectorProxies().add(this);
+    allWorkerInspectorProxies().add(*this);
 
     InspectorInstrumentation::workerStarted(*this);
 }
@@ -83,7 +83,7 @@ void WorkerInspectorProxy::workerTerminated()
 
     InspectorInstrumentation::workerTerminated(*this);
 
-    allWorkerInspectorProxies().remove(this);
+    allWorkerInspectorProxies().remove(*this);
 
     m_scriptExecutionContext = nullptr;
     m_workerThread = nullptr;
