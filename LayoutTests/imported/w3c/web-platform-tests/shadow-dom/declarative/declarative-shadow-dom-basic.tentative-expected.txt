@@ -14,6 +14,8 @@ FAIL Declarative Shadow DOM: Multiple roots assert_equals: No leftover template 
     <span>root 1</span>
   </...
 FAIL Declarative Shadow DOM: template containing declarative shadow root assert_true: Inner div should have a shadow root expected true got false
+FAIL Declarative Shadow DOM: template containing (deeply nested) declarative shadow root assert_true: Inner div should have a shadow root expected true got false
+FAIL Declarative Shadow DOM: template containing a template containing declarative shadow root assert_true: Inner div should have a shadow root expected true got false
 FAIL Declarative Shadow DOM: template containing declarative shadow root and UA shadow root assert_true: Inner div should have a shadow root expected true got false
 PASS Declarative Shadow DOM: template containing closed declarative shadow root and UA shadow root
 PASS Declarative Shadow DOM: template root element

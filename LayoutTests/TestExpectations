@@ -3354,6 +3354,9 @@ fast/text/design-system-ui-14.html [ ImageOnlyFailure ]
 fast/text/design-system-ui-15.html [ ImageOnlyFailure ]
 fast/text/design-system-ui-16.html [ ImageOnlyFailure ]
 
+# This is a crash test. The result is ignored for now.
+imported/w3c/web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash.html [ Pass Failure ]
+
 # wpt css-images failures
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations002.html [ ImageOnlyFailure ]
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations003.html [ ImageOnlyFailure ]

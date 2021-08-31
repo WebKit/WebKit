@@ -1,3 +1,30 @@
+2021-08-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Resync web-platform-tests/shadow-dom
+        https://bugs.webkit.org/show_bug.cgi?id=229698
+
+        Reviewed by Antti Koivisto.
+
+        Resync WPT tests for shadow DOM as of 62d977d3e3161a900aecd007ff3fc88b621fdc65.
+
+        * resources/resource-files.json:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative-expected.txt:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative.html:
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-1.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-2.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3-expected.xht: Added.
+        * web-platform-tests/shadow-dom/focus/focus-pseudo-on-shadow-host-3.html: Added.
+        * web-platform-tests/shadow-dom/focus/w3c-import.log:
+        * web-platform-tests/shadow-dom/imperative-slot-api-expected.txt:
+        * web-platform-tests/shadow-dom/imperative-slot-api-slotchange-expected.txt:
+        * web-platform-tests/shadow-dom/imperative-slot-api-slotchange.html:
+        * web-platform-tests/shadow-dom/imperative-slot-api.html:
+        * web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash-expected.txt: Added.
+        * web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash.html: Added.
+        * web-platform-tests/shadow-dom/w3c-import.log:
+
 2021-08-31  Chris Dumez  <cdumez@apple.com>
 
         Implement self.structuredClone()

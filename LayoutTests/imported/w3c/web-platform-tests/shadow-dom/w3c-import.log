@@ -51,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-api-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-api-slotchange.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-api.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-assign-not-slotable-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/innerHTML-setter.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-element-list.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-type-radio.html
