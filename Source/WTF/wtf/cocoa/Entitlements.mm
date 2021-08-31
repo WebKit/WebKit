@@ -39,8 +39,7 @@ static bool hasEntitlement(SecTaskRef task, const char* entitlement)
     if (!task)
         return false;
     auto string = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, entitlement, kCFStringEncodingASCII, kCFAllocatorNull));
-    auto value = adoptCF(SecTaskCopyValueForEntitlement(task, string.get(), nullptr));
-    return value && CFGetTypeID(value.get()) == CFBooleanGetTypeID() && CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
+    return adoptCF(SecTaskCopyValueForEntitlement(task, string.get(), nullptr)) == kCFBooleanTrue;
 }
 
 bool hasEntitlement(audit_token_t token, const char* entitlement)

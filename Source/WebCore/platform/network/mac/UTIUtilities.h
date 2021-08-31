@@ -30,7 +30,7 @@
 namespace WebCore {
 
 WEBCORE_EXPORT String MIMETypeFromUTI(const String&);
-String MIMETypeFromUTITree(const String&);
+RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef);
 WEBCORE_EXPORT String UTIFromMIMEType(const String&);
 bool isDeclaredUTI(const String&);
 WEBCORE_EXPORT String UTIFromTag(const String& tagClass, const String& tag, const String& conformingToUTI);

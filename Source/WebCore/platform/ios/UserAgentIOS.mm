@@ -30,10 +30,12 @@
 
 #import "Device.h"
 #import "SystemVersion.h"
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/TypeCastsCF.h>
+
+#import <pal/ios/UIKitSoftLink.h>
 
 namespace WebCore {
 
@@ -59,12 +61,12 @@ String osNameForUserAgent()
     return "iPhone OS";
 }
 
-static inline String deviceNameForUserAgent()
+static StringView deviceNameForUserAgent()
 {
     if (isClassic()) {
         if (isClassicPad())
-            return "iPad"_s;
-        return "iPhone"_s;
+            return "iPad";
+        return "iPhone";
     }
 
     static NeverDestroyed<String> name = [] {
@@ -76,29 +78,21 @@ static inline String deviceNameForUserAgent()
 #endif
         return name;
     }();
-    return name;
+    return name.get();
 }
 
 String standardUserAgentWithApplicationName(const String& applicationName, const String& userAgentOSVersion, UserAgentType type)
 {
-    if (type == UserAgentType::Desktop) {
-        String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
-        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
-    }
+    auto separator = applicationName.isEmpty() ? "" : " ";
+    if (type == UserAgentType::Desktop)
+        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
 
-    // FIXME: We should deprecate and eventually remove this obsolete UA override;
-    // see https://bugs.webkit.org/show_bug.cgi?id=217927 for details.
-    // Check to see if there is a user agent override for all WebKit clients.
-    auto override = adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation")));
-    if (override) {
-        if (CFGetTypeID(override.get()) == CFStringGetTypeID())
-            return (__bridge NSString *)override.get();
-    }
+    // FIXME: We should deprecate and remove this override; see https://bugs.webkit.org/show_bug.cgi?id=217927 for details.
+    if (auto override = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation")))))
+        return override.get();
 
-    String osVersion = userAgentOSVersion.isEmpty()  ? systemMarketingVersionForUserAgentString() : userAgentOSVersion;
-    String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
-
-    return makeString("Mozilla/5.0 (", deviceNameForUserAgent(), "; CPU ", osNameForUserAgent(), " ", osVersion, " like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
+    auto osVersion = userAgentOSVersion.isEmpty() ? systemMarketingVersionForUserAgentString() : userAgentOSVersion;
+    return makeString("Mozilla/5.0 (", deviceNameForUserAgent(), "; CPU ", osNameForUserAgent(), " ", osVersion, " like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
 }
 
 } // namespace WebCore.

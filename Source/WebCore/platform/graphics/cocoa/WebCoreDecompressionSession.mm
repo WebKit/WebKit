@@ -194,8 +194,7 @@ bool WebCoreDecompressionSession::shouldDecodeSample(CMSampleBufferRef sample, b
 
     for (CFIndex index = 0, count = CFArrayGetCount(attachments); index < count; ++index) {
         CFDictionaryRef attachmentDict = (CFDictionaryRef)CFArrayGetValueAtIndex(attachments, index);
-        CFBooleanRef dependedOn = (CFBooleanRef)CFDictionaryGetValue(attachmentDict, PAL::kCMSampleAttachmentKey_IsDependedOnByOthers);
-        if (dependedOn && !CFBooleanGetValue(dependedOn))
+        if (CFDictionaryGetValue(attachmentDict, PAL::kCMSampleAttachmentKey_IsDependedOnByOthers) == kCFBooleanFalse)
             return false;
     }
 

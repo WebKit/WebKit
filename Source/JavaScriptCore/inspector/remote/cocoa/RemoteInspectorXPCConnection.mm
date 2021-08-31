@@ -34,6 +34,7 @@
 #import <wtf/Lock.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/cocoa/CFXPCBridgeSPI.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -110,9 +111,8 @@ NSDictionary *RemoteInspectorXPCConnection::deserializeMessage(xpc_object_t obje
         return nil;
     }
 
-    auto dictionary = adoptCF(_CFXPCCreateCFObjectFromXPCMessage(xpcDictionary));
+    auto dictionary = dynamic_cf_cast<CFDictionaryRef>(adoptCF(_CFXPCCreateCFObjectFromXPCMessage(xpcDictionary)));
     ASSERT_WITH_MESSAGE(dictionary, "Unable to deserialize xpc message");
-    ASSERT(CFGetTypeID(dictionary.get()) == CFDictionaryGetTypeID());
     return dictionary.bridgingAutorelease();
 }
 

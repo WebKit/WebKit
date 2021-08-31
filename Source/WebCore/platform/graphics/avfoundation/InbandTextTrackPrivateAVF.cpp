@@ -36,13 +36,15 @@
 #include <JavaScriptCore/DataView.h>
 #include <JavaScriptCore/Int8Array.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
-#include <pal/cf/CoreMediaSoftLink.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
+
+#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 
@@ -71,8 +73,8 @@ static std::optional<SRGBA<uint8_t>> makeSimpleColorFromARGBCFArray(CFArrayRef c
 
     float componentArray[4];
     for (int i = 0; i < 4; i++) {
-        CFNumberRef value = static_cast<CFNumberRef>(CFArrayGetValueAtIndex(colorArray, i));
-        if (CFGetTypeID(value) != CFNumberGetTypeID())
+        auto value = dynamic_cf_cast<CFNumberRef>(CFArrayGetValueAtIndex(colorArray, i));
+        if (!value)
             return std::nullopt;
 
         float component;
@@ -105,7 +107,6 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
     if (!length)
         return cueData;
 
-
     CFRange effectiveRange = CFRangeMake(0, 0);
     while ((effectiveRange.location + effectiveRange.length) < length) {
 
@@ -114,7 +115,6 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             continue;
 
         StringBuilder tagStart;
-        CFStringRef valueString;
         String tagEnd;
         CFIndex attributeCount = CFDictionaryGetCount(attributes);
         Vector<const void*> keys(attributeCount);
@@ -122,14 +122,14 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
         CFDictionaryGetKeysAndValues(attributes, keys.data(), values.data());
 
         for (CFIndex i = 0; i < attributeCount; ++i) {
-            CFStringRef key = static_cast<CFStringRef>(keys[i]);
+            auto key = dynamic_cf_cast<CFStringRef>(keys[i]);
             CFTypeRef value = values[i];
-            if (CFGetTypeID(key) != CFStringGetTypeID() || !CFStringGetLength(key))
+            if (!key || !CFStringGetLength(key))
                 continue;
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_Alignment, 0) == kCFCompareEqualTo) {
-                valueString = static_cast<CFStringRef>(value);
-                if (CFGetTypeID(valueString) != CFStringGetTypeID() || !CFStringGetLength(valueString))
+                auto valueString = dynamic_cf_cast<CFStringRef>(value);
+                if (!valueString || !CFStringGetLength(valueString))
                     continue;
                 if (processed & Align)
                     continue;
@@ -148,7 +148,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_BoldStyle, 0) == kCFCompareEqualTo) {
-                if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
+                if (value != kCFBooleanTrue)
                     continue;
 
                 tagStart.append("<b>");
@@ -157,7 +157,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_ItalicStyle, 0) == kCFCompareEqualTo) {
-                if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
+                if (value != kCFBooleanTrue)
                     continue;
 
                 tagStart.append("<i>");
@@ -166,7 +166,7 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_UnderlineStyle, 0) == kCFCompareEqualTo) {
-                if (static_cast<CFBooleanRef>(value) != kCFBooleanTrue)
+                if (value != kCFBooleanTrue)
                     continue;
 
                 tagStart.append("<u>");
@@ -175,13 +175,13 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_OrthogonalLinePositionPercentageRelativeToWritingDirection, 0) == kCFCompareEqualTo) {
-                if (CFGetTypeID(value) != CFNumberGetTypeID())
+                auto valueNumber = dynamic_cf_cast<CFNumberRef>(value);
+                if (!valueNumber)
                     continue;
                 if (processed & Line)
                     continue;
                 processed |= Line;
 
-                CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double line;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &line);
                 cueData->setLine(line);
@@ -189,13 +189,13 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_TextPositionPercentageRelativeToWritingDirection, 0) == kCFCompareEqualTo) {
-                if (CFGetTypeID(value) != CFNumberGetTypeID())
+                auto valueNumber = dynamic_cf_cast<CFNumberRef>(value);
+                if (!valueNumber)
                     continue;
                 if (processed & Position)
                     continue;
                 processed |= Position;
 
-                CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double position;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &position);
                 cueData->setPosition(position);
@@ -203,13 +203,13 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_WritingDirectionSizePercentage, 0) == kCFCompareEqualTo) {
-                if (CFGetTypeID(value) != CFNumberGetTypeID())
+                auto valueNumber = dynamic_cf_cast<CFNumberRef>(value);
+                if (!valueNumber)
                     continue;
                 if (processed & Size)
                     continue;
                 processed |= Size;
 
-                CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
                 double size;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &size);
                 cueData->setSize(size);
@@ -217,8 +217,8 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_VerticalLayout, 0) == kCFCompareEqualTo) {
-                valueString = static_cast<CFStringRef>(value);
-                if (CFGetTypeID(valueString) != CFStringGetTypeID() || !CFStringGetLength(valueString))
+                auto valueString = dynamic_cf_cast<CFStringRef>(value);
+                if (!valueString || !CFStringGetLength(valueString))
                     continue;
                 
                 if (CFStringCompare(valueString, kCMTextVerticalLayout_LeftToRight, 0) == kCFCompareEqualTo)
@@ -229,10 +229,10 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, 0) == kCFCompareEqualTo) {
-                if (CFGetTypeID(value) != CFNumberGetTypeID())
+                auto valueNumber = dynamic_cf_cast<CFNumberRef>(value);
+                if (!valueNumber)
                     continue;
-                
-                CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
+
                 double baseFontSize;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &baseFontSize);
                 cueData->setBaseFontSize(baseFontSize);
@@ -240,10 +240,10 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_RelativeFontSize, 0) == kCFCompareEqualTo) {
-                if (CFGetTypeID(value) != CFNumberGetTypeID())
+                auto valueNumber = dynamic_cf_cast<CFNumberRef>(value);
+                if (!valueNumber)
                     continue;
-                
-                CFNumberRef valueNumber = static_cast<CFNumberRef>(value);
+
                 double relativeFontSize;
                 CFNumberGetValue(valueNumber, kCFNumberFloat64Type, &relativeFontSize);
                 cueData->setRelativeFontSize(relativeFontSize);
@@ -251,8 +251,8 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_FontFamilyName, 0) == kCFCompareEqualTo) {
-                valueString = static_cast<CFStringRef>(value);
-                if (CFGetTypeID(valueString) != CFStringGetTypeID() || !CFStringGetLength(valueString))
+                auto valueString = dynamic_cf_cast<CFStringRef>(value);
+                if (!valueString || !CFStringGetLength(valueString))
                     continue;
                 if (processed & FontName)
                     continue;
@@ -263,22 +263,22 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_ForegroundColorARGB, 0) == kCFCompareEqualTo) {
-                CFArrayRef arrayValue = static_cast<CFArrayRef>(value);
-                if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
+                auto arrayValue = dynamic_cf_cast<CFArrayRef>(value);
+                if (!arrayValue)
                     continue;
-                
+
                 auto color = makeSimpleColorFromARGBCFArray(arrayValue);
                 if (!color)
                     continue;
                 cueData->setForegroundColor(*color);
                 continue;
             }
-            
+
             if (CFStringCompare(key, kCMTextMarkupAttribute_BackgroundColorARGB, 0) == kCFCompareEqualTo) {
-                CFArrayRef arrayValue = static_cast<CFArrayRef>(value);
-                if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
+                auto arrayValue = dynamic_cf_cast<CFArrayRef>(value);
+                if (!arrayValue)
                     continue;
-                
+
                 auto color = makeSimpleColorFromARGBCFArray(arrayValue);
                 if (!color)
                     continue;
@@ -287,10 +287,10 @@ Ref<InbandGenericCue> InbandTextTrackPrivateAVF::processCueAttributes(CFAttribut
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_CharacterBackgroundColorARGB, 0) == kCFCompareEqualTo) {
-                CFArrayRef arrayValue = static_cast<CFArrayRef>(value);
-                if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
+                auto arrayValue = dynamic_cf_cast<CFArrayRef>(value);
+                if (!arrayValue)
                     continue;
-                
+
                 auto color = makeSimpleColorFromARGBCFArray(arrayValue);
                 if (!color)
                     continue;

@@ -29,14 +29,16 @@
 #if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "ANGLEHeaders.h"
-#include "CoreVideoSoftLink.h"
 #include "FourCC.h"
 #include "Logging.h"
 #include <pal/spi/cf/CoreVideoSPI.h>
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdMap.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/StringBuilder.h>
+
+#include "CoreVideoSoftLink.h"
 
 namespace WebCore {
 
@@ -158,7 +160,7 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
 
 static TransferFunctionCV transferFunctionFromString(CFStringRef string)
 {
-    if (!string || CFGetTypeID(string) != CFStringGetTypeID())
+    if (!string)
         return TransferFunctionCV::Unknown;
     if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
         return TransferFunctionCV::kITU_R_709_2;
@@ -699,7 +701,7 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
     m_context->uniform2f(m_uvTextureSizeUniformLocation, uvPlaneWidth, uvPlaneHeight);
 
     auto range = pixelRangeFromPixelFormat(pixelFormat);
-    auto transferFunction = transferFunctionFromString((CFStringRef)CVBufferGetAttachment(image, kCVImageBufferYCbCrMatrixKey, nil));
+    auto transferFunction = transferFunctionFromString(dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(image, kCVImageBufferYCbCrMatrixKey, nil)));
     auto colorMatrix = YCbCrToRGBMatrixForRangeAndTransferFunction(range, transferFunction);
     m_context->uniformMatrix4fv(m_colorMatrixUniformLocation, GL_FALSE, colorMatrix);
 

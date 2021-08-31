@@ -23,6 +23,7 @@
 
 #include <array>
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WTF {
@@ -51,11 +52,8 @@ TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomStr
 
 static RetainPtr<CFStringRef> textBreakLocalePreference()
 {
-    auto locale = adoptCF(CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
-        kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
-    if (!locale || CFGetTypeID(locale.get()) != CFStringGetTypeID())
-        return nullptr;
-    return static_cast<CFStringRef>(locale.get());
+    return dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
+        kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost)));
 }
 
 static RetainPtr<CFStringRef> topLanguagePreference()

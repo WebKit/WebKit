@@ -32,15 +32,14 @@
 #include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
 #include "VersionChecks.h"
-#include <pal/spi/cf/CoreTextSPI.h>
-
 #include <CoreText/SFNTLayoutTypes.h>
-
+#include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/cf/TypeCastsCF.h>
 
 // FIXME: This seems like it should be in PlatformHave.h.
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
@@ -697,8 +696,8 @@ Vector<String> FontCache::systemFontFamilies()
     auto availableFontFamilies = adoptCF(CTFontManagerCopyAvailableFontFamilyNames());
     CFIndex count = CFArrayGetCount(availableFontFamilies.get());
     for (CFIndex i = 0; i < count; ++i) {
-        CFStringRef fontName = static_cast<CFStringRef>(CFArrayGetValueAtIndex(availableFontFamilies.get(), i));
-        if (CFGetTypeID(fontName) != CFStringGetTypeID()) {
+        auto fontName = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(availableFontFamilies.get(), i));
+        if (!fontName) {
             ASSERT_NOT_REACHED();
             continue;
         }
@@ -1347,8 +1346,7 @@ static inline bool isArabicCharacter(UChar character)
 #if ASSERT_ENABLED
 static bool isUserInstalledFont(CTFontRef font)
 {
-    auto attribute = adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(font, kCTFontUserInstalledAttribute)));
-    return attribute && CFBooleanGetValue(attribute.get());
+    return adoptCF(CTFontCopyAttribute(font, kCTFontUserInstalledAttribute)) == kCFBooleanTrue;
 }
 #endif
 

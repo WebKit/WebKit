@@ -377,15 +377,11 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
 
 - (String)bundleVersion
 {
-    CFDictionaryRef infoDictionary = CFBundleGetInfoDictionary(cfBundle.get());
+    auto infoDictionary = CFBundleGetInfoDictionary(cfBundle.get());
     if (!infoDictionary)
         return String();
 
-    CFTypeRef bundleVersionString = CFDictionaryGetValue(infoDictionary, kCFBundleVersionKey);
-    if (!bundleVersionString || CFGetTypeID(bundleVersionString) != CFStringGetTypeID())
-        return String();
-
-    return reinterpret_cast<CFStringRef>(bundleVersionString);
+    return dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(infoDictionary, kCFBundleVersionKey));
 }
 
 @end

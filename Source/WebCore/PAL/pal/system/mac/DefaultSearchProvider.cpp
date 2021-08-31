@@ -30,6 +30,7 @@
 
 #include "CFUtilitiesSPI.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/cf/TypeCastsCF.h>
 
 namespace PAL {
 
@@ -39,12 +40,11 @@ RetainPtr<CFStringRef> defaultSearchProviderDisplayName()
     if (!providerInfo)
         return CFSTR("Google");
 
-    CFTypeRef displayName = CFDictionaryGetValue(providerInfo.get(), kCFWebServicesProviderDefaultDisplayNameKey);
+    auto displayName = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(providerInfo.get(), kCFWebServicesProviderDefaultDisplayNameKey));
     if (!displayName)
         return CFSTR("Google");
 
-    ASSERT(CFGetTypeID(displayName) == CFStringGetTypeID());
-    return adoptCF(CFStringCreateCopy(kCFAllocatorDefault, (CFStringRef)displayName));
+    return displayName;
 }
 
 } // namespace PAL

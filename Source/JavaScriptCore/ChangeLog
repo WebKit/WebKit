@@ -1,3 +1,16 @@
+2021-08-26  Darin Adler  <darin@apple.com>
+
+        Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining
+        https://bugs.webkit.org/show_bug.cgi?id=229414
+
+        Reviewed by Tim Horton.
+
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::deserializeMessage): Use
+        dynamic_cf_cast to check type instead of CFGetTypeID. Also do the
+        check at runtime rather than asserting. Not really sufficient to
+        assert correct type for something that comes over an XPC connection.
+
 2021-08-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Host functions and custom getters should be lowerCamelCase

@@ -1,3 +1,109 @@
+2021-08-26  Darin Adler  <darin@apple.com>
+
+        Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining
+        https://bugs.webkit.org/show_bug.cgi?id=229414
+
+        Reviewed by Tim Horton.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::makeSimpleColorFromARGBCFArray): Use dynamic_cf_cast.
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes): Ditto.
+        Also removed unnecessary type casts when comparing with kCFBooleanTrue.
+
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        Use dynamic_cf_cast.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::systemFontFamilies): Ditto.
+        (WebCore::isUserInstalledFont): Use kCFBooleanTrue.
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.mm:
+        (WebCore::validateHEVCParameters): Use dynamic_cf_cast and kCFBooleanTrue.
+        (WebCore::validateDoViParameters): Ditto.
+
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::shouldDecodeSample):
+        Use kCFBooleanFalse.
+
+        * platform/graphics/coretext/FontPlatformDataCoreText.cpp:
+        (WebCore::FontPlatformData::objectForEqualityCheck): Use auto.
+
+        * platform/graphics/cv/GraphicsContextGLCVANGLE.cpp:
+        (WebCore::transferFunctionFromString): Removed type check, which caller
+        should do since the agument type is CFStringRef.
+        (WebCore::GraphicsContextGLCVANGLE::copyPixelBufferToTexture): Use
+        dynamic_cf_cast instead of an unchecked static_cast.
+
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::deviceNameForUserAgent): Improved efficiency by returning
+        a StringView instead of a String, no need to create and destroy a string
+        or churn the reference count each time this function is called.
+        (WebCore::standardUserAgentWithApplicationName): Improved efficiency
+        by using a better idiom for the space before the application name.
+        Use dynamic_cf_cast.
+
+        * platform/mediastream/mac/WindowDisplayCapturerMac.mm:
+        (WebCore::anyOfCGWindow): Use kCFBooleanFalse.
+
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        (WebCore::processProxyServers): Use dynamic_cf_cast.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp: Move
+        WTF_DECLARE_CF_TYPE_TRAIT for CFURLRef out of here.
+
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::chooseProxyFromArray): Ditto.
+
+        * platform/network/ios/WebCoreURLResponseIOS.h: Tweaked a bit.
+
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        (WebCore::createExtensionToMIMETypeMap): Deleted.
+        (WebCore::adjustMIMETypeIfNecessary): Simplified the code that maps ".mjs"
+        to "text/javascript" to make it much more efficient and not use a dictionary.
+        Refactored to share code with the Mac, via the WebCoreURLResponse.h/mm
+        files, which are not macOS-specific even though they are in a directory
+        named "mac". Fixed one place where we did adoptCF where it should be adoptNS.
+        Use CFSTR("application/octet-stream") directly instead of using
+        WebCore::defaultMIMEType().
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying): Use
+        dynamic_cf_cast.
+
+        * platform/network/mac/UTIUtilities.h: Renamed MIMETypeFromUTITree
+        to mimeTypeFromUTITree to make the style robot happy. Changed the
+        argument and return type to CFStringRef since that's what the callers
+        all want, and what the implementation uses, and there is no reason to
+        convert back and forth to WTF::String.
+
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::mimeTypeFromUTITree): Use nullptr, not emptyString(), for the
+        value when there is no MIME type found. Use auto. Use dynamic_cf_cast.
+        Make recursion more efficient since we don't keep converting back and
+        forth between CFStringRef and WTF::String.
+        (WebCore::UTIFromTag): Removed unneeded explicit converstion to WTF::String.
+
+        * platform/network/mac/WebCoreURLResponse.h: Added helper functions
+        to the header, shared by WebCoreURLResponse.mm and WebCoreURLResponseIOS.mm.
+        Use CFSTR("application/octet-stream") directly instead of using
+        WebCore::defaultMIMEType().6
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::createExtensionToMIMETypeMap): Deleted.
+        (WebCore::adjustMIMETypeIfNecessary): Refactored to use a SortedArrayMap
+        instead of a CFDictionary, eliminating various type casts and conversions.
+        Refactored to use the new functions below. Use makeNeverDestroyed to
+        instead of RetainPtr::leakRef. Removed unnecessary check for equality
+        since this function only does work when CFURLResponseGetMIMEType is nullptr.
+        (WebCore::filePathExtension): Added. Refactored the code to get a path extension
+        from a CFURLResponseRef into a function since it's used in two places.
+        (WebCore::preferredMIMETypeForFileExtensionFromUTType): Added. Refactored
+        this logical operation, mapping a file extension to a MIME type, into a function.
+        This is used in two places. Also puts ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END
+        pair into a single place, and this is where we'll switch to use newer UTType
+        machinery later on.
+
+        * testing/cocoa/WebArchiveDumpSupport.mm:
+        (WebCoreTestSupport::convertWebResourceResponseToDictionary): Use auto and
+        dynamic_cf_cast.
+
 2021-08-30  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Refactor `WorkerInspectorAgent` to use weak pointers for `WorkerInspectorProxy`s

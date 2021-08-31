@@ -1,3 +1,20 @@
+2021-08-26  Darin Adler  <darin@apple.com>
+
+        Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining
+        https://bugs.webkit.org/show_bug.cgi?id=229414
+
+        Reviewed by Tim Horton.
+
+        * wtf/cf/TypeCastsCF.h: Added WTF_DECLARE_CF_TYPE_TRAIT(CFURL). Added a
+        dynamic_cf_cast overload that converts from one RetainPtr type to another
+        and avoids reference count churn. Tweaked comments.
+
+        * wtf/cocoa/Entitlements.mm:
+        (WTF::hasEntitlement): Use kCFBooleanTrue instead of CFBooleanGetValue.
+
+        * wtf/text/cocoa/TextBreakIteratorInternalICUCocoa.cpp:
+        (WTF::textBreakLocalePreference): Use dynamic_cf_cast.
+
 2021-08-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement Temporal.Calendar

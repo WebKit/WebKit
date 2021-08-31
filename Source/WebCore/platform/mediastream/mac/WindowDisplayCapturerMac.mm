@@ -71,8 +71,7 @@ static bool anyOfCGWindow(const Function<bool(CFDictionaryRef info, unsigned id,
         if (windowLayer)
             continue;
 
-        auto onScreen = checked_cf_cast<CFBooleanRef>(CFDictionaryGetValue(windowInfo, kCGWindowIsOnscreen));
-        if (!CFBooleanGetValue(onScreen))
+        if (CFDictionaryGetValue(windowInfo, kCGWindowIsOnscreen) == kCFBooleanFalse)
             continue;
 
         auto windowIDRef = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(windowInfo, kCGWindowNumber));

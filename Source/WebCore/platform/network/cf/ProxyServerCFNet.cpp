@@ -29,6 +29,7 @@
 #include <wtf/URL.h>
 #include "Logging.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY) || PLATFORM(WIN)
@@ -76,8 +77,8 @@ static void processProxyServers(Vector<ProxyServer>& proxyServers, CFArrayRef pr
                 continue;
 
             // FIXME: We should restructure to allow this to happen asynchronously.
-            CFURLRef scriptURL = static_cast<CFURLRef>(CFDictionaryGetValue(proxyDictionary, kCFProxyAutoConfigurationURLKey));
-            if (!scriptURL || CFGetTypeID(scriptURL) != CFURLGetTypeID())
+            auto scriptURL = dynamic_cf_cast<CFURLRef>(CFDictionaryGetValue(proxyDictionary, kCFProxyAutoConfigurationURLKey));
+            if (!scriptURL)
                 continue;
 
             CFStreamClientContext context = { 0, (void*)&proxyServers, 0, 0, 0 };

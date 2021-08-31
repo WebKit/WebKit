@@ -30,18 +30,15 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#ifdef __OBJC__
-#include "WebCoreURLResponse.h"
-#endif
-
 #include "MIMETypeRegistry.h"
+#include "WebCoreURLResponse.h"
 #include <wtf/text/WTFString.h>
-
-namespace WebCore {
 
 #if USE(QUICK_LOOK)
     
-inline bool shouldUseQuickLookForMIMEType(const WTF::String& mimeType)
+namespace WebCore {
+
+inline bool shouldUseQuickLookForMIMEType(const String& mimeType)
 {
     if ((!MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)       // ignore supported non-image MIME types
          && !MIMETypeRegistry::isSupportedImageMIMEType(mimeType)       // ignore supported image MIME types
@@ -57,8 +54,8 @@ inline bool shouldUseQuickLookForMIMEType(const WTF::String& mimeType)
     return false;
 }
 
-#endif // USE(QUICK_LOOK)
-
 } // namespace WebCore
+
+#endif // USE(QUICK_LOOK)
 
 #endif // PLATFORM(IOS_FAMILY)

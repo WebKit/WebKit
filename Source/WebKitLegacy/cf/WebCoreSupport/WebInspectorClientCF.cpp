@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,63 +25,51 @@
 
 // FIXME: On Windows, we require all WebKit source files to include config.h
 // before including any other files. Failing to include config.h will leave
-// USE_CF undefined, causing build failures in this
-// file. But Mac doesn't have a config.h for WebKit, so we can't include the
-// Windows one here. For now we can just define USE_CF manually,
-// but we need a better long-term solution.
+// USE_CF undefined, causing build failures in this file. But Mac doesn't have
+// a config.h for WebKit, so we can't include the Windows one here. For now we
+// define USE_CF manually here, but it would be good to find a better solution,
+// likely by making "config.h" a "prefix file" in the Windows build configuration.
 #ifndef USE_CF
 #define USE_CF 1
 #endif
 
 #include <wtf/Platform.h>
 
-#if PLATFORM(WIN)
-#ifndef USE_CG
+#if PLATFORM(WIN) && !defined(USE_CG)
 #define USE_CG 1
 #endif
-#endif
 
-// NOTE: These need to appear up top, as they declare macros
-// used in the JS and WTF headers.
+// NOTE: These need to appear up top, as they declare macros used in the JS and WTF headers.
 #include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/ExportMacros.h>
 
 #include "WebInspectorClient.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-
 #include <WebCore/Frame.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/Page.h>
-
 #include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/cf/TypeCastsCF.h>
 
-using namespace WebCore;
+static constexpr const char* inspectorStartsAttachedSetting = "inspectorStartsAttached";
+static constexpr const char* inspectorAttachDisabledSetting = "inspectorAttachDisabled";
 
-static const char* inspectorStartsAttachedSetting = "inspectorStartsAttached";
-static const char* inspectorAttachDisabledSetting = "inspectorAttachDisabled";
-
-static inline RetainPtr<CFStringRef> createKeyForPreferences(const String& key)
+static RetainPtr<CFStringRef> createKeyForPreferences(const String& key)
 {
     return adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("WebKit Web Inspector Setting - %@"), key.createCFString().get()));
 }
 
-static void populateSetting(const String& key, String* setting)
+static String loadSetting(const String& key)
 {
-    RetainPtr<CFStringRef> preferencesKey = createKeyForPreferences(key);
-    RetainPtr<CFPropertyListRef> value = adoptCF(CFPreferencesCopyAppValue(preferencesKey.get(), kCFPreferencesCurrentApplication));
-
-    if (!value)
-        return;
-
-    CFTypeID type = CFGetTypeID(value.get());
-    if (type == CFStringGetTypeID())
-        *setting = static_cast<String>(static_cast<CFStringRef>(value.get()));
-    else if (type == CFBooleanGetTypeID())
-        *setting = static_cast<bool>(CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()))) ? "true" : "false";
-    else
-        *setting = emptyString();
+    auto value = adoptCF(CFPreferencesCopyAppValue(createKeyForPreferences(key).get(), kCFPreferencesCurrentApplication));
+    if (auto string = dynamic_cf_cast<CFStringRef>(value.get()))
+        return string;
+    if (value == kCFBooleanTrue)
+        return "true"_s;
+    if (value == kCFBooleanFalse)
+        return "false"_s;
+    return { };
 }
 
 static void storeSetting(const String& key, const String& setting)
@@ -101,11 +89,7 @@ void WebInspectorClient::sendMessageToFrontend(const String& message)
 
 bool WebInspectorClient::inspectorAttachDisabled()
 {
-    String value;
-    populateSetting(inspectorAttachDisabledSetting, &value);
-    if (value.isEmpty())
-        return false;
-    return value == "true";
+    return loadSetting(inspectorAttachDisabledSetting) == "true";
 }
 
 void WebInspectorClient::setInspectorAttachDisabled(bool disabled)
@@ -120,11 +104,7 @@ void WebInspectorClient::deleteInspectorStartsAttached()
 
 bool WebInspectorClient::inspectorStartsAttached()
 {
-    String value;
-    populateSetting(inspectorStartsAttachedSetting, &value);
-    if (value.isEmpty())
-        return true;
-    return value == "true";
+    return loadSetting(inspectorStartsAttachedSetting) == "true";
 }
 
 void WebInspectorClient::setInspectorStartsAttached(bool attached)
@@ -140,24 +120,10 @@ void WebInspectorClient::deleteInspectorAttachDisabled()
 std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
 {
     class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {
-    public:
-        virtual ~InspectorFrontendSettingsCF() { }
-        virtual String getProperty(const String& name)
-        {
-            String value;
-            populateSetting(name, &value);
-            return value;
-        }
-
-        virtual void setProperty(const String& name, const String& value)
-        {
-            storeSetting(name, value);
-        }
-
-        virtual void deleteProperty(const String& name)
-        {
-            deleteSetting(name);
-        }
+    private:
+        String getProperty(const String& name) final { return loadSetting(name); }
+        void setProperty(const String& name, const String& value) final { storeSetting(name, value); }
+        void deleteProperty(const String& name) final { deleteSetting(name); }
     };
     return makeUnique<InspectorFrontendSettingsCF>();
 }

@@ -31,6 +31,7 @@
 #import "FourCC.h"
 #import "HEVCUtilities.h"
 #import "MediaCapabilitiesInfo.h"
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import "VideoToolboxSoftLink.h"
@@ -76,8 +77,8 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
     if (!capabilities)
         return std::nullopt;
 
-    auto supportedProfiles = (CFArrayRef)CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_SupportedProfiles);
-    if (!supportedProfiles || CFGetTypeID(supportedProfiles) != CFArrayGetTypeID())
+    auto supportedProfiles = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_SupportedProfiles));
+    if (!supportedProfiles)
         return std::nullopt;
 
     int16_t generalProfileIDC = parameters.generalProfileIDC;
@@ -86,25 +87,22 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
     if (!CFArrayContainsValue(supportedProfiles, searchRange, cfGeneralProfileIDC.get()))
         return std::nullopt;
 
-    auto perProfileSupport = (CFDictionaryRef)CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_PerProfileSupport);
-    if (!perProfileSupport || CFGetTypeID(perProfileSupport) != CFDictionaryGetTypeID())
+    auto perProfileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(capabilities.get(), kVTHEVCDecoderCapability_PerProfileSupport));
+    if (!perProfileSupport)
         return std::nullopt;
 
     auto generalProfileIDCString = String::number(generalProfileIDC).createCFString();
-    auto profileSupport = (CFDictionaryRef)CFDictionaryGetValue(perProfileSupport, generalProfileIDCString.get());
-    if (!profileSupport || CFGetTypeID(profileSupport) != CFDictionaryGetTypeID())
+    auto profileSupport = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(perProfileSupport, generalProfileIDCString.get()));
+    if (!profileSupport)
         return std::nullopt;
 
     MediaCapabilitiesInfo info;
 
     info.supported = true;
 
-    auto isHardwareAccelerated = (CFBooleanRef)CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_IsHardwareAccelerated);
-    if (isHardwareAccelerated && CFGetTypeID(isHardwareAccelerated) == CFBooleanGetTypeID())
-        info.powerEfficient = CFBooleanGetValue(isHardwareAccelerated);
+    info.powerEfficient = CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_IsHardwareAccelerated) == kCFBooleanTrue;
 
-    auto cfMaxDecodeLevel = (CFNumberRef)CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxDecodeLevel);
-    if (cfMaxDecodeLevel && CFGetTypeID(cfMaxDecodeLevel) == CFNumberGetTypeID()) {
+    if (auto cfMaxDecodeLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxDecodeLevel))) {
         int16_t maxDecodeLevel = 0;
         if (!CFNumberGetValue(cfMaxDecodeLevel, kCFNumberSInt16Type, &maxDecodeLevel))
             return std::nullopt;
@@ -113,8 +111,7 @@ std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters
             return std::nullopt;
     }
 
-    auto cfMaxPlaybackLevel = (CFNumberRef)CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxPlaybackLevel);
-    if (cfMaxPlaybackLevel && CFGetTypeID(cfMaxPlaybackLevel) == CFNumberGetTypeID()) {
+    if (auto cfMaxPlaybackLevel = dynamic_cf_cast<CFNumberRef>(CFDictionaryGetValue(profileSupport, kVTHEVCDecoderProfileCapability_MaxPlaybackLevel))) {
         int16_t maxPlaybackLevel = 0;
         if (!CFNumberGetValue(cfMaxPlaybackLevel, kCFNumberSInt16Type, &maxPlaybackLevel))
             return std::nullopt;
@@ -196,10 +193,7 @@ std::optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters
     if (!supportedLevels)
         return std::nullopt;
 
-    auto isHardwareAcceleratedCF = (CFBooleanRef)CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_IsHardwareAccelerated);
-    if (!isHardwareAcceleratedCF || CFGetTypeID(isHardwareAcceleratedCF) != CFBooleanGetTypeID())
-        return std::nullopt;
-    bool isHardwareAccelerated = CFBooleanGetValue(isHardwareAcceleratedCF);
+    bool isHardwareAccelerated = CFDictionaryGetValue(capabilities.get(), kVTDolbyVisionDecoderCapability_IsHardwareAccelerated) == kCFBooleanTrue;
 
     if (!supportedProfiles.value().contains(parameters.bitstreamProfileID) || !supportedLevels.value().contains(parameters.bitstreamLevelID))
         return std::nullopt;

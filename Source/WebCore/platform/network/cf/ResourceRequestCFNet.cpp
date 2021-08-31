@@ -48,8 +48,6 @@
 #include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
-WTF_DECLARE_CF_TYPE_TRAIT(CFURL);
-
 namespace WebCore {
 
 // FIXME: Make this a NetworkingContext property.

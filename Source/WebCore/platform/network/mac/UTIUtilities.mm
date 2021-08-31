@@ -45,44 +45,37 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-String MIMETypeFromUTITree(const String& uti)
+RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
 {
-    auto utiCF = uti.createCFString();
-
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Check if this UTI has a MIME type.
-    RetainPtr<CFStringRef> mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(utiCF.get(), kUTTagClassMIMEType));
-    if (mimeType)
-        return mimeType.get();
+    if (auto type = adoptCF(UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)))
+        return type;
 
     // If not, walk the ancestory of this UTI via its "ConformsTo" tags and return the first MIME type we find.
-    RetainPtr<CFDictionaryRef> decl = adoptCF(UTTypeCopyDeclaration(utiCF.get()));
-    if (!decl)
-        return emptyString();
-    CFTypeRef value = CFDictionaryGetValue(decl.get(), kUTTypeConformsToKey);
+    auto declaration = adoptCF(UTTypeCopyDeclaration(uti));
+    if (!declaration)
+        return nullptr;
+
+    auto value = CFDictionaryGetValue(declaration.get(), kUTTypeConformsToKey);
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!value)
-        return emptyString();
-    CFTypeID typeID = CFGetTypeID(value);
+        return nullptr;
 
-    if (typeID == CFStringGetTypeID())
-        return MIMETypeFromUTITree((CFStringRef)value);
+    if (auto string = dynamic_cf_cast<CFStringRef>(value))
+        return mimeTypeFromUTITree(string);
 
-    if (typeID == CFArrayGetTypeID()) {
-        CFArrayRef newTypes = (CFArrayRef)value;
-        CFIndex count = CFArrayGetCount(newTypes);
+    if (auto array = dynamic_cf_cast<CFArrayRef>(value)) {
+        CFIndex count = CFArrayGetCount(array);
         for (CFIndex i = 0; i < count; ++i) {
-            CFTypeRef object = CFArrayGetValueAtIndex(newTypes, i);
-            if (CFGetTypeID(object) != CFStringGetTypeID())
-                continue;
-
-            String mimeType = MIMETypeFromUTITree((CFStringRef)object);
-            if (!mimeType.isEmpty())
-                return mimeType;
+            if (auto string = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(array, i))) {
+                if (auto type = mimeTypeFromUTITree(string))
+                    return type;
+            }
         }
     }
 
-    return emptyString();
+    return nullptr;
 }
 
 static CFStringRef UTIFromUnknownMIMEType(StringView mimeType)
@@ -137,7 +130,7 @@ String UTIFromTag(const String& tagClass, const String& tag, const String& confo
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto u = adoptCF(UTTypeCreatePreferredIdentifierForTag(tagClass.createCFString().get(), tag.createCFString().get(), conformingToUTI.createCFString().get()));
 ALLOW_DEPRECATED_DECLARATIONS_END
-    return String(u.get());
+    return u.get();
 }
 
 }

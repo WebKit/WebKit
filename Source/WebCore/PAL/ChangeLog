@@ -1,3 +1,14 @@
+2021-08-26  Darin Adler  <darin@apple.com>
+
+        Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining
+        https://bugs.webkit.org/show_bug.cgi?id=229414
+
+        Reviewed by Tim Horton.
+
+        * pal/system/mac/DefaultSearchProvider.cpp:
+        (PAL::defaultSearchProviderDisplayName): Use dynamic_cf_cast and removed an unneeded call to
+        CFStringCreateCopy, since the callers don't need an isolated copy.
+
 2021-08-25  Kate Cheney  <katherine_cheney@apple.com>
 
         WebCrypto uses deprecated CCKeyDerivationHMac

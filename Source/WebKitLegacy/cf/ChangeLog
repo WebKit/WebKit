@@ -1,3 +1,17 @@
+2021-08-26  Darin Adler  <darin@apple.com>
+
+        Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining
+        https://bugs.webkit.org/show_bug.cgi?id=229414
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (loadSetting): Rename from populateSetting. Use dyanmic_cf_cast, kCFBooleanTrue, and
+        kCFBooleanFalse, also change to return value instead of a pointer-based out argument.
+        (WebInspectorClient::inspectorAttachDisabled): Update for change to loadSetting.
+        (WebInspectorClient::inspectorStartsAttached): Ditto.
+        (WebInspectorClient::createFrontendSettings): Ditto. Also use final instead of virtual.
+
 2020-10-30  Brian Burg  <bburg@apple.com>
 
         Web Inspector: move InspectorFrontendAPIDispatcher to WebCore, clean up uses

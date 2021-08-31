@@ -32,6 +32,7 @@
 #import "PluginSandboxProfile.h"
 #import <wtf/HashSet.h>
 #import <wtf/MainThread.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
@@ -67,78 +68,68 @@ static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
 
 static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
-    RetainPtr<CFDictionaryRef> mimeTypes = static_cast<CFDictionaryRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypes")));
-    if (!mimeTypes || CFGetTypeID(mimeTypes.get()) != CFDictionaryGetTypeID())
+    RetainPtr mimeTypes = dynamic_cf_cast<CFDictionaryRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypes")));
+    if (!mimeTypes)
         return false;
 
     // Get the plug-in name.
-    CFStringRef pluginName = static_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginName")));
-    if (pluginName && CFGetTypeID(pluginName) == CFStringGetTypeID())
+    auto pluginName = dynamic_cf_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginName")));
+    if (pluginName)
         plugin.info.name = pluginName;
     
     // Get the plug-in description.
-    CFStringRef pluginDescription = static_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginDescription")));
-    if (pluginDescription && CFGetTypeID(pluginDescription) == CFStringGetTypeID())
+    auto pluginDescription = dynamic_cf_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginDescription")));
+    if (pluginDescription)
         plugin.info.desc = pluginDescription;
     
     // Get the MIME type mapping dictionary.
     CFIndex numMimeTypes = CFDictionaryGetCount(mimeTypes.get());          
-    Vector<CFStringRef> mimeTypesVector(numMimeTypes);
-    Vector<CFDictionaryRef> mimeTypeInfoVector(numMimeTypes);
-    CFDictionaryGetKeysAndValues(mimeTypes.get(), reinterpret_cast<const void**>(mimeTypesVector.data()), reinterpret_cast<const void**>(mimeTypeInfoVector.data()));
+    Vector<CFTypeRef> mimeTypesVector(numMimeTypes);
+    Vector<CFTypeRef> mimeTypeInfoVector(numMimeTypes);
+    CFDictionaryGetKeysAndValues(mimeTypes.get(), mimeTypesVector.data(), mimeTypeInfoVector.data());
     
     for (CFIndex i = 0; i < numMimeTypes; ++i) {
         WebCore::MimeClassInfo mimeClassInfo;
         
         // If this MIME type is invalid, ignore it.
-        CFStringRef mimeType = mimeTypesVector[i];
-        if (!mimeType || CFGetTypeID(mimeType) != CFStringGetTypeID() || CFStringGetLength(mimeType) == 0)
+        auto mimeType = dynamic_cf_cast<CFStringRef>(mimeTypesVector[i]);
+        if (!mimeType || !CFStringGetLength(mimeType))
             continue;
 
         // If this MIME type doesn't have a valid info dictionary, ignore it.
-        CFDictionaryRef mimeTypeInfo = mimeTypeInfoVector[i];
-        if (!mimeTypeInfo || CFGetTypeID(mimeTypeInfo) != CFDictionaryGetTypeID())
+        auto mimeTypeInfo = dynamic_cf_cast<CFDictionaryRef>(mimeTypeInfoVector[i]);
+        if (!mimeTypeInfo)
             continue;
 
         // FIXME: Consider storing disabled MIME types.
-        CFTypeRef isEnabled = CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginTypeEnabled"));
+        auto isEnabled = CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginTypeEnabled"));
         if (isEnabled) {
-            if (CFGetTypeID(isEnabled) == CFNumberGetTypeID()) {
+            if (auto number = dynamic_cf_cast<CFNumberRef>(isEnabled)) {
                 int value;
-                if (!CFNumberGetValue(static_cast<CFNumberRef>(isEnabled), kCFNumberIntType, &value) || !value)
+                if (!CFNumberGetValue(number, kCFNumberIntType, &value) || !value)
                     continue;
-            } else if (CFGetTypeID(isEnabled) == CFBooleanGetTypeID()) {
-                if (!CFBooleanGetValue(static_cast<CFBooleanRef>(isEnabled)))
-                    continue;
-            } else
+            } else if (isEnabled != kCFBooleanTrue)
                 continue;
         }
 
-        // Get the MIME type description.
-        CFStringRef mimeTypeDescription = static_cast<CFStringRef>(CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginTypeDescription")));
-        if (mimeTypeDescription && CFGetTypeID(mimeTypeDescription) != CFStringGetTypeID())
-            mimeTypeDescription = 0;
-
         mimeClassInfo.type = String(mimeType).convertToASCIILowercase();
-        mimeClassInfo.desc = mimeTypeDescription;
+        mimeClassInfo.desc = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginTypeDescription")));
 
         // Now get the extensions for this MIME type.
         CFIndex numExtensions = 0;
-        CFArrayRef extensionsArray = static_cast<CFArrayRef>(CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginExtensions")));
-        if (extensionsArray && CFGetTypeID(extensionsArray) == CFArrayGetTypeID())
+        auto extensionsArray = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(mimeTypeInfo, CFSTR("WebPluginExtensions")));
+        if (extensionsArray)
             numExtensions = CFArrayGetCount(extensionsArray);
 
         for (CFIndex i = 0; i < numExtensions; ++i) {
-            CFStringRef extension = static_cast<CFStringRef>(CFArrayGetValueAtIndex(extensionsArray, i));
-            if (!extension || CFGetTypeID(extension) != CFStringGetTypeID())
+            auto extension = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(extensionsArray, i));
+            if (!extension)
                 continue;
 
             // The DivX plug-in lists multiple extensions in a comma separated string instead of using
             // multiple array elements in the property list. Work around this here by splitting the
             // extension string into components.
-            Vector<String> extensionComponents = String(extension).convertToASCIILowercase().split(',');
-
-            for (auto& component : extensionComponents)
+            for (auto& component : String(extension).convertToASCIILowercase().split(','))
                 mimeClassInfo.extensions.append(component);
         }
 
@@ -151,10 +142,10 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginModuleInfo&
 
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
-    RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
+    auto bundleURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     
     // Try to initialize the bundle.
-    RetainPtr<CFBundleRef> bundle = adoptCF(_CFBundleCreateUnique(kCFAllocatorDefault, bundleURL.get()));
+    auto bundle = adoptCF(_CFBundleCreateUnique(kCFAllocatorDefault, bundleURL.get()));
     if (!bundle)
         return false;
     
@@ -170,15 +161,8 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
 
     plugin.path = pluginPath;
     plugin.bundleIdentifier = CFBundleGetIdentifier(bundle.get());
-    if (CFTypeRef versionTypeRef = CFBundleGetValueForInfoDictionaryKey(bundle.get(), kCFBundleVersionKey)) {
-        if (CFGetTypeID(versionTypeRef) == CFStringGetTypeID())
-            plugin.versionString = static_cast<CFStringRef>(versionTypeRef);
-    }
-
-    if (CFTypeRef shortVersionTypeRef = CFBundleGetValueForInfoDictionaryKey(bundle.get(), CFSTR("CFBundleShortVersionString"))) {
-        if (CFGetTypeID(shortVersionTypeRef) == CFStringGetTypeID())
-            plugin.shortVersionString = static_cast<CFStringRef>(shortVersionTypeRef);
-    }
+    plugin.versionString = dynamic_cf_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle.get(), kCFBundleVersionKey));
+    plugin.shortVersionString = dynamic_cf_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle.get(), CFSTR("CFBundleShortVersionString")));
 
     if (!getPluginInfoFromPropertyLists(bundle.get(), plugin))
         return false;

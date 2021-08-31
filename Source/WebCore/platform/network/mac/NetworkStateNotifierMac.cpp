@@ -29,23 +29,24 @@
 #if PLATFORM(MAC)
 
 #include <SystemConfiguration/SystemConfiguration.h>
+#include <wtf/cf/TypeCastsCF.h>
 
 namespace WebCore {
 
 void NetworkStateNotifier::updateStateWithoutNotifying()
 {
     auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterface(0, kSCDynamicStoreDomainState));
-    auto propertyList = adoptCF(SCDynamicStoreCopyValue(m_store.get(), key.get()));
-    if (!propertyList || CFGetTypeID(propertyList.get()) != CFDictionaryGetTypeID())
+    auto propertyList = dynamic_cf_cast<CFDictionaryRef>(adoptCF(SCDynamicStoreCopyValue(m_store.get(), key.get())));
+    if (!propertyList)
         return;
 
-    auto netInterfaces = CFDictionaryGetValue((CFDictionaryRef)propertyList.get(), kSCDynamicStorePropNetInterfaces);
-    if (!netInterfaces || CFGetTypeID(netInterfaces) != CFArrayGetTypeID())
+    auto netInterfaces = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(propertyList.get(), kSCDynamicStorePropNetInterfaces));
+    if (!netInterfaces)
         return;
 
-    for (CFIndex i = 0; i < CFArrayGetCount((CFArrayRef)netInterfaces); i++) {
-        auto interfaceName = (CFStringRef)CFArrayGetValueAtIndex((CFArrayRef)netInterfaces, i);
-        if (CFGetTypeID(interfaceName) != CFStringGetTypeID())
+    for (CFIndex i = 0; i < CFArrayGetCount(netInterfaces); i++) {
+        auto interfaceName = dynamic_cf_cast<CFStringRef>(CFArrayGetValueAtIndex(netInterfaces, i));
+        if (!interfaceName)
             continue;
 
         // Ignore the loopback interface.

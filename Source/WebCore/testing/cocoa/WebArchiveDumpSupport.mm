@@ -152,40 +152,40 @@ static void normalizeWebResourceURL(CFMutableStringRef webResourceURL)
 
 static void convertWebResourceResponseToDictionary(CFMutableDictionaryRef propertyList)
 {
-    CFDataRef responseData = static_cast<CFDataRef>(CFDictionaryGetValue(propertyList, CFSTR("WebResourceResponse"))); // WebResourceResponseKey in WebResource.m
-    if (CFGetTypeID(responseData) != CFDataGetTypeID())
+    auto responseData = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(propertyList, CFSTR("WebResourceResponse"))); // WebResourceResponseKey in WebResource.m
+    if (!responseData)
         return;
 
     auto response = createCFURLResponseFromResponseData(responseData);
     if (!response)
         return;
 
-    RetainPtr<CFMutableDictionaryRef> responseDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto responseDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr<CFMutableStringRef> urlString = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, CFURLGetString(CFURLResponseGetURL(response.get()))));
+    auto urlString = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, CFURLGetString(CFURLResponseGetURL(response.get()))));
     normalizeWebResourceURL(urlString.get());
     CFDictionarySetValue(responseDictionary.get(), CFSTR("URL"), urlString.get());
 
-    RetainPtr<CFMutableStringRef> mimeTypeString = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, CFURLResponseGetMIMEType(response.get())));
+    auto mimeTypeString = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, CFURLResponseGetMIMEType(response.get())));
     convertMIMEType(mimeTypeString.get());
     CFDictionarySetValue(responseDictionary.get(), CFSTR("MIMEType"), mimeTypeString.get());
 
-    CFStringRef textEncodingName = CFURLResponseGetTextEncodingName(response.get());
+    auto textEncodingName = CFURLResponseGetTextEncodingName(response.get());
     if (textEncodingName)
         CFDictionarySetValue(responseDictionary.get(), CFSTR("textEncodingName"), textEncodingName);
 
     SInt64 expectedContentLength = CFURLResponseGetExpectedContentLength(response.get());
-    RetainPtr<CFNumberRef> expectedContentLengthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &expectedContentLength));
+    auto expectedContentLengthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &expectedContentLength));
     CFDictionarySetValue(responseDictionary.get(), CFSTR("expectedContentLength"), expectedContentLengthNumber.get());
 
     if (CFHTTPMessageRef httpMessage = CFURLResponseGetHTTPResponse(response.get())) {
-        RetainPtr<CFDictionaryRef> allHeaders = adoptCF(CFHTTPMessageCopyAllHeaderFields(httpMessage));
-        RetainPtr<CFMutableDictionaryRef> allHeaderFields = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, allHeaders.get()));
+        auto allHeaders = adoptCF(CFHTTPMessageCopyAllHeaderFields(httpMessage));
+        auto allHeaderFields = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, allHeaders.get()));
         normalizeHTTPResponseHeaderFields(allHeaderFields.get());
         CFDictionarySetValue(responseDictionary.get(), CFSTR("allHeaderFields"), allHeaderFields.get());
 
         CFIndex statusCode = CFHTTPMessageGetResponseStatusCode(httpMessage);
-        RetainPtr<CFNumberRef> statusCodeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &statusCode));
+        auto statusCodeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &statusCode));
         CFDictionarySetValue(responseDictionary.get(), CFSTR("statusCode"), statusCodeNumber.get());
     }
 
