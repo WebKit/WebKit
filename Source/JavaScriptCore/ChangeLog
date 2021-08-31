@@ -1,3 +1,20 @@
+2021-08-31  Saam Barati  <sbarati@apple.com>
+
+        Baseline JIT's in_by_val and emitHasPrivate should load the property before branching on if the base is a cell
+        https://bugs.webkit.org/show_bug.cgi?id=229725
+
+        Reviewed by Keith Miller.
+
+        If the base isn't a cell, we're calling the slow path with a random value
+        in the property. This works, because the slow paths first branch on if
+        the base is a cell or not, and throw an exception. But we fix this for our
+        own sanity, since it's never a good idea to go to a slow path with a
+        JSValue argument containing unknown bits.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitHasPrivate):
+
 2021-08-31  Aditi Singh  <asingh@igalia.com>
 
         Implement Object.hasOwn()

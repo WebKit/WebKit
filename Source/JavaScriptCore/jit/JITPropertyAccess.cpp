@@ -1514,8 +1514,8 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     ArrayProfile* profile = &metadata.m_arrayProfile;
 
     emitGetVirtualRegister(base, regT0);
-    emitJumpSlowCaseIfNotJSCell(regT0, base);
     emitGetVirtualRegister(property, regT1);
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
     emitArrayProfilingSiteWithCell(regT0, profile, regT2);
 
     JITInByValGenerator gen(
@@ -1584,8 +1584,8 @@ void JIT::emitSlow_op_in_by_val(const Instruction* currentInstruction, Vector<Sl
 void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType type)
 {
     emitGetVirtualRegister(base, regT0);
-    emitJumpSlowCaseIfNotJSCell(regT0, base);
     emitGetVirtualRegister(propertyOrBrand, regT1);
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
 
     JITInByValGenerator gen(
         m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), type, RegisterSet::stubUnavailableRegisters(),
