@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Not allowed to load local resource: thisisnotarealfile.otf
+
+FAIL nonexistent-file-url assert_equals: A nonexistent file URL should appear in document.fonts. expected 1 but got 0
+

@@ -50,6 +50,7 @@
         "css/css-flexbox/position-relative-with-scrollable-with-abspos-crash.html",
         "css/css-flexbox/remove-out-of-flow-child-crash.html",
         "css/css-flexbox/zero-content-size-with-scrollbar-crash.html",
+        "css/css-font-loading/fontfaceset-no-root-element.html",
         "css/css-multicol/multicol-rule-large-002.xht",
         "css/css-shapes/test-plan/index.html",
         "css/css-sizing/support/dynamic-available-size-iframe.html",

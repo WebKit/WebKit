@@ -14,6 +14,9 @@
     "imported/w3c/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
+    "imported/w3c/css/css-font-loading/idlharness.https.html": [
+        "slow"
+    ],
     "imported/w3c/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],

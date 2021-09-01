@@ -1,3 +1,38 @@
+2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Import web-platform-tests/css/css-font-loading
+        https://bugs.webkit.org/show_bug.cgi?id=229729
+
+        Reviewed by Simon Fraser.
+
+        % ./Tools/Scripts/import-w3c-tests css/css-font-loading -l -s /path/to/web-platform-tests -d imported/w3c/web-platform-tests
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-font-loading/fontface-override-descriptor-getter-setter.sub.html: Added.
+        * web-platform-tests/css/css-font-loading/fontface-override-descriptors-expected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontface-override-descriptors.html: Added.
+        * web-platform-tests/css/css-font-loading/fontface-size-adjust-descriptor-expected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontface-size-adjust-descriptor.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-add-css-connected-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-add-css-connected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-clear-css-connected-2-expected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-clear-css-connected-2.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-clear-css-connected-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-clear-css-connected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected-2-expected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected-2.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-load-var.html: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-update-after-stylesheet-change-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-update-after-stylesheet-change.html: Added.
+        * web-platform-tests/css/css-font-loading/nonexistent-file-url-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/nonexistent-file-url.html: Added.
+        * web-platform-tests/css/css-font-loading/resources/Rochester.otf: Added.
+        * web-platform-tests/css/css-font-loading/resources/w3c-import.log:
+        * web-platform-tests/css/css-font-loading/w3c-import.log:
+
 2021-08-31  Chris Dumez  <cdumez@apple.com>
 
         Enable SharedArrayBuffer support when COOP/COEP headers are used

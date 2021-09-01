@@ -1,3 +1,13 @@
+2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Import web-platform-tests/css/css-font-loading
+        https://bugs.webkit.org/show_bug.cgi?id=229729
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-08-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable Object.hasOwn

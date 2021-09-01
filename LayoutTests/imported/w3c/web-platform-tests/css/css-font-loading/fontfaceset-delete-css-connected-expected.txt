@@ -1,0 +1,3 @@
+
+FAIL fontfaceset-delete-css-connected assert_equals: expected 1 but got 0
+
