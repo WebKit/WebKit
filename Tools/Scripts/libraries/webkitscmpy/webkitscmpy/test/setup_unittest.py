@@ -22,8 +22,8 @@
 
 import os
 
-from webkitcorepy import OutputCapture, testing
-from webkitcorepy.mocks import Time as MockTime, Terminal as MockTerminal
+from webkitcorepy import Editor, OutputCapture, testing
+from webkitcorepy.mocks import Terminal as MockTerminal
 from webkitscmpy import program, mocks
 
 
@@ -87,12 +87,14 @@ Set git user name to 'Tim Apple'
 Setting better Objective-C diffing behavior...
 Set better Objective-C diffing behavior!
 Using a rebase merge strategy
+Setting git editor for {repository}...
+Using the default git editor
 '''.format(repository=self.path),
         )
 
     def test_github_checkout(self):
         with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
-            MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', 'y'), \
+            MockTerminal.input('n', 'committer@webkit.org', 'n', 'Committer', 'n', '1', 'y'), \
             mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo:
 
             self.assertEqual(0, program.main(
@@ -105,6 +107,7 @@ Using a rebase merge strategy
             self.assertEqual('Committer', config.get('user.name', ''))
             self.assertEqual('committer@webkit.org', config.get('user.email', ''))
 
+        programs = ['default'] + [p.name for p in Editor.programs()]
         self.assertEqual(
             captured.stdout.getvalue(),
             '''Set 'tapple@webkit.org' as the git user email (Yes/No): 
@@ -112,8 +115,11 @@ Git user email:
 Set 'Tim Apple' as the git user name (Yes/No): 
 Git user name: 
 Auto-color status, diff, and branch? (Yes/No): 
+Pick a commit message editor:
+    {}
+: 
 Create a private fork of 'WebKit' belonging to 'username' (Yes/No): 
-''')
+'''.format('\n    '.join(['{}) {}'.format(count + 1, programs[count]) for count in range(len(programs))])))
         self.assertEqual(captured.stderr.getvalue(), '')
         self.maxDiff = None
         self.assertEqual(
@@ -125,6 +131,8 @@ Set git user name to 'Committer'
 Setting better Objective-C diffing behavior...
 Set better Objective-C diffing behavior!
 Using a rebase merge strategy
+Setting git editor for {repository}...
+Using the default git editor
 Saving GitHub credentials in system credential store...
 GitHub credentials saved via Keyring!
 Verifying user owned fork...

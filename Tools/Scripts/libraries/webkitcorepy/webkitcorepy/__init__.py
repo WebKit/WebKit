@@ -40,8 +40,9 @@ from webkitcorepy.credentials import credentials
 from webkitcorepy.measure_time import MeasureTime
 from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 from webkitcorepy.call_by_need import CallByNeed
+from webkitcorepy.editor import Editor
 
-version = Version(0, 9, 1)
+version = Version(0, 10, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -69,6 +70,7 @@ AutoInstall.register(Package('six', Version(1, 15, 0)))
 AutoInstall.register(Package('tblib', Version(1, 7, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))
+AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 
 # This is needed for python-keyring.
 if sys.platform == 'linux':

@@ -25,7 +25,7 @@ import sys
 
 from .command import Command
 from requests.auth import HTTPBasicAuth
-from webkitcorepy import arguments, run, Terminal
+from webkitcorepy import arguments, run, Editor, Terminal
 from webkitscmpy import log, local, remote
 
 
@@ -140,6 +140,25 @@ class Setup(Command):
         ).returncode:
             sys.stderr.write('Failed to use {} as the merge strategy\n'.format('merge commits' if args.merge else 'rebase'))
             result += 1
+
+        log.warning('Setting git editor for {}...'.format(repository.root_path))
+        editor_name = 'default' if args.defaults else Terminal.choose(
+            'Pick a commit message editor',
+            options=['default'] + [program.name for program in Editor.programs()],
+            default='default',
+            numbered=True,
+        )
+        if editor_name == 'default':
+            log.warning('Using the default git editor')
+        elif run(
+            [local.Git.executable(), 'config', 'core.editor', ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])],
+            capture_output=True,
+            cwd=repository.root_path,
+        ).returncode:
+            sys.stderr.write('Failed to set the git editor to {}\n'.format(editor_name))
+            result += 1
+        else:
+            log.warning("Set git editor to '{}'".format(editor_name))
 
         # Only configure GitHub if the URL is a GitHub URL
         rmt = repository.remote()

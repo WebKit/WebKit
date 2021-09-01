@@ -1,3 +1,34 @@
+2021-09-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Add automatic Editor configuration
+        https://bugs.webkit.org/show_bug.cgi?id=228867
+        <rdar://problem/81621991>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version, add whichcraft.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/editor.py: Added.
+        (Editor): Class representing a text editor 
+        (Editor.atom):
+        (Editor.sublime):
+        (Editor.textmate):
+        (Editor.xcode):
+        (Editor.textedit):
+        (Editor.default): System's default text editor.
+        (Editor.preferred): User's prefered text editor.
+        (Editor.by_name): Search for text editor by name.
+        (Editor.programs): List all available text editor programs on this machine.
+        (Editor.__init__):
+        (Editor.open): Open a file with a text editor.
+        (Editor.__repr__):
+        (Editor.__bool__):
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version, remove whichcraft.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): Prompt user and set commit log editor.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+
 2021-09-01  Kevin Neal  <kevin_neal@apple.com>
 
         [RunBindingsTests] Invoke with Python 3
