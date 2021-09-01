@@ -4,3 +4,6 @@ editing/selection/preserve-selection-when-clicking-button.html [ Failure ]
 editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Failure ]
 
 webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure ]
+
+# rdar://82190832 ([ iOS15 ] editing/caret/ios/caret-in-overflow-area.html is failing)
+[ Debug ] editing/caret/ios/caret-in-overflow-area.html [ Pass Timeout Failure ]
