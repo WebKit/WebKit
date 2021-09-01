@@ -185,6 +185,7 @@ class Structure;
 class RegExp;
 #endif
 class Symbol;
+class TemporalDuration;
 class TypedArrayController;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
@@ -617,6 +618,7 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentIteratorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmenterSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentsSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalDurationSpace)
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)

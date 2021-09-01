@@ -1,3 +1,13 @@
+2021-08-31  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement Temporal.Duration
+        https://bugs.webkit.org/show_bug.cgi?id=228532
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/temporal-duration.js: Added.
+        * test262/config.yaml: Enabled Duration tests.
+
 2021-08-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC][Intl] Errors for .call({}) are too verbose

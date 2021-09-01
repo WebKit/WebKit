@@ -99,6 +99,7 @@
     macro(counters) \
     macro(dateStyle) \
     macro(day) \
+    macro(days) \
     macro(dayPeriod) \
     macro(defineProperty) \
     macro(deref) \
@@ -138,6 +139,7 @@
     macro(hash) \
     macro(header) \
     macro(hour) \
+    macro(hours) \
     macro(hourCycle) \
     macro(hour12) \
     macro(id) \
@@ -158,6 +160,7 @@
     macro(join) \
     macro(language) \
     macro(languageDisplay) \
+    macro(largestUnit) \
     macro(lastIndex) \
     macro(length) \
     macro(line) \
@@ -166,14 +169,19 @@
     macro(maximumFractionDigits) \
     macro(maximumSignificantDigits) \
     macro(message) \
+    macro(microseconds) \
+    macro(milliseconds) \
     macro(minimumFractionDigits) \
     macro(minimumIntegerDigits) \
     macro(minimumSignificantDigits) \
     macro(minute) \
+    macro(minutes) \
     macro(month) \
     macro(monthCode) \
+    macro(months) \
     macro(multiline) \
     macro(name) \
+    macro(nanoseconds) \
     macro(next) \
     macro(now) \
     macro(numInlinedCalls) \
@@ -196,13 +204,17 @@
     macro(region) \
     macro(replace) \
     macro(resolve) \
+    macro(roundingIncrement) \
+    macro(roundingMode) \
     macro(script) \
     macro(second) \
+    macro(seconds) \
     macro(segment) \
     macro(sensitivity) \
     macro(set) \
     macro(size) \
     macro(slice) \
+    macro(smallestUnit) \
     macro(source) \
     macro(sourceCode) \
     macro(sourceURL) \
@@ -229,12 +241,15 @@
     macro(type) \
     macro(uid) \
     macro(unicode) \
+    macro(unit) \
     macro(usage) \
     macro(value) \
     macro(valueOf) \
     macro(weekday) \
+    macro(weeks) \
     macro(writable) \
-    macro(year)
+    macro(year) \
+    macro(years)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_PRIVATE_FIELD(macro) \
     macro(constructor)

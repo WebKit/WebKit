@@ -853,6 +853,7 @@ runtime/IntlSegmenterPrototype.cpp
 runtime/IntlSegments.cpp
 runtime/IntlSegmentsPrototype.cpp
 runtime/IntlWorkaround.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect to this file.
+runtime/ISO8601.cpp
 runtime/IteratorOperations.cpp
 runtime/IteratorPrototype.cpp
 runtime/JSArray.cpp
@@ -1013,6 +1014,9 @@ runtime/TemplateObjectDescriptor.cpp
 runtime/TemporalCalendar.cpp
 runtime/TemporalCalendarConstructor.cpp
 runtime/TemporalCalendarPrototype.cpp
+runtime/TemporalDuration.cpp
+runtime/TemporalDurationConstructor.cpp
+runtime/TemporalDurationPrototype.cpp
 runtime/TemporalNow.cpp
 runtime/TemporalObject.cpp
 runtime/TestRunnerUtils.cpp

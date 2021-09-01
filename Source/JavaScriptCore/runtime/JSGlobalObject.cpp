@@ -202,8 +202,9 @@
 #include "SymbolObject.h"
 #include "SymbolPrototype.h"
 #include "TemporalCalendar.h"
-#include "TemporalCalendarConstructor.h"
 #include "TemporalCalendarPrototype.h"
+#include "TemporalDuration.h"
+#include "TemporalDurationPrototype.h"
 #include "TemporalObject.h"
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
@@ -1222,6 +1223,13 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 init.set(TemporalCalendar::createStructure(init.vm, globalObject, calendarPrototype));
             });
 
+        m_durationStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                TemporalDurationPrototype* durationPrototype = TemporalDurationPrototype::create(init.vm, TemporalDurationPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+                init.set(TemporalDuration::createStructure(init.vm, globalObject, durationPrototype));
+            });
+
         TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));
         putDirectWithoutTransition(vm, vm.propertyNames->Temporal, temporal, static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
@@ -2101,6 +2109,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_numberFormatStructure.visit(visitor);
 
     thisObject->m_calendarStructure.visit(visitor);
+    thisObject->m_durationStructure.visit(visitor);
 
     visitor.append(thisObject->m_nullGetterFunction);
     visitor.append(thisObject->m_nullSetterFunction);

@@ -1,3 +1,54 @@
+2021-08-31  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement Temporal.Duration
+        https://bugs.webkit.org/show_bug.cgi?id=228532
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements the Duration class for the upcoming Temporal API (currently at stage 3 in TC39).
+        Spec: https://tc39.es/proposal-temporal/#sec-temporal-duration-objects
+        Docs: https://tc39.es/proposal-temporal/docs/duration.html
+
+        A Duration is ultimately an array of doubles (years, months, weeks, days, hours, minutes, seconds, ms, μs, ns)
+        which can be converted to and from an ISO string representation (e.g. "-P1Y2M3W4DT5H6M7.123456789S")
+        and which supports various calculations.
+
+        The spec is still in flux and certain issues were identified in the course of preparing this patch.
+        This code aims to be "as correct as possible" for the moment; small corrections are expected in the near future.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/ISO8601.cpp: Added.
+        * runtime/ISO8601.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::durationStructure):
+        * runtime/TemporalDuration.cpp: Added.
+        * runtime/TemporalDuration.h: Added.
+        * runtime/TemporalDurationConstructor.cpp: Added.
+        * runtime/TemporalDurationConstructor.h: Added.
+        * runtime/TemporalDurationPrototype.cpp: Added.
+        * runtime/TemporalDurationPrototype.h: Added.
+        * runtime/TemporalObject.cpp:
+        (JSC::createDurationConstructor):
+        (JSC::singularUnit):
+        (JSC::temporalUnitType):
+        (JSC::temporalLargestUnit):
+        (JSC::temporalSmallestUnit):
+        (JSC::temporalFractionalSecondDigits):
+        (JSC::secondsStringPrecision):
+        (JSC::maximumRoundingIncrement):
+        (JSC::temporalRoundingIncrement):
+        (JSC::roundNumberToIncrement):
+        * runtime/TemporalObject.h:
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2021-08-31  Lauro Moura  <lmoura@igalia.com>
 
         Non-unified build partial fixes, late late August 2021

@@ -6,6 +6,7 @@ flags:
   Array.prototype.at: useAtMethod
   TypedArray.prototype.at: useAtMethod
   String.prototype.at: useAtMethod
+  Temporal: useTemporal
   array-find-from-last: useArrayFindLastMethod
   Object.hasOwn: useHasOwn
 skip:
@@ -15,12 +16,21 @@ skip:
     - regexp-lookbehind
     - cleanupSome
     - resizable-arraybuffer
-    - Temporal
     - import-assertions
     - json-modules
     - class-static-block
     - callable-boundary-realms
   paths:
+    - test/built-ins/Temporal/Calendar
+    - test/built-ins/Temporal/Instant
+    - test/built-ins/Temporal/Now
+    - test/built-ins/Temporal/PlainDate
+    - test/built-ins/Temporal/PlainDateTime
+    - test/built-ins/Temporal/PlainMonthDay
+    - test/built-ins/Temporal/PlainTime
+    - test/built-ins/Temporal/PlainYearMonth
+    - test/built-ins/Temporal/TimeZone
+    - test/built-ins/Temporal/ZonedDateTime
   files:
     # https://github.com/claudepache/es-legacy-function-reflection
     - test/built-ins/ThrowTypeError/unique-per-realm-function-proto.js

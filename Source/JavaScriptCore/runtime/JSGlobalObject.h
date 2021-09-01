@@ -325,6 +325,7 @@ public:
     LazyClassStructure m_numberFormatStructure;
 
     LazyProperty<JSGlobalObject, Structure> m_calendarStructure;
+    LazyProperty<JSGlobalObject, Structure> m_durationStructure;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -873,6 +874,7 @@ public:
     JSObject* numberFormatPrototype() { return m_numberFormatStructure.prototype(this); }
 
     Structure* calendarStructure() { return m_calendarStructure.get(this); }
+    Structure* durationStructure() { return m_durationStructure.get(this); }
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;
