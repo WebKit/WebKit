@@ -1,3 +1,14 @@
+2021-08-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable Object.hasOwn
+        https://bugs.webkit.org/show_bug.cgi?id=229730
+
+        Reviewed by Saam Barati.
+
+        Enable Object.hasOwn implementation. And cleaning up feature flag list.
+
+        * runtime/OptionsList.h:
+
 2021-08-31  Saam Barati  <sbarati@apple.com>
 
         Baseline JIT's in_by_val and emitHasPrivate should load the property before branching on if the base is a cell

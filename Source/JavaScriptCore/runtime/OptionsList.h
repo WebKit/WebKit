@@ -528,21 +528,21 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useJITCage, canUseJITCage(), Normal, nullptr) \
     v(Bool, dumpBaselineJITSizeStatistics, false, Normal, nullptr) \
     v(Bool, dumpDFGJITSizeStatistics, false, Normal, nullptr) \
-    \
-    /* Feature Flags */\
-    \
-    v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
-    v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
-    v(Bool, useAtMethod, true, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
-    v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
     v(Bool, useDataIC, false, Normal, nullptr) \
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
-    v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
+    \
+    /* Feature Flags */\
+    \
     v(Bool, useArrayFindLastMethod, true, Normal, "Expose the findLast() and findLastIndex() methods on Array and %TypedArray%.") \
+    v(Bool, useAtMethod, true, Normal, "Expose the at() method on Array, %TypedArray%, and String.") \
+    v(Bool, useHasOwn, true, Normal, "Expose the Object.hasOwn method") \
     v(Bool, useIntlEnumeration, true, Normal, "Expose the Intl enumeration APIs.") \
-    v(Bool, useHasOwn, false, Normal, "Expose the Object.hasOwn method") \
+    v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
+    v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \
+    v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
+    v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
 
 
 enum OptionEquivalence {

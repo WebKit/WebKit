@@ -1,3 +1,13 @@
+2021-08-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable Object.hasOwn
+        https://bugs.webkit.org/show_bug.cgi?id=229730
+
+        Reviewed by Saam Barati.
+
+        * js/Object-getOwnPropertyNames-expected.txt:
+        * js/script-tests/Object-getOwnPropertyNames.js:
+
 2021-08-31  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Monterey GuardMalloc ] accessibility/* tests are timing out.
