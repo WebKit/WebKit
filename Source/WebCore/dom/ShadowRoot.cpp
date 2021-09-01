@@ -226,7 +226,7 @@ HTMLSlotElement* ShadowRoot::findAssignedSlot(const Node& node)
     ASSERT(node.parentNode() == host());
     if (!m_slotAssignment)
         return nullptr;
-    return m_slotAssignment->findAssignedSlot(node, *this);
+    return m_slotAssignment->findAssignedSlot(node);
 }
 
 void ShadowRoot::renameSlotElement(HTMLSlotElement& slot, const AtomString& oldName, const AtomString& newName)

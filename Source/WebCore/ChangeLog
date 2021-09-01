@@ -1,3 +1,45 @@
+2021-09-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Eagerly resolve slot elements to simply the code in SlotAssignment
+        https://bugs.webkit.org/show_bug.cgi?id=229748
+
+        Reviewed by Chris Dumez.
+
+        This patch makes the resolution of slot elements eager. Lazily resolution stopped making any sense
+        once slotchange event was required whenever a slot element was inserted or removed per r235650.
+
+        Right now, this lazy optimization only applies when scripts repeatedly inserts & removes a slot element
+        in such a manner that there are multiple slot elements of the same name in a single shadow tree,
+        and there are assigned nodes to the slot. There is no reason to overcomplicate the slot assignment code
+        for this insane edge case.
+
+        No new tests since there should be no observable behavior change.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::findAssignedSlot):
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::findAssignedSlot):
+        (WebCore::SlotAssignment::addSlotElementByName): Always call resolveSlotsAfterSlotMutation when there
+        is an ambiguity as to whether this is the first slot element or not.
+        (WebCore::SlotAssignment::removeSlotElementByName): Ditto for removal case.
+        (WebCore::SlotAssignment::resolveSlotsAfterSlotMutation):
+        (WebCore::SlotAssignment::resolveSlotsBeforeNodeInsertionOrRemoval): Moved to the header file.
+        (WebCore::SlotAssignment::willRemoveAllChildren): Ditto.
+        (WebCore::SlotAssignment::didChangeSlot):
+        (WebCore::SlotAssignment::assignedNodesForSlot):
+        (WebCore::SlotAssignment::findFirstSlotElement):
+        (WebCore::SlotAssignment::resolveAllSlotElements): Deleted.
+        * dom/SlotAssignment.h:
+        (WebCore::SlotAssignment::resolveSlotsBeforeNodeInsertionOrRemoval): Moved from cpp file now that it
+        doesn't optionally call resolveAllSlotElements. I'm not renaming this function for now since I want to
+        remove it altogether in a followup.
+        (WebCore::SlotAssignment::willRemoveAllChildren): Ditto.
+        (WebCore::ShadowRoot::resolveSlotsBeforeNodeInsertionOrRemoval): Always update the slot mutation version
+        and clear m_willBeRemovingAllChildren for simplicity. This extra condition will only apply for
+        the deatils element, which nobody cares about it. Meanwhile, we're wasting many IC entries for all other
+        node types whenever a node is inserted or removed. It's a pure madness.
+        (WebCore::ShadowRoot::willRemoveAllChildren): Ditto.
+
 2021-09-01  Jean-Yves Avenard  <jya@apple.com>
 
          'Show Next Frame' and 'Show Previous Frame' keyboard shortcuts seem out of context and only pause video
