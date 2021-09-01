@@ -171,6 +171,8 @@ $(PROJECT_DIR)/runtime/SymbolConstructor.cpp
 $(PROJECT_DIR)/runtime/SymbolPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalCalendarConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalCalendarPrototype.cpp
+$(PROJECT_DIR)/runtime/TemporalDurationConstructor.cpp
+$(PROJECT_DIR)/runtime/TemporalDurationPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalObject.cpp
 $(PROJECT_DIR)/ucd/CaseFolding.txt
 $(PROJECT_DIR)/ucd/DerivedBinaryProperties.txt

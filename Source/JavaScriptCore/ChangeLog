@@ -1,3 +1,12 @@
+2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the Xcode build after r281838
+
+        Unreviewed.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
 2021-09-01  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r279256): Crash in JSC::FTL::saveAllRegisters
