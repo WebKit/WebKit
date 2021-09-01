@@ -173,7 +173,10 @@ class Contributor(object):
         return False
 
     def as_dict(self):
-        info = {"emails" : self._case_preserved_emails}
+        info = dict(
+            name=self.full_name,
+            emails=self._case_preserved_emails,
+        )
 
         if self.aliases:
             info["aliases"] = self.aliases
@@ -243,8 +246,11 @@ class CommitterList(object):
         self._committers = []
         self._reviewers = []
 
-        for name, data in contributors.items():
+        for data in contributors:
+            name = data.get('name')
             status = data.get('status')
+            if not name:
+                continue
             if status == "reviewer":
                 contributor = Reviewer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
                 self._reviewers.append(contributor)
@@ -264,16 +270,11 @@ class CommitterList(object):
         self._committers = committers + reviewers
         self._reviewers = reviewers
 
-    @staticmethod
-    def _contributor_list_to_dict(list):
-        committers_dict = {}
-        for contributor in sorted(list):
-            committers_dict[contributor.full_name] = contributor.as_dict()
-        return committers_dict
-
     def as_json(self):
-        result = CommitterList._contributor_list_to_dict(self._contributors)
-        return json.dumps(result, sort_keys=True, indent=3, separators=(',', ' : '))
+        return json.dumps(
+            [contributor.as_dict() for contributor in sorted(self._contributors)],
+            sort_keys=True, indent=3, separators=(',', ' : '),
+        )
 
     def reformat_in_place(self):
         json_path = os.path.join(

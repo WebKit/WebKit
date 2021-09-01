@@ -1,3 +1,17 @@
+2021-09-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [contributors.json] Relocation (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=229690
+        <rdar://problem/82552403>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.as_dict): Include name in dictionary.
+        (CommitterList.load_json): Use list instead of dictionary.
+        (CommitterList.as_json): Encode as list instead of dictionary.
+        (CommitterList._contributor_list_to_dict): Deleted.
+
 2021-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Remove _statisticsDatabaseColumnsForTable and related unused test functions
