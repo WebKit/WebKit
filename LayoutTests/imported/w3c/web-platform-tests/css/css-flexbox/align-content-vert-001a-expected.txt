@@ -63,28 +63,12 @@ PASS .flexbox div 61
 PASS .flexbox div 62
 PASS .flexbox div 63
 PASS .flexbox div 64
-FAIL .flexbox div 65 assert_equals:
-<div class="a" data-expected-width="10" data-expected-height="10" data-offset-x="198" data-offset-y="296"></div>
-offsetLeft expected 198 but got 8
-FAIL .flexbox div 66 assert_equals:
-<div class="a" data-expected-width="10" data-expected-height="10" data-offset-x="168" data-offset-y="308"></div>
-offsetLeft expected 168 but got 8
-FAIL .flexbox div 67 assert_equals:
-<div class="b" data-expected-width="30" data-expected-height="10" data-offset-x="178" data-offset-y="308"><div class="fixedSizeChild" data-expected-width="30" data-expected-height="5" data-offset-x="178" data-offset-y="308"></div></div>
-offsetLeft expected 178 but got 18
-FAIL .flexbox div 68 assert_equals:
-<div class="fixedSizeChild" data-expected-width="30" data-expected-height="5" data-offset-x="178" data-offset-y="308"></div>
-offsetLeft expected 178 but got 18
-FAIL .flexbox div 69 assert_equals:
-<div class="a" data-expected-width="10" data-expected-height="10" data-offset-x="128" data-offset-y="320"></div>
-offsetLeft expected 128 but got 8
-FAIL .flexbox div 70 assert_equals:
-<div class="b" data-expected-width="30" data-expected-height="10" data-offset-x="138" data-offset-y="320"><div class="fixedSizeChild" data-expected-width="30" data-expected-height="5" data-offset-x="138" data-offset-y="320"></div></div>
-offsetLeft expected 138 but got 18
-FAIL .flexbox div 71 assert_equals:
-<div class="fixedSizeChild" data-expected-width="30" data-expected-height="5" data-offset-x="138" data-offset-y="320"></div>
-offsetLeft expected 138 but got 18
-FAIL .flexbox div 72 assert_equals:
-<div class="c" data-expected-width="40" data-expected-height="10" data-offset-x="168" data-offset-y="320"></div>
-offsetLeft expected 168 but got 48
+PASS .flexbox div 65
+PASS .flexbox div 66
+PASS .flexbox div 67
+PASS .flexbox div 68
+PASS .flexbox div 69
+PASS .flexbox div 70
+PASS .flexbox div 71
+PASS .flexbox div 72
 

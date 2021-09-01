@@ -1,3 +1,12 @@
+2021-08-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add initial support for css-align-3 positional alignment properties
+        https://bugs.webkit.org/show_bug.cgi?id=229074
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations: Unskipped 4 WPT tests that are passing now.
+
 2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Import web-platform-tests/css/css-font-loading

@@ -55,30 +55,14 @@ PASS .flexbox div 53
 PASS .flexbox div 54
 PASS .flexbox div 55
 PASS .flexbox div 56
-FAIL .flexbox div 57 assert_equals:
-<div class="a" data-expected-width="10" data-expected-height="20" data-offset-x="8" data-offset-y="470"></div>
-offsetLeft expected 8 but got 198
-FAIL .flexbox div 58 assert_equals:
-<div class="a" data-expected-width="10" data-expected-height="20" data-offset-x="38" data-offset-y="492"></div>
-offsetLeft expected 38 but got 198
-FAIL .flexbox div 59 assert_equals:
-<div class="b" data-expected-width="30" data-expected-height="20" data-offset-x="8" data-offset-y="492"><div class="fixedSizeChild" data-expected-width="30" data-expected-height="10" data-offset-x="8" data-offset-y="492"></div></div>
-offsetLeft expected 8 but got 168
-FAIL .flexbox div 60 assert_equals:
-<div class="fixedSizeChild" data-expected-width="30" data-expected-height="10" data-offset-x="8" data-offset-y="492"></div>
-offsetLeft expected 8 but got 168
-FAIL .flexbox div 61 assert_equals:
-<div class="a" data-expected-width="10" data-expected-height="20" data-offset-x="78" data-offset-y="514"></div>
-offsetLeft expected 78 but got 198
-FAIL .flexbox div 62 assert_equals:
-<div class="b" data-expected-width="30" data-expected-height="20" data-offset-x="48" data-offset-y="514"><div class="fixedSizeChild" data-expected-width="30" data-expected-height="10" data-offset-x="48" data-offset-y="514"></div></div>
-offsetLeft expected 48 but got 168
-FAIL .flexbox div 63 assert_equals:
-<div class="fixedSizeChild" data-expected-width="30" data-expected-height="10" data-offset-x="48" data-offset-y="514"></div>
-offsetLeft expected 48 but got 168
-FAIL .flexbox div 64 assert_equals:
-<div class="c" data-expected-width="40" data-expected-height="20" data-offset-x="8" data-offset-y="514"></div>
-offsetLeft expected 8 but got 128
+PASS .flexbox div 57
+PASS .flexbox div 58
+PASS .flexbox div 59
+PASS .flexbox div 60
+PASS .flexbox div 61
+PASS .flexbox div 62
+PASS .flexbox div 63
+PASS .flexbox div 64
 PASS .flexbox div 65
 PASS .flexbox div 66
 PASS .flexbox div 67

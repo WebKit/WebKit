@@ -482,6 +482,11 @@ bool RenderFlexibleBox::isColumnFlow() const
     return style().isColumnFlexDirection();
 }
 
+bool RenderFlexibleBox::isColumnOrRowReverse() const
+{
+    return style().flexDirection() == FlexDirection::ColumnReverse || style().flexDirection() == FlexDirection::RowReverse;
+}
+
 bool RenderFlexibleBox::isHorizontalFlow() const
 {
     if (isHorizontalWritingMode())
@@ -1493,9 +1498,11 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, Vector<FlexIte
     return !totalViolation;
 }
 
-static LayoutUnit initialJustifyContentOffset(LayoutUnit availableFreeSpace, ContentPosition justifyContent, ContentDistribution justifyContentDistribution, unsigned numberOfChildren)
+static LayoutUnit initialJustifyContentOffset(LayoutUnit availableFreeSpace, ContentPosition justifyContent, ContentDistribution justifyContentDistribution, unsigned numberOfChildren, bool isReversed)
 {
-    if (justifyContent == ContentPosition::FlexEnd)
+    if (justifyContent == ContentPosition::FlexEnd
+        || (justifyContent == ContentPosition::End && !isReversed)
+        || (justifyContent == ContentPosition::Start && isReversed))
         return availableFreeSpace;
     if (justifyContent == ContentPosition::Center)
         return availableFreeSpace / 2;
@@ -1535,6 +1542,10 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
     case ItemPosition::Normal:
         ASSERT_NOT_REACHED();
         break;
+    case ItemPosition::Start:
+    case ItemPosition::End:
+        ASSERT_NOT_REACHED("%u alignmentForChild should have transformed this position value to something we handle below.", static_cast<uint8_t>(position));
+        break;
     case ItemPosition::Stretch:
         // Actual stretching must be handled by the caller. Since wrap-reverse
         // flips cross start and cross end, stretch children should be aligned
@@ -1559,12 +1570,9 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
     case ItemPosition::LastBaseline:
     case ItemPosition::SelfStart:
     case ItemPosition::SelfEnd:
-    case ItemPosition::Start:
-    case ItemPosition::End:
     case ItemPosition::Left:
     case ItemPosition::Right:
-        // FIXME: Implement the extended grammar, enabled when the Grid Layout
-        // feature was enabled by default.
+        // FIXME: Implement last baseline.
         break;
     }
     return 0;
@@ -1584,8 +1592,9 @@ LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const Ren
 
     ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
-    LayoutUnit offset = initialJustifyContentOffset(availableSpace, position, distribution, 1);
-    if (style().flexDirection() == FlexDirection::RowReverse || style().flexDirection() == FlexDirection::ColumnReverse)
+    auto isReverse = isColumnOrRowReverse();
+    LayoutUnit offset = initialJustifyContentOffset(availableSpace, position, distribution, 1, isReverse);
+    if (isReverse)
         offset = availableSpace - offset;
     return offset;
 }
@@ -1678,6 +1687,15 @@ ItemPosition RenderFlexibleBox::alignmentForChild(const RenderBox& child) const
 
     if (align == ItemPosition::Baseline && !mainAxisIsChildInlineAxis(child))
         align = ItemPosition::FlexStart;
+
+    // We can safely return here because start/end are not affected by a reversed flex-wrap because the
+    // alignment container is the flex line, and in a wrap reversed flex container the start and end within
+    // a flex line are still the same. Contrary to this flex-start/flex-end depend on the flex container
+    // start/end edges which are flipped in the case of wrap-reverse.
+    if (align == ItemPosition::Start)
+        return ItemPosition::FlexStart;
+    if (align == ItemPosition::End)
+        return ItemPosition::FlexEnd;
 
     if (style().flexWrap() == FlexWrap::Reverse) {
         if (align == ItemPosition::FlexStart)
@@ -1812,7 +1830,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
 
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
-    mainAxisOffset += initialJustifyContentOffset(availableFreeSpace, position, distribution, children.size());
+    mainAxisOffset += initialJustifyContentOffset(availableFreeSpace, position, distribution, children.size(), isColumnOrRowReverse());
     if (style().flexDirection() == FlexDirection::RowReverse)
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
@@ -1920,7 +1938,7 @@ void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, La
     // the children starting from the end of the flexbox. We also don't need to
     // layout anything since we're just moving the children to a new position.
     LayoutUnit mainAxisOffset = logicalHeight() - flowAwareBorderEnd() - flowAwarePaddingEnd();
-    mainAxisOffset -= initialJustifyContentOffset(availableFreeSpace, position, distribution, children.size());
+    mainAxisOffset -= initialJustifyContentOffset(availableFreeSpace, position, distribution, children.size(), isColumnOrRowReverse());
     mainAxisOffset -= isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
     
     for (size_t i = 0; i < children.size(); ++i) {
@@ -1933,9 +1951,11 @@ void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, La
     }
 }
     
-static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, ContentPosition alignContent, ContentDistribution alignContentDistribution, unsigned numberOfLines)
+static LayoutUnit initialAlignContentOffset(LayoutUnit availableFreeSpace, ContentPosition alignContent, ContentDistribution alignContentDistribution, unsigned numberOfLines, bool isReversed)
 {
-    if (alignContent == ContentPosition::FlexEnd)
+    if (alignContent == ContentPosition::FlexEnd
+        || (alignContent == ContentPosition::End && !isReversed)
+        || (alignContent == ContentPosition::Start && isReversed))
         return availableFreeSpace;
     if (alignContent == ContentPosition::Center)
         return availableFreeSpace / 2;
@@ -1983,7 +2003,7 @@ void RenderFlexibleBox::alignFlexLines(Vector<LineContext>& lineContexts, Layout
     for (size_t i = 0; i < numLines; ++i)
         availableCrossAxisSpace -= lineContexts[i].crossAxisExtent;
 
-    LayoutUnit lineOffset = initialAlignContentOffset(availableCrossAxisSpace, position, distribution, numLines);
+    LayoutUnit lineOffset = initialAlignContentOffset(availableCrossAxisSpace, position, distribution, numLines, style().flexWrap() == FlexWrap::Reverse);
     for (unsigned lineNumber = 0; lineNumber < numLines; ++lineNumber) {
         LineContext& lineContext = lineContexts[lineNumber];
         lineContext.crossAxisOffset += lineOffset;

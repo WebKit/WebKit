@@ -1,3 +1,27 @@
+2021-08-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add initial support for css-align-3 positional alignment properties
+        https://bugs.webkit.org/show_bug.cgi?id=229074
+
+        Reviewed by Simon Fraser.
+
+        Added initial support for Start and End positional alignment properties from
+        https://drafts.csswg.org/css-align-3/#positional-values. These two properties
+        align the flex item to be flush with the alignment container's (the flex container)
+        start and end edges in the appropriate axis.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::isColumnOrRowReverse const): New method.
+        (WebCore::initialJustifyContentOffset): Handle Start and End.
+        (WebCore::alignmentOffset): Ditto.
+        (WebCore::RenderFlexibleBox::staticMainAxisPositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::alignmentForChild const):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+        (WebCore::initialAlignContentOffset): Handle Start and End.
+        (WebCore::RenderFlexibleBox::alignFlexLines):
+        * rendering/RenderFlexibleBox.h:
+
 2021-09-01  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process](REGRESSION): A detached canvas leaks all the images it draws

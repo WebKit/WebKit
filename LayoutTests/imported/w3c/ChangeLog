@@ -1,3 +1,20 @@
+2021-08-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add initial support for css-align-3 positional alignment properties
+        https://bugs.webkit.org/show_bug.cgi?id=229074
+
+        Reviewed by Simon Fraser.
+
+        Fixed expectations for 56 subtests that should PASS now instead of FAIL.
+
+        * web-platform-tests/css/css-flexbox/align-content-horiz-001a-expected.txt: Mark 8 subtests as PASS.
+        * web-platform-tests/css/css-flexbox/align-content-horiz-001b-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content-horiz-002-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content-vert-001a-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content-vert-001b-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content-vert-002-expected.txt: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content-wmvert-001-expected.txt: Ditto.
+
 2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Import web-platform-tests/css/css-font-loading
