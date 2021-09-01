@@ -2514,6 +2514,8 @@ printing/return-from-printing-mode.html
 webkit.org/b/140866 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 [ Debug ] fast/repaint/animation-after-layer-scroll.html [ Failure ]
 
+webkit.org/b/215723 fast/repaint/list-item-equal-style-change-no-repaint.html [ Pass Failure ]
+
 [ Release ] platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 [ Debug ] platform/win/fast/text/uniscribe-missing-glyph.html [ Skip ] # Debug assertion
 
