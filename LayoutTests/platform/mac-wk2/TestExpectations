@@ -508,12 +508,12 @@ webkit.org/b/125996 accessibility/mac/search-predicate-visible-button.html [ Fai
 webkit.org/b/162999 accessibility/mac/wk1-set-selected-text-marker-range-input-element.html [ Skip ]
 
 # rdar://82147955 ([ Monterey GuardMalloc ] accessibility/* tests are timing out)
-accessibility/accessibility-crash-with-dynamic-inline-content.html [ Pass Timeout ]
-accessibility/accessibility-crash-focused-element-change.html [ Pass Timeout ]
-accessibility/accessibility-object-update-during-style-resolution-crash.html [ Pass Timeout ]
-accessibility/accessibility-crash-setattribute.html [ Pass Timeout ]
-accessibility/activation-of-input-field-inside-other-element.html [ Pass Timeout ]
-accessibility/add-children-pseudo-element.html [ Pass Timeout ]
+[ Monterey ] accessibility/accessibility-crash-with-dynamic-inline-content.html [ Timeout ]
+[ Monterey ] accessibility/accessibility-crash-focused-element-change.html [ Timeout ]
+[ Monterey ] accessibility/accessibility-object-update-during-style-resolution-crash.html [ Timeout ]
+[ Monterey ] accessibility/accessibility-crash-setattribute.html [ Timeout ]
+[ Monterey ] accessibility/activation-of-input-field-inside-other-element.html [ Timeout ]
+[ Monterey ] accessibility/add-children-pseudo-element.html [ Timeout ]
 
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
