@@ -73,11 +73,12 @@ private:
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use valid runtime flags
 
-ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& data, String&& userAgent, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
-    : WorkerThread({ data.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), data.contentSecurityPolicy, false, data.crossOriginEmbedderPolicy, MonotonicTime::now(), { }, data.workerType, FetchRequestCredentials::Omit, settingsValues }, data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, data.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
-    , m_serviceWorkerIdentifier(data.serviceWorkerIdentifier)
-    , m_jobDataIdentifier(data.jobDataIdentifier)
-    , m_data(crossThreadCopy(data))
+ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
+    : WorkerThread({ contextData.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), contextData.contentSecurityPolicy, false, contextData.crossOriginEmbedderPolicy, MonotonicTime::now(), { }, contextData.workerType, FetchRequestCredentials::Omit, settingsValues }, contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
+    , m_serviceWorkerIdentifier(contextData.serviceWorkerIdentifier)
+    , m_jobDataIdentifier(contextData.jobDataIdentifier)
+    , m_contextData(crossThreadCopy(WTFMove(contextData)))
+    , m_workerData(crossThreadCopy(WTFMove(workerData)))
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())
     , m_heartBeatTimeout(SWContextManager::singleton().connection()->shouldUseShortTimeout() ? heartBeatTimeoutForTest : heartBeatTimeout)
     , m_heartBeatTimer { *this, &ServiceWorkerThread::heartBeatTimerFired }
@@ -90,8 +91,8 @@ ServiceWorkerThread::~ServiceWorkerThread() = default;
 
 Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
-    RELEASE_ASSERT(m_data);
-    return ServiceWorkerGlobalScope::create(*std::exchange(m_data, std::nullopt), params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
+    RELEASE_ASSERT(m_contextData);
+    return ServiceWorkerGlobalScope::create(*std::exchange(m_contextData, std::nullopt), *std::exchange(m_workerData, std::nullopt), params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
 }
 
 void ServiceWorkerThread::runEventLoop()

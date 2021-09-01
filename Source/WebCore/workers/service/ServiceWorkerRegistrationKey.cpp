@@ -60,9 +60,14 @@ bool ServiceWorkerRegistrationKey::operator==(const ServiceWorkerRegistrationKey
     return m_topOrigin == other.m_topOrigin && m_scope == other.m_scope;
 }
 
-ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const
+ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() const &
 {
     return { m_topOrigin.isolatedCopy(), m_scope.isolatedCopy() };
+}
+
+ServiceWorkerRegistrationKey ServiceWorkerRegistrationKey::isolatedCopy() &&
+{
+    return { WTFMove(m_topOrigin).isolatedCopy(), WTFMove(m_scope).isolatedCopy() };
 }
 
 bool ServiceWorkerRegistrationKey::isMatching(const SecurityOriginData& topOrigin, const URL& clientURL) const

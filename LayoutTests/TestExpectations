@@ -407,6 +407,7 @@ imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.htm
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/navigate-top-to-aboutblank.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/popup-coop-by-sw.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html [ DumpJSConsoleLogInStdErr ]

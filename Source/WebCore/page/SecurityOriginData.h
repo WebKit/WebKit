@@ -64,7 +64,8 @@ struct SecurityOriginData {
     String host;
     std::optional<uint16_t> port;
 
-    WEBCORE_EXPORT SecurityOriginData isolatedCopy() const;
+    WEBCORE_EXPORT SecurityOriginData isolatedCopy() const &;
+    WEBCORE_EXPORT SecurityOriginData isolatedCopy() &&;
 
     // Serialize the security origin to a string that could be used as part of
     // file names. This format should be used in storage APIs only.

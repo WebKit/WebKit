@@ -93,13 +93,13 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
     return set;
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, ServiceWorkerContextData&& data, String&& userAgent, CacheStorageProvider& cacheStorageProvider, StorageBlockingPolicy storageBlockingPolicy)
-    : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy))
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, CacheStorageProvider& cacheStorageProvider, StorageBlockingPolicy storageBlockingPolicy)
+    : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), contextData, storageBlockingPolicy))
     , m_document(*m_page->mainFrame().document())
 #if ENABLE(REMOTE_INSPECTOR)
-    , m_remoteDebuggable(makeUnique<ServiceWorkerDebuggable>(*this, data))
+    , m_remoteDebuggable(makeUnique<ServiceWorkerDebuggable>(*this, contextData))
 #endif
-    , m_serviceWorkerThread(ServiceWorkerThread::create(WTFMove(data), WTFMove(userAgent), m_document->settingsValues(), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
+    , m_serviceWorkerThread(ServiceWorkerThread::create(WTFMove(contextData), WTFMove(workerData), WTFMove(userAgent), m_document->settingsValues(), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_inspectorProxy(*this)
 {

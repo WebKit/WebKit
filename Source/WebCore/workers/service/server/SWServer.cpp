@@ -727,10 +727,10 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     registration->setPreInstallationWorker(worker.ptr());
     worker->setState(SWServerWorker::State::Running);
     auto userAgent = worker->userAgent();
-    auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, WTFMove(worker));
+    auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, worker.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    connection->installServiceWorkerContext(data, userAgent);
+    connection->installServiceWorkerContext(data, worker->data(), userAgent);
 }
 
 void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
@@ -798,7 +798,7 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
     auto* contextConnection = worker->contextConnection();
     ASSERT(contextConnection);
 
-    contextConnection->installServiceWorkerContext(worker->contextData(), worker->userAgent());
+    contextConnection->installServiceWorkerContext(worker->contextData(), worker->data(), worker->userAgent());
 
     return true;
 }

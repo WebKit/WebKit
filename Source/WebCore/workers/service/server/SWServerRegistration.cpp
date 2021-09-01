@@ -233,7 +233,7 @@ bool SWServerRegistration::tryClear()
 void SWServerRegistration::clear()
 {
     if (m_preInstallationWorker) {
-        ASSERT(m_preInstallationWorker->state() == ServiceWorkerState::Redundant);
+        ASSERT(m_preInstallationWorker->state() == ServiceWorkerState::Parsed);
         m_preInstallationWorker->terminate();
         m_preInstallationWorker = nullptr;
     }

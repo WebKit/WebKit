@@ -45,7 +45,8 @@ struct CrossOriginEmbedderPolicy {
     CrossOriginEmbedderPolicyValue reportOnlyValue { CrossOriginEmbedderPolicyValue::UnsafeNone };
     String reportOnlyReportingEndpoint;
 
-    CrossOriginEmbedderPolicy isolatedCopy() const;
+    CrossOriginEmbedderPolicy isolatedCopy() const &;
+    CrossOriginEmbedderPolicy isolatedCopy() &&;
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<CrossOriginEmbedderPolicy> decode(Decoder&);
 };

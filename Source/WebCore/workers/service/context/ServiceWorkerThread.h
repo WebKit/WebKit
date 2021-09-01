@@ -79,7 +79,7 @@ protected:
     void runEventLoop() override;
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThread(ServiceWorkerContextData&&, String&& userAgent, const Settings::Values&, WorkerLoaderProxy&, WorkerDebuggerProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    WEBCORE_EXPORT ServiceWorkerThread(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, const Settings::Values&, WorkerLoaderProxy&, WorkerDebuggerProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     bool isServiceWorkerThread() const final { return true; }
     void finishedEvaluatingScript() final;
@@ -95,7 +95,8 @@ private:
 
     ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     std::optional<ServiceWorkerJobDataIdentifier> m_jobDataIdentifier;
-    std::optional<ServiceWorkerContextData> m_data; // Becomes std::nullopt after the ServiceWorkerGlobalScope has been created.
+    std::optional<ServiceWorkerContextData> m_contextData; // Becomes std::nullopt after the ServiceWorkerGlobalScope has been created.
+    std::optional<ServiceWorkerData> m_workerData; // Becomes std::nullopt after the ServiceWorkerGlobalScope has been created.
     WorkerObjectProxy& m_workerObjectProxy;
     bool m_doesHandleFetch { false };
 

@@ -1,3 +1,41 @@
+2021-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Add support for ServiceWorkerGlobalScope.serviceWorker
+        https://bugs.webkit.org/show_bug.cgi?id=229720
+
+        Reviewed by Youenn Fablet.
+
+        Add support for ServiceWorkerGlobalScope.serviceWorker:
+        - https://w3c.github.io/ServiceWorker/#dom-serviceworkerglobalscope-serviceworker
+
+        Also add support for the "parsed" initial ServiceWorkerState:
+        - https://w3c.github.io/ServiceWorker/#enumdef-serviceworkerstate
+
+        No new tests, rebaselined existing tests.
+
+        * workers/service/ServiceWorker.idl:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::create):
+        (WebCore::ServiceWorkerGlobalScope::ServiceWorkerGlobalScope):
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerGlobalScope.idl:
+        * workers/service/ServiceWorkerTypes.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        (WebCore::ServiceWorkerThread::createWorkerGlobalScope):
+        * workers/service/context/ServiceWorkerThread.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::installContextData):
+        (WebCore::SWServer::runServiceWorker):
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::clear):
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+
 2021-09-01  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Refactor screen capture class

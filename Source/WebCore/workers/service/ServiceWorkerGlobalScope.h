@@ -45,7 +45,7 @@ class ServiceWorkerThread;
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
-    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     ~ServiceWorkerGlobalScope();
 
@@ -53,6 +53,7 @@ public:
 
     ServiceWorkerClients& clients() { return m_clients.get(); }
     ServiceWorkerRegistration& registration() { return m_registration.get(); }
+    ServiceWorker& serviceWorker() { return m_serviceWorker.get(); }
     
     void skipWaiting(Ref<DeferredPromise>&&);
 
@@ -77,12 +78,13 @@ public:
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
     
 private:
-    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerRegistration> m_registration;
+    Ref<ServiceWorker> m_serviceWorker;
     Ref<ServiceWorkerClients> m_clients;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClient*> m_clientMap;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;

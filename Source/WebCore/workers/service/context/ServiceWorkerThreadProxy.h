@@ -85,7 +85,7 @@ public:
     WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, ServiceWorkerContextData&&, String&& userAgent, CacheStorageProvider&, StorageBlockingPolicy);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, CacheStorageProvider&, StorageBlockingPolicy);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 

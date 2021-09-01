@@ -64,13 +64,23 @@ CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse
     return obtainCrossOriginEmbedderPolicy(response, isSecureContext);
 }
 
-CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() const
+CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() const &
 {
     return {
         value,
         reportingEndpoint.isolatedCopy(),
         reportOnlyValue,
         reportOnlyReportingEndpoint.isolatedCopy()
+    };
+}
+
+CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() &&
+{
+    return {
+        value,
+        WTFMove(reportingEndpoint).isolatedCopy(),
+        reportOnlyValue,
+        WTFMove(reportOnlyReportingEndpoint).isolatedCopy()
     };
 }
 

@@ -30,11 +30,22 @@
 
 namespace WebCore {
 
-ServiceWorkerData ServiceWorkerData::isolatedCopy() const
+ServiceWorkerData ServiceWorkerData::isolatedCopy() const &
 {
     return {
         identifier,
         scriptURL.isolatedCopy(),
+        state,
+        type,
+        registrationIdentifier
+    };
+}
+
+ServiceWorkerData ServiceWorkerData::isolatedCopy() &&
+{
+    return {
+        identifier,
+        WTFMove(scriptURL).isolatedCopy(),
         state,
         type,
         registrationIdentifier

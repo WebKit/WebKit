@@ -87,9 +87,9 @@ void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const Serv
         connection->postMessageToServiceWorkerClient(destinationIdentifier.contextIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
-void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& data, const String& userAgent)
+void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent)
 {
-    send(Messages::WebSWContextManagerConnection::InstallServiceWorker { data, userAgent });
+    send(Messages::WebSWContextManagerConnection::InstallServiceWorker { contextData, workerData, userAgent });
 }
 
 void WebSWServerToContextConnection::updateAppInitiatedValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)

@@ -49,7 +49,8 @@ struct ServiceWorkerRegistrationData {
     std::optional<ServiceWorkerData> waitingWorker;
     std::optional<ServiceWorkerData> activeWorker;
 
-    ServiceWorkerRegistrationData isolatedCopy() const;
+    ServiceWorkerRegistrationData isolatedCopy() const &;
+    ServiceWorkerRegistrationData isolatedCopy() &&;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerRegistrationData> decode(Decoder&);

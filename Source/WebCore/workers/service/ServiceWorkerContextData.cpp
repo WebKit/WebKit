@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const
+ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const &
 {
     return {
         jobDataIdentifier,
@@ -47,6 +47,25 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const
         loadedFromDisk,
         lastNavigationWasAppInitiated,
         crossThreadCopy(scriptResourceMap)
+    };
+}
+
+ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() &&
+{
+    return {
+        jobDataIdentifier,
+        WTFMove(registration).isolatedCopy(),
+        serviceWorkerIdentifier,
+        WTFMove(script).isolatedCopy(),
+        WTFMove(certificateInfo).isolatedCopy(),
+        WTFMove(contentSecurityPolicy).isolatedCopy(),
+        WTFMove(crossOriginEmbedderPolicy).isolatedCopy(),
+        WTFMove(referrerPolicy).isolatedCopy(),
+        WTFMove(scriptURL).isolatedCopy(),
+        workerType,
+        loadedFromDisk,
+        lastNavigationWasAppInitiated,
+        crossThreadCopy(WTFMove(scriptResourceMap))
     };
 }
 

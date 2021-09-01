@@ -1,3 +1,24 @@
+2021-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Add support for ServiceWorkerGlobalScope.serviceWorker
+        https://bugs.webkit.org/show_bug.cgi?id=229720
+
+        Reviewed by Youenn Fablet.
+
+        Add support for ServiceWorkerGlobalScope.serviceWorker:
+        - https://w3c.github.io/ServiceWorker/#dom-serviceworkerglobalscope-serviceworker
+
+        Also add support for the "parsed" initial ServiceWorkerState:
+        - https://w3c.github.io/ServiceWorker/#enumdef-serviceworkerstate
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::installServiceWorkerContext):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2021-09-01  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         [CoordinatedGraphics] Schedule rendering after setLayerTreeStateIsFrozen(false) in non-AC mode

@@ -53,7 +53,8 @@ public:
 
     bool relatesToOrigin(const SecurityOriginData&) const;
 
-    ServiceWorkerRegistrationKey isolatedCopy() const;
+    ServiceWorkerRegistrationKey isolatedCopy() const &;
+    ServiceWorkerRegistrationKey isolatedCopy() &&;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerRegistrationKey> decode(Decoder&);

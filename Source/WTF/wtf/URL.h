@@ -75,7 +75,8 @@ public:
     // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread. Since the underlying StringImpl objects are immutable, there's
     // no other reason to ever prefer isolatedCopy() over plain old assignment.
-    WTF_EXPORT_PRIVATE URL isolatedCopy() const;
+    WTF_EXPORT_PRIVATE URL isolatedCopy() const &;
+    WTF_EXPORT_PRIVATE URL isolatedCopy() &&;
 
     bool isNull() const;
     bool isEmpty() const;

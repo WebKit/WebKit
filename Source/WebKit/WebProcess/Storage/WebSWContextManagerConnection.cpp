@@ -141,7 +141,7 @@ void WebSWContextManagerConnection::updateAppInitiatedValue(ServiceWorkerIdentif
         serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);
 }
 
-void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextData&& data, String&& userAgent)
+void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent)
 {
     auto pageConfiguration = pageConfigurationWithEmptyClients(WebProcess::singleton().sessionID());
 
@@ -159,11 +159,11 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
     pageConfiguration.loaderClientForMainFrame = makeUniqueRef<ServiceWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, FrameIdentifier::generate(), effectiveUserAgent);
 
 #if !RELEASE_LOG_DISABLED
-    auto serviceWorkerIdentifier = data.serviceWorkerIdentifier;
+    auto serviceWorkerIdentifier = contextData.serviceWorkerIdentifier;
 #endif
     
-    auto lastNavigationWasAppInitiated = data.lastNavigationWasAppInitiated;
-    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), WTFMove(data), WTFMove(effectiveUserAgent), WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
+    auto lastNavigationWasAppInitiated = contextData.lastNavigationWasAppInitiated;
+    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), WTFMove(contextData), WTFMove(workerData), WTFMove(effectiveUserAgent), WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
 
     if (lastNavigationWasAppInitiated)
         serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);

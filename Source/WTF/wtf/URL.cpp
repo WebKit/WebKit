@@ -72,10 +72,17 @@ static bool shouldTrimFromURL(UChar character)
     return character <= ' ';
 }
 
-URL URL::isolatedCopy() const
+URL URL::isolatedCopy() const &
 {
     URL result = *this;
     result.m_string = result.m_string.isolatedCopy();
+    return result;
+}
+
+URL URL::isolatedCopy() &&
+{
+    URL result = *this;
+    result.m_string = WTFMove(result.m_string).isolatedCopy();
     return result;
 }
 

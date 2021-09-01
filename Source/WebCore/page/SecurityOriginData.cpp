@@ -115,12 +115,23 @@ std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(con
     return SecurityOriginData { protocol, host, port };
 }
 
-SecurityOriginData SecurityOriginData::isolatedCopy() const
+SecurityOriginData SecurityOriginData::isolatedCopy() const &
 {
     SecurityOriginData result;
 
     result.protocol = protocol.isolatedCopy();
     result.host = host.isolatedCopy();
+    result.port = port;
+
+    return result;
+}
+
+SecurityOriginData SecurityOriginData::isolatedCopy() &&
+{
+    SecurityOriginData result;
+
+    result.protocol = WTFMove(protocol).isolatedCopy();
+    result.host = WTFMove(host).isolatedCopy();
     result.port = port;
 
     return result;

@@ -45,6 +45,7 @@
 ServiceWorker includes AbstractWorker;
 
 enum ServiceWorkerState {
+    "parsed",
     "installing",
     "installed",
     "activating",

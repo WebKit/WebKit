@@ -46,6 +46,7 @@ enum class ServiceWorkerRegistrationState : uint8_t {
 };
 
 enum class ServiceWorkerState : uint8_t {
+    Parsed,
     Installing,
     Installed,
     Activating,
@@ -105,6 +106,7 @@ template <> struct EnumTraits<WebCore::ServiceWorkerRegistrationState> {
 template <> struct EnumTraits<WebCore::ServiceWorkerState> {
     using values = EnumValues<
         WebCore::ServiceWorkerState,
+        WebCore::ServiceWorkerState::Parsed,
         WebCore::ServiceWorkerState::Installing,
         WebCore::ServiceWorkerState::Installed,
         WebCore::ServiceWorkerState::Activating,

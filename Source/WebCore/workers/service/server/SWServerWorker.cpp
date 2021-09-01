@@ -54,7 +54,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     : m_server(makeWeakPtr(server))
     , m_registrationKey(registration.key())
     , m_registration(makeWeakPtr(registration))
-    , m_data { identifier, scriptURL, ServiceWorkerState::Redundant, type, registration.identifier() }
+    , m_data { identifier, scriptURL, ServiceWorkerState::Parsed, type, registration.identifier() }
     , m_script(script)
     , m_certificateInfo(certificateInfo)
     , m_contentSecurityPolicy(contentSecurityPolicy)

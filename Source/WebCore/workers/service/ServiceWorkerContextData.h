@@ -97,7 +97,8 @@ struct ServiceWorkerContextData {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
 
-    ServiceWorkerContextData isolatedCopy() const;
+    ServiceWorkerContextData isolatedCopy() const &;
+    ServiceWorkerContextData isolatedCopy() &&;
 };
 
 template<class Encoder>
