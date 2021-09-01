@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DatabaseUtilities.h"
+#include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {

@@ -25,6 +25,8 @@
 #include "config.h"
 #include "LibWebRTCIceTransportBackend.h"
 
+#include "LibWebRTCProvider.h"
+
 #if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
 
 ALLOW_UNUSED_PARAMETERS_BEGIN

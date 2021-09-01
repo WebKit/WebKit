@@ -27,6 +27,7 @@
 #include "PutByStatus.h"
 
 #include "BytecodeStructs.h"
+#include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "GetterSetterAccessCase.h"

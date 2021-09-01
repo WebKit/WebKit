@@ -40,6 +40,7 @@
 #include "LibWebRTCProvider.h"
 #include "MediaRecorderProvider.h"
 #include "PerformanceLoggingClient.h"
+#include "PermissionController.h"
 #include "PluginInfoProvider.h"
 #include "ProgressTrackerClient.h"
 #include "SocketProvider.h"

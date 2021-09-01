@@ -179,7 +179,7 @@ static String formSignature(const HTMLFormElement& form)
     // Remove the query part because it might contain volatile parameters such as a session key.
     // FIXME: But leave the fragment identifier? Perhaps we should switch to removeQueryAndFragmentIdentifier.
 
-    URL actionURL = form.getURLAttribute(actionAttr);
+    URL actionURL = form.getURLAttribute(HTMLNames::actionAttr);
     actionURL.setQuery({ });
     builder.append(actionURL.string());
 

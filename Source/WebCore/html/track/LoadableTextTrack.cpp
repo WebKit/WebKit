@@ -34,6 +34,7 @@
 #include "VTTCue.h"
 #include "VTTRegionList.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 

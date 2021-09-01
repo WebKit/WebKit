@@ -28,6 +28,7 @@
 
 #include "RTCIceGatheringState.h"
 #include "RTCIceTransportState.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

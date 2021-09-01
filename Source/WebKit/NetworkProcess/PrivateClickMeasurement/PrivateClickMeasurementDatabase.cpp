@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "PrivateClickMeasurementDebugInfo.h"
 #include "PrivateClickMeasurementManager.h"
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <WebCore/SQLiteTransaction.h>
@@ -235,7 +236,7 @@ std::pair<std::optional<Database::UnattributedPrivateClickMeasurement>, std::opt
     return std::make_pair(unattributedPrivateClickMeasurement, attributedPrivateClickMeasurement);
 }
 
-std::pair<std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData)
+std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> Database::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -252,7 +253,7 @@ std::pair<std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData
     RELEASE_LOG_INFO(PrivateClickMeasurement, "Got an attribution with attribution trigger data: %{public}u and priority: %{public}u.", data, priority);
     debugInfo.messages.append({ MessageLevel::Info, makeString("[Private Click Measurement] Got an attribution with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "'."_s) });
 
-    PrivateClickMeasurement::AttributionSecondsUntilSendData secondsUntilSend { std::nullopt, std::nullopt };
+    WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData secondsUntilSend { std::nullopt, std::nullopt };
 
     auto attribution = findPrivateClickMeasurement(sourceSite, destinationSite);
     auto& previouslyUnattributed = attribution.first;
@@ -300,7 +301,7 @@ std::pair<std::optional<PrivateClickMeasurement::AttributionSecondsUntilSendData
     return { secondsUntilSend, WTFMove(debugInfo) };
 }
 
-void Database::removeUnattributed(PrivateClickMeasurement& attribution)
+void Database::removeUnattributed(WebCore::PrivateClickMeasurement& attribution)
 {
     ASSERT(!RunLoop::isMain());
     auto sourceSiteDomainID = domainID(attribution.sourceSite().registrableDomain);
@@ -439,7 +440,7 @@ void Database::markAttributedPrivateClickMeasurementsAsExpiredForTesting()
     }
 }
 
-void Database::clearPrivateClickMeasurement(std::optional<RegistrableDomain> domain)
+void Database::clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDomain> domain)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -479,7 +480,7 @@ void Database::clearExpiredPrivateClickMeasurement()
     }
 }
 
-void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
+void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attribution, WebCore::PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
 {
     ASSERT(!RunLoop::isMain());
     auto timesToSend = earliestTimesToSend(attribution);
@@ -493,7 +494,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
         return;
 
     switch (attributionReportEndpoint) {
-    case PrivateClickMeasurement::AttributionReportEndpoint::Source:
+    case WebCore::PrivateClickMeasurement::AttributionReportEndpoint::Source:
         if (!sourceEarliestTimeToSend) {
             ASSERT_NOT_REACHED();
             return;
@@ -501,7 +502,7 @@ void Database::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributi
         markReportAsSentToSource(*sourceSiteDomainID, *destinationSiteDomainID);
         sourceEarliestTimeToSend = std::nullopt;
         break;
-    case PrivateClickMeasurement::AttributionReportEndpoint::Destination:
+    case WebCore::PrivateClickMeasurement::AttributionReportEndpoint::Destination:
         if (!destinationEarliestTimeToSend) {
             ASSERT_NOT_REACHED();
             return;

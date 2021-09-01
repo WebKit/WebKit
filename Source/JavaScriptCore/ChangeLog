@@ -1,3 +1,15 @@
+2021-08-31  Lauro Moura  <lmoura@igalia.com>
+
+        Non-unified build partial fixes, late late August 2021
+        https://bugs.webkit.org/show_bug.cgi?id=229741
+
+        Unreviewed non-unified build fixes.
+
+        * bytecode/PutByStatus.cpp: Add missing header.
+        * bytecode/PutByVariant.h: Ditto.
+        * runtime/TemporalCalendar.cpp: Ditto.
+        * runtime/TemporalCalendarPrototype.cpp: Ditto.
+
 2021-08-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Enable Object.hasOwn

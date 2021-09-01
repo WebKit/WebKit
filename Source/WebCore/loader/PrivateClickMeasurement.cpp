@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Expected.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/URL.h>

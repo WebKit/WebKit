@@ -22,6 +22,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 

@@ -26,6 +26,9 @@
 #include "config.h"
 #include "TemporalCalendar.h"
 
+#include "JSObjectInlines.h"
+#include "StructureInlines.h"
+
 namespace JSC {
 
 const ClassInfo TemporalCalendar::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalCalendar) };

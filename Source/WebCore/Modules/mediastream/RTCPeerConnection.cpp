@@ -55,6 +55,8 @@
 #include "RTCDtlsTransportBackend.h"
 #include "RTCIceCandidate.h"
 #include "RTCIceCandidateInit.h"
+#include "RTCIceTransport.h"
+#include "RTCIceTransportBackend.h"
 #include "RTCOfferOptions.h"
 #include "RTCPeerConnectionIceErrorEvent.h"
 #include "RTCPeerConnectionIceEvent.h"

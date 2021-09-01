@@ -30,6 +30,7 @@
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include "TemporalCalendar.h"
 
 namespace JSC {
 
