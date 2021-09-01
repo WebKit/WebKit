@@ -253,10 +253,8 @@ void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& 
 
 void Performance::navigationFinished(const NetworkLoadMetrics& metrics)
 {
-    if (!m_navigationTiming) {
-        ASSERT_NOT_REACHED();
+    if (!m_navigationTiming)
         return;
-    }
     m_navigationTiming->navigationFinished(metrics);
 
     queueEntry(*m_navigationTiming);
