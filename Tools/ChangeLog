@@ -1,3 +1,16 @@
+2021-09-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Unreviewed, reverting r281870.
+
+        It broke the GTK api test runner.
+
+        Reverted changeset:
+
+        "[GTK] The Xvfb display server may fail to start sometimes
+        causing tests to randomly crash"
+        https://bugs.webkit.org/show_bug.cgi?id=229758
+        https://commits.webkit.org/r281870
+
 2021-09-01  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Automatic rebasing or pull-requests (Follow-up fix.)

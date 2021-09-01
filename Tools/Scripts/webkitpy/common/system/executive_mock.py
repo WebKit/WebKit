@@ -37,23 +37,21 @@ _log = logging.getLogger(__name__)
 
 
 class MockProcess(object):
-    def __init__(self, stdout='MOCK STDOUT\n', stderr='', returncode=0):
+    def __init__(self, stdout='MOCK STDOUT\n', stderr=''):
         self.pid = 42
         self.stdout = BytesIO(string_utils.encode(stdout))
         self.stderr = BytesIO(string_utils.encode(stderr))
         self.stdin = BytesIO()
-        self.returncode = returncode
+        self.returncode = 0
         self._is_running = False
 
     def wait(self):
         self._is_running = False
         return self.returncode
 
-    def communicate(self, input=None, timeout=None):
+    def communicate(self, input=None):
         self._is_running = False
-        stdout = self.stdout.read() if isinstance(self.stdout, BytesIO) else self.stdout
-        stderr = self.stderr.read() if isinstance(self.stderr, BytesIO) else self.stderr
-        return (stdout, stderr)
+        return (self.stdout, self.stderr)
 
     def poll(self):
         if self._is_running:
