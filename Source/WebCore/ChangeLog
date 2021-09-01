@@ -1,3 +1,74 @@
+2021-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Refactor screen capture class
+        https://bugs.webkit.org/show_bug.cgi?id=229142
+        <rdar://problem/81983306>
+
+        Reviewed by Youenn Fablet.
+        
+        Rename classes based on the frameworks they use. Create CGDisplayStream base class.
+
+        No new tests, no functional change.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/CGDisplayStreamCaptureSource.cpp: Added.
+        (WebCore::CGDisplayStreamCaptureSource::~CGDisplayStreamCaptureSource):
+        (WebCore::CGDisplayStreamCaptureSource::start):
+        (WebCore::CGDisplayStreamCaptureSource::stop):
+        (WebCore::CGDisplayStreamCaptureSource::generateFrame):
+        (WebCore::CGDisplayStreamCaptureSource::startDisplayStream):
+        (WebCore::CGDisplayStreamCaptureSource::commitConfiguration):
+        (WebCore::CGDisplayStreamCaptureSource::displayWasReconfigured):
+        (WebCore::CGDisplayStreamCaptureSource::displayReconfigurationCallBack):
+        (WebCore::CGDisplayStreamCaptureSource::newFrame):
+        (WebCore::CGDisplayStreamCaptureSource::frameAvailableHandler):
+        * platform/mediastream/mac/CGDisplayStreamCaptureSource.h: Copied from Source/WebCore/platform/mediastream/mac/ScreenDisplayCapturerMac.h.
+        (WebCore::CGDisplayStreamCaptureSource::checkDisplayStream):
+        (WebCore::CGDisplayStreamCaptureSource::displayStream const):
+        (WebCore::CGDisplayStreamCaptureSource::invalidateDisplayStream):
+        * platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.h: Renamed from Source/WebCore/platform/mediastream/mac/ScreenDisplayCapturerMac.h.
+        * platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.mm: Added.
+        (WebCore::updateDisplayID):
+        (WebCore::CGDisplayStreamScreenCaptureSource::create):
+        (WebCore::CGDisplayStreamScreenCaptureSource::CGDisplayStreamScreenCaptureSource):
+        (WebCore::CGDisplayStreamScreenCaptureSource::checkDisplayStream):
+        (WebCore::CGDisplayStreamScreenCaptureSource::createDisplayStream):
+        (WebCore::CGDisplayStreamScreenCaptureSource::screenCaptureDeviceWithPersistentID):
+        (WebCore::CGDisplayStreamScreenCaptureSource::screenCaptureDevices):
+        * platform/mediastream/mac/CGWindowCaptureSource.h: Renamed from Source/WebCore/platform/mediastream/mac/WindowDisplayCapturerMac.h.
+        * platform/mediastream/mac/CGWindowCaptureSource.mm: Renamed from Source/WebCore/platform/mediastream/mac/WindowDisplayCapturerMac.mm.
+        (WebCore::CGWindowCaptureSource::create):
+        (WebCore::CGWindowCaptureSource::CGWindowCaptureSource):
+        (WebCore::CGWindowCaptureSource::windowImage):
+        (WebCore::CGWindowCaptureSource::generateFrame):
+        (WebCore::CGWindowCaptureSource::windowCaptureDeviceWithPersistentID):
+        (WebCore::CGWindowCaptureSource::windowCaptureDevices):
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::DisplayCaptureManagerCocoa::updateDisplayCaptureDevices):
+        (WebCore::DisplayCaptureManagerCocoa::updateWindowCaptureDevices):
+        (WebCore::DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID):
+        (WebCore::DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID):
+        * platform/mediastream/mac/DisplayCaptureSourceMac.cpp: Renamed from Source/WebCore/platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp.
+        (WebCore::DisplayCaptureSourceMac::create):
+        (WebCore::DisplayCaptureSourceMac::DisplayCaptureSourceMac):
+        (WebCore::DisplayCaptureSourceMac::~DisplayCaptureSourceMac):
+        (WebCore::DisplayCaptureSourceMac::capabilities):
+        (WebCore::DisplayCaptureSourceMac::settings):
+        (WebCore::DisplayCaptureSourceMac::settingsDidChange):
+        (WebCore::DisplayCaptureSourceMac::startProducingData):
+        (WebCore::DisplayCaptureSourceMac::stopProducingData):
+        (WebCore::DisplayCaptureSourceMac::elapsedTime):
+        (WebCore::DisplayCaptureSourceMac::updateFrameSize):
+        (WebCore::DisplayCaptureSourceMac::emitFrame):
+        (WebCore::DisplayCaptureSourceMac::Capturer::setLogger):
+        (WebCore::DisplayCaptureSourceMac::Capturer::logChannel const):
+        * platform/mediastream/mac/DisplayCaptureSourceMac.h: Renamed from Source/WebCore/platform/mediastream/mac/DisplayCaptureSourceCocoa.h.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * platform/mediastream/mac/ScreenDisplayCapturerMac.mm: Removed.
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockDisplayCapturer::generateFrame):
+
 2021-09-01  Chris Dumez  <cdumez@apple.com>
 
         Regression(r272607) Removal of alert()/confirm() in third-party iframes breaks Salesforce

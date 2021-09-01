@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc.  All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@
 
 #if PLATFORM(COCOA)
 #include "CoreAudioCaptureSource.h"
-#include "DisplayCaptureSourceCocoa.h"
+#include "DisplayCaptureSourceMac.h"
 #include "MockRealtimeVideoSourceMac.h"
 #endif
 
@@ -115,14 +115,14 @@ private:
 };
 
 #if PLATFORM(MAC)
-class MockDisplayCapturer final : public DisplayCaptureSourceCocoa::Capturer {
+class MockDisplayCapturer final : public DisplayCaptureSourceMac::Capturer {
 public:
     explicit MockDisplayCapturer(const CaptureDevice&);
 
 private:
     bool start(float) final;
     void stop() final  { m_source->stop(); }
-    DisplayCaptureSourceCocoa::DisplayFrameType generateFrame() final;
+    DisplayCaptureSourceMac::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
     void commitConfiguration(float) final { }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
@@ -144,7 +144,7 @@ bool MockDisplayCapturer::start(float)
     return true;
 }
 
-DisplayCaptureSourceCocoa::DisplayFrameType MockDisplayCapturer::generateFrame()
+DisplayCaptureSourceMac::DisplayFrameType MockDisplayCapturer::generateFrame()
 {
     if (auto* imageBuffer = m_source->imageBuffer())
         return imageBuffer->copyNativeImage();
@@ -163,7 +163,7 @@ public:
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Window:
 #if PLATFORM(MAC)
-            return DisplayCaptureSourceCocoa::create(UniqueRef<DisplayCaptureSourceCocoa::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
+            return DisplayCaptureSourceMac::create(UniqueRef<DisplayCaptureSourceMac::Capturer>(makeUniqueRef<MockDisplayCapturer>(device)), device, constraints);
 #elif USE(GSTREAMER)
             return MockDisplayCaptureSourceGStreamer::create(device, constraints);
 #else
