@@ -103,9 +103,9 @@ const RealtimeMediaSourceCapabilities& DisplayCaptureSourceMac::capabilities()
     if (!m_capabilities) {
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
-        // FIXME: what should these be?
-        capabilities.setWidth(CapabilityValueOrRange(1, 3840));
-        capabilities.setHeight(CapabilityValueOrRange(1, 2160));
+        auto intrinsicSize = m_capturer->intrinsicSize();
+        capabilities.setWidth(CapabilityValueOrRange(1, intrinsicSize.width()));
+        capabilities.setHeight(CapabilityValueOrRange(1, intrinsicSize.height()));
         capabilities.setFrameRate(CapabilityValueOrRange(.01, 30.0));
 
         m_capabilities = WTFMove(capabilities);
@@ -145,9 +145,6 @@ void DisplayCaptureSourceMac::settingsDidChange(OptionSet<RealtimeMediaSourceSet
     if (settings.contains(RealtimeMediaSourceSettings::Flag::FrameRate) && m_timer.isActive())
         m_timer.startRepeating(1_s / frameRate());
 
-    if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
-        m_bufferAttributes = nullptr;
-
     m_currentSettings = { };
 }
 
@@ -156,7 +153,7 @@ void DisplayCaptureSourceMac::startProducingData()
     m_startTime = MonotonicTime::now();
     m_timer.startRepeating(1_s / frameRate());
 
-    if (!m_capturer->start(frameRate()))
+    if (!m_capturer->start())
         captureFailed();
 }
 

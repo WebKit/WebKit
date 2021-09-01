@@ -103,15 +103,38 @@ static RetainPtr<CFDictionaryRef> windowDescription(CGWindowID id)
 
 Expected<UniqueRef<DisplayCaptureSourceMac::Capturer>, String> CGWindowCaptureSource::create(const String& deviceID)
 {
-    auto displayID = parseInteger<uint32_t>(deviceID);
-    if (!displayID)
+    auto windowID = parseInteger<uint32_t>(deviceID);
+    if (!windowID)
         return makeUnexpected("Invalid window device ID"_s);
 
-    auto windowInfo = windowDescription(*displayID);
+    auto windowInfo = windowDescription(*windowID);
     if (!windowInfo)
         return makeUnexpected("Invalid window ID"_s);
 
-    return UniqueRef<DisplayCaptureSourceMac::Capturer>(makeUniqueRef<CGWindowCaptureSource>(*displayID));
+    return UniqueRef<DisplayCaptureSourceMac::Capturer>(makeUniqueRef<CGWindowCaptureSource>(*windowID));
+}
+
+IntSize CGWindowCaptureSource::intrinsicSize() const
+{
+    auto windowInfo = windowDescription(m_windowID);
+    if (!windowInfo) {
+        RELEASE_LOG(WebRTC, "Invalid window ID?");
+        return { };
+    }
+
+    auto boundsDictionary = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(windowInfo.get(), kCGWindowBounds));
+    if (!boundsDictionary) {
+        RELEASE_LOG(WebRTC, "Unable to get window bounds");
+        return { };
+    }
+
+    CGRect windowBounds;
+    if (!CGRectMakeWithDictionaryRepresentation(boundsDictionary, &windowBounds)) {
+        RELEASE_LOG(WebRTC, "Unable to decode window bounds");
+        return { };
+    }
+
+    return IntSize(windowBounds.size);
 }
 
 CGWindowCaptureSource::CGWindowCaptureSource(uint32_t windowID)

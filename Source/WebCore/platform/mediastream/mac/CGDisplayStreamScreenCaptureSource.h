@@ -54,12 +54,13 @@ private:
     // DisplayCaptureSourceMac::Capturer
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
+    IntSize intrinsicSize() const final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "CGDisplayStreamScreenCaptureSource"; }
 #endif
 
     // CGDisplayStreamCaptureSource
-    RetainPtr<CGDisplayStreamRef> createDisplayStream(float, FrameAvailableCallback, dispatch_queue_t) final;
+    RetainPtr<CGDisplayStreamRef> createDisplayStream(FrameAvailableCallback, dispatch_queue_t) final;
     bool checkDisplayStream() final;
 
     class DisplaySurface {

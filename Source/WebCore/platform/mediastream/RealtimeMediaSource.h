@@ -149,7 +149,7 @@ public:
     const IntSize size() const;
     void setSize(const IntSize&);
 
-    const IntSize intrinsicSize() const;
+    IntSize intrinsicSize() const;
     void setIntrinsicSize(const IntSize&, bool notifyObservers = true);
 
     double frameRate() const { return m_frameRate; }

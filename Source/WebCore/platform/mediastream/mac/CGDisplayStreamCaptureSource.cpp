@@ -48,14 +48,14 @@ CGDisplayStreamCaptureSource::~CGDisplayStreamCaptureSource()
     m_currentFrame = nullptr;
 }
 
-bool CGDisplayStreamCaptureSource::start(float frameRate)
+bool CGDisplayStreamCaptureSource::start()
 {
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
 
     if (m_isRunning)
         return true;
 
-    return startDisplayStream(frameRate);
+    return startDisplayStream();
 }
 
 void CGDisplayStreamCaptureSource::stop()
@@ -76,7 +76,7 @@ DisplayCaptureSourceMac::DisplayFrameType CGDisplayStreamCaptureSource::generate
     return DisplayCaptureSourceMac::DisplayFrameType { RetainPtr<IOSurfaceRef> { m_currentFrame.ioSurface() } };
 }
 
-bool CGDisplayStreamCaptureSource::startDisplayStream(float frameRate)
+bool CGDisplayStreamCaptureSource::startDisplayStream()
 {
     if (!checkDisplayStream())
         return false;
@@ -85,7 +85,7 @@ bool CGDisplayStreamCaptureSource::startDisplayStream(float frameRate)
         m_captureQueue = adoptOSObject(dispatch_queue_create("CGDisplayStreamCaptureSource Capture Queue", DISPATCH_QUEUE_SERIAL));
 
     if (!m_displayStream) {
-        m_displayStream = createDisplayStream(frameRate, frameAvailableHandler(), m_captureQueue.get());
+        m_displayStream = createDisplayStream(frameAvailableHandler(), m_captureQueue.get());
         if (!m_displayStream)
             return false;
 
@@ -105,10 +105,22 @@ bool CGDisplayStreamCaptureSource::startDisplayStream(float frameRate)
     return true;
 }
 
-void CGDisplayStreamCaptureSource::commitConfiguration(float frameRate)
+void CGDisplayStreamCaptureSource::commitConfiguration(const RealtimeMediaSourceSettings& settings)
 {
-    if (m_isRunning && !m_displayStream)
-        startDisplayStream(frameRate);
+    if (m_width == settings.width() && m_height == settings.height() && m_frameRate == settings.frameRate())
+        return;
+
+    m_width = settings.width();
+    m_height = settings.height();
+    m_frameRate = settings.frameRate();
+
+    if (m_displayStream) {
+        CGDisplayStreamStop(m_displayStream.get());
+        m_displayStream = nullptr;
+    }
+
+    if (m_isRunning)
+        startDisplayStream();
 }
 
 void CGDisplayStreamCaptureSource::displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags)

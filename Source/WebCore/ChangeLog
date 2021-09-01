@@ -1,3 +1,50 @@
+2021-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] getDisplayMedia should capture at the constrained size if possible
+        https://bugs.webkit.org/show_bug.cgi?id=229357
+        <rdar://problem/82191109>
+
+        Reviewed by Youenn Fablet.
+
+        Create display stream with preferred width, height, and frame rate.
+
+        Test: fast/mediastream/get-display-media-capabilities.html
+
+        * platform/mediastream/mac/CGDisplayStreamCaptureSource.cpp:
+        (WebCore::CGDisplayStreamCaptureSource::start): Remove frame rate parameter.
+        (WebCore::CGDisplayStreamCaptureSource::startDisplayStream): Ditto.
+        (WebCore::CGDisplayStreamCaptureSource::commitConfiguration): Pass source settings
+        instead of frame rate. Release and recreate the display stream if width, height,
+        or frame rate has changed.
+        * platform/mediastream/mac/CGDisplayStreamCaptureSource.h:
+        (WebCore::CGDisplayStreamCaptureSource::width const):
+        (WebCore::CGDisplayStreamCaptureSource::height const):
+        (WebCore::CGDisplayStreamCaptureSource::frameRate const):
+
+        * platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.h:
+        * platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.mm:
+        (WebCore::CGDisplayStreamScreenCaptureSource::createDisplayStream): Remove
+        frame rate parameter. Create display stream with the configured width and height,
+        not the size of the screen.
+        (WebCore::CGDisplayStreamScreenCaptureSource::intrinsicSize const): Return screen
+        size so track capabilities are accurate.
+
+        * platform/mediastream/mac/CGWindowCaptureSource.h:
+        * platform/mediastream/mac/CGWindowCaptureSource.mm:
+        (WebCore::CGWindowCaptureSource::create): Remove frame rate parameter.
+        (WebCore::CGWindowCaptureSource::intrinsicSize const): Return window size.
+
+        * platform/mediastream/mac/DisplayCaptureSourceMac.cpp:
+        (WebCore::DisplayCaptureSourceMac::capabilities): Use capturer intrinsic size for 
+        width and height capabilities.
+
+        * platform/mediastream/mac/DisplayCaptureSourceMac.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp: Change the mock screen sizes to
+        make the first one is different than the old hard-coded sizes so we're able to detect
+        that it is used in a test.
+        (WebCore::MockDisplayCapturer::start): Remove frame rate parameter.
+        (WebCore::MockDisplayCapturer::intrinsicSize const):
+
 2021-09-01  Chris Dumez  <cdumez@apple.com>
 
         Improve time precision when cross-origin isolated via COOP+COEP

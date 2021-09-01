@@ -1,3 +1,14 @@
+2021-09-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] getDisplayMedia should capture at the constrained size if possible
+        https://bugs.webkit.org/show_bug.cgi?id=229357
+        <rdar://problem/82191109>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/get-display-media-capabilities-expected.txt: Added.
+        * fast/mediastream/get-display-media-capabilities.html: Added.
+
 2021-09-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur arm64 Debug EWS ] ASSERTION FAILED: m_uncommittedState.state == State::Provisional.

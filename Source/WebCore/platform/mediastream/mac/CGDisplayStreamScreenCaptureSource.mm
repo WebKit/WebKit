@@ -111,31 +111,32 @@ bool CGDisplayStreamScreenCaptureSource::checkDisplayStream()
     return true;
 }
 
-RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayStream(float frameRate, FrameAvailableCallback frameAvailableHandler, dispatch_queue_t queue)
+RetainPtr<CGDisplayStreamRef> CGDisplayStreamScreenCaptureSource::createDisplayStream(FrameAvailableCallback frameAvailableHandler, dispatch_queue_t queue)
 {
     static const int screenQueueMaximumLength = 6;
 
     ASSERT(!displayStream());
     ASSERT(m_displayID == updateDisplayID(m_displayID));
 
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
-
-    auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
-    auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
-    auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
-    if (!screenWidth || !screenHeight) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "unable to get screen width/height");
-        return nullptr;
-    }
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "frame rate ", frameRate(), ", size ", width(), "x", height());
 
     NSDictionary* streamOptions = @{
-        (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate),
+        (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
         (__bridge NSString *)kCGDisplayStreamQueueDepth : @(screenQueueMaximumLength),
         (__bridge NSString *)kCGDisplayStreamColorSpace : (__bridge id)sRGBColorSpaceRef(),
         (__bridge NSString *)kCGDisplayStreamShowCursor : @YES,
     };
 
-    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, screenWidth, screenHeight, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, queue, frameAvailableHandler));
+    return adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, width(), height(), preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, queue, frameAvailableHandler));
+}
+
+IntSize CGDisplayStreamScreenCaptureSource::intrinsicSize() const
+{
+    auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_displayID));
+    auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
+    auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
+
+    return { Checked<int>(screenWidth), Checked<int>(screenHeight) };
 }
 
 std::optional<CaptureDevice> CGDisplayStreamScreenCaptureSource::screenCaptureDeviceWithPersistentID(const String& deviceID)

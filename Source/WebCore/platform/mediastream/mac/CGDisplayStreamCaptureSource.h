@@ -47,23 +47,27 @@ public:
 
 protected:
     using FrameAvailableCallback = void (^)(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef);
-    virtual RetainPtr<CGDisplayStreamRef> createDisplayStream(float, FrameAvailableCallback, dispatch_queue_t) = 0;
+    virtual RetainPtr<CGDisplayStreamRef> createDisplayStream(FrameAvailableCallback, dispatch_queue_t) = 0;
     virtual bool checkDisplayStream() { return true; }
 
     CGDisplayStreamRef displayStream() const { return m_displayStream.get(); }
     void invalidateDisplayStream() { m_displayStream = nullptr; }
 
+    uint32_t width() const { return m_width; }
+    uint32_t height() const { return m_height; }
+    float frameRate() const { return m_frameRate; }
+
 private:
     static void displayReconfigurationCallBack(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void*);
 
     // DisplayCaptureSourceMac::Capturer
-    bool start(float frameRate) final;
+    bool start() final;
     void stop() final;
     DisplayCaptureSourceMac::DisplayFrameType generateFrame() final;
-    void commitConfiguration(float frameRate) final;
+    void commitConfiguration(const RealtimeMediaSourceSettings&) final;
 
     void displayWasReconfigured(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
-    bool startDisplayStream(float frameRate);
+    bool startDisplayStream();
     FrameAvailableCallback frameAvailableHandler();
 
     class DisplaySurface {
@@ -104,6 +108,10 @@ private:
     RetainPtr<CGDisplayStreamRef> m_displayStream;
     OSObjectPtr<dispatch_queue_t> m_captureQueue;
     BlockPtr<void(CGDisplayStreamFrameStatus, uint64_t, IOSurfaceRef, CGDisplayStreamUpdateRef)> m_frameAvailableHandler;
+
+    uint32_t m_width { 0 };
+    uint32_t m_height { 0 };
+    float m_frameRate { 0 };
 
     bool m_isRunning { false };
     bool m_observingDisplayChanges { false };

@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>video track created with getDisplayMedia should return correct capabilities</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+
+        <script>
+            promise_test(async () => {
+                stream = await callGetDisplayMedia({ video: true });
+                let capabilities = stream.getVideoTracks()[0].getCapabilities();
+
+                let height = capabilities.height;
+                assert_equals(height.max, 1080);
+                assert_equals(height.min, 1);
+
+                let width = capabilities.width;
+                assert_equals(width.max, 1920);
+                assert_equals(width.min, 1);
+            }, "check capabilities");
+
+        </script>
+    </body>
+</html>

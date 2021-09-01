@@ -59,12 +59,13 @@ public:
     public:
         virtual ~Capturer() = default;
 
-        virtual bool start(float frameRate) = 0;
+        virtual bool start() = 0;
         virtual void stop() = 0;
         virtual DisplayFrameType generateFrame() = 0;
         virtual CaptureDevice::DeviceType deviceType() const = 0;
         virtual RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const = 0;
-        virtual void commitConfiguration(float frameRate) = 0;
+        virtual void commitConfiguration(const RealtimeMediaSourceSettings&) = 0;
+        virtual IntSize intrinsicSize() const = 0;
 
         virtual void setLogger(const Logger&, const void*);
         const Logger* loggerPtr() const { return m_logger.get(); }
@@ -94,7 +95,7 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
     CaptureDevice::DeviceType deviceType() const { return m_capturer->deviceType(); }
-    void commitConfiguration() final { return m_capturer->commitConfiguration(frameRate()); }
+    void commitConfiguration() final { m_capturer->commitConfiguration(settings()); }
 
     const char* logClassName() const final { return "DisplayCaptureSourceMac"; }
 
@@ -108,7 +109,6 @@ private:
     MonotonicTime m_startTime { MonotonicTime::nan() };
     Seconds m_elapsedTime { 0_s };
 
-    RetainPtr<CFMutableDictionaryRef> m_bufferAttributes;
     RunLoop::Timer<DisplayCaptureSourceMac> m_timer;
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;

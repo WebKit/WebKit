@@ -50,12 +50,13 @@ public:
 
 private:
     // DisplayCaptureSourceMac::Capturer
-    bool start(float) final { return true; }
+    bool start() final { return true; }
     void stop() final { }
     DisplayCaptureSourceMac::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Window; }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Window; }
-    void commitConfiguration(float) final { }
+    void commitConfiguration(const RealtimeMediaSourceSettings&) final { }
+    IntSize intrinsicSize() const final;
     const char* logClassName() const final { return "CGWindowCaptureSource"; }
 
     RetainPtr<CGImageRef> windowImage();

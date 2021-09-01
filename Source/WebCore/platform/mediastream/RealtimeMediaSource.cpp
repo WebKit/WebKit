@@ -997,7 +997,7 @@ void RealtimeMediaSource::setIntrinsicSize(const IntSize& size, bool notifyObser
     }
 }
 
-const IntSize RealtimeMediaSource::intrinsicSize() const
+IntSize RealtimeMediaSource::intrinsicSize() const
 {
     return m_intrinsicSize;
 }

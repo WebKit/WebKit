@@ -91,8 +91,8 @@ static inline Vector<MockMediaDevice> defaultDevices()
                 Color::darkGray,
             } },
 
-        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 3840, 2160 } } },
-        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 1920, 1080 } } },
+        MockMediaDevice { "SCREEN-1"_s, "Mock screen device 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::lightGray, { 1920, 1080 } } },
+        MockMediaDevice { "SCREEN-2"_s, "Mock screen device 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, Color::yellow, { 3840, 2160 } } },
 
         MockMediaDevice { "WINDOW-2"_s, "Mock window 1"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, SRGBA<uint8_t> { 255, 241, 181 }, { 640, 480 } } },
         MockMediaDevice { "WINDOW-2"_s, "Mock window 2"_s, MockDisplayProperties { CaptureDevice::DeviceType::Screen, SRGBA<uint8_t> { 255, 208, 181 }, { 1280, 600 } } },
@@ -120,12 +120,13 @@ public:
     explicit MockDisplayCapturer(const CaptureDevice&);
 
 private:
-    bool start(float) final;
+    bool start() final;
     void stop() final  { m_source->stop(); }
     DisplayCaptureSourceMac::DisplayFrameType generateFrame() final;
     RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const final { return RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor; }
-    void commitConfiguration(float) final { }
+    void commitConfiguration(const RealtimeMediaSourceSettings&) final { }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Screen; }
+    IntSize intrinsicSize() const final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MockDisplayCapturer"; }
 #endif
@@ -138,7 +139,7 @@ MockDisplayCapturer::MockDisplayCapturer(const CaptureDevice& device)
 {
 }
 
-bool MockDisplayCapturer::start(float)
+bool MockDisplayCapturer::start()
 {
     m_source->start();
     return true;
@@ -150,7 +151,22 @@ DisplayCaptureSourceMac::DisplayFrameType MockDisplayCapturer::generateFrame()
         return imageBuffer->copyNativeImage();
     return { };
 }
-#endif
+
+IntSize MockDisplayCapturer::intrinsicSize() const
+{
+    auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(m_source->persistentID());
+    ASSERT(device);
+    if (!device)
+        return { };
+
+    ASSERT(device->isDisplay());
+    if (!device->isDisplay())
+        return { };
+
+    auto& properties = WTF::get<MockDisplayProperties>(device->properties);
+    return properties.defaultSize;
+}
+#endif // PLATFORM(MAC)
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
 public:
