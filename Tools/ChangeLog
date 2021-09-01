@@ -1,3 +1,22 @@
+2021-09-01  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Fix missing UTF-8 decoding in test crash logs
+        https://bugs.webkit.org/show_bug.cgi?id=229760
+
+        Reviewed by Philippe Normand.
+
+        Fix a couple of decoding issues in linux_get_crash_log.py, where
+        bytestrings were being printed without decoding.
+
+        An addditional decoding issue was fixed by Philippe Normand in
+        driver.py when printing ASan results.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._read_block):
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator._get_trace_from_flatpak):
+        (GDBCrashLogGenerator.generate_crash_log):
+
 2021-08-31  Chris Dumez  <cdumez@apple.com>
 
         Enable SharedArrayBuffer support when COOP/COEP headers are used

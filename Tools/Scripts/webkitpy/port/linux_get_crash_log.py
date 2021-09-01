@@ -121,7 +121,8 @@ class GDBCrashLogGenerator(object):
 
         proc = self._executive.popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         crash_log, stderr = proc.communicate()
-        errors = string_utils.decode(str(stderr or '<empty>'), errors='ignore').splitlines()
+        crash_log = string_utils.decode(crash_log, errors='ignore')
+        errors = string_utils.decode(stderr or '<empty>', errors='ignore').splitlines()
         return crash_log, errors
 
     def generate_crash_log(self, stdout, stderr):
@@ -156,7 +157,7 @@ class GDBCrashLogGenerator(object):
         elif coredumpctl:
             crash_log, errors = self._get_trace_from_systemd(coredumpctl, pid_representation)
 
-        stderr_lines = errors + string_utils.decode(str(stderr or '<empty>'), errors='ignore').splitlines()
+        stderr_lines = errors + string_utils.decode(stderr or '<empty>', errors='ignore').splitlines()
         errors_str = '\n'.join(('STDERR: ' + stderr_line) for stderr_line in stderr_lines)
         cppfilt_proc = self._executive.popen(
             ['c++filt'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

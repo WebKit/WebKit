@@ -732,7 +732,7 @@ class Driver(object):
                     break
                 elif self._check_for_address_sanitizer_violation(err_line):
                     asan_violation_detected = True
-                    self._crash_report_from_driver = b''
+                    self._crash_report_from_driver = ''
                     # ASan report starts with a nondescript line, we only detect the second line.
                     end_of_previous_error_line = self.error_from_test.rfind('\n', 0, -1)
                     if end_of_previous_error_line > 0:
