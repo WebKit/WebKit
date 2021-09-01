@@ -241,6 +241,16 @@ void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& 
 {
     ASSERT(document.settings().performanceNavigationTimingAPIEnabled());
     m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.eventTiming(), document.securityOrigin(), documentLoader.triggeringAction().type());
+}
+
+void Performance::navigationFinished(const NetworkLoadMetrics& metrics)
+{
+    if (!m_navigationTiming) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_navigationTiming->navigationFinished(metrics);
+
     queueEntry(*m_navigationTiming);
 }
 

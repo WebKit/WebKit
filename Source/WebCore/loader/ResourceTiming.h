@@ -49,6 +49,7 @@ public:
     const String& initiator() const { return m_initiator; }
     const ResourceLoadTiming& resourceLoadTiming() const { return m_resourceLoadTiming; }
     const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
+    NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
     Vector<Ref<PerformanceServerTiming>> populateServerTiming() const;
     ResourceTiming isolatedCopy() const;
 

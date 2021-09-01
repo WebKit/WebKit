@@ -70,6 +70,7 @@ public:
 
     DocumentEventTiming& documentEventTiming() { return m_documentEventTiming; }
     DocumentLoadTiming& documentLoadTiming() { return m_documentLoadTiming; }
+    void navigationFinished(const NetworkLoadMetrics&);
 
 private:
     PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&, const DocumentEventTiming&, const SecurityOrigin&, WebCore::NavigationType);
