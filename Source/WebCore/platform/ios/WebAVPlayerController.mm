@@ -462,12 +462,12 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (BOOL)canSeekFrameBackward
 {
-    return YES;
+    return NO;
 }
 
 - (BOOL)canSeekFrameForward
 {
-    return YES;
+    return NO;
 }
 
 - (BOOL)hasMediaSelectionOptions

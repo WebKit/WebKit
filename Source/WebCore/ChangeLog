@@ -1,3 +1,23 @@
+2021-09-01  Jean-Yves Avenard  <jya@apple.com>
+
+         'Show Next Frame' and 'Show Previous Frame' keyboard shortcuts seem out of context and only pause video
+        https://bugs.webkit.org/show_bug.cgi?id=229538
+        rdar://78161031
+
+        Reviewed by Eric Carlson.
+
+        On its own, this change will do nothing as currently AVKit doesn't check those properties
+        and will always attempt to seek one frame forward or backward which isn't currently
+        supported.
+        AVKit will be amended so that it will call canSeekFrameBackward/canSeekFrameForward
+        as necessary.
+        This change will be reverted once https://bugs.webkit.org/show_bug.cgi?id=229539 is
+        complete.
+
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController canSeekFrameBackward]):
+        (-[WebAVPlayerController canSeekFrameForward]):
+
 2021-09-01  David Kilzer  <ddkilzer@apple.com>
 
         [WebRTC] Leak or over-release of CFPixelBufferRef returned from webrtc::createPixelBufferFromFrame()
