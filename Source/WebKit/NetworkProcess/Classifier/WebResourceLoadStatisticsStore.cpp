@@ -335,23 +335,6 @@ void WebResourceLoadStatisticsStore::statisticsDatabaseHasAllTables(CompletionHa
     });
 }
 
-void WebResourceLoadStatisticsStore::statisticsDatabaseColumnsForTable(const String& table, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-
-    postTask([this, table = table.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
-            completionHandler({ });
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        auto columns = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).columnsForTable(table);
-        postTaskReply([columns = WTFMove(columns), completionHandler = WTFMove(completionHandler)] () mutable {
-            completionHandler(WTFMove(columns));
-        });
-    });
-}
-
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

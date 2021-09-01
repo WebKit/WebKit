@@ -189,7 +189,6 @@ public:
     void scheduleCookieBlockingUpdateForDomains(const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(CompletionHandler<void()>&&);
     void statisticsDatabaseHasAllTables(CompletionHandler<void(bool)>&&);
-    void statisticsDatabaseColumnsForTable(const String&, CompletionHandler<void(Vector<String>&&)>&&);
     void scheduleClearInMemoryAndPersistent(ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
     void clearInMemoryEphemeral(CompletionHandler<void()>&&);

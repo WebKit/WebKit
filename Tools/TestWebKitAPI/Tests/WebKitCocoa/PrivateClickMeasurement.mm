@@ -36,9 +36,6 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
-// FIXME: Remove _statisticsDatabaseColumnsForTable and its infrastructure in another patch.
-// It is no longer needed, but removing it is likely to cause unnecessary merge conflicts.
-
 static RetainPtr<WKWebView> webViewWithResourceLoadStatisticsEnabledInNetworkProcess()
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];

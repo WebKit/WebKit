@@ -108,7 +108,6 @@ messages -> NetworkProcess LegacyReceiver {
     ScheduleCookieBlockingUpdate(PAL::SessionID sessionID) -> () Async
     ScheduleStatisticsAndDataRecordsProcessing(PAL::SessionID sessionID) -> () Async
     StatisticsDatabaseHasAllTables(PAL::SessionID sessionID) -> (bool hasAllTables) Async
-    StatisticsDatabaseColumnsForTable(PAL::SessionID sessionID, String tableName) -> (Vector<String> columns) Async
     SetCacheMaxAgeCapForPrevalentResources(PAL::SessionID sessionID, Seconds seconds) -> () Async
     SetGrandfathered(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain, bool isGrandfathered) -> () Async
     GetResourceLoadStatisticsDataSummary(PAL::SessionID sessionID) -> (Vector<WebKit::WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyData) Async

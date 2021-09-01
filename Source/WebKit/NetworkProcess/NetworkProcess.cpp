@@ -774,19 +774,6 @@ void NetworkProcess::statisticsDatabaseHasAllTables(PAL::SessionID sessionID, Co
     }
 }
 
-void NetworkProcess::statisticsDatabaseColumnsForTable(PAL::SessionID sessionID, const String& tableName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    if (auto* networkSession = this->networkSession(sessionID)) {
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->statisticsDatabaseColumnsForTable(tableName, WTFMove(completionHandler));
-        else
-            completionHandler({ });
-    } else {
-        ASSERT_NOT_REACHED();
-        completionHandler({ });
-    }
-}
-
 void NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {

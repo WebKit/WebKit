@@ -125,8 +125,6 @@ public:
     void insertExpiredStatisticForTesting(const RegistrableDomain&, unsigned numberOfOperatingDaysPassed, bool hasUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent) override;
     static void interruptAllDatabases();
 
-    Vector<String> columnsForTable(const String&);
-
 private:
     void includeTodayAsOperatingDateIfNecessary() override;
     void clearOperatingDates() override { }

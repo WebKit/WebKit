@@ -199,7 +199,6 @@ public:
     void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
     void domainIDExistsInDatabase(int domainID, CompletionHandler<void(bool)>&&);
     void statisticsDatabaseHasAllTables(CompletionHandler<void(bool)>&&);
-    void statisticsDatabaseColumnsForTable(const String&, CompletionHandler<void(Vector<String>&&)>&&);
     void mergeStatisticForTesting(const URL&, const URL& topFrameUrl1, const URL& topFrameUrl2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&&);
     void insertExpiredStatisticForTesting(const URL&, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(bool, CompletionHandler<void()>&&);

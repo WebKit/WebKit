@@ -244,7 +244,6 @@ public:
     void scheduleCookieBlockingUpdate(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID, CompletionHandler<void()>&&);
     void statisticsDatabaseHasAllTables(PAL::SessionID, CompletionHandler<void(bool)>&&);
-    void statisticsDatabaseColumnsForTable(PAL::SessionID, const String&, CompletionHandler<void(Vector<String>&&)>&&);
     void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setGrandfatheringTime(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setLastSeen(PAL::SessionID, const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);

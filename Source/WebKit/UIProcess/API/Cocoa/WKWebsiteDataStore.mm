@@ -577,21 +577,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
-- (void)_statisticsDatabaseColumnsForTable:(NSString *)table completionHandler:(void (^)(NSArray<NSString *> *))completionHandler
-{
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    _websiteDataStore->statisticsDatabaseColumnsForTable(table, [completionHandler = makeBlockPtr(completionHandler)](auto&& columns) {
-        Vector<RefPtr<API::Object>> apiColumns;
-        apiColumns.reserveInitialCapacity(columns.size());
-        for (auto& column : columns)
-            apiColumns.uncheckedAppend(API::String::create(column));
-        completionHandler(wrapper(API::Array::create(WTFMove(apiColumns))));
-    });
-#else
-    completionHandler(nil);
-#endif
-}
-
 - (void)_processStatisticsAndDataRecords:(void (^)(void))completionHandler
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

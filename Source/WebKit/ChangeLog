@@ -1,3 +1,32 @@
+2021-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Remove _statisticsDatabaseColumnsForTable and related unused test functions
+        https://bugs.webkit.org/show_bug.cgi?id=229771
+
+        Reviewed by Kate Cheney.
+
+        This removes some code that was used for tests until r281779
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::columnsForTable): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::statisticsDatabaseColumnsForTable): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::statisticsDatabaseColumnsForTable): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _statisticsDatabaseColumnsForTable:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::statisticsDatabaseColumnsForTable): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::statisticsDatabaseColumnsForTable): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-09-01  David Kilzer  <ddkilzer@apple.com>
 
         [WebRTC] Leak or over-release of CFPixelBufferRef returned from webrtc::createPixelBufferFromFrame()

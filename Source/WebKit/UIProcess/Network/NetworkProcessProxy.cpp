@@ -714,11 +714,6 @@ void NetworkProcessProxy::statisticsDatabaseHasAllTables(PAL::SessionID sessionI
     sendWithAsyncReply(Messages::NetworkProcess::StatisticsDatabaseHasAllTables(sessionID), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::statisticsDatabaseColumnsForTable(PAL::SessionID sessionID, const String& tableName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::StatisticsDatabaseColumnsForTable(sessionID, tableName), WTFMove(completionHandler));
-}
-
 void NetworkProcessProxy::logUserInteraction(PAL::SessionID sessionID, const RegistrableDomain& resourceDomain, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

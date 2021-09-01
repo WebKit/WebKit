@@ -1327,12 +1327,6 @@ void WebsiteDataStore::statisticsDatabaseHasAllTables(CompletionHandler<void(boo
     networkProcess().statisticsDatabaseHasAllTables(m_sessionID, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::statisticsDatabaseColumnsForTable(const String& tableName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    ASSERT(RunLoop::isMain());
-    networkProcess().statisticsDatabaseColumnsForTable(m_sessionID, tableName, WTFMove(completionHandler));
-}
-
 void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (url.protocolIsAbout() || url.isEmpty()) {

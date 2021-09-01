@@ -566,25 +566,6 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
     deleteTable("AttributedPrivateClickMeasurement");
 }
 
-Vector<String> ResourceLoadStatisticsDatabaseStore::columnsForTable(const String& tableName)
-{
-    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
-
-    if (!statement) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::getColumnsFromTableInfoStatement Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    Vector<String> columns;
-    while (statement->step() == SQLITE_ROW) {
-        auto name = statement->columnText(1);
-        columns.append(name);
-    }
-
-    return columns;
-}
-
 void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
 {
     auto missingTables = checkForMissingTablesInSchema();
