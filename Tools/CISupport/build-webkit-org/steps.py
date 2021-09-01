@@ -863,7 +863,7 @@ class RunBindingsTests(shell.Test):
     name = "bindings-generation-tests"
     description = ["bindings-tests running"]
     descriptionDone = ["bindings-tests"]
-    command = ["python", "./Tools/Scripts/run-bindings-tests"]
+    command = ["python3", "./Tools/Scripts/run-bindings-tests"]
 
 
 class RunBuiltinsTests(shell.Test):

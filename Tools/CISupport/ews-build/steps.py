@@ -1234,7 +1234,7 @@ class RunBindingsTests(shell.ShellCommand):
     flunkOnFailure = True
     jsonFileName = 'bindings_test_results.json'
     logfiles = {'json': jsonFileName}
-    command = ['python', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(jsonFileName)]
+    command = ['python3', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(jsonFileName)]
 
     def __init__(self, **kwargs):
         super(RunBindingsTests, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)

@@ -1,3 +1,18 @@
+2021-09-01  Kevin Neal  <kevin_neal@apple.com>
+
+        [RunBindingsTests] Invoke with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=229724
+
+        Reviewed by Darin Adler.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunBindingsTests):
+        * CISupport/ews-build/steps.py:
+        (RunBindingsTests):
+        * CISupport/ews-build/steps_unittest.py:
+        * Scripts/run-bindings-tests:
+        (main): Deleted.
+
 2021-09-01  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Relocation (Part 1)

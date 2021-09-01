@@ -374,7 +374,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
             + 0,
@@ -388,7 +388,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
+                        command=['python3', 'Tools/Scripts/run-bindings-tests', '--json-output={0}'.format(self.jsonFileName)],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp')

@@ -201,7 +201,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/Scripts/run-bindings-tests'],
+                command=['python3', './Tools/Scripts/run-bindings-tests'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='bindings-tests')
@@ -214,7 +214,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python', './Tools/Scripts/run-bindings-tests'],
+                command=['python3', './Tools/Scripts/run-bindings-tests'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp'),
         )
