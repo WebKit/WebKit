@@ -1,3 +1,20 @@
+2021-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r272607) Removal of alert()/confirm() in third-party iframes breaks Salesforce
+        https://bugs.webkit.org/show_bug.cgi?id=229737
+        <rdar://82591122>
+
+        Unreviewed, Revert behavior change made in r272607 as it broke Salesforce. My understanding is that
+        Chrome had to revert this too.
+
+        Tests: http/tests/security/cross-origin-js-prompt-allowed.html
+               http/tests/security/same-origin-different-domain-js-prompt-allowed.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::alert):
+        (WebCore::DOMWindow::confirmForBindings):
+        (WebCore::DOMWindow::prompt):
+
 2021-09-01  Alan Bujtas  <zalan@apple.com>
 
         visualWordPosition should operate on a clean tree

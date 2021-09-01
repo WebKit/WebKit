@@ -1,3 +1,19 @@
+2021-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r272607) Removal of alert()/confirm() in third-party iframes breaks Salesforce
+        https://bugs.webkit.org/show_bug.cgi?id=229737
+        <rdar://82591122>
+
+        Unreviewed, Update existing tests to reflect behavior change.
+
+        * http/tests/security/cross-origin-js-prompt-allowed-expected.txt: Added.
+        * http/tests/security/cross-origin-js-prompt-allowed.html: Renamed from LayoutTests/http/tests/security/cross-origin-js-prompt-forbidden.html.
+        * http/tests/security/cross-origin-js-prompt-forbidden-expected.txt: Removed.
+        * http/tests/security/resources/cross-origin-js-prompt-allowed.html: Renamed from LayoutTests/http/tests/security/resources/cross-origin-js-prompt-forbidden.html.
+        * http/tests/security/same-origin-different-domain-js-prompt-allowed-expected.txt: Added.
+        * http/tests/security/same-origin-different-domain-js-prompt-allowed.html: Renamed from LayoutTests/http/tests/security/same-origin-different-domain-js-prompt-forbidden.html.
+        * http/tests/security/same-origin-different-domain-js-prompt-forbidden-expected.txt: Removed.
+
 2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontFaceSet.clear() should not clear CSS-connected members
