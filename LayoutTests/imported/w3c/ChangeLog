@@ -1,3 +1,12 @@
+2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontFaceSet.clear() should not clear CSS-connected members
+        https://bugs.webkit.org/show_bug.cgi?id=229643
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-font-loading/fontfaceset-clear-css-connected-expected.txt:
+
 2021-08-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Add initial support for css-align-3 positional alignment properties

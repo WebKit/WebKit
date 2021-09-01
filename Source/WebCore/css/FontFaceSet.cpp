@@ -132,8 +132,11 @@ bool FontFaceSet::remove(FontFace& face)
 
 void FontFaceSet::clear()
 {
-    while (m_backing->faceCount())
-        m_backing->remove(m_backing.get()[0]);
+    auto facesPartitionIndex = m_backing->facesPartitionIndex();
+    while (m_backing->faceCount() > facesPartitionIndex) {
+        m_backing->remove(m_backing.get()[m_backing->faceCount() - 1]);
+        ASSERT(m_backing->facesPartitionIndex() == facesPartitionIndex);
+    }
 }
 
 void FontFaceSet::load(const String& font, const String& text, LoadPromise&& promise)
