@@ -4288,6 +4288,9 @@ void EventHandler::stopKeyboardScrolling()
 
 bool EventHandler::startKeyboardScrolling(KeyboardEvent& event)
 {
+    if (!m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled())
+        return false;
+
     Ref protectedFrame = m_frame;
     FrameView* view = m_frame.view();
 
@@ -4304,8 +4307,7 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
     ASSERT(event.type() == eventNames().keydownEvent);
 
     if (!isSpatialNavigationEnabled(&m_frame)) {
-        if (m_frame.settings().eventHandlerDrivenSmoothKeyboardScrollingEnabled())
-            startKeyboardScrolling(event);
+        startKeyboardScrolling(event);
         return;
     }
 
