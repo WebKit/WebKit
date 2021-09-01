@@ -1,3 +1,16 @@
+2021-09-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Automatic rebasing or pull-requests (Follow-up fix.)
+        https://bugs.webkit.org/show_bug.cgi?id=229625
+        <rdar://problem/82451030>
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.pull): Set commit for git-svn checkouts.
+
 2021-09-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] The Xvfb display server may fail to start sometimes causing tests to randomly crash

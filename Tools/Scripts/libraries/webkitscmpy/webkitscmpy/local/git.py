@@ -772,6 +772,7 @@ class Git(Scm):
         ).returncode else self.commit()
 
     def pull(self, rebase=None, branch=None):
+        commit = self.commit() if self.is_svn else None
         code = run(
             [self.executable(), 'pull'] + (
                 ['origin', branch] if branch else []
