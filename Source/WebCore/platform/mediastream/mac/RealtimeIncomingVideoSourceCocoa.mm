@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,8 +117,7 @@ RetainPtr<CVPixelBufferRef> RealtimeIncomingVideoSourceCocoa::pixelBufferFromVid
         return m_blackFrame.get();
     }
 
-    RetainPtr<CVPixelBufferRef> newPixelBuffer;
-    return webrtc::pixelBufferFromFrame(frame, [this, &newPixelBuffer](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
+    return adoptCF(webrtc::createPixelBufferFromFrame(frame, [this](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
         auto pixelBufferPool = this->pixelBufferPool(width, height, bufferType);
         if (!pixelBufferPool)
             return nullptr;
@@ -130,9 +129,8 @@ RetainPtr<CVPixelBufferRef> RealtimeIncomingVideoSourceCocoa::pixelBufferFromVid
             ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "Failed creating a pixel buffer with error ", status);
             return nullptr;
         }
-        newPixelBuffer = adoptCF(pixelBuffer);
-        return newPixelBuffer.get();
-    });
+        return pixelBuffer;
+    }));
 }
 
 void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)

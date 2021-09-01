@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -431,8 +431,7 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     if (!encoder.connection)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
-    RetainPtr<CVPixelBufferRef> newPixelBuffer;
-    auto pixelBuffer = webrtc::pixelBufferFromFrame(frame, [&newPixelBuffer](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
+    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromFrame(frame, [](size_t width, size_t height, webrtc::BufferType bufferType) -> CVPixelBufferRef {
         OSType poolBufferType;
         switch (bufferType) {
         case webrtc::BufferType::I420:
@@ -445,18 +444,17 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
         if (!pixelBufferPool)
             return nullptr;
 
-        newPixelBuffer = WebCore::createPixelBufferFromPool(pixelBufferPool);
-        return newPixelBuffer.get();
-    });
+        return WebCore::createPixelBufferFromPool(pixelBufferPool).leakRef();
+    }));
 
     if (!pixelBuffer)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
-    auto sample = RemoteVideoSample::create(pixelBuffer, MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
+    auto sample = RemoteVideoSample::create(pixelBuffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
     if (!sample) {
         // FIXME: Optimize this code path, currently we have non BGRA for muted frames at least.
-        newPixelBuffer = convertToBGRA(pixelBuffer);
-        sample = RemoteVideoSample::create(newPixelBuffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
+        pixelBuffer = convertToBGRA(pixelBuffer.get());
+        sample = RemoteVideoSample::create(pixelBuffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
     }
 
     encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);

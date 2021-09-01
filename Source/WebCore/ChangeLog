@@ -1,3 +1,18 @@
+2021-09-01  David Kilzer  <ddkilzer@apple.com>
+
+        [WebRTC] Leak or over-release of CFPixelBufferRef returned from webrtc::createPixelBufferFromFrame()
+        <https://webkit.org/b/229661>
+        <rdar://problem/82507827>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferFromVideoFrame):
+        - Use adoptCF() to prevent a leak since
+          webrtc::createPixelBufferFromFrame() always returns a +1
+          retained CVPixelBufferRef now.
+        - Change the functor to return a +1 retained CVPixelBufferRef.
+
 2021-09-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r280928) The smooth keyboard scrolling is unconditionally enabled for PageUp and PageDown keys
