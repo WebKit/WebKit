@@ -1934,6 +1934,8 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refres
 
 webkit.org/b/217258 svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
 
+webkit.org/b/229743 [ Release ] svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Pass Failure ]
+
 webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Slow Failure Crash ]
 
 webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Slow Failure ]
