@@ -1,3 +1,16 @@
+2021-09-01  Alan Bujtas  <zalan@apple.com>
+
+        visualWordPosition should operate on a clean tree
+        https://bugs.webkit.org/show_bug.cgi?id=229744
+        <rdar://80684065>
+
+        Reviewed by Antti Koivisto.
+
+        This function expects the tree to not be mutated while walking the inline runs.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::visualWordPosition):
+
 2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         document.fonts.size needs to update style so it doesn't return stale values
