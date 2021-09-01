@@ -80,6 +80,17 @@ NetworkStorageSession* NetworkSession::networkStorageSession() const
     return storageSession;
 }
 
+static String pcmStoreDirectory(const NetworkSession& session, const String& resourceLoadStatisticsDirectory, const String& privateClickMeasurementStorageDirectory)
+{
+    if (session.sessionID().isEphemeral())
+        return { };
+
+    if (!privateClickMeasurementStorageDirectory.isEmpty())
+        return privateClickMeasurementStorageDirectory;
+
+    return resourceLoadStatisticsDirectory;
+}
+
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : m_sessionID(parameters.sessionID)
     , m_networkProcess(networkProcess)
@@ -128,7 +139,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-    m_privateClickMeasurement = makeUnique<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID, [weakThis = makeWeakPtr(this)] (auto&& loadParameters, auto&& completionHandler) {
+    m_privateClickMeasurement = makeUnique<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID, pcmStoreDirectory(*this, parameters.resourceLoadStatisticsParameters.directory, parameters.resourceLoadStatisticsParameters.privateClickMeasurementStorageDirectory), [weakThis = makeWeakPtr(this)] (auto&& loadParameters, auto&& completionHandler) {
         if (!weakThis)
             return completionHandler(ResourceError(ResourceError::Type::Cancellation), { }, { });
 
@@ -142,6 +153,7 @@ NetworkSession::~NetworkSession()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     destroyResourceLoadStatistics([] { });
 #endif
+    privateClickMeasurement().store().close([] { });
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
         loader->abort();
 }
@@ -170,6 +182,11 @@ void NetworkSession::invalidateAndCancel()
 #endif
 }
 
+void NetworkSession::recreatePrivateClickMeasurementStore(CompletionHandler<void()>&& completionHandler)
+{
+    privateClickMeasurement().destroyStoreForTesting(WTFMove(completionHandler));
+}
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
 void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
 {
@@ -184,7 +201,7 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     if (m_resourceLoadStatistics)
         return;
 
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_privateClickMeasurementStorageDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
     if (!m_sessionID.isEphemeral())
         m_resourceLoadStatistics->populateMemoryStoreFromDisk([] { });
 
@@ -194,20 +211,6 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
     if (!m_resourceLoadStatisticsManualPrevalentResource.isEmpty())
         m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
     forwardResourceLoadStatisticsSettings();
-}
-
-void NetworkSession::recreateResourceLoadStatisticStore(CompletionHandler<void()>&& completionHandler)
-{
-    destroyResourceLoadStatistics([this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] () mutable {
-        if (!weakThis)
-            return completionHandler();
-        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_privateClickMeasurementStorageDirectory,  m_shouldIncludeLocalhostInResourceLoadStatistics, (m_sessionID.isEphemeral() ? ResourceLoadStatistics::IsEphemeral::Yes : ResourceLoadStatistics::IsEphemeral::No));
-        forwardResourceLoadStatisticsSettings();
-        if (!m_sessionID.isEphemeral())
-            m_resourceLoadStatistics->populateMemoryStoreFromDisk(WTFMove(completionHandler));
-        else
-            completionHandler();
-    });
 }
 
 void NetworkSession::forwardResourceLoadStatisticsSettings()

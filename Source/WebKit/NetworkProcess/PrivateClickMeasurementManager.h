@@ -27,6 +27,7 @@
 
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
+#include "PrivateClickMeasurementStore.h"
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>
@@ -52,7 +53,7 @@ public:
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using RegistrableDomain = WebCore::RegistrableDomain;
     using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
-    explicit PrivateClickMeasurementManager(NetworkSession&, NetworkProcess&, PAL::SessionID, Function<void(NetworkLoadParameters&&, NetworkLoadCallback&&)>&&);
+    explicit PrivateClickMeasurementManager(NetworkSession&, NetworkProcess&, PAL::SessionID, const String& storageDirectory, Function<void(NetworkLoadParameters&&, NetworkLoadCallback&&)>&&);
 
     void storeUnattributed(PrivateClickMeasurement&&);
     void handleAttribution(AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
@@ -68,6 +69,11 @@ public:
     void setEphemeralMeasurementForTesting(bool value) { m_isRunningEphemeralMeasurementTest = value; }
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
     void startTimer(Seconds);
+
+    void destroyStoreForTesting(CompletionHandler<void()>&&);
+
+    PCM::Store& store();
+    const PCM::Store& store() const;
 
 private:
     void getTokenPublicKey(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
@@ -91,6 +97,8 @@ private:
     WeakPtr<NetworkSession> m_networkSession;
     Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
+    mutable RefPtr<PCM::Store> m_store;
+    String m_storageDirectory;
     Function<void(NetworkLoadParameters&&, NetworkLoadCallback&&)> m_networkLoadFunction;
 
     struct AttributionReportTestConfig {

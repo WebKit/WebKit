@@ -51,7 +51,7 @@ public:
     void clearExpiredPrivateClickMeasurement();
     void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PrivateClickMeasurement::AttributionReportEndpoint);
 
-    String privateClickMeasurementToStringForTesting();
+    String privateClickMeasurementToStringForTesting() const;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting();
 
@@ -68,7 +68,7 @@ private:
     void destroyStatements() final;
     std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&);
     void removeUnattributed(WebCore::PrivateClickMeasurement&);
-    String attributionToStringForTesting(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType);
+    String attributionToStringForTesting(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType) const;
     void markReportAsSentToDestination(SourceDomainID, DestinationDomainID);
     void markReportAsSentToSource(SourceDomainID, DestinationDomainID);
     std::pair<std::optional<SourceEarliestTimeToSend>, std::optional<DestinationEarliestTimeToSend>> earliestTimesToSend(const WebCore::PrivateClickMeasurement&);

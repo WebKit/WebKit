@@ -49,11 +49,6 @@ static constexpr size_t numberOfStatistics = 7;
 static constexpr std::array<unsigned, numberOfBucketsPerStatistic> bucketSizes {{ 1, 3, 10, 50, 100 }};
 
 class ResourceLoadStatisticsMemoryStore;
-class PrivateClickMeasurementManager;
-
-using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
-using AttributionDestinationSite = WebCore::PrivateClickMeasurement::AttributionDestinationSite;
-using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
 
 typedef std::pair<String, std::optional<String>> TableAndIndexPair;
 

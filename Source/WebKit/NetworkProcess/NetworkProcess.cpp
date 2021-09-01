@@ -2580,15 +2580,14 @@ void NetworkProcess::firePrivateClickMeasurementTimerImmediately(PAL::SessionID 
 
 void NetworkProcess::simulateResourceLoadStatisticsSessionRestart(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    // FIXME: Rename this to simulatePrivateClickMeasurementSessionRestart.
     if (auto* session = networkSession(sessionID)) {
-        session->recreateResourceLoadStatisticStore([this, sessionID, completionHandler = WTFMove(completionHandler)] () mutable {
+        session->recreatePrivateClickMeasurementStore([this, sessionID, completionHandler = WTFMove(completionHandler)] () mutable {
             firePrivateClickMeasurementTimerImmediately(sessionID);
             completionHandler();
         });
         return;
     }
-#endif
     completionHandler();
 }
 

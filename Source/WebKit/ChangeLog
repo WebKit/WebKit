@@ -1,5 +1,58 @@
 2021-09-01  Alex Christensen  <achristensen@webkit.org>
 
+        Move PCM::Store ownership from WebResourceLoadStatisticsStore to PrivateClickMeasurementManager
+        https://bugs.webkit.org/show_bug.cgi?id=229770
+
+        Reviewed by Kate Cheney.
+
+        Now that PrivateClickMeasurement storage is separate from ResourceLoadStatistics storage, they don't need to know about each other.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::create):
+        (WebKit::WebResourceLoadStatisticsStore::didDestroyNetworkSession):
+        (WebKit::pcmStoreDirectory): Deleted.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::pcmStoreDirectory):
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::recreateResourceLoadStatisticStore):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::privateClickMeasurementToStringForTesting const):
+        (WebKit::PCM::Database::attributionToStringForTesting const):
+        (WebKit::PCM::Database::privateClickMeasurementToStringForTesting): Deleted.
+        (WebKit::PCM::Database::attributionToStringForTesting): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        (WebKit::PCM::Store::postTask const):
+        (WebKit::PCM::Store::postTaskReply const):
+        (WebKit::PCM::Store::privateClickMeasurementToStringForTesting const):
+        (WebKit::PCM::Store::postTask): Deleted.
+        (WebKit::PCM::Store::postTaskReply): Deleted.
+        (WebKit::PCM::Store::privateClickMeasurementToStringForTesting): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.h:
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager):
+        (WebKit::PrivateClickMeasurementManager::insertPrivateClickMeasurement):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::clearSentAttribution):
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        (WebKit::PrivateClickMeasurementManager::clear):
+        (WebKit::PrivateClickMeasurementManager::clearForRegistrableDomain):
+        (WebKit::PrivateClickMeasurementManager::clearExpired):
+        (WebKit::PrivateClickMeasurementManager::toStringForTesting const):
+        (WebKit::PrivateClickMeasurementManager::markAllUnattributedAsExpiredForTesting):
+        (WebKit::PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        (WebKit::PrivateClickMeasurementManager::store):
+        (WebKit::PrivateClickMeasurementManager::store const):
+
+2021-09-01  Alex Christensen  <achristensen@webkit.org>
+
         Remove _statisticsDatabaseColumnsForTable and related unused test functions
         https://bugs.webkit.org/show_bug.cgi?id=229771
 

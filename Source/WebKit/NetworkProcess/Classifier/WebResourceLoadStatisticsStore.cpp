@@ -150,23 +150,11 @@ static Ref<SuspendableWorkQueue> sharedStatisticsQueue()
     return queue.get().copyRef();
 }
 
-static String pcmStoreDirectory(const NetworkSession& session, const String& resourceLoadStatisticsDirectory, const String& privateClickMeasurementStorageDirectory)
-{
-    if (session.sessionID().isEphemeral())
-        return { };
-
-    if (!privateClickMeasurementStorageDirectory.isEmpty())
-        return privateClickMeasurementStorageDirectory;
-
-    return resourceLoadStatisticsDirectory;
-}
-
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, const String& privateClickMeasurementStorageDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral isEphemeral)
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral isEphemeral)
     : m_networkSession(makeWeakPtr(networkSession))
     , m_statisticsQueue(sharedStatisticsQueue())
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
     , m_isEphemeral(isEphemeral)
-    , m_pcmStore(PCM::Store::create(pcmStoreDirectory(networkSession, resourceLoadStatisticsDirectory, privateClickMeasurementStorageDirectory)))
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -198,9 +186,9 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
     RELEASE_ASSERT(!m_statisticsStore);
 }
 
-Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, const String& privateClickMeasurementStorageDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
+Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(NetworkSession& networkSession, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost shouldIncludeLocalhost, WebCore::ResourceLoadStatistics::IsEphemeral isEphemeral)
 {
-    return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, privateClickMeasurementStorageDirectory, shouldIncludeLocalhost, isEphemeral));
+    return adoptRef(*new WebResourceLoadStatisticsStore(networkSession, resourceLoadStatisticsDirectory, shouldIncludeLocalhost, isEphemeral));
 }
 
 void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<void()>&& completionHandler)
@@ -213,7 +201,6 @@ void WebResourceLoadStatisticsStore::didDestroyNetworkSession(CompletionHandler<
 
     m_networkSession = nullptr;
     destroyResourceLoadStatisticsStore([callbackAggregator] { });
-    privateClickMeasurementStore().close([callbackAggregator] { });
 }
 
 inline void WebResourceLoadStatisticsStore::postTask(WTF::Function<void()>&& task)

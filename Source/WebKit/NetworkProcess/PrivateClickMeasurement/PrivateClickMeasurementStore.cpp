@@ -67,13 +67,13 @@ Store::Store(const String& databaseDirectory)
 
 Store::~Store() = default;
 
-void Store::postTask(Function<void()>&& task)
+void Store::postTask(Function<void()>&& task) const
 {
     ASSERT(RunLoop::isMain());
     m_queue->dispatch(WTFMove(task));
 }
 
-void Store::postTaskReply(WTF::Function<void()>&& reply)
+void Store::postTaskReply(WTF::Function<void()>&& reply) const
 {
     ASSERT(!RunLoop::isMain());
     RunLoop::main().dispatch(WTFMove(reply));
@@ -118,7 +118,7 @@ void Store::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurem
     });
 }
 
-void Store::privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&& completionHandler)
+void Store::privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
 {
     postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         String result;

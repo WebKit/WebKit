@@ -338,7 +338,7 @@ Vector<WebCore::PrivateClickMeasurement> Database::allAttributedPrivateClickMeas
     return attributions;
 }
 
-String Database::privateClickMeasurementToStringForTesting()
+String Database::privateClickMeasurementToStringForTesting() const
 {
     ASSERT(!RunLoop::isMain());
     auto privateClickMeasurementDataExists = m_database.prepareStatement("SELECT (SELECT COUNT(*) FROM UnattributedPrivateClickMeasurement) as cnt1, (SELECT COUNT(*) FROM AttributedPrivateClickMeasurement) as cnt2"_s);
@@ -385,7 +385,7 @@ String Database::privateClickMeasurementToStringForTesting()
     return builder.toString();
 }
 
-String Database::attributionToStringForTesting(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType)
+String Database::attributionToStringForTesting(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType) const
 {
     ASSERT(!RunLoop::isMain());
     auto sourceSiteDomain = getDomainStringFromDomainID(statement.columnInt(0));

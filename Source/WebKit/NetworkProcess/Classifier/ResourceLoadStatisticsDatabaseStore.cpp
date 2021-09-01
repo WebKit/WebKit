@@ -552,7 +552,11 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
 
     if (!unattributed.isEmpty() || !attributed.isEmpty()) {
         RunLoop::main().dispatch([store = makeRef(store()), unattributed = unattributed.isolatedCopy(), attributed = attributed.isolatedCopy()] () mutable {
-            auto& pcmStore = store->privateClickMeasurementStore();
+            auto* networkSession = store->networkSession();
+            if (!networkSession)
+                return;
+
+            auto& pcmStore = networkSession->privateClickMeasurement().store();
             for (auto& pcm : WTFMove(attributed))
                 pcmStore.insertPrivateClickMeasurement(WTFMove(pcm), PrivateClickMeasurementAttributionType::Attributed);
             for (auto& pcm : WTFMove(unattributed))
