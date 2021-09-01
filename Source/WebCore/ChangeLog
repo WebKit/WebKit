@@ -1,3 +1,16 @@
+2021-09-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ImageRenderingMode.h is not used
+        https://bugs.webkit.org/show_bug.cgi?id=229753
+
+        Reviewed by Antti Koivisto.
+
+        Remove the file. `InterpolationQuality` from `GraphicsTypes.h` seems
+        to be the type used nowadays.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ImageRenderingMode.h: Removed.
+
 2021-09-01  Alex Christensen  <achristensen@webkit.org>
 
         PerformanceNavigationTiming should be instantiated before scripts run then updated when response finishes
