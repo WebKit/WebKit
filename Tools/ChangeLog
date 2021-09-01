@@ -1,3 +1,15 @@
+2021-09-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [contributors.json] Relocation (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=229690
+        <rdar://problem/82552403>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        (CommitterList.load_json): Read from metadata/contributors.json.
+        (CommitterList.reformat_in_place): Ditto.
+
 2021-09-01  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Fix missing UTF-8 decoding in test crash logs
