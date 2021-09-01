@@ -103,6 +103,13 @@ bool CSSFontFaceSet::hasFace(const CSSFontFace& face) const
     return false;
 }
 
+// Calling updateStyleIfNeeded() might delete |this|.
+void CSSFontFaceSet::updateStyleIfNeeded()
+{
+    if (m_owningFontSelector)
+        m_owningFontSelector->updateStyleIfNeeded();
+}
+
 void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& familyName)
 {
     ASSERT(m_owningFontSelector);

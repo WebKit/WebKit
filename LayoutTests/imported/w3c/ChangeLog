@@ -1,5 +1,14 @@
 2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        document.fonts.size needs to update style so it doesn't return stale values
+        https://bugs.webkit.org/show_bug.cgi?id=229644
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-font-loading/fontfaceset-update-after-stylesheet-change-expected.txt:
+
+2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
         CSSFontFaceSet.clear() should not clear CSS-connected members
         https://bugs.webkit.org/show_bug.cgi?id=229643
 

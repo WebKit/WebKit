@@ -110,9 +110,11 @@ bool FontFaceSet::has(FontFace& face) const
     return m_backing->hasFace(face.backing());
 }
 
-size_t FontFaceSet::size() const
+size_t FontFaceSet::size()
 {
-    return m_backing->faceCount();
+    auto protect = m_backing;
+    protect->updateStyleIfNeeded();
+    return protect->faceCount();
 }
 
 FontFaceSet& FontFaceSet::add(FontFace& face)

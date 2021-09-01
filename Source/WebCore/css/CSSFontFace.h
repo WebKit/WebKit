@@ -125,7 +125,7 @@ public:
         virtual void fontLoaded(CSSFontFace&) { }
         virtual void fontStateChanged(CSSFontFace&, Status /*oldState*/, Status /*newState*/) { }
         virtual void fontPropertyChanged(CSSFontFace&, CSSValueList* /*oldFamilies*/ = nullptr) { }
-        virtual void fontStyleUpdateNeeded(CSSFontFace&) { }
+        virtual void updateStyleIfNeeded(CSSFontFace&) { }
         virtual void ref() = 0;
         virtual void deref() = 0;
     };
