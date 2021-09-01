@@ -87,16 +87,10 @@ struct Regs {
     GPRReg nextRegister(GPRReg current)
     {
         auto next = MacroAssembler::nextRegister(current);
-        while (special.get(next))
-            next = MacroAssembler::nextRegister(next);
-        return next;
-    }
-
-    FPRReg nextFPRegister(FPRReg current)
-    {
-        auto next = MacroAssembler::nextFPRegister(current);
-        while (special.get(next))
-            next = MacroAssembler::nextFPRegister(next);
+        for (; next <= MacroAssembler::lastRegister(); next = MacroAssembler::nextRegister(next)) {
+            if (!special.get(next))
+                break;
+        }
         return next;
     }
 
@@ -126,8 +120,11 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     AssemblyHelpers::StoreRegSpooler spooler(jit, baseGPR);
 
     // Get all of the other GPRs out of the way.
-    for (GPRReg reg = firstToSaveGPR; reg <= MacroAssembler::lastRegister(); reg = regs.nextRegister(reg))
+    for (MacroAssembler::RegisterID reg = firstToSaveGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
+        if (regs.special.get(reg))
+            continue;
         spooler.storeGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+    }
     spooler.finalizeGPR();
     
     // Restore the first register into the second one and save it.
@@ -139,8 +136,11 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
 #endif
     
     // Finally save all FPR's.
-    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = regs.nextFPRegister(reg))
+    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
+        if (regs.special.get(reg))
+            continue;
         spooler.storeFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+    }
     spooler.finalizeFPR();
 }
 
@@ -155,8 +155,11 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     AssemblyHelpers::LoadRegSpooler spooler(jit, baseGPR);
 
     // Restore all FPR's.
-    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = regs.nextFPRegister(reg))
+    for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
+        if (regs.special.get(reg))
+            continue;
         spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+    }
     spooler.finalizeFPR();
     
 #if CPU(ARM64)
@@ -167,8 +170,11 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
 #else
     GPRReg firstToRestoreGPR = regs.nextRegister(baseGPR);
 #endif
-    for (MacroAssembler::RegisterID reg = firstToRestoreGPR; reg <= MacroAssembler::lastRegister(); reg = regs.nextRegister(reg))
+    for (MacroAssembler::RegisterID reg = firstToRestoreGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
+        if (regs.special.get(reg))
+            continue;
         spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+    }
     spooler.finalizeGPR();
 
 #if CPU(ARM64)

@@ -1,3 +1,31 @@
+2021-09-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r279256): Crash in JSC::FTL::saveAllRegisters
+        https://bugs.webkit.org/show_bug.cgi?id=229235
+        <rdar://problem/82337517>
+
+        Reviewed by Mark Lam.
+
+        Avoid out-of-bounds access into RegisterSet's underlying Bitmap that
+        occurs in FTL::saveAllRegisters() and FTL::restoreAllRegisters(). Helper
+        Regs::nextRegister() and Regs::nextFPRegister() methods can increase the
+        register ID values beyond the valid values, at which point there's a
+        possibility of misuse if these register ID values are used to index into
+        the Bitmap.
+
+        To avoid this, iterating over RegisterID and FPRegisterID ranges is
+        simplified yet kept efficient, and access into the RegisterSet is now
+        only done if the register ID values are valid.
+
+        This enables removing Regs::nextFPRegister(). Regs::nextRegister() is
+        still used but is not adjusted to also use a for-loop to iterate across
+        the valid RegisterID values, and only for those values the access into
+        the RegisterSet is possible.
+
+        * ftl/FTLSaveRestore.cpp:
+        (JSC::FTL::saveAllRegisters):
+        (JSC::FTL::restoreAllRegisters):
+
 2021-08-31  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Implement Temporal.Duration
