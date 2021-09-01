@@ -242,6 +242,8 @@ void DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen(bool isFrozen)
         m_exitCompositingTimer.stop();
     else if (m_wantsToExitAcceleratedCompositingMode)
         exitAcceleratedCompositingModeSoon();
+    else if (!m_layerTreeHost)
+        scheduleDisplay();
 }
 
 void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore& store)

@@ -1,3 +1,20 @@
+2021-09-01  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [CoordinatedGraphics] Schedule rendering after setLayerTreeStateIsFrozen(false) in non-AC mode
+        https://bugs.webkit.org/show_bug.cgi?id=229749
+
+        We should schedule another rendering when the setLayerTreeStateIsFrozen(false) is called.
+        In some rare cases, the browser only shows the white page after the page transition,
+        because the rendering is skipped while the layer tree is frozen and there was no guarantee that there is
+        another rendering after setLayerTreeStateIsFrozen(false).
+
+        Reviewed by Carlos Garcia Campos.
+
+        Tested by manual.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::setLayerTreeStateIsFrozen): Schedule another rendering when the layer tree becomes unfrozen.
+
 2021-08-31  Lauro Moura  <lmoura@igalia.com>
 
         Non-unified build partial fixes, late late August 2021
