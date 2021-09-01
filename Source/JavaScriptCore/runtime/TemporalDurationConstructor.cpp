@@ -98,7 +98,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObjec
             return throwVMRangeError(globalObject, scope, "Temporal.Duration properties must be finite"_s);
     }
 
-    return JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(subdurations), structure));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(subdurations), structure)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalDuration, (JSGlobalObject* globalObject, CallFrame*))

@@ -1,3 +1,10 @@
+2021-09-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed exception scope verification fix for r241171.
+
+        * runtime/TemporalDurationConstructor.cpp:
+        Add missing RELEASE_AND_RETURN.
+
 2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the Xcode build after r281838
