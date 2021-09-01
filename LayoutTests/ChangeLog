@@ -1,3 +1,14 @@
+2021-09-01  Marcos Caceres  <marcos@marcosc.com>
+
+        Add "payment" permissions policy
+        https://bugs.webkit.org/show_bug.cgi?id=229406
+
+        Reviewed by Devin Rousso.
+
+        * http/tests/paymentrequest/payment-allow-attribute.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-allow-attribute.https.html: Added.
+        * http/tests/paymentrequest/resources/payment-postmessage.html: Added.
+
 2021-09-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS15 ] editing/caret/ios/caret-in-overflow-area.html is failing.

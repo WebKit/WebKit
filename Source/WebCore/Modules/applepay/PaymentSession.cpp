@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "FeaturePolicy.h"
 #include "Page.h"
 #include "PaymentCoordinator.h"
 #include "SecurityOrigin.h"
@@ -49,6 +50,9 @@ static bool isSecure(DocumentLoader& documentLoader)
 
 ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
 {
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Payment, document, LogFeaturePolicyFailure::Yes))
+        return Exception { SecurityError, "Third-party iframes are not allowed to request payments unless explicitly allowed via Feature-Policy (payment)"_s };
+
     if (!document.frame())
         return Exception { InvalidAccessError, "Trying to start an Apple Pay session from an inactive document." };
 

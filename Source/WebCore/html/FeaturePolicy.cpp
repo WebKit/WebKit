@@ -50,6 +50,8 @@ static const char* policyTypeName(FeaturePolicy::Type type)
         return "DisplayCapture";
     case FeaturePolicy::Type::Geolocation:
         return "Geolocation";
+    case FeaturePolicy::Type::Payment:
+        return "Payment";
     case FeaturePolicy::Type::SyncXHR:
         return "SyncXHR";
     case FeaturePolicy::Type::Fullscreen:
@@ -170,6 +172,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isSpeakerSelectionInitialized = false;
     bool isDisplayCaptureInitialized = false;
     bool isGeolocationInitialized = false;
+    bool isPaymentInitialized = false;
     bool isSyncXHRInitialized = false;
     bool isFullscreenInitialized = false;
 #if ENABLE(DEVICE_ORIENTATION)
@@ -205,6 +208,11 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         if (item.startsWith("geolocation")) {
             isGeolocationInitialized = true;
             updateList(document, policy.m_geolocationRule, item.substring(12));
+            continue;
+        }
+        if (item.startsWith("payment")) {
+            isPaymentInitialized = true;
+            updateList(document, policy.m_paymentRule, item.substring(8));
             continue;
         }
         if (item.startsWith("sync-xhr")) {
@@ -254,6 +262,8 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         policy.m_displayCaptureRule.allowedList.add(document.securityOrigin().data());
     if (!isGeolocationInitialized)
         policy.m_geolocationRule.allowedList.add(document.securityOrigin().data());
+    if (!isPaymentInitialized)
+        policy.m_paymentRule.allowedList.add(document.securityOrigin().data());
 #if ENABLE(DEVICE_ORIENTATION)
     if (!isGyroscopeInitialized)
         policy.m_gyroscopeRule.allowedList.add(document.securityOrigin().data());
@@ -301,6 +311,8 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_displayCaptureRule, origin);
     case Type::Geolocation:
         return isAllowedByFeaturePolicy(m_geolocationRule, origin);
+    case Type::Payment:
+        return isAllowedByFeaturePolicy(m_paymentRule, origin);
     case Type::SyncXHR:
         return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
     case Type::Fullscreen:

@@ -1,3 +1,20 @@
+2021-09-01  Marcos Caceres  <marcos@marcosc.com>
+
+        Add "payment" permissions policy
+        https://bugs.webkit.org/show_bug.cgi?id=229406
+
+        Reviewed by Devin Rousso.
+
+        Test: http/tests/paymentrequest/payment-allow-attribute.https.html
+
+        * Modules/applepay/PaymentSession.cpp:
+        (WebCore::PaymentSession::canCreateSession):
+        * html/FeaturePolicy.cpp:
+        (WebCore::policyTypeName):
+        (WebCore::FeaturePolicy::parse):
+        (WebCore::FeaturePolicy::allows const):
+        * html/FeaturePolicy.h:
+
 2021-09-01  Alex Christensen  <achristensen@webkit.org>
 
         PerformanceNavigationTiming should be instantiated before scripts run then updated when response finishes

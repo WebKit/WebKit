@@ -44,6 +44,7 @@ public:
         SpeakerSelection,
         DisplayCapture,
         Geolocation,
+        Payment,
         SyncXHR,
         Fullscreen,
 #if ENABLE(DEVICE_ORIENTATION)
@@ -69,6 +70,7 @@ private:
     AllowRule m_speakerSelectionRule;
     AllowRule m_displayCaptureRule;
     AllowRule m_geolocationRule;
+    AllowRule m_paymentRule;
     AllowRule m_syncXHRRule;
     AllowRule m_fullscreenRule;
 #if ENABLE(DEVICE_ORIENTATION)
