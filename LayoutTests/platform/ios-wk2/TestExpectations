@@ -1958,15 +1958,6 @@ webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass ]
 
-fast/forms/ios/accessory-bar-navigation.html [ Failure Timeout ]
-fast/forms/ios/focus-input-in-fixed.html [ Failure Crash Timeout ]
-fast/forms/ios/focus-input-in-iframe.html [ Failure Crash Timeout ]
-fast/forms/ios/focus-input-via-button-no-scaling.html [ Failure Timeout ] 
-fast/forms/ios/focus-input-via-button.html [ Failure Timeout Crash ]
-fast/forms/ios/focus-long-textarea.html  [ Failure Timeout ]
-fast/forms/ios/zoom-after-input-tap-wide-input.html [ Failure Timeout ]
-fast/forms/ios/zoom-after-input-tap.html [ Failure Timeout Crash ]
-
 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Pass Failure ]
 
@@ -2027,8 +2018,6 @@ editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure 
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
 # rdar://80393995 ([ iOS15 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout) http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Timeout ]
-
-#rdar://80391927 ([ iOS ] fast/forms/ios/ipad/open-picker-using-keyboard.html is a flaky timeout) fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
 
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 

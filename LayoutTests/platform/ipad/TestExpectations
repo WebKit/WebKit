@@ -16,6 +16,8 @@ fast/forms/ios/delete-in-input-in-iframe.html [ Timeout ]
 fast/forms/ios/typing-in-input-in-iframe.html [ Timeout ]
 fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Timeout ]
 fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Timeout ]
+fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-iframe-with-focused-field.html [ Timeout ]
+fast/events/ios/keyboard-scrolling-distance.html [ Failure ]
 
 # iPads don't zoom when form elements are focused
 fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]
