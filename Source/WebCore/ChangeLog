@@ -1,3 +1,28 @@
+2021-09-01  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process](REGRESSION): A detached canvas leaks all the images it draws
+        https://bugs.webkit.org/show_bug.cgi?id=229668
+        <rdar://problem/82532484>
+
+        Reviewed by Simon Fraser.
+
+        Before drawing the canvas to the page, the canvas element may need to 
+        prepare its context for display. For 2D canvas elements, this should 
+        happen regardless whether they are attached to the Document or not.
+        Because prepareForDisplay() calls ImageBuffer::flushDrawingContextAsync(),
+        this will ensure the canvas drawing commands are pushed from WebProcess
+        to GPUProcess. It will also release the cached shared images from both
+        WebProcess and GPUProcess.
+
+        Move the decision to skip the context prepareForDisplay() step from 
+        Document::prepareCanvasesForDisplayIfNeeded() to 
+        WebGLRenderingContextBase::prepareForDisplay().
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareCanvasesForDisplayIfNeeded):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::prepareForDisplay):
+
 2021-08-31  Lauro Moura  <lmoura@igalia.com>
 
         Non-unified build partial fixes, late late August 2021
