@@ -1,3 +1,9 @@
+2021-09-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed test gardening after r281818.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-01  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for fast/iOS/events.
