@@ -87,6 +87,7 @@
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "ReferencedSVGResources.h"
 #include "RenderAncestorIterator.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFragmentContainer.h"
@@ -3185,16 +3186,15 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
         return true;
     }
 
-    if (style.clipPath()->type() == ClipPathOperation::Reference) {
-        ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style.clipPath());
-        Element* element = renderer().document().getElementById(referenceClipPathOperation->fragment());
-        if (element && element->renderer() && is<RenderSVGResourceClipper>(element->renderer())) {
+    if (is<ReferenceClipPathOperation>(style.clipPath())) {
+        auto& referenceClipPathOperation = downcast<ReferenceClipPathOperation>(*style.clipPath());
+        if (auto* clipperRenderer = renderer().ensureReferencedSVGResources().referencedClipperRenderer(renderer().document(), referenceClipPathOperation)) {
             context.save();
             auto referenceBox = snapRectToDevicePixels(rootRelativeBounds, renderer().document().deviceScaleFactor());
             auto offset = referenceBox.location();
             context.translate(offset);
             FloatRect svgReferenceBox { {}, referenceBox.size() };
-            downcast<RenderSVGResourceClipper>(*element->renderer()).applyClippingToContext(context, renderer(), svgReferenceBox, renderer().style().effectiveZoom());
+            clipperRenderer->applyClippingToContext(context, renderer(), svgReferenceBox, renderer().style().effectiveZoom());
             context.translate(-offset);
             return true;
         }

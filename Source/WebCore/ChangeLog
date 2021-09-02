@@ -1,3 +1,73 @@
+2021-09-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Changes to clip-path and filter SVG elements referenced by CSS don't trigger repaints
+        https://bugs.webkit.org/show_bug.cgi?id=204204
+
+        Reviewed by Antti Koivisto.
+
+        Create a mechanism that allows SVG clipping and filter resources referenced from
+        CSS to trigger repaints when they change. This fixes bugs where change to the
+        SVG, via script or animations, failed to cause CSS-rendered elements that
+        reference them, via clip-path:url(#foo) or filter:url(#foo) to repaint.
+
+        The key is that SVGElement stores a set of SVGResourceElementClients, as it does for
+        element references which are the equivalent for intra-SVG resource refs.
+
+        RenderElementRareData holds a ReferencedSVGResources class, which stores a map
+        of resourceID -> SVGResourceElementClient, and its implementation of SVGResourceElementClients
+        triggers the repaint.
+
+        ReferencedSVGResources are updated after a style change, which works because
+        they only ever find elements, not SVG renderers.
+
+        Change filter and clip-path code go via ReferencedSVGResources to find their
+        appropriate filter element or clipping renderer, for cleanliness.
+
+        Tests: css3/filters/reference-filter-change-repaint.html
+               css3/masking/reference-clip-path-animate-transform-repaint.html
+               css3/masking/reference-clip-path-change-repaint.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::buildReferenceFilter): Remove some code related to looking
+        for resources in external documents, since this functionality was removed.
+        * rendering/ReferencedSVGResources.cpp: Added.
+        (WebCore::CSSSVGResourceElementClient::resourceChanged):
+        (WebCore::ReferencedSVGResources::ReferencedSVGResources):
+        (WebCore::ReferencedSVGResources::~ReferencedSVGResources):
+        (WebCore::ReferencedSVGResources::removeClientForTarget):
+        (WebCore::ReferencedSVGResources::referencedSVGResourceIDs):
+        (WebCore::ReferencedSVGResources::updateReferencedResources):
+        (WebCore::ReferencedSVGResources::elementForResourceID):
+        (WebCore::ReferencedSVGResources::referencedFilterElement):
+        (WebCore::ReferencedSVGResources::referencedClipperRenderer):
+        * rendering/ReferencedSVGResources.h: Added.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleDidChange):
+        (WebCore::RenderElement::ensureReferencedSVGResources):
+        (WebCore::RenderElement::clearReferencedSVGResources):
+        (WebCore::RenderElement::updateReferencedSVGResources):
+        * rendering/RenderElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObjectRareData::RenderObjectRareData):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::RenderObjectRareData::RenderObjectRareData): Deleted.
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::referencingCSSClients const):
+        (WebCore::SVGElement::addReferencingCSSClient):
+        (WebCore::SVGElement::removeReferencingCSSClient):
+        * svg/SVGElement.h:
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::addReferencingCSSClient):
+        (WebCore::SVGElementRareData::removeReferencingCSSClient):
+        (WebCore::SVGElementRareData::referencingCSSClients const):
+        * svg/SVGResourceElementClient.h: Added.
+
 2021-09-02  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Simplify date picker logic for datetime-local inputs

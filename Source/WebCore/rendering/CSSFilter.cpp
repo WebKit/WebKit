@@ -37,6 +37,7 @@
 #include "FEMerge.h"
 #include "FilterEffectRenderer.h"
 #include "Logging.h"
+#include "ReferencedSVGResources.h"
 #include "RenderLayer.h"
 #include "SVGElement.h"
 #include "SVGFilterBuilder.h"
@@ -72,26 +73,14 @@ GraphicsContext* CSSFilter::inputContext()
 
 RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, FilterEffect& previousEffect, ReferenceFilterOperation& filterOperation)
 {
-    auto* cachedSVGDocumentReference = filterOperation.cachedSVGDocumentReference();
-    auto* cachedSVGDocument = cachedSVGDocumentReference ? cachedSVGDocumentReference->document() : nullptr;
-
-    // If we have an SVG document, this is an external reference. Otherwise
-    // we look up the referenced node in the current document.
-    Document* document;
-    if (!cachedSVGDocument)
-        document = &renderer.document();
-    else {
-        document = cachedSVGDocument->document();
-        if (!document)
-            return nullptr;
-    }
-
-    auto* filter = document->getElementById(filterOperation.fragment());
-    if (!filter) {
+    auto* filterElement = renderer.ensureReferencedSVGResources().referencedFilterElement(renderer.document(), filterOperation);
+    if (!filterElement) {
+        LOG_WITH_STREAM(Filters, stream << "CSSFilter " << this << " buildReferenceFilter: failed to find filter renderer, adding pending resource " << filterOperation.fragment());
         // Although we did not find the referenced filter, it might exist later in the document.
         // FIXME: This skips anonymous RenderObjects. <https://webkit.org/b/131085>
+        // FIXME: Unclear if this does anything.
         if (auto* element = renderer.element())
-            document->accessSVGExtensions().addPendingResource(filterOperation.fragment(), *element);
+            renderer.document().accessSVGExtensions().addPendingResource(filterOperation.fragment(), *element);
         return nullptr;
     }
 
@@ -101,7 +90,7 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
     RefPtr<FilterEffect> effect;
     Vector<Ref<FilterEffect>> referenceEffects;
 
-    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filter)) {
+    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(*filterElement)) {
         effect = effectElement.build(builder.get(), *this);
         if (!effect) {
             LOG_WITH_STREAM(Filters, stream << "CSSFilter " << this << " buildReferenceFilter: failed to build effect from " << effectElement);

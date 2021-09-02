@@ -46,6 +46,7 @@
 #include "SVGPropertyAnimatorFactory.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
+#include "SVGResourceElementClient.h"
 #include "SVGSVGElement.h"
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
@@ -334,6 +335,25 @@ void SVGElement::removeElementReference()
         return;
     if (auto destination = makeRefPtr(m_svgRareData->referenceTarget()))
         destination->removeReferencingElement(*this);
+}
+
+Vector<WeakPtr<SVGResourceElementClient>> SVGElement::referencingCSSClients() const
+{
+    if (!m_svgRareData)
+        return { };
+    return copyToVector(m_svgRareData->referencingCSSClients());
+}
+
+void SVGElement::addReferencingCSSClient(SVGResourceElementClient& client)
+{
+    ensureSVGRareData().addReferencingCSSClient(client);
+}
+
+void SVGElement::removeReferencingCSSClient(SVGResourceElementClient& client)
+{
+    if (!m_svgRareData)
+        return;
+    ensureSVGRareData().removeReferencingCSSClient(client);
 }
 
 SVGElement* SVGElement::correspondingElement() const

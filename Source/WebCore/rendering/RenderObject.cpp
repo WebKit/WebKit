@@ -45,6 +45,7 @@
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
 #include "PseudoElement.h"
+#include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderCounter.h"
 #include "RenderFragmentedFlow.h"
@@ -1945,6 +1946,15 @@ void RenderObject::removeRareData()
     rareDataMap().remove(this);
     setHasRareData(false);
 }
+
+RenderObject::RenderObjectRareData::RenderObjectRareData()
+    : m_hasReflection(false)
+    , m_isRenderFragmentedFlow(false)
+    , m_hasOutlineAutoAncestor(false)
+{
+}
+
+RenderObject::RenderObjectRareData::~RenderObjectRareData() = default;
 
 bool RenderObject::hasNonEmptyVisibleRectRespectingParentFrames() const
 {

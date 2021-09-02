@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "SVGResourceElementClient.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include <wtf/HashSet.h>
@@ -55,6 +56,10 @@ public:
     SVGElement* referenceTarget() const { return m_referenceTarget.get(); }
     void setReferenceTarget(WeakPtr<SVGElement>&& element) { m_referenceTarget = WTFMove(element); }
 
+    void addReferencingCSSClient(SVGResourceElementClient& client) { m_referencingCSSClients.add(client); }
+    void removeReferencingCSSClient(SVGResourceElementClient& client) { m_referencingCSSClients.remove(client); }
+    const WeakHashSet<SVGResourceElementClient>& referencingCSSClients() const { return m_referencingCSSClients; }
+
     SVGElement* correspondingElement() { return m_correspondingElement.get(); }
     void setCorrespondingElement(SVGElement* correspondingElement) { m_correspondingElement = makeWeakPtr(correspondingElement); }
 
@@ -86,6 +91,9 @@ public:
 private:
     WeakHashSet<SVGElement> m_referencingElements;
     WeakPtr<SVGElement> m_referenceTarget;
+
+    WeakHashSet<SVGResourceElementClient> m_referencingCSSClients;
+
     WeakHashSet<SVGElement> m_instances;
     WeakPtr<SVGElement> m_correspondingElement;
     bool m_instancesUpdatesBlocked : 1;

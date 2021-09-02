@@ -1884,6 +1884,7 @@ webkit.org/b/229195 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout
 svg/animations/animate-text-nested-transforms.html [ Failure ]
 svg/repaint/text-mask-update.svg [ ImageOnlyFailure ]
 svg/text/lengthAdjust-text-metrics.html [ Failure ]
+css3/filters/reference-filter-change-repaint.html [ Failure ]
 
 # Weird black images
 imported/mozilla/svg/svg-effects-area-unzoomed.xhtml

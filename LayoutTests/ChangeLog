@@ -1,3 +1,20 @@
+2021-09-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Changes to clip-path and filter SVG elements referenced by CSS don't trigger repaints
+        https://bugs.webkit.org/show_bug.cgi?id=204204
+
+        Reviewed by Antti Koivisto.
+
+        Repaint tests that detect repaints when referenced clips or filters change.
+
+        * css3/filters/reference-filter-change-repaint-expected.txt: Added.
+        * css3/filters/reference-filter-change-repaint.html: Added.
+        * css3/masking/clip-path-reference-local-url-with-base.html:
+        * css3/masking/reference-clip-path-animate-transform-repaint-expected.txt: Added.
+        * css3/masking/reference-clip-path-animate-transform-repaint.html: Added.
+        * css3/masking/reference-clip-path-change-repaint-expected.txt: Added.
+        * css3/masking/reference-clip-path-change-repaint.html: Added.
+
 2021-09-02  Chris Dumez  <cdumez@apple.com>
 
         [ BigSur arm64 Debug EWS ] ASSERTION FAILED: m_uncommittedState.state == State::Provisional

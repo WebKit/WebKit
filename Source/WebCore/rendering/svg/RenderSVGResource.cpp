@@ -31,6 +31,7 @@
 #include "RenderSVGResourceSolidColor.h"
 #include "RenderSVGRoot.h"
 #include "RenderView.h"
+#include "SVGResourceElementClient.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
@@ -153,7 +154,7 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
     return s_sharedSolidPaintingResource;
 }
 
-static inline void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout)
+static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout)
 {
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
         if (RenderSVGResourceFilter* filter = resources->filter())
@@ -169,7 +170,9 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderElement& rende
     if (!is<SVGElement>(renderer.element()))
         return;
 
-    for (auto& element : downcast<SVGElement>(*renderer.element()).referencingElements()) {
+    Ref svgElement = downcast<SVGElement>(*renderer.element());
+
+    for (auto& element : svgElement->referencingElements()) {
         if (auto* renderer = element->renderer()) {
             // We allow cycles in SVGDocumentExtensions reference sets in order to avoid expensive
             // reference graph adjustments on changes, so we need to break possible cycles here.
@@ -181,6 +184,12 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderElement& rende
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer, needsLayout);
             invalidatingDependencies.get().remove(element.get());
         }
+    }
+
+    for (auto& cssClient : svgElement->referencingCSSClients()) {
+        if (!cssClient)
+            continue;
+        cssClient->resourceChanged(svgElement.get());
     }
 }
 

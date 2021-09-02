@@ -31,6 +31,7 @@ namespace WebCore {
 class ContentData;
 class ControlStates;
 class KeyframeList;
+class ReferencedSVGResources;
 class RenderBlock;
 class RenderStyle;
 class RenderTreeBuilder;
@@ -262,6 +263,8 @@ public:
     WeakPtr<RenderBlockFlow> backdropRenderer() const;
     void setBackdropRenderer(RenderBlockFlow&);
 
+    ReferencedSVGResources& ensureReferencedSVGResources();
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
@@ -361,6 +364,9 @@ private:
     
     bool shouldWillChangeCreateStackingContext() const;
     void issueRepaintForOutlineAuto(float outlineSize);
+    
+    void updateReferencedSVGResources();
+    void clearReferencedSVGResources();
 
     unsigned m_baseTypeFlags : 6;
     unsigned m_ancestorLineBoxDirty : 1;

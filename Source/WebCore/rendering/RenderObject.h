@@ -56,6 +56,7 @@ class HitTestResult;
 class LegacyInlineBox;
 class Path;
 class Position;
+class ReferencedSVGResources;
 class RenderBoxModelObject;
 class RenderInline;
 class RenderBlock;
@@ -927,18 +928,16 @@ private:
     class RenderObjectRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        RenderObjectRareData()
-            : m_hasReflection(false)
-            , m_isRenderFragmentedFlow(false)
-            , m_hasOutlineAutoAncestor(false)
-        {
-        }
+        RenderObjectRareData();
+        ~RenderObjectRareData();
+
         ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
         ADD_BOOLEAN_BITFIELD(isRenderFragmentedFlow, IsRenderFragmentedFlow);
         ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
 
         // From RenderElement
         std::unique_ptr<RenderStyle> cachedFirstLineStyle;
+        std::unique_ptr<ReferencedSVGResources> referencedSVGResources;
         WeakPtr<RenderBlockFlow> backdropRenderer;
     };
     

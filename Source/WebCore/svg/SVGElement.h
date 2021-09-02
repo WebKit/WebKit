@@ -41,6 +41,7 @@ class Document;
 class SVGDocumentExtensions;
 class SVGElementRareData;
 class SVGPropertyAnimatorFactory;
+class SVGResourceElementClient;
 class SVGSVGElement;
 class SVGUseElement;
 
@@ -97,6 +98,11 @@ public:
     void addReferencingElement(SVGElement&);
     void removeReferencingElement(SVGElement&);
     void removeElementReference();
+
+    Vector<WeakPtr<SVGResourceElementClient>> referencingCSSClients() const;
+    void addReferencingCSSClient(SVGResourceElementClient&);
+    void removeReferencingCSSClient(SVGResourceElementClient&);
+
 
     SVGElement* correspondingElement() const;
     RefPtr<SVGUseElement> correspondingUseElement() const;
