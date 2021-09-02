@@ -113,6 +113,7 @@ private:
     void suspend() final;
     void resume() final;
     void disableICECandidateFiltering() final;
+    bool isNegotiationNeeded(uint32_t) const final;
 
     Ref<LibWebRTCMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };

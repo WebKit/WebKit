@@ -297,7 +297,7 @@ rtc::scoped_refptr<webrtc::DataChannelInterface> MockLibWebRTCPeerConnection::Cr
 webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> MockLibWebRTCPeerConnection::AddTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track, const std::vector<std::string>& streamIds)
 {
     LibWebRTCProvider::callOnWebRTCSignalingThread([observer = &m_observer] {
-        observer->OnRenegotiationNeeded();
+        observer->OnNegotiationNeededEvent(0);
     });
 
     if (!streamIds.empty())
@@ -314,7 +314,7 @@ webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> MockLibWebRTC
 bool MockLibWebRTCPeerConnection::RemoveTrack(webrtc::RtpSenderInterface* sender)
 {
     LibWebRTCProvider::callOnWebRTCSignalingThread([observer = &m_observer] {
-        observer->OnRenegotiationNeeded();
+        observer->OnNegotiationNeededEvent(0);
     });
     bool isRemoved = false;
     return m_transceivers.removeFirstMatching([&](auto& transceiver) {

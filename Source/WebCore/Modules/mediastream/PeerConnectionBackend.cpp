@@ -577,15 +577,9 @@ void PeerConnectionBackend::stop()
     doStop();
 }
 
-void PeerConnectionBackend::markAsNeedingNegotiation()
+void PeerConnectionBackend::markAsNeedingNegotiation(uint32_t eventId)
 {
-    if (m_negotiationNeeded)
-        return;
-
-    m_negotiationNeeded = true;
-
-    if (m_peerConnection.signalingState() == RTCSignalingState::Stable)
-        m_peerConnection.scheduleNegotiationNeededEvent();
+    m_peerConnection.updateNegotiationNeededFlag(eventId);
 }
 
 ExceptionOr<Ref<RTCRtpSender>> PeerConnectionBackend::addTrack(MediaStreamTrack&, Vector<String>&&)

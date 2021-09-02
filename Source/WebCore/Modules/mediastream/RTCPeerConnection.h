@@ -173,7 +173,7 @@ public:
     void updateIceGatheringState(RTCIceGatheringState);
     void updateIceConnectionState(RTCIceConnectionState);
 
-    void scheduleNegotiationNeededEvent();
+    void updateNegotiationNeededFlag(std::optional<uint32_t>);
 
     void dispatchEventWhenFeasible(Ref<Event>&&);
 
@@ -263,7 +263,7 @@ private:
     Vector<Function<void()>> m_pendingTasks;
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
     bool m_hasPendingOperation { false };
-    bool m_shouldFireNegotiationNeededOnceOperationChainIsEmpty { false };
+    std::optional<uint32_t> m_negotiationNeededEventId;
     Vector<Ref<RTCDtlsTransport>> m_dtlsTransports;
     Vector<Ref<RTCIceTransport>> m_iceTransports;
 };

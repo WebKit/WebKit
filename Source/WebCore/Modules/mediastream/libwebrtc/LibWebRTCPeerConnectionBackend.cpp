@@ -109,6 +109,11 @@ void LibWebRTCPeerConnectionBackend::disableICECandidateFiltering()
         factory->disableRelay();
 }
 
+bool LibWebRTCPeerConnectionBackend::isNegotiationNeeded(uint32_t eventId) const
+{
+    return m_endpoint->isNegotiationNeeded(eventId);
+}
+
 static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
 {
     switch (configuration.bundlePolicy) {

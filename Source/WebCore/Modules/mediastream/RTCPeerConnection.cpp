@@ -738,22 +738,28 @@ void RTCPeerConnection::processIceTransportStateChange(RTCIceTransport& iceTrans
         dispatchEventWhenFeasible(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-void RTCPeerConnection::scheduleNegotiationNeededEvent()
+void RTCPeerConnection::updateNegotiationNeededFlag(std::optional<uint32_t> eventId)
 {
-    if (m_hasPendingOperation) {
-        m_shouldFireNegotiationNeededOnceOperationChainIsEmpty = true;
-        return;
-    }
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](ScriptExecutionContext&) {
+    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), eventId](auto&) mutable {
         if (isClosed())
             return;
+        if (!eventId) {
+            if (!m_negotiationNeededEventId)
+                return;
+            eventId = m_negotiationNeededEventId;
+        }
         if (m_hasPendingOperation) {
-            m_shouldFireNegotiationNeededOnceOperationChainIsEmpty = true;
+            m_negotiationNeededEventId = *eventId;
             return;
         }
-        if (!m_backend->isNegotiationNeeded())
+        if (signalingState() != RTCSignalingState::Stable) {
+            m_negotiationNeededEventId = *eventId;
             return;
-        m_backend->clearNegotiationNeededState();
+        }
+
+        if (!m_backend->isNegotiationNeeded(*eventId))
+            return;
+
         dispatchEventWhenFeasible(Event::create(eventNames().negotiationneededEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
@@ -871,17 +877,15 @@ void RTCPeerConnection::chainOperation(Ref<DeferredPromise>&& promise, Function<
             return;
         }
 
-        if (m_operations.isEmpty()) {
-            m_hasPendingOperation = false;
-            if (m_shouldFireNegotiationNeededOnceOperationChainIsEmpty) {
-                m_shouldFireNegotiationNeededOnceOperationChainIsEmpty = false;
-                scheduleNegotiationNeededEvent();
-            }
+        if (!m_operations.isEmpty()) {
+            auto promiseOperation = m_operations.takeFirst();
+            promiseOperation.second(WTFMove(promiseOperation.first));
             return;
         }
 
-        auto promiseOperation = m_operations.takeFirst();
-        promiseOperation.second(WTFMove(promiseOperation.first));
+        m_hasPendingOperation = false;
+        if (m_negotiationNeededEventId)
+            updateNegotiationNeededFlag({ });
     });
 
     if (m_hasPendingOperation || !m_operations.isEmpty()) {

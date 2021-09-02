@@ -120,6 +120,11 @@ void LibWebRTCMediaEndpoint::resume()
         m_rtcSocketFactory->resume();
 }
 
+bool LibWebRTCMediaEndpoint::isNegotiationNeeded(uint32_t eventId) const
+{
+    return m_backend ? m_backend->ShouldFireNegotiationNeededEvent(eventId) : false;
+}
+
 static inline const char* sessionDescriptionType(RTCSdpType sdpType)
 {
     switch (sdpType) {
@@ -558,12 +563,12 @@ void LibWebRTCMediaEndpoint::stop()
     m_remoteStreamsFromRemoteTrack.clear();
 }
 
-void LibWebRTCMediaEndpoint::OnRenegotiationNeeded()
+void LibWebRTCMediaEndpoint::OnNegotiationNeededEvent(uint32_t eventId)
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = makeRef(*this), eventId] {
         if (protectedThis->isStopped())
             return;
-        protectedThis->m_peerConnectionBackend.markAsNeedingNegotiation();
+        protectedThis->m_peerConnectionBackend.markAsNeedingNegotiation(eventId);
     });
 }
 

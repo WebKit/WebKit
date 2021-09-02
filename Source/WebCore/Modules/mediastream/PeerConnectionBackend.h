@@ -124,9 +124,8 @@ public:
     virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&);
     virtual ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&);
 
-    void markAsNeedingNegotiation();
-    bool isNegotiationNeeded() const { return m_negotiationNeeded; };
-    void clearNegotiationNeededState() { m_negotiationNeeded = false; };
+    void markAsNeedingNegotiation(uint32_t);
+    virtual bool isNegotiationNeeded(uint32_t) const = 0;
 
     virtual void emulatePlatformEvent(const String& action) = 0;
 
@@ -254,7 +253,6 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
-    bool m_negotiationNeeded { false };
     bool m_finishedGatheringCandidates { false };
     uint64_t m_waitingForMDNSRegistration { 0 };
 };

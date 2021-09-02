@@ -1,3 +1,37 @@
+2021-09-02  Youenn Fablet  <youenn@apple.com>
+
+        Migrate LibWebRTCMediaEndpoint from OnRenegotiationNeeded to OnRenegotiationNeededEvent
+        https://bugs.webkit.org/show_bug.cgi?id=229562
+
+        Reviewed by Eric Carlson.
+
+        OnRenegotiationNeededEvent is the more spec-aligned version of OnRenegotiationNeeded.
+        We switch to it and update to check for validity of the event by using the given eventId.
+        We can remove some state variables like m_negotiationNeeded given we use the backend with eventId to know whether we can send the event.
+
+        Covered by existing tests.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::markAsNeedingNegotiation):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::updateNegotiationNeededFlag):
+        (WebCore::RTCPeerConnection::chainOperation):
+        Update code to better align with spec steps.
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::stop):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::isNegotiationNeeded const):
+        (WebCore::LibWebRTCMediaEndpoint::OnNegotiationNeededEvent):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::isNegotiationNeeded const):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::AddTrack):
+        (WebCore::MockLibWebRTCPeerConnection::RemoveTrack):
+
 2021-09-02  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r277763): [Debug][GLib] fast/mediastream timeouts

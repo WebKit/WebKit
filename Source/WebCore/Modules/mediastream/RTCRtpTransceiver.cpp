@@ -118,7 +118,7 @@ ExceptionOr<void> RTCRtpTransceiver::stop()
     if (m_backend)
         m_backend->stop();
 
-    m_connection->scheduleNegotiationNeededEvent();
+    // No need to call negotiation needed, it will be done by the backend itself.
     return { };
 }
 
