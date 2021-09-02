@@ -83,7 +83,7 @@ void ImageRotationSessionVT::initialize(const RotationProperties& rotation, Floa
 
     VTImageRotationSessionRef rawRotationSession = nullptr;
     VTImageRotationSessionCreate(kCFAllocatorDefault, m_rotationProperties.angle, &rawRotationSession);
-    m_rotationSession = rawRotationSession;
+    m_rotationSession = adoptCF(rawRotationSession);
     VTImageRotationSessionSetProperty(m_rotationSession.get(), kVTImageRotationPropertyKey_EnableHighSpeedTransfer, kCFBooleanTrue);
 
     if (m_rotationProperties.flipY)

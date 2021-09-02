@@ -1,3 +1,15 @@
+2021-09-02  David Kilzer  <ddkilzer@apple.com>
+
+        Leak of VTImageRotationSessionRef (176 bytes) in com.apple.WebKit.GPU.Development process
+        <https://webkit.org/b/229781>
+        <rdar://problem/82651897>
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/cv/ImageRotationSessionVT.mm:
+        (WebCore::ImageRotationSessionVT::initialize):
+        - Add missing adoptCF() to fix the leak.
+
 2021-09-02  Peng Liu  <peng.liu6@apple.com>
 
         [MSE][GPUP] SourceBufferPrivateAVFObjC does not work properly when audio and video exchange their track IDs
