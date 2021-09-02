@@ -1,3 +1,15 @@
+2021-09-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] run-gtk-tests does not require GI outside the sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=229836
+
+        Reviewed by Jonathan Bedard.
+
+        Some worker bots were failing without python3-gi installed, but it's
+        not required as the flatpak env provides it.
+
+        * Scripts/run-gtk-tests:
+
 2021-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Gracefully recover from WebAuthnProcess crashes
