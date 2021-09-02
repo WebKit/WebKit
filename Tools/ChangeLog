@@ -1,5 +1,64 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281817. rdar://problem/82652467
+
+    Loads after session restore marked app initiated in Safari
+    https://bugs.webkit.org/show_bug.cgi?id=229721
+    <rdar://problem/82084236>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::loadDifferentDocumentItem):
+    Set the proper app initiated value when creating a new request.
+    
+    Source/WebKit:
+    
+    Offer a way to set the app initiated value when restoring a session.
+    
+    * Shared/SessionState.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _restoreSessionState:andNavigate:]):
+    * UIProcess/API/Cocoa/_WKSessionState.h:
+    * UIProcess/API/Cocoa/_WKSessionState.mm:
+    (-[_WKSessionState _sessionStateWithAppInitiatedValue]):
+    * UIProcess/API/Cocoa/_WKSessionStateInternal.h:
+    * UIProcess/ProvisionalPageProxy.cpp:
+    (WebKit::ProvisionalPageProxy::goToBackForwardItem):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::launchProcessForReload):
+    (WebKit::WebPageProxy::goToBackForwardItem):
+    (WebKit::WebPageProxy::restoreFromSessionState):
+    * UIProcess/WebPageProxy.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::goToBackForwardItem):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    
+    Tools:
+    
+    API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281817 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-31  Kate Cheney  <katherine_cheney@apple.com>
+
+            Loads after session restore marked app initiated in Safari
+            https://bugs.webkit.org/show_bug.cgi?id=229721
+            <rdar://problem/82084236>
+
+            Reviewed by Brent Fulgham.
+
+            API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281684. rdar://problem/82651474
 
     [JSC] op_put_private_name should use modern IC and remove ByValInfo

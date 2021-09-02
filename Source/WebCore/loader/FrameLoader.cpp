@@ -3800,6 +3800,9 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
     bool isFormSubmission = false;
     Event* event = nullptr;
 
+    if (auto* documentLoader = m_frame.mainFrame().loader().documentLoader())
+        request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
+
     // If this was a repost that failed the page cache, we might try to repost the form.
     NavigationAction action;
     if (formData) {

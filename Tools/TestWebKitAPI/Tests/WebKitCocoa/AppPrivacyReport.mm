@@ -36,6 +36,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKSessionState.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RunLoop.h>
 #import <wtf/text/WTFString.h>
@@ -731,6 +732,47 @@ TEST(AppPrivacyReport, LoadSimulatedRequestIsAppInitiated)
 TEST(AppPrivacyReport, LoadSimulatedRequestIsNonAppInitiated)
 {
     loadSimulatedRequestTest(IsAppInitiated::No);
+}
+
+static void restoreFromSessionStateTest(IsAppInitiated isAppInitiated)
+{
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://www.apple.com/"]];
+    request.attribution = isAppInitiated == IsAppInitiated::Yes ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
+
+    [webView1 loadRequest:request];
+    [webView1 _test_waitForDidFinishNavigation];
+
+    RetainPtr<_WKSessionState> sessionState = [webView1 _sessionState];
+    sessionState.get().isAppInitiated = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    webView1 = nullptr;
+
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView2 _restoreSessionState:sessionState.get() andNavigate:YES];
+    [webView2 _test_waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ(@"https://www.apple.com/", [[webView2 URL] absoluteString]);
+
+    static bool isDone = false;
+    bool expectingAppInitiatedRequests = isAppInitiated == IsAppInitiated::Yes ? true : false;
+    [webView2 _appPrivacyReportTestingData:^(struct WKAppPrivacyReportTestingData data) {
+        EXPECT_EQ(data.hasLoadedAppInitiatedRequestTesting, expectingAppInitiatedRequests);
+        EXPECT_EQ(data.hasLoadedNonAppInitiatedRequestTesting, !expectingAppInitiatedRequests);
+        isDone = true;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(AppPrivacyReport, RestoreFromSessionStateIsAppInitiated)
+{
+    restoreFromSessionStateTest(IsAppInitiated::Yes);
+}
+
+TEST(AppPrivacyReport, RestoreFromSessionStateIsNonAppInitiated)
+{
+    restoreFromSessionStateTest(IsAppInitiated::No);
 }
 
 #endif // APP_PRIVACY_REPORT

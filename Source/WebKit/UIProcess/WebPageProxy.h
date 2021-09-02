@@ -1946,6 +1946,8 @@ public:
     void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(bool)>&&);
 #endif
 
+    bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
+
 #if PLATFORM(COCOA)
     void setLastNavigationWasAppInitiated(WebCore::ResourceRequest&);
     void lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&);
