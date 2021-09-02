@@ -1,3 +1,15 @@
+2021-09-02  Rob Buis  <rbuis@igalia.com>
+
+        Absolutely positioned and negative z-index div with canvas child gets drawn with wrong stacking order
+        https://bugs.webkit.org/show_bug.cgi?id=217154
+
+        Reviewed by Simon Fraser.
+
+        Add test based on bug report test case.
+
+        * compositing/subtree-div-overlaps-multiple-negative-z-divs-expected.html: Added.
+        * compositing/subtree-div-overlaps-multiple-negative-z-divs.html: Added.
+
 2021-09-01  Sonia Singla  <ssingla@igalia.com>
 
         Replace webkit- prefix logical properties with Standard Properties in LayoutTests/

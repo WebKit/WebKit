@@ -1098,15 +1098,18 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     bool anyDescendantHas3DTransform = false;
     bool descendantsAddedToOverlap = currentState.hasNonRootCompositedAncestor();
 
+    unsigned newlyCompositedChildLayerCount = 0;
     for (auto* childLayer : layer.negativeZOrderLayers()) {
         computeCompositingRequirements(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform);
 
         // If we have to make a layer for this child, make one now so we can have a contents layer
         // (since we need to ensure that the -ve z-order child renders underneath our contents).
-        if (!willBeComposited && currentState.subtreeIsCompositing) {
-            layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
-            layerWillComposite();
-        }
+        if (!willBeComposited && currentState.subtreeIsCompositing)
+            ++newlyCompositedChildLayerCount;
+    }
+    while (newlyCompositedChildLayerCount--) {
+        layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
+        layerWillComposite();
     }
 
     for (auto* childLayer : layer.normalFlowLayers())
