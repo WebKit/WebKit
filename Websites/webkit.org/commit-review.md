@@ -10,7 +10,7 @@ A candidate for WebKit Committer or WebKit Reviewer should initially be nominate
 
 Once someone is successfully nominated for WebKit Committer status, Apple will take care of sending the committer agreement and setting up a Subversion account once signed and received.
 
-Once someone is successfully nominated for WebKit Reviewer status, the nominating Reviewer or another responsible party should inform the candidate and ask for indication of acceptance from the potential new reviewer. If the candidate accepts, [contributors.json](http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/contributors.json) will be updated.
+Once someone is successfully nominated for WebKit Reviewer status, the nominating Reviewer or another responsible party should inform the candidate and ask for indication of acceptance from the potential new reviewer. If the candidate accepts, [contributors.json](http://trac.webkit.org/browser/trunk/metadata/contributors.json) will be updated.
 
 ## Criteria for Committers
 

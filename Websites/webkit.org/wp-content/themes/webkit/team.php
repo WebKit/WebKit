@@ -157,21 +157,18 @@ var domainAffiliations = {
 };
 
 function parseContributorsJSON(text) {
-    var contributorsJSON = JSON.parse(text);
-    var contributors = [];
-
-    for (var contributor in contributorsJSON) {
-        var data = contributorsJSON[contributor];
-        if (data.status == "bot")
-            continue;
+    let contributors = [];
+    JSON.parse(text).forEach(contributor => {
+        if (contributor.class == "bot")
+            return;
         contributors.push({
-            name: contributor,
-            kind: data.status ? data.status : 'contributor',
-            emails: data.emails,
-            nicks: data.nicks,
-            expertise: data.expertise
+            name: contributor.name,
+            kind: contributor.status ? contributor.status : 'contributor',
+            emails: contributor.emails,
+            nicks: contributor.nicks,
+            expertise: contributor.expertise
         });
-    }
+    });
     return contributors;
 }
 
@@ -266,7 +263,7 @@ xhr.onload = function () {
     populateContributorList(contributors, 'contributor');
 };
 xhr.onerror = function () { document.getElementById('team').textContent = 'There was an issue loading data for the WebKit Team. not obtain contributors.json'; };
-xhr.open('GET', svnTrunkUrl + 'Tools/Scripts/webkitpy/common/config/contributors.json');
+xhr.open('GET', svnTrunkUrl + 'metadata/contributors.json');
 xhr.send();
 
 </script>
