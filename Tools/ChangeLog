@@ -1,3 +1,14 @@
+2021-09-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [buildbot] Only serve content through nginx
+        https://bugs.webkit.org/show_bug.cgi?id=229785
+        <rdar://problem/82653668>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/build-webkit-org/master.cfg: Only expose webserver to localhost.
+        * CISupport/ews-build/master.cfg: Ditto.
+
 2021-09-02  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Garden itp API test failure after r281886
