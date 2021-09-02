@@ -36,16 +36,17 @@
 
 namespace WebCore {
 
-Ref<StyleRuleImport> StyleRuleImport::create(const String& href, Ref<MediaQuerySet>&& media)
+Ref<StyleRuleImport> StyleRuleImport::create(const String& href, Ref<MediaQuerySet>&& media, std::optional<CascadeLayerName>&& cascadeLayerName)
 {
-    return adoptRef(*new StyleRuleImport(href, WTFMove(media)));
+    return adoptRef(*new StyleRuleImport(href, WTFMove(media), WTFMove(cascadeLayerName)));
 }
 
-StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media)
+StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media, std::optional<CascadeLayerName>&& cascadeLayerName)
     : StyleRuleBase(StyleRuleType::Import)
     , m_styleSheetClient(this)
     , m_strHref(href)
     , m_mediaQueries(WTFMove(media))
+    , m_cascadeLayerName(WTFMove(cascadeLayerName))
 {
     if (!m_mediaQueries)
         m_mediaQueries = MediaQuerySet::create(String(), MediaQueryParserContext());

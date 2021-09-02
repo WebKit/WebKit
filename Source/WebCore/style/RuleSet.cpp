@@ -376,9 +376,17 @@ void RuleSet::Builder::addRulesFromSheet(const StyleSheetContents& sheet)
     for (auto& rule : sheet.importRules()) {
         if (!rule->styleSheet())
             continue;
+        
+        if (mediaQueryCollector.pushAndEvaluate(rule->mediaQueries())) {
+            auto& cascadeLayerName = rule->cascadeLayerName();
+            if (cascadeLayerName)
+                pushCascadeLayer(*cascadeLayerName);
 
-        if (mediaQueryCollector.pushAndEvaluate(rule->mediaQueries()))
             addRulesFromSheet(*rule->styleSheet());
+
+            if (cascadeLayerName)
+                popCascadeLayer(*cascadeLayerName);
+        }
         mediaQueryCollector.pop(rule->mediaQueries());
     }
 

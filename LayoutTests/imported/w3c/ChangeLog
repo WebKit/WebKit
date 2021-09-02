@@ -1,3 +1,12 @@
+2021-09-02  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Support layer argument in @import rules
+        https://bugs.webkit.org/show_bug.cgi?id=229795
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/layer-import-expected.txt:
+
 2021-09-02  Youenn Fablet  <youenn@apple.com>
 
         Migrate LibWebRTCMediaEndpoint from OnRenegotiationNeeded to OnRenegotiationNeededEvent

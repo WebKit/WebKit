@@ -507,6 +507,32 @@ RefPtr<StyleRuleCharset> CSSParserImpl::consumeCharsetRule(CSSParserTokenRange p
     return StyleRuleCharset::create();
 }
 
+enum class AllowAnonymous { Yes, No };
+static std::optional<CascadeLayerName> consumeCascadeLayerName(CSSParserTokenRange& range, AllowAnonymous allowAnonymous)
+{
+    CascadeLayerName name;
+    if (range.atEnd()) {
+        if (allowAnonymous == AllowAnonymous::Yes)
+            return name;
+        return { };
+    }
+
+    while (true) {
+        auto nameToken = range.consume();
+        if (nameToken.type() != IdentToken)
+            return { };
+
+        name.append(nameToken.value().toAtomString());
+
+        if (range.peek().type() != DelimiterToken || range.peek().delimiter() != '.')
+            break;
+        range.consume();
+    }
+
+    range.consumeWhitespace();
+    return name;
+}
+
 RefPtr<StyleRuleImport> CSSParserImpl::consumeImportRule(CSSParserTokenRange prelude)
 {
     AtomString uri(consumeStringOrURI(prelude));
@@ -520,8 +546,29 @@ RefPtr<StyleRuleImport> CSSParserImpl::consumeImportRule(CSSParserTokenRange pre
         m_observerWrapper->observer().startRuleBody(endOffset);
         m_observerWrapper->observer().endRuleBody(endOffset);
     }
+
+    prelude.consumeWhitespace();
+
+    auto consumeCascadeLayer = [&]() -> std::optional<CascadeLayerName> {
+        if (!m_context.cascadeLayersEnabled)
+            return { };
+        
+        auto& token = prelude.peek();
+        if (token.type() == FunctionToken && equalIgnoringASCIICase(token.value(), "layer")) {
+            auto contents = CSSPropertyParserHelpers::consumeFunction(prelude);
+            return consumeCascadeLayerName(contents, AllowAnonymous::No);
+        }
+        if (token.type() == IdentToken && equalIgnoringASCIICase(token.value(), "layer")) {
+            prelude.consumeIncludingWhitespace();
+            return CascadeLayerName { };
+        }
+        return { };
+    };
+
+    auto cascadeLayerName = consumeCascadeLayer();
+    auto mediaQuerySet = MediaQueryParser::parseMediaQuerySet(prelude, MediaQueryParserContext(m_context));
     
-    return StyleRuleImport::create(uri, MediaQueryParser::parseMediaQuerySet(prelude, MediaQueryParserContext(m_context)).releaseNonNull());
+    return StyleRuleImport::create(uri, mediaQuerySet.releaseNonNull(), WTFMove(cascadeLayerName));
 }
 
 RefPtr<StyleRuleNamespace> CSSParserImpl::consumeNamespaceRule(CSSParserTokenRange prelude)
@@ -687,33 +734,11 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
 
     auto preludeCopy = prelude;
 
-    auto consumeName = [&]() -> std::optional<CascadeLayerName> {
-        CascadeLayerName name;
-        // Anonymous case.
-        if (prelude.atEnd())
-            return name;
-
-        while (true) {
-            auto nameToken = prelude.consume();
-            if (nameToken.type() != IdentToken)
-                return { };
-
-            name.append(nameToken.value().toAtomString());
-
-            if (prelude.peek().type() != DelimiterToken || prelude.peek().delimiter() != '.')
-                break;
-            prelude.consume();
-        }
-
-        prelude.consumeWhitespace();
-        return name;
-    };
-
     if (!block) {
         // List syntax.
         Vector<CascadeLayerName> nameList;
         while (true) {
-            auto name = consumeName();
+            auto name = consumeCascadeLayerName(prelude, AllowAnonymous::No);
             if (!name)
                 return nullptr;
             nameList.append(*name);
@@ -737,7 +762,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
         return StyleRuleLayer::create(WTFMove(nameList));
     }
 
-    auto name = consumeName();
+    auto name = consumeCascadeLayerName(prelude, AllowAnonymous::Yes);
     if (!name)
         return nullptr;
 

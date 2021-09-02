@@ -3,23 +3,23 @@ PASS A1 Layer rules with import
 PASS A2 Layer rules with import
 PASS A3 Layer rules with import
 PASS A4 Layer rules with import
-FAIL B1 Anonymous imports assert_equals: B1 Anonymous imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL B2 Anonymous imports assert_equals: B2 Anonymous imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS B1 Anonymous imports
+PASS B2 Anonymous imports
 PASS B3 Anonymous imports
-FAIL B4 Anonymous imports assert_equals: B4 Anonymous imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL C1 Named imports assert_equals: C1 Named imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL C2 Named imports assert_equals: C2 Named imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS B4 Anonymous imports
+PASS C1 Named imports
+PASS C2 Named imports
 PASS C3 Named imports
-FAIL C4 Named imports assert_equals: C4 Named imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS C4 Named imports
 PASS C5 Named imports
 PASS C6 Named imports
-FAIL C7 Named imports assert_equals: C7 Named imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL C8 Named imports assert_equals: C8 Named imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL C9 Named imports assert_equals: C9 Named imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D1 Layer statement with imports assert_equals: D1 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS C7 Named imports
+PASS C8 Named imports
+PASS C9 Named imports
+PASS D1 Layer statement with imports
 FAIL D2 Layer statement with imports assert_equals: D2 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 FAIL D3 Layer statement with imports assert_equals: D3 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 FAIL D4 Layer statement with imports assert_equals: D4 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 FAIL D5 Layer statement with imports assert_equals: D5 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D6 Layer statement with imports assert_equals: D6 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS D6 Layer statement with imports
 
