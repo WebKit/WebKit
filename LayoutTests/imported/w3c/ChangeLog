@@ -1,3 +1,24 @@
+2021-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Reject non-IPv4 hostnames that end in numbers
+        https://bugs.webkit.org/show_bug.cgi?id=228826
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window-expected.txt:
+        This test has its expectations change because, in our test infrastructure, it loads a url with host "www1.127.0.0.1" which this change now rejects.
+        When run from wpt.fyi this is not the case.
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/failure-expected.txt:
+        * web-platform-tests/url/resources/urltestdata.json:
+        * web-platform-tests/url/url-constructor.any-expected.txt:
+        * web-platform-tests/url/url-constructor.any.worker-expected.txt:
+        * web-platform-tests/url/url-origin.any-expected.txt:
+        * web-platform-tests/url/url-origin.any.worker-expected.txt:
+
 2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontFaceSet.add() needs to throw when called on a CSS-connected font

@@ -484,4 +484,154 @@ PASS XHR: file://xn--/p should throw
 PASS sendBeacon(): file://xn--/p should throw
 PASS Location's href: file://xn--/p should throw
 PASS window.open(): file://xn--/p should throw
+PASS URL's constructor's base argument: http://0..0x300/ should throw
+PASS URL's href: http://0..0x300/ should throw
+PASS XHR: http://0..0x300/ should throw
+PASS sendBeacon(): http://0..0x300/ should throw
+PASS Location's href: http://0..0x300/ should throw
+PASS window.open(): http://0..0x300/ should throw
+PASS URL's constructor's base argument: http://0..0x300./ should throw
+PASS URL's href: http://0..0x300./ should throw
+PASS XHR: http://0..0x300./ should throw
+PASS sendBeacon(): http://0..0x300./ should throw
+PASS Location's href: http://0..0x300./ should throw
+PASS window.open(): http://0..0x300./ should throw
+PASS URL's constructor's base argument: http://1.2.3.08 should throw
+PASS URL's href: http://1.2.3.08 should throw
+PASS XHR: http://1.2.3.08 should throw
+PASS sendBeacon(): http://1.2.3.08 should throw
+PASS Location's href: http://1.2.3.08 should throw
+PASS window.open(): http://1.2.3.08 should throw
+PASS URL's constructor's base argument: http://1.2.3.08. should throw
+PASS URL's href: http://1.2.3.08. should throw
+PASS XHR: http://1.2.3.08. should throw
+PASS sendBeacon(): http://1.2.3.08. should throw
+PASS Location's href: http://1.2.3.08. should throw
+PASS window.open(): http://1.2.3.08. should throw
+PASS URL's constructor's base argument: http://1.2.3.09 should throw
+PASS URL's href: http://1.2.3.09 should throw
+PASS XHR: http://1.2.3.09 should throw
+PASS sendBeacon(): http://1.2.3.09 should throw
+PASS Location's href: http://1.2.3.09 should throw
+PASS window.open(): http://1.2.3.09 should throw
+PASS URL's constructor's base argument: http://09.2.3.4 should throw
+PASS URL's href: http://09.2.3.4 should throw
+PASS XHR: http://09.2.3.4 should throw
+PASS sendBeacon(): http://09.2.3.4 should throw
+PASS Location's href: http://09.2.3.4 should throw
+PASS window.open(): http://09.2.3.4 should throw
+PASS URL's constructor's base argument: http://09.2.3.4. should throw
+PASS URL's href: http://09.2.3.4. should throw
+PASS XHR: http://09.2.3.4. should throw
+PASS sendBeacon(): http://09.2.3.4. should throw
+PASS Location's href: http://09.2.3.4. should throw
+PASS window.open(): http://09.2.3.4. should throw
+PASS URL's constructor's base argument: http://01.2.3.4.5 should throw
+PASS URL's href: http://01.2.3.4.5 should throw
+PASS XHR: http://01.2.3.4.5 should throw
+PASS sendBeacon(): http://01.2.3.4.5 should throw
+PASS Location's href: http://01.2.3.4.5 should throw
+PASS window.open(): http://01.2.3.4.5 should throw
+PASS URL's constructor's base argument: http://01.2.3.4.5. should throw
+PASS URL's href: http://01.2.3.4.5. should throw
+PASS XHR: http://01.2.3.4.5. should throw
+PASS sendBeacon(): http://01.2.3.4.5. should throw
+PASS Location's href: http://01.2.3.4.5. should throw
+PASS window.open(): http://01.2.3.4.5. should throw
+PASS URL's constructor's base argument: http://0x100.2.3.4 should throw
+PASS URL's href: http://0x100.2.3.4 should throw
+PASS XHR: http://0x100.2.3.4 should throw
+PASS sendBeacon(): http://0x100.2.3.4 should throw
+PASS Location's href: http://0x100.2.3.4 should throw
+PASS window.open(): http://0x100.2.3.4 should throw
+PASS URL's constructor's base argument: http://0x100.2.3.4. should throw
+PASS URL's href: http://0x100.2.3.4. should throw
+PASS XHR: http://0x100.2.3.4. should throw
+PASS sendBeacon(): http://0x100.2.3.4. should throw
+PASS Location's href: http://0x100.2.3.4. should throw
+PASS window.open(): http://0x100.2.3.4. should throw
+PASS URL's constructor's base argument: http://0x1.2.3.4.5 should throw
+PASS URL's href: http://0x1.2.3.4.5 should throw
+PASS XHR: http://0x1.2.3.4.5 should throw
+PASS sendBeacon(): http://0x1.2.3.4.5 should throw
+PASS Location's href: http://0x1.2.3.4.5 should throw
+PASS window.open(): http://0x1.2.3.4.5 should throw
+PASS URL's constructor's base argument: http://0x1.2.3.4.5. should throw
+PASS URL's href: http://0x1.2.3.4.5. should throw
+PASS XHR: http://0x1.2.3.4.5. should throw
+PASS sendBeacon(): http://0x1.2.3.4.5. should throw
+PASS Location's href: http://0x1.2.3.4.5. should throw
+PASS window.open(): http://0x1.2.3.4.5. should throw
+PASS URL's constructor's base argument: http://foo.1.2.3.4 should throw
+PASS URL's href: http://foo.1.2.3.4 should throw
+PASS XHR: http://foo.1.2.3.4 should throw
+PASS sendBeacon(): http://foo.1.2.3.4 should throw
+PASS Location's href: http://foo.1.2.3.4 should throw
+PASS window.open(): http://foo.1.2.3.4 should throw
+PASS URL's constructor's base argument: http://foo.1.2.3.4. should throw
+PASS URL's href: http://foo.1.2.3.4. should throw
+PASS XHR: http://foo.1.2.3.4. should throw
+PASS sendBeacon(): http://foo.1.2.3.4. should throw
+PASS Location's href: http://foo.1.2.3.4. should throw
+PASS window.open(): http://foo.1.2.3.4. should throw
+PASS URL's constructor's base argument: http://foo.2.3.4 should throw
+PASS URL's href: http://foo.2.3.4 should throw
+PASS XHR: http://foo.2.3.4 should throw
+PASS sendBeacon(): http://foo.2.3.4 should throw
+PASS Location's href: http://foo.2.3.4 should throw
+PASS window.open(): http://foo.2.3.4 should throw
+PASS URL's constructor's base argument: http://foo.2.3.4. should throw
+PASS URL's href: http://foo.2.3.4. should throw
+PASS XHR: http://foo.2.3.4. should throw
+PASS sendBeacon(): http://foo.2.3.4. should throw
+PASS Location's href: http://foo.2.3.4. should throw
+PASS window.open(): http://foo.2.3.4. should throw
+PASS URL's constructor's base argument: http://foo.09 should throw
+PASS URL's href: http://foo.09 should throw
+PASS XHR: http://foo.09 should throw
+PASS sendBeacon(): http://foo.09 should throw
+PASS Location's href: http://foo.09 should throw
+PASS window.open(): http://foo.09 should throw
+PASS URL's constructor's base argument: http://foo.09. should throw
+PASS URL's href: http://foo.09. should throw
+PASS XHR: http://foo.09. should throw
+PASS sendBeacon(): http://foo.09. should throw
+PASS Location's href: http://foo.09. should throw
+PASS window.open(): http://foo.09. should throw
+PASS URL's constructor's base argument: http://foo.0x4 should throw
+PASS URL's href: http://foo.0x4 should throw
+PASS XHR: http://foo.0x4 should throw
+PASS sendBeacon(): http://foo.0x4 should throw
+PASS Location's href: http://foo.0x4 should throw
+PASS window.open(): http://foo.0x4 should throw
+PASS URL's constructor's base argument: http://foo.0x4. should throw
+PASS URL's href: http://foo.0x4. should throw
+PASS XHR: http://foo.0x4. should throw
+PASS sendBeacon(): http://foo.0x4. should throw
+PASS Location's href: http://foo.0x4. should throw
+PASS window.open(): http://foo.0x4. should throw
+PASS URL's constructor's base argument: http://0999999999999999999/ should throw
+PASS URL's href: http://0999999999999999999/ should throw
+PASS XHR: http://0999999999999999999/ should throw
+PASS sendBeacon(): http://0999999999999999999/ should throw
+PASS Location's href: http://0999999999999999999/ should throw
+PASS window.open(): http://0999999999999999999/ should throw
+PASS URL's constructor's base argument: http://foo.0x should throw
+PASS URL's href: http://foo.0x should throw
+PASS XHR: http://foo.0x should throw
+PASS sendBeacon(): http://foo.0x should throw
+PASS Location's href: http://foo.0x should throw
+PASS window.open(): http://foo.0x should throw
+PASS URL's constructor's base argument: http://foo.0XFfFfFfFfFfFfFfFfFfAcE123 should throw
+PASS URL's href: http://foo.0XFfFfFfFfFfFfFfFfFfAcE123 should throw
+PASS XHR: http://foo.0XFfFfFfFfFfFfFfFfFfAcE123 should throw
+PASS sendBeacon(): http://foo.0XFfFfFfFfFfFfFfFfFfAcE123 should throw
+PASS Location's href: http://foo.0XFfFfFfFfFfFfFfFfFfAcE123 should throw
+PASS window.open(): http://foo.0XFfFfFfFfFfFfFfFfFfAcE123 should throw
+PASS URL's constructor's base argument: http://💩.123/ should throw
+PASS URL's href: http://💩.123/ should throw
+PASS XHR: http://💩.123/ should throw
+PASS sendBeacon(): http://💩.123/ should throw
+PASS Location's href: http://💩.123/ should throw
+PASS window.open(): http://💩.123/ should throw
 

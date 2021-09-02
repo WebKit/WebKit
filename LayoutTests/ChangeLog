@@ -1,3 +1,13 @@
+2021-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Reject non-IPv4 hostnames that end in numbers
+        https://bugs.webkit.org/show_bug.cgi?id=228826
+
+        Reviewed by Tim Horton.
+
+        * fast/url/ipv4-expected.txt:
+        * fast/url/ipv4.html:
+
 2021-09-02  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur Release wk2] webgl/2.0.0/conformance2/textures/video/tex-2d-r8ui-red_integer-unsigned_byte.html is a flaky timeout.

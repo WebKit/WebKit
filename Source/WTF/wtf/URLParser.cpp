@@ -1438,7 +1438,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                     } else {
                         m_url.m_userEnd = currentPosition(authorityOrHostBegin);
                         m_url.m_passwordEnd = m_url.m_userEnd;
-                        if (!parseHostAndPort(iterator)) {
+                        if (parseHostAndPort(iterator) == HostParsingResult::InvalidHost) {
                             failure();
                             return;
                         }
@@ -1462,7 +1462,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             do {
                 LOG_STATE("Host");
                 if (*c == '/' || *c == '?' || *c == '#') {
-                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+                    if (parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)) == HostParsingResult::InvalidHost) {
                         failure();
                         return;
                     }
@@ -1656,7 +1656,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                         state = State::Path;
                         break;
                     }
-                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+                    if (parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)) == HostParsingResult::InvalidHost) {
                         failure();
                         return;
                     }
@@ -1849,7 +1849,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             m_url.m_hostEnd = m_url.m_userStart;
             m_url.m_portLength = 0;
             m_url.m_pathEnd = m_url.m_userStart;
-        } else if (!parseHostAndPort(authorityOrHostBegin)) {
+        } else if (parseHostAndPort(authorityOrHostBegin) == HostParsingResult::InvalidHost) {
             failure();
             return;
         } else {
@@ -1865,7 +1865,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         break;
     case State::Host:
         LOG_FINAL_STATE("Host");
-        if (!parseHostAndPort(authorityOrHostBegin)) {
+        if (parseHostAndPort(authorityOrHostBegin) == HostParsingResult::InvalidHost) {
             failure();
             return;
         }
@@ -1954,7 +1954,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             break;
         }
 
-        if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+        if (parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c)) == HostParsingResult::InvalidHost) {
             failure();
             return;
         }
@@ -2692,33 +2692,70 @@ bool URLParser::subdomainStartsWithXNDashDash(StringImpl& host)
     return subdomainStartsWithXNDashDash(CodePointIterator<UChar>(begin, begin + host.length()));
 }
 
+static bool dnsNameEndsInNumber(StringView name)
+{
+    // https://url.spec.whatwg.org/#ends-in-a-number-checker
+    auto containsOctalDecimalOrHexNumber = [] (StringView segment) {
+        auto isNonDigit = [](UChar c) {
+            return !isASCIIDigit(c);
+        };
+        const auto segmentLength = segment.length();
+        if (!UNLIKELY(segmentLength))
+            return false;
+        auto firstCodeUnit = segment[0];
+        if (LIKELY(isNonDigit(firstCodeUnit)))
+            return false;
+        if (segmentLength == 1)
+            return true;
+        auto secondCodeUnit = segment[1];
+        if ((secondCodeUnit == 'x' || secondCodeUnit == 'X') && firstCodeUnit == '0') {
+            auto isNonHexDigit = [](UChar c) {
+                return !isASCIIHexDigit(c);
+            };
+            return segment.find(isNonHexDigit, 2) == notFound;
+        }
+        return segment.find(isNonDigit) == notFound;
+    };
+
+    size_t lastDotLocation = name.reverseFind('.');
+    if (lastDotLocation == notFound)
+        return containsOctalDecimalOrHexNumber(name);
+    size_t lastSegmentEnd = name.length();
+    if (lastDotLocation == lastSegmentEnd - 1) {
+        lastSegmentEnd = lastDotLocation;
+        lastDotLocation = name.reverseFind('.', lastDotLocation - 1);
+    }
+    StringView lastPart = name.substring(lastDotLocation == notFound ? 0 : lastDotLocation + 1, lastSegmentEnd - lastDotLocation - 1);
+    return containsOctalDecimalOrHexNumber(lastPart);
+}
+
 template<typename CharacterType>
-bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
+auto URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator) -> HostParsingResult
 {
     if (iterator.atEnd())
-        return false;
+        return HostParsingResult::InvalidHost;
     if (*iterator == ':')
-        return false;
+        return HostParsingResult::InvalidHost;
     if (*iterator == '[') {
         auto ipv6End = iterator;
         while (!ipv6End.atEnd() && *ipv6End != ']')
             ++ipv6End;
         if (ipv6End.atEnd())
-            return false;
+            return HostParsingResult::InvalidHost;
         if (auto address = parseIPv6Host(CodePointIterator<CharacterType>(iterator, ipv6End))) {
             serializeIPv6(address.value());
             if (!ipv6End.atEnd()) {
                 advance(ipv6End);
                 m_url.m_hostEnd = currentPosition(ipv6End);
                 if (!ipv6End.atEnd() && *ipv6End == ':')
-                    return parsePort(ipv6End);
+                    return parsePort(ipv6End) ? HostParsingResult::IPv6WithPort : HostParsingResult::InvalidHost;
                 m_url.m_portLength = 0;
-                return ipv6End.atEnd();
+                return ipv6End.atEnd() ? HostParsingResult::IPv6WithoutPort : HostParsingResult::InvalidHost;
             }
             m_url.m_hostEnd = currentPosition(ipv6End);
-            return true;
+            return HostParsingResult::IPv6WithoutPort;
         }
-        return false;
+        return HostParsingResult::InvalidHost;
     }
 
     if (!m_urlIsSpecial) {
@@ -2730,15 +2767,15 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             if (*iterator == ':')
                 break;
             if (UNLIKELY(isForbiddenHostCodePoint(*iterator) && *iterator != '%'))
-                return false;
+                return HostParsingResult::InvalidHost;
             utf8PercentEncode<isInSimpleEncodeSet>(iterator);
         }
         m_url.m_hostEnd = currentPosition(iterator);
         if (iterator.atEnd()) {
             m_url.m_portLength = 0;
-            return true;
+            return HostParsingResult::NonSpecialHostWithoutPort;
         }
-        return parsePort(iterator);
+        return parsePort(iterator) ? HostParsingResult::NonSpecialHostWithPort : HostParsingResult::InvalidHost;
     }
     
     if (LIKELY(!m_hostHasPercentOrNonASCII && !subdomainStartsWithXNDashDash(iterator))) {
@@ -2749,7 +2786,7 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             if (*iterator == ':')
                 break;
             if (isForbiddenHostCodePoint(*iterator))
-                return false;
+                return HostParsingResult::InvalidHost;
         }
         auto address = parseIPv4Host(hostIterator, CodePointIterator<CharacterType>(hostIterator, iterator));
         if (address) {
@@ -2757,12 +2794,12 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             m_url.m_hostEnd = currentPosition(iterator);
             if (iterator.atEnd()) {
                 m_url.m_portLength = 0;
-                return true;
+                return HostParsingResult::IPv4WithoutPort;
             }
-            return parsePort(iterator);
+            return parsePort(iterator) ? HostParsingResult::IPv4WithPort : HostParsingResult::InvalidHost;
         }
         if (address.error() == IPv4ParsingError::Failure)
-            return false;
+            return HostParsingResult::InvalidHost;
         for (; hostIterator != iterator; ++hostIterator) {
             if (UNLIKELY(isTabOrNewline(*hostIterator))) {
                 syntaxViolation(hostIterator);
@@ -2773,12 +2810,13 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
             appendToASCIIBuffer(toASCIILower(*hostIterator));
         }
         m_url.m_hostEnd = currentPosition(iterator);
+        auto hostStart = m_url.hostStart();
+        if (UNLIKELY(dnsNameEndsInNumber(parsedDataView(hostStart, m_url.m_hostEnd - hostStart))))
+            return HostParsingResult::InvalidHost;
         if (!hostIterator.atEnd())
-            return parsePort(hostIterator);
-        unsigned portLength = currentPosition(iterator) - m_url.m_hostEnd;
-        RELEASE_ASSERT(portLength <= URL::maxPortLength);
-        m_url.m_portLength = portLength;
-        return true;
+            return parsePort(hostIterator) ? HostParsingResult::DNSNameWithPort : HostParsingResult::InvalidHost;
+        m_url.m_portLength = 0;
+        return HostParsingResult::DNSNameWithoutPort;
     }
     
     const auto hostBegin = iterator;
@@ -2799,18 +2837,18 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         UBool isError = false;
         U8_APPEND(buffer, offset, U8_MAX_LENGTH, *iterator, isError);
         if (isError)
-            return false;
+            return HostParsingResult::InvalidHost;
         utf8Encoded.append(buffer, offset);
     }
     LCharBuffer percentDecoded = percentDecode(utf8Encoded.data(), utf8Encoded.size(), hostBegin);
     String domain = String::fromUTF8(percentDecoded.data(), percentDecoded.size());
     if (domain.isNull())
-        return false;
+        return HostParsingResult::InvalidHost;
     if (domain != StringView(percentDecoded.data(), percentDecoded.size()))
         syntaxViolation(hostBegin);
     auto asciiDomain = domainToASCII(*domain.impl(), hostBegin);
     if (!asciiDomain || hasForbiddenHostCodePoint(asciiDomain.value()))
-        return false;
+        return HostParsingResult::InvalidHost;
     LCharBuffer& asciiDomainValue = asciiDomain.value();
     const LChar* asciiDomainCharacters = asciiDomainValue.data();
 
@@ -2820,19 +2858,23 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         m_url.m_hostEnd = currentPosition(iterator);
         if (iterator.atEnd()) {
             m_url.m_portLength = 0;
-            return true;
+            return HostParsingResult::IPv4WithoutPort;
         }
-        return parsePort(iterator);
+        return parsePort(iterator) ? HostParsingResult::IPv4WithPort : HostParsingResult::InvalidHost;
     }
     if (address.error() == IPv4ParsingError::Failure)
-        return false;
+        return HostParsingResult::InvalidHost;
 
     appendToASCIIBuffer(asciiDomainCharacters, asciiDomainValue.size());
     m_url.m_hostEnd = currentPosition(iterator);
+    auto hostStart = m_url.hostStart();
+    if (UNLIKELY(dnsNameEndsInNumber(parsedDataView(hostStart, m_url.m_hostEnd - hostStart))))
+        return HostParsingResult::InvalidHost;
     if (!iterator.atEnd())
-        return parsePort(iterator);
+        return parsePort(iterator) ? HostParsingResult::DNSNameWithPort : HostParsingResult::InvalidHost;
+
     m_url.m_portLength = 0;
-    return true;
+    return HostParsingResult::DNSNameWithoutPort;
 }
 
 std::optional<String> URLParser::formURLDecode(StringView input)
