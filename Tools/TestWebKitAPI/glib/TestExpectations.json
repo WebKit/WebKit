@@ -115,7 +115,8 @@
             },
             "/webkit/WebKitWebsiteData/itp": {
                 "expected": {
-                    "all": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/224175"}
+                    "all_before_bug_229807": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/224175"},
+                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/229807"}
                 }
             },
             "/webkit/WebKitWebsiteData/configuration": {

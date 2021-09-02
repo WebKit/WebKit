@@ -1,3 +1,11 @@
+2021-09-02  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden itp API test failure after r281886
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-09-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Port API test runner to python3
