@@ -1,3 +1,28 @@
+2021-09-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Braille display is blank in contenteditable elements when the field is followed by another element.
+        https://bugs.webkit.org/show_bug.cgi?id=229713
+        rdar://82095237
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/mac/range-for-line-index.html
+
+        We were making the length of line ranges in text fields 1 more than the
+        number of characters in the line even when no line break character
+        existed, like in the case of a single line text field.
+        Clients like VoiceOver expect the length of the line ranges in text
+        fields to match the number of charaters in the line including the line
+        break if one exists.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::isHardLineBreak): Helper function used in doAXRangeForLine.
+        Determines whether the given VisiblePosition corresponds to a hard line
+        break.
+        (WebCore::AccessibilityRenderObject::doAXRangeForLine const):
+        Returns a PlainTextRange whose length matches the number of characters
+        in the given line, accounting for line break characters.
+
 2021-09-02  Rob Buis  <rbuis@igalia.com>
 
         Absolutely positioned and negative z-index div with canvas child gets drawn with wrong stacking order

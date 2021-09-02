@@ -51,6 +51,7 @@
 #include "GeometryUtilities.h"
 #include "HTMLAreaElement.h"
 #include "HTMLAudioElement.h"
+#include "HTMLBRElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
@@ -2443,38 +2444,59 @@ void AccessibilityRenderObject::lineBreaks(Vector<int>& lineBreaks) const
     }
 }
 
+static bool isHardLineBreak(const VisiblePosition& position)
+{
+    if (!isEndOfLine(position))
+        return false;
+
+    auto next = position.next();
+
+    auto lineBreakRange = makeSimpleRange(position, next);
+    if (!lineBreakRange)
+        return false;
+
+    TextIterator it(*lineBreakRange);
+    if (it.atEnd())
+        return false;
+
+    if (is<HTMLBRElement>(it.node()))
+        return true;
+
+    if (it.node() != position.deepEquivalent().anchorNode())
+        return false;
+
+    return it.text().length() == 1 && it.text()[0] == '\n';
+}
+
 // Given a line number, the range of characters of the text associated with this accessibility
 // object that contains the line number.
 PlainTextRange AccessibilityRenderObject::doAXRangeForLine(unsigned lineNumber) const
 {
     if (!isTextControl())
-        return PlainTextRange();
-    
-    // iterate to the specified line
-    VisiblePosition visiblePos = visiblePositionForIndex(0);
-    VisiblePosition savedVisiblePos;
-    for (unsigned lineCount = lineNumber; lineCount; lineCount -= 1) {
-        savedVisiblePos = visiblePos;
-        visiblePos = nextLinePosition(visiblePos, 0);
-        if (visiblePos.isNull() || visiblePos == savedVisiblePos)
-            return PlainTextRange();
+        return { };
+
+    // Iterate to the specified line.
+    auto lineStart = visiblePositionForIndex(0);
+    for (unsigned lineCount = lineNumber; lineCount; --lineCount) {
+        auto nextLineStart = nextLinePosition(lineStart, 0);
+        if (nextLineStart.isNull() || nextLineStart == lineStart)
+            return { };
+        lineStart = nextLineStart;
     }
 
     // Get the end of the line based on the starting position.
-    VisiblePosition endPosition = endOfLine(visiblePos);
+    auto lineEnd = endOfLine(lineStart);
 
-    int index1 = indexForVisiblePosition(visiblePos);
-    int index2 = indexForVisiblePosition(endPosition);
-    
-    // add one to the end index for a line break not caused by soft line wrap (to match AppKit)
-    if (endPosition.affinity() == Affinity::Downstream && endPosition.next().isNotNull())
-        index2 += 1;
-    
-    // return nil rather than an zero-length range (to match AppKit)
-    if (index1 == index2)
-        return PlainTextRange();
-    
-    return PlainTextRange(index1, index2 - index1);
+    int index1 = indexForVisiblePosition(lineStart);
+    int index2 = indexForVisiblePosition(lineEnd);
+
+    if (isHardLineBreak(lineEnd))
+        ++index2;
+
+    if (index1 < 0 || index2 < 0 || index2 <= index1)
+        return { };
+
+    return { static_cast<unsigned>(index1), static_cast<unsigned>(index2 - index1) };
 }
 
 // The composed character range in the text associated with this accessibility object that

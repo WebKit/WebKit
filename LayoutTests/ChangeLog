@@ -1,3 +1,16 @@
+2021-09-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        Braille display is blank in contenteditable elements when the field is followed by another element.
+        https://bugs.webkit.org/show_bug.cgi?id=229713
+        rdar://82095237
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/range-for-line-index-expected.txt: Added.
+        * accessibility/mac/range-for-line-index.html: Added.
+        * platform/mac/accessibility/content-editable-as-textarea-expected.txt:
+        * platform/win/accessibility/content-editable-as-textarea-expected.txt:
+
 2021-09-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GLib gardening

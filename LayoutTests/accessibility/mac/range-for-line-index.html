@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="contenteditable1" contenteditable="true">this is a test.</div>
+<div id="contenteditable2" contenteditable="true">this is a test.<br></div>
+<div id="contenteditable3" contenteditable="true">this is a test.<br>hello<br>
+    <a href="#">world</a>
+</div>
+
+<textarea id="textarea1">this is a test.</textarea>
+<textarea id="textarea2">this is a test.
+hello
+world</textarea>
+
+<input type="text" id="textfield" value="this is a text field."></input>
+
+<script>
+    if (window.accessibilityController) {
+        description("");
+
+        // contenteditable
+        var contenteditable = accessibilityController.accessibleElementById("contenteditable1");
+        shouldBe("contenteditable.rangeForLine(0)", "'{0, 15}'");
+
+        var multilineContenteditable = accessibilityController.accessibleElementById("contenteditable2");
+        shouldBe("multilineContenteditable.rangeForLine(0)", "'{0, 16}'");
+        shouldBe("multilineContenteditable.rangeForLine(1)", "'{15, 1}'");
+
+        multilineContenteditable = accessibilityController.accessibleElementById("contenteditable3");
+        shouldBe("multilineContenteditable.rangeForLine(0)", "'{0, 16}'");
+        shouldBe("multilineContenteditable.rangeForLine(1)", "'{16, 6}'");
+        shouldBe("multilineContenteditable.rangeForLine(2)", "'{22, 5}'");
+
+        // textarea
+        var textarea = accessibilityController.accessibleElementById("textarea1");
+        shouldBe("textarea.rangeForLine(0)", "'{0, 15}'");
+
+        var multilineTextarea = accessibilityController.accessibleElementById("textarea2");
+        shouldBe("multilineTextarea.rangeForLine(0)", "'{0, 16}'");
+        shouldBe("multilineTextarea.rangeForLine(1)", "'{16, 6}'");
+        shouldBe("multilineTextarea.rangeForLine(2)", "'{22, 5}'");
+
+        // input text field
+        var textfield = accessibilityController.accessibleElementById("textfield");
+        shouldBe("textfield.rangeForLine(0)", "'{0, 21}'");
+    }
+</script>
+</body>
+</html>
