@@ -30,7 +30,7 @@ import Commit from "../src/Commit.mjs";
 import Contributors from "../src/Contributors.mjs";
 import {rootDirectoryOfWebKit} from "../src/Utility.mjs";
 
-const localContributorsPath = path.resolve(rootDirectoryOfWebKit(), "Tools", "Scripts", "webkitpy", "common", "config", "contributors.json");
+const localContributorsPath = path.resolve(rootDirectoryOfWebKit(), "metadata", "contributors.json");
 const contributors = new Contributors(JSON.parse(readFileSync(localContributorsPath)));
 const readFileAsync = util.promisify(readFile);
 

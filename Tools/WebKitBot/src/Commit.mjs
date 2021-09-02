@@ -42,9 +42,9 @@ function cleanUpChange(change, contributors)
         if (!entry.nicks)
             continue;
 
-        let nameWithNicks = `${entry.fullName} (@${entry.nicks[0]})`;
-        if (change.includes(entry.fullName)) {
-            change = replaceAll(entry.fullName, nameWithNicks, change);
+        let nameWithNicks = `${entry.name} (@${entry.nicks[0]})`;
+        if (change.includes(entry.name)) {
+            change = replaceAll(entry.name, nameWithNicks, change);
             for (let email of entry.emails)
                 change = replaceAll(`<${email}>`, "", change);
         } else {
@@ -79,7 +79,7 @@ export default class Commit {
             if (this._email) {
                 let entry = contributors.queryWithEmail(this._email);
                 if (entry && entry.nicks && entry.nicks[0])
-                    this._author = `${entry.fullName} (@${entry.nicks[0]})`;
+                    this._author = `${entry.name} (@${entry.nicks[0]})`;
             }
         }
         if (this._revert) {

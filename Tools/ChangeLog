@@ -1,5 +1,18 @@
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
+        [contributors.json] Relocation (Part 6)
+        https://bugs.webkit.org/show_bug.cgi?id=229690
+        <rdar://problem/82552403>
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebKitBot/src/Commit.mjs: Use name instead of fullName.
+        * WebKitBot/src/Contributors.mjs: Load contributors from metadata/contributors.json,
+        parse as list instead of dictionary.
+        * WebKitBot/tests/Commit.test.mjs: Load contributors from metadata/contributors.json.
+
+2021-09-02  Jonathan Bedard  <jbedard@apple.com>
+
         [webkit-patch] apply-watchlist command fails on python 3
         https://bugs.webkit.org/show_bug.cgi?id=229822
         <rdar://problem/82691261>
