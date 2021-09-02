@@ -465,7 +465,7 @@ static VisibleSelection expandSelectionToRespectSelectOnMouseDown(Node& targetNo
 
 bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targetNode, const VisibleSelection& selection, TextGranularity granularity)
 {
-    if (Position::nodeIsUserSelectNone(targetNode))
+    if (Position::nodeIsInertOrUserSelectNone(targetNode))
         return false;
 
     if (!dispatchSelectStart(targetNode)) {

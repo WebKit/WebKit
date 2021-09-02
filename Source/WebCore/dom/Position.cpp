@@ -935,14 +935,20 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
     return false;
 }
 
-bool Position::nodeIsUserSelectNone(Node* node)
+bool Position::nodeIsInertOrUserSelectNone(Node* node)
 {
-    return node && node->renderer() && node->renderer()->style().userSelect() == UserSelect::None;
+    if (!node)
+        return false;
+    if (node->isInert())
+        return true;
+    return node->renderer() && node->renderer()->style().userSelect() == UserSelect::None;
 }
 
 bool Position::nodeIsUserSelectAll(const Node* node)
 {
-    return node && node->renderer() && node->renderer()->style().userSelect() == UserSelect::All;
+    if (!node || node->isInert())
+        return false;
+    return node->renderer() && node->renderer()->style().userSelect() == UserSelect::All;
 }
 
 Node* Position::rootUserSelectAllForNode(Node* node)
@@ -982,16 +988,16 @@ bool Position::isCandidate() const
 
     if (renderer->isBR()) {
         // FIXME: The condition should be m_anchorType == PositionIsBeforeAnchor, but for now we still need to support legacy positions.
-        return !m_offset && m_anchorType != PositionIsAfterAnchor && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
+        return !m_offset && m_anchorType != PositionIsAfterAnchor && !nodeIsInertOrUserSelectNone(deprecatedNode()->parentNode());
     }
 
     if (is<RenderText>(*renderer))
-        return !nodeIsUserSelectNone(deprecatedNode()) && downcast<RenderText>(*renderer).containsCaretOffset(m_offset);
+        return !nodeIsInertOrUserSelectNone(deprecatedNode()) && downcast<RenderText>(*renderer).containsCaretOffset(m_offset);
 
     if (positionBeforeOrAfterNodeIsCandidate(*deprecatedNode())) {
         return ((atFirstEditingPositionForNode() && m_anchorType == PositionIsBeforeAnchor)
             || (atLastEditingPositionForNode() && m_anchorType == PositionIsAfterAnchor))
-            && !nodeIsUserSelectNone(deprecatedNode()->parentNode());
+            && !nodeIsInertOrUserSelectNone(deprecatedNode()->parentNode());
     }
 
     if (is<HTMLHtmlElement>(*m_anchorNode))
@@ -1001,13 +1007,13 @@ bool Position::isCandidate() const
         auto& block = downcast<RenderBlock>(*renderer);
         if (block.logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || m_anchorNode->isRootEditableElement()) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(block))
-                return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(deprecatedNode());
-            return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
+                return atFirstEditingPositionForNode() && !Position::nodeIsInertOrUserSelectNone(deprecatedNode());
+            return m_anchorNode->hasEditableStyle() && !Position::nodeIsInertOrUserSelectNone(deprecatedNode()) && atEditingBoundary();
         }
         return false;
     }
 
-    return m_anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
+    return m_anchorNode->hasEditableStyle() && !Position::nodeIsInertOrUserSelectNone(deprecatedNode()) && atEditingBoundary();
 }
 
 bool Position::isRenderedCharacter() const

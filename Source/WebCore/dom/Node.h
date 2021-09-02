@@ -529,7 +529,7 @@ public:
     // https://github.com/WICG/inert/blob/master/README.md
     // This can't be in Element because text nodes must be recognized as
     // inert to prevent text selection.
-    bool isInert() const;
+    WEBCORE_EXPORT bool isInert() const;
 
 protected:
     enum class NodeFlag : uint32_t {

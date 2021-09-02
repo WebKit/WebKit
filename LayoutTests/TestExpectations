@@ -2399,9 +2399,6 @@ webkit.org/b/84796 imported/w3c/web-platform-tests/html/semantics/interactive-el
 webkit.org/b/84796 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-containing-block.html [ ImageOnlyFailure ]
 webkit.org/b/84796 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/top-layer-stacking.html [ ImageOnlyFailure ]
 
-# inert subtrees
-webkit.org/b/110952 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-not-highlighted.html [ ImageOnlyFailure ]
-
 # Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
 webkit.org/b/94458 http/tests/security/MessagePort/event-listener-context.html [ Skip ]
 

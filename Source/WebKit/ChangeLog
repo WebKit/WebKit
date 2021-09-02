@@ -1,3 +1,13 @@
+2021-09-02  Tim Nguyen  <ntim@apple.com>
+
+        Add more inert checks for selection-related functionality
+        https://bugs.webkit.org/show_bug.cgi?id=229728
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::selectionPositionInformation):
+
 2021-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Move PCM::Store ownership from WebResourceLoadStatisticsStore to PrivateClickMeasurementManager
