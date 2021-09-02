@@ -1,5 +1,54 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281700. rdar://problem/82650954
+
+    REGRESSION (r276882): Shadow trees may use stale style information after inline stylesheet is mutated via CSSOM
+    https://bugs.webkit.org/show_bug.cgi?id=228917
+    rdar://81483998
+    
+    Reviewed by Alan Bujtas.
+    
+    Source/WebCore:
+    
+    If a stylesheet in a shadow tree is mutated via CSSOM we fail to remove cached style resolver for the mutated sheet
+    and may end up with stale style.
+    
+    Test: fast/shadow-dom/shadow-stylesheet-mutation.html
+    
+    * style/StyleScope.cpp:
+    (WebCore::Style::Scope::unshareShadowTreeResolverBeforeMutation):
+    
+    Remove an assert relevant to the previous call site only.
+    
+    (WebCore::Style::Scope::scheduleUpdate):
+    
+    Unshare shadow tree resolver immeditaly when stylesheet contents or interpretation changes.
+    
+    LayoutTests:
+    
+    Original reduction by Thomas Ladd.
+    
+    * fast/shadow-dom/shadow-stylesheet-mutation-expected.html: Added.
+    * fast/shadow-dom/shadow-stylesheet-mutation.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281700 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-27  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r276882): Shadow trees may use stale style information after inline stylesheet is mutated via CSSOM
+            https://bugs.webkit.org/show_bug.cgi?id=228917
+            rdar://81483998
+
+            Reviewed by Alan Bujtas.
+
+            Original reduction by Thomas Ladd.
+
+            * fast/shadow-dom/shadow-stylesheet-mutation-expected.html: Added.
+            * fast/shadow-dom/shadow-stylesheet-mutation.html: Added.
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281367. rdar://problem/82651467
 
     Prevent AudioSession category from moving out of PlayAndRecord too quickly
