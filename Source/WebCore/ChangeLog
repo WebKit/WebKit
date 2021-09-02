@@ -1,3 +1,21 @@
+2021-09-02  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r277763): [Debug][GLib] fast/mediastream timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=229665
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The tests were timing out in Debug because of the unaccelerated PixelBuffer conversions
+        triggered from the GStreamer mock video source. Making the AlphaPremultiplication value
+        match between the source and destination buffers allows us to skip this expensive
+        conversion. A memcpy is now done if the source and destination parameters match, there is no
+        need to do pixel-per-pixel copies in this case.
+
+        * platform/graphics/PixelBufferConversion.cpp:
+        (WebCore::convertImagePixels):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockRealtimeVideoSourceGStreamer::updateSampleBuffer):
+
 2021-09-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Braille display is blank in contenteditable elements when the field is followed by another element.

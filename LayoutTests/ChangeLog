@@ -1,3 +1,13 @@
+2021-09-02  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r277763): [Debug][GLib] fast/mediastream timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=229665
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Update expectations, some tests pass now, apart from two
+        getDisplayMedia tests, to be handled in another patch.
+
 2021-09-02  Andres Gonzalez  <andresg_22@apple.com>
 
         Braille display is blank in contenteditable elements when the field is followed by another element.

@@ -254,6 +254,13 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
     // This could be added using conversion functions from ColorConversion.h.
     ASSERT(source.format.colorSpace == destination.format.colorSpace);
 
+    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat) {
+        memcpy(destination.rows, source.rows, source.bytesPerRow * destinationSize.height());
+        return;
+    }
+
+    // FIXME: In Linux platform the following paths could be optimized with ORC.
+
     if (source.format.alphaFormat == destination.format.alphaFormat) {
         if (source.format.pixelFormat == destination.format.pixelFormat) {
             if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
