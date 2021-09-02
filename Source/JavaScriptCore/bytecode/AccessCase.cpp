@@ -1484,11 +1484,10 @@ void AccessCase::generateWithGuard(
                 notInt.link(&jit);
 #if USE(JSVALUE64)
                 jit.unboxDoubleWithoutAssertions(valueRegs.payloadGPR(), scratch2GPR, state.scratchFPR);
-                failAndRepatch.append(jit.branchIfNaN(state.scratchFPR));
 #else
-                failAndRepatch.append(jit.branch32(CCallHelpers::Above, valueRegs.tagGPR(), CCallHelpers::TrustedImm32(JSValue::LowestTag)));
                 jit.unboxDouble(valueRegs, state.scratchFPR);
 #endif
+                failAndRepatch.append(jit.branchIfNaN(state.scratchFPR));
                 ready.link(&jit);
 
                 jit.zeroExtend32ToWord(propertyGPR, scratch2GPR);

@@ -1,3 +1,21 @@
+2021-09-02  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Fix IndexedDoubleStore InlineAccess for 32 bits
+        https://bugs.webkit.org/show_bug.cgi?id=229772
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        In IndexedDoubleStore inline access, the path if the value is NaN
+        is only being handled in 64 bits, thus introducing some wrong 
+        results in 32 bits. This patch fixes:
+
+        stress/double-add-sub-mul-can-produce-nan.js
+        stress/pow-stable-results.js
+        stress/math-pow-stable-results.js
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+
 2021-09-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Fix invalid exception checks in Temporal classes
