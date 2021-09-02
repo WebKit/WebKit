@@ -4122,6 +4122,8 @@ webkit.org/b/189836 webanimations/accelerated-animation-suspension.html [ Skip ]
 webkit.org/b/190032 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 webkit.org/b/190032 transitions/clip-path-transitions.html [ Pass Failure ]
 
+webkit.org/b/229829 css3/filters/canvas-with-filter-after-repaint.html [ Pass ImageOnlyFailure ]
+
 # MediaRecorder is not enabled on Windows
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Skip ]
