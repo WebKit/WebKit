@@ -1,3 +1,14 @@
+2021-09-02  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Import @import WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=229796
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-cascade/layer-import-expected.txt: Added.
+        * web-platform-tests/css/css-cascade/layer-import.html: Added.
+        * web-platform-tests/css/css-cascade/w3c-import.log:
+
 2021-09-01  Alex Christensen  <achristensen@webkit.org>
 
         PerformanceNavigationTiming should be instantiated before scripts run then updated when response finishes
