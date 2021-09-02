@@ -1414,6 +1414,9 @@ webkit.org/b/228038 [ Debug ] media/modern-media-controls/mute-button/mute-butto
 webkit.org/b/228038 [ Debug ] fast/mediastream/audio-bad-sampleRate.html  [ Pass Crash ] 
 webkit.org/b/228038 [ Debug ] media/media-blocked-by-willsendrequest.html  [ Pass Crash ] 
 
+webkit.org/b/229810 [ Debug ] fast/mediastream/get-display-media-capabilities.html [ Crash ]
+webkit.org/b/229810 [ Release ] fast/mediastream/get-display-media-capabilities.html [ Failure ]
+
 webkit.org/b/228204 media/video-presentation-mode.html [ Pass Timeout ] 
 
 webkit.org/b/217621 [ Release ] media/video-buffering-allowed.html [ Pass Timeout ]
