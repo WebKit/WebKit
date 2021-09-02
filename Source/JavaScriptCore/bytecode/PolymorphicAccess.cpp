@@ -735,14 +735,24 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         // of something that isn't patchable. The slow path will decrement "countdown" and will only
         // patch things if the countdown reaches zero. We increment the slow path count here to ensure
         // that the slow path does not try to patch.
+        if (codeBlock->useDataIC()) {
 #if CPU(X86) || CPU(X86_64)
-        jit.move(CCallHelpers::TrustedImmPtr(&stubInfo.countdown), state.scratchGPR);
-        jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(state.scratchGPR));
+            jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
 #else
-        jit.load8(&stubInfo.countdown, state.scratchGPR);
-        jit.add32(CCallHelpers::TrustedImm32(1), state.scratchGPR);
-        jit.store8(state.scratchGPR, &stubInfo.countdown);
+            jit.load8(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()), state.scratchGPR);
+            jit.add32(CCallHelpers::TrustedImm32(1), state.scratchGPR);
+            jit.store8(state.scratchGPR, CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCountdown()));
 #endif
+        } else {
+#if CPU(X86) || CPU(X86_64)
+            jit.move(CCallHelpers::TrustedImmPtr(&stubInfo.countdown), state.scratchGPR);
+            jit.add8(CCallHelpers::TrustedImm32(1), CCallHelpers::Address(state.scratchGPR));
+#else
+            jit.load8(&stubInfo.countdown, state.scratchGPR);
+            jit.add32(CCallHelpers::TrustedImm32(1), state.scratchGPR);
+            jit.store8(state.scratchGPR, &stubInfo.countdown);
+#endif
+        }
     }
 
     CCallHelpers::JumpList failure;

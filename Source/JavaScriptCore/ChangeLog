@@ -1,5 +1,41 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281618. rdar://problem/82650928
+
+    [JSC] DataIC should not embed StructureStubInfo pointer
+    https://bugs.webkit.org/show_bug.cgi?id=229541
+    
+    Reviewed by Mark Lam.
+    
+    We should not embed pointer to StructureStubInfo::countdown if DataIC is used.
+    
+    * assembler/MacroAssemblerMIPS.h:
+    (JSC::MacroAssemblerMIPS::store8):
+    * bytecode/PolymorphicAccess.cpp:
+    (JSC::PolymorphicAccess::regenerate):
+    * bytecode/StructureStubInfo.h:
+    (JSC::StructureStubInfo::offsetOfCountdown):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281618 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] DataIC should not embed StructureStubInfo pointer
+            https://bugs.webkit.org/show_bug.cgi?id=229541
+
+            Reviewed by Mark Lam.
+
+            We should not embed pointer to StructureStubInfo::countdown if DataIC is used.
+
+            * assembler/MacroAssemblerMIPS.h:
+            (JSC::MacroAssemblerMIPS::store8):
+            * bytecode/PolymorphicAccess.cpp:
+            (JSC::PolymorphicAccess::regenerate):
+            * bytecode/StructureStubInfo.h:
+            (JSC::StructureStubInfo::offsetOfCountdown):
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281615. rdar://problem/82651172
 
     [JSC] Polymorphic PutByVal
