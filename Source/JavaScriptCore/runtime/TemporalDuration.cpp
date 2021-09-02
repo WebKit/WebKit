@@ -114,6 +114,7 @@ TemporalDuration::Subdurations TemporalDuration::fromObject(JSGlobalObject* glob
     auto hasRelevantProperty = false;
     for (size_t i = 0; i < numberOfTemporalUnits; i++) {
         JSValue value = durationLike->get(globalObject, propertyName(vm, i));
+        RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
             result[i] = 0;
@@ -148,8 +149,12 @@ TemporalDuration* TemporalDuration::toDuration(JSGlobalObject* globalObject, JSV
     if (itemValue.inherits<TemporalDuration>(vm))
         return jsCast<TemporalDuration*>(itemValue);
 
-    if (itemValue.isObject())
-        RELEASE_AND_RETURN(scope, TemporalDuration::tryCreateIfValid(globalObject, fromObject(globalObject, asObject(itemValue))));
+    if (itemValue.isObject()) {
+        auto subdurations = fromObject(globalObject, asObject(itemValue));
+        RETURN_IF_EXCEPTION(scope, nullptr);
+
+        RELEASE_AND_RETURN(scope, TemporalDuration::tryCreateIfValid(globalObject, WTFMove(subdurations)));
+    }
 
     String string = itemValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -231,6 +236,7 @@ TemporalDuration::Subdurations TemporalDuration::with(JSGlobalObject* globalObje
     auto hasRelevantProperty = false;
     for (size_t i = 0; i < numberOfTemporalUnits; i++) {
         JSValue value = durationLike->get(globalObject, propertyName(vm, i));
+        RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
             result[i] = m_subdurations[i];

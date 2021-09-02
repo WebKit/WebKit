@@ -122,7 +122,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields, (JSGlobalObject* g
         fieldNames.append(jsNontrivialString(vm, vm.propertyNames->eraYear.impl()));
     }
 
-    return JSValue::encode(constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), fieldNames));
+    RELEASE_AND_RETURN(scope, JSValue::encode(constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), fieldNames)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-defaultmergefields
