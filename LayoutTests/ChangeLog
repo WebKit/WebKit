@@ -1,3 +1,9 @@
+2021-09-02  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GLib gardening
+
+        * platform/glib/TestExpectations: Remove duplicate test expectation landed by mistake.
+
 2021-09-02  Rob Buis  <rbuis@igalia.com>
 
         Absolutely positioned and negative z-index div with canvas child gets drawn with wrong stacking order

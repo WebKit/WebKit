@@ -687,8 +687,6 @@ webkit.org/b/227934 media/media-source/media-webm-opus-partial.html [ Failure ]
 
 webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.https.html [ Failure ]
 
-webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.https.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
