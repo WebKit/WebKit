@@ -1,3 +1,23 @@
+2021-09-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [run-perf-tests] Add support for python3 and use it by default
+        https://bugs.webkit.org/show_bug.cgi?id=229783
+
+        Reviewed by Jonathan Bedard.
+
+        Make the script compatible with python3 and set it to use python3
+        by default. The script is still compatible with python2.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunAndUploadPerfTests):
+        * Scripts/run-perf-tests:
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        (FileUploader._upload_data.callback):
+        (FileUploader):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_upload_json):
+
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Relocation (Part 6)

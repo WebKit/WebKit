@@ -32,6 +32,7 @@ import os
 import json
 import logging
 import optparse
+import sys
 import time
 import datetime
 
@@ -42,6 +43,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.performance_tests.perftest import PerfTestFactory
 from webkitpy.performance_tests.perftest import DEFAULT_TEST_RUNNER_COUNT
+from webkitcorepy import string_utils
 
 
 _log = logging.getLogger(__name__)
@@ -285,7 +287,7 @@ class PerfTestsRunner(object):
             'buildNumber': int(build_number) if build_number else None}
 
         contents = {'tests': {}}
-        for key, value in meta_info.items():
+        for key, value in list(meta_info.items()):
             if value:
                 contents[key] = value
 
@@ -354,7 +356,7 @@ class PerfTestsRunner(object):
             _log.error("Failed to upload JSON file to %s in 120s: %s" % (url, error))
             return False
 
-        response_body = [line.strip('\n') for line in response]
+        response_body = [string_utils.decode(line, target_type=str).strip('\n') for line in response]
         if response_body != ['OK']:
             try:
                 parsed_response = json.loads('\n'.join(response_body))

@@ -33,7 +33,7 @@ import json
 import logging
 import unittest
 
-from webkitcorepy import StringIO
+from webkitcorepy import BytesIO
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.port.test import TestPort
@@ -203,16 +203,16 @@ class MainTest(unittest.TestCase):
                     raise Exception
                 return mock.upload_single_text_file_return_value
 
-        MockFileUploader.upload_single_text_file_return_value = StringIO('OK')
+        MockFileUploader.upload_single_text_file_return_value = BytesIO(b'OK')
         self.assertTrue(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
         self.assertEqual(MockFileUploader.called, ['FileUploader', 'upload_single_text_file'])
 
         MockFileUploader.reset()
-        MockFileUploader.upload_single_text_file_return_value = StringIO('OK')
+        MockFileUploader.upload_single_text_file_return_value = BytesIO(b'OK')
         self.assertTrue(runner._upload_json('some.host', 'some.json', '/some/path', MockFileUploader))
 
         MockFileUploader.reset()
-        MockFileUploader.upload_single_text_file_return_value = StringIO('Some error')
+        MockFileUploader.upload_single_text_file_return_value = BytesIO(b'Some error')
         with OutputCapture(level=logging.INFO) as captured:
             self.assertFalse(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
         self.assertEqual(
@@ -227,12 +227,12 @@ class MainTest(unittest.TestCase):
         self.assertEqual(MockFileUploader.called, ['FileUploader', 'upload_single_text_file'])
 
         MockFileUploader.reset()
-        MockFileUploader.upload_single_text_file_return_value = StringIO('{"status": "OK"}')
+        MockFileUploader.upload_single_text_file_return_value = BytesIO(b'{"status": "OK"}')
         self.assertTrue(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
         self.assertEqual(MockFileUploader.called, ['FileUploader', 'upload_single_text_file'])
 
         MockFileUploader.reset()
-        MockFileUploader.upload_single_text_file_return_value = StringIO('{"status": "SomethingHasFailed", "failureStored": false}')
+        MockFileUploader.upload_single_text_file_return_value = BytesIO(b'{"status": "SomethingHasFailed", "failureStored": false}')
         with OutputCapture(level=logging.INFO) as captured:
             self.assertFalse(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
         serialized_json = json.dumps({'status': 'SomethingHasFailed', 'failureStored': False}, indent=4)

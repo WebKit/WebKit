@@ -1024,7 +1024,7 @@ class RunAndUploadPerfTests(shell.Test):
     name = "perf-test"
     description = ["perf-tests running"]
     descriptionDone = ["perf-tests"]
-    command = ["python", "./Tools/Scripts/run-perf-tests",
+    command = ["python3", "./Tools/Scripts/run-perf-tests",
                "--output-json-path", "perf-test-results.json",
                "--worker-config-json-path", "../../perf-test-config.json",
                "--no-show-results",
