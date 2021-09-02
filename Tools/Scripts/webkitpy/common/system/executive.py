@@ -83,10 +83,15 @@ class ScriptError(Exception):
 
 class WrappedPopen(object):
     def __init__(self, popen):
-        for attribute in dir(popen):
-            if attribute.startswith('__'):
+        self._popen = popen
+        for attribute in dir(self._popen):
+            if attribute.startswith('__') or attribute == 'returncode':
                 continue
-            setattr(self, attribute, getattr(popen, attribute))
+            setattr(self, attribute, getattr(self._popen, attribute))
+
+    @property
+    def returncode(self):
+        return self._popen.returncode
 
     def __enter__(self):
         return self

@@ -1,3 +1,14 @@
+2021-09-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] WrappedPopen breaks process returncode
+        https://bugs.webkit.org/show_bug.cgi?id=229824
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (WrappedPopen.__init__): Define underlying object.
+        (WrappedPopen.returncode): Return underlying object's returncode.
+
 2021-09-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Port API test runner to python3 (v2)
