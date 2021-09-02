@@ -5,6 +5,15 @@
 
         Unreviewed test gardening.
 
+        * platform/ios-wk2/TestExpectations: Now test is skipping on iOS
+
+2021-09-02  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] SHOULD NEVER BE REACHED ./Modules/mediastream/MediaStreamTrack.cpp(294) : WebCore::DoubleRange WebCore::capabilityDoubleRange(const WebCore::CapabilityValueOrRange &).
+        https://bugs.webkit.org/show_bug.cgi?id=229810
+
+        Unreviewed test gardening.
+
         * platform/ios-wk2/TestExpectations:
 
 2021-09-02  Philippe Normand  <pnormand@igalia.com>
