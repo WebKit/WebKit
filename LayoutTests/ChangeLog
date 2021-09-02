@@ -1,3 +1,21 @@
+2021-09-01  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Update baselines of some failing tests
+
+        Unreviewed test gardening.
+
+        * platform/wpe/fast/css/font-face-multiple-faces-expected.txt: After r266118.
+        * platform/wpe/fast/css/font-face-synthetic-bold-italic-expected.txt: Ditto.
+        * platform/wpe/fast/css/font-face-weight-matching-expected.txt: Ditto.
+        * platform/wpe/fast/dom/52776-expected.txt: After r281419.
+        * platform/wpe/fast/editing/insert-paragraph-with-text-in-table-crash-expected.txt: Added.
+        * platform/wpe/fast/editing/paste-and-match-style-with-table-2-crash-expected.txt: Added.
+        * platform/wpe/fast/frames/onlyCommentInIFrame-expected.txt: After r281357.
+        * platform/wpe/fast/text/font-weights-zh-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: After r266118.
+        * platform/wpe/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt: Ditto.
+        * platform/wpe/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Ditto.
+
 2021-09-01  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for 2 webrtc tests..

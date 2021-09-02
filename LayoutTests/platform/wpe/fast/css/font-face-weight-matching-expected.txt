@@ -72,30 +72,30 @@ layer at (0,0) size 800x600
             text run at (160,1) width 16: "A"
         RenderText {#text} at (176,0) size 4x17
           text run at (176,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (180,1) size 16x16
-            text run at (180,1) width 16: "A"
-        RenderText {#text} at (196,0) size 4x17
-          text run at (196,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 17x16
+          RenderText {#text} at (180,1) size 17x16
+            text run at (180,1) width 17: "A"
+        RenderText {#text} at (197,0) size 4x17
+          text run at (197,0) width 4: " "
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (200,1) size 16x16
-            text run at (200,1) width 16: "A"
-        RenderText {#text} at (216,0) size 4x17
-          text run at (216,0) width 4: " "
+          RenderText {#text} at (201,1) size 16x16
+            text run at (201,1) width 16: "A"
+        RenderText {#text} at (217,0) size 4x17
+          text run at (217,0) width 4: " "
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (220,1) size 16x16
-            text run at (220,1) width 16: "A"
-        RenderText {#text} at (236,0) size 4x17
-          text run at (236,0) width 4: " "
+          RenderText {#text} at (221,1) size 16x16
+            text run at (221,1) width 16: "A"
+        RenderText {#text} at (237,0) size 4x17
+          text run at (237,0) width 4: " "
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (240,1) size 16x16
-            text run at (240,1) width 16: "A"
-        RenderText {#text} at (256,0) size 4x17
-          text run at (256,0) width 4: " "
+          RenderText {#text} at (241,1) size 16x16
+            text run at (241,1) width 16: "A"
+        RenderText {#text} at (257,0) size 4x17
+          text run at (257,0) width 4: " "
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (260,1) size 16x16
-            text run at (260,1) width 16: "A"
+          RenderText {#text} at (261,1) size 16x16
+            text run at (261,1) width 16: "A"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
