@@ -1,3 +1,26 @@
+2021-09-02  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Add support for CSSKeywordValue in CSS Typed OM
+        https://bugs.webkit.org/show_bug.cgi?id=229705
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/typedom/CSSKeywordValue.cpp: Added.
+        (WebCore::CSSKeywordValue::create):
+        (WebCore::CSSKeywordValue::setValue):
+        * css/typedom/CSSKeywordValue.h: Added.
+        (WebCore::CSSKeywordValue::value):
+        (WebCore::CSSKeywordValue::CSSKeywordValue):
+        (isType):
+        * css/typedom/CSSKeywordValue.idl: Added.
+
 2021-09-02  Chris Dumez  <cdumez@apple.com>
 
         [COOP] html/cross-origin-opener-policy/coop-navigate-same-origin-csp-sandbox.html WPT test is failing

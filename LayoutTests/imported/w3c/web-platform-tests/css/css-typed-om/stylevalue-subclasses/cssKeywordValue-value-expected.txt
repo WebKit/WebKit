@@ -1,8 +1,8 @@
 
-FAIL CSSKeywordValue.value can be updated to a CSS wide keyword Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue.value can be updated to a CSS keyword Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue.value can be updated to an unsupported CSS keyword Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue.value can be updated to a string containing multiple tokens Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue.value can be updated to a unicode string Can't find variable: CSSKeywordValue
-FAIL Updating CSSKeywordValue.value with an empty string throws a TypeError Can't find variable: CSSKeywordValue
+PASS CSSKeywordValue.value can be updated to a CSS wide keyword
+PASS CSSKeywordValue.value can be updated to a CSS keyword
+PASS CSSKeywordValue.value can be updated to an unsupported CSS keyword
+PASS CSSKeywordValue.value can be updated to a string containing multiple tokens
+PASS CSSKeywordValue.value can be updated to a unicode string
+PASS Updating CSSKeywordValue.value with an empty string throws a TypeError
 

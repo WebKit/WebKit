@@ -771,6 +771,7 @@ css/parser/MediaQueryParser.cpp
 css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
 css/typedom/StylePropertyMapReadOnly.cpp
+css/typedom/CSSKeywordValue.cpp
 css/typedom/CSSStyleImageValue.cpp
 css/typedom/CSSNumericValue.cpp
 css/typedom/CSSStyleValue.cpp
@@ -3602,6 +3603,7 @@ JSTransformStream.cpp
 JSTransformStreamDefaultController.cpp
 JSTransitionEvent.cpp
 JSTreeWalker.cpp
+JSCSSKeywordValue.cpp
 JSCSSStyleImageValue.cpp
 JSCSSNumericValue.cpp
 JSCSSOMVariableReferenceValue.cpp

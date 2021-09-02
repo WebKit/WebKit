@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSKeywordValue
+CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 CONSOLE MESSAGE: ReferenceError: Cannot access uninitialized variable.
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSKeywordValue
+Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
 
 

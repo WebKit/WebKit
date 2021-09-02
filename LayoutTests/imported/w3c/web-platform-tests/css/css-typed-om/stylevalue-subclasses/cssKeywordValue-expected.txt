@@ -1,7 +1,7 @@
 
-FAIL CSSKeywordValue can be constructed from a CSS wide keyword Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue can be constructed from a CSS keyword Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue can be constructed from an unsupported CSS keyword Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue can be constructed from a string containing multiple tokens Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue can be constructed from a unicode string Can't find variable: CSSKeywordValue
+PASS CSSKeywordValue can be constructed from a CSS wide keyword
+PASS CSSKeywordValue can be constructed from a CSS keyword
+PASS CSSKeywordValue can be constructed from an unsupported CSS keyword
+PASS CSSKeywordValue can be constructed from a string containing multiple tokens
+PASS CSSKeywordValue can be constructed from a unicode string
 

@@ -734,6 +734,7 @@ $(PROJECT_DIR)/css/mediaControls.css
 $(PROJECT_DIR)/css/plugIns.css
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/svg.css
+$(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
 $(PROJECT_DIR)/css/typedom/CSSNumericValue.idl
 $(PROJECT_DIR)/css/typedom/CSSOMVariableReferenceValue.idl
 $(PROJECT_DIR)/css/typedom/CSSStyleImageValue.idl

@@ -308,6 +308,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframeRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframeRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframesRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeyframesRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeywordValue.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSKeywordValue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMediaRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMediaRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNamespaceRule.cpp

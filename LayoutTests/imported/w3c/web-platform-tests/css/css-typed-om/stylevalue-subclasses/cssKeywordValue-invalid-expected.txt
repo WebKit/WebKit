@@ -1,5 +1,3 @@
 
-FAIL Constructing CSSKeywordValue with an empty string throws a TypeError assert_throws_js: function "() => new CSSKeywordValue('')" threw object "ReferenceError: Can't find variable: CSSKeywordValue" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Constructing CSSKeywordValue with an empty string throws a TypeError
 

@@ -607,6 +607,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/StyleSheetList.idl \
     $(WebCore)/css/typedom/StylePropertyMap.idl \
     $(WebCore)/css/typedom/StylePropertyMapReadOnly.idl \
+	$(WebCore)/css/typedom/CSSKeywordValue.idl \
     $(WebCore)/css/typedom/CSSStyleImageValue.idl \
     $(WebCore)/css/typedom/CSSNumericValue.idl \
     $(WebCore)/css/typedom/CSSStyleValue.idl \

@@ -1,6 +1,6 @@
 
-FAIL CSSKeywordValue constructed from IDL serializes correctly Can't find variable: CSSKeywordValue
-FAIL CSSKeywordValue constructed from IDL serializes to escaped strings Can't find variable: CSSKeywordValue
+FAIL CSSKeywordValue constructed from IDL serializes correctly assert_equals: expected "auto" but got ""
+FAIL CSSKeywordValue constructed from IDL serializes to escaped strings assert_equals: expected "\\ Hello\\ World" but got ""
 FAIL CSSKeywordValue from DOMString modified through "value" setter serializes correctly auto cannot be parsed as a width
 FAIL CSSKeywordValue from CSSOM modified through "value" setter serializes correctly assert_equals: expected "lemon" but got "auto"
 

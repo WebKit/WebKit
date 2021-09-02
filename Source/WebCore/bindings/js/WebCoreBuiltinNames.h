@@ -79,6 +79,7 @@ namespace WebCore {
     macro(CSSAnimation) \
     macro(CSSCounterStyleRule) \
     macro(CSSImageValue) \
+    macro(CSSKeywordValue) \
     macro(CSSNumericValue) \
     macro(CSSPaintSize) \
     macro(CSSStyleValue) \
