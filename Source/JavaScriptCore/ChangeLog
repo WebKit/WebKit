@@ -1,5 +1,60 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281454. rdar://problem/82650992
+
+    [JSC] emitArrayProfilingSiteWithCell should not load indexingType unnecessarily
+    https://bugs.webkit.org/show_bug.cgi?id=229396
+    
+    Reviewed by Saam Barati.
+    
+    emitArrayProfilingSiteWithCell is always loading indexingType after profiling a cell.
+    But (possibly) this is old code, and there is no reason to do that. This patch removes it.
+    
+    * jit/JIT.h:
+    * jit/JITInlines.h:
+    (JSC::JIT::emitArrayProfilingSiteWithCell):
+    * jit/JITPropertyAccess.cpp:
+    (JSC::JIT::emit_op_get_by_val):
+    (JSC::JIT::emit_op_put_by_val):
+    (JSC::JIT::emit_op_get_by_id):
+    (JSC::JIT::emit_op_in_by_val):
+    (JSC::JIT::emit_op_enumerator_get_by_val):
+    * jit/JITPropertyAccess32_64.cpp:
+    (JSC::JIT::emit_op_get_by_val):
+    (JSC::JIT::emit_op_put_by_val):
+    (JSC::JIT::emit_op_get_by_id):
+    (JSC::JIT::emit_op_in_by_val):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281454 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] emitArrayProfilingSiteWithCell should not load indexingType unnecessarily
+            https://bugs.webkit.org/show_bug.cgi?id=229396
+
+            Reviewed by Saam Barati.
+
+            emitArrayProfilingSiteWithCell is always loading indexingType after profiling a cell.
+            But (possibly) this is old code, and there is no reason to do that. This patch removes it.
+
+            * jit/JIT.h:
+            * jit/JITInlines.h:
+            (JSC::JIT::emitArrayProfilingSiteWithCell):
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emit_op_get_by_val):
+            (JSC::JIT::emit_op_put_by_val):
+            (JSC::JIT::emit_op_get_by_id):
+            (JSC::JIT::emit_op_in_by_val):
+            (JSC::JIT::emit_op_enumerator_get_by_val):
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emit_op_get_by_val):
+            (JSC::JIT::emit_op_put_by_val):
+            (JSC::JIT::emit_op_get_by_id):
+            (JSC::JIT::emit_op_in_by_val):
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281355. rdar://problem/82651674
 
     [JSC] Simplify moveIntsToDouble

@@ -381,7 +381,7 @@ namespace JSC {
         std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void>
         emitValueProfilingSiteIfProfiledOpcode(Op bytecode);
 
-        void emitArrayProfilingSiteWithCell(RegisterID cell, RegisterID indexingType, ArrayProfile*);
+        void emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile*, RegisterID scratchGPR);
         void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
         void emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile*);
         

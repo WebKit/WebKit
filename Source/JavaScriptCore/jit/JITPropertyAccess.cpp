@@ -60,12 +60,12 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
 
     if (metadata.m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers()) {
         auto notCell = branchIfNotCell(regT0);
-        emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+        emitArrayProfilingSiteWithCell(regT0, profile, regT2);
         notCell.link(this);
         callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetByVal, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1);
     } else {
         emitJumpSlowCaseIfNotJSCell(regT0, base);
-        emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+        emitArrayProfilingSiteWithCell(regT0, profile, regT2);
 
         JSValueRegs resultRegs = JSValueRegs(regT0);
 
@@ -462,12 +462,13 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
         // See comment in op_get_by_val.
         zeroExtend32ToWord(regT1, regT1);
     }
-    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+    emitArrayProfilingSiteWithCell(regT0, profile, regT2);
 
     PatchableJump badType;
     JumpList slowCases;
 
     // FIXME: Maybe we should do this inline?
+    load8(Address(regT0, JSCell::indexingTypeAndMiscOffset()), regT2);
     addSlowCase(branchTest32(NonZero, regT2, TrustedImm32(CopyOnWrite)));
     and32(TrustedImm32(IndexingShapeMask), regT2);
 
@@ -1307,7 +1308,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     
     if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
         Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
-        emitArrayProfilingSiteWithCell(regT0, regT1, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
+        emitArrayProfilingSiteWithCell(regT0, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile, regT1);
         notArrayLengthMode.link(this);
     }
 
@@ -1713,7 +1714,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     emitGetVirtualRegister(base, regT0);
     emitJumpSlowCaseIfNotJSCell(regT0, base);
     emitGetVirtualRegister(property, regT1);
-    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+    emitArrayProfilingSiteWithCell(regT0, profile, regT2);
 
     JITInByValGenerator gen(
         m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
@@ -3101,7 +3102,7 @@ void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
     emitGetVirtualRegister(index, regT1);
 
     isNotIndexed.link(this);
-    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+    emitArrayProfilingSiteWithCell(regT0, profile, regT2);
 
     JITGetByValGenerator gen(
         m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
