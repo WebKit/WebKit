@@ -24,7 +24,7 @@
 // DAMAGE.
 
 WebKitCommitters = (function() {
-    var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json';
+    var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/metadata/contributors.json';
     var m_committers;
 
     function statusToType(status) {
@@ -36,19 +36,15 @@ WebKitCommitters = (function() {
     }
 
     function parseCommittersPy(text) {
-        var contributors = JSON.parse(text);
-
         m_committers = [];
-
-        for (var name in contributors) {
-            var record = contributors[name];
+        JSON.parse(text).forEach(contributor => {
             m_committers.push({
-                name: name,
-                emails: record.emails,
-                irc: record.nicks,
-                type: statusToType(record.status),
+                name: contributor.name,
+                emails: contributor.emails,
+                irc: contributor.nicks,
+                type: statusToType(contributor.status),
             });
-        }
+        })
     }
 
     function loadCommitters(callback) {
