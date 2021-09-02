@@ -667,7 +667,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)accessoryOpen;
 
 - (void)updateFocusedElementValueAsColor:(UIColor *)value;
-- (void)updateFocusedElementValueAsNumber:(double)value;
 - (void)updateFocusedElementValue:(NSString *)value;
 - (void)updateFocusedElementSelectedIndex:(uint32_t)index allowsMultipleSelection:(bool)allowsMultipleSelection;
 - (void)updateFocusedElementFocusedWithDataListDropdown:(BOOL)value;

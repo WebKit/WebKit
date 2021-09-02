@@ -1257,13 +1257,6 @@ void WebPage::setFocusedElementValue(const WebCore::ElementContext& context, con
         downcast<HTMLInputElement>(*element).setValue(value, DispatchInputAndChangeEvent);
 }
 
-void WebPage::setFocusedElementValueAsNumber(const WebCore::ElementContext& context, double value)
-{
-    RefPtr<Element> element = elementForContext(context);
-    if (is<HTMLInputElement>(element))
-        downcast<HTMLInputElement>(*element).setValueAsNumber(value, DispatchInputAndChangeEvent);
-}
-
 void WebPage::setFocusedElementSelectedIndex(const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
 {
     RefPtr<Element> element = elementForContext(context);

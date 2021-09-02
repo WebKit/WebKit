@@ -1,3 +1,48 @@
+2021-09-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Simplify date picker logic for datetime-local inputs
+        https://bugs.webkit.org/show_bug.cgi?id=229773
+
+        Reviewed by Darin Adler.
+
+        Currently, the date picker logic for getting/setting the value of a
+        datetime-local input relies on the numeric value of input. This
+        logic differs from logic for date, time, and month inputs, where we use
+        the string value of the input. This patch simplifies the code by using
+        string values for all the date/time input types.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+
+        Set the format string for datetime-local inputs, matching the spec.
+
+        (-[WKDateTimePicker _sanitizeInputValueForFormatter:]):
+
+        Sanitize datetime-local values to remove seconds and milliseconds
+        information. UIKit does not support anything beyond minute granularity.
+
+        (-[WKDateTimePicker dateFormatterForPicker]):
+        (-[WKDateTimePicker _dateChanged]):
+
+        Always use setValueAsString, matching the other date/time inputs.
+
+        Time zone conversion before sending the date back to the web process
+        is no longer needed.
+
+        (-[WKDateTimePicker setDateTimePickerToInitialValue]):
+
+        Time zone conversion when retrieving the date from the web process is no
+        longer needed.
+
+        (-[WKDateTimePicker controlBeginEditing]):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
 2021-09-02  Peng Liu  <peng.liu6@apple.com>
 
         [MSE][GPUP] SourceBufferPrivateAVFObjC does not work properly when audio and video exchange their track IDs

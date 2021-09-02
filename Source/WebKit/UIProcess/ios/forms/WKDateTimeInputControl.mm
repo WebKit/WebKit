@@ -229,8 +229,6 @@ static const CGFloat kDateTimePickerTimeControlHeight = 172;
 > {
     NSString *_formatString;
     RetainPtr<NSString> _initialValue;
-    NSTimeInterval _initialValueAsNumber;
-    BOOL _shouldRemoveTimeZoneInformation;
     WKContentView *_view;
     CGPoint _interactionPoint;
     RetainPtr<UIDatePicker> _datePicker;
@@ -259,6 +257,7 @@ static const CGFloat kDateTimePickerTimeControlHeight = 172;
 static NSString * const kDateFormatString = @"yyyy-MM-dd"; // "2011-01-27".
 static NSString * const kMonthFormatString = @"yyyy-MM"; // "2011-01".
 static NSString * const kTimeFormatString = @"HH:mm"; // "13:45".
+static NSString * const kDateTimeFormatString = @"yyyy-MM-dd'T'HH:mm"; // "2011-01-27T13:45"
 static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 static const CGFloat kDateTimePickerControlMargin = 6;
@@ -270,7 +269,6 @@ static const CGFloat kDateTimePickerControlMargin = 6;
 
     _view = view;
     _interactionPoint = [_view lastInteractionLocation];
-    _shouldRemoveTimeZoneInformation = NO;
 
     switch (view.focusedElementInformation.elementType) {
     case WebKit::InputType::Date:
@@ -283,7 +281,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
         _formatString = kTimeFormatString;
         break;
     case WebKit::InputType::DateTimeLocal:
-        _shouldRemoveTimeZoneInformation = YES;
+        _formatString = kDateTimeFormatString;
         break;
     default:
         break;
@@ -553,20 +551,21 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     [super dealloc];
 }
 
-- (NSInteger)_timeZoneOffsetFromGMT:(NSDate *)date
-{
-    if (!_shouldRemoveTimeZoneInformation)
-        return 0;
-
-    return [[_datePicker timeZone] secondsFromGMTForDate:date];
-}
-
 - (NSString *)_sanitizeInputValueForFormatter:(NSString *)value
 {
-    // The "time" input type may have seconds and milliseconds information which we
-    // just ignore. For example: "01:56:20.391" is shortened to just "01:56".
+    ASSERT([value length]);
+
+    // Times may have seconds and milliseconds information which we just
+    // ignore. For example: "01:56:20.391" is shortened to just "01:56".
+
     if (_view.focusedElementInformation.elementType == WebKit::InputType::Time)
         return [value substringToIndex:[kTimeFormatString length]];
+
+    if (_view.focusedElementInformation.elementType == WebKit::InputType::DateTimeLocal) {
+        NSString *timeString = [[value componentsSeparatedByString:@"T"] objectAtIndex:1];
+        NSString *sanitizedTimeString = [timeString substringToIndex:[kTimeFormatString length]];
+        return [value stringByReplacingOccurrencesOfString:timeString withString:sanitizedTimeString];
+    }
 
     return value;
 }
@@ -577,52 +576,27 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     RetainPtr<NSDateFormatter> dateFormatter = adoptNS([[NSDateFormatter alloc] init]);
     [dateFormatter setTimeZone:[_datePicker timeZone]];
     [dateFormatter setDateFormat:_formatString];
+    // Force English locale because that is what HTML5 value parsing expects.
     [dateFormatter setLocale:englishLocale.get()];
     return dateFormatter;
 }
 
-- (void)_dateChangedSetAsNumber
+- (void)_dateChanged
 {
-    NSDate *date = [_datePicker date];
-    [_view updateFocusedElementValueAsNumber:(date.timeIntervalSince1970 + [self _timeZoneOffsetFromGMT:date]) * kMillisecondsPerSecond];
-}
-
-- (void)_dateChangedSetAsString
-{
-    // Force English locale because that is what HTML5 value parsing expects.
     RetainPtr<NSDateFormatter> dateFormatter = [self dateFormatterForPicker];
     [_view updateFocusedElementValue:[dateFormatter stringFromDate:[_datePicker date]]];
 }
 
-- (void)_dateChanged
-{
-    // Internally, DOMHTMLInputElement setValueAs* each take different values for
-    // different date types. It is sometimes easier to set the date in different ways:
-    //   - use setValueAsString for "date", "month", and "time".
-    //   - use setValueAsNumber for "datetime-local".
-    if (_formatString)
-        [self _dateChangedSetAsString];
-    else
-        [self _dateChangedSetAsNumber];
-}
-
 - (void)setDateTimePickerToInitialValue
 {
-    if ([_initialValue isEqual: @""]) {
+    if (![_initialValue length]) {
         [_datePicker setDate:[NSDate date]];
         [self _dateChanged];
-    } else if (_formatString) {
-        // Convert the string value to a date object for the fields where we have a format string.
-        RetainPtr<NSDateFormatter> dateFormatter = [self dateFormatterForPicker];
-        NSDate *parsedDate = [dateFormatter dateFromString:[self _sanitizeInputValueForFormatter:_initialValue.get()]];
-        [_datePicker setDate:parsedDate ? parsedDate : [NSDate date]];
-    } else {
-        // Convert the number value to a date object for the fields affected by timezones.
-        NSTimeInterval secondsSince1970 = _initialValueAsNumber / kMillisecondsPerSecond;
-        NSInteger timeZoneOffset = [self _timeZoneOffsetFromGMT:[NSDate dateWithTimeIntervalSince1970:secondsSince1970]];
-        NSTimeInterval adjustedSecondsSince1970 = secondsSince1970 - timeZoneOffset;
-        [_datePicker setDate:[NSDate dateWithTimeIntervalSince1970:adjustedSecondsSince1970]];
+        return;
     }
+
+    NSDate *parsedDate = [[self dateFormatterForPicker] dateFromString:[self _sanitizeInputValueForFormatter:_initialValue.get()]];
+    [_datePicker setDate:parsedDate ? parsedDate : [NSDate date]];
 }
 
 - (UIView *)controlView
@@ -642,7 +616,6 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     // Currently no value for the <input>. Start the picker with the current time.
     // Also, update the actual <input> value.
     _initialValue = _view.focusedElementInformation.value;
-    _initialValueAsNumber = _view.focusedElementInformation.valueAsNumber;
     [self setDateTimePickerToInitialValue];
 
     [self showDateTimePicker];

@@ -967,11 +967,6 @@ void WebPageProxy::setFocusedElementValue(const WebCore::ElementContext& context
     send(Messages::WebPage::SetFocusedElementValue(context, value));
 }
 
-void WebPageProxy::setFocusedElementValueAsNumber(const WebCore::ElementContext& context, double value)
-{
-    send(Messages::WebPage::SetFocusedElementValueAsNumber(context, value));
-}
-
 void WebPageProxy::setFocusedElementSelectedIndex(const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
 {
     send(Messages::WebPage::SetFocusedElementSelectedIndex(context, index, allowMultipleSelection));

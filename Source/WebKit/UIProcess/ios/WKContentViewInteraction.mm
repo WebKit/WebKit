@@ -4827,12 +4827,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _page->setIsShowingInputViewForFocusedElement(false);
 }
 
-- (void)updateFocusedElementValueAsNumber:(double)value
-{
-    _page->setFocusedElementValueAsNumber(_focusedElementInformation.elementContext, value);
-    _focusedElementInformation.valueAsNumber = value;
-}
-
 - (void)updateFocusedElementValue:(NSString *)value
 {
     _page->setFocusedElementValue(_focusedElementInformation.elementContext, value);

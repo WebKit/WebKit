@@ -95,7 +95,6 @@ messages -> WebPage LegacyReceiver {
     FocusNextFocusedElement(bool isForward) -> () Async
     AutofillLoginCredentials(String username, String password)
     SetFocusedElementValue(struct WebCore::ElementContext context, String value)
-    SetFocusedElementValueAsNumber(struct WebCore::ElementContext context, double value)
     SetFocusedElementSelectedIndex(struct WebCore::ElementContext context, uint32_t index, bool allowMultipleSelection)
     ApplicationWillResignActive()
     ApplicationDidEnterBackground(bool isSuspendedUnderLock)

@@ -136,6 +136,7 @@ template<typename CharacterType> static std::optional<int> parseIntWithinLimits(
     return value;
 }
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#months
 template<typename CharacterType> bool DateComponents::parseYear(StringParsingBuffer<CharacterType>& buffer)
 {
     unsigned digitsLength = countDigits(buffer);
@@ -337,6 +338,7 @@ bool DateComponents::addMinute(int minute)
     return true;
 }
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#time-zones
 // Parses a timezone part, and adjust year, month, monthDay, hour, minute, second, millisecond.
 template<typename CharacterType> bool DateComponents::parseTimeZone(StringParsingBuffer<CharacterType>& buffer)
 {
@@ -373,6 +375,7 @@ template<typename CharacterType> bool DateComponents::parseTimeZone(StringParsin
     return true;
 }
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#months
 template<typename CharacterType> bool DateComponents::parseMonth(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseYear(buffer))
@@ -394,6 +397,7 @@ template<typename CharacterType> bool DateComponents::parseMonth(StringParsingBu
     return true;
 }
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#dates
 template<typename CharacterType> bool DateComponents::parseDate(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseMonth(buffer))
@@ -414,6 +418,7 @@ template<typename CharacterType> bool DateComponents::parseDate(StringParsingBuf
     return true;
 }
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#weeks
 template<typename CharacterType> bool DateComponents::parseWeek(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseYear(buffer))
@@ -436,6 +441,7 @@ template<typename CharacterType> bool DateComponents::parseWeek(StringParsingBuf
     return true;
 }
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#times
 template<typename CharacterType> bool DateComponents::parseTime(StringParsingBuffer<CharacterType>& buffer)
 {
     auto hour = parseIntWithinLimits(buffer, 2, 0, 23);
@@ -496,6 +502,7 @@ template<typename CharacterType> bool DateComponents::parseTime(StringParsingBuf
     return true;
 }
 
+// https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#local-dates-and-times
 template<typename CharacterType> bool DateComponents::parseDateTimeLocal(StringParsingBuffer<CharacterType>& buffer)
 {
     if (!parseDate(buffer))
