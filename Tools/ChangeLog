@@ -1,3 +1,15 @@
+2021-09-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Port API test runner to python3 (v2)
+        https://bugs.webkit.org/show_bug.cgi?id=229782
+
+        Unreviewed follow-up fix after r281919
+
+        Remove change on the shebang of run-perf-tests that doesn't belong to this patch,
+        not sure how this ended here, seems I messed it when working on the patch for bug 229783
+
+        * Scripts/run-perf-tests:
+
 2021-09-02  Aakash Jain  <aakash_jain@apple.com>
 
         Move few scripts from python 2 to python3
