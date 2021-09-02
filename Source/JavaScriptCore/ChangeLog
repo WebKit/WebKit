@@ -1,3 +1,9 @@
+2021-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, annotate executeJSCJITProbe with REFERENCED_FROM_ASM WTF_INTERNAL
+
+        * assembler/ProbeContext.h:
+
 2021-09-02  Mark Lam  <mark.lam@apple.com>
 
         Add more support for JIT operation validation testing.

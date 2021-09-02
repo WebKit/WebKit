@@ -249,7 +249,7 @@ private:
     friend JS_EXPORT_PRIVATE void* probeStateForContext(Context&); // Not for general use. This should only be for writing tests.
 };
 
-extern "C" void executeJSCJITProbe(State*);
+extern "C" void executeJSCJITProbe(State*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 } // namespace Probe
 } // namespace JSC
