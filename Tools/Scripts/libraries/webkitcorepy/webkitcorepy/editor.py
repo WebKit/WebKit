@@ -130,4 +130,4 @@ class Editor(object):
         return self.name
 
     def __bool__(self):
-        return os.path.isfile(self.path)
+        return bool(self.path) and os.path.isfile(self.path)

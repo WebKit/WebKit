@@ -1,3 +1,20 @@
+2021-09-02  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitcorepy] Evaluate default Editor to false when not found
+        https://bugs.webkit.org/show_bug.cgi?id=229791
+
+        Reviewed by Jonathan Bedard.
+
+        This makes the default editor to not be listed as valid in platforms
+        without the open command. This was causing the tests to fail for
+        GTK/WPE (on Linux).
+
+        In a future commit a proper solution might be adding proper support
+        for $EDITOR.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/editor.py:
+        (Editor.__bool__):
+
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         [buildbot] Only serve content through nginx
