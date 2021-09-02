@@ -1037,7 +1037,7 @@ writingModes.forEach(function(writingMode) {
                 flexbox.className = 'flexbox ' + flexboxClassName;
                 flexbox.setAttribute('style', mainAxis + ': 70px');
 
-                var baselineMargin = (flexDirection.indexOf('row') != -1) ? '-webkit-margin-before: 5px;' : '-webkit-margin-start: 5px;';
+                var baselineMargin = (flexDirection.indexOf('row') != -1) ? 'margin-block-start: 5px;' : 'margin-inline-start: 5px;';
 
                 var testExpectations = expectations[writingMode][flexDirection][direction][wrap];
                 addChild(flexbox, mainAxis, crossAxis, 10, '10px', 'flex-start', testExpectations['child1']);

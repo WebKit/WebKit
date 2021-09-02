@@ -2,10 +2,10 @@
 <style>
     div.columns {
         display:inline-block;
-        -webkit-logical-height: 60px;
-        -webkit-logical-width: 100px;
-        -webkit-margin-before: 10px;
-        -webkit-margin-after: 10px;
+        block-size: 60px;
+        inline-size: 100px;
+        margin-block-start: 10px;
+        margin-block-end: 10px;
          padding: 5px;
         border: solid black;
         font-family: ahem;
@@ -39,7 +39,7 @@
     .vertical { -webkit-writing-mode: vertical-lr; }
     .vertical.flipped { -webkit-writing-mode: vertical-rl; }
 
-    div.span { -webkit-column-span: all; -webkit-logical-height:10px; background-color:silver; }
+    div.span { -webkit-column-span: all; block-size:10px; background-color:silver; }
 
 </style>
 </head>
@@ -102,7 +102,7 @@
     <br><div><br><img id="t13" style="width: 25px; height: 25px; background-color: lightblue;"></div>
 </div>
 <div class="columns vertical"><div class="span"></div>
-    <div id="t14" style=" -webkit-margin-before: 40px; width: 25px; height: 25px; background-color: lightblue;"></div>
+    <div id="t14" style=" margin-block-start: 40px; width: 25px; height: 25px; background-color: lightblue;"></div>
 </div>
 
 
@@ -130,7 +130,7 @@
     <br><div><br><img id="t20" style="width: 25px; height: 25px; background-color: lightblue;"></div>
 </div>
 <div class="columns vertical flipped"><div class="span"></div>
-    <div id="t21" style="-webkit-margin-before: 40px; width: 25px; height: 25px; background-color: lightblue;"></div>
+    <div id="t21" style="margin-block-start: 40px; width: 25px; height: 25px; background-color: lightblue;"></div>
 </div>
 
 <script>

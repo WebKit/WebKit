@@ -1,1 +1,1 @@
-*{-webkit-border-before-style:groove}
+*{border-block-start-style:groove}

@@ -3,15 +3,15 @@ body {
 }
 
 div {
-    -webkit-logical-width: 200px;
-    -webkit-logical-height: 150px;
+    inline-size: 200px;
+    block-size: 150px;
     -webkit-column-gap: 30px;
     -webkit-column-rule-width: 10px;
     -webkit-column-rule-style: solid;
     outline: 1px dashed lightblue;
-    -webkit-margin-after: 360px;
-    -webkit-border-before: 20px solid silver;
-    -webkit-margin-start: 20px;
+    margin-block-end: 360px;
+    border-block-start: 20px solid silver;
+    margin-inline-start: 20px;
 }
 
 div.horizontal

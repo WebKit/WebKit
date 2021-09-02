@@ -11,7 +11,7 @@ function runTest() {
     testRunner.dumpAsText();
 
     elementStyle = div.style;
-    elementStyle.setProperty("-webkit-border-start-width", "1px");
+    elementStyle.setProperty("border-inline-start-width", "1px");
     elementStyle.setProperty("column-span", "all");
     animation = div.getAnimations()[0];
     animation.effect = new KeyframeEffect(li, [ { } ], 6); 

@@ -7,8 +7,8 @@
             .columns {
                 -webkit-column-count:2;
                 -webkit-column-gap:50px;
-                -webkit-logical-width:250px;
-                -webkit-logical-height:145px;
+                inline-size:250px;
+                block-size:145px;
                 margin: 20px;
                 border:2px solid black;
                 -webkit-column-rule: 1px solid maroon;
@@ -18,9 +18,9 @@
                 -webkit-column-break-after: always;
             }
         
-            .columns div { -webkit-logical-height:50px; background-color:green; margin:5px; -webkit-margin-collapse:separate }
+            .columns div { block-size:50px; background-color:green; margin:5px; -webkit-margin-collapse:separate }
             
-            .columns div.span { margin:0; -webkit-logical-height:25px; background-color:orange; -webkit-column-span:all; -webkit-margin-start: 5px; -webkit-margin-end: 5px }
+            .columns div.span { margin:0; block-size:25px; background-color:orange; -webkit-column-span:all; margin-inline-start: 5px; margin-inline-end: 5px }
 
             .fail #pass, .pass #fail { display: none; }
             

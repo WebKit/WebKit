@@ -1,3 +1,162 @@
+2021-09-01  Sonia Singla  <ssingla@igalia.com>
+
+        Replace webkit- prefix logical properties with Standard Properties in LayoutTests/
+        https://bugs.webkit.org/show_bug.cgi?id=228730
+
+        Reviewed by Frédéric Wang.
+
+        List of webkit- prefixed logical properties replaced with
+        - webkit-border-after >> border-block-end
+        - webkit-border-after-width >> border-block-end-width
+        - webkit-border-before-style >> border-block-start-style
+        - webkit-border-before-width >> border-block-start-width
+        - webkit-border-end >> border-inline-end
+        - webkit-border-end-color >> border-inline-end-color
+        - webkit-border-end-style >> border-inline-end-style
+        - webkit-border-end-width >> border-inline-end-width
+        - webkit-border-start >> border-inline-start
+        - webkit-border-start-color >> border-inline-start-color
+        - webkit-border-start-style >> border-inline-start-style
+        - webkit-border-start-width >> border-inline-start-width
+        - webkit-logical-height >> block-size
+        - webkit-logical-width >> inline-size
+        - webkit-margin-after >> margin-block-end
+        - webkit-margin-before >> margin-block-start
+        - webkit-margin-end >> margin-inline-end
+        - webkit-margin-start >> margin-inline-start
+        - webkit-min-logical-height >> min-block-size
+        - webkit-padding-after >> padding-block-end
+        - webkit-padding-before >> padding-block-start
+        - webkit-padding-end >> padding-inline-end
+        - webkit-padding-start >> padding-inline-start
+
+        * compositing/bounds-in-flipped-writing-mode.html:
+        * css3/flexbox/flex-flow-auto-margins.html:
+        * css3/flexbox/flex-flow-border.html:
+        * css3/flexbox/flex-flow-margins.html:
+        * css3/flexbox/flex-flow-padding.html:
+        * css3/flexbox/flex-flow.html:
+        * css3/flexbox/multiline-align-self.html:
+        * css3/flexbox/multiline-justify-content.html:
+        * css3/flexbox/negative-flex-rounding-assert.html:
+        * css3/flexbox/writing-modes.html:
+        * editing/deleting/delete-blockquote-large-offsets.html:
+        * editing/deleting/delete-selection-crash.html:
+        * editing/selection/move-by-word-visually-crash-test-5.html:
+        * fast/block/float/float-list-changed-before-layout-crash.html:
+        * fast/block/float/intruding-float-not-removed-from-next-sibling-crash.html:
+        * fast/block/positioning/vertical-lr/003.html:
+        * fast/block/positioning/vertical-lr/004.html:
+        * fast/block/positioning/vertical-rl/003.html:
+        * fast/block/positioning/vertical-rl/004.html:
+        * fast/borders/border-styles-split.html:
+        * fast/borders/empty-drawrect-assert-after-pixelsnap.html:
+        * fast/css/fontMetric-webkit-border-end-width-null-crash.html:
+        * fast/css/identical-logical-height-decl.html:
+        * fast/css/logical-property-resolution.html:
+        * fast/css/overflow-btt-border-after.html:
+        * fast/css/overflow-rtl-border-after.html:
+        * fast/css/style-resolver-cache-direction-1.html:
+        * fast/css/style-resolver-cache-direction-2.html:
+        * fast/css/style-resolver-cache-direction-3.html:
+        * fast/css/variables/direction-dependent-variable-properties.html:
+        * fast/dom/HTMLElement/attr-dir-auto-change-before-text-node.html:
+        * fast/dom/HTMLElement/attr-dir-auto-change-child-node.html:
+        * fast/dom/HTMLElement/attr-dir-auto-change-text-form-control.html:
+        * fast/dom/HTMLElement/attr-dir-auto-change-text.html:
+        * fast/dom/HTMLElement/attr-dir-auto-children.html:
+        * fast/dom/HTMLElement/attr-dir-auto-remove-add-children.html:
+        * fast/dom/HTMLElement/attr-dir-auto-text-form-control-child.html:
+        * fast/dom/HTMLElement/attr-dir-auto-text-form-control.html:
+        * fast/dom/HTMLElement/attr-dir-auto.html:
+        * fast/dom/HTMLElement/attr-dir-value-change.html:
+        * fast/dynamic/crash-paint-no-documentElement-renderer-expected.txt:
+        * fast/dynamic/crash-paint-no-documentElement-renderer.html:
+        * fast/forms/fieldset/fieldset-deprecated-flexbox-expected.html:
+        * fast/forms/fieldset/fieldset-deprecated-flexbox.html:
+        * fast/forms/fieldset/fieldset-flexbox-expected.html:
+        * fast/forms/fieldset/fieldset-flexbox.html:
+        * fast/forms/fieldset/fieldset-overflow-auto-expected.html:
+        * fast/forms/fieldset/fieldset-overflow-auto.html:
+        * fast/forms/fieldset/fieldset-overflow-hidden-expected.html:
+        * fast/forms/fieldset/fieldset-overflow-hidden.html:
+        * fast/forms/fieldset/fieldset-positioned-children-expected.html:
+        * fast/forms/fieldset/fieldset-positioned-children.html:
+        * fast/forms/fieldset/fieldset-positioned-legend-expected.html:
+        * fast/forms/fieldset/fieldset-positioned-legend.html:
+        * fast/forms/fieldset/fieldset-self-painting-legend-expected.html:
+        * fast/forms/fieldset/fieldset-self-painting-legend.html:
+        * fast/forms/fieldset/fieldset-writing-modes-expected.html:
+        * fast/forms/fieldset/fieldset-writing-modes.html:
+        * fast/images/mask-box-image-crash.html:
+        * fast/layers/geometry-map-saturated-offset-assert.html:
+        * fast/multicol/client-rects-spanners-complex.html:
+        * fast/multicol/client-rects-spanners.html:
+        * fast/multicol/client-rects.html:
+        * fast/multicol/crash-when-line-grid-is-shorter-than-half-px.html:
+        * fast/multicol/negativeColumnGap.html:
+        * fast/multicol/newmulticol/client-rects.html:
+        * fast/multicol/newmulticol/compare-with-old-impl/overflow-content-expected.html:
+        * fast/multicol/newmulticol/compare-with-old-impl/overflow-content.html:
+        * fast/multicol/newmulticol/hide-box-vertical-lr-expected.html:
+        * fast/multicol/newmulticol/hide-box-vertical-lr.html:
+        * fast/multicol/newmulticol/hide-box-vertical-rl-expected.html:
+        * fast/multicol/newmulticol/hide-box-vertical-rl.html:
+        * fast/multicol/newmulticol/multicol-inside-multicol.html:
+        * fast/multicol/newmulticol/progression-reverse-expected.html:
+        * fast/multicol/newmulticol/progression-reverse-overflow-expected.html:
+        * fast/multicol/newmulticol/progression-reverse-overflow.html:
+        * fast/multicol/newmulticol/progression-reverse.html:
+        * fast/multicol/offset-top-left.html:
+        * fast/multicol/overflow-content-expected.html:
+        * fast/multicol/overflow-content.html:
+        * fast/multicol/pageLogicalOffset-vertical.html:
+        * fast/multicol/progression-reverse-overflow-expected.html:
+        * fast/multicol/progression-reverse-overflow.html:
+        * fast/multicol/progression-reverse.html:
+        * fast/multicol/resources/block-axis.css:
+        (div):
+        * fast/multicol/vertical-lr/column-break-with-balancing.html:
+        * fast/multicol/vertical-lr/float-paginate-complex.html:
+        * fast/multicol/vertical-lr/float-truncation.html:
+        * fast/multicol/vertical-lr/rules-with-border-before.html:
+        * fast/multicol/vertical-rl/column-break-with-balancing.html:
+        * fast/multicol/vertical-rl/float-paginate-complex.html:
+        * fast/multicol/vertical-rl/float-truncation.html:
+        * fast/multicol/vertical-rl/rules-with-border-before.html:
+        * fast/ruby/position-after.html:
+        * fast/table/border-collapsing/001-vertical.html:
+        * fast/table/border-collapsing/border-collapsing-head-foot-vertical.html:
+        * fast/table/border-collapsing/equal-precedence-resolution-vertical.html:
+        * fast/table/border-collapsing/rtl-border-collapsing-vertical.html:
+        * fast/table/fixed-with-auto-with-colspan-vertical.html:
+        * fast/text/decorations-with-text-combine.html:
+        * fast/text/dirty-inline-textbox-crash.html:
+        * fast/writing-mode/Kusa-Makura-background-canvas.html:
+        * fast/writing-mode/block-level-images.html:
+        * fast/writing-mode/border-radius-clipping-vertical-lr.html:
+        * fast/writing-mode/border-styles-vertical-lr-mixed.html:
+        * fast/writing-mode/border-styles-vertical-lr.html:
+        * fast/writing-mode/border-styles-vertical-rl-mixed.html:
+        * fast/writing-mode/border-styles-vertical-rl.html:
+        * fast/writing-mode/fieldsets.html:
+        * fast/writing-mode/flipped-blocks-text-map-local-to-container.html:
+        * fast/writing-mode/horizontal-bt-replaced-selection.html:
+        * fast/writing-mode/logical-height-after-clear-expected.html:
+        * fast/writing-mode/logical-height-after-clear.html:
+        * fast/writing-mode/root-lr-basic.html:
+        * fast/writing-mode/vertical-lr-replaced-selection-mixed.html:
+        * fast/writing-mode/vertical-lr-replaced-selection.html:
+        * fast/writing-mode/vertical-rl-replaced-selection-mixed.html:
+        * fast/writing-mode/vertical-rl-replaced-selection.html:
+        * js/suppress-asan-on-clobberize-to-workaround-asan-bug.html:
+        * mathml/presentation/dir-mo-expected.html:
+        * mathml/presentation/mo-lspace-rspace-expected.html:
+        * scrollbars/scrollbar-part-created-with-no-parent-crash.html:
+        * scrollbars/scrollbar-percent-padding-crash.html:
+        * svg/as-image/svg-intrinsic-size-rectangular-vertical-expected.html:
+        * svg/as-image/svg-intrinsic-size-rectangular-vertical.html:
+
 2021-09-01  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Update baselines of some failing tests
