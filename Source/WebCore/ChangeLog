@@ -1,3 +1,16 @@
+2021-09-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Implement ANGLE version of WebGL layer snapshot copyImageSnapshotWithColorSpace
+        https://bugs.webkit.org/show_bug.cgi?id=217377
+        <rdar://problem/70248151>
+
+        Reviewed by Tim Horton.
+
+        Remove the function. The snapshots go through the paint codepath now.
+
+        * platform/graphics/cocoa/WebGLLayer.h:
+        * platform/graphics/cocoa/WebGLLayer.mm:
+
 2021-09-01  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not generate integration runs out of IFC's display runs

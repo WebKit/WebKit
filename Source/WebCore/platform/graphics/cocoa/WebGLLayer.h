@@ -36,8 +36,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque;
 
-- (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace;
-
 - (WebCore::GraphicsContextGLIOSurfaceSwapChain&) swapChain;
 
 @end

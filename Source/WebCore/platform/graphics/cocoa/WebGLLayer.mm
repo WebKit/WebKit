@@ -75,13 +75,6 @@ private:
     [super setAnchorPoint:CGPointMake(p.x, 1.0 - p.y)];
 }
 
-- (CGImageRef)copyImageSnapshotWithColorSpace:(CGColorSpaceRef)colorSpace
-{
-    // FIXME: implement. https://bugs.webkit.org/show_bug.cgi?id=217377
-    // When implementing, remember to use self.contentsScale.
-    UNUSED_PARAM(colorSpace);
-    return nullptr;
-}
 - (WebCore::GraphicsContextGLIOSurfaceSwapChain&) swapChain
 {
     return _swapChain.value();
