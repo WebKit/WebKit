@@ -1049,29 +1049,23 @@ private:
 };
 
 template <typename ExecutableType>
-Exception* ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+void ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     if (hasJITCodeFor(kind)) {
-        if constexpr (std::is_same<ExecutableType, EvalExecutable>::value) {
+        if constexpr (std::is_same<ExecutableType, EvalExecutable>::value)
             resultCodeBlock = jsCast<CodeBlock*>(jsCast<ExecutableType*>(this)->codeBlock());
-            return nullptr;
-        }
-        if constexpr (std::is_same<ExecutableType, ProgramExecutable>::value) {
+        else if constexpr (std::is_same<ExecutableType, ProgramExecutable>::value)
             resultCodeBlock = jsCast<CodeBlock*>(jsCast<ExecutableType*>(this)->codeBlock());
-            return nullptr;
-        }
-        if constexpr (std::is_same<ExecutableType, ModuleProgramExecutable>::value) {
+        else if constexpr (std::is_same<ExecutableType, ModuleProgramExecutable>::value)
             resultCodeBlock = jsCast<CodeBlock*>(jsCast<ExecutableType*>(this)->codeBlock());
-            return nullptr;
-        }
-        if constexpr (std::is_same<ExecutableType, FunctionExecutable>::value) {
+        else {
+            static_assert(std::is_same<ExecutableType, FunctionExecutable>::value);
             resultCodeBlock = jsCast<CodeBlock*>(jsCast<ExecutableType*>(this)->codeBlockFor(kind));
-            return nullptr;
         }
-        RELEASE_ASSERT_NOT_REACHED();
-        return nullptr;
+        return;
     }
-    return prepareForExecutionImpl(vm, function, scope, kind, resultCodeBlock);
+
+    prepareForExecutionImpl(vm, function, scope, kind, resultCodeBlock);
 }
 
 #define CODEBLOCK_LOG_EVENT(codeBlock, summary, details) \

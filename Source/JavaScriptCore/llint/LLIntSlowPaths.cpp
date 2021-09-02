@@ -1873,17 +1873,16 @@ inline SlowPathReturnType setUpCall(CallFrame* calleeFrame, CodeSpecializationKi
         codePtr = executable->entrypointFor(kind, MustCheckArity);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
             LLINT_CALL_THROW(globalObject, createNotAConstructorError(globalObject, callee));
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
-        Exception* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
-        EXCEPTION_ASSERT(throwScope.exception() == error);
-        if (UNLIKELY(error))
-            LLINT_CALL_THROW(globalObject, error);
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
+        LLINT_CALL_CHECK_EXCEPTION(globalObject);
+
         codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
+
         ArityCheckMode arity;
         if (calleeFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
             arity = MustCheckArity;

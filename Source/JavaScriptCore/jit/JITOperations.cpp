@@ -1560,11 +1560,12 @@ JSC_DEFINE_JIT_OPERATION(operationLinkCall, SlowPathReturnType, (CallFrame* call
         }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
-        Exception* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
-        EXCEPTION_ASSERT(throwScope.exception() == error);
-        if (UNLIKELY(error))
-            return handleThrowException();
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
+        RETURN_IF_EXCEPTION(throwScope, handleThrowException());
+
         codeBlock = *codeBlockSlot;
+        ASSERT(codeBlock);
+
         ArityCheckMode arity;
         if (calleeFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs())
             arity = MustCheckArity;
@@ -1607,21 +1608,19 @@ inline SlowPathReturnType virtualForWithFunction(JSGlobalObject* globalObject, C
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
+        auto handleThrowException = [&] () {
+            void* throwTarget = vm.getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress();
+            return encodeResult(throwTarget, reinterpret_cast<void*>(KeepTheFrame));
+        };
+
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
             throwException(globalObject, throwScope, createNotAConstructorError(globalObject, function));
-            return encodeResult(
-                vm.getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress(),
-                reinterpret_cast<void*>(KeepTheFrame));
+            return handleThrowException();
         }
 
         CodeBlock** codeBlockSlot = calleeFrame->addressOfCodeBlock();
-        Exception* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, kind, *codeBlockSlot);
-        EXCEPTION_ASSERT(throwScope.exception() == error);
-        if (UNLIKELY(error)) {
-            return encodeResult(
-                vm.getCTIStub(throwExceptionFromCallSlowPathGenerator).retaggedCode<JSEntryPtrTag>().executableAddress(),
-                reinterpret_cast<void*>(KeepTheFrame));
-        }
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, kind, *codeBlockSlot);
+        RETURN_IF_EXCEPTION(throwScope, handleThrowException());
     }
     // FIXME: Support wasm IC.
     // https://bugs.webkit.org/show_bug.cgi?id=220339

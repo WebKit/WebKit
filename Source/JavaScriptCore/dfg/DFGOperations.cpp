@@ -3763,13 +3763,11 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (CallLinkInfo* callLinkI
         codePtr = executable->entrypointFor(kind, MustCheckArity);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-
         RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);
-        
-        Exception* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, codeBlock);
-        EXCEPTION_ASSERT_UNUSED(throwScope, throwScope.exception() == error);
-        if (UNLIKELY(error))
-            return;
+
+        functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, codeBlock);
+        RETURN_IF_EXCEPTION(throwScope, void());
+
         unsigned argumentStackSlots = callLinkInfo->maxArgumentCountIncludingThis();
         if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
             codePtr = functionExecutable->entrypointFor(kind, MustCheckArity);

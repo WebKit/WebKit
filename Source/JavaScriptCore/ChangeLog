@@ -1,3 +1,46 @@
+2021-09-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] ScriptExecutable::newCodeBlockFor should handle exceptions more predictably
+        https://bugs.webkit.org/show_bug.cgi?id=229787
+
+        Reviewed by Mark Lam.
+
+        ScriptExecutable::newCodeBlockFor has four codepaths -- one for each of EvalExecutable, ProgramExecutable,
+        ModuleProgramExecutable, and FunctionExecutable. These all end up in bool CodeBlock::finishCreation(...),
+        but the first three overwrite the current exception with an OOM error while the last does not.
+        Furthermore, newCodeBlockFor handles exceptions via an out param, which is then returned by its single caller,
+        prepareForExecutionImpl.
+
+        Altogether, this results in some questionable checking of the returned exception against throwScope.exception()
+        at prepareForExecution's callsites in Interpreter and elsewhere.
+
+        This patch aims to make this exception handling clearer and more consistent by:
+        1. not overwriting an existing exception with an OOM error
+        2. doing away with the out param in favor of RETURN_IF_EXCEPTION
+
+        * bytecode/CodeBlock.h:
+        (JSC::ScriptExecutable::prepareForExecution):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        (JSC::virtualForWithFunction):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/ScriptExecutable.h:
+
 2021-09-02  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Fix IndexedDoubleStore InlineAccess for 32 bits

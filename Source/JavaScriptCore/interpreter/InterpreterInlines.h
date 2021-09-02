@@ -88,10 +88,10 @@ ALWAYS_INLINE JSValue Interpreter::execute(CallFrameClosure& closure)
 
     // Reload CodeBlock since GC can replace CodeBlock owned by Executable.
     CodeBlock* codeBlock;
-    Exception* error = closure.functionExecutable->prepareForExecution<FunctionExecutable>(vm, closure.function, closure.scope, CodeForCall, codeBlock);
-    EXCEPTION_ASSERT(throwScope.exception() == error);
-    if (UNLIKELY(error))
-        return checkedReturn(error);
+    closure.functionExecutable->prepareForExecution<FunctionExecutable>(vm, closure.function, closure.scope, CodeForCall, codeBlock);
+    RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
+
+    ASSERT(codeBlock);
     codeBlock->m_shouldAlwaysBeInlined = false;
     {
         DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.

@@ -246,8 +246,7 @@ bool ScriptExecutable::hasClearableCode(VM& vm) const
     return false;
 }
 
-CodeBlock* ScriptExecutable::newCodeBlockFor(
-    CodeSpecializationKind kind, JSFunction* function, JSScope* scope, Exception*& exception)
+CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunction* function, JSScope* scope)
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -262,33 +261,15 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_evalCodeBlock);
         RELEASE_ASSERT(!function);
-        auto* codeBlock = EvalCodeBlock::create(vm,
-            executable, executable->m_unlinkedEvalCodeBlock.get(), scope);
-        EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
-        if (!codeBlock) {
-            exception = throwException(
-                globalObject, throwScope,
-                createOutOfMemoryError(globalObject));
-            return nullptr;
-        }
-        return codeBlock;
+        RELEASE_AND_RETURN(throwScope, EvalCodeBlock::create(vm, executable, executable->m_unlinkedEvalCodeBlock.get(), scope));
     }
-    
+
     if (classInfo(vm) == ProgramExecutable::info()) {
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_programCodeBlock);
         RELEASE_ASSERT(!function);
-        auto* codeBlock = ProgramCodeBlock::create(vm,
-            executable, executable->m_unlinkedProgramCodeBlock.get(), scope);
-        EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
-        if (!codeBlock) {
-            exception = throwException(
-                globalObject, throwScope,
-                createOutOfMemoryError(globalObject));
-            return nullptr;
-        }
-        return codeBlock;
+        RELEASE_AND_RETURN(throwScope, ProgramCodeBlock::create(vm, executable, executable->m_unlinkedProgramCodeBlock.get(), scope));
     }
 
     if (classInfo(vm) == ModuleProgramExecutable::info()) {
@@ -296,16 +277,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_moduleProgramCodeBlock);
         RELEASE_ASSERT(!function);
-        auto* codeBlock = ModuleProgramCodeBlock::create(vm,
-            executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope);
-        EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
-        if (!codeBlock) {
-            exception = throwException(
-                globalObject, throwScope,
-                createOutOfMemoryError(globalObject));
-            return nullptr;
-        }
-        return codeBlock;
+        RELEASE_AND_RETURN(throwScope, ModuleProgramCodeBlock::create(vm, executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope));
     }
 
     RELEASE_ASSERT(classInfo(vm) == FunctionExecutable::info());
@@ -333,16 +305,11 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         executable->m_unlinkedExecutable->hasCapturedVariables(),
         lastLine(), endColumn()); 
     if (!unlinkedCodeBlock) {
-        exception = throwException(
-            globalObject, throwScope,
-            error.toErrorObject(globalObject, executable->source()));
+        throwException(globalObject, throwScope, error.toErrorObject(globalObject, executable->source()));
         return nullptr;
     }
 
-    auto* codeBlock = FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope);
-    if (throwScope.exception())
-        exception = throwScope.exception();
-    return codeBlock;
+    RELEASE_AND_RETURN(throwScope, FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope));
 }
 
 CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
@@ -409,34 +376,32 @@ static void setupJIT(VM& vm, CodeBlock* codeBlock)
 #endif
 }
 
-Exception* ScriptExecutable::prepareForExecutionImpl(
-    VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     DeferGCForAWhile deferGC(vm.heap);
 
     if (UNLIKELY(vm.getAndClearFailNextNewCodeBlock())) {
         JSGlobalObject* globalObject = scope->globalObject(vm);
-        return throwException(globalObject, throwScope, createError(globalObject, "Forced Failure"_s));
+        throwException(globalObject, throwScope, createError(globalObject, "Forced Failure"_s));
+        return;
     }
 
-    Exception* exception = nullptr;
-    CodeBlock* codeBlock = newCodeBlockFor(kind, function, scope, exception);
+    CodeBlock* codeBlock = newCodeBlockFor(kind, function, scope);
+    RETURN_IF_EXCEPTION(throwScope, void());
+
+    ASSERT(codeBlock);
     resultCodeBlock = codeBlock;
-    EXCEPTION_ASSERT(!!throwScope.exception() == !codeBlock);
-    if (UNLIKELY(!codeBlock))
-        return exception;
-    
+
     if (Options::validateBytecode())
         codeBlock->validate();
-    
+
     if (Options::useLLInt())
         setupLLInt(codeBlock);
     else
         setupJIT(vm, codeBlock);
-    
+
     installCode(vm, codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
-    return nullptr;
 }
 
 ScriptExecutable* ScriptExecutable::topLevelExecutable()
