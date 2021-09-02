@@ -1,3 +1,42 @@
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281780. rdar://problem/82650791
+
+    Update availability macros for APIs available in iOS 14.5 and macOS 11.3
+    https://bugs.webkit.org/show_bug.cgi?id=229466
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-08-30
+    Reviewed by Chris Dumez.
+    
+    We mistakenly updated them to 15.0/12.0
+    
+    * UIProcess/API/Cocoa/WKDownload.h:
+    * UIProcess/API/Cocoa/WKDownloadDelegate.h:
+    * UIProcess/API/Cocoa/WKNavigationAction.h:
+    * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+    * UIProcess/API/Cocoa/WKPreferences.h:
+    * UIProcess/API/Cocoa/WKWebView.h:
+    * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281780 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-30  Alex Christensen  <achristensen@webkit.org>
+
+            Update availability macros for APIs available in iOS 14.5 and macOS 11.3
+            https://bugs.webkit.org/show_bug.cgi?id=229466
+
+            Reviewed by Chris Dumez.
+
+            We mistakenly updated them to 15.0/12.0
+
+            * UIProcess/API/Cocoa/WKDownload.h:
+            * UIProcess/API/Cocoa/WKDownloadDelegate.h:
+            * UIProcess/API/Cocoa/WKNavigationAction.h:
+            * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+            * UIProcess/API/Cocoa/WKPreferences.h:
+            * UIProcess/API/Cocoa/WKWebView.h:
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+
 2021-08-25  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r281595. rdar://problem/82365117

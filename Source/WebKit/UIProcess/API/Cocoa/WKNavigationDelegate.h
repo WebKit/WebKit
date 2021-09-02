@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
     WKNavigationActionPolicyCancel,
     WKNavigationActionPolicyAllow,
-    WKNavigationActionPolicyDownload WK_API_AVAILABLE(macos(12.0), ios(15.0)),
+    WKNavigationActionPolicyDownload WK_API_AVAILABLE(macos(11.3), ios(14.5)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! @enum WKNavigationResponsePolicy
@@ -58,7 +58,7 @@ typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
 typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyCancel,
     WKNavigationResponsePolicyAllow,
-    WKNavigationResponsePolicyDownload WK_API_AVAILABLE(macos(12.0), ios(15.0)),
+    WKNavigationResponsePolicyDownload WK_API_AVAILABLE(macos(11.3), ios(14.5)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! A class conforming to the WKNavigationDelegate protocol can provide
@@ -176,7 +176,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param download The download.
  @discussion The download needs its delegate to be set to receive updates about its progress.
 */
-- (void)webView:(WKWebView *)webView navigationAction:(WKNavigationAction *)navigationAction didBecomeDownload:(WKDownload *)download WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)webView:(WKWebView *)webView navigationAction:(WKNavigationAction *)navigationAction didBecomeDownload:(WKDownload *)download WK_API_AVAILABLE(macos(11.3), ios(14.5));
 
 /*
  @abstract Called after using WKNavigationResponsePolicyDownload.
@@ -185,7 +185,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @param download The download.
  @discussion The download needs its delegate to be set to receive updates about its progress.
 */
-- (void)webView:(WKWebView *)webView navigationResponse:(WKNavigationResponse *)navigationResponse didBecomeDownload:(WKDownload *)download WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (void)webView:(WKWebView *)webView navigationResponse:(WKNavigationResponse *)navigationResponse didBecomeDownload:(WKDownload *)download WK_API_AVAILABLE(macos(11.3), ios(14.5));
 
 @end
 
