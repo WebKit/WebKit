@@ -1606,9 +1606,6 @@ void AccessCase::generateWithGuard(
             allocator.lock(stubInfo.m_arrayProfileGPR);
         allocator.lock(scratchGPR);
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
-        GPRReg scratch3GPR = InvalidGPRReg;
-        if (isClamped(type))
-            scratch3GPR = allocator.allocateScratchGPR();
 
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(
             jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
@@ -1621,16 +1618,17 @@ void AccessCase::generateWithGuard(
             if (isClamped(type)) {
                 ASSERT(elementSize(type) == 1);
                 ASSERT(!JSC::isSigned(type));
-                jit.move(valueRegs.payloadGPR(), scratch3GPR);
-                auto inBounds = jit.branch32(CCallHelpers::BelowOrEqual, scratch3GPR, CCallHelpers::TrustedImm32(0xff));
-                auto tooBig = jit.branch32(CCallHelpers::GreaterThan, scratch3GPR, CCallHelpers::TrustedImm32(0xff));
-                jit.xor32(scratch3GPR, scratch3GPR);
+                jit.getEffectiveAddress(CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne), scratch2GPR);
+                jit.move(valueRegs.payloadGPR(), scratchGPR);
+                auto inBounds = jit.branch32(CCallHelpers::BelowOrEqual, scratchGPR, CCallHelpers::TrustedImm32(0xff));
+                auto tooBig = jit.branch32(CCallHelpers::GreaterThan, scratchGPR, CCallHelpers::TrustedImm32(0xff));
+                jit.xor32(scratchGPR, scratchGPR);
                 auto clamped = jit.jump();
                 tooBig.link(&jit);
-                jit.move(CCallHelpers::TrustedImm32(0xff), scratch3GPR);
+                jit.move(CCallHelpers::TrustedImm32(0xff), scratchGPR);
                 clamped.link(&jit);
                 inBounds.link(&jit);
-                jit.store8(scratch3GPR, CCallHelpers::BaseIndex(scratch2GPR, scratchGPR, CCallHelpers::TimesOne));
+                jit.store8(scratchGPR, CCallHelpers::Address(scratch2GPR));
             } else {
                 switch (elementSize(type)) {
                 case 1:

@@ -1,5 +1,34 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281638. rdar://problem/82651129
+
+    [JSC] Segfault in stress/typedarray-every.js (32bit)
+    https://bugs.webkit.org/show_bug.cgi?id=229546
+    
+    Reviewed by Saam Barati.
+    
+    ARMv7 does not have enough registers. Adding workaround by using getEffectiveAddress.
+    
+    * bytecode/AccessCase.cpp:
+    (JSC::AccessCase::generateWithGuard):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281638 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Segfault in stress/typedarray-every.js (32bit)
+            https://bugs.webkit.org/show_bug.cgi?id=229546
+
+            Reviewed by Saam Barati.
+
+            ARMv7 does not have enough registers. Adding workaround by using getEffectiveAddress.
+
+            * bytecode/AccessCase.cpp:
+            (JSC::AccessCase::generateWithGuard):
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281618. rdar://problem/82650928
 
     [JSC] DataIC should not embed StructureStubInfo pointer
