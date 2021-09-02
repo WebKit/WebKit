@@ -899,13 +899,13 @@ class ValidatePatch(buildstep.BuildStep, BugzillaMixin):
 class ValidateCommiterAndReviewer(buildstep.BuildStep):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
-    url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/Tools/Scripts/webkitpy/common/config/contributors.json'
+    url = 'https://raw.githubusercontent.com/WebKit/WebKit/main/metadata/contributors.json'
     contributors = {}
 
     def load_contributors_from_disk(self):
         cwd = os.path.abspath(os.path.dirname(__file__))
-        tools_dir_path = os.path.dirname(os.path.dirname(cwd))
-        contributors_path = os.path.join(tools_dir_path, 'Scripts/webkitpy/common/config/contributors.json')
+        repo_root = os.path.dirname(os.path.dirname(os.path.dirname(cwd)))
+        contributors_path = os.path.join(repo_root, 'metadata/contributors.json')
         try:
             with open(contributors_path, 'rb') as contributors_json:
                 return json.load(contributors_json)
@@ -930,11 +930,12 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             contributors_json = self.load_contributors_from_disk()
 
         contributors = {}
-        for key, value in contributors_json.items():
+        for value in contributors_json:
+            name = value.get('name')
             emails = value.get('emails')
-            if emails:
+            if name and emails:
                 bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
-                contributors[bugzilla_email] = {'name': key, 'status': value.get('status')}
+                contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
         return contributors
 
     @defer.inlineCallbacks

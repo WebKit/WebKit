@@ -4216,8 +4216,8 @@ class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase
 
     def test_load_contributors_from_disk(self):
         ValidateCommiterAndReviewer._addToLog = lambda cls, logtype, log: sys.stdout.write(log)
-        contributors = ValidateCommiterAndReviewer().load_contributors_from_disk()
-        self.assertEqual(contributors['Aakash Jain']['nicks'], ['aakash_jain'])
+        contributors = filter(lambda element: element.get('name') == 'Aakash Jain', ValidateCommiterAndReviewer().load_contributors_from_disk())
+        self.assertEqual(list(contributors)[0]['emails'], ['aakash_jain@apple.com'])
 
 
 class TestCheckPatchStatusOnEWSQueues(BuildStepMixinAdditions, unittest.TestCase):
