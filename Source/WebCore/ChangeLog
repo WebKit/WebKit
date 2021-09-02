@@ -1,5 +1,66 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281787. rdar://problem/82651372
+
+    Web Inspector: Refactor `WorkerInspectorAgent` to use weak pointers for `WorkerInspectorProxy`s
+    https://bugs.webkit.org/show_bug.cgi?id=229632
+    
+    Reviewed by Chris Dumez.
+    
+    Covered by existing tests in LayoutTests/inspector/worker/*
+    
+    Make `WorkerInspectorProxy` reference counted, and use `WeakPtr`s to them in `InspectorWorkerAgent`.
+    
+    * inspector/agents/InspectorWorkerAgent.cpp:
+    (WebCore::InspectorWorkerAgent::initialized):
+    (WebCore::InspectorWorkerAgent::sendMessageToWorker):
+    (WebCore::InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage):
+    (WebCore::InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies):
+    (WebCore::InspectorWorkerAgent::connectToWorkerInspectorProxy):
+    * inspector/agents/InspectorWorkerAgent.h:
+    * workers/WorkerInspectorProxy.cpp:
+    (WebCore::WorkerInspectorProxy::allWorkerInspectorProxies):
+    (WebCore::WorkerInspectorProxy::workerStarted):
+    (WebCore::WorkerInspectorProxy::workerTerminated):
+    * workers/WorkerInspectorProxy.h:
+    (WebCore::WorkerInspectorProxy::create):
+    * workers/WorkerMessagingProxy.cpp:
+    (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+    * workers/WorkerMessagingProxy.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281787 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-30  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: Refactor `WorkerInspectorAgent` to use weak pointers for `WorkerInspectorProxy`s
+            https://bugs.webkit.org/show_bug.cgi?id=229632
+
+            Reviewed by Chris Dumez.
+
+            Covered by existing tests in LayoutTests/inspector/worker/*
+
+            Make `WorkerInspectorProxy` reference counted, and use `WeakPtr`s to them in `InspectorWorkerAgent`.
+
+            * inspector/agents/InspectorWorkerAgent.cpp:
+            (WebCore::InspectorWorkerAgent::initialized):
+            (WebCore::InspectorWorkerAgent::sendMessageToWorker):
+            (WebCore::InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage):
+            (WebCore::InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies):
+            (WebCore::InspectorWorkerAgent::connectToWorkerInspectorProxy):
+            * inspector/agents/InspectorWorkerAgent.h:
+            * workers/WorkerInspectorProxy.cpp:
+            (WebCore::WorkerInspectorProxy::allWorkerInspectorProxies):
+            (WebCore::WorkerInspectorProxy::workerStarted):
+            (WebCore::WorkerInspectorProxy::workerTerminated):
+            * workers/WorkerInspectorProxy.h:
+            (WebCore::WorkerInspectorProxy::create):
+            * workers/WorkerMessagingProxy.cpp:
+            (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+            * workers/WorkerMessagingProxy.h:
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281700. rdar://problem/82650954
 
     REGRESSION (r276882): Shadow trees may use stale style information after inline stylesheet is mutated via CSSOM

@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -70,7 +71,7 @@ private:
     RefPtr<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
 
     Page& m_page;
-    HashMap<String, WorkerInspectorProxy*> m_connectedProxies;
+    HashMap<String, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
     bool m_enabled { false };
 };
 

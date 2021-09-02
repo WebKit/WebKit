@@ -58,7 +58,7 @@ WorkerGlobalScopeProxy& WorkerGlobalScopeProxy::create(Worker& worker)
 
 WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
     : m_scriptExecutionContext(workerObject.scriptExecutionContext())
-    , m_inspectorProxy(makeUnique<WorkerInspectorProxy>(workerObject.identifier()))
+    , m_inspectorProxy(WorkerInspectorProxy::create(workerObject.identifier()))
     , m_workerObject(&workerObject)
 {
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
