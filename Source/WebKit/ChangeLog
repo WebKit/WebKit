@@ -1,3 +1,22 @@
+2021-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Gracefully recover from WebAuthnProcess crashes
+        https://bugs.webkit.org/show_bug.cgi?id=229828
+        <rdar://82682650>
+
+        Reviewed by Chris Dumez.
+
+        When a WebAuthn process closes, it can't be connected with again, which causes persistent web process "crashes".
+        Let's start a new process when this happens instead.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _webAuthnProcessIdentifier]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+        (WebKit::sharedProcess):
+        (WebKit::WebAuthnProcessProxy::singleton):
+        (WebKit::WebAuthnProcessProxy::webAuthnProcessCrashed):
+
 2021-09-02  Chris Dumez  <cdumez@apple.com>
 
         [ BigSur arm64 Debug EWS ] ASSERTION FAILED: m_uncommittedState.state == State::Provisional

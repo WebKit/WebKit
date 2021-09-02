@@ -51,24 +51,30 @@
 namespace WebKit {
 using namespace WebCore;
 
+static RefPtr<WebAuthnProcessProxy>& sharedProcess()
+{
+    static NeverDestroyed<RefPtr<WebAuthnProcessProxy>> process;
+    return process.get();
+}
+
 WebAuthnProcessProxy& WebAuthnProcessProxy::singleton()
 {
     ASSERT(RunLoop::isMain());
 
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<Ref<WebAuthnProcessProxy>> webAuthnProcess;
-
-    std::call_once(onceFlag, [] {
-        webAuthnProcess.construct(adoptRef(*new WebAuthnProcessProxy));
+    auto createAndInitializeNewProcess = [] {
+        auto webAuthnProcess = adoptRef(*new WebAuthnProcessProxy);
 
         WebAuthnProcessCreationParameters parameters;
 
         // Initialize the WebAuthn process.
-        webAuthnProcess.get()->send(Messages::WebAuthnProcess::InitializeWebAuthnProcess(parameters), 0);
-        webAuthnProcess.get()->updateProcessAssertion();
-    });
+        webAuthnProcess->send(Messages::WebAuthnProcess::InitializeWebAuthnProcess(parameters), 0);
+        webAuthnProcess->updateProcessAssertion();
+        return webAuthnProcess;
+    };
 
-    return webAuthnProcess.get();
+    if (!sharedProcess())
+        sharedProcess() = createAndInitializeNewProcess();
+    return *sharedProcess();
 }
 
 WebAuthnProcessProxy::WebAuthnProcessProxy()
@@ -118,6 +124,7 @@ void WebAuthnProcessProxy::webAuthnProcessCrashed()
 {
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->terminateAllWebContentProcesses();
+    sharedProcess() = nullptr;
 }
 
 void WebAuthnProcessProxy::didClose(IPC::Connection&)
