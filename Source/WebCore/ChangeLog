@@ -1,5 +1,42 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281813. rdar://problem/82651722
+
+    REGRESSION (r272900): wpt.fyi loading performance is very slow (regressed, and slower than other browsers)
+    https://bugs.webkit.org/show_bug.cgi?id=229680
+    <rdar://problem/82541045>
+    
+    Reviewed by Darin Adler.
+    
+    The page is inserting new children to shadow host and on each insertion we are traversing the composed
+    tree to tear down renderers, even though there are none.
+    
+    * rendering/updating/RenderTreeUpdater.cpp:
+    (WebCore::RenderTreeUpdater::tearDownRenderersAfterSlotChange):
+    
+    If the host doesn't have a renderer or 'display:contents' there can't be any renderers left in the subtree.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281813 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-31  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r272900): wpt.fyi loading performance is very slow (regressed, and slower than other browsers)
+            https://bugs.webkit.org/show_bug.cgi?id=229680
+            <rdar://problem/82541045>
+
+            Reviewed by Darin Adler.
+
+            The page is inserting new children to shadow host and on each insertion we are traversing the composed
+            tree to tear down renderers, even though there are none.
+
+            * rendering/updating/RenderTreeUpdater.cpp:
+            (WebCore::RenderTreeUpdater::tearDownRenderersAfterSlotChange):
+
+            If the host doesn't have a renderer or 'display:contents' there can't be any renderers left in the subtree.
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281787. rdar://problem/82651372
 
     Web Inspector: Refactor `WorkerInspectorAgent` to use weak pointers for `WorkerInspectorProxy`s
