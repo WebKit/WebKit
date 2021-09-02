@@ -47,7 +47,7 @@ public:
 
     bool has(FontFace&) const;
     size_t size();
-    FontFaceSet& add(FontFace&);
+    ExceptionOr<FontFaceSet&> add(FontFace&);
     bool remove(FontFace&);
     void clear();
 

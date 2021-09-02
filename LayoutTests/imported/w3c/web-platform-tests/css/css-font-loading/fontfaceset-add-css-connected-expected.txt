@@ -1,3 +1,3 @@
 
-FAIL fontfaceset-add-css-connected assert_throws_dom: function "function () { fontFaceSet.add(font); }" did not throw
+PASS fontfaceset-add-css-connected
 

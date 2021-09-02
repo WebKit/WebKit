@@ -35,12 +35,9 @@ shouldBeTrue("object.done");
 
 var fontFaceSet = new FontFaceSet([]);
 fontFaceSet.add(new FontFace("MyFont2", "url(\"asdf\")", {}));
-fontFaceSet.add(document.fonts.keys().next().value);
-shouldBe("fontFaceSet.size", "2");
+shouldThrow("fontFaceSet.add(document.fonts.keys().next().value)");
+shouldBe("fontFaceSet.size", "1");
 iterator = fontFaceSet.keys();
-object = iterator.next();
-shouldBeFalse("object.done");
-shouldBeEqualToString("object.value.family", "MyFont1");
 object = iterator.next();
 shouldBeFalse("object.done");
 shouldBeEqualToString("object.value.family", "MyFont2");

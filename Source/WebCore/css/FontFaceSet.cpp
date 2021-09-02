@@ -117,10 +117,13 @@ size_t FontFaceSet::size()
     return protect->faceCount();
 }
 
-FontFaceSet& FontFaceSet::add(FontFace& face)
+ExceptionOr<FontFaceSet&> FontFaceSet::add(FontFace& face)
 {
-    if (!m_backing->hasFace(face.backing()))
-        m_backing->add(face.backing());
+    if (m_backing->hasFace(face.backing()))
+        return *this;
+    if (face.backing().cssConnection())
+        return Exception(InvalidModificationError);
+    m_backing->add(face.backing());
     return *this;
 }
 

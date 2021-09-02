@@ -1,3 +1,13 @@
+2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFaceSet.add() needs to throw when called on a CSS-connected font
+        https://bugs.webkit.org/show_bug.cgi?id=229641
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-face-set-document-expected.txt:
+        * fast/text/font-face-set-document.html:
+
 2021-09-02  Peng Liu  <peng.liu6@apple.com>
 
         [MSE][GPUP] SourceBufferPrivateAVFObjC does not work properly when audio and video exchange their track IDs
