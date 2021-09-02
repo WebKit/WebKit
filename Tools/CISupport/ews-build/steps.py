@@ -275,7 +275,7 @@ class CleanWorkingDirectory(shell.ShellCommand):
     descriptionDone = ['Cleaned working directory']
     flunkOnFailure = True
     haltOnFailure = True
-    command = ['python', 'Tools/Scripts/clean-webkit']
+    command = ['python3', 'Tools/Scripts/clean-webkit']
 
     def __init__(self, **kwargs):
         super(CleanWorkingDirectory, self).__init__(logEnviron=False, **kwargs)
@@ -2782,7 +2782,7 @@ class TransferToS3(master.MasterShellCommand):
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
-    command = ['python', 'Tools/CISupport/download-built-product',
+    command = ['python3', 'Tools/CISupport/download-built-product',
                WithProperties('--%(configuration)s'),
                WithProperties(S3URL + 'ews-archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     name = 'download-built-product'
@@ -3073,7 +3073,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
 
 
 class ArchiveTestResults(shell.ShellCommand):
-    command = ['python', 'Tools/CISupport/test-result-archive',
+    command = ['python3', 'Tools/CISupport/test-result-archive',
                Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']
     name = 'archive-test-results'
     description = ['archiving test results']

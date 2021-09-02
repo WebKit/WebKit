@@ -1,3 +1,22 @@
+2021-09-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Move few scripts from python 2 to python3
+        https://bugs.webkit.org/show_bug.cgi?id=229817
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/clean-webkit: Changed shebang to python3.
+        * CISupport/test-result-archive: Ditto.
+        * CISupport/ews-build/steps.py: Ditto.
+        * CISupport/build-webkit-org/steps.py:
+        (DownloadBuiltProduct): Use python 3 instead of python 2.
+        (ArchiveTestResults): Ditto.
+        * CISupport/download-built-product: Ditto.
+        (CleanWorkingDirectory):
+        (DownloadBuiltProduct):
+        (ArchiveTestResults):
+        * CISupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Relocation (Part 5)

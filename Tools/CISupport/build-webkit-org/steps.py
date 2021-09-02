@@ -395,7 +395,7 @@ class UploadMinifiedBuiltProduct(UploadBuiltProduct):
 
 
 class DownloadBuiltProduct(shell.ShellCommand):
-    command = ["python", "./Tools/CISupport/download-built-product",
+    command = ["python3", "./Tools/CISupport/download-built-product",
         WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"),
         WithProperties(S3URL + "archives.webkit.org/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(got_revision)s.zip")]
     name = "download-built-product"
@@ -1091,7 +1091,7 @@ class RunBenchmarkTests(shell.Test):
 
 
 class ArchiveTestResults(shell.ShellCommand):
-    command = ["python", "./Tools/CISupport/test-result-archive",
+    command = ["python3", "./Tools/CISupport/test-result-archive",
                WithProperties("--platform=%(platform)s"), WithProperties("--%(configuration)s"), "archive"]
     name = "archive-test-results"
     description = ["archiving test results"]
