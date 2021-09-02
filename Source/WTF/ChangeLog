@@ -1,3 +1,18 @@
+2021-09-02  Mark Lam  <mark.lam@apple.com>
+
+        Add more support for JIT operation validation testing.
+        https://bugs.webkit.org/show_bug.cgi?id=229534
+        rdar://81526335
+
+        Reviewed by Saam Barati.
+
+        * wtf/PlatformCallingConventions.h:
+        * wtf/PtrTag.h:
+        (WTF::PtrTagTraits::isTagged):
+        (WTF::isTaggedNativeCodePtrImpl):
+        (WTF::isTaggedWith):
+        (WTF::assertIsTaggedWith):
+
 2021-08-26  Darin Adler  <darin@apple.com>
 
         Cut down on use of CFGetTypeID, using dynamic_cf_cast instead; related streamlining

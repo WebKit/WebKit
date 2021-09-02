@@ -1,3 +1,80 @@
+2021-09-02  Mark Lam  <mark.lam@apple.com>
+
+        Add more support for JIT operation validation testing.
+        https://bugs.webkit.org/show_bug.cgi?id=229534
+        rdar://81526335
+
+        Reviewed by Saam Barati.
+
+        1. Added a JITOperationValidation.h to tidy up the code for supporting JIT
+           operation validation.
+
+        2. Introduce a JITOperationAnnotation struct to record JIT operation function
+           pointers, with an extra pointer field for a validation test function.
+
+        3. Changed JSC_ANNOTATE_JIT_OPERATION to capture a JITOperationAnnotation struct
+           instead of just a single operation pointer.
+
+        4. Converted the static addPointers() function in JITOperationList.cpp into a
+           member function of JITOperationList.  This allows for the code to be more
+           terse, as well as enables the use of an inverse map mechanism on debug builds
+           only.
+
+        5. Added more macros to help differentiate between different types of JIT
+           operation functions.
+
+        6. Made all JIT operation functions use extern "C" linkage to make it possible to
+           write validation tests in assembly so that we can run them on a release build
+           as well without taking too much time.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/JITOperationList.cpp:
+        (JSC::JITOperationList::addInverseMap):
+        (JSC::JITOperationList::addPointers):
+        (JSC::JITOperationList::populatePointersInJavaScriptCore):
+        (JSC::JITOperationList::populatePointersInJavaScriptCoreForLLInt):
+        (JSC::JITOperationList::populatePointersInEmbedder):
+        (JSC::addPointers): Deleted.
+        * assembler/JITOperationList.h:
+        (JSC::JITOperationList::map const):
+        (JSC::JITOperationList::inverseMap const):
+        (JSC::JITOperationList::assertIsJITOperation):
+        (JSC::JITOperationList::assertIsJITOperationWithvalidation):
+        * assembler/JITOperationValidation.h: Added.
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARM64.h:
+        * assembler/MacroAssemblerARM64E.h:
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerMIPS.cpp:
+        * assembler/MacroAssemblerX86Common.cpp:
+        * b3/testb3.h:
+        * b3/testb3_1.cpp:
+        * b3/testb3_5.cpp:
+        * b3/testb3_7.cpp:
+        * dfg/DFGOSRExit.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        * jit/Repatch.cpp:
+        (JSC::retagOperationWithValidation):
+        (JSC::retagCallTargetWithValidation):
+        (JSC::readPutICCallTarget):
+        * jit/ThunkGenerators.cpp:
+        * jsc.cpp:
+        * llint/LLIntData.cpp:
+        * llint/LLIntThunks.cpp:
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSCPtrTag.h:
+        (JSC::tagJSCCodePtrImpl):
+        (JSC::untagJSCCodePtrImpl):
+        (JSC::isTaggedJSCCodePtrImpl):
+        * runtime/MathCommon.h:
+        * runtime/Options.cpp:
+        (JSC::canUseJITCage):
+        * tools/JSDollarVM.cpp:
+        * yarr/YarrJIT.cpp:
+
 2021-09-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed exception scope verification fix for r241171.

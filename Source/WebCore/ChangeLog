@@ -1,3 +1,19 @@
+2021-09-02  Mark Lam  <mark.lam@apple.com>
+
+        Add more support for JIT operation validation testing.
+        https://bugs.webkit.org/show_bug.cgi?id=229534
+        rdar://81526335
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/WebCoreJITOperations.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJITDOMConstructor::prototypeForStructure):
+        * cssjit/SelectorCompiler.cpp:
+        * testing/js/WebCoreTestSupport.cpp:
+
 2021-09-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Implement ANGLE version of WebGL layer snapshot copyImageSnapshotWithColorSpace

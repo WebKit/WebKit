@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,6 +80,9 @@ ALWAYS_INLINE static PtrType untagNativeCodePtrImpl(PtrType ptr)
 #endif
 }
 
+template<PtrTag tag, typename PtrType>
+ALWAYS_INLINE static bool isTaggedNativeCodePtrImpl(PtrType);
+
 template<PtrTag passedTag>
 struct PtrTagTraits {
     static constexpr PtrTag tag = passedTag;
@@ -97,6 +100,12 @@ struct PtrTagTraits {
     ALWAYS_INLINE static PtrType untagCodePtr(PtrType ptr)
     {
         return untagNativeCodePtrImpl<tag>(ptr);
+    }
+
+    template<typename PtrType>
+    ALWAYS_INLINE static bool isTagged(PtrType ptr)
+    {
+        return isTaggedNativeCodePtrImpl<tag>(ptr);
     }
 };
 
@@ -323,19 +332,30 @@ void assertIsNotTagged(PtrType value)
 }
 
 template<PtrTag tag, typename PtrType>
+ALWAYS_INLINE static bool isTaggedNativeCodePtrImpl(PtrType ptr)
+{
+#if CPU(ARM64E)
+    return ptr == tagNativeCodePtrImpl<tag>(removeCodePtrTag(ptr));
+#else
+    UNUSED_PARAM(ptr);
+    return true;
+#endif
+}
+
+template<PtrTag tag, typename PtrType>
 bool isTaggedWith(PtrType value)
 {
     void* ptr = bitwise_cast<void*>(value);
     if (tag == NoPtrTag)
         return ptr == removeCodePtrTag(ptr);
-    return ptr == tagCodePtrImpl<PtrTagAction::NoAssert, tag>(removeCodePtrTag(ptr));
+    return PtrTagTraits<tag>::isTagged(ptr);
 }
 
 template<PtrTag tag, typename PtrType>
 void assertIsTaggedWith(PtrType value)
 {
     UNUSED_PARAM(value);
-    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, value, tag, isTaggedWith<tag>(value));
+    WTF_PTRTAG_ASSERT(PtrTagAction::DebugAssert, value, tag, PtrTagTraits<tag>::isTagged(value));
 }
 
 template<PtrTag tag, typename PtrType>

@@ -1,3 +1,15 @@
+2021-09-02  Mark Lam  <mark.lam@apple.com>
+
+        Add more support for JIT operation validation testing.
+        https://bugs.webkit.org/show_bug.cgi?id=229534
+        rdar://81526335
+
+        Reviewed by Saam Barati.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        * bmalloc/GigacageConfig.h:
+
 2021-08-04  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] medium size class lookup needs to correctly fence the counting lock read path

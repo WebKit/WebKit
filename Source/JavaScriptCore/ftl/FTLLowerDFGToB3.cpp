@@ -120,7 +120,7 @@ namespace {
 std::atomic<int> compileCounter;
 
 #if ASSERT_ENABLED
-static NO_RETURN_DUE_TO_CRASH JSC_DECLARE_JIT_OPERATION(ftlUnreachable, void, (CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex));
+JSC_DECLARE_JIT_OPERATION_WITH_ATTRIBUTES(ftlUnreachable, NO_RETURN_DUE_TO_CRASH, void, (CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex));
 JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(ftlUnreachable, NO_RETURN_DUE_TO_CRASH, void, (CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex))
 {
     dataLog("Crashing in thought-to-be-unreachable FTL-generated code for ", pointerDump(codeBlock), " at basic block #", blockIndex);

@@ -34,29 +34,63 @@ namespace JSC {
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
 
+// This indirection is provided so that we can manually force on assertions for
+// testing even on release builds.
+#define JIT_OPERATION_VALIDATION_ASSERT_ENABLED ASSERT_ENABLED
+
+struct JITOperationAnnotation;
+
 class JITOperationList {
 public:
     static JITOperationList& instance();
     static void initialize();
 
-    void* map(void* pointer) const
+    template<typename PtrType>
+    void* map(PtrType pointer) const
     {
-        return m_validatedOperations.get(removeCodePtrTag(pointer));
+        return m_validatedOperations.get(removeCodePtrTag(bitwise_cast<void*>(pointer)));
     }
+
+#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+    template<typename PtrType>
+    void* inverseMap(PtrType pointer) const
+    {
+        return m_validatedOperationsInverseMap.get(bitwise_cast<void*>(pointer));
+    }
+#endif
 
     static void populatePointersInJavaScriptCore();
     static void populatePointersInJavaScriptCoreForLLInt();
 
-    JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const uintptr_t* beginOperations, const uintptr_t* endOperations);
+    JS_EXPORT_PRIVATE static void populatePointersInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations);
 
     template<typename T> static void assertIsJITOperation(T function)
     {
         UNUSED_PARAM(function);
-        ASSERT(!Options::useJIT() || JITOperationList::instance().map(bitwise_cast<void*>(function)));
+#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+        RELEASE_ASSERT(!Options::useJIT() || JITOperationList::instance().map(function));
+#endif
+    }
+
+    template<typename T> static void assertIsJITOperationWithValidation(T function)
+    {
+        UNUSED_PARAM(function);
+#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+        RELEASE_ASSERT(!Options::useJIT() || JITOperationList::instance().inverseMap(function));
+#endif
     }
 
 private:
+    ALWAYS_INLINE void addPointers(const JITOperationAnnotation* begin, const JITOperationAnnotation* end);
+
+#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+    void addInverseMap(void* validationEntry, void* pointer);
+#endif
+
     HashMap<void*, void*> m_validatedOperations;
+#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+    HashMap<void*, void*> m_validatedOperationsInverseMap;
+#endif
 };
 
 JS_EXPORT_PRIVATE extern LazyNeverDestroyed<JITOperationList> jitOperationList;
@@ -76,6 +110,7 @@ public:
     static void populatePointersInJavaScriptCoreForLLInt() { }
 
     template<typename T> static void assertIsJITOperation(T) { }
+    template<typename T> static void assertIsJITOperationWithValidation(T) { }
 };
 
 #endif // ENABLE(JIT_OPERATION_VALIDATION)

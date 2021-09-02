@@ -26,10 +26,8 @@
 #pragma once
 
 #include "JITOperationList.h"
+#include "JITOperationValidation.h"
 #include <wtf/PtrTag.h>
-#if ENABLE(JIT_CAGE)
-#include <WebKitAdditions/JITCageAdditions.h>
-#endif
 
 #if ENABLE(JIT_CAGE)
 extern "C" JS_EXPORT_PRIVATE void* jitCagePtr(void* pointer, uintptr_t tag);
@@ -104,6 +102,15 @@ using PtrTag = WTF::PtrTag;
             else \
                 return JSC::untagJSCCodePtrImpl<tag, calleeType, callerType>(ptr); \
         } \
+    \
+        template<typename PtrType> \
+        ALWAYS_INLINE static bool isTagged(PtrType ptr) \
+        { \
+            if constexpr (!isSpecialized) \
+                return WTF::isTaggedNativeCodePtrImpl<tag>(ptr); \
+            else \
+                return JSC::isTaggedJSCCodePtrImpl<tag, calleeType, callerType>(ptr); \
+        } \
     };
 
 #if COMPILER(MSVC)
@@ -129,7 +136,7 @@ ALWAYS_INLINE static PtrType tagJSCCodePtrImpl(PtrType ptr)
         JITOperationList::assertIsJITOperation(ptr);
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage())
-            return bitwise_cast<PtrType>(JITOperationList::instance().map(bitwise_cast<void*>(ptr)));
+            return bitwise_cast<PtrType>(JITOperationList::instance().map(ptr));
     } else {
         if (Options::useJITCage())
             return bitwise_cast<PtrType>(jitCagePtr(bitwise_cast<void*>(ptr), tag));
@@ -144,11 +151,12 @@ ALWAYS_INLINE static PtrType untagJSCCodePtrImpl(PtrType ptr)
     static_assert(callerType == PtrTagCallerType::JIT);
     if constexpr (calleeType == PtrTagCalleeType::Native) {
         static_assert(tag == OperationPtrTag);
-        JITOperationList::assertIsJITOperation(ptr);
+        JITOperationList::assertIsJITOperationWithValidation(ptr);
 #if ENABLE(JIT_CAGE)
         if (Options::useJITCage()) {
-            RELEASE_ASSERT(bitwise_cast<PtrType>(JITOperationList::instance().map(bitwise_cast<void*>(ptr))) == ptr);
-            return removeCodePtrTag(ptr);
+            // This case is currently not used. If this changes in the future, we'll have to implement
+            // an inverse mapping of a validation operation back to the original operation.
+            RELEASE_ASSERT_NOT_REACHED();
         }
     } else {
         if (Options::useJITCage()) {
@@ -159,6 +167,27 @@ ALWAYS_INLINE static PtrType untagJSCCodePtrImpl(PtrType ptr)
 #endif // ENABLE(JIT_CAGE)
     }
     return WTF::untagNativeCodePtrImpl<tag>(ptr);
+}
+
+template<PtrTag tag, PtrTagCalleeType calleeType, PtrTagCallerType callerType, typename PtrType>
+ALWAYS_INLINE static bool isTaggedJSCCodePtrImpl(PtrType ptr)
+{
+    static_assert(callerType == PtrTagCallerType::JIT);
+    if constexpr (calleeType == PtrTagCalleeType::Native) {
+        static_assert(tag == OperationPtrTag);
+#if ENABLE(JIT_CAGE)
+        if (Options::useJITCage()) {
+#if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
+            return JITOperationList::instance().inverseMap(ptr);
+#else
+            // Not supported. We currently don't use this, and don't have an
+            // efficient way to implement this. So, just assert that it's not used.
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        }
+#endif // ENABLE(JIT_CAGE)
+    }
+    return WTF::isTaggedNativeCodePtrImpl<tag>(ptr);
 }
 
 template<typename PtrType>

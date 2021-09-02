@@ -63,6 +63,8 @@
 namespace WebCore {
 namespace SelectorCompiler {
 
+extern "C" {
+
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAddStyleRelationFunction, void, (SelectorChecker::CheckingContext*, const Element*));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsActive, bool, (const Element*));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsHovered, bool, (const Element*));
@@ -134,6 +136,8 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMat
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
+
+} // extern "C"
 
 #define CSS_SELECTOR_JIT_DEBUGGING 0
 

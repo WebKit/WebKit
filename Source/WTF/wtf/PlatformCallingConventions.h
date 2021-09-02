@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -85,22 +85,45 @@
 #endif
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-#define JSC_ANNOTATE_JIT_OPERATION(functionId, function) \
-    constexpr auto  functionId __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = function;
+#define JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function) \
+    constexpr JSC::JITOperationAnnotation _JITTargetID_##function __attribute__((used, section("__DATA_CONST,__jsc_ops"))) = { (void*)function, (void*)function##Validate };
+
+#define JSC_ANNOTATE_JIT_OPERATION(function) \
+    JSC_DECLARE_AND_DEFINE_JIT_OPERATION_VALIDATION(function); \
+    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function)
+
+#define JSC_ANNOTATE_JIT_OPERATION_PROBE(function) \
+    JSC_DECLARE_AND_DEFINE_JIT_OPERATION_PROBE_VALIDATION(function); \
+    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function)
+
+#define JSC_ANNOTATE_JIT_OPERATION_RETURN(function) \
+    JSC_DECLARE_AND_DEFINE_JIT_OPERATION_RETURN_VALIDATION(function); \
+    JSC_ANNOTATE_JIT_OPERATION_INTERNAL(function)
+
 #else
-#define JSC_ANNOTATE_JIT_OPERATION(functionId, function)
+#define JSC_ANNOTATE_JIT_OPERATION(function)
+#define JSC_ANNOTATE_JIT_OPERATION_PROBE(function)
+#define JSC_ANNOTATE_JIT_OPERATION_RETURN(function)
 #endif
 
 
 #define JSC_DEFINE_JIT_OPERATION_WITHOUT_VARIABLE(functionName, returnType, parameters) \
     returnType JIT_OPERATION_ATTRIBUTES functionName parameters
+
 #define JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, attributes, returnType, parameters) \
-    JSC_ANNOTATE_JIT_OPERATION(_JITTarget_##functionName, static_cast<returnType(*)parameters>(functionName)); \
+    JSC_ANNOTATE_JIT_OPERATION(functionName); \
     attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters
+
 #define JSC_DEFINE_JIT_OPERATION(functionName, returnType, parameters) \
     JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, , returnType, parameters)
+
+#define JSC_DECLARE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, attributes, returnType, parameters) \
+    extern "C" attributes returnType JIT_OPERATION_ATTRIBUTES functionName parameters REFERENCED_FROM_ASM WTF_INTERNAL; \
+    JSC_DECLARE_JIT_OPERATION_VALIDATION(functionName) \
+
 #define JSC_DECLARE_JIT_OPERATION(functionName, returnType, parameters) \
-    returnType JIT_OPERATION_ATTRIBUTES functionName parameters REFERENCED_FROM_ASM WTF_INTERNAL
+    JSC_DECLARE_JIT_OPERATION_WITH_ATTRIBUTES(functionName, , returnType, parameters)
+
 #define JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionName, returnType, parameters) \
     returnType JIT_OPERATION_ATTRIBUTES functionName parameters REFERENCED_FROM_ASM
 

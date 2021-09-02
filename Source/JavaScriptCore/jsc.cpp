@@ -3634,8 +3634,8 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 }
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-extern const uintptr_t startOfJITOperationsInShell __asm("section$start$__DATA_CONST$__jsc_ops");
-extern const uintptr_t endOfJITOperationsInShell __asm("section$end$__DATA_CONST$__jsc_ops");
+extern const JITOperationAnnotation startOfJITOperationsInShell __asm("section$start$__DATA_CONST$__jsc_ops");
+extern const JITOperationAnnotation endOfJITOperationsInShell __asm("section$end$__DATA_CONST$__jsc_ops");
 #endif
 
 int jscmain(int argc, char** argv)
