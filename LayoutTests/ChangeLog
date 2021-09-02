@@ -1,3 +1,12 @@
+2021-09-02  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur arm64 EWS ] ASSERTION FAILED: !needsLayout() ./rendering/RenderView.cpp(305) : virtual void WebCore::RenderView::paint(WebCore::PaintInfo &, const WebCore::LayoutPoint &).
+        https://bugs.webkit.org/show_bug.cgi?id=229820
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-02  Eric Hutchison  <ehutchison@apple.com>
 
         Reset expectations for fast/mediastream/get-display-media-capabilities.html.

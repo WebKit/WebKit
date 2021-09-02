@@ -1023,6 +1023,8 @@ webkit.org/b/183684 http/tests/appcache/abort-cache-onprogress.html [ Pass Failu
 
 webkit.org/b/207303 loader/stateobjects/pushstate-size-iframe.html [ Pass Crash ]
 
+webkit.org/b/229820 [ BigSur Debug arm64 ] loader/stateobjects/pushstate-size.html [ Pass Crash ]
+
 webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
 
 webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
