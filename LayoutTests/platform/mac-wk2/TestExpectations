@@ -1386,6 +1386,8 @@ webkit.org/b/222210 imported/w3c/web-platform-tests/media-source/SourceBuffer-ab
 
 webkit.org/b/223131 [ Debug ] imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Pass Failure ]
 
+webkit.org/b/229832 imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
+
 webkit.org/b/221759 [ Release ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Pass Timeout ]
 
 webkit.org/b/223206 http/tests/local/loading-stylesheet-import-remove.html [ Pass ImageOnlyFailure ]
