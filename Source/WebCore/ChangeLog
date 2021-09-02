@@ -1,3 +1,65 @@
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281367. rdar://problem/82651467
+
+    Prevent AudioSession category from moving out of PlayAndRecord too quickly
+    https://bugs.webkit.org/show_bug.cgi?id=229327
+    <rdar://81997024>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    If category is PlayAndRecord, we stick to PlayAndRecord until audio is no longer playing at which point we
+    transition to whatever category is most appropriate.
+    Introduce PlatformMediaSession::isPlaying in addition to canProduceAudio to compute whether audio is being played.
+    
+    Test: http/tests/media/media-stream/audio-capture-and-category.https.html
+    
+    * Modules/webaudio/AudioContext.cpp:
+    (WebCore::AudioContext::isPlaying const):
+    * Modules/webaudio/AudioContext.h:
+    * html/HTMLMediaElement.h:
+    * platform/audio/PlatformMediaSession.cpp:
+    (WebCore::PlatformMediaSession::isPlaying const):
+    * platform/audio/PlatformMediaSession.h:
+    (WebCore::PlatformMediaSessionClient::isPlaying const):
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (WebCore::MediaSessionManagerCocoa::updateSessionState):
+    
+    LayoutTests:
+    
+    * http/tests/media/media-stream/audio-capture-and-category.https-expected.txt: Added.
+    * http/tests/media/media-stream/audio-capture-and-category.https.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281367 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-21  Youenn Fablet  <youenn@apple.com>
+
+            Prevent AudioSession category from moving out of PlayAndRecord too quickly
+            https://bugs.webkit.org/show_bug.cgi?id=229327
+            <rdar://81997024>
+
+            Reviewed by Eric Carlson.
+
+            If category is PlayAndRecord, we stick to PlayAndRecord until audio is no longer playing at which point we
+            transition to whatever category is most appropriate.
+            Introduce PlatformMediaSession::isPlaying in addition to canProduceAudio to compute whether audio is being played.
+
+            Test: http/tests/media/media-stream/audio-capture-and-category.https.html
+
+            * Modules/webaudio/AudioContext.cpp:
+            (WebCore::AudioContext::isPlaying const):
+            * Modules/webaudio/AudioContext.h:
+            * html/HTMLMediaElement.h:
+            * platform/audio/PlatformMediaSession.cpp:
+            (WebCore::PlatformMediaSession::isPlaying const):
+            * platform/audio/PlatformMediaSession.h:
+            (WebCore::PlatformMediaSessionClient::isPlaying const):
+            * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+            (WebCore::MediaSessionManagerCocoa::updateSessionState):
+
 2021-08-25  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r281245. rdar://problem/82354967

@@ -485,6 +485,11 @@ bool AudioContext::isSuspended() const
     return !document() || document()->activeDOMObjectsAreSuspended() || document()->activeDOMObjectsAreStopped();
 }
 
+bool AudioContext::isPlaying() const
+{
+    return state() == State::Running;
+}
+
 void AudioContext::pageMutedStateDidChange()
 {
     if (document() && document()->page())
