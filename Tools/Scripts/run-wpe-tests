@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
-# Copyright (C) 2017 Igalia S.L.
+# Copyright (C) 2017, 2021 Igalia S.L.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public

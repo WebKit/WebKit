@@ -37,12 +37,12 @@ from io import BytesIO
  LOG_MAX_RESULT,
  LOG_MESSAGE,
  LOG_START_SUITE,
- LOG_STOP_SUITE) = range(12)
+ LOG_STOP_SUITE) = list(range(12))
 
 (TEST_RUN_SUCCESS,
  TEST_RUN_SKIPPED,
  TEST_RUN_FAILURE,
- TEST_RUN_INCOMPLETE) = range(4)
+ TEST_RUN_INCOMPLETE) = list(range(4))
 
 
 class TestTimeout(Exception):
@@ -72,7 +72,7 @@ class Message(object):
             values = []
             for i in range(n):
                 str_len = read_unsigned(bytes)[0]
-                values.append(struct.unpack('%ds' % str_len, bytes.read(str_len))[0])
+                values.append(struct.unpack('%ds' % str_len, bytes.read(str_len))[0].decode('utf-8'))
             return values
 
         bytes = BytesIO(data)
@@ -127,7 +127,7 @@ class GLibTestRunner(object):
             self._subtest_message([message.strings[0]])
 
     def _read_from_pipe(self, pipe_r):
-        data = ''
+        data = b''
         read_set = [pipe_r]
         while read_set:
             try:
@@ -165,7 +165,7 @@ class GLibTestRunner(object):
             if not buffer:
                 return data
 
-            data += buffer
+            data += buffer.decode('utf-8')
 
     @staticmethod
     def _start_timeout(timeout):
@@ -248,7 +248,10 @@ class GLibTestRunner(object):
         if not self._results:
             sys.stdout.write('TEST: %s...\n' % self._test_binary)
             sys.stdout.flush()
-        p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env)
+        if sys.version_info.major > 2:
+            p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env, pass_fds=[pipe_w])
+        else:
+            p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env)
         self._stderr_fd = p.stderr.fileno()
         os.close(pipe_w)
 

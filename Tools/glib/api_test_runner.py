@@ -199,7 +199,7 @@ class TestRunner(object):
 
     def _get_tests_from_google_test_suite(self, test_program, skipped_test_cases):
         try:
-            output = subprocess.check_output([test_program, '--gtest_list_tests'], env=self._test_env)
+            output = subprocess.check_output([test_program, '--gtest_list_tests'], env=self._test_env).decode('utf-8')
         except subprocess.CalledProcessError:
             sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
             sys.stderr.flush()
@@ -313,7 +313,7 @@ class TestRunner(object):
                 if number_of_executed_subtests_for_test > 1:
                     number_of_executed_tests += number_of_executed_subtests_for_test
                     number_of_total_tests += number_of_executed_subtests_for_test
-                for test_case, result in results.iteritems():
+                for test_case, result in results.items():
                     if result in self._expectations.get_expectation(os.path.basename(test), test_case):
                         continue
 
@@ -329,7 +329,7 @@ class TestRunner(object):
             self._tear_down_testing_environment()
 
         def number_of_tests(tests):
-            return sum(len(value) for value in tests.itervalues())
+            return sum(len(value) for value in tests.values())
 
         def report(tests, title, base_dir):
             if not tests:

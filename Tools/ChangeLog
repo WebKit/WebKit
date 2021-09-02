@@ -1,3 +1,44 @@
+2021-09-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Port API test runner to python3
+        https://bugs.webkit.org/show_bug.cgi?id=229782
+
+        Reviewed by Philippe Normand.
+
+        Port the GTK/WPE API test runner to be compatible with python3
+        and set it to run with python3 by default.
+        The runner is still compatible with python2 after this patch, so
+        we can land this without immediately requiring a restart of the CI.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner): Deleted.
+        (GtkTestRunner.__init__): Deleted.
+        (GtkTestRunner._ensure_accessibility_service_is_running): Deleted.
+        (GtkTestRunner._setup_testing_environment): Deleted.
+        (GtkTestRunner._tear_down_testing_environment): Deleted.
+        (GtkTestRunner.is_glib_test): Deleted.
+        (GtkTestRunner.is_google_test): Deleted.
+        (GtkTestRunner.is_qt_test): Deleted.
+        * Scripts/run-perf-tests:
+        * Scripts/run-wpe-tests:
+        (WPETestRunner): Deleted.
+        (WPETestRunner.__init__): Deleted.
+        (WPETestRunner.is_glib_test): Deleted.
+        (WPETestRunner.is_google_test): Deleted.
+        (WPETestRunner.is_qt_test): Deleted.
+        * glib/api_test_runner.py:
+        (TestRunner._get_tests_from_google_test_suite):
+        (TestRunner.run_tests):
+        (TestRunner.run_tests.number_of_tests):
+        * glib/common.py:
+        (parse_output_lines):
+        * glib/glib_test_runner.py:
+        (Message.create.read_string):
+        (Message):
+        (GLibTestRunner._read_from_pipe):
+        (GLibTestRunner._read_from_stderr):
+        (GLibTestRunner.run):
+
 2021-09-01  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Relocation (Part 2)

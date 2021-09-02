@@ -2857,7 +2857,7 @@ class RunAPITests(TestWithFailureCount):
     def start(self):
         platform = self.getProperty('platform')
         if platform == 'gtk':
-            command = ['python', 'Tools/Scripts/run-gtk-tests',
+            command = ['python3', 'Tools/Scripts/run-gtk-tests',
                        '--{0}'.format(self.getProperty('configuration')),
                        '--json-output={0}'.format(self.jsonFileName)]
             self.setCommand(command)
