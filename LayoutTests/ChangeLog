@@ -1,3 +1,15 @@
+2021-09-02  Peng Liu  <peng.liu6@apple.com>
+
+        [MSE][GPUP] SourceBufferPrivateAVFObjC does not work properly when audio and video exchange their track IDs
+        https://bugs.webkit.org/show_bug.cgi?id=229617
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/content/test-fragmented-swap-track-ids-manifest.json: Added.
+        * media/media-source/content/test-fragmented-swap-track-ids.mp4: Added.
+        * media/media-source/media-source-init-segment-swap-track-ids-expected.txt: Added.
+        * media/media-source/media-source-init-segment-swap-track-ids.html: Added.
+
 2021-09-02  Eric Hutchison  <ehutchison@apple.com>
 
         [iOS14] imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-atomic-nowrap-001.html is a flaky timeout.

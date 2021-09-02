@@ -126,6 +126,7 @@ private:
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
 
     HashMap<AtomString, TrackPrivateRemoteIdentifier> m_trackIdentifierMap;
+    HashMap<AtomString, TrackPrivateRemoteIdentifier> m_prevTrackIdentifierMap;
 
     bool m_isActive { false };
     uint64_t m_totalTrackBufferSizeInBytes = { 0 };

@@ -765,11 +765,12 @@ void SourceBufferPrivate::addTrackBuffer(const AtomString& trackId, RefPtr<Media
 
 void SourceBufferPrivate::updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs)
 {
+    auto trackBufferMap = std::exchange(m_trackBufferMap, { });
     for (auto& trackIdPair : trackIdPairs) {
         auto oldId = trackIdPair.first;
         auto newId = trackIdPair.second;
         ASSERT(oldId != newId);
-        auto trackBuffer = m_trackBufferMap.take(oldId);
+        auto trackBuffer = trackBufferMap.take(oldId);
         if (!trackBuffer)
             continue;
         m_trackBufferMap.add(newId, makeUniqueRefFromNonNullUniquePtr(WTFMove(trackBuffer)));

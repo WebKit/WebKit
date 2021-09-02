@@ -334,10 +334,10 @@ void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<AtomString, Atom
     Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>> identifierPairs;
 
     for (auto& trackIdPair : trackIdPairs) {
-        ASSERT(m_trackIdentifierMap.contains(trackIdPair.first));
+        ASSERT(m_prevTrackIdentifierMap.contains(trackIdPair.first));
         ASSERT(m_trackIdentifierMap.contains(trackIdPair.second));
 
-        auto oldIdentifier = m_trackIdentifierMap.take(trackIdPair.first);
+        auto oldIdentifier = m_prevTrackIdentifierMap.take(trackIdPair.first);
         auto newIdentifier = m_trackIdentifierMap.get(trackIdPair.second);
         identifierPairs.append(std::make_pair(oldIdentifier, newIdentifier));
     }
@@ -375,6 +375,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
     SourceBufferPrivateClient::InitializationSegment segment;
     segment.duration = segmentInfo.duration;
 
+    m_prevTrackIdentifierMap.swap(m_trackIdentifierMap);
     for (auto& audioTrack : segmentInfo.audioTracks) {
         SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
         info.track = m_mediaPlayerPrivate->audioTrackPrivateRemote(audioTrack.identifier);

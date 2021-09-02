@@ -192,6 +192,7 @@ private:
     Ref<SourceBufferParser> m_parser;
     bool m_processingInitializationSegment { false };
     bool m_hasPendingAppendCompletedCallback { false };
+    Vector<Function<void()>> m_pendingTrackChangeCallbacks;
     Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;

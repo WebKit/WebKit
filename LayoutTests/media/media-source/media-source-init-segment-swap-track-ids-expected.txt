@@ -1,0 +1,23 @@
+This tests that SourceBuffer deals with swapping audio/video track IDs properly (should not crash).
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+Append an initialization segment.
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+
+Append another initialization segment with audi/video track IDs swapped.
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+END OF TEST
+

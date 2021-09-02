@@ -364,31 +364,66 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
     clearTracks();
 
     for (auto videoTrackInfo : segment.videoTracks) {
-        videoTrackInfo.track->setSelectedChangedCallback([weakThis = makeWeakPtr(this)] (VideoTrackPrivate& track, bool selected) {
-            if (weakThis)
-                weakThis->trackDidChangeSelected(track, selected);
+        videoTrackInfo.track->setSelectedChangedCallback([weakThis = makeWeakPtr(this), this] (VideoTrackPrivate& track, bool selected) {
+            if (!weakThis)
+                return;
+
+            auto videoTrackSelectedChanged = [weakThis, this, trackRef = makeRef(track), selected] {
+                if (!weakThis)
+                    return;
+                trackDidChangeSelected(trackRef, selected);
+            };
+
+            if (!m_processingInitializationSegment) {
+                videoTrackSelectedChanged();
+                return;
+            }
+
+            m_pendingTrackChangeCallbacks.append(WTFMove(videoTrackSelectedChanged));
         });
+
         m_videoTracks.append(videoTrackInfo.track);
     }
 
     for (auto audioTrackInfo : segment.audioTracks) {
-        audioTrackInfo.track->setEnabledChangedCallback([weakThis = makeWeakPtr(this)] (AudioTrackPrivate& track, bool enabled) {
-            if (weakThis)
-                weakThis->trackDidChangeEnabled(track, enabled);
+        audioTrackInfo.track->setEnabledChangedCallback([weakThis = makeWeakPtr(this), this] (AudioTrackPrivate& track, bool enabled) {
+            if (!weakThis)
+                return;
+
+            auto audioTrackEnabledChanged= [weakThis, this, trackRef = makeRef(track), enabled] {
+                if (!weakThis)
+                    return;
+
+                trackDidChangeEnabled(trackRef, enabled);
+            };
+
+            if (!m_processingInitializationSegment) {
+                audioTrackEnabledChanged();
+                return;
+            }
+
+            m_pendingTrackChangeCallbacks.append(WTFMove(audioTrackEnabledChanged));
         });
+
         m_audioTracks.append(audioTrackInfo.track);
     }
-
-    if (auto player = this->player())
-        player->characteristicsChanged();
 
     m_processingInitializationSegment = true;
     didReceiveInitializationSegment(WTFMove(segment), [this, weakThis = makeWeakPtr(*this), abortCalled = m_abortCalled]() {
         ASSERT(isMainThread());
-        if (!weakThis || abortCalled != weakThis->m_abortCalled)
+        if (!weakThis)
             return;
 
         m_processingInitializationSegment = false;
+        if (abortCalled != weakThis->m_abortCalled) {
+            m_pendingTrackChangeCallbacks.clear();
+            m_mediaSamples.clear();
+            return;
+        }
+
+        auto callbacks = std::exchange(m_pendingTrackChangeCallbacks, { });
+        for (auto& callback : callbacks)
+            callback();
 
         if (auto player = this->player())
             player->characteristicsChanged();
@@ -792,7 +827,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
 {
     auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).value_or(0);
 
-    ALWAYS_LOG(LOGIDENTIFIER, "audio trackID = ", trackID, ", selected = ", enabled);
+    ALWAYS_LOG(LOGIDENTIFIER, "audio trackID = ", trackID, ", enabled = ", enabled);
 
     if (!enabled) {
         ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN

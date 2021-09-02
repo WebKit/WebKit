@@ -1,3 +1,43 @@
+2021-09-02  Peng Liu  <peng.liu6@apple.com>
+
+        [MSE][GPUP] SourceBufferPrivateAVFObjC does not work properly when audio and video exchange their track IDs
+        https://bugs.webkit.org/show_bug.cgi?id=229617
+
+        Reviewed by Jer Noble.
+
+        When a page appends a new initialization segment with new track IDs, the `SourceBuffer`
+        notifies its `SourceBufferPrivate` about that. If a `SourceBuffer` has only
+        one audio track and one video track, the `SourceBufferPrivate` will update its
+        hash map (`m_trackBufferMap`), which maps track IDs to track buffers of audio and
+        video data.
+
+        In a special case that the new initialization segment switches the track IDs of
+        audio and video, e.g., currently audio and video have track IDs 2 and 1 respectively,
+        while the new initialization segment defines audio and video track IDs as 1 and 2,
+        the current implementation of `SourceBuffer/SourceBufferPrivate` will overwrite
+        one key in the hash map, and eventually the hash map will have only one key.
+
+        This patch fixes this bug by creating a new hash map instead of updating the hash
+        map in-place.
+
+        Test: media/media-source/media-source-init-segment-swap-track-ids.html
+
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::updateTrackIds):
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseInitializationData):
+        `AudioTrackPrivate::EnabledChangedCallback` and `VideoTrackPrivate::SelectedChangedCallback`
+        should be called after the initialization segment is handled.
+        Because `SourceBuffer` may update the track IDs of audio and video when processing the
+        initialization segment, and the hash map of `SourceBufferPrivate` will be changed accordingly.
+        We should not enqueue samples to the parser (in those callbacks) before the hash map change
+        is completed.
+
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        Fix a minor issue in the log.
+
 2021-09-02  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Add support for CSSKeywordValue in CSS Typed OM

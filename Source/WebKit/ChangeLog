@@ -1,3 +1,18 @@
+2021-09-02  Peng Liu  <peng.liu6@apple.com>
+
+        [MSE][GPUP] SourceBufferPrivateAVFObjC does not work properly when audio and video exchange their track IDs
+        https://bugs.webkit.org/show_bug.cgi?id=229617
+
+        Reviewed by Jer Noble.
+
+        Fix the bug in updating the hash map by creating a new one instead of
+        updating the hash map in-place.
+
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::updateTrackIds):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+
 2021-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Introduce PCM::Client for PrivateClickMeasurementManager
