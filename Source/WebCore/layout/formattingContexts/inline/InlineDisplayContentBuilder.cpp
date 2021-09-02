@@ -36,6 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
+#define ALLOW_ROOT_AND_LINE_SPANNING_INLINE_BOX 0
 
 InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
     : m_formattingContextRoot(formattingContextRoot)
@@ -47,11 +48,12 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const ContainerBox& for
 void InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex)
 {
     auto& formattingState = this->formattingState();
+#if ALLOW_ROOT_AND_LINE_SPANNING_INLINE_BOX
     // Every line starts with a root run, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     rootInlineBoxRect.moveBy(lineBoxLogicalTopLeft);
     formattingState.addRun({ lineIndex, Run::Type::RootInlineBox, root(), rootInlineBoxRect, rootInlineBoxRect, { }, { },  lineBox.rootInlineBox().hasContent()});
-
+#endif
     // Spanning inline boxes start at the very beginning of the line.
     auto lineSpanningInlineBoxIndex = formattingState.runs().size();
     createRunsAndUpdateGeometryForLineContent(lineContent, lineBox, lineBoxLogicalTopLeft, lineIndex);
@@ -181,7 +183,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
     formattingState.lines().last().setNeedsIntegralPosition(lineNeedIntegralPosition);
 }
 
-void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes(const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, size_t lineSpanningInlineBoxIndex)
+void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes(const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t /*lineIndex*/, size_t /*lineSpanningInlineBoxIndex*/)
 {
     if (!lineBox.hasContent()) {
         // When a spanning inline box (e.g. <div>text<span><br></span></div>) lands on an empty line
@@ -202,8 +204,9 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInli
         auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
         inlineBoxBorderBox.moveBy(lineBoxLogicalTopLeft);
 
+#if ALLOW_ROOT_AND_LINE_SPANNING_INLINE_BOX
         formattingState.runs().insert(lineSpanningInlineBoxIndex++, { lineIndex, Run::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), true });
-
+#endif
         auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
         auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };
         // Middle or end of the inline box. Let's stretch the box as needed.

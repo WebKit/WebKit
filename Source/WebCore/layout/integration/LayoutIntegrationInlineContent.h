@@ -27,8 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineLineRun.h"
 #include "LayoutIntegrationLine.h"
-#include "LayoutIntegrationRun.h"
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -47,6 +47,8 @@ namespace LayoutIntegration {
 class LineLayout;
 class RunIterator;
 class TextRunIterator;
+
+using Run = Layout::Run;
 
 struct InlineContent : public RefCounted<InlineContent> {
     static Ref<InlineContent> create(const LineLayout& lineLayout) { return adoptRef(*new InlineContent(lineLayout)); }

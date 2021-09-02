@@ -29,10 +29,10 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineFormattingState.h"
+#include "InlineLineRun.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutIntegrationInlineContent.h"
-#include "LayoutIntegrationRun.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutState.h"
 #include "RenderBlockFlow.h"
@@ -65,38 +65,36 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 {
 }
 
-void InlineContentBuilder::build(const Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
+void InlineContentBuilder::build(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    createDisplayRuns(inlineFormattingState.runs(), inlineContent);
+    createDisplayRuns(inlineFormattingState, inlineContent);
     createDisplayLines(inlineFormattingState.lines(), inlineContent);
 }
 
-void InlineContentBuilder::createDisplayRuns(const Layout::InlineRuns& runs, InlineContent& inlineContent) const
+void InlineContentBuilder::createDisplayRuns(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    if (runs.isEmpty())
-        return;
-
-    inlineContent.runs.reserveInitialCapacity(runs.size());
-    for (auto& run : runs) {
-        if (auto text = run.text()) {
-            inlineContent.runs.append({ run.lineIndex(), run.layoutBox(), run.logicalRect(), run.inkOverflow(), Run::Expansion { run.expansion().behavior, run.expansion().horizontalExpansion }
-                , Run::Text { text->start(), text->length(), text->originalContent(), text->renderedContent(), text->hasHyphen() } });
-        } else if (!run.isRootInlineBox()) {
-            // FIXME: Teach the run iterators to ignore the root inline box runs.
-            auto& geometry = m_layoutState.geometryForBox(run.layoutBox());
-            if (!run.isInlineBox() || !run.isLineSpanning()) {
-                // FIXME: Run iterators with (text)runs spanning over multiple lines expect no "in-between" runs (e.g. line spanning or root inline boxes).
-                inlineContent.runs.append({ run.lineIndex(), run.layoutBox(), run.logicalRect(), run.inkOverflow(), { }, { } });
-            }
-            if (run.isInlineBox()) {
-                auto hasScrollableContent = [&] {
-                    // In standards mode, inline boxes always start with an imaginary strut.
-                    return m_layoutState.inStandardsMode() || run.hasContent() || geometry.horizontalBorder() || (geometry.horizontalPadding() && geometry.horizontalPadding().value());
-                };
-                inlineContent.nonRootInlineBoxes.append({ run.lineIndex(), run.layoutBox(), run.logicalRect(), hasScrollableContent() });
-            }
+    // FIXME: Remove this loop when we transitioned to the "run only" setup (i.e. each inline box is represented as a run as well)
+    auto& lineBoxes = const_cast<Layout::InlineFormattingState&>(inlineFormattingState).lineBoxes();
+    for (size_t lineIndex = 0; lineIndex < lineBoxes.size(); ++lineIndex) {
+        auto& lineBox = lineBoxes[lineIndex];
+        auto lineBoxLogicalTopLeft = inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect().topLeft();
+        for (auto& nonRootInlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+            if (!nonRootInlineLevelBox.isInlineBox())
+                continue;
+            auto& layoutBox = nonRootInlineLevelBox.layoutBox();
+            auto& boxGeometry = inlineFormattingState.boxGeometry(layoutBox);
+            auto hasScrollableContent = [&] {
+                // In standards mode, inline boxes always start with an imaginary strut.
+                return m_layoutState.inStandardsMode() || nonRootInlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+            };
+            // Inline boxes may or may not be wrapped and have runs on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
+            auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
+            inlineBoxBorderBox.moveBy(lineBoxLogicalTopLeft);
+            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxBorderBox, hasScrollableContent() });
         }
     }
+    // FIXME: This might need a different approach with partial layout where the layout code needs to know about the runs.
+    inlineContent.runs = WTFMove(inlineFormattingState.runs());
 }
 
 void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, InlineContent& inlineContent) const
@@ -131,11 +129,11 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
             auto runLogicalRect = run.logicalRect();
             if (!box.hasSelfPaintingLayer()) {
                 auto childInkOverflow = box.logicalVisualOverflowRectForPropagation(&box.parent()->style());
-                childInkOverflow.move(runLogicalRect.x(), runLogicalRect.y());
+                childInkOverflow.move(runLogicalRect.left(), runLogicalRect.top());
                 lineInkOverflowRect.unite(childInkOverflow);
             }
             auto childScrollableOverflow = box.logicalLayoutOverflowRectForPropagation(&box.parent()->style());
-            childScrollableOverflow.move(runLogicalRect.x(), runLogicalRect.y());
+            childScrollableOverflow.move(runLogicalRect.left(), runLogicalRect.top());
             scrollableOverflowRect.unite(childScrollableOverflow);
         }
         // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.

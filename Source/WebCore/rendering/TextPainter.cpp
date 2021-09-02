@@ -27,7 +27,6 @@
 #include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "HTMLParserIdioms.h"
-#include "LayoutIntegrationRun.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderCombineText.h"
 #include "RenderLayer.h"

@@ -44,8 +44,8 @@ struct Run {
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
-        String originalContent() const { return m_originalContent; }
-        String renderedContent() const { return m_adjustedContentToRender; }
+        StringView originalContent() const { return StringView(m_originalContent).substring(m_start, m_length); }
+        StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
 
         bool hasHyphen() const { return m_hasHyphen; }
 
@@ -111,6 +111,8 @@ struct Run {
 
     size_t lineIndex() const { return m_lineIndex; }
 
+    void setVerticalPositionIntegral();
+
 private:
     const size_t m_lineIndex;
     const Type m_type;
@@ -144,6 +146,12 @@ inline Run::Text::Text(size_t start, size_t length, const String& originalConten
     , m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)
 {
+}
+
+inline void Run::setVerticalPositionIntegral()
+{
+    m_logicalRect.setTop(roundToInt(m_logicalRect.top()));
+    m_inkOverflow.setTop(roundToInt(m_inkOverflow.top()));
 }
 
 }

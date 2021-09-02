@@ -768,6 +768,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
+    layout/formattingContexts/inline/InlineLineRun.h
     layout/formattingContexts/inline/InlineRect.h
 
     layout/integration/LayoutIntegrationInlineContent.h
@@ -775,7 +776,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/integration/LayoutIntegrationLineIterator.h
     layout/integration/LayoutIntegrationLineIteratorLegacyPath.h
     layout/integration/LayoutIntegrationLineIteratorModernPath.h
-    layout/integration/LayoutIntegrationRun.h
     layout/integration/LayoutIntegrationRunIterator.h
     layout/integration/LayoutIntegrationRunIteratorLegacyPath.h
     layout/integration/LayoutIntegrationRunIteratorModernPath.h

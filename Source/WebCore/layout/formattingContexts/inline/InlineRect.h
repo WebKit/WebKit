@@ -38,6 +38,7 @@ public:
     InlineRect(InlineLayoutUnit top, InlineLayoutUnit left, InlineLayoutUnit width, InlineLayoutUnit height);
     InlineRect(const InlineLayoutPoint& topLeft, InlineLayoutUnit width, InlineLayoutUnit height);
     InlineRect(const InlineLayoutPoint& topLeft, const InlineLayoutSize&);
+    InlineRect(const FloatRect&);
     
     InlineLayoutUnit top() const;
     InlineLayoutUnit left() const;
@@ -111,6 +112,11 @@ inline InlineRect::InlineRect(const InlineLayoutPoint& topLeft, InlineLayoutUnit
 
 inline InlineRect::InlineRect(const InlineLayoutPoint& topLeft, const InlineLayoutSize& size)
     : InlineRect(topLeft.y(), topLeft.x(), size.width(), size.height())
+{
+}
+
+inline InlineRect::InlineRect(const FloatRect& rect)
+    : InlineRect(rect.y(), rect.x(), rect.width(), rect.height())
 {
 }
 

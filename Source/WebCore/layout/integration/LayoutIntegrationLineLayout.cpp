@@ -563,11 +563,11 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
         physicalPaintOffset.move({ 0, -run.logicalRect().height() });
     }
 
-    auto physicalRect = [&](const auto& rect) {
+    auto physicalRect = [&](const auto& rect) -> FloatRect {
         if (!style.isFlippedBlocksWritingMode())
             return rect;
         if (!blockIsHorizontalWriting)
-            return FloatRect { formattingContextRoot.width() - rect.maxY(), rect.x() , rect.width(), rect.height() };
+            return FloatRect { formattingContextRoot.width() - rect.bottom(), rect.left() , rect.width(), rect.height() };
         ASSERT_NOT_IMPLEMENTED_YET();
         return rect;
     };
@@ -592,7 +592,7 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
     // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
     // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
     auto& fontCascade = style.fontCascade();
-    auto xPos = run.logicalRect().x() - (line.lineBoxLeft() + line.contentLeft());
+    auto xPos = run.logicalRect().left() - (line.lineBoxLeft() + line.contentLeft());
     auto textRun = WebCore::TextRun { textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
 

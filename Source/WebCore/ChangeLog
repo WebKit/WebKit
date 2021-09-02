@@ -1,3 +1,37 @@
+2021-09-01  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not generate integration runs out of IFC's display runs
+        https://bugs.webkit.org/show_bug.cgi?id=229719
+
+        Reviewed by Antti Koivisto.
+
+        Integration runs and IFC display runs hold the exact same set of data, so let's not duplicate then for the integration layer.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::debugDescription const):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::Run::Text::originalContent const):
+        (WebCore::Layout::Run::Text::renderedContent const):
+        (WebCore::Layout::Run::setVerticalPositionIntegral):
+        * layout/formattingContexts/inline/InlineRect.h:
+        (WebCore::Layout::InlineRect::InlineRect):
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayRuns const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paintTextRunUsingPhysicalCoordinates):
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        * layout/integration/LayoutIntegrationRun.h: Removed.
+        * rendering/TextPainter.cpp:
+
 2021-09-01  Marcos Caceres  <marcos@marcosc.com>
 
         Add "payment" permissions policy
