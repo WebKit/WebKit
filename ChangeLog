@@ -1,3 +1,9 @@
+2021-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.90 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2021-08-30  Zan Dobersek  <zdobersek@igalia.com>
 
         RISCV64 support in LLInt

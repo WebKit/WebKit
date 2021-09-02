@@ -1,5 +1,11 @@
 2021-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.90 release
+
+        * gtk/NEWS: Add release notes for 2.33.90.
+
+2021-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK distcheck build
 
         * webkitglib-symbols.map: Bring back symbols removed in r281073.

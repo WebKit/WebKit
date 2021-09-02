@@ -1,3 +1,16 @@
+=================
+WebKitGTK 2.33.90
+=================
+
+What's new in WebKitGTK 2.33.90?
+
+  - Show TLS protocol version and ciphersuite name in the inspector when building with libsoup3.
+  - Add multi-track support to media backend.
+  - Avoid strong alias computations in font fallback code.
+  - Fix deadlock tearing down pipeline when using fallback sink.
+  - Fix the build with gtk-doc enabled.
+  - Fix several crashes and rendering issues.
+
 ================
 WebKitGTK 2.33.3
 ================
