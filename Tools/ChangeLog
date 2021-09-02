@@ -1,5 +1,16 @@
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkit-patch] apply-watchlist command fails on python 3
+        https://bugs.webkit.org/show_bug.cgi?id=229822
+        <rdar://problem/82691261>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/common/checkout/diff_parser.py:
+        (DiffParser._parse_into_diff_files): Ensure all diff lines are strings.
+
+2021-09-02  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitpy] WrappedPopen breaks process returncode
         https://bugs.webkit.org/show_bug.cgi?id=229824
 
