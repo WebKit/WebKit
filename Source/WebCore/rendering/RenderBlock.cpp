@@ -629,31 +629,10 @@ void RenderBlock::preparePaginationBeforeBlockLayout(bool& relayoutChildren)
         fragmentedFlow->logicalWidthChangedInFragmentsForBlock(this, relayoutChildren);
 }
 
-static bool shouldRecalculateMinMaxWidthsAffectedByAncestor(const RenderBox* box)
-{
-    // If the preferred widths are already dirty at this point (during layout), it actually means that we never need to calculate them, since that should
-    // have been carried out by an ancestor that's sized based on preferred widths (a shrink-to-fit container, for instance). In such cases the
-    // object will be left as dirty indefinitely, and it would just be a waste of time to calculate the preferred withs when nobody needs them.
-    if (box->preferredLogicalWidthsDirty())
-        return false;
-    // If our containing block also has min/max widths that are affected by the ancestry, we have already dealt with this object as well. Avoid
-    // unnecessary work and O(n^2) time complexity.
-    if (const RenderBox* cb = box->containingBlock()) {
-        if (cb->needsPreferredWidthsRecalculation() && !cb->preferredLogicalWidthsDirty())
-            return false;
-    }
-    return true;
-}
-
 bool RenderBlock::recomputeLogicalWidth()
 {
     LayoutUnit oldWidth = logicalWidth();
 
-    // Laying out this object means that its containing block is also being laid out. This object is special, in that its min/max widths depend on
-    // the ancestry (min/max width calculation should ideally be strictly bottom-up, but that's not always the case), so since the containing
-    // block size may have changed, we need to recalculate the min/max widths of this object, and every child that has the same issue, recursively.
-    if (needsPreferredWidthsRecalculation() && shouldRecalculateMinMaxWidthsAffectedByAncestor(this))
-        setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
     updateLogicalWidth();
     
     bool hasBorderOrPaddingLogicalWidthChanged = this->hasBorderOrPaddingLogicalWidthChanged();
