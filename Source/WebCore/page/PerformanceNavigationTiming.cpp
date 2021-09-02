@@ -144,8 +144,6 @@ double PerformanceNavigationTiming::duration() const
 void PerformanceNavigationTiming::navigationFinished(const NetworkLoadMetrics& metrics)
 {
     m_documentLoadTiming.markEndTime();
-
-    ASSERT(!m_resourceTiming.networkLoadMetrics().responseEnd);
     m_resourceTiming.networkLoadMetrics() = metrics;
 }
 

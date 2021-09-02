@@ -1,3 +1,14 @@
+2021-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Remove optimistic assertion from r281860
+        https://bugs.webkit.org/show_bug.cgi?id=229751
+
+        This assertion was being hit in debug WK1 tests because of the way ResourceHandle updates timing data.
+        When it is hit, there is no issue.  It is replacing data with equal data.
+
+        * page/PerformanceNavigationTiming.cpp:
+        (WebCore::PerformanceNavigationTiming::navigationFinished):
+
 2021-09-02  Tim Nguyen  <ntim@apple.com>
 
         Add more inert checks for selection-related functionality
