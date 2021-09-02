@@ -128,7 +128,20 @@ public:
         IndexedTypedArrayUint32Load,
         IndexedTypedArrayFloat32Load,
         IndexedTypedArrayFloat64Load,
-        IndexedStringLoad
+        IndexedStringLoad,
+        IndexedInt32Store,
+        IndexedDoubleStore,
+        IndexedContiguousStore,
+        IndexedArrayStorageStore,
+        IndexedTypedArrayInt8Store,
+        IndexedTypedArrayUint8Store,
+        IndexedTypedArrayUint8ClampedStore,
+        IndexedTypedArrayInt16Store,
+        IndexedTypedArrayUint16Store,
+        IndexedTypedArrayInt32Store,
+        IndexedTypedArrayUint32Store,
+        IndexedTypedArrayFloat32Store,
+        IndexedTypedArrayFloat64Store,
     };
 
     enum State : uint8_t {
@@ -353,12 +366,13 @@ public:
         struct Key {
             Key() = default;
 
-            Key(GPRReg baseGPR, GPRReg valueGPR, GPRReg extraGPR, GPRReg stubInfoGPR, RegisterSet usedRegisters, PolymorphicAccessJITStubRoutine* wrapped)
+            Key(GPRReg baseGPR, GPRReg valueGPR, GPRReg extraGPR, GPRReg stubInfoGPR, GPRReg arrayProfileGPR, RegisterSet usedRegisters, PolymorphicAccessJITStubRoutine* wrapped)
                 : m_wrapped(wrapped)
                 , m_baseGPR(baseGPR)
                 , m_valueGPR(valueGPR)
                 , m_extraGPR(extraGPR)
                 , m_stubInfoGPR(stubInfoGPR)
+                , m_arrayProfileGPR(arrayProfileGPR)
                 , m_usedRegisters(usedRegisters)
             { }
 
@@ -375,6 +389,7 @@ public:
                     && a.m_valueGPR == b.m_valueGPR
                     && a.m_extraGPR == b.m_extraGPR
                     && a.m_stubInfoGPR == b.m_stubInfoGPR
+                    && a.m_arrayProfileGPR == b.m_arrayProfileGPR
                     && a.m_usedRegisters == b.m_usedRegisters;
             }
 
@@ -383,6 +398,7 @@ public:
             GPRReg m_valueGPR;
             GPRReg m_extraGPR;
             GPRReg m_stubInfoGPR;
+            GPRReg m_arrayProfileGPR;
             RegisterSet m_usedRegisters;
         };
 
@@ -416,6 +432,7 @@ public:
                     && a.m_valueGPR == b.m_valueGPR
                     && a.m_extraGPR == b.m_extraGPR
                     && a.m_stubInfoGPR == b.m_stubInfoGPR
+                    && a.m_arrayProfileGPR == b.m_arrayProfileGPR
                     && a.m_usedRegisters == b.m_usedRegisters) {
                     // FIXME: The ordering of cases does not matter for sharing capabilities.
                     // We can potentially increase success rate by making this comparison / hashing non ordering sensitive.
@@ -445,6 +462,7 @@ public:
         GPRReg m_valueGPR;
         GPRReg m_extraGPR;
         GPRReg m_stubInfoGPR;
+        GPRReg m_arrayProfileGPR;
         RegisterSet m_usedRegisters;
         const FixedVector<RefPtr<AccessCase>>& m_cases;
         const FixedVector<StructureID>& m_weakStructures;

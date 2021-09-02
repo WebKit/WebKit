@@ -67,10 +67,10 @@ namespace JSC {
     macro(OperationPutByIdNonStrictBuildList) \
     macro(OperationPutByIdDefinePrivateFieldFieldStrictOptimize) \
     macro(OperationPutByIdPutPrivateFieldFieldStrictOptimize) \
-    macro(PutByIdAddAccessCase) \
-    macro(PutByIdReplaceWithJump) \
-    macro(PutByIdSelfPatch) \
-    macro(InByIdSelfPatch) \
+    macro(PutByAddAccessCase) \
+    macro(PutByReplaceWithJump) \
+    macro(PutBySelfPatch) \
+    macro(InBySelfPatch) \
     macro(DelByReplaceWithJump) \
     macro(DelByReplaceWithGeneric) \
     macro(OperationGetPrivateNameOptimize) \

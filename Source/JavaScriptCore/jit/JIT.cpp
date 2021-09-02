@@ -510,6 +510,7 @@ void JIT::privateCompileSlowCases()
     m_getByValIndex = 0;
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
+    m_putByValIndex = 0;
     m_inByIdIndex = 0;
     m_inByValIndex = 0;
     m_delByIdIndex = 0;
@@ -662,6 +663,7 @@ void JIT::privateCompileSlowCases()
     RELEASE_ASSERT(m_getByIdIndex == m_getByIds.size());
     RELEASE_ASSERT(m_getByIdWithThisIndex == m_getByIdsWithThis.size());
     RELEASE_ASSERT(m_putByIdIndex == m_putByIds.size());
+    RELEASE_ASSERT(m_putByValIndex == m_putByVals.size());
     RELEASE_ASSERT(m_inByIdIndex == m_inByIds.size());
     RELEASE_ASSERT(m_instanceOfIndex == m_instanceOfs.size());
     RELEASE_ASSERT(m_privateBrandAccessIndex == m_privateBrandAccesses.size());
@@ -909,6 +911,7 @@ void JIT::link()
     finalizeInlineCaches(m_getByVals, patchBuffer);
     finalizeInlineCaches(m_getByIdsWithThis, patchBuffer);
     finalizeInlineCaches(m_putByIds, patchBuffer);
+    finalizeInlineCaches(m_putByVals, patchBuffer);
     finalizeInlineCaches(m_delByIds, patchBuffer);
     finalizeInlineCaches(m_delByVals, patchBuffer);
     finalizeInlineCaches(m_inByIds, patchBuffer);

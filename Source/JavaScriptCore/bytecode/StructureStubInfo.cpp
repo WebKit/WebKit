@@ -281,8 +281,11 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
     case AccessType::GetPrivateName:
         resetGetBy(codeBlock, *this, GetByKind::PrivateName);
         break;
-    case AccessType::Put:
-        resetPutByID(codeBlock, *this);
+    case AccessType::PutById:
+        resetPutBy(codeBlock, *this, PutByKind::ById);
+        break;
+    case AccessType::PutByVal:
+        resetPutBy(codeBlock, *this, PutByKind::ByVal);
         break;
     case AccessType::InById:
         resetInBy(codeBlock, *this, InByKind::ById);

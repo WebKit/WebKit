@@ -546,7 +546,7 @@ namespace JSC { namespace DFG {
     macro(FilterCallLinkStatus, NodeMustGenerate) \
     macro(FilterGetByStatus, NodeMustGenerate) \
     macro(FilterInByStatus, NodeMustGenerate) \
-    macro(FilterPutByIdStatus, NodeMustGenerate) \
+    macro(FilterPutByStatus, NodeMustGenerate) \
     macro(FilterDeleteByStatus, NodeMustGenerate) \
     macro(FilterCheckPrivateBrandStatus, NodeMustGenerate) \
     macro(FilterSetPrivateBrandStatus, NodeMustGenerate) \

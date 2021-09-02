@@ -312,8 +312,8 @@ public:
                     break;
                 case MultiPutByOffset:
                     for (unsigned i = node->multiPutByOffsetData().variants.size(); i--;) {
-                        const PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
-                        if (variant.kind() != PutByIdVariant::Transition)
+                        const PutByVariant& variant = node->multiPutByOffsetData().variants[i];
+                        if (variant.kind() != PutByVariant::Transition)
                             continue;
                         VALIDATE((node), !variant.oldStructureForTransition()->dfgShouldWatch());
                     }

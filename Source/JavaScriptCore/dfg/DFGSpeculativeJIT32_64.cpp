@@ -2690,35 +2690,82 @@ void SpeculativeJIT::compile(Node* node)
             break;
         case Array::Generic: {
             ASSERT(node->op() == PutByVal || node->op() == PutByValDirect);
+            if (m_graph.m_slowPutByVal.contains(node)) {
+                if (child1.useKind() == CellUse) {
+                    if (child2.useKind() == StringUse) {
+                        compilePutByValForCellWithString(node, child1, child2, child3);
+                        alreadyHandled = true;
+                        break;
+                    }
 
-            if (child1.useKind() == CellUse) {
-                if (child2.useKind() == StringUse) {
-                    compilePutByValForCellWithString(node, child1, child2, child3);
-                    alreadyHandled = true;
-                    break;
+                    if (child2.useKind() == SymbolUse) {
+                        compilePutByValForCellWithSymbol(node, child1, child2, child3);
+                        alreadyHandled = true;
+                        break;
+                    }
                 }
 
-                if (child2.useKind() == SymbolUse) {
-                    compilePutByValForCellWithSymbol(node, child1, child2, child3);
-                    alreadyHandled = true;
-                    break;
-                }
+                SpeculateCellOperand base(this, child1); // Save a register, speculate cell. We'll probably be right.
+                JSValueOperand property(this, child2);
+                JSValueOperand value(this, child3);
+                GPRReg baseGPR = base.gpr();
+                JSValueRegs propertyRegs = property.jsValueRegs();
+                JSValueRegs valueRegs = value.jsValueRegs();
+
+                flushRegisters();
+                if (node->op() == PutByValDirect)
+                    callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
+                else
+                    callOperation(node->ecmaMode().isStrict() ? operationPutByValCellStrict : operationPutByValCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
+                m_jit.exceptionCheck();
+
+                noResult(node);
+                alreadyHandled = true;
+                break;
             }
-            
-            SpeculateCellOperand base(this, child1); // Save a register, speculate cell. We'll probably be right.
-            JSValueOperand property(this, child2);
-            JSValueOperand value(this, child3);
-            GPRReg baseGPR = base.gpr();
+
+            JSValueOperand base(this, child1, ManualOperandSpeculation);
+            JSValueOperand property(this, child2, ManualOperandSpeculation);
+            JSValueOperand value(this, child3, ManualOperandSpeculation);
+            JSValueRegs baseRegs = base.jsValueRegs();
             JSValueRegs propertyRegs = property.jsValueRegs();
             JSValueRegs valueRegs = value.jsValueRegs();
-            
-            flushRegisters();
-            if (node->op() == PutByValDirect)
-                callOperation(node->ecmaMode().isStrict() ? operationPutByValDirectCellStrict : operationPutByValDirectCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
-            else
-                callOperation(node->ecmaMode().isStrict() ? operationPutByValCellStrict : operationPutByValCellNonStrict, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, propertyRegs, valueRegs);
-            m_jit.exceptionCheck();
-            
+
+            speculate(node, child1);
+            speculate(node, child2);
+            speculate(node, child3);
+
+            CodeOrigin codeOrigin = node->origin.semantic;
+            CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+            RegisterSet usedRegisters = this->usedRegisters();
+            bool isDirect = node->op() == PutByValDirect;
+            ECMAMode ecmaMode = node->ecmaMode();
+
+            JITPutByValGenerator gen(
+                m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
+                baseRegs, propertyRegs, valueRegs, InvalidGPRReg, InvalidGPRReg);
+
+            if (m_state.forNode(child2).isType(SpecString))
+                gen.stubInfo()->propertyIsString = true;
+            else if (m_state.forNode(child2).isType(SpecInt32Only))
+                gen.stubInfo()->propertyIsInt32 = true;
+            else if (m_state.forNode(child2).isType(SpecSymbol))
+                gen.stubInfo()->propertyIsSymbol = true;
+
+            gen.generateFastPath(m_jit);
+
+            JITCompiler::JumpList slowCases;
+            slowCases.append(gen.slowPathJump());
+
+            std::unique_ptr<SlowPathGenerator> slowPath;
+            auto operation = isDirect ? (ecmaMode.isStrict() ? operationDirectPutByValStrictOptimize : operationDirectPutByValNonStrictOptimize) : (ecmaMode.isStrict() ? operationPutByValStrictOptimize : operationPutByValNonStrictOptimize);
+            slowPath = slowPathCall(
+                slowCases, this, operation,
+                NoResult, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(codeOrigin)), baseRegs, propertyRegs, valueRegs, gen.stubInfo(), nullptr);
+
+            m_jit.addPutByVal(gen, slowPath.get());
+            addSlowPathGenerator(WTFMove(slowPath));
+
             noResult(node);
             alreadyHandled = true;
             break;
@@ -4322,7 +4369,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case FilterCallLinkStatus:
     case FilterGetByStatus:
-    case FilterPutByIdStatus:
+    case FilterPutByStatus:
     case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:

@@ -225,28 +225,6 @@ namespace JSC {
             return JIT(vm, codeBlock, bytecodeOffset).privateCompile(effort);
         }
         
-        static void compilePutByVal(const ConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
-            jit.privateCompilePutByVal<OpPutByVal>(locker, byValInfo, returnAddress, arrayMode);
-        }
-        
-        static void compileDirectPutByVal(const ConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, JITArrayMode arrayMode)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
-            jit.privateCompilePutByVal<OpPutByValDirect>(locker, byValInfo, returnAddress, arrayMode);
-        }
-
-        template<typename Op>
-        static void compilePutByValWithCachedId(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, PutKind putKind, CacheableIdentifier propertyName)
-        {
-            JIT jit(vm, codeBlock);
-            jit.m_bytecodeIndex = byValInfo->bytecodeIndex;
-            jit.privateCompilePutByValWithCachedId<Op>(byValInfo, returnAddress, putKind, propertyName);
-        }
-
         static void compilePutPrivateNameWithCachedId(VM& vm, CodeBlock* codeBlock, ByValInfo* byValInfo, ReturnAddressPtr returnAddress, CacheableIdentifier propertyName)
         {
             JIT jit(vm, codeBlock);
@@ -267,15 +245,7 @@ namespace JSC {
         void link();
         CompilationResult privateCompile(JITCompilationEffort);
         
-        void privateCompileGetByVal(const ConcurrentJSLocker&, ByValInfo*, ReturnAddressPtr, JITArrayMode);
-        template<typename Op>
-        void privateCompilePutByVal(const ConcurrentJSLocker&, ByValInfo*, ReturnAddressPtr, JITArrayMode);
-        template<typename Op>
-        void privateCompilePutByValWithCachedId(ByValInfo*, ReturnAddressPtr, PutKind, CacheableIdentifier);
-
         void privateCompilePutPrivateNameWithCachedId(ByValInfo*, ReturnAddressPtr, CacheableIdentifier);
-
-        void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         // Add a call out from JIT code, without an exception check.
         Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
@@ -382,38 +352,9 @@ namespace JSC {
         emitValueProfilingSiteIfProfiledOpcode(Op bytecode);
 
         void emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile*, RegisterID scratchGPR);
+        void emitArrayProfilingSiteWithCell(RegisterID cellGPR, RegisterID arrayProfileGPR, RegisterID scratchGPR);
         void emitArrayProfileStoreToHoleSpecialCase(ArrayProfile*);
         void emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile*);
-        
-        JITArrayMode chooseArrayMode(ArrayProfile*);
-        
-        // Property is in regT1, base is in regT0. regT2 contains indecing type.
-        // The value to store is not yet loaded. Property is int-checked and
-        // zero-extended. Base is cell checked. Structure is already profiled.
-        // returns the slow cases.
-        template<typename Op>
-        JumpList emitInt32PutByVal(Op bytecode, PatchableJump& badType, ByValInfo* byValInfo)
-        {
-            return emitGenericContiguousPutByVal(bytecode, badType, byValInfo, Int32Shape);
-        }
-        template<typename Op>
-        JumpList emitDoublePutByVal(Op bytecode, PatchableJump& badType, ByValInfo* byValInfo)
-        {
-            return emitGenericContiguousPutByVal(bytecode, badType, byValInfo, DoubleShape);
-        }
-        template<typename Op>
-        JumpList emitContiguousPutByVal(Op bytecode, PatchableJump& badType, ByValInfo* byValInfo)
-        {
-            return emitGenericContiguousPutByVal(bytecode, badType, byValInfo);
-        }
-        template<typename Op>
-        JumpList emitGenericContiguousPutByVal(Op, PatchableJump& badType, ByValInfo*, IndexingType indexingShape = ContiguousShape);
-        template<typename Op>
-        JumpList emitArrayStoragePutByVal(Op, PatchableJump& badType, ByValInfo*);
-        template<typename Op>
-        JumpList emitIntTypedArrayPutByVal(Op, PatchableJump& badType, ByValInfo*, TypedArrayType);
-        template<typename Op>
-        JumpList emitFloatTypedArrayPutByVal(Op, PatchableJump& badType, ByValInfo*, TypedArrayType);
 
         template<typename Op>
         ECMAMode ecmaMode(Op);
@@ -1064,6 +1005,7 @@ namespace JSC {
         Vector<JITGetByValGenerator> m_getByVals;
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
         Vector<JITPutByIdGenerator> m_putByIds;
+        Vector<JITPutByValGenerator> m_putByVals;
         Vector<JITInByIdGenerator> m_inByIds;
         Vector<JITInByValGenerator> m_inByVals;
         Vector<JITDelByIdGenerator> m_delByIds;
@@ -1091,6 +1033,7 @@ namespace JSC {
         unsigned m_getByValIndex { UINT_MAX };
         unsigned m_getByIdWithThisIndex { UINT_MAX };
         unsigned m_putByIdIndex { UINT_MAX };
+        unsigned m_putByValIndex { UINT_MAX };
         unsigned m_inByIdIndex { UINT_MAX };
         unsigned m_inByValIndex { UINT_MAX };
         unsigned m_delByValIndex { UINT_MAX };

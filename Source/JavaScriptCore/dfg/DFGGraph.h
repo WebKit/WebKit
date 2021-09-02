@@ -1202,6 +1202,7 @@ public:
     RegisteredStructure symbolStructure;
 
     HashSet<Node*> m_slowGetByVal;
+    HashSet<Node*> m_slowPutByVal;
 
 private:
     template<typename Visitor> void visitChildrenImpl(Visitor&);

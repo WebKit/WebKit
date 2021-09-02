@@ -1,5 +1,565 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281615. rdar://problem/82651172
+
+    [JSC] Polymorphic PutByVal
+    https://bugs.webkit.org/show_bug.cgi?id=229229
+    
+    Reviewed by Saam Barati.
+    
+    This patch changes PutByVal IC to modern style. This polymorphic PutByVal can handle multiple array types and multiple identifiers.
+    Also, this removes adhoc IC code in Baseline so that it paves the way to unlinked Baseline JIT by cleaning up IC.
+    
+    Several interesting points of the design.
+    
+    1. We need to pass ArrayProfile* via GPRReg to IC since we need to profile mayStoreToHole, which is still important to avoid the slow path.
+    2. Transition / Replace IC need to record propertyRegs if it exists not to clobber these registers. This is important in DFG / FTL since
+       IC should not clobber these registers unless it is flushed. It also makes Baseline code smaller since we do not reload them in the slow path call.
+    3. Added a path folding String/Symbol when emitting PutByVal in DFG / FTL. This edge-case is found via a microbenchmark. Let's consider the case: one
+       put_by_val site has one identifier "foo", but it has so many different Structures. Previously, we emit JITPutByIdGenerator adhocly, and still we
+       cache this "foo" identifier in cachedId. In DFG / FTL, while we cannot make it PutByOffset, we can emit PutById since we know that identifier is
+       always "foo". But after this patch's change, such a site becomes slow-path. And then this identifier information is missed, and we were emitting
+       PutByVal for that. For now, we attempt to fold to one identifier in DFGByteCodeParser so that we can still attempt to make it PutById, which
+       can be PutByOffset in constant folding phase. We would like to handle this one identifier slow-path case in PutByStatus / GetByStatus in the future
+       patch.
+    4. Now, DFG OSR exit does not query to ByValInfo for setter calls since JITPutByValGenerator use StructureStubInfo in Baseline.
+    
+    Results of Microbenchmarks look good.
+    
+                                                         ToT                     Patched
+    
+    put-by-val-direct-large-index                  94.6265+-0.9076           93.4550+-0.7121          might be 1.0125x faster
+    inlined-put-by-val-with-string-transition
+                                                   23.7131+-0.3282     ^     22.7679+-0.1137        ^ definitely 1.0415x faster
+    put-by-val-with-string-slightly-polymorphic
+                                                    1.9852+-0.0284            1.9580+-0.0224          might be 1.0139x faster
+    get-and-put-by-val-double-index-dont-fall-off-a-cliff
+                                                  185.4762+-0.5737     ?    185.6325+-0.5819        ?
+    polymorphic-put-by-val-with-string             30.9903+-0.1207           30.8097+-0.1285
+    put-by-val-machine-int                          1.8803+-0.0384            1.8707+-0.0440
+    fold-put-by-val-with-symbol-to-multi-put-by-offset
+                                                    4.8463+-0.1148            4.7839+-0.0547          might be 1.0130x faster
+    put-by-val-with-string-replace-and-transition
+                                                    8.8730+-1.5934     ^      6.2276+-0.0585        ^ definitely 1.4248x faster
+    fold-put-by-val-with-string-to-multi-put-by-offset
+                                                    4.8183+-0.0841     ?      4.8233+-0.0892        ?
+    put-by-val-direct                               0.2845+-0.0091     ?      0.2901+-0.0088        ? might be 1.0196x slower
+    put-by-val-with-symbol-replace-and-transition
+                                                    6.3527+-0.0686     ?      6.3933+-0.0961        ?
+    put-by-val-with-symbol                          9.3556+-3.1421            7.1509+-0.1019          might be 1.3083x faster
+    put-by-val-with-symbol-slightly-polymorphic
+                                                    2.0052+-0.0309            1.9781+-0.0397          might be 1.0137x faster
+    put-by-val-negative-array-index                14.9572+-0.1221     ^     14.5636+-0.1044        ^ definitely 1.0270x faster
+    put-by-val-with-string                         11.6345+-4.3048     ^      7.0919+-0.0918        ^ definitely 1.6405x faster
+    put-by-val-large-index-blank-indexing-type
+                                                    3.1425+-0.1165            3.1236+-0.0378
+    inlined-put-by-val-with-symbol-transition
+                                                   23.4932+-0.3186     ^     22.8469+-0.0873        ^ definitely 1.0283x faster
+    polymorphic-put-by-val-with-symbol             36.6046+-1.6519     ^     30.8597+-0.1474        ^ definitely 1.1862x faster
+    
+    Speedometer2 showed roughly 0.2-0.3% progression.
+    
+    ----------------------------------------------------------------------------------------------------------------------------------
+    |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+    ----------------------------------------------------------------------------------------------------------------------------------
+    | Elm-TodoMVC                          |121.916667   |121.958333   |1.000342  | 0.876802                                         |
+    | VueJS-TodoMVC                        |26.263333    |26.006667    |0.990227  | 0.263868                                         |
+    | EmberJS-TodoMVC                      |127.080000   |127.866667   |1.006190  | 0.011497 (significant)                           |
+    | BackboneJS-TodoMVC                   |48.920000    |49.318333    |1.008143  | 0.003395 (significant)                           |
+    | Preact-TodoMVC                       |19.828333    |19.828333    |1.000000  | 1.000000                                         |
+    | AngularJS-TodoMVC                    |134.011667   |132.080000   |0.985586  | 0.000000 (significant)                           |
+    | Vanilla-ES2015-TodoMVC               |63.726667    |63.838333    |1.001752  | 0.408404                                         |
+    | Inferno-TodoMVC                      |65.153333    |63.753333    |0.978512  | 0.000000 (significant)                           |
+    | Flight-TodoMVC                       |78.133333    |78.780000    |1.008276  | 0.097794                                         |
+    | Angular2-TypeScript-TodoMVC          |40.415000    |40.100000    |0.992206  | 0.287630                                         |
+    | VanillaJS-TodoMVC                    |51.931667    |52.500000    |1.010944  | 0.004149 (significant)                           |
+    | jQuery-TodoMVC                       |226.056667   |225.073333   |0.995650  | 0.007796 (significant)                           |
+    | EmberJS-Debug-TodoMVC                |341.210000   |340.978333   |0.999321  | 0.623386                                         |
+    | React-TodoMVC                        |87.198333    |86.893333    |0.996502  | 0.042189                                         |
+    | React-Redux-TodoMVC                  |146.506667   |145.958333   |0.996257  | 0.018801 (significant)                           |
+    | Vanilla-ES2015-Babel-Webpack-TodoMVC |61.450000    |61.870000    |1.006835  | 0.000049 (significant)                           |
+    ----------------------------------------------------------------------------------------------------------------------------------
+    a mean = 254.85111
+    b mean = 255.25735
+    pValue = 0.1856561656
+    (Bigger means are better.)
+    1.002 times better
+    Results ARE NOT significant
+    
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * Sources.txt:
+    * bytecode/AccessCase.cpp:
+    (JSC::AccessCase::create):
+    (JSC::AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck const):
+    (JSC::AccessCase::requiresIdentifierNameMatch const):
+    (JSC::AccessCase::requiresInt32PropertyCheck const):
+    (JSC::AccessCase::needsScratchFPR const):
+    (JSC::AccessCase::forEachDependentCell const):
+    (JSC::AccessCase::doesCalls const):
+    (JSC::AccessCase::canReplace const):
+    (JSC::AccessCase::generateWithGuard):
+    (JSC::AccessCase::generateImpl):
+    (JSC::AccessCase::toTypedArrayType):
+    (JSC::AccessCase::canBeShared):
+    * bytecode/AccessCase.h:
+    (JSC::SharedJITStubSet::Hash::Key::Key):
+    (JSC::SharedJITStubSet::Hash::Key::operator==):
+    (JSC::SharedJITStubSet::Searcher::Translator::equal):
+    * bytecode/ArrayProfile.h:
+    (JSC::ArrayProfile::offsetOfMayStoreToHole):
+    (JSC::ArrayProfile::offsetOfLastSeenStructureID):
+    * bytecode/GetterSetterAccessCase.cpp:
+    (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+    * bytecode/ICStatusMap.h:
+    * bytecode/InlineAccess.cpp:
+    (JSC::getScratchRegister):
+    * bytecode/PolymorphicAccess.cpp:
+    (JSC::PolymorphicAccess::regenerate):
+    (WTF::printInternal):
+    * bytecode/PutByStatus.cpp: Renamed from Source/JavaScriptCore/bytecode/PutByIdStatus.cpp.
+    (JSC::PutByStatus::appendVariant):
+    (JSC::PutByStatus::shrinkToFit):
+    (JSC::PutByStatus::computeFromLLInt):
+    (JSC::PutByStatus::PutByStatus):
+    (JSC::PutByStatus::computeFor):
+    (JSC::PutByStatus::computeForStubInfo):
+    (JSC::PutByStatus::makesCalls const):
+    (JSC::PutByStatus::slowVersion const):
+    (JSC::PutByStatus::singleIdentifier const):
+    (JSC::PutByStatus::visitAggregateImpl):
+    (JSC::PutByStatus::markIfCheap):
+    (JSC::PutByStatus::finalize):
+    (JSC::PutByStatus::merge):
+    (JSC::PutByStatus::filter):
+    (JSC::PutByStatus::dump const):
+    * bytecode/PutByStatus.h: Renamed from Source/JavaScriptCore/bytecode/PutByIdStatus.h.
+    * bytecode/PutByVariant.cpp: Renamed from Source/JavaScriptCore/bytecode/PutByIdVariant.cpp.
+    (JSC::PutByVariant::PutByVariant):
+    (JSC::PutByVariant::operator=):
+    (JSC::PutByVariant::replace):
+    (JSC::PutByVariant::transition):
+    (JSC::PutByVariant::setter):
+    (JSC::PutByVariant::oldStructureForTransition const):
+    (JSC::PutByVariant::fixTransitionToReplaceIfNecessary):
+    (JSC::PutByVariant::writesStructures const):
+    (JSC::PutByVariant::reallocatesStorage const):
+    (JSC::PutByVariant::makesCalls const):
+    (JSC::PutByVariant::attemptToMerge):
+    (JSC::PutByVariant::attemptToMergeTransitionWithReplace):
+    (JSC::PutByVariant::visitAggregateImpl):
+    (JSC::PutByVariant::markIfCheap):
+    (JSC::PutByVariant::finalize):
+    (JSC::PutByVariant::dump const):
+    (JSC::PutByVariant::dumpInContext const):
+    * bytecode/PutByVariant.h: Renamed from Source/JavaScriptCore/bytecode/PutByIdVariant.h.
+    (JSC::PutByVariant::PutByVariant):
+    (JSC::PutByVariant::identifier const):
+    (JSC::PutByVariant::overlaps):
+    * bytecode/RecordedStatuses.cpp:
+    (JSC::RecordedStatuses::addPutByStatus):
+    (JSC::RecordedStatuses::visitAggregateImpl):
+    (JSC::RecordedStatuses::addPutByIdStatus): Deleted.
+    * bytecode/RecordedStatuses.h:
+    * bytecode/StructureStubInfo.cpp:
+    (JSC::StructureStubInfo::reset):
+    * bytecode/StructureStubInfo.h:
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterICStatus):
+    * dfg/DFGArgumentsEliminationPhase.cpp:
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::load):
+    (JSC::DFG::ByteCodeParser::store):
+    (JSC::DFG::ByteCodeParser::emitPutById):
+    (JSC::DFG::ByteCodeParser::handlePutById):
+    (JSC::DFG::ByteCodeParser::handlePutPrivateNameById):
+    (JSC::DFG::ByteCodeParser::parseBlock):
+    (JSC::DFG::ByteCodeParser::handlePutByVal):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    * dfg/DFGClobbersExitState.cpp:
+    (JSC::DFG::clobbersExitState):
+    * dfg/DFGConstantFoldingPhase.cpp:
+    (JSC::DFG::ConstantFoldingPhase::foldConstants):
+    (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+    (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+    * dfg/DFGDoesGC.cpp:
+    (JSC::DFG::doesGC):
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    * dfg/DFGGraph.cpp:
+    (JSC::DFG::Graph::dump):
+    * dfg/DFGGraph.h:
+    * dfg/DFGJITCompiler.cpp:
+    (JSC::DFG::JITCompiler::link):
+    * dfg/DFGJITCompiler.h:
+    (JSC::DFG::JITCompiler::addPutByVal):
+    * dfg/DFGMayExit.cpp:
+    * dfg/DFGNode.h:
+    (JSC::DFG::Node::hasPutByStatus):
+    (JSC::DFG::Node::putByStatus):
+    (JSC::DFG::Node::hasPutByIdStatus): Deleted.
+    (JSC::DFG::Node::putByIdStatus): Deleted.
+    * dfg/DFGNodeType.h:
+    * dfg/DFGOSRExitCompilerCommon.cpp:
+    (JSC::DFG::callerReturnPC):
+    * dfg/DFGObjectAllocationSinkingPhase.cpp:
+    * dfg/DFGPredictionPropagationPhase.cpp:
+    * dfg/DFGSafeToExecute.h:
+    (JSC::DFG::safeToExecute):
+    * dfg/DFGSpeculativeJIT32_64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * dfg/DFGSpeculativeJIT64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * dfg/DFGStoreBarrierInsertionPhase.cpp:
+    * dfg/DFGValidate.cpp:
+    * dfg/DFGVarargsForwardingPhase.cpp:
+    * ftl/FTLCapabilities.cpp:
+    (JSC::FTL::canCompile):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+    (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+    (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+    * generator/DSL.rb:
+    * jit/ICStats.h:
+    * jit/JIT.cpp:
+    (JSC::JIT::privateCompileSlowCases):
+    (JSC::JIT::link):
+    * jit/JIT.h:
+    * jit/JITInlineCacheGenerator.cpp:
+    (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+    (JSC::JITPutByValGenerator::JITPutByValGenerator):
+    (JSC::JITPutByValGenerator::generateFastPath):
+    (JSC::JITPutByValGenerator::finalize):
+    * jit/JITInlineCacheGenerator.h:
+    * jit/JITInlines.h:
+    (JSC::JIT::emitArrayProfilingSiteWithCell):
+    (JSC::JIT::chooseArrayMode): Deleted.
+    * jit/JITOperations.cpp:
+    (JSC::JSC_DEFINE_JIT_OPERATION):
+    (JSC::putByVal):
+    (JSC::directPutByVal):
+    (JSC::putByValOptimize):
+    (JSC::directPutByValOptimize):
+    (JSC::tryPutByValOptimize): Deleted.
+    (JSC::tryDirectPutByValOptimize): Deleted.
+    * jit/JITOperations.h:
+    * jit/JITPropertyAccess.cpp:
+    (JSC::JIT::emit_op_put_by_val):
+    (JSC::JIT::emitSlow_op_put_by_val):
+    (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+    (JSC::JIT::emitSlow_op_put_private_name):
+    (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+    (JSC::JIT::emitGenericContiguousPutByVal): Deleted.
+    (JSC::JIT::emitArrayStoragePutByVal): Deleted.
+    (JSC::JIT::privateCompilePutByVal): Deleted.
+    (JSC::JIT::privateCompilePutByValWithCachedId): Deleted.
+    (JSC::JIT::emitIntTypedArrayPutByVal): Deleted.
+    (JSC::JIT::emitFloatTypedArrayPutByVal): Deleted.
+    * jit/JITPropertyAccess32_64.cpp:
+    (JSC::JIT::emit_op_put_by_val):
+    (JSC::JIT::emitSlow_op_put_by_val):
+    (JSC::JIT::emitGenericContiguousPutByVal): Deleted.
+    (JSC::JIT::emitArrayStoragePutByVal): Deleted.
+    * jit/Repatch.cpp:
+    (JSC::appropriateGenericPutByFunction):
+    (JSC::appropriateOptimizingPutByFunction):
+    (JSC::tryCachePutBy):
+    (JSC::repatchPutBy):
+    (JSC::tryCacheArrayPutByVal):
+    (JSC::repatchArrayPutByVal):
+    (JSC::tryCacheInBy):
+    (JSC::resetPutBy):
+    (JSC::appropriateGenericPutByIdFunction): Deleted.
+    (JSC::appropriateOptimizingPutByIdFunction): Deleted.
+    (JSC::tryCachePutByID): Deleted.
+    (JSC::repatchPutByID): Deleted.
+    (JSC::resetPutByID): Deleted.
+    * jit/Repatch.h:
+    * llint/LowLevelInterpreter.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281615 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Polymorphic PutByVal
+            https://bugs.webkit.org/show_bug.cgi?id=229229
+
+            Reviewed by Saam Barati.
+
+            This patch changes PutByVal IC to modern style. This polymorphic PutByVal can handle multiple array types and multiple identifiers.
+            Also, this removes adhoc IC code in Baseline so that it paves the way to unlinked Baseline JIT by cleaning up IC.
+
+            Several interesting points of the design.
+
+            1. We need to pass ArrayProfile* via GPRReg to IC since we need to profile mayStoreToHole, which is still important to avoid the slow path.
+            2. Transition / Replace IC need to record propertyRegs if it exists not to clobber these registers. This is important in DFG / FTL since
+               IC should not clobber these registers unless it is flushed. It also makes Baseline code smaller since we do not reload them in the slow path call.
+            3. Added a path folding String/Symbol when emitting PutByVal in DFG / FTL. This edge-case is found via a microbenchmark. Let's consider the case: one
+               put_by_val site has one identifier "foo", but it has so many different Structures. Previously, we emit JITPutByIdGenerator adhocly, and still we
+               cache this "foo" identifier in cachedId. In DFG / FTL, while we cannot make it PutByOffset, we can emit PutById since we know that identifier is
+               always "foo". But after this patch's change, such a site becomes slow-path. And then this identifier information is missed, and we were emitting
+               PutByVal for that. For now, we attempt to fold to one identifier in DFGByteCodeParser so that we can still attempt to make it PutById, which
+               can be PutByOffset in constant folding phase. We would like to handle this one identifier slow-path case in PutByStatus / GetByStatus in the future
+               patch.
+            4. Now, DFG OSR exit does not query to ByValInfo for setter calls since JITPutByValGenerator use StructureStubInfo in Baseline.
+
+            Results of Microbenchmarks look good.
+
+                                                                 ToT                     Patched
+
+            put-by-val-direct-large-index                  94.6265+-0.9076           93.4550+-0.7121          might be 1.0125x faster
+            inlined-put-by-val-with-string-transition
+                                                           23.7131+-0.3282     ^     22.7679+-0.1137        ^ definitely 1.0415x faster
+            put-by-val-with-string-slightly-polymorphic
+                                                            1.9852+-0.0284            1.9580+-0.0224          might be 1.0139x faster
+            get-and-put-by-val-double-index-dont-fall-off-a-cliff
+                                                          185.4762+-0.5737     ?    185.6325+-0.5819        ?
+            polymorphic-put-by-val-with-string             30.9903+-0.1207           30.8097+-0.1285
+            put-by-val-machine-int                          1.8803+-0.0384            1.8707+-0.0440
+            fold-put-by-val-with-symbol-to-multi-put-by-offset
+                                                            4.8463+-0.1148            4.7839+-0.0547          might be 1.0130x faster
+            put-by-val-with-string-replace-and-transition
+                                                            8.8730+-1.5934     ^      6.2276+-0.0585        ^ definitely 1.4248x faster
+            fold-put-by-val-with-string-to-multi-put-by-offset
+                                                            4.8183+-0.0841     ?      4.8233+-0.0892        ?
+            put-by-val-direct                               0.2845+-0.0091     ?      0.2901+-0.0088        ? might be 1.0196x slower
+            put-by-val-with-symbol-replace-and-transition
+                                                            6.3527+-0.0686     ?      6.3933+-0.0961        ?
+            put-by-val-with-symbol                          9.3556+-3.1421            7.1509+-0.1019          might be 1.3083x faster
+            put-by-val-with-symbol-slightly-polymorphic
+                                                            2.0052+-0.0309            1.9781+-0.0397          might be 1.0137x faster
+            put-by-val-negative-array-index                14.9572+-0.1221     ^     14.5636+-0.1044        ^ definitely 1.0270x faster
+            put-by-val-with-string                         11.6345+-4.3048     ^      7.0919+-0.0918        ^ definitely 1.6405x faster
+            put-by-val-large-index-blank-indexing-type
+                                                            3.1425+-0.1165            3.1236+-0.0378
+            inlined-put-by-val-with-symbol-transition
+                                                           23.4932+-0.3186     ^     22.8469+-0.0873        ^ definitely 1.0283x faster
+            polymorphic-put-by-val-with-symbol             36.6046+-1.6519     ^     30.8597+-0.1474        ^ definitely 1.1862x faster
+
+            Speedometer2 showed roughly 0.2-0.3% progression.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |121.916667   |121.958333   |1.000342  | 0.876802                                         |
+            | VueJS-TodoMVC                        |26.263333    |26.006667    |0.990227  | 0.263868                                         |
+            | EmberJS-TodoMVC                      |127.080000   |127.866667   |1.006190  | 0.011497 (significant)                           |
+            | BackboneJS-TodoMVC                   |48.920000    |49.318333    |1.008143  | 0.003395 (significant)                           |
+            | Preact-TodoMVC                       |19.828333    |19.828333    |1.000000  | 1.000000                                         |
+            | AngularJS-TodoMVC                    |134.011667   |132.080000   |0.985586  | 0.000000 (significant)                           |
+            | Vanilla-ES2015-TodoMVC               |63.726667    |63.838333    |1.001752  | 0.408404                                         |
+            | Inferno-TodoMVC                      |65.153333    |63.753333    |0.978512  | 0.000000 (significant)                           |
+            | Flight-TodoMVC                       |78.133333    |78.780000    |1.008276  | 0.097794                                         |
+            | Angular2-TypeScript-TodoMVC          |40.415000    |40.100000    |0.992206  | 0.287630                                         |
+            | VanillaJS-TodoMVC                    |51.931667    |52.500000    |1.010944  | 0.004149 (significant)                           |
+            | jQuery-TodoMVC                       |226.056667   |225.073333   |0.995650  | 0.007796 (significant)                           |
+            | EmberJS-Debug-TodoMVC                |341.210000   |340.978333   |0.999321  | 0.623386                                         |
+            | React-TodoMVC                        |87.198333    |86.893333    |0.996502  | 0.042189                                         |
+            | React-Redux-TodoMVC                  |146.506667   |145.958333   |0.996257  | 0.018801 (significant)                           |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |61.450000    |61.870000    |1.006835  | 0.000049 (significant)                           |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 254.85111
+            b mean = 255.25735
+            pValue = 0.1856561656
+            (Bigger means are better.)
+            1.002 times better
+            Results ARE NOT significant
+
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * Sources.txt:
+            * bytecode/AccessCase.cpp:
+            (JSC::AccessCase::create):
+            (JSC::AccessCase::guardedByStructureCheckSkippingConstantIdentifierCheck const):
+            (JSC::AccessCase::requiresIdentifierNameMatch const):
+            (JSC::AccessCase::requiresInt32PropertyCheck const):
+            (JSC::AccessCase::needsScratchFPR const):
+            (JSC::AccessCase::forEachDependentCell const):
+            (JSC::AccessCase::doesCalls const):
+            (JSC::AccessCase::canReplace const):
+            (JSC::AccessCase::generateWithGuard):
+            (JSC::AccessCase::generateImpl):
+            (JSC::AccessCase::toTypedArrayType):
+            (JSC::AccessCase::canBeShared):
+            * bytecode/AccessCase.h:
+            (JSC::SharedJITStubSet::Hash::Key::Key):
+            (JSC::SharedJITStubSet::Hash::Key::operator==):
+            (JSC::SharedJITStubSet::Searcher::Translator::equal):
+            * bytecode/ArrayProfile.h:
+            (JSC::ArrayProfile::offsetOfMayStoreToHole):
+            (JSC::ArrayProfile::offsetOfLastSeenStructureID):
+            * bytecode/GetterSetterAccessCase.cpp:
+            (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+            * bytecode/ICStatusMap.h:
+            * bytecode/InlineAccess.cpp:
+            (JSC::getScratchRegister):
+            * bytecode/PolymorphicAccess.cpp:
+            (JSC::PolymorphicAccess::regenerate):
+            (WTF::printInternal):
+            * bytecode/PutByStatus.cpp: Renamed from Source/JavaScriptCore/bytecode/PutByIdStatus.cpp.
+            (JSC::PutByStatus::appendVariant):
+            (JSC::PutByStatus::shrinkToFit):
+            (JSC::PutByStatus::computeFromLLInt):
+            (JSC::PutByStatus::PutByStatus):
+            (JSC::PutByStatus::computeFor):
+            (JSC::PutByStatus::computeForStubInfo):
+            (JSC::PutByStatus::makesCalls const):
+            (JSC::PutByStatus::slowVersion const):
+            (JSC::PutByStatus::singleIdentifier const):
+            (JSC::PutByStatus::visitAggregateImpl):
+            (JSC::PutByStatus::markIfCheap):
+            (JSC::PutByStatus::finalize):
+            (JSC::PutByStatus::merge):
+            (JSC::PutByStatus::filter):
+            (JSC::PutByStatus::dump const):
+            * bytecode/PutByStatus.h: Renamed from Source/JavaScriptCore/bytecode/PutByIdStatus.h.
+            * bytecode/PutByVariant.cpp: Renamed from Source/JavaScriptCore/bytecode/PutByIdVariant.cpp.
+            (JSC::PutByVariant::PutByVariant):
+            (JSC::PutByVariant::operator=):
+            (JSC::PutByVariant::replace):
+            (JSC::PutByVariant::transition):
+            (JSC::PutByVariant::setter):
+            (JSC::PutByVariant::oldStructureForTransition const):
+            (JSC::PutByVariant::fixTransitionToReplaceIfNecessary):
+            (JSC::PutByVariant::writesStructures const):
+            (JSC::PutByVariant::reallocatesStorage const):
+            (JSC::PutByVariant::makesCalls const):
+            (JSC::PutByVariant::attemptToMerge):
+            (JSC::PutByVariant::attemptToMergeTransitionWithReplace):
+            (JSC::PutByVariant::visitAggregateImpl):
+            (JSC::PutByVariant::markIfCheap):
+            (JSC::PutByVariant::finalize):
+            (JSC::PutByVariant::dump const):
+            (JSC::PutByVariant::dumpInContext const):
+            * bytecode/PutByVariant.h: Renamed from Source/JavaScriptCore/bytecode/PutByIdVariant.h.
+            (JSC::PutByVariant::PutByVariant):
+            (JSC::PutByVariant::identifier const):
+            (JSC::PutByVariant::overlaps):
+            * bytecode/RecordedStatuses.cpp:
+            (JSC::RecordedStatuses::addPutByStatus):
+            (JSC::RecordedStatuses::visitAggregateImpl):
+            (JSC::RecordedStatuses::addPutByIdStatus): Deleted.
+            * bytecode/RecordedStatuses.h:
+            * bytecode/StructureStubInfo.cpp:
+            (JSC::StructureStubInfo::reset):
+            * bytecode/StructureStubInfo.h:
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterICStatus):
+            * dfg/DFGArgumentsEliminationPhase.cpp:
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::load):
+            (JSC::DFG::ByteCodeParser::store):
+            (JSC::DFG::ByteCodeParser::emitPutById):
+            (JSC::DFG::ByteCodeParser::handlePutById):
+            (JSC::DFG::ByteCodeParser::handlePutPrivateNameById):
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            (JSC::DFG::ByteCodeParser::handlePutByVal):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+            * dfg/DFGClobbersExitState.cpp:
+            (JSC::DFG::clobbersExitState):
+            * dfg/DFGConstantFoldingPhase.cpp:
+            (JSC::DFG::ConstantFoldingPhase::foldConstants):
+            (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+            (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+            * dfg/DFGDoesGC.cpp:
+            (JSC::DFG::doesGC):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::dump):
+            * dfg/DFGGraph.h:
+            * dfg/DFGJITCompiler.cpp:
+            (JSC::DFG::JITCompiler::link):
+            * dfg/DFGJITCompiler.h:
+            (JSC::DFG::JITCompiler::addPutByVal):
+            * dfg/DFGMayExit.cpp:
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::hasPutByStatus):
+            (JSC::DFG::Node::putByStatus):
+            (JSC::DFG::Node::hasPutByIdStatus): Deleted.
+            (JSC::DFG::Node::putByIdStatus): Deleted.
+            * dfg/DFGNodeType.h:
+            * dfg/DFGOSRExitCompilerCommon.cpp:
+            (JSC::DFG::callerReturnPC):
+            * dfg/DFGObjectAllocationSinkingPhase.cpp:
+            * dfg/DFGPredictionPropagationPhase.cpp:
+            * dfg/DFGSafeToExecute.h:
+            (JSC::DFG::safeToExecute):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGStoreBarrierInsertionPhase.cpp:
+            * dfg/DFGValidate.cpp:
+            * dfg/DFGVarargsForwardingPhase.cpp:
+            * ftl/FTLCapabilities.cpp:
+            (JSC::FTL::canCompile):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+            (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+            (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+            * generator/DSL.rb:
+            * jit/ICStats.h:
+            * jit/JIT.cpp:
+            (JSC::JIT::privateCompileSlowCases):
+            (JSC::JIT::link):
+            * jit/JIT.h:
+            * jit/JITInlineCacheGenerator.cpp:
+            (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+            (JSC::JITPutByValGenerator::JITPutByValGenerator):
+            (JSC::JITPutByValGenerator::generateFastPath):
+            (JSC::JITPutByValGenerator::finalize):
+            * jit/JITInlineCacheGenerator.h:
+            * jit/JITInlines.h:
+            (JSC::JIT::emitArrayProfilingSiteWithCell):
+            (JSC::JIT::chooseArrayMode): Deleted.
+            * jit/JITOperations.cpp:
+            (JSC::JSC_DEFINE_JIT_OPERATION):
+            (JSC::putByVal):
+            (JSC::directPutByVal):
+            (JSC::putByValOptimize):
+            (JSC::directPutByValOptimize):
+            (JSC::tryPutByValOptimize): Deleted.
+            (JSC::tryDirectPutByValOptimize): Deleted.
+            * jit/JITOperations.h:
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emit_op_put_by_val):
+            (JSC::JIT::emitSlow_op_put_by_val):
+            (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+            (JSC::JIT::emitSlow_op_put_private_name):
+            (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+            (JSC::JIT::emitGenericContiguousPutByVal): Deleted.
+            (JSC::JIT::emitArrayStoragePutByVal): Deleted.
+            (JSC::JIT::privateCompilePutByVal): Deleted.
+            (JSC::JIT::privateCompilePutByValWithCachedId): Deleted.
+            (JSC::JIT::emitIntTypedArrayPutByVal): Deleted.
+            (JSC::JIT::emitFloatTypedArrayPutByVal): Deleted.
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emit_op_put_by_val):
+            (JSC::JIT::emitSlow_op_put_by_val):
+            (JSC::JIT::emitGenericContiguousPutByVal): Deleted.
+            (JSC::JIT::emitArrayStoragePutByVal): Deleted.
+            * jit/Repatch.cpp:
+            (JSC::appropriateGenericPutByFunction):
+            (JSC::appropriateOptimizingPutByFunction):
+            (JSC::tryCachePutBy):
+            (JSC::repatchPutBy):
+            (JSC::tryCacheArrayPutByVal):
+            (JSC::repatchArrayPutByVal):
+            (JSC::tryCacheInBy):
+            (JSC::resetPutBy):
+            (JSC::appropriateGenericPutByIdFunction): Deleted.
+            (JSC::appropriateOptimizingPutByIdFunction): Deleted.
+            (JSC::tryCachePutByID): Deleted.
+            (JSC::repatchPutByID): Deleted.
+            (JSC::resetPutByID): Deleted.
+            * jit/Repatch.h:
+            * llint/LowLevelInterpreter.h:
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281454. rdar://problem/82650992
 
     [JSC] emitArrayProfilingSiteWithCell should not load indexingType unnecessarily

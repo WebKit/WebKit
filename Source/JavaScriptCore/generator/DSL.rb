@@ -141,7 +141,7 @@ module DSL
 #include "JSPropertyNameEnumerator.h"
 #include "Opcode.h"
 #include "PrivateFieldPutKind.h"
-#include "PutByIdStatus.h"
+#include "PutByStatus.h"
 #include "PutByIdFlags.h"
 #include "ToThisStatus.h"
 

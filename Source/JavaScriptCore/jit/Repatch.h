@@ -43,6 +43,11 @@ enum class GetByKind {
     PrivateNameById,
 };
 
+enum class PutByKind {
+    ById,
+    ByVal,
+};
+
 enum class DelByKind {
     ById,
     ByVal
@@ -56,7 +61,8 @@ enum class InByKind {
 
 void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&);
 void repatchGetBy(JSGlobalObject*, CodeBlock*, JSValue, CacheableIdentifier, const PropertySlot&, StructureStubInfo&, GetByKind);
-void repatchPutByID(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, StructureStubInfo&, PutKind);
+void repatchArrayPutByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&, PutKind, ECMAMode);
+void repatchPutBy(JSGlobalObject*, CodeBlock*, JSValue, Structure*, CacheableIdentifier, const PutPropertySlot&, StructureStubInfo&, PutByKind, PutKind);
 void repatchDeleteBy(JSGlobalObject*, CodeBlock*, DeletePropertySlot&, JSValue, Structure*, CacheableIdentifier, StructureStubInfo&, DelByKind, ECMAMode);
 void repatchInBy(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound, const PropertySlot&, StructureStubInfo&, InByKind);
 void repatchHasPrivateBrand(JSGlobalObject*, CodeBlock*, JSObject*, CacheableIdentifier, bool wasFound,  StructureStubInfo&);
@@ -69,7 +75,7 @@ void linkSlowFor(CallFrame*, CallLinkInfo&);
 void unlinkCall(VM&, CallLinkInfo&);
 void linkPolymorphicCall(JSGlobalObject*, CallFrame*, CallLinkInfo&, CallVariant);
 void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);
-void resetPutByID(CodeBlock*, StructureStubInfo&);
+void resetPutBy(CodeBlock*, StructureStubInfo&, PutByKind);
 void resetDelBy(CodeBlock*, StructureStubInfo&, DelByKind);
 void resetInBy(CodeBlock*, StructureStubInfo&, InByKind);
 void resetHasPrivateBrand(CodeBlock*, StructureStubInfo&);

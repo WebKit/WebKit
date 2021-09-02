@@ -208,6 +208,9 @@ public:
     ArrayModes* addressOfArrayModes() { return &m_observedArrayModes; }
     bool* addressOfMayStoreToHole() { return &m_mayStoreToHole; }
 
+    static ptrdiff_t offsetOfMayStoreToHole() { return OBJECT_OFFSETOF(ArrayProfile, m_mayStoreToHole); }
+    static ptrdiff_t offsetOfLastSeenStructureID() { return OBJECT_OFFSETOF(ArrayProfile, m_lastSeenStructureID); }
+
     void setOutOfBounds() { m_outOfBounds = true; }
     bool* addressOfOutOfBounds() { return &m_outOfBounds; }
     

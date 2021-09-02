@@ -55,7 +55,7 @@
 #include "JSPropertyNameEnumerator.h"
 #include "Operands.h"
 #include "PrivateFieldPutKind.h"
-#include "PutByIdVariant.h"
+#include "PutByVariant.h"
 #include "SetPrivateBrandVariant.h"
 #include "SpeculatedType.h"
 #include "TypeLocation.h"
@@ -92,7 +92,7 @@ struct StorageAccessData {
 
 struct MultiPutByOffsetData {
     unsigned identifierNumber;
-    Vector<PutByIdVariant, 2> variants;
+    Vector<PutByVariant, 2> variants;
     
     bool writesStructures() const;
     bool reallocatesStorage() const;
@@ -3210,15 +3210,15 @@ public:
         return m_opInfo.as<InByStatus*>();
     }
     
-    bool hasPutByIdStatus()
+    bool hasPutByStatus()
     {
-        return op() == FilterPutByIdStatus;
+        return op() == FilterPutByStatus;
     }
     
-    PutByIdStatus* putByIdStatus()
+    PutByStatus* putByStatus()
     {
-        ASSERT(hasPutByIdStatus());
-        return m_opInfo.as<PutByIdStatus*>();
+        ASSERT(hasPutByStatus());
+        return m_opInfo.as<PutByStatus*>();
     }
 
     bool hasDeleteByStatus()

@@ -568,53 +568,94 @@ void repatchArrayGetByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JS
         repatchSlowPathCall(codeBlock, stubInfo, operationGetByValGeneric);
 }
 
-static auto appropriateGenericPutByIdFunction(const PutPropertySlot &slot, PutKind putKind) -> decltype(&operationPutByIdDirectStrict)
+static FunctionPtr<CFunctionPtrTag> appropriateGenericPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
 {
-    switch (putKind) {
-    case PutKind::NotDirect:
-        if (slot.isStrictMode())
-            return operationPutByIdStrict;
-        return operationPutByIdNonStrict;
-    case PutKind::Direct:
-        if (slot.isStrictMode())
-            return operationPutByIdDirectStrict;
-        return operationPutByIdDirectNonStrict;
-    case PutKind::DirectPrivateFieldDefine:
-        ASSERT(slot.isStrictMode());
-        return operationPutByIdDefinePrivateFieldStrict;
-    case PutKind::DirectPrivateFieldSet:
-        ASSERT(slot.isStrictMode());
-        return operationPutByIdSetPrivateFieldStrict;
+    switch (putByKind) {
+    case PutByKind::ById: {
+        switch (putKind) {
+        case PutKind::NotDirect:
+            if (slot.isStrictMode())
+                return operationPutByIdStrict;
+            return operationPutByIdNonStrict;
+        case PutKind::Direct:
+            if (slot.isStrictMode())
+                return operationPutByIdDirectStrict;
+            return operationPutByIdDirectNonStrict;
+        case PutKind::DirectPrivateFieldDefine:
+            ASSERT(slot.isStrictMode());
+            return operationPutByIdDefinePrivateFieldStrict;
+        case PutKind::DirectPrivateFieldSet:
+            ASSERT(slot.isStrictMode());
+            return operationPutByIdSetPrivateFieldStrict;
+        }
+        break;
+    }
+    case PutByKind::ByVal: {
+        switch (putKind) {
+        case PutKind::NotDirect:
+            if (slot.isStrictMode())
+                return operationPutByValStrictGeneric;
+            return operationPutByValNonStrictGeneric;
+        case PutKind::Direct:
+            if (slot.isStrictMode())
+                return operationDirectPutByValStrictGeneric;
+            return operationDirectPutByValNonStrictGeneric;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
     }
     // Make win port compiler happy
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-static auto appropriateOptimizingPutByIdFunction(const PutPropertySlot &slot, PutKind putKind) -> decltype(&operationPutByIdDirectStrictOptimize)
+static FunctionPtr<CFunctionPtrTag> appropriateOptimizingPutByFunction(const PutPropertySlot &slot, PutByKind putByKind, PutKind putKind)
 {
-    switch (putKind) {
-    case PutKind::NotDirect:
-        if (slot.isStrictMode())
-            return operationPutByIdStrictOptimize;
-        return operationPutByIdNonStrictOptimize;
-    case PutKind::Direct:
-        if (slot.isStrictMode())
-            return operationPutByIdDirectStrictOptimize;
-        return operationPutByIdDirectNonStrictOptimize;
-    case PutKind::DirectPrivateFieldDefine:
-        ASSERT(slot.isStrictMode());
-        return operationPutByIdDefinePrivateFieldStrictOptimize;
-    case PutKind::DirectPrivateFieldSet:
-        ASSERT(slot.isStrictMode());
-        return operationPutByIdSetPrivateFieldStrictOptimize;
+    switch (putByKind) {
+    case PutByKind::ById:
+        switch (putKind) {
+        case PutKind::NotDirect:
+            if (slot.isStrictMode())
+                return operationPutByIdStrictOptimize;
+            return operationPutByIdNonStrictOptimize;
+        case PutKind::Direct:
+            if (slot.isStrictMode())
+                return operationPutByIdDirectStrictOptimize;
+            return operationPutByIdDirectNonStrictOptimize;
+        case PutKind::DirectPrivateFieldDefine:
+            ASSERT(slot.isStrictMode());
+            return operationPutByIdDefinePrivateFieldStrictOptimize;
+        case PutKind::DirectPrivateFieldSet:
+            ASSERT(slot.isStrictMode());
+            return operationPutByIdSetPrivateFieldStrictOptimize;
+        }
+        break;
+    case PutByKind::ByVal: {
+        switch (putKind) {
+        case PutKind::NotDirect:
+            if (slot.isStrictMode())
+                return operationPutByValStrictOptimize;
+            return operationPutByValNonStrictOptimize;
+        case PutKind::Direct:
+            if (slot.isStrictMode())
+                return operationDirectPutByValStrictOptimize;
+            return operationDirectPutByValNonStrictOptimize;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
     }
     // Make win port compiler happy
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutByKind putByKind, PutKind putKind)
 {
     VM& vm = globalObject->vm();
     AccessGenerationResult result;
@@ -682,8 +723,8 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                     
                     bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(stubInfo, oldStructure, slot.cachedOffset());
                     if (generatedCodeInline) {
-                        LOG_IC((ICEvent::PutByIdSelfPatch, oldStructure->classInfo(), ident, slot.base() == baseValue));
-                        repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingPutByIdFunction(slot, putKind));
+                        LOG_IC((ICEvent::PutBySelfPatch, oldStructure->classInfo(), ident, slot.base() == baseValue));
+                        repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingPutByFunction(slot, putByKind, putKind));
                         stubInfo.initPutByIdReplace(locker, codeBlock, oldStructure, slot.cachedOffset(), propertyName);
                         return RetryCacheLater;
                     }
@@ -817,12 +858,12 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
             }
         }
 
-        LOG_IC((ICEvent::PutByIdAddAccessCase, oldStructure->classInfo(), ident, slot.base() == baseValue));
+        LOG_IC((ICEvent::PutByAddAccessCase, oldStructure->classInfo(), ident, slot.base() == baseValue));
         
         result = stubInfo.addAccessCase(locker, globalObject, codeBlock, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy(), propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
-            LOG_IC((ICEvent::PutByIdReplaceWithJump, oldStructure->classInfo(), ident, slot.base() == baseValue));
+            LOG_IC((ICEvent::PutByReplaceWithJump, oldStructure->classInfo(), ident, slot.base() == baseValue));
             
             RELEASE_ASSERT(result.code());
 
@@ -835,12 +876,105 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
-void repatchPutByID(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+void repatchPutBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutByKind putByKind, PutKind putKind)
 {
     SuperSamplerScope superSamplerScope(false);
     
-    if (tryCachePutByID(globalObject, codeBlock, baseValue, oldStructure, propertyName, slot, stubInfo, putKind) == GiveUpOnCache)
-        repatchSlowPathCall(codeBlock, stubInfo, appropriateGenericPutByIdFunction(slot, putKind));
+    if (tryCachePutBy(globalObject, codeBlock, baseValue, oldStructure, propertyName, slot, stubInfo, putByKind, putKind) == GiveUpOnCache)
+        repatchSlowPathCall(codeBlock, stubInfo, appropriateGenericPutByFunction(slot, putByKind, putKind));
+}
+
+static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue baseValue, JSValue index, StructureStubInfo& stubInfo, PutKind)
+{
+    if (!baseValue.isCell())
+        return GiveUpOnCache;
+
+    if (!index.isInt32())
+        return RetryCacheLater;
+
+    VM& vm = globalObject->vm();
+    AccessGenerationResult result;
+
+    {
+        JSCell* base = baseValue.asCell();
+
+        AccessCase::AccessType accessType;
+        if (isTypedView(base->classInfo(vm)->typedArrayStorageType)) {
+            switch (base->classInfo(vm)->typedArrayStorageType) {
+            case TypeInt8:
+                accessType = AccessCase::IndexedTypedArrayInt8Store;
+                break;
+            case TypeUint8:
+                accessType = AccessCase::IndexedTypedArrayUint8Store;
+                break;
+            case TypeUint8Clamped:
+                accessType = AccessCase::IndexedTypedArrayUint8ClampedStore;
+                break;
+            case TypeInt16:
+                accessType = AccessCase::IndexedTypedArrayInt16Store;
+                break;
+            case TypeUint16:
+                accessType = AccessCase::IndexedTypedArrayUint16Store;
+                break;
+            case TypeInt32:
+                accessType = AccessCase::IndexedTypedArrayInt32Store;
+                break;
+            case TypeUint32:
+                accessType = AccessCase::IndexedTypedArrayUint32Store;
+                break;
+            case TypeFloat32:
+                accessType = AccessCase::IndexedTypedArrayFloat32Store;
+                break;
+            case TypeFloat64:
+                accessType = AccessCase::IndexedTypedArrayFloat64Store;
+                break;
+            // FIXME: Optimize BigInt64Array / BigUint64Array in IC
+            // https://bugs.webkit.org/show_bug.cgi?id=221183
+            case TypeBigInt64:
+            case TypeBigUint64:
+                return GiveUpOnCache;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        } else {
+            IndexingType indexingShape = base->indexingType() & IndexingShapeMask;
+            switch (indexingShape) {
+            case Int32Shape:
+                accessType = AccessCase::IndexedInt32Store;
+                break;
+            case DoubleShape:
+                accessType = AccessCase::IndexedDoubleStore;
+                break;
+            case ContiguousShape:
+                accessType = AccessCase::IndexedContiguousStore;
+                break;
+            case ArrayStorageShape:
+                accessType = AccessCase::IndexedArrayStorageStore;
+                break;
+            default:
+                return GiveUpOnCache;
+            }
+        }
+
+        GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm().heap);
+        result = stubInfo.addAccessCase(locker, globalObject, codeBlock, ECMAMode::strict(), nullptr, AccessCase::create(vm, codeBlock, accessType, nullptr));
+
+        if (result.generatedSomeCode()) {
+            LOG_IC((ICEvent::PutByReplaceWithJump, baseValue.classInfoOrNull(vm), Identifier()));
+
+            RELEASE_ASSERT(result.code());
+            InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
+        }
+    }
+
+    fireWatchpointsAndClearStubIfNeeded(vm, stubInfo, codeBlock, result);
+    return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
+}
+
+void repatchArrayPutByVal(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSValue base, JSValue index, StructureStubInfo& stubInfo, PutKind putKind, ECMAMode ecmaMode)
+{
+    if (tryCacheArrayPutByVal(globalObject, codeBlock, base, index, stubInfo, putKind) == GiveUpOnCache)
+        repatchSlowPathCall(codeBlock, stubInfo, putKind == PutKind::Direct ? (ecmaMode.isStrict() ? operationDirectPutByValStrictGeneric : operationDirectPutByValNonStrictGeneric) : (ecmaMode.isStrict() ? operationPutByValStrictGeneric : operationPutByValNonStrictGeneric));
 }
 
 static InlineCacheAction tryCacheDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeletePropertySlot& slot, JSValue baseValue, Structure* oldStructure, CacheableIdentifier propertyName, StructureStubInfo& stubInfo, DelByKind, ECMAMode ecmaMode)
@@ -986,7 +1120,7 @@ static InlineCacheAction tryCacheInBy(
                 && !structure->needImpurePropertyWatchpoint()) {
                 bool generatedCodeInline = InlineAccess::generateSelfInAccess(stubInfo, structure);
                 if (generatedCodeInline) {
-                    LOG_IC((ICEvent::InByIdSelfPatch, structure->classInfo(), ident, slot.slotBase() == base));
+                    LOG_IC((ICEvent::InBySelfPatch, structure->classInfo(), ident, slot.slotBase() == base));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
                     repatchSlowPathCall(codeBlock, stubInfo, operationInByIdOptimize);
                     stubInfo.initInByIdSelf(locker, codeBlock, structure, slot.cachedOffset(), propertyName);
@@ -1756,28 +1890,55 @@ void resetGetBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kin
     }
 }
 
-void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+void resetPutBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PutByKind kind)
 {
-    using FunctionType = decltype(&operationPutByIdDirectStrictOptimize);
-    FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).executableAddress());
-    FunctionType optimizedFunction;
-    if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictOptimize)
-        optimizedFunction = operationPutByIdStrictOptimize;
-    else if (unoptimizedFunction == operationPutByIdNonStrict || unoptimizedFunction == operationPutByIdNonStrictOptimize)
-        optimizedFunction = operationPutByIdNonStrictOptimize;
-    else if (unoptimizedFunction == operationPutByIdDirectStrict || unoptimizedFunction == operationPutByIdDirectStrictOptimize)
-        optimizedFunction = operationPutByIdDirectStrictOptimize;
-    else if (unoptimizedFunction == operationPutByIdSetPrivateFieldStrict || unoptimizedFunction == operationPutByIdSetPrivateFieldStrictOptimize)
-        optimizedFunction = operationPutByIdSetPrivateFieldStrictOptimize;
-    else if (unoptimizedFunction == operationPutByIdDefinePrivateFieldStrict || unoptimizedFunction == operationPutByIdDefinePrivateFieldStrictOptimize)
-        optimizedFunction = operationPutByIdDefinePrivateFieldStrictOptimize;
-    else {
-        ASSERT(unoptimizedFunction == operationPutByIdDirectNonStrict || unoptimizedFunction == operationPutByIdDirectNonStrictOptimize);
-        optimizedFunction = operationPutByIdDirectNonStrictOptimize;
+    FunctionPtr<CFunctionPtrTag> optimizedFunction;
+    switch (kind) {
+    case PutByKind::ById: {
+        using FunctionType = decltype(&operationPutByIdDirectStrictOptimize);
+        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).executableAddress());
+        if (unoptimizedFunction == operationPutByIdStrict || unoptimizedFunction == operationPutByIdStrictOptimize)
+            optimizedFunction = operationPutByIdStrictOptimize;
+        else if (unoptimizedFunction == operationPutByIdNonStrict || unoptimizedFunction == operationPutByIdNonStrictOptimize)
+            optimizedFunction = operationPutByIdNonStrictOptimize;
+        else if (unoptimizedFunction == operationPutByIdDirectStrict || unoptimizedFunction == operationPutByIdDirectStrictOptimize)
+            optimizedFunction = operationPutByIdDirectStrictOptimize;
+        else if (unoptimizedFunction == operationPutByIdSetPrivateFieldStrict || unoptimizedFunction == operationPutByIdSetPrivateFieldStrictOptimize)
+            optimizedFunction = operationPutByIdSetPrivateFieldStrictOptimize;
+        else if (unoptimizedFunction == operationPutByIdDefinePrivateFieldStrict || unoptimizedFunction == operationPutByIdDefinePrivateFieldStrictOptimize)
+            optimizedFunction = operationPutByIdDefinePrivateFieldStrictOptimize;
+        else {
+            ASSERT(unoptimizedFunction == operationPutByIdDirectNonStrict || unoptimizedFunction == operationPutByIdDirectNonStrictOptimize);
+            optimizedFunction = operationPutByIdDirectNonStrictOptimize;
+        }
+        break;
+    }
+    case PutByKind::ByVal: {
+        using FunctionType = decltype(&operationPutByValStrictOptimize);
+        FunctionType unoptimizedFunction = reinterpret_cast<FunctionType>(readPutICCallTarget(codeBlock, stubInfo).executableAddress());
+        if (unoptimizedFunction == operationPutByValStrictGeneric || unoptimizedFunction == operationPutByValStrictOptimize)
+            optimizedFunction = operationPutByValStrictOptimize;
+        else if (unoptimizedFunction == operationPutByValNonStrictGeneric || unoptimizedFunction == operationPutByValNonStrictOptimize)
+            optimizedFunction = operationPutByValNonStrictOptimize;
+        else if (unoptimizedFunction == operationDirectPutByValStrictGeneric || unoptimizedFunction == operationDirectPutByValStrictOptimize)
+            optimizedFunction = operationDirectPutByValStrictOptimize;
+        else {
+            ASSERT(unoptimizedFunction == operationDirectPutByValNonStrictGeneric || unoptimizedFunction == operationDirectPutByValNonStrictOptimize);
+            optimizedFunction = operationDirectPutByValNonStrictOptimize;
+        }
+        break;
+    }
     }
 
     repatchSlowPathCall(codeBlock, stubInfo, optimizedFunction);
-    InlineAccess::resetStubAsJumpInAccess(codeBlock, stubInfo);
+    switch (kind) {
+    case PutByKind::ById:
+        InlineAccess::resetStubAsJumpInAccess(codeBlock, stubInfo);
+        break;
+    case PutByKind::ByVal:
+        InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo);
+        break;
+    }
 }
 
 void resetDelBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, DelByKind kind)

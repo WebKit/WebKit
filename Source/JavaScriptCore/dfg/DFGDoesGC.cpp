@@ -247,7 +247,7 @@ bool doesGC(Graph& graph, Node* node)
     case MatchStructure:
     case FilterCallLinkStatus:
     case FilterGetByStatus:
-    case FilterPutByIdStatus:
+    case FilterPutByStatus:
     case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:

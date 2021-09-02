@@ -1449,7 +1449,7 @@ private:
         case WeakMapSet:
         case FilterCallLinkStatus:
         case FilterGetByStatus:
-        case FilterPutByIdStatus:
+        case FilterPutByStatus:
         case FilterInByStatus:
         case FilterDeleteByStatus:
         case FilterCheckPrivateBrandStatus:

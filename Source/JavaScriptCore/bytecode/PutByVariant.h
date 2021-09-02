@@ -33,7 +33,7 @@ namespace JSC {
 
 class CallLinkStatus;
 
-class PutByIdVariant {
+class PutByVariant {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Kind {
@@ -43,25 +43,22 @@ public:
         Setter
     };
     
-    PutByIdVariant()
+    PutByVariant(CacheableIdentifier identifier)
         : m_kind(NotSet)
         , m_offset(invalidOffset)
         , m_newStructure(nullptr)
+        , m_identifier(WTFMove(identifier))
     {
     }
     
-    PutByIdVariant(const PutByIdVariant&);
-    PutByIdVariant& operator=(const PutByIdVariant&);
+    PutByVariant(const PutByVariant&);
+    PutByVariant& operator=(const PutByVariant&);
 
-    static PutByIdVariant replace(const StructureSet&, PropertyOffset);
+    static PutByVariant replace(CacheableIdentifier, const StructureSet&, PropertyOffset);
     
-    static PutByIdVariant transition(
-        const StructureSet& oldStructure, Structure* newStructure,
-        const ObjectPropertyConditionSet&, PropertyOffset);
+    static PutByVariant transition(CacheableIdentifier, const StructureSet& oldStructure, Structure* newStructure, const ObjectPropertyConditionSet&, PropertyOffset);
     
-    static PutByIdVariant setter(
-        const StructureSet&, PropertyOffset, const ObjectPropertyConditionSet&,
-        std::unique_ptr<CallLinkStatus>);
+    static PutByVariant setter(CacheableIdentifier, const StructureSet&, PropertyOffset, const ObjectPropertyConditionSet&, std::unique_ptr<CallLinkStatus>);
     
     Kind kind() const { return m_kind; }
     
@@ -130,21 +127,30 @@ public:
         return m_callLinkStatus.get();
     }
 
-    bool attemptToMerge(const PutByIdVariant& other);
+    bool attemptToMerge(const PutByVariant& other);
     
+    DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);
     
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
-    bool overlaps(const PutByIdVariant& other)
+    CacheableIdentifier identifier() const { return m_identifier; }
+
+    bool overlaps(const PutByVariant& other)
     {
+        if (!!m_identifier != !!other.m_identifier)
+            return true;
+        if (m_identifier) {
+            if (m_identifier != other.m_identifier)
+                return false;
+        }
         return structureSet().overlaps(other.structureSet());
     }
 
 private:
-    bool attemptToMergeTransitionWithReplace(const PutByIdVariant& replace);
+    bool attemptToMergeTransitionWithReplace(const PutByVariant& replace);
     
     Kind m_kind;
     PropertyOffset m_offset;
@@ -152,6 +158,7 @@ private:
     Structure* m_newStructure { nullptr };
     ObjectPropertyConditionSet m_conditionSet;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
+    CacheableIdentifier m_identifier;
 };
 
 } // namespace JSC
