@@ -1,5 +1,79 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281860. rdar://problem/82651913
+
+    PerformanceNavigationTiming should be instantiated before scripts run then updated when response finishes
+    https://bugs.webkit.org/show_bug.cgi?id=229751
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-09-01
+    Reviewed by Chris Dumez.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/navigation-timing/nav2_test_response_end_and_duration_before_during_and_after_load_event-expected.txt: Added.
+    * web-platform-tests/navigation-timing/nav2_test_response_end_and_duration_before_during_and_after_load_event.html: Added.
+    * web-platform-tests/navigation-timing/resources/respond_slowly.py: Added.
+    (main):
+    
+    Source/WebCore:
+    
+    Test: imported/w3c/web-platform-tests/navigation-timing/nav2_test_response_end_and_duration_before_during_and_after_load_event.html
+    
+    I noticed some server timing tests were calling performance.getEntriesByType('navigation')[0] before the document loaded, and in WebKit
+    it would return undefined and in Chrome and Firefox it would return a PerformanceNavigationTiming object.  The solution is to make the object
+    available earlier.  But what about responseEnd and duration before the main resource is finished responding?  It turns out in Chrome and now
+    WebKit they are both 0 until they are filled in.  I added a WPT test to verify this behavior.
+    
+    * loader/DocumentLoader.cpp:
+    (WebCore::DocumentLoader::notifyFinished):
+    (WebCore::DocumentLoader::commitData):
+    * loader/ResourceTiming.h:
+    (WebCore::ResourceTiming::networkLoadMetrics):
+    * page/Performance.cpp:
+    (WebCore::Performance::addNavigationTiming):
+    (WebCore::Performance::navigationFinished):
+    * page/Performance.h:
+    * page/PerformanceNavigationTiming.cpp:
+    (WebCore::PerformanceNavigationTiming::navigationFinished):
+    * page/PerformanceNavigationTiming.h:
+    * page/PerformanceResourceTiming.cpp:
+    (WebCore::PerformanceResourceTiming::responseEnd const):
+    * page/PerformanceResourceTiming.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281860 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-01  Alex Christensen  <achristensen@webkit.org>
+
+            PerformanceNavigationTiming should be instantiated before scripts run then updated when response finishes
+            https://bugs.webkit.org/show_bug.cgi?id=229751
+
+            Reviewed by Chris Dumez.
+
+            Test: imported/w3c/web-platform-tests/navigation-timing/nav2_test_response_end_and_duration_before_during_and_after_load_event.html
+
+            I noticed some server timing tests were calling performance.getEntriesByType('navigation')[0] before the document loaded, and in WebKit
+            it would return undefined and in Chrome and Firefox it would return a PerformanceNavigationTiming object.  The solution is to make the object
+            available earlier.  But what about responseEnd and duration before the main resource is finished responding?  It turns out in Chrome and now
+            WebKit they are both 0 until they are filled in.  I added a WPT test to verify this behavior.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::notifyFinished):
+            (WebCore::DocumentLoader::commitData):
+            * loader/ResourceTiming.h:
+            (WebCore::ResourceTiming::networkLoadMetrics):
+            * page/Performance.cpp:
+            (WebCore::Performance::addNavigationTiming):
+            (WebCore::Performance::navigationFinished):
+            * page/Performance.h:
+            * page/PerformanceNavigationTiming.cpp:
+            (WebCore::PerformanceNavigationTiming::navigationFinished):
+            * page/PerformanceNavigationTiming.h:
+            * page/PerformanceResourceTiming.cpp:
+            (WebCore::PerformanceResourceTiming::responseEnd const):
+            * page/PerformanceResourceTiming.h:
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281848. rdar://problem/82652449
 
     Regression(r272607) Removal of alert()/confirm() in third-party iframes breaks Salesforce

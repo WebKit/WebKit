@@ -424,7 +424,7 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
     if (auto document = makeRefPtr(this->document())) {
         if (auto domWindow = makeRefPtr(document->domWindow())) {
             if (document->settings().performanceNavigationTimingAPIEnabled())
-                domWindow->performance().addNavigationTiming(*this, *document, resource, timing(), metrics);
+                domWindow->performance().navigationFinished(metrics);
         }
     }
 
@@ -1318,8 +1318,14 @@ void DocumentLoader::commitData(const uint8_t* bytes, size_t length)
         if (!isLoading())
             return;
 
-        if (auto* window = document.domWindow())
+        if (auto* window = document.domWindow()) {
             window->prewarmLocalStorageIfNecessary();
+
+            if (document.settings().performanceNavigationTimingAPIEnabled() && m_mainResource) {
+                auto* metrics = m_response.deprecatedNetworkLoadMetricsOrNull();
+                window->performance().addNavigationTiming(*this, document, *m_mainResource, timing(), metrics ? *metrics : NetworkLoadMetrics { });
+            }
+        }
 
         bool userChosen;
         String encoding;

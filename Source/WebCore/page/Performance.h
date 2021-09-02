@@ -97,6 +97,7 @@ public:
     void clearMeasures(const String& measureName);
 
     void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&);
+    void navigationFinished(const NetworkLoadMetrics&);
     void addResourceTiming(ResourceTiming&&);
 
     void reportFirstContentfulPaint();

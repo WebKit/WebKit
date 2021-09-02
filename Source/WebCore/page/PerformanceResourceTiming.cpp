@@ -221,8 +221,11 @@ double PerformanceResourceTiming::responseStart() const
 
 double PerformanceResourceTiming::responseEnd() const
 {
-    // responseEnd is a required property.
-    ASSERT(m_resourceTiming.networkLoadMetrics().isComplete() || m_resourceTiming.resourceLoadTiming().endTime());
+    // responseEnd is a required property, but PerformanceNavigationTiming
+    // can be queried before the document load is complete
+    ASSERT(m_resourceTiming.networkLoadMetrics().isComplete()
+        || m_resourceTiming.resourceLoadTiming().endTime()
+        || performanceEntryType() == Type::Navigation);
 
     if (m_resourceTiming.networkLoadMetrics().isComplete()) {
         if (m_resourceTiming.networkLoadMetrics().responseEnd)
