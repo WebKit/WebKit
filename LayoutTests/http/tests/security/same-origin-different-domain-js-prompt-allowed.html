@@ -3,7 +3,7 @@
 <body>
 <script src="/js-test-resources/js-test.js"></script>
 <script>
-description("Tests that JS prompts are forbidden in same-origin but different-domain iframes");
+description("Tests that JS prompts are allowed in same-origin but different-domain iframes");
 jsTestIsAsync = true;
 
 if (window.internals)
@@ -17,6 +17,6 @@ onmessage = (e) => {
     debug(e.data);
 }
 </script>
-<iframe src="http://127.0.0.1:8000/security/resources/cross-origin-js-prompt-forbidden.html"></iframe>
+<iframe src="http://127.0.0.1:8000/security/resources/cross-origin-js-prompt-allowed.html"></iframe>
 </body>
 </html>

@@ -1116,11 +1116,6 @@ void DOMWindow::alert(const String& message)
         return;
     }
 
-    if (!document->securityOrigin().isSameOriginDomain(document->topDocument().securityOrigin())) {
-        printErrorMessage("Use of window.alert is not allowed in different origin-domain iframes.");
-        return;
-    }
-
     document->updateStyleIfNeeded();
 #if ENABLE(POINTER_LOCK)
     page->pointerLockController().requestPointerUnlock();
@@ -1150,11 +1145,6 @@ bool DOMWindow::confirmForBindings(const String& message)
         return false;
     }
 
-    if (!document->securityOrigin().isSameOriginDomain(document->topDocument().securityOrigin())) {
-        printErrorMessage("Use of window.confirm is not allowed in different origin-domain iframes.");
-        return false;
-    }
-
     document->updateStyleIfNeeded();
 #if ENABLE(POINTER_LOCK)
     page->pointerLockController().requestPointerUnlock();
@@ -1181,11 +1171,6 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
 
     if (!page->arePromptsAllowed()) {
         printErrorMessage("Use of window.prompt is not allowed while unloading a page.");
-        return String();
-    }
-
-    if (!document->securityOrigin().isSameOriginDomain(document->topDocument().securityOrigin())) {
-        printErrorMessage("Use of window.prompt is not allowed in different origin-domain iframes.");
         return String();
     }
 
