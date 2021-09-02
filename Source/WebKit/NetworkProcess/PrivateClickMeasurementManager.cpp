@@ -53,16 +53,11 @@ using EphemeralSourceNonce = PrivateClickMeasurement::EphemeralSourceNonce;
 
 constexpr Seconds debugModeSecondsUntilSend { 10_s };
 
-PrivateClickMeasurementManager::PrivateClickMeasurementManager(NetworkSession& networkSession, NetworkProcess& networkProcess, PAL::SessionID sessionID, const String& storageDirectory, Function<void(NetworkLoadParameters&&, NetworkLoadCallback&&)>&& networkLoadFunction)
+PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory)
     : m_firePendingAttributionRequestsTimer(*this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
-    , m_networkSession(makeWeakPtr(networkSession))
-    , m_networkProcess(networkProcess)
-    , m_sessionID(sessionID)
     , m_storageDirectory(storageDirectory)
-    , m_networkLoadFunction(WTFMove(networkLoadFunction))
+    , m_client(WTFMove(client))
 {
-    ASSERT(m_networkLoadFunction);
-
     // We should send any pending attributions on session-start in case their
     // send delay has expired while the session was closed. Waiting 5 seconds accounts for the
     // delay in database startup.
@@ -92,7 +87,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
             else {
                 if (auto errorMessage = measurement.calculateAndUpdateSourceUnlinkableToken(publicKeyBase64URL)) {
                     RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceUnlinkableToken(): '%{public}s", errorMessage->utf8().data());
-                    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
+                    m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
                     return;
                 }
             }
@@ -103,7 +98,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
         });
     }
 
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing a click."_s);
+    m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Storing a click."_s);
 
     insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed);
 }
@@ -158,23 +153,23 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     auto loadParameters = generateNetworkLoadParametersForHttpGet(WTFMove(tokenPublicKeyURL), pcmDataCarried, debugModeEnabled());
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
+    m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    m_networkLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
+    m_client->loadFromNetwork(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
         if (!error.isNull()) {
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for token public key request."_s));
+            m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for token public key request."_s));
             return;
         }
 
         if (!jsonObject) {
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] JSON response is empty for token public key request."_s));
+            m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] JSON response is empty for token public key request."_s));
             return;
         }
 
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Got JSON response for token public key request."_s));
+        m_client->broadcastConsoleMessage(MessageLevel::Log, makeString("[Private Click Measurement] Got JSON response for token public key request."_s));
 
         callback(WTFMove(attribution), jsonObject->getString("token_public_key"_s));
     });
@@ -201,25 +196,25 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, debugModeEnabled());
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
+    m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
 
-    m_networkLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
+    m_client->loadFromNetwork(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
         if (!error.isNull()) {
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for secret token signing request."_s));
+            m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for secret token signing request."_s));
             return;
         }
 
         if (!jsonObject) {
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] JSON response is empty for token signing request."_s));
+            m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] JSON response is empty for token signing request."_s));
             return;
         }
 
         auto signatureBase64URL = jsonObject->getString("unlinkable_token"_s);
         if (signatureBase64URL.isEmpty()) {
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] JSON response doesn't have the key 'unlinkable_token' for token signing request."_s));
+            m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] JSON response doesn't have the key 'unlinkable_token' for token signing request."_s));
             return;
         }
         // FIX NOW!
@@ -229,13 +224,13 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
         else {
             if (auto errorMessage = measurement.calculateAndUpdateSourceSecretToken(signatureBase64URL)) {
                 RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%{public}s", errorMessage->utf8().data());
-                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
+                m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
                 return;
             }
         }
 #endif
 
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Storing a secret token."_s);
+        m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Storing a secret token."_s);
 
         insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed);
     });
@@ -262,16 +257,16 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
     auto& firstPartyURL = redirectRequest.firstPartyForCookies();
 
     if (!redirectDomain.matches(requestURL)) {
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because the HTTP redirect was not same-site."_s);
+        m_client->broadcastConsoleMessage(MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because the HTTP redirect was not same-site."_s);
         return;
     }
 
     if (redirectDomain.matches(firstPartyURL)) {
-        m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because it was requested in an HTTP redirect that is same-site as the first-party."_s);
+        m_client->broadcastConsoleMessage(MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because it was requested in an HTTP redirect that is same-site as the first-party."_s);
         return;
     }
 
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] Triggering event accepted."_s);
+    m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Triggering event accepted."_s);
 
     attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData));
 }
@@ -303,7 +298,7 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
 
         if (UNLIKELY(debugModeEnabled())) {
             for (auto& message : debugInfo.messages)
-                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, message.messageLevel, message.message);
+                m_client->broadcastConsoleMessage(message.messageLevel, message.message);
         }
 
         if (attributionSecondsUntilSendData.value().hasValidSecondsUntilSendValues()) {
@@ -317,10 +312,10 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
                 return;
 
             if (UNLIKELY(debugModeEnabled())) {
-                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, minSecondsUntilSend.value().seconds(), " seconds."_s));
+                m_client->broadcastConsoleMessage(MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the debug mode timeout of "_s, debugModeSecondsUntilSend.seconds(), " seconds where the regular timeout would have been "_s, minSecondsUntilSend.value().seconds(), " seconds."_s));
                 minSecondsUntilSend = debugModeSecondsUntilSend;
             } else
-                m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the timeout of "_s, minSecondsUntilSend.value().seconds(), " seconds."_s));
+                m_client->broadcastConsoleMessage(MessageLevel::Log, makeString("[Private Click Measurement] Setting timer for firing attribution request to the timeout of "_s, minSecondsUntilSend.value().seconds(), " seconds."_s));
 
             startTimer(*minSecondsUntilSend);
         }
@@ -376,14 +371,14 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(attributionURL), attribution.attributionReportJSON(), PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, debugModeEnabled());
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
-    m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
+    m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
 
-    m_networkLoadFunction(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this](auto& error, auto& response, auto&) {
+    m_client->loadFromNetwork(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this](auto& error, auto& response, auto&) {
         if (!weakThis)
             return;
 
         if (!error.isNull()) {
-            m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for ad click attribution request."_s));
+            m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for ad click attribution request."_s));
         }
     });
 }
@@ -529,12 +524,12 @@ void PrivateClickMeasurementManager::setPCMFraudPreventionValuesForTesting(Strin
 
 bool PrivateClickMeasurementManager::featureEnabled() const
 {
-    return m_networkSession && m_networkProcess->privateClickMeasurementEnabled() && !m_sessionID.isEphemeral();
+    return m_client->featureEnabled();
 }
 
 bool PrivateClickMeasurementManager::debugModeEnabled() const
 {
-    return m_networkProcess->privateClickMeasurementDebugModeEnabled() && !m_sessionID.isEphemeral();
+    return m_client->debugModeEnabled();
 }
 
 void PrivateClickMeasurementManager::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)

@@ -4553,6 +4553,9 @@
 		5CB7AFE423C67D6400E49CF3 /* APIResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIResourceLoadInfo.h; sourceTree = "<group>"; };
 		5CB7AFE523C67DF900E49CF3 /* _WKResourceLoadInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKResourceLoadInfoInternal.h; sourceTree = "<group>"; };
 		5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
+		5CB930BF26E0542E0032B1C0 /* PrivateClickMeasurementClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementClient.h; sourceTree = "<group>"; };
+		5CB930C026E0542F0032B1C0 /* PrivateClickMeasurementClientImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementClientImpl.cpp; sourceTree = "<group>"; };
+		5CB930C126E054B80032B1C0 /* PrivateClickMeasurementClientImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementClientImpl.h; sourceTree = "<group>"; };
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTask.h; sourceTree = "<group>"; };
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDebugInfo.h; sourceTree = "<group>"; };
@@ -9262,6 +9265,9 @@
 		5C01BC3526D46AD400FEB42F /* PrivateClickMeasurement */ = {
 			isa = PBXGroup;
 			children = (
+				5CB930BF26E0542E0032B1C0 /* PrivateClickMeasurementClient.h */,
+				5CB930C026E0542F0032B1C0 /* PrivateClickMeasurementClientImpl.cpp */,
+				5CB930C126E054B80032B1C0 /* PrivateClickMeasurementClientImpl.h */,
 				5C826D6A26D482EA008AEC91 /* PrivateClickMeasurementDatabase.cpp */,
 				5C826D6926D482EA008AEC91 /* PrivateClickMeasurementDatabase.h */,
 				5CBE909026D7FB7C005A2E95 /* PrivateClickMeasurementDebugInfo.cpp */,

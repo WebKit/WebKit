@@ -35,6 +35,7 @@
 #include "NetworkResourceLoader.h"
 #include "NetworkSessionCreationParameters.h"
 #include "PingLoad.h"
+#include "PrivateClickMeasurementClientImpl.h"
 #include "PrivateClickMeasurementManager.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -139,13 +140,8 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-    m_privateClickMeasurement = makeUnique<PrivateClickMeasurementManager>(*this, networkProcess, parameters.sessionID, pcmStoreDirectory(*this, parameters.resourceLoadStatisticsParameters.directory, parameters.resourceLoadStatisticsParameters.privateClickMeasurementStorageDirectory), [weakThis = makeWeakPtr(this)] (auto&& loadParameters, auto&& completionHandler) {
-        if (!weakThis)
-            return completionHandler(ResourceError(ResourceError::Type::Cancellation), { }, { });
-
-        PrivateClickMeasurementNetworkLoader::start(*weakThis, WTFMove(loadParameters), WTFMove(completionHandler));
-    });
 #endif
+    m_privateClickMeasurement = makeUnique<PrivateClickMeasurementManager>(makeUniqueRef<PCM::ClientImpl>(*this, networkProcess), pcmStoreDirectory(*this, parameters.resourceLoadStatisticsParameters.directory, parameters.resourceLoadStatisticsParameters.privateClickMeasurementStorageDirectory));
 }
 
 NetworkSession::~NetworkSession()

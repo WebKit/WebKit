@@ -1,3 +1,37 @@
+2021-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Introduce PCM::Client for PrivateClickMeasurementManager
+        https://bugs.webkit.org/show_bug.cgi?id=229789
+
+        Reviewed by Kate Cheney.
+
+        This makes it so that PrivateClickMeasurementManager can run in environments other than the NetworkProcess.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClient.h: Added.
+        (WebKit::PCM::Client::~Client):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp: Added.
+        (WebKit::PCM::ClientImpl::ClientImpl):
+        (WebKit::PCM::ClientImpl::loadFromNetwork):
+        (WebKit::PCM::ClientImpl::broadcastConsoleMessage):
+        (WebKit::PCM::ClientImpl::featureEnabled const):
+        (WebKit::PCM::ClientImpl::debugModeEnabled const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.h: Added.
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::PrivateClickMeasurementManager):
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        (WebKit::PrivateClickMeasurementManager::featureEnabled const):
+        (WebKit::PrivateClickMeasurementManager::debugModeEnabled const):
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-09-02  Chris Dumez  <cdumez@apple.com>
 
         [COOP] Cross origin isolation doesn't happen when going from an HTTP URL to a HTTPS one with COOP+COEP

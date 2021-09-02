@@ -27,6 +27,7 @@
 
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
+#include "PrivateClickMeasurementClient.h"
 #include "PrivateClickMeasurementStore.h"
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
@@ -49,11 +50,10 @@ public:
 
     using AttributionDestinationSite = WebCore::PrivateClickMeasurement::AttributionDestinationSite;
     using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
-    using NetworkLoadCallback = CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&, const RefPtr<JSON::Object>&)>;
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using RegistrableDomain = WebCore::RegistrableDomain;
     using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
-    explicit PrivateClickMeasurementManager(NetworkSession&, NetworkProcess&, PAL::SessionID, const String& storageDirectory, Function<void(NetworkLoadParameters&&, NetworkLoadCallback&&)>&&);
+    explicit PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, const String& storageDirectory);
 
     void storeUnattributed(PrivateClickMeasurement&&);
     void handleAttribution(AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
@@ -94,12 +94,9 @@ private:
     bool m_isRunningEphemeralMeasurementTest { false };
     std::optional<URL> m_tokenPublicKeyURLForTesting;
     std::optional<URL> m_tokenSignatureURLForTesting;
-    WeakPtr<NetworkSession> m_networkSession;
-    Ref<NetworkProcess> m_networkProcess;
-    PAL::SessionID m_sessionID;
     mutable RefPtr<PCM::Store> m_store;
     String m_storageDirectory;
-    Function<void(NetworkLoadParameters&&, NetworkLoadCallback&&)> m_networkLoadFunction;
+    UniqueRef<PCM::Client> m_client;
 
     struct AttributionReportTestConfig {
         URL attributionReportSourceURL;
