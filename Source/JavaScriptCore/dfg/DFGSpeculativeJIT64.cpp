@@ -3108,9 +3108,13 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetPrivateName:
-    case GetPrivateNameById: {
+    case GetPrivateName: {
         compileGetPrivateName(node);
+        break;
+    }
+
+    case GetPrivateNameById: {
+        compileGetPrivateNameById(node);
         break;
     }
 

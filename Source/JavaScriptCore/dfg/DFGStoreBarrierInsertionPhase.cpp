@@ -275,6 +275,12 @@ private:
                 break;
             }
                 
+            case PutPrivateName: {
+                if (!m_graph.m_slowPutByVal.contains(m_node) && (m_node->child1().useKind() == CellUse || m_node->child1().useKind() == KnownCellUse))
+                    considerBarrier(m_node->child1(), m_node->child3());
+                break;
+            }
+
             case PutPrivateNameById: {
                 // We emit IC code when we have a non-null cacheableIdentifier and we need to introduce a
                 // barrier for it. On PutPrivateName, we perform store barrier during slow path execution.

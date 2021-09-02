@@ -1,5 +1,183 @@
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281684. rdar://problem/82651474
+
+    [JSC] op_put_private_name should use modern IC and remove ByValInfo
+    https://bugs.webkit.org/show_bug.cgi?id=229544
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    Move class-fields-private benchmarks into microbenchmarks.
+    Added several microbenchmarks and stress tests.
+    
+    * microbenchmarks/class-private-field-polymorphic.js: Added.
+    (shouldBe):
+    (test.A.prototype.put):
+    * microbenchmarks/get-private-name.js: Renamed from JSTests/microbenchmarks/class-fields-private/get-private-name.js.
+    * microbenchmarks/monomorphic-get-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/monomorphic-get-private-field.js.
+    * microbenchmarks/polymorphic-get-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/polymorphic-get-private-field.js.
+    * microbenchmarks/polymorphic-put-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/polymorphic-put-private-field.js.
+    * microbenchmarks/put-by-val-polymorphic-properties.js: Added.
+    (shouldBe):
+    (test):
+    * microbenchmarks/put-private-field.js: Renamed from JSTests/microbenchmarks/class-fields-private/put-private-field.js.
+    * stress/class-private-field-megamorphic.js: Added.
+    (shouldBe):
+    * stress/class-private-field-polymorphic.js: Added.
+    (shouldBe):
+    (test.A.prototype.put):
+    * stress/put-by-val-polymorphic-properties.js: Added.
+    (shouldBe):
+    (test):
+    
+    Source/JavaScriptCore:
+    
+    This patch makes op_put_private_name use new PutByVal IC. This allows op_put_private_name to support
+    polymorphic properties, and we can finally remove Baseline's adhoc IC and ByValInfo completely.
+    
+    Added microbenchmark showed 3x improvement due to polymorphic PutPrivateName IC.
+    
+                                                ToT                     Patched
+    
+    class-private-field-polymorphic        9.3666+-0.0332     ^      3.1199+-0.0182        ^ definitely 3.0022x faster
+    
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * Sources.txt:
+    * bytecode/ByValInfo.cpp: Removed.
+    * bytecode/ByValInfo.h: Removed.
+    * bytecode/CodeBlock.cpp:
+    (JSC::CodeBlock::getICStatusMap):
+    (JSC::CodeBlock::stronglyVisitStrongReferences):
+    (JSC::CodeBlock::findByValInfo): Deleted.
+    (JSC::CodeBlock::addByValInfo): Deleted.
+    * bytecode/CodeBlock.h:
+    * bytecode/ICStatusMap.h:
+    * dfg/DFGByteCodeParser.cpp:
+    (JSC::DFG::ByteCodeParser::parseBlock):
+    * dfg/DFGFixupPhase.cpp:
+    (JSC::DFG::FixupPhase::fixupNode):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileGetPrivateName):
+    (JSC::DFG::SpeculativeJIT::compilePutPrivateName):
+    * dfg/DFGSpeculativeJIT32_64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * dfg/DFGSpeculativeJIT64.cpp:
+    (JSC::DFG::SpeculativeJIT::compile):
+    * dfg/DFGStoreBarrierInsertionPhase.cpp:
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compilePutPrivateName):
+    * jit/JIT.cpp:
+    (JSC::JIT::privateCompileSlowCases):
+    (JSC::JIT::link):
+    (JSC::JIT::privateCompileExceptionHandlers):
+    * jit/JIT.h:
+    (JSC::ByValCompilationInfo::ByValCompilationInfo): Deleted.
+    * jit/JITInlines.h:
+    (JSC::JIT::emitArrayProfileStoreToHoleSpecialCase): Deleted.
+    (JSC::JIT::emitArrayProfileOutOfBoundsSpecialCase): Deleted.
+    * jit/JITOperations.cpp:
+    (JSC::putPrivateNameOptimize):
+    (JSC::putPrivateName):
+    (JSC::JSC_DEFINE_JIT_OPERATION):
+    * jit/JITOperations.h:
+    * jit/JITPropertyAccess.cpp:
+    (JSC::JIT::emit_op_put_private_name):
+    (JSC::JIT::emitSlow_op_put_private_name):
+    (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+    (JSC::JIT::emitPutByValWithCachedId): Deleted.
+    (JSC::JIT::emitPutPrivateNameWithCachedId): Deleted.
+    (JSC::JIT::emitByValIdentifierCheck): Deleted.
+    (JSC::JIT::privateCompilePutPrivateNameWithCachedId): Deleted.
+    * jit/JITPropertyAccess32_64.cpp:
+    (JSC::JIT::emit_op_put_private_name):
+    (JSC::JIT::emitSlow_op_put_private_name):
+    * jit/Repatch.cpp:
+    (JSC::appropriateGenericPutByFunction):
+    (JSC::appropriateOptimizingPutByFunction):
+    (JSC::resetPutBy):
+    
+    Tools:
+    
+    * Scripts/run-jsc-benchmarks:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281684 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] op_put_private_name should use modern IC and remove ByValInfo
+            https://bugs.webkit.org/show_bug.cgi?id=229544
+
+            Reviewed by Saam Barati.
+
+            This patch makes op_put_private_name use new PutByVal IC. This allows op_put_private_name to support
+            polymorphic properties, and we can finally remove Baseline's adhoc IC and ByValInfo completely.
+
+            Added microbenchmark showed 3x improvement due to polymorphic PutPrivateName IC.
+
+                                                        ToT                     Patched
+
+            class-private-field-polymorphic        9.3666+-0.0332     ^      3.1199+-0.0182        ^ definitely 3.0022x faster
+
+
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * Sources.txt:
+            * bytecode/ByValInfo.cpp: Removed.
+            * bytecode/ByValInfo.h: Removed.
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::getICStatusMap):
+            (JSC::CodeBlock::stronglyVisitStrongReferences):
+            (JSC::CodeBlock::findByValInfo): Deleted.
+            (JSC::CodeBlock::addByValInfo): Deleted.
+            * bytecode/CodeBlock.h:
+            * bytecode/ICStatusMap.h:
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+            * dfg/DFGFixupPhase.cpp:
+            (JSC::DFG::FixupPhase::fixupNode):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileGetPrivateName):
+            (JSC::DFG::SpeculativeJIT::compilePutPrivateName):
+            * dfg/DFGSpeculativeJIT32_64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGSpeculativeJIT64.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+            * dfg/DFGStoreBarrierInsertionPhase.cpp:
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compilePutPrivateName):
+            * jit/JIT.cpp:
+            (JSC::JIT::privateCompileSlowCases):
+            (JSC::JIT::link):
+            (JSC::JIT::privateCompileExceptionHandlers):
+            * jit/JIT.h:
+            (JSC::ByValCompilationInfo::ByValCompilationInfo): Deleted.
+            * jit/JITInlines.h:
+            (JSC::JIT::emitArrayProfileStoreToHoleSpecialCase): Deleted.
+            (JSC::JIT::emitArrayProfileOutOfBoundsSpecialCase): Deleted.
+            * jit/JITOperations.cpp:
+            (JSC::putPrivateNameOptimize):
+            (JSC::putPrivateName):
+            (JSC::JSC_DEFINE_JIT_OPERATION):
+            * jit/JITOperations.h:
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emit_op_put_private_name):
+            (JSC::JIT::emitSlow_op_put_private_name):
+            (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+            (JSC::JIT::emitPutByValWithCachedId): Deleted.
+            (JSC::JIT::emitPutPrivateNameWithCachedId): Deleted.
+            (JSC::JIT::emitByValIdentifierCheck): Deleted.
+            (JSC::JIT::privateCompilePutPrivateNameWithCachedId): Deleted.
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emit_op_put_private_name):
+            (JSC::JIT::emitSlow_op_put_private_name):
+            * jit/Repatch.cpp:
+            (JSC::appropriateGenericPutByFunction):
+            (JSC::appropriateOptimizingPutByFunction):
+            (JSC::resetPutBy):
+
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281638. rdar://problem/82651129
 
     [JSC] Segfault in stress/typedarray-every.js (32bit)

@@ -39,12 +39,10 @@ class InByStatus;
 class PutByStatus;
 class DeleteByStatus;
 class StructureStubInfo;
-struct ByValInfo;
 
 struct ICStatus {
     StructureStubInfo* stubInfo { nullptr };
     CallLinkInfo* callLinkInfo { nullptr };
-    ByValInfo* byValInfo { nullptr };
     CallLinkStatus* callStatus { nullptr };
     GetByStatus* getStatus { nullptr };
     InByStatus* inStatus { nullptr };

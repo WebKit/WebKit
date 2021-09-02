@@ -32,7 +32,6 @@
 
 #include "ArithProfile.h"
 #include "BasicBlockLocation.h"
-#include "ByValInfo.h"
 #include "BytecodeDumper.h"
 #include "BytecodeLivenessAnalysisInlines.h"
 #include "BytecodeOperandsForCheckpoint.h"
@@ -1626,8 +1625,6 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
                 result.add(stubInfo->codeOrigin, ICStatus()).iterator->value.stubInfo = stubInfo;
             for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos)
                 result.add(callLinkInfo->codeOrigin(), ICStatus()).iterator->value.callLinkInfo = callLinkInfo;
-            for (ByValInfo* byValInfo : jitData->m_byValInfos)
-                result.add(CodeOrigin(byValInfo->bytecodeIndex), ICStatus()).iterator->value.byValInfo = byValInfo;
         }
 #if ENABLE(DFG_JIT)
         if (JITCode::isOptimizingJIT(jitType())) {
@@ -1697,24 +1694,6 @@ StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
         }
     }
     return nullptr;
-}
-
-ByValInfo* CodeBlock::findByValInfo(CodeOrigin codeOrigin)
-{
-    ConcurrentJSLocker locker(m_lock);
-    if (auto* jitData = m_jitData.get()) {
-        for (ByValInfo* byValInfo : jitData->m_byValInfos) {
-            if (byValInfo->bytecodeIndex == codeOrigin.bytecodeIndex())
-                return byValInfo;
-        }
-    }
-    return nullptr;
-}
-
-ByValInfo* CodeBlock::addByValInfo(BytecodeIndex bytecodeIndex)
-{
-    ConcurrentJSLocker locker(m_lock);
-    return ensureJITData(locker).m_byValInfos.add(bytecodeIndex);
 }
 
 CallLinkInfo* CodeBlock::addCallLinkInfo(CodeOrigin codeOrigin)
@@ -1828,8 +1807,6 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
 
 #if ENABLE(JIT)
     if (auto* jitData = m_jitData.get()) {
-        for (ByValInfo* byValInfo : jitData->m_byValInfos)
-            byValInfo->visitAggregate(visitor);
         for (StructureStubInfo* stubInfo : jitData->m_stubInfos)
             stubInfo->visitAggregate(visitor);
     }

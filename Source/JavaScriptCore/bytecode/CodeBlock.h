@@ -97,7 +97,6 @@ class MetadataTable;
 class PCToCodeOriginMap;
 class RegisterAtOffsetList;
 class StructureStubInfo;
-struct ByValInfo;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CodeBlockRareData);
 
@@ -275,7 +274,6 @@ public:
         Bag<JITMulIC> m_mulICs;
         Bag<JITNegIC> m_negICs;
         Bag<JITSubIC> m_subICs;
-        Bag<ByValInfo> m_byValInfos;
         Bag<CallLinkInfo> m_callLinkInfos;
         SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
         SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
@@ -316,10 +314,6 @@ public:
 
     // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
-    // O(n) operation. Use getICStatusMap() unless you really only intend to get one by-val-info.
-    ByValInfo* findByValInfo(CodeOrigin);
-
-    ByValInfo* addByValInfo(BytecodeIndex);
 
     CallLinkInfo* addCallLinkInfo(CodeOrigin);
 

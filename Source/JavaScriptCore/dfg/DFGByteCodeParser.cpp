@@ -6453,12 +6453,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(bytecode.m_value);
             bool compiledAsPutPrivateNameById = false;
 
+            PutByStatus status = PutByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
+
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
-
-                PutByStatus status = PutByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
-
                 if (CacheableIdentifier identifier = status.singleIdentifier()) {
                     UniquedStringImpl* uid = identifier.uid();
                     unsigned identifierNumber = m_graph.identifiers().ensure(uid);
@@ -6473,11 +6472,37 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                     handlePutPrivateNameById(base, identifier, identifierNumber, value, status, bytecode.m_putKind);
                     compiledAsPutPrivateNameById = true;
+                } else if (status.takesSlowPath()) {
+                    // Even though status is taking a slow path, it is possible that this node still has constant identifier and using PutById is always better in that case.
+                    UniquedStringImpl* uid = nullptr;
+                    JSCell* propertyCell = nullptr;
+                    if (auto* symbol = property->dynamicCastConstant<Symbol*>(*m_vm)) {
+                        uid = &symbol->uid();
+                        propertyCell = symbol;
+                        FrozenValue* frozen = m_graph.freezeStrong(symbol);
+                        addToGraph(CheckIsConstant, OpInfo(frozen), property);
+                    } else if (auto* string = property->dynamicCastConstant<JSString*>(*m_vm)) {
+                        if (auto* impl = string->tryGetValueImpl(); impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
+                            uid = bitwise_cast<UniquedStringImpl*>(impl);
+                            propertyCell = string;
+                            m_graph.freezeStrong(string);
+                            addToGraph(CheckIdent, OpInfo(uid), property);
+                        }
+                    }
+
+                    if (uid) {
+                        unsigned identifierNumber = m_graph.identifiers().ensure(uid);
+                        handlePutPrivateNameById(base, CacheableIdentifier::createFromCell(propertyCell), identifierNumber, value, status, bytecode.m_putKind);
+                        compiledAsPutPrivateNameById = true;
+                    }
                 }
             }
 
-            if (!compiledAsPutPrivateNameById)
-                addToGraph(PutPrivateName, OpInfo(), OpInfo(bytecode.m_putKind), base, property, value);
+            if (!compiledAsPutPrivateNameById) {
+                Node* putPrivateName = addToGraph(PutPrivateName, OpInfo(), OpInfo(bytecode.m_putKind), base, property, value);
+                if (status.observedStructureStubInfoSlowPath())
+                    m_graph.m_slowPutByVal.add(putPrivateName);
+            }
 
             NEXT_OPCODE(op_put_private_name);
         }

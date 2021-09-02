@@ -360,16 +360,6 @@ inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cellGPR, RegisterID a
     }
 }
 
-inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfile)
-{
-    store8(TrustedImm32(1), arrayProfile->addressOfMayStoreToHole());
-}
-
-inline void JIT::emitArrayProfileOutOfBoundsSpecialCase(ArrayProfile* arrayProfile)
-{
-    store8(TrustedImm32(1), arrayProfile->addressOfOutOfBounds());
-}
-
 ALWAYS_INLINE int32_t JIT::getOperandConstantInt(VirtualRegister src)
 {
     return getConstantOperand(src).asInt32();
