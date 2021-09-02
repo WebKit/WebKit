@@ -1,3 +1,15 @@
+2021-09-02  Chris Dumez  <cdumez@apple.com>
+
+        [ BigSur arm64 Debug EWS ] ASSERTION FAILED: m_uncommittedState.state == State::Provisional
+        https://bugs.webkit.org/show_bug.cgi?id=229769
+        <rdar://problem/82645706>
+
+        Reviewed by Alex Christensen.
+
+        Unskip test that should no longer be flakily crashing in debug.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Reject non-IPv4 hostnames that end in numbers
