@@ -819,7 +819,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 #if USE(JSVALUE64)
     unboxDouble(value.gpr(), result, valueAsFPR);
 #else
-    unboxDouble(value, valueAsFPR, tempFPR);
+    unboxDouble(value, valueAsFPR);
 #endif
     move(invert ? TrustedImm32(1) : TrustedImm32(0), result);
     done.append(branchDoubleZeroOrNaN(valueAsFPR, tempFPR));
@@ -920,7 +920,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 #if USE(JSVALUE64)
     unboxDouble(value.gpr(), scratch, valueAsFPR);
 #else
-    unboxDouble(value, valueAsFPR, tempFPR);
+    unboxDouble(value, valueAsFPR);
 #endif
     if (invert) {
         truthy.append(branchDoubleZeroOrNaN(valueAsFPR, tempFPR));

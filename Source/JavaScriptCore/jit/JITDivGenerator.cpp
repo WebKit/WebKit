@@ -55,7 +55,7 @@ void JITDivGenerator::loadOperand(CCallHelpers& jit, SnippetOperand& opr, JSValu
         jit.convertInt32ToDouble(oprRegs.payloadGPR(), destFPR);
         CCallHelpers::Jump oprIsLoaded = jit.jump();
         notInt32.link(&jit);
-        jit.unboxDoubleNonDestructive(oprRegs, destFPR, m_scratchGPR, m_scratchFPR);
+        jit.unboxDoubleNonDestructive(oprRegs, destFPR, m_scratchGPR);
         oprIsLoaded.link(&jit);
     }
 }

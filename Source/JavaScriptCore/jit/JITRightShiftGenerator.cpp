@@ -38,7 +38,6 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
 #if USE(JSVALUE32_64)
     ASSERT(m_scratchGPR != m_left.tagGPR());
     ASSERT(m_scratchGPR != m_right.tagGPR());
-    ASSERT(m_scratchFPR != InvalidFPRReg);
 #endif
 
     ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
@@ -69,7 +68,7 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
 
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
 
-            jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
+            jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR);
 #if CPU(ARM64)
             if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
                 jit.convertDoubleToInt32UsingJavaScriptSemantics(m_leftFPR, m_scratchGPR);
@@ -128,7 +127,7 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
             leftNotInt.link(&jit);
 
             m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
-            jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
+            jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR);
 #if CPU(ARM64)
             if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
                 jit.convertDoubleToInt32UsingJavaScriptSemantics(m_leftFPR, m_scratchGPR);

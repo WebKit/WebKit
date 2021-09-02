@@ -80,7 +80,6 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 #if USE(JSVALUE32_64)
     ASSERT(m_scratchGPR != m_left.tagGPR());
     ASSERT(m_scratchGPR != m_right.tagGPR());
-    ASSERT(m_scratchFPR != InvalidFPRReg);
 #endif
 
     ASSERT(!m_leftOperand.isConstInt32() || !m_rightOperand.isConstInt32());
@@ -114,7 +113,7 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         if (!varOpr.definitelyIsNumber())
             slowPathJumpList.append(jit.branchIfNotNumber(var, m_scratchGPR));
 
-        jit.unboxDoubleNonDestructive(var, m_leftFPR, m_scratchGPR, m_scratchFPR);
+        jit.unboxDoubleNonDestructive(var, m_leftFPR, m_scratchGPR);
 
         jit.move(CCallHelpers::Imm32(constOpr.asConstInt32()), m_scratchGPR);
         jit.convertInt32ToDouble(m_scratchGPR, m_rightFPR);
@@ -151,7 +150,7 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         if (!m_rightOperand.definitelyIsNumber())
             slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
 
-        jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
+        jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR);
         CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
 
         jit.convertInt32ToDouble(m_right.payloadGPR(), m_rightFPR);
@@ -164,7 +163,7 @@ bool JITAddGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
         jit.convertInt32ToDouble(m_left.payloadGPR(), m_leftFPR);
 
         rightIsDouble.link(&jit);
-        jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR, m_scratchFPR);
+        jit.unboxDoubleNonDestructive(m_right, m_rightFPR, m_scratchGPR);
 
         rightWasInteger.link(&jit);
 

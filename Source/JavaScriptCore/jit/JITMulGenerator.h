@@ -42,7 +42,7 @@ public:
 
     JITMulGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,
-        FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR, FPRReg scratchFPR)
+        FPRReg leftFPR, FPRReg rightFPR, GPRReg scratchGPR)
         : m_leftOperand(leftOperand)
         , m_rightOperand(rightOperand)
         , m_result(result)
@@ -51,7 +51,6 @@ public:
         , m_leftFPR(leftFPR)
         , m_rightFPR(rightFPR)
         , m_scratchGPR(scratchGPR)
-        , m_scratchFPR(scratchFPR)
     {
         ASSERT(!m_leftOperand.isPositiveConstInt32() || !m_rightOperand.isPositiveConstInt32());
     }
@@ -71,7 +70,6 @@ private:
     FPRReg m_leftFPR;
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;
-    FPRReg m_scratchFPR;
 };
 
 } // namespace JSC

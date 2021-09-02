@@ -854,13 +854,11 @@ void JIT::emitRightShiftFastPath(const Instruction* currentInstruction, JITRight
     JSValueRegs rightRegs = JSValueRegs(regT1);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT2;
-    FPRReg scratchFPR = InvalidFPRReg;
 #else
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT4;
-    FPRReg scratchFPR = fpRegT2;
 #endif
 
     SnippetOperand leftOperand;
@@ -878,8 +876,7 @@ void JIT::emitRightShiftFastPath(const Instruction* currentInstruction, JITRight
     if (!rightOperand.isConst())
         emitGetVirtualRegister(op2, rightRegs);
 
-    JITRightShiftGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs,
-        fpRegT0, scratchGPR, scratchFPR, snippetShiftType);
+    JITRightShiftGenerator gen(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, fpRegT0, scratchGPR, snippetShiftType);
 
     gen.generateFastPath(*this);
 
@@ -979,13 +976,11 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
     JSValueRegs rightRegs = JSValueRegs(regT2);
     JSValueRegs resultRegs = JSValueRegs(regT0);
     GPRReg scratchGPR = regT3;
-    FPRReg scratchFPR = fpRegT2;
 #else
     JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
     JSValueRegs rightRegs = JSValueRegs(regT3, regT2);
     JSValueRegs resultRegs = leftRegs;
     GPRReg scratchGPR = regT4;
-    FPRReg scratchFPR = fpRegT2;
 #endif
 
     SnippetOperand leftOperand(bytecode.m_operandTypes.first());
@@ -998,7 +993,7 @@ void JIT::emitMathICFast(JITBinaryMathIC<Generator>* mathIC, const Instruction* 
 
     RELEASE_ASSERT(!leftOperand.isConst() || !rightOperand.isConst());
 
-    mathIC->m_generator = Generator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, fpRegT0, fpRegT1, scratchGPR, scratchFPR);
+    mathIC->m_generator = Generator(leftOperand, rightOperand, resultRegs, leftRegs, rightRegs, fpRegT0, fpRegT1, scratchGPR);
     
     ASSERT(!(Generator::isLeftOperandValidConstant(leftOperand) && Generator::isRightOperandValidConstant(rightOperand)));
     

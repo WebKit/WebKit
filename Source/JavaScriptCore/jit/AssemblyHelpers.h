@@ -1304,7 +1304,7 @@ public:
         boxDouble(fpr, regs.gpr(), mode);
     }
 
-    void unboxDoubleNonDestructive(JSValueRegs regs, FPRReg destFPR, GPRReg resultGPR, FPRReg)
+    void unboxDoubleNonDestructive(JSValueRegs regs, FPRReg destFPR, GPRReg resultGPR)
     {
         unboxDouble(regs.payloadGPR(), resultGPR, destFPR);
     }
@@ -1355,23 +1355,23 @@ public:
     {
         moveDoubleToInts(fpr, payloadGPR, tagGPR);
     }
-    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
+    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr)
     {
-        moveIntsToDouble(payloadGPR, tagGPR, fpr, scratchFPR);
+        moveIntsToDouble(payloadGPR, tagGPR, fpr);
     }
     
     void boxDouble(FPRReg fpr, JSValueRegs regs)
     {
         boxDouble(fpr, regs.tagGPR(), regs.payloadGPR());
     }
-    void unboxDouble(JSValueRegs regs, FPRReg fpr, FPRReg scratchFPR)
+    void unboxDouble(JSValueRegs regs, FPRReg fpr)
     {
-        unboxDouble(regs.tagGPR(), regs.payloadGPR(), fpr, scratchFPR);
+        unboxDouble(regs.tagGPR(), regs.payloadGPR(), fpr);
     }
 
-    void unboxDoubleNonDestructive(const JSValueRegs regs, FPRReg destFPR, GPRReg, FPRReg scratchFPR)
+    void unboxDoubleNonDestructive(JSValueRegs regs, FPRReg destFPR, GPRReg)
     {
-        unboxDouble(regs, destFPR, scratchFPR);
+        unboxDouble(regs, destFPR);
     }
 #endif
     

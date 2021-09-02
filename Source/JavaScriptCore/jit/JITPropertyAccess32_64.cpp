@@ -545,7 +545,7 @@ JIT::JumpList JIT::emitGenericContiguousPutByVal(Op bytecode, PatchableJump& bad
         convertInt32ToDouble(regT0, fpRegT0);
         Jump ready = jump();
         notInt.link(this);
-        moveIntsToDouble(regT0, regT1, fpRegT0, fpRegT1);
+        moveIntsToDouble(regT0, regT1, fpRegT0);
         slowCases.append(branchIfNaN(fpRegT0));
         ready.link(this);
         storeDouble(fpRegT0, BaseIndex(regT3, regT2, TimesEight));

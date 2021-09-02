@@ -2503,7 +2503,7 @@ private:
                 JITBinaryMathIC<Generator>* mathIC = jit.codeBlock()->addMathIC<Generator>(arithProfile);
                 mathIC->m_generator = Generator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.fpScratch(0),
-                    params.fpScratch(1), params.gpScratch(0), InvalidFPRReg);
+                    params.fpScratch(1), params.gpScratch(0));
 
                 bool shouldEmitProfiling = false;
                 bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, shouldEmitProfiling);
@@ -16012,7 +16012,7 @@ private:
                 auto generator = Box<JITRightShiftGenerator>::create(
                     leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()),
-                    params.fpScratch(0), params.gpScratch(0), InvalidFPRReg, shiftType);
+                    params.fpScratch(0), params.gpScratch(0), shiftType);
 
                 generator->generateFastPath(jit);
                 generator->endJumpList().link(&jit);

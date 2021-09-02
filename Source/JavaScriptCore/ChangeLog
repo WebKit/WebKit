@@ -1,3 +1,142 @@
+2021-09-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281355. rdar://problem/82651674
+
+    [JSC] Simplify moveIntsToDouble
+    https://bugs.webkit.org/show_bug.cgi?id=229351
+    
+    Reviewed by Saam Barati.
+    
+    MacroAssembler::moveIntsToDouble required scratch FPRReg. But it was only required for MacroAssemblerX86, and it is already removed.
+    This means that we no longer need this scratch FPRReg. This change makes a lot of IC code, property access code simpler.
+    This patch removes that scratch FPRReg, and removed scratch FPRReg of many arithmetic ICs. This patch is important for PutByVal modern
+    IC since some of property access requires FPRReg because of MacroAssembler::moveIntsToDouble, and it requires adding new m_scratch2FPR
+    to AccessCase. But after this simplification, this is no longer necessary.
+    
+    * assembler/MacroAssemblerARMv7.h:
+    (JSC::MacroAssemblerARMv7::moveIntsToDouble):
+    * assembler/MacroAssemblerMIPS.h:
+    (JSC::MacroAssemblerMIPS::moveIntsToDouble):
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+    (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+    (JSC::DFG::SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp):
+    (JSC::DFG::SpeculativeJIT::compileValueAdd):
+    (JSC::DFG::SpeculativeJIT::compileValueSub):
+    (JSC::DFG::SpeculativeJIT::compileMathIC):
+    (JSC::DFG::SpeculativeJIT::compileValueNegate):
+    (JSC::DFG::SpeculativeJIT::compileValueMul):
+    (JSC::DFG::SpeculativeJIT::speculateRealNumber):
+    (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+    * dfg/DFGSpeculativeJIT.h:
+    (JSC::DFG::SpeculativeJIT::unboxDouble):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    * jit/AssemblyHelpers.cpp:
+    (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+    (JSC::AssemblyHelpers::branchIfValue):
+    * jit/AssemblyHelpers.h:
+    (JSC::AssemblyHelpers::unboxDoubleNonDestructive):
+    (JSC::AssemblyHelpers::unboxDouble):
+    * jit/JITAddGenerator.cpp:
+    (JSC::JITAddGenerator::generateFastPath):
+    * jit/JITAddGenerator.h:
+    (JSC::JITAddGenerator::JITAddGenerator):
+    * jit/JITArithmetic.cpp:
+    (JSC::JIT::emitRightShiftFastPath):
+    (JSC::JIT::emitMathICFast):
+    * jit/JITDivGenerator.cpp:
+    (JSC::JITDivGenerator::loadOperand):
+    * jit/JITMulGenerator.cpp:
+    (JSC::JITMulGenerator::generateInline):
+    (JSC::JITMulGenerator::generateFastPath):
+    * jit/JITMulGenerator.h:
+    (JSC::JITMulGenerator::JITMulGenerator):
+    * jit/JITPropertyAccess.cpp:
+    (JSC::JIT::emitFloatTypedArrayPutByVal):
+    * jit/JITPropertyAccess32_64.cpp:
+    (JSC::JIT::emitGenericContiguousPutByVal):
+    * jit/JITRightShiftGenerator.cpp:
+    (JSC::JITRightShiftGenerator::generateFastPath):
+    * jit/JITRightShiftGenerator.h:
+    (JSC::JITRightShiftGenerator::JITRightShiftGenerator):
+    * jit/JITSubGenerator.cpp:
+    (JSC::JITSubGenerator::generateInline):
+    (JSC::JITSubGenerator::generateFastPath):
+    * jit/JITSubGenerator.h:
+    (JSC::JITSubGenerator::JITSubGenerator):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281355 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Simplify moveIntsToDouble
+            https://bugs.webkit.org/show_bug.cgi?id=229351
+
+            Reviewed by Saam Barati.
+
+            MacroAssembler::moveIntsToDouble required scratch FPRReg. But it was only required for MacroAssemblerX86, and it is already removed.
+            This means that we no longer need this scratch FPRReg. This change makes a lot of IC code, property access code simpler.
+            This patch removes that scratch FPRReg, and removed scratch FPRReg of many arithmetic ICs. This patch is important for PutByVal modern
+            IC since some of property access requires FPRReg because of MacroAssembler::moveIntsToDouble, and it requires adding new m_scratch2FPR
+            to AccessCase. But after this simplification, this is no longer necessary.
+
+            * assembler/MacroAssemblerARMv7.h:
+            (JSC::MacroAssemblerARMv7::moveIntsToDouble):
+            * assembler/MacroAssemblerMIPS.h:
+            (JSC::MacroAssemblerMIPS::moveIntsToDouble):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+            (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+            (JSC::DFG::SpeculativeJIT::emitUntypedOrBigIntRightShiftBitOp):
+            (JSC::DFG::SpeculativeJIT::compileValueAdd):
+            (JSC::DFG::SpeculativeJIT::compileValueSub):
+            (JSC::DFG::SpeculativeJIT::compileMathIC):
+            (JSC::DFG::SpeculativeJIT::compileValueNegate):
+            (JSC::DFG::SpeculativeJIT::compileValueMul):
+            (JSC::DFG::SpeculativeJIT::speculateRealNumber):
+            (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+            * dfg/DFGSpeculativeJIT.h:
+            (JSC::DFG::SpeculativeJIT::unboxDouble):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+            * jit/AssemblyHelpers.cpp:
+            (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+            (JSC::AssemblyHelpers::branchIfValue):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::unboxDoubleNonDestructive):
+            (JSC::AssemblyHelpers::unboxDouble):
+            * jit/JITAddGenerator.cpp:
+            (JSC::JITAddGenerator::generateFastPath):
+            * jit/JITAddGenerator.h:
+            (JSC::JITAddGenerator::JITAddGenerator):
+            * jit/JITArithmetic.cpp:
+            (JSC::JIT::emitRightShiftFastPath):
+            (JSC::JIT::emitMathICFast):
+            * jit/JITDivGenerator.cpp:
+            (JSC::JITDivGenerator::loadOperand):
+            * jit/JITMulGenerator.cpp:
+            (JSC::JITMulGenerator::generateInline):
+            (JSC::JITMulGenerator::generateFastPath):
+            * jit/JITMulGenerator.h:
+            (JSC::JITMulGenerator::JITMulGenerator):
+            * jit/JITPropertyAccess.cpp:
+            (JSC::JIT::emitFloatTypedArrayPutByVal):
+            * jit/JITPropertyAccess32_64.cpp:
+            (JSC::JIT::emitGenericContiguousPutByVal):
+            * jit/JITRightShiftGenerator.cpp:
+            (JSC::JITRightShiftGenerator::generateFastPath):
+            * jit/JITRightShiftGenerator.h:
+            (JSC::JITRightShiftGenerator::JITRightShiftGenerator):
+            * jit/JITSubGenerator.cpp:
+            (JSC::JITSubGenerator::generateInline):
+            (JSC::JITSubGenerator::generateFastPath):
+            * jit/JITSubGenerator.h:
+            (JSC::JITSubGenerator::JITSubGenerator):
+
 2021-08-30  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281665. rdar://problem/82528295

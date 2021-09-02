@@ -480,9 +480,9 @@ public:
     {
         m_jit.boxDouble(fpr, tagGPR, payloadGPR);
     }
-    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
+    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr)
     {
-        m_jit.unboxDouble(tagGPR, payloadGPR, fpr, scratchFPR);
+        m_jit.unboxDouble(tagGPR, payloadGPR, fpr);
     }
 #endif
     void boxDouble(FPRReg fpr, JSValueRegs regs)
@@ -1395,9 +1395,9 @@ public:
     void compileShiftOp(Node*);
 
     template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
-    void compileMathIC(Node*, JITBinaryMathIC<Generator>*, bool needsScratchGPRReg, bool needsScratchFPRReg, RepatchingFunction, NonRepatchingFunction);
+    void compileMathIC(Node*, JITBinaryMathIC<Generator>*, RepatchingFunction, NonRepatchingFunction);
     template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
-    void compileMathIC(Node*, JITUnaryMathIC<Generator>*, bool needsScratchGPRReg, RepatchingFunction, NonRepatchingFunction);
+    void compileMathIC(Node*, JITUnaryMathIC<Generator>*, RepatchingFunction, NonRepatchingFunction);
 
     void compileArithDoubleUnaryOp(Node*, double (*doubleFunction)(double), double (*operation)(JSGlobalObject*, EncodedJSValue));
     void compileValueAdd(Node*);
