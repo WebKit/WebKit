@@ -1,3 +1,18 @@
+2021-09-02  Alex Christensen  <achristensen@webkit.org>
+
+        Move PrivateClickMeasurementManager and PrivateClickMeasurementNetworkLoader into PrivateClickMeasurement directory
+        https://bugs.webkit.org/show_bug.cgi?id=229835
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurementManager.cpp.
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurementManager.h.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurementNetworkLoader.cpp.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.h: Renamed from Source/WebKit/NetworkProcess/PrivateClickMeasurementNetworkLoader.h.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-09-02  Per Arne  <pvollan@apple.com>
 
         [iOS] Gather logs for IOKit class

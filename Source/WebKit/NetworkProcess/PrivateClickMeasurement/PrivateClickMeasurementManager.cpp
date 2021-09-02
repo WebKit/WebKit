@@ -377,9 +377,8 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
         if (!weakThis)
             return;
 
-        if (!error.isNull()) {
+        if (!error.isNull())
             m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] Received error: '"_s, error.localizedDescription(), "' for ad click attribution request."_s));
-        }
     });
 }
 

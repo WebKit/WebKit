@@ -1074,8 +1074,6 @@
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
-		5183247C26168C62003F239E /* NetworkURLSchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 51832475261599CC003F239E /* NetworkURLSchemeHandler.h */; };
-		5183247D26168FF7003F239E /* NetworkURLSchemeTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5183247A26168675003F239E /* NetworkURLSchemeTask.h */; };
 		5183722223CE97410003CF83 /* APIContentWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = 5183722023CE973A0003CF83 /* APIContentWorld.h */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
 		518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4112,12 +4110,8 @@
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/NetworkProcessConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheStorageEngineConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/CacheStorageEngineConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionMessages.h; path = DerivedSources/WebKit2/NetworkProcessConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		51832475261599CC003F239E /* NetworkURLSchemeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkURLSchemeHandler.h; sourceTree = "<group>"; };
-		51832476261599CC003F239E /* NetworkURLSchemeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkURLSchemeHandler.cpp; sourceTree = "<group>"; };
 		518324782615B00D003F239E /* NetworkSchemeURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeURLProtocol.h; sourceTree = "<group>"; };
 		518324792615B00D003F239E /* NetworkSchemeURLProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkSchemeURLProtocol.mm; sourceTree = "<group>"; };
-		5183247A26168675003F239E /* NetworkURLSchemeTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkURLSchemeTask.h; sourceTree = "<group>"; };
-		5183247B26168675003F239E /* NetworkURLSchemeTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkURLSchemeTask.cpp; sourceTree = "<group>"; };
 		5183722023CE973A0003CF83 /* APIContentWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContentWorld.h; sourceTree = "<group>"; };
 		5183722123CE973A0003CF83 /* APIContentWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIContentWorld.cpp; sourceTree = "<group>"; };
 		5183B3931379F85C00E8754E /* Shim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shim.xcconfig; sourceTree = "<group>"; };
@@ -8747,18 +8741,10 @@
 				5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */,
 				5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */,
 				5C9EF2E721F058F9003BDC56 /* NetworkStorageSessionProvider.h */,
-				51832476261599CC003F239E /* NetworkURLSchemeHandler.cpp */,
-				51832475261599CC003F239E /* NetworkURLSchemeHandler.h */,
-				5183247B26168675003F239E /* NetworkURLSchemeTask.cpp */,
-				5183247A26168675003F239E /* NetworkURLSchemeTask.h */,
 				462107D71F38DBD300DD7810 /* PingLoad.cpp */,
 				5CE85B1F1C88E6430070BFCE /* PingLoad.h */,
 				83A0ED331F747CC7003299EB /* PreconnectTask.cpp */,
 				83A0ED321F747CC6003299EB /* PreconnectTask.h */,
-				6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */,
-				6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */,
-				57FE688B260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.cpp */,
-				57FE688A260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h */,
 				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
 				41287D4D225C161F009A3E26 /* WebSocketTask.h */,
 			);
@@ -9272,6 +9258,10 @@
 				5C826D6926D482EA008AEC91 /* PrivateClickMeasurementDatabase.h */,
 				5CBE909026D7FB7C005A2E95 /* PrivateClickMeasurementDebugInfo.cpp */,
 				5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */,
+				6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */,
+				6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */,
+				57FE688B260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.cpp */,
+				57FE688A260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h */,
 				5C826D6726D46B43008AEC91 /* PrivateClickMeasurementStore.cpp */,
 				5C826D6826D46B44008AEC91 /* PrivateClickMeasurementStore.h */,
 			);
@@ -12275,8 +12265,6 @@
 				5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */,
 				532159551DBAE7290054AA3C /* NetworkSessionCocoa.h in Headers */,
 				417915B92257046F00D6F97E /* NetworkSocketChannel.h in Headers */,
-				5183247C26168C62003F239E /* NetworkURLSchemeHandler.h in Headers */,
-				5183247D26168FF7003F239E /* NetworkURLSchemeTask.h in Headers */,
 				570DAAC22303730300E8FC04 /* NfcConnection.h in Headers */,
 				570DAAAE23026F5C00E8FC04 /* NfcService.h in Headers */,
 				31A2EC5614899C0900810D71 /* NotificationPermissionRequest.h in Headers */,
