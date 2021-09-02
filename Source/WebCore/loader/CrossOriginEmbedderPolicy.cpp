@@ -35,7 +35,7 @@
 namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/origin.html#obtain-an-embedder-policy
-CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse& response, IsSecureContext isSecureContext)
+CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse& response, const ScriptExecutionContext* context)
 {
     auto parseCOEPHeader = [&response](HTTPHeaderName headerName, auto& value, auto& reportingEndpoint) {
         auto coepParsingResult = parseStructuredFieldValue(response.httpHeaderField(headerName));
@@ -46,22 +46,14 @@ CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse
     };
 
     CrossOriginEmbedderPolicy policy;
-    if (isSecureContext == IsSecureContext::No)
+    if (context && !context->settingsValues().crossOriginEmbedderPolicyEnabled)
+        return policy;
+    if (!SecurityOrigin::create(response.url())->isPotentiallyTrustworthy())
         return policy;
 
     parseCOEPHeader(HTTPHeaderName::CrossOriginEmbedderPolicy, policy.value, policy.reportingEndpoint);
     parseCOEPHeader(HTTPHeaderName::CrossOriginEmbedderPolicyReportOnly, policy.reportOnlyValue, policy.reportOnlyReportingEndpoint);
     return policy;
-}
-
-CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse& response, const ScriptExecutionContext& context)
-{
-    if (!context.settingsValues().crossOriginEmbedderPolicyEnabled)
-        return { };
-
-    // FIXME: about:blank should be marked as secure as per https://w3c.github.io/webappsec-secure-contexts/#potentially-trustworthy-url.
-    auto isSecureContext = context.isSecureContext() || context.url() == aboutBlankURL() || context.url().isEmpty() ? IsSecureContext::Yes : IsSecureContext::No;
-    return obtainCrossOriginEmbedderPolicy(response, isSecureContext);
 }
 
 CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() const &

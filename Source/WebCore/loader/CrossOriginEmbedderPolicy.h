@@ -93,10 +93,7 @@ std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(Decod
     }};
 }
 
-CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, const ScriptExecutionContext&);
+WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, const ScriptExecutionContext*);
 WEBCORE_EXPORT void addCrossOriginEmbedderPolicyHeaders(ResourceResponse&, const CrossOriginEmbedderPolicy&);
-
-enum class IsSecureContext : bool { No, Yes };
-WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, IsSecureContext);
 
 } // namespace WebCore

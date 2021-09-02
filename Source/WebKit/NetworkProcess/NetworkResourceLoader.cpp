@@ -602,7 +602,7 @@ bool NetworkResourceLoader::shouldInterruptNavigationForCrossOriginEmbedderPolic
 
     // https://html.spec.whatwg.org/multipage/origin.html#check-a-navigation-response's-adherence-to-its-embedder-policy
     if (m_parameters.parentCrossOriginEmbedderPolicy.value != WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone && m_parameters.sourceOrigin) {
-        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, m_parameters.sourceOrigin->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No);
+        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, nullptr);
         if (responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
             String errorMessage = makeString("Refused to display '", response.url().stringCenterEllipsizedToLength(), "' in a frame because of Cross-Origin-Embedder-Policy.");
             send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);
@@ -618,7 +618,7 @@ bool NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolic
         return false;
 
     if (m_parameters.crossOriginEmbedderPolicy.value != WebCore::CrossOriginEmbedderPolicyValue::UnsafeNone && m_parameters.sourceOrigin) {
-        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, m_parameters.sourceOrigin->isPotentiallyTrustworthy() ? IsSecureContext::Yes : IsSecureContext::No);
+        auto responseCOEP = WebCore::obtainCrossOriginEmbedderPolicy(response, nullptr);
         if (responseCOEP.value != WebCore::CrossOriginEmbedderPolicyValue::RequireCORP) {
             String errorMessage = makeString("Refused to load '", response.url().stringCenterEllipsizedToLength(), "' worker because of Cross-Origin-Embedder-Policy.");
             send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  MessageSource::Security, MessageLevel::Error, errorMessage, coreIdentifier() }, m_parameters.webPageID);

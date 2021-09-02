@@ -1,0 +1,3 @@
+
+PASS Make sure that COOP causes a browsing context group switch when navigating from a secure context to a non-secure one
+

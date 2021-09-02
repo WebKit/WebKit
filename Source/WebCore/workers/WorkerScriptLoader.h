@@ -114,7 +114,7 @@ private:
     bool m_failed { false };
     bool m_finishing { false };
     bool m_isRedirected { false };
-    bool m_isSecureContext { false };
+    bool m_isCOEPEnabled { false };
     ResourceResponse::Source m_responseSource { ResourceResponse::Source::Unknown };
     ResourceError m_error;
 };

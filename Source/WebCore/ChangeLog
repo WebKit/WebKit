@@ -1,3 +1,33 @@
+2021-09-02  Chris Dumez  <cdumez@apple.com>
+
+        [COOP] Cross origin isolation doesn't happen when going from an HTTP URL to a HTTPS one with COOP+COEP
+        https://bugs.webkit.org/show_bug.cgi?id=229745
+        <rdar://problem/82630927>
+
+        Reviewed by Alex Christensen.
+
+        When calling obtainCrossOriginOpenerPolicy() / obtainCrossOriginEmbedderPolicy() to get the COOP / COEP
+        policy from a resource response, we should check if the response's URL is potentially trustworty to
+        determine if COOP/COEP apply, instead of relying on the current context's isSecureContext().
+
+        When navigating from a HTTP URL to a HTTPS one with COOP+COEP, we obviously want cross-origin isolation
+        to happen, even if the source context is not a secure context.
+
+        Test: http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html
+
+        * loader/CrossOriginEmbedderPolicy.cpp:
+        (WebCore::obtainCrossOriginEmbedderPolicy):
+        * loader/CrossOriginEmbedderPolicy.h:
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::obtainCrossOriginOpenerPolicy):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        * workers/WorkerScriptLoader.h:
+
 2021-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove optimistic assertion from r281860

@@ -1,3 +1,17 @@
+2021-09-02  Chris Dumez  <cdumez@apple.com>
+
+        [COOP] Cross origin isolation doesn't happen when going from an HTTP URL to a HTTPS one with COOP+COEP
+        https://bugs.webkit.org/show_bug.cgi?id=229745
+        <rdar://problem/82630927>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https-expected.txt: Added.
+        * http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html: Added.
+        * http/wpt/cross-origin-opener-policy/resources/non-secure-to-secure-context-navigation-popup.html: Added.
+
 2021-09-02  Eric Hutchison  <ehutchison@apple.com>
 
         [iOS] fast/mediastream/get-display-media-capabilities.html is a flaky failure and crash.
