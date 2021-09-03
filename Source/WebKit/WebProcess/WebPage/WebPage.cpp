@@ -4223,6 +4223,17 @@ void WebPage::releaseMemory(Critical)
 #endif
 }
 
+unsigned WebPage::remoteImagesCountForTesting() const
+{
+#if ENABLE(GPU_PROCESS)
+    if (!m_remoteRenderingBackendProxy)
+        return 0;
+    return m_remoteRenderingBackendProxy->remoteResourceCacheProxy().imagesCount();
+#else
+    return 0;
+#endif
+}
+
 WebInspector* WebPage::inspector(LazyCreationPolicy behavior)
 {
     if (m_isClosed)

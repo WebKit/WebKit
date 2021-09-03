@@ -1,3 +1,17 @@
+2021-09-03  Said Abou-Hallawa  <said@apple.com>
+
+        Add a layout test to detect memory leaks when drawing images to a detached canvas
+        https://bugs.webkit.org/show_bug.cgi?id=229790
+
+        Reviewed by Darin Adler.
+
+        Draw frames on an animated image to a detached canvas. Verify at the end
+        and after releasing all the image decoded frames that there are no remote
+        cached images.
+
+        * fast/canvas/canvas-drawImage-detached-leak-expected.txt: Added.
+        * fast/canvas/canvas-drawImage-detached-leak.html: Added.
+
 2021-09-03  Frédéric Wang  <fwang@igalia.com>
 
         Use isRendererReplacedElement for SimplifiedBackwardsTextIterator

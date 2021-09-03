@@ -407,6 +407,8 @@ public:
 
     void releaseMemory(WTF::Critical);
 
+    unsigned remoteImagesCountForTesting() const;
+
     enum class LazyCreationPolicy { UseExistingOnly, CreateIfNeeded };
 
     WebInspector* inspector(LazyCreationPolicy = LazyCreationPolicy::CreateIfNeeded);

@@ -988,6 +988,11 @@ void WebChromeClient::triggerRenderingUpdate()
         m_page.drawingArea()->triggerRenderingUpdate();
 }
 
+unsigned WebChromeClient::remoteImagesCountForTesting() const
+{
+    return m_page.remoteImagesCountForTesting();
+}
+
 void WebChromeClient::contentRuleListNotification(const URL& url, const ContentRuleListResults& results)
 {
 #if ENABLE(CONTENT_EXTENSIONS)

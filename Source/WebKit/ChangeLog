@@ -1,3 +1,19 @@
+2021-09-03  Said Abou-Hallawa  <said@apple.com>
+
+        Add a layout test to detect memory leaks when drawing images to a detached canvas
+        https://bugs.webkit.org/show_bug.cgi?id=229790
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.h:
+        (WebKit::RemoteResourceCacheProxy::imagesCount const):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::remoteImagesCountForTesting const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::remoteImagesCountForTesting const):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-09-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r280767): Caret color is black after pasting rich text in Mail compose in dark mode
