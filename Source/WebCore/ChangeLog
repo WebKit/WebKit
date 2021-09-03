@@ -1,3 +1,17 @@
+2021-09-03  Rob Buis  <rbuis@igalia.com>
+
+        Remove some SVG code from dirtyForLayoutFromPercentageHeightDescendants
+        https://bugs.webkit.org/show_bug.cgi?id=229805
+
+        Reviewed by Darin Adler.
+
+        Remove some SVG code from dirtyForLayoutFromPercentageHeightDescendants
+        that was needed when we were using containingBlock but not anymore
+        now we use container in dirtyForLayoutFromPercentageHeightDescendants.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dirtyForLayoutFromPercentageHeightDescendants):
+
 2021-09-03  Youenn Fablet  <youenn@apple.com>
 
         Migrate to latest libwebrtc AddIceCandidate

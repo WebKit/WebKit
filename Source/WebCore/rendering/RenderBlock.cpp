@@ -63,7 +63,6 @@
 #include "RenderLayoutState.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
-#include "RenderSVGRoot.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
 #include "RenderTextFragment.h"
@@ -71,7 +70,6 @@
 #include "RenderTreeBuilder.h"
 #include "RenderTreePosition.h"
 #include "RenderView.h"
-#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShapeOutsideInfo.h"
@@ -839,20 +837,7 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
             // (A horizontal flexbox that contains an inline image wrapped in an anonymous block for example.)
             if (renderer->hasIntrinsicAspectRatio() || renderer->style().hasAspectRatio())
                 renderer->setPreferredLogicalWidthsDirty(true);
-            auto* container = renderer->container();
-            // Mark the svg ancestor chain dirty as we walk to the container.
-            if (is<SVGElement>(renderer->element()) && container != renderer->parent()) {
-                auto* ancestor = renderer->parent();
-                ASSERT(ancestor->isDescendantOf(container));
-                while (ancestor != container) {
-                    ancestor->setChildNeedsLayout(MarkOnlyThis);
-                    // This is the topmost SVG root, no need to go any further.
-                    if (is<SVGSVGElement>(ancestor->element()) && !downcast<SVGSVGElement>(*ancestor->element()).ownerSVGElement())
-                        break;
-                    ancestor = ancestor->parent();
-                }
-            }
-            renderer = container;
+            renderer = renderer->container();
             ASSERT(renderer);
             if (!renderer)
                 break;
