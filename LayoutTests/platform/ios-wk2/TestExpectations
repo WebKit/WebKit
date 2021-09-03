@@ -1347,6 +1347,11 @@ webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash
 
 webkit.org/b/205216 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
+webkit.org/b/229875 imported/w3c/web-platform-tests/content-security-policy/worker-src/service-fallback.https.sub.html [ Pass Failure ]
+webkit.org/b/229875 imported/w3c/web-platform-tests/content-security-policy/worker-src/service-list.https.sub.html [ Pass Failure ]
+webkit.org/b/229875 imported/w3c/web-platform-tests/content-security-policy/worker-src/service-none.https.sub.html [ Pass Failure ]
+webkit.org/b/229875 imported/w3c/web-platform-tests/content-security-policy/worker-src/service-self.https.sub.html [ Pass Failure ]
+
 webkit.org/b/190852 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Pass Failure ]
 
 webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
