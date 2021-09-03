@@ -1,3 +1,33 @@
+2021-09-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r280767): Caret color is black after pasting rich text in Mail compose in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=229808
+        rdar://82600990
+
+        Reviewed by Tim Horton.
+
+        Partially revert one of the changes in r280767 that makes caret-color follow the immediate container node of the
+        selection caret, rather than the focused element (which it previously used). This was effectively a drive-by fix
+        for a FIXME about allowing `caret-color` to match child containers inside the root editable container element.
+        While this matches behavior on macOS, this change also causes the caret color to become black when pasting rich
+        text copied in dark mode, since we write `caret-color: rgb(0, 0, 0);` to the pasteboard when copying the editing
+        style for rich text.
+
+        In the short term, we should restore old (pre-r280767) `caret-color` on iOS; in the slightly longer term, I've
+        filed bug #229809 to track unifying macOS and iOS caret-color behavior, with respect to nested editable
+        container nodes.
+
+        To retain the fix for rdar://81674787 without exhibiting the above bug, we use the selection's root editable
+        container (rather than `m_focusedElement`, which was used prior to r280767).
+
+        Test: editing/caret/ios/caret-color-in-nested-editable-containers.html
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
+        Also adjust this logic so that we only attempt the tree-walk to find the root editable element if the selection
+        has editable style.
+
 2021-09-02  Alex Christensen  <achristensen@webkit.org>
 
         Gracefully recover from WebAuthnProcess crashes

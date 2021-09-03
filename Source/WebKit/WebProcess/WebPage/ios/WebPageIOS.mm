@@ -336,8 +336,13 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     postLayoutData.atStartOfSentence = frame.selection().selectionAtSentenceStart();
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
-        if (RefPtr container = selection.start().containerNode(); container && container->renderer() && selection.isContentEditable())
-            postLayoutData.caretColor = CaretBase::computeCaretColor(container->renderer()->style(), container.get());
+        if (selection.hasEditableStyle()) {
+            // FIXME: The caret color style should be computed using the selection caret's container
+            // rather than the focused element. This causes caret colors in editable children to be
+            // ignored in favor of the editing host's caret color. See: <https://webkit.org/b/229809>.
+            if (RefPtr editableRoot = selection.rootEditableElement(); editableRoot && editableRoot->renderer())
+                postLayoutData.caretColor = CaretBase::computeCaretColor(editableRoot->renderer()->style(), editableRoot.get());
+        }
 
         if (auto editableRootOrFormControl = makeRefPtr(enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement())) {
             postLayoutData.selectionClipRect = rootViewInteractionBounds(*editableRootOrFormControl);
