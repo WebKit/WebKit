@@ -41,8 +41,13 @@
 @end
 
 @protocol TIPreferencesControllerActions <NSObject>
+@property (nonatomic) BOOL automaticMinimizationEnabled;
 - (BOOL)oneTimeActionCompleted:(NSString *)actionKey;
 - (void)didTriggerOneTimeAction:(NSString *)actionKey;
+@end
+
+@interface TIPreferencesController : NSObject <TIPreferencesControllerActions>
++ (instancetype)sharedPreferencesController;
 @end
 
 @interface NSString (TextInputDetails)

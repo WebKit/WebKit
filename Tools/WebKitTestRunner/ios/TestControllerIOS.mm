@@ -47,6 +47,10 @@
 #import <objc/runtime.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/MainThread.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK(TextInput)
+SOFT_LINK_CLASS(TextInput, TIPreferencesController);
 
 static void overrideSyncInputManagerToAcceptedAutocorrection(id, SEL, TIKeyboardCandidate *candidate, TIKeyboardInput *input)
 {
@@ -153,14 +157,13 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     [UIPasteboard generalPasteboard].items = @[ ];
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
-    UIKeyboardPreferencesController *keyboardPreferences = UIKeyboardPreferencesController.sharedPreferencesController;
-    auto globalPreferencesDomainName = CFSTR("com.apple.Preferences");
-    auto automaticMinimizationEnabledPreferenceKey = @"AutomaticMinimizationEnabled";
-    if (![keyboardPreferences boolForPreferenceKey:automaticMinimizationEnabledPreferenceKey]) {
-        [keyboardPreferences setValue:@YES forPreferenceKey:automaticMinimizationEnabledPreferenceKey];
-        CFPreferencesSetAppValue((__bridge CFStringRef)automaticMinimizationEnabledPreferenceKey, kCFBooleanTrue, globalPreferencesDomainName);
-    }
 
+    // Ensures that only the UCB is on-screen when showing the keyboard, if the hardware keyboard is attached.
+    TIPreferencesController *textInputPreferences = [getTIPreferencesControllerClass() sharedPreferencesController];
+    if (!textInputPreferences.automaticMinimizationEnabled)
+        textInputPreferences.automaticMinimizationEnabled = YES;
+
+    UIKeyboardPreferencesController *keyboardPreferences = UIKeyboardPreferencesController.sharedPreferencesController;
     // Ensures that changing selection does not cause the software keyboard to appear,
     // even when the hardware keyboard is attached.
     auto hardwareKeyboardLastSeenPreferenceKey = @"HardwareKeyboardLastSeen";
@@ -177,7 +180,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     auto dictationKeyboardShortcutValueForTesting = @(-1);
     if (![dictationKeyboardShortcutValueForTesting isEqual:[keyboardPreferences valueForPreferenceKey:dictationKeyboardShortcutPreferenceKey]]) {
         [keyboardPreferences setValue:dictationKeyboardShortcutValueForTesting forPreferenceKey:dictationKeyboardShortcutPreferenceKey];
-        CFPreferencesSetAppValue((__bridge CFStringRef)dictationKeyboardShortcutPreferenceKey, (__bridge CFNumberRef)dictationKeyboardShortcutValueForTesting, globalPreferencesDomainName);
+        CFPreferencesSetAppValue((__bridge CFStringRef)dictationKeyboardShortcutPreferenceKey, (__bridge CFNumberRef)dictationKeyboardShortcutValueForTesting, CFSTR("com.apple.Preferences"));
     }
 
     GSEventSetHardwareKeyboardAttached(true, 0);

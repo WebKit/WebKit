@@ -1,3 +1,23 @@
+2021-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] editing/caret/ios/caret-in-overflow-area.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=229830
+        rdar://82190832
+
+        Reviewed by Tim Horton.
+
+        In iOS 15, writing the "AutomaticMinimizationEnabled" default is no longer sufficient to ensure that only the
+        UCB is on-screen when the keyboard is shown after focusing an editable element with the hardware keyboard
+        attached in layout tests. Among other things, this causes editing/caret/ios/caret-in-overflow-area.html to fail
+        in newly created iOS simulators, or iOS simulators that have just had their content erased, due to the fact that
+        the full-height software keyboard is shown instead of the minimized UCB.
+
+        Address this by updating the workaround such that we directly call into TextInput SPI to enable automatic
+        keyboard minimization.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2021-09-03  Youenn Fablet  <youenn@apple.com>
 
         Remove all WTR output before Content-Type:text/plain for WebRTC tests on BigSur

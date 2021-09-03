@@ -1,3 +1,15 @@
+2021-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 15] editing/caret/ios/caret-in-overflow-area.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=229830
+        rdar://82190832
+
+        Reviewed by Tim Horton.
+
+        See Tools/ChangeLog for more details.
+
+        * Platform/spi/ios/TextInputSPI.h:
+
 2021-09-03  David Kilzer  <ddkilzer@apple.com>
 
         RemoteVideoSample needs CVPixelBufferRef to be kept alive, but relies on caller to retain it
