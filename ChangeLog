@@ -1,3 +1,12 @@
+2021-09-03  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Disable GCC_OFFLINEASM_SOURCE_MAP
+        https://bugs.webkit.org/show_bug.cgi?id=229893
+
+        Unreviewed, this fixes build failures caused by invalid assembler sources.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2021-09-01  Jonathan Bedard  <jbedard@apple.com>
 
         [contributors.json] Relocation (Part 2)
