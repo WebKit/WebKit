@@ -1,3 +1,20 @@
+2021-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix WebKitAdditions directory traversal in offlineasm
+        https://bugs.webkit.org/show_bug.cgi?id=229841
+
+        Reviewed by Mark Lam.
+
+        When DEPLOYMENT_LOCATION is YES, WebKitAdditions directory becomes /usr/local/include/WebKitAdditions.
+        This patch adds --use-deployment-location option to generate_offset_extractor.rb, generate_settings_extractor.rb,
+        and asm.rb. And they pass it to parser to change the include directory.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * offlineasm/asm.rb:
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/generate_settings_extractor.rb:
+        * offlineasm/parser.rb:
+
 2021-09-02  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] ScriptExecutable::newCodeBlockFor should handle exceptions more predictably

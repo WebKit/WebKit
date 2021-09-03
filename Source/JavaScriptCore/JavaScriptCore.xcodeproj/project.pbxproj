@@ -1417,10 +1417,10 @@
 		A38CA59E26DD84DE00C8D84C /* ISO8601.h in Headers */ = {isa = PBXBuildFile; fileRef = A38CA59C26DD84DE00C8D84C /* ISO8601.h */; };
 		A38D250E25800D440042BFDD /* JSArrayBufferPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A38D250D25800D430042BFDD /* JSArrayBufferPrototypeInlines.h */; };
 		A38D5BFC2666D3DA00A109A6 /* InByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = A38D5BFA2666D3DA00A109A6 /* InByStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A3EE8543262514B000FC9B8D /* IntlWorkaround.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A37619402625127C00CBCBA9 /* IntlWorkaround.cpp */; };
 		A3C7EDB626B0DB38004C34C5 /* TemporalDurationPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C7EDB026B0DB36004C34C5 /* TemporalDurationPrototype.h */; };
 		A3C7EDB926B0DB38004C34C5 /* TemporalDuration.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C7EDB326B0DB37004C34C5 /* TemporalDuration.h */; };
 		A3C7EDBA26B0DB38004C34C5 /* TemporalDurationConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C7EDB426B0DB37004C34C5 /* TemporalDurationConstructor.h */; };
+		A3EE8543262514B000FC9B8D /* IntlWorkaround.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A37619402625127C00CBCBA9 /* IntlWorkaround.cpp */; };
 		A3FF9BC72234749100B1A9AB /* YarrFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = A3FF9BC52234746600B1A9AB /* YarrFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */; };
 		A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA18188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h */; };
@@ -10164,6 +10164,7 @@
 				86D446EA25B2125300ECAE75 /* JITOpaqueByproducts.h in Headers */,
 				E3CA3A4E2527AB2F004802BF /* JITOperationList.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
+				6B2360CE26C6253D0054AEEC /* JITOperationValidation.h in Headers */,
 				726B91B726581653008E6F82 /* JITPlan.h in Headers */,
 				72131BFA26587EF2007114CF /* JITPlanStage.h in Headers */,
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
@@ -10348,7 +10349,6 @@
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
 				795AC61820A2355E0052C76C /* JSVirtualMachinePrivate.h in Headers */,
 				A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */,
-				6B2360CE26C6253D0054AEEC /* JITOperationValidation.h in Headers */,
 				FEF5B4272628ABD90016E776 /* JSWeakMapInlines.h in Headers */,
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
@@ -11229,7 +11229,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\" \"${BUILD_VARIANTS}\"\n";
+			shellScript = "set -e\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --use-deployment-location\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\" \"${BUILD_VARIANTS}\" ${OFFLINEASM_ARGS}\n";
 		};
 		14BD6892215191450050DAFF /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11243,7 +11243,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_settings_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredSettings.h\" \"${ARCHS} C_LOOP\"\n";
+			shellScript = "set -e\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --use-deployment-location\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_settings_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredSettings.h\" \"${ARCHS} C_LOOP\" ${OFFLINEASM_ARGS}\n";
 		};
 		1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11489,7 +11489,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" JavaScriptCore/llint/LowLevelInterpreter.asm \"${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor\" LLIntAssembly.h \"${BUILD_VARIANTS}\" || exit 1\n";
+			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --use-deployment-location\"\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" JavaScriptCore/llint/LowLevelInterpreter.asm \"${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor\" LLIntAssembly.h \"${BUILD_VARIANTS}\" ${OFFLINEASM_ARGS} || exit 1\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
