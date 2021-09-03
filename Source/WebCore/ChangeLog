@@ -1,3 +1,23 @@
+2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFaceSet.status needs to react to style changes
+        https://bugs.webkit.org/show_bug.cgi?id=229839
+
+        Reviewed by Sam Weinig.
+
+        When content says "document.fonts.status", the ".status" part needs to
+        update style instead of the "document.fonts" part. This is because it's
+        totally legal for content to say:
+
+        var f = document.fonts;
+        // Modify style here
+        ... f.status ... <=== This needs to reflect the style changes.
+
+        Test: fast/text/FontFaceSet-status-after-style-update.html
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::status const):
+
 2021-09-03  Ziran Sun  <zsun@igalia.com>
 
         REGRESSION(r280078): broke fast/images/exif-orientation-composited.html on windows

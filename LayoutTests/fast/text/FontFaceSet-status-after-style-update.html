@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head id="head">
+<style id="style">
+@font-face {
+    font-family: "WebFont";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script>
+if (window.internals) {
+    internals.invalidateFontCache();
+    internals.clearMemoryCache();
+}
+</script>
+</head>
+<body>
+<script>
+description("This function makes sure document.fonts.status gets updated after style changes.");
+let fonts = document.fonts;
+shouldBeEqualToString("fonts.status", "loaded");
+fonts.values().next().value.load();
+shouldBeEqualToString("fonts.status", "loading");
+document.getElementById("head").removeChild(document.getElementById("style"));
+shouldBeEqualToString("fonts.status", "loaded");
+</script>
+</body>
+</html>
