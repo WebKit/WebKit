@@ -15,6 +15,7 @@ PACKAGES=(
     libtasn1
     libtiff
     libtool
+    little-cms2
     ninja
     pango
     pkg-config

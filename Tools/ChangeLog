@@ -1,5 +1,19 @@
 2021-09-02  Lauro Moura  <lmoura@igalia.com>
 
+        [GLIB] Install lcms2 in helper dependencies script
+        https://bugs.webkit.org/show_bug.cgi?id=229173
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        lcms2 support is enabled by default since r274273.
+
+        * glib/dependencies/apt:
+        * glib/dependencies/dnf:
+        * glib/dependencies/pacman:
+        * gtk/dependencies/brew:
+
+2021-09-02  Lauro Moura  <lmoura@igalia.com>
+
         [WPE] form-submission-steps API test is also flaky timing out like GTK
 
         Unreviewed test gardening.

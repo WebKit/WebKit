@@ -20,6 +20,7 @@ PACKAGES=(
     gzip
     intltool
     itstool
+    lcms2
     libevent
     libjpeg-turbo
     libkate

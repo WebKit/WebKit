@@ -34,6 +34,7 @@ PACKAGES=(
     libgstreamer-plugins-base1.0-dev
     libjpeg-dev
     libkate-dev
+    liblcms2-dev
     libopenjp2-7-dev
     libpng-dev
     libseccomp-dev
