@@ -1,3 +1,35 @@
+2021-08-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-writing-modes] Fix absolutely positioning with orthogonal writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=228914
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Computing the position of an absolutely positioned object was not well supported for those cases in which
+        the absolutely positioned child is orthogonal to its containing block, i.e. the child has horizontal writing mode
+        and the containing block vertical writing mode or viceversa.
+
+        This is a two level fix. First of all we had to modify the two methods that retrieve the static distance to use
+        the position of the perpendicular axis in those cases where we have orthogonal flows. The static distances are relative
+        to the container's writing mode, i.e., the inline distance of a vertical child inside a horizontal container is the child's
+        block position (same for a horizontal child inside a vertical container).
+
+        And the second fix was to adapt the methods that flip the position in the axis if needed. That is needed for those cases
+        in which we have orthogonal writing modes and either the child or the container have flipped blocks writing mode. In particular
+        we have to do it for the cases in which the positioned properties are not both auto because in those cases, neither
+        computeInlineStaticDistance() nor computeBlockStaticDistance() are called and thus no adjustment was made.
+
+        No need to add new tests because this fix unskips 48 WPT tests from css/css-writing-modes that work fine now. Apart from
+        that a good number of other subtests are also fixed by this patch.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::isOrthogonal):
+        (WebCore::computeInlineStaticDistance): Add support for orthogonal writing modes.
+        (WebCore::computeLogicalLeftPositionedOffset): Ditto.
+        (WebCore::computeBlockStaticDistance): Ditto.
+        (WebCore::computeLogicalTopPositionedOffset): Ditto.
+        (WebCore::isVerticalLRChildInHorizontalTBParent): Deleted.
+
 2021-09-03  Lauro Moura  <lmoura@igalia.com>
 
         [GStreamer] Update mock display resolution after Mac mock was updated

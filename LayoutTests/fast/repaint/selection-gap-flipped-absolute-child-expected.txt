@@ -3,6 +3,6 @@ This tests that absolute elements that get flipped are invalidated correctly. Th
 
 
 (repaint rects
-  (rect 700 0 100 100)
+  (rect 0 0 100 100)
 )
 

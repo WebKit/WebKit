@@ -1,3 +1,18 @@
+2021-08-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-writing-modes] Fix absolutely positioning with orthogonal writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=228914
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Removed 48 tests that are now passing.
+        * fast/repaint/selection-gap-flipped-absolute-child-expected.txt: Updated expectations.
+        * fast/writing-mode/table-percent-width-quirk-expected.txt: Ditto.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/position-absolute-013-expected.txt: Removed.
+        * platform/ios/TestExpectations: Skipped several tests that show 1px diff in the result.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-012-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-flexbox/abspos/position-absolute-013-expected.txt: Removed.
+
 2021-09-03  Simon Fraser  <simon.fraser@apple.com>
 
         Scrollbars on pointer-events: none element still intercepts events

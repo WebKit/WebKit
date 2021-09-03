@@ -33,100 +33,100 @@ PASS .flexbox 31
 PASS .flexbox 32
 FAIL .flexbox 33 assert_equals:
 <div class="flexbox vertical-rl ltr row justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 34 assert_equals:
 <div class="flexbox vertical-rl ltr row justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 35 assert_equals:
 <div class="flexbox vertical-rl ltr row justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 36 assert_equals:
 <div class="flexbox vertical-rl ltr row justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 37 assert_equals:
 <div class="flexbox vertical-rl rtl row justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 38 assert_equals:
 <div class="flexbox vertical-rl rtl row justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 39 assert_equals:
 <div class="flexbox vertical-rl rtl row justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 40 assert_equals:
 <div class="flexbox vertical-rl rtl row justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 41 assert_equals:
 <div class="flexbox vertical-rl ltr column justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 42 assert_equals:
 <div class="flexbox vertical-rl ltr column justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 43 assert_equals:
 <div class="flexbox vertical-rl ltr column justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 44 assert_equals:
 <div class="flexbox vertical-rl ltr column justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 45 assert_equals:
 <div class="flexbox vertical-rl rtl column justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 46 assert_equals:
 <div class="flexbox vertical-rl rtl column justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 47 assert_equals:
 <div class="flexbox vertical-rl rtl column justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 48 assert_equals:
 <div class="flexbox vertical-rl rtl column justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 49 assert_equals:
 <div class="flexbox vertical-rl ltr row-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 50 assert_equals:
 <div class="flexbox vertical-rl ltr row-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 51 assert_equals:
 <div class="flexbox vertical-rl ltr row-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 52 assert_equals:
 <div class="flexbox vertical-rl ltr row-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 53 assert_equals:
 <div class="flexbox vertical-rl rtl row-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 54 assert_equals:
 <div class="flexbox vertical-rl rtl row-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 55 assert_equals:
 <div class="flexbox vertical-rl rtl row-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 56 assert_equals:
 <div class="flexbox vertical-rl rtl row-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 57 assert_equals:
 <div class="flexbox vertical-rl ltr column-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 58 assert_equals:
 <div class="flexbox vertical-rl ltr column-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 59 assert_equals:
 <div class="flexbox vertical-rl ltr column-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 60 assert_equals:
 <div class="flexbox vertical-rl ltr column-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 61 assert_equals:
 <div class="flexbox vertical-rl rtl column-reverse justify-content-flex-start align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="50"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 62 assert_equals:
 <div class="flexbox vertical-rl rtl column-reverse justify-content-flex-start align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="50"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 FAIL .flexbox 63 assert_equals:
 <div class="flexbox vertical-rl rtl column-reverse justify-content-flex-end align-items-flex-start"><div class="abspos" data-offset-x="50" data-offset-y="0"></div></div>
-offsetLeft expected 50 but got 719
+offsetLeft expected 50 but got 0
 FAIL .flexbox 64 assert_equals:
 <div class="flexbox vertical-rl rtl column-reverse justify-content-flex-end align-items-flex-end"><div class="abspos" data-offset-x="0" data-offset-y="0"></div></div>
-offsetLeft expected 0 but got 669
+offsetLeft expected 0 but got 50
 PASS .flexbox 65
 PASS .flexbox 66
 PASS .flexbox 67
