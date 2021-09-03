@@ -48,9 +48,9 @@ variants = ARGV.shift.split(/[,\s]+/)
 
 $options = {}
 OptionParser.new do |opts|
-    opts.banner = "Usage: generate_offset_extractor.rb asmFile settingFile outputFileName backends variants [--use-deployment-location]"
-    opts.on("--use-deployment-location", "Flag to use deployment location.") do |flag|
-        $options[:use_deployment_location] = flag
+    opts.banner = "Usage: generate_offset_extractor.rb asmFile settingFile outputFileName backends variants [--webkit-additions-path=<path>]"
+    opts.on("--webkit-additions-path=PATH", "WebKitAdditions path.") do |path|
+        $options[:webkit_additions_path] = path
     end
 end.parse!
 

@@ -45,9 +45,9 @@ includeOnlyBackends(validBackends)
 
 $options = {}
 OptionParser.new do |opts|
-    opts.banner = "Usage: generate_settings_extractor.rb asmFile settingFile [--use-deployment-location]"
-    opts.on("--use-deployment-location", "Flag to use deployment location.") do |flag|
-        $options[:use_deployment_location] = flag
+    opts.banner = "Usage: generate_settings_extractor.rb asmFile settingFile [--webkit-additions-path=<path>]"
+    opts.on("--webkit-additions-path=PATH", "WebKitAdditions path.") do |path|
+        $options[:webkit_additions_path] = path
     end
 end.parse!
 
