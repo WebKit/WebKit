@@ -74,6 +74,7 @@
 #include "Frame.h"
 #include "HTMLAreaElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDialogElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
@@ -250,17 +251,20 @@ AXObjectCache::~AXObjectCache()
 #endif
 }
 
+bool AXObjectCache::isModalElement(Element& element) const
+{
+    bool hasDialogRole = nodeHasRole(&element, "dialog") || nodeHasRole(&element, "alertdialog");
+    bool isAriaModal = equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(aria_modalAttr), "true");
+
+    return (hasDialogRole && isAriaModal) || (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal());
+}
+
 void AXObjectCache::findModalNodes()
 {
-    // Traverse the DOM tree to look for the aria-modal=true nodes.
+    // Traverse the DOM tree to look for the aria-modal=true nodes or modal <dialog> elements.
     for (Element* element = ElementTraversal::firstWithin(document().rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
-        // Must have dialog or alertdialog role
-        if (!nodeHasRole(element, "dialog") && !nodeHasRole(element, "alertdialog"))
-            continue;
-        if (!equalLettersIgnoringASCIICase(element->attributeWithoutSynchronization(aria_modalAttr), "true"))
-            continue;
-
-        m_modalElementsSet.add(element);
+        if (isModalElement(*element))
+            m_modalElementsSet.add(element);
     }
 
     m_modalNodesInitialized = true;
@@ -268,11 +272,17 @@ void AXObjectCache::findModalNodes()
 
 Element* AXObjectCache::currentModalNode()
 {
-    // There might be multiple nodes with aria-modal=true set.
+    // There might be multiple modal dialog nodes.
     // We use this function to pick the one we want.
     m_currentModalElement = nullptr;
     if (m_modalElementsSet.isEmpty())
         return nullptr;
+
+    // Pick the document active modal <dialog> element if it exists.
+    if (Element* activeModalDialog = document().activeModalDialog()) {
+        ASSERT(m_modalElementsSet.contains(activeModalDialog));
+        return activeModalDialog;
+    }
 
     // If any of the modal nodes contains the keyboard focus, we want to pick that one.
     // If not, we want to pick the last visible dialog in the DOM.
@@ -1802,6 +1812,11 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     else if (attrName == idAttr)
         updateIsolatedTree(get(element), AXObjectCache::AXIdAttributeChanged);
 #endif
+    else if (attrName == openAttr && is<HTMLDialogElement>(*element)) {
+        deferModalChange(element);
+        recomputeIsIgnored(element->parentNode());
+    }
+
 
     if (!attrName.localName().string().startsWith("aria-"))
         return;
@@ -1849,7 +1864,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
 
 void AXObjectCache::handleModalChange(Element& element)
 {
-    if (!nodeHasRole(&element, "dialog") && !nodeHasRole(&element, "alertdialog"))
+    if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog") && !nodeHasRole(&element, "alertdialog"))
         return;
 
     stopCachingComputedObjectAttributes();
@@ -1857,7 +1872,7 @@ void AXObjectCache::handleModalChange(Element& element)
     if (!m_modalNodesInitialized)
         findModalNodes();
 
-    if (equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(aria_modalAttr), "true")) {
+    if (isModalElement(element)) {
         // Add the newly modified node to the modal nodes set.
         // We will recompute the current valid aria modal node in modalNode() when this node is not visible.
         m_modalElementsSet.add(&element);

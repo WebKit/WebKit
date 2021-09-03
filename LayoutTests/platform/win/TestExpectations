@@ -1500,6 +1500,7 @@ webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
 webkit.org/b/95405 accessibility/win/single-select-children.html [ Skip ]
 accessibility/file-upload-button-stringvalue.html
 webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Skip ] #  [ Timeout ]
+accessibility/dialog-showModal.html [ Skip ]
 
 # Color Well is not implemented:
 accessibility/color-well.html

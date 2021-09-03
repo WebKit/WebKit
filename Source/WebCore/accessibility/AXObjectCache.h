@@ -472,7 +472,8 @@ private:
     void handleAriaExpandedChange(Node*);
     void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 
-    // aria-modal related
+    // aria-modal or modal <dialog> related
+    bool isModalElement(Element&) const;
     void findModalNodes();
     Element* currentModalNode();
     bool isNodeVisible(Node*) const;

@@ -1,3 +1,19 @@
+2021-09-03  Tim Nguyen  <ntim@apple.com>
+
+        AX: findModalNodes() and currentModalNode() should include modal <dialog>
+        https://bugs.webkit.org/show_bug.cgi?id=229815
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/dialog-showModal.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::isModalElement const):
+        (WebCore::AXObjectCache::findModalNodes):
+        (WebCore::AXObjectCache::handleAttributeChange):
+        (WebCore::AXObjectCache::handleModalChange):
+        * accessibility/AXObjectCache.h:
+
 2021-09-03  Aditya Keerthi  <akeerthi@apple.com>
 
         iframes should get an opaque background when the embedding element and embedded root color-schemes do not match
