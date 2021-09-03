@@ -46,7 +46,7 @@ class Client {
 public:
     virtual ~Client() { }
     using NetworkLoadCallback = CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&, const RefPtr<JSON::Object>&)>;
-    virtual void loadFromNetwork(NetworkLoadParameters&&, NetworkLoadCallback&&) = 0;
+    virtual void loadFromNetwork(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, NetworkLoadCallback&&) = 0;
     virtual void broadcastConsoleMessage(JSC::MessageLevel, const String&) = 0;
     virtual bool featureEnabled() const = 0;
     virtual bool debugModeEnabled() const = 0;

@@ -40,7 +40,7 @@ class PrivateClickMeasurementNetworkLoader final : public NetworkLoadClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using Callback = CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&, const RefPtr<JSON::Object>&)>;
-    static void start(NetworkSession&, NetworkLoadParameters&&, Callback&&);
+    static void start(NetworkSession&, URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&&);
 
     ~PrivateClickMeasurementNetworkLoader();
 

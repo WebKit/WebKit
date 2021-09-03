@@ -28,6 +28,7 @@
 
 #include "NetworkLoad.h"
 #include "NetworkSession.h"
+#include <WebCore/HTTPHeaderValues.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/TextResourceDecoder.h>
 
@@ -37,8 +38,31 @@ namespace WebKit {
 
 using namespace WebCore;
 
-void PrivateClickMeasurementNetworkLoader::start(NetworkSession& session, NetworkLoadParameters&& parameters, Callback&& completionHandler)
+static NetworkLoadParameters generateNetworkLoadParameters(URL&& url, RefPtr<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried pcmDataCarried)
 {
+    String httpMethod = jsonPayload ? "POST"_s : "GET"_s;
+
+    ResourceRequest request { WTFMove(url) };
+    request.setHTTPMethod(httpMethod);
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, WebCore::HTTPHeaderValues::maxAge0());
+    if (jsonPayload) {
+        request.setHTTPContentType(WebCore::HTTPHeaderValues::applicationJSONContentType());
+        request.setHTTPBody(WebCore::FormData::create(jsonPayload->toJSONString().utf8()));
+    }
+
+    NetworkLoadParameters loadParameters;
+    loadParameters.request = request;
+    loadParameters.parentPID = presentingApplicationPID();
+    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
+    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
+    loadParameters.pcmDataCarried = pcmDataCarried;
+
+    return loadParameters;
+}
+
+void PrivateClickMeasurementNetworkLoader::start(NetworkSession& session, URL&& url, RefPtr<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried pcmDataCarried, Callback&& completionHandler)
+{
+    auto parameters = generateNetworkLoadParameters(WTFMove(url), WTFMove(jsonPayload), pcmDataCarried);
     auto loader = std::unique_ptr<PrivateClickMeasurementNetworkLoader>(new PrivateClickMeasurementNetworkLoader(session, WTFMove(parameters), WTFMove(completionHandler)));
     session.addPrivateClickMeasurementNetworkLoader(WTFMove(loader));
 }

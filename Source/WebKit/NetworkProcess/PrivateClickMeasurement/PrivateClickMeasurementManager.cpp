@@ -32,7 +32,6 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
-#include <WebCore/HTTPHeaderValues.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -109,36 +108,6 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
     insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed);
 }
 
-static NetworkLoadParameters generateNetworkLoadParameters(URL&& url, const String& httpMethod, RefPtr<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried dataTypeCarried, bool isDebugModeEnabled)
-{
-    ResourceRequest request { WTFMove(url) };
-    request.setHTTPMethod(httpMethod);
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, WebCore::HTTPHeaderValues::maxAge0());
-    if (jsonPayload) {
-        request.setHTTPContentType(WebCore::HTTPHeaderValues::applicationJSONContentType());
-        request.setHTTPBody(WebCore::FormData::create(jsonPayload->toJSONString().utf8().data()));
-    }
-
-    NetworkLoadParameters loadParameters;
-    loadParameters.request = request;
-    loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
-    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
-    loadParameters.pcmDataCarried = UNLIKELY(isDebugModeEnabled) ? PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable : dataTypeCarried;
-
-    return loadParameters;
-}
-
-static NetworkLoadParameters generateNetworkLoadParametersForHttpPost(URL&& url, Ref<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried dataTypeCarried, bool isDebugModeEnabled)
-{
-    return generateNetworkLoadParameters(WTFMove(url), "POST"_s, WTFMove(jsonPayload), dataTypeCarried, isDebugModeEnabled);
-}
-
-static NetworkLoadParameters generateNetworkLoadParametersForHttpGet(URL&& url, PrivateClickMeasurement::PcmDataCarried dataTypeCarried, bool isDebugModeEnabled)
-{
-    return generateNetworkLoadParameters(WTFMove(url), "GET"_s, nullptr, dataTypeCarried, isDebugModeEnabled);
-}
-
 void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried pcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
 {
     if (!featureEnabled())
@@ -156,12 +125,13 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     if (tokenPublicKeyURL.isEmpty() || !tokenPublicKeyURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkLoadParametersForHttpGet(WTFMove(tokenPublicKeyURL), pcmDataCarried, debugModeEnabled());
+    if (debugModeEnabled())
+        pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    m_client->loadFromNetwork(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
+    m_client->loadFromNetwork(WTFMove(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
@@ -199,12 +169,13 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, debugModeEnabled());
+    if (debugModeEnabled())
+        pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
 
-    m_client->loadFromNetwork(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
+    m_client->loadFromNetwork(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
@@ -384,12 +355,12 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(attributionURL), attribution.attributionReportJSON(), PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, debugModeEnabled());
+    auto pcmDataCarried = debugModeEnabled() ? PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable : PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
 
-    m_client->loadFromNetwork(WTFMove(loadParameters), [weakThis = makeWeakPtr(*this), this](auto& error, auto& response, auto&) {
+    m_client->loadFromNetwork(WTFMove(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this](auto& error, auto& response, auto&) {
         if (!weakThis)
             return;
 

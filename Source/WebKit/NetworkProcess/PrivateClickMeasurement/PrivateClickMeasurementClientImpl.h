@@ -42,7 +42,7 @@ public:
     ClientImpl(NetworkSession&, NetworkProcess&);
 
 private:
-    void loadFromNetwork(NetworkLoadParameters&&, NetworkLoadCallback&&) final;
+    void loadFromNetwork(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, NetworkLoadCallback&&) final;
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
     bool featureEnabled() const final;
     bool debugModeEnabled() const final;

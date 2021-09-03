@@ -1,3 +1,39 @@
+2021-09-03  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify PCM::Client interface
+        https://bugs.webkit.org/show_bug.cgi?id=229887
+
+        Reviewed by Kate Cheney.
+
+        NetworkLoadParameters is a heavy object to have on an interface like this.
+        We really only need a URL, a RefPtr<JSON::Object> from which the HTTP method can be inferred
+        from whether it's null or not, and PcmDataCarried to give to processPCMRequest.
+
+        The NetworkLoadParameters generation is only needed in a networking implementation that uses NetworkSession,
+        so I moved it to PrivateClickMeasurementNetworkLoader::start.
+
+        I moved the debugModeEnabled calls to the callers of loadFromNetwork to simplify the interface and to
+        keep the responsibility for that in PrivateClickMeasurementManager instead of the loadFromNetwork function,
+        which should be simple and just take what it gets and give it to the network.
+
+        No change in behavior.  Just moving things around.
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClient.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp:
+        (WebKit::PCM::ClientImpl::loadFromNetwork):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        (WebKit::generateNetworkLoadParameters): Deleted.
+        (WebKit::generateNetworkLoadParametersForHttpPost): Deleted.
+        (WebKit::generateNetworkLoadParametersForHttpGet): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp:
+        (WebKit::generateNetworkLoadParameters):
+        (WebKit::PrivateClickMeasurementNetworkLoader::start):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.h:
+
 2021-09-03  Devin Rousso  <drousso@apple.com>
 
         [Web App Manifest] Always fetch the first manifest if provided
