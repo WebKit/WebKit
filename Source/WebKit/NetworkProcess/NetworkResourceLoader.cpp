@@ -528,11 +528,11 @@ void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProces
     m_connection = newConnection;
     m_parameters.identifier = newCoreIdentifier;
 
-    ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse
 #if ENABLE(SERVICE_WORKER)
-        || m_serviceWorkerFetchTask
+    ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse || m_serviceWorkerFetchTask);
+#else
+    ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse);
 #endif
-    );
     bool willWaitForContinueDidReceiveResponse = true;
     send(Messages::WebResourceLoader::DidReceiveResponse { m_response, willWaitForContinueDidReceiveResponse });
 }
