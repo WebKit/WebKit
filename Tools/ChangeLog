@@ -1,3 +1,11 @@
+2021-09-02  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] form-submission-steps API test is also flaky timing out like GTK
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-09-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkit-patch] apply-watchlist command fails on python 3 (Follow-up fix)
