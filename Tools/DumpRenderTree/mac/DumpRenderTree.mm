@@ -1994,7 +1994,7 @@ static void runTest(const std::string& inputLine)
 #if !PLATFORM(IOS_FAMILY)
             WebView *webView = [window.contentView.subviews objectAtIndex:0];
 #else
-            ASSERT([window.contentView] isKindOfClass:WebView.class]);
+            ASSERT([window.contentView isKindOfClass:WebView.class]);
             WebView *webView = (WebView *)window.contentView;
 #endif
 

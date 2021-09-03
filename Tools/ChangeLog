@@ -1,3 +1,10 @@
+2021-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r281990.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+
 2021-09-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Invoke apply-watchlist with Python 3
