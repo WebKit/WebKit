@@ -1,3 +1,15 @@
+2021-09-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        iframes should get an opaque background when the embedding element and embedded root color-schemes do not match
+        https://bugs.webkit.org/show_bug.cgi?id=228124
+        <rdar://problem/80922070>
+
+        Reviewed by Simon Fraser.
+
+        Remove failure expectations for newly passing tests.
+
+        * TestExpectations:
+
 2021-09-03  Alan Bujtas  <zalan@apple.com>
 
         Add a layout test for custom scrollbars with relative width/height values

@@ -3034,13 +3034,15 @@ void FrameView::updateBackgroundRecursively(const std::optional<Color>& backgrou
 #else
     static const auto cssValueControlBackground = CSSValueWindow;
 #endif
-    Color baseBackgroundColor = backgroundColor.value_or(RenderTheme::singleton().systemColor(cssValueControlBackground, styleColorOptions()));
-#else
-    Color baseBackgroundColor = backgroundColor.value_or(Color::white);
 #endif
 
     for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        if (FrameView* view = frame->view()) {
+        if (auto* view = frame->view()) {
+#if HAVE(OS_DARK_MODE_SUPPORT)
+            auto baseBackgroundColor = backgroundColor.value_or(RenderTheme::singleton().systemColor(cssValueControlBackground, view->styleColorOptions()));
+#else
+            auto baseBackgroundColor = backgroundColor.value_or(Color::white);
+#endif
             view->setTransparent(!baseBackgroundColor.isVisible());
             view->setBaseBackgroundColor(baseBackgroundColor);
             if (view->needsLayout())

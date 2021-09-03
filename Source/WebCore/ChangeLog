@@ -1,3 +1,45 @@
+2021-09-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        iframes should get an opaque background when the embedding element and embedded root color-schemes do not match
+        https://bugs.webkit.org/show_bug.cgi?id=228124
+        <rdar://problem/80922070>
+
+        Reviewed by Simon Fraser.
+
+        Currently, iframes always have a transparent underlying background
+        color. The existing behavior is undesirable, as it can result in
+        scenarios where text in iframes is illegible, due to a mismatch between
+        the used color scheme of the embedding element and embedded root.
+
+        To address this problem, it has been resolved [1] that iframes should get
+        an opaque background when the embedding element and embedded root color-schemes
+        do not match. The background color used should be appropriate to the
+        embedded root color-scheme.
+
+        [1] https://drafts.csswg.org/css-color-adjust-1/#color-scheme-effect
+
+        Test: imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/support/dark-frame-ref.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateBackgroundRecursively):
+
+        Ensure subframes have a base background color appropriate to their
+        color-scheme, rather than simply inheriting their parent's base
+        background color.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
+        Moved root element background painting logic into RenderView.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::shouldPaintBaseBackground const):
+
+        Paint the base background for the root element of an iframe if its used
+        color scheme does not match the color scheme of the embedding element.
+
+        * rendering/RenderView.h:
+
 2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         @font-face rules accessed over file: urls to a file which does not exist are not visible to document.fonts

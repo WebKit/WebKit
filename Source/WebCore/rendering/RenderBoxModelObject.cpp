@@ -37,8 +37,6 @@
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
-#include "HTMLFrameOwnerElement.h"
-#include "HTMLFrameSetElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
@@ -898,30 +896,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context.beginTransparencyLayer(1);
     }
 
-    // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
-    // no background in the child document should show the parent's background.
-    bool isOpaqueRoot = false;
+    auto isOpaqueRoot = false;
     if (isRoot) {
-        isOpaqueRoot = true;
-        if (!bgLayer.next() && !bgColor.isOpaque()) {
-            HTMLFrameOwnerElement* ownerElement = document().ownerElement();
-            if (ownerElement) {
-                if (!ownerElement->hasTagName(frameTag)) {
-                    // Locate the <body> element using the DOM.  This is easier than trying
-                    // to crawl around a render tree with potential :before/:after content and
-                    // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
-                    // render object very easily via the DOM.
-                    if (HTMLElement* body = document().bodyOrFrameset()) {
-                        // Can't scroll a frameset document anyway.
-                        isOpaqueRoot = is<HTMLFrameSetElement>(*body);
-                    } else {
-                        // SVG documents and XML documents with SVG root nodes are transparent.
-                        isOpaqueRoot = !document().hasSVGRootNode();
-                    }
-                }
-            } else
-                isOpaqueRoot = !view().frameView().isTransparent();
-        }
+        isOpaqueRoot = bgLayer.next() || bgColor.isOpaque() || view().shouldPaintBaseBackground();
         view().frameView().setContentIsOpaque(isOpaqueRoot);
     }
 

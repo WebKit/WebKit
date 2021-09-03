@@ -4523,10 +4523,6 @@ webkit.org/b/214454 [ Release ] imported/w3c/web-platform-tests/css/css-backgrou
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/border-width-pixel-snapping-001-a.html [ ImageOnlyFailure ]
 
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-change-checkbox.html [ ImageOnlyFailure ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background.html [ ImageOnlyFailure ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-alpha.html [ ImageOnlyFailure ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque.html [ ImageOnlyFailure ]
-webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ ImageOnlyFailure ]
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html [ ImageOnlyFailure ]
 
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ ImageOnlyFailure ]
