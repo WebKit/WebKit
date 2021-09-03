@@ -45,7 +45,7 @@ public:
     ~RemoteVideoSample() = default;
 
     WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(MediaSample&);
-    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(CVPixelBufferRef, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None);
+    WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(RetainPtr<CVPixelBufferRef>&&, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None);
     WEBCORE_EXPORT IOSurfaceRef surface() const;
 
     const MediaTime& time() const { return m_time; }
@@ -103,9 +103,10 @@ public:
     }
 
 private:
-    RemoteVideoSample(IOSurfaceRef, const DestinationColorSpace&, MediaTime&&, MediaSample::VideoRotation, bool);
+    RemoteVideoSample(IOSurfaceRef, RetainPtr<CVPixelBufferRef>&&, const DestinationColorSpace&, MediaTime&&, MediaSample::VideoRotation, bool);
 
     std::unique_ptr<WebCore::IOSurface> m_ioSurface;
+    RetainPtr<CVPixelBufferRef> m_imageBuffer;
     WTF::MachSendRight m_sendRight;
     MediaSample::VideoRotation m_rotation { MediaSample::VideoRotation::None };
     MediaTime m_time;

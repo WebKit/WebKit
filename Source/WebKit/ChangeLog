@@ -1,3 +1,17 @@
+2021-09-03  David Kilzer  <ddkilzer@apple.com>
+
+        RemoteVideoSample needs CVPixelBufferRef to be kept alive, but relies on caller to retain it
+        <https://webkit.org/b/229806>
+        <rdar://problem/82684479>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        - Pass converted CVPixelBufferRef to
+          RemoteVideoSample::create().  A similar change in an earlier
+          patch for Bug 229661 caused test failures.
+
 2021-09-03  Youenn Fablet  <youenn@apple.com>
 
         Enable WebRTC relay for SafariViewController

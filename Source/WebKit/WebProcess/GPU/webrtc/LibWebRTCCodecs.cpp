@@ -453,8 +453,7 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     auto sample = RemoteVideoSample::create(pixelBuffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
     if (!sample) {
         // FIXME: Optimize this code path, currently we have non BGRA for muted frames at least.
-        pixelBuffer = convertToBGRA(pixelBuffer.get());
-        sample = RemoteVideoSample::create(pixelBuffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
+        sample = RemoteVideoSample::create(convertToBGRA(pixelBuffer.get()), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()));
     }
 
     encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);

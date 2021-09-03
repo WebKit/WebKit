@@ -1,3 +1,29 @@
+2021-09-03  David Kilzer  <ddkilzer@apple.com>
+
+        RemoteVideoSample needs CVPixelBufferRef to be kept alive, but relies on caller to retain it
+        <https://webkit.org/b/229806>
+        <rdar://problem/82684479>
+
+        Reviewed by Darin Adler.
+
+        Covered by tests:
+            webrtc/video-mute.html
+            webrtc/video-unmute.html
+
+        * platform/graphics/RemoteVideoSample.cpp:
+        (WebCore::RemoteVideoSample::create):
+        - Pass CVPixelBufferRef to RemoteVideoSample
+          constructor.
+        (WebCore::RemoteVideoSample::RemoteVideoSample):
+        - Change constructor to accept CVPixelBufferRef
+          argument.
+        * platform/graphics/RemoteVideoSample.h:
+        (WebCore::RemoteVideoSample::RemoteVideoSample):
+        - Change constructor to accept CVPixelBufferRef
+          argument.
+        - Add m_imageBuffer instance variable to hold on to the
+          CVPixelBufferRef.
+
 2021-09-03  Rob Buis  <rbuis@igalia.com>
 
         Remove some SVG code from dirtyForLayoutFromPercentageHeightDescendants
