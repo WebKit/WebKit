@@ -21,7 +21,7 @@ PASS checkAddTrackPairs
 PASS checkReplaceTrackNullDoesntPreventPairing
 PASS checkRemoveAndReadd
 PASS checkAddTrackExistingTransceiverThenRemove
-FAIL checkRemoveTrackNegotiation promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
+FAIL checkRemoveTrackNegotiation assert_equals: Rollback should have added two tracks expected 2 but got 0
 FAIL checkMute assert_true: expected true got false
 FAIL checkStop assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}}}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null}}]"
 FAIL checkStopAfterCreateOffer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"
@@ -30,11 +30,11 @@ FAIL checkStopAfterSetRemoteOffer assert_equals: expected "stopped" but got "ina
 FAIL checkStopAfterCreateAnswer assert_equals: expected "[{currentDirection:null,direction:\"stopped\"}]" but got "[{currentDirection:null,direction:\"inactive\"}]"
 FAIL checkStopAfterSetLocalAnswer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"
 PASS checkStopAfterClose
-FAIL checkLocalRollback promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
-FAIL checkRollbackAndSetRemoteOfferWithDifferentType promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
-FAIL checkRemoteRollback promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
+FAIL checkLocalRollback assert_equals: expected "[{direction:\"stopped\"}]" but got "[{direction:\"inactive\"}]"
+PASS checkRollbackAndSetRemoteOfferWithDifferentType
+FAIL checkRemoteRollback assert_equals: expected "[]" but got "[{}]"
 FAIL checkMsectionReuse assert_equals: expected "[{currentDirection:null,mid:null}]" but got "[{currentDirection:\"inactive\",mid:\"0\"}]"
 PASS checkStopAfterCreateOfferWithReusedMsection
-FAIL checkAddIceCandidateToStoppedTransceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 0 is incompatible with current signaling state 1"
+PASS checkAddIceCandidateToStoppedTransceiver
 FAIL checkBundleTagRejected promise_test: Unhandled rejection with value: object "InvalidAccessError: Failed to set remote offer sdp: The m= section with mid='1' should be rejected."
 

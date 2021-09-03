@@ -26,6 +26,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 enum class RTCSignalingState {

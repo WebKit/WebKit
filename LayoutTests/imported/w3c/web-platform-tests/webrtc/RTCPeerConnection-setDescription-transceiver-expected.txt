@@ -1,8 +1,8 @@
 
 PASS setLocalDescription(offer) with m= section should assign mid to corresponding transceiver
 PASS setRemoteDescription(offer) with m= section and no existing transceiver should create corresponding transceiver
-FAIL setLocalDescription(rollback) should unset transceiver.mid promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
-FAIL setLocalDescription(rollback) should only unset transceiver mids associated with current round promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
-FAIL setRemoteDescription(rollback) should remove newly created transceiver from transceiver list promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
+PASS setLocalDescription(rollback) should unset transceiver.mid
+PASS setLocalDescription(rollback) should only unset transceiver mids associated with current round
+FAIL setRemoteDescription(rollback) should remove newly created transceiver from transceiver list assert_array_equals: Expect transceiver to be removed from pc2's transceiver list lengths differ, expected array [] length 0, got [object "[object RTCRtpTransceiver]"] length 1
 PASS setRemoteDescription should set transceiver inactive if its corresponding m section is rejected
 

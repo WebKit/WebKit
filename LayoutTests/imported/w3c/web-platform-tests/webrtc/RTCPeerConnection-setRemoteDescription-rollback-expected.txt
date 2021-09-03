@@ -1,23 +1,23 @@
 
-FAIL setRemoteDescription(rollback) in have-remote-offer state should revert to stable state promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
+PASS setRemoteDescription(rollback) in have-remote-offer state should revert to stable state
 PASS setRemoteDescription(rollback) from stable state should reject with InvalidStateError
-FAIL setRemoteDescription(rollback) should ignore invalid sdp content and succeed promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL local offer created before setRemoteDescription(remote offer) then rollback should still be usable promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL local offer created before setRemoteDescription(remote offer) with different transceiver level assignments then rollback should still be usable promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL rollback of a remote offer should remove a transceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL rollback of a remote offer should remove touched transceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL rollback of a remote offer should keep a transceiver promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL rollback of a remote offer should keep a transceiver created by addtrack promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL rollback of a remote offer should keep a transceiver without tracks promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL explicit rollback of local offer should remove transceivers and transport promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
-FAIL when using addTransceiver, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded until we settle in stable promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 0 is incompatible with current signaling state 1"
-FAIL when using addTrack, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 0 is incompatible with current signaling state 1"
-FAIL rollback of a remote offer to negotiated stable state should enable applying of a local offer promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
-FAIL rollback of a local offer to negotiated stable state should enable applying of a remote offer promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
-FAIL rollback a local offer with audio direction change to negotiated stable state and then add video receiver promise_test: Unhandled rejection with value: object "InvalidStateError: Local description type 3 is incompatible with current signaling state 1"
-FAIL two transceivers with same mids promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 0 is incompatible with current signaling state 1"
-FAIL onremovetrack fires during remote rollback promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 3 is incompatible with current signaling state 2"
+PASS setRemoteDescription(rollback) should ignore invalid sdp content and succeed
+PASS local offer created before setRemoteDescription(remote offer) then rollback should still be usable
+PASS local offer created before setRemoteDescription(remote offer) with different transceiver level assignments then rollback should still be usable
+FAIL rollback of a remote offer should remove a transceiver assert_equals: expected 0 but got 1
+FAIL rollback of a remote offer should remove touched transceiver assert_equals: expected 0 but got 1
+PASS rollback of a remote offer should keep a transceiver
+PASS rollback of a remote offer should keep a transceiver created by addtrack
+PASS rollback of a remote offer should keep a transceiver without tracks
+PASS explicit rollback of local offer should remove transceivers and transport
+FAIL when using addTransceiver, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded until we settle in stable promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+FAIL when using addTrack, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+PASS rollback of a remote offer to negotiated stable state should enable applying of a local offer
+PASS rollback of a local offer to negotiated stable state should enable applying of a remote offer
+PASS rollback a local offer with audio direction change to negotiated stable state and then add video receiver
+FAIL two transceivers with same mids promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+PASS onremovetrack fires during remote rollback
 FAIL rollback of a remote offer with stream changes assert_equals: expected 2 but got 1
 PASS removeTrack() with a sender being rolled back does not crash or throw
-FAIL Implicit rollback with only a datachannel works promise_test: Unhandled rejection with value: object "InvalidStateError: Remote description type 0 is incompatible with current signaling state 1"
+FAIL Implicit rollback with only a datachannel works promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
 

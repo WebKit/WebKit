@@ -1,5 +1,31 @@
 2021-09-03  Youenn Fablet  <youenn@apple.com>
 
+        Signaling state check when applying a local or remote description is no longer aligned with the WebRTC spec
+        https://bugs.webkit.org/show_bug.cgi?id=229138
+
+        Reviewed by Eric Carlson.
+
+        Rebasing tests.
+        Some tests are going from PASS to FAIL:
+        - LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-operations.https.html: we do not support yet rollback.
+        - LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-pranswer.html:  is no longer throwing the right exception (and we are not supporting pranswer yet).
+        - LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription.html: we are throwing with a different exception.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-operations.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-restartIce.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setDescription-transceiver-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-pranswer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-rollback-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-rollback-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver.https-expected.txt:
+
+2021-09-03  Youenn Fablet  <youenn@apple.com>
+
         Migrate to latest libwebrtc AddIceCandidate
         https://bugs.webkit.org/show_bug.cgi?id=229700
 

@@ -262,6 +262,31 @@ rtc::scoped_refptr<webrtc::MediaStreamInterface> MockLibWebRTCPeerConnectionFact
 
 void MockLibWebRTCPeerConnection::SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription)
 {
+    bool isCorrectState = true;
+    switch (m_signalingState) {
+    case RTCSignalingState::Stable:
+    case RTCSignalingState::HaveLocalOffer:
+        isCorrectState = sessionDescription->GetType() == webrtc::SdpType::kOffer;
+        if (isCorrectState)
+            m_signalingState = RTCSignalingState::HaveLocalOffer;
+        break;
+    case RTCSignalingState::HaveRemoteOffer:
+        isCorrectState = sessionDescription->GetType() == webrtc::SdpType::kAnswer;
+        if (isCorrectState)
+            m_signalingState = RTCSignalingState::Stable;
+        break;
+    case RTCSignalingState::HaveLocalPranswer:
+    case RTCSignalingState::HaveRemotePranswer:
+    case RTCSignalingState::Closed:
+        isCorrectState = false;
+    }
+    if (!isCorrectState) {
+        LibWebRTCProvider::callOnWebRTCSignalingThread([observer] {
+            observer->OnFailure(webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE));
+        });
+        return;
+    }
+
     std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
     LibWebRTCProvider::callOnWebRTCSignalingThread([this, observer] {
         observer->OnSuccess();
@@ -271,6 +296,31 @@ void MockLibWebRTCPeerConnection::SetLocalDescription(webrtc::SetSessionDescript
 
 void MockLibWebRTCPeerConnection::SetRemoteDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription)
 {
+    bool isCorrectState = true;
+    switch (m_signalingState) {
+    case RTCSignalingState::HaveRemoteOffer:
+    case RTCSignalingState::Stable:
+        isCorrectState = sessionDescription->GetType() == webrtc::SdpType::kOffer;
+        if (isCorrectState)
+            m_signalingState = RTCSignalingState::HaveRemoteOffer;
+        break;
+    case RTCSignalingState::HaveLocalOffer:
+        isCorrectState = sessionDescription->GetType() == webrtc::SdpType::kAnswer;
+        if (isCorrectState)
+            m_signalingState = RTCSignalingState::Stable;
+        break;
+    case RTCSignalingState::HaveLocalPranswer:
+    case RTCSignalingState::HaveRemotePranswer:
+    case RTCSignalingState::Closed:
+        isCorrectState = false;
+    }
+    if (!isCorrectState) {
+        LibWebRTCProvider::callOnWebRTCSignalingThread([observer] {
+            observer->OnFailure(webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE));
+        });
+        return;
+    }
+
     std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
     LibWebRTCProvider::callOnWebRTCSignalingThread([observer] {
         observer->OnSuccess();
