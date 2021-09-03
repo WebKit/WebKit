@@ -1,3 +1,19 @@
+2021-09-03  Ziran Sun  <zsun@igalia.com>
+
+        REGRESSION(r280078): broke fast/images/exif-orientation-composited.html on windows
+        https://bugs.webkit.org/show_bug.cgi?id=228325
+
+        Reviewed by Javier Fernandez.
+
+        The is to fix regression caused by r280078. After updating overridingLogicalWidth,
+        there is no need to reset the logicalWidth.
+
+        No test needed. Test fast/images/exif-orientation-composited.html is enough to cover
+        the affected code.
+   
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::applyStretchAlignmentToChildIfNeeded):
+
 2021-09-03  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] Media playback continues after backgrounding Safari

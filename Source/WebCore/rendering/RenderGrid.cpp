@@ -1177,10 +1177,8 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
         LayoutUnit stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection).value(), child);
         LayoutUnit desiredLogicalWidth = constrainLogicalWidthInFragmentByMinMax(stretchedLogicalWidth, contentWidth(), *this, nullptr);
         child.setOverridingLogicalWidth(desiredLogicalWidth);
-        if (desiredLogicalWidth != child.logicalWidth()) {
-            child.setLogicalWidth(0_lu);
+        if (desiredLogicalWidth != child.logicalWidth())
             child.setNeedsLayout(MarkOnlyThis);
-        }
     } 
 }
 
