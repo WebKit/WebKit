@@ -172,9 +172,6 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 {
-    if (!gTestRunner->canOpenWindows())
-        return nil;
-    
     // Make sure that waitUntilDone has been called.
     ASSERT(gTestRunner->waitToDump());
 

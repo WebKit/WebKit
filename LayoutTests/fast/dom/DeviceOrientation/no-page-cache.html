@@ -7,10 +7,9 @@
 <script>
 description('Tests that pages that use DeviceOrientation are not put in the page cache.');
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.waitUntilDone();
-    testRunner.setCanOpenWindows();
-} else
+else
     debug('This test can not be run without the TestRunner');
 
 var pageOneOnloadCount = 0;

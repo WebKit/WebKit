@@ -7,10 +7,8 @@
 <script>
 description("Tests that manipulating location properties in a just-created window object does not crash. Note: Turn off pop-up blocking to run this in-browser.");
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.waitUntilDone();
-    testRunner.setCanOpenWindows();
-}
 
 var testWindow = open("data:text/plain,a");
 

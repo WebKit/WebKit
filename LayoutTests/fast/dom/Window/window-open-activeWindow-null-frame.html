@@ -8,9 +8,6 @@ debug("This test passes if it doesn't crash.");
 
 window.jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.setCanOpenWindows(true);
-
 function openWindow()
 {
     testFrameWindowOpen.call(window);

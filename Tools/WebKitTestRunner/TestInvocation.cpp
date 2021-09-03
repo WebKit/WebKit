@@ -850,11 +850,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "GetDumpFrameLoadCallbacks"))
         return adoptWK(WKBooleanCreate(m_dumpFrameLoadCallbacks));
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetCanOpenWindows")) {
-        m_canOpenWindows = booleanValue(messageBody);
-        return nullptr;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         TestController::singleton().mainWebView()->setWindowIsKey(booleanValue(messageBody));
         return nullptr;

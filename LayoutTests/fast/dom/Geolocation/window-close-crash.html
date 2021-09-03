@@ -11,10 +11,9 @@ description("Tests the assertion that the GeolocationClient should not be updati
 
 var otherWindow;
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.waitUntilDone();
-    testRunner.setCanOpenWindows();
-} else
+else
     testFailed('This test can not be run without the testRunner');
 
 function gotPosition(p)

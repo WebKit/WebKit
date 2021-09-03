@@ -98,8 +98,6 @@ public:
 
     void dumpResourceLoadStatistics();
 
-    bool canOpenWindows() const { return m_canOpenWindows; }
-
     void dumpPrivateClickMeasurement();
     void performCustomMenuAction();
 
@@ -166,7 +164,6 @@ private:
     bool m_dumpPixels { false };
     bool m_pixelResultIsPending { false };
     bool m_shouldDumpResourceLoadStatistics { false };
-    bool m_canOpenWindows { false };
     bool m_shouldDumpPrivateClickMeasurement { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 

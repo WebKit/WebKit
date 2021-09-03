@@ -433,11 +433,6 @@ bool TestRunner::isCommandEnabled(JSStringRef name)
     return WKBundlePageIsEditingCommandEnabled(page(), toWK(name).get());
 }
 
-void TestRunner::setCanOpenWindows()
-{
-    postSynchronousMessage("SetCanOpenWindows", true);
-}
-
 void TestRunner::setCustomUserAgent(JSStringRef userAgent)
 {
     postSynchronousMessage("SetCustomUserAgent", toWK(userAgent));
