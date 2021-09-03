@@ -1,3 +1,20 @@
+2021-09-02  Alan Bujtas  <zalan@apple.com>
+
+        Relative -webkit-scrollbar width value may lead to unstable layout
+        https://bugs.webkit.org/show_bug.cgi?id=229833.
+        <rdar://80336247>
+
+        Reviewed by Simon Fraser.
+
+        The way we resolve the relative property value for the webkit-scrollbar width (using the owning renderer’s width) can lead to unstable layout with
+        circular dependency. While -webkit-scrollbar itself is non-standard, Chrome supports it but not with relative width/height values. They are resolved to 0px.
+        Here we use the default platform value instead.
+
+        * rendering/RenderScrollbarPart.cpp:
+        (WebCore::calcScrollbarThicknessUsing): Do not try to resolve the relative length value.
+        (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+        (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+
 2021-09-02  Simon Fraser  <simon.fraser@apple.com>
 
         Changes to clip-path and filter SVG elements referenced by CSS don't trigger repaints
