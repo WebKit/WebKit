@@ -188,7 +188,9 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
 
 ExceptionOr<bool> FontFaceSet::check(const String& family, const String& text)
 {
-    return m_backing->check(family, text);
+    Ref protect = m_backing;
+    protect->updateStyleIfNeeded();
+    return protect->check(family, text);
 }
     
 auto FontFaceSet::status() const -> LoadStatus

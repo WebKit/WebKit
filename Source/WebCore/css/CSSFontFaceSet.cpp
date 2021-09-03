@@ -442,7 +442,8 @@ ExceptionOr<bool> CSSFontFaceSet::check(const String& font, const String& text)
         return matchingFaces.releaseException();
 
     for (auto& face : matchingFaces.releaseReturnValue()) {
-        if (face.get().status() == CSSFontFace::Status::Pending)
+        if (face.get().status() == CSSFontFace::Status::Pending
+            || face.get().status() == CSSFontFace::Status::Loading)
             return false;
     }
     return true;

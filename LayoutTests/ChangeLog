@@ -1,5 +1,17 @@
 2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        FontFaceSet.check() needs to react to style changes
+        https://bugs.webkit.org/show_bug.cgi?id=229844
+
+        Reviewed by Sam Weinig.
+
+        This can't be a WPT test because it requires internals.invalidateFontCache().
+
+        * fast/text/FontFaceSet-check-after-style-update-expected.txt: Added.
+        * fast/text/FontFaceSet-check-after-style-update.html: Added.
+
+2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
         FontFaceSet.status needs to react to style changes
         https://bugs.webkit.org/show_bug.cgi?id=229839
 
