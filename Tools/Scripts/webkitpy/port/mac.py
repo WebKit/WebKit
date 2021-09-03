@@ -295,9 +295,8 @@ class MacPort(DarwinPort):
     def logging_detectors_to_strip_text_start(self, test_name):
         logging_detectors = []
 
-        if 'webrtc' in test_name:
-            logging_detectors.append('Negotiation String:')
-            logging_detectors.append('LRP')
+        if 'webrtc' in test_name and self._os_version.major == 11:
+            logging_detectors.append('')
 
         return logging_detectors
 

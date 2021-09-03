@@ -1,3 +1,18 @@
+2021-09-03  Youenn Fablet  <youenn@apple.com>
+
+        Remove all WTR output before Content-Type:text/plain for WebRTC tests on BigSur
+        https://bugs.webkit.org/show_bug.cgi?id=229552
+        <rdar://problem/82390178>
+
+        Reviewed by Jonathan Bedard.
+
+        Previously we were removing stdout logging according certain patterns for webrtc tests.
+        Based on bot results, we now remove any stdout logging for WebRTC tests, but only for BigSur.
+        For that purpose, we add the empty string as detector when needed.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.logging_detectors_to_strip_text_start):
+
 2021-09-02  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Install lcms2 in helper dependencies script
