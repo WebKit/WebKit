@@ -1,3 +1,18 @@
+2021-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Fix race in RemoteRenderingBackend::allowsExitUnderMemoryPressure()
+        https://bugs.webkit.org/show_bug.cgi?id=229870
+        <rdar://82459484>
+
+        Reviewed by David Kilzer.
+
+        RemoteRenderingBackend::m_remoteResourceCache should only be used safely from RemoteRenderingBackend's work queue.
+        RemoteRenderingBackend::allowsExitUnderMemoryPressure() gets called on the main thread so we need to make sure we
+        dispatch to RemoteRenderingBackend's work queue before accessing m_remoteResourceCache.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::allowsExitUnderMemoryPressure const):
+
 2021-09-03  Alex Christensen  <achristensen@webkit.org>
 
         Clean up PrivateClickMeasurementManager interface

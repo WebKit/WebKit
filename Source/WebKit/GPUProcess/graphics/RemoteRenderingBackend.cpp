@@ -681,7 +681,12 @@ void RemoteRenderingBackend::updateRenderingResourceRequest()
 
 bool RemoteRenderingBackend::allowsExitUnderMemoryPressure() const
 {
-    return m_remoteResourceCache.imageBuffers().isEmpty() && m_remoteResourceCache.nativeImages().isEmpty();
+    ASSERT(isMainRunLoop());
+    bool hasActiveDrawables = false;
+    m_workQueue->dispatchSync([this, &hasActiveDrawables] {
+        hasActiveDrawables = !m_remoteResourceCache.imageBuffers().isEmpty() || !m_remoteResourceCache.nativeImages().isEmpty();
+    });
+    return !hasActiveDrawables;
 }
 
 RemoteRenderingBackendState RemoteRenderingBackend::lastKnownState() const
