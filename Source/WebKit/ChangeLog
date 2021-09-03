@@ -1,3 +1,34 @@
+2021-09-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        Safari’s Privacy Report window is completely blank
+        https://bugs.webkit.org/show_bug.cgi?id=229847
+        <rdar://problem/80974688>
+
+        Reviewed by Chris Dumez.
+
+        We should not wait for an IPC reply on a cached web process, because
+        it will cause long hangs.
+
+        In order to test this I added a new SPI to update the
+        cachedProcessSuspensionDelay (the usual timeout is 30 seconds). I also
+        moved the initial suspension timer call to be after the responsiveness
+        check, otherwise the cached process will be resumed very soon.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _setCachedProcessSuspensionDelayForTesting:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::setCachedProcessSuspensionDelayForTesting):
+        (WebKit::WebProcessCache::addProcess):
+        (WebKit::WebProcessCache::CachedProcess::CachedProcess):
+        (WebKit::WebProcessCache::CachedProcess::startSuspensionTimer):
+        * UIProcess/WebProcessCache.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendResourceLoadStatisticsDataImmediately):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setCachedProcessSuspensionDelayForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-09-03  Alex Christensen  <achristensen@webkit.org>
 
         Simplify PCM::Client interface

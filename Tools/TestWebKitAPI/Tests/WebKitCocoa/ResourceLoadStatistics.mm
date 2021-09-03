@@ -38,6 +38,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringConcatenateNumbers.h>
 
 static bool finishedNavigation = false;
 
@@ -1336,6 +1337,62 @@ TEST(ResourceLoadStatistics, StoreSuspension)
 }
 
 @end
+
+#if PLATFORM(MAC)
+TEST(ResourceLoadStatistics, DataSummaryWithCachedProcess)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    processPoolConfiguration.get().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol = YES;
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    EXPECT_GT([processPool _maximumSuspendedPageCount], 0u);
+    EXPECT_GT([processPool _processCacheCapacity], 0u);
+
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    [WKWebsiteDataStore _setCachedProcessSuspensionDelayForTesting:0];
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    [webViewConfiguration setWebsiteDataStore:dataStore];
+
+    auto handler = adoptNS([[ResourceLoadStatisticsSchemeHandler alloc] init]);
+
+    const unsigned maxSuspendedPageCount = [processPool _maximumSuspendedPageCount];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"resource-load-statistics"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto delegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    for (unsigned i = 0; i < maxSuspendedPageCount + 1; i++) {
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("resource-load-statistics://www.domain-", i, ".com")]];
+        [webView loadRequest:request];
+        [delegate waitForDidFinishNavigation];
+
+        EXPECT_EQ(i + 1, [processPool _webProcessCount]);
+        EXPECT_EQ(i + 1, [processPool _webProcessCountIgnoringPrewarmedAndCached]);
+        EXPECT_FALSE([processPool _hasPrewarmedWebProcess]);
+    }
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:makeString("resource-load-statistics://www.domain-", maxSuspendedPageCount + 1, ".com")]];
+    [webView loadRequest:request];
+    [delegate waitForDidFinishNavigation];
+
+    // This will timeout if waiting for IPC from a cached process.
+    static bool doneFlag = false;
+    [dataStore _getResourceLoadStatisticsDataSummary:^void(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData)
+    {
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+    
+    [WKWebsiteDataStore _setCachedProcessSuspensionDelayForTesting:30];
+}
+#endif
 
 TEST(ResourceLoadStatistics, BackForwardPerPageData)
 {

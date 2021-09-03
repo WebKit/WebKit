@@ -2035,8 +2035,12 @@ void WebProcessPool::sendResourceLoadStatisticsDataImmediately(CompletionHandler
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
-    for (auto& process : processes())
+    for (auto& process : processes()) {
+        if (!process->pageCount())
+            continue;
+
         process->sendWithAsyncReply(Messages::WebProcess::SendResourceLoadStatisticsDataImmediately(), [callbackAggregator] { });
+    }
 }
 #endif
 

@@ -259,6 +259,8 @@ public:
     const String& resolvedModelElementCacheDirectory() const { return m_resolvedConfiguration->modelElementCacheDirectory(); }
 #endif
 
+    static void setCachedProcessSuspensionDelayForTesting(Seconds);
+
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
     DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
