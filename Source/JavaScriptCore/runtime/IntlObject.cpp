@@ -1770,63 +1770,79 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
 
-// https://tc39.es/proposal-intl-enumeration/#sec-canonicalizetimezonename
-static std::optional<String> canonicalizeTimeZoneNameFromICUTimeZone(const String& timeZoneName)
+static bool isValidTimeZoneNameFromICUTimeZone(StringView timeZoneName)
 {
     // Some time zone names are included in ICU, but they are not included in the IANA Time Zone Database.
     // We need to filter them out.
     if (timeZoneName.startsWith("SystemV/"))
-        return std::nullopt;
+        return false;
     if (timeZoneName.startsWith("Etc/"))
-        return std::nullopt;
+        return isUTCEquivalent(timeZoneName);
     // IANA time zone names include '/'. Some of them are not including, but it is in backward links.
     // And ICU already resolved these backward links.
     if (!timeZoneName.contains('/'))
-        return std::nullopt;
+        return timeZoneName == "UTC"_s || timeZoneName == "GMT"_s;
+    return true;
+}
 
-    return timeZoneName;
+// https://tc39.es/proposal-intl-enumeration/#sec-canonicalizetimezonename
+static std::optional<String> canonicalizeTimeZoneNameFromICUTimeZone(String&& timeZoneName)
+{
+    if (isUTCEquivalent(timeZoneName))
+        return "UTC"_s;
+    return std::make_optional(WTFMove(timeZoneName));
+}
+
+// https://tc39.es/proposal-intl-enumeration/#sec-availabletimezones
+const Vector<String>& intlAvailableTimeZones()
+{
+    static LazyNeverDestroyed<Vector<String>> availableTimeZones;
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        Vector<String> temporary;
+        UErrorCode status = U_ZERO_ERROR;
+        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, nullptr, nullptr, &status));
+        ASSERT(U_SUCCESS(status));
+
+        int32_t count = uenum_count(enumeration.get(), &status);
+        ASSERT(U_SUCCESS(status));
+        temporary.reserveInitialCapacity(count);
+        for (int32_t index = 0; index < count; ++index) {
+            int32_t length = 0;
+            const char* pointer = uenum_next(enumeration.get(), &length, &status);
+            ASSERT(U_SUCCESS(status));
+            String timeZone(pointer, length);
+            if (isValidTimeZoneNameFromICUTimeZone(timeZone)) {
+                if (auto mapped = canonicalizeTimeZoneNameFromICUTimeZone(WTFMove(timeZone)))
+                    temporary.append(WTFMove(mapped.value()));
+            }
+        }
+
+        // The AvailableTimeZones abstract operation returns a List, ordered as if an Array of the same
+        // values had been sorted using %Array.prototype.sort% using undefined as comparefn
+        std::sort(temporary.begin(), temporary.end(),
+            [](const String& a, const String& b) {
+                return WTF::codePointCompare(a, b) < 0;
+            });
+        auto end = std::unique(temporary.begin(), temporary.end());
+        availableTimeZones.construct();
+        availableTimeZones->reserveInitialCapacity(end - temporary.begin());
+
+        auto createImmortalThreadSafeString = [&](String&& string) {
+            if (string.is8Bit())
+                return StringImpl::createStaticStringImpl(string.characters8(), string.length());
+            return StringImpl::createStaticStringImpl(string.characters16(), string.length());
+        };
+        for (auto iterator = temporary.begin(); iterator != end; ++iterator)
+            availableTimeZones->uncheckedAppend(createImmortalThreadSafeString(WTFMove(*iterator)));
+    });
+    return availableTimeZones;
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availabletimezones
 static JSArray* availableTimeZones(JSGlobalObject* globalObject)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    UErrorCode status = U_ZERO_ERROR;
-    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, nullptr, nullptr, &status));
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "failed to enumerate available timezones"_s);
-        return { };
-    }
-
-    int32_t count = uenum_count(enumeration.get(), &status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "failed to enumerate available timezones"_s);
-        return { };
-    }
-
-    Vector<String, 1> elements;
-    elements.reserveInitialCapacity(count);
-    for (int32_t index = 0; index < count; ++index) {
-        int32_t length = 0;
-        const char* pointer = uenum_next(enumeration.get(), &length, &status);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "failed to enumerate available timezones"_s);
-            return { };
-        }
-        String timeZone(pointer, length);
-        if (auto mapped = canonicalizeTimeZoneNameFromICUTimeZone(timeZone))
-            elements.append(WTFMove(mapped.value()));
-    }
-
-    // 4. Sort result in order as if an Array of the same values had been sorted using %Array.prototype.sort% using undefined as comparefn.
-    std::sort(elements.begin(), elements.end(),
-        [](const String& a, const String& b) {
-            return WTF::codePointCompare(a, b) < 0;
-        });
-
-    RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
+    return createArrayFromStringVector(globalObject, intlAvailableTimeZones());
 }
 
 // https://tc39.es/proposal-intl-enumeration/#sec-availableunits

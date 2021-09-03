@@ -1,3 +1,73 @@
+2021-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Temporal.TimeZone
+        https://bugs.webkit.org/show_bug.cgi?id=229703
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Temporal.TimeZone. While this patch does not implement features which requires Temporal.Instant,
+        we implement the core of Temporal.TimeZone, holding UTC offset or IANA TimeZone ID. This patch implements parsing TimeZoneNumericUTCOffset
+        to populate TimeZone from that format.
+
+        Since Temporal.TimeZone is implemented, we also support `Temporal.Now.timeZone()`, which returns current system TimeZone.
+
+        We also fix Intl enumeration not including "UTC". Since it is included in IANA TimeZones, we should include that.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::parseDecimalInt32):
+        (JSC::ISO8601::handleFraction):
+        (JSC::ISO8601::parseTimeZoneNumericUTCOffset):
+        (JSC::ISO8601::formatTimeZoneOffsetString):
+        * runtime/ISO8601.h:
+        * runtime/IntlObject.cpp:
+        (JSC::isValidTimeZoneNameFromICUTimeZone):
+        (JSC::canonicalizeTimeZoneNameFromICUTimeZone):
+        (JSC::intlAvailableTimeZones):
+        (JSC::availableTimeZones):
+        * runtime/IntlObject.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::timeZoneStructure):
+        * runtime/TemporalNow.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalNow.h:
+        * runtime/TemporalObject.cpp:
+        (JSC::createTimeZoneConstructor):
+        * runtime/TemporalTimeZone.cpp: Added.
+        (JSC::TemporalTimeZone::createFromID):
+        (JSC::TemporalTimeZone::createFromUTCOffset):
+        (JSC::TemporalTimeZone::createStructure):
+        (JSC::TemporalTimeZone::TemporalTimeZone):
+        (JSC::TemporalTimeZone::idForTimeZoneName):
+        (JSC::parseTemporalTimeZoneString):
+        (JSC::TemporalTimeZone::from):
+        * runtime/TemporalTimeZone.h: Copied from Source/JavaScriptCore/runtime/ISO8601.h.
+        * runtime/TemporalTimeZoneConstructor.cpp: Added.
+        (JSC::TemporalTimeZoneConstructor::create):
+        (JSC::TemporalTimeZoneConstructor::createStructure):
+        (JSC::TemporalTimeZoneConstructor::TemporalTimeZoneConstructor):
+        (JSC::TemporalTimeZoneConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalTimeZoneConstructor.h: Copied from Source/JavaScriptCore/runtime/ISO8601.h.
+        * runtime/TemporalTimeZonePrototype.cpp: Added.
+        (JSC::TemporalTimeZonePrototype::create):
+        (JSC::TemporalTimeZonePrototype::createStructure):
+        (JSC::TemporalTimeZonePrototype::TemporalTimeZonePrototype):
+        (JSC::TemporalTimeZonePrototype::finishCreation):
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalTimeZonePrototype.h: Copied from Source/JavaScriptCore/runtime/ISO8601.h.
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
 2021-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Validate JSPropertyNameEnumerator via watchpoints

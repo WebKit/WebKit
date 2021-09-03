@@ -195,7 +195,10 @@ OBJECT_LUT_HEADERS = \
     TemporalCalendarPrototype.lut.h \
     TemporalDurationConstructor.lut.h \
     TemporalDurationPrototype.lut.h \
+    TemporalNow.lut.h \
     TemporalObject.lut.h \
+    TemporalTimeZoneConstructor.lut.h \
+    TemporalTimeZonePrototype.lut.h \
     WebAssemblyCompileErrorConstructor.lut.h \
     WebAssemblyCompileErrorPrototype.lut.h \
     WebAssemblyGlobalConstructor.lut.h \

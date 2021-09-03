@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,26 @@
 
 #pragma once
 
-#include "TemporalObject.h"
+#include "InternalFunction.h"
 
 namespace JSC {
-namespace ISO8601 {
 
-struct Duration {
-    using const_iterator = std::array<double, numberOfTemporalUnits>::const_iterator;
+class TemporalTimeZonePrototype;
 
-#define JSC_DEFINE_ISO8601_DURATION_FIELD(name, capitalizedName) \
-    double name##s() const { return data[static_cast<uint8_t>(TemporalUnit::capitalizedName)]; } \
-    void set##capitalizedName##s(double value) { data[static_cast<uint8_t>(TemporalUnit::capitalizedName)] = value; }
-    JSC_TEMPORAL_UNITS(JSC_DEFINE_ISO8601_DURATION_FIELD);
-#undef JSC_DEFINE_ISO8601_DURATION_FIELD
+class TemporalTimeZoneConstructor final : public InternalFunction {
+public:
+    using Base = InternalFunction;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    double& operator[](size_t i) { return data[i]; }
-    const double& operator[](size_t i) const { return data[i]; }
-    const_iterator begin() const { return data.begin(); }
-    const_iterator end() const { return data.end(); }
-    void clear() { data.fill(0); }
+    static TemporalTimeZoneConstructor* create(VM&, Structure*, TemporalTimeZonePrototype*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    std::array<double, numberOfTemporalUnits> data { };
+    DECLARE_INFO;
+
+private:
+    TemporalTimeZoneConstructor(VM&, Structure*);
+    void finishCreation(VM&, TemporalTimeZonePrototype*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalTimeZoneConstructor, InternalFunction);
 
-std::optional<Duration> parseDuration(StringView);
-std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView);
-String formatTimeZoneOffsetString(int64_t);
-
-} // namespace ISO8601
 } // namespace JSC

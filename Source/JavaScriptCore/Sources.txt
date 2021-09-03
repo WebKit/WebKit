@@ -1019,6 +1019,9 @@ runtime/TemporalDurationConstructor.cpp
 runtime/TemporalDurationPrototype.cpp
 runtime/TemporalNow.cpp
 runtime/TemporalObject.cpp
+runtime/TemporalTimeZone.cpp
+runtime/TemporalTimeZoneConstructor.cpp
+runtime/TemporalTimeZonePrototype.cpp
 runtime/TestRunnerUtils.cpp
 runtime/ThrowScope.cpp
 runtime/TypeLocationCache.cpp

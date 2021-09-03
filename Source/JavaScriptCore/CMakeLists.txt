@@ -111,7 +111,10 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalCalendarPrototype.cpp
     runtime/TemporalDurationConstructor.cpp
     runtime/TemporalDurationPrototype.cpp
+    runtime/TemporalNow.cpp
     runtime/TemporalObject.cpp
+    runtime/TemporalTimeZoneConstructor.cpp
+    runtime/TemporalTimeZonePrototype.cpp
 
     wasm/js/JSWebAssembly.cpp
     wasm/js/JSToWasmICCallee.cpp

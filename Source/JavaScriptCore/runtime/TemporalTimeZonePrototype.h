@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,30 @@
 
 #pragma once
 
-#include "TemporalObject.h"
+#include "JSObject.h"
 
 namespace JSC {
-namespace ISO8601 {
 
-struct Duration {
-    using const_iterator = std::array<double, numberOfTemporalUnits>::const_iterator;
+class TemporalTimeZonePrototype final : public JSNonFinalObject {
+public:
+    using Base = JSNonFinalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-#define JSC_DEFINE_ISO8601_DURATION_FIELD(name, capitalizedName) \
-    double name##s() const { return data[static_cast<uint8_t>(TemporalUnit::capitalizedName)]; } \
-    void set##capitalizedName##s(double value) { data[static_cast<uint8_t>(TemporalUnit::capitalizedName)] = value; }
-    JSC_TEMPORAL_UNITS(JSC_DEFINE_ISO8601_DURATION_FIELD);
-#undef JSC_DEFINE_ISO8601_DURATION_FIELD
+    template<typename CellType, SubspaceAccess>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalTimeZonePrototype, Base);
+        return &vm.plainObjectSpace;
+    }
 
-    double& operator[](size_t i) { return data[i]; }
-    const double& operator[](size_t i) const { return data[i]; }
-    const_iterator begin() const { return data.begin(); }
-    const_iterator end() const { return data.end(); }
-    void clear() { data.fill(0); }
+    static TemporalTimeZonePrototype* create(VM&, JSGlobalObject*, Structure*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    std::array<double, numberOfTemporalUnits> data { };
+    DECLARE_INFO;
+
+private:
+    TemporalTimeZonePrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
-std::optional<Duration> parseDuration(StringView);
-std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView);
-String formatTimeZoneOffsetString(int64_t);
-
-} // namespace ISO8601
 } // namespace JSC

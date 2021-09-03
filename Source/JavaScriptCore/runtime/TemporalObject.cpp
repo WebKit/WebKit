@@ -33,6 +33,8 @@
 #include "TemporalDurationConstructor.h"
 #include "TemporalDurationPrototype.h"
 #include "TemporalNow.h"
+#include "TemporalTimeZoneConstructor.h"
+#include "TemporalTimeZonePrototype.h"
 
 namespace JSC {
 
@@ -59,6 +61,13 @@ static JSValue createDurationConstructor(VM& vm, JSObject* object)
     return TemporalDurationConstructor::create(vm, TemporalDurationConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalDurationPrototype*>(globalObject->durationStructure()->storedPrototypeObject()));
 }
 
+static JSValue createTimeZoneConstructor(VM& vm, JSObject* object)
+{
+    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
+    return TemporalTimeZoneConstructor::create(vm, TemporalTimeZoneConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalTimeZonePrototype*>(globalObject->timeZoneStructure()->storedPrototypeObject()));
+}
+
 } // namespace JSC
 
 #include "TemporalObject.lut.h"
@@ -68,8 +77,9 @@ namespace JSC {
 /* Source for TemporalObject.lut.h
 @begin temporalObjectTable
   Calendar       createCalendarConstructor       DontEnum|PropertyCallback
-  Now            createNowObject                 DontEnum|PropertyCallback
   Duration       createDurationConstructor       DontEnum|PropertyCallback
+  Now            createNowObject                 DontEnum|PropertyCallback
+  TimeZone       createTimeZoneConstructor       DontEnum|PropertyCallback
 @end
 */
 

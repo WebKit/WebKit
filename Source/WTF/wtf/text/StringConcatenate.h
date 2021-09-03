@@ -150,24 +150,28 @@ public:
     }
 };
 
-template<> class StringTypeAdapter<Vector<char>, void> {
+template<typename CharType, size_t N>
+class StringTypeAdapter<Vector<CharType, N>, void> {
 public:
-    StringTypeAdapter(const Vector<char>& vector)
+    using CharTypeForString = std::conditional_t<sizeof(CharType) == sizeof(LChar), LChar, UChar>;
+    static_assert(sizeof(CharTypeForString) == sizeof(CharType));
+
+    StringTypeAdapter(const Vector<CharType, N>& vector)
         : m_vector { vector }
     {
     }
 
     size_t length() const { return m_vector.size(); }
-    bool is8Bit() const { return true; }
+    bool is8Bit() const { return sizeof(CharType) == 1; }
     template<typename CharacterType> void writeTo(CharacterType* destination) const { StringImpl::copyCharacters(destination, characters(), length()); }
 
 private:
-    const LChar* characters() const
+    const CharTypeForString* characters() const
     {
-        return reinterpret_cast<const LChar*>(m_vector.data());
+        return reinterpret_cast<const CharTypeForString*>(m_vector.data());
     }
 
-    const Vector<char>& m_vector;
+    const Vector<CharType, N>& m_vector;
 };
 
 template<> class StringTypeAdapter<StringImpl*, void> {

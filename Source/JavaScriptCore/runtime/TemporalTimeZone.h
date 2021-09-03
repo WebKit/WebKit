@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,40 @@
 
 #pragma once
 
-#include "TemporalObject.h"
+#include "IntlObject.h"
+#include "JSObject.h"
+#include <wtf/Variant.h>
 
 namespace JSC {
-namespace ISO8601 {
 
-struct Duration {
-    using const_iterator = std::array<double, numberOfTemporalUnits>::const_iterator;
+class TemporalTimeZone final : public JSNonFinalObject {
+public:
+    using Base = JSNonFinalObject;
 
-#define JSC_DEFINE_ISO8601_DURATION_FIELD(name, capitalizedName) \
-    double name##s() const { return data[static_cast<uint8_t>(TemporalUnit::capitalizedName)]; } \
-    void set##capitalizedName##s(double value) { data[static_cast<uint8_t>(TemporalUnit::capitalizedName)] = value; }
-    JSC_TEMPORAL_UNITS(JSC_DEFINE_ISO8601_DURATION_FIELD);
-#undef JSC_DEFINE_ISO8601_DURATION_FIELD
+    template<typename CellType, SubspaceAccess mode>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.temporalTimeZoneSpace<mode>();
+    }
 
-    double& operator[](size_t i) { return data[i]; }
-    const double& operator[](size_t i) const { return data[i]; }
-    const_iterator begin() const { return data.begin(); }
-    const_iterator end() const { return data.end(); }
-    void clear() { data.fill(0); }
+    static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID);
+    static TemporalTimeZone* createFromUTCOffset(VM&, Structure*, int64_t);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    std::array<double, numberOfTemporalUnits> data { };
+    DECLARE_INFO;
+
+    using TimeZone = Variant<TimeZoneID, int64_t>;
+    TimeZone timeZone() const { return m_timeZone; }
+
+    static std::optional<TimeZoneID> idForTimeZoneName(StringView);
+
+    static JSObject* from(JSGlobalObject*, JSValue);
+
+private:
+    TemporalTimeZone(VM&, Structure*, TimeZone);
+
+    // TimeZoneID or UTC offset.
+    TimeZone m_timeZone;
 };
 
-std::optional<Duration> parseDuration(StringView);
-std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView);
-String formatTimeZoneOffsetString(int64_t);
-
-} // namespace ISO8601
 } // namespace JSC

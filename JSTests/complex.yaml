@@ -46,3 +46,9 @@
 
 - path: complex/intl-timezone-check.js
   cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1"
+
+- path: complex/temporal-now-timezone-check.js
+  cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1", "--useTemporal=1"
+
+- path: complex/temporal-now-timezone-with-broken-tz.js
+  cmd: runComplexTest [], [], "TZ=UNDEFINED", "--useDollarVM=1", "--useTemporal=1"

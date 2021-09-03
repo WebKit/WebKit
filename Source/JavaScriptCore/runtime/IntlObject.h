@@ -114,6 +114,9 @@ inline CalendarID iso8601CalendarID()
     return value;
 }
 
+using TimeZoneID = unsigned;
+const Vector<String>& intlAvailableTimeZones();
+
 TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);

@@ -1,3 +1,22 @@
+2021-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Temporal.TimeZone
+        https://bugs.webkit.org/show_bug.cgi?id=229703
+
+        Reviewed by Ross Kirsling.
+
+        * complex.yaml:
+        * complex/temporal-now-timezone-check.js: Added.
+        (shouldBe):
+        * complex/temporal-now-timezone-with-broken-tz.js: Added.
+        (shouldBe):
+        * stress/intl-enumeration.js:
+        * stress/temporal-timezone.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (let.text.of.failures.shouldThrow):
+        (reviver):
+
 2021-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Validate JSPropertyNameEnumerator via watchpoints
