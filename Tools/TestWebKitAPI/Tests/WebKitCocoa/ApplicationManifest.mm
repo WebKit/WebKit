@@ -39,7 +39,7 @@ namespace TestWebKitAPI {
 
 constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
 
-TEST(WebKit, ApplicationManifestCoding)
+TEST(ApplicationManifest, Coding)
 {
     auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\", \"theme_color\": \"red\" }";
     RetainPtr<_WKApplicationManifest> manifest { [_WKApplicationManifest applicationManifestFromJSON:jsonString manifestURL:[NSURL URLWithString:@"https://test.com/manifest.json"] documentURL:[NSURL URLWithString:@"https://test.com/"]] };
@@ -60,7 +60,7 @@ TEST(WebKit, ApplicationManifestCoding)
     EXPECT_TRUE(CGColorEqualToColor(manifest.get().themeColor.CGColor, redColor.get()));
 }
 
-TEST(WebKit, ApplicationManifestBasic)
+TEST(ApplicationManifest, Basic)
 {
     static bool done = false;
 
@@ -117,7 +117,7 @@ TEST(WebKit, ApplicationManifestBasic)
     Util::run(&done);
 }
 
-TEST(WebKit, ApplicationManifestDisplayMode)
+TEST(ApplicationManifest, DisplayMode)
 {
     static bool done;
     NSDictionary *displayModesAndExpectedContent = @{
@@ -147,6 +147,135 @@ TEST(WebKit, ApplicationManifestDisplayMode)
             [webView removeFromSuperview];
         }
     }];
+}
+
+TEST(ApplicationManifest, AlwaysFetch)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
+
+    NSDictionary *manifestObject = @{ @"theme_color": @"red" };
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
+
+    {
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        while (!CGColorEqualToColor([webView themeColor].CGColor, redColor.get()))
+            Util::sleep(1);
+    }
+
+    __block bool done = false;
+    [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(ApplicationManifest, OnlyFirstManifest)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
+
+    NSDictionary *manifestObject1 = @{ @"theme_color": @"red" };
+    NSDictionary *manifestObject2 = @{ @"theme_color": @"blue" };
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject1 options:0 error:nil] base64EncodedStringWithOptions:0], [[NSJSONSerialization dataWithJSONObject:manifestObject2 options:0 error:nil] base64EncodedStringWithOptions:0]]];
+
+    {
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        while (!CGColorEqualToColor([webView themeColor].CGColor, redColor.get()))
+            Util::sleep(1);
+    }
+
+    __block bool done = false;
+    [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(ApplicationManifest, NoManifest)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
+
+    [webView synchronouslyLoadHTMLString:@"Hello World"];
+
+    EXPECT_NULL([webView themeColor]);
+
+    __block bool done = false;
+    [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+        EXPECT_NULL(manifest);
+
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(ApplicationManifest, MediaAttriute)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
+
+    NSDictionary *manifestObject1 = @{ @"theme_color": @"blue" };
+    NSDictionary *manifestObject2 = @{ @"theme_color": @"red" };
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\" media=\"invalid\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\" media=\"screen\">", [[NSJSONSerialization dataWithJSONObject:manifestObject1 options:0 error:nil] base64EncodedStringWithOptions:0], [[NSJSONSerialization dataWithJSONObject:manifestObject2 options:0 error:nil] base64EncodedStringWithOptions:0]]];
+
+    {
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        while (!CGColorEqualToColor([webView themeColor].CGColor, redColor.get()))
+            Util::sleep(1);
+    }
+
+    __block bool done = false;
+    [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(ApplicationManifest, DoesNotExist)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
+
+    [webView synchronouslyLoadHTMLString:@"<link rel=\"manifest\" href=\"does not exist\">"];
+
+    EXPECT_NULL([webView themeColor]);
+
+    __block bool done = false;
+    [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+        EXPECT_NULL(manifest);
+
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(ApplicationManifest, Blocked)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect]);
+
+    NSDictionary *manifestObject = @{ @"theme_color": @"red" };
+    [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<meta http-equiv=\"Content-Security-Policy\" content=\"manifest-src 'none'\"><link rel=\"manifest\" href=\"data:application/manifest+json;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
+
+    EXPECT_NULL([webView themeColor]);
+
+    __block bool done = false;
+    [webView _getApplicationManifestWithCompletionHandler:^(_WKApplicationManifest *manifest) {
+        EXPECT_NULL(manifest);
+
+        done = true;
+    }];
+    Util::run(&done);
 }
 
 } // namespace TestWebKitAPI

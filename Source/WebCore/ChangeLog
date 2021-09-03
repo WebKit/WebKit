@@ -1,3 +1,39 @@
+2021-09-03  Devin Rousso  <drousso@apple.com>
+
+        [Web App Manifest] Always fetch the first manifest if provided
+        https://bugs.webkit.org/show_bug.cgi?id=229059
+        <rdar://problem/82148333>
+
+        Reviewed by Brent Fulgham.
+
+        Before this patch, WebKit only fetched/parsed/applied/etc. the web app manifest when
+        `-[WKWebView _getApplicationManifestWithCompletionHandler:]` was called. This patch makes
+        WebKit do all that as soon as a `<link rel="manifest">` (with a valid URL) is encountered.
+        This allows manifests that have specified a `"theme_color"` to actually have an effect.
+
+        Tests: ApplicationManifest.AlwaysFetch
+               ApplicationManifest.OnlyFirstManifest
+               ApplicationManifest.NoManifest
+               ApplicationManifest.MediaAttriute
+               ApplicationManifest.DoesNotExist
+               ApplicationManifest.Blocked
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
+        * loader/DocumentLoader.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::loadApplicationManifest):
+        (WebCore::DocumentLoader::finishedLoadingApplicationManifest):
+        (WebCore::DocumentLoader::notifyFinishedLoadingApplicationManifest): Deleted.
+        Simplify the way that the UIProcess communicates with the WebProcess (and between WebKit and
+        WebCore). There's no need to have a `HashMap` of callbacks since each document can only have
+        at most one web app manifest. Furthermore, instead of having a `HashMap` in both WebKit and
+        WebCore, just pass along the `CompletionHandler` to the `DocumentLoader` for a single list
+        of completion callbacks (a list is needed because it's possible for a client to invoke
+        `-[WKWebView _getApplicationManifestWithCompletionHandler:]` multiple times).
+
 2021-09-03  Tim Nguyen  <ntim@apple.com>
 
         AX: findModalNodes() and currentModalNode() should include modal <dialog>

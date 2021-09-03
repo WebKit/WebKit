@@ -1,3 +1,31 @@
+2021-09-03  Devin Rousso  <drousso@apple.com>
+
+        [Web App Manifest] Always fetch the first manifest if provided
+        https://bugs.webkit.org/show_bug.cgi?id=229059
+        <rdar://problem/82148333>
+
+        Reviewed by Brent Fulgham.
+
+        Before this patch, WebKit only fetched/parsed/applied/etc. the web app manifest when
+        `-[WKWebView _getApplicationManifestWithCompletionHandler:]` was called. This patch makes
+        WebKit do all that as soon as a `<link rel="manifest">` (with a valid URL) is encountered.
+        This allows manifests that have specified a `"theme_color"` to actually have an effect.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::finishedLoadingApplicationManifest): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::getApplicationManifest):
+        (WebKit::WebPage::didFinishLoadingApplicationManifest):
+        Simplify the way that the UIProcess communicates with the WebProcess (and between WebKit and
+        WebCore). There's no need to have a `HashMap` of callbacks since each document can only have
+        at most one web app manifest. Furthermore, instead of having a `HashMap` in both WebKit and
+        WebCore, just pass along the `CompletionHandler` to the `DocumentLoader` for a single list
+        of completion callbacks (a list is needed because it's possible for a client to invoke
+        `-[WKWebView _getApplicationManifestWithCompletionHandler:]` multiple times).
+
 2021-09-03  Per Arne  <pvollan@apple.com>
 
         [GPUP] Temporarily allow access to power logging service

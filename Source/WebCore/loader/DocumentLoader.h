@@ -393,7 +393,7 @@ public:
     const Vector<LinkIcon>& linkIcons() const { return m_linkIcons; }
 
 #if ENABLE(APPLICATION_MANIFEST)
-    WEBCORE_EXPORT uint64_t loadApplicationManifest();
+    WEBCORE_EXPORT void loadApplicationManifest(CompletionHandler<void(const std::optional<ApplicationManifest>&)>&&);
     void finishedLoadingApplicationManifest(ApplicationManifestLoader&);
 #endif
 
@@ -516,7 +516,7 @@ private:
     void becomeMainResourceClient();
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, std::optional<ApplicationManifest>);
+    void notifyFinishedLoadingApplicationManifest();
 #endif
 
     // ContentSecurityPolicyClient
@@ -621,7 +621,9 @@ private:
     Vector<LinkIcon> m_linkIcons;
 
 #if ENABLE(APPLICATION_MANIFEST)
-    HashMap<std::unique_ptr<ApplicationManifestLoader>, uint64_t> m_applicationManifestLoaders;
+    std::unique_ptr<ApplicationManifestLoader> m_applicationManifestLoader;
+    Vector<CompletionHandler<void(const std::optional<ApplicationManifest>&)>> m_loadApplicationManifestCallbacks;
+    bool m_finishedLoadingApplicationManifest { false };
 #endif
 
     Vector<CustomHeaderFields> m_customHeaderFields;

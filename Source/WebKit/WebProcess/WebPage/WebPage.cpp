@@ -1051,13 +1051,6 @@ WebPage::~WebPage()
 
     for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
         completionHandler(false);
-    
-#if ENABLE(APPLICATION_MANIFEST)
-    for (auto& completionHandler : m_applicationManifestFetchCallbackMap.values()) {
-        if (completionHandler)
-            completionHandler(std::nullopt);
-    }
-#endif
 }
 
 IPC::Connection* WebPage::messageSenderConnection() const
@@ -7208,6 +7201,7 @@ RefPtr<HTMLAttachmentElement> WebPage::attachmentElementWithIdentifier(const Str
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(APPLICATION_MANIFEST)
+
 void WebPage::getApplicationManifest(CompletionHandler<void(const std::optional<WebCore::ApplicationManifest>&)>&& completionHandler)
 {
     Document* mainFrameDocument = m_mainFrame->coreFrame()->document();
@@ -7215,18 +7209,9 @@ void WebPage::getApplicationManifest(CompletionHandler<void(const std::optional<
     if (!loader)
         return completionHandler(std::nullopt);
 
-    auto coreCallbackID = loader->loadApplicationManifest();
-    if (!coreCallbackID)
-        return completionHandler(std::nullopt);
-
-    m_applicationManifestFetchCallbackMap.add(coreCallbackID, WTFMove(completionHandler));
+    loader->loadApplicationManifest(WTFMove(completionHandler));
 }
 
-void WebPage::didFinishLoadingApplicationManifest(uint64_t coreCallbackID, const std::optional<WebCore::ApplicationManifest>& manifest)
-{
-    if (auto callback = m_applicationManifestFetchCallbackMap.take(coreCallbackID))
-        callback(manifest);
-}
 #endif // ENABLE(APPLICATION_MANIFEST)
 
 void WebPage::updateCurrentModifierState(OptionSet<PlatformEvent::Modifier> modifiers)

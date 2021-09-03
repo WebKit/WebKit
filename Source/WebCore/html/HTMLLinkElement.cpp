@@ -35,6 +35,7 @@
 #include "DOMTokenList.h"
 #include "DefaultResourceLoadPriority.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventSender.h"
@@ -305,19 +306,9 @@ void HTMLLinkElement::process()
 
         m_loading = true;
 
-        bool mediaQueryMatches = true;
-        if (!m_media.isEmpty()) {
-            std::optional<RenderStyle> documentStyle;
-            if (document().hasLivingRenderTree())
-                documentStyle = Style::resolveForDocument(document());
-            auto media = MediaQuerySet::create(m_media, MediaQueryParserContext(document()));
-            LOG(MediaQueries, "HTMLLinkElement::process evaluating queries");
-            mediaQueryMatches = MediaQueryEvaluator { document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr }.evaluate(media.get());
-        }
-
         // Don't hold up render tree construction and script execution on stylesheets
         // that are not needed for the rendering at the moment.
-        bool isActive = mediaQueryMatches && !isAlternate();
+        bool isActive = mediaAttributeMatches() && !isAlternate();
         addPendingSheet(isActive ? ActiveSheet : InactiveSheet);
 
         // Load stylesheets that are not needed for the rendering immediately with low priority.
@@ -351,11 +342,24 @@ void HTMLLinkElement::process()
             sheetLoaded();
             notifyLoadedSheetAndAllCriticalSubresources(true);
         }
-    } else if (m_sheet) {
+
+        return;
+    }
+
+    if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
         clearSheet();
         m_styleScope->didChangeActiveStyleSheetCandidates();
+        return;
     }
+
+#if ENABLE(APPLICATION_MANIFEST)
+    if (isApplicationManifest()) {
+        if (RefPtr loader = document().loader())
+            loader->loadApplicationManifest({ });
+        return;
+    }
+#endif // ENABLE(APPLICATION_MANIFEST)
 }
 
 void HTMLLinkElement::clearSheet()
@@ -497,6 +501,19 @@ DOMTokenList& HTMLLinkElement::sizes()
     if (!m_sizes)
         m_sizes = makeUnique<DOMTokenList>(*this, sizesAttr);
     return *m_sizes;
+}
+
+bool HTMLLinkElement::mediaAttributeMatches() const
+{
+    if (m_media.isEmpty())
+        return true;
+
+    std::optional<RenderStyle> documentStyle;
+    if (document().hasLivingRenderTree())
+        documentStyle = Style::resolveForDocument(document());
+    auto media = MediaQuerySet::create(m_media, MediaQueryParserContext(document()));
+    LOG(MediaQueries, "HTMLLinkElement::mediaAttributeMatches");
+    return MediaQueryEvaluator(document().frame()->view()->mediaType(), document(), documentStyle ? &*documentStyle : nullptr).evaluate(media.get());
 }
 
 void HTMLLinkElement::linkLoaded()

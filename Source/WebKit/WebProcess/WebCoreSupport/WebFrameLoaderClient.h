@@ -270,10 +270,6 @@ private:
 
     void didCreateWindow(WebCore::DOMWindow&) final;
 
-#if ENABLE(APPLICATION_MANIFEST)
-    void finishedLoadingApplicationManifest(uint64_t, const std::optional<WebCore::ApplicationManifest>&) final;
-#endif
-
     Ref<WebFrame> m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView { false };

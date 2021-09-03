@@ -96,6 +96,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/Scope.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -332,9 +333,9 @@ void DocumentLoader::stopLoading()
     m_iconsPendingLoadDecision.clear();
     
 #if ENABLE(APPLICATION_MANIFEST)
-    for (auto callbackIdentifier : m_applicationManifestLoaders.values())
-        notifyFinishedLoadingApplicationManifest(callbackIdentifier, std::nullopt);
-    m_applicationManifestLoaders.clear();
+    m_applicationManifestLoader = nullptr;
+    m_finishedLoadingApplicationManifest = false;
+    notifyFinishedLoadingApplicationManifest();
 #endif
 
     // Always cancel multipart loaders
@@ -1553,67 +1554,86 @@ void DocumentLoader::clearMainResourceLoader()
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
-uint64_t DocumentLoader::loadApplicationManifest()
+
+void DocumentLoader::loadApplicationManifest(CompletionHandler<void(const std::optional<ApplicationManifest>&)>&& completionHandler)
 {
-    static uint64_t nextCallbackID = 1;
+    if (completionHandler)
+        m_loadApplicationManifestCallbacks.append(WTFMove(completionHandler));
+
+    bool isLoading = !!m_applicationManifestLoader;
+    auto notifyIfUnableToLoad = makeScopeExit([&] {
+        if (!isLoading || m_finishedLoadingApplicationManifest)
+            notifyFinishedLoadingApplicationManifest();
+    });
+
+    if (isLoading)
+        return;
 
     auto* document = this->document();
     if (!document)
-        return 0;
+        return;
 
-    if (!m_frame->isMainFrame())
-        return 0;
+    if (!document->isTopDocument())
+        return;
 
     if (document->url().isEmpty() || document->url().protocolIsAbout())
-        return 0;
+        return;
 
     auto head = document->head();
     if (!head)
-        return 0;
+        return;
 
     URL manifestURL;
     bool useCredentials = false;
     for (const auto& link : childrenOfType<HTMLLinkElement>(*head)) {
-        if (link.isApplicationManifest()) {
-            manifestURL = link.href();
-            useCredentials = equalIgnoringASCIICase(link.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), "use-credentials");
-            break;
-        }
+        if (!link.isApplicationManifest())
+            continue;
+
+        auto href = link.href();
+        if (href.isEmpty() || !href.isValid())
+            continue;
+
+        if (!link.mediaAttributeMatches())
+            continue;
+
+        manifestURL = href;
+        useCredentials = equalIgnoringASCIICase(link.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), "use-credentials");
+        break;
     }
 
     if (manifestURL.isEmpty() || !manifestURL.isValid())
-        return 0;
+        return;
 
-    auto manifestLoader = makeUnique<ApplicationManifestLoader>(*this, manifestURL, useCredentials);
-    auto* rawManifestLoader = manifestLoader.get();
-    auto callbackID = nextCallbackID++;
-    m_applicationManifestLoaders.set(WTFMove(manifestLoader), callbackID);
+    m_applicationManifestLoader = makeUnique<ApplicationManifestLoader>(*this, manifestURL, useCredentials);
 
-    if (!rawManifestLoader->startLoading()) {
-        m_applicationManifestLoaders.remove(rawManifestLoader);
-        return 0;
-    }
-
-    return callbackID;
+    isLoading = m_applicationManifestLoader->startLoading();
+    if (!isLoading)
+        m_finishedLoadingApplicationManifest = true;
 }
 
 void DocumentLoader::finishedLoadingApplicationManifest(ApplicationManifestLoader& loader)
 {
+    ASSERT_UNUSED(loader, &loader == m_applicationManifestLoader.get());
+
     // If the DocumentLoader has detached from its frame, all manifest loads should have already been canceled.
     ASSERT(m_frame);
 
-    auto callbackIdentifier = m_applicationManifestLoaders.get(&loader);
-    notifyFinishedLoadingApplicationManifest(callbackIdentifier, loader.processManifest());
-    m_applicationManifestLoaders.remove(&loader);
+    ASSERT(!m_finishedLoadingApplicationManifest);
+    m_finishedLoadingApplicationManifest = true;
+
+    notifyFinishedLoadingApplicationManifest();
 }
 
-void DocumentLoader::notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, std::optional<ApplicationManifest> manifest)
+void DocumentLoader::notifyFinishedLoadingApplicationManifest()
 {
-    RELEASE_ASSERT(callbackIdentifier);
-    RELEASE_ASSERT(m_frame);
-    m_frame->loader().client().finishedLoadingApplicationManifest(callbackIdentifier, manifest);
+    std::optional<ApplicationManifest> manifest = m_applicationManifestLoader ? m_applicationManifestLoader->processManifest() : std::nullopt;
+    ASSERT_IMPLIES(manifest, m_finishedLoadingApplicationManifest);
+
+    for (auto& callback : std::exchange(m_loadApplicationManifestCallbacks, { }))
+        callback(manifest);
 }
-#endif
+
+#endif // ENABLE(APPLICATION_MANIFEST)
 
 bool DocumentLoader::isLoadingInAPISense() const
 {

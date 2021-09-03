@@ -1296,7 +1296,6 @@ public:
 
 #if ENABLE(APPLICATION_MANIFEST)
     void getApplicationManifest(CompletionHandler<void(const std::optional<WebCore::ApplicationManifest>&)>&&);
-    void didFinishLoadingApplicationManifest(uint64_t, const std::optional<WebCore::ApplicationManifest>&);
 #endif
 
 #if USE(WPE_RENDERER)
@@ -2310,10 +2309,6 @@ private:
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;
 
     HashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
-
-#if ENABLE(APPLICATION_MANIFEST)
-    HashMap<uint64_t, CompletionHandler<void(const std::optional<WebCore::ApplicationManifest>&)>> m_applicationManifestFetchCallbackMap;
-#endif
 
     OptionSet<LayerTreeFreezeReason> m_layerTreeFreezeReasons;
     bool m_isSuspended { false };

@@ -1933,17 +1933,6 @@ void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
     webPage->send(Messages::WebPageProxy::DidCreateWindow(m_frame->frameID(), window.identifier()));
 }
 
-#if ENABLE(APPLICATION_MANIFEST)
-void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackIdentifier, const std::optional<WebCore::ApplicationManifest>& manifest)
-{
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    webPage->didFinishLoadingApplicationManifest(callbackIdentifier, manifest);
-}
-#endif // ENABLE(APPLICATION_MANIFEST)
-
 #if ENABLE(APP_BOUND_DOMAINS)
 bool WebFrameLoaderClient::shouldEnableInAppBrowserPrivacyProtections() const
 {
