@@ -1,3 +1,24 @@
+2021-09-03  Frédéric Wang  <fwang@igalia.com>
+
+        Use isRendererReplacedElement for SimplifiedBackwardsTextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=229798
+
+        Reviewed by Darin Adler.
+
+        TextIterator::advance() relies on isRendererReplacedElement to determine whether an element
+        should be treated as a replaced element and emit a comma ','. SimplifiedBackwardsTextIterator
+        has similar logic to check for replaced elements, but it has not been updated and is now
+        out-of-sync. This patch makes SimplifiedBackwardsTextIterator use the same function
+        isRendererReplacedElement, adding support for attachment (r200509), media (r158743),
+        element with a11y role "img" (r152388) as well as various control elements (r15966).
+        This makes the two iterators more consistent and facilitates code maintenance.
+
+        Tests: editing/text-iterator/backwards-text-iterator-attachment.html
+               editing/text-iterator/backwards-text-iterator.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::advance): Use isRendererReplacedElement.
+
 2021-09-02  Alan Bujtas  <zalan@apple.com>
 
         Let content with newlineCharacter be measured by FontCascade::widthForSimpleText

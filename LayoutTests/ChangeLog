@@ -1,3 +1,23 @@
+2021-09-03  Frédéric Wang  <fwang@igalia.com>
+
+        Use isRendererReplacedElement for SimplifiedBackwardsTextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=229798
+
+        Reviewed by Darin Adler.
+
+        Add new tests for SimplifiedBackwardsTextIterator, covering all new cases except media
+        elements. media-emits-object-replacement.html was added in r158743 but removed in r274810
+        with all the tests relying on ModernMediaControlsEnabled=false. Also, similar tests for
+        TextIterator (plainTextWithTextIterator) are note added, because its handleReplacedElement
+        function is more more complex and does not emit a comma by default.
+
+        * editing/text-iterator/backwards-text-iterator-attachment-expected.txt: Added.
+        * editing/text-iterator/backwards-text-iterator-attachment.html: Added. Checks that a comma
+        is emited for <attachment> element.
+        * editing/text-iterator/backwards-text-iterator-basic-expected.txt: Add the new result.
+        * editing/text-iterator/backwards-text-iterator-basic.html: Check the remaining cases besides
+        attachment and media.
+
 2021-09-02  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Mark fast/text/trak-optimizeLegibility.html as ImageOnlyFailure rather than Skip

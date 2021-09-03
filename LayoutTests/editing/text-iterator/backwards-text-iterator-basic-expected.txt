@@ -20,6 +20,8 @@ PASS plainTextWithBackwardsTextIterator("<ul><li>hello<li>world</ul>WebKit") is 
 
 PASS plainTextWithTextIterator("<table><tr><td>hello</td><td>world</td></table>") is "hello	world"
 PASS plainTextWithBackwardsTextIterator("<table><tr><td>hello</td><td>world</td></table>") is "\n\nhello\nworld"
+
+PASS plainTextWithBackwardsTextIterator("img<img>iframe<iframe></iframe>meter<meter></meter>progress<progress></progress><legend>legend</legend>imgrole<span role='img'></span><button>button</button>") is "img,iframe,meter,progress,\nlegend,imgrole,button,"
 PASS successfullyParsed is true
 
 TEST COMPLETE

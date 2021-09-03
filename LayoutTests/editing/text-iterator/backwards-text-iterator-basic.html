@@ -50,6 +50,11 @@ debug('');
 shouldBe('plainTextWithTextIterator("<table><tr><td>hello</td><td>world</td></table>")', '"hello\tworld"');
 shouldBe('plainTextWithBackwardsTextIterator("<table><tr><td>hello</td><td>world</td></table>")', '"\\n\\nhello\\nworld"');
 
+debug('');
+
+// Verify that replaced elements emit a comma.
+shouldBe(`plainTextWithBackwardsTextIterator("img<img>iframe<iframe></iframe>meter<meter></meter>progress<progress></progress><legend>legend</legend>imgrole<span role='img'></span><button>button</button>")`, '"img,iframe,meter,progress,\\nlegend,imgrole,button,"');
+
 container.innerHTML = '';
 
 successfullyParsed = true;

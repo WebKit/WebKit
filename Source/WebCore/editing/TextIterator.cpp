@@ -1199,7 +1199,7 @@ void SimplifiedBackwardsTextIterator::advance()
             if (renderer && renderer->isText() && m_node->isTextNode()) {
                 if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleTextNode();
-            } else if (renderer && (renderer->isImage() || renderer->isWidget())) {
+            } else if (isRendererReplacedElement(renderer)) {
                 if (renderer->style().visibility() == Visibility::Visible && m_offset > 0)
                     m_handledNode = handleReplacedElement();
             } else
