@@ -1,3 +1,20 @@
+2021-09-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrollbars on pointer-events: none element still intercepts events
+        https://bugs.webkit.org/show_bug.cgi?id=225229
+
+        Reviewed by Alan Bujtas.
+        
+        When hit-testing overflow scrollbars, and the resizer control, check visibleToHitTesting()
+        which consults the pointer-events property.
+
+        Test: fast/events/hittest-pointer-event-none-scrollbars.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::hitTestResizerInFragments const):
+
 2021-09-03  Youenn Fablet  <youenn@apple.com>
 
         Signaling state check when applying a local or remote description is no longer aligned with the WebRTC spec

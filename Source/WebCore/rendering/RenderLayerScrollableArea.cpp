@@ -1552,6 +1552,9 @@ bool RenderLayerScrollableArea::hitTestResizerInFragments(const LayerFragments& 
         return false;
 
     auto& renderer = m_layer.renderer();
+    if (!renderer.visibleToHitTesting())
+        return false;
+
     auto borderBoxRect = snappedIntRect(downcast<RenderBox>(renderer).borderBoxRect());
     auto rects = overflowControlsRects();
 

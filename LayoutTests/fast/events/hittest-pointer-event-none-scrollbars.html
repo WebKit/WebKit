@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .scroller {
+            margin: 10px;
+            width: 200px;
+            height: 200px;
+            border: 10px solid black;
+            overflow: scroll;
+            resize: both;
+            pointer-events: none;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+</div>
+    <div class="scroller">
+        <div class="content"></div>
+    </div>
+    <div id="console"></div>
+    <script>
+        let verticalScrollbarHit = document.elementFromPoint(216, 100);
+        shouldBe('verticalScrollbarHit', 'document.body');
+
+        let horizontalScrollbarHit = document.elementFromPoint(100, 216);
+        shouldBe('horizontalScrollbarHit', 'document.body');
+
+        let resizerHit = document.elementFromPoint(216, 216);
+        shouldBe('resizerHit', 'document.body');
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
