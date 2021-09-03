@@ -1,3 +1,51 @@
+2021-09-03  Chris Dumez  <cdumez@apple.com>
+
+        WebKitTestRunner does not correctly close all auxiliary WebViews between tests
+        https://bugs.webkit.org/show_bug.cgi?id=229838
+
+        Reviewed by Alex Christensen.
+
+        I noticed when running imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox-navigate.https.html
+        in a loop that the number of WebContent processes would grow until we crash. The reason for that is that the
+        test opens a popup window and that popup wouldn't get closed between runs.
+
+        There was some logic in InjectedBundle::done() to close auxiliary pages but this relied on the injected
+        bundle API and thus only knows about pages that are in the same WebProcess. Nowadays, with process swapping,
+        it is common for auxiliary pages to end up in other WebProcesses. For this reason, I dropped the logic to
+        close auxiliary pages from InjectedBundle::done() and instead added similar logic in the UIProcess,
+        inside TestController::resetStateToConsistentValues().
+
+        Finally, I dropped most of the code related to testRunner.setCloseRemainingWindowsWhenComplete() while keeping
+        the method as a no-op for now so that I don't have to update all the layout tests in this patch (I'll follow
+        up). For WebKitTestRunner, testRunner.setCloseRemainingWindowsWhenComplete() was already a no-op as the data
+        member getting set was never queried. For DumpRenderTree, I just made this behavior the default as I don't see
+        any reason why we wouldn't want to close auxiliary pages between tests.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (setCloseRemainingWindowsWhenCompleteCallback):
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::setCanOpenWindows):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::pageCount const):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::setCloseRemainingWindowsWhenComplete):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::closeOtherPage):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::platformCreateOtherPage):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateOtherPage):
+
 2021-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 15] editing/caret/ios/caret-in-overflow-area.html is failing

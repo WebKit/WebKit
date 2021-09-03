@@ -91,6 +91,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/UUID.h>
 #include <wtf/UniqueArray.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -268,11 +269,10 @@ void TestController::runModal(WKPageRef page, const void* clientInfo)
     TestController::singleton().mainWebView()->setWindowIsKey(true);
 }
 
-static void closeOtherPage(WKPageRef page, const void* clientInfo)
+void TestController::closeOtherPage(WKPageRef page, const void* clientInfo)
 {
-    WKPageClose(page);
     PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
-    delete view;
+    TestController::singleton().closeOtherPage(page, view);
 }
 
 static void focus(WKPageRef page, const void* clientInfo)
@@ -359,6 +359,14 @@ void TestController::setIsMediaKeySystemPermissionGranted(bool granted)
     m_isMediaKeySystemPermissionGranted = granted;
 }
 
+void TestController::closeOtherPage(WKPageRef page, PlatformWebView* view)
+{
+    WKPageClose(page);
+    auto index = m_auxiliaryWebViews.findMatching([view](auto& auxiliaryWebView) { return auxiliaryWebView.ptr() == view; });
+    if (index != notFound)
+        m_auxiliaryWebViews.remove(index);
+}
+
 WKPageRef TestController::createOtherPage(WKPageRef, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
 {
     PlatformWebView* parentView = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
@@ -375,13 +383,13 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
 
     m_createdOtherPage = true;
 
-    PlatformWebView* view = platformCreateOtherPage(parentView, configuration, parentView->options());
+    auto view = platformCreateOtherPage(parentView, configuration, parentView->options());
     WKPageRef newPage = view->page();
 
     view->resizeTo(800, 600);
 
     WKPageUIClientV8 otherPageUIClient = {
-        { 8, view },
+        { 8, view.ptr() },
         nullptr, // createNewPage_deprecatedForUseWithV0
         nullptr, // showPage
         closeOtherPage,
@@ -485,8 +493,9 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
 
     view->didInitializeClients();
 
-    TestController::singleton().updateWindowScaleForTest(view, *TestController::singleton().m_currentInvocation);
+    TestController::singleton().updateWindowScaleForTest(view.ptr(), *TestController::singleton().m_currentInvocation);
 
+    m_auxiliaryWebViews.append(WTFMove(view));
     WKRetain(newPage);
     return newPage;
 }
@@ -910,6 +919,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 {
     SetForScope<State> changeState(m_state, Resetting);
     m_beforeUnloadReturnValue = true;
+
+    for (auto& auxiliaryWebView : std::exchange(m_auxiliaryWebViews, { }))
+        WKPageClose(auxiliaryWebView->page());
 
     // This setting differs between the antique and modern Mac WebKit2 API.
     // For now, maintain the antique behavior, because some tests depend on it!
@@ -2721,9 +2733,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef configuration,
     m_mainWebView = makeUnique<PlatformWebView>(configuration, options);
 }
 
-PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const TestOptions& options)
+UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, const TestOptions& options)
 {
-    return new PlatformWebView(configuration, options);
+    return makeUniqueRef<PlatformWebView>(configuration, options);
 }
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)

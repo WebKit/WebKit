@@ -54,6 +54,7 @@
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/MainThread.h>
+#import <wtf/UniqueRef.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
@@ -202,14 +203,14 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     [m_mainWebView->platformView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES];
 }
 
-PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
+UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
 {
     auto newConfiguration = adoptNS([globalWebViewConfiguration() copy]);
     [newConfiguration _setRelatedWebView:static_cast<WKWebView*>(parentView->platformView())];
     if ([newConfiguration _relatedWebView])
         [newConfiguration setWebsiteDataStore:[newConfiguration _relatedWebView].configuration.websiteDataStore];
-    PlatformWebView* view = new PlatformWebView(newConfiguration.get(), options);
-    finishCreatingPlatformWebView(view, options);
+    auto view = makeUniqueRef<PlatformWebView>(newConfiguration.get(), options);
+    finishCreatingPlatformWebView(view.ptr(), options);
     return view;
 }
 

@@ -100,7 +100,7 @@ public:
     void keepWebHistory();
     void setAcceptsEditing(bool value) { m_shouldAllowEditing = value; }
     void setCanOpenWindows();
-    void setCloseRemainingWindowsWhenComplete(bool value) { m_shouldCloseExtraWindows = value; }
+    void setCloseRemainingWindowsWhenComplete(bool) { }
 
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);
     void addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
@@ -218,8 +218,6 @@ public:
     void setShouldLogDownloadCallbacks(bool);
 
     bool shouldAllowEditing() const { return m_shouldAllowEditing; }
-
-    bool shouldCloseExtraWindowsAfterRunningTest() const { return m_shouldCloseExtraWindows; }
 
     void evaluateScriptInIsolatedWorld(JSContextRef, unsigned worldID, JSStringRef script);
     static unsigned worldIDForWorld(WKBundleScriptWorldRef);
@@ -566,7 +564,6 @@ private:
     bool m_shouldDumpAllFrameScrollPositions { false };
     bool m_shouldDumpBackForwardListsForAllWindows { false };
     bool m_shouldAllowEditing { true };
-    bool m_shouldCloseExtraWindows { false };
 
     bool m_dumpEditingCallbacks { false };
     bool m_dumpStatusCallbacks { false };

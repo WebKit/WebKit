@@ -1327,18 +1327,13 @@ static void runTest(const string& inputLine)
     // then try to close it in case it was accidentally left open.
     ::gTestRunner->closeWebInspector();
 
-    if (::gTestRunner->closeRemainingWindowsWhenComplete()) {
-        Vector<HWND> windows = openWindows();
-        unsigned size = windows.size();
-        for (unsigned i = 0; i < size; i++) {
-            HWND window = windows[i];
 
-            // Don't try to close the main window
-            if (window == hostWindow)
-                continue;
+    for (HWND window : openWindows()) {
+        // Don't try to close the main window
+        if (window == hostWindow)
+            continue;
 
-            ::DestroyWindow(window);
-        }
+        ::DestroyWindow(window);
     }
 
     resetWebViewToConsistentStateBeforeTesting(options);

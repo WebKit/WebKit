@@ -64,7 +64,6 @@ public:
     InjectedBundlePage* page() const;
     WKBundlePageRef pageRef() const;
     size_t pageCount() const { return m_pages.size(); }
-    void closeOtherPages();
 
     void dumpBackForwardListsForAllPages(StringBuilder&);
 

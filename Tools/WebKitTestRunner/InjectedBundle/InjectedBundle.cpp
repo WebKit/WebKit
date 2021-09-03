@@ -561,19 +561,7 @@ void InjectedBundle::done()
 
     WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), toWK("Done").get(), body.get());
 
-    closeOtherPages();
-
     m_state = Idle;
-}
-
-void InjectedBundle::closeOtherPages()
-{
-    Vector<WKBundlePageRef> pagesToClose;
-    size_t size = m_pages.size();
-    for (size_t i = 1; i < size; ++i)
-        pagesToClose.append(m_pages[i]->page());
-    for (auto& page : pagesToClose)
-        WKBundlePageClose(page);
 }
 
 void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilder)

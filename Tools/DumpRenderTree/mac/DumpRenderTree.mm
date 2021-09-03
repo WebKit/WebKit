@@ -1986,27 +1986,20 @@ static void runTest(const std::string& inputLine)
             [[mainWindow contentView] addSubview:webView];
 #endif
 
-        if (gTestRunner->closeRemainingWindowsWhenComplete()) {
-            NSArray* array = [DumpRenderTreeWindow openWindows];
-
-            unsigned count = [array count];
-            for (unsigned i = 0; i < count; i++) {
-                NSWindow *window = [array objectAtIndex:i];
-
-                // Don't try to close the main window
-                if (window == [[mainFrame webView] window])
-                    continue;
+        for (NSWindow *window in DumpRenderTreeWindow.openWindows) {
+            // Don't try to close the main window
+            if (window == mainFrame.webView.window)
+                continue;
 
 #if !PLATFORM(IOS_FAMILY)
-                WebView *webView = [[[window contentView] subviews] objectAtIndex:0];
+            WebView *webView = [window.contentView.subviews objectAtIndex:0];
 #else
-                ASSERT([[window contentView] isKindOfClass:[WebView class]]);
-                WebView *webView = (WebView *)[window contentView];
+            ASSERT([window.contentView] isKindOfClass:WebView.class]);
+            WebView *webView = (WebView *)window.contentView;
 #endif
 
-                [webView close];
-                [window close];
-            }
+            [webView close];
+            [window close];
         }
 
         resetWebViewToConsistentState(options, ResetTime::AfterTest);
