@@ -42,6 +42,8 @@ static PropertyName propertyName(VM& vm, unsigned index)
         JSC_TEMPORAL_UNITS(JSC_TEMPORAL_DURATION_PROPERTY_NAME)
 #undef JSC_TEMPORAL_DURATION_PROPERTY_NAME
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 const ClassInfo TemporalDuration::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalDuration) };

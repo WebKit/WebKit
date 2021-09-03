@@ -328,6 +328,8 @@ double roundNumberToIncrement(double x, double increment, RoundingMode mode)
     case RoundingMode::HalfExpand:
         return std::round(quotient) * increment;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace JSC
