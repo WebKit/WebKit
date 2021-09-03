@@ -9,7 +9,6 @@ if (window.testRunner) {
     testRunner.dumpChildFramesAsText();
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows(true);
-    testRunner.setCloseRemainingWindowsWhenComplete(true);
     internals.settings.setStorageBlockingPolicy('BlockThirdParty');
 }
 

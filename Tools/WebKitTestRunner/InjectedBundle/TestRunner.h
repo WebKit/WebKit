@@ -100,7 +100,6 @@ public:
     void keepWebHistory();
     void setAcceptsEditing(bool value) { m_shouldAllowEditing = value; }
     void setCanOpenWindows();
-    void setCloseRemainingWindowsWhenComplete(bool) { }
 
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);
     void addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);

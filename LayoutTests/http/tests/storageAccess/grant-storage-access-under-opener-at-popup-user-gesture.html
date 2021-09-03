@@ -55,7 +55,6 @@
                     if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
                         testFailed("Host did not get logged for user interaction.");
                     testRunner.dumpChildFramesAsText();
-                    testRunner.setCloseRemainingWindowsWhenComplete(true);
 
                     testRunner.statisticsUpdateCookieBlocking(function () {
                         newWin = window.open(thirdPartyOrigin + "/storageAccess/resources/produce-user-gesture-set-cookie-and-report-back.html", "testWindow");

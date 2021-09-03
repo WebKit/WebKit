@@ -54,7 +54,6 @@
             if (testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
                 testFailed("Host logged for user interaction.");
             testRunner.dumpChildFramesAsText();
-            testRunner.setCloseRemainingWindowsWhenComplete(true);
 
             testRunner.setStatisticsShouldBlockThirdPartyCookies(true, function() {
                 newWin = window.open(thirdPartyOrigin + "/storageAccess/resources/set-cookie-and-report-back.html", "testWindow");

@@ -7,10 +7,8 @@ window.jsTestIsAsync = true;
 
 var child;
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.setCanOpenWindows(true);
-    testRunner.setCloseRemainingWindowsWhenComplete(true);
-}
 
 // Called by resources/picture-in-picture.html
 function notifyDidChangePresentationMode()

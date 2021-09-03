@@ -1,5 +1,22 @@
 2021-09-03  Chris Dumez  <cdumez@apple.com>
 
+        Drop calls to testRunner.setCloseRemainingWindowsWhenComplete() from layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=229873
+
+        Reviewed by Sam Weinig.
+
+        Drop testRunner.setCloseRemainingWindowsWhenComplete() implementation from WKTR and DRT
+        as it is a no-op.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
+2021-09-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed iOS build fix after r281990.
 
         * DumpRenderTree/mac/DumpRenderTree.mm:

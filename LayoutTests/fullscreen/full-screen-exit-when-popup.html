@@ -7,10 +7,8 @@
         logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
         endTest();
     } else {
-        if (window.testRunner) {
+        if (window.testRunner)
             testRunner.setCanOpenWindows(true);
-            testRunner.setCloseRemainingWindowsWhenComplete(true);
-        }
         var callback;
         var fullscreenChanged = function(event)
         {

@@ -1,3 +1,147 @@
+2021-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop calls to testRunner.setCloseRemainingWindowsWhenComplete() from layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=229873
+
+        Reviewed by Sam Weinig.
+
+        Drop calls to testRunner.setCloseRemainingWindowsWhenComplete() from layout tests as it is
+        a no-op.
+
+        * fast/dom/Geolocation/window-close-crash.html:
+        * fast/dom/Window/closure-access-after-navigation-window.html:
+        * fast/dom/Window/dom-access-from-closure-window-with-gc.html:
+        * fast/dom/Window/dom-access-from-closure-window.html:
+        * fast/dom/Window/open-window-min-size.html:
+        * fast/dom/open-and-close-by-DOM.html:
+        * fast/dom/window-domurl-crash.html:
+        * fast/events/before-unload-navigate-different-window.html:
+        * fast/events/before-unload-open-window.html:
+        * fast/events/ios/submit-form-target-blank-using-return-key.html:
+        * fast/events/open-window-from-another-frame.html:
+        * fast/events/popup-allowed-from-gesture-initiated-event.html:
+        * fast/events/popup-allowed-from-gesture-initiated-form-submit.html:
+        * fast/events/popup-blocked-from-fake-button-click.html:
+        * fast/events/popup-blocked-from-fake-focus.html:
+        * fast/events/popup-blocked-from-fake-user-gesture.html:
+        * fast/events/popup-blocked-from-history-reload.html:
+        * fast/events/popup-blocked-from-iframe-script.html:
+        * fast/events/popup-blocked-from-iframe-src.html:
+        * fast/events/popup-blocked-from-mousemove.html:
+        * fast/events/popup-blocked-from-sandboxed-frame-via-window-open-named-sibling-frame.html:
+        * fast/events/popup-blocked-from-sandboxed-frame-via-window-open-named-sibling-frame2.html:
+        * fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame.html:
+        * fast/events/popup-blocked-from-untrusted-click-event-on-anchor.html:
+        * fast/events/popup-blocked-from-untrusted-mouse-click.html:
+        * fast/events/popup-blocked-from-window-open.html:
+        * fast/events/popup-blocked-to-post-blank.html:
+        * fast/events/popup-blocking-click-in-iframe.html:
+        * fast/events/popup-when-select-change.html:
+        * fast/files/domurl-script-execution-context-crash.html:
+        * fast/forms/submit-to-blank-multiple-times.html:
+        * fast/frames/sandboxed-iframe-close-top-noclose.html:
+        * fast/frames/sandboxed-iframe-close-top.html:
+        * fast/history/window-open.html:
+        * fast/loader/cancel-load-during-port-block-timer.html:
+        * fast/loader/navigate-with-new-target-after-back-forward-navigation.html:
+        * fast/loader/navigate-with-post-to-new-target-after-back-forward-navigation.html:
+        * fast/loader/reload-zero-byte-plugin.html:
+        * fullscreen/full-screen-exit-when-popup.html:
+        * http/tests/contentextensions/block-everything-unless-domain.html:
+        * http/tests/contentextensions/popups.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/data-url-iframe-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html:
+        * http/tests/security/contentSecurityPolicy/image-blocked-in-about-blank-window.html:
+        * http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html:
+        * http/tests/security/contentSecurityPolicy/resources/window-open-javascript-url-blocked.js:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.py:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/proper-open-window-upgrades.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/resources/nested-window.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-worker.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-image-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-sync-xhr-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-xhr-in-main-frame.html:
+        * http/tests/security/contentSecurityPolicy/window-open-javascript-url-with-target-blocked.html:
+        * http/tests/security/cookies/cookie-theft-with-javascript-doc.html:
+        * http/tests/security/cross-origin-worker-indexeddb.html:
+        * http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html:
+        * http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html:
+        * http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html:
+        * http/tests/security/inactive-document-with-empty-security-origin.html:
+        * http/tests/security/insecure-geolocation.html:
+        * http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/data-url-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-css-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-css-with-secure-cookies.html:
+        * http/tests/security/mixedContent/insecure-executable-css-with-secure-cookies.html:
+        * http/tests/security/mixedContent/insecure-form-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-image-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-allowCrossOriginSubresourcesToAskForCredentials.html:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html:
+        * http/tests/security/mixedContent/insecure-image-with-securecookie-block.html:
+        * http/tests/security/mixedContent/insecure-image-with-securecookie.html:
+        * http/tests/security/mixedContent/insecure-script-in-data-iframe-in-main-frame-blocked.html:
+        * http/tests/security/mixedContent/insecure-script-redirects-to-basic-auth-secure-script.html:
+        * http/tests/security/mixedContent/insecure-stylesheet-redirects-to-basic-auth-secure-stylesheet.html:
+        * http/tests/security/mixedContent/insecure-xhr-in-main-frame.html:
+        * http/tests/security/mixedContent/insecure-xhr-sync-in-main-frame.html:
+        * http/tests/security/mixedContent/javascript-url-form-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html:
+        * http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block.html:
+        * http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies.html:
+        * http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame.html:
+        * http/tests/security/mixedcontent-geolocation-block-insecure-content.html:
+        * http/tests/security/mixedcontent-geolocation.html:
+        * http/tests/security/originHeader/origin-header-for-empty.html:
+        * http/tests/security/popup-allowed-by-sandbox-is-sandboxed-control.html:
+        * http/tests/security/popup-allowed-by-sandbox-is-sandboxed.html:
+        * http/tests/security/popup-allowed-by-sandbox-when-allowed.html:
+        * http/tests/security/popup-blocked-from-fake-event.html:
+        * http/tests/security/popup-blocked-from-window-open.html:
+        * http/tests/security/referrer-policy-redirect-link-downgrade.html:
+        * http/tests/security/referrer-policy-redirect-link.html:
+        * http/tests/security/window-named-valueOf.html:
+        * http/tests/security/xss-DENIED-click-and-form-submission-from-inactive-domwindow.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2-pson.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window2.html:
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window3.html:
+        * http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html:
+        * http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml:
+        * http/tests/security/xssAuditor/link-opens-new-window.html:
+        * http/tests/security/xssAuditor/window-open-without-url-should-not-assert.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-ephemeral.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss-ephemeral.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener-if-auto-dismiss.html:
+        * http/tests/storageAccess/deny-storage-access-under-opener.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.html:
+        * http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.html:
+        * http/tests/storageAccess/resources/request-storage-access-iframe-and-pop-window.html:
+        * imported/blink/fast/events/popup-forwarded-gesture.html:
+        * js/dom/function-constructor-this-value.html:
+        * media/crash-closing-page-with-media-as-plugin-fallback.html:
+        * platform/ipad/media/controls/close-page-with-picture-in-picture-video-assertion-failure.html:
+        * plugins/geturlnotify-during-document-teardown.html:
+        * plugins/navigator-plugin-crash.html:
+        * plugins/open-and-close-window-with-plugin.html:
+        * plugins/plugin-initiate-popup-window.html:
+        * printing/print-close-crash.html:
+
 2021-09-03  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html.

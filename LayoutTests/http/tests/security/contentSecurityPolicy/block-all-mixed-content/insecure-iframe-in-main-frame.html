@@ -7,7 +7,6 @@ if (window.testRunner) {
     testRunner.dumpChildFramesAsText();
     testRunner.dumpFrameLoadCallbacks();
     testRunner.setCanOpenWindows();
-    testRunner.setCloseRemainingWindowsWhenComplete(true);
     testRunner.waitUntilDone();
 
     // FIXME: For some reason a SecurityPolicyViolation event is not dispatched in frame-with-insecure-iframe.html (why?).

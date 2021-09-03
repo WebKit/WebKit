@@ -13,7 +13,6 @@ sys.stdout.write(
     'if (window.testRunner) {\n'
     '    testRunner.dumpAsText();\n'
     '    testRunner.setCanOpenWindows();\n'
-    '    testRunner.setCloseRemainingWindowsWhenComplete(true);\n'
     '    testRunner.waitUntilDone();\n'
     '}\n'
     '</script>\n'

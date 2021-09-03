@@ -8,10 +8,8 @@
         const isSameOriginIframe = hashArguments[3] === "isSameOriginIframe";
         const originIsNull = hashArguments[4] === "originIsNull";
 
-        if (window.testRunner) {
+        if (window.testRunner)
             testRunner.setCanOpenWindows(false);
-            testRunner.setCloseRemainingWindowsWhenComplete(true);
-        }
 
         var requestStorageAccessResolved;
 

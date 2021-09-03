@@ -6,7 +6,6 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows();
-    testRunner.setCloseRemainingWindowsWhenComplete(true);
 }
 var child = window.open("about:blank", "child");
 child.name = "child";

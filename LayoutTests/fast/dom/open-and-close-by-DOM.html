@@ -39,8 +39,6 @@
         document.getElementById('anchorLink').dispatchEvent(event);
 
         if (window.testRunner) {
-            testRunner.setCloseRemainingWindowsWhenComplete();
-
             start = new Date();
             myInterval = setInterval(checkIfDone, 500);        
 

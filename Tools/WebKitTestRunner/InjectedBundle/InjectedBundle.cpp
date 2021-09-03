@@ -515,7 +515,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
     m_testRunner->setUserStyleSheetEnabled(false);
 
-    m_testRunner->setCloseRemainingWindowsWhenComplete(false);
     m_testRunner->setAcceptsEditing(true);
     m_testRunner->setTabKeyCyclesThroughElements(true);
     m_testRunner->clearTestRunnerCallbacks();

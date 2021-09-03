@@ -78,7 +78,6 @@ interface TestRunner {
     undefined keepWebHistory();
     undefined setAcceptsEditing(boolean value);
     undefined setCanOpenWindows();
-    undefined setCloseRemainingWindowsWhenComplete(boolean value); // FIXME: This is a no-op, we should update the tests and remove it.
     undefined setCustomPolicyDelegate(boolean enabled, boolean permissive);
     undefined addOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     undefined removeOriginAccessAllowListEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
