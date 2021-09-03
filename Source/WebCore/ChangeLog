@@ -1,3 +1,22 @@
+2021-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r277571) Call to SQLiteDatabase::turnOnIncrementalAutoVacuum() from ITP fails
+        https://bugs.webkit.org/show_bug.cgi?id=229886
+        <rdar://82581507>
+
+        Reviewed by Alex Christensen.
+
+        Before r277571, `lastError()` was getting called after the call to `statement->columnInt(0)`
+        and *before* the call to `statement.finalize()`. After r277571, the call to `statement.finalize()`
+        became implicit, and gets called when `statement` does out of scope. As a result, `lastError()`
+        was getting called *after* the statement finalization instead of after. This is an issue because
+        the code expects the last error to be for `statement->columnInt(0)` and thus expects SQLITE_ROW.
+        I moved the `lastError()` call so that it now after between `statement->columnInt(0)` and the
+        implicit statement finalization, like it used to.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::turnOnIncrementalAutoVacuum):
+
 2021-09-03  Devin Rousso  <drousso@apple.com>
 
         [Web App Manifest] Always fetch the first manifest if provided

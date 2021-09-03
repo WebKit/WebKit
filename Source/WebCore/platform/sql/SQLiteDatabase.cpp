@@ -622,10 +622,11 @@ bool SQLiteDatabase::isAutoCommitOn() const
 
 bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
 {
-    int autoVacuumMode = 0;
-    if (auto statement = prepareStatement("PRAGMA auto_vacuum"_s))
-        autoVacuumMode = statement->columnInt(0);
-    int error = lastError();
+    auto statement = prepareStatement("PRAGMA auto_vacuum"_s);
+    if (!statement)
+        return false;
+
+    int autoVacuumMode = statement->columnInt(0);
 
     // Check if we got an error while trying to get the value of the auto_vacuum flag.
     // If we got a SQLITE_BUSY error, then there's probably another transaction in
@@ -633,7 +634,7 @@ bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
     // auto_vacuum flag and try to set it to INCREMENTAL the next time we open this
     // database. If the error is not SQLITE_BUSY, then we probably ran into a more
     // serious problem and should return false (to log an error message).
-    if (error != SQLITE_ROW)
+    if (lastError() != SQLITE_ROW)
         return false;
 
     switch (autoVacuumMode) {
@@ -646,8 +647,7 @@ bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
         if (!executeCommand("PRAGMA auto_vacuum = 2"_s))
             return false;
         runVacuumCommand();
-        error = lastError();
-        return (error == SQLITE_OK);
+        return lastError() == SQLITE_OK;
     }
 }
 
