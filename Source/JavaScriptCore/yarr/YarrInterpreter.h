@@ -70,7 +70,7 @@ struct ByteTerm {
         } anchors;
         unsigned checkInputCount;
     };
-    unsigned frameLocation;
+    unsigned frameLocation { 0 };
     enum class Type : uint8_t {
         BodyAlternativeBegin,
         BodyAlternativeDisjunction,
@@ -107,18 +107,18 @@ struct ByteTerm {
     Type type;
     bool m_capture : 1;
     bool m_invert : 1;
-    unsigned inputPosition;
+    unsigned inputPosition { 0 };
 
     ByteTerm(UChar32 ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
+        , inputPosition(inputPos)
     {
         atom.patternCharacter = ch;
         atom.quantityType = quantityType;
         atom.quantityMinCount = quantityCount;
         atom.quantityMaxCount = quantityCount;
-        inputPosition = inputPos;
 
         switch (quantityType) {
         case QuantifierType::FixedCount:
@@ -137,6 +137,7 @@ struct ByteTerm {
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
+        , inputPosition(inputPos)
     {
         switch (quantityType) {
         case QuantifierType::FixedCount:
@@ -155,32 +156,31 @@ struct ByteTerm {
         atom.quantityType = quantityType;
         atom.quantityMinCount = quantityCount;
         atom.quantityMaxCount = quantityCount;
-        inputPosition = inputPos;
     }
 
     ByteTerm(CharacterClass* characterClass, bool invert, unsigned inputPos)
         : type(ByteTerm::Type::CharacterClass)
         , m_capture(false)
         , m_invert(invert)
+        , inputPosition(inputPos)
     {
         atom.characterClass = characterClass;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
         atom.quantityMaxCount = 1;
-        inputPosition = inputPos;
     }
 
     ByteTerm(Type type, unsigned subpatternId, ByteDisjunction* parenthesesInfo, bool capture, unsigned inputPos)
         : type(type)
         , m_capture(capture)
         , m_invert(false)
+        , inputPosition(inputPos)
     {
         atom.subpatternId = subpatternId;
         atom.parenthesesDisjunction = parenthesesInfo;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
         atom.quantityMaxCount = 1;
-        inputPosition = inputPos;
     }
     
     ByteTerm(Type type, bool invert = false)
@@ -197,12 +197,12 @@ struct ByteTerm {
         : type(type)
         , m_capture(capture)
         , m_invert(invert)
+        , inputPosition(inputPos)
     {
         atom.subpatternId = subpatternId;
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
         atom.quantityMaxCount = 1;
-        inputPosition = inputPos;
     }
 
     static ByteTerm BOL(unsigned inputPos)
