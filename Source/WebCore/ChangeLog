@@ -1,3 +1,19 @@
+2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        The CSS Font Loading API shouldn't be able to delete a CSS-connected font
+        https://bugs.webkit.org/show_bug.cgi?id=229640
+
+        Reviewed by Alan Bujtas.
+
+        https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-delete
+        "1. If font is CSS-connected, return false and exit this algorithm immediately."
+
+        Tests: web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected.html
+               web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected-2.html
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::remove):
+
 2021-09-02  Alan Bujtas  <zalan@apple.com>
 
         Relative -webkit-scrollbar width value may lead to unstable layout
