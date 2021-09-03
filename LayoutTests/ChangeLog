@@ -1,3 +1,13 @@
+2021-09-03  Alan Bujtas  <zalan@apple.com>
+
+        Add a layout test for custom scrollbars with relative width/height values
+        https://bugs.webkit.org/show_bug.cgi?id=229871
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/scrollbar-size-with-relative-value-expected.html: Added.
+        * fast/scrolling/scrollbar-size-with-relative-value.html: Added.
+
 2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         @font-face rules accessed over file: urls to a file which does not exist are not visible to document.fonts
