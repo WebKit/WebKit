@@ -151,7 +151,7 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::Type::ImageResource:
         return 500_ms;
     case CachedResource::Type::MediaResource:
-        return 50_ms;
+        return WebLoaderStrategy::mediaMaximumBufferingTime;
     case CachedResource::Type::MainResource:
     case CachedResource::Type::Icon:
     case CachedResource::Type::RawResource:

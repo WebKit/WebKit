@@ -1,3 +1,59 @@
+2021-09-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282003. rdar://problem/82734034
+
+    Buffer large media XHRs in the NetworkProcess to reduce IPC overhead
+    https://bugs.webkit.org/show_bug.cgi?id=229813
+    <rdar://82406803>
+    
+    Reviewed by Alex Christensen.
+    
+    When playing back media through MSE, a significant amount of CPU time is spent sending
+    small chunks of loaded media across the XPC boundary, on the order of 16kb at a time out
+    of a 1-3MB resource. This large number of small XPC messages, each with a fixed cost, causes
+    a relatively large CPU overhead. Media loaded directly through a HTMLMediaElement already
+    is coalesced in the NetworkProcess on a 50ms timer.
+    
+    Buffer all loads of large media resources, performed over fetch() or XHR, when those resources
+    have an expected length of more than 1MB, by coalescing them on the same 50ms timer as we use
+    for HTMLMediaElement-generated loads.
+    
+    * NetworkProcess/NetworkResourceLoadParameters.h:
+    * NetworkProcess/NetworkResourceLoader.cpp:
+    (WebKit::NetworkResourceLoader::didReceiveResponse):
+    * NetworkProcess/NetworkResourceLoader.h:
+    * WebProcess/Network/WebLoaderStrategy.cpp:
+    (WebKit::maximumBufferingTime):
+    * WebProcess/Network/WebLoaderStrategy.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282003 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Jer Noble  <jer.noble@apple.com>
+
+            Buffer large media XHRs in the NetworkProcess to reduce IPC overhead
+            https://bugs.webkit.org/show_bug.cgi?id=229813
+            <rdar://82406803>
+
+            Reviewed by Alex Christensen.
+
+            When playing back media through MSE, a significant amount of CPU time is spent sending
+            small chunks of loaded media across the XPC boundary, on the order of 16kb at a time out
+            of a 1-3MB resource. This large number of small XPC messages, each with a fixed cost, causes
+            a relatively large CPU overhead. Media loaded directly through a HTMLMediaElement already
+            is coalesced in the NetworkProcess on a 50ms timer.
+
+            Buffer all loads of large media resources, performed over fetch() or XHR, when those resources
+            have an expected length of more than 1MB, by coalescing them on the same 50ms timer as we use
+            for HTMLMediaElement-generated loads.
+
+            * NetworkProcess/NetworkResourceLoadParameters.h:
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::didReceiveResponse):
+            * NetworkProcess/NetworkResourceLoader.h:
+            * WebProcess/Network/WebLoaderStrategy.cpp:
+            (WebKit::maximumBufferingTime):
+            * WebProcess/Network/WebLoaderStrategy.h:
+
 2021-08-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Unable to load downloaded HTML files in Safari

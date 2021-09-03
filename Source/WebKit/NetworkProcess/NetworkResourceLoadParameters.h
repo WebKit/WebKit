@@ -54,7 +54,7 @@ public:
     ResourceLoadIdentifier identifier { 0 };
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
-    Seconds maximumBufferingTime;
+    mutable Seconds maximumBufferingTime;
     WebCore::FetchOptions options;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy;
