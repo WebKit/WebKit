@@ -1,5 +1,13 @@
 2021-09-03  Ross Kirsling  <ross.kirsling@sony.com>
 
+        Unreviewed, non-unified JSC build fix following 241222@main.
+
+        * b3/B3ReduceLoopStrength.h:
+        * jit/JITOperations.h:
+        * wasm/WasmOperations.h:
+
+2021-09-03  Ross Kirsling  <ross.kirsling@sony.com>
+
         [JSC] Yarr::ByteTerm sometimes leaves fields uninitialized
         https://bugs.webkit.org/show_bug.cgi?id=229891
 

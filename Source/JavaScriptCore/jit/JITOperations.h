@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "JITMathICForwards.h"
+#include "JITOperationValidation.h"
 #include "PrivateFieldPutKind.h"
 #include "SlowPathReturnType.h"
 #include <wtf/Platform.h>

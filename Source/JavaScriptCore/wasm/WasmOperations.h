@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "IndexingType.h"
+#include "JITOperationValidation.h"
 #include "JSCJSValue.h"
 #include "SlowPathReturnType.h"
 #include "WasmExceptionType.h"

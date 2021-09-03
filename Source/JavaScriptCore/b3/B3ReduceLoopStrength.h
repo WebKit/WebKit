@@ -27,6 +27,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "JITOperationValidation.h"
+
 namespace JSC { namespace B3 {
 
 class Procedure;
