@@ -1,5 +1,18 @@
 2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        @font-face rules accessed over file: urls to a file which does not exist are not visible to document.fonts
+        https://bugs.webkit.org/show_bug.cgi?id=229639
+
+        Reviewed by Alan Bujtas.
+
+        Keep a local copy of these tests, because WPT tests don't run from file: URLs, but layout tests do.
+        The behavior is different depending on the scheme of the main page.
+
+        * fast/text/font-file-failed-expected.txt: Added.
+        * fast/text/font-file-failed.html: Added.
+
+2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
         FontFaceSet.check() needs to react to style changes
         https://bugs.webkit.org/show_bug.cgi?id=229844
 

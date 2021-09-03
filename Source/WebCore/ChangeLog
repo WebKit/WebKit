@@ -1,5 +1,22 @@
 2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        @font-face rules accessed over file: urls to a file which does not exist are not visible to document.fonts
+        https://bugs.webkit.org/show_bug.cgi?id=229639
+
+        Reviewed by Alan Bujtas.
+
+        Because all the sources were failed, we were marking the whole CSSFontFace as failed, and then
+        not adding it to the CSSFontFaceSource. Unfortunately, this optimization is observable, so we
+        can't do it.
+
+        Tests: fast/text/font-file-failed.html
+               imported/w3c/web-platform-tests/css/css-font-loading/nonexistent-file-url.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+
+2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
         FontFaceSet.check() needs to react to style changes
         https://bugs.webkit.org/show_bug.cgi?id=229844
 

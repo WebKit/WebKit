@@ -1,3 +1,12 @@
+2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        @font-face rules accessed over file: urls to a file which does not exist are not visible to document.fonts
+        https://bugs.webkit.org/show_bug.cgi?id=229639
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/css-font-loading/nonexistent-file-url-expected.txt:
+
 2021-09-03  Chris Dumez  <cdumez@apple.com>
 
         [Mac] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox-navigate.https.html is a flaky failure
