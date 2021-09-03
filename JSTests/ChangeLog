@@ -1,3 +1,20 @@
+2021-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Validate JSPropertyNameEnumerator via watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=229846
+
+        Reviewed by Keith Miller.
+
+        * stress/for-in-cacheable-dictionary.js: Added.
+        (shouldBe):
+        (collect):
+        * stress/for-in-invalidate.js: Added.
+        (shouldBe):
+        (collect):
+        * stress/for-in-uncacheable-dictionary.js: Added.
+        (shouldBe):
+        (collect):
+
 2021-08-31  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Implement Temporal.Duration

@@ -2118,6 +2118,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionAsanEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionIsMemoryLimited);
 static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
+static JSC_DECLARE_HOST_FUNCTION(functionToCacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionIsPrivateSymbol);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum);
@@ -3713,6 +3714,20 @@ JSC_DEFINE_HOST_FUNCTION(functionIsGigacageEnabled, (JSGlobalObject*, CallFrame*
     return JSValue::encode(jsBoolean(Gigacage::isEnabled()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionToCacheableDictionary, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* object = jsDynamicCast<JSObject*>(vm, callFrame->argument(0));
+    if (!object)
+        return throwVMTypeError(globalObject, scope, "Expected first argument to be an object"_s);
+    if (!object->structure(vm)->isUncacheableDictionary())
+        object->convertToDictionary(vm);
+    return JSValue::encode(object);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionToUncacheableDictionary, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -3946,6 +3961,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "useJIT", functionUseJIT, 0);
     addFunction(vm, "isGigacageEnabled", functionIsGigacageEnabled, 0);
 
+    addFunction(vm, "toCacheableDictionary", functionToCacheableDictionary, 1);
     addFunction(vm, "toUncacheableDictionary", functionToUncacheableDictionary, 1);
 
     addFunction(vm, "isPrivateSymbol", functionIsPrivateSymbol, 1);

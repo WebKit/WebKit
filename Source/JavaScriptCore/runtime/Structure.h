@@ -634,6 +634,11 @@ public:
     {
         return dfgShouldWatchIfPossible() && transitionWatchpointSetIsStillValid();
     }
+
+    bool propertyNameEnumeratorShouldWatch() const
+    {
+        return dfgShouldWatch();
+    }
         
     void addTransitionWatchpoint(Watchpoint* watchpoint) const
     {

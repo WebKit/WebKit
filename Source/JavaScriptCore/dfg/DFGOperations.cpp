@@ -2462,7 +2462,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdateIndexAndMode, EncodedJSVal
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSPropertyNameEnumerator::Mode mode = static_cast<JSPropertyNameEnumerator::Mode>(modeNumber);
+    JSPropertyNameEnumerator::Flag mode = static_cast<JSPropertyNameEnumerator::Flag>(modeNumber);
     if (JSValue::decode(baseValue).isUndefinedOrNull()) {
         ASSERT(mode == JSPropertyNameEnumerator::InitMode);
         ASSERT(!index);

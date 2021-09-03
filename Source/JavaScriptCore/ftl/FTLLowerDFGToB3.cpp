@@ -13220,10 +13220,54 @@ private:
     void compileGetPropertyEnumerator()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        if (m_node->child1().useKind() == CellUse)
-            setJSValue(vmCall(Int64, operationGetPropertyEnumeratorCell, weakPointer(globalObject), lowCell(m_node->child1())));
-        else
-            setJSValue(vmCall(Int64, operationGetPropertyEnumerator, weakPointer(globalObject), lowJSValue(m_node->child1())));
+        if (m_node->child1().useKind() == CellUse) {
+            LBasicBlock checkExistingCase = m_out.newBlock();
+            LBasicBlock notNullCase = m_out.newBlock();
+            LBasicBlock rareDataCase = m_out.newBlock();
+            LBasicBlock validationCase = m_out.newBlock();
+            LBasicBlock genericCase = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue cell = lowCell(m_node->child1());
+
+            // We go to the inlined fast path if the object is UndecidedShape / NoIndexingShape for simplicity.
+            static_assert(!NonArray);
+            static_assert(ArrayClass == 1);
+            static_assert(UndecidedShape == 2);
+            static_assert(ArrayWithUndecided == 3);
+            static_assert(NonArray <= ArrayWithUndecided);
+            static_assert(ArrayClass <= ArrayWithUndecided);
+            static_assert(ArrayWithUndecided <= ArrayWithUndecided);
+            LValue indexingType = m_out.bitAnd(m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingTypeAndMisc), m_out.constInt32(IndexingTypeMask));
+            m_out.branch(m_out.belowOrEqual(indexingType, m_out.constInt32(ArrayWithUndecided)), unsure(checkExistingCase), unsure(genericCase));
+
+            LBasicBlock lastNext = m_out.appendTo(checkExistingCase, notNullCase);
+            LValue structure = loadStructure(cell);
+            LValue previousOrRareData = m_out.loadPtr(structure, m_heaps.Structure_previousOrRareData);
+            m_out.branch(m_out.notNull(previousOrRareData), unsure(notNullCase), unsure(genericCase));
+
+            m_out.appendTo(notNullCase, rareDataCase);
+            m_out.branch(
+                m_out.notEqual(m_out.load32(previousOrRareData, m_heaps.JSCell_structureID), m_out.constInt32(m_graph.m_vm.structureStructure->structureID())),
+                unsure(rareDataCase), unsure(genericCase));
+
+            m_out.appendTo(rareDataCase, validationCase);
+            LValue cached = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_cachedPropertyNameEnumerator);
+            m_out.branch(m_out.notNull(cached), unsure(validationCase), unsure(genericCase));
+
+            m_out.appendTo(validationCase, genericCase);
+            ValueFromBlock fastResult = m_out.anchor(cached);
+            m_out.branch(m_out.testNonZero32(m_out.load32(cached, m_heaps.JSPropertyNameEnumerator_flags), m_out.constInt32(JSPropertyNameEnumerator::ValidatedViaWatchpoint)), unsure(continuation), unsure(genericCase));
+
+            m_out.appendTo(genericCase, continuation);
+            ValueFromBlock genericResult = m_out.anchor(vmCall(pointerType(), operationGetPropertyEnumeratorCell, weakPointer(globalObject), cell));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setJSValue(m_out.phi(pointerType(), fastResult, genericResult));
+            return;
+        }
+        setJSValue(vmCall(Int64, operationGetPropertyEnumerator, weakPointer(globalObject), lowJSValue(m_node->child1())));
     }
 
     void compileEnumeratorNextUpdateIndexAndMode()
@@ -13269,7 +13313,7 @@ private:
             LValue base = lowCell(baseEdge);
             speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.load32(base, m_heaps.JSCell_structureID), m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_cachedStructureID)));
 
-            speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_modeSet), m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode)));
+            speculate(BadCache, noValue(), m_node, m_out.notEqual(m_out.bitAnd(m_out.load32(enumerator, m_heaps.JSPropertyNameEnumerator_flags), m_out.constInt32(JSPropertyNameEnumerator::enumerationModeMask)), m_out.constInt32(JSPropertyNameEnumerator::OwnStructureMode)));
 
             LBasicBlock increment = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
