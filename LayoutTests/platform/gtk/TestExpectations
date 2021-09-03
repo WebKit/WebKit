@@ -1715,8 +1715,6 @@ webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Fa
 
 webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
 
-webkit.org/b/168191 fast/text/trak-optimizeLegibility.html [ Failure ]
-
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-listbox.html [ ImageOnlyFailure ]
 webkit.org/b/168427 fast/scrolling/rtl-scrollbars-overflow-contents.html [ ImageOnlyFailure ]
 

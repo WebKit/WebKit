@@ -1771,7 +1771,7 @@ fast/text/hidpi-text-selection-gap-between-words.html [ Skip ]
 
 # No different rendering for text-rendering: optimizeLegibility.
 fast/text/variations/optical-sizing-trak-2.html [ Skip ]
-fast/text/trak-optimizeLegibility.html [ Skip ]
+fast/text/trak-optimizeLegibility.html [ ImageOnlyFailure ]
 
 # Currently enabled on Mac only.
 media/media-usage-state.html [ Skip ]

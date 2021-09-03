@@ -1,3 +1,16 @@
+2021-09-02  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Mark fast/text/trak-optimizeLegibility.html as ImageOnlyFailure rather than Skip
+        https://bugs.webkit.org/show_bug.cgi?id=229823
+
+        This test is not applicable for GLIB as nothing different is done when
+        optimizeLegibility is set, but at least it should not crash.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         The CSS Font Loading API shouldn't be able to delete a CSS-connected font
