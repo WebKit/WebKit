@@ -1,3 +1,16 @@
+2021-09-03  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Fix for debug mode with ENABLE_SERVICE_WORKER=OFF after r281706
+        https://bugs.webkit.org/show_bug.cgi?id=229845
+
+        Reviewed by Alex Christensen.
+
+        Put m_serviceWorkerFetchTask check into #if.
+
+        No new tests, is a build fix for having service workers off.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+
 2021-09-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 15] editing/caret/ios/caret-in-overflow-area.html is failing
