@@ -1,3 +1,13 @@
+2021-09-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/editing/caret/caret-color-expected.txt:
+        * platform/wincairo/fast/css/font-face-weight-matching-expected.txt:
+        * platform/wincairo/fast/text/fixed-pitch-control-characters-expected.txt: Added.
+        * platform/wincairo/fast/text/international/text-combine-image-test-expected.txt:
+
 2021-09-02  Simon Fraser  <simon.fraser@apple.com>
 
         Changes to clip-path and filter SVG elements referenced by CSS don't trigger repaints
