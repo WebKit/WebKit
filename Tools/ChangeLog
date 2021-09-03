@@ -1,3 +1,14 @@
+2021-09-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Invoke apply-watchlist with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=229864
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (ApplyWatchList):
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-09-03  Chris Dumez  <cdumez@apple.com>
 
         WebKitTestRunner does not correctly close all auxiliary WebViews between tests

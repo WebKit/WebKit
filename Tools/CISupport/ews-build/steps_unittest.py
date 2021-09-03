@@ -337,7 +337,7 @@ class TestApplyWatchList(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', '1234'])
+                        command=['python3', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', '1234'])
             + ExpectShell.log('stdio', stdout='Result of watchlist: cc "" messages ""')
             + 0,
         )
@@ -351,7 +351,7 @@ class TestApplyWatchList(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=120,
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', '1234'])
+                        command=['python3', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', '1234'])
             + ExpectShell.log('stdio', stdout='Unexpected failure')
             + 2,
         )

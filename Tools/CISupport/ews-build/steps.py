@@ -3250,7 +3250,7 @@ class ApplyWatchList(shell.ShellCommand):
     description = ['applying watchilist']
     descriptionDone = ['Applied WatchList']
     bug_id = WithProperties('%(bug_id)s')
-    command = ['python', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', bug_id]
+    command = ['python3', 'Tools/Scripts/webkit-patch', 'apply-watchlist-local', bug_id]
     haltOnFailure = True
     flunkOnFailure = True
 
