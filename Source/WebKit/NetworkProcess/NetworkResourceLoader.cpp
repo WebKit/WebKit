@@ -43,6 +43,7 @@
 #include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebLoaderStrategy.h"
 #include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWServerConnection.h"
@@ -647,6 +648,27 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         m_connection->addNetworkLoadInformation(coreIdentifier(), WTFMove(information));
     }
 
+    auto resourceLoadInfo = this->resourceLoadInfo();
+
+    auto isFetchOrXHR = [] (const ResourceLoadInfo& info) {
+        return info.type == ResourceLoadInfo::Type::Fetch
+            || info.type == ResourceLoadInfo::Type::XMLHTTPRequest;
+    };
+
+    auto isMediaMIMEType = [] (const String& mimeType) {
+        return mimeType.startsWithIgnoringASCIICase("audio/")
+            || mimeType.startsWithIgnoringASCIICase("video/")
+            || equalLettersIgnoringASCIICase(mimeType, "application/octet-stream");
+    };
+
+    if (!m_bufferedData
+        && m_response.expectedContentLength() > static_cast<long long>(1 * MB)
+        && isFetchOrXHR(resourceLoadInfo)
+        && isMediaMIMEType(m_response.mimeType())) {
+        m_bufferedData = SharedBuffer::create();
+        m_parameters.maximumBufferingTime = WebLoaderStrategy::mediaMaximumBufferingTime;
+    }
+
     // For multipart/x-mixed-replace didReceiveResponseAsync gets called multiple times and buffering would require special handling.
     if (!isSynchronous() && m_response.isMultipart())
         m_bufferedData = nullptr;
@@ -721,7 +743,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     send(Messages::WebResourceLoader::DidReceiveResponse { response, willWaitForContinueDidReceiveResponse });
 
     if (m_parameters.pageHasResourceLoadClient)
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(m_parameters.webPageProxyID, resourceLoadInfo(), response), 0);
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(m_parameters.webPageProxyID, resourceLoadInfo, response), 0);
 
     if (willWaitForContinueDidReceiveResponse) {
         m_responseCompletionHandler = WTFMove(completionHandler);
