@@ -982,9 +982,6 @@ webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeo
 webkit.org/b/158948 inspector/timeline [ Pass Timeout ]
 webkit.org/b/191539 http/tests/inspector/network/resource-security-connection.html [ Skip ]
 
-webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]
-
-
 # VNE testing is flaky.
 webkit.org/b/210436 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
 
