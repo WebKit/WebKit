@@ -1,3 +1,15 @@
+2021-09-03  Youenn Fablet  <youenn@apple.com>
+
+        Migrate to latest libwebrtc AddIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=229700
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations: mark failing test as flaky as an exception sometimes happen.
+        * fast/mediastream/RTCPeerConnection-addIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-addIceCandidate.html:
+        Update the test to match implementation, which makes it consistent with other browsers.
+
 2021-09-03  Said Abou-Hallawa  <said@apple.com>
 
         Add a layout test to detect memory leaks when drawing images to a detached canvas

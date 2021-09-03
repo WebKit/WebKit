@@ -62,7 +62,7 @@ private:
     void doCreateAnswer(RTCAnswerOptions&&) final;
     void doSetLocalDescription(const RTCSessionDescription*) final;
     void doSetRemoteDescription(const RTCSessionDescription&) final;
-    void doAddIceCandidate(RTCIceCandidate&) final;
+    void doAddIceCandidate(RTCIceCandidate&, Function<void(ExceptionOr<void>&&)>&&) final;
     void doStop() final;
     std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
     void restartIce() final;

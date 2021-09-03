@@ -81,7 +81,7 @@
             .then(function () {
                 debug("<br>*** Test some OK input");
                 // Testing passing a RTCIceCandidateInit
-                return promiseShouldResolve("pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid})");
+                return promiseShouldReject("pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid})");
             })
             .then(function () {
                 return promiseShouldResolve("pc.addIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex})");
@@ -97,8 +97,7 @@
                 return promiseShouldResolve("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex}))");
             })
             .then(function () {
-                debug("*** A valid sdpMid takes precedesce over a bad sdpMLineIndex");
-                return promiseShouldResolve("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex}))");
+                return promiseShouldReject("pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex}))");
             })
             .then(function () {
                 testPassed("End of test promise chain");

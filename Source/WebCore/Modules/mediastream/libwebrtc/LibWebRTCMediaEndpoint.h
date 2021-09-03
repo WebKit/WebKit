@@ -89,7 +89,7 @@ public:
     void getStats(webrtc::RtpReceiverInterface&, Ref<DeferredPromise>&&);
     void getStats(webrtc::RtpSenderInterface&, Ref<DeferredPromise>&&);
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
-    bool addIceCandidate(webrtc::IceCandidateInterface& candidate) { return m_backend->AddIceCandidate(&candidate); }
+    void addIceCandidate(std::unique_ptr<webrtc::IceCandidateInterface>&&, std::function<void(webrtc::RTCError)>&&);
 
     void close();
     void stop();

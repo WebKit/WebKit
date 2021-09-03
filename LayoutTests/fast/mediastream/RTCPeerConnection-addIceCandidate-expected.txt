@@ -13,10 +13,10 @@ PASS Remote description set
 PASS sdpMLineIndex is not badSdpMLineIndex
 PASS sdpMid is not null
 PASS sdpMid is not badSdpMid
-FAIL promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid})) fulfilled unexpectedly.
-FAIL promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: badSdpMLineIndex})) fulfilled unexpectedly.
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid})) rejected with OperationError: Error processing ICE candidate
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: badSdpMLineIndex})) rejected with OperationError: Error processing ICE candidate
 *** A (bad) sdpMid takes precedesce over valid sdpMLineIndex
-FAIL promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid, sdpMLineIndex: sdpMLineIndex})) fulfilled unexpectedly.
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: badSdpMid, sdpMLineIndex: sdpMLineIndex})) rejected with OperationError: Error processing ICE candidate
 *** Test bad candidate content with valid sdpMid
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', sdpMid: sdpMid})) rejected with OperationError: Expect line: candidate:<candidate-str>
 *** Test bad candidate content with valid sdpMLineIndex
@@ -25,13 +25,12 @@ PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: 'bad content', s
 PASS promise pc.addIceCandidate({candidate: validCandidate}) rejected with TypeError: Candidate must not have both null sdpMid and sdpMLineIndex
 
 *** Test some OK input
-PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid}) fulfilled with undefined
+PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMid: sdpMid}) rejected with OperationError: Error processing ICE candidate
 PASS promise pc.addIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex}) fulfilled with undefined
 PASS promise pc.addIceCandidate(undefined) fulfilled with undefined
 PASS promise pc.addIceCandidate(null) fulfilled with undefined
 PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMLineIndex: sdpMLineIndex})) fulfilled with undefined
-*** A valid sdpMid takes precedesce over a bad sdpMLineIndex
-PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex})) fulfilled with undefined
+PASS promise pc.addIceCandidate(new RTCIceCandidate({candidate: validCandidate, sdpMid: sdpMid, sdpMLineIndex: badSdpMLineIndex})) rejected with OperationError: Error processing ICE candidate
 PASS End of test promise chain
 PASS successfullyParsed is true
 

@@ -619,6 +619,11 @@ void LibWebRTCMediaEndpoint::OnIceGatheringChange(webrtc::PeerConnectionInterfac
     });
 }
 
+void LibWebRTCMediaEndpoint::addIceCandidate(std::unique_ptr<webrtc::IceCandidateInterface>&& candidate, std::function<void(webrtc::RTCError)>&& callback)
+{
+    m_backend->AddIceCandidate(WTFMove(candidate), WTFMove(callback));
+}
+
 void LibWebRTCMediaEndpoint::OnIceCandidate(const webrtc::IceCandidateInterface *rtcCandidate)
 {
     ASSERT(rtcCandidate);

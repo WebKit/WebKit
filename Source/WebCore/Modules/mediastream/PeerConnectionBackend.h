@@ -222,7 +222,7 @@ private:
     virtual void doCreateAnswer(RTCAnswerOptions&&) = 0;
     virtual void doSetLocalDescription(const RTCSessionDescription*) = 0;
     virtual void doSetRemoteDescription(const RTCSessionDescription&) = 0;
-    virtual void doAddIceCandidate(RTCIceCandidate&) = 0;
+    virtual void doAddIceCandidate(RTCIceCandidate&, Function<void(ExceptionOr<void>&&)>&&) = 0;
     virtual void endOfIceCandidates(DOMPromiseDeferred<void>&&);
     virtual void doStop() = 0;
 
@@ -234,7 +234,6 @@ protected:
 private:
     std::unique_ptr<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
     std::unique_ptr<DOMPromiseDeferred<void>> m_setDescriptionPromise;
-    std::unique_ptr<DOMPromiseDeferred<void>> m_addIceCandidatePromise;
 
     bool m_shouldFilterICECandidates { true };
     struct PendingICECandidate {

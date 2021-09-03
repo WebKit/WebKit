@@ -1,3 +1,15 @@
+2021-09-03  Youenn Fablet  <youenn@apple.com>
+
+        Migrate to latest libwebrtc AddIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=229700
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-operations.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https-expected.txt:
+
 2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         The CSS Font Loading API shouldn't be able to delete a CSS-connected font

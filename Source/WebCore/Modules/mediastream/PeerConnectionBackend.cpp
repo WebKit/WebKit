@@ -348,35 +348,12 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPr
         return;
     }
 
-    m_addIceCandidatePromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
-    doAddIceCandidate(*iceCandidate);
-}
-
-void PeerConnectionBackend::addIceCandidateSucceeded()
-{
-    ASSERT(isMainThread());
-    ALWAYS_LOG(LOGIDENTIFIER, "Adding ice candidate succeeded");
-
-    ASSERT(m_addIceCandidatePromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_addIceCandidatePromise)]() mutable {
-        if (m_peerConnection.isClosed())
+    doAddIceCandidate(*iceCandidate, [weakThis = makeWeakPtr(this), promise = WTFMove(promise)](auto&& result) mutable {
+        ASSERT(isMainThread());
+        if (!weakThis)
             return;
-
-        promise->resolve();
-    });
-}
-
-void PeerConnectionBackend::addIceCandidateFailed(Exception&& exception)
-{
-    ASSERT(isMainThread());
-    ALWAYS_LOG(LOGIDENTIFIER, "Adding ice candidate failed:", exception.message());
-
-    ASSERT(m_addIceCandidatePromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_addIceCandidatePromise), exception = WTFMove(exception)]() mutable {
-        if (m_peerConnection.isClosed())
-            return;
-
-        promise->reject(WTFMove(exception));
+        RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate finished, success=%d", result.hasException());
+        promise.settle(WTFMove(result));
     });
 }
 
@@ -570,7 +547,6 @@ void PeerConnectionBackend::stop()
 {
     m_offerAnswerPromise = nullptr;
     m_setDescriptionPromise = nullptr;
-    m_addIceCandidatePromise = nullptr;
 
     m_pendingTrackEvents.clear();
 
