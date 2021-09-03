@@ -1,3 +1,24 @@
+2021-09-02  Alan Bujtas  <zalan@apple.com>
+
+        Let content with newlineCharacter be measured by FontCascade::widthForSimpleText
+        https://bugs.webkit.org/show_bug.cgi?id=229849
+
+        Reviewed by Simon Fraser.
+
+        This logic was added as part of r281423 to make sure we properly compute the advance width of certain characters by
+        avoiding the simplified measuring codepath.
+
+        However in case of newlineCharacter/carriageReturn: 
+        1. they are treated as _space_ when preserved
+        2. the _space_ character takes the simplified codepath
+        We should be fine taking the simplified codepath when such characters are present.
+        This also caused regression on certain text heavy micro-benchmarks on perf.webkit.org.
+
+        Let's restore the pre-r281423 (long time) behavior while figuring out what to do with such characters. 
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::characterCanUseSimplifiedTextMeasuring):
+
 2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         The CSS Font Loading API shouldn't be able to delete a CSS-connected font

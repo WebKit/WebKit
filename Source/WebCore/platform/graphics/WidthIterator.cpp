@@ -528,8 +528,6 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
         break;
     case noBreakSpace:
     case softHyphen:
-    case newlineCharacter:
-    case carriageReturn:
     case leftToRightMark:
     case rightToLeftMark:
     case leftToRightEmbed:
