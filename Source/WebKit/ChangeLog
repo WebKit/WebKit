@@ -1,3 +1,35 @@
+2021-09-03  Youenn Fablet  <youenn@apple.com>
+
+        Enable WebRTC relay for SafariViewController
+        https://bugs.webkit.org/show_bug.cgi?id=229768
+
+        Reviewed by Eric Carlson.
+
+        Use source application bundle identifier instead of attributed bundle identifier for nw_parameters_set_source_application_by_bundle_id.
+        Use attributed bundle identifier for nw_parameters_set_attributed_bundle_identifier.
+        Make sure to not set token data in case application bundle identifier is available.
+        This allows the OS to decide whether to relay the nw_connections or not.
+
+        Introduce a helper routine to share more code between UDP and TCP sockets.
+
+        Manually tested as testing relay would require non-localhost connections
+        and an application bundle identifier that would be known by the OS.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::applicationBundleIdentifier const):
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::configureParameters):
+        * NetworkProcess/webrtc/NetworkRTCUtilitiesCocoa.h: Added.
+        * NetworkProcess/webrtc/NetworkRTCUtilitiesCocoa.mm: Added.
+        (WebKit::setNWParametersApplicationIdentifiers):
+        * Platform/spi/Cocoa/NWParametersSPI.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-09-03  Said Abou-Hallawa  <said@apple.com>
 
         Add a layout test to detect memory leaks when drawing images to a detached canvas

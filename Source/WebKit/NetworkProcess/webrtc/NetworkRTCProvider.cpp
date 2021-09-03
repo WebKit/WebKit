@@ -49,6 +49,7 @@
 #include "NetworkRTCResolverCocoa.h"
 #include "NetworkRTCTCPSocketCocoa.h"
 #include "NetworkRTCUDPSocketCocoa.h"
+#include "NetworkSessionCocoa.h"
 #endif
 
 namespace WebKit {
@@ -91,6 +92,10 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     , m_sourceApplicationAuditToken(connection.networkProcess().sourceApplicationAuditToken())
 #endif
 {
+#if PLATFORM(COCOA)
+    if (auto* session = static_cast<NetworkSessionCocoa*>(connection.networkSession()))
+        m_applicationBundleIdentifier = session->sourceApplicationBundleIdentifier().utf8();
+#endif
 #if !RELEASE_LOG_DISABLED
     rtc::LogMessage::SetLogOutput(WebKit2LogWebRTC.state == WTFLogChannelState::On ? rtc::LS_INFO : rtc::LS_WARNING, doReleaseLogging);
 #endif

@@ -32,6 +32,7 @@
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include "NWParametersSPI.h"
+#include "NetworkRTCUtilitiesCocoa.h"
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
 #include <wtf/BlockPtr.h>
@@ -96,10 +97,8 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
         nw_tcp_options_set_no_delay(tcp_options, true);
     }));
 
-    if (auto token = rtcProvider.sourceApplicationAuditToken())
-        nw_parameters_set_source_application(tcpTLS.get(), *token);
-    if (!attributedBundleIdentifier.isEmpty())
-        nw_parameters_set_source_application_by_bundle_id(tcpTLS.get(), attributedBundleIdentifier.utf8().data());
+    setNWParametersApplicationIdentifiers(tcpTLS.get(), rtcProvider.applicationBundleIdentifier(), rtcProvider.sourceApplicationAuditToken(), attributedBundleIdentifier);
+
     if (isRelayDisabled)
         nw_parameters_set_account_id(tcpTLS.get(), "com.apple.safari.peertopeer");
 

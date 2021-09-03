@@ -23,28 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Network/Network.h>
+#pragma once
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(LIBWEBRTC)
 
-#import <nw/private.h>
+#include "NWParametersSPI.h"
+#include <optional>
+#include <wtf/Forward.h>
 
-#else
+namespace WebKit {
 
-WTF_EXTERN_C_BEGIN
+void setNWParametersApplicationIdentifiers(nw_parameters_t, const char* sourceApplicationBundleIdentifier, std::optional<audit_token_t>, const String& attributedBundleIdentifier);
 
-void nw_parameters_set_account_id(nw_parameters_t, const char * account_id);
-void nw_parameters_set_source_application(nw_parameters_t, audit_token_t);
-void nw_parameters_set_source_application_by_bundle_id(nw_parameters_t, const char*);
-void nw_parameters_set_attributed_bundle_identifier(nw_parameters_t, const char*);
-nw_endpoint_t nw_endpoint_create_host_with_numeric_port(const char* hostname, uint16_t port_host_order);
+} // namespace WebKit
 
-#if HAVE(NWPARAMETERS_TRACKER_API)
-void nw_parameters_set_is_third_party_web_content(nw_parameters_t, bool is_third_party_web_content);
-void nw_parameters_set_is_known_tracker(nw_parameters_t, bool is_known_tracker);
-void nw_parameters_allow_sharing_port_with_listener(nw_parameters_t, nw_listener_t);
-#endif // HAVE(NWPARAMETERS_TRACKER_API)
-
-WTF_EXTERN_C_END
-
-#endif // USE(APPLE_INTERNAL_SDK)
+#endif // USE(LIBWEBRTC)

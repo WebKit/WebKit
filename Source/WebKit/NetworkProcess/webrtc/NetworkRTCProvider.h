@@ -108,6 +108,7 @@ public:
 
 #if PLATFORM(COCOA)
     const std::optional<audit_token_t>& sourceApplicationAuditToken() const { return m_sourceApplicationAuditToken; }
+    const char* applicationBundleIdentifier() const { return m_applicationBundleIdentifier.data(); }
 #endif
 
 private:
@@ -160,6 +161,7 @@ private:
 #if PLATFORM(COCOA)
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifiers;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
+    CString m_applicationBundleIdentifier;
 #endif
 
 };
