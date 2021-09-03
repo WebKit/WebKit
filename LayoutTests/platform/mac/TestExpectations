@@ -1221,9 +1221,6 @@ webkit.org/b/175102 workers/wasm-hashset-many-2.html [ Skip ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
-# This test is specific to Core Text.
-webkit.org/b/228177 [ Mojave Catalina BigSur Monterey ] fast/text/font-lookup-dot-prefix-case-sensitive.html [ ImageOnlyFailure ]
-
 webkit.org/b/173010 [ Debug ] js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
 
 webkit.org/b/173560 inspector/css/add-rule.html [ Pass Timeout ]

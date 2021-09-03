@@ -1,3 +1,14 @@
+2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening after r281293
+        https://bugs.webkit.org/show_bug.cgi?id=228177
+
+        Unreviewed.
+
+        The macOS port of WebKitTestRunner acts as if it was linked after every OS version.
+
+        * platform/mac/TestExpectations:
+
 2021-09-03  Devin Rousso  <drousso@apple.com>
 
         [Web App Manifest] Always fetch the first manifest if provided
