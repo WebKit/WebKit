@@ -53,12 +53,16 @@ public:
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using RegistrableDomain = WebCore::RegistrableDomain;
     using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
+
     explicit PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, const String& storageDirectory);
+    ~PrivateClickMeasurementManager();
 
     void storeUnattributed(PrivateClickMeasurement&&);
     void handleAttribution(AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
     void clear(CompletionHandler<void()>&&);
     void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&);
+    void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
+
     void toStringForTesting(CompletionHandler<void(String)>&&) const;
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
     void setTokenPublicKeyURLForTesting(URL&&);
@@ -68,14 +72,13 @@ public:
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void setEphemeralMeasurementForTesting(bool value) { m_isRunningEphemeralMeasurementTest = value; }
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
-    void startTimer(Seconds);
-
+    void startTimerImmediatelyForTesting();
     void destroyStoreForTesting(CompletionHandler<void()>&&);
 
+private:
     PCM::Store& store();
     const PCM::Store& store() const;
-
-private:
+    void startTimer(Seconds);
     void getTokenPublicKey(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
     void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);

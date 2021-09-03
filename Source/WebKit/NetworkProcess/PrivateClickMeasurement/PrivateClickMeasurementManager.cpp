@@ -64,6 +64,12 @@ PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Cl
     startTimer(5_s);
 }
 
+PrivateClickMeasurementManager::~PrivateClickMeasurementManager()
+{
+    if (m_store)
+        m_store->close([] { });
+}
+
 void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&& measurement)
 {
     if (!featureEnabled())
@@ -248,6 +254,11 @@ void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickM
     store().insertPrivateClickMeasurement(WTFMove(measurement), type);
 }
 
+void PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type)
+{
+    store().insertPrivateClickMeasurement(WTFMove(measurement), type);
+}
+
 void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
     if (!featureEnabled())
@@ -269,6 +280,11 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Triggering event accepted."_s);
 
     attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData));
+}
+
+void PrivateClickMeasurementManager::startTimerImmediatelyForTesting()
+{
+    startTimer(0_s);
 }
 
 void PrivateClickMeasurementManager::startTimer(Seconds seconds)

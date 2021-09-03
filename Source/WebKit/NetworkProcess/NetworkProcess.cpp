@@ -2572,18 +2572,13 @@ void NetworkProcess::setPrivateClickMeasurementOverrideTimerForTesting(PAL::Sess
     completionHandler();
 }
 
-void NetworkProcess::firePrivateClickMeasurementTimerImmediately(PAL::SessionID sessionID)
-{
-    if (auto* session = networkSession(sessionID))
-        session->firePrivateClickMeasurementTimerImmediately();
-}
-
 void NetworkProcess::simulateResourceLoadStatisticsSessionRestart(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     // FIXME: Rename this to simulatePrivateClickMeasurementSessionRestart.
     if (auto* session = networkSession(sessionID)) {
-        session->recreatePrivateClickMeasurementStore([this, sessionID, completionHandler = WTFMove(completionHandler)] () mutable {
-            firePrivateClickMeasurementTimerImmediately(sessionID);
+        session->recreatePrivateClickMeasurementStore([session = makeWeakPtr(*session), completionHandler = WTFMove(completionHandler)] () mutable {
+            if (session)
+                session->firePrivateClickMeasurementTimerImmediatelyForTesting();
             completionHandler();
         });
         return;

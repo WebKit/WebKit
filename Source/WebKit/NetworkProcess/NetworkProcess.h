@@ -501,8 +501,6 @@ private:
     void setIsHoldingLockedFiles(bool);
 #endif
 
-    void firePrivateClickMeasurementTimerImmediately(PAL::SessionID);
-
     class SessionStorageQuotaManager {
         WTF_MAKE_FAST_ALLOCATED;
     public:

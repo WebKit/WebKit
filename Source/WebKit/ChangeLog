@@ -1,3 +1,30 @@
+2021-09-03  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up PrivateClickMeasurementManager interface
+        https://bugs.webkit.org/show_bug.cgi?id=229840
+
+        Reviewed by Kate Cheney.
+
+        Notably, PrivateClickMeasurementManager::store is now private, which makes it possible to use
+        the interface and have the store in a different process.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::simulateResourceLoadStatisticsSessionRestart):
+        (WebKit::NetworkProcess::firePrivateClickMeasurementTimerImmediately): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting):
+        (WebKit::NetworkSession::firePrivateClickMeasurementTimerImmediately): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::~PrivateClickMeasurementManager):
+        (WebKit::PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacyStorage):
+        (WebKit::PrivateClickMeasurementManager::startTimerImmediatelyForTesting):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+
 2021-09-03  Jer Noble  <jer.noble@apple.com>
 
         Buffer large media XHRs in the NetworkProcess to reduce IPC overhead

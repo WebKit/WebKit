@@ -149,7 +149,6 @@ NetworkSession::~NetworkSession()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     destroyResourceLoadStatistics([] { });
 #endif
-    privateClickMeasurement().store().close([] { });
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
         loader->abort();
 }
@@ -376,9 +375,9 @@ void NetworkSession::setPCMFraudPreventionValuesForTesting(String&& unlinkableTo
     privateClickMeasurement().setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
 }
 
-void NetworkSession::firePrivateClickMeasurementTimerImmediately()
+void NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting()
 {
-    privateClickMeasurement().startTimer(0_s);
+    privateClickMeasurement().startTimerImmediatelyForTesting();
 }
 
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)
