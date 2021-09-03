@@ -86,6 +86,8 @@ def get_diff_converter(lines):
              converter from git to SVN.
     """
     for i, line in enumerate(lines[:-1]):
+        line = string_utils.decode(line)
+
         # Stop when we find the first patch
         if line[:3] == "+++" and lines[i + 1] == "---":
             break
