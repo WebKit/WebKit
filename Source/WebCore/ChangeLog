@@ -1,3 +1,19 @@
+2021-09-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GStreamer] Update mock display resolution after Mac mock was updated
+        https://bugs.webkit.org/show_bug.cgi?id=229868
+
+        Reviewed by Philippe Normand.
+
+        r281880 added this test and swapped the resolutions of Mac's mock
+        SCREEN-1 and SCREEN-2. As r281305 did, this commit matches the
+        GStreamer mock with the mac one.
+
+        Fixes fast/mediastream/get-display-media-capabilities.html
+
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockDisplayCaptureSourceGStreamer::capabilities):
+
 2021-09-03  Simon Fraser  <simon.fraser@apple.com>
 
         Scrollbars on pointer-events: none element still intercepts events

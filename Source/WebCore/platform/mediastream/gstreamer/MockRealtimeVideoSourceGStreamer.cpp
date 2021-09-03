@@ -99,8 +99,9 @@ const RealtimeMediaSourceCapabilities& MockDisplayCaptureSourceGStreamer::capabi
         RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
 
         // FIXME: what should these be?
-        capabilities.setWidth(CapabilityValueOrRange(1, 3840));
-        capabilities.setHeight(CapabilityValueOrRange(1, 2160));
+        // Currently mimicking the values for SCREEN-1 in MockRealtimeMediaSourceCenter.cpp::defaultDevices()
+        capabilities.setWidth(CapabilityValueOrRange(1, 1920));
+        capabilities.setHeight(CapabilityValueOrRange(1, 1080));
         capabilities.setFrameRate(CapabilityValueOrRange(.01, 30.0));
 
         m_capabilities = WTFMove(capabilities);
