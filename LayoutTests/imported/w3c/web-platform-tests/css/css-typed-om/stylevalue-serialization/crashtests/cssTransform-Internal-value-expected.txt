@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: TypeError: CSS.px is not a function. (In 'CSS.px(1)', 'CSS.px' is undefined)
+CONSOLE MESSAGE: TypeError: v98.div is not a function. (In 'v98.div(CSS.px(1))', 'v98.div' is undefined)
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x8

@@ -1,3 +1,40 @@
+2021-09-03  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Addition of CSSNumericFactory in CSS Typed OM
+        https://bugs.webkit.org/show_bug.cgi?id=229699
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/css/css-typed-om/factory-absolute-length-expected.txt:
+        * web-platform-tests/css/css-typed-om/factory-duration-expected.txt:
+        * web-platform-tests/css/css-typed-om/factory-frequency-expected.txt:
+        * web-platform-tests/css/css-typed-om/idlharness-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-numeric.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/positionvalue-normalization.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/crashtests/cssTransform-Internal-value-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssPositionValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssHSL-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPerspective.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPositionValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPositionValue-invalid-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRGB-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRotate.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssScale.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkew.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkewX.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkewY.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTranslate.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/equals.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/numeric-factory.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/to.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/toSum.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/append.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/set-shorthand-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/declared/set.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/append.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/set-shorthand-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/set.tentative-expected.txt:
+
 2021-09-03  Aditya Keerthi  <akeerthi@apple.com>
 
         iframes should get an opaque background when the embedding element and embedded root color-schemes do not match

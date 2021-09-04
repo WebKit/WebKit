@@ -691,6 +691,7 @@ $(PROJECT_DIR)/css/CSSSupportsRule.idl
 $(PROJECT_DIR)/css/CSSUnknownRule.idl
 $(PROJECT_DIR)/css/CSSValueKeywords.in
 $(PROJECT_DIR)/css/DOMCSSCustomPropertyDescriptor.idl
+$(PROJECT_DIR)/css/DOMCSSNamespace+CSSNumericFactory.idl
 $(PROJECT_DIR)/css/DOMCSSNamespace+CSSPainting.idl
 $(PROJECT_DIR)/css/DOMCSSNamespace+CSSPropertiesandValues.idl
 $(PROJECT_DIR)/css/DOMCSSNamespace.idl

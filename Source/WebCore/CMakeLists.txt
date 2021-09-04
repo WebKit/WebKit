@@ -701,6 +701,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSUnknownRule.idl
     css/DocumentOrShadowRoot+CSSOM.idl
     css/DOMCSSCustomPropertyDescriptor.idl
+    css/DOMCSSNamespace+CSSNumericFactory.idl
     css/DOMCSSNamespace+CSSPainting.idl
     css/DOMCSSNamespace+CSSPropertiesandValues.idl
     css/DOMCSSNamespace.idl

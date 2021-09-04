@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: TypeError: CSS.px is not a function. (In 'CSS.px(1)', 'CSS.px' is undefined)
+CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 
-Harness Error (FAIL), message = TypeError: CSS.px is not a function. (In 'CSS.px(1)', 'CSS.px' is undefined)
+Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
 
 

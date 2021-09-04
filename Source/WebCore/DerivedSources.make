@@ -583,6 +583,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/DocumentOrShadowRoot+CSSOM.idl \
     $(WebCore)/css/DOMCSSCustomPropertyDescriptor.idl \
     $(WebCore)/css/DOMCSSNamespace.idl \
+    $(WebCore)/css/DOMCSSNamespace+CSSNumericFactory.idl \
     $(WebCore)/css/DOMCSSNamespace+CSSPainting.idl \
     $(WebCore)/css/DOMCSSNamespace+CSSPropertiesandValues.idl \
     $(WebCore)/css/DOMMatrix.idl \

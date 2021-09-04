@@ -1,5 +1,31 @@
-CONSOLE MESSAGE: TypeError: CSS.deg is not a function. (In 'CSS.deg(180)', 'CSS.deg' is undefined)
 
-Harness Error (FAIL), message = TypeError: CSS.deg is not a function. (In 'CSS.deg(180)', 'CSS.deg' is undefined)
-
+FAIL Constructing a CSSHSL with degrees for the hue works as intended. Can't find variable: CSSHSL
+FAIL CSSHSL.h can be updated with a degrees. Can't find variable: CSSHSL
+FAIL Constructing a CSSHSL with radians for the hue works as intended. Can't find variable: CSSHSL
+FAIL CSSHSL.h can be updated with a radians. Can't find variable: CSSHSL
+FAIL Constructing a CSSHSL with gradians for the hue works as intended. Can't find variable: CSSHSL
+FAIL CSSHSL.h can be updated with a gradians. Can't find variable: CSSHSL
+FAIL Constructing a CSSHSL with a number for hue throws a type error. assert_throws_js: function "() => new CSSHSL(hue, 0, 0)" threw object "ReferenceError: Can't find variable: CSSHSL" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSHSL with css pixels for hue throws a type error. assert_throws_js: function "() => new CSSHSL(hue, 0, 0)" threw object "ReferenceError: Can't find variable: CSSHSL" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSHSL with undefined for hue throws a type error. assert_throws_js: function "() => new CSSHSL(hue, 0, 0)" threw object "ReferenceError: Can't find variable: CSSHSL" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL CSSHSL can be constructed from three numbers and will get an alpha of 100%. Can't find variable: CSSHSL
+FAIL CSSHSL can be constructed from four numbers. Can't find variable: CSSHSL
+FAIL Constructing a CSSHSL with CSS.number for s, l or alpha throws a TypeError assert_throws_js: function "() => new CSSHSL(CSS.deg(0), CSS.number(1), 0, 0)" threw object "ReferenceError: Can't find variable: CSSHSL" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Updating a CSSHSL with CSS.number for s throws a TypeError Can't find variable: CSSHSL
+FAIL CSSHSL.s can be updated to a number. Can't find variable: CSSHSL
+FAIL CSSHSL.s can be updated with a CSS percent. Can't find variable: CSSHSL
+FAIL Updating a CSSHSL with CSS.number for l throws a TypeError Can't find variable: CSSHSL
+FAIL CSSHSL.l can be updated to a number. Can't find variable: CSSHSL
+FAIL CSSHSL.l can be updated with a CSS percent. Can't find variable: CSSHSL
+FAIL Updating a CSSHSL with CSS.number for alpha throws a TypeError Can't find variable: CSSHSL
+FAIL CSSHSL.alpha can be updated to a number. Can't find variable: CSSHSL
+FAIL CSSHSL.alpha can be updated with a CSS percent. Can't find variable: CSSHSL
 

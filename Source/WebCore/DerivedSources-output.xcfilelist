@@ -314,6 +314,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMediaRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSMediaRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNamespaceRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNamespaceRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericFactory.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericValue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSNumericValue.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSOMVariableReferenceValue.cpp
@@ -503,6 +505,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMApplicationCache.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMBindingInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSCustomPropertyDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSCustomPropertyDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSNamespace+CSSNumericFactory.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSNamespace+CSSNumericFactory.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSNamespace+CSSPainting.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSNamespace+CSSPainting.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMCSSNamespace+CSSPropertiesandValues.cpp

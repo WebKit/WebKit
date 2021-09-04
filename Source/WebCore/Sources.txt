@@ -773,6 +773,7 @@ css/parser/SizesCalcParser.cpp
 css/typedom/StylePropertyMapReadOnly.cpp
 css/typedom/CSSKeywordValue.cpp
 css/typedom/CSSStyleImageValue.cpp
+css/typedom/CSSNumericFactory.cpp
 css/typedom/CSSNumericValue.cpp
 css/typedom/CSSStyleValue.cpp
 css/typedom/CSSUnitValue.cpp

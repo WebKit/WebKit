@@ -1,9 +1,9 @@
 
-FAIL CSS.cm() produces cm length CSS.cm is not a function. (In 'CSS.cm(10)', 'CSS.cm' is undefined)
-FAIL CSS.mm() produces mm length CSS.mm is not a function. (In 'CSS.mm(20)', 'CSS.mm' is undefined)
-FAIL CSS.Q() produces q length CSS.Q is not a function. (In 'CSS.Q(30)', 'CSS.Q' is undefined)
-FAIL CSS.in() produces in length CSS.in is not a function. (In 'CSS.in(40)', 'CSS.in' is undefined)
-FAIL CSS.pt() produces pt length CSS.pt is not a function. (In 'CSS.pt(50)', 'CSS.pt' is undefined)
-FAIL CSS.pc() produces pc length CSS.pc is not a function. (In 'CSS.pc(60)', 'CSS.pc' is undefined)
-FAIL CSS.px() produces px length CSS.px is not a function. (In 'CSS.px(70)', 'CSS.px' is undefined)
+PASS CSS.cm() produces cm length
+PASS CSS.mm() produces mm length
+PASS CSS.Q() produces q length
+PASS CSS.in() produces in length
+PASS CSS.pt() produces pt length
+PASS CSS.pc() produces pc length
+PASS CSS.px() produces px length
 

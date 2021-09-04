@@ -65,4 +65,8 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSUnitValue)
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSUnitValue; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

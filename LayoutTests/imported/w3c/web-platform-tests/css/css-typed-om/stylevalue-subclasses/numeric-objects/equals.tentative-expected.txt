@@ -1,7 +1,7 @@
 
-FAIL Two CSSUnitValues with same value and unit are equal CSS.px is not a function. (In 'CSS.px(1)', 'CSS.px' is undefined)
-FAIL Two CSSUnitValues with different values are not equal CSS.px is not a function. (In 'CSS.px(0)', 'CSS.px' is undefined)
-FAIL Two CSSUnitValues with different units are not equal CSS.px is not a function. (In 'CSS.px(1)', 'CSS.px' is undefined)
+FAIL Two CSSUnitValues with same value and unit are equal CSS.px(1).equals is not a function. (In 'CSS.px(1).equals(CSS.px(1))', 'CSS.px(1).equals' is undefined)
+FAIL Two CSSUnitValues with different values are not equal CSS.px(0).equals is not a function. (In 'CSS.px(0).equals(CSS.px(1))', 'CSS.px(0).equals' is undefined)
+FAIL Two CSSUnitValues with different units are not equal CSS.px(1).equals is not a function. (In 'CSS.px(1).equals(CSS.number(1))', 'CSS.px(1).equals' is undefined)
 FAIL Two CSSMathValues with different types are not equal Can't find variable: CSSMathSum
 FAIL Two CSSMathValues with different number of values are not equal Can't find variable: CSSMathSum
 FAIL Two CSSMathValues with different values are not equal Can't find variable: CSSMathSum

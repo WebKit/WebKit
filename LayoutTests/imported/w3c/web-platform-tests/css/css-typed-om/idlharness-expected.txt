@@ -469,40 +469,40 @@ FAIL CSSDeviceCMYK interface: attribute k assert_own_property: self does not hav
 FAIL CSSDeviceCMYK interface: attribute alpha assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
 FAIL CSSStyleRule interface: attribute styleMap assert_true: The prototype object must have a property "styleMap" expected true got false
 PASS CSS namespace: operation escape(CSSOMString)
-FAIL CSS namespace: operation number(double) assert_own_property: namespace object missing operation "number" expected property "number" missing
-FAIL CSS namespace: operation percent(double) assert_own_property: namespace object missing operation "percent" expected property "percent" missing
-FAIL CSS namespace: operation em(double) assert_own_property: namespace object missing operation "em" expected property "em" missing
-FAIL CSS namespace: operation ex(double) assert_own_property: namespace object missing operation "ex" expected property "ex" missing
-FAIL CSS namespace: operation ch(double) assert_own_property: namespace object missing operation "ch" expected property "ch" missing
-FAIL CSS namespace: operation ic(double) assert_own_property: namespace object missing operation "ic" expected property "ic" missing
-FAIL CSS namespace: operation rem(double) assert_own_property: namespace object missing operation "rem" expected property "rem" missing
-FAIL CSS namespace: operation lh(double) assert_own_property: namespace object missing operation "lh" expected property "lh" missing
-FAIL CSS namespace: operation rlh(double) assert_own_property: namespace object missing operation "rlh" expected property "rlh" missing
-FAIL CSS namespace: operation vw(double) assert_own_property: namespace object missing operation "vw" expected property "vw" missing
-FAIL CSS namespace: operation vh(double) assert_own_property: namespace object missing operation "vh" expected property "vh" missing
-FAIL CSS namespace: operation vi(double) assert_own_property: namespace object missing operation "vi" expected property "vi" missing
-FAIL CSS namespace: operation vb(double) assert_own_property: namespace object missing operation "vb" expected property "vb" missing
-FAIL CSS namespace: operation vmin(double) assert_own_property: namespace object missing operation "vmin" expected property "vmin" missing
-FAIL CSS namespace: operation vmax(double) assert_own_property: namespace object missing operation "vmax" expected property "vmax" missing
-FAIL CSS namespace: operation cm(double) assert_own_property: namespace object missing operation "cm" expected property "cm" missing
-FAIL CSS namespace: operation mm(double) assert_own_property: namespace object missing operation "mm" expected property "mm" missing
-FAIL CSS namespace: operation Q(double) assert_own_property: namespace object missing operation "Q" expected property "Q" missing
-FAIL CSS namespace: operation in(double) assert_own_property: namespace object missing operation "in" expected property "in" missing
-FAIL CSS namespace: operation pt(double) assert_own_property: namespace object missing operation "pt" expected property "pt" missing
-FAIL CSS namespace: operation pc(double) assert_own_property: namespace object missing operation "pc" expected property "pc" missing
-FAIL CSS namespace: operation px(double) assert_own_property: namespace object missing operation "px" expected property "px" missing
-FAIL CSS namespace: operation deg(double) assert_own_property: namespace object missing operation "deg" expected property "deg" missing
-FAIL CSS namespace: operation grad(double) assert_own_property: namespace object missing operation "grad" expected property "grad" missing
-FAIL CSS namespace: operation rad(double) assert_own_property: namespace object missing operation "rad" expected property "rad" missing
-FAIL CSS namespace: operation turn(double) assert_own_property: namespace object missing operation "turn" expected property "turn" missing
-FAIL CSS namespace: operation s(double) assert_own_property: namespace object missing operation "s" expected property "s" missing
-FAIL CSS namespace: operation ms(double) assert_own_property: namespace object missing operation "ms" expected property "ms" missing
-FAIL CSS namespace: operation Hz(double) assert_own_property: namespace object missing operation "Hz" expected property "Hz" missing
-FAIL CSS namespace: operation kHz(double) assert_own_property: namespace object missing operation "kHz" expected property "kHz" missing
-FAIL CSS namespace: operation dpi(double) assert_own_property: namespace object missing operation "dpi" expected property "dpi" missing
-FAIL CSS namespace: operation dpcm(double) assert_own_property: namespace object missing operation "dpcm" expected property "dpcm" missing
-FAIL CSS namespace: operation dppx(double) assert_own_property: namespace object missing operation "dppx" expected property "dppx" missing
-FAIL CSS namespace: operation fr(double) assert_own_property: namespace object missing operation "fr" expected property "fr" missing
+PASS CSS namespace: operation number(double)
+PASS CSS namespace: operation percent(double)
+PASS CSS namespace: operation em(double)
+PASS CSS namespace: operation ex(double)
+PASS CSS namespace: operation ch(double)
+PASS CSS namespace: operation ic(double)
+PASS CSS namespace: operation rem(double)
+PASS CSS namespace: operation lh(double)
+PASS CSS namespace: operation rlh(double)
+PASS CSS namespace: operation vw(double)
+PASS CSS namespace: operation vh(double)
+PASS CSS namespace: operation vi(double)
+PASS CSS namespace: operation vb(double)
+PASS CSS namespace: operation vmin(double)
+PASS CSS namespace: operation vmax(double)
+PASS CSS namespace: operation cm(double)
+PASS CSS namespace: operation mm(double)
+PASS CSS namespace: operation Q(double)
+PASS CSS namespace: operation in(double)
+PASS CSS namespace: operation pt(double)
+PASS CSS namespace: operation pc(double)
+PASS CSS namespace: operation px(double)
+PASS CSS namespace: operation deg(double)
+PASS CSS namespace: operation grad(double)
+PASS CSS namespace: operation rad(double)
+PASS CSS namespace: operation turn(double)
+PASS CSS namespace: operation s(double)
+PASS CSS namespace: operation ms(double)
+PASS CSS namespace: operation Hz(double)
+PASS CSS namespace: operation kHz(double)
+PASS CSS namespace: operation dpi(double)
+PASS CSS namespace: operation dpcm(double)
+PASS CSS namespace: operation dppx(double)
+PASS CSS namespace: operation fr(double)
 PASS SVGElement interface: attribute attributeStyleMap
 PASS HTMLElement interface: attribute attributeStyleMap
 FAIL Element interface: operation computedStyleMap() assert_own_property: interface prototype object missing non-static operation expected property "computedStyleMap" missing
