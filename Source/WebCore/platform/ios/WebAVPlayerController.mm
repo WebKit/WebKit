@@ -173,7 +173,9 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     if (defaultPlaybackRate == _defaultPlaybackRate)
         return;
 
+    [self willChangeValueForKey:@"defaultPlaybackRate"];
     _defaultPlaybackRate = defaultPlaybackRate;
+    [self didChangeValueForKey:@"defaultPlaybackRate"];
 
     if (!fromJavaScript && self.delegate && self.delegate->defaultPlaybackRate() != _defaultPlaybackRate)
         self.delegate->setDefaultPlaybackRate(_defaultPlaybackRate);
@@ -197,7 +199,9 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     if (rate == _rate)
         return;
 
+    [self willChangeValueForKey:@"rate"];
     _rate = rate;
+    [self didChangeValueForKey:@"rate"];
 
     // AVKit doesn't have a separate variable for "paused", instead representing it by a `rate` of
     // `0`. Unfortunately, `HTMLMediaElement::play` doesn't call `HTMLMediaElement::setPlaybackRate`
