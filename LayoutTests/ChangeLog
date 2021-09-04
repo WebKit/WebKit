@@ -1,3 +1,20 @@
+2021-09-03  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Regression(r282025) fast/forms/ios/remove-and-add-view-during-focus.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=229908
+
+        Reviewed by Wenson Hsieh.
+
+        The test is calling window.open() and it was causing a sync IPC to the UIProcess and a call
+        to uiController.willCreateNewPageCallback. However, because the test wasn't calling
+        `testRunner.setCanOpenWindows()`, it wasn't actually opening a popup.
+
+        Now that tests can open popups by default (since r282025), the popup actually opens and
+        its view becomes fist responder, which is confusing the test. To address the issue,
+        close the window as soon as it opens.
+
+        * fast/forms/ios/remove-and-add-view-during-focus.html:
+
 2021-09-03  Robert Jenner  <Jenner@apple.com>
 
         [Monterey Wk2 Debug] fast/history/visited-href-mutation.html is a flaky image failure
