@@ -33,7 +33,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/threads/Signals.h>
 
-#if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+#if USE(SYSTEM_MALLOC)
 namespace Gigacage {
 constexpr size_t reservedSlotsForGigacageConfig = 0;
 constexpr size_t reservedBytesForGigacageConfig = 0;

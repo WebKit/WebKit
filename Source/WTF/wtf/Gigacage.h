@@ -28,7 +28,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
-#if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+#if USE(SYSTEM_MALLOC)
 #define GIGACAGE_ENABLED 0
 
 namespace Gigacage {

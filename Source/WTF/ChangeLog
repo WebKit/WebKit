@@ -1,3 +1,23 @@
+2021-09-03  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Use USE(SYSTEM_MALLOC) macro in all cases
+        https://bugs.webkit.org/show_bug.cgi?id=229902
+
+        Reviewed by Yusuke Suzuki.
+
+        Convert old style macro check to USE() macro for USE_SYSTEM_MALLOC.
+
+        * wtf/FastMalloc.cpp:
+        * wtf/Gigacage.cpp:
+        * wtf/Gigacage.h:
+        * wtf/IsoMalloc.h:
+        * wtf/IsoMallocInlines.h:
+        * wtf/JSValueMalloc.cpp:
+        * wtf/PlatformUse.h:
+        * wtf/RAMSize.cpp:
+        * wtf/VMTags.h:
+        * wtf/WTFConfig.h:
+
 2021-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement Temporal.TimeZone

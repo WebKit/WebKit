@@ -27,7 +27,7 @@
 
 #include <wtf/ForbidHeapAllocation.h>
 
-#if (defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
+#if (USE(SYSTEM_MALLOC))
 
 #include <wtf/FastMalloc.h>
 

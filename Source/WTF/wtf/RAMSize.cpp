@@ -30,7 +30,7 @@
 
 #if OS(WINDOWS)
 #include <windows.h>
-#elif defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+#elif USE(SYSTEM_MALLOC)
 #if OS(LINUX)
 #include <sys/sysinfo.h>
 #elif OS(UNIX)

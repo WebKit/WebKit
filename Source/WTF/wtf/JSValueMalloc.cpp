@@ -29,13 +29,13 @@
 #include <wtf/DataLog.h>
 #include <wtf/RawPointer.h>
 
-#if !(defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
+#if !(USE(SYSTEM_MALLOC))
 #include <bmalloc/bmalloc.h>
 #endif
 
 namespace WTF {
 
-#if defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC
+#if USE(SYSTEM_MALLOC)
 void* tryJSValueMalloc(size_t size)
 {
     return FastMalloc::tryMalloc(size);
