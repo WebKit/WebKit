@@ -52,3 +52,6 @@
 
 - path: complex/temporal-now-timezone-with-broken-tz.js
   cmd: runComplexTest [], [], "TZ=UNDEFINED", "--useDollarVM=1", "--useTemporal=1"
+
+- path: complex/for-in-clobberize.js
+  cmd: runComplexTest [], [], "", "--destroy-vm"

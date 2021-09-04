@@ -1,3 +1,20 @@
+2021-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make EnumeratorNextUpdateIndexAndMode clobberizing rule precise
+        https://bugs.webkit.org/show_bug.cgi?id=229898
+        rdar://82714439
+
+        Reviewed by Saam Barati.
+
+        Clobberizing rule and AI does not match for EnumeratorNextUpdateIndexAndMode node.
+        We fix both cases: isSaneChain is not related to this node. So we should use isInBounds
+        as we are doing for HasIndexedProperty node.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2021-09-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed, non-unified JSC build fix following 241222@main.
