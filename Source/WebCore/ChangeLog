@@ -1,3 +1,24 @@
+2021-09-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r275515): pointer-events:none may get stuck in LFC runs
+        https://bugs.webkit.org/show_bug.cgi?id=229854
+        rdar://81165275
+
+        Reviewed by Alan Bujtas.
+
+        We only update run style with diff >= StyleDifference::Repaint but pointer-events changes don't require repaint.
+
+        Test: fast/events/pointer-events-mutation.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleDidChange):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+
+        Fix by pushing the new style to LFC unconditionally. This has no meaningful cost.
+
 2021-09-03  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Addition of CSSNumericFactory in CSS Typed OM

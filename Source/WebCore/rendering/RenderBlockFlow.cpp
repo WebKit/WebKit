@@ -2142,12 +2142,12 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
         };
         if (shouldInvalidateLineLayoutPath())
             invalidateLineLayoutPath();
+    }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (auto* lineLayout = modernLineLayout())
-            lineLayout->updateStyle(*this);
+    if (auto* lineLayout = modernLineLayout())
+        lineLayout->updateStyle(*this);
 #endif
-    }
 
     if (multiColumnFlow())
         updateStylesForColumnChildren();
