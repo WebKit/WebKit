@@ -55,7 +55,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    RunWebKitTestsWithoutPatch, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch, VerifyGitHubIntegrity)
+                   UploadTestResults, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, ValidatePatch, VerifyGitHubIntegrity)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -357,6 +357,43 @@ class TestApplyWatchList(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to apply watchlist')
         return self.runStep()
+
+
+class TestValidateChangeLogAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(ValidateChangeLogAndReviewer())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=180,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/webkit-patch', 'validate-changelog', '--check-oops', '--non-interactive'])
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Validated ChangeLog and Reviewer')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(ValidateChangeLogAndReviewer())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=180,
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/webkit-patch', 'validate-changelog', '--check-oops', '--non-interactive'])
+            + ExpectShell.log('stdio', stdout='ChangeLog entry in LayoutTests/ChangeLog contains OOPS!.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='ChangeLog validation failed')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'ChangeLog entry in LayoutTests/ChangeLog contains OOPS!.\n')
+        self.assertEqual(self.getProperty('build_finish_summary'), 'ChangeLog validation failed')
+        return rc
 
 
 class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):

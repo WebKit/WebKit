@@ -1009,7 +1009,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
 class ValidateChangeLogAndReviewer(shell.ShellCommand):
     name = 'validate-changelog-and-reviewer'
     descriptionDone = ['Validated ChangeLog and Reviewer']
-    command = ['python', 'Tools/Scripts/webkit-patch', 'validate-changelog', '--check-oops', '--non-interactive']
+    command = ['python3', 'Tools/Scripts/webkit-patch', 'validate-changelog', '--check-oops', '--non-interactive']
     haltOnFailure = False
     flunkOnFailure = True
 
