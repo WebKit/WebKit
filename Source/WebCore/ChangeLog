@@ -1,3 +1,36 @@
+2021-09-05  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Skip inline boxes in iterator
+        https://bugs.webkit.org/show_bug.cgi?id=229922
+
+        Reviewed by Alan Bujtas.
+
+        Start including root and non-root inline boxes to the run vector.
+        Change the iterator to skip over these boxes.
+
+        The new boxes are not used for anything yet.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::hasContent const):
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+        (WebCore::LayoutIntegration::LineIteratorModernPath::firstRun const):
+        (WebCore::LayoutIntegration::LineIteratorModernPath::lastRun const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::lineCount const):
+        (WebCore::LayoutIntegration::LineLayout::enclosingBorderBoxRectFor const):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traverseNextTextRun):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traverseNextOnLine):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traversePreviousOnLine):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traverseNextLeaf):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traversePreviousLeaf):
+
 2021-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove unnecessary uses of Ref protect = m_backing from FontFaceSet

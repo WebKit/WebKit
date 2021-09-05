@@ -141,10 +141,12 @@ public:
 
         auto& layoutBox = run().layoutBox();
 
-        ++m_runIndex;
+        traverseNextLeaf();
 
         if (!atEnd() && &layoutBox != &run().layoutBox())
             setAtEnd();
+
+        ASSERT(atEnd() || run().text());
     }
 
     void traverseNextTextRunInTextOrder()
@@ -159,7 +161,7 @@ public:
 
         auto oldLineIndex = run().lineIndex();
 
-        ++m_runIndex;
+        traverseNextLeaf();
 
         if (!atEnd() && oldLineIndex != run().lineIndex())
             setAtEnd();
@@ -169,16 +171,11 @@ public:
     {
         ASSERT(!atEnd());
 
-        if (!m_runIndex) {
-            setAtEnd();
-            return;
-        }
-
         auto oldLineIndex = run().lineIndex();
 
-        --m_runIndex;
+        traversePreviousLeaf();
 
-        if (oldLineIndex != run().lineIndex())
+        if (!atEnd() && oldLineIndex != run().lineIndex())
             setAtEnd();
     }
 
@@ -202,8 +199,25 @@ public:
     }
 
 private:
+    friend class LineIteratorModernPath;
     friend class PathRun;
     friend class RunIterator;
+
+    void traverseNextLeaf()
+    {
+        ASSERT(!atEnd());
+        do {
+            ++m_runIndex;
+        } while (!atEnd() && run().isInlineBox());
+    }
+
+    void traversePreviousLeaf()
+    {
+        ASSERT(!atEnd());
+        do {
+            m_runIndex = m_runIndex ? m_runIndex - 1 : runs().size();
+        } while (!atEnd() && run().isInlineBox());
+    }
 
     TextBoxSelectableRange selectableRange() const
     {

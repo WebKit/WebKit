@@ -41,6 +41,12 @@ InlineContent::InlineContent(const LineLayout& lineLayout)
 {
 }
 
+bool InlineContent::hasContent() const
+{
+    ASSERT(runs.isEmpty() || runs[0].isRootInlineBox());
+    return runs.size() > 1;
+};
+
 WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect&) const
 {
     // FIXME: Do something efficient e.g. using line boxes.

@@ -302,7 +302,7 @@ size_t LineLayout::lineCount() const
 {
     if (!m_inlineContent)
         return 0;
-    if (m_inlineContent->runs.isEmpty())
+    if (!m_inlineContent->hasContent())
         return 0;
 
     return m_inlineContent->lines.size();
@@ -416,7 +416,8 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (!m_inlineContent)
         return { };
 
-    if (m_inlineContent->runs.isEmpty())
+    // FIXME: This keeps the existing output.
+    if (!m_inlineContent->hasContent())
         return { };
 
     return Layout::BoxGeometry::borderBoxRect(m_inlineFormattingState.boxGeometry(m_boxTree.layoutBoxForRenderer(renderInline)));
@@ -455,6 +456,8 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintRect.moveBy(-paintOffset);
 
     for (auto& run : m_inlineContent->runsForRect(paintRect)) {
+        if (run.isInlineBox())
+            continue;
         if (run.text())
             paintTextRunUsingPhysicalCoordinates(paintInfo, paintOffset, m_inlineContent->lineForRun(run), run);
         else if (auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox()); is<RenderBox>(renderer) && renderer.isReplaced()) {
@@ -477,6 +480,10 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
     // FIXME: This should do something efficient to find the run range.
     for (auto& run : WTF::makeReversedRange(inlineContent.runs)) {
+        // FIXME: Use for hit testing instead of nonRootInlineBoxes.
+        if (run.isInlineBox())
+            continue;
+
         auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
 
         if (is<RenderText>(renderer)) {

@@ -99,7 +99,10 @@ public:
     {
         if (!line().runCount())
             return { *m_inlineContent };
-        return { *m_inlineContent, line().firstRunIndex() };
+        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstRunIndex() };
+        if (runIterator.run().isInlineBox())
+            runIterator.traverseNextLeaf();
+        return runIterator;
     }
 
     RunIteratorModernPath lastRun() const
@@ -107,7 +110,10 @@ public:
         auto runCount = line().runCount();
         if (!runCount)
             return { *m_inlineContent };
-        return { *m_inlineContent, line().firstRunIndex() + runCount - 1 };
+        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstRunIndex() + runCount - 1 };
+        if (runIterator.run().isInlineBox())
+            runIterator.traversePreviousLeaf();
+        return runIterator;
     }
 
     RunIteratorModernPath logicalStartRun() const
