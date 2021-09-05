@@ -522,6 +522,12 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
     // This function needs to be kept in sync with applyCSSVisibilityRules().
 
     switch (character) {
+    case newlineCharacter:
+    case carriageReturn:
+    case zeroWidthNoBreakSpace:
+    case zeroWidthNonJoiner:
+    case zeroWidthJoiner:
+        return true;
     case tabCharacter:
         if (!whitespaceIsCollapsed)
             return false;
@@ -536,13 +542,10 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
     case rightToLeftOverride:
     case leftToRightIsolate:
     case rightToLeftIsolate:
-    case zeroWidthNonJoiner:
-    case zeroWidthJoiner:
     case popDirectionalFormatting:
     case popDirectionalIsolate:
     case firstStrongIsolate:
     case objectReplacementCharacter:
-    case zeroWidthNoBreakSpace:
         return false;
         break;
     }

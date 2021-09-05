@@ -1,3 +1,16 @@
+2021-09-05  Alan Bujtas  <zalan@apple.com>
+
+        Let content with newlineCharacter be measured by FontCascade::widthForSimpleText
+        https://bugs.webkit.org/show_bug.cgi?id=229849
+        <rdar://problem/82708348>
+
+        Reviewed by Simon Fraser.
+
+        Apparently r281978 did not address it properly.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::characterCanUseSimplifiedTextMeasuring):
+
 2021-09-05  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Skip inline boxes in iterator
