@@ -129,7 +129,7 @@ void DownloadProxy::didStart(const ResourceRequest& request, const String& sugge
     m_client->legacyDidStart(*this);
 }
 
-void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID)
+void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& authenticationChallenge, AuthenticationChallengeIdentifier challengeID)
 {
     if (!m_dataStore)
         return;

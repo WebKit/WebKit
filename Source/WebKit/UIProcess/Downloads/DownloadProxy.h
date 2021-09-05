@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "DataReference.h"
 #include "DownloadID.h"
+#include "IdentifierTypes.h"
 #include "SandboxExtension.h"
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
@@ -113,7 +114,7 @@ public:
 
     // Message handlers.
     void didStart(const WebCore::ResourceRequest&, const String& suggestedFilename);
-    void didReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge&&, uint64_t challengeID);
+    void didReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge&&, AuthenticationChallengeIdentifier);
     void didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite);
     void shouldDecodeSourceDataOfMIMEType(const String& mimeType, bool& result);
     void didCreateDestination(const String& path);

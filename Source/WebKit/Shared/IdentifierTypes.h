@@ -30,6 +30,9 @@
 
 namespace WebKit {
 
+enum AuthenticationChallengeIdentifierType { };
+using AuthenticationChallengeIdentifier = ObjectIdentifier<AuthenticationChallengeIdentifierType>;
+
 enum FormSubmitListenerIdentifierType { };
 using FormSubmitListenerIdentifier = ObjectIdentifier<FormSubmitListenerIdentifierType>;
 

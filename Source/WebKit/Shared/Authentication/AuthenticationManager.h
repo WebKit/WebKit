@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DownloadID.h"
+#include "IdentifierTypes.h"
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
 #include "WebPageProxyIdentifier.h"
@@ -73,7 +74,7 @@ public:
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const WebCore::SecurityOriginData* , const WebCore::AuthenticationChallenge&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
 
-    void completeAuthenticationChallenge(uint64_t challengeID, AuthenticationChallengeDisposition, WebCore::Credential&&);
+    void completeAuthenticationChallenge(AuthenticationChallengeIdentifier, AuthenticationChallengeDisposition, WebCore::Credential&&);
 
     void negotiatedLegacyTLS(WebPageProxyIdentifier) const;
 
@@ -98,14 +99,14 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    uint64_t addChallengeToChallengeMap(UniqueRef<Challenge>&&);
-    bool shouldCoalesceChallenge(WebPageProxyIdentifier, uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
+    AuthenticationChallengeIdentifier addChallengeToChallengeMap(UniqueRef<Challenge>&&);
+    bool shouldCoalesceChallenge(WebPageProxyIdentifier, AuthenticationChallengeIdentifier, const WebCore::AuthenticationChallenge&) const;
 
-    Vector<uint64_t> coalesceChallengesMatching(uint64_t challengeID) const;
+    Vector<AuthenticationChallengeIdentifier> coalesceChallengesMatching(AuthenticationChallengeIdentifier) const;
 
     NetworkProcess& m_process;
 
-    HashMap<uint64_t, UniqueRef<Challenge>> m_challenges;
+    HashMap<AuthenticationChallengeIdentifier, UniqueRef<Challenge>> m_challenges;
 };
 
 } // namespace WebKit

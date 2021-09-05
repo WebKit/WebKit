@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "IdentifierTypes.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,7 +43,7 @@ class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
 public:
-    static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, uint64_t challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
+    static Ref<AuthenticationChallengeProxy> create(WebCore::AuthenticationChallenge&& authenticationChallenge, AuthenticationChallengeIdentifier challengeID, Ref<IPC::Connection>&& connection, WeakPtr<SecKeyProxyStore>&& secKeyProxyStore)
     {
         return adoptRef(*new AuthenticationChallengeProxy(WTFMove(authenticationChallenge), challengeID, WTFMove(connection), WTFMove(secKeyProxyStore)));
     }
@@ -54,10 +55,10 @@ public:
     const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
 private:
-    AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&&, uint64_t challengeID, Ref<IPC::Connection>&&, WeakPtr<SecKeyProxyStore>&&);
+    AuthenticationChallengeProxy(WebCore::AuthenticationChallenge&&, AuthenticationChallengeIdentifier, Ref<IPC::Connection>&&, WeakPtr<SecKeyProxyStore>&&);
 
 #if HAVE(SEC_KEY_PROXY)
-    static void sendClientCertificateCredentialOverXpc(IPC::Connection&, SecKeyProxyStore&, uint64_t challengeID, const WebCore::Credential&);
+    static void sendClientCertificateCredentialOverXpc(IPC::Connection&, SecKeyProxyStore&, AuthenticationChallengeIdentifier, const WebCore::Credential&);
 #endif
 
     WebCore::AuthenticationChallenge m_coreAuthenticationChallenge;
