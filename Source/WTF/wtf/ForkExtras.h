@@ -4,6 +4,11 @@
 
 #ifdef __cplusplus
 
+#include <stdint.h>
+
+
+
+
 extern "C" {
 #endif
 

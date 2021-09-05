@@ -106,6 +106,8 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
         linux/ProcessMemoryFootprint.h
         linux/CurrentProcessMemoryStatus.h
     )
+    # Necessary for Ubuntu
+    list(APPEND WTF_LIBRARIES stdc++fs)
 elseif (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
     list(APPEND WTF_SOURCES
         generic/MemoryFootprintGeneric.cpp

@@ -25,7 +25,9 @@
 
 #ifndef JSValueRef_h
 #define JSValueRef_h
-
+#ifndef __cplusplus
+#include <stddef.h>
+#endif
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/WebKitAvailability.h>
 #include <wtf/ForkExtras.h>
