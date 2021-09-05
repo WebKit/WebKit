@@ -112,9 +112,8 @@ bool FontFaceSet::has(FontFace& face) const
 
 size_t FontFaceSet::size()
 {
-    auto protect = m_backing;
-    protect->updateStyleIfNeeded();
-    return protect->faceCount();
+    m_backing->updateStyleIfNeeded();
+    return m_backing->faceCount();
 }
 
 ExceptionOr<FontFaceSet&> FontFaceSet::add(FontFace& face)
@@ -188,17 +187,15 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
 
 ExceptionOr<bool> FontFaceSet::check(const String& family, const String& text)
 {
-    Ref protect = m_backing;
-    protect->updateStyleIfNeeded();
-    return protect->check(family, text);
+    m_backing->updateStyleIfNeeded();
+    return m_backing->check(family, text);
 }
     
 auto FontFaceSet::status() const -> LoadStatus
 {
-    Ref protect = m_backing;
-    protect->updateStyleIfNeeded();
+    m_backing->updateStyleIfNeeded();
 
-    switch (protect->status()) {
+    switch (m_backing->status()) {
     case CSSFontFaceSet::Status::Loading:
         return LoadStatus::Loading;
     case CSSFontFaceSet::Status::Loaded:

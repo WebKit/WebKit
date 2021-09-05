@@ -1,3 +1,21 @@
+2021-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove unnecessary uses of Ref protect = m_backing from FontFaceSet
+        https://bugs.webkit.org/show_bug.cgi?id=229911
+
+        Reviewed by Anders Carlsson.
+
+        The only callers of these are from JS. So, JS will maintain a ref to
+        the FontFaceSet, and the FontFaceSet will maintain a ref to its
+        CSSFontFaceSet. So it doesn't need to be protected.
+
+        No new tests because there is no behavior change.
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::size):
+        (WebCore::FontFaceSet::check):
+        (WebCore::FontFaceSet::status const):
+
 2021-09-05  Alan Bujtas  <zalan@apple.com>
 
         Ensure fragmented flow state invalidation even when the cached fragmented flow is not present.
