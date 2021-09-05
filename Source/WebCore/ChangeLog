@@ -1,3 +1,20 @@
+2021-09-05  Alan Bujtas  <zalan@apple.com>
+
+        Ensure fragmented flow state invalidation even when the cached fragmented flow is not present.
+        https://bugs.webkit.org/show_bug.cgi?id=229914
+        <rdar://82025006>
+
+        Reviewed by Antti Koivisto.
+
+        The cached fragmented flow is the byproduct of querying the enclosing fragment during layout/repaint.
+        Sometimes when the layout process, between 2 subsequent style change does not generate such cached fragmented flows
+        the invalidation process stops early and leaves subtrees in an inconsistent state.
+
+        Let's use the passed in fragmented flow when the cached value is not present.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants):
+
 2021-09-04  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] Play/pause button's icon does not update when pausing in full screen

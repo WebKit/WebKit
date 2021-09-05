@@ -2683,15 +2683,13 @@ RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
     return rareData->m_enclosingFragmentedFlow.value().get();
 }
 
-void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow*)
+void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)
 {
     if (fragmentedFlowState() == NotInsideFragmentedFlow)
         return;
 
-    if (cachedEnclosingFragmentedFlowNeedsUpdate())
-        return;
-
-    auto* fragmentedFlow = cachedEnclosingFragmentedFlow();
+    if (auto* cachedFragmentedFlow = cachedEnclosingFragmentedFlow())
+        fragmentedFlow = cachedFragmentedFlow;
     setCachedEnclosingFragmentedFlowNeedsUpdate();
     RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(fragmentedFlow);
 }
