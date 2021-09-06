@@ -74,7 +74,7 @@ public:
 
         bool isNull() const;
 
-#if OS(DARWIN) || OS(WINDOWS)
+#if (OS(DARWIN) || OS(WINDOWS)) && !USE(UNIX_DOMAIN_SOCKETS)
         size_t size() const { return m_size; }
 #endif
 

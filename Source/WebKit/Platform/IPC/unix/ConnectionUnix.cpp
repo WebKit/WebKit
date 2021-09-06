@@ -44,6 +44,10 @@
 #include <gio/gio.h>
 #endif
 
+#if OS(DARWIN)
+#define MSG_NOSIGNAL 0
+#endif
+
 // Although it's available on Darwin, SOCK_SEQPACKET seems to work differently
 // than in traditional Unix so fallback to STREAM on that platform.
 #if defined(SOCK_SEQPACKET) && !OS(DARWIN)

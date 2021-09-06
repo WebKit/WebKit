@@ -53,6 +53,10 @@
 #endif
 
 #if PLATFORM(COCOA)
+#define HAVE_AUDIT_TOKEN 1
+#endif
+
+#if PLATFORM(COCOA)
 #define HAVE_OUT_OF_PROCESS_LAYER_HOSTING 1
 #endif
 
@@ -204,10 +208,6 @@
 
 #if OS(DARWIN)
 #define HAVE_SYS_TIMEB_H 1
-#endif
-
-#if OS(DARWIN)
-#define HAVE_AUDIT_TOKEN 1
 #endif
 
 #if OS(DARWIN) && __has_include(<mach/mach_exc.defs>) && !PLATFORM(GTK)

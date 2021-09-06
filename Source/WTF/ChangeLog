@@ -1,3 +1,14 @@
+2021-09-06  Dmitry Kalinkin  <dmitry.kalinkin+webkit@gmail.com>
+
+        Fix WebKitGTK build on MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=225850
+
+        Reviewed by Michael Catanzaro.
+
+        Define HAVE_AUDIT_TOKEN only for Cocoa backend.
+
+        * wtf/PlatformHave.h:
+
 2021-09-03  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Use USE(SYSTEM_MALLOC) macro in all cases

@@ -1,3 +1,21 @@
+2021-09-06  Dmitry Kalinkin  <dmitry.kalinkin+webkit@gmail.com>
+
+        Fix WebKitGTK build on MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=225850
+
+        Reviewed by Michael Catanzaro.
+
+        Define HAVE_AUDIT_TOKEN only for Cocoa backend.
+        Streamline other conditionals for consistency between headers and implementations.
+
+        * NetworkProcess/ServiceWorker/WebSWOriginStore.cpp:
+        (WebKit::WebSWOriginStore::sendStoreHandle):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        * Platform/IPC/IPCSemaphore.h:
+        * Platform/SharedMemory.h:
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::sendStoreHandleToProcess):
+
 2021-09-06  Youenn Fablet  <youenn@apple.com>
 
         Implement libwebrtc network manager GetMdnsResponder

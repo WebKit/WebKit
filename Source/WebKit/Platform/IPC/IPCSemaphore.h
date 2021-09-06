@@ -29,7 +29,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
 #include <mach/semaphore.h>
 #include <wtf/MachSendRight.h>
 #elif OS(WINDOWS)
@@ -57,7 +57,7 @@ public:
     bool wait();
     bool waitFor(Timeout);
 
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
     explicit Semaphore(MachSendRight&&);
 
     MachSendRight createSendRight() const;
@@ -70,7 +70,7 @@ public:
 
 private:
     void destroy();
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
     MachSendRight m_sendRight;
     semaphore_t m_semaphore { SEMAPHORE_NULL };
 #elif OS(WINDOWS)
