@@ -177,8 +177,10 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     find_package(Perl 5.10.0 REQUIRED)
     find_package(PerlModules COMPONENTS JSON::PP REQUIRED)
 
-    set(Python_ADDITIONAL_VERSIONS 3)
-    find_package(PythonInterp 2.7.0 REQUIRED)
+    # This module looks preferably for version 3 of Python. If not found, version 2 is searched.
+    find_package(Python COMPONENTS Interpreter REQUIRED)
+    # Set the variable with uppercase name to keep compatibility with code and users expecting it.
+    set(PYTHON_EXECUTABLE ${Python_EXECUTABLE} CACHE FILEPATH "Path to the Python interpreter")
 
     # We cannot check for RUBY_FOUND because it is set only when the full package is installed and
     # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
