@@ -1,3 +1,13 @@
+2021-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r280017): Calling getBoundingClientRect() on an empty element with "break-before: column" in columns returns a rect with all zeros
+        https://bugs.webkit.org/show_bug.cgi?id=229747
+
+        Reviewed by Alan Bujtas.
+
+        * fast/multicol/newmulticol/client-rects-column-breakers-expected.txt: Added.
+        * fast/multicol/newmulticol/client-rects-column-breakers.html: Added.
+
 2021-09-06  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Garden tests related to the experimetal <attachment> element
