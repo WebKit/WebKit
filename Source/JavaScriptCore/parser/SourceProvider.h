@@ -55,7 +55,7 @@ class UnlinkedFunctionCodeBlock;
         
         JS_EXPORT_PRIVATE SourceProvider(const SourceOrigin&, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType);
 
-        JS_EXPORT_PRIVATE virtual ~SourceProvider();
+        JS_EXPORT_PRIVATE virtual ~SourceProvider() {};
 
         JS_EXPORT_PRIVATE virtual unsigned hash() const = 0;
         JS_EXPORT_PRIVATE virtual StringView source() const = 0;
