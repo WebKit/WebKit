@@ -2,9 +2,9 @@
 PASS RTCRtpSender.transport is null when unconnected
 PASS RTCRtpSender/receiver.transport has a value when connected
 PASS RTCRtpSender/receiver.transport at the right time, with bundle policy balanced
-FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy balanced promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller.sctp.transport')"
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy balanced assert_equals: Callee SCTP transport does not match: expected object "[object RTCDtlsTransport]" but got object "[object RTCDtlsTransport]"
 PASS RTCRtpSender/receiver.transport at the right time, with bundle policy max-bundle
-FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-bundle promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller.sctp.transport')"
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-bundle assert_equals: Callee SCTP transport does not match: expected object "[object RTCDtlsTransport]" but got object "[object RTCDtlsTransport]"
 PASS RTCRtpSender/receiver.transport at the right time, with bundle policy max-compat
-FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-compat promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'caller.sctp.transport')"
+FAIL RTCRtpSender/receiver/SCTP transport at the right time, with bundle policy max-compat assert_equals: Callee SCTP transport does not match: expected object "[object RTCDtlsTransport]" but got object "[object RTCDtlsTransport]"
 

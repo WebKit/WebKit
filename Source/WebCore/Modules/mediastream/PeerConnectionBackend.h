@@ -57,6 +57,7 @@ class RTCPeerConnection;
 class RTCRtpReceiver;
 class RTCRtpSender;
 class RTCRtpTransceiver;
+class RTCSctpTransportBackend;
 class RTCSessionDescription;
 class RTCStatsReport;
 class ScriptExecutionContext;
@@ -198,10 +199,10 @@ protected:
     void createAnswerSucceeded(String&&);
     void createAnswerFailed(Exception&&);
 
-    void setLocalDescriptionSucceeded();
+    void setLocalDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&&);
     void setLocalDescriptionFailed(Exception&&);
 
-    void setRemoteDescriptionSucceeded();
+    void setRemoteDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&&);
     void setRemoteDescriptionFailed(Exception&&);
 
     void addIceCandidateSucceeded();

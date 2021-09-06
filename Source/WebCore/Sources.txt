@@ -179,6 +179,7 @@ Modules/mediastream/RTCRtpScriptTransformer.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/mediastream/RTCRtpTransform.cpp
 Modules/mediastream/RTCRtpTransceiver.cpp
+Modules/mediastream/RTCSctpTransport.cpp
 Modules/mediastream/RTCSessionDescription.cpp
 Modules/mediastream/RTCTrackEvent.cpp
 Modules/mediastream/RTCTransformEvent.cpp
@@ -193,6 +194,7 @@ Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformBackend.cpp
 Modules/mediastream/libwebrtc/LibWebRTCRtpTransformableFrame.cpp
+Modules/mediastream/libwebrtc/LibWebRTCSctpTransportBackend.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
@@ -3354,6 +3356,8 @@ JSRTCRtpSender.cpp
 JSRTCRtpSynchronizationSource.cpp
 JSRTCRtpTransceiver.cpp
 JSRTCRtpTransceiverDirection.cpp
+JSRTCSctpTransport.cpp
+JSRTCSctpTransportState.cpp
 JSRTCSdpType.cpp
 JSRTCSessionDescription.cpp
 JSRTCSessionDescriptionInit.cpp

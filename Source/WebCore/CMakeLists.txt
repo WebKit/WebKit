@@ -426,6 +426,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCRtpSynchronizationSource.idl
     Modules/mediastream/RTCRtpTransceiver.idl
     Modules/mediastream/RTCRtpTransceiverDirection.idl
+    Modules/mediastream/RTCSctpTransport.idl
+    Modules/mediastream/RTCSctpTransportState.idl
     Modules/mediastream/RTCSdpType.idl
     Modules/mediastream/RTCSessionDescription.idl
     Modules/mediastream/RTCSessionDescriptionInit.idl

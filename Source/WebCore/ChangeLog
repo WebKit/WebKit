@@ -1,3 +1,64 @@
+2021-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCSctpTransport
+        https://bugs.webkit.org/show_bug.cgi?id=229292
+        <rdar://problem/82394152>
+
+        Reviewed by Eric Carlson.
+
+        Expose RTSctpTransport API and getter from the peer connection.
+        Implement event mechanism and getters.
+        Additional work will be needed to make ice transport objects consistent between SCTP and senders/receivers.
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::updateSctpBackend):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCSctpTransport.cpp: Added.
+        (WebCore::RTCSctpTransport::RTCSctpTransport):
+        (WebCore::RTCSctpTransport::~RTCSctpTransport):
+        (WebCore::RTCSctpTransport::stop):
+        (WebCore::RTCSctpTransport::virtualHasPendingActivity const):
+        (WebCore::RTCSctpTransport::onStateChanged):
+        * Modules/mediastream/RTCSctpTransport.h: Added.
+        * Modules/mediastream/RTCSctpTransport.idl: Added.
+        * Modules/mediastream/RTCSctpTransportBackend.h: Added.
+        (WebCore::operator==):
+        * Modules/mediastream/RTCSctpTransportState.h: Added.
+        * Modules/mediastream/RTCSctpTransportState.idl: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::SctpTransportState::SctpTransportState):
+        (WebCore::SctpTransportState::createBackend):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded):
+        * Modules/mediastream/libwebrtc/LibWebRTCSctpTransportBackend.cpp: Added.
+        (WebCore::toRTCSctpTransportState):
+        (WebCore::LibWebRTCSctpTransportBackendObserver::LibWebRTCSctpTransportBackendObserver):
+        (WebCore::LibWebRTCSctpTransportBackendObserver::updateState):
+        (WebCore::LibWebRTCSctpTransportBackendObserver::start):
+        (WebCore::LibWebRTCSctpTransportBackendObserver::stop):
+        (WebCore::LibWebRTCSctpTransportBackendObserver::OnStateChange):
+        (WebCore::LibWebRTCSctpTransportBackend::LibWebRTCSctpTransportBackend):
+        (WebCore::LibWebRTCSctpTransportBackend::~LibWebRTCSctpTransportBackend):
+        (WebCore::LibWebRTCSctpTransportBackend::dtlsTransportBackend):
+        (WebCore::LibWebRTCSctpTransportBackend::registerClient):
+        (WebCore::LibWebRTCSctpTransportBackend::unregisterClient):
+        * Modules/mediastream/libwebrtc/LibWebRTCSctpTransportBackend.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventTargetFactory.in:
+
 2021-09-06  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] Check ContentType parameters when checking supported types

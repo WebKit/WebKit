@@ -292,6 +292,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCRtpSynchronizationSource.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiver.idl \
     $(WebCore)/Modules/mediastream/RTCRtpTransceiverDirection.idl \
+    $(WebCore)/Modules/mediastream/RTCSctpTransport.idl \
+    $(WebCore)/Modules/mediastream/RTCSctpTransportState.idl \
     $(WebCore)/Modules/mediastream/RTCSdpType.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
     $(WebCore)/Modules/mediastream/RTCSessionDescriptionInit.idl \

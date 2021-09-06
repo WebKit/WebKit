@@ -36,6 +36,8 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WebCore {
 
 static inline RTCIceTransportState toRTCIceTransportState(webrtc::IceTransportState state)

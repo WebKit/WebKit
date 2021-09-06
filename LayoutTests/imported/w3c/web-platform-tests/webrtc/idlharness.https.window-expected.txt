@@ -2,7 +2,7 @@
 PASS idl_test setup
 PASS idl_test validation
 PASS Test driver for asyncInitCertificate
-FAIL Test driver for asyncInitTransports assert_unreached: Failed to run asyncInitTransports: ReferenceError: Can't find variable: RTCSctpTransport Reached unreachable code
+PASS Test driver for asyncInitTransports
 PASS Test driver for asyncInitMediaStreamTrack
 PASS Partial dictionary RTCOfferOptions: original dictionary defined
 PASS Partial dictionary RTCOfferOptions: member names are unique
@@ -62,7 +62,7 @@ PASS RTCPeerConnection interface: operation addTrack(MediaStreamTrack, MediaStre
 PASS RTCPeerConnection interface: operation removeTrack(RTCRtpSender)
 PASS RTCPeerConnection interface: operation addTransceiver((MediaStreamTrack or DOMString), optional RTCRtpTransceiverInit)
 PASS RTCPeerConnection interface: attribute ontrack
-FAIL RTCPeerConnection interface: attribute sctp assert_true: The prototype object must have a property "sctp" expected true got false
+PASS RTCPeerConnection interface: attribute sctp
 PASS RTCPeerConnection interface: operation createDataChannel(USVString, optional RTCDataChannelInit)
 PASS RTCPeerConnection interface: attribute ondatachannel
 PASS RTCPeerConnection interface: operation getStats(optional MediaStreamTrack?)
@@ -123,7 +123,7 @@ PASS RTCPeerConnection interface: calling removeTrack(RTCRtpSender) on new RTCPe
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "addTransceiver((MediaStreamTrack or DOMString), optional RTCRtpTransceiverInit)" with the proper type
 PASS RTCPeerConnection interface: calling addTransceiver((MediaStreamTrack or DOMString), optional RTCRtpTransceiverInit) on new RTCPeerConnection() with too few arguments must throw TypeError
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "ontrack" with the proper type
-FAIL RTCPeerConnection interface: new RTCPeerConnection() must inherit property "sctp" with the proper type assert_inherits: property "sctp" not found in prototype chain
+PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "sctp" with the proper type
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "createDataChannel(USVString, optional RTCDataChannelInit)" with the proper type
 PASS RTCPeerConnection interface: calling createDataChannel(USVString, optional RTCDataChannelInit) on new RTCPeerConnection() with too few arguments must throw TypeError
 PASS RTCPeerConnection interface: new RTCPeerConnection() must inherit property "ondatachannel" with the proper type
@@ -312,13 +312,13 @@ PASS RTCDtlsTransport interface: attribute state
 PASS RTCDtlsTransport interface: operation getRemoteCertificates()
 PASS RTCDtlsTransport interface: attribute onstatechange
 PASS RTCDtlsTransport interface: attribute onerror
-FAIL RTCDtlsTransport must be primary interface of idlTestObjects.dtlsTransport assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of idlTestObjects.dtlsTransport assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "iceTransport" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "state" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "getRemoteCertificates()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "onstatechange" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "onerror" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS RTCDtlsTransport must be primary interface of idlTestObjects.dtlsTransport
+PASS Stringification of idlTestObjects.dtlsTransport
+PASS RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "iceTransport" with the proper type
+PASS RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "state" with the proper type
+PASS RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "getRemoteCertificates()" with the proper type
+PASS RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "onstatechange" with the proper type
+PASS RTCDtlsTransport interface: idlTestObjects.dtlsTransport must inherit property "onerror" with the proper type
 PASS RTCIceTransport interface: existence and properties of interface object
 PASS RTCIceTransport interface object length
 PASS RTCIceTransport interface object name
@@ -337,20 +337,20 @@ FAIL RTCIceTransport interface: operation getRemoteParameters() assert_own_prope
 PASS RTCIceTransport interface: attribute onstatechange
 PASS RTCIceTransport interface: attribute ongatheringstatechange
 FAIL RTCIceTransport interface: attribute onselectedcandidatepairchange assert_true: The prototype object must have a property "onselectedcandidatepairchange" expected true got false
-FAIL RTCIceTransport must be primary interface of idlTestObjects.iceTransport assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of idlTestObjects.iceTransport assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "role" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "component" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "state" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "gatheringState" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getLocalCandidates()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getRemoteCandidates()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getSelectedCandidatePair()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getLocalParameters()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getRemoteParameters()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "onstatechange" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "ongatheringstatechange" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "onselectedcandidatepairchange" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS RTCIceTransport must be primary interface of idlTestObjects.iceTransport
+PASS Stringification of idlTestObjects.iceTransport
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "role" with the proper type assert_inherits: property "role" not found in prototype chain
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "component" with the proper type assert_inherits: property "component" not found in prototype chain
+PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "state" with the proper type
+PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "gatheringState" with the proper type
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getLocalCandidates()" with the proper type assert_inherits: property "getLocalCandidates" not found in prototype chain
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getRemoteCandidates()" with the proper type assert_inherits: property "getRemoteCandidates" not found in prototype chain
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getSelectedCandidatePair()" with the proper type assert_inherits: property "getSelectedCandidatePair" not found in prototype chain
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getLocalParameters()" with the proper type assert_inherits: property "getLocalParameters" not found in prototype chain
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "getRemoteParameters()" with the proper type assert_inherits: property "getRemoteParameters" not found in prototype chain
+PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "onstatechange" with the proper type
+PASS RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "ongatheringstatechange" with the proper type
+FAIL RTCIceTransport interface: idlTestObjects.iceTransport must inherit property "onselectedcandidatepairchange" with the proper type assert_inherits: property "onselectedcandidatepairchange" not found in prototype chain
 PASS RTCTrackEvent interface: existence and properties of interface object
 PASS RTCTrackEvent interface object length
 PASS RTCTrackEvent interface object name
@@ -367,24 +367,24 @@ PASS RTCTrackEvent interface: initTrackEvent() must inherit property "receiver" 
 PASS RTCTrackEvent interface: initTrackEvent() must inherit property "track" with the proper type
 PASS RTCTrackEvent interface: initTrackEvent() must inherit property "streams" with the proper type
 PASS RTCTrackEvent interface: initTrackEvent() must inherit property "transceiver" with the proper type
-FAIL RTCSctpTransport interface: existence and properties of interface object assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface object length assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface object name assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: attribute transport assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: attribute state assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: attribute maxMessageSize assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: attribute maxChannels assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport interface: attribute onstatechange assert_own_property: self does not have own property "RTCSctpTransport" expected property "RTCSctpTransport" missing
-FAIL RTCSctpTransport must be primary interface of idlTestObjects.sctpTransport assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of idlTestObjects.sctpTransport assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "transport" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "state" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "maxMessageSize" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "maxChannels" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "onstatechange" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS RTCSctpTransport interface: existence and properties of interface object
+PASS RTCSctpTransport interface object length
+PASS RTCSctpTransport interface object name
+PASS RTCSctpTransport interface: existence and properties of interface prototype object
+PASS RTCSctpTransport interface: existence and properties of interface prototype object's "constructor" property
+PASS RTCSctpTransport interface: existence and properties of interface prototype object's @@unscopables property
+PASS RTCSctpTransport interface: attribute transport
+PASS RTCSctpTransport interface: attribute state
+PASS RTCSctpTransport interface: attribute maxMessageSize
+PASS RTCSctpTransport interface: attribute maxChannels
+PASS RTCSctpTransport interface: attribute onstatechange
+PASS RTCSctpTransport must be primary interface of idlTestObjects.sctpTransport
+PASS Stringification of idlTestObjects.sctpTransport
+PASS RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "transport" with the proper type
+PASS RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "state" with the proper type
+PASS RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "maxMessageSize" with the proper type
+PASS RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "maxChannels" with the proper type
+PASS RTCSctpTransport interface: idlTestObjects.sctpTransport must inherit property "onstatechange" with the proper type
 PASS RTCDataChannel interface: existence and properties of interface object
 PASS RTCDataChannel interface object length
 PASS RTCDataChannel interface object name
