@@ -1,5 +1,23 @@
 2021-09-05  Alan Bujtas  <zalan@apple.com>
 
+        In-page search results overlay broken if the result spans more than two elements
+        https://bugs.webkit.org/show_bug.cgi?id=229926
+        <rdar://82741616>
+
+        Reviewed by Tim Horton.
+
+        pathsWithShrinkWrappedRects fails to form a closed path for adjoining rects when they are horizontally out-of-order.
+        e.g.
+        1: (60,0) (30x20)
+        2:  (0,0) (30x20)
+        3: (30,0) (30x20)
+        Let's sort the rects horizontally too (as we already do y ordering in polygonsForRect).
+
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::polygonsForRect):
+
+2021-09-05  Alan Bujtas  <zalan@apple.com>
+
         Let content with newlineCharacter be measured by FontCascade::widthForSimpleText
         https://bugs.webkit.org/show_bug.cgi?id=229849
         <rdar://problem/82708348>

@@ -260,7 +260,13 @@ static FloatPointGraph::Polygon edgesForRect(FloatRect rect, FloatPointGraph& gr
 static Vector<FloatPointGraph::Polygon> polygonsForRect(const Vector<FloatRect>& rects, FloatPointGraph& graph)
 {
     Vector<FloatRect> sortedRects = rects;
-    std::sort(sortedRects.begin(), sortedRects.end(), [](FloatRect a, FloatRect b) { return b.y() > a.y(); });
+    // FIXME: Replace it with 2 dimensional sort.
+    std::sort(sortedRects.begin(), sortedRects.end(), [](FloatRect a, FloatRect b) {
+        return a.x() < b.x();
+    });
+    std::sort(sortedRects.begin(), sortedRects.end(), [](FloatRect a, FloatRect b) {
+        return a.y() < b.y();
+    });
 
     Vector<FloatPointGraph::Polygon> rectPolygons;
     rectPolygons.reserveInitialCapacity(sortedRects.size());

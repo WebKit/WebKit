@@ -1,3 +1,14 @@
+2021-09-05  Alan Bujtas  <zalan@apple.com>
+
+        In-page search results overlay broken if the result spans more than two elements
+        https://bugs.webkit.org/show_bug.cgi?id=229926
+        <rdar://82741616>
+
+        Reviewed by Tim Horton.
+
+        * fast/shrink-wrap/rect-shrink-wrap-expected.html:
+        * fast/shrink-wrap/rect-shrink-wrap.html: Add the out-of-order rect case.
+
 2021-09-05  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Skip inline boxes in iterator
