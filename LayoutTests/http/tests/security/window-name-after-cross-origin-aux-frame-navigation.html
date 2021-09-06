@@ -4,6 +4,7 @@
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows(true);
         }
 
         console.log("window.name should equal \"test\" after a cross-origin auxiliary frame navigation.");

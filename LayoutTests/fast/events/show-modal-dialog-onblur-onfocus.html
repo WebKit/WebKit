@@ -7,6 +7,7 @@
         window.onblur = onBlurFunc;
         if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
             testRunner.waitUntilDone();
 
             // DumpRenderTreeWindow does not respond to focus events.  Forcing onblur event so

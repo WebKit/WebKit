@@ -14,6 +14,7 @@
 if (self.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
     testRunner.grantWebNotificationPermission("http://localhost:8800");
     // Let's restrict calling testharness timeout() to wptserve tests for the moment.
     // That will limit the impact to a small number of tests.

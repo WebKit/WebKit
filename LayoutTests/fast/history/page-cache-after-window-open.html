@@ -7,6 +7,9 @@
 description("Tests that a page that has called window.open() goes into the page cache.");
 window.jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 window.addEventListener("pageshow", function(event) {
     if (!window.sessionStorage.didStartPageCacheAfterWindowOpenTest) {
         if (event.persisted)

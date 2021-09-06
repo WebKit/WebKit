@@ -1,3 +1,16 @@
+2021-09-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r282025.
+        https://bugs.webkit.org/show_bug.cgi?id=229970
+
+        broken layout test on mac-debug-wk1
+
+        Reverted changeset:
+
+        "Allow layout tests to open popups by default"
+        https://bugs.webkit.org/show_bug.cgi?id=229881
+        https://commits.webkit.org/r282025
+
 2021-09-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] The Xvfb display server may fail to start sometimes causing tests to randomly crash

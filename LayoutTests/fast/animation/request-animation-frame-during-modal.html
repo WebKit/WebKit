@@ -4,6 +4,9 @@
 <body>
 
 <script type="text/javascript">
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 description('Tests that requestAnimationFrame callbacks are not invoked while modal dialogs are displayed.');
 
 onload = function()

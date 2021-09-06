@@ -226,6 +226,9 @@ public:
     
     bool callCloseOnWebViews() const { return m_callCloseOnWebViews; }
     void setCallCloseOnWebViews(bool callCloseOnWebViews) { m_callCloseOnWebViews = callCloseOnWebViews; }
+
+    bool canOpenWindows() const { return m_canOpenWindows; }
+    void setCanOpenWindows(bool canOpenWindows) { m_canOpenWindows = canOpenWindows; }
     
     bool newWindowsCopyBackForwardList() const { return m_newWindowsCopyBackForwardList; }
     void setNewWindowsCopyBackForwardList(bool newWindowsCopyBackForwardList) { m_newWindowsCopyBackForwardList = newWindowsCopyBackForwardList; }
@@ -422,6 +425,7 @@ private:
     bool m_dumpWillCacheResponse { false };
     bool m_generatePixelResults { true };
     bool m_callCloseOnWebViews { true };
+    bool m_canOpenWindows { false };
     bool m_newWindowsCopyBackForwardList { false };
     bool m_stopProvisionalFrameLoads { false };
     bool m_testOnscreen { false };

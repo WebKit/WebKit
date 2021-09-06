@@ -5,6 +5,8 @@
 <script>
 description("Tests navigating a window whose opener is itself");
 jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
 
 onload = function() {
     w = window.open("resources/window-opens-self.html", "foo");

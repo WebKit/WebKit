@@ -5,6 +5,8 @@
 <script>
 description("Tests navigating a window which has an opener cycle.");
 jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
 
 function tryNavigateFoo()
 {

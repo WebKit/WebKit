@@ -6,6 +6,9 @@
 <p>If the page does not trigger a crash the test passed.</p>
 <div id=console></div>
 <script>
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 jsTestIsAsync = true;
 
 function test()

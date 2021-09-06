@@ -1,4 +1,5 @@
 if (window.testRunner) {
+    testRunner.setCanOpenWindows(true);
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }

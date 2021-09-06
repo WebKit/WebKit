@@ -5,6 +5,7 @@ We pass if we don't crash when setting the location of the already closed window
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
     testRunner.waitUntilDone();
 }
 

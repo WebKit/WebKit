@@ -7,6 +7,9 @@
 description("Tests that a page that has a window opener goes into the page cache.");
 window.jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 window.addEventListener("load", function() {
     newWindow = open("resources/page-cache-window-with-opener.html", "one");
     otherWindowDocument = newWindow.document;

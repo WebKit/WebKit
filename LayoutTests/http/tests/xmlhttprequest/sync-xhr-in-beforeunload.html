@@ -8,6 +8,9 @@
 description("Checks that trying to do a synchronous XHR in a beforeunload event handler is not allowed.");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 onload = () => {
     w = open("resources/sync-xhr-in-beforeunload-window.html");
     w.onload = () => {

@@ -7,6 +7,9 @@
 description("Tests that window.open() is working in ephemeral sessions");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows(true);
+
 onload = () => {
     w = open("about:blank");
     shouldBeTrue("!!w");

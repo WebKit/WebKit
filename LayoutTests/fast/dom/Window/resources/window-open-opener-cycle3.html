@@ -3,6 +3,9 @@
 <body>
 <script>
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 onload = function() {
     root = opener.opener;
     open("", "foo");

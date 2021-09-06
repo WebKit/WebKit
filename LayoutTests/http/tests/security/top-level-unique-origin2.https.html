@@ -4,6 +4,7 @@
     if (window.testRunner) {
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
     }
     onmessage = (event) => {
         document.body.innerHTML = !event.data ? "PASS": "FAIL";

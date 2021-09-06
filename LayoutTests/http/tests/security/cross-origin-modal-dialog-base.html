@@ -3,6 +3,9 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <body>
 <script>
+    if (window.testRunner)
+        testRunner.setCanOpenWindows();
+
     description("Tests that a modal dialog doesn't fall back to its openers origin when document.location is set to a relative path.");
 
     var triggeredCaptureListener = false;

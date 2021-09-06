@@ -12,6 +12,7 @@ sys.stdout.write(
     '<script>\n'
     'if (window.testRunner) {\n'
     '    testRunner.dumpAsText();\n'
+    '    testRunner.setCanOpenWindows();\n'
     '    testRunner.waitUntilDone();\n'
     '}\n'
     '</script>\n'

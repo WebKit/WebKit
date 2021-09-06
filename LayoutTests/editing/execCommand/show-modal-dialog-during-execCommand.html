@@ -8,8 +8,10 @@ function sleep(ms) {
 }
 
 (() => {
-    if (window.testRunner)
+    if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+    }
 })();
 
 window.onclick = () => {

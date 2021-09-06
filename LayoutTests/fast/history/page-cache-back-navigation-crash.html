@@ -7,6 +7,9 @@
 description('Tests that removing a frame in a detached document after navigation does not cause a crash on navigating back');
 window.jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 function removeFrameInChild()
 {
     setTimeout(function() {

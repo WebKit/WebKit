@@ -5,6 +5,9 @@
 description("Tests that calling an instance property getter on another instance works as expected");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 function runTest()
 {
     otherWindow = window.open("about:blank");

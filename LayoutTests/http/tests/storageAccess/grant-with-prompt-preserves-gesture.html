@@ -46,6 +46,7 @@
 
         function runTest() {
             setEnableFeature(true, function() {
+                testRunner.setCanOpenWindows(false);
                 testRunner.setStatisticsPrevalentResource(statisticsUrl, true, function() {
                     if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
                         testFailed("Host did not get set as prevalent resource.");

@@ -1,8 +1,10 @@
 <html> <!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
 <body>
 <script> 
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+}
 
 win = window.open("about:blank");
 alert(win ? "FAIL" : "PASS");

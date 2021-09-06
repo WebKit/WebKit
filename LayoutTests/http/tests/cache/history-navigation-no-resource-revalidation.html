@@ -6,6 +6,9 @@
     description("Test that we don't attempt to revalidate the cached main resource on history navigation");
     jsTestIsAsync = true;
 
+    if (window.testRunner)
+        testRunner.setCanOpenWindows();
+
     // Values to check.
     var originalRandomNumber = 0;
     var backLoadRandomNumber = 0;

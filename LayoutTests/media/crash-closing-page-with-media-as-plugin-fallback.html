@@ -14,6 +14,7 @@ if (window.testRunner && window.internals) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     internals.settings.setBackForwardCacheSupportsPlugins(true);
+    testRunner.setCanOpenWindows(true);
     var button = document.getElementById("button");
     eventSender.mouseMoveTo(button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2, button.offsetParent.offsetTop +  button.offsetTop + button.offsetHeight / 2);
     eventSender.mouseDown();

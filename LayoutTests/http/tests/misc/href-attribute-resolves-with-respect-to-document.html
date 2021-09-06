@@ -7,6 +7,9 @@
 description("Test for HTMLBaseElement's href attribute.");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 function endsWith(string, substring)
 {
     var length = string.length - substring.length;

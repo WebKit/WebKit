@@ -16,6 +16,7 @@ function startTest() {
     if (!window.testRunner)
         return;
     testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
 
     debug("Window 1 is loaded");
 

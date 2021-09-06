@@ -41,6 +41,7 @@ function endTest() {
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows()
     startTest();
     document.querySelector('button').remove();
 }

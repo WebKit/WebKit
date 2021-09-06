@@ -7,8 +7,10 @@
     <script>
         var newWindow;
 
-        if (window.testRunner)
+        if (window.testRunner) {
+            testRunner.setCanOpenWindows();
             testRunner.waitUntilDone();
+        }
 
         function checkNewWindowDocumentIsDefined () {
             shouldBeDefined("newWindow.document");

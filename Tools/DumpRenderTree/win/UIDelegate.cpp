@@ -591,6 +591,9 @@ HRESULT UIDelegate::createWebViewWithRequest(_In_opt_ IWebView* /*sender*/, _In_
         return E_POINTER;
     *newWebView = nullptr;
 
+    if (!::gTestRunner->canOpenWindows())
+        return E_FAIL;
+
     *newWebView = createWebViewAndOffscreenWindow();
     return S_OK;
 }

@@ -5,6 +5,7 @@ var theWinref;
 function test()
 {
     if (window.testRunner) {
+        testRunner.setCanOpenWindows();
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
     }

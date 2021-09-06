@@ -46,6 +46,8 @@
         setEnableFeature(true, function() {
             window.addEventListener("message", receiveMessage, false);
 
+            testRunner.setCanOpenWindows();
+
             testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, function() {
                 if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
                     testFailed("Host did not get set as prevalent resource.");

@@ -4,6 +4,9 @@
     <script src="/js-test-resources/testharness.js"></script>
     <script src="/js-test-resources/testharnessreport.js"></script>
     <script>
+    if (window.testRunner)
+      testRunner.setCanOpenWindows();
+
     var t = async_test("Verify that subresources do not receive an 'Upgrade-Insecure-Requests' header.");
     fetch("resources/echo-https-header.pl").then(t.step_func(function(res) {
         return res.json();

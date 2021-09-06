@@ -3,6 +3,9 @@
 <body style="min-height: 2000px"> 
 
 <script type="text/javascript">
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 description('Tests that scroll events are not fired while modal dialogs are displayed.');
 
 var triggeredCaptureListener = false;

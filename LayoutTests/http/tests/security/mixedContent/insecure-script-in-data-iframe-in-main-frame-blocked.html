@@ -4,6 +4,7 @@
 if (window.testRunner && window.internals) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
     internals.settings.setAllowRunningOfInsecureContent(false);
 }
 window.addEventListener("message", function (e) {

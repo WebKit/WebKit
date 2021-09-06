@@ -6,6 +6,9 @@
 description("Makes sure that BroadcastChannel cannot be used to communicate between different sessions.");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 onload = () => {
     channel = new BroadcastChannel('broadcast-channel-between-different-sessions');
     channel.onmessage = (event) => {

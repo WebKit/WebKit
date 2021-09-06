@@ -10,6 +10,7 @@ function runTest()
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows();
 
         document.getElementById('result').innerHTML = 'FAILURE: image1.html not loaded';
         window.open("resources/image1.html", "_blank");

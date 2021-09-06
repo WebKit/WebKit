@@ -14,6 +14,9 @@ window.targetWindow = frames[0];
 
 window.onload = function()
 {
+    if (window.testRunner)
+        testRunner.setCanOpenWindows(true);
+
     // Allowed
     // void focus();
     // void blur();

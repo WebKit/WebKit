@@ -6,6 +6,9 @@
 description("Basic testing for the window returning window.open() becoming remote when navigating cross-origin.");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows(true);
+
 function wasWindowNavigatedCrossOrigin()
 {
     try {

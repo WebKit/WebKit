@@ -1,6 +1,9 @@
 // This test makes sure that two different windows from two different domains who spam SW registrations get responses intertwined with each other
 // as each registration should operate on its own task queue.
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 if (location.hostname != "127.0.0.1")
     alert("This test must be initiated from the hostname 127.0.0.1");
 

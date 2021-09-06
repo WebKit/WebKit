@@ -8,6 +8,9 @@
 description("Tests that process swap on navigation does not break navigating back cross-origin a cross-origin window.");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 onload = function() {
     w = window.open();
     w.opener = null;

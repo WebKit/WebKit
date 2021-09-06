@@ -6,6 +6,9 @@
 description("Tests that XML documents do not end up with a unique origin.");
 jsTestIsAsync = true;
 
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
 function finishTest()
 {
     clearTimeout(timeoutHandle);

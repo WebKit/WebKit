@@ -5,6 +5,7 @@
     if (window.testRunner) {
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
     }
 
     window.addEventListener("message", function (e) {

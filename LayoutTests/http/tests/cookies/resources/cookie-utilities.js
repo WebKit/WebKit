@@ -77,6 +77,7 @@ async function resetCookies(urls)
     function setUp() {
         return new Promise((resolve) => {
             if (window.testRunner) {
+                testRunner.setCanOpenWindows(true);
                 testRunner.setAlwaysAcceptCookies(true);
                 internals.settings.setJavaScriptCanOpenWindowsAutomatically(true);
             }

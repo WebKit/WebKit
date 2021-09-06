@@ -49,6 +49,7 @@
 
     function run() {
         setEnableFeature(true, function () {
+            testRunner.setCanOpenWindows();
 
             if (testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
                 testFailed("Host logged for user interaction.");

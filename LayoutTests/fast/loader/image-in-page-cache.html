@@ -10,6 +10,7 @@ function runTest() {
 	if (window.testRunner) {
 		testRunner.dumpAsText();
 		testRunner.waitUntilDone();
+		testRunner.setCanOpenWindows();
 	}
 
 	// This test open two windows. One primary window will load animated-image.html.

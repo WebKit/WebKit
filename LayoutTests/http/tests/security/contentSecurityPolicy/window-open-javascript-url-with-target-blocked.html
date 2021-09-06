@@ -5,6 +5,7 @@
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
 }
 var child = window.open("about:blank", "child");
 child.name = "child";

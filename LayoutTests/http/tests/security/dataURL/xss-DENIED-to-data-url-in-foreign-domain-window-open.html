@@ -9,6 +9,7 @@
             if (window.testRunner) {
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
+                testRunner.setCanOpenWindows();
             }
 
             openedWindow = window.open("http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessee-opened-frame.html");

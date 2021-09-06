@@ -20,6 +20,7 @@ function test() {
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows();
     }
     log("open page-1");
     window.open("resources/cached-page-1.html");
