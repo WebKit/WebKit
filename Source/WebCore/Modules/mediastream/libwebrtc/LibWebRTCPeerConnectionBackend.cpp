@@ -315,7 +315,7 @@ RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::currentLocalDescri
 {
     auto description = m_endpoint->currentLocalDescription();
     if (description)
-        description->setSdp(filterSDP(String(description->sdp())));
+        validateSDP(description->sdp());
     return description;
 }
 
@@ -328,7 +328,7 @@ RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::pendingLocalDescri
 {
     auto description = m_endpoint->pendingLocalDescription();
     if (description)
-        description->setSdp(filterSDP(String(description->sdp())));
+        validateSDP(description->sdp());
     return description;
 }
 
@@ -341,7 +341,7 @@ RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::localDescription()
 {
     auto description = m_endpoint->localDescription();
     if (description)
-        description->setSdp(filterSDP(String(description->sdp())));
+        validateSDP(description->sdp());
     return description;
 }
 

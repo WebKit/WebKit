@@ -207,7 +207,7 @@ protected:
     void addIceCandidateSucceeded();
     void addIceCandidateFailed(Exception&&);
 
-    String filterSDP(String&&) const;
+    void validateSDP(const String&) const;
 
     struct PendingTrackEvent {
         Ref<RTCRtpReceiver> receiver;
@@ -226,8 +226,6 @@ private:
     virtual void endOfIceCandidates(DOMPromiseDeferred<void>&&);
     virtual void doStop() = 0;
 
-    void registerMDNSName(const String& ipAddress);
-
 protected:
     RTCPeerConnection& m_peerConnection;
 
@@ -236,24 +234,14 @@ private:
     std::unique_ptr<DOMPromiseDeferred<void>> m_setDescriptionPromise;
 
     bool m_shouldFilterICECandidates { true };
-    struct PendingICECandidate {
-        // Fields described in https://www.w3.org/TR/webrtc/#idl-def-rtcicecandidateinit.
-        String sdp;
-        String mid;
-        unsigned short sdpMLineIndex;
-        String serverURL;
-    };
-    Vector<PendingICECandidate> m_pendingICECandidates;
 
     Vector<PendingTrackEvent> m_pendingTrackEvents;
 
-    HashMap<String, String> m_ipAddressToMDNSNameMap;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
     bool m_finishedGatheringCandidates { false };
-    uint64_t m_waitingForMDNSRegistration { 0 };
 };
 
 } // namespace WebCore

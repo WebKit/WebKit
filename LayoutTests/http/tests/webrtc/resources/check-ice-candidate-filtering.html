@@ -14,7 +14,8 @@ function gatherCandidates()
                 resolve(candidates);
                 return;
             }
-            candidates.push(event.candidate.candidate);
+            if (event.candidate.candidate.indexOf('.local') === -1)
+                candidates.push(event.candidate.candidate);
         };
         pc.createOffer().then((offer) => {
             pc.setLocalDescription(offer);

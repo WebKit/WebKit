@@ -1,3 +1,56 @@
+2021-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Implement libwebrtc network manager GetMdnsResponder
+        https://bugs.webkit.org/show_bug.cgi?id=229757
+
+        Reviewed by Eric Carlson.
+
+        Implement RTCNetworkManager API in LibWebRTCNetworkManager to handle per-document mDNS registrations.
+        Move part of WebRTCMonitor to LibWebRTCNetworkManager.
+        LibWebRTCNetworkManager is a WebRTCMonitor observer to get the list of networks.
+        Since libwebrtc is now doing the mDNS registration, we need to return a mDNS name even if registration failed.
+        We update WebMDNSRegister and NetworkMDNSRegister accordingly.
+
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::registerMDNSNameCallback):
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp: Added.
+        (WebKit::LibWebRTCNetworkManager::getOrCreate):
+        (WebKit::LibWebRTCNetworkManager::LibWebRTCNetworkManager):
+        (WebKit::LibWebRTCNetworkManager::~LibWebRTCNetworkManager):
+        (WebKit::LibWebRTCNetworkManager::unregisterMDNSNames):
+        (WebKit::LibWebRTCNetworkManager::StartUpdating):
+        (WebKit::LibWebRTCNetworkManager::StopUpdating):
+        (WebKit::LibWebRTCNetworkManager::GetMdnsResponder const):
+        (WebKit::LibWebRTCNetworkManager::networksChanged):
+        (WebKit::LibWebRTCNetworkManager::networkProcessCrashed):
+        (WebKit::LibWebRTCNetworkManager::CreateNameForAddress):
+        (WebKit::LibWebRTCNetworkManager::RemoveNameForAddress):
+        * WebProcess/Network/webrtc/LibWebRTCNetworkManager.h: Added.
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::LibWebRTCProvider::createPeerConnection):
+        (WebKit::LibWebRTCProvider::disableNonLocalhostConnections):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.h:
+        * WebProcess/Network/webrtc/WebMDNSRegister.cpp:
+        (WebKit::WebMDNSRegister::finishedRegisteringMDNSName):
+        (WebKit::WebMDNSRegister::registerMDNSName):
+        * WebProcess/Network/webrtc/WebMDNSRegister.h:
+        * WebProcess/Network/webrtc/WebMDNSRegister.messages.in:
+        * WebProcess/Network/webrtc/WebRTCMonitor.cpp:
+        (WebKit::WebRTCMonitor::startUpdating):
+        (WebKit::WebRTCMonitor::stopUpdating):
+        (WebKit::WebRTCMonitor::networksChanged):
+        (WebKit::WebRTCMonitor::networkProcessCrashed):
+        * WebProcess/Network/webrtc/WebRTCMonitor.h:
+        (WebKit::WebRTCMonitor::addObserver):
+        (WebKit::WebRTCMonitor::removeObserver):
+        (WebKit::WebRTCMonitor::didReceiveNetworkList const):
+        (WebKit::WebRTCMonitor::networkList const):
+        (WebKit::WebRTCMonitor::ipv4 const):
+        (WebKit::WebRTCMonitor::ipv6 const):
+
 2021-09-05  Simon Fraser  <simon.fraser@apple.com>
 
         Use a strongly typed identifier for authentication challenge IDs

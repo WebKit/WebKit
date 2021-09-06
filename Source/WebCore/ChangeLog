@@ -1,3 +1,54 @@
+2021-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Implement libwebrtc network manager GetMdnsResponder
+        https://bugs.webkit.org/show_bug.cgi?id=229757
+
+        Reviewed by Eric Carlson.
+
+        Use libwebrtc mDNS support instead of applying it within PeerConnectionBackend.
+        This allows a better integration and is more consistent with the API and other browsers.
+        For instance mDNS candidates now show up in local descriptions.
+        We introduce RTCNetworkManager which is responsible for WebRTC network.
+        RTCNetworkManager is responsible of all peer connections of a document. It can thus reuse mDNS names from one connection to another.
+        When document goes away, RTCNetworkManager needs to unregister all mDNS names.
+        Update existing SDP and ICE candidate filtering code by only keeping debug assert that we do not leak private IP addresses in case ICE filtering is on.
+        WK1 does not support mDNS candidates. In that case, we expose private IP addresses.
+
+        Covered by updated and existing tests.
+
+        * Headers.cmake:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::enableICECandidateFiltering):
+        (WebCore::PeerConnectionBackend::disableICECandidateFiltering):
+        (WebCore::PeerConnectionBackend::validateSDP const):
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCController.cpp:
+        (WebCore::RTCController::add):
+        (WebCore::RTCController::disableICECandidateFilteringForAllOrigins):
+        (WebCore::RTCController::disableICECandidateFilteringForDocument):
+        (WebCore::RTCController::enableICECandidateFiltering):
+        * Modules/mediastream/RTCNetworkManager.h: Added.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::setConfiguration):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::currentLocalDescription const):
+        (WebCore::LibWebRTCPeerConnectionBackend::pendingLocalDescription const):
+        (WebCore::LibWebRTCPeerConnectionBackend::localDescription const):
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::willBeRemovedFromFrame):
+        (WebCore::Document::suspend):
+        * dom/Document.h:
+        (WebCore::Document::rtcNetworkManager):
+        (WebCore::Document::setRTCNetworkManager):
+        * platform/mediastream/MDNSRegisterError.h: Added.
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::LibWebRTCProvider::createPeerConnection):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2021-09-06  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/1.0.x/conformance/context/constants-and-properties.html fails

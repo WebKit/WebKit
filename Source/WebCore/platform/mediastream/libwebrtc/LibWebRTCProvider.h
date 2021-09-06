@@ -27,6 +27,7 @@
 
 #include "DocumentIdentifier.h"
 #include "LibWebRTCMacros.h"
+#include "MDNSRegisterError.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
@@ -66,8 +67,6 @@ class RegistrableDomain;
 struct PeerConnectionFactoryAndThreads;
 struct RTCRtpCapabilities;
 
-enum class MDNSRegisterError { NotImplemented, BadParameter, DNSSD, Internal, Timeout };
-
 class WEBCORE_EXPORT LibWebRTCProvider {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -86,18 +85,10 @@ public:
     using IPAddressOrError = Expected<String, MDNSRegisterError>;
     using MDNSNameOrError = Expected<String, MDNSRegisterError>;
 
-    virtual void unregisterMDNSNames(DocumentIdentifier) { }
-
-    virtual void registerMDNSName(DocumentIdentifier, const String& ipAddress, CompletionHandler<void(MDNSNameOrError&&)>&& callback)
-    {
-        UNUSED_PARAM(ipAddress);
-        callback(makeUnexpected(MDNSRegisterError::NotImplemented));
-    }
-
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() { return nullptr; }
 
 #if USE(LIBWEBRTC)
-    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);
+    virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(DocumentIdentifier, webrtc::PeerConnectionObserver&, rtc::PacketSocketFactory*, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     webrtc::PeerConnectionFactoryInterface* factory();
 
@@ -122,6 +113,8 @@ public:
     bool isSupportingVP9Profile2() const { return m_supportsVP9Profile2; }
     bool isSupportingVP9VTB() const { return m_supportsVP9VTB; }
     virtual void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
+
+    bool isSupportingMDNS() const { return m_supportsMDNS; }
 
     // Callback is executed on a background thread.
     void prepareCertificateGenerator(Function<void(rtc::RTCCertificateGenerator&)>&&);
@@ -168,6 +161,7 @@ protected:
     bool m_supportsVP9Profile2 { false };
     bool m_supportsVP9VTB { false };
     bool m_useDTLS10 { false };
+    bool m_supportsMDNS { false };
 #endif
 };
 
@@ -180,16 +174,3 @@ inline void LibWebRTCProvider::setVP9Support(bool supportsVP9Profile0, bool supp
 #endif
 
 } // namespace WebCore
-
-namespace WTF {
-template<> struct EnumTraits<WebCore::MDNSRegisterError> {
-    using values = EnumValues<
-        WebCore::MDNSRegisterError,
-        WebCore::MDNSRegisterError::NotImplemented,
-        WebCore::MDNSRegisterError::BadParameter,
-        WebCore::MDNSRegisterError::DNSSD,
-        WebCore::MDNSRegisterError::Internal,
-        WebCore::MDNSRegisterError::Timeout
-    >;
-};
-}

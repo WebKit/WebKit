@@ -390,6 +390,7 @@ http/tests/webrtc [ Skip ]
 http/wpt/webrtc [ Skip ]
 webrtc/datachannel [ Pass ]
 webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
+webrtc/datachannel/filter-ice-candidate.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 
 imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]

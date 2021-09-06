@@ -1,3 +1,17 @@
+2021-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Implement libwebrtc network manager GetMdnsResponder
+        https://bugs.webkit.org/show_bug.cgi?id=229757
+
+        Reviewed by Eric Carlson.
+
+        Update tests given mDNS ICE candidates are now showing up in descriptions.
+        Make sure to consider mDNS candidates as if they are filtered.
+
+        * http/wpt/webrtc/resources/third-party-frame-ice-candidate-filtering-iframe.html:
+        * webrtc/datachannel/filter-ice-candidate.html:
+        * webrtc/filtering-ice-candidate-after-reload.html:
+
 2021-09-06  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/1.0.x/conformance/context/constants-and-properties.html fails

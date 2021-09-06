@@ -82,6 +82,11 @@ PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
     , m_logIdentifier(peerConnection.logIdentifier())
 #endif
 {
+#if USE(LIBWEBRTC)
+    auto* document = peerConnection.document();
+    if (auto* page = document ? document->page() : nullptr)
+        m_shouldFilterICECandidates = page->libWebRTCProvider().isSupportingMDNS();
+#endif
 }
 
 PeerConnectionBackend::~PeerConnectionBackend() = default;
@@ -101,7 +106,8 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
     ALWAYS_LOG(LOGIDENTIFIER, "Create offer succeeded:\n", sdp);
 
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), sdp = filterSDP(WTFMove(sdp))]() mutable {
+    validateSDP(sdp);
+    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -324,81 +330,19 @@ void PeerConnectionBackend::enableICECandidateFiltering()
 void PeerConnectionBackend::disableICECandidateFiltering()
 {
     m_shouldFilterICECandidates = false;
-    for (auto& pendingICECandidate : m_pendingICECandidates)
-        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(pendingICECandidate.sdp), WTFMove(pendingICECandidate.mid), pendingICECandidate.sdpMLineIndex), WTFMove(pendingICECandidate.serverURL));
-    m_pendingICECandidates.clear();
 }
 
-static String filterICECandidate(String&& sdp)
+void PeerConnectionBackend::validateSDP(const String& sdp) const
 {
-    ASSERT(!sdp.contains(" host "));
-
-    if (!sdp.contains(" raddr "))
-        return WTFMove(sdp);
-
-    bool skipNextItem = false;
-    bool isFirst = true;
-    StringBuilder filteredSDP;
-    sdp.split(' ', [&](StringView item) {
-        if (skipNextItem) {
-            skipNextItem = false;
-            return;
-        }
-        if (item == "raddr") {
-            filteredSDP.append(" raddr 0.0.0.0");
-            skipNextItem = true;
-            return;
-        }
-        if (item == "rport") {
-            filteredSDP.append(" rport 0");
-            skipNextItem = true;
-            return;
-        }
-        if (isFirst)
-            isFirst = false;
-        else
-            filteredSDP.append(' ');
-        filteredSDP.append(item);
-    });
-    return filteredSDP.toString();
-}
-
-String PeerConnectionBackend::filterSDP(String&& sdp) const
-{
+#ifndef NDEBUG
     if (!m_shouldFilterICECandidates)
-        return WTFMove(sdp);
-
-    StringBuilder filteredSDP;
-    sdp.split('\n', [this, &filteredSDP](StringView line) {
-        if (line.startsWith("c=IN IP4")) {
-            filteredSDP.append("c=IN IP4 0.0.0.0\r\n");
-            return;
-        }
-        if (line.startsWith("c=IN IP6")) {
-            filteredSDP.append("c=IN IP6 ::\r\n");
-            return;
-        }
-        if (!line.startsWith("a=candidate")) {
-            filteredSDP.append(line);
-            filteredSDP.append('\n');
-            return;
-        }
-        if (line.find(" host ", 11) == notFound) {
-            filteredSDP.append(filterICECandidate(line.toString()));
-            filteredSDP.append('\n');
-            return;
-        }
-
-        auto ipAddress = extractIPAddress(line);
-        auto mdnsName = m_ipAddressToMDNSNameMap.get(ipAddress);
-        if (mdnsName.isEmpty())
-            return;
-        auto sdp = line.toString();
-        sdp.replace(ipAddress, mdnsName);
-        filteredSDP.append(sdp);
-        filteredSDP.append('\n');
+        return;
+    sdp.split('\n', [](auto line) {
+        ASSERT(!line.startsWith("a=candidate") || line.contains(".local"));
     });
-    return filteredSDP.toString();
+#else
+    UNUSED_PARAM(sdp);
+#endif
 }
 
 void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL)
@@ -408,22 +352,8 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
         ALWAYS_LOG(logSiteIdentifier, "Gathered ice candidate:", sdp);
         m_finishedGatheringCandidates = false;
 
-        if (!m_shouldFilterICECandidates) {
-            fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
-            return;
-        }
-        if (sdp.find(" host ", 0) != notFound) {
-            // FIXME: We might need to clear all pending candidates when setting again local description.
-            m_pendingICECandidates.append(PendingICECandidate { String { sdp }, WTFMove(mid), sdpMLineIndex, WTFMove(serverURL) });
-            if (RuntimeEnabledFeatures::sharedFeatures().webRTCMDNSICECandidatesEnabled()) {
-                auto ipAddress = extractIPAddress(sdp);
-                // We restrict to IPv4 candidates for now.
-                if (ipAddress.contains('.'))
-                    registerMDNSName(ipAddress);
-            }
-            return;
-        }
-        fireICECandidateEvent(RTCIceCandidate::create(filterICECandidate(WTFMove(sdp)), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
+        ASSERT(!m_shouldFilterICECandidates || sdp.contains(".local"));
+        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
     });
 }
 
@@ -433,56 +363,13 @@ void PeerConnectionBackend::doneGatheringCandidates()
     ALWAYS_LOG(LOGIDENTIFIER, "Finished ice candidate gathering");
     m_finishedGatheringCandidates = true;
 
-    if (m_waitingForMDNSRegistration)
-        return;
-
     m_peerConnection.dispatchEventWhenFeasible(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, nullptr, { }));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
-    m_pendingICECandidates.clear();
 }
 
 void PeerConnectionBackend::endOfIceCandidates(DOMPromiseDeferred<void>&& promise)
 {
     promise.resolve();
-}
-
-void PeerConnectionBackend::registerMDNSName(const String& ipAddress)
-{
-    ++m_waitingForMDNSRegistration;
-    auto& document = downcast<Document>(*m_peerConnection.scriptExecutionContext());
-    auto& provider = document.page()->libWebRTCProvider();
-    provider.registerMDNSName(document.identifier(), ipAddress, [peerConnection = makeRef(m_peerConnection), this, ipAddress] (LibWebRTCProvider::MDNSNameOrError&& result) {
-        if (peerConnection->isStopped())
-            return;
-
-        --m_waitingForMDNSRegistration;
-        if (!result.has_value()) {
-            m_peerConnection.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("MDNS registration of a host candidate failed with error ", (unsigned)result.error()));
-            return;
-        }
-
-        this->finishedRegisteringMDNSName(ipAddress, result.value());
-    });
-}
-
-void PeerConnectionBackend::finishedRegisteringMDNSName(const String& ipAddress, const String& name)
-{
-    m_ipAddressToMDNSNameMap.add(ipAddress, name);
-    Vector<PendingICECandidate*> candidates;
-    for (auto& candidate : m_pendingICECandidates) {
-        if (candidate.sdp.find(ipAddress) != notFound) {
-            auto sdp = candidate.sdp;
-            sdp.replace(ipAddress, name);
-            fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(candidate.mid), candidate.sdpMLineIndex), WTFMove(candidate.serverURL));
-            candidates.append(&candidate);
-        }
-    }
-    m_pendingICECandidates.removeAllMatching([&] (const auto& candidate) {
-        return candidates.contains(&candidate);
-    });
-
-    if (!m_waitingForMDNSRegistration && m_finishedGatheringCandidates)
-        doneGatheringCandidates();
 }
 
 void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingState)
