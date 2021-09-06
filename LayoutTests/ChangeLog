@@ -1,3 +1,22 @@
+2021-09-06  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/1.0.x/conformance/context/constants-and-properties.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223311
+        <rdar://problem/75772425>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        Mark the skipped tests as Pass until all 1.0.x/2.0.y tests
+        are unskipped.
+        Skip the 2.0.0/1.0.3 test that is invalid now.
+        * fast/canvas/webgl/constants-on-interface.html: Removed.
+        * fast/canvas/webgl/constants.html: Removed.
+        Remove failing tests that serve the same purpose.
+        They seem to, according to best effort inspection, test 
+        the same properties.
+
+
 2021-09-05  Alan Bujtas  <zalan@apple.com>
 
         In-page search results overlay broken if the result spans more than two elements

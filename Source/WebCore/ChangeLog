@@ -1,3 +1,20 @@
+2021-09-06  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/1.0.x/conformance/context/constants-and-properties.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223311
+        <rdar://problem/75772425>
+
+        Reviewed by Antti Koivisto.
+
+        Remove STENCIL_INDEX, it was removed from the spec 2017.
+
+        Fixes tests: 
+        webgl/1.0.x/conformance/context/constants-and-properties.html
+        webgl/2.0.y/conformance2/context/constants-and-properties-2.html
+        
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * platform/graphics/GraphicsContextGL.h:
+
 2021-09-05  Alan Bujtas  <zalan@apple.com>
 
         In-page search results overlay broken if the result spans more than two elements

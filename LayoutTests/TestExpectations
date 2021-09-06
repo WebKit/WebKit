@@ -3678,6 +3678,7 @@ webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/1.0.x/conformance/glsl/bugs/character-set.html [ Pass ]
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Pass ]
 webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
+webgl/1.0.x/conformance/context/constants-and-properties.html [ Pass ]
 
 
 # WebGL conformance test suite 2.0.1 is skipped until 2.0.0 is retired.
@@ -3689,14 +3690,17 @@ webgl/2.0.y/conformance/misc/invalid-passed-params.html [ Pass ]
 webgl/2.0.y/conformance/glsl/bugs/character-set.html [ Pass ]
 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Pass ]
 webgl/2.0.y/conformance/glsl/misc/fragcolor-fragdata-invariant.html [ Pass ]
+webgl/2.0.y/conformance2/context/constants-and-properties-2.html [ Pass ]
 
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.
+fast/canvas/webgl/invalid-passed-params.html [ Skip ]
+webgl/1.0.3/conformance/context/constants-and-properties.html  [ Skip ]
 webgl/1.0.3/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
 webgl/1.0.3/conformance/misc/invalid-passed-params.html [ Skip ]
+webgl/2.0.0/conformance/context/constants-and-properties.html  [ Skip ]
 webgl/2.0.0/conformance/glsl/misc/shader-with-define-line-continuation.frag.html [ Skip ]
 webgl/2.0.0/conformance/misc/invalid-passed-params.html [ Skip ]
-fast/canvas/webgl/invalid-passed-params.html [ Skip ]
 
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]

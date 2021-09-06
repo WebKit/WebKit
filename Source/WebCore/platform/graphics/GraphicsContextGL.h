@@ -339,7 +339,6 @@ public:
     static constexpr GCGLenum RGB5_A1 = 0x8057;
     static constexpr GCGLenum RGB565 = 0x8D62;
     static constexpr GCGLenum DEPTH_COMPONENT16 = 0x81A5;
-    static constexpr GCGLenum STENCIL_INDEX = 0x1901;
     static constexpr GCGLenum STENCIL_INDEX8 = 0x8D48;
     static constexpr GCGLenum RENDERBUFFER_WIDTH = 0x8D42;
     static constexpr GCGLenum RENDERBUFFER_HEIGHT = 0x8D43;
