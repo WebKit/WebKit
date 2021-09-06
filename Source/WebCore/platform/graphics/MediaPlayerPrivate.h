@@ -87,6 +87,7 @@ public:
     virtual bool supportsPictureInPicture() const { return false; }
     virtual bool supportsFullscreen() const { return false; }
     virtual bool supportsScanning() const { return false; }
+    virtual bool supportsProgressMonitoring() const { return true; }
     virtual bool requiresImmediateCompositing() const { return false; }
 
     virtual bool canSaveMediaData() const { return false; }

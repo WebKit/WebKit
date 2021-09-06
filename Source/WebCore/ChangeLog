@@ -1,3 +1,28 @@
+2021-09-06  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE] Prevent false-positive "stalled" event iff MSE used
+        https://bugs.webkit.org/show_bug.cgi?id=226882
+        <rdar://problem/79454993>
+
+        Reviewed by Alicia Boya Garcia.
+
+        "progress" and "stalled" events make no sense in context of MSE:
+        https://github.com/w3c/media-source/issues/88
+        and hence they will likely be removed soon:
+        https://w3c.github.io/media-source/#h-note-19
+
+        This patch is authored by Pawel Lampe <pawel.lampe@gmail.com>.
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/711
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::progressEventTimerFired): Only fire the progess event if the player supports progress monitoring.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsProgressMonitoring const): Forward call to the player private.
+        * platform/graphics/MediaPlayer.h: Added new supportsProgressMonitoring() method.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::supportsProgressMonitoring const): Added method, defaulting to true to trigger the old behaviour.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h: Return false on new supportsProgressMonitoring() method to prevent progress event triggering.
+
 2021-09-06  Simon Fraser  <simon.fraser@apple.com>
 
         Add a temporarily prefixed property for mask-mode, aliased to -webkit-mask-source-type

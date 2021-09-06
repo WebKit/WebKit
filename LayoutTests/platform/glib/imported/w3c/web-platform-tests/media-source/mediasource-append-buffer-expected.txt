@@ -21,5 +21,5 @@ PASS Test abort after readyState is ended following init segment and media segme
 PASS Test abort after appendBuffer update ends.
 PASS Test appending null.
 PASS Test appending after removeSourceBuffer().
-FAIL Test slow appending does not trigger stalled events. assert_unreached: Unexpected 'stalled' event. Reached unreachable code
+PASS Test slow appending does not trigger stalled events.
 

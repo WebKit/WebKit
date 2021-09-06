@@ -2868,6 +2868,8 @@ void HTMLMediaElement::progressEventTimerFired()
     ASSERT(m_player);
     if (m_networkState != NETWORK_LOADING)
         return;
+    if (!m_player->supportsProgressMonitoring())
+        return;
 
     m_player->didLoadingProgress([this, weakThis = makeWeakPtr(this)](bool progress) {
         if (!weakThis)

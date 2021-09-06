@@ -316,6 +316,7 @@ public:
     bool supportsFullscreen() const;
     bool supportsScanning() const;
     bool canSaveMediaData() const;
+    bool supportsProgressMonitoring() const;
     bool requiresImmediateCompositing() const;
     bool doesHaveAttribute(const AtomString&, AtomString* value = nullptr) const;
     PlatformLayer* platformLayer() const;
