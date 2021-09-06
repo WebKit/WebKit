@@ -264,11 +264,11 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
         layer.setBackgroundYOrigin(*pair->first());
 }
 
-void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
+void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
 {
-    MaskSourceType type = FillLayer::initialFillMaskSourceType(layer.type());
+    MaskMode maskMode = FillLayer::initialFillMaskMode(layer.type());
     if (value.treatAsInitialValue(propertyID)) {
-        layer.setMaskSourceType(type);
+        layer.setMaskMode(maskMode);
         return;
     }
 
@@ -277,18 +277,23 @@ void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID propertyID, FillLayer& l
 
     switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueAlpha:
-        type = MaskSourceType::Alpha;
+        maskMode = MaskMode::Alpha;
         break;
     case CSSValueLuminance:
-        type = MaskSourceType::Luminance;
+        maskMode = MaskMode::Luminance;
+        break;
+    case CSSValueMatchSource:
+        ASSERT(propertyID == CSSPropertyWebkitMaskMode);
+        maskMode = MaskMode::MatchSource;
         break;
     case CSSValueAuto:
+        ASSERT(propertyID == CSSPropertyWebkitMaskSourceType);
         break;
     default:
         ASSERT_NOT_REACHED();
     }
 
-    layer.setMaskSourceType(type);
+    layer.setMaskMode(maskMode);
 }
 
 void CSSToStyleMap::mapAnimationDelay(Animation& animation, const CSSValue& value)

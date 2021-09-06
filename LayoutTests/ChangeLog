@@ -1,3 +1,13 @@
+2021-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a temporarily prefixed property for mask-mode, aliased to -webkit-mask-source-type
+        https://bugs.webkit.org/show_bug.cgi?id=229915
+
+        Reviewed by Antti Koivisto.
+
+        * fast/masking/parsing-mask-mode-expected.txt: Added.
+        * fast/masking/parsing-mask-mode.html: Added.
+
 2021-09-06  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCSctpTransport

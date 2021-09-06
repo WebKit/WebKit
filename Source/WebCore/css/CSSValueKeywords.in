@@ -1544,6 +1544,11 @@ selector
 // normal
 compact
 
+// mask-type, mask-mode
+// alpha
+// luminance
+match-source
+
 // rotate
 x
 y

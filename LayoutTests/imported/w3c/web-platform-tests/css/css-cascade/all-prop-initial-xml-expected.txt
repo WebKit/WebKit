@@ -367,6 +367,7 @@ PASS -webkit-mask-box-image-width
 PASS -webkit-mask-clip
 PASS -webkit-mask-composite
 PASS -webkit-mask-image
+PASS -webkit-mask-mode
 PASS -webkit-mask-origin
 PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y

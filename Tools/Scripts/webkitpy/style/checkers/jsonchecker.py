@@ -307,6 +307,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'sink-priority': self.validate_boolean,
             'skip-builder': self.validate_boolean,
             'skip-codegen': self.validate_boolean,
+            'synonym': self.validate_string,
             'svg': self.validate_boolean,
             'visited-link-color-support': self.validate_boolean,
         }

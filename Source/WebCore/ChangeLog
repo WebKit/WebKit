@@ -1,3 +1,64 @@
+2021-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a temporarily prefixed property for mask-mode, aliased to -webkit-mask-source-type
+        https://bugs.webkit.org/show_bug.cgi?id=229915
+
+        Reviewed by Antti Koivisto.
+        
+        In preparation for unprefixing the "mask" property, add -webkit-mask-mode. This is 
+        almost an alias to the existing -webkit-mask-source-type, but takes a "match-source"
+        value rather than "auto".
+
+        To make it easier to have aliases with different parsing requirements, add support
+        in CSSProperties.json for "synonyms"; these are like aliases but they get their
+        own CSSPropertyID to allow for customized parsing. They share style builder code
+        with the related property.
+        
+        FillLayer now uses MaskMode rather than MaskSourceType.
+
+        Test: fast/masking/parsing-mask-mode.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::maskSourceTypeToCSSValue):
+        (WebCore::maskModeToCSSValue):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        (WebCore::fillSourceTypeToCSSValue): Deleted.
+        * css/CSSProperties.json:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillMaskMode):
+        (WebCore::CSSToStyleMap::mapFillMaskSourceType): Deleted.
+        * css/CSSToStyleMap.h:
+        * css/CSSValueKeywords.in:
+        * css/makeprop.pl:
+        (addProperty):
+        (generateFillLayerPropertyValueSetter):
+        (generateValueSetter):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitMaskMode):
+        (WebCore::consumeBackgroundComponent):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator== const):
+        (WebCore::operator<<):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::maskMode const):
+        (WebCore::FillLayer::isMaskModeSet const):
+        (WebCore::FillLayer::setMaskMode):
+        (WebCore::FillLayer::clearMaskMode):
+        (WebCore::FillLayer::initialFillMaskMode):
+        (WebCore::FillLayer::maskSourceType const): Deleted.
+        (WebCore::FillLayer::isMaskSourceTypeSet const): Deleted.
+        (WebCore::FillLayer::setMaskSourceType): Deleted.
+        (WebCore::FillLayer::clearMaskSourceType): Deleted.
+        (WebCore::FillLayer::initialFillMaskSourceType): Deleted.
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+
 2021-09-06  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCSctpTransport
