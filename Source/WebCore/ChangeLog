@@ -1,3 +1,15 @@
+2021-09-06  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Use inline boxes in run vector for hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=229933
+
+        Reviewed by Alan Bujtas.
+
+        Stop using nonRootInlineBoxes.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+
 2021-09-06  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE] Prevent false-positive "stalled" event iff MSE used

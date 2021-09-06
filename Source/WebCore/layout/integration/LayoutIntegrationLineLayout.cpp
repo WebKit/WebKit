@@ -480,56 +480,29 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
     // FIXME: This should do something efficient to find the run range.
     for (auto& run : WTF::makeReversedRange(inlineContent.runs)) {
-        // FIXME: Use for hit testing instead of nonRootInlineBoxes.
-        if (run.isInlineBox())
-            continue;
-
         auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
 
-        if (is<RenderText>(renderer)) {
-            auto runRect = Layout::toLayoutRect(run.logicalRect());
-            runRect.moveBy(accumulatedOffset);
+        if (!run.isRootInlineBox() && is<RenderLayerModelObject>(renderer) && downcast<RenderLayerModelObject>(renderer).hasSelfPaintingLayer())
+            continue;
 
-            if (!locationInContainer.intersects(runRect))
-                continue;
-            
-            auto& style = run.style();
-            if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
-                continue;
-
-            renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-            if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, runRect) == HitTestProgress::Stop)
+        if (run.isAtomicInlineLevelBox()) {
+            if (renderer.hitTest(request, result, locationInContainer, accumulatedOffset))
                 return true;
             continue;
         }
 
-        if (is<RenderBox>(renderer)) {
-            auto& renderBox = downcast<RenderBox>(renderer);
-            if (renderBox.hasSelfPaintingLayer())
-                continue;
-            
-            if (renderBox.hitTest(request, result, locationInContainer, accumulatedOffset)) {
-                renderBox.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-                return true;
-            }
-        }
-    }
+        auto runRect = Layout::toLayoutRect(run.logicalRect());
+        runRect.moveBy(accumulatedOffset);
 
-    for (auto& inlineBox : WTF::makeReversedRange(inlineContent.nonRootInlineBoxes)) {
-        auto inlineBoxRect = Layout::toLayoutRect(inlineBox.rect());
-        inlineBoxRect.moveBy(accumulatedOffset);
-
-        if (!locationInContainer.intersects(inlineBoxRect))
+        if (!locationInContainer.intersects(runRect))
             continue;
 
-        auto& style = inlineBox.style();
+        auto& style = run.style();
         if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
             continue;
-
-        auto& renderer = m_boxTree.rendererForLayoutBox(inlineBox.layoutBox());
-
+        
         renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
-        if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, inlineBoxRect) == HitTestProgress::Stop)
+        if (result.addNodeToListBasedTestResult(renderer.nodeForHitTest(), request, locationInContainer, runRect) == HitTestProgress::Stop)
             return true;
     }
 
