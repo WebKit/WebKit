@@ -1,3 +1,17 @@
+2021-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        TestWebKitAPI.EventAttribution.Basic is extremely flaky on api-ios
+        https://bugs.webkit.org/show_bug.cgi?id=229995
+
+        Reviewed by Jonathan Bedard.
+
+        Clear state on disk before running these tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::clearState):
+        (TestWebKitAPI::runBasicEventAttributionTest):
+        (TestWebKitAPI::TEST):
+
 2021-09-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [build.webkit.org][ews-build.webkit.org] Only try to download from S3 on the production server
