@@ -26,7 +26,23 @@ import os
 import sys
 
 from webkitpy.common.config.committers import CommitterList
-from webkitscmpy import program, Contributor
+from webkitscmpy import local, program, remote, Contributor
+
+
+def is_webkit_filter(to_return):
+    def callback(repository):
+        if isinstance(repository, local.Scm):
+            repository = repository.remote()
+        if not isinstance(repository, remote.Scm):
+            return None
+        if getattr(repository, 'name', None) == 'WebKit':
+            return to_return
+        url = getattr(repository, 'url', '')
+        if 'svn.webkit.org' in url or 'git.webkit.org' in url:
+            return to_return
+        return None
+
+    return callback
 
 
 if '__main__' == __name__:
@@ -44,8 +60,8 @@ if '__main__' == __name__:
 
     sys.exit(program.main(
         path=os.path.dirname(__file__),
-        contributors=contributors,
-        identifier_template='Canonical link: https://commits.webkit.org/{}',
-        subversion='https://svn.webkit.org/repository/webkit',
+        contributors=is_webkit_filter(contributors),
+        identifier_template=is_webkit_filter('Canonical link: https://commits.webkit.org/{}'),
+        subversion=is_webkit_filter('https://svn.webkit.org/repository/webkit'),
     ))
 
