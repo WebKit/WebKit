@@ -860,7 +860,7 @@ class Manager(object):
                 if not _should_include_dir_in_report(dirname):
                     continue
 
-                truncated_dirname = re.sub(r'^.*(.{47})$', '...\g<1>', dirname if device_test_stats[dirname]['has_tests'] else '{}*'.format(dirname))
+                truncated_dirname = re.sub(r'^.*(.{47})$', '...\\g<1>', dirname if device_test_stats[dirname]['has_tests'] else '{}*'.format(dirname))
                 count = device_test_stats[dirname]['count']
                 passing = device_test_stats[dirname]['pass']
                 skip = device_test_stats[dirname]['skip']
