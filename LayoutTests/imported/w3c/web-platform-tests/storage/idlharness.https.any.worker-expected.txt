@@ -1,0 +1,34 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface mixin NavigatorID: member names are unique
+PASS Navigator includes NavigatorStorage: member names are unique
+PASS WorkerNavigator includes NavigatorStorage: member names are unique
+PASS Navigator includes NavigatorID: member names are unique
+PASS Navigator includes NavigatorLanguage: member names are unique
+PASS Navigator includes NavigatorOnLine: member names are unique
+PASS Navigator includes NavigatorContentUtils: member names are unique
+PASS Navigator includes NavigatorCookies: member names are unique
+PASS Navigator includes NavigatorPlugins: member names are unique
+PASS Navigator includes NavigatorConcurrentHardware: member names are unique
+PASS WorkerNavigator includes NavigatorID: member names are unique
+PASS WorkerNavigator includes NavigatorLanguage: member names are unique
+PASS WorkerNavigator includes NavigatorOnLine: member names are unique
+PASS WorkerNavigator includes NavigatorConcurrentHardware: member names are unique
+FAIL StorageManager interface: existence and properties of interface object assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface object length assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface object name assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface: operation persisted() assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager interface: member persist undefined is not an Object. (evaluating 'member.name in this.get_interface_object()')
+FAIL StorageManager interface: operation estimate() assert_own_property: self does not have own property "StorageManager" expected property "StorageManager" missing
+FAIL StorageManager must be primary interface of navigator.storage assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of navigator.storage assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StorageManager interface: navigator.storage must inherit property "persisted()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL StorageManager interface: navigator.storage must not have property "persist" obj is not an Object. (evaluating 'member.name in obj')
+FAIL StorageManager interface: navigator.storage must inherit property "estimate()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL WorkerNavigator interface: attribute storage assert_true: The prototype object must have a property "storage" expected true got false
+FAIL WorkerNavigator interface: navigator must inherit property "storage" with the proper type assert_inherits: property "storage" not found in prototype chain
+

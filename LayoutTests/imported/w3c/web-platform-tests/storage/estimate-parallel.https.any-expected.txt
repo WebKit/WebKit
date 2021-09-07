@@ -1,0 +1,3 @@
+
+FAIL Multiple estimate() calls in parallel should complete promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.estimate')"
+
