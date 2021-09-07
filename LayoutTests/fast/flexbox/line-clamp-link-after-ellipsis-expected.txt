@@ -1,0 +1,12 @@
+Test that links painted after the ellipsis of a flexbox using -webkit-line-clamp is hit-testable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementsByTagName('a')[0].textContent is "clicked"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+line one
+line twoclicked
+

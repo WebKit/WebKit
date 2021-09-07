@@ -1055,11 +1055,22 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         if (!lastVisibleLine || !lastVisibleLine->firstChild())
             continue;
 
+        const UChar ellipsisAndSpace[2] = { horizontalEllipsis, ' ' };
+        static MainThreadNeverDestroyed<const AtomString> ellipsisAndSpaceStr(ellipsisAndSpace, 2);
         static MainThreadNeverDestroyed<const AtomString> ellipsisStr(&horizontalEllipsis, 1);
         const RenderStyle& lineStyle = numVisibleLines == 1 ? firstLineStyle() : style();
         const FontCascade& font = lineStyle.fontCascade();
 
-        auto totalWidth = font.width(constructTextRun(&horizontalEllipsis, 1, style()));
+        // Get ellipsis width, and if the last child is an anchor, it will go after the ellipsis, so add in a space and the anchor width too
+        LayoutUnit totalWidth;
+        LegacyInlineBox* anchorBox = lastLine->lastChild();
+        auto& lastVisibleRenderer = lastVisibleLine->firstChild()->renderer();
+        if (anchorBox && anchorBox->renderer().style().isLink() && &lastVisibleRenderer != &anchorBox->renderer())
+            totalWidth = anchorBox->logicalWidth() + font.width(constructTextRun(ellipsisAndSpace, 2, style()));
+        else {
+            anchorBox = nullptr;
+            totalWidth = font.width(constructTextRun(&horizontalEllipsis, 1, style()));
+        }
 
         // See if this width can be accommodated on the last visible line
         RenderBlockFlow& destBlock = lastVisibleLine->blockFlow();
@@ -1080,7 +1091,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         // Let the truncation code kick in.
         // FIXME: the text alignment should be recomputed after the width changes due to truncation.
         LayoutUnit blockLeftEdge = destBlock.logicalLeftOffsetForLine(LayoutUnit(lastVisibleLine->y()), DoNotIndentText);
-        lastVisibleLine->placeEllipsis(ellipsisStr, leftToRight, blockLeftEdge, blockRightEdge, totalWidth);
+        lastVisibleLine->placeEllipsis(anchorBox ? ellipsisAndSpaceStr : ellipsisStr, leftToRight, blockLeftEdge, blockRightEdge, totalWidth, anchorBox);
         destBlock.setHasMarkupTruncation(true);
     }
 }

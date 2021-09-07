@@ -1,3 +1,17 @@
+2021-09-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r282086.
+        https://bugs.webkit.org/show_bug.cgi?id=230005
+
+        Turns out -webkit-line-clamp with link is used by iTunes store
+
+        Reverted changeset:
+
+        "Remove -webkit-line-clamp behaviour where last link is placed
+        after ellipsis box"
+        https://bugs.webkit.org/show_bug.cgi?id=229985
+        https://commits.webkit.org/r282086
+
 2021-09-07  Antti Koivisto  <antti@apple.com>
 
         Remove -webkit-line-clamp behaviour where last link is placed after ellipsis box

@@ -127,13 +127,13 @@ bool LegacyRootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, in
     return LegacyInlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
-float LegacyRootInlineBox::placeEllipsis(const AtomString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth)
+float LegacyRootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, LegacyInlineBox* markupBox)
 {
     if (!gEllipsisBoxMap)
         gEllipsisBoxMap = new EllipsisBoxMap();
 
     ASSERT(!hasEllipsisBox());
-    auto* ellipsisBox = gEllipsisBoxMap->set(this, makeUnique<LegacyEllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth, logicalHeight(), y(), !prevRootBox(), isHorizontal())).iterator->value.get();
+    auto* ellipsisBox = gEllipsisBoxMap->set(this, makeUnique<LegacyEllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox)).iterator->value.get();
     setHasEllipsisBox(true);
     // FIXME: Do we need an RTL version of this?
     if (ltr && (x() + logicalWidth() + ellipsisWidth) <= blockRightEdge) {
