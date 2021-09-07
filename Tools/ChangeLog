@@ -1,3 +1,58 @@
+2021-09-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] The Xvfb display server may fail to start sometimes causing tests to randomly crash (v3)
+        https://bugs.webkit.org/show_bug.cgi?id=229758
+
+        Reviewed by Philippe Normand.
+
+        Add a new function in XvfbDriver() to ensure that the display server
+        at a given display_id is replying as expected. Ask it for the screen
+        size at monitor 0 and compare the result with the one we expect to
+        have inside Xvfb. For doing this check a external python program is
+        called which does the query using GTK. Using a external program is
+        more robust against possible failures calling into GTK and also will
+        allow re-using this program also to check that the weston server is
+        also replying as expected for the weston driver (on a future patch).
+
+        If the Xvfb driver is not replying as expected then restart it and
+        try again, up to 3 retries.
+
+        Use this also on the weston driver to check that the Xvfb driver is
+        ready.
+
+        The code is both compatible with python2 and python3, when running on
+        python2 it will try first to use subprocess32 if available, otherwise
+        will use standard python2 subprocess without using the timeout feature.
+
+        On this v3 fix an error that caused that the subprocess stderr was
+        redirected to stdout by mistake.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.__init__):
+        (MockProcess.communicate):
+        * Scripts/webkitpy/port/westondriver.py:
+        (WestonDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/westondriver_unittest.py:
+        (WestonXvfbDriverDisplayTest._xvfb_check_if_ready):
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver):
+        (XvfbDriver.__init__):
+        (XvfbDriver.check_driver):
+        (XvfbDriver._xvfb_run):
+        (XvfbDriver._xvfb_screen_size):
+        (XvfbDriver._xvfb_stop):
+        (XvfbDriver._xvfb_check_if_ready):
+        (XvfbDriver._setup_environ_for_test):
+        (XvfbDriver.has_crashed):
+        (XvfbDriver.stop):
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.make_driver):
+        (XvfbDriverTest.assertDriverStartSuccessful):
+        (XvfbDriverTest.test_xvfb_start_and_ready):
+        (XvfbDriverTest.test_xvfb_start_arbitrary_worker_number):
+        (XvfbDriverTest.test_xvfb_not_replying):
+        * gtk/print-screen-size: Added.
+
 2021-09-07  Aakash Jain  <aakash_jain@apple.com>
 
         TestWebKitAPI.EventAttribution.Basic is extremely flaky on api-ios
