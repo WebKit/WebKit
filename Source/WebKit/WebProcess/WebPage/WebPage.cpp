@@ -6524,9 +6524,7 @@ void WebPage::scheduleFullEditorStateUpdate()
     else
         m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::Scheduled;
 
-    // FIXME: Scheduling a compositing layer flush here can be more expensive than necessary.
-    // Instead, we should just compute and send post-layout editor state during the next frame.
-    m_drawingArea->triggerRenderingUpdate();
+    m_page->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
 }
 
 #if HAVE(TOUCH_BAR)

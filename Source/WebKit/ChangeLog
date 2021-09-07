@@ -1,3 +1,22 @@
+2021-09-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Post-layout `EditorState` updates should be scheduled using `RenderingUpdateScheduler`
+        https://bugs.webkit.org/show_bug.cgi?id=229905
+
+        Reviewed by Simon Fraser.
+
+        Use `Page::scheduleRenderingUpdate` rather than `DrawingArea::triggerRenderingUpdate` to ensure that we schedule
+        a layer tree flush when sending a full post-layout `EditorState` update to the UI process. On macOS, the latter
+        method on DrawingArea will immediately install a runloop observer for the next CA commit, while the former only
+        does so after a zero-delay timer fires, courtesy of RenderingUpdateScheduler.
+
+        This prevents us from triggering unnecessary layer tree flushes in the case where the selection changes
+        frequently during a single rendering update; in particular, in Speedometer 2 on macOS, this decreases the total
+        number of rendering updates performed over the course of the benchmark by roughly 30%.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scheduleFullEditorStateUpdate):
+
 2021-09-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early September 2021 edition
