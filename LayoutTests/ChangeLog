@@ -1,3 +1,13 @@
+2021-09-07  Antti Koivisto  <antti@apple.com>
+
+        Remove -webkit-line-clamp behaviour where last link is placed after ellipsis box
+        https://bugs.webkit.org/show_bug.cgi?id=229985
+
+        Reviewed by Alan Bujtas.
+
+        * fast/flexbox/line-clamp-link-after-ellipsis-expected.txt: Removed.
+        * fast/flexbox/line-clamp-link-after-ellipsis.html: Removed.
+
 2021-08-26  Sergio Villar Senin  <svillar@igalia.com>
 
         Interoperability issue in margin collapsing with overflow:hidden elements

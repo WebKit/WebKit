@@ -1,3 +1,29 @@
+2021-09-07  Antti Koivisto  <antti@apple.com>
+
+        Remove -webkit-line-clamp behaviour where last link is placed after ellipsis box
+        https://bugs.webkit.org/show_bug.cgi?id=229985
+
+        Reviewed by Alan Bujtas.
+
+        -webkit-line-clamp has a bizarre and random behavior where the last link in a paragraph gets
+        rendered after the ellipsis box. It was exists to support some long-dead UI. No other engine does this.
+        The implementation is buggy and only works at all under a narrow set of cicrumstances.
+
+        This patch removes the behavior.
+
+        * rendering/LegacyEllipsisBox.cpp:
+        (WebCore::LegacyEllipsisBox::LegacyEllipsisBox):
+        (WebCore::LegacyEllipsisBox::paint):
+        (WebCore::LegacyEllipsisBox::nodeAtPoint):
+        (WebCore::LegacyEllipsisBox::markupBox const): Deleted.
+        (WebCore::LegacyEllipsisBox::paintMarkupBox): Deleted.
+        * rendering/LegacyEllipsisBox.h:
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::placeEllipsis):
+        * rendering/LegacyRootInlineBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+
 2021-08-26  Sergio Villar Senin  <svillar@igalia.com>
 
         Interoperability issue in margin collapsing with overflow:hidden elements

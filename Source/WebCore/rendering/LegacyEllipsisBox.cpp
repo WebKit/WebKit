@@ -34,9 +34,8 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyEllipsisBox);
 
-LegacyEllipsisBox::LegacyEllipsisBox(RenderBlockFlow& renderer, const AtomString& ellipsisStr, LegacyInlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox)
+LegacyEllipsisBox::LegacyEllipsisBox(RenderBlockFlow& renderer, const AtomString& ellipsisStr, LegacyInlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal)
     : LegacyInlineElementBox(renderer, FloatPoint(0, y), width, firstLine, true, false, false, isHorizontal, 0, 0, parent)
-    , m_shouldPaintMarkupBox(markupBox)
     , m_height(height)
     , m_str(ellipsisStr)
 {
@@ -45,7 +44,7 @@ LegacyEllipsisBox::LegacyEllipsisBox(RenderBlockFlow& renderer, const AtomString
 #endif
 }
 
-void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
+void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
 {
     GraphicsContext& context = paintInfo.context();
     const RenderStyle& lineStyle = this->lineStyle();
@@ -78,38 +77,6 @@ void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     if (setShadow)
         context.clearShadow();
-
-    paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle);
-}
-
-LegacyInlineBox* LegacyEllipsisBox::markupBox() const
-{
-    if (!m_shouldPaintMarkupBox)
-        return 0;
-
-    LegacyRootInlineBox* lastLine = blockFlow().lastRootBox();
-    if (!lastLine)
-        return 0;
-
-    // If the last line-box on the last line of a block is a link, -webkit-line-clamp paints that box after the ellipsis.
-    // It does not actually move the link.
-    LegacyInlineBox* anchorBox = lastLine->lastChild();
-    if (!anchorBox || !anchorBox->renderer().style().isLink())
-        return 0;
-
-    return anchorBox;
-}
-
-void LegacyEllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle& style)
-{
-    LegacyInlineBox* markupBox = this->markupBox();
-    if (!markupBox)
-        return;
-
-    LayoutPoint adjustedPaintOffset = paintOffset;
-    adjustedPaintOffset.move(x() + logicalWidth() - markupBox->x(),
-        y() + style.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()));
-    markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
 IntRect LegacyEllipsisBox::selectionRect()
@@ -145,20 +112,9 @@ void LegacyEllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoi
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
 }
 
-bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
+bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit, LayoutUnit, HitTestAction)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + LayoutPoint(topLeft());
-
-    // Hit test the markup box.
-    if (LegacyInlineBox* markupBox = this->markupBox()) {
-        const RenderStyle& lineStyle = this->lineStyle();
-        LayoutUnit mtx { adjustedLocation.x() + logicalWidth() - markupBox->x() };
-        LayoutUnit mty { adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()) };
-        if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom, hitTestAction)) {
-            blockFlow().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
-            return true;
-        }
-    }
 
     auto boundsRect = LayoutRect { adjustedLocation, LayoutSize(LayoutUnit(logicalWidth()), m_height) };
     if (visibleToHitTesting(request) && locationInContainer.intersects(boundsRect)) {
