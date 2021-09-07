@@ -1,3 +1,15 @@
+2021-09-07  Per Arne  <pvollan@apple.com>
+
+        Fix incorrect preprocess guard in WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=230025
+        <rdar://82721734>
+
+        Reviewed by Brent Fulgham.
+
+        Fix incorrect macOS version guard.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Replace PrivateClickMeasurementNetworkLoader::start with an implementation that doesn't need NetworkSession
