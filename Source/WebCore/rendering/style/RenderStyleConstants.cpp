@@ -753,12 +753,11 @@ TextStream& operator<<(TextStream& ts, MarqueeDirection marqueeDirection)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, MaskMode maskMode)
+TextStream& operator<<(TextStream& ts, MaskSourceType maskSource)
 {
-    switch (maskMode) {
-    case MaskMode::Alpha: ts << "alpha"; break;
-    case MaskMode::Luminance: ts << "luminance"; break;
-    case MaskMode::MatchSource: ts << "match-source"; break;
+    switch (maskSource) {
+    case MaskSourceType::Alpha: ts << "alpha"; break;
+    case MaskSourceType::Luminance: ts << "luminance"; break;
     }
 
     return ts;

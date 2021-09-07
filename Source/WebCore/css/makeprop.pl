@@ -117,8 +117,6 @@ my %styleBuilderOptions = (
 );
 my %nameToId;
 my %nameToAliases;
-my %synonyms;
-my %namesToSynonyms;
 my %relatedProperty;
 
 for my $name (@allNames) {
@@ -300,9 +298,6 @@ sub addProperty($$)
                     $relatedProperty{$name} = $codegenProperties->{"related-property"}
                 } elsif ($codegenOptionName eq "aliases") {
                     $nameToAliases{$name} = $codegenProperties->{"aliases"};
-                } elsif ($codegenOptionName eq "synonym") {
-                    $synonyms{$name} = 1;
-                    push @{$namesToSynonyms{$codegenProperties->{"synonym"}}}, $name;
                 } elsif ($styleBuilderOptions{$codegenOptionName}) {
                     $propertiesWithStyleBuilderOptions{$name}{$codegenOptionName} = $codegenProperties->{$codegenOptionName};
                 } elsif ($codegenOptionName eq "internal-only") {
@@ -1184,6 +1179,8 @@ sub generateFillLayerPropertyValueSetter {
   my $name = shift;
   my $indent = shift;
 
+  my $CSSPropertyId = "CSSProperty" . $nameToId{$name};
+
   my $setterContent = "";
   $setterContent .= $indent . "auto* child = &builderState.style()." . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
@@ -1194,12 +1191,12 @@ sub generateFillLayerPropertyValueSetter {
   $setterContent .= $indent . "            previousChild->setNext(FillLayer::create(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "            child = previousChild->next();\n";
   $setterContent .= $indent . "        }\n";
-  $setterContent .= $indent . "        builderState.styleMap()." . getFillLayerMapfunction($name) . "(propertyID, *child, item);\n";
+  $setterContent .= $indent . "        builderState.styleMap()." . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, item);\n";
   $setterContent .= $indent . "        previousChild = child;\n";
   $setterContent .= $indent . "        child = child->next();\n";
   $setterContent .= $indent . "    }\n";
   $setterContent .= $indent . "} else {\n";
-  $setterContent .= $indent . "    builderState.styleMap()." . getFillLayerMapfunction($name) . "(propertyID, *child, value);\n";
+  $setterContent .= $indent . "    builderState.styleMap()." . getFillLayerMapfunction($name) . "(" . $CSSPropertyId . ", *child, value);\n";
   $setterContent .= $indent . "    child = child->next();\n";
   $setterContent .= $indent . "}\n";
   $setterContent .= $indent . "for (; child; child = child->next())\n";
@@ -1298,15 +1295,9 @@ sub generateValueSetter {
   my $name = shift;
   my $indent = shift;
 
-  my $valueApplierFirstArgument = "";
-  if (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
-    $valueApplierFirstArgument = "CSSPropertyID propertyID, ";
-  }
-
   my $setterContent = "";
-  $setterContent .= $indent . "static void applyValue" . $nameToId{$name} . "(" . $valueApplierFirstArgument . "BuilderState& builderState, CSSValue& value)\n";
+  $setterContent .= $indent . "static void applyValue" . $nameToId{$name} . "(BuilderState& builderState, CSSValue& value)\n";
   $setterContent .= $indent . "{\n";
-
   my $convertedValue;
   if (exists($propertiesWithStyleBuilderOptions{$name}{"converter"})) {
     $convertedValue = "BuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"converter"} . "(builderState, value)";
@@ -1383,7 +1374,6 @@ foreach my $name (@names) {
   # Skip Shorthand properties and properties that do not use the StyleBuilder.
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"});
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"skip-builder"});
-  next if (exists $synonyms{$name});
 
   my $indent = "    ";
   if (!$propertiesWithStyleBuilderOptions{$name}{"custom"}{"Initial"}) {
@@ -1418,18 +1408,7 @@ void BuilderGenerated::applyProperty(CSSPropertyID property, BuilderState& build
 EOF
 
 foreach my $name (@names) {
-  next if (exists $synonyms{$name});
-
   print STYLEBUILDER "    case CSSProperty" . $nameToId{$name} . ":\n";
-
-  my $valueApplierFirstArgument = "";
-  if (exists $propertiesWithStyleBuilderOptions{$name}{"fill-layer-property"}) {
-    $valueApplierFirstArgument = "property, ";
-  }
-  foreach my $synonym (@{$namesToSynonyms{$name}}) {
-    print STYLEBUILDER "    case CSSProperty" . $nameToId{$synonym} . ":\n";
-  }
-
   if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"}) {
     print STYLEBUILDER "        ASSERT(isShorthandCSSProperty(property));\n";
     print STYLEBUILDER "        ASSERT_NOT_REACHED();\n";
@@ -1439,7 +1418,7 @@ foreach my $name (@names) {
     print STYLEBUILDER "        else if (isInherit)\n";
     print STYLEBUILDER "            " . getScopeForFunction($name, "Inherit") . "::applyInherit" . $nameToId{$name} . "(builderState);\n";
     print STYLEBUILDER "        else\n";
-    print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(" . $valueApplierFirstArgument . "builderState, value);\n";
+    print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(builderState, value);\n";
   }
   print STYLEBUILDER "        break;\n";
 }

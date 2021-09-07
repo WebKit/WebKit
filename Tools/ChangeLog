@@ -1,3 +1,17 @@
+2021-09-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r282058.
+        https://bugs.webkit.org/show_bug.cgi?id=229978
+
+        broken two css layout tests on iOS
+
+        Reverted changeset:
+
+        "Add a temporarily prefixed property for mask-mode, aliased to
+        -webkit-mask-source-type"
+        https://bugs.webkit.org/show_bug.cgi?id=229915
+        https://commits.webkit.org/r282058
+
 2021-09-06  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Invoke transfer-archive-to-s3 with Python 3

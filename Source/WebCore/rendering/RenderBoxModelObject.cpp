@@ -950,7 +950,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         geometry.clip(LayoutRect(pixelSnappedRect));
         RefPtr<Image> image;
         if (!geometry.destRect().isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : this, geometry.tileSize()))) {
-            context.setDrawLuminanceMask(bgLayer.maskMode() == MaskMode::Luminance);
+            context.setDrawLuminanceMask(bgLayer.maskSourceType() == MaskSourceType::Luminance);
 
             if (is<BitmapImage>(image))
                 downcast<BitmapImage>(*image).updateFromSettings(settings());

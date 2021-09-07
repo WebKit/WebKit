@@ -3072,11 +3072,6 @@ static RefPtr<CSSPrimitiveValue> consumeWebkitMaskSourceType(CSSParserTokenRange
     return consumeIdent<CSSValueAuto, CSSValueAlpha, CSSValueLuminance>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeWebkitMaskMode(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueAlpha, CSSValueLuminance, CSSValueMatchSource>(range);
-}
-
 static RefPtr<CSSPrimitiveValue> consumePrefixedBackgroundBox(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& /*context*/)
 {
     // The values 'border', 'padding' and 'content' are deprecated and do not apply to the version of the property that has the -webkit- prefix removed.
@@ -3152,8 +3147,6 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
     case CSSPropertyBackgroundImage:
     case CSSPropertyWebkitMaskImage:
         return consumeImageOrNone(range, context);
-    case CSSPropertyWebkitMaskMode:
-        return consumeWebkitMaskMode(range);
     case CSSPropertyWebkitMaskSourceType:
         return consumeWebkitMaskSourceType(range);
     case CSSPropertyBackgroundPositionX:
@@ -4415,7 +4408,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitMaskPositionX:
     case CSSPropertyWebkitMaskPositionY:
     case CSSPropertyWebkitMaskSize:
-    case CSSPropertyWebkitMaskMode:
     case CSSPropertyWebkitMaskSourceType:
         return consumeCommaSeparatedBackgroundComponent(property, m_range, m_context);
     case CSSPropertyWebkitMaskRepeatX:

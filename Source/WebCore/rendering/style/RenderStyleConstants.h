@@ -363,12 +363,11 @@ enum class Edge : uint8_t {
     Left
 };
 
-// CSS3 Mask Mode
+// CSS3 Mask Source Types
 
-enum class MaskMode : uint8_t {
+enum class MaskSourceType : uint8_t {
     Alpha,
-    Luminance,
-    MatchSource,
+    Luminance
 };
 
 // CSS3 Marquee Properties
@@ -1314,7 +1313,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, ListStyleType);
 WTF::TextStream& operator<<(WTF::TextStream&, MarginCollapse);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeBehavior);
 WTF::TextStream& operator<<(WTF::TextStream&, MarqueeDirection);
-WTF::TextStream& operator<<(WTF::TextStream&, MaskMode);
+WTF::TextStream& operator<<(WTF::TextStream&, MaskSourceType);
 WTF::TextStream& operator<<(WTF::TextStream&, NBSPMode);
 WTF::TextStream& operator<<(WTF::TextStream&, ObjectFit);
 WTF::TextStream& operator<<(WTF::TextStream&, Order);
