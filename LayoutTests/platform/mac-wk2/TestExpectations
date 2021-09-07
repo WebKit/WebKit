@@ -285,7 +285,7 @@ webkit.org/b/90156 editing/mac/spelling/autocorrection-blockquote-crash.html [ F
 
 webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 
-webkit.org/b/229723 [ BigSur Debug arm64 ] http/tests/security/no-indexeddb-from-sandbox.html [ Pass Crash ]
+webkit.org/b/229723 [ BigSur Debug ] http/tests/security/no-indexeddb-from-sandbox.html [ Pass Crash ]
 
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK2 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
