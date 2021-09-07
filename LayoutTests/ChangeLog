@@ -1,3 +1,14 @@
+2021-09-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [iOS, BigSur+] webrtc/datachannel/getStats-no-prflx-remote-candidate.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=229877
+
+        Unreviewed test gardning.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-07  Chris Dumez  <cdumez@apple.com>
 
         Allow layout tests to open popups by default

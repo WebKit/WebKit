@@ -1412,4 +1412,6 @@ webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
 
+webkit.org/b/229877 webrtc/datachannel/getStats-no-prflx-remote-candidate.html [ Pass Timeout ]
+
 webkit.org/b/228211 css2.1/20110323/replaced-intrinsic-003.htm [ Pass Failure ]
