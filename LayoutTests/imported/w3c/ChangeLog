@@ -1,3 +1,25 @@
+2021-09-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Update the css-transforms/parsing WPT
+        https://bugs.webkit.org/show_bug.cgi?id=229974
+
+        Reviewed by Youenn Fablet.
+
+        Update the transforms parsing tests to 8a2b0f1086adf122d91c36c222b26362ba4059f2.
+
+        An update of the entire css-transforms directory has too many failures to deal with.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-transforms/parsing/scale-parsing-invalid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/scale-parsing-invalid.html:
+        * web-platform-tests/css/css-transforms/parsing/scale-parsing-valid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/scale-parsing-valid.html:
+        * web-platform-tests/css/css-transforms/parsing/transform-valid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/transform-valid.html:
+        * web-platform-tests/css/css-transforms/parsing/translate-parsing-invalid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/translate-parsing-invalid.html:
+        * web-platform-tests/css/css-transforms/parsing/w3c-import.log: Added.
+
 2021-09-07  Sihui Liu  <sihui_liu@apple.com>
 
         Import storage tests from WPT
