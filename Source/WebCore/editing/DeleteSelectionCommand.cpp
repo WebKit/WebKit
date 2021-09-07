@@ -491,10 +491,15 @@ void DeleteSelectionCommand::insertBlockPlaceholderForTableCellIfNeeded(Element&
     
 void DeleteSelectionCommand::removeNodeUpdatingStates(Node& node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
-    if (&node == m_startBlock && !isEndOfBlock(VisiblePosition(firstPositionInNode(m_startBlock.get())).previous()))
-        m_needPlaceholder = true;
-    else if (&node == m_endBlock && !isStartOfBlock(VisiblePosition(lastPositionInNode(m_startBlock.get())).next()))
-        m_needPlaceholder = true;
+    if (&node == m_startBlock) {
+        auto prev = VisiblePosition(firstPositionInNode(m_startBlock.get())).previous();
+        if (!prev.isNull() && !isEndOfBlock(prev))
+            m_needPlaceholder = true;
+    } else if (&node == m_endBlock) {
+        auto next = VisiblePosition(lastPositionInNode(m_endBlock.get())).next();
+        if (!next.isNull() && !isStartOfBlock(next))
+            m_needPlaceholder = true;
+    }
     
     // FIXME: Update the endpoints of the range being deleted.
     updatePositionForNodeRemoval(m_endingPosition, node);
