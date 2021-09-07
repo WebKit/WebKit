@@ -1,3 +1,12 @@
+2021-09-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS EWS ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=230011
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-09-07  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for http/tests/security/no-indexeddb-from-sandbox.html.
