@@ -1,3 +1,12 @@
+2021-09-07  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS EWS ] media/modern-media-controls/media-documents/media-document-invalid.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230012
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-09-07  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/2.0.y/deqp/functional/gles3/negativestateapi.html get_framebuffer_attachment_parameter fails on Metal
