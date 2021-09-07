@@ -1,3 +1,15 @@
+2021-09-06  Antti Koivisto  <antti@apple.com>
+
+        Add layout test for performance of adding children to a shadow host
+        https://bugs.webkit.org/show_bug.cgi?id=229960
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for https://trac.webkit.org/changeset/281813/webkit
+
+        * fast/shadow-dom/host-child-append-performance-expected.txt: Added.
+        * fast/shadow-dom/host-child-append-performance.html: Added.
+
 2021-09-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Gardening of two flaky tests and timeout.
