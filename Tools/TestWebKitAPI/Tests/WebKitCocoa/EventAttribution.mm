@@ -282,7 +282,7 @@ TEST(EventAttribution, FraudPrevention)
 }
 #endif
 
-TEST(EventAttribution, Basic)
+TEST(EventAttribution, DISABLED_Basic)
 {
     runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
