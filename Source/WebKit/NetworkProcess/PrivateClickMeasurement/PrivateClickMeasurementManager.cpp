@@ -230,13 +230,10 @@ void PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacySto
     store().insertPrivateClickMeasurement(WTFMove(measurement), type);
 }
 
-void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL)
 {
     if (!featureEnabled())
         return;
-
-    RegistrableDomain redirectDomain { redirectRequest.url() };
-    auto& firstPartyURL = redirectRequest.firstPartyForCookies();
 
     if (!redirectDomain.matches(requestURL)) {
         m_client->broadcastConsoleMessage(MessageLevel::Warning, "[Private Click Measurement] Triggering event was not accepted because the HTTP redirect was not same-site."_s);

@@ -316,7 +316,7 @@ void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasureme
 
 void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
 {
-    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, redirectRequest);
+    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyForCookies());
 }
 
 void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)

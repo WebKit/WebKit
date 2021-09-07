@@ -58,7 +58,7 @@ public:
     ~PrivateClickMeasurementManager();
 
     void storeUnattributed(PrivateClickMeasurement&&);
-    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest);
+    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL);
     void clear(CompletionHandler<void()>&&);
     void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&);
     void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);

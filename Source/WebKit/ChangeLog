@@ -1,3 +1,20 @@
+2021-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Simplify PrivateClickMeasurementManager interface
+        https://bugs.webkit.org/show_bug.cgi?id=230014
+
+        Reviewed by John Wilander.
+
+        ResourceRequest serialization is excessive and complicated.
+        Let's just serialize the parts we need instead.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClient.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::handleAttribution):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+
 2021-09-07  Chris Dumez  <cdumez@apple.com>
 
         Implement origin partitioning (top-origin/frame-origin) for BroadcastChannel
