@@ -2439,6 +2439,10 @@ webkit.org/b/229738 fast/text/word-break.html [ Failure ]
 
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
 
+webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/229979 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

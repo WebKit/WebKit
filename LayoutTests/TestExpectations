@@ -5084,3 +5084,5 @@ webkit.org/b/228176 fast/text/variable-system-font-2.html [ Pass ImageOnlyFailur
 webkit.org/b/229726 imported/w3c/web-platform-tests/css/css-font-loading/fontface-override-descriptors.html [ ImageOnlyFailure ]
 webkit.org/b/229726 imported/w3c/web-platform-tests/css/css-font-loading/fontface-size-adjust-descriptor.html [ ImageOnlyFailure ]
 webkit.org/b/229727 imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-load-var.html [ Skip ]
+
+webkit.org/b/229975 fast/text/FontFaceSet-status-after-style-update.html [ Failure Pass ]

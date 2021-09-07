@@ -1,3 +1,12 @@
+2021-09-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of two flaky tests and timeout.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+
 2021-09-06  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [Gstreamer] Mark tests media/track/in-band/track-in-band-*-added-once.html as flaky
