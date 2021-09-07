@@ -63,7 +63,6 @@ class RTCDtlsTransportBackend;
 class RTCIceCandidate;
 class RTCIceTransportBackend;
 class RTCPeerConnectionErrorCallback;
-class RTCSctpTransport;
 class RTCSessionDescription;
 class RTCStatsCallback;
 
@@ -189,11 +188,8 @@ public:
 
     void updateTransceiversAfterSuccessfulLocalDescription();
     void updateTransceiversAfterSuccessfulRemoteDescription();
-    void updateSctpBackend(std::unique_ptr<RTCSctpTransportBackend>&&);
 
     void processIceTransportStateChange(RTCIceTransport&);
-
-    RTCSctpTransport* sctp() { return m_sctpTransport.get(); }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -270,7 +266,6 @@ private:
     std::optional<uint32_t> m_negotiationNeededEventId;
     Vector<Ref<RTCDtlsTransport>> m_dtlsTransports;
     Vector<Ref<RTCIceTransport>> m_iceTransports;
-    RefPtr<RTCSctpTransport> m_sctpTransport;
 };
 
 } // namespace WebCore

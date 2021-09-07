@@ -48,11 +48,9 @@ promise_test(async (test) => {
     }, (remoteConnection) => {
     });
 
-    assert_not_equals(localConnection.sctp, null);
-
     let counter = 0;
     while (++counter < 20) {
-        if (localConnection.sctp.transport.state === "connected")
+        if (localConnection.connectionState === "connected")
            return;
         await new Promise(resolve => setTimeout(resolve, 10));
     }
@@ -71,8 +69,7 @@ promise_test(async (test) => {
     });
 
     await new Promise(resolve => setTimeout(resolve, 200));
-    assert_not_equals(localConnection.sctp, null);
-    assert_not_equals(localConnection.sctp.transport.state, "connected");
+    assert_not_equals(localConnection.connectionState, "connected");
 }, "Verify regular clients cannot connect with DTLS1-only clients");
     </script>
   </body>

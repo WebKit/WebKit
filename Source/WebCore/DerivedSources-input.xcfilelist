@@ -269,8 +269,6 @@ $(PROJECT_DIR)/Modules/mediastream/RTCRtpSynchronizationSource.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpTransceiver.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpTransceiverDirection.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCRtpTransform.idl
-$(PROJECT_DIR)/Modules/mediastream/RTCSctpTransport.idl
-$(PROJECT_DIR)/Modules/mediastream/RTCSctpTransportState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSdpType.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSessionDescription.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCSessionDescriptionInit.idl

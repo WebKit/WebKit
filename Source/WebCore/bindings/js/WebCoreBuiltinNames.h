@@ -212,7 +212,6 @@ namespace WebCore {
     macro(RTCRtpSender) \
     macro(RTCRtpTransceiver) \
     macro(RTCRtpTransform) \
-    macro(RTCSctpTransport) \
     macro(RTCSessionDescription) \
     macro(RTCStatsReport) \
     macro(RTCTrackEvent) \

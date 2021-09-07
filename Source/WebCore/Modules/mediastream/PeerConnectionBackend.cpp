@@ -45,7 +45,6 @@
 #include "RTCPeerConnection.h"
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCRtpCapabilities.h"
-#include "RTCSctpTransportBackend.h"
 #include "RTCSessionDescriptionInit.h"
 #include "RTCTrackEvent.h"
 #include "RuntimeEnabledFeatures.h"
@@ -175,18 +174,16 @@ void PeerConnectionBackend::setLocalDescription(const RTCSessionDescription* ses
     doSetLocalDescription(sessionDescription);
 }
 
-void PeerConnectionBackend::setLocalDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
+void PeerConnectionBackend::setLocalDescriptionSucceeded()
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise)]() mutable {
         if (m_peerConnection.isClosed())
             return;
-
         m_peerConnection.updateTransceiversAfterSuccessfulLocalDescription();
-        m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
         promise->resolve();
     });
 }
@@ -213,7 +210,7 @@ void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& se
     doSetRemoteDescription(sessionDescription);
 }
 
-void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
+void PeerConnectionBackend::setRemoteDescriptionSucceeded()
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
@@ -234,12 +231,11 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::unique_ptr<RTCSct
         track.source().setMuted(false);
     }
 
-    m_peerConnection.doTask([this, promise = WTFMove(promise), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(promise)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
         m_peerConnection.updateTransceiversAfterSuccessfulRemoteDescription();
-        m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
         promise->resolve();
     });
 }

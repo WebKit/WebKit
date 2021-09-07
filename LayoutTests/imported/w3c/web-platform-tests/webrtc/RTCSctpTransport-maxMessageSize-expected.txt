@@ -1,7 +1,7 @@
 
-PASS Determine the local side send limitation (canSendSize) by offering a max-message-size of 0
-FAIL Remote offer SDP missing max-message-size attribute assert_equals: Missing SDP attribute and a non-zero canSendSize should give an maxMessageSize of min(65536, canSendSize) expected 65536 but got 1.7976931348623157e+308
-FAIL max-message-size with a (non-zero) value provided by the remote peer assert_equals: maxMessageSize should be the value provided by the remote peer (as long as it is less than canSendSize) expected 1 but got 1.7976931348623157e+308
-FAIL Renegotiate max-message-size with various values provided by the remote peer assert_equals: maxMessageSize should be the value provided by the remote peer (as long as it is less than canSendSize) expected 1 but got 1.7976931348623157e+308
-FAIL max-message-size with a (non-zero) value larger than canSendSize provided by the remote peer promise_test: Unhandled rejection with value: object "SyntaxError: Invalid SCTP max message size."
+FAIL Determine the local side send limitation (canSendSize) by offering a max-message-size of 0 assert_equals: RTCSctpTransport must be null expected (object) null but got (undefined) undefined
+FAIL Remote offer SDP missing max-message-size attribute assert_not_equals: canSendSize needs to be determined got disallowed value null
+FAIL max-message-size with a (non-zero) value provided by the remote peer assert_not_equals: canSendSize needs to be determined got disallowed value null
+FAIL Renegotiate max-message-size with various values provided by the remote peer assert_not_equals: canSendSize needs to be determined got disallowed value null
+FAIL max-message-size with a (non-zero) value larger than canSendSize provided by the remote peer assert_not_equals: canSendSize needs to be determined got disallowed value null
 
