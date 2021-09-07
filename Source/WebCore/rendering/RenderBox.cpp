@@ -4838,7 +4838,7 @@ bool RenderBox::shrinkToAvoidFloats() const
 bool RenderBox::createsNewFormattingContext() const
 {
     return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasPotentiallyScrollableOverflow() || isFlexItemIncludingDeprecated()
-        || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isRenderFragmentContainer()
+        || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isDocumentElementRenderer() || isRenderFragmentedFlow()
         || style().containsLayout() || isGridItem() || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot;
 }
 

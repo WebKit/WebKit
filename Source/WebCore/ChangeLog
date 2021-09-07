@@ -1,3 +1,24 @@
+2021-09-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        Do not let RenderFragmentContainers create new formatting contexts
+        https://bugs.webkit.org/show_bug.cgi?id=229759
+
+        Reviewed by Alan Bujtas.
+
+        The isRenderFragmentContainer() condition was added in r176957 when the createsNewFormattingContext() function
+        was introduced. Back then it was actually isRenderRegion() which was later renamed. However that was wrongly added
+        to the method because it should have remained in the caller RenderBlockFlow::addOverhangingFloats().
+
+        Instead of removing it (as the patch does) I thought about moving it back to the addOverhangingFloats() method
+        where it was added as part of r167602. That revision is actually two fixes and the one that required this code
+        was an import of a Blink patch. However moving it to its original location does not seem to regress anything and
+        what's more Blink has also removed it from there some time ago. That's why I decided just to remove it.
+
+        Does not directly fix any test at the moment but it's a precondition for wkb.ug/224185 which will fix 3 tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createsNewFormattingContext const):
+
 2021-09-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early September 2021 edition
