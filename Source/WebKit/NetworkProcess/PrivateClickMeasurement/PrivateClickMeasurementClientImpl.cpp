@@ -37,14 +37,6 @@ ClientImpl::ClientImpl(NetworkSession& session, NetworkProcess& networkProcess)
     : m_networkSession(makeWeakPtr(session))
     , m_networkProcess(networkProcess) { }
 
-void ClientImpl::loadFromNetwork(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore::PrivateClickMeasurement::PcmDataCarried pcmDataCarried, NetworkLoadCallback&& completionHandler)
-{
-    if (!featureEnabled())
-        return completionHandler(WebCore::ResourceError(WebCore::ResourceError::Type::Cancellation), { }, { });
-
-    PrivateClickMeasurementNetworkLoader::start(*m_networkSession, WTFMove(url), WTFMove(jsonPayload), pcmDataCarried, WTFMove(completionHandler));
-}
-
 void ClientImpl::broadcastConsoleMessage(JSC::MessageLevel messageLevel, const String& message)
 {
     if (!featureEnabled())

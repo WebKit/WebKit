@@ -4555,6 +4555,7 @@
 		5CB930BF26E0542E0032B1C0 /* PrivateClickMeasurementClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementClient.h; sourceTree = "<group>"; };
 		5CB930C026E0542F0032B1C0 /* PrivateClickMeasurementClientImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementClientImpl.cpp; sourceTree = "<group>"; };
 		5CB930C126E054B80032B1C0 /* PrivateClickMeasurementClientImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementClientImpl.h; sourceTree = "<group>"; };
+		5CB930F226E7EEE00032B1C0 /* PrivateClickMeasurementNetworkLoaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementNetworkLoaderCocoa.mm; sourceTree = "<group>"; };
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTask.h; sourceTree = "<group>"; };
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDebugInfo.h; sourceTree = "<group>"; };
@@ -9260,6 +9261,7 @@
 		5C01BC3526D46AD400FEB42F /* PrivateClickMeasurement */ = {
 			isa = PBXGroup;
 			children = (
+				5CB930F126E7EE890032B1C0 /* cocoa */,
 				5CB930BF26E0542E0032B1C0 /* PrivateClickMeasurementClient.h */,
 				5CB930C026E0542F0032B1C0 /* PrivateClickMeasurementClientImpl.cpp */,
 				5CB930C126E054B80032B1C0 /* PrivateClickMeasurementClientImpl.h */,
@@ -9351,6 +9353,14 @@
 				5C74300E21500492004BFA17 /* WKWebProcess.h */,
 			);
 			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		5CB930F126E7EE890032B1C0 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				5CB930F226E7EEE00032B1C0 /* PrivateClickMeasurementNetworkLoaderCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		6BE969BF1E54D452008B7483 /* ResourceLoadStatistics */ = {

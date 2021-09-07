@@ -25,49 +25,25 @@
 
 #pragma once
 
-#include "NetworkLoad.h"
-#include "NetworkLoadClient.h"
-#include "NetworkLoadParameters.h"
-#include <WebCore/TextResourceDecoder.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/JSONValues.h>
+
+namespace WebCore {
+class ResourceError;
+class ResourceResponse;
+}
 
 namespace WebKit {
 
-class NetworkSession;
+namespace PCM {
 
-class PrivateClickMeasurementNetworkLoader final : public NetworkLoadClient {
+class NetworkLoader {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using Callback = CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&, const RefPtr<JSON::Object>&)>;
-    static void start(NetworkSession&, URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&&);
-
-    ~PrivateClickMeasurementNetworkLoader();
-
-private:
-    PrivateClickMeasurementNetworkLoader(NetworkSession&, NetworkLoadParameters&&, Callback&&);
-
-    // NetworkLoadClient.
-    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final { }
-    bool isSynchronous() const final { return false; }
-    bool isAllowedToAskUserForCredentials() const final { return false; }
-    void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
-    void didReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
-    void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) final;
-    void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
-    void didFailLoading(const WebCore::ResourceError&) final;
-
-    void fail(WebCore::ResourceError&&);
-    void cancel();
-    void didComplete();
-
-    WeakPtr<NetworkSession> m_session;
-    std::unique_ptr<NetworkLoad> m_networkLoad;
-    Callback m_completionHandler;
-
-    WebCore::ResourceResponse m_response;
-    RefPtr<WebCore::TextResourceDecoder> m_decoder;
-    StringBuilder m_jsonString;
+    static void start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&&);
 };
+
+} // namespace PCM
 
 } // namespace WebKit

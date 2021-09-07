@@ -26,124 +26,20 @@
 #include "config.h"
 #include "PrivateClickMeasurementNetworkLoader.h"
 
-#include "NetworkLoad.h"
-#include "NetworkSession.h"
-#include <WebCore/HTTPHeaderValues.h>
-#include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/RuntimeApplicationChecks.h>
-#include <WebCore/TextResourceDecoder.h>
-
-#include <wtf/JSONValues.h>
+#include <WebCore/NotImplemented.h>
 
 namespace WebKit {
 
-using namespace WebCore;
+namespace PCM {
 
-static NetworkLoadParameters generateNetworkLoadParameters(URL&& url, RefPtr<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried pcmDataCarried)
+#if !PLATFORM(COCOA)
+void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
 {
-    String httpMethod = jsonPayload ? "POST"_s : "GET"_s;
-
-    ResourceRequest request { WTFMove(url) };
-    request.setHTTPMethod(httpMethod);
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, WebCore::HTTPHeaderValues::maxAge0());
-    if (jsonPayload) {
-        request.setHTTPContentType(WebCore::HTTPHeaderValues::applicationJSONContentType());
-        request.setHTTPBody(WebCore::FormData::create(jsonPayload->toJSONString().utf8()));
-    }
-
-    NetworkLoadParameters loadParameters;
-    loadParameters.request = request;
-    loadParameters.parentPID = presentingApplicationPID();
-    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
-    loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
-    loadParameters.pcmDataCarried = pcmDataCarried;
-
-    return loadParameters;
+    notImplemented();
+    completionHandler({ }, { }, { });
 }
+#endif
 
-void PrivateClickMeasurementNetworkLoader::start(NetworkSession& session, URL&& url, RefPtr<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried pcmDataCarried, Callback&& completionHandler)
-{
-    auto parameters = generateNetworkLoadParameters(WTFMove(url), WTFMove(jsonPayload), pcmDataCarried);
-    auto loader = std::unique_ptr<PrivateClickMeasurementNetworkLoader>(new PrivateClickMeasurementNetworkLoader(session, WTFMove(parameters), WTFMove(completionHandler)));
-    session.addPrivateClickMeasurementNetworkLoader(WTFMove(loader));
-}
-
-PrivateClickMeasurementNetworkLoader::PrivateClickMeasurementNetworkLoader(NetworkSession& session, NetworkLoadParameters&& parameters, Callback&& completionHandler)
-    : m_session(makeWeakPtr(session))
-    , m_completionHandler(WTFMove(completionHandler))
-{
-    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *m_session);
-    m_networkLoad->start();
-}
-
-PrivateClickMeasurementNetworkLoader::~PrivateClickMeasurementNetworkLoader()
-{
-    cancel();
-}
-
-void PrivateClickMeasurementNetworkLoader::fail(ResourceError&& error)
-{
-    if (!m_completionHandler)
-        return;
-
-    m_completionHandler(WTFMove(error), { }, nullptr);
-    didComplete();
-}
-
-void PrivateClickMeasurementNetworkLoader::cancel()
-{
-    fail(ResourceError { ResourceError::Type::Cancellation });
-}
-
-void PrivateClickMeasurementNetworkLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&)
-{
-    cancel();
-}
-
-void PrivateClickMeasurementNetworkLoader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
-{
-    if (!MIMETypeRegistry::isSupportedJSONMIMEType(response.mimeType())) {
-        fail({ errorDomainWebKitInternal, 0, response.url(), "MIME Type is not a JSON MIME type"_s });
-        completionHandler(PolicyAction::Ignore);
-        return;
-    }
-
-    m_response = WTFMove(response);
-    completionHandler(PolicyAction::Use);
-}
-
-void PrivateClickMeasurementNetworkLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
-{
-    if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("application/json"_s, m_response.textEncodingName().isEmpty() ? WebCore::TextEncoding("UTF-8") : WebCore::TextEncoding(m_response.textEncodingName()));
-
-    if (auto size = buffer->size())
-        m_jsonString.append(m_decoder->decode(buffer->data(), size));
-}
-
-void PrivateClickMeasurementNetworkLoader::didFinishLoading(const WebCore::NetworkLoadMetrics&)
-{
-    if (m_decoder)
-        m_jsonString.append(m_decoder->flush());
-
-    if (auto jsonValue = JSON::Value::parseJSON(m_jsonString.toString()))
-        m_completionHandler({ }, m_response, jsonValue->asObject());
-    else
-        m_completionHandler({ }, m_response, nullptr);
-
-    didComplete();
-}
-
-void PrivateClickMeasurementNetworkLoader::didFailLoading(const ResourceError& error)
-{
-    fail(ResourceError(error));
-}
-
-void PrivateClickMeasurementNetworkLoader::didComplete()
-{
-    m_networkLoad = nullptr;
-    if (m_session)
-        m_session->removePrivateClickMeasurementNetworkLoader(this);
-}
+} // namespace PCM
 
 } // namespace WebKit

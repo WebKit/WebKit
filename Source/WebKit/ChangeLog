@@ -1,5 +1,69 @@
 2021-09-07  Alex Christensen  <achristensen@webkit.org>
 
+        Replace PrivateClickMeasurementNetworkLoader::start with an implementation that doesn't need NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=230015
+
+        Reviewed by John Wilander.
+
+        This is needed to run this code in a process that doesn't have NetworkSession, which is a class tied closely to WKWebsiteDataStore.
+        This replaces it with a simple implementation that does the same things:
+        1. Uses an ephemeral stateless session that doesn't accept cookies or use credentials.
+        2. Does not allow redirects.
+        3. Only accepts JSON mime types.
+        4. Calls processPCMRequest
+
+        We still need to call NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost to get tests to pass.
+        Covered by existing tests.
+
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::addPrivateClickMeasurementNetworkLoader): Deleted.
+        (WebKit::NetworkSession::removePrivateClickMeasurementNetworkLoader): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClient.h:
+        (WebKit::PCM::Client::~Client):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.cpp:
+        (WebKit::PCM::ClientImpl::loadFromNetwork): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementClientImpl.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp:
+        (WebKit::PCM::NetworkLoader::start):
+        (WebKit::generateNetworkLoadParameters): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::start): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::PrivateClickMeasurementNetworkLoader): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::~PrivateClickMeasurementNetworkLoader): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::fail): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::cancel): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::willSendRedirectedRequest): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::didReceiveResponse): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::didReceiveBuffer): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::didFinishLoading): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::didFailLoading): Deleted.
+        (WebKit::PrivateClickMeasurementNetworkLoader::didComplete): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.h:
+        (): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm: Added.
+        (processPCMRequest):
+        (-[WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::PCM::taskMap):
+        (WebKit::PCM::statelessSessionWithoutRedirects):
+        (WebKit::PCM::NetworkLoader::start):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (processPCMRequest): Deleted.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2021-09-07  Alex Christensen  <achristensen@webkit.org>
+
         Simplify PrivateClickMeasurementManager interface
         https://bugs.webkit.org/show_bug.cgi?id=230014
 

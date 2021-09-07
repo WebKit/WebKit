@@ -67,7 +67,6 @@ public:
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
     std::optional<NetworkActivityTracker> networkActivityTracker;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
-    std::optional<WebCore::PrivateClickMeasurement::PcmDataCarried> pcmDataCarried;
 };
 
 } // namespace WebKit

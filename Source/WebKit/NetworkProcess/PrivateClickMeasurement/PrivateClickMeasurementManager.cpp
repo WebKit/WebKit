@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "NetworkSession.h"
 #include "PrivateClickMeasurementDebugInfo.h"
+#include "PrivateClickMeasurementNetworkLoader.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FormData.h>
@@ -131,7 +132,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
 
-    m_client->loadFromNetwork(WTFMove(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTFMove(tokenPublicKeyURL), nullptr, pcmDataCarried, [weakThis = makeWeakPtr(*this), this, attribution = WTFMove(attribution), callback = WTFMove(callback)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
@@ -149,7 +150,6 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
 
         callback(WTFMove(attribution), jsonObject->getString("token_public_key"_s));
     });
-
 }
 
 void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasurement&& measurement)
@@ -175,7 +175,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
 
-    m_client->loadFromNetwork(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
+    PCM::NetworkLoader::start(WTFMove(tokenSignatureURL), measurement.tokenSignatureJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this, measurement = WTFMove(measurement)] (auto& error, auto& response, auto& jsonObject) mutable {
         if (!weakThis)
             return;
 
@@ -357,7 +357,7 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
 
-    m_client->loadFromNetwork(WTFMove(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this](auto& error, auto& response, auto&) {
+    PCM::NetworkLoader::start(WTFMove(attributionURL), attribution.attributionReportJSON(), pcmDataCarried, [weakThis = makeWeakPtr(*this), this](auto& error, auto& response, auto&) {
         if (!weakThis)
             return;
 

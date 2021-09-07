@@ -57,7 +57,6 @@
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
-static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { }
 static void overrideAttributionContext(NSMutableURLRequest *) { }
 #endif
 
@@ -346,9 +345,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
 
     overrideAttributionContext(mutableRequest.get());
-
-    if (parameters.pcmDataCarried)
-        processPCMRequest(*parameters.pcmDataCarried, mutableRequest.get());
 
     nsRequest = mutableRequest;
 

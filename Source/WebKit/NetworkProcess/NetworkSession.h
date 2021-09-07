@@ -29,7 +29,6 @@
 #include "NavigatingToAppBoundDomain.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "PrefetchCache.h"
-#include "PrivateClickMeasurementNetworkLoader.h"
 #include "SandboxExtension.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -174,9 +173,6 @@ public:
     AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
 #endif
 
-    void addPrivateClickMeasurementNetworkLoader(std::unique_ptr<PrivateClickMeasurementNetworkLoader>&& loader) { m_privateClickMeasurementNetworkLoaders.add(WTFMove(loader)); }
-    void removePrivateClickMeasurementNetworkLoader(PrivateClickMeasurementNetworkLoader* loader) { m_privateClickMeasurementNetworkLoaders.remove(loader); }
-
     virtual void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
     virtual void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) { }
@@ -248,7 +244,6 @@ protected:
     AppPrivacyReportTestingData m_appPrivacyReportTestingData;
 #endif
 
-    HashSet<std::unique_ptr<PrivateClickMeasurementNetworkLoader>> m_privateClickMeasurementNetworkLoaders;
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
 };
 

@@ -41,6 +41,8 @@ NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.mm
 NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm
 
+NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm
+
 NetworkProcess/WebStorage/ios/LocalStorageDatabaseTrackerIOS.mm
 
 NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm

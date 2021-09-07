@@ -127,7 +127,6 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 #endif
     
     encoder << isNavigatingToAppBoundDomain;
-    encoder << pcmDataCarried;
 }
 
 std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IPC::Decoder& decoder)
@@ -329,12 +328,6 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
     if (!isNavigatingToAppBoundDomain)
         return std::nullopt;
     result.isNavigatingToAppBoundDomain = *isNavigatingToAppBoundDomain;
-
-    std::optional<std::optional<WebCore::PrivateClickMeasurement::PcmDataCarried>> pcmDataCarried;
-    decoder >> pcmDataCarried;
-    if (!pcmDataCarried)
-        return std::nullopt;
-    result.pcmDataCarried = *pcmDataCarried;
     
     return result;
 }
