@@ -1652,6 +1652,8 @@ webkit.org/b/229736 fast/hidpi/image-srcset-svg-canvas-2x.html [ Pass Failure ]
 
 webkit.org/b/229764 animations/background-position.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/230013 http/tests/inspector/network/x-frame-options.html [ Pass Failure ]
+webkit.org/b/230013 [ BigSur Debug ] http/tests/inspector/network/x-frame-options.html [ Pass Failure ]
+
+webkit.org/b/230027 [ BigSur Debug ] http/tests/media/media-document-referer.html [ Pass Failure ]
 
 webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Slow ]
