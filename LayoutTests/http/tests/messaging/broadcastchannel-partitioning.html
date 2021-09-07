@@ -6,9 +6,6 @@
 description("Tests that BroadcastChannel is partioning based on top origin / frame origin.");
 jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.setCanOpenWindows();
-
 let bc = new BroadcastChannel("broadcastchannel-partitioning");
 
 let gotMessageFromSameOriginPopup = false;

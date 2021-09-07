@@ -1,5 +1,13 @@
 2021-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed minor test fix after r282105.
+
+        The test conflicted with another change that landed recently.
+
+        * http/tests/messaging/broadcastchannel-partitioning.html:
+
+2021-09-07  Chris Dumez  <cdumez@apple.com>
+
         Implement origin partitioning (top-origin/frame-origin) for BroadcastChannel
         https://bugs.webkit.org/show_bug.cgi?id=229814
 
