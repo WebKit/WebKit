@@ -405,7 +405,12 @@ class DownloadBuiltProduct(shell.ShellCommand):
     flunkOnFailure = False
 
     def start(self):
-        return shell.ShellCommand.start(self)
+        # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
+        if CURRENT_HOSTNAME == BUILD_WEBKIT_HOSTNAME:
+            return shell.ShellCommand.start(self)
+        self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
+        self.finished(SKIPPED)
+        return defer.succeed(None)
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)

@@ -2791,12 +2791,20 @@ class DownloadBuiltProduct(shell.ShellCommand):
     flunkOnFailure = False
 
     def getResultSummary(self):
-        if self.results != SUCCESS:
+        if self.results not in [SUCCESS, SKIPPED]:
             return {'step': 'Failed to download built product from S3'}
         return super(DownloadBuiltProduct, self).getResultSummary()
 
     def __init__(self, **kwargs):
         super(DownloadBuiltProduct, self).__init__(logEnviron=False, **kwargs)
+
+    def start(self):
+        # Only try to download from S3 on the official deployment <https://webkit.org/b/230006>
+        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+            return shell.ShellCommand.start(self)
+        self.build.addStepsAfterCurrentStep([DownloadBuiltProductFromMaster()])
+        self.finished(SKIPPED)
+        return defer.succeed(None)
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)

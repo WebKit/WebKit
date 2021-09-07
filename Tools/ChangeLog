@@ -1,3 +1,26 @@
+2021-09-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [build.webkit.org][ews-build.webkit.org] Only try to download from S3 on the production server
+        https://bugs.webkit.org/show_bug.cgi?id=230006
+
+        Reviewed by Aakash Jain.
+
+        The URL identifiers used for the S3 built products are not random,
+        they depend on the revision number or the patch number. So it can
+        happen than on a test deployment the tester downloads the built-product
+        from the official deployment at webkit.org rather than from its own worker.
+
+        Avoid this by ensuring that only on the official deployment it is tried to
+        download from S3. On the test deployments the code will now skip the step to
+        download from S3 and instead it will download the built product from the master.
+
+        * CISupport/build-webkit-org/steps.py:
+        (DownloadBuiltProduct.start):
+        * CISupport/ews-build/steps.py:
+        (DownloadBuiltProduct.getResultSummary):
+        (DownloadBuiltProduct.start):
+        * CISupport/ews-build/steps_unittest.py:
+
 2021-09-07  Megan Gardner  <megan_gardner@apple.com>
 
         Rewrite long press and drag tests to be more robust.

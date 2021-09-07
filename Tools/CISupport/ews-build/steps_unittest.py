@@ -3039,7 +3039,8 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Downloaded built product')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
 
     def test_failure(self):
         self.setupStep(DownloadBuiltProduct())
@@ -3056,7 +3057,18 @@ class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to download built product from S3')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAME):
+            return self.runStep()
+
+    def test_deployment_skipped(self):
+        self.setupStep(DownloadBuiltProduct())
+        self.setProperty('fullPlatform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '123456')
+        self.expectOutcome(result=SKIPPED)
+        with current_hostname('test-ews-deployment.igalia.com'):
+            return self.runStep()
 
 
 class TestDownloadBuiltProductFromMaster(BuildStepMixinAdditions, unittest.TestCase):
