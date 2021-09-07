@@ -1,3 +1,25 @@
+2021-09-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Rewrite long press and drag tests to be more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=229779
+        rdar://40917203
+
+        Reviewed by Wenson Hsieh.
+
+        Rewrite long press and drag tests to use more modern methods and make the test more
+        robust to small changes in UIKit's selection code. 
+
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-down-to-change-selected-text-expected.txt:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-down-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-left-to-change-selected-text-expected.txt:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-left-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-right-to-change-selected-text-expected.txt:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-right-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text-expected.txt:
+        * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.midPointOfRect):
+
 2021-09-07  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS EWS ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html is flaky.

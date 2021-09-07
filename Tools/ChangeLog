@@ -1,3 +1,16 @@
+2021-09-07  Megan Gardner  <megan_gardner@apple.com>
+
+        Rewrite long press and drag tests to be more robust.
+        https://bugs.webkit.org/show_bug.cgi?id=229779
+        rdar://40917203
+
+        Reviewed by Wenson Hsieh.
+
+        Found a crash when bad data was entered for gesture emulation.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::convertCoordinates):
+
 2021-09-07  Jonathan Bedard  <jbedard@apple.com>
 
         Exception in run-webkit-tests: Bad file descriptor (Part 1)

@@ -404,7 +404,10 @@ void convertCoordinates(TestRunnerWKWebView *webView, NSMutableDictionary *event
 {
     if (event[HIDEventTouchesKey]) {
         for (NSMutableDictionary *touch in event[HIDEventTouchesKey]) {
-            auto location = globalToContentCoordinates(webView, (long)[touch[HIDEventXKey] doubleValue], (long)[touch[HIDEventYKey]doubleValue]);
+            NSNumber *touchX = touch[HIDEventXKey] == [NSNull null] ? nil : touch[HIDEventXKey];
+            NSNumber *touchY = touch[HIDEventYKey] == [NSNull null] ? nil : touch[HIDEventYKey];
+            
+            auto location = globalToContentCoordinates(webView, (long)[touchX doubleValue], (long)[touchY doubleValue]);
             touch[HIDEventXKey] = @(location.x);
             touch[HIDEventYKey] = @(location.y);
         }
