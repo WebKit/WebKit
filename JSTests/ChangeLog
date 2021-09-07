@@ -1,3 +1,13 @@
+2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Math.hypot checks for infinite values prematurely
+        https://bugs.webkit.org/show_bug.cgi?id=229843
+
+        Reviewed by Ross Kirsling.
+
+        * stress/math-hypot-evaluation-ordering.js: Added.
+        (shouldThrow):
+
 2021-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make EnumeratorNextUpdateIndexAndMode clobberizing rule precise

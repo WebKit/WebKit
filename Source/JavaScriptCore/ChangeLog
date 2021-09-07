@@ -1,3 +1,17 @@
+2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Math.hypot checks for infinite values prematurely
+        https://bugs.webkit.org/show_bug.cgi?id=229843
+
+        Reviewed by Ross Kirsling.
+
+        According to the spec[1], we should throw an error about non finite argument after coercing all arguments to doubles.
+
+        [1]: https://tc39.es/ecma262/#sec-math.hypot
+
+        * runtime/MathObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-09-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early September 2021 edition

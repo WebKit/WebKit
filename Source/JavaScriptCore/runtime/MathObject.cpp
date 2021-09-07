@@ -188,19 +188,26 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncHypot, (JSGlobalObject* globalObject, Call
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
     unsigned argsCount = callFrame->argumentCount();
-    double max = 0;
     Vector<double, 8> args;
     args.reserveInitialCapacity(argsCount);
     for (unsigned i = 0; i < argsCount; ++i) {
-        args.uncheckedAppend(callFrame->uncheckedArgument(i).toNumber(globalObject));
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (std::isinf(args[i]))
-            return JSValue::encode(jsDoubleNumber(+std::numeric_limits<double>::infinity()));
-        max = std::max(fabs(args[i]), max);
+        double argument = callFrame->uncheckedArgument(i).toNumber(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        args.uncheckedAppend(argument);
     }
+
+    double max = 0;
+    for (double argument : args) {
+        if (std::isinf(argument))
+            return JSValue::encode(jsDoubleNumber(+std::numeric_limits<double>::infinity()));
+        max = std::max(fabs(argument), max);
+    }
+
     if (!max)
         max = 1;
+
     // Kahan summation algorithm significantly reduces the numerical error in the total obtained.
     double sum = 0;
     double compensation = 0;
