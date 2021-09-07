@@ -1,5 +1,16 @@
 2021-09-07  Jonathan Bedard  <jbedard@apple.com>
 
+        Exception in run-webkit-tests: Bad file descriptor (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=229994
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.write): Catch "Bad file descriptor."
+        (ServerProcess._wait_for_data_and_update_buffers_using_select): Ditto.
+
+2021-09-07  Jonathan Bedard  <jbedard@apple.com>
+
         run_webkit_tests failed to print error message in python3 in linux_get_crash_log.py
         https://bugs.webkit.org/show_bug.cgi?id=229971
 
