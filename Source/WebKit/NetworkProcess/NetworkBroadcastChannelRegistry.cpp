@@ -34,7 +34,7 @@ namespace WebKit {
 
 NetworkBroadcastChannelRegistry::NetworkBroadcastChannelRegistry() = default;
 
-void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier channelIdentifier)
+void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier channelIdentifier)
 {
     auto& channelsForOrigin = m_broadcastChannels.ensure(origin, [] { return NameToChannelIdentifiersMap { }; }).iterator->value;
     auto& channelsForName = channelsForOrigin.ensure(name, [] { return Vector<GlobalBroadcastChannelIdentifier> { }; }).iterator->value;
@@ -43,7 +43,7 @@ void NetworkBroadcastChannelRegistry::registerChannel(IPC::Connection& connectio
     channelsForName.append(WTFMove(globalChannelIdentifier));
 }
 
-void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier channelIdentifier)
+void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier channelIdentifier)
 {
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
@@ -59,7 +59,7 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     channelsForNameIterator->value.removeFirst(globalChannelIdentifier);
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
@@ -86,7 +86,7 @@ void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, c
 
 void NetworkBroadcastChannelRegistry::removeConnection(IPC::Connection& connection)
 {
-    Vector<WebCore::SecurityOriginData> originsToRemove;
+    Vector<WebCore::ClientOrigin> originsToRemove;
     for (auto& entry : m_broadcastChannels) {
         Vector<String> namesToRemove;
         for (auto& innerEntry : entry.value) {

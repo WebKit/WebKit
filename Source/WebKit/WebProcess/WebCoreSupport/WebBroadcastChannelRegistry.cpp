@@ -39,17 +39,17 @@ static inline IPC::Connection& networkProcessConnection()
     return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-void WebBroadcastChannelRegistry::registerChannel(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::registerChannel(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
 {
     networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { origin, name, identifier }, 0);
 }
 
-void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
+void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier identifier)
 {
     networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::UnregisterChannel { origin, name, identifier }, 0);
 }
 
-void WebBroadcastChannelRegistry::postMessage(const WebCore::SecurityOriginData& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
+void WebBroadcastChannelRegistry::postMessage(const WebCore::ClientOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     networkProcessConnection().sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { origin, name, source, WebCore::MessageWithMessagePorts { WTFMove(message), { } } }, WTFMove(completionHandler), 0);
 }

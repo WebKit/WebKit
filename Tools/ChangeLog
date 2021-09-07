@@ -1,5 +1,23 @@
 2021-09-07  Chris Dumez  <cdumez@apple.com>
 
+        Implement origin partitioning (top-origin/frame-origin) for BroadcastChannel
+        https://bugs.webkit.org/show_bug.cgi?id=229814
+
+        Reviewed by Alex Christensen.
+
+        Disable BroadcastChannel origin partitioning when running layout tests since it would cause
+        too many test failures in WPT tests at this point (e.g. COOP/COEP tests).
+
+        * TestRunnerShared/TestFeatures.cpp:
+        (WTR::shouldDisableBroadcastChannelOriginPartitioning):
+        (WTR::hardcodedFeaturesBasedOnPathForTest):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
+2021-09-07  Chris Dumez  <cdumez@apple.com>
+
         Allow layout tests to open popups by default
         https://bugs.webkit.org/show_bug.cgi?id=229881
 

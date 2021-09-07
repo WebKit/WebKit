@@ -87,7 +87,7 @@ BlankAnchorTargetImpliesNoOpenerEnabled:
     WebCore:
       default: true
 
-# We have to resolve the privacy issue in https://github.com/whatwg/html/issues/5803 before we can enable this.
+# We would have to partition BroadcastChannel based on PageGroups if we wanted to enable this for WebKitLegacy.
 BroadcastChannelEnabled:
   type: bool
   humanReadableName: "BroadcastChannel API"
@@ -99,6 +99,16 @@ BroadcastChannelEnabled:
       default: false
     WebCore:
       default: false
+
+BroadcastChannelOriginPartitioningEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 CFNetworkNetworkLoaderEnabled:
   type: bool

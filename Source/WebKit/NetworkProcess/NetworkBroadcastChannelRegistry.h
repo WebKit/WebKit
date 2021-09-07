@@ -27,7 +27,7 @@
 
 #include "Connection.h"
 #include <WebCore/BroadcastChannelIdentifier.h>
-#include <WebCore/SecurityOriginData.h>
+#include <WebCore/ClientOrigin.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -45,9 +45,9 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    void registerChannel(IPC::Connection&, const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier);
-    void unregisterChannel(IPC::Connection&, const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier);
-    void postMessage(IPC::Connection&, const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
+    void registerChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier);
+    void unregisterChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier);
+    void postMessage(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 
 private:
     struct GlobalBroadcastChannelIdentifier {
@@ -60,9 +60,8 @@ private:
         }
     };
 
-    // FIXME: BroadcastChannel needs partitioning (https://github.com/whatwg/html/issues/5803).
     using NameToChannelIdentifiersMap = HashMap<String, Vector<GlobalBroadcastChannelIdentifier>>;
-    HashMap<WebCore::SecurityOriginData, NameToChannelIdentifiersMap> m_broadcastChannels;
+    HashMap<WebCore::ClientOrigin, NameToChannelIdentifiersMap> m_broadcastChannels;
 };
 
 } // namespace WebKit

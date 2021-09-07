@@ -1174,9 +1174,9 @@ public:
 private:
     EmptyBroadcastChannelRegistry() = default;
 
-    void registerChannel(const SecurityOriginData&, const String&, BroadcastChannelIdentifier) final { }
-    void unregisterChannel(const SecurityOriginData&, const String&, BroadcastChannelIdentifier) final { }
-    void postMessage(const SecurityOriginData&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
+    void registerChannel(const ClientOrigin&, const String&, BroadcastChannelIdentifier) final { }
+    void unregisterChannel(const ClientOrigin&, const String&, BroadcastChannelIdentifier) final { }
+    void postMessage(const ClientOrigin&, const String&, BroadcastChannelIdentifier, Ref<SerializedScriptValue>&&, CompletionHandler<void()>&&) final { }
 };
 
 PageConfiguration pageConfigurationWithEmptyClients(PAL::SessionID sessionID)

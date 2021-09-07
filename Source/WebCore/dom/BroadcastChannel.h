@@ -27,9 +27,9 @@
 
 #include "ActiveDOMObject.h"
 #include "BroadcastChannelIdentifier.h"
+#include "ClientOrigin.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "SecurityOriginData.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -83,7 +83,7 @@ private:
     void stop() final { close(); }
 
     const String m_name;
-    const SecurityOriginData m_origin;
+    const ClientOrigin m_origin;
     const BroadcastChannelIdentifier m_identifier;
     bool m_isClosed { false };
     bool m_hasRelevantEventListener { false };

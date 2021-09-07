@@ -64,6 +64,7 @@ const TestFeatures& TestOptions::defaults()
             { "AllowsInlineMediaPlayback", true },
             { "AsyncFrameScrollingEnabled", false },
             { "AsyncOverflowScrollingEnabled", false },
+            { "BroadcastChannelOriginPartitioningEnabled", false },
             { "CSSOMViewScrollingAPIEnabled", true },
             { "CaptureAudioInGPUProcessEnabled", captureAudioInGPUProcessEnabledValue },
             { "CaptureAudioInUIProcessEnabled", false },

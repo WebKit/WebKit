@@ -41,9 +41,9 @@ public:
         return adoptRef(*new WebBroadcastChannelRegistry);
     }
 
-    void registerChannel(const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier) final;
-    void unregisterChannel(const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier) final;
-    void postMessage(const WebCore::SecurityOriginData&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
+    void registerChannel(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
+    void unregisterChannel(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
+    void postMessage(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 

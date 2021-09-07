@@ -60,7 +60,7 @@ static HashMap<BroadcastChannelIdentifier, ScriptExecutionContextIdentifier>& ch
 BroadcastChannel::BroadcastChannel(ScriptExecutionContext& context, const String& name)
     : ActiveDOMObject(&context)
     , m_name(name)
-    , m_origin(context.securityOrigin()->data())
+    , m_origin { context.settingsValues().broadcastChannelOriginPartitioningEnabled ? context.topOrigin().data() : context.securityOrigin()->data(), context.securityOrigin()->data() }
     , m_identifier(BroadcastChannelIdentifier::generateThreadSafe())
 {
     {
@@ -150,7 +150,7 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
 
     queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, message = WTFMove(message)]() mutable {
         if (!m_isClosed)
-            dispatchEvent(MessageEvent::create({ }, WTFMove(message), m_origin.toString()));
+            dispatchEvent(MessageEvent::create({ }, WTFMove(message), m_origin.clientOrigin.toString()));
     });
 }
 

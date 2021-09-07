@@ -1,0 +1,13 @@
+Tests that BroadcastChannel is partioning based on top origin / frame origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Received message from same-origin popup
+PASS gotMessageFromSameOriginPopup is false
+PASS Received message from same-origin iframe under same-origin popup
+PASS gotMessageFromSameOriginIframeUnderSameOriginPopup is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,15 @@
+2021-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Implement origin partitioning (top-origin/frame-origin) for BroadcastChannel
+        https://bugs.webkit.org/show_bug.cgi?id=229814
+
+        Reviewed by Alex Christensen.
+
+        Add experimental preference for BroadcastChannel origin partitioning. This is useful because we currently
+        disable this when running web-platform-tests in WKTR / DRT for now.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-09-06  Dmitry Kalinkin  <dmitry.kalinkin+webkit@gmail.com>
 
         Fix WebKitGTK build on MacOS
