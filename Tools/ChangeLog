@@ -1,3 +1,13 @@
+2021-09-07  Jonathan Bedard  <jbedard@apple.com>
+
+        run_webkit_tests failed to print error message in python3 in linux_get_crash_log.py
+        https://bugs.webkit.org/show_bug.cgi?id=229971
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator._get_gdb_output):
+
 2021-09-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] The Xvfb display server may fail to start sometimes causing tests to randomly crash (v3)
