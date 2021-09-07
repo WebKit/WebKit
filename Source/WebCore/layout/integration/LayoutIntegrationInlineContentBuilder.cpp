@@ -67,42 +67,16 @@ InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutStat
 
 void InlineContentBuilder::build(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    createDisplayRuns(inlineFormattingState, inlineContent);
-    createDisplayLines(inlineFormattingState.lines(), inlineContent);
-}
-
-void InlineContentBuilder::createDisplayRuns(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
-{
-    // FIXME: Remove this loop when we transitioned to the "run only" setup (i.e. each inline box is represented as a run as well)
-    auto& lineBoxes = const_cast<Layout::InlineFormattingState&>(inlineFormattingState).lineBoxes();
-    for (size_t lineIndex = 0; lineIndex < lineBoxes.size(); ++lineIndex) {
-        auto& lineBox = lineBoxes[lineIndex];
-        auto lineBoxLogicalTopLeft = inlineFormattingState.lines()[lineIndex].lineBoxLogicalRect().topLeft();
-        for (auto& nonRootInlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (!nonRootInlineLevelBox.isInlineBox())
-                continue;
-            auto& layoutBox = nonRootInlineLevelBox.layoutBox();
-            auto& boxGeometry = inlineFormattingState.boxGeometry(layoutBox);
-            auto hasScrollableContent = [&] {
-                // In standards mode, inline boxes always start with an imaginary strut.
-                return m_layoutState.inStandardsMode() || nonRootInlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
-            };
-            // Inline boxes may or may not be wrapped and have runs on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
-            auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-            inlineBoxBorderBox.moveBy(lineBoxLogicalTopLeft);
-            inlineContent.nonRootInlineBoxes.append({ lineIndex, layoutBox, inlineBoxBorderBox, hasScrollableContent() });
-        }
-    }
     // FIXME: This might need a different approach with partial layout where the layout code needs to know about the runs.
     inlineContent.runs = WTFMove(inlineFormattingState.runs());
+    createDisplayLines(inlineFormattingState, inlineContent);
 }
 
-void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, InlineContent& inlineContent) const
+void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
+    auto& lines = inlineFormattingState.lines();
     auto& runs = inlineContent.runs;
-    auto& nonRootInlineBoxes = inlineContent.nonRootInlineBoxes;
     size_t runIndex = 0;
-    size_t inlineBoxIndex = 0;
     inlineContent.lines.reserveInitialCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
@@ -121,30 +95,31 @@ void InlineContentBuilder::createDisplayLines(const Layout::InlineLines& lines, 
             lineInkOverflowRect.unite(run.inkOverflow());
 
             auto& layoutBox = run.layoutBox();
-            if (!layoutBox.isReplacedBox())
+            if (run.isNonRootInlineBox()) {
+                // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
+                auto hasScrollableContent = [&] {
+                    // In standards mode, inline boxes always start with an imaginary strut.
+                    auto& boxGeometry = inlineFormattingState.boxGeometry(layoutBox);
+                    return m_layoutState.inStandardsMode() || run.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+                };
+                if (hasScrollableContent())
+                    scrollableOverflowRect.unite(run.logicalRect());
                 continue;
-
-            // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
-            auto& box = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-            auto runLogicalRect = run.logicalRect();
-            if (!box.hasSelfPaintingLayer()) {
-                auto childInkOverflow = box.logicalVisualOverflowRectForPropagation(&box.parent()->style());
-                childInkOverflow.move(runLogicalRect.left(), runLogicalRect.top());
-                lineInkOverflowRect.unite(childInkOverflow);
             }
-            auto childScrollableOverflow = box.logicalLayoutOverflowRectForPropagation(&box.parent()->style());
-            childScrollableOverflow.move(runLogicalRect.left(), runLogicalRect.top());
-            scrollableOverflowRect.unite(childScrollableOverflow);
-        }
-        // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
-        while (inlineBoxIndex < nonRootInlineBoxes.size() && nonRootInlineBoxes[inlineBoxIndex].lineIndex() == lineIndex) {
-            auto& inlineBox = nonRootInlineBoxes[inlineBoxIndex++];
-
-            if (line.needsIntegralPosition())
-                inlineBox.setVerticalPositionIntegral();
-
-            if (inlineBox.hasScrollableContent())
-                scrollableOverflowRect.unite(inlineBox.rect());
+            if (layoutBox.isReplacedBox()) {
+                // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
+                auto& box = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+                auto runLogicalRect = run.logicalRect();
+                if (!box.hasSelfPaintingLayer()) {
+                    auto childInkOverflow = box.logicalVisualOverflowRectForPropagation(&box.parent()->style());
+                    childInkOverflow.move(runLogicalRect.left(), runLogicalRect.top());
+                    lineInkOverflowRect.unite(childInkOverflow);
+                }
+                auto childScrollableOverflow = box.logicalLayoutOverflowRectForPropagation(&box.parent()->style());
+                childScrollableOverflow.move(runLogicalRect.left(), runLogicalRect.top());
+                scrollableOverflowRect.unite(childScrollableOverflow);
+                continue;
+            }
         }
 
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };

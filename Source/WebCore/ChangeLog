@@ -1,3 +1,28 @@
+2021-09-06  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Remove redundant NonRootInlineBox
+        https://bugs.webkit.org/show_bug.cgi?id=229967
+
+        Reviewed by Antti Koivisto.
+
+        Now that all the inline boxes generate runs, and we use those runs to do painint/hittest, this
+        helper structure is not needed anymore.
+
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayRuns const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.h:
+        * layout/integration/LayoutIntegrationLine.h:
+        (WebCore::LayoutIntegration::NonRootInlineBox::NonRootInlineBox): Deleted.
+        (WebCore::LayoutIntegration::NonRootInlineBox::layoutBox const): Deleted.
+        (WebCore::LayoutIntegration::NonRootInlineBox::style const): Deleted.
+        (WebCore::LayoutIntegration::NonRootInlineBox::lineIndex const): Deleted.
+        (WebCore::LayoutIntegration::NonRootInlineBox::rect const): Deleted.
+        (WebCore::LayoutIntegration::NonRootInlineBox::setVerticalPositionIntegral): Deleted.
+        (WebCore::LayoutIntegration::NonRootInlineBox::hasScrollableContent const): Deleted.
+
 2021-09-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r282058.

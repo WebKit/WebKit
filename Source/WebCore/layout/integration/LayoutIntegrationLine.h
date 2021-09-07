@@ -86,34 +86,6 @@ private:
     float m_contentWidth { 0 };
 };
 
-class NonRootInlineBox {
-public:
-    NonRootInlineBox(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, bool hasScrollableContent)
-        : m_lineIndex(lineIndex)
-        , m_layoutBox(makeWeakPtr(layoutBox))
-        , m_rect(rect)
-        , m_hasScrollableContent(hasScrollableContent)
-    {
-    }
-
-    const Layout::Box& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const { return m_layoutBox->style(); }
-
-    size_t lineIndex() const { return m_lineIndex; }
-
-    FloatRect rect() const { return m_rect; }
-
-    void setVerticalPositionIntegral() { m_rect.setY(roundToInt(m_rect.y())); }
-
-    bool hasScrollableContent() const { return m_hasScrollableContent; }
-
-private:
-    const size_t m_lineIndex;
-    WeakPtr<const Layout::Box> m_layoutBox;
-    FloatRect m_rect;
-    bool m_hasScrollableContent { false };
-};
-
 }
 }
 

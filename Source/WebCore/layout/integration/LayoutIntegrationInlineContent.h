@@ -59,7 +59,6 @@ struct InlineContent : public RefCounted<InlineContent> {
 
     Runs runs;
     Lines lines;
-    Vector<NonRootInlineBox> nonRootInlineBoxes;
 
     float clearGapAfterLastLine { 0 };
 
