@@ -1,3 +1,19 @@
+2021-08-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        Interoperability issue in margin collapsing with overflow:hidden elements
+        https://bugs.webkit.org/show_bug.cgi?id=224185
+
+        Reviewed by Alan Bujtas.
+
+        Margins should not self collapse for those elements that create new formatting contexts
+        like when using overflow:hidden.
+
+        Test: fast/block/margin-collapse/self-collapsing-block-with-overflow-hidden.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelfCollapsingBlock const): Boxes that create new formatting context should
+        not self collapse.
+
 2021-09-07  Brent Fulgham  <bfulgham@apple.com>
 
         [wpt-improvement] Improve CSP support for window reuse

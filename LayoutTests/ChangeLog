@@ -1,3 +1,14 @@
+2021-08-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        Interoperability issue in margin collapsing with overflow:hidden elements
+        https://bugs.webkit.org/show_bug.cgi?id=224185
+
+        Reviewed by Alan Bujtas.
+
+        * TestExpectations: Unskipped 3 flexbox tests that are working fine now.
+        * fast/block/margin-collapse/self-collapsing-block-with-overflow-hidden-expected.html: Added.
+        * fast/block/margin-collapse/self-collapsing-block-with-overflow-hidden.html: Added.
+
 2021-09-01  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Add support for left & right css-align-3 positional alignment properties

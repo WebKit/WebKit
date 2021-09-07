@@ -509,7 +509,8 @@ bool RenderBlock::isSelfCollapsingBlock() const
     // If the height is 0 or auto, then whether or not we are a self-collapsing block depends
     // on whether we have content that is all self-collapsing or not.
     if (hasAutoHeight || ((logicalHeightLength.isFixed() || logicalHeightLength.isPercentOrCalculated()) && logicalHeightLength.isZero()))
-        return !childrenPreventSelfCollapsing();
+        return !createsNewFormattingContext() && !childrenPreventSelfCollapsing();
+
 
     return false;
 }
