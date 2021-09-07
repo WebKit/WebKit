@@ -1,3 +1,28 @@
+2021-09-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add support for left & right css-align-3 positional alignment properties
+        https://bugs.webkit.org/show_bug.cgi?id=229756
+
+        Reviewed by Javier Fernandez.
+
+        Added support for Left and Right positional alignment properties from
+        https://drafts.csswg.org/css-align-3/#positional-values. These two properties
+        align the flex item to be flush with the alignment container's (the flex line)
+        line-left|right or physical left|right whichever is in the appropriate axis. Note that
+        contrary to start/end which change according to the text direction, left always refer
+        to where ltr text would start and right always refer to where rtl text would start.
+
+        The only caveat is that specs mention that in the case of having orthogonal start<->end and
+        left<->right axis (only happens in column flexboxes) then both left|right behave as start.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::initialJustifyContentOffset):
+        (WebCore::alignmentOffset):
+        (WebCore::RenderFlexibleBox::staticMainAxisPositionForPositionedChild):
+        (WebCore::RenderFlexibleBox::alignmentForChild const):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::layoutColumnReverse):
+
 2021-09-07  Rob Buis  <rbuis@igalia.com>
 
         Nullptr crash in DeleteSelectionCommand::removeNodeUpdatingStates

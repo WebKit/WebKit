@@ -37,6 +37,7 @@
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderStyleConstants.h"
 #include "RenderView.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
@@ -1498,8 +1499,33 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, Vector<FlexIte
     return !totalViolation;
 }
 
-static LayoutUnit initialJustifyContentOffset(LayoutUnit availableFreeSpace, ContentPosition justifyContent, ContentDistribution justifyContentDistribution, unsigned numberOfChildren, bool isReversed)
+static LayoutUnit initialJustifyContentOffset(const RenderStyle& style, LayoutUnit availableFreeSpace, unsigned numberOfChildren, bool isReversed)
 {
+    ContentPosition justifyContent = style.resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
+    ContentDistribution justifyContentDistribution = style.resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
+
+    // First of all resolve Left and Right so we could convert it to their equivalent properties handled bellow.
+    // If the property's axis is not parallel with either left<->right axis, this value behaves as start. Currently,
+    // the only case where the property's axis is not parallel with either left<->right axis is in a column flexbox.
+    // https: //www.w3.org/TR/css-align-3/#valdef-justify-content-left
+    if ((justifyContent == ContentPosition::Left || justifyContent == ContentPosition::Right) && style.isColumnFlexDirection() && style.isHorizontalWritingMode())
+        justifyContent = ContentPosition::Start;
+
+    if (justifyContent == ContentPosition::Left) {
+        if (style.isColumnFlexDirection() && style.isFlippedBlocksWritingMode())
+            justifyContent = ContentPosition::End;
+        else
+            justifyContent = style.isLeftToRightDirection() ? ContentPosition::Start : ContentPosition::End;
+    }
+    if (justifyContent == ContentPosition::Right) {
+        if (style.isColumnFlexDirection() && !style.isFlippedLinesWritingMode())
+            justifyContent = ContentPosition::Start;
+        else
+            justifyContent = style.isLeftToRightDirection() ? ContentPosition::End : ContentPosition::Start;
+    }
+    ASSERT(justifyContent != ContentPosition::Left);
+    ASSERT(justifyContent != ContentPosition::Right);
+
     if (justifyContent == ContentPosition::FlexEnd
         || (justifyContent == ContentPosition::End && !isReversed)
         || (justifyContent == ContentPosition::Start && isReversed))
@@ -1544,6 +1570,8 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
         break;
     case ItemPosition::Start:
     case ItemPosition::End:
+    case ItemPosition::Left:
+    case ItemPosition::Right:
         ASSERT_NOT_REACHED("%u alignmentForChild should have transformed this position value to something we handle below.", static_cast<uint8_t>(position));
         break;
     case ItemPosition::Stretch:
@@ -1570,8 +1598,6 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
     case ItemPosition::LastBaseline:
     case ItemPosition::SelfStart:
     case ItemPosition::SelfEnd:
-    case ItemPosition::Left:
-    case ItemPosition::Right:
         // FIXME: Implement last baseline.
         break;
     }
@@ -1589,11 +1615,8 @@ void RenderFlexibleBox::setOverridingMainSizeForChild(RenderBox& child, LayoutUn
 LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const RenderBox& child)
 {
     const LayoutUnit availableSpace = mainAxisContentExtent(contentLogicalHeight()) - mainAxisExtentForChild(child);
-
-    ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
-    ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
     auto isReverse = isColumnOrRowReverse();
-    LayoutUnit offset = initialJustifyContentOffset(availableSpace, position, distribution, 1, isReverse);
+    LayoutUnit offset = initialJustifyContentOffset(style(), availableSpace, 1, isReverse);
     if (isReverse)
         offset = availableSpace - offset;
     return offset;
@@ -1684,6 +1707,8 @@ ItemPosition RenderFlexibleBox::alignmentForChild(const RenderBox& child) const
 {
     ItemPosition align = child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position();
     ASSERT(align != ItemPosition::Auto && align != ItemPosition::Normal);
+    // Left and Right are only for justify-*.
+    ASSERT(align != ItemPosition::Left && align != ItemPosition::Right);
 
     if (align == ItemPosition::Baseline && !mainAxisIsChildInlineAxis(child))
         align = ItemPosition::FlexStart;
@@ -1825,18 +1850,16 @@ bool RenderFlexibleBox::childHasPercentHeightDescendants(const RenderBox& render
 
 void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vector<FlexItem>& children, LayoutUnit availableFreeSpace, bool relayoutChildren, Vector<LineContext>& lineContexts, LayoutUnit gapBetweenItems)
 {
-    ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
-    ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
-
     LayoutUnit autoMarginOffset = autoMarginOffsetInMainAxis(children, availableFreeSpace);
     LayoutUnit mainAxisOffset = flowAwareBorderStart() + flowAwarePaddingStart();
-    mainAxisOffset += initialJustifyContentOffset(availableFreeSpace, position, distribution, children.size(), isColumnOrRowReverse());
+    mainAxisOffset += initialJustifyContentOffset(style(), availableFreeSpace, children.size(), isColumnOrRowReverse());
     if (style().flexDirection() == FlexDirection::RowReverse)
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     LayoutUnit totalMainExtent = mainAxisExtent();
     LayoutUnit maxAscent, maxDescent; // Used when align-items: baseline.
     LayoutUnit maxChildCrossAxisExtent;
+    ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
     for (size_t i = 0; i < children.size(); ++i) {
         const auto& flexItem = children[i];
@@ -1931,16 +1954,15 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
 
 void RenderFlexibleBox::layoutColumnReverse(const Vector<FlexItem>& children, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace)
 {
-    ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehavior());
-    ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
-    
     // This is similar to the logic in layoutAndPlaceChildren, except we place
     // the children starting from the end of the flexbox. We also don't need to
     // layout anything since we're just moving the children to a new position.
     LayoutUnit mainAxisOffset = logicalHeight() - flowAwareBorderEnd() - flowAwarePaddingEnd();
-    mainAxisOffset -= initialJustifyContentOffset(availableFreeSpace, position, distribution, children.size(), isColumnOrRowReverse());
+    mainAxisOffset -= initialJustifyContentOffset(style(), availableFreeSpace, children.size(), isColumnOrRowReverse());
     mainAxisOffset -= isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
-    
+
+    ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
+
     for (size_t i = 0; i < children.size(); ++i) {
         auto& child = children[i].box;
         ASSERT(!child.isOutOfFlowPositioned());
