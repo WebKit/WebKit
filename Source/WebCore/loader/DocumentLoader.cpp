@@ -782,12 +782,6 @@ bool DocumentLoader::doCrossOriginOpenerHandlingOfResponse(const ResourceRespons
     if (!m_frame->document() || !m_frame->document()->settings().crossOriginOpenerPolicyEnabled())
         return true;
 
-    if (!response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull()) {
-        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr);
-        m_contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
-    } else
-        m_contentSecurityPolicy = nullptr;
-
     auto [responseOrigin, responseCOOP] = computeResponseOriginAndCOOP(response, *m_frame->document(), m_triggeringAction.requester(), m_contentSecurityPolicy.get());
 
     // https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 12.5.6.2)
@@ -924,6 +918,12 @@ static URL microsoftTeamsRedirectURL()
 void DocumentLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, m_mainResource == &resource);
+
+    if (!response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull()) {
+        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr);
+        m_contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+    } else
+        m_contentSecurityPolicy = nullptr;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.

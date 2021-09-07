@@ -1,3 +1,26 @@
+2021-09-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [wpt-improvement] Improve CSP support for window reuse
+        https://bugs.webkit.org/show_bug.cgi?id=229882
+        <rdar://78416553>
+
+        Reviewed by Chris Dumez.
+
+        If window.open is used to host content with a CSP sandbox header, we should always
+        create a new window, rather than reusing the existing one, unless the header
+        includes 'allow-same-site'.
+
+        This improves our WPT score.
+
+        Tested by: imported/w3c/web-platform-tests/content-security-policy/sandbox/window-reuse-sandboxed.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Parse the HTTP headers earlier so we can
+        make decisions based on their state.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin): Don't reuse the current window if 'allow-same-site'
+        is not allowed.
+
 2021-09-01  Sergio Villar Senin  <svillar@igalia.com>
 
         Do not let RenderFragmentContainers create new formatting contexts
