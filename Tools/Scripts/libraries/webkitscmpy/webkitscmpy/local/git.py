@@ -380,10 +380,7 @@ class Git(Scm):
 
     @decorators.Memoize()
     def url(self, name=None):
-        result = run([self.executable(), 'remote', 'get-url', name or 'origin'], cwd=self.root_path, capture_output=True, encoding='utf-8')
-        if result.returncode:
-            raise self.Exception('Failed to retrieve remote for {}'.format(self.root_path))
-        return result.stdout.rstrip()
+        return self.config().get('remote.{}.url'.format(name or 'origin'))
 
     @decorators.Memoize()
     def remote(self, name=None):
