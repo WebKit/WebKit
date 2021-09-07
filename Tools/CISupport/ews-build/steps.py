@@ -2748,7 +2748,7 @@ class TransferToS3(master.MasterShellCommand):
     archive = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
     identifier = WithProperties('%(fullPlatform)s-%(architecture)s-%(configuration)s')
     patch_id = WithProperties('%(patch_id)s')
-    command = ['python', '../Shared/transfer-archive-to-s3', '--patch_id', patch_id, '--identifier', identifier, '--archive', archive]
+    command = ['python3', '../Shared/transfer-archive-to-s3', '--patch_id', patch_id, '--identifier', identifier, '--archive', archive]
     haltOnFailure = False
     flunkOnFailure = False
 
