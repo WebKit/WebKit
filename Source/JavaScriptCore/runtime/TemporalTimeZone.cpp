@@ -27,6 +27,7 @@
 #include "TemporalTimeZone.h"
 
 #include "ISO8601.h"
+#include "JSObjectInlines.h"
 
 namespace JSC {
 

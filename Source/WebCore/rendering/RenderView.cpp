@@ -605,7 +605,7 @@ bool RenderView::shouldPaintBaseBackground() const
     if (!ownerElement)
         return !frameView.isTransparent();
 
-    if (ownerElement->hasTagName(frameTag))
+    if (ownerElement->hasTagName(HTMLNames::frameTag))
         return true;
 
     // Locate the <body> element using the DOM. This is easier than trying

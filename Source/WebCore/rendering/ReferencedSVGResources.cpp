@@ -34,6 +34,8 @@
 #include "SVGClipPathElement.h"
 #include "SVGResourceElementClient.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
 
 class CSSSVGResourceElementClient final : public SVGResourceElementClient {

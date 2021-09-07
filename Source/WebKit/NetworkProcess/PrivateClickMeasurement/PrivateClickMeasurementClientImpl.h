@@ -28,6 +28,7 @@
 #include "PrivateClickMeasurementClient.h"
 #include <pal/SessionID.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 

@@ -27,13 +27,17 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class CSSSVGResourceElementClient;
+class Document;
 class ReferenceClipPathOperation;
 class ReferenceFilterOperation;
+class RenderElement;
 class RenderSVGResourceClipper;
 class RenderSVGResourceFilter;
 class RenderStyle;

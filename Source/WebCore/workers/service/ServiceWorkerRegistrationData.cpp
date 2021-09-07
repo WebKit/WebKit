@@ -28,6 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include <wtf/CrossThreadCopier.h>
+
 namespace WebCore {
 
 ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() const &

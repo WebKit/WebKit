@@ -30,6 +30,7 @@
 #include "NetworkSession.h"
 #include <WebCore/HTTPHeaderValues.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/TextResourceDecoder.h>
 
 #include <wtf/JSONValues.h>
