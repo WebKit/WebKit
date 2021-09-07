@@ -1447,7 +1447,11 @@ webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 webkit.org/b/209455 http/wpt/misc/last-modified-parsing.html [ Failure ]
 webkit.org/b/209455 http/wpt/misc/no-last-modified.html [ Failure ]
 
+webkit.org/b/225258 js/dom/Promise-reject-large-string.html [ Pass Failure ]
+
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
+
+webkit.org/b/215271 storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
@@ -2081,3 +2085,6 @@ webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements
 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
 webgl/webgl-oom-paint-document-no-crash.html [ Skip ]
 workers/bomb.html [ Skip ] # Timeout
+
+fast/masking/clip-path-selection.html [ Failure ]
+animations/remove-syncing-animation.html [ Pass Failure ]
