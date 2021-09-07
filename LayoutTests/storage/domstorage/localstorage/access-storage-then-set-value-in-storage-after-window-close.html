@@ -5,8 +5,6 @@
 window.jsTestIsAsync = true;
 
 if (window.testRunner) {
-    testRunner.setCanOpenWindows();
-
     // We explicitly call testRunner.waitUntilDone() because we call window.open() before
     // js-test-post.js is processed.
     testRunner.waitUntilDone();

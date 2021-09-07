@@ -9,7 +9,6 @@
             if (window.testRunner) {
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
-                testRunner.setCanOpenWindows();
             }
 
             var url = "javascript:\"<html><head><scr" + "ipt>window.onload = function() { if (window.testRunner) testRunner.globalFlag = true; }</scr" + "ipt></head><body><p>Opened Frame</p><p id='accessMe'>FAIL</p></body></html>\"";

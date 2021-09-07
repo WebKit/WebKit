@@ -30,9 +30,6 @@ function windowLoaded()
 
 function runTest()
 {
-  if (window.testRunner)
-    testRunner.setCanOpenWindows();
-
   testWindow = window.open("resources/animated-gif-window-resize.html", "testWindow", "width=200, height=200");
   testWindow.onload = windowLoaded;
 }

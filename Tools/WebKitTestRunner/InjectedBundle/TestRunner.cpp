@@ -433,9 +433,9 @@ bool TestRunner::isCommandEnabled(JSStringRef name)
     return WKBundlePageIsEditingCommandEnabled(page(), toWK(name).get());
 }
 
-void TestRunner::setCanOpenWindows()
+void TestRunner::preventPopupWindows()
 {
-    postSynchronousMessage("SetCanOpenWindows", true);
+    postSynchronousMessage("SetCanOpenWindows", false);
 }
 
 void TestRunner::setCustomUserAgent(JSStringRef userAgent)

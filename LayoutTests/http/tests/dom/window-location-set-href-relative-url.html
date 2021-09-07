@@ -7,9 +7,6 @@ description("Tests that we use the right entry window to convert relative URL wh
 jsTestIsAsync = true;
 
 onload = () => {
-    if (window.testRunner)
-        testRunner.setCanOpenWindows();
-
     popup = open("/resources/square20.jpg");
     popup.onload = () => {
         firstURL = self.origin + "/resources/square20.jpg"

@@ -46,10 +46,9 @@
     window.addEventListener("message", receiveMessage, false);
 
     function runTest() {
-        if (window.testRunner) {
-            testRunner.setCanOpenWindows();
+        if (window.testRunner)
             activateElement("targetLink");
-        } else {
+        else {
             document.getElementById("output").innerText = "FAIL No testRunner.";
             tearDownAndFinish();
         }

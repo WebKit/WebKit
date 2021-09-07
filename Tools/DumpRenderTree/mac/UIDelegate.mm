@@ -174,7 +174,7 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
 {
     if (!gTestRunner->canOpenWindows())
         return nil;
-    
+
     // Make sure that waitUntilDone has been called.
     ASSERT(gTestRunner->waitToDump());
 

@@ -18,6 +18,7 @@ function callback(result) {
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+    testRunner.preventPopupWindows();
     
     plg.getURLNotify("http://www.apple.com", "_blank", "callback");
 } else {

@@ -10,9 +10,6 @@
 description('Tests that document.cookie returns the right value after a showModalDialog() call');
 jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.setCanOpenWindows();
-
 testButton.onclick = () => {
     document.cookie = "testKey=testValue";
     shouldBeEqualToString('normalizeCookie(document.cookie)', 'testKey=testValue');

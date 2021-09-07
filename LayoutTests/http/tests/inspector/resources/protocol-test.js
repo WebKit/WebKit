@@ -82,7 +82,6 @@ TestPage.runTest = window.runTest = function()
 
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
-    testRunner.setCanOpenWindows(true);
 
     let testFunction = window.test;
     if (typeof testFunction !== "function") {

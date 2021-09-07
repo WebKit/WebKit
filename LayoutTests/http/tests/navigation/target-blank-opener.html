@@ -8,10 +8,8 @@
 <p>Test that a new window opened via &lt;a target='_blank'&gt; with rel="noreferrer" has a null opener.</p>
 <a id="testLink" href="resources/target-blank-opener-window.py" target="_blank" rel="noreferrer">Click me to test.</a>
 <script>
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.waitUntilDone();
-    testRunner.setCanOpenWindows(true);
-}
 
 document.getElementById("testLink").click();
 

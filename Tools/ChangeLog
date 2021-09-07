@@ -1,3 +1,30 @@
+2021-09-07  Chris Dumez  <cdumez@apple.com>
+
+        Allow layout tests to open popups by default
+        https://bugs.webkit.org/show_bug.cgi?id=229881
+
+        Reviewed by Darin Adler.
+
+        Allow layout tests to open popups by default and drop testRunner.setCanOpenWindow().
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::setCallCloseOnWebViews):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:createWebViewWithRequest:]):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::createWebViewWithRequest):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::setAcceptsEditing):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+
 2021-09-07  Alex Christensen  <achristensen@webkit.org>
 
         TestWebKitAPI.EventAttribution.Basic is extremely flaky on api-ios

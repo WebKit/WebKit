@@ -7,9 +7,6 @@
 <script>
 jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.setCanOpenWindows();
-
 onload = function() {
     if (window.opener)
         console.log("PASS: New window should have an opener");

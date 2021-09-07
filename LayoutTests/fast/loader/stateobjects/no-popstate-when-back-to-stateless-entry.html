@@ -11,8 +11,6 @@ var testWindow;
 
 onload = function()
 {
-    if (window.testRunner)
-        testRunner.setCanOpenWindows();
     testWindow = window.open('resources/no-popstate-when-back-to-stateless-entry-1.html');
     if (!testWindow)
         testFailed('Could not open test window');

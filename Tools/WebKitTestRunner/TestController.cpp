@@ -377,7 +377,7 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
 {
     m_currentInvocation->willCreateNewPage();
 
-    // The test needs to call testRunner.setCanOpenWindows() to open new windows.
+    // The test called testRunner.preventPopupWindows() to prevent opening new windows.
     if (!m_currentInvocation->canOpenWindows())
         return nullptr;
 

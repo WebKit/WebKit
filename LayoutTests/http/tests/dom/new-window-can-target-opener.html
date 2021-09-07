@@ -8,9 +8,6 @@
 description("Make sure that windows opened via window.open can target their opener");
 jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.setCanOpenWindows();    
- 
 onload = function() {
     window.name = "opener";
     w = open("resources/new-window-can-target-opener-win.html", "");

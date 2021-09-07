@@ -7,9 +7,6 @@
 log("* Tests that a client is re-added to the list of service worker clients when it is restored from the page cache");
 log("");
 
-if (window.testRunner)
-  testRunner.setCanOpenWindows();
-
 let tries = 0;
 
 let expectedClientIdentifiers = [];

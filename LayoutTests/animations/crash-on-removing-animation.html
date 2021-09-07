@@ -7,12 +7,10 @@
     window.jsTestIsAsync = true;
 
     function setup() {
-        if (window.testRunner) {
-            testRunner.setCanOpenWindows();
+        if (window.testRunner)
             window.open("resources/crash-on-removing-animation-window.html");
-        } else {
+        else
             document.write("This test must be run in DRT/WKTR.");
-        }
     }
     </script>
 

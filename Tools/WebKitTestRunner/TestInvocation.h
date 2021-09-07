@@ -166,7 +166,7 @@ private:
     bool m_dumpPixels { false };
     bool m_pixelResultIsPending { false };
     bool m_shouldDumpResourceLoadStatistics { false };
-    bool m_canOpenWindows { false };
+    bool m_canOpenWindows { true };
     bool m_shouldDumpPrivateClickMeasurement { false };
     WhatToDump m_whatToDump { WhatToDump::RenderTree };
 

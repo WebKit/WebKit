@@ -425,7 +425,7 @@ private:
     bool m_dumpWillCacheResponse { false };
     bool m_generatePixelResults { true };
     bool m_callCloseOnWebViews { true };
-    bool m_canOpenWindows { false };
+    bool m_canOpenWindows { true };
     bool m_newWindowsCopyBackForwardList { false };
     bool m_stopProvisionalFrameLoads { false };
     bool m_testOnscreen { false };

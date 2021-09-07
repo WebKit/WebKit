@@ -30,8 +30,10 @@
     <keygen autofocus="autofocus">
     <iframe>Test Frame</iframe>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.preventPopupWindows();
+        }
 
         description("The test passes if it does not ASSERT in debug builds.");
 

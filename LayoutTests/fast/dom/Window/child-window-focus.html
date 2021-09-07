@@ -6,9 +6,6 @@ description("Test that a Window can be focused / closed by its opener");
 
 window.jsTestIsAsync = true;
 
-if (window.testRunner)
-    testRunner.setCanOpenWindows(true);
-
 debug("* Opening new window");
 newWindow = window.open('about:blank', '_blank');
 newWindow.onfocus = function() {

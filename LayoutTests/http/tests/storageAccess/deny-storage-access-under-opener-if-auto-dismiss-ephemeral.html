@@ -49,8 +49,6 @@
         setEnableFeature(true, function() {
             window.addEventListener("message", receiveMessage, false);
 
-            testRunner.setCanOpenWindows();
-
             testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, true, function() {
                 if (!testRunner.isStatisticsHasHadUserInteraction(thirdPartyOrigin))
                     testFailed("Host did not get logged for user interaction.");
