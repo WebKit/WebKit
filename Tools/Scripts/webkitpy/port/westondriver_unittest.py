@@ -50,9 +50,6 @@ class WestonXvfbDriverDisplayTest():
     def _xvfb_run(self, environment):
         return self._expected_xvfbdisplay
 
-    def _xvfb_check_if_ready(self, display_id):
-        return True
-
 
 class WestonDriverTest(unittest.TestCase):
     def make_driver(self):

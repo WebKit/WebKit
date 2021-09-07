@@ -1,3 +1,17 @@
+2021-09-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r282064.
+        https://bugs.webkit.org/show_bug.cgi?id=229990
+
+        Made run-webkit-test fail in Linux
+
+        Reverted changeset:
+
+        "[GTK] The Xvfb display server may fail to start sometimes
+        causing tests to randomly crash"
+        https://bugs.webkit.org/show_bug.cgi?id=229758
+        https://commits.webkit.org/r282064
+
 2021-09-07  Sam Sneddon  <gsnedders@apple.com>
 
         Fix DeprecationWarning in webkitpy under Py 3.6+
