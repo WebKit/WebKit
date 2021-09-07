@@ -1,3 +1,36 @@
+2021-09-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/deqp/functional/gles3/negativestateapi.html get_framebuffer_attachment_parameter fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229947
+
+        Reviewed by Kenneth Russell.
+
+        Fix get_framebuffer_attachment_parameter part of
+        webgl/2.0.y/deqp/functional/gles3/negativestateapi.html.
+        The code was querying the attachment parameters of default framebuffer from ANGLE.
+        However, this is problematic as WebGL default framebuffer is emulated with
+        a FBO with texture and stencil attachment. As such, some properties returned
+        values that should have returned errors.
+        WebGL2 specification specifies all the properties that can be queried.
+        All these properties are known at the WebCore level, so just return them
+        there.
+        Failing test part was:
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.BACK, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME);
+            this.expectError(gl.INVALID_ENUM);
+        and:
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME);
+            this.expectError([gl.INVALID_OPERATION, gl.INVALID_ENUM]);
+
+        Tested by:
+        webgl/2.0.y/deqp/functional/gles3/negativestateapi.html
+
+        Does modify test expectations since the test fails in other, unrelated parts.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter):
+
 2021-09-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r282086.

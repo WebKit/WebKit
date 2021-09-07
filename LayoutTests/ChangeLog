@@ -1,3 +1,23 @@
+2021-09-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/deqp/functional/gles3/negativestateapi.html get_framebuffer_attachment_parameter fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229947
+
+        Reviewed by Kenneth Russell.
+
+        The fix fixed the test partially. This would affect the test results.
+        WebGL tests do not commonly have partially succeeding test results, rather
+        the -expected.txt is always the "success".
+
+        webgl/2.0.0/deqp/functional/gles3/negativestateapi.html had its result generated with
+        buggy implementation, e.g. the result had failures listed. Regenerate the result and
+        add expected failure to test expectations instead.
+
+        * webgl/2.0.0/deqp/functional/gles3/negativestateapi-expected.txt:
+        Reset the expected.txt to test success instead of incorrect failure.
+        * webgl/TestExpectations:
+        Mark the test failing.
+
 2021-09-07  Megan Gardner  <megan_gardner@apple.com>
 
         Rewrite long press and drag tests to be more robust.

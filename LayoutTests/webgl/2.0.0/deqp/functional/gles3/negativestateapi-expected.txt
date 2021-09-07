@@ -1,47 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/negativestateapi.html
-
-[ 1: PASS ] state.enable: Passed
-[ 2: PASS ] state.disable: Passed
-[ 3: PASS ] state.get_parameter: Passed
-[ 4: PASS ] state.get_indexed_parameter: Passed
-[ 5: PASS ] state.get_attached_shaders: Passed
-[ 6: PASS ] state.get_shader_parameter: Passed
-[ 7: PASS ] state.get_shader_info_log: Passed
-[ 8: PASS ] state.get_shader_precision_format: Passed
-[ 9: PASS ] state.get_shader_source: Passed
-[ 10: PASS ] state.get_program_parameter: Passed
-[ 11: PASS ] state.get_program_info_log: Passed
-[ 12: PASS ] state.get_tex_parameter: Passed
-[ 13: PASS ] state.get_uniform: Passed
-[ 14: PASS ] state.get_active_uniform: Passed
-[ 15: PASS ] state.get_active_uniforms: Passed
-[ 16: PASS ] state.get_active_uniform_block_parameter: Passed
-[ 17: PASS ] state.get_active_uniform_block_name: Passed
-[ 18: PASS ] state.get_active_attrib: Passed
-[ 19: PASS ] state.get_uniform_indices: Passed
-[ 20: PASS ] state.get_vertex_attrib: Passed
-[ 21: PASS ] state.get_vertex_attrib_offset: Passed
-[ 22: PASS ] state.get_frag_data_location: Passed
-[ 23: PASS ] state.get_buffer_parameter: Passed
-[ 24: FAIL ] state.get_framebuffer_attachment_parameter: Expected gl.INVALID_ENUM, but got gl.NO_ERROR.
-[ 25: PASS ] state.get_renderbuffer_parameter: Passed
-[ 26: PASS ] state.get_internalformat_parameter: Passed
-[ 27: PASS ] state.get_query: Passed
-[ 28: FAIL ] state.get_query_parameter: Expected gl.INVALID_OPERATION, but got gl.NO_ERROR.
-[ 29: PASS ] state.get_sync_parameter: Passed
-[ 30: PASS ] state.is_enabled: Passed
-[ 31: PASS ] state.is_buffer: Passed
-[ 32: PASS ] state.is_framebuffer: Passed
-[ 33: PASS ] state.is_program: Passed
-[ 34: PASS ] state.is_renderbuffer: Passed
-[ 35: PASS ] state.is_shader: Passed
-[ 36: PASS ] state.is_texture: Passed
-[ 37: PASS ] state.is_query: Passed
-[ 38: PASS ] state.is_sampler: Passed
-[ 39: PASS ] state.is_sync: Passed
-[ 40: PASS ] state.is_transform_feedback: Passed
-[ 41: PASS ] state.is_vertex_array: Passed
-[ 42: PASS ] state.is_vertex_array: successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ PASS ] All tests passed

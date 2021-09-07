@@ -2811,9 +2811,24 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
 
         switch (pname) {
         case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-            return GraphicsContextGL::FRAMEBUFFER_DEFAULT;
+            return static_cast<unsigned>(GraphicsContextGL::FRAMEBUFFER_DEFAULT);
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_RED_SIZE:
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_BLUE_SIZE:
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_GREEN_SIZE:
+            return attachment == GraphicsContextGL::BACK ? 8 : 0;
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
+            return attachment == GraphicsContextGL::BACK && m_attributes.alpha ? 8 : 0;
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
+            return attachment == GraphicsContextGL::DEPTH ? 24 : 0;
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
+            return attachment == GraphicsContextGL::STENCIL ? 8 : 0;
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
+            return static_cast<unsigned>(GraphicsContextGL::UNSIGNED_NORMALIZED);
+        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING:
+            return static_cast<unsigned>(GraphicsContextGL::LINEAR);
         default:
-            return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name");
+            return nullptr;
         }
     }
 
