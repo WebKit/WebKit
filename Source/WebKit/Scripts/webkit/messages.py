@@ -567,17 +567,17 @@ def async_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(ASYNC_ATTRIBUTE):
         dispatch_function += 'Async'
-        dispatch_function_args.insert(0, 'connection')
 
     if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
-        if message.has_attribute(ASYNC_ATTRIBUTE):
-            dispatch_function += 'WantsConnection'
-        else:
-            dispatch_function_args.insert(0, 'connection')
+        dispatch_function += 'WantsConnection'
+
+    connection = 'connection'
+    if receiver.has_attribute(STREAM_ATTRIBUTE):
+        connection = 'connection.connection()'
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(%s);\n' % (dispatch_function, receiver.name, message.name, ', '.join(dispatch_function_args)))
+    result.append('        return IPC::%s<Messages::%s::%s>(%s, %s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
     return surround_in_condition(''.join(result), message.condition)
 
 
@@ -585,12 +585,11 @@ def sync_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
         dispatch_function += 'Synchronous'
-        if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
-            dispatch_function += 'WantsConnection'
     if message.has_attribute(ASYNC_ATTRIBUTE):
         dispatch_function += 'Async'
+    if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
+        dispatch_function += 'WantsConnection'
 
-    wants_connection = message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(WANTS_CONNECTION_ATTRIBUTE)
     maybe_reply_encoder = ", *replyEncoder"
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         maybe_reply_encoder = ''
@@ -599,7 +598,7 @@ def sync_message_statement(receiver, message):
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(%sdecoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', maybe_reply_encoder, handler_function(receiver, message)))
+    result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
     return surround_in_condition(''.join(result), message.condition)
 
 

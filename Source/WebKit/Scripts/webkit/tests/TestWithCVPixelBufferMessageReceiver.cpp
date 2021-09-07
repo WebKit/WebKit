@@ -42,7 +42,7 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
     auto protectedThis = makeRef(*this);
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
-        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
@@ -58,7 +58,7 @@ bool TestWithCVPixelBuffer::didReceiveSyncMessage(IPC::Connection& connection, I
     auto protectedThis = makeRef(*this);
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
-        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(decoder, *replyEncoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, *replyEncoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);

@@ -56,6 +56,7 @@ extern "C" {
     M(Fullscreen) \
     M(Gamepad) \
     M(IPC) \
+    M(IPCMessages) \
     M(ITPDebug) \
     M(IconDatabase) \
     M(Images) \

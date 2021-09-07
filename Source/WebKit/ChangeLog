@@ -1,3 +1,76 @@
+2021-09-07  Cameron McCormack  <heycam@apple.com>
+
+        Add an IPCMessages channel to log all IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=229664
+        <rdar://problem/82511640>
+
+        Reviewed by Alex Christensen.
+
+        This adds a new IPCMessages log channel, to which all IPC message names,
+        arguments, and return values are logged. To avoid performance impacts
+        when not logging, these are only enabled in debug builds.
+
+        ValueOrDefault is used when writing out each message argument to (1)
+        avoid having to add operator<<(TextStream&) defintions for all
+        argument types right now, and (2) to alleviate the need to add such a
+        definition when adding new IPC messages. The string "..." is output
+        for types with no operator<< defined.
+
+        The remote and local process IDs are included in the log message. The
+        remote process ID is only readily accessible on OS(DARWIN), as we can
+        grab it from the XPC connection. But not all IPC::Connections are
+        created for XPC connections. For example, the Web -> GPU process
+        connection is created by the UI process on behalf of the Web process,
+        and the IPC::Connection::Identifier does not have an XPC service
+        handle in it. So for now, we omit the remote process ID. (We'd need
+        to thread it through messages like CreateGPUConnectionToWebProcess
+        to have it available.)
+
+        Since we need the IPC::Connection object for logging now, all of the
+        handleMessage* functions take a connection, and the messages.py code
+        generator is updated accordingly.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::textStreamForLogging):
+        (IPC::logMessageImpl):
+        (IPC::logMessage):
+        (IPC::logReply):
+        (IPC::handleMessage):
+        (IPC::handleMessageWantsConnection):
+        (IPC::handleMessageSynchronous):
+        (IPC::handleMessageSynchronousWantsConnection):
+        (IPC::handleMessageAsync):
+        (IPC::handleMessageAsyncWantsConnection):
+        * Platform/Logging.h:
+        * Scripts/webkit/messages.py:
+        (async_message_statement):
+        (sync_message_statement):
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessageReceiver.cpp:
+        (WebKit::TestWithCVPixelBuffer::didReceiveMessage):
+        (WebKit::TestWithCVPixelBuffer::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithIfMessageMessageReceiver.cpp:
+        (WebKit::TestWithIfMessage::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp:
+        (WebKit::TestWithImageData::didReceiveMessage):
+        (WebKit::TestWithImageData::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (WebKit::TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage):
+        (WebKit::TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage):
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+        (WebKit::TestWithSemaphore::didReceiveMessage):
+        (WebKit::TestWithSemaphore::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithStreamBufferMessageReceiver.cpp:
+        (WebKit::TestWithStreamBuffer::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp:
+        (WebKit::TestWithStream::didReceiveStreamMessage):
+        * Scripts/webkit/tests/TestWithSuperclassMessageReceiver.cpp:
+        (WebKit::TestWithSuperclass::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (WebKit::TestWithoutAttributes::didReceiveMessage):
+        (WebKit::TestWithoutAttributes::didReceiveSyncMessage):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+
 2021-09-07  Per Arne  <pvollan@apple.com>
 
         Fix incorrect preprocess guard in WebContent sandbox

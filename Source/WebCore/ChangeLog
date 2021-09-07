@@ -1,3 +1,19 @@
+2021-09-07  Cameron McCormack  <heycam@apple.com>
+
+        Add an IPCMessages channel to log all IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=229664
+        <rdar://problem/82511640>
+
+        Reviewed by Alex Christensen.
+
+        Add a way to get the type of process we're in as a string, for
+        logging.
+
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::processType):
+        (WebCore::processTypeDescription):
+        * platform/RuntimeApplicationChecks.h:
+
 2021-09-07  Chris Dumez  <cdumez@apple.com>
 
         Implement origin partitioning (top-origin/frame-origin) for BroadcastChannel

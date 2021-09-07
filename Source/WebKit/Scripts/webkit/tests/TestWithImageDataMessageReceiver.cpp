@@ -39,7 +39,7 @@ void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 {
     auto protectedThis = makeRef(*this);
     if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name())
-        return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(decoder, this, &TestWithImageData::sendImageData);
+        return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, decoder, this, &TestWithImageData::sendImageData);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -53,7 +53,7 @@ bool TestWithImageData::didReceiveSyncMessage(IPC::Connection& connection, IPC::
 {
     auto protectedThis = makeRef(*this);
     if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name())
-        return IPC::handleMessage<Messages::TestWithImageData::ReceiveImageData>(decoder, *replyEncoder, this, &TestWithImageData::receiveImageData);
+        return IPC::handleMessage<Messages::TestWithImageData::ReceiveImageData>(connection, decoder, *replyEncoder, this, &TestWithImageData::receiveImageData);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);

@@ -42,11 +42,11 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
     auto protectedThis = makeRef(*this);
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(decoder, this, &TestWithIfMessage::loadURL);
+        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
 #endif
 #if PLATFORM(GTK)
     if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(decoder, this, &TestWithIfMessage::loadURL);
+        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);

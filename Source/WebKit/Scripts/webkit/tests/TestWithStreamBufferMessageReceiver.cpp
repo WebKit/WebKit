@@ -36,7 +36,7 @@ void TestWithStreamBuffer::didReceiveMessage(IPC::Connection& connection, IPC::D
 {
     auto protectedThis = makeRef(*this);
     if (decoder.messageName() == Messages::TestWithStreamBuffer::SendStreamBuffer::name())
-        return IPC::handleMessage<Messages::TestWithStreamBuffer::SendStreamBuffer>(decoder, this, &TestWithStreamBuffer::sendStreamBuffer);
+        return IPC::handleMessage<Messages::TestWithStreamBuffer::SendStreamBuffer>(connection, decoder, this, &TestWithStreamBuffer::sendStreamBuffer);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

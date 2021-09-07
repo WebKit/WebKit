@@ -1,3 +1,61 @@
+2021-09-07  Cameron McCormack  <heycam@apple.com>
+
+        Add an IPCMessages channel to log all IPC messages
+        https://bugs.webkit.org/show_bug.cgi?id=229664
+        <rdar://problem/82511640>
+
+        Reviewed by Alex Christensen.
+
+        Two changes to TextStream in this patch.
+
+        The first is a new argument to the constructor to allow limiting
+        the number of elements in a container when appending it to a
+        TextStream. This is intended to be used when the output is for
+        human consumption and could potentially be uselessly large.
+
+        The second is a value adapter ValueOrEllipsis. This allows appending
+        a value to a TextStream even if it doesn't have an
+        operator<<(TextStream&) defined. If it doesn't, then the fallback
+        value "..." is used instead.
+
+        An implementation detail of ValueOrEllipsis is a new type trait
+        supports_text_stream_insertion, which detects at compile time whether
+        a given type can be appended to a TextStream. It works by using
+        "expression SFINAE" and partial template specialization.
+
+        The base, unspecialized version of the template inherits from
+        std::false_type, and is selected for all types by default.
+
+        A partial specialization that uses decltype() to check whether a
+        `TextStream() << value` expression would compile inherits from
+        std::true_type.
+
+        Sadly, C++ SFINAE has a limitation that means template definitions
+        that would be instantiated inside the decltype() are not checked
+        to ensure they would compile. This would mean container types whose
+        elements are types that don't have an operator<< defined would still
+        report true from supports_text_stream_insertion. We work around this
+        by having more specific partial specializations for all of the container
+        types we have operator<< definitions for, which defer to the
+        supports_text_stream_insertion value for the element type(s).
+
+        If an operator<< is added for a new container type without a
+        corresponding supports_text_stream_insertion specialization, and that
+        type is used with ValueOrEllipsis, it will cause a compile error.
+
+        The supports_text_stream_insertion template takes six template
+        arguments, which looks odd, but is needed because all specializations
+        must have the same number (and kind) of template arguments. The six
+        include five type template arguments (which is how many HashMap has)
+        plus a size_t value template argument (for Vector's inlineCapacity
+        argument).
+
+        * wtf/text/TextStream.h:
+        (WTF::TextStream::TextStream):
+        (WTF::TextStream::containerSizeLimit const):
+        (WTF::operator<<):
+        (WTF::ValueOrEllipsis::ValueOrEllipsis):
+
 2021-09-07  Chris Dumez  <cdumez@apple.com>
 
         Implement origin partitioning (top-origin/frame-origin) for BroadcastChannel
