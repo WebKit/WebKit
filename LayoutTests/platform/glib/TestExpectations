@@ -687,6 +687,9 @@ webkit.org/b/227934 media/media-source/media-webm-opus-partial.html [ Failure ]
 
 webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.https.html [ Failure ]
 
+webkit.org/b/229973 media/track/in-band/track-in-band-kate-ogg-cues-added-once.html [ Failure Pass ]
+webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

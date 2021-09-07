@@ -1,3 +1,12 @@
+2021-09-06  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [Gstreamer] Mark tests media/track/in-band/track-in-band-*-added-once.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=229973
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-09-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r282058.
