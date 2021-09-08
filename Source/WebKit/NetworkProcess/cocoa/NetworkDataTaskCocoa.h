@@ -128,5 +128,6 @@ private:
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
+void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *);
 
 } // namespace WebKit

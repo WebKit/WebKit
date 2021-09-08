@@ -1,3 +1,18 @@
+2021-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Replace PrivateClickMeasurementNetworkLoader::start with an implementation that doesn't need NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=230015
+
+        This fixes the internal build after r282110.
+
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm:
+        (WebKit::PCM::NetworkLoader::start):
+        (processPCMRequest): Deleted.
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (processPCMRequest):
+        (WebKit::setPCMDataCarriedOnRequest):
+
 2021-09-07  Cameron McCormack  <heycam@apple.com>
 
         Add an IPCMessages channel to log all IPC messages

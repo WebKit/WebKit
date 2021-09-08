@@ -26,17 +26,12 @@
 #import "config.h"
 #import "PrivateClickMeasurementNetworkLoader.h"
 
+#import "NetworkDataTaskCocoa.h"
 #import "NetworkSessionCocoa.h"
 #import <WebCore/HTTPHeaderValues.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/NeverDestroyed.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
-#else
-static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { }
-#endif
 
 @interface WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON : NSObject <NSURLSessionDataDelegate>
 @end
@@ -103,7 +98,7 @@ void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore
         request.get().HTTPBody = adoptNS([[NSData alloc] initWithBytes:body.data() length:body.length()]).get();
     }
 
-    processPCMRequest(pcmDataCarried, request.get());
+    setPCMDataCarriedOnRequest(pcmDataCarried, request.get());
 
     auto identifier = LoadTaskIdentifier::generate();
     NSURLSessionDataTask *task = [statelessSessionWithoutRedirects() dataTaskWithRequest:request.get() completionHandler:makeBlockPtr([callback = WTFMove(callback), identifier](NSData *data, NSURLResponse *response, NSError *error) mutable {
