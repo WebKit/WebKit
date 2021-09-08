@@ -1,3 +1,23 @@
+2021-09-08  Frédéric Wang  <fwang@igalia.com>
+
+        Testing for the fact that media elements are treated as replaced elements
+        https://bugs.webkit.org/show_bug.cgi?id=229857
+
+        Reviewed by Darin Adler.
+
+        This is a follow-up of r281979. backwards-text-iterator-basic.html is extended to check that
+        SimplifiedBackwardsTextIterator emits a comma for a media element. The a11y test from r274810
+        which verified audio/video elements emit an object replacement character is restored, as it
+        seems it was removed by mistake and so this case was no longer checked explicitly.
+        text-marker-previous-next.html is also extended to cover the case of media element.
+
+        * accessibility/text-marker/media-emits-object-replacement-expected.txt: Added.
+        * accessibility/text-marker/media-emits-object-replacement.html: Added.
+        * accessibility/text-marker/text-marker-previous-next-expected.txt:
+        * accessibility/text-marker/text-marker-previous-next.html:
+        * editing/text-iterator/backwards-text-iterator-basic-expected.txt:
+        * editing/text-iterator/backwards-text-iterator-basic.html:
+
 2021-09-08  Tim Nguyen  <ntim@apple.com>
 
         Support animations on ::backdrop

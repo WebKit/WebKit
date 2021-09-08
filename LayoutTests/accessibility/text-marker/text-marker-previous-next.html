@@ -31,6 +31,8 @@ f
 
 <p id="text6">a     b</p>
 
+<p id="text7">audio<audio controls></audio>file</p>
+
 <p id="description"></p>
 <div id="console"></div>
 
@@ -195,6 +197,25 @@ f
         result = backwards(1, result.previous, result.current, text);
         shouldBe("text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(result.previous, result.current))", "'a'");
         
+        // Test case with replaced elements (should use object replacement character).
+        text = accessibilityController.accessibleElementById("text7");
+        textMarkerRange = text.textMarkerRangeForElement(text);
+        shouldBe("text.stringForTextMarkerRange(textMarkerRange)", "'audio\uFFFCfile'");
+        currentMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+        for (var i = 0; i < 6; i++) {
+            previousMarker = currentMarker;
+            currentMarker = text.nextTextMarker(currentMarker);
+        }
+        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker)
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "'\uFFFC'");
+        currentMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
+        for (var i = 0; i < 5; i++) {
+            previousMarker = currentMarker;
+            currentMarker = text.previousTextMarker(currentMarker);
+        }
+        markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker)
+        shouldBe("text.stringForTextMarkerRange(markerRange)", "'\uFFFC'");
+
         function forward(count, previousMarker, currentMarker, obj) {
             for (var i = 0; i < count; i++) {
                 previousMarker = currentMarker;
