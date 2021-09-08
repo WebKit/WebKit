@@ -1,3 +1,15 @@
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/deqp/functional/gles3/rbostatequery.html fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229950
+
+        Reviewed by Dean Jackson.
+
+        Enable webgl/2.0.y/deqp/functional/gles3/rbostatequery.html
+        explicitly until 2.0.y is activated.
+
+        * webgl/TestExpectations:
+
 2021-09-07  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/2.0.y/deqp/functional/gles3/negativestateapi.html get_query_parameter  fails on Metal

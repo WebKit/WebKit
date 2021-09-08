@@ -341,6 +341,8 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     if (contextAttributes().xrCompatible)
         requiredExtensions.append("GL_OES_EGL_image"_s);
 #endif
+    if (m_isForWebGL2)
+        requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
     ExtensionsGL& extensions = getExtensions();
     for (auto& extension : requiredExtensions) {
         if (!extensions.supports(extension)) {
