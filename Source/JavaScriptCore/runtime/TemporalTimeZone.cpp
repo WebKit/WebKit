@@ -58,17 +58,6 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 {
 }
 
-// https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
-std::optional<TimeZoneID> TemporalTimeZone::idForTimeZoneName(StringView string)
-{
-    const auto& timeZones = intlAvailableTimeZones();
-    for (unsigned index = 0; index < timeZones.size(); ++index) {
-        if (equalIgnoringASCIICase(timeZones[index], string))
-            return index;
-    }
-    return std::nullopt;
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimeZonestring
 static std::optional<int64_t> parseTemporalTimeZoneString(StringView)
 {
@@ -111,7 +100,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     if (utcOffset)
         return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffset.value());
 
-    std::optional<TimeZoneID> identifier = idForTimeZoneName(timeZoneString);
+    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
     if (identifier)
         return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), identifier.value());
 

@@ -1,5 +1,149 @@
 2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Implement Temporal.PlainTime
+        https://bugs.webkit.org/show_bug.cgi?id=229892
+
+        Reviewed by Darin Adler.
+
+        This patch implements Temporal.PlainTime[1]. This is time representation which is not associated to
+        calendars and timezones. This is tuple of hour, minute, second, millisecond, microsecond, and nanosecond.
+
+        1. We add full-fledged ISO8601 DateTime / Time parser, so that Temporal.PlainTime.from can extract
+           time as specified.
+
+        2. ISO8601::PlainTime is used for already-validated PlainTime data. When performing arithmetics, we first
+           do that in ISO8601::Duration, and then we validate and convert it to PlainTime.
+
+        We also found several spec issues, and reported in [2,3,4].
+
+        [1]: https://tc39.es/proposal-temporal/#sec-temporal-plaintime-objects
+        [2]: https://github.com/tc39/proposal-temporal/issues/1803
+        [3]: https://github.com/tc39/proposal-temporal/issues/1804
+        [4]: https://github.com/tc39/proposal-temporal/issues/1805
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::parseTimeZoneName):
+        (JSC::ISO8601::parseDecimalInt32):
+        (JSC::ISO8601::parseDuration):
+        (JSC::ISO8601::parseTimeSpec):
+        (JSC::ISO8601::parseTimeZoneNumericUTCOffset):
+        (JSC::ISO8601::parseTimeZoneBracketedAnnotation):
+        (JSC::ISO8601::canBeTimeZone):
+        (JSC::ISO8601::parseTimeZone):
+        (JSC::ISO8601::parseTime):
+        (JSC::ISO8601::daysInMonth):
+        (JSC::ISO8601::parseDate):
+        (JSC::ISO8601::parseDateTime):
+        (JSC::ISO8601::formatTimeZoneOffsetString):
+        (JSC::ISO8601::temporalTimeToString):
+        (JSC::ISO8601::isValidDuration):
+        * runtime/ISO8601.h:
+        (JSC::ISO8601::Duration::Duration):
+        (JSC::ISO8601::Duration::operator[]):
+        (JSC::ISO8601::Duration::operator[] const):
+        (JSC::ISO8601::Duration::begin const):
+        (JSC::ISO8601::Duration::end const):
+        (JSC::ISO8601::Duration::clear):
+        (JSC::ISO8601::Duration::operator- const):
+        (JSC::ISO8601::PlainTime::PlainTime):
+        (JSC::ISO8601::PlainTime::operator==):
+        (JSC::ISO8601::PlainDate::PlainDate):
+        (JSC::ISO8601::PlainDate::year const):
+        (JSC::ISO8601::PlainDate::month const):
+        (JSC::ISO8601::PlainDate::day const):
+        * runtime/IntlObject.cpp:
+        (JSC::utcTimeZoneIDSlow):
+        * runtime/IntlObject.h:
+        (JSC::utcTimeZoneID):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildrenImpl):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::plainTimeStructure):
+        * runtime/TemporalCalendarConstructor.cpp:
+        (JSC::TemporalCalendarConstructor::finishCreation):
+        * runtime/TemporalDuration.cpp:
+        (JSC::TemporalDuration::tryCreateIfValid):
+        (JSC::TemporalDuration::fromNonDurationValue):
+        (JSC::TemporalDuration::toDuration):
+        (JSC::TemporalDuration::toDurationRecord):
+        (JSC::TemporalDuration::toString const):
+        (JSC::TemporalDuration::toString):
+        (JSC::isValidDuration): Deleted.
+        (JSC::TemporalDuration::fromObject): Deleted.
+        * runtime/TemporalDuration.h:
+        * runtime/TemporalNow.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalObject.cpp:
+        (JSC::createPlainTimeConstructor):
+        (JSC::secondsStringPrecision):
+        (JSC::toTemporalOverflow):
+        * runtime/TemporalObject.h:
+        * runtime/TemporalPlainTime.cpp: Added.
+        (JSC::TemporalPlainTime::create):
+        (JSC::TemporalPlainTime::createStructure):
+        (JSC::TemporalPlainTime::TemporalPlainTime):
+        (JSC::TemporalPlainTime::finishCreation):
+        (JSC::TemporalPlainTime::visitChildrenImpl):
+        (JSC::toPlainTime):
+        (JSC::TemporalPlainTime::tryCreateIfValid):
+        (JSC::nonNegativeModulo):
+        (JSC::balanceTime):
+        (JSC::roundTime):
+        (JSC::TemporalPlainTime::round const):
+        (JSC::TemporalPlainTime::toString const):
+        (JSC::propertyName):
+        (JSC::toTemporalTimeRecord):
+        (JSC::toPartialTime):
+        (JSC::constraintTime):
+        (JSC::regulateTime):
+        (JSC::toTemporalCalendarWithISODefault):
+        (JSC::getTemporalCalendarWithISODefault):
+        (JSC::TemporalPlainTime::from):
+        (JSC::TemporalPlainTime::compare):
+        (JSC::toLimitedTemporalDuration):
+        (JSC::addTime):
+        (JSC::TemporalPlainTime::add const):
+        (JSC::TemporalPlainTime::subtract const):
+        (JSC::TemporalPlainTime::with const):
+        (JSC::differenceTime):
+        (JSC::extractDifferenceOptions):
+        (JSC::TemporalPlainTime::until const):
+        (JSC::TemporalPlainTime::since const):
+        * runtime/TemporalPlainTime.h: Added.
+        * runtime/TemporalPlainTimeConstructor.cpp: Added.
+        (JSC::TemporalPlainTimeConstructor::create):
+        (JSC::TemporalPlainTimeConstructor::createStructure):
+        (JSC::TemporalPlainTimeConstructor::TemporalPlainTimeConstructor):
+        (JSC::TemporalPlainTimeConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/TemporalPlainTimeConstructor.h: Copied from Source/JavaScriptCore/runtime/TemporalTimeZone.h.
+        * runtime/TemporalPlainTimePrototype.cpp: Added.
+        (JSC::TemporalPlainTimePrototype::create):
+        (JSC::TemporalPlainTimePrototype::createStructure):
+        (JSC::TemporalPlainTimePrototype::TemporalPlainTimePrototype):
+        (JSC::TemporalPlainTimePrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/TemporalPlainTimePrototype.h: Copied from Source/JavaScriptCore/runtime/TemporalTimeZone.h.
+        * runtime/TemporalTimeZone.cpp:
+        (JSC::TemporalTimeZone::from):
+        (JSC::TemporalTimeZone::idForTimeZoneName): Deleted.
+        * runtime/TemporalTimeZone.h:
+        * runtime/TemporalTimeZoneConstructor.cpp:
+        (JSC::TemporalTimeZoneConstructor::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+
+2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Math.hypot checks for infinite values prematurely
         https://bugs.webkit.org/show_bug.cgi?id=229843
 

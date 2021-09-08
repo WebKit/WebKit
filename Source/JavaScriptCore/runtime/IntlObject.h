@@ -117,6 +117,10 @@ inline CalendarID iso8601CalendarID()
 using TimeZoneID = unsigned;
 const Vector<String>& intlAvailableTimeZones();
 
+extern TimeZoneID utcTimeZoneIDStorage;
+TimeZoneID utcTimeZoneIDSlow();
+CalendarID utcTimeZoneID();
+
 TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
@@ -163,5 +167,14 @@ struct UFieldPositionIteratorDeleter {
 std::optional<String> mapICUCollationKeywordToBCP47(const String&);
 std::optional<String> mapICUCalendarKeywordToBCP47(const String&);
 std::optional<String> mapBCP47ToICUCalendarKeyword(const String&);
+
+
+inline CalendarID utcTimeZoneID()
+{
+    unsigned value = utcTimeZoneIDStorage;
+    if (value == std::numeric_limits<TimeZoneID>::max())
+        return utcTimeZoneIDSlow();
+    return value;
+}
 
 } // namespace JSC

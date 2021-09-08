@@ -21,20 +21,26 @@
 #pragma once
 
 #include "JSObject.h"
+#include <wtf/Variant.h>
 
 namespace JSC {
 
-#define JSC_TEMPORAL_UNITS(macro) \
-    macro(year, Year) \
-    macro(month, Month) \
-    macro(week, Week) \
-    macro(day, Day) \
+#define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
     macro(minute, Minute) \
     macro(second, Second) \
     macro(millisecond, Millisecond) \
     macro(microsecond, Microsecond) \
     macro(nanosecond, Nanosecond) \
+
+
+#define JSC_TEMPORAL_UNITS(macro) \
+    macro(year, Year) \
+    macro(month, Month) \
+    macro(week, Week) \
+    macro(day, Day) \
+    JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
+
 
 enum class TemporalUnit : uint8_t {
 #define JSC_DEFINE_TEMPORAL_UNIT_ENUM(name, capitalizedName) capitalizedName,
@@ -43,6 +49,7 @@ enum class TemporalUnit : uint8_t {
 };
 #define JSC_COUNT_TEMPORAL_UNITS(name, capitalizedName) + 1
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
 class TemporalObject final : public JSNonFinalObject {
@@ -74,10 +81,16 @@ enum class RoundingMode : uint8_t {
     HalfExpand
 };
 
+enum class Precision : uint8_t {
+    Minute,
+    Fixed,
+    Auto,
+};
+
 struct PrecisionData {
-    std::optional<unsigned> precision;
+    std::tuple<Precision, unsigned> precision;
     TemporalUnit unit;
-    double increment;
+    unsigned increment;
 };
 
 std::optional<TemporalUnit> temporalUnitType(StringView);
@@ -88,5 +101,12 @@ PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
 std::optional<double> maximumRoundingIncrement(TemporalUnit);
 double temporalRoundingIncrement(JSGlobalObject*, JSObject* options, std::optional<double> dividend, bool inclusive);
 double roundNumberToIncrement(double, double increment, RoundingMode);
+
+enum class TemporalOverflow : bool {
+    Constrain,
+    Reject,
+};
+
+TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 
 } // namespace JSC

@@ -136,5 +136,7 @@ struct IntegerToStringConversionTrait<Vector<LChar, N>> {
 
 } // namespace WTF
 
+using WTF::numberToStringSigned;
+using WTF::numberToStringUnsigned;
 using WTF::lengthOfIntegerAsString;
 using WTF::writeIntegerToBuffer;

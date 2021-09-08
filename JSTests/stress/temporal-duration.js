@@ -27,6 +27,7 @@ shouldBe(Object.getOwnPropertyDescriptor(Temporal.Duration, 'prototype').writabl
 shouldBe(Object.getOwnPropertyDescriptor(Temporal.Duration, 'prototype').enumerable, false);
 shouldBe(Object.getOwnPropertyDescriptor(Temporal.Duration, 'prototype').configurable, false);
 shouldThrow(() => Temporal.Duration(), TypeError);
+shouldBe(Temporal.Duration.prototype.constructor, Temporal.Duration);
 
 shouldBe(new Temporal.Duration() instanceof Temporal.Duration, true);
 {

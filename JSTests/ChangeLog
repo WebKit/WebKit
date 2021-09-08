@@ -1,5 +1,28 @@
 2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Implement Temporal.PlainTime
+        https://bugs.webkit.org/show_bug.cgi?id=229892
+
+        Reviewed by Darin Adler.
+
+        * stress/temporal-calendar.js:
+        * stress/temporal-duration.js:
+        * stress/temporal-plaintime.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shouldBe.String.Temporal.PlainTime.from):
+        (let.time.Temporal.PlainTime.from.shouldBe):
+        (let.text.of.failures.shouldThrow):
+        (print):
+        (shouldBe.Temporal.PlainTime.from):
+        (new.Temporal.PlainTime.valueOf):
+        (shouldBe.String.time.until.Temporal.PlainTime.from):
+        * stress/temporal-timezone.js:
+        (let.text.of.failures.shouldThrow): Deleted.
+        * test262/config.yaml:
+
+2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Math.hypot checks for infinite values prematurely
         https://bugs.webkit.org/show_bug.cgi?id=229843
 

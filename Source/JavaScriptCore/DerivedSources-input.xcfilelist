@@ -175,6 +175,8 @@ $(PROJECT_DIR)/runtime/TemporalDurationConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalDurationPrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalNow.cpp
 $(PROJECT_DIR)/runtime/TemporalObject.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainTimeConstructor.cpp
+$(PROJECT_DIR)/runtime/TemporalPlainTimePrototype.cpp
 $(PROJECT_DIR)/runtime/TemporalTimeZoneConstructor.cpp
 $(PROJECT_DIR)/runtime/TemporalTimeZonePrototype.cpp
 $(PROJECT_DIR)/ucd/CaseFolding.txt

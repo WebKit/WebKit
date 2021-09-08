@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,26 @@
 
 #pragma once
 
-#include "ISO8601.h"
-#include "IntlObject.h"
-#include "JSObject.h"
-#include <wtf/Variant.h>
+#include "InternalFunction.h"
 
 namespace JSC {
 
-class TemporalTimeZone final : public JSNonFinalObject {
+class TemporalPlainTimePrototype;
+
+class TemporalPlainTimeConstructor final : public InternalFunction {
 public:
-    using Base = JSNonFinalObject;
+    using Base = InternalFunction;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    template<typename CellType, SubspaceAccess mode>
-    static IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.temporalTimeZoneSpace<mode>();
-    }
-
-    static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID);
-    static TemporalTimeZone* createFromUTCOffset(VM&, Structure*, int64_t);
+    static TemporalPlainTimeConstructor* create(VM&, Structure*, TemporalPlainTimePrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    using TimeZone = ISO8601::TimeZone;
-
-    TimeZone timeZone() const { return m_timeZone; }
-
-    static JSObject* from(JSGlobalObject*, JSValue);
-
 private:
-    TemporalTimeZone(VM&, Structure*, TimeZone);
-
-    // TimeZoneID or UTC offset.
-    TimeZone m_timeZone;
+    TemporalPlainTimeConstructor(VM&, Structure*);
+    void finishCreation(VM&, TemporalPlainTimePrototype*);
 };
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalPlainTimeConstructor, InternalFunction);
 
 } // namespace JSC

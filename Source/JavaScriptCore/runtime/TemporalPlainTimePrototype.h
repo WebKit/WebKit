@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,30 @@
 
 #pragma once
 
-#include "ISO8601.h"
-#include "IntlObject.h"
 #include "JSObject.h"
-#include <wtf/Variant.h>
 
 namespace JSC {
 
-class TemporalTimeZone final : public JSNonFinalObject {
+class TemporalPlainTimePrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    template<typename CellType, SubspaceAccess mode>
+    template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return vm.temporalTimeZoneSpace<mode>();
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalPlainTimePrototype, Base);
+        return &vm.plainObjectSpace;
     }
 
-    static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID);
-    static TemporalTimeZone* createFromUTCOffset(VM&, Structure*, int64_t);
+    static TemporalPlainTimePrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    using TimeZone = ISO8601::TimeZone;
-
-    TimeZone timeZone() const { return m_timeZone; }
-
-    static JSObject* from(JSGlobalObject*, JSValue);
-
 private:
-    TemporalTimeZone(VM&, Structure*, TimeZone);
-
-    // TimeZoneID or UTC offset.
-    TimeZone m_timeZone;
+    TemporalPlainTimePrototype(VM&, Structure*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 
 } // namespace JSC

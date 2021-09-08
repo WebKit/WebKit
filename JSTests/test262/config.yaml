@@ -27,7 +27,8 @@ skip:
     - test/built-ins/Temporal/PlainDate
     - test/built-ins/Temporal/PlainDateTime
     - test/built-ins/Temporal/PlainMonthDay
-    - test/built-ins/Temporal/PlainTime
+    - test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime
+    - test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainYearMonth
     - test/built-ins/Temporal/TimeZone
     - test/built-ins/Temporal/ZonedDateTime

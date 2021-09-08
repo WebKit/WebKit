@@ -149,6 +149,12 @@
     macro(indices) \
     macro(inferredName) \
     macro(input) \
+    macro(isoHour) \
+    macro(isoMicrosecond) \
+    macro(isoMillisecond) \
+    macro(isoMinute) \
+    macro(isoNanosecond) \
+    macro(isoSecond) \
     macro(instructionCount) \
     macro(isArray) \
     macro(isEnabled) \
@@ -169,7 +175,9 @@
     macro(maximumFractionDigits) \
     macro(maximumSignificantDigits) \
     macro(message) \
+    macro(microsecond) \
     macro(microseconds) \
+    macro(millisecond) \
     macro(milliseconds) \
     macro(minimumFractionDigits) \
     macro(minimumIntegerDigits) \
@@ -181,6 +189,7 @@
     macro(months) \
     macro(multiline) \
     macro(name) \
+    macro(nanosecond) \
     macro(nanoseconds) \
     macro(next) \
     macro(now) \
@@ -194,6 +203,7 @@
     macro(origin) \
     macro(osrExitSites) \
     macro(osrExits) \
+    macro(overflow) \
     macro(parse) \
     macro(parseInt) \
     macro(parseFloat) \
@@ -245,6 +255,7 @@
     macro(usage) \
     macro(value) \
     macro(valueOf) \
+    macro(week) \
     macro(weekday) \
     macro(weeks) \
     macro(writable) \

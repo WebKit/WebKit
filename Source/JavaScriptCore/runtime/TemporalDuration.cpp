@@ -72,22 +72,6 @@ void TemporalDuration::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-// IsValidDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds )
-// https://tc39.es/proposal-temporal/#sec-temporal-isvalidduration
-static bool isValidDuration(const TemporalDuration::Subdurations& subdurations)
-{
-    int sign = 0;
-    for (auto value : subdurations) {
-        if (!std::isfinite(value) || (value < 0 && sign > 0) || (value > 0 && sign < 0))
-            return false;
-
-        if (!sign && value)
-            sign = value > 0 ? 1 : -1;
-    }
-
-    return true;
-}
-
 // CreateTemporalDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds [ , newTarget ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalduration
 TemporalDuration* TemporalDuration::tryCreateIfValid(JSGlobalObject* globalObject, Subdurations&& subdurations, Structure* structure)
@@ -95,7 +79,7 @@ TemporalDuration* TemporalDuration::tryCreateIfValid(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!isValidDuration(subdurations)) {
+    if (!ISO8601::isValidDuration(subdurations)) {
         throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
         return { };
     }
@@ -105,17 +89,17 @@ TemporalDuration* TemporalDuration::tryCreateIfValid(JSGlobalObject* globalObjec
 
 // ToTemporalDurationRecord ( temporalDurationLike )
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaldurationrecord
-TemporalDuration::Subdurations TemporalDuration::fromObject(JSGlobalObject* globalObject, JSObject* durationLike)
+TemporalDuration::Subdurations TemporalDuration::fromNonDurationValue(JSGlobalObject* globalObject, JSValue durationLike)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(!durationLike->inherits<TemporalDuration>(vm));
+    ASSERT(!durationLike.inherits<TemporalDuration>(vm));
 
     Subdurations result;
     auto hasRelevantProperty = false;
     for (size_t i = 0; i < numberOfTemporalUnits; i++) {
-        JSValue value = durationLike->get(globalObject, propertyName(vm, i));
+        JSValue value = durationLike.get(globalObject, propertyName(vm, i));
         RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
@@ -152,7 +136,7 @@ TemporalDuration* TemporalDuration::toDuration(JSGlobalObject* globalObject, JSV
         return jsCast<TemporalDuration*>(itemValue);
 
     if (itemValue.isObject()) {
-        auto subdurations = fromObject(globalObject, asObject(itemValue));
+        auto subdurations = fromNonDurationValue(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, nullptr);
 
         RELEASE_AND_RETURN(scope, TemporalDuration::tryCreateIfValid(globalObject, WTFMove(subdurations)));
@@ -168,6 +152,16 @@ TemporalDuration* TemporalDuration::toDuration(JSGlobalObject* globalObject, JSV
     }
 
     RELEASE_AND_RETURN(scope, TemporalDuration::tryCreateIfValid(globalObject, WTFMove(parsedSubdurations.value())));
+}
+
+TemporalDuration::Subdurations TemporalDuration::toDurationRecord(JSGlobalObject* globalObject, JSValue temporalDurationLike)
+{
+    VM& vm = globalObject->vm();
+
+    if (temporalDurationLike.inherits<TemporalDuration>(vm))
+        return jsCast<TemporalDuration*>(temporalDurationLike)->subdurations();
+
+    return fromNonDurationValue(globalObject, temporalDurationLike);
 }
 
 TemporalDuration* TemporalDuration::from(JSGlobalObject* globalObject, JSValue itemValue)
@@ -530,7 +524,10 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
 
     PrecisionData data = secondsStringPrecision(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
-    ASSERT(data.unit >= TemporalUnit::Second);
+    if (data.unit < TemporalUnit::Second) {
+        throwRangeError(globalObject, scope, "smallestUnit must not be \"minute\""_s);
+        return { };
+    }
 
     auto roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode,
         { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
@@ -538,7 +535,7 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
     RETURN_IF_EXCEPTION(scope, { });
 
     // No need to make a new object if we were given explicit defaults.
-    if (!data.precision && roundingMode == RoundingMode::Trunc)
+    if (std::get<0>(data.precision) == Precision::Auto && roundingMode == RoundingMode::Trunc)
         return toString();
 
     Subdurations newSubdurations = m_subdurations;
@@ -548,9 +545,10 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
 
 // TemporalDurationToString ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, precision )
 // https://tc39.es/proposal-temporal/#sec-temporal-temporaldurationtostring
-String TemporalDuration::toString(const TemporalDuration::Subdurations& subdurations, std::optional<unsigned> precision)
+String TemporalDuration::toString(const TemporalDuration::Subdurations& subdurations, std::tuple<Precision, unsigned> precision)
 {
-    ASSERT(!precision || precision.value() < 10);
+    auto [precisionType, precisionValue] = precision;
+    ASSERT(precisionType == Precision::Auto || precisionValue < 10);
 
     auto balancedMicroseconds = subdurations.microseconds() + std::trunc(subdurations.nanoseconds() / 1000);
     auto balancedNanoseconds = std::fmod(subdurations.nanoseconds(), 1000);
@@ -597,10 +595,10 @@ String TemporalDuration::toString(const TemporalDuration::Subdurations& subdurat
         builder.append(formatInteger(balancedSeconds));
 
         auto fraction = std::abs(balancedMilliseconds) * 1e6 + std::abs(balancedMicroseconds) * 1e3 + std::abs(balancedNanoseconds);
-        if ((!precision && fraction) || (precision && precision.value())) {
+        if ((precisionType == Precision::Auto && fraction) || (precisionType == Precision::Fixed && precisionValue)) {
             auto padded = makeString('.', pad('0', 9, fraction));
-            if (precision)
-                builder.append(StringView(padded).left(padded.length() - (9 - precision.value())));
+            if (precisionType == Precision::Fixed)
+                builder.append(StringView(padded).left(padded.length() - (9 - precisionValue)));
             else {
                 auto lengthWithoutTrailingZeroes = padded.length();
                 while (padded[lengthWithoutTrailingZeroes - 1] == '0')

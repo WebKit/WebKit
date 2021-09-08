@@ -66,7 +66,15 @@ public:
     Subdurations round(JSGlobalObject*, JSValue options) const;
     double total(JSGlobalObject*, JSValue options) const;
     String toString(JSGlobalObject*, JSValue options) const;
-    String toString(std::optional<unsigned> precision = std::nullopt) const { return toString(m_subdurations, precision); }
+    String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const { return toString(m_subdurations, precision); }
+
+    const Subdurations& subdurations() const { return m_subdurations; }
+
+    static Subdurations toDurationRecord(JSGlobalObject*, JSValue);
+
+    static int sign(const Subdurations&);
+    static double round(Subdurations&, double increment, TemporalUnit, RoundingMode);
+    static void balance(Subdurations&, TemporalUnit largestUnit);
 
 private:
     TemporalDuration(VM&, Structure*, Subdurations&&);
@@ -74,12 +82,9 @@ private:
 
     template<typename CharacterType>
     static std::optional<Subdurations> parse(StringParsingBuffer<CharacterType>&);
-    static Subdurations fromObject(JSGlobalObject*, JSObject*);
+    static Subdurations fromNonDurationValue(JSGlobalObject*, JSValue);
 
-    static int sign(const Subdurations&);
-    static void balance(Subdurations&, TemporalUnit largestUnit);
-    static double round(Subdurations&, double increment, TemporalUnit, RoundingMode);
-    static String toString(const Subdurations&, std::optional<unsigned> precision);
+    static String toString(const Subdurations&, std::tuple<Precision, unsigned> precision);
 
     TemporalUnit largestSubduration() const;
 

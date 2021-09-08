@@ -77,7 +77,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncTimeZone, (JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
 
     String timeZoneString = vm.dateCache.defaultTimeZone();
-    std::optional<TimeZoneID> identifier = TemporalTimeZone::idForTimeZoneName(timeZoneString);
+    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
     if (!identifier)
         return JSValue::encode(TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), 0));
     return JSValue::encode(TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), identifier.value()));

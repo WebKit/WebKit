@@ -195,6 +195,7 @@ class UnlinkedModuleProgramCodeBlock;
 class VirtualRegister;
 class VMEntryScope;
 class TemporalCalendar;
+class TemporalPlainTime;
 class TemporalTimeZone;
 class TopLevelGlobalObjectScope;
 class TypeProfiler;
@@ -595,6 +596,8 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(symbolObjectSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(templateObjectDescriptorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalCalendarSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalDurationSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalPlainTimeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalTimeZoneSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ClampedArraySpace)
@@ -620,7 +623,6 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentIteratorSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmenterSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentsSpace)
-    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(temporalDurationSpace)
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)

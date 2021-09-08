@@ -1839,6 +1839,19 @@ const Vector<String>& intlAvailableTimeZones()
     return availableTimeZones;
 }
 
+TimeZoneID utcTimeZoneIDStorage { std::numeric_limits<TimeZoneID>::max() };
+TimeZoneID utcTimeZoneIDSlow()
+{
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        auto& timeZones = intlAvailableTimeZones();
+        auto index = timeZones.find("UTC"_s);
+        RELEASE_ASSERT(index != WTF::notFound);
+        utcTimeZoneIDStorage = index;
+    });
+    return utcTimeZoneIDStorage;
+}
+
 // https://tc39.es/proposal-intl-enumeration/#sec-availabletimezones
 static JSArray* availableTimeZones(JSGlobalObject* globalObject)
 {

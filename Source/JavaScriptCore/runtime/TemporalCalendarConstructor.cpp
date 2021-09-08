@@ -73,6 +73,7 @@ void TemporalCalendarConstructor::finishCreation(VM& vm, TemporalCalendarPrototy
 {
     Base::finishCreation(vm, 0, "Calendar"_s, PropertyAdditionMode::WithoutStructureTransition);
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, temporalCalendarPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    temporalCalendarPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 JSC_DEFINE_HOST_FUNCTION(constructTemporalCalendar, (JSGlobalObject* globalObject, CallFrame* callFrame))
