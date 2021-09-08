@@ -619,7 +619,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Pass ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
@@ -689,6 +689,8 @@ webkit.org/b/229761 http/tests/media/media-stream/audio-capture-and-category.htt
 
 webkit.org/b/229973 media/track/in-band/track-in-band-kate-ogg-cues-added-once.html [ Failure Pass ]
 webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Failure Pass ]
+
+webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs

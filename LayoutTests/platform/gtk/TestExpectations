@@ -1234,6 +1234,8 @@ webkit.org/b/229964 webaudio/silent-audio-interrupted-in-background.html [ Pass 
 # Flaky on skip-failing-test bot (EWS)
 webkit.org/b/229270 fast/events/monotonic-event-time.html [ Failure Pass ]
 
+webkit.org/b/230017 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
