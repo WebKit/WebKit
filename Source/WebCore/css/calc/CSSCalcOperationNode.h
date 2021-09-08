@@ -37,6 +37,7 @@ public:
     static RefPtr<CSSCalcOperationNode> createSum(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createProduct(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createMinOrMaxOrClamp(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory);
+    static RefPtr<CSSCalcOperationNode> createTrig(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
 
     static Ref<CSSCalcExpressionNode> simplify(Ref<CSSCalcExpressionNode>&&);
 
@@ -46,6 +47,7 @@ public:
     bool isCalcSumNode() const { return m_operator == CalcOperator::Add; }
     bool isCalcProductNode() const { return m_operator == CalcOperator::Multiply; }
     bool isMinOrMaxNode() const { return m_operator == CalcOperator::Min || m_operator == CalcOperator::Max; }
+    bool isTrigNode() const { return m_operator == CalcOperator::Sin || m_operator == CalcOperator::Cos || m_operator == CalcOperator::Tan; }
     bool shouldSortChildren() const { return isCalcSumNode() || isCalcProductNode(); }
 
     void hoistChildrenWithOperator(CalcOperator);

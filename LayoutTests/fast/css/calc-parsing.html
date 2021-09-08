@@ -19,6 +19,15 @@
                     shouldBeEqualToString(`element.style['${propertyName}']`, `${specifiedValue}`);
                     shouldBeEqualToString(`getComputedStyle(element).getPropertyValue('${propertyName}')`, `${computedValue}`);
                 }
+                
+                function testValue(expression, computedValue)
+                {
+                    debug('');
+                    element.style[propertyName] = '999px';
+                    evalAndLog(`element.style["${propertyName}"] = "${expression}"`);
+                    var value = Math.round(getComputedStyle(element).getPropertyValue(propertyName).slice(0,-2));
+                    shouldBe(`${value}`, computedValue);
+                }
 
                 // Valid expressions.
                 testExpression('calc(100px)', 'calc(100px)', '100px');
@@ -33,6 +42,14 @@
                 testExpression('min(100px,0%)', 'min(100px, 0%)', propertyName == 'width' ? '0px' : "min(100px, 0%)");
                 testExpression('max(100px,0%)', 'max(100px, 0%)', propertyName == 'width' ? '100px' : "max(100px, 0%)");
                 testExpression('clamp(100px,0%,1%)', 'clamp(100px, 0%, 1%)', propertyName == 'width' ? '100px' : "clamp(100px, 0%, 1%)");
+                testValue('calc(sin(90deg) * 100px)', '100');
+                testValue('calc(sin(45deg  +  45deg ) * 100px)', '100');
+                testValue('calc(cos( 0 ) * 100px)', '100');
+                testValue('calc(cos( 30deg - 30deg ) * 100px)', '100');
+                testValue('calc(tan(45deg)*100px)', '100');
+                testValue('calc(tan(30deg + 15deg) * 100px)', '100');
+                testValue('calc(sin(pi/2) * 100px)', '100');
+                testValue('calc(cos(e - e) * 100px)', '100');
 
                 // Non-parsing expressions.
                 testExpression('calc(100px, 200px)', '999px', '999px');
@@ -48,6 +65,15 @@
                 testExpression('clamp(200px,,300px)', '999px', '999px');
                 testExpression('clamp((),,300px)', '999px', '999px');
                 testExpression('clamp(1px,2px,2px,4px)', '999px', '999px');
+                testExpression('calc(sin(90px) * 100px)', '999px', '999px');
+                testExpression('calc(sin(30deg + 1.0471967rad, 0) * 100px)', '999px', '999px');
+                testExpression('calc(cos( 0 ,) * 100px)', '999px', '999px');
+                testExpression('calc(cos( () 30deg - 0.523599rad ) * 100px)', '999px', '999px');
+                testExpression('calc(tan(45deg ) ) * 100px)', '999px', '999px');
+                testExpression('calc(tan(30deg, + 0.261799rad) * 100px)', '999px', '999px');
+                testExpression('calc(sin(piiii/4) * 100px)', '999px', '999px');
+                testExpression('calc(sin(e e/4) * 100px)', '999px', '999px');
+                testExpression('calc(sin() * 100px)', '999px', '999px');
             }
 
             testProperty("width");

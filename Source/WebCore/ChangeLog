@@ -1,3 +1,78 @@
+2021-09-08  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement sin, cos, tan, e and pi for calc
+        https://bugs.webkit.org/show_bug.cgi?id=229507
+
+        Reviewed by Simon Fraser.
+
+        Tests: css3/calc/simple-trig-functions.html
+               css3/calc/trig-functions-with-constants.html
+        
+        Add support for sin, cos, and tan functions within calc. Also add e and pi
+        constant values within calc.
+        
+        * css/CSSValueKeywords.in:
+        Add sin,cos,e and pi keywords.
+        
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::getConstantTable):
+        Add helper function with table mapping e and pi keywords to their
+        approximate numerical value.
+        
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        Add handling for creation of sin,cos,tan operation nodes.
+        
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        Add handling for creation of primitive css value when constant is parsed.
+        
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        Add sin,cos,tan to switch statement.
+        
+        (WebCore::functionFromOperator):
+        Add sin,cos,tan to switch statement.
+        
+        (WebCore::CSSCalcOperationNode::createTrig):
+        Add function for creation of sin,cos,tan operation node.
+        
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        Add handling for performing sin,cos,tan function on child node.
+        
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        Add handling for sin,cos,tan.
+        
+        (WebCore::CSSCalcOperationNode::primitiveType const):
+        Remove assert that is no longer correct. Trig functions take can take an
+        angle and return a number, so it is no longer the case that all children
+        of a node producing a number must be numbers themself.
+        
+        (WebCore::CSSCalcOperationNode::doubleValue const):
+        Convert chilren nodes that are angles to radians.
+        
+        (WebCore::functionPrefixForOperator):
+        Add handling for sin,cos,tan.
+        
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        Add functionality for sin,cos,tan functions.
+        
+        * css/calc/CSSCalcOperationNode.h:
+        * css/calc/CSSCalcValue.cpp:
+        (WebCore::createCSS):
+        Add handling for creation of sin,cos,tan operation nodes.
+        
+        (WebCore::CSSCalcValue::isCalcFunction):
+        Add handling for sin,cos,tan.
+        
+        * platform/calc/CalcExpressionOperation.cpp:
+        (WebCore::CalcExpressionOperation::evaluate const):
+        Add functionality for sin,cos,tan function.
+        
+        * platform/calc/CalcOperator.cpp:
+        (WebCore::operator<<):
+        Add handling for sin,cos,tan.
+        
+        * platform/calc/CalcOperator.h:
+
 2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/2.0.y/conformance/extensions/webgl-compressed-texture-etc.html fails on Metal

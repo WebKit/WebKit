@@ -38,6 +38,9 @@ enum class CalcOperator : uint8_t {
     Min = 0,
     Max,
     Clamp,
+    Sin,
+    Cos,
+    Tan,
 };
 
 TextStream& operator<<(TextStream&, CalcOperator);

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CalcExpressionOperation.h"
 
+#include <cmath>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -85,6 +86,21 @@ float CalcExpressionOperation::evaluate(float maxValue) const
         float value = m_children[1]->evaluate(maxValue);
         float max = m_children[2]->evaluate(maxValue);
         return std::max(min, std::min(value, max));
+    }
+    case CalcOperator::Sin: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::sin(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Cos: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::cos(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Tan: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::tan(m_children[0]->evaluate(maxValue));
     }
     }
     ASSERT_NOT_REACHED();

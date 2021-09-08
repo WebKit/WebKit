@@ -95,6 +95,11 @@ enum ParseState {
     NoMoreTokens
 };
 
+static const CSSCalcSymbolTable getConstantTable()
+{
+    return { { CSSValuePi, CSSUnitType::CSS_NUMBER, piDouble }, { CSSValueE, CSSUnitType::CSS_NUMBER, std::exp(1.0) } };
+}
+
 static ParseState checkDepthAndIndex(int depth, CSSParserTokenRange tokens)
 {
     if (tokens.atEnd())
@@ -124,6 +129,9 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
         minArgumentCount = 3;
         maxArgumentCount = 3;
         break;
+    case CSSValueSin:
+    case CSSValueCos:
+    case CSSValueTan:
     case CSSValueCalc:
         maxArgumentCount = 1;
         break;
@@ -166,6 +174,15 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     case CSSValueClamp:
         result = CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator::Clamp, WTFMove(nodes), m_destinationCategory);
         break;
+    case CSSValueSin:
+        result = CSSCalcOperationNode::createTrig(CalcOperator::Sin, WTFMove(nodes));
+        break;
+    case CSSValueCos:
+        result = CSSCalcOperationNode::createTrig(CalcOperator::Cos, WTFMove(nodes));
+        break;
+    case CSSValueTan:
+        result = CSSCalcOperationNode::createTrig(CalcOperator::Tan, WTFMove(nodes));
+        break;
     case CSSValueWebkitCalc:
     case CSSValueCalc:
         result = CSSCalcOperationNode::createSum(WTFMove(nodes));
@@ -193,6 +210,7 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr
     switch (token.type()) {
     case IdentToken: {
         auto value = m_symbolTable.get(token.id());
+        value = value ? value : getConstantTable().get(token.id());
         if (!value)
             return false;
         return makeCSSCalcPrimitiveValueNode(value->type, value->value);

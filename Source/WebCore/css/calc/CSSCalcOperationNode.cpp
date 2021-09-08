@@ -72,6 +72,9 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
         if (rightCategory != CalculationCategory::Number || rightSide.isZero())
             return CalculationCategory::Other;
         return leftCategory;
+    case CalcOperator::Sin:
+    case CalcOperator::Cos:
+    case CalcOperator::Tan:
     case CalcOperator::Min:
     case CalcOperator::Max:
     case CalcOperator::Clamp:
@@ -140,7 +143,9 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
                 return CalculationCategory::Other;
             break;
         }
-
+        case CalcOperator::Sin:
+        case CalcOperator::Cos:
+        case CalcOperator::Tan:
         case CalcOperator::Min:
         case CalcOperator::Max:
         case CalcOperator::Clamp:
@@ -255,6 +260,12 @@ static CSSValueID functionFromOperator(CalcOperator op)
         return CSSValueMax;
     case CalcOperator::Clamp:
         return CSSValueClamp;
+    case CalcOperator::Sin:
+        return CSSValueSin;
+    case CalcOperator::Cos:
+        return CSSValueCos;
+    case CalcOperator::Tan:
+        return CSSValueTan;
     }
     return CSSValueCalc;
 }
@@ -341,6 +352,20 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOpe
     return adoptRef(new CSSCalcOperationNode(category.value(), op, WTFMove(values)));
 }
 
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createTrig(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 1)
+        return nullptr;
+    
+    auto childCategory = values[0]->category();
+    if (childCategory != CalculationCategory::Number && childCategory != CalculationCategory::Angle) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create trig node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+
+    return adoptRef(new CSSCalcOperationNode(CalculationCategory::Number, op, WTFMove(values)));
+}
+
 void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 {
     ASSERT(op == CalcOperator::Add || op == CalcOperator::Multiply);
@@ -405,9 +430,17 @@ bool CSSCalcOperationNode::canCombineAllChildren() const
 
 void CSSCalcOperationNode::combineChildren()
 {
-    if (m_children.size() < 2)
-        return;
+    if (m_children.size() < 2) {
+        if (m_children.size() == 1 && isTrigNode()) {
+            double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
 
+            m_children.clear();
+            m_children.append(WTFMove(newChild));
+        }
+        return;
+    }
+    
     if (shouldSortChildren()) {
         // <https://drafts.csswg.org/css-values-4/#sort-a-calculations-children>
         std::stable_sort(m_children.begin(), m_children.end(), [](const auto& first, const auto& second) {
@@ -595,8 +628,8 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
     // using its children, expressed in the result’s canonical unit.
     if (is<CSSCalcOperationNode>(rootNode)) {
         auto& calcOperationNode = downcast<CSSCalcOperationNode>(rootNode.get());
-        // Don't simplify at the root, otherwise we lose track of the operation for serialization.
-        if (calcOperationNode.children().size() == 1 && depth)
+        // Simplify operations with only one child node (other than root and operations that only need one node).
+        if (calcOperationNode.children().size() == 1 && depth && !calcOperationNode.isTrigNode())
             return WTFMove(calcOperationNode.children()[0]);
         
         if (calcOperationNode.isCalcSumNode()) {
@@ -611,7 +644,10 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
         
         if (calcOperationNode.isMinOrMaxNode())
             calcOperationNode.combineChildren();
-
+        
+        if (calcOperationNode.isTrigNode())
+            calcOperationNode.combineChildren();
+        
         // If only one child remains, return the child (except at the root).
         auto shouldCombineParentWithOnlyChild = [](const CSSCalcOperationNode& parent, int depth)
         {
@@ -676,12 +712,7 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
     auto unitCategory = category();
     switch (unitCategory) {
     case CalculationCategory::Number:
-#if ASSERT_ENABLED
-        for (auto& child : m_children)
-            ASSERT(child->category() == CalculationCategory::Number);
-#endif
         return CSSUnitType::CSS_NUMBER;
-
     case CalculationCategory::Percent: {
         if (m_children.isEmpty())
             return CSSUnitType::CSS_UNKNOWN;
@@ -748,6 +779,8 @@ double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
         CSSUnitType childType = unitType;
         if (allowNumbers && unitType != CSSUnitType::CSS_NUMBER && child->primitiveType() == CSSUnitType::CSS_NUMBER)
             childType = CSSUnitType::CSS_NUMBER;
+        if (isTrigNode() && unitType != CSSUnitType::CSS_NUMBER)
+            childType = CSSUnitType::CSS_RAD;
         return child->doubleValue(childType);
     }));
 }
@@ -800,6 +833,9 @@ static const char* functionPrefixForOperator(CalcOperator op)
     case CalcOperator::Divide:
         ASSERT_NOT_REACHED();
         return "";
+    case CalcOperator::Sin: return "sin(";
+    case CalcOperator::Cos: return "cos(";
+    case CalcOperator::Tan: return "tan(";
     case CalcOperator::Min: return "min(";
     case CalcOperator::Max: return "max(";
     case CalcOperator::Clamp: return "clamp(";
@@ -1003,6 +1039,21 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         double value = children[1];
         double max = children[2];
         return std::max(min, std::min(value, max));
+    }
+    case CalcOperator::Sin: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::sin(children[0]);
+    }
+    case CalcOperator::Cos: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::cos(children[0]);
+    }
+    case CalcOperator::Tan: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::tan(children[0]);
     }
     }
     ASSERT_NOT_REACHED();

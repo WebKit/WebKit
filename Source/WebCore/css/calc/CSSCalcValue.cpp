@@ -164,6 +164,14 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
 
             return CSSCalcOperationNode::createProduct(createCSS(operationChildren, style));
         }
+        case CalcOperator::Cos:
+        case CalcOperator::Tan:
+        case CalcOperator::Sin: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createTrig(op, WTFMove(children));
+        }
         case CalcOperator::Min:
         case CalcOperator::Max:
         case CalcOperator::Clamp: {
@@ -283,6 +291,9 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueMin:
     case CSSValueMax:
     case CSSValueClamp:
+    case CSSValueSin:
+    case CSSValueCos:
+    case CSSValueTan:
         return true;
     default:
         return false;

@@ -52,6 +52,30 @@ element.style["width"] = "clamp(100px,0%,1%)"
 PASS element.style['width'] is "clamp(100px, 0%, 1%)"
 PASS getComputedStyle(element).getPropertyValue('width') is "100px"
 
+element.style["width"] = "calc(sin(90deg) * 100px)"
+PASS 100 is 100
+
+element.style["width"] = "calc(sin(45deg  +  45deg ) * 100px)"
+PASS 100 is 100
+
+element.style["width"] = "calc(cos( 0 ) * 100px)"
+PASS 100 is 100
+
+element.style["width"] = "calc(cos( 30deg - 30deg ) * 100px)"
+PASS 100 is 100
+
+element.style["width"] = "calc(tan(45deg)*100px)"
+PASS 100 is 100
+
+element.style["width"] = "calc(tan(30deg + 15deg) * 100px)"
+PASS 100 is 100
+
+element.style["width"] = "calc(sin(pi/2) * 100px)"
+PASS 100 is 100
+
+element.style["width"] = "calc(cos(e - e) * 100px)"
+PASS 100 is 100
+
 element.style["width"] = "calc(100px, 200px)"
 PASS element.style['width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('width') is "999px"
@@ -104,6 +128,42 @@ element.style["width"] = "clamp(1px,2px,2px,4px)"
 PASS element.style['width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('width') is "999px"
 
+element.style["width"] = "calc(sin(90px) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(sin(30deg + 1.0471967rad, 0) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(cos( 0 ,) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(cos( () 30deg - 0.523599rad ) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(tan(45deg ) ) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(tan(30deg, + 0.261799rad) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(sin(piiii/4) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(sin(e e/4) * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "calc(sin() * 100px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
 element.style["min-width"] = "calc(100px)"
 PASS element.style['min-width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "100px"
@@ -151,6 +211,30 @@ PASS getComputedStyle(element).getPropertyValue('min-width') is "max(100px, 0%)"
 element.style["min-width"] = "clamp(100px,0%,1%)"
 PASS element.style['min-width'] is "clamp(100px, 0%, 1%)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "clamp(100px, 0%, 1%)"
+
+element.style["min-width"] = "calc(sin(90deg) * 100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "calc(sin(45deg  +  45deg ) * 100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "calc(cos( 0 ) * 100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "calc(cos( 30deg - 30deg ) * 100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "calc(tan(45deg)*100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "calc(tan(30deg + 15deg) * 100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "calc(sin(pi/2) * 100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "calc(cos(e - e) * 100px)"
+PASS 100 is 100
 
 element.style["min-width"] = "calc(100px, 200px)"
 PASS element.style['min-width'] is "999px"
@@ -201,6 +285,42 @@ PASS element.style['min-width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
 
 element.style["min-width"] = "clamp(1px,2px,2px,4px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(sin(90px) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(sin(30deg + 1.0471967rad, 0) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(cos( 0 ,) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(cos( () 30deg - 0.523599rad ) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(tan(45deg ) ) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(tan(30deg, + 0.261799rad) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(sin(piiii/4) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(sin(e e/4) * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "calc(sin() * 100px)"
 PASS element.style['min-width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
 PASS successfullyParsed is true

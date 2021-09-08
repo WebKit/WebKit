@@ -1,3 +1,21 @@
+2021-09-08  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement sin, cos, tan, e and pi for calc
+        https://bugs.webkit.org/show_bug.cgi?id=229507
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/calc-parsing.html:
+        Added parsing tests for sin, cos, tan, e and pi.
+
+        * css3/calc/trig-functions-with-constants.html: Added.
+        Added additional tests for expected behavior of sin, cos, tan, e and pi.
+
+        * LayoutTests/animations/calc-animation-test.html: Added.
+        Added animation test for expanding width of box given a width defined using a calc expression
+        Involving sin and cos.
+        
+
 2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk2 Debug ] http/tests/inspector/network/resource-request-headers.html is flaky failing.

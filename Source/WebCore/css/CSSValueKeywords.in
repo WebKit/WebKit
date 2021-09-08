@@ -1351,6 +1351,10 @@ calc
 min
 max
 clamp
+sin
+cos
+e
+pi
 
 from-image
 
