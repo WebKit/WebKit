@@ -1,3 +1,16 @@
+2021-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Support prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=229976
+
+        Reviewed by Don Olmstead.
+
+        Just turned on ENABLE_DARK_MODE_CSS and HAVE_OS_DARK_MODE_SUPPORT.
+        It's always the light mode.
+
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2021-09-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Prefer python3 over python2

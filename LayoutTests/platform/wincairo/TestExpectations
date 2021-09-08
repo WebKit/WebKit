@@ -1106,7 +1106,13 @@ fast/css-custom-paint/ [ Skip ]
 css-typedom [ Skip ]
 
 # Dark mode not supported on Windows
-css-dark-mode [ Skip ]
+css-dark-mode [ Pass ]
+css-dark-mode/color-scheme-css.html [ Failure ]
+css-dark-mode/color-scheme-meta.html [ Failure ]
+css-dark-mode/color-scheme-priority.html [ Failure ]
+css-dark-mode/default-colors.html [ Failure ]
+css-dark-mode/older-syntax/supported-color-schemes-css.html [ Failure ]
+css-dark-mode/older-syntax/supported-color-schemes-meta.html [ Failure ]
 
 webkit.org/b/142260 fast/css/has-attachment.html [ Skip ]
 
