@@ -1700,15 +1700,34 @@ static Ref<CSSValue> fillRepeatToCSSValue(FillRepeat xRepeat, FillRepeat yRepeat
     return list;
 }
 
-static Ref<CSSValue> fillSourceTypeToCSSValue(MaskSourceType type)
+static Ref<CSSValue> maskSourceTypeToCSSValue(MaskMode type)
 {
     switch (type) {
-    case MaskSourceType::Alpha:
+    case MaskMode::Alpha:
         return CSSValuePool::singleton().createValue(CSSValueAlpha);
-    default:
-        ASSERT(type == MaskSourceType::Luminance);
+    case MaskMode::Luminance:
+        ASSERT(type == MaskMode::Luminance);
         return CSSValuePool::singleton().createValue(CSSValueLuminance);
+    case MaskMode::MatchSource:
+        // MatchSource is only available in the mask-mode property.
+        return CSSValuePool::singleton().createValue(CSSValueAlpha);
     }
+    ASSERT_NOT_REACHED();
+    return CSSValuePool::singleton().createValue(CSSValueAlpha);
+}
+
+static Ref<CSSValue> maskModeToCSSValue(MaskMode type)
+{
+    switch (type) {
+    case MaskMode::Alpha:
+        return CSSValuePool::singleton().createValue(CSSValueAlpha);
+    case MaskMode::Luminance:
+        return CSSValuePool::singleton().createValue(CSSValueLuminance);
+    case MaskMode::MatchSource:
+        return CSSValuePool::singleton().createValue(CSSValueMatchSource);
+    }
+    ASSERT_NOT_REACHED();
+    return CSSValuePool::singleton().createValue(CSSValueMatchSource);
 }
 
 static Ref<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderStyle& style)
@@ -2616,10 +2635,19 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMaskSourceType: {
             auto& layers = style.maskLayers();
             if (!layers.next())
-                return fillSourceTypeToCSSValue(layers.maskSourceType());
+                return maskSourceTypeToCSSValue(layers.maskMode());
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(fillSourceTypeToCSSValue(currLayer->maskSourceType()));
+                list->append(maskSourceTypeToCSSValue(currLayer->maskMode()));
+            return list;
+        }
+        case CSSPropertyWebkitMaskMode: {
+            auto& layers = style.maskLayers();
+            if (!layers.next())
+                return maskModeToCSSValue(layers.maskMode());
+            auto list = CSSValueList::createCommaSeparated();
+            for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
+                list->append(maskModeToCSSValue(currLayer->maskMode()));
             return list;
         }
         case CSSPropertyWebkitBackgroundComposite:

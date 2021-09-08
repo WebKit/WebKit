@@ -57,7 +57,7 @@ public:
     void mapFillSize(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillXPosition(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillYPosition(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillMaskSourceType(CSSPropertyID, FillLayer&, const CSSValue&);
+    void mapFillMaskMode(CSSPropertyID, FillLayer&, const CSSValue&);
 
     void mapAnimationDelay(Animation&, const CSSValue&);
     void mapAnimationDirection(Animation&, const CSSValue&);
