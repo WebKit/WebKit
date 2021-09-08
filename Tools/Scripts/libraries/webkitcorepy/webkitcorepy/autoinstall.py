@@ -590,6 +590,13 @@ class AutoInstall(object):
         return None
 
     @classmethod
+    def find_spec(cls, fullname, path=None, target=None):
+        loader = cls.find_module(fullname, path=path)
+        if not loader:
+            return None
+        return loader.create_module(None)
+
+    @classmethod
     def find_module(cls, fullname, path=None):
         if not cls.enabled() or path is not None:
             return None
