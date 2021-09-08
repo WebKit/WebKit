@@ -1328,7 +1328,7 @@ static void runTest(const string& inputLine)
     ::gTestRunner->closeWebInspector();
 
 
-    for (HWND window : openWindows()) {
+    for (HWND window : Vector(openWindows())) {
         // Don't try to close the main window
         if (window == hostWindow)
             continue;
