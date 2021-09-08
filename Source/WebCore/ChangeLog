@@ -1,3 +1,28 @@
+2021-09-08  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Hovering over link switches to legacy inline boxes
+        https://bugs.webkit.org/show_bug.cgi?id=226812
+        <rdar://problem/79394047>
+
+        Reviewed by Alan Bujtas.
+
+        Implement rect/quad collection functions in RenderInline by getting data from LFC.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::visualOverflowBoundingBoxRectFor const):
+
+        Some tests taking LFC path were affected by the missing implementation here.
+
+        (WebCore::LayoutIntegration::LineLayout::collectInlineBoxRects const):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::generateLineBoxRects const):
+        (WebCore::RenderInline::absoluteRects const):
+        (WebCore::RenderInline::absoluteQuads const):
+        (WebCore::RenderInline::absoluteQuadsIgnoringContinuation const):
+        (WebCore::RenderInline::absoluteQuadsForSelection const):
+        (WebCore::RenderInline::addFocusRingRects):
+
 2021-09-08  Youenn Fablet  <youenn@apple.com>
 
         webrtc/ephemeral-certificates-and-cnames.html needs to close its connections between two tests

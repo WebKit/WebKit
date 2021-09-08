@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FloatRect.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
@@ -97,6 +98,7 @@ public:
 
     LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
     LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
+    Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& flow() const { return m_boxTree.flow(); }

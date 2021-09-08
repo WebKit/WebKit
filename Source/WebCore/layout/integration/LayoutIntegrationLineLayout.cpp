@@ -425,8 +425,33 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
 
 LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
 {
-    // FIXME: This doesn't contain overflow.
-    return enclosingBorderBoxRectFor(renderInline);
+    LayoutRect result;
+
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    for (auto& run : m_inlineContent->runs) {
+        if (&run.layoutBox() != &layoutBox)
+            continue;
+        result.unite(Layout::toLayoutRect(run.inkOverflow()));
+    }
+
+    return result;
+}
+
+Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderInline) const
+{
+    if (!m_inlineContent)
+        return { };
+
+    Vector<FloatRect> result;
+
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    for (auto& run : m_inlineContent->runs) {
+        if (&run.layoutBox() != &layoutBox)
+            continue;
+        result.append(run.logicalRect());
+    }
+
+    return result;
 }
 
 const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBox) const

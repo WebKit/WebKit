@@ -253,6 +253,18 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 template<typename GeneratorContext>
 void RenderInline::generateLineBoxRects(GeneratorContext& context) const
 {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+        auto inlineBoxRects = lineLayout->collectInlineBoxRects(*this);
+        if (inlineBoxRects.isEmpty()) {
+            context.addRect({ });
+            return;
+        }
+        for (auto inlineBoxRect : inlineBoxRects)
+            context.addRect(inlineBoxRect);
+        return;
+    }
+#endif
     if (!alwaysCreateLineBoxes())
         generateCulledLineBoxRects(context, this);
     else if (LegacyInlineFlowBox* curr = firstLineBox()) {
@@ -342,8 +354,6 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
     }
 }
 
-namespace {
-
 class AbsoluteRectsGeneratorContext {
 public:
     AbsoluteRectsGeneratorContext(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
@@ -361,14 +371,8 @@ private:
     const LayoutPoint& m_accumulatedOffset;
 };
 
-} // unnamed namespace
-
 void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
-#endif
     Vector<LayoutRect> lineboxRects;
     AbsoluteRectsGeneratorContext context(lineboxRects, accumulatedOffset);
     generateLineBoxRects(context);
@@ -383,7 +387,6 @@ void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accu
             continuation->absoluteRects(rects, toLayoutPoint(accumulatedOffset - containingBlock()->location()));
     }
 }
-
 
 namespace {
 
@@ -409,10 +412,6 @@ private:
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
-#endif
     absoluteQuadsIgnoringContinuation({ }, quads, wasFixed);
     if (continuation())
         collectAbsoluteQuadsForContinuation(quads, wasFixed);
@@ -420,10 +419,6 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 
 void RenderInline::absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>& quads, bool*) const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
-#endif
     AbsoluteQuadsGeneratorContext context(this, quads);
     generateLineBoxRects(context);
 }
@@ -431,10 +426,6 @@ void RenderInline::absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<Fl
 #if PLATFORM(IOS_FAMILY)
 void RenderInline::absoluteQuadsForSelection(Vector<FloatQuad>& quads) const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
-#endif
     AbsoluteQuadsGeneratorContext context(this, quads);
     generateLineBoxRects(context);
 }
@@ -610,8 +601,6 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const R
     return RenderBoxModelObject::positionForPoint(point, fragment);
 }
 
-namespace {
-
 class LinesBoundingBoxGeneratorContext {
 public:
     LinesBoundingBoxGeneratorContext(FloatRect& rect) : m_rect(rect) { }
@@ -623,8 +612,6 @@ public:
 private:
     FloatRect& m_rect;
 };
-
-} // unnamed namespace
 
 IntRect RenderInline::linesBoundingBox() const
 {
@@ -1218,10 +1205,6 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
 
 void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
-#endif
     AbsoluteRectsGeneratorContext context(rects, additionalOffset);
     generateLineBoxRects(context);
 
