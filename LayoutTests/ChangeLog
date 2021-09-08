@@ -1,3 +1,16 @@
+2021-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/FontFaceSet-status-after-style-update.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=229975
+
+        Unreviewed.
+
+        internals.clearMemoryCache() only works for fonts if you put it before the @font-face block.
+
+        * TestExpectations:
+        * fast/text/FontFaceSet-check-after-style-update.html:
+        * fast/text/FontFaceSet-status-after-style-update.html:
+
 2021-09-08  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement sin, cos, tan, e and pi for calc
