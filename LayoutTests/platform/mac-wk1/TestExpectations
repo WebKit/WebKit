@@ -729,6 +729,8 @@ webkit.org/b/181862 [ Debug ] http/tests/images/image-supports-video.html [ Pass
 
 webkit.org/b/179853 imported/blink/fast/text/international-iteration-simple-text.html [ Pass Failure ]
 
+webkit.org/b/230062 fast/text/FontFaceSet-check-after-style-update.html [ Pass Failure ]
+
 # Skip anything related to WebAuthN
 http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
