@@ -1,3 +1,36 @@
+2021-09-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/deqp/functional/gles3/negativestateapi.html get_query_parameter  fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229982
+
+        Reviewed by Dean Jackson.
+
+        Check that the query being queried with getQueryParameter is not part
+        of the currently active queries.
+
+        Failing part of the test:
+                bufferedLogToConsole('gl.INVALID_OPERATION is generated if id is the name of a currently active query object.');
+                gl.beginQuery (gl.ANY_SAMPLES_PASSED, id);
+                this.expectError (gl.NO_ERROR);
+                gl.getQueryParameter (id, gl.QUERY_RESULT_AVAILABLE);
+                this.expectError (gl.INVALID_OPERATION);
+
+        Fixes test:
+        webgl/2.0.y/deqp/functional/gles3/negativestateapi.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::~WebGL2RenderingContext):
+        (WebCore::WebGL2RenderingContext::deleteQuery):
+        (WebCore::WebGL2RenderingContext::validateQueryTarget):
+        (WebCore::WebGL2RenderingContext::beginQuery):
+        (WebCore::WebGL2RenderingContext::endQuery):
+        (WebCore::WebGL2RenderingContext::getQuery):
+        (WebCore::WebGL2RenderingContext::getQueryParameter):
+        (WebCore::WebGL2RenderingContext::addMembersToOpaqueRoots):
+        * html/canvas/WebGL2RenderingContext.h:
+        Change the 2-element HashMap to 2-element array for ease of
+        enumeration and trivial size optimization.
+
 2021-09-07  Sihui Liu  <sihui_liu@apple.com>
 
         Add basic support for Storage API

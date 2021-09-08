@@ -77,6 +77,7 @@
 #include <JavaScriptCore/SlotVisitor.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
+#include <algorithm>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
@@ -129,7 +130,8 @@ WebGL2RenderingContext::~WebGL2RenderingContext()
     m_boundTransformFeedbackBuffer = nullptr;
     m_boundUniformBuffer = nullptr;
     m_boundIndexedUniformBuffers.clear();
-    m_activeQueries.clear();
+    for (auto& activeQuery : m_activeQueries)
+        activeQuery = nullptr;
 }
 
 void WebGL2RenderingContext::initializeNewContext()
@@ -1914,9 +1916,14 @@ void WebGL2RenderingContext::deleteQuery(WebGLQuery* query)
 
     if (isContextLostOrPending() || !query || !query->object() || !validateWebGLObject("deleteQuery", query))
         return;
-    if (query->target() && query == m_activeQueries.get(query->target())) {
-        m_context->endQuery(query->target());
-        m_activeQueries.remove(query->target());
+    if (query->target()) {
+        for (auto& activeQuery : m_activeQueries) {
+            if (query == activeQuery) {
+                m_context->endQuery(query->target());
+                activeQuery = nullptr;
+                break;
+            }
+        }
     }
     deleteObject(locker, query);
 }
@@ -1932,38 +1939,40 @@ GCGLboolean WebGL2RenderingContext::isQuery(WebGLQuery* query)
     return m_context->isQuery(query->object());
 }
 
-bool WebGL2RenderingContext::validateQueryTarget(const char* functionName, GCGLenum target, GCGLenum* targetKey)
+std::optional<WebGL2RenderingContext::ActiveQueryKey> WebGL2RenderingContext::validateQueryTarget(const char* functionName, GCGLenum target)
 {
-    if (target != GraphicsContextGL::ANY_SAMPLES_PASSED && target != GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE && target != GraphicsContextGL::TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
-        return false;
+    switch (target) {
+    case GraphicsContextGL::ANY_SAMPLES_PASSED:
+    case GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE:
+        return ActiveQueryKey::SamplesPassed;
+    case GraphicsContextGL::TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN:
+        return ActiveQueryKey::PrimitivesWritten;
+    default:
+        break;
     }
-    if (targetKey)
-        *targetKey = (target == GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE) ? GraphicsContextGL::ANY_SAMPLES_PASSED : target;
-    return true;
+    synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
+    return std::nullopt;
 }
 
 void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 {
     Locker locker { objectGraphLock() };
-
-    GCGLenum targetKey;
-    if (!validateWebGLObject("beginQuery", &query) || !validateQueryTarget("beginQuery", target, &targetKey))
+    if (!validateWebGLObject("beginQuery", &query))
         return;
-
+    auto activeQueryKey = validateQueryTarget("beginQuery", target);
+    if (!activeQueryKey)
+        return;
     if (query.target() && query.target() != target) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQuery", "query type does not match target");
         return;
     }
 
-    auto addResult = m_activeQueries.add(targetKey, makeRefPtr(&query));
-
     // Only one query object can be active per target.
-    if (!addResult.isNewEntry) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQuery", "Query object of target is already active");
+    if (m_activeQueries[*activeQueryKey]) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQuery", "query object of target is already active");
         return;
     }
-
+    m_activeQueries[*activeQueryKey] = makeRefPtr(&query);
     m_context->beginQuery(target, query.object());
     query.setTarget(target);
 }
@@ -1971,29 +1980,29 @@ void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 void WebGL2RenderingContext::endQuery(GCGLenum target)
 {
     Locker locker { objectGraphLock() };
-
-    GCGLenum targetKey;
-    if (isContextLostOrPending() || !scriptExecutionContext() || !validateQueryTarget("beginQuery", target, &targetKey))
+    if (isContextLostOrPending() || !scriptExecutionContext())
         return;
-
-    auto query = m_activeQueries.take(targetKey);
-    if (!query) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "endQuery", "Query object of target is not active");
+    auto activeQueryKey = validateQueryTarget("endQuery", target);
+    if (!activeQueryKey)
+        return;
+    if (!m_activeQueries[*activeQueryKey]) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "endQuery", "query object of target is not active");
         return;
     }
-
     m_context->endQuery(target);
 
     // A query's result must not be made available until control has returned to the user agent's main loop.
-    scriptExecutionContext()->eventLoop().queueMicrotask([query] {
+    scriptExecutionContext()->eventLoop().queueMicrotask([query = WTFMove(m_activeQueries[*activeQueryKey])] {
         query->makeResultAvailable();
     });
 }
 
 RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GCGLenum target, GCGLenum pname)
 {
-    GCGLenum targetKey;
-    if (isContextLostOrPending() || !scriptExecutionContext() || !validateQueryTarget("beginQuery", target, &targetKey))
+    if (isContextLostOrPending() || !scriptExecutionContext())
+        return nullptr;
+    auto activeQueryKey = validateQueryTarget("beginQuery", target);
+    if (!activeQueryKey)
         return nullptr;
 
     if (pname != GraphicsContextGL::CURRENT_QUERY) {
@@ -2001,7 +2010,7 @@ RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GCGLenum target, GCGLenum pn
         return nullptr;
     }
 
-    auto query = m_activeQueries.get(targetKey);
+    auto query = m_activeQueries[*activeQueryKey];
     if (!query || query->target() != target)
         return nullptr;
     return query;
@@ -2011,7 +2020,14 @@ WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum p
 {
     if (!validateWebGLObject("getQueryParameter", &query))
         return nullptr;
-
+    if (!query.target()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getQueryParameter", "query has not been used by beginQuery");
+        return nullptr;
+    }
+    if (std::find(std::begin(m_activeQueries), std::end(m_activeQueries), &query) != std::end(m_activeQueries)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getQueryParameter", "query is currently active");
+        return nullptr;
+    }
     switch (pname) {
     case GraphicsContextGL::QUERY_RESULT:
         if (!query.isResultAvailable())
@@ -2022,7 +2038,7 @@ WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum p
             return false;
         break;
     default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryParameter", "Invalid pname");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryParameter", "invalid parameter name");
         return nullptr;
     }
 
@@ -3132,7 +3148,7 @@ void WebGL2RenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& v
         visitor.addOpaqueRoot(buffer.get());
 
     for (auto& entry : m_activeQueries)
-        visitor.addOpaqueRoot(entry.value.get());
+        visitor.addOpaqueRoot(entry.get());
 
     for (auto& entry : m_boundSamplers)
         visitor.addOpaqueRoot(entry.get());

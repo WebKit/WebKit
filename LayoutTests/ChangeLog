@@ -1,3 +1,15 @@
+2021-09-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/deqp/functional/gles3/negativestateapi.html get_query_parameter  fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229982
+
+        Reviewed by Dean Jackson.
+
+        Enable webgl/2.0.y/deqp/functional/gles3/negativestateapi.html
+        explicitly until 2.0.y is activated.
+
+        * webgl/TestExpectations:
+
 2021-09-07  Sihui Liu  <sihui_liu@apple.com>
 
         Add basic support for Storage API
