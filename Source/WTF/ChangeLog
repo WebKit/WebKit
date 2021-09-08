@@ -1,3 +1,13 @@
+2021-09-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Safari TP 131 audio canPlayType() reports false negatives
+        https://bugs.webkit.org/show_bug.cgi?id=229799
+        rdar://problem/82776747
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Remove preference.
+
 2021-09-07  Sihui Liu  <sihui_liu@apple.com>
 
         Add basic support for Storage API

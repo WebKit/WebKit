@@ -1366,18 +1366,6 @@ WebMParserEnabled:
     WebKit:
       default: WebKit::defaultWebMParserEnabled()
 
-WebMWebAudioEnabled:
-  type: bool
-  webcoreBinding: RuntimeEnabledFeatures
-  humanReadableName: "WebM Web Audio"
-  humanReadableDescription: "Enable WebM Web Audio"
-  condition: ENABLE(MEDIA_SOURCE)
-  defaultValue:
-    WebKitLegacy:
-      default: WebKit::defaultWebMWebAudioEnabled()
-    WebKit:
-      default: WebKit::defaultWebMWebAudioEnabled()
-
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH264LowLatencyEncoderEnabled:
   type: bool

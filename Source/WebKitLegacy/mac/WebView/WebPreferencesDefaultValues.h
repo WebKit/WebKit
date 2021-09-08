@@ -83,7 +83,6 @@ bool defaultWheelEventGesturesBecomeNonBlocking();
 
 #if ENABLE(MEDIA_SOURCE)
 bool defaultWebMParserEnabled();
-bool defaultWebMWebAudioEnabled();
 #endif
 
 #if ENABLE(VP9)

@@ -1061,15 +1061,6 @@ HTMLMediaElement::NetworkState HTMLMediaElement::networkState() const
     return m_networkState;
 }
 
-static inline bool webMWebAudioEnabled()
-{
-#if ENABLE(MEDIA_SOURCE)
-    return RuntimeEnabledFeatures::sharedFeatures().webMWebAudioEnabled();
-#else
-    return false;
-#endif
-}
-
 String HTMLMediaElement::canPlayType(const String& mimeType) const
 {
     MediaEngineSupportParameters parameters;
@@ -1078,14 +1069,6 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
     MediaPlayer::SupportsType support = MediaPlayer::supportsType(parameters);
     String canPlay;
-
-#if PLATFORM(COCOA)
-    // Temporarily work around bug 226922. For now claim that the opus and vorbis codecs aren't supported
-    // so that sites relying on this test to determine if webaudio use of opus or vorbis won't error.
-    auto codecs = contentType.codecs();
-    if (support == MediaPlayer::SupportsType::IsSupported && ((codecs.contains("opus") || codecs.contains("vorbis")) && !webMWebAudioEnabled()))
-        support = MediaPlayer::SupportsType::IsNotSupported;
-#endif
 
     // 4.8.10.3
     switch (support)

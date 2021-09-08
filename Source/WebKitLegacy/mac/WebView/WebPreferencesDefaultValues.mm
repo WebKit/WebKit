@@ -282,11 +282,6 @@ bool defaultWebMParserEnabled()
     return isFeatureFlagEnabled("webm_parser", true);
 }
 
-bool defaultWebMWebAudioEnabled()
-{
-    return isFeatureFlagEnabled("webm_webaudio", false);
-}
-
 #endif // ENABLE(MEDIA_SOURCE)
 
 #if ENABLE(VP9)
