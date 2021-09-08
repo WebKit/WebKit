@@ -3708,8 +3708,8 @@
    },
    {
       "emails" : [
-         "justin@justinmichaud.com",
-         "justin_michaud@apple.com"
+         "justin_michaud@apple.com",
+         "justin@justinmichaud.com"
       ],
       "name" : "Justin Michaud",
       "status" : "committer"
