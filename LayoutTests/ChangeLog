@@ -1,5 +1,14 @@
 2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ MacOS wk1 ] media/video-preload.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=230071
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ BigSur wk2 Debug ] accessibility/mac/native-text-control-set-selected-textmarker-range.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=230066
 
