@@ -1,3 +1,25 @@
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229948
+
+        Reviewed by Dean Jackson.
+
+        Validate the texStorage3D target using correct
+        validation function. The validation should be removed, as
+        same is done in ANGLE, but for consistency it should be
+        removed from all functions. Until removal, use correct
+        WebKit-side validation too.
+
+        Fixes tests:
+        webgl/2.0.0/deqp/functional/gles3/negativetextureapi.html
+        webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html
+        webgl/2.0.0/conformance2/textures/misc/tex-storage-and-subimage-3d.html
+        webgl/2.0.y/conformance2/textures/misc/tex-storage-and-subimage-3d.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::texStorage3D):
+
 2021-09-08  Tim Nguyen  <ntim@apple.com>
 
         Support animations on ::backdrop

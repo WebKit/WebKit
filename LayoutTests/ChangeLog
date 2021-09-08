@@ -1,3 +1,17 @@
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229948
+
+        Reviewed by Dean Jackson.
+
+        Enable webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html
+        explicitly until 2.0.y is activated.
+
+        * webgl/TestExpectations:
+        * webgl/2.0.0/conformance2/textures/misc/tex-storage-and-subimage-3d-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/negativetextureapi-expected.txt:
+
 2021-09-08  Frédéric Wang  <fwang@igalia.com>
 
         Testing for the fact that media elements are treated as replaced elements

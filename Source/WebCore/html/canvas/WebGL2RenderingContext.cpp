@@ -1078,7 +1078,7 @@ void WebGL2RenderingContext::texStorage3D(GCGLenum target, GCGLsizei levels, GCG
     if (isContextLostOrPending())
         return;
 
-    auto texture = validateTextureBinding("texStorage3D", target);
+    auto texture = validateTexture3DBinding("texStorage3D", target);
     if (!texture)
         return;
 
