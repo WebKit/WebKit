@@ -1903,6 +1903,9 @@
 		E383500A2390D93B0036316D /* WasmGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E38350092390D9370036316D /* WasmGlobal.h */; };
 		E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */; };
 		E38652E3237CA0C900E1D5EE /* BlockDirectoryBits.h in Headers */ = {isa = PBXBuildFile; fileRef = E38652E2237CA0C800E1D5EE /* BlockDirectoryBits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E386FD7B26E867B800E4C28B /* TemporalPlainTimeConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E386FD7526E867B700E4C28B /* TemporalPlainTimeConstructor.h */; };
+		E386FD7E26E867B800E4C28B /* TemporalPlainTime.h in Headers */ = {isa = PBXBuildFile; fileRef = E386FD7826E867B800E4C28B /* TemporalPlainTime.h */; };
+		E386FD7F26E867B800E4C28B /* TemporalPlainTimePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E386FD7926E867B800E4C28B /* TemporalPlainTimePrototype.h */; };
 		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
 		E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9788FC221471AD0C0068CE2D /* JSDateMath.cpp */; };
 		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5194,6 +5197,12 @@
 		E38350092390D9370036316D /* WasmGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmGlobal.h; sourceTree = "<group>"; };
 		E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGMinifiedIDInlines.h; path = dfg/DFGMinifiedIDInlines.h; sourceTree = "<group>"; };
 		E38652E2237CA0C800E1D5EE /* BlockDirectoryBits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockDirectoryBits.h; sourceTree = "<group>"; };
+		E386FD7426E867B700E4C28B /* TemporalPlainTimeConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainTimeConstructor.cpp; sourceTree = "<group>"; };
+		E386FD7526E867B700E4C28B /* TemporalPlainTimeConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainTimeConstructor.h; sourceTree = "<group>"; };
+		E386FD7626E867B700E4C28B /* TemporalPlainTimePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainTimePrototype.cpp; sourceTree = "<group>"; };
+		E386FD7726E867B700E4C28B /* TemporalPlainTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainTime.cpp; sourceTree = "<group>"; };
+		E386FD7826E867B800E4C28B /* TemporalPlainTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainTime.h; sourceTree = "<group>"; };
+		E386FD7926E867B800E4C28B /* TemporalPlainTimePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainTimePrototype.h; sourceTree = "<group>"; };
 		E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFromSyncIteratorPrototype.lut.h; sourceTree = "<group>"; };
 		E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetchParameters.h; sourceTree = "<group>"; };
 		E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFetchParameters.h; sourceTree = "<group>"; };
@@ -8009,6 +8018,12 @@
 				F6F150182693D33D004B98EF /* TemporalNow.h */,
 				F6F150192693D33E004B98EF /* TemporalObject.cpp */,
 				F6F1501A2693D33E004B98EF /* TemporalObject.h */,
+				E386FD7726E867B700E4C28B /* TemporalPlainTime.cpp */,
+				E386FD7826E867B800E4C28B /* TemporalPlainTime.h */,
+				E386FD7426E867B700E4C28B /* TemporalPlainTimeConstructor.cpp */,
+				E386FD7526E867B700E4C28B /* TemporalPlainTimeConstructor.h */,
+				E386FD7626E867B700E4C28B /* TemporalPlainTimePrototype.cpp */,
+				E386FD7926E867B800E4C28B /* TemporalPlainTimePrototype.h */,
 				E30E8A4D26DE2E4700DA4915 /* TemporalTimeZone.cpp */,
 				E30E8A5026DE2E4800DA4915 /* TemporalTimeZone.h */,
 				E30E8A4F26DE2E4700DA4915 /* TemporalTimeZoneConstructor.cpp */,
@@ -9611,6 +9626,7 @@
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
 				535C24611F78928E006EC40E /* create_regex_tables in Headers */,
 				9959E92B1BD17FA4001AA413 /* cssmin.py in Headers */,
+				E386FD7B26E867B800E4C28B /* TemporalPlainTimeConstructor.h in Headers */,
 				2A111246192FCE79005EE18D /* CustomGetterSetter.h in Headers */,
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
 				0F2B66DF17B6B5AB00A7AE3F /* DataView.h in Headers */,
@@ -9716,6 +9732,7 @@
 				A7D89CF817A0B8CC00773AD8 /* DFGFlushFormat.h in Headers */,
 				0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */,
 				0F69CC89193AC60A0045759E /* DFGFrozenValue.h in Headers */,
+				E386FD7E26E867B800E4C28B /* TemporalPlainTime.h in Headers */,
 				86EC9DC61328DF82002B2AD7 /* DFGGenerationInfo.h in Headers */,
 				86EC9DC81328DF82002B2AD7 /* DFGGraph.h in Headers */,
 				0F2FCCFA18A60070001A27F8 /* DFGGraphSafepoint.h in Headers */,
@@ -10258,6 +10275,7 @@
 				0F2B66F217B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructor.h in Headers */,
 				0F2B66F317B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructorInlines.h in Headers */,
 				0F2B66F417B6B5AB00A7AE3F /* JSGenericTypedArrayViewInlines.h in Headers */,
+				E386FD7F26E867B800E4C28B /* TemporalPlainTimePrototype.h in Headers */,
 				0F2B66F517B6B5AB00A7AE3F /* JSGenericTypedArrayViewPrototype.h in Headers */,
 				53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */,
 				0F2B66F617B6B5AB00A7AE3F /* JSGenericTypedArrayViewPrototypeInlines.h in Headers */,
