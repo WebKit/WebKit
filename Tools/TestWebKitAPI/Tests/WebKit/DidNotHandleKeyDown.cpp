@@ -26,6 +26,7 @@
 #include "config.h"
 
 #if WK_HAVE_C_SPI
+#if PLATFORM(COCOA) || PLATFORM(WIN)
 
 #include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
@@ -68,4 +69,5 @@ TEST(WebKit, DidNotHandleKeyDown)
 
 } // namespace TestWebKitAPI
 
+#endif // PLATFORM(COCOA) || PLATFORM(WIN)
 #endif

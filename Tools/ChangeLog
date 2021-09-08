@@ -1,5 +1,19 @@
 2021-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win] TestWebKitAPI.WebKit.DidNotHandleKeyDown is failing
+        https://bugs.webkit.org/show_bug.cgi?id=229927
+
+        Reviewed by Don Olmstead.
+
+        TestWebKitAPI::Util::isKeyDown was not implemented
+
+        * TestWebKitAPI/CMakeLists.txt: Added Tests/WebKit/DidNotHandleKeyDown.cpp.
+        * TestWebKitAPI/Tests/WebKit/DidNotHandleKeyDown.cpp: GTK and WPE ports fail the test. Skip it.
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::isKeyDown): Implemented.
+
+2021-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win] PlatformWebView::simulateSpacebarKeyPress sends wrong scan code for the space key and Alt key
         https://bugs.webkit.org/show_bug.cgi?id=229928
 

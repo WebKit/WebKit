@@ -253,6 +253,7 @@ if (ENABLE_WEBKIT)
         Tests/WebKit/CanHandleRequest.cpp
         Tests/WebKit/DOMWindowExtensionBasic.cpp
         Tests/WebKit/DOMWindowExtensionNoCache.cpp
+        Tests/WebKit/DidNotHandleKeyDown.cpp
         Tests/WebKit/DocumentStartUserScriptAlertCrash.cpp
         Tests/WebKit/DownloadDecideDestinationCrash.cpp
         Tests/WebKit/EnumerateMediaDevices.cpp
