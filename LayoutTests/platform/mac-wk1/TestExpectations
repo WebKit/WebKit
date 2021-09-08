@@ -313,8 +313,6 @@ http/tests/plugins/unsupported-plugin-on-specific-origin.html [ Skip ]
 plugins/unsupported-plugin.html [ Skip ]
 plugins/unsupported-plugin-with-replacement-in-iframe-crash.html [ Skip ]
 
-webkit.org/b/230050 plugins/get-url-that-the-resource-load-delegate-will-disallow.html [ Pass Crash ]
-
 # Color input is not yet implemented on Mac WK1. Currently, using it erroneously triggers an ASSERT_NOT_REACHED.
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Skip ]
 webkit.org/b/119094 fast/forms/color/color-suggestion-picker-crash-on-set-value.html [ Skip ]

@@ -1,3 +1,14 @@
+2021-09-08  Chris Dumez  <cdumez@apple.com>
+
+        [ MacOS wk1 ] plugins/get-url-that-the-resource-load-delegate-will-disallow.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=230050
+        <rdar://problem/82877497>
+
+        Unreviewed, prevent popup windows in the test to restore pre-r282103 behavior.
+
+        * platform/mac-wk1/TestExpectations:
+        * plugins/get-url-that-the-resource-load-delegate-will-disallow.html:
+
 2021-09-08  Youenn Fablet  <youenn@apple.com>
 
         Make webrtc/datachannel/getStats-no-prflx-remote-candidate.html provide more meaningful errors
