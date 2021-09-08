@@ -34,6 +34,10 @@ async function doTest()
     });
 
     const localDataChannel = localPc.createDataChannel('test');
+    const localDataChannelPromise = new Promise((resolve, reject) => {
+        localDataChannel.onopen = resolve;
+        setTimeout(() => reject('localDataChannelPromise'), 5000);
+    });
 
     localPc.addEventListener('icecandidate', event => {
         remotePc.addIceCandidate(event.candidate);
@@ -43,10 +47,16 @@ async function doTest()
     const remoteDataChannel = await promiseDataChannel;
 
     assert_true(!!remoteDataChannel, "remoteDataChannel is defined");
-    await new Promise(resolve => {
+
+    const remoteDataChannelPromise = new Promise((resolve, reject) => {
         remoteDataChannel.onmessage = resolve;
-        localDataChannel.send("test");
+        setTimeout(() => reject('remoteDataChannelPromise'), 5000);
     });
+
+    await localDataChannelPromise;
+    localDataChannel.send("test");
+
+    await remoteDataChannelPromise;
 
     const remoteCandidateStats = getRequiredStats(await localPc.getStats(), "remote-candidate");
     assert_equals(remoteCandidateStats.address, undefined, "address should remain undefined");

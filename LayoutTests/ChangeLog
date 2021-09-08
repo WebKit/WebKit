@@ -1,5 +1,16 @@
 2021-09-08  Youenn Fablet  <youenn@apple.com>
 
+        Make webrtc/datachannel/getStats-no-prflx-remote-candidate.html provide more meaningful errors
+        https://bugs.webkit.org/show_bug.cgi?id=230003
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/getStats-no-prflx-remote-candidate.html:
+        The test is timing out flakily, add some errors to know where it is timing out.
+        Make sure to call send once the local channel is opened.
+
+2021-09-08  Youenn Fablet  <youenn@apple.com>
+
         webrtc/ephemeral-certificates-and-cnames.html needs to close its connections between two tests
         https://bugs.webkit.org/show_bug.cgi?id=229931
 
