@@ -97,6 +97,8 @@ struct Run {
     InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
 
     void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+    void adjustInkOverflow(const InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
+
     std::optional<Text>& text() { return m_text; }
     const std::optional<Text>& text() const { return m_text; }
 

@@ -1,3 +1,25 @@
+2021-09-08  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for inline box ink overflow
+        https://bugs.webkit.org/show_bug.cgi?id=230026
+
+        Reviewed by Antti Koivisto.
+
+        Collecting the ink overflow from the descendant boxes has 2 phases.
+        1. Update the ink overflow on the parent inline box (unless it's a root inline box) as we walk the line content
+        and find the atomic inline level boxes (e.g. <span><img></span>)
+        2. Collect the ink overflow on nested inline boxes (e.g. <span>some<span style="font-size: 100px">text</span><span>). 
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::InlineDisplayContentBuilder):
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        (WebCore::Layout::InlineDisplayContentBuilder::collectInkOverflowForInlineBoxRuns):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.h:
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::Run::adjustInkOverflow):
+
 2021-09-08  Martin Robinson  <mrobinson@webkit.org>
 
         [css-position-sticky] Sticky constraints are calculated incorrectly when scrolling container has padding and borders
