@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+<meta charset=utf-8>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    promise_test(() => {
+        return new Promise(resolve => {
+            window.addEventListener('DOMContentLoaded', resolve);
+        });
+    }, 'DOMContentLoaded');
+
+    function test_key(key) {
+        return async () => {
+            let previousScrollY = scrollY;
+            let previousTimestamp = internals.lastHandledUserGestureTimestamp();
+
+            let wait = UIHelper.waitForTargetScrollAnimationToSettle(window);
+            UIHelper.keyDown(key);
+            await wait;
+
+            assert_not_equals(scrollY, previousScrollY);
+            assert_not_equals(internals.lastHandledUserGestureTimestamp(), previousTimestamp);
+        };
+    }
+    
+    promise_test(test_key(' '), 'space');
+    promise_test(test_key('downArrow'), 'downArrow');
+    promise_test(test_key('pageDown'), 'pageDown');
+</script>
+<style>
+    body {
+        border: blue 10px solid;
+        height: 10000px;
+    }
+</style>
