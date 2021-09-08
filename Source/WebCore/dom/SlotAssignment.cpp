@@ -125,6 +125,9 @@ void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElemen
     });
     auto& slot = *addResult.iterator->value;
 
+    if (!m_slotAssignmentsIsValid)
+        assignSlots(shadowRoot);
+
     slot.elementCount++;
     if (slot.elementCount == 1) {
         slot.element = makeWeakPtr(slotElement);
