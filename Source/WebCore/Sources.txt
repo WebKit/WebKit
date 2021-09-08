@@ -228,6 +228,7 @@ Modules/speech/SpeechSynthesis.cpp
 Modules/speech/SpeechSynthesisEvent.cpp
 Modules/speech/SpeechSynthesisUtterance.cpp
 Modules/speech/SpeechSynthesisVoice.cpp
+Modules/storage/StorageManager.cpp
 Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
 Modules/webaudio/AnalyserNode.cpp
@@ -3574,6 +3575,7 @@ JSStereoPannerNode.cpp
 JSStereoPannerOptions.cpp
 JSStaticRange.cpp
 JSStorage.cpp
+JSStorageManager.cpp
 JSStorageEvent.cpp
 JSStringCallback.cpp
 JSStructuredSerializeOptions.cpp

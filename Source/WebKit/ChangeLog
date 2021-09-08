@@ -1,3 +1,93 @@
+2021-09-07  Sihui Liu  <sihui_liu@apple.com>
+
+        Add basic support for Storage API
+        https://bugs.webkit.org/show_bug.cgi?id=229925
+
+        Reviewed by Darin Adler.
+
+        Set up basic infrastructure for StorageManager.
+        UI process sets the directory for StorageMananager with datastore configuration. 
+        Network process manages storage with NetworkStorageManager (per Session). It has multiple OriginStorageManagers
+        for managing storage of different origins, and each OriginStorageManager has a default StorageBucket.
+        Web process can get and set persist property of each bucket by sending messages to network process.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::addStorageManagerForSession):
+        (WebKit::NetworkProcess::removeStorageManagerForSession):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp: Added.
+        (WebKit::NetworkStorageManager::create):
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::NetworkStorageManager::startReceivingMessageFromConnection):
+        (WebKit::NetworkStorageManager::stopReceivingMessageFromConnection):
+        (WebKit::encode):
+        (WebKit::originPath):
+        (WebKit::NetworkStorageManager::localOriginStorageManager):
+        (WebKit::NetworkStorageManager::persisted):
+        (WebKit::NetworkStorageManager::persist):
+        * NetworkProcess/storage/NetworkStorageManager.h: Added.
+        (WebKit::NetworkStorageManager::sessionID const):
+        * NetworkProcess/storage/NetworkStorageManager.messages.in: Added.
+        * NetworkProcess/storage/OriginStorageManager.cpp: Added.
+        (WebKit::OriginStorageManager::StorageBucket::StorageBucket):
+        (WebKit::OriginStorageManager::StorageBucket::mode const):
+        (WebKit::OriginStorageManager::StorageBucket::setMode):
+        (WebKit::OriginStorageManager::OriginStorageManager):
+        (WebKit::OriginStorageManager::persist):
+        * NetworkProcess/storage/OriginStorageManager.h: Added.
+        (WebKit::OriginStorageManager::persisted const):
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * Sources.txt:
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.cpp:
+        (WKWebsiteDataStoreConfigurationCopyGeneralStorageDirectory):
+        (WKWebsiteDataStoreConfigurationSetGeneralStorageDirectory):
+        * UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration generalStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration setGeneralStorageDirectory:]):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::defaultGeneralStorageDirectory):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::generalStorageDirectory const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::generalStorageDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setGeneralStorageDirectory):
+        * UIProcess/WebsiteData/playstation/WebsiteDataStorePlayStation.cpp:
+        (WebKit::WebsiteDataStore::defaultGeneralStorageDirectory):
+        * UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp:
+        (WebKit::WebsiteDataStore::defaultGeneralStorageDirectory):
+        * UIProcess/glib/WebsiteDataStoreGLib.cpp:
+        (WebKit::WebsiteDataStore::defaultGeneralStorageDirectory):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebStorageConnection.cpp: Added.
+        (WebKit::WebStorageConnection::create):
+        (WebKit::WebStorageConnection::persisted):
+        (WebKit::WebStorageConnection::persist):
+        (WebKit::WebStorageConnection::connection):
+        * WebProcess/WebCoreSupport/WebStorageConnection.h: Added.
+        * WebProcess/WebCoreSupport/WebStorageProvider.h: Added.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_appHighlightsVisible):
+
 2021-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Replace PrivateClickMeasurementNetworkLoader::start with an implementation that doesn't need NetworkSession

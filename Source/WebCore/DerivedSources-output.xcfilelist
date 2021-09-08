@@ -1427,6 +1427,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorServiceWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorShare.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorWebDriver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorWebDriver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigatorWebXR.cpp
@@ -2205,6 +2207,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageManager.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageManager.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStringCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStringCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStructuredSerializeOptions.cpp

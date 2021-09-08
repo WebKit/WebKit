@@ -146,10 +146,11 @@ class ScrollingCoordinator;
 class ServicesOverlayController;
 class Settings;
 class SocketProvider;
+class SpeechRecognitionProvider;
 class SpeechSynthesisClient;
 class StorageNamespace;
 class StorageNamespaceProvider;
-class SpeechRecognitionProvider;
+class StorageProvider;
 class UserContentProvider;
 class UserContentURLPattern;
 class UserInputBridge;
@@ -874,6 +875,7 @@ public:
 #endif
 
     WEBCORE_EXPORT PermissionController& permissionController();
+    WEBCORE_EXPORT StorageConnection& storageConnection();
 
 private:
     struct Navigation {
@@ -1198,6 +1200,7 @@ private:
     mutable MediaSessionGroupIdentifier m_mediaSessionGroupIdentifier;
 
     Ref<PermissionController> m_permissionController;
+    UniqueRef<StorageProvider> m_storageProvider;
 
 #if ENABLE(IMAGE_ANALYSIS)
     // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.

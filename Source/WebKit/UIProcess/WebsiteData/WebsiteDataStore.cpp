@@ -271,6 +271,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setCacheStorageDirectory(resolvePathForSandboxExtension(m_configuration->cacheStorageDirectory()));
     if (!m_configuration->hstsStorageDirectory().isEmpty() && m_resolvedConfiguration->hstsStorageDirectory().isEmpty())
         m_resolvedConfiguration->setHSTSStorageDirectory(resolvePathForSandboxExtension(m_configuration->hstsStorageDirectory()));
+    if (!m_configuration->generalStorageDirectory().isEmpty())
+        m_resolvedConfiguration->setGeneralStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->generalStorageDirectory()));
 #if HAVE(ARKIT_INLINE_PREVIEW)
     if (!m_configuration->modelElementCacheDirectory().isEmpty())
         m_resolvedConfiguration->setModelElementCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->modelElementCacheDirectory()));
@@ -2085,6 +2087,12 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         parameters.cacheStorageDirectory = cacheStorageDirectory;
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory))
             parameters.cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
+
+    if (auto directory = generalStorageDirectory(); !directory.isEmpty()) {
+        parameters.generalStorageDirectory = directory;
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
+            parameters.generalStorageDirectoryHandle = WTFMove(*handle);
     }
 
     parameters.perOriginStorageQuota = perOriginStorageQuota();

@@ -3559,6 +3559,11 @@ RefPtr<PermissionController> Document::permissionController()
     return page() ? &page()->permissionController() : nullptr;
 }
 
+RefPtr<StorageConnection> Document::storageConnection()
+{
+    return page() ? &page()->storageConnection() : nullptr;
+}
+
 SocketProvider* Document::socketProvider()
 {
     return m_socketProvider.get();

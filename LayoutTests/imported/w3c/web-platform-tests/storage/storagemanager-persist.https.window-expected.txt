@@ -1,3 +1,3 @@
 
-FAIL navigator.storage.persist() returns a promise that resolves. undefined is not an object (evaluating 'navigator.storage.persist')
+PASS navigator.storage.persist() returns a promise that resolves.
 

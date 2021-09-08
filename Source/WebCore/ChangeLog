@@ -1,3 +1,54 @@
+2021-09-07  Sihui Liu  <sihui_liu@apple.com>
+
+        Add basic support for Storage API
+        https://bugs.webkit.org/show_bug.cgi?id=229925
+
+        Reviewed by Darin Adler.
+
+        Add bindings code and a feature flag for Storage API.
+        Spec: https://storage.spec.whatwg.org
+
+        Rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Modules/storage/DummyStorageProvider.h: Added.
+        * Modules/storage/StorageConnection.h: Added.
+        * Modules/storage/StorageManager.cpp: Added.
+        (WebCore::StorageManager::create):
+        (WebCore::StorageManager::StorageManager):
+        (WebCore::clientOrigin):
+        (WebCore::StorageManager::persisted):
+        (WebCore::StorageManager::persist):
+        * Modules/storage/StorageManager.h: Added.
+        * Modules/storage/StorageManager.idl: Added.
+        * Modules/storage/StorageProvider.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::storageConnection):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::storageConnection):
+        * loader/EmptyClients.cpp:
+        (WebCore::pageConfigurationWithEmptyClients):
+        * page/Navigator.idl:
+        * page/NavigatorBase.cpp:
+        * page/NavigatorBase.h:
+        * page/NavigatorStorage.idl: Added.
+        * page/Page.cpp:
+        (WebCore::m_storageProvider):
+        (WebCore::Page::storageConnection):
+        (WebCore::m_permissionController): Deleted.
+        * page/Page.h:
+        * page/PageConfiguration.cpp:
+        (WebCore::PageConfiguration::PageConfiguration):
+        * page/PageConfiguration.h:
+
 2021-09-07  Antti Koivisto  <antti@apple.com>
 
         Disable inline culling

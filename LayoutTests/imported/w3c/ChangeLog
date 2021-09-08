@@ -1,3 +1,49 @@
+2021-09-07  Sihui Liu  <sihui_liu@apple.com>
+
+        Add basic support for Storage API
+        https://bugs.webkit.org/show_bug.cgi?id=229925
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/file-system-access/idlharness.https.any-expected.txt:
+        * web-platform-tests/file-system-access/idlharness.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-BroadcastChannel.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-Error.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-frames.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-windows.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-MessagePort-workers.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-frames.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-windows.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-postMessage-workers.https.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-create-sync-access-handle-dedicated-worker.https.tentative.window-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any-expected.txt:
+        * web-platform-tests/storage/estimate-indexeddb.https.any-expected.txt:
+        * web-platform-tests/storage/estimate-parallel.https.any-expected.txt:
+        * web-platform-tests/storage/estimate-usage-details-application-cache.https.tentative-expected.txt:
+        * web-platform-tests/storage/estimate-usage-details-caches.https.tentative.any-expected.txt:
+        * web-platform-tests/storage/estimate-usage-details-indexeddb.https.tentative.any-expected.txt:
+        * web-platform-tests/storage/estimate-usage-details-service-workers.https.tentative.window-expected.txt:
+        * web-platform-tests/storage/estimate-usage-details.https.tentative.any-expected.txt:
+        * web-platform-tests/storage/idlharness.https.any-expected.txt:
+        * web-platform-tests/storage/idlharness.https.any.worker-expected.txt:
+        * web-platform-tests/storage/opaque-origin.https.window-expected.txt:
+        * web-platform-tests/storage/persisted.https.any-expected.txt:
+        * web-platform-tests/storage/quotachange-in-detached-iframe.tentative.https-expected.txt:
+        * web-platform-tests/storage/storagemanager-estimate.https.any-expected.txt:
+        * web-platform-tests/storage/storagemanager-persist.https.window-expected.txt:
+        * web-platform-tests/storage/storagemanager-persisted.https.any-expected.txt:
+
 2021-09-07  Antti Koivisto  <antti@apple.com>
 
         Disable inline culling

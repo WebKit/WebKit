@@ -69,6 +69,7 @@ $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messa
 $(PROJECT_DIR)/NetworkProcess/WebStorage/StorageManagerSet.messages.in
 $(PROJECT_DIR)/NetworkProcess/cache/CacheStorageEngineConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in
+$(PROJECT_DIR)/NetworkProcess/storage/NetworkStorageManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCProvider.messages.in

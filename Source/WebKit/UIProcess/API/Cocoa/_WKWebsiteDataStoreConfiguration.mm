@@ -335,6 +335,22 @@ static void checkURLArgument(NSURL *url)
     _configuration->setAlternativeServicesDirectory(url.path);
 }
 
+- (NSURL *)generalStorageDirectory
+{
+    auto& directory = _configuration->generalStorageDirectory();
+    if (directory.isNull())
+        return nil;
+    return [NSURL fileURLWithPath:directory isDirectory:YES];
+}
+
+- (void)setGeneralStorageDirectory:(NSURL *)url
+{
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set storageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
+    checkURLArgument(url);
+    _configuration->setGeneralStorageDirectory(url.path);
+}
+
 - (BOOL)deviceManagementRestrictionsEnabled
 {
     return _configuration->deviceManagementRestrictionsEnabled();

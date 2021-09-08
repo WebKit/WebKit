@@ -37,6 +37,7 @@
 #include "SecurityContext.h"
 #include "ServiceWorkerTypes.h"
 #include "Settings.h"
+#include "StorageConnection.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HandleTypes.h>
 #include <wtf/CrossThreadTask.h>
@@ -75,7 +76,6 @@ class MessagePort;
 class PublicURLManager;
 class RejectedPromiseTracker;
 class ResourceRequest;
-class SecurityOrigin;
 class SocketProvider;
 enum class ReferrerPolicy : uint8_t;
 enum class TaskSource : uint8_t;
@@ -118,6 +118,7 @@ public:
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
     virtual RefPtr<PermissionController> permissionController() { return nullptr; }
+    virtual RefPtr<StorageConnection> storageConnection() { return nullptr; }
 
     virtual SocketProvider* socketProvider() = 0;
 
