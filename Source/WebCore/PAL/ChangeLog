@@ -1,3 +1,13 @@
+2021-09-08  Per Arne  <pvollan@apple.com>
+
+        Remove unneeded call on startup of WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=230022
+        <rdar://problem/82838000>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
 2021-08-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Drawing system fallback fonts to canvas causes a crash

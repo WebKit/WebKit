@@ -1,3 +1,17 @@
+2021-09-08  Per Arne  <pvollan@apple.com>
+
+        Remove unneeded call on startup of WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=230022
+        <rdar://problem/82838000>
+
+        Reviewed by Darin Adler.
+
+        There is no need to call CGSShutdownServerConnections during startup of the WebContent process on macOS,
+        since we already have asserted that there are no open connections at this point.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2021-09-08  Jean-Yves Avenard  <jya@apple.com>
 
         Safari TP 131 audio canPlayType() reports false negatives
