@@ -1,3 +1,17 @@
+2021-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] PlatformWebView::simulateSpacebarKeyPress sends wrong scan code for the space key and Alt key
+        https://bugs.webkit.org/show_bug.cgi?id=229928
+
+        Reviewed by Don Olmstead.
+
+        PlatformWebView::simulateSpacebarKeyPress sent 39, but it should be 0x39.
+        PlatformWebView::simulateAltKeyPress sent 38, but it should be 0x38.
+
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateAltKeyPress):
+
 2021-09-07  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Support callbacks as main arguments (Follow-up fix)
