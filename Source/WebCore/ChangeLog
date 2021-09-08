@@ -1,5 +1,21 @@
 2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        webgl/2.0.y/deqp/functional/gles3/negativeshaderapi.html fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229946
+
+        Reviewed by Kenneth Russell.
+
+        Add a missing check for link status.
+
+        Fixes tests:
+        webgl/2.0.0/deqp/functional/gles3/negativeshaderapi.html
+        webgl/2.0.y/deqp/functional/gles3/negativeshaderapi.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getTransformFeedbackVarying):
+
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html fails on Metal
         https://bugs.webkit.org/show_bug.cgi?id=229948
 

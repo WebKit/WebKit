@@ -1,5 +1,17 @@
 2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        webgl/2.0.y/deqp/functional/gles3/negativeshaderapi.html fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229946
+
+        Reviewed by Kenneth Russell.
+
+        Enable webgl/2.0.y/deqp/functional/gles3/negativeshaderapi.html
+        explicitly until 2.0.y is activated.
+
+        * webgl/TestExpectations:
+
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html fails on Metal
         https://bugs.webkit.org/show_bug.cgi?id=229948
 

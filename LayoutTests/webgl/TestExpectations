@@ -30,3 +30,4 @@ webkit.org/b/228703 webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/text
 webgl/2.0.y/deqp/functional/gles3/negativestateapi.html [ Pass ]
 webgl/2.0.y/deqp/functional/gles3/rbostatequery.html [ Pass ]
 webgl/2.0.y/deqp/functional/gles3/negativetextureapi.html [ Pass ]
+webgl/2.0.y/deqp/functional/gles3/negativeshaderapi.html [ Pass ]
