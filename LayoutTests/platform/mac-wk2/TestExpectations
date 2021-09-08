@@ -507,6 +507,8 @@ webkit.org/b/125996 accessibility/mac/search-predicate-visible-button.html [ Fai
 
 webkit.org/b/162999 accessibility/mac/wk1-set-selected-text-marker-range-input-element.html [ Skip ]
 
+webkit.org/b/162999 [ BigSur+ Debug ] accessibility/mac/native-text-control-set-selected-textmarker-range.html [ Pass Failure ]
+
 # rdar://82147955 ([ Monterey GuardMalloc ] accessibility/* tests are timing out)
 [ Monterey ] accessibility/accessibility-crash-with-dynamic-inline-content.html [ Timeout ]
 [ Monterey ] accessibility/accessibility-crash-focused-element-change.html [ Timeout ]
