@@ -1,3 +1,23 @@
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/conformance/extensions/webgl-compressed-texture-etc.html fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229940
+
+        Reviewed by Dean Jackson.
+
+        Enable webgl/2.0.y/conformance/extensions/webgl-compressed-texture-etc.html
+        explicitly until 2.0.y is activated. Same for 1.0.x.
+
+        * webgl/TestExpectations:
+        * webgl/webgl-allow-shared-expected.txt:
+        The test tests that SharedArrayBuffer does not produce an error for
+        when used as TexImageSource. The change makes two compressedTexImage
+        calls produce new GL errors due to the extension not being enabled.
+        The errors are added to the expected.txt. This does not invalidate
+        the objective of the change -- the SharedArrayBuffer type validation
+        happens before the GL validation and as such will be visible if
+        the objective of the test is broken.
+
 2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk1 ] webrtc/datachannel/datachannel-page-cache-send.html is a flaky timeout.

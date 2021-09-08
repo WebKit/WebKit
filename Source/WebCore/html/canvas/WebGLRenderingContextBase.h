@@ -976,10 +976,11 @@ protected:
     // Helper function to validate compressed texture data is correct size
     // for the given format and dimensions.
     bool validateCompressedTexFuncData(const char* functionName, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& pixels);
-
+#endif
     // Helper function for validating compressed texture formats.
-    bool validateCompressedTexFormat(GCGLenum format);
+    bool validateCompressedTexFormat(const char* functionName, GCGLenum format);
 
+#if !USE(ANGLE)
     // Helper function to validate compressed texture dimensions are valid for
     // the given format.
     bool validateCompressedTexDimensions(const char* functionName, GCGLenum target, GCGLint level, GCGLsizei width, GCGLsizei height, GCGLenum format);

@@ -1905,16 +1905,15 @@ void WebGLRenderingContextBase::compressedTexImage2D(GCGLenum target, GCGLint le
 #if USE(ANGLE)
     if (!validateTexture2DBinding("compressedTexImage2D", target))
         return;
+    if (!validateCompressedTexFormat("compressedTexImage2D", internalformat))
+        return;
     m_context->compressedTexImage2D(target, level, internalformat, width, height,
         border, data.byteLength(), makeGCGLSpan(data.baseAddress(), data.byteLength()));
 #else
     if (!validateTexFuncLevel("compressedTexImage2D", target, level))
         return;
-
-    if (!validateCompressedTexFormat(internalformat)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "compressedTexImage2D", "invalid internalformat");
+    if (!validateCompressedTexFormat("compressedTexImage2D", internalformat))
         return;
-    }
     if (border) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "compressedTexImage2D", "border not 0");
         return;
@@ -1950,14 +1949,14 @@ void WebGLRenderingContextBase::compressedTexSubImage2D(GCGLenum target, GCGLint
 #if USE(ANGLE)
     if (!validateTexture2DBinding("compressedTexSubImage2D", target))
         return;
+    if (!validateCompressedTexFormat("compressedTexSubImage2D", format))
+        return;
     m_context->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, data.byteLength(), GCGLSpan<const GCGLvoid>(data.baseAddress(), data.byteLength()));
 #else
     if (!validateTexFuncLevel("compressedTexSubImage2D", target, level))
         return;
-    if (!validateCompressedTexFormat(format)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "compressedTexSubImage2D", "invalid format");
+    if (!validateCompressedTexFormat("compressedTexSubImage2D", format))
         return;
-    }
     if (!validateCompressedTexFuncData("compressedTexSubImage2D", width, height, format, data))
         return;
 
@@ -6835,11 +6834,16 @@ GCGLint WebGLRenderingContextBase::maxTextureLevelForTarget(GCGLenum target)
     return 0;
 }
 
-#if !USE(ANGLE)
-bool WebGLRenderingContextBase::validateCompressedTexFormat(GCGLenum format)
+bool WebGLRenderingContextBase::validateCompressedTexFormat(const char* functionName, GCGLenum format)
 {
-    return m_compressedTextureFormats.contains(format);
+    if (!m_compressedTextureFormats.contains(format)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid format");
+        return false;
+    }
+    return true;
 }
+
+#if !USE(ANGLE)
 
 struct BlockParameters {
     const int width;

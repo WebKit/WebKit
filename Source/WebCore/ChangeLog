@@ -1,3 +1,26 @@
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/conformance/extensions/webgl-compressed-texture-etc.html fails on Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229940
+
+        Reviewed by Dean Jackson.
+
+        Add compressed texture upload internal format validation back.
+        This was disabled when ANGLE was integrated.
+        ANGLE does not check whether the extensions are enabled or not.
+
+        Fixes tests:
+        webgl/1.0.x/conformance/extensions/webgl-compressed-texture-etc.html 
+        webgl/2.0.y/conformance/extensions/webgl-compressed-texture-etc.html 
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::compressedTexImage2D):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::compressedTexImage2D):
+        (WebCore::WebGLRenderingContextBase::compressedTexSubImage2D):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexFormat):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2021-09-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-text-decor] text-decoration-* properties are no longer experimental
