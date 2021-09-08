@@ -6695,9 +6695,6 @@
                     "-webkit-text-decoration-line"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-line"
@@ -6716,9 +6713,6 @@
                 "dashed",
                 "wavy"
             ],
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-style"
@@ -6733,9 +6727,6 @@
                 "visited-link-color-support": true,
                 "color-property": true
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-color"
@@ -6749,9 +6740,6 @@
                     "-webkit-text-decoration-skip"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-skip"
@@ -6764,9 +6752,6 @@
                 ]
             },
             "inherited": true,
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-underline-position-property"
@@ -6777,9 +6762,6 @@
             "codegen-properties": {
                 "converter": "TextUnderlineOffset"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-4/#underline-offset"
@@ -6789,9 +6771,6 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "TextDecorationThickness"
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
