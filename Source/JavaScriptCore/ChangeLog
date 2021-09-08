@@ -1,5 +1,50 @@
 2021-09-08  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282042. rdar://problem/82877251
+
+    [JSC] Make EnumeratorNextUpdateIndexAndMode clobberizing rule precise
+    https://bugs.webkit.org/show_bug.cgi?id=229898
+    rdar://82714439
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * complex.yaml:
+    * complex/for-in-clobberize.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    Clobberizing rule and AI does not match for EnumeratorNextUpdateIndexAndMode node.
+    We fix both cases: isSaneChain is not related to this node. So we should use isInBounds
+    as we are doing for HasIndexedProperty node.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    * dfg/DFGClobberize.h:
+    (JSC::DFG::clobberize):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282042 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Make EnumeratorNextUpdateIndexAndMode clobberizing rule precise
+            https://bugs.webkit.org/show_bug.cgi?id=229898
+            rdar://82714439
+
+            Reviewed by Saam Barati.
+
+            Clobberizing rule and AI does not match for EnumeratorNextUpdateIndexAndMode node.
+            We fix both cases: isSaneChain is not related to this node. So we should use isInBounds
+            as we are doing for HasIndexedProperty node.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+
+2021-09-08  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282014. rdar://problem/82877307
 
     [JSC] Validate JSPropertyNameEnumerator via watchpoints

@@ -351,73 +351,22 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
-    case EnumeratorNextUpdateIndexAndMode: {
-        read(JSObject_butterfly);
-        if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && graph.varArgChild(node, 0).useKind() == CellUse) {
-            read(NamedProperties);
-            read(JSCell_structureID);
-            return;
-        }
-
-        if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode) {
-            clobberTop();
-            return;
-        }
-
-        ArrayMode mode = node->arrayMode();
-        switch (mode.type()) {
-        case Array::ForceExit: {
-            write(SideState);
-            return;
-        }
-        case Array::Int32: {
-            if (mode.isSaneChain()) {
-                read(Butterfly_publicLength);
-                read(IndexedInt32Properties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedInt32Properties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
-                return;
-            }
-            break;
-        }
-
-        case Array::Double: {
-            if (mode.isSaneChain()) {
-                read(Butterfly_publicLength);
-                read(IndexedDoubleProperties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedDoubleProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
-                return;
-            }
-            break;
-        }
-
-        case Array::Contiguous: {
-            if (mode.isSaneChain()) {
-                read(Butterfly_publicLength);
-                read(IndexedContiguousProperties);
-                def(HeapLocation(HasIndexedPropertyLoc, IndexedContiguousProperties, graph.varArgChild(node, 0), graph.varArgChild(node, 1)), LazyNode(node));
-                return;
-            }
-            break;
-        }
-
-        case Array::ArrayStorage: {
-            if (mode.isInBounds()) {
-                read(Butterfly_vectorLength);
-                read(IndexedArrayStorageProperties);
-                return;
-            }
-            break;
-        }
-
-        default:
-            break;
-        }
-
-        clobberTop();
-        return;
-    }
-
+    case EnumeratorNextUpdateIndexAndMode:
     case HasIndexedProperty: {
+        if (node->op() == EnumeratorNextUpdateIndexAndMode) {
+            if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && graph.varArgChild(node, 0).useKind() == CellUse) {
+                read(JSObject_butterfly);
+                read(NamedProperties);
+                read(JSCell_structureID);
+                return;
+            }
+
+            if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode) {
+                clobberTop();
+                return;
+            }
+        }
+
         read(JSObject_butterfly);
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {

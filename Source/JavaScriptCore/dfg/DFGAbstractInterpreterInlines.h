@@ -4280,11 +4280,26 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case EnumeratorNextUpdateIndexAndMode: {
         ArrayMode arrayMode = node->arrayMode();
-        if (arrayMode.isSaneChain())
-            ASSERT(node->enumeratorMetadata() == JSPropertyNameEnumerator::IndexedMode);
-        else if (node->enumeratorMetadata() != JSPropertyNameEnumerator::OwnStructureMode || m_graph.varArgChild(node, 0).useKind() != CellUse)
+        if (node->enumeratorMetadata() == JSPropertyNameEnumerator::OwnStructureMode && m_graph.varArgChild(node, 0).useKind() == CellUse) {
+            // Do nothing.
+        } else if (node->enumeratorMetadata() != JSPropertyNameEnumerator::IndexedMode)
             clobberWorld();
-
+        else {
+            switch (arrayMode.type()) {
+            case Array::Int32:
+            case Array::Double:
+            case Array::Contiguous:
+            case Array::ArrayStorage: {
+                if (arrayMode.isInBounds())
+                    break;
+                FALLTHROUGH;
+            }
+            default: {
+                clobberWorld();
+                break;
+            }
+            }
+        }
         setNonCellTypeForNode(node, SpecBytecodeNumber);
         break;
     }

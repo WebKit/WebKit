@@ -46,3 +46,6 @@
 
 - path: complex/intl-timezone-check.js
   cmd: runComplexTest [], [], "TZ=America/Los_Angeles", "--useDollarVM=1"
+
+- path: complex/for-in-clobberize.js
+  cmd: runComplexTest [], [], "", "--destroy-vm"
