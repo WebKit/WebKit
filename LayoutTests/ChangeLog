@@ -1,3 +1,13 @@
+2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ macOS and iOS ] editing/deleting/forward-delete-crash.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=230047
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-09-08  Simon Fraser  <simon.fraser@apple.com>
 
         Support percentages in the scale() transform functions, and the scale property

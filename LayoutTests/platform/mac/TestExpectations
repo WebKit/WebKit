@@ -1084,6 +1084,8 @@ css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ P
 # rdar://problem/27141291
 editing/selection/triple-click-in-pre.html [ Failure ]
 
+webkit.org/b/230047 editing/deleting/forward-delete-crash.html [ Pass Timeout ]
+
 # rdar://problem/31243824
 webkit.org/b/158747 media/restore-from-page-cache.html [ Pass Failure Crash ]
 
