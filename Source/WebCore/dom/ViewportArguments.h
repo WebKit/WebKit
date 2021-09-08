@@ -147,6 +147,6 @@ typedef WTF::Function<void(ViewportErrorCode, const String&)> ViewportErrorHandl
 void setViewportFeature(ViewportArguments&, Document&, StringView key, StringView value);
 WEBCORE_EXPORT void setViewportFeature(ViewportArguments&, StringView key, StringView value, bool viewportFitEnabled, const ViewportErrorHandler&);
 
-WTF::TextStream& operator<<(WTF::TextStream&, const ViewportArguments&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const ViewportArguments&);
 
 } // namespace WebCore
