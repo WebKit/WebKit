@@ -146,7 +146,7 @@ layer at (8,8) size 1032x479 backgroundClip at (0,0) size 785x1508 clip at (0,0)
             text run at (288,291) width 118: "you downloaded a"
             text run at (306,291) width 70: "build with "
             text run at (306,360) width 63: "Talkback,"
-          RenderInline {EM} at (0,0) size 18x106
+          RenderInline {EM} at (0,0) size 19x106
             RenderText {#text} at (324,291) size 19x106
               text run at (324,291) width 46: "please "
               text run at (324,336) width 60: "turn it on"
@@ -162,14 +162,14 @@ layer at (8,8) size 1032x479 backgroundClip at (0,0) size 785x1508 clip at (0,0)
             text run at (414,0) width 285: "them. And all you have to do is click \"OK\". "
             text run at (414,284) width 139: "If you find something"
             text run at (432,0) width 317: "you think is a bug, check to see if it's not already "
-          RenderInline {A} at (0,0) size 18x84 [color=#0000EE]
+          RenderInline {A} at (0,0) size 19x84 [color=#0000EE]
             RenderText {#text} at (432,316) size 19x84
               text run at (432,316) width 84: "known about"
           RenderText {#text} at (432,399) size 37x431
             text run at (432,399) width 32: ", and"
             text run at (450,0) width 76: "then please "
             text run at (450,75) width 70: "follow the "
-          RenderInline {A} at (0,0) size 18x169 [color=#0000EE]
+          RenderInline {A} at (0,0) size 19x169 [color=#0000EE]
             RenderText {#text} at (450,144) size 19x169
               text run at (450,144) width 169: "bug submission procedure"
           RenderText {#text} at (450,312) size 19x5

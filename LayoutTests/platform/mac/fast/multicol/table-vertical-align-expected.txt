@@ -269,7 +269,7 @@ layer at (8,376) size 377x1166 backgroundClip at (0,0) size 1562x1010 clip at (0
               text run at (11,1097) width 46: "of text."
             RenderBR {BR} at (56,1097) size 1x18
           RenderTableCell {TD} at (142,478) size 233x207 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-            RenderInline {SPAN} at (0,0) size 146x183
+            RenderInline {SPAN} at (0,0) size 146x184
               RenderText {#text} at (11,10) size 146x185
                 text run at (11,11) width 146: "Other"
                 text run at (11,121) width 109: "cell."

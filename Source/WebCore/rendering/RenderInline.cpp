@@ -207,14 +207,14 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 #endif
 }
 
-bool RenderInline::shouldCreateLineBoxes() const
+bool RenderInline::mayAffectRendering() const
 {
     // Test if we can get away with culling.
     auto* parentStyle = &parent()->style();
     RenderInline* parentRenderInline = is<RenderInline>(*parent()) ? downcast<RenderInline>(parent()) : nullptr;
     auto hasHardLineBreakChildOnly = firstChild() && firstChild() == lastChild() && firstChild()->isBR();
     bool checkFonts = document().inNoQuirksMode();
-    auto needsLineBoxes = (parentRenderInline && parentRenderInline->alwaysCreateLineBoxes())
+    auto mayAffectRendering = (parentRenderInline && parentRenderInline->mayAffectRendering())
         || (parentRenderInline && parentStyle->verticalAlign() != VerticalAlign::Baseline)
         || style().verticalAlign() != VerticalAlign::Baseline
         || style().textEmphasisMark() != TextEmphasisMark::None
@@ -222,22 +222,22 @@ bool RenderInline::shouldCreateLineBoxes() const
         || parentStyle->lineHeight() != style().lineHeight()))
         || hasHardLineBreakChildOnly;
 
-    if (!needsLineBoxes && checkFonts && view().usesFirstLineRules()) {
+    if (!mayAffectRendering && checkFonts && view().usesFirstLineRules()) {
         // Have to check the first line style as well.
         parentStyle = &parent()->firstLineStyle();
         auto& childStyle = firstLineStyle();
-        needsLineBoxes = !parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
+        mayAffectRendering = !parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
             || childStyle.verticalAlign() != VerticalAlign::Baseline
             || parentStyle->lineHeight() != childStyle.lineHeight();
     }
-    return needsLineBoxes;
+    return mayAffectRendering;
 }
 
 void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
 {
     // Once we have been tainted once, just assume it will happen again. This way effects like hover highlighting that change the
     // background color will only cause a layout on the first rollover.
-    if (alwaysCreateLineBoxes() || !shouldCreateLineBoxes())
+    if (alwaysCreateLineBoxes() || !mayAffectRendering())
         return;
 
     setAlwaysCreateLineBoxes();

@@ -202,7 +202,7 @@ static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
         if (!is<RenderInline>(sibling))
             return true;
         auto& siblingRendererInline = downcast<RenderInline>(sibling);
-        if (siblingRendererInline.shouldCreateLineBoxes() || !isRenderInlineEmpty(siblingRendererInline))
+        if (siblingRendererInline.mayAffectRendering() || !isRenderInlineEmpty(siblingRendererInline))
             return true;
     }
     return false;

@@ -1,3 +1,32 @@
+2021-09-07  Antti Koivisto  <antti@apple.com>
+
+        Disable inline culling
+        https://bugs.webkit.org/show_bug.cgi?id=229993
+
+        Reviewed by Alan Bujtas.
+
+        Inline culling is an optimization that avoids creating LegacyInlineFlowBoxes for inline
+        elements under certain circumstances (basically if they don't affect rendering).
+
+        The optimization is is complex and requires a ton of code. It is a constant source of bugs.
+        Meanwhile the kind of content where this is beneficial is already mostly taken over by LFC.
+        It is time to remove it.
+
+        This patch disables the optimization but doesn't yet remove the code.
+
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        * rendering/LegacyEllipsisBox.cpp:
+        (WebCore::LegacyEllipsisBox::markupBox const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mayAffectRendering const):
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        (WebCore::RenderInline::shouldCreateLineBoxes const): Deleted.
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::alwaysCreateLineBoxes const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::hasNonEmptySibling):
+
 2021-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS debug build, probably after r282115

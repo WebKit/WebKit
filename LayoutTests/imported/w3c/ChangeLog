@@ -1,3 +1,14 @@
+2021-09-07  Antti Koivisto  <antti@apple.com>
+
+        Disable inline culling
+        https://bugs.webkit.org/show_bug.cgi?id=229993
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/cssom-view/cssom-getClientRects-002-expected.txt:
+        * web-platform-tests/css/cssom-view/elementFromPoint-mixed-font-sizes-expected.txt:
+        * web-platform-tests/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint-expected.txt:
+
 2021-09-07  Simon Fraser  <simon.fraser@apple.com>
 
         Update the css-transforms/parsing WPT

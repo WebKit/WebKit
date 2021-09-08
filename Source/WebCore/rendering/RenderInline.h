@@ -82,9 +82,9 @@ public:
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) final;
     void paintOutline(PaintInfo&, const LayoutPoint&);
 
-    bool alwaysCreateLineBoxes() const { return renderInlineAlwaysCreatesLineBoxes(); }
+    bool alwaysCreateLineBoxes() const { return true; }
     void setAlwaysCreateLineBoxes() { setRenderInlineAlwaysCreatesLineBoxes(true); }
-    bool shouldCreateLineBoxes() const;
+    bool mayAffectRendering() const;
     void updateAlwaysCreateLineBoxes(bool fullLayout);
 
     bool hitTestCulledInline(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);

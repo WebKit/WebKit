@@ -93,7 +93,7 @@ LegacyInlineBox* LegacyEllipsisBox::markupBox() const
 
     // If the last line-box on the last line of a block is a link, -webkit-line-clamp paints that box after the ellipsis.
     // It does not actually move the link.
-    LegacyInlineBox* anchorBox = lastLine->lastChild();
+    LegacyInlineBox* anchorBox = lastLine->lastLeafDescendant();
     if (!anchorBox || !anchorBox->renderer().style().isLink())
         return 0;
 
