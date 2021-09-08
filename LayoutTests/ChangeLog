@@ -1,3 +1,9 @@
+2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2021-09-08  Eric Hutchison  <ehutchison@apple.com>
 
         [iOS14 Release iPhone] fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-001.html is a flaky crash.
