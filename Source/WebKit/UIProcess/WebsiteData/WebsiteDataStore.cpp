@@ -2161,22 +2161,22 @@ void WebsiteDataStore::clearStorage(CompletionHandler<void()>&& completionHandle
 }
 
 #if !PLATFORM(COCOA)
-WTF::String WebsiteDataStore::defaultMediaCacheDirectory()
+String WebsiteDataStore::defaultMediaCacheDirectory()
 {
     // FIXME: Implement. https://bugs.webkit.org/show_bug.cgi?id=156369 and https://bugs.webkit.org/show_bug.cgi?id=156370
-    return WTF::String();
+    return String();
 }
 
-WTF::String WebsiteDataStore::defaultAlternativeServicesDirectory()
+String WebsiteDataStore::defaultAlternativeServicesDirectory()
 {
     // FIXME: Implement.
-    return WTF::String();
+    return String();
 }
 
-WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
+String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
 {
     // FIXME: Implement.
-    return WTF::String();
+    return String();
 }
 
 bool WebsiteDataStore::http3Enabled()
@@ -2191,10 +2191,10 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)
-WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
 {
     // Not implemented.
-    return WTF::String();
+    return String();
 }
 #endif
 

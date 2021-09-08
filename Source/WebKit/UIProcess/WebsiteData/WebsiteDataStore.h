@@ -387,9 +387,9 @@ private:
     WebsiteDataStore();
 
     enum class ShouldCreateDirectory { No, Yes };
-    static WTF::String tempDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
-    static WTF::String cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
-    static WTF::String websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName);
+    static String tempDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
+    static String cacheDirectoryFileSystemRepresentation(const String& directoryName, ShouldCreateDirectory = ShouldCreateDirectory::Yes);
+    static String websiteDataDirectoryFileSystemRepresentation(const String& directoryName);
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
 
@@ -424,7 +424,7 @@ private:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool m_resourceLoadStatisticsDebugMode { false };
     bool m_resourceLoadStatisticsEnabled { false };
-    WTF::Function<void(const String&)> m_statisticsTestingCallback;
+    Function<void(const String&)> m_statisticsTestingCallback;
 #endif
 
     Ref<WorkQueue> m_queue;
