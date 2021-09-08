@@ -39,11 +39,11 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 675x26
           RenderTableRow {TR} at (0,0) size 675x26 [bgcolor=#9999CC]
             RenderTableCell {TD} at (0,0) size 507x26 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 152x20
-                RenderInline {B} at (0,0) size 152x20
+              RenderInline {FONT} at (0,0) size 152x21
+                RenderInline {B} at (0,0) size 152x21
                   RenderText {#text} at (2,1) size 152x22
                     text run at (2,2) width 152: "Technology News"
-              RenderInline {FONT} at (0,0) size 183x15
+              RenderInline {FONT} at (0,0) size 183x16
                 RenderText {#text} at (153,5) size 183x17
                   text run at (153,6) width 63: " - updated "
                   text run at (215,6) width 121: "12:15 PM ET Oct 24"

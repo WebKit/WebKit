@@ -1,3 +1,26 @@
+2021-09-08  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test baselines after r282129
+        https://bugs.webkit.org/show_bug.cgi?id=230049
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/multicol/table-vertical-align-expected.txt:
+        * platform/gtk/css1/text_properties/vertical_align-expected.txt:
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/gtk/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/gtk/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug126742-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/gtk/tables/mozilla/other/ms-expected.txt:
+        * platform/wpe/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1188-expected.txt:
+
 2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS wk1 ]plugins/get-url-that-the-resource-load-delegate-will-disallow.html is a flaky crash.

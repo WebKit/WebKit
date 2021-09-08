@@ -245,7 +245,7 @@ layer at (0,0) size 785x4410
         RenderText {#text} at (696,23) size 732x93
           text run at (696,23) width 36: " all of"
           text run at (0,99) width 43: "which "
-        RenderImage {IMG} at (43,76) size 20x66
+        RenderImage {IMG} at (43,76) size 20x65
         RenderText {#text} at (63,99) size 119x17
           text run at (63,99) width 119: " should be aligned "
         RenderImage {IMG} at (182,91) size 11x36
@@ -589,7 +589,7 @@ layer at (0,0) size 785x4410
                 RenderText {#text} at (696,23) size 732x93
                   text run at (696,23) width 36: " all of"
                   text run at (0,99) width 43: "which "
-                RenderImage {IMG} at (43,76) size 20x66
+                RenderImage {IMG} at (43,76) size 20x65
                 RenderText {#text} at (63,99) size 119x17
                   text run at (63,99) width 119: " should be aligned "
                 RenderImage {IMG} at (182,91) size 11x36
