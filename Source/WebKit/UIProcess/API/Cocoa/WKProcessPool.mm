@@ -38,6 +38,7 @@
 #import "WKObject.h"
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
+#import "WebAuthnProcessProxy.h"
 #import "WebBackForwardCache.h"
 #import "WebCertificateInfo.h"
 #import "WebCookieManagerProxy.h"
@@ -194,6 +195,15 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
         url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
 
     return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
+}
+
++ (pid_t)_webAuthnProcessIdentifier
+{
+#if ENABLE(WEB_AUTHN)
+    return WebKit::WebAuthnProcessProxy::singleton().processIdentifier();
+#else
+    return 0;
+#endif
 }
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host

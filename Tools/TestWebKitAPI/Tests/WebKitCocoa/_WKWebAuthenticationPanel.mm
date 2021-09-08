@@ -37,6 +37,7 @@
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKAuthenticationExtensionsClientInputs.h>
 #import <WebKit/_WKAuthenticationExtensionsClientOutputs.h>
@@ -2056,6 +2057,32 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
     EXPECT_EQ([credentials count], 0lu);
 }
 #endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+
+TEST(WebAuthenticationPanel, RecoverAfterAuthNProcessCrash)
+{
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationExperimentalFeature()];
+    [[configuration preferences] _setEnabled:YES forExperimentalFeature:webAuthenticationModernExperimentalFeature()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
+    EXPECT_EQ([WKProcessPool _webAuthnProcessIdentifier], 0);
+    [webView objectByEvaluatingJavaScript:@"internals.setMockWebAuthenticationConfiguration({ })"];
+    auto firstWebPID = [webView _webProcessIdentifier];
+    auto firstWebAuthnPID = [WKProcessPool _webAuthnProcessIdentifier];
+    EXPECT_NE(firstWebPID, 0);
+    EXPECT_NE(firstWebAuthnPID, 0);
+
+    kill(firstWebAuthnPID, SIGKILL);
+    while ([WKProcessPool _webAuthnProcessIdentifier] || [webView _webProcessIdentifier])
+        Util::spinRunLoop();
+    [webView objectByEvaluatingJavaScript:@"internals.setMockWebAuthenticationConfiguration({ })"];
+    auto secondWebPID = [webView _webProcessIdentifier];
+    auto secondWebAuthnPID = [WKProcessPool _webAuthnProcessIdentifier];
+    EXPECT_NE(secondWebAuthnPID, 0);
+    EXPECT_NE(secondWebAuthnPID, firstWebAuthnPID);
+    EXPECT_NE(secondWebPID, 0);
+    EXPECT_NE(secondWebPID, firstWebPID);
+}
 
 } // namespace TestWebKitAPI
 
