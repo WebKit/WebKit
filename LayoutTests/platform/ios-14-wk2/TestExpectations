@@ -10,3 +10,5 @@ fast/images/text-recognition/mac [ Skip ]
 accessibility/ios-simulator/image-overlay-elements.html [ Skip ]
 
 http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html [ Skip ]
+
+webkit.org/b/230060 [ Release ] fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-001.html [ Pass Crash ]
