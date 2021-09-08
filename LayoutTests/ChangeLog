@@ -1,3 +1,12 @@
+2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur wk1 ] webrtc/datachannel/datachannel-page-cache-send.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=230055
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-08  Chris Dumez  <cdumez@apple.com>
 
         [ MacOS wk1 ] plugins/get-url-that-the-resource-load-delegate-will-disallow.html is a flaky crash
