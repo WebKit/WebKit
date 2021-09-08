@@ -1,3 +1,12 @@
+2021-09-08  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur wk2 Debug ] http/tests/inspector/network/resource-request-headers.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=230056
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/2.0.y/conformance/extensions/webgl-compressed-texture-etc.html fails on Metal
