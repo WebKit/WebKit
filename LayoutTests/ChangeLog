@@ -1,5 +1,17 @@
 2021-09-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Support percentages in the scale() transform functions, and the scale property
+        https://bugs.webkit.org/show_bug.cgi?id=202501
+
+        Reviewed by Sam Weinig.
+        
+        Ref test for scales with %.
+
+        * transforms/2d/scale-percent-expected.html: Added.
+        * transforms/2d/scale-percent.html: Added.
+
+2021-09-08  Simon Fraser  <simon.fraser@apple.com>
+
         Add a temporarily prefixed property for mask-mode, aliased to -webkit-mask-source-type
         https://bugs.webkit.org/show_bug.cgi?id=229915
 

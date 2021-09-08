@@ -830,6 +830,20 @@ double CSSPrimitiveValue::doubleValue() const
     return primitiveUnitType() != CSSUnitType::CSS_CALC ? m_value.num : m_value.calc->doubleValue();
 }
 
+double CSSPrimitiveValue::doubleValueDividingBy100IfPercentage() const
+{
+    switch (primitiveUnitType()) {
+    case CSSUnitType::CSS_CALC:
+        return m_value.calc->primitiveType() == CSSUnitType::CSS_PERCENTAGE ? m_value.calc->doubleValue() / 100.0 : m_value.calc->doubleValue();
+    
+    case CSSUnitType::CSS_PERCENTAGE:
+        return m_value.num / 100.0;
+        
+    default:
+        return m_value.num;
+    }
+}
+
 std::optional<bool> CSSPrimitiveValue::isZero() const
 {
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)

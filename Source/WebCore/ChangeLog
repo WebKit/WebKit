@@ -1,5 +1,35 @@
 2021-09-08  Simon Fraser  <simon.fraser@apple.com>
 
+        Support percentages in the scale() transform functions, and the scale property
+        https://bugs.webkit.org/show_bug.cgi?id=202501
+
+        Reviewed by Sam Weinig.
+
+        Support percentage values in the scale*() functions in the transform property, and
+        on the scale property. These value are converted by numbers by dividing by 100
+        at parse time, as we do for alpha values in colors. We have to keep calc() intact,
+        so % calcs need to be divided by 100 at use time.
+
+        Test: transforms/2d/scale-percent.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::doubleValueDividingBy100IfPercentage const):
+        * css/CSSPrimitiveValue.h:
+        * css/TransformFunctions.cpp:
+        (WebCore::transformsForValue):
+        (WebCore::scaleForValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeNumbersOrPercents):
+        (WebCore::consumeTransformValue):
+        (WebCore::consumeScale):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawOrPercentRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawOrPercentRawAllowingSymbolTableIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberOrPercent):
+        * css/parser/CSSPropertyParserHelpers.h:
+
+2021-09-08  Simon Fraser  <simon.fraser@apple.com>
+
         Add a temporarily prefixed property for mask-mode, aliased to -webkit-mask-source-type
         https://bugs.webkit.org/show_bug.cgi?id=229915
 

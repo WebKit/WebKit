@@ -1793,6 +1793,32 @@ static bool consumeNumbers(CSSParserTokenRange& args, RefPtr<CSSFunctionValue>& 
     return true;
 }
 
+static bool consumeNumbersOrPercents(CSSParserTokenRange& args, RefPtr<CSSFunctionValue>& transformValue, unsigned numberOfArguments)
+{
+    auto parseNumberAndAppend = [&] {
+        auto parsedValue = consumeNumberOrPercent(args, ValueRange::All);
+        if (!parsedValue)
+            return false;
+
+        transformValue->append(parsedValue.releaseNonNull());
+        --numberOfArguments;
+        return true;
+    };
+
+    if (!parseNumberAndAppend())
+        return false;
+
+    while (numberOfArguments) {
+        if (!consumeCommaIncludingWhitespace(args))
+            return false;
+
+        if (!parseNumberAndAppend())
+            return false;
+    }
+
+    return true;
+}
+
 static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<CSSFunctionValue>& transformValue)
 {
     if (auto parsedValue = consumeLength(args, cssParserMode, ValueRange::NonNegative)) {
@@ -1840,12 +1866,12 @@ static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSPar
     case CSSValueScaleY:
     case CSSValueScaleZ:
     case CSSValueScale:
-        parsedValue = consumeNumber(args, ValueRange::All);
+        parsedValue = consumeNumberOrPercent(args, ValueRange::All);
         if (!parsedValue)
             return nullptr;
         if (functionId == CSSValueScale && consumeCommaIncludingWhitespace(args)) {
             transformValue->append(*parsedValue);
-            parsedValue = consumeNumber(args, ValueRange::All);
+            parsedValue = consumeNumberOrPercent(args, ValueRange::All);
             if (!parsedValue)
                 return nullptr;
         }
@@ -1876,7 +1902,7 @@ static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSPar
             return nullptr;
         break;
     case CSSValueScale3d:
-        if (!consumeNumbers(args, transformValue, 3))
+        if (!consumeNumbersOrPercents(args, transformValue, 3))
             return nullptr;
         break;
     case CSSValueRotate3d:
@@ -1983,25 +2009,25 @@ static RefPtr<CSSValue> consumeScale(CSSParserTokenRange& range, CSSParserMode)
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
 
-    RefPtr<CSSValue> x = consumeNumber(range, ValueRange::All);
+    RefPtr<CSSValue> x = consumeNumberOrPercent(range, ValueRange::All);
     if (!x)
         return list;
     list->append(*x);
     range.consumeWhitespace();
 
-    RefPtr<CSSValue> y = consumeNumber(range, ValueRange::All);
+    RefPtr<CSSValue> y = consumeNumberOrPercent(range, ValueRange::All);
     if (!y)
         return list;
 
     // If the x and y values are the same, the y value is not needed.
-    if (downcast<CSSPrimitiveValue>(*x).floatValue() != downcast<CSSPrimitiveValue>(*y).floatValue())
+    if (downcast<CSSPrimitiveValue>(*x).doubleValue() != downcast<CSSPrimitiveValue>(*y).doubleValue())
         list->append(*y);
     range.consumeWhitespace();
 
-    RefPtr<CSSValue> z = consumeNumber(range, ValueRange::All);
+    RefPtr<CSSValue> z = consumeNumberOrPercent(range, ValueRange::All);
     if (!z)
         return list;
-    if (downcast<CSSPrimitiveValue>(*z).floatValue() != 1.0) {
+    if (downcast<CSSPrimitiveValue>(*z).doubleValue() != 1.0) {
         // We only need to append the z value if it's set to something other than 1.
         // In case y was not added yet, because it was equal to x, we must append it
         // prior to appending z.

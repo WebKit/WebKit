@@ -256,7 +256,7 @@ template<typename IntType> static std::optional<IntType> consumeIntegerTypeRawWi
     return clampTo<IntType>(range.consumeIncludingWhitespace().numericValue());
 }
 
-// MARK: Integer (CSSPrimitiveValue - not maintaing calc)
+// MARK: Integer (CSSPrimitiveValue - not maintaining calc)
 
 template<typename IntType> static RefPtr<CSSPrimitiveValue> consumeIntegerTypeCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(CSSParserTokenRange& range, double minimumValue, CSSValuePool& pool)
 {
@@ -324,7 +324,7 @@ static std::optional<double> consumeNumberRawWithKnownTokenTypeIdent(CSSParserTo
     return std::nullopt;
 }
 
-// MARK: Number (CSSPrimitiveValue - maintaing calc)
+// MARK: Number (CSSPrimitiveValue - maintaining calc)
 
 static RefPtr<CSSPrimitiveValue> consumeNumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSValuePool& pool)
 {
@@ -400,7 +400,7 @@ static std::optional<double> consumePercentRawWithKnownTokenTypeIdent(CSSParserT
 }
 
 
-// MARK: Percent (CSSPrimitiveValue - maintaing calc)
+// MARK: Percent (CSSPrimitiveValue - maintaining calc)
 
 static RefPtr<CSSPrimitiveValue> consumePercentCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSValuePool& pool)
 {
@@ -497,7 +497,7 @@ static std::optional<LengthRaw> consumeLengthRawWithKnownTokenTypeNumber(CSSPars
     return std::nullopt;
 }
 
-// MARK: Length (CSSPrimitiveValue - maintaing calc)
+// MARK: Length (CSSPrimitiveValue - maintaining calc)
 
 static RefPtr<CSSPrimitiveValue> consumeLengthCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, CSSValuePool& pool)
 {
@@ -562,7 +562,7 @@ static std::optional<AngleRaw> consumeAngleRawWithKnownTokenTypeNumber(CSSParser
     return std::nullopt;
 }
 
-// MARK: Angle (CSSPrimitiveValue - maintaing calc)
+// MARK: Angle (CSSPrimitiveValue - maintaining calc)
 
 static RefPtr<CSSPrimitiveValue> consumeAngleCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk, CSSValuePool& pool)
 {
@@ -591,7 +591,7 @@ static RefPtr<CSSPrimitiveValue> consumeAngleCSSPrimitiveValueWithCalcWithKnownT
 }
 
 
-// MARK: Time (CSSPrimitiveValue - maintaing calc)
+// MARK: Time (CSSPrimitiveValue - maintaining calc)
 
 static RefPtr<CSSPrimitiveValue> consumeTimeCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, CSSParserMode, UnitlessQuirk, CSSValuePool& pool)
 {
@@ -1121,27 +1121,27 @@ static std::optional<double> consumeAngleRawOrNumberRawAllowingSymbolTableIdent(
 // MARK: - Combination consumers with transformations based on result type.
 
 template<typename NumberTransformer, typename PercentTransformer>
-static auto consumeNumberRawOrPercentRaw(CSSParserTokenRange& range, ValueRange valueRange, NumberTransformer&& numberTranformer, PercentTransformer&& percentTranformer) -> std::optional<decltype(numberTranformer(std::declval<double>()))>
+static auto consumeNumberRawOrPercentRaw(CSSParserTokenRange& range, ValueRange valueRange, NumberTransformer&& numberTransformer, PercentTransformer&& percentTransformer) -> std::optional<decltype(numberTransformer(std::declval<double>()))>
 {
     const auto& token = range.peek();
 
     switch (token.type()) {
     case FunctionToken: {
         if (auto number = consumeNumberRawWithKnownTokenTypeFunction(range, { }, valueRange))
-            return numberTranformer(*number);
+            return numberTransformer(*number);
         if (auto percent = consumePercentRawWithKnownTokenTypeFunction(range, { }, valueRange))
-            return percentTranformer(*percent);
+            return percentTransformer(*percent);
         break;
     }
 
     case PercentageToken:
         if (auto percent = consumePercentRawWithKnownTokenTypePercentage(range, { }, valueRange))
-            return percentTranformer(*percent);
+            return percentTransformer(*percent);
         break;
 
     case NumberToken:
         if (auto number = consumeNumberRawWithKnownTokenTypeNumber(range, { }, valueRange))
-            return numberTranformer(*number);
+            return numberTransformer(*number);
         break;
 
     default:
@@ -1159,27 +1159,27 @@ static std::optional<double> consumeNumberRawOrPercentDividedBy100Raw(CSSParserT
 // MARK: - Combination consumers that both allow lookup in the symbol table for IdentTokens and transformations based on result type.
 
 template<typename NumberTransformer, typename PercentTransformer>
-static auto consumeNumberRawOrPercentRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, NumberTransformer&& numberTranformer, PercentTransformer&& percentTranformer) -> std::optional<decltype(numberTranformer(std::declval<double>()))>
+static auto consumeNumberRawOrPercentRawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange, NumberTransformer&& numberTransformer, PercentTransformer&& percentTransformer) -> std::optional<decltype(numberTransformer(std::declval<double>()))>
 {
     auto& token = range.peek();
 
     switch (token.type()) {
     case FunctionToken: {
         if (auto number = consumeNumberRawWithKnownTokenTypeFunction(range, symbolTable, valueRange))
-            return numberTranformer(*number);
+            return numberTransformer(*number);
         if (auto percent = consumePercentRawWithKnownTokenTypeFunction(range, symbolTable, valueRange))
-            return percentTranformer(*percent);
+            return percentTransformer(*percent);
         break;
     }
 
     case PercentageToken:
         if (auto percent = consumePercentRawWithKnownTokenTypePercentage(range, symbolTable, valueRange))
-            return percentTranformer(*percent);
+            return percentTransformer(*percent);
         break;
 
     case NumberToken:
         if (auto number = consumeNumberRawWithKnownTokenTypeNumber(range, symbolTable, valueRange))
-            return numberTranformer(*number);
+            return numberTransformer(*number);
         break;
 
     case IdentToken:
@@ -1188,14 +1188,14 @@ static auto consumeNumberRawOrPercentRawAllowingSymbolTableIdent(CSSParserTokenR
             case CSSUnitType::CSS_PERCENTAGE:
                 if (auto validatedValue = validatedPercentRaw(variable->value, valueRange)) {
                     range.consumeIncludingWhitespace();
-                    return percentTranformer(*validatedValue);
+                    return percentTransformer(*validatedValue);
                 }
                 break;
 
             case CSSUnitType::CSS_NUMBER:
                 if (auto validatedValue = validatedNumberRaw(variable->value, valueRange)) {
                     range.consumeIncludingWhitespace();
-                    return numberTranformer(*validatedValue);
+                    return numberTransformer(*validatedValue);
                 }
                 break;
 
@@ -1215,6 +1215,30 @@ static auto consumeNumberRawOrPercentRawAllowingSymbolTableIdent(CSSParserTokenR
 static std::optional<double> consumeNumberRawOrPercentDividedBy100RawAllowingSymbolTableIdent(CSSParserTokenRange& range, const CSSCalcSymbolTable& symbolTable, ValueRange valueRange)
 {
     return consumeNumberRawOrPercentRawAllowingSymbolTableIdent(range, symbolTable, valueRange, [](double number) { return number; }, [](double percent) { return percent / 100.0; });
+}
+
+RefPtr<CSSPrimitiveValue> consumeNumberOrPercent(CSSParserTokenRange& range, ValueRange valueRange)
+{
+    auto& token = range.peek();
+
+    switch (token.type()) {
+    case FunctionToken:
+        if (auto value = consumeNumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(range, { }, valueRange, CSSValuePool::singleton()))
+            return value;
+        return consumePercentCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction(range, { }, valueRange, CSSValuePool::singleton());
+
+    case NumberToken:
+    case PercentageToken: {
+        auto value = consumeNumberRawOrPercentDividedBy100Raw(range, valueRange);
+        if (value)
+            return CSSValuePool::singleton().createValue(*value, CSSUnitType::CSS_NUMBER);
+        break;
+    }
+    default:
+        break;
+    }
+
+    return nullptr;
 }
 
 std::optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)

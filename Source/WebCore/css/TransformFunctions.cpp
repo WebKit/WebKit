@@ -136,13 +136,13 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             double sx = 1.0;
             double sy = 1.0;
             if (transformValue.name() == CSSValueScaleY)
-                sy = firstValue.doubleValue();
+                sy = firstValue.doubleValueDividingBy100IfPercentage();
             else {
-                sx = firstValue.doubleValue();
+                sx = firstValue.doubleValueDividingBy100IfPercentage();
                 if (transformValue.name() != CSSValueScaleX) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        sy = secondValue.doubleValue();
+                        sy = secondValue.doubleValueDividingBy100IfPercentage();
                     } else
                         sy = sx;
                 }
@@ -156,19 +156,19 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             double sy = 1.0;
             double sz = 1.0;
             if (transformValue.name() == CSSValueScaleZ)
-                sz = firstValue.doubleValue();
+                sz = firstValue.doubleValueDividingBy100IfPercentage();
             else if (transformValue.name() == CSSValueScaleY)
-                sy = firstValue.doubleValue();
+                sy = firstValue.doubleValueDividingBy100IfPercentage();
             else {
-                sx = firstValue.doubleValue();
+                sx = firstValue.doubleValueDividingBy100IfPercentage();
                 if (transformValue.name() != CSSValueScaleX) {
                     if (transformValue.length() > 2) {
                         auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
-                        sz = thirdValue.doubleValue();
+                        sz = thirdValue.doubleValueDividingBy100IfPercentage();
                     }
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        sy = secondValue.doubleValue();
+                        sy = secondValue.doubleValueDividingBy100IfPercentage();
                     } else
                         sy = sx;
                 }
@@ -396,13 +396,13 @@ RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
         if (!is<CSSPrimitiveValue>(valueItem))
             return nullptr;
         if (!i) {
-            sx = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+            sx = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
             sy = sx;
         } else if (i == 1)
-            sy = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+            sy = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
         else if (i == 2) {
             type = TransformOperation::SCALE_3D;
-            sz = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+            sz = downcast<CSSPrimitiveValue>(*valueItem).doubleValueDividingBy100IfPercentage();
         }
     }
 
