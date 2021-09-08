@@ -176,6 +176,7 @@ messages -> NetworkProcess LegacyReceiver {
     ResetServiceWorkerFetchTimeoutForTesting() -> () Synchronous
 
     ResetQuota(PAL::SessionID sessionID) -> () Async
+    ClearStorage(PAL::SessionID sessionID) -> () Async
     
 #if ENABLE(APP_BOUND_DOMAINS)
     HasAppBoundSession(PAL::SessionID sessionID) -> (bool hasAppBoundSession) Async

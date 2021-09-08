@@ -1,3 +1,18 @@
+2021-09-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Regression (r282130): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/storage/persisted.https.any.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=230053
+        <rdar://problem/82879548>
+
+        Reviewed by Chris Dumez.
+
+        Clear storage states between tests so tests do not affect each other.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::clearStorage):
+        * WebKitTestRunner/TestController.h:
+
 2021-09-08  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add support for find_spec

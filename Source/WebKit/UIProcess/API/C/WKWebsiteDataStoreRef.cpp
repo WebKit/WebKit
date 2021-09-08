@@ -838,6 +838,14 @@ void WKWebsiteDataStoreResetQuota(WKWebsiteDataStoreRef dataStoreRef, void* cont
     });
 }
 
+void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearStorageCallback callback)
+{
+    WebKit::toImpl(dataStoreRef)->clearStorage([context, callback] {
+        if (callback)
+            callback(context);
+    });
+}
+
 void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAppBoundSessionFunction completionHandler)
 {
 #if ENABLE(APP_BOUND_DOMAINS)

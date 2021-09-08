@@ -967,6 +967,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     clearDOMCaches();
 
     resetQuota();
+    clearStorage();
 
     WKContextClearCurrentModifierStateForTesting(TestController::singleton().context());
     WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
@@ -2950,6 +2951,13 @@ void TestController::resetQuota()
 {
     StorageVoidCallbackContext context(*this);
     WKWebsiteDataStoreResetQuota(TestController::websiteDataStore(), &context, StorageVoidCallback);
+    runUntil(context.done, noTimeout);
+}
+
+void TestController::clearStorage()
+{
+    StorageVoidCallbackContext context(*this);
+    WKWebsiteDataStoreClearStorage(TestController::websiteDataStore(), &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 

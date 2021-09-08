@@ -308,6 +308,7 @@ public:
     void syncLocalStorage(CompletionHandler<void()>&&);
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
+    void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);
     void renameOriginInWebsiteData(PAL::SessionID, const URL&, const URL&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
 
 #if ENABLE(SERVICE_WORKER)
