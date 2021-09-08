@@ -63,6 +63,7 @@ class JSGlobalObject;
     v(instanceOf, nullptr) \
     v(BuiltinLog, nullptr) \
     v(BuiltinDescribe, nullptr) \
+    v(ShadowRealm, nullptr) \
     v(RegExp, nullptr) \
     v(min, nullptr) \
     v(trunc, nullptr) \
@@ -78,6 +79,8 @@ class JSGlobalObject;
     v(hostPromiseRejectionTracker, nullptr) \
     v(Set, nullptr) \
     v(thisTimeValue, nullptr) \
+    v(importInRealm, nullptr) \
+    v(evalInRealm, nullptr) \
     v(isConstructor, nullptr) \
     v(sameValue, nullptr) \
     v(regExpProtoFlagsGetter, nullptr) \
