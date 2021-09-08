@@ -1,3 +1,15 @@
+2021-09-08  Tim Nguyen  <ntim@apple.com>
+
+        Support animations on ::backdrop
+        https://bugs.webkit.org/show_bug.cgi?id=229042
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-pseudo/backdrop-animate-002-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/backdrop-animate-002.html: Added.
+        * web-platform-tests/css/css-pseudo/backdrop-animate-expected.txt: Added.
+        * web-platform-tests/css/css-pseudo/backdrop-animate.html: Added.
+
 2021-09-07  Sihui Liu  <sihui_liu@apple.com>
 
         Add basic support for Storage API

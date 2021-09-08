@@ -259,6 +259,8 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         pseudoUpdates.set(PseudoId::Before, WTFMove(*beforeElementUpdate));
     if (auto afterElementUpdate = resolvePseudoStyle(element, update, PseudoId::After))
         pseudoUpdates.set(PseudoId::After, WTFMove(*afterElementUpdate));
+    if (auto backdropElementUpdate = resolvePseudoStyle(element, update, PseudoId::Backdrop))
+        pseudoUpdates.set(PseudoId::Backdrop, WTFMove(*backdropElementUpdate));
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.
@@ -275,8 +277,8 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
 
 std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
-    ASSERT(pseudoId != PseudoId::Backdrop, "This method does not handle ::backdrop currently");
-
+    if (pseudoId == PseudoId::Backdrop && !element.isInTopLayer())
+        return { };
     if (pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
         return { };
     if (elementUpdate.style->display() == DisplayType::None)

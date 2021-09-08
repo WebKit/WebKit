@@ -1,3 +1,14 @@
+2021-09-08  Tim Nguyen  <ntim@apple.com>
+
+        Support animations on ::backdrop
+        https://bugs.webkit.org/show_bug.cgi?id=229042
+
+        Reviewed by Antoine Quint.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::resolvePseudoStyle):
+
 2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/2.0.y/deqp/functional/gles3/rbostatequery.html fails on Metal
