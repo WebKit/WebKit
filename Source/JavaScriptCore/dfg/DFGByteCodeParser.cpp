@@ -8416,7 +8416,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* enumerator = get(bytecode.m_enumerator);
             Node* mode = get(bytecode.m_mode);
 
-            auto seenModes = OptionSet<JSPropertyNameEnumerator::Mode>::fromRaw(metadata.m_enumeratorMetadata);
+            auto seenModes = OptionSet<JSPropertyNameEnumerator::Flag>::fromRaw(metadata.m_enumeratorMetadata);
 
             if (!seenModes)
                 addToGraph(ForceOSRExit);
@@ -8451,7 +8451,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* mode = get(bytecode.m_mode);
             Node* enumerator = get(bytecode.m_enumerator);
 
-            auto seenModes = OptionSet<JSPropertyNameEnumerator::Mode>::fromRaw(metadata.m_enumeratorMetadata);
+            auto seenModes = OptionSet<JSPropertyNameEnumerator::Flag>::fromRaw(metadata.m_enumeratorMetadata);
             if (!seenModes)
                 addToGraph(ForceOSRExit);
 

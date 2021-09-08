@@ -985,7 +985,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_next)
     Register& indexRegister = GET(bytecode.m_index);
     Register& nameRegister = GET(bytecode.m_propertyName);
 
-    auto mode = static_cast<JSPropertyNameEnumerator::Mode>(modeRegister.jsValue().asUInt32());
+    auto mode = static_cast<JSPropertyNameEnumerator::Flag>(modeRegister.jsValue().asUInt32());
     uint32_t index = indexRegister.jsValue().asUInt32();
 
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue());
@@ -1011,7 +1011,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_get_by_val)
     auto bytecode = pc->as<OpEnumeratorGetByVal>();
     JSValue baseValue = GET_C(bytecode.m_base).jsValue();
     auto& metadata = bytecode.metadata(codeBlock);
-    auto mode = static_cast<JSPropertyNameEnumerator::Mode>(GET(bytecode.m_mode).jsValue().asUInt32());
+    auto mode = static_cast<JSPropertyNameEnumerator::Flag>(GET(bytecode.m_mode).jsValue().asUInt32());
     metadata.m_enumeratorMetadata |= static_cast<uint8_t>(mode);
 
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue());
@@ -1054,7 +1054,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_in_by_val)
     auto bytecode = pc->as<OpEnumeratorInByVal>();
     JSValue baseValue = GET_C(bytecode.m_base).jsValue();
     auto& metadata = bytecode.metadata(codeBlock);
-    auto mode = static_cast<JSPropertyNameEnumerator::Mode>(GET(bytecode.m_mode).jsValue().asUInt32());
+    auto mode = static_cast<JSPropertyNameEnumerator::Flag>(GET(bytecode.m_mode).jsValue().asUInt32());
     metadata.m_enumeratorMetadata |= static_cast<uint8_t>(mode);
 
     CHECK_EXCEPTION();
@@ -1077,7 +1077,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_has_own_property)
     auto bytecode = pc->as<OpEnumeratorHasOwnProperty>();
     JSValue baseValue = GET_C(bytecode.m_base).jsValue();
     auto& metadata = bytecode.metadata(codeBlock);
-    auto mode = static_cast<JSPropertyNameEnumerator::Mode>(GET(bytecode.m_mode).jsValue().asUInt32());
+    auto mode = static_cast<JSPropertyNameEnumerator::Flag>(GET(bytecode.m_mode).jsValue().asUInt32());
     metadata.m_enumeratorMetadata |= static_cast<uint8_t>(mode);
 
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue());

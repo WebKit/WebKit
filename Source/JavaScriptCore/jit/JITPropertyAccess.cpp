@@ -2808,7 +2808,7 @@ void JIT::emit_op_enumerator_next(const Instruction* currentInstruction)
     if (metadata.m_enumeratorMetadata == JSPropertyNameEnumerator::OwnStructureMode) {
         GPRReg enumeratorGPR = regT3;
         emitGetVirtualRegister(enumerator, enumeratorGPR);
-        operationCases.append(branchTest32(NonZero, Address(enumeratorGPR, JSPropertyNameEnumerator::modeSetOffset()), TrustedImm32(~JSPropertyNameEnumerator::OwnStructureMode)));
+        operationCases.append(branchTest32(NonZero, Address(enumeratorGPR, JSPropertyNameEnumerator::flagsOffset()), TrustedImm32((~JSPropertyNameEnumerator::OwnStructureMode) & JSPropertyNameEnumerator::enumerationModeMask)));
         emitGetVirtualRegister(base, baseGPR);
         load32(Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset()), indexGPR);
         operationCases.append(branch32(NotEqual, indexGPR, Address(baseGPR, JSCell::structureIDOffset())));

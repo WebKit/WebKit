@@ -110,11 +110,12 @@ namespace JSC { namespace FTL {
     macro(JSObject_butterfly, JSObject::butterflyOffset()) \
     macro(JSPropertyNameEnumerator_cachedInlineCapacity, JSPropertyNameEnumerator::cachedInlineCapacityOffset()) \
     macro(JSPropertyNameEnumerator_cachedPropertyNamesVector, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()) \
+    macro(JSPropertyNameEnumerator_cachedPrototypeChain, JSPropertyNameEnumerator::offsetOfCachedPrototypeChain()) \
     macro(JSPropertyNameEnumerator_cachedStructureID, JSPropertyNameEnumerator::cachedStructureIDOffset()) \
     macro(JSPropertyNameEnumerator_endGenericPropertyIndex, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()) \
     macro(JSPropertyNameEnumerator_endStructurePropertyIndex, JSPropertyNameEnumerator::endStructurePropertyIndexOffset()) \
     macro(JSPropertyNameEnumerator_indexLength, JSPropertyNameEnumerator::indexedLengthOffset()) \
-    macro(JSPropertyNameEnumerator_modeSet, JSPropertyNameEnumerator::modeSetOffset()) \
+    macro(JSPropertyNameEnumerator_flags, JSPropertyNameEnumerator::flagsOffset()) \
     macro(JSRopeString_flags, JSRopeString::offsetOfFlags()) \
     macro(JSRopeString_length, JSRopeString::offsetOfLength()) \
     macro(JSRopeString_fiber0, JSRopeString::offsetOfFiber0()) \
@@ -152,6 +153,7 @@ namespace JSC { namespace FTL {
     macro(Structure_structureID, Structure::structureIDOffset()) \
     macro(StructureRareData_cachedKeys, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::Keys)) \
     macro(StructureRareData_cachedGetOwnPropertyNames, StructureRareData::offsetOfCachedPropertyNames(CachedPropertyNamesKind::GetOwnPropertyNames)) \
+    macro(StructureRareData_cachedPropertyNameEnumerator, StructureRareData::offsetOfCachedPropertyNameEnumerator()) \
     macro(HashMapImpl_capacity, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()) \
     macro(HashMapImpl_buffer,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfBuffer()) \
     macro(HashMapImpl_head,  HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfHead()) \

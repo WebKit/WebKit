@@ -28,6 +28,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
+#include "StructureChain.h"
 #include "StructureRareData.h"
 
 namespace JSC {
@@ -45,6 +46,21 @@ struct SpecialPropertyCacheEntry {
 struct SpecialPropertyCache {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     SpecialPropertyCacheEntry m_cache[numberOfCachedSpecialPropertyKeys];
+};
+
+class StructureChainInvalidationWatchpoint final : public Watchpoint {
+public:
+    StructureChainInvalidationWatchpoint()
+        : Watchpoint(Watchpoint::Type::StructureChainInvalidation)
+        , m_structureRareData(nullptr)
+    { }
+
+    void install(StructureRareData*, Structure*);
+    void fireInternal(VM&, const FireDetail&);
+
+private:
+    // Own destructor may not be called. Keep members trivially destructible.
+    JSC_WATCHPOINT_FIELD(PackedCellPtr<StructureRareData>, m_structureRareData);
 };
 
 inline void StructureRareData::setPreviousID(VM& vm, Structure* structure)
@@ -80,6 +96,9 @@ inline JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator
 inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, JSPropertyNameEnumerator* enumerator)
 {
     m_cachedPropertyNameEnumerator.set(vm, this, enumerator);
+    m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>();
+    bool validatedViaWatchpoint = tryCachePropertyNameEnumeratorViaWatchpoint(vm, enumerator->cachedPrototypeChain());
+    enumerator->setValidatedViaWatchpoint(validatedViaWatchpoint);
 }
 
 inline JSImmutableButterfly* StructureRareData::cachedPropertyNames(CachedPropertyNamesKind kind) const
@@ -138,6 +157,46 @@ inline void StructureRareData::cacheSpecialProperty(JSGlobalObject* globalObject
     if (!canCacheSpecialProperty(key))
         return;
     return cacheSpecialPropertySlow(globalObject, vm, ownStructure, value, key, slot);
+}
+
+inline void StructureChainInvalidationWatchpoint::install(StructureRareData* structureRareData, Structure* structure)
+{
+    m_structureRareData = structureRareData;
+    structure->addTransitionWatchpoint(this);
+}
+
+inline void StructureChainInvalidationWatchpoint::fireInternal(VM&, const FireDetail&)
+{
+    if (!m_structureRareData->isLive())
+        return;
+    m_structureRareData->invalidateWatchpointBasedValidation();
+}
+
+inline bool StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint(VM& vm, StructureChain* chain)
+{
+    unsigned size = 0;
+    for (auto* current = chain->head(); *current; ++current) {
+        ++size;
+        StructureID structureID = *current;
+        Structure* structure = vm.getStructure(structureID);
+        if (!structure->propertyNameEnumeratorShouldWatch())
+            return false;
+    }
+    m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>(size);
+    unsigned index = 0;
+    for (auto* current = chain->head(); *current; ++current) {
+        StructureID structureID = *current;
+        Structure* structure = vm.getStructure(structureID);
+        m_cachedPropertyNameEnumeratorWatchpoints[index].install(this, structure);
+        ++index;
+    }
+    return true;
+}
+
+inline void StructureRareData::invalidateWatchpointBasedValidation()
+{
+    m_cachedPropertyNameEnumerator.clear();
+    m_cachedPropertyNameEnumeratorWatchpoints = FixedVector<StructureChainInvalidationWatchpoint>();
 }
 
 } // namespace JSC

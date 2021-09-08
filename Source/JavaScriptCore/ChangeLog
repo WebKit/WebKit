@@ -1,3 +1,149 @@
+2021-09-08  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282014. rdar://problem/82877307
+
+    [JSC] Validate JSPropertyNameEnumerator via watchpoints
+    https://bugs.webkit.org/show_bug.cgi?id=229846
+    
+    Reviewed by Keith Miller.
+    
+    JSTests:
+    
+    * stress/for-in-cacheable-dictionary.js: Added.
+    (shouldBe):
+    (collect):
+    * stress/for-in-invalidate.js: Added.
+    (shouldBe):
+    (collect):
+    * stress/for-in-uncacheable-dictionary.js: Added.
+    (shouldBe):
+    (collect):
+    
+    Source/JavaScriptCore:
+    
+    Looked into Elm-TodoMVC sampling profiler data and found that op_get_property_enumerator is taking enough amount of time.
+    And Instruments say validating JSPropertyNameEnumerator via traversing StructureChain is costly.
+    We are caching JSPropertyNameEnumerator only when we meet the condition: objects in prototype chain can ensure identity of
+    property names if structure is not changed. So we can use watchpoint based approach to invalidate JSPropertyNameEnumerator.
+    
+    This patch injects structure transition watchpoints if possible. And when watchpoint is fired, we invalidate JSPropertyNameEnumerator
+    cached in StructureRareData, as if we are ensuring prototype chain condition for the other property accesses.
+    
+    This offers 0.6% improvement in Speedometer2.
+    
+    ----------------------------------------------------------------------------------------------------------------------------------
+    |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+    ----------------------------------------------------------------------------------------------------------------------------------
+    | Elm-TodoMVC                          |121.971667   |117.725000   |0.965183  | 0.000000 (significant)                           |
+    | VueJS-TodoMVC                        |26.246667    |26.035000    |0.991935  | 0.360614                                         |
+    | EmberJS-TodoMVC                      |126.196667   |126.653333   |1.003619  | 0.103138                                         |
+    | BackboneJS-TodoMVC                   |48.976667    |48.881667    |0.998060  | 0.474106                                         |
+    | Preact-TodoMVC                       |20.118333    |20.115000    |0.999834  | 0.989038                                         |
+    | AngularJS-TodoMVC                    |131.545000   |130.706667   |0.993627  | 0.015344 (significant)                           |
+    | Vanilla-ES2015-TodoMVC               |63.725000    |63.773333    |1.000758  | 0.706560                                         |
+    | Inferno-TodoMVC                      |64.231667    |62.653333    |0.975427  | 0.000000 (significant)                           |
+    | Flight-TodoMVC                       |77.223333    |77.690000    |1.006043  | 0.268309                                         |
+    | Angular2-TypeScript-TodoMVC          |39.686667    |39.500000    |0.995296  | 0.499678                                         |
+    | VanillaJS-TodoMVC                    |52.321667    |51.973333    |0.993342  | 0.077777                                         |
+    | jQuery-TodoMVC                       |224.908333   |225.761667   |1.003794  | 0.022136                                         |
+    | EmberJS-Debug-TodoMVC                |339.858333   |339.886667   |1.000083  | 0.950320                                         |
+    | React-TodoMVC                        |86.545000    |86.070000    |0.994512  | 0.001518 (significant)                           |
+    | React-Redux-TodoMVC                  |146.010000   |142.855000   |0.978392  | 0.000000 (significant)                           |
+    | Vanilla-ES2015-Babel-Webpack-TodoMVC |61.411667    |61.456667    |1.000733  | 0.631499                                         |
+    ----------------------------------------------------------------------------------------------------------------------------------
+    a mean = 255.96543
+    b mean = 257.53379
+    pValue = 0.0000034394
+    (Bigger means are better.)
+    1.006 times better
+    Results ARE significant
+    
+    * bytecode/Watchpoint.cpp:
+    * bytecode/Watchpoint.h:
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileGetPropertyEnumerator):
+    * ftl/FTLAbstractHeapRepository.h:
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+    * runtime/JSPropertyNameEnumerator.h:
+    (JSC::propertyNameEnumerator):
+    * runtime/StructureRareData.h:
+    * runtime/StructureRareDataInlines.h:
+    (JSC::StructureRareData::setCachedPropertyNameEnumerator):
+    (JSC::StructureChainInvalidationWatchpoint::install):
+    (JSC::StructureChainInvalidationWatchpoint::fireInternal):
+    (JSC::StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint):
+    (JSC::StructureRareData::invalidateWatchpointBasedValidation):
+    * tools/JSDollarVM.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    (JSC::JSDollarVM::finishCreation):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282014 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Validate JSPropertyNameEnumerator via watchpoints
+            https://bugs.webkit.org/show_bug.cgi?id=229846
+
+            Reviewed by Keith Miller.
+
+            Looked into Elm-TodoMVC sampling profiler data and found that op_get_property_enumerator is taking enough amount of time.
+            And Instruments say validating JSPropertyNameEnumerator via traversing StructureChain is costly.
+            We are caching JSPropertyNameEnumerator only when we meet the condition: objects in prototype chain can ensure identity of
+            property names if structure is not changed. So we can use watchpoint based approach to invalidate JSPropertyNameEnumerator.
+
+            This patch injects structure transition watchpoints if possible. And when watchpoint is fired, we invalidate JSPropertyNameEnumerator
+            cached in StructureRareData, as if we are ensuring prototype chain condition for the other property accesses.
+
+            This offers 0.6% improvement in Speedometer2.
+
+            ----------------------------------------------------------------------------------------------------------------------------------
+            |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            | Elm-TodoMVC                          |121.971667   |117.725000   |0.965183  | 0.000000 (significant)                           |
+            | VueJS-TodoMVC                        |26.246667    |26.035000    |0.991935  | 0.360614                                         |
+            | EmberJS-TodoMVC                      |126.196667   |126.653333   |1.003619  | 0.103138                                         |
+            | BackboneJS-TodoMVC                   |48.976667    |48.881667    |0.998060  | 0.474106                                         |
+            | Preact-TodoMVC                       |20.118333    |20.115000    |0.999834  | 0.989038                                         |
+            | AngularJS-TodoMVC                    |131.545000   |130.706667   |0.993627  | 0.015344 (significant)                           |
+            | Vanilla-ES2015-TodoMVC               |63.725000    |63.773333    |1.000758  | 0.706560                                         |
+            | Inferno-TodoMVC                      |64.231667    |62.653333    |0.975427  | 0.000000 (significant)                           |
+            | Flight-TodoMVC                       |77.223333    |77.690000    |1.006043  | 0.268309                                         |
+            | Angular2-TypeScript-TodoMVC          |39.686667    |39.500000    |0.995296  | 0.499678                                         |
+            | VanillaJS-TodoMVC                    |52.321667    |51.973333    |0.993342  | 0.077777                                         |
+            | jQuery-TodoMVC                       |224.908333   |225.761667   |1.003794  | 0.022136                                         |
+            | EmberJS-Debug-TodoMVC                |339.858333   |339.886667   |1.000083  | 0.950320                                         |
+            | React-TodoMVC                        |86.545000    |86.070000    |0.994512  | 0.001518 (significant)                           |
+            | React-Redux-TodoMVC                  |146.010000   |142.855000   |0.978392  | 0.000000 (significant)                           |
+            | Vanilla-ES2015-Babel-Webpack-TodoMVC |61.411667    |61.456667    |1.000733  | 0.631499                                         |
+            ----------------------------------------------------------------------------------------------------------------------------------
+            a mean = 255.96543
+            b mean = 257.53379
+            pValue = 0.0000034394
+            (Bigger means are better.)
+            1.006 times better
+            Results ARE significant
+
+            * bytecode/Watchpoint.cpp:
+            * bytecode/Watchpoint.h:
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileGetPropertyEnumerator):
+            * ftl/FTLAbstractHeapRepository.h:
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+            * runtime/JSPropertyNameEnumerator.h:
+            (JSC::propertyNameEnumerator):
+            * runtime/StructureRareData.h:
+            * runtime/StructureRareDataInlines.h:
+            (JSC::StructureRareData::setCachedPropertyNameEnumerator):
+            (JSC::StructureChainInvalidationWatchpoint::install):
+            (JSC::StructureChainInvalidationWatchpoint::fireInternal):
+            (JSC::StructureRareData::tryCachePropertyNameEnumeratorViaWatchpoint):
+            (JSC::StructureRareData::invalidateWatchpointBasedValidation):
+            * tools/JSDollarVM.cpp:
+            (JSC::JSC_DEFINE_HOST_FUNCTION):
+            (JSC::JSDollarVM::finishCreation):
+
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281684. rdar://problem/82651474
