@@ -3486,8 +3486,6 @@ webkit.org/b/228993 imported/w3c/web-platform-tests/css/css-position/multicol/st
 webkit.org/b/228993 imported/w3c/web-platform-tests/css/css-position/multicol/static-position/vrl-rtl-ltr-in-multicol.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/228993 imported/w3c/web-platform-tests/css/css-position/multicol/static-position/vrl-rtl-rtl-in-multicol.html [ ImageOnlyFailure ]
 webkit.org/b/203450 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html [ ImageOnlyFailure ]
-webkit.org/b/203450 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-large-top-2.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/203450 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-large-top.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203450 imported/w3c/web-platform-tests/css/css-position/sticky/sticky-after-input.html [ Failure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/htb-ltr-ltr.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/htb-ltr-rtl.tentative.html [ ImageOnlyFailure ]
