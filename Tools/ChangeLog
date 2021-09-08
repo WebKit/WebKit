@@ -1,5 +1,13 @@
 2021-09-08  Lauro Moura  <lmoura@igalia.com>
 
+        [GTK] Fix test path in last commit
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2021-09-08  Lauro Moura  <lmoura@igalia.com>
+
         [GTK] Garden default-menu API test failure
 
         Unreviewed test gardening.
