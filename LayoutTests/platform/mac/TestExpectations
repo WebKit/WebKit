@@ -324,6 +324,8 @@ fast/forms/file/file-input-capture.html
 
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
+webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
+
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
 webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
