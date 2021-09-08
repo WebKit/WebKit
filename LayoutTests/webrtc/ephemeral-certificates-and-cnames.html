@@ -53,6 +53,7 @@ promise_test((test) => {
             setTimeout(() => reject("Test timed out 1"), 2000);
         });
     }).then(() => {
+        closeConnections();
         return navigator.mediaDevices.getUserMedia({ video: true, audio: true}).then((stream) => {
             return new Promise((resolve, reject) => {
                 createConnections((firstConnection) => {

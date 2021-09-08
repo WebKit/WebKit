@@ -1,3 +1,22 @@
+2021-09-08  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/ephemeral-certificates-and-cnames.html needs to close its connections between two tests
+        https://bugs.webkit.org/show_bug.cgi?id=229931
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated test.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::addIceCandidate):
+        As per https://w3c.github.io/webrtc-pc/#dom-peerconnection-addicecandidate step 4.7, abort if peer connection is closed.
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        As per https://w3c.github.io/webrtc-pc/#dfn-surface-the-candidate,
+        no need to fire an ICE candidate event if peer connection is closed.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addIceCandidate):
+        Return early if peer connection is closed as per https://w3c.github.io/webrtc-pc/#dom-peerconnection-addicecandidate.
+
 2021-09-08  Simon Fraser  <simon.fraser@apple.com>
 
         Support percentages in the scale() transform functions, and the scale property

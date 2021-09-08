@@ -325,10 +325,8 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
         return;
     }
 
-    if (isClosed()) {
-        promise->reject(InvalidStateError);
+    if (isClosed())
         return;
-    }
 
     ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", candidate ? candidate->candidate() : "null");
     chainOperation(WTFMove(promise), [this, candidate = WTFMove(candidate)](auto&& promise) mutable {

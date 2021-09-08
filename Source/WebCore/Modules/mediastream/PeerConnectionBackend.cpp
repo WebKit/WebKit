@@ -308,7 +308,7 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPr
 
     doAddIceCandidate(*iceCandidate, [weakThis = makeWeakPtr(this), promise = WTFMove(promise)](auto&& result) mutable {
         ASSERT(isMainThread());
-        if (!weakThis)
+        if (!weakThis || weakThis->m_peerConnection.isClosed())
             return;
         RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate finished, success=%d", result.hasException());
         promise.settle(WTFMove(result));
@@ -348,6 +348,9 @@ void PeerConnectionBackend::validateSDP(const String& sdp) const
 void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL)
 {
     m_peerConnection.doTask([logSiteIdentifier = LOGIDENTIFIER, this, sdp = WTFMove(sdp), mid = WTFMove(mid), sdpMLineIndex, serverURL = WTFMove(serverURL)]() mutable {
+        if (m_peerConnection.isClosed())
+            return;
+
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "Gathered ice candidate:", sdp);
         m_finishedGatheringCandidates = false;

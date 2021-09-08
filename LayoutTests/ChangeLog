@@ -1,3 +1,13 @@
+2021-09-08  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/ephemeral-certificates-and-cnames.html needs to close its connections between two tests
+        https://bugs.webkit.org/show_bug.cgi?id=229931
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/ephemeral-certificates-and-cnames.html:
+        Close old connections so that we do not start adding ICE candidates from an old connection to a new one.
+
 2021-09-08  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines after r282129
