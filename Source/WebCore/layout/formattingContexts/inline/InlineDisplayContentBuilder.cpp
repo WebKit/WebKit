@@ -50,10 +50,8 @@ void InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineCont
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     rootInlineBoxRect.moveBy(lineBoxLogicalTopLeft);
     formattingState.addRun({ lineIndex, Run::Type::RootInlineBox, root(), rootInlineBoxRect, rootInlineBoxRect, { }, { },  lineBox.rootInlineBox().hasContent()});
-    // Spanning inline boxes start at the very beginning of the line.
-    auto lineSpanningInlineBoxIndex = formattingState.runs().size();
+    createRunsAndUpdateGeometryForLineSpanningInlineBoxes(lineBox, lineBoxLogicalTopLeft, lineIndex);
     createRunsAndUpdateGeometryForLineContent(lineContent, lineBox, lineBoxLogicalTopLeft, lineIndex);
-    createRunsAndUpdateGeometryForLineSpanningInlineBoxes(lineBox, lineBoxLogicalTopLeft, lineIndex, lineSpanningInlineBoxIndex);
 }
 
 void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex)
@@ -61,7 +59,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
     auto& formattingState = this->formattingState();
     // Legacy inline tree integral rounds the vertical position for certain content (see LegacyInlineFlowBox::placeBoxesInBlockDirection and ::addToLine).
     // See shouldClearDescendantsHaveSameLineHeightAndBaseline in LegacyInlineFlowBox::addToLine.
-    auto lineNeedIntegralPosition = true;
+    auto lineNeedIntegralPosition = formattingState.lines().last().needsIntegralPosition();
     auto& rootStyle = root().style();
     // Create the inline runs on the current line. This is mostly text and atomic inline runs.
     for (auto& lineRun : lineContent.runs) {
@@ -179,7 +177,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
     formattingState.lines().last().setNeedsIntegralPosition(lineNeedIntegralPosition);
 }
 
-void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes(const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex, size_t lineSpanningInlineBoxIndex)
+void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes(const LineBox& lineBox, const InlineLayoutPoint& lineBoxLogicalTopLeft, const size_t lineIndex)
 {
     if (!lineBox.hasContent()) {
         // When a spanning inline box (e.g. <div>text<span><br></span></div>) lands on an empty line
@@ -190,7 +188,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInli
 
     auto& rootStyle = root().style();
     auto& formattingState = this->formattingState();
-    auto lineNeedIntegralPosition = formattingState.lines().last().needsIntegralPosition();
+    auto lineNeedIntegralPosition = true;
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (!inlineLevelBox.isLineSpanningInlineBox())
             continue;
@@ -200,7 +198,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInli
         auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
         inlineBoxBorderBox.moveBy(lineBoxLogicalTopLeft);
 
-        formattingState.runs().insert(lineSpanningInlineBoxIndex++, { lineIndex, Run::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), true });
+        formattingState.addRun({ lineIndex, Run::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), true });
 
         auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
         auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };

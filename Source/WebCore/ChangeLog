@@ -1,3 +1,19 @@
+2021-09-07  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Construct line spanning inline boxes first
+        https://bugs.webkit.org/show_bug.cgi?id=230018
+
+        Reviewed by Antti Koivisto.
+
+        Runs for line spanning inline boxes (e.g. <span>first line<br>second line</span>) can now be constrcuted before getting to the actual line content.
+        (It simply means that we can keep adding runs to the vector instead of using insert to position the line spanning inline box runs right after the root inline box run.) 
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.h:
+
 2021-09-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Eagerly resolve slot elements to simply the code in SlotAssignment
