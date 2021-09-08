@@ -1,3 +1,23 @@
+2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r282115): undefined reference to `IPC::messageArgumentDescriptions(IPC::MessageName)' in Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=230064
+
+        Unreviewed build fix.
+
+        Debug build of non-Cocoa ports were broken since r282115 started
+        to use IPC::messageArgumentDescriptions for debug logging.
+        However, MessageArgumentDescriptions.cpp has a long-standing
+        compilation problem for non-Cocoa ports.
+
+        Temporarily disabled the debug logging for non-Cocoa ports by
+        using ENABLE(IPC_TESTING_API) macro. I'll revert this change after
+        I will fix the fundamental problem of messages.py.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::logMessageImpl):
+        (IPC::logReply):
+
 2021-09-08  Sihui Liu  <sihui_liu@apple.com>
 
         Remove unnecessary WTF:: in WebsiteDataStore files
