@@ -1,3 +1,74 @@
+2021-09-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a fast path for atomizing strings when parsing HTML
+        https://bugs.webkit.org/show_bug.cgi?id=229907
+        rdar://82854612
+
+        Reviewed by Yusuke Suzuki and Darin Adler.
+
+        On various subtests in Speedometer 2, a nontrivial amount of time is spent mapping raw UChar data vectors into
+        AtomStrings while parsing HTML tag names, attribute names and attribute values. Most of this happens underneath
+        the AtomHTMLToken constructor, which computes a hash for each string in the process of adding it to the atom
+        string table; the time it takes to compute this string hash increases linearly with the length of the string.
+
+        However, over the course of the benchmark, the vast majority of AtomStrings created out of tag names, attribute
+        names and attribute values are both:
+
+        (1) Strings that we've already recently atomized, and
+        (2) Usually distinguishable from other atom strings based solely on their first character, last character, and
+            overall string length.
+
+        As such, it's possible to slightly improve string atomization performance in this particular case (i.e. parsing
+        HTML) by maintaining a smaller cache of recently atomized AtomStrings that we index using a simple, constant-
+        time hash function that considers only the first character, last character, and length of the string. In terms
+        of the cache hit rate in this AtomString cache, the default string hashing algorithm only barely outperforms
+        this simple hash function on Speedometer (i.e., a cache hit rate of 99.24% using the default hash algorithm vs.
+        99.15% using the "first/last character and length" hash).
+
+        Using this technique, we can get a significant performance improvement on Speedometer by introducing two small,
+        fixed-size (512 capacity) AtomString tables: one to hold tag names and attribute names, and another to hold
+        attribute values (which seems to contain a much larger set of unique strings); we additionally use the cheap "2-
+        char & length" hash algorithm described above to index into these fixed-size tables.
+
+        This allows us to more efficiently atomize not only known tag and attribute names, but also custom element tag
+        names and attribute names and values that tend to appear frequently in markup (e.g. due to using certain
+        JavaScript frameworks that get and set HTML attributes).
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/AtomHTMLToken.h:
+        (WebCore::AtomHTMLToken::initializeAttributes):
+        (WebCore::AtomHTMLToken::AtomHTMLToken):
+        * html/parser/HTMLAtomStringCache.cpp: Added.
+        (WebCore::HTMLAtomStringCache::cache):
+        * html/parser/HTMLAtomStringCache.h: Added.
+
+        Add a helper class that exposes three static inline helper methods: `makeTagOrAttributeName` and
+        `makeAttributeValue`, which return AtomStrings for the given `Vector<UChar>` (consulting the corresponding
+        cache if possible); and `clear`, which empties all cached atom strings.
+
+        (WebCore::HTMLAtomStringCache::makeTagOrAttributeName):
+        (WebCore::HTMLAtomStringCache::makeAttributeValue):
+        (WebCore::HTMLAtomStringCache::clear):
+        (WebCore::HTMLAtomStringCache::make):
+
+        Additionally add an upper length limit for characters that we include in this cache; in practice, longer strings
+        tend to be repeatedly atomized less frequently than shorter strings. The 36-character limit also allows for
+        frequently-parsed (and atomized) UUIDs to be cached.
+
+        (WebCore::HTMLAtomStringCache::cacheSlot):
+
+        This hashing algorithm was inspired by `calculateWithTwoCharacters`, but with constants specifically chosen to
+        minimize collisions between common HTML tag and attribute names.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::jettisonExpensiveObjectsOnTopLevelNavigation):
+
+        Add logic to clear the HTML atom string cache upon receiving a low memory warning, and upon top-level
+        navigation.
+
 2021-09-08  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for inline box ink overflow

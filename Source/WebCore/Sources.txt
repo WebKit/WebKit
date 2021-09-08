@@ -1312,6 +1312,7 @@ html/canvas/WebGLVertexArrayObjectBase.cpp
 html/canvas/WebGLVertexArrayObjectOES.cpp
 html/forms/FileIconLoader.cpp
 html/parser/CSSPreloadScanner.cpp
+html/parser/HTMLAtomStringCache.cpp
 html/parser/HTMLConstructionSite.cpp
 html/parser/HTMLDocumentParser.cpp
 html/parser/HTMLElementStack.cpp
