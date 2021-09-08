@@ -301,6 +301,11 @@
                 "expected": {
                     "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/227020"}
                 }
+            },
+            "/webkit/WebKitWebPage/default-menu": {
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/230043"}
+                }
             }
         }
     },

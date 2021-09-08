@@ -1,3 +1,11 @@
+2021-09-08  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Garden default-menu API test failure
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-09-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] TestWebKitAPI.WebKit.DidNotHandleKeyDown is failing
