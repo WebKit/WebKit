@@ -501,6 +501,24 @@ static RetainPtr<CTFontDescriptorRef> findFontDescriptor(const String& reference
     return nullptr;
 }
 
+static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, const String& referenceURL, const String& postScriptName)
+{
+    if (auto name = static_cast<CFStringRef>(CFDictionaryGetValue(attributes, kCTFontNameAttribute))) {
+        if (CFStringHasPrefix(name, CFSTR("."))) {
+            auto fontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes));
+            if (!fontDescriptor)
+                return nullptr;
+            return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, kCTFontOptionsSystemUIFont));
+        }
+    }
+
+    auto fontDescriptor = findFontDescriptor(referenceURL, postScriptName);
+    if (!fontDescriptor)
+        return nullptr;
+    fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes));
+    return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+}
+
 std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData(Decoder& decoder)
 {
     std::optional<WebCore::FontOrientation> orientation;
@@ -580,11 +598,9 @@ std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::deco
     if (!postScriptName)
         return std::nullopt;
 
-    auto fontDescriptor = findFontDescriptor(*referenceURL, *postScriptName);
-    if (!fontDescriptor)
+    auto ctFont = createCTFont(attributes->get(), *size, *referenceURL, *postScriptName);
+    if (!ctFont)
         return std::nullopt;
-    fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes->get()));
-    auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), *size, nullptr));
 
     return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
