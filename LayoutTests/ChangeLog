@@ -1,3 +1,29 @@
+2021-09-09  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [Gstreamer] timeouts in media/media-source/media-source-has-audio-video.html and media/media-source/media-source-seek-unbuffered.html
+        https://bugs.webkit.org/show_bug.cgi?id=227258
+        <rdar://problem/79625722>
+
+        Reviewed by Alicia Boya Garcia.
+
+        The media-source-seek-unbuffered.html test was feeding only one segment
+        (1 second) to the SourceBuffer, but the libav h264 decoder used by the
+        glib ports needs more data to start producing decoded output.
+        The test was modified to append two segments (2 seconds) instead and now
+        the test passes.
+
+        The concatArrayBuffers() function from the media-source-error-crash.html
+        test was refactored as MediaSourceLoader.concatenateMediaSegments() and
+        reused in media-source-seek-unbuffered.html.
+
+        * media/media-source/media-source-error-crash-expected.txt: Expect different concatenation expression.
+        * media/media-source/media-source-error-crash.html: Removed concatArrayBuffers() and use MediaSourceLoader.concatenateMediaSegments() instead.
+        * media/media-source/media-source-loader.js:
+        (MediaSourceLoader.prototype.concatenateMediaSegments): New method that concatenates two media segments (ArrayBuffers).
+        * media/media-source/media-source-seek-unbuffered-expected.txt: Modified expectations to expect a different removed range and a more legible currentTime check.
+        * media/media-source/media-source-seek-unbuffered.html: Append 2 segments, remove [0.5, 2] instead of [0.5, 1] and improve legibility of currentTime check.
+        * platform/glib/TestExpectations: Unskipped test.
+
 2021-09-09  Cameron McCormack  <heycam@apple.com>
 
         Update WPT tests under /html/canvas/element

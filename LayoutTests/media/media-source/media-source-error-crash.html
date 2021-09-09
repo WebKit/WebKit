@@ -10,13 +10,6 @@
     var sourceBuffer;
     var sourceBuffer2;
 
-    function concatArrayBuffers(buffer1, buffer2) {
-    	var view = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
-    	view.set(new Uint8Array(buffer1), 0);
-    	view.set(new Uint8Array(buffer2), buffer1.byteLength);
-    	return view.buffer;
-    }
-
     function runTest() {
         findMediaElement();
 
@@ -41,7 +34,7 @@
         run('sourceBuffer2 = source.addSourceBuffer(loader.type())');
         waitForEventAndEnd('error');
         consoleWrite('Append an invalid media segment; should not crash.')
-        run('sourceBuffer.appendBuffer(concatArrayBuffers(loader.initSegment(), new ArrayBuffer(512)))');
+        run('sourceBuffer.appendBuffer(loader.concatenateMediaSegments([loader.initSegment(), new ArrayBuffer(512)]))');
     }
 
     </script>
