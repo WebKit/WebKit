@@ -1,5 +1,14 @@
 2021-09-09  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ iOS ] editing/selection/ios/select-text-under-hidden-subframe.html is timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=230127#c4
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-09-09  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ iOS ] Rebaselining 2 imported/w3c/web-platform-tests/css/cssom-view/* tests.
         https://bugs.webkit.org/show_bug.cgi?id=230123
 

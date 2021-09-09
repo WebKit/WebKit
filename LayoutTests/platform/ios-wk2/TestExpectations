@@ -2033,6 +2033,8 @@ editing/selection/ios/changing-selection-does-not-trigger-autocapitalization.htm
 editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Failure ]
 editing/selection/ios/do-not-hide-selection-in-visible-field.html [ Failure ]
 
+webkit.org/b/230127 editing/selection/ios/select-text-under-hidden-subframe.html [ Timeout ]
+
 # rdar://80393995 ([ iOS15 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html is a constant timeout) http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Timeout ]
 
 webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
