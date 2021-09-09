@@ -27,16 +27,23 @@
 #include "ArgumentCoders.h"
 
 #include "DataReference.h"
+#include "PrivateClickMeasurementDecoder.h"
+#include "PrivateClickMeasurementEncoder.h"
 #include "StreamConnectionEncoder.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {
 
+template<typename Encoder>
 void ArgumentCoder<WallTime>::encode(Encoder& encoder, const WallTime& time)
 {
     encoder << time.secondsSinceEpoch().value();
 }
+template
+void ArgumentCoder<WallTime>::encode<Encoder>(Encoder&, const WallTime&);
+template
+void ArgumentCoder<WallTime>::encode<WebKit::PCM::Encoder>(WebKit::PCM::Encoder&, const WallTime&);
 
 WARN_UNUSED_RETURN bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
 {
@@ -48,6 +55,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTi
     return true;
 }
 
+template<typename Decoder>
 WARN_UNUSED_RETURN std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
 {
     std::optional<double> time;
@@ -56,6 +64,10 @@ WARN_UNUSED_RETURN std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decod
         return std::nullopt;
     return WallTime::fromRawSeconds(*time);
 }
+template
+std::optional<WallTime> ArgumentCoder<WallTime>::decode<Decoder>(Decoder&);
+template
+std::optional<WallTime> ArgumentCoder<WallTime>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
 
 void ArgumentCoder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
 {
@@ -133,12 +145,14 @@ template
 void ArgumentCoder<String>::encode<Encoder>(Encoder&, const String&);
 template
 void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const String&);
+template
+void ArgumentCoder<String>::encode<WebKit::PCM::Encoder>(WebKit::PCM::Encoder&, const String&);
 
-template <typename CharacterType>
+template<typename CharacterType, typename Decoder>
 static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
+    if (!decoder.template bufferIsLargeEnoughToContain<CharacterType>(length))
         return std::nullopt;
     
     CharacterType* buffer;
@@ -149,25 +163,32 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t 
     return string;
 }
 
+template<typename Decoder>
 WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
-    uint32_t length;
-    if (!decoder.decode(length))
+    std::optional<uint32_t> length;
+    decoder >> length;
+    if (!length)
         return std::nullopt;
     
-    if (length == std::numeric_limits<uint32_t>::max()) {
+    if (*length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
         return String();
     }
     
-    bool is8Bit;
-    if (!decoder.decode(is8Bit))
+    std::optional<bool> is8Bit;
+    decoder >> is8Bit;
+    if (!is8Bit)
         return std::nullopt;
     
-    if (is8Bit)
-        return decodeStringText<LChar>(decoder, length);
-    return decodeStringText<UChar>(decoder, length);
+    if (*is8Bit)
+        return decodeStringText<LChar>(decoder, *length);
+    return decodeStringText<UChar>(decoder, *length);
 }
+template
+std::optional<String> ArgumentCoder<String>::decode<Decoder>(Decoder&);
+template
+std::optional<String> ArgumentCoder<String>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
 
 WARN_UNUSED_RETURN bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
 {

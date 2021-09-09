@@ -29,6 +29,7 @@
 #include "NavigatingToAppBoundDomain.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "PrefetchCache.h"
+#include "PrivateClickMeasurementManagerInterface.h"
 #include "SandboxExtension.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -60,7 +61,6 @@ class NetworkProcess;
 class NetworkResourceLoader;
 class NetworkBroadcastChannelRegistry;
 class NetworkSocketChannel;
-class PrivateClickMeasurementManager;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSocketTask;
@@ -167,7 +167,7 @@ public:
 #endif
 
     NetworkLoadScheduler& networkLoadScheduler();
-    PrivateClickMeasurementManager& privateClickMeasurement() { return *m_privateClickMeasurement; }
+    PCM::ManagerInterface& privateClickMeasurement() { return m_privateClickMeasurement.get(); }
 
 #if PLATFORM(COCOA)
     AppPrivacyReportTestingData& appPrivacyReportTestingData() { return m_appPrivacyReportTestingData; }
@@ -192,7 +192,6 @@ protected:
     Ref<NetworkProcess> m_networkProcess;
     WeakHashSet<NetworkDataTask> m_dataTaskSet;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    String m_privateClickMeasurementStorageDirectory;
     String m_resourceLoadStatisticsDirectory;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
     ShouldIncludeLocalhost m_shouldIncludeLocalhostInResourceLoadStatistics { ShouldIncludeLocalhost::Yes };
@@ -208,7 +207,7 @@ protected:
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
-    std::unique_ptr<PrivateClickMeasurementManager> m_privateClickMeasurement;
+    UniqueRef<PCM::ManagerInterface> m_privateClickMeasurement;
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 

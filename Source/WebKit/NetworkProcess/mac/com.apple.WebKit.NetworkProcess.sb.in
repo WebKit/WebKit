@@ -357,6 +357,8 @@
     (global-name "com.apple.AppSSO.service-xpc")
 )
 
+(allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
+
 (with-filter (uid 0)
     (allow mach-lookup
         (global-name "com.apple.DiskArbitration.diskarbitrationd")

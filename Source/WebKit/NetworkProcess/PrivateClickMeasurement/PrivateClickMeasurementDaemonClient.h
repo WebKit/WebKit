@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKMain.h"
+#pragma once
 
-#import "PCMDaemonEntryPoint.h"
-#import "XPCServiceEntryPoint.h"
+#include "PrivateClickMeasurementClient.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/WeakPtr.h>
 
-int WKXPCServiceMain(int argc, const char** argv)
-{
-    return WebKit::XPCServiceMain(argc, argv);
-}
+namespace WebKit {
 
-int WKPCMDaemonMain(int argc, const char** argv)
-{
-    return WebKit::PCMDaemonMain(argc, argv);
-}
+namespace PCM {
+
+class DaemonClient : public Client, public CanMakeWeakPtr<DaemonClient> {
+    WTF_MAKE_FAST_ALLOCATED;
+    void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
+    bool featureEnabled() const final;
+    bool debugModeEnabled() const final;
+};
+
+} // namespace PCM
+
+} // namespace WebKit

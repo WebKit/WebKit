@@ -1,3 +1,105 @@
+2021-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        Add PrivateClickMeasurement daemon
+        https://bugs.webkit.org/show_bug.cgi?id=230052
+
+        Reviewed by Chris Dumez.
+
+        This adds the infrastructure to use a daemon instead of the network process to handle PrivateClickMeasurement.
+        It does not start using the daemon yet, so there is no change in behavior.
+        I made a new class PCM::ManagerInterface which can either be a PrivateClickMeasurementManager or a PCM::ManagerProxy,
+        which would send messages to the daemon instead of doing the work locally.
+        I implemented the encoding and decoding of parameters using some of the IPC encoding templates.
+        I have an entry point for an executable but no executable yet.
+        I have verified that EventAttribution unit tests pass when using the daemon, so the infrastructure is good.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::pcmStoreDirectory): Deleted.
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::privateClickMeasurement):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp: Added.
+        (WebKit::PCM::Connection::connectionToDaemon):
+        (WebKit::PCM::Connection::send):
+        (WebKit::PCM::Connection::sendWithReply):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.h: Added.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.cpp: Added.
+        (WebKit::PCM::DaemonClient::loadFromNetwork):
+        (WebKit::PCM::DaemonClient::broadcastConsoleMessage):
+        (WebKit::PCM::DaemonClient::featureEnabled const):
+        (WebKit::PCM::DaemonClient::debugModeEnabled const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDaemonClient.h: Added.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDecoder.cpp: Added.
+        (WebKit::PCM::Decoder::bufferIsLargeEnoughToContainBytes const):
+        (WebKit::PCM::Decoder::decodeFixedLengthData):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDecoder.h: Added.
+        (WebKit::PCM::Decoder::Decoder):
+        (WebKit::PCM::Decoder::operator>>):
+        (WebKit::PCM::Decoder::bufferIsLargeEnoughToContain const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEncoder.cpp: Added.
+        (WebKit::PCM::Encoder::encodeFixedLengthData):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementEncoder.h: Added.
+        (WebKit::PCM::Encoder::operator<<):
+        (WebKit::PCM::Encoder::encode):
+        (WebKit::PCM::Encoder::takeBuffer):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp: Added.
+        (WebKit::PCM::MessageInfo::toStringForTesting::encodeReply):
+        (WebKit::PCM::manager):
+        (WebKit::PCM::handlePCMMessage):
+        (WebKit::PCM::handlePCMMessageWithReply):
+        (WebKit::PCM::decodeMessageAndSendToManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h: Added.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp: Added.
+        (WebKit::PCM::sendMessage):
+        (WebKit::PCM::ReplyCaller<>::callReply):
+        (WebKit::PCM::ReplyCaller<String>::callReply):
+        (WebKit::PCM::sendMessageWithReply):
+        (WebKit::PCM::ManagerProxy::storeUnattributed):
+        (WebKit::PCM::ManagerProxy::handleAttribution):
+        (WebKit::PCM::ManagerProxy::clear):
+        (WebKit::PCM::ManagerProxy::clearForRegistrableDomain):
+        (WebKit::PCM::ManagerProxy::migratePrivateClickMeasurementFromLegacyStorage):
+        (WebKit::PCM::ManagerProxy::toStringForTesting const):
+        (WebKit::PCM::ManagerProxy::setOverrideTimerForTesting):
+        (WebKit::PCM::ManagerProxy::setTokenPublicKeyURLForTesting):
+        (WebKit::PCM::ManagerProxy::setTokenSignatureURLForTesting):
+        (WebKit::PCM::ManagerProxy::setAttributionReportURLsForTesting):
+        (WebKit::PCM::ManagerProxy::markAllUnattributedAsExpiredForTesting):
+        (WebKit::PCM::ManagerProxy::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::PCM::ManagerProxy::setEphemeralMeasurementForTesting):
+        (WebKit::PCM::ManagerProxy::setPCMFraudPreventionValuesForTesting):
+        (WebKit::PCM::ManagerProxy::startTimerImmediatelyForTesting):
+        (WebKit::PCM::ManagerProxy::destroyStoreForTesting):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h: Added.
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementDaemonConnectionCocoa.mm: Added.
+        (WebKit::PCM::Connection::Connection):
+        (WebKit::PCM::Connection::connectionToDaemon):
+        (WebKit::PCM::dictionaryFromMessage):
+        (WebKit::PCM::Connection::send):
+        (WebKit::PCM::Connection::sendWithReply):
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.h: Added.
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.mm: Added.
+        (WebKit::PCM::addVersionAndEncodedMessageToDictionary):
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Platform/IPC/ArgumentCoder.h:
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::decodeStringText):
+        (IPC::ArgumentCoder<String>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.h: Added.
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm: Added.
+        (WebKit::peers):
+        (WebKit::CompletionHandler<void):
+        (WebKit::connectionEventHandler):
+        (WebKit::startListeningForMachServiceConnections):
+        (WebKit::registerScheduledActivityHandler):
+        (WebKit::enterSandbox):
+        (WebKit::PCMDaemonMain):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-09-09  Sihui Liu  <sihui_liu@apple.com>
 
         Address post-commit comments on r282130 (Add basic support for Storage API)

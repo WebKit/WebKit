@@ -28,13 +28,9 @@
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include "PrivateClickMeasurementClient.h"
+#include "PrivateClickMeasurementManagerInterface.h"
 #include "PrivateClickMeasurementStore.h"
-#include <WebCore/PrivateClickMeasurement.h>
-#include <WebCore/RegistrableDomain.h>
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceResponse.h>
 #include <WebCore/Timer.h>
-#include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
 #include <wtf/WeakPtr.h>
@@ -42,38 +38,30 @@
 
 namespace WebKit {
 
-enum class PrivateClickMeasurementAttributionType : bool { Unattributed, Attributed };
-
-class PrivateClickMeasurementManager : public CanMakeWeakPtr<PrivateClickMeasurementManager> {
+class PrivateClickMeasurementManager : public PCM::ManagerInterface, public CanMakeWeakPtr<PrivateClickMeasurementManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-
-    using AttributionDestinationSite = WebCore::PrivateClickMeasurement::AttributionDestinationSite;
-    using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
-    using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
-    using RegistrableDomain = WebCore::RegistrableDomain;
-    using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
 
     explicit PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, const String& storageDirectory);
     ~PrivateClickMeasurementManager();
 
-    void storeUnattributed(PrivateClickMeasurement&&);
-    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL);
-    void clear(CompletionHandler<void()>&&);
-    void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&);
-    void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
+    void storeUnattributed(PrivateClickMeasurement&&) final;
+    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL) final;
+    void clear(CompletionHandler<void()>&&) final;
+    void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&) final;
+    void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
 
-    void toStringForTesting(CompletionHandler<void(String)>&&) const;
-    void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
-    void setTokenPublicKeyURLForTesting(URL&&);
-    void setTokenSignatureURLForTesting(URL&&);
-    void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL);
-    void markAllUnattributedAsExpiredForTesting();
-    void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
-    void setEphemeralMeasurementForTesting(bool value) { m_isRunningEphemeralMeasurementTest = value; }
-    void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
-    void startTimerImmediatelyForTesting();
-    void destroyStoreForTesting(CompletionHandler<void()>&&);
+    void toStringForTesting(CompletionHandler<void(String)>&&) const final;
+    void setOverrideTimerForTesting(bool value) final { m_isRunningTest = value; }
+    void setTokenPublicKeyURLForTesting(URL&&) final;
+    void setTokenSignatureURLForTesting(URL&&) final;
+    void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL) final;
+    void markAllUnattributedAsExpiredForTesting() final;
+    void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) final;
+    void setEphemeralMeasurementForTesting(bool value) final { m_isRunningEphemeralMeasurementTest = value; }
+    void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
+    void startTimerImmediatelyForTesting() final;
+    void destroyStoreForTesting(CompletionHandler<void()>&&) final;
 
 private:
     PCM::Store& store();

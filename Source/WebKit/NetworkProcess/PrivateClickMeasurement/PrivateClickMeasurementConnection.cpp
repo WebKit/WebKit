@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKMain.h"
+#include "config.h"
+#include "PrivateClickMeasurementConnection.h"
 
-#import "PCMDaemonEntryPoint.h"
-#import "XPCServiceEntryPoint.h"
+#include <WebCore/NotImplemented.h>
 
-int WKXPCServiceMain(int argc, const char** argv)
+namespace WebKit {
+
+namespace PCM {
+
+#if !PLATFORM(COCOA)
+
+Connection Connection::connectionToDaemon()
 {
-    return WebKit::XPCServiceMain(argc, argv);
+    notImplemented();
+    return { };
 }
 
-int WKPCMDaemonMain(int argc, const char** argv)
+void Connection::send(MessageType, EncodedMessage&&)
 {
-    return WebKit::PCMDaemonMain(argc, argv);
+    notImplemented();
 }
+
+void Connection::sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler({ });
+}
+
+#endif
+
+} // namespace PCM
+
+} // namespace WebKit

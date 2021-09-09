@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKMain.h"
+#include "config.h"
+#include "PrivateClickMeasurementEncoder.h"
 
-#import "PCMDaemonEntryPoint.h"
-#import "XPCServiceEntryPoint.h"
+namespace WebKit {
 
-int WKXPCServiceMain(int argc, const char** argv)
+namespace PCM {
+
+void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, size_t)
 {
-    return WebKit::XPCServiceMain(argc, argv);
+    m_buffer.append(data, size);
 }
 
-int WKPCMDaemonMain(int argc, const char** argv)
-{
-    return WebKit::PCMDaemonMain(argc, argv);
-}
+} // namespace PCM
+
+} // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKMain.h"
+#pragma once
 
-#import "PCMDaemonEntryPoint.h"
-#import "XPCServiceEntryPoint.h"
+#include "ArgumentCoders.h"
 
-int WKXPCServiceMain(int argc, const char** argv)
-{
-    return WebKit::XPCServiceMain(argc, argv);
-}
+namespace WebKit {
 
-int WKPCMDaemonMain(int argc, const char** argv)
-{
-    return WebKit::PCMDaemonMain(argc, argv);
-}
+namespace PCM {
+
+class Encoder {
+public:
+    template<typename T>
+    Encoder& operator<<(T&& t)
+    {
+        IPC::ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>>::encode(*this, std::forward<T>(t));
+        return *this;
+    }
+
+    template<typename Arg, typename... Args>
+    void encode(Arg&& arg, Args&&... args)
+    {
+        *this << std::forward<Arg>(arg);
+        encode(std::forward<Args>(args)...);
+    }
+    void encode() { }
+
+    Vector<uint8_t> takeBuffer() { return std::exchange(m_buffer, { }); }
+
+    void encodeFixedLengthData(const uint8_t*, size_t, size_t alignment);
+
+private:
+    Vector<uint8_t> m_buffer;
+};
+
+} // namespace PCM
+
+} // namespace WebKit

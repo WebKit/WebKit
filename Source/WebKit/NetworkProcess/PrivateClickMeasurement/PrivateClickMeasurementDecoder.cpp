@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKMain.h"
+#include "config.h"
+#include "PrivateClickMeasurementDecoder.h"
 
-#import "PCMDaemonEntryPoint.h"
-#import "XPCServiceEntryPoint.h"
+namespace WebKit {
 
-int WKXPCServiceMain(int argc, const char** argv)
+namespace PCM {
+
+bool Decoder::bufferIsLargeEnoughToContainBytes(size_t bytes) const
 {
-    return WebKit::XPCServiceMain(argc, argv);
+    return bytes <= m_buffer.size() - m_bufferPosition;
 }
 
-int WKPCMDaemonMain(int argc, const char** argv)
+bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t)
 {
-    return WebKit::PCMDaemonMain(argc, argv);
+    if (!bufferIsLargeEnoughToContainBytes(size))
+        return false;
+    memcpy(data, m_buffer.data() + m_bufferPosition, size);
+    m_bufferPosition += size;
+    return true;
 }
+
+} // namespace PCM
+
+} // namespace WebKit

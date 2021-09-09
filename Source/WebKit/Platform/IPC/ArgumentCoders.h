@@ -300,6 +300,7 @@ auto tupleFromTupleAndObject(T&& object, std::tuple<Elements...>&& tuple)
 
 template<typename Type, typename... Types>
 struct TupleDecoderImpl {
+    template<typename Decoder>
     static std::optional<std::tuple<Type, Types...>> decode(Decoder& decoder)
     {
         std::optional<Type> optional;
@@ -317,6 +318,7 @@ struct TupleDecoderImpl {
 
 template<typename Type>
 struct TupleDecoderImpl<Type> {
+    template<typename Decoder>
     static std::optional<std::tuple<Type>> decode(Decoder& decoder)
     {
         std::optional<Type> optional;
@@ -329,6 +331,7 @@ struct TupleDecoderImpl<Type> {
 
 template<size_t size, typename... Elements>
 struct TupleDecoder {
+    template<typename Decoder>
     static std::optional<std::tuple<Elements...>> decode(Decoder& decoder)
     {
         return TupleDecoderImpl<Elements...>::decode(decoder);
@@ -337,6 +340,7 @@ struct TupleDecoder {
 
 template<>
 struct TupleDecoder<0> {
+    template<typename Decoder>
     static std::optional<std::tuple<>> decode(Decoder&)
     {
         return std::make_tuple();
@@ -350,6 +354,7 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
         TupleEncoder<sizeof...(Elements), Elements...>::encode(encoder, tuple);
     }
 
+    template<typename Decoder>
     static std::optional<std::tuple<Elements...>> decode(Decoder& decoder)
     {
         return TupleDecoder<sizeof...(Elements), Elements...>::decode(decoder);
@@ -721,8 +726,10 @@ template<typename... Types> struct ArgumentCoder<WTF::Variant<Types...>> {
 };
     
 template<> struct ArgumentCoder<WallTime> {
+    template<typename Encoder>
     static void encode(Encoder&, const WallTime&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WallTime&);
+    template<typename Decoder>
     static std::optional<WallTime> decode(Decoder&);
 };
 
@@ -740,6 +747,7 @@ template<> struct ArgumentCoder<String> {
     template<typename Encoder>
     static void encode(Encoder&, const String&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, String&);
+    template<typename Decoder>
     static std::optional<String> decode(Decoder&);
 };
 

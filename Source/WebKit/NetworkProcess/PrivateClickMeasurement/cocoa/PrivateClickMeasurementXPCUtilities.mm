@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,17 +24,27 @@
  */
 
 #import "config.h"
-#import "WKMain.h"
+#import "PrivateClickMeasurementXPCUtilities.h"
 
-#import "PCMDaemonEntryPoint.h"
-#import "XPCServiceEntryPoint.h"
+namespace WebKit {
 
-int WKXPCServiceMain(int argc, const char** argv)
+namespace PCM {
+
+void addVersionAndEncodedMessageToDictionary(Vector<uint8_t>&& message, xpc_object_t dictionary)
 {
-    return WebKit::XPCServiceMain(argc, argv);
+    ASSERT(xpc_get_type(dictionary) == XPC_TYPE_DICTIONARY);
+    xpc_dictionary_set_uint64(dictionary, PCM::protocolVersionKey, PCM::protocolVersionValue);
+
+    auto bufferSize = message.size();
+    auto rawPointer = message.releaseBuffer().leakPtr();
+    auto dispatchData = adoptNS(dispatch_data_create(rawPointer, bufferSize, dispatch_get_main_queue(), ^{
+        fastFree(rawPointer);
+    }));
+    auto xpcData = adoptOSObject(xpc_data_create_with_dispatch_data(dispatchData.get()));
+    xpc_dictionary_set_value(dictionary, PCM::protocolEncodedMessageKey, xpcData.get());
+
 }
 
-int WKPCMDaemonMain(int argc, const char** argv)
-{
-    return WebKit::PCMDaemonMain(argc, argv);
-}
+} // namespace PCM
+
+} // namespace WebKit

@@ -33,6 +33,7 @@
 #include "PluginProcessManager.h"
 #include "PluginProcessProxy.h"
 #include "PrivateClickMeasurementManager.h"
+#include "PrivateClickMeasurementManagerProxy.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"

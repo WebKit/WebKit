@@ -48,6 +48,7 @@ template<typename T, typename = void> struct ArgumentCoder {
         t.encode(encoder);
     }
 
+    template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {
         if constexpr(HasModernDecoderV<T>)
@@ -82,6 +83,7 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&value), sizeof(T), alignof(T));
     }
 
+    template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {
         T result;
@@ -100,6 +102,7 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_enum_v<T>>> {
         encoder << WTF::enumToUnderlyingType<T>(value);
     }
 
+    template<typename Decoder>
     static std::optional<T> decode(Decoder& decoder)
     {
         std::optional<std::underlying_type_t<T>> value;

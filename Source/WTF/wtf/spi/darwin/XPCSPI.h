@@ -36,6 +36,7 @@
 OS_OBJECT_DECL(xpc_object);
 typedef xpc_object_t xpc_connection_t;
 typedef xpc_object_t xpc_endpoint_t;
+typedef xpc_object_t xpc_activity_t;
 
 static ALWAYS_INLINE void _xpc_object_validate(xpc_object_t object)
 {
@@ -50,12 +51,23 @@ static ALWAYS_INLINE void _xpc_object_validate(xpc_object_t object)
 typedef void* xpc_object_t;
 typedef void* xpc_connection_t;
 typedef void* xpc_endpoint_t;
+typedef void* xpc_activity_t;
 
 #define XPC_GLOBAL_OBJECT(object) (&(object))
 
 #endif // OS_OBJECT_USE_OBJC
 
+enum {
+    XPC_ACTIVITY_STATE_CHECK_IN,
+    XPC_ACTIVITY_STATE_WAIT,
+    XPC_ACTIVITY_STATE_RUN,
+    XPC_ACTIVITY_STATE_DEFER,
+    XPC_ACTIVITY_STATE_CONTINUE,
+    XPC_ACTIVITY_STATE_DONE,
+};
+typedef long xpc_activity_state_t;
 typedef const struct _xpc_type_s* xpc_type_t;
+extern "C" const xpc_object_t XPC_ACTIVITY_CHECK_IN;
 
 #if PLATFORM(IOS_FAMILY) && __has_attribute(noescape)
 #define XPC_NOESCAPE __attribute__((__noescape__))
@@ -71,6 +83,7 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 
 #define XPC_ARRAY_APPEND ((size_t)(-1))
 #define XPC_CONNECTION_MACH_SERVICE_LISTENER (1 << 0)
+#define XPC_ERROR_CONNECTION_INTERRUPTED XPC_GLOBAL_OBJECT(_xpc_error_connection_interrupted)
 #define XPC_ERROR_CONNECTION_INVALID XPC_GLOBAL_OBJECT(_xpc_error_connection_invalid)
 #define XPC_ERROR_KEY_DESCRIPTION _xpc_error_key_description
 #define XPC_ERROR_TERMINATION_IMMINENT XPC_GLOBAL_OBJECT(_xpc_error_termination_imminent)
@@ -84,12 +97,27 @@ typedef void (*xpc_connection_handler_t)(xpc_connection_t connection);
 
 extern const char * const _xpc_error_key_description;
 
+extern "C" void xpc_connection_activate(xpc_connection_t connection);
+extern "C" const void* xpc_dictionary_get_data(xpc_object_t xdict, const char* key, size_t* length);
+extern "C" xpc_object_t xpc_data_create_with_dispatch_data(dispatch_data_t ddata);
+extern "C" xpc_activity_state_t xpc_activity_get_state(xpc_activity_t activity);
+extern "C" xpc_object_t xpc_activity_copy_criteria(xpc_activity_t activity);
+extern "C" void xpc_activity_set_criteria(xpc_activity_t activity, xpc_object_t criteria);
+#if COMPILER_SUPPORTS(BLOCKS)
+typedef void (^xpc_activity_handler_t)(xpc_activity_t activity);
+extern "C" void xpc_activity_register(const char *identifier, xpc_object_t criteria,
+    xpc_activity_handler_t handler);
+#endif // COMPILER_SUPPORTS(BLOCKS)
+
 #endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <os/transaction_private.h>
 #include <xpc/private.h>
 #else
+
+extern "C" const char * const XPC_ACTIVITY_RANDOM_INITIAL_DELAY;
+extern "C" const char * const XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY;
 
 #if OS_OBJECT_USE_OBJC
 OS_OBJECT_DECL(os_transaction);
@@ -108,6 +136,7 @@ enum {
 
 WTF_EXTERN_C_BEGIN
 
+extern const struct _xpc_dictionary_s _xpc_error_connection_interrupted;
 extern const struct _xpc_dictionary_s _xpc_error_connection_invalid;
 extern const struct _xpc_dictionary_s _xpc_error_termination_imminent;
 

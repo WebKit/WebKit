@@ -1291,6 +1291,7 @@
 		5CB7AFE023C52CE500E49CF3 /* _WKResourceLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB7AFDF23C52CBC00E49CF3 /* _WKResourceLoadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CB7AFE723C6820700E49CF3 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB7AFE623C681B000E49CF3 /* ResourceLoadInfo.h */; };
 		5CB7AFE823C69B6100E49CF3 /* _WKResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB7AFE323C67D3700E49CF3 /* _WKResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CB9310926E8439A0032B1C0 /* PrivateClickMeasurementXPCUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB9310726E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.h */; };
 		5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */; };
 		5CBD595C2280EDF4002B22AA /* _WKCustomHeaderFields.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C5D2388227A1892000B9BDA /* _WKCustomHeaderFields.mm */; };
 		5CD286511E7235990094FDC8 /* WKContentRuleListStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864D1E722F440094FDC8 /* WKContentRuleListStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4564,6 +4565,23 @@
 		5CB930C026E0542F0032B1C0 /* PrivateClickMeasurementClientImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementClientImpl.cpp; sourceTree = "<group>"; };
 		5CB930C126E054B80032B1C0 /* PrivateClickMeasurementClientImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementClientImpl.h; sourceTree = "<group>"; };
 		5CB930F226E7EEE00032B1C0 /* PrivateClickMeasurementNetworkLoaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementNetworkLoaderCocoa.mm; sourceTree = "<group>"; };
+		5CB930F426E801E80032B1C0 /* PrivateClickMeasurementDaemonConnectionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementDaemonConnectionCocoa.mm; sourceTree = "<group>"; };
+		5CB930F526E802150032B1C0 /* PrivateClickMeasurementManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManagerProxy.h; sourceTree = "<group>"; };
+		5CB930F626E802150032B1C0 /* PrivateClickMeasurementDaemonClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDaemonClient.h; sourceTree = "<group>"; };
+		5CB930F726E802150032B1C0 /* PrivateClickMeasurementDaemonClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDaemonClient.cpp; sourceTree = "<group>"; };
+		5CB930F826E802150032B1C0 /* PrivateClickMeasurementDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDecoder.cpp; sourceTree = "<group>"; };
+		5CB930F926E802150032B1C0 /* PrivateClickMeasurementEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementEncoder.cpp; sourceTree = "<group>"; };
+		5CB930FA26E802150032B1C0 /* PrivateClickMeasurementManagerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManagerInterface.h; sourceTree = "<group>"; };
+		5CB930FB26E802150032B1C0 /* PrivateClickMeasurementManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManagerProxy.cpp; sourceTree = "<group>"; };
+		5CB930FC26E802160032B1C0 /* PrivateClickMeasurementConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementConnection.cpp; sourceTree = "<group>"; };
+		5CB930FD26E802160032B1C0 /* PrivateClickMeasurementDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDecoder.h; sourceTree = "<group>"; };
+		5CB930FE26E802160032B1C0 /* PrivateClickMeasurementConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementConnection.h; sourceTree = "<group>"; };
+		5CB930FF26E802160032B1C0 /* PrivateClickMeasurementEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementEncoder.h; sourceTree = "<group>"; };
+		5CB9310426E837FC0032B1C0 /* PCMDaemonEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PCMDaemonEntryPoint.h; sourceTree = "<group>"; };
+		5CB9310526E837FD0032B1C0 /* PCMDaemonEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PCMDaemonEntryPoint.mm; sourceTree = "<group>"; };
+		5CB9310626E839A90032B1C0 /* PrivateClickMeasurementManagerInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManagerInterface.cpp; sourceTree = "<group>"; };
+		5CB9310726E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementXPCUtilities.h; sourceTree = "<group>"; };
+		5CB9310826E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrivateClickMeasurementXPCUtilities.mm; sourceTree = "<group>"; };
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTask.h; sourceTree = "<group>"; };
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDebugInfo.h; sourceTree = "<group>"; };
@@ -9283,12 +9301,24 @@
 				5CB930BF26E0542E0032B1C0 /* PrivateClickMeasurementClient.h */,
 				5CB930C026E0542F0032B1C0 /* PrivateClickMeasurementClientImpl.cpp */,
 				5CB930C126E054B80032B1C0 /* PrivateClickMeasurementClientImpl.h */,
+				5CB930FC26E802160032B1C0 /* PrivateClickMeasurementConnection.cpp */,
+				5CB930FE26E802160032B1C0 /* PrivateClickMeasurementConnection.h */,
+				5CB930F726E802150032B1C0 /* PrivateClickMeasurementDaemonClient.cpp */,
+				5CB930F626E802150032B1C0 /* PrivateClickMeasurementDaemonClient.h */,
 				5C826D6A26D482EA008AEC91 /* PrivateClickMeasurementDatabase.cpp */,
 				5C826D6926D482EA008AEC91 /* PrivateClickMeasurementDatabase.h */,
 				5CBE909026D7FB7C005A2E95 /* PrivateClickMeasurementDebugInfo.cpp */,
 				5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */,
+				5CB930F826E802150032B1C0 /* PrivateClickMeasurementDecoder.cpp */,
+				5CB930FD26E802160032B1C0 /* PrivateClickMeasurementDecoder.h */,
+				5CB930F926E802150032B1C0 /* PrivateClickMeasurementEncoder.cpp */,
+				5CB930FF26E802160032B1C0 /* PrivateClickMeasurementEncoder.h */,
 				6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */,
 				6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */,
+				5CB9310626E839A90032B1C0 /* PrivateClickMeasurementManagerInterface.cpp */,
+				5CB930FA26E802150032B1C0 /* PrivateClickMeasurementManagerInterface.h */,
+				5CB930FB26E802150032B1C0 /* PrivateClickMeasurementManagerProxy.cpp */,
+				5CB930F526E802150032B1C0 /* PrivateClickMeasurementManagerProxy.h */,
 				57FE688B260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.cpp */,
 				57FE688A260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h */,
 				5C826D6726D46B43008AEC91 /* PrivateClickMeasurementStore.cpp */,
@@ -9376,9 +9406,22 @@
 		5CB930F126E7EE890032B1C0 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				5CB930F426E801E80032B1C0 /* PrivateClickMeasurementDaemonConnectionCocoa.mm */,
 				5CB930F226E7EEE00032B1C0 /* PrivateClickMeasurementNetworkLoaderCocoa.mm */,
+				5CB9310726E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.h */,
+				5CB9310826E841CB0032B1C0 /* PrivateClickMeasurementXPCUtilities.mm */,
 			);
 			path = cocoa;
+			sourceTree = "<group>";
+		};
+		5CB9310326E8375B0032B1C0 /* Daemon */ = {
+			isa = PBXGroup;
+			children = (
+				5CB9310426E837FC0032B1C0 /* PCMDaemonEntryPoint.h */,
+				5CB9310526E837FD0032B1C0 /* PCMDaemonEntryPoint.mm */,
+			);
+			name = Daemon;
+			path = Cocoa/Daemon;
 			sourceTree = "<group>";
 		};
 		6BE969BF1E54D452008B7483 /* ResourceLoadStatistics */ = {
@@ -10842,6 +10885,7 @@
 		BC82836816B3587900A278FE /* EntryPointUtilities */ = {
 			isa = PBXGroup;
 			children = (
+				5CB9310326E8375B0032B1C0 /* Daemon */,
 				BC82836B16B3587900A278FE /* XPCService */,
 				5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */,
 			);
@@ -12395,6 +12439,7 @@
 				6BD05865220CE8C2000BED5C /* PrivateClickMeasurementManager.h in Headers */,
 				57FE688C260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h in Headers */,
 				5C826D6B26D482EF008AEC91 /* PrivateClickMeasurementStore.h in Headers */,
+				5CB9310926E8439A0032B1C0 /* PrivateClickMeasurementXPCUtilities.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
 				463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */,
