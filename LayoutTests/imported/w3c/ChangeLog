@@ -1,3 +1,13 @@
+2021-09-09  Martin Robinson  <mrobinson@webkit.org>
+
+        Position sticky does not work within table cells
+        https://bugs.webkit.org/show_bug.cgi?id=155496
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-position/sticky/position-sticky-contained-by-display-table-ref.html: Added.
+        * web-platform-tests/css/css-position/sticky/position-sticky-contained-by-display-table.html: Added.
+
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCError and RTCErrorEvent

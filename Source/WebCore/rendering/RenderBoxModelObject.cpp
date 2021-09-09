@@ -466,7 +466,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
         // the hierarchy between this stickily positioned item and its scrolling ancestor. In both cases,
         // we use the content box rectangle of the containing block, which is what should constrain the
         // movement.
-        containerContentRect = containingBlock->contentBoxRect();
+        containerContentRect = containingBlock->computedCSSContentBoxRect();
     } else {
         containerContentRect = containingBlock->layoutOverflowRect();
         containerContentRect.contract(LayoutBoxExtent {
