@@ -203,7 +203,7 @@ const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttri
     return attribute.value();
 }
 
-MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(const StringView& string)
+MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView string)
 {
     LengthType lengthType = LengthType::UnitLess;
     unsigned stringLength = string.length();
@@ -245,7 +245,7 @@ MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(const String
     return length;
 }
 
-MathMLElement::Length MathMLPresentationElement::parseNamedSpace(const StringView& string)
+MathMLElement::Length MathMLPresentationElement::parseNamedSpace(StringView string)
 {
     // Named space values are case-sensitive.
     int namedSpaceValue;

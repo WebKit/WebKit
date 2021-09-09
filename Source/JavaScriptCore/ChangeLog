@@ -1,3 +1,16 @@
+2021-09-09  Darin Adler  <darin@apple.com>
+
+        Improve performance by using StringView, not "const StringView&"
+        https://bugs.webkit.org/show_bug.cgi?id=229834
+
+        Reviewed by Anders Carlsson.
+
+        * parser/Lexer.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::setFormatsFromPattern):
+        * runtime/IntlDateTimeFormat.h:
+        Use StringView, not const StringView&.
+
 2021-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize op_get_property_enumerator further

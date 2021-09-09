@@ -821,7 +821,7 @@ static URL conformFragmentIdentifierForURL(const URL& url)
     // Work around this broken implementation by pre-parsing the fragment and ensuring that it meets their
     // criteria. Problematic strings from the TC0051.html test include "t=3&", and this problem generally is
     // with subtrings between the '&' character not including an equal sign.
-    auto hasInvalidNumberOfEqualCharacters = [](const StringView& fragmentParameter) {
+    auto hasInvalidNumberOfEqualCharacters = [](StringView fragmentParameter) {
         auto results = fragmentParameter.splitAllowingEmptyEntries('=');
         auto iterator = results.begin();
         return iterator == results.end() || ++iterator == results.end() || ++iterator != results.end();

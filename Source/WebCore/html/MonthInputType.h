@@ -52,7 +52,7 @@ private:
     Decimal parseToNumber(const String&, const Decimal&) const override;
     Decimal defaultValueForStepUp() const override;
     StepRange createStepRange(AnyStepHandling) const override;
-    std::optional<DateComponents> parseToDateComponents(const StringView&) const override;
+    std::optional<DateComponents> parseToDateComponents(StringView) const override;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const override;
     void handleDOMActivateEvent(Event&) override;
 

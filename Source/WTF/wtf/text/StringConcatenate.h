@@ -377,12 +377,12 @@ struct ASCIICaseConverter {
     StringView string;
 };
 
-inline ASCIICaseConverter lowercase(const StringView& stringView)
+inline ASCIICaseConverter lowercase(StringView stringView)
 {
     return { StringView::CaseConvertType::Lower, stringView };
 }
 
-inline ASCIICaseConverter uppercase(const StringView& stringView)
+inline ASCIICaseConverter uppercase(StringView stringView)
 {
     return { StringView::CaseConvertType::Upper, stringView };
 }

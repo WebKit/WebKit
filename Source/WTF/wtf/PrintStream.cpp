@@ -89,7 +89,7 @@ static void printExpectedCStringHelper(PrintStream& out, const char* type, Expec
     printInternal(out, expectedCString.value());
 }
 
-void printInternal(PrintStream& out, const StringView& string)
+void printInternal(PrintStream& out, StringView string)
 {
     printExpectedCStringHelper(out, "StringView", string.tryGetUtf8());
 }

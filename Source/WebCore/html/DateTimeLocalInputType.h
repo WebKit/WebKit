@@ -50,7 +50,7 @@ private:
     double valueAsDate() const final;
     ExceptionOr<void> setValueAsDate(double) const final;
     StepRange createStepRange(AnyStepHandling) const final;
-    std::optional<DateComponents> parseToDateComponents(const StringView&) const final;
+    std::optional<DateComponents> parseToDateComponents(StringView) const final;
     std::optional<DateComponents> setMillisecondToDateComponents(double) const final;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;

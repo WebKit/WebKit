@@ -456,7 +456,7 @@ static bool parseHTTPRefreshInternal(const CharacterType* position, const Charac
     return true;
 }
 
-bool parseMetaHTTPEquivRefresh(const StringView& input, double& delay, String& url)
+bool parseMetaHTTPEquivRefresh(StringView input, double& delay, String& url)
 {
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();

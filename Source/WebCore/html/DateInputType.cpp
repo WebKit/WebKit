@@ -74,7 +74,7 @@ StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, dateStepDescription);
 }
 
-std::optional<DateComponents> DateInputType::parseToDateComponents(const StringView& source) const
+std::optional<DateComponents> DateInputType::parseToDateComponents(StringView source) const
 {
     return DateComponents::fromParsingDate(source);
 }

@@ -1061,7 +1061,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
     return std::make_pair(count, isAfterExpansion);
 }
 
-std::pair<unsigned, bool> FontCascade::expansionOpportunityCount(const StringView& stringView, TextDirection direction, ExpansionBehavior expansionBehavior)
+std::pair<unsigned, bool> FontCascade::expansionOpportunityCount(StringView stringView, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
     // For each character, iterating from left to right:
     //   If it is recognized as a space, insert an opportunity after it
@@ -1072,7 +1072,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCount(const StringVie
     return expansionOpportunityCountInternal(stringView.characters16(), stringView.length(), direction, expansionBehavior);
 }
 
-bool FontCascade::leftExpansionOpportunity(const StringView& stringView, TextDirection direction)
+bool FontCascade::leftExpansionOpportunity(StringView stringView, TextDirection direction)
 {
     if (!stringView.length())
         return false;
@@ -1091,7 +1091,7 @@ bool FontCascade::leftExpansionOpportunity(const StringView& stringView, TextDir
     return canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(initialCharacter);
 }
 
-bool FontCascade::rightExpansionOpportunity(const StringView& stringView, TextDirection direction)
+bool FontCascade::rightExpansionOpportunity(StringView stringView, TextDirection direction)
 {
     if (!stringView.length())
         return false;

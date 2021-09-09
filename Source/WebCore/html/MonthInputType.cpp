@@ -117,7 +117,7 @@ Decimal MonthInputType::parseToNumber(const String& src, const Decimal& defaultV
     return Decimal::fromDouble(months);
 }
 
-std::optional<DateComponents> MonthInputType::parseToDateComponents(const StringView& source) const
+std::optional<DateComponents> MonthInputType::parseToDateComponents(StringView source) const
 {
     return DateComponents::fromParsingMonth(source);
 }

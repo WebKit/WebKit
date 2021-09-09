@@ -327,7 +327,7 @@ static inline unsigned skipLiteralText(const Container& container, unsigned star
     return length - 1;
 }
 
-void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
+void IntlDateTimeFormat::setFormatsFromPattern(StringView pattern)
 {
     // Get all symbols from the pattern, and set format fields accordingly.
     // http://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table

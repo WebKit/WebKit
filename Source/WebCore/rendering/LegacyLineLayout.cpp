@@ -895,7 +895,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
     BidiRun* previousRun = nullptr;
     for (; run; run = run->next()) {
         auto computeExpansionOpportunities = [&expansionOpportunities, &expansionOpportunityCount, textAlign, &isAfterExpansion] (RenderBlockFlow& block,
-            LegacyInlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, const StringView& stringView, TextDirection direction)
+            LegacyInlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, StringView stringView, TextDirection direction)
         {
             if (stringView.isEmpty()) {
                 // Empty runs should still produce an entry in expansionOpportunities list so that the number of items matches the number of runs.

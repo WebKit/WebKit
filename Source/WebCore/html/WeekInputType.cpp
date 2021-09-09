@@ -68,7 +68,7 @@ StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(stepBase, RangeLimitations::Valid, minimum, maximum, step, weekStepDescription);
 }
 
-std::optional<DateComponents> WeekInputType::parseToDateComponents(const StringView& source) const
+std::optional<DateComponents> WeekInputType::parseToDateComponents(StringView source) const
 {
     return DateComponents::fromParsingWeek(source);
 }

@@ -246,7 +246,7 @@ public:
     static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
     static String createUninitialized(unsigned length, LChar*& data) { return StringImpl::createUninitialized(length, data); }
 
-    using SplitFunctor = WTF::Function<void(const StringView&)>;
+    using SplitFunctor = WTF::Function<void(StringView)>;
 
     WTF_EXPORT_PRIVATE void split(UChar separator, const SplitFunctor&) const;
     WTF_EXPORT_PRIVATE Vector<String> split(UChar separator) const;

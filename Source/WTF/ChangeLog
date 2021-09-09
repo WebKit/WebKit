@@ -1,3 +1,32 @@
+2021-09-09  Darin Adler  <darin@apple.com>
+
+        Improve performance by using StringView, not "const StringView&"
+        https://bugs.webkit.org/show_bug.cgi?id=229834
+
+        Reviewed by Anders Carlsson.
+
+        Since StringView is a small structure that fits into two registers, it's not
+        good to pass a pointer to it; better performance to pass it by value. Note
+        that this is for release builds, not debug builds where StringView has
+        significant additional overhead when copying.
+
+        * wtf/PrintStream.cpp:
+        (WTF::printInternal):
+        * wtf/PrintStream.h:
+        * wtf/text/StringConcatenate.h:
+        * wtf/text/StringView.cpp:
+        (WTF::StringView::containsIgnoringASCIICase const):
+        (WTF::StringView::findIgnoringASCIICase const):
+        (WTF::StringView::startsWith const):
+        (WTF::StringView::startsWithIgnoringASCIICase const):
+        (WTF::StringView::endsWith const):
+        (WTF::StringView::endsWithIgnoringASCIICase const):
+        (WTF::StringView::GraphemeClusters::Iterator::Impl::Impl):
+        (WTF::StringView::GraphemeClusters::Iterator::Iterator):
+        * wtf/text/StringView.h:
+        * wtf/text/WTFString.h:
+        Use StringView, not const StringView&.
+
 2021-09-09  Alex Christensen  <achristensen@webkit.org>
 
         Add PrivateClickMeasurement daemon

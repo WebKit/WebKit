@@ -98,7 +98,7 @@ static std::optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuatio
     return block.relativePositionOffset();
 }
 
-static bool canUseSimplifiedTextMeasuring(const StringView& content, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
+static bool canUseSimplifiedTextMeasuring(StringView content, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
 {
     if (fontCascade.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
         return false;
