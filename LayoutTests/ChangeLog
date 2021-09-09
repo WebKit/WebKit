@@ -1,3 +1,12 @@
+2021-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-text-decor] Update WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=230042
+
+        Reviewed by Rob Buis.
+
+        * TestExpectations: Mark some test failures.
+
 2021-09-09  Enrique Ocaña González  <eocanha@igalia.com>
 
         [Gstreamer] timeouts in media/media-source/media-source-has-audio-video.html and media/media-source/media-source-seek-unbuffered.html

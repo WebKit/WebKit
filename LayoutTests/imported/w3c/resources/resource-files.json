@@ -498,6 +498,7 @@
         "web-platform-tests/css/css-shapes/test-plan/index.html",
         "web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-029-crash.html",
         "web-platform-tests/css/css-sizing/aspect-ratio/small-aspect-ratio-crash.html",
+        "web-platform-tests/css/css-text-decor/text-decoration-color-selection-002.html",
         "web-platform-tests/css/css-text-decor/text-decoration-visibility-001.xht",
         "web-platform-tests/css/css-text-decor/text-decoration-visibility-002.xht",
         "web-platform-tests/css/css-text-decor/text-decoration-visibility-003.xht",

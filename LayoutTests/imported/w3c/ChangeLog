@@ -1,3 +1,62 @@
+2021-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-text-decor] Update WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=230042
+
+        Import css-text-decor test suite based on WPT commit 5d2020c403.
+
+        Reviewed by Rob Buis.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-dashed-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-dashed.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-double-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-double.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-solid-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-solid.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-wavy-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/text-decoration-invalidation-wavy.html: Added.
+        * web-platform-tests/css/css-text-decor/invalidation/w3c-import.log: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-color-expected.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-color-selection-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-color-selection-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-color-selection-002.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-color.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-005-expected.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-skip-ink-005.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-from-zero-sized-font-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-from-zero-sized-font.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-ink-skip-dilation-expected.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-percent-001-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-percent-001.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001.html:
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-single-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-single.html: Added.
+        * web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002.html:
+        * web-platform-tests/css/css-text-decor/text-emphasis-color-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-002.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-above-right-002.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-left-002.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-001.xht:
+        * web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-002.xht:
+        * web-platform-tests/css/css-text-decor/text-underline-offset-negative-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-negative.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-overline-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-overline-vertical-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-overline-vertical.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-overline.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-scroll-001.html:
+        * web-platform-tests/css/css-text-decor/text-underline-offset-vertical-003-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-vertical-003.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-zero-position-expected.html: Added.
+        * web-platform-tests/css/css-text-decor/text-underline-offset-zero-position.html: Added.
+        * web-platform-tests/css/css-text-decor/w3c-import.log:
+
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
         Rebase a few WebRTC tests marked as flaky but making progress with RTCSctpTransport introduction

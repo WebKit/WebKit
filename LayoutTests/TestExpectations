@@ -3425,6 +3425,8 @@ webkit.org/b/203515 imported/w3c/web-platform-tests/css/css-sizing/slice-intrins
 webkit.org/b/203583 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-affects-container-width-when-height-changes.html [ Pass Failure ]
 
 # wpt css-text-decor failures
+webkit.org/b/230041 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-001.html [ ImageOnlyFailure ]
+webkit.org/b/230041 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01.html [ ImageOnlyFailure ]
 webkit.org/b/203530 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html [ ImageOnlyFailure ]
 webkit.org/b/203531 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-linethrough-001.html [ ImageOnlyFailure ]
@@ -3433,8 +3435,12 @@ webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-deco
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-percent-001.html [ ImageOnlyFailure ]
+webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-single.html [ ImageOnlyFailure ]
 webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja.html [ ImageOnlyFailure ]
 webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-negative.html [ ImageOnlyFailure ]
+webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-zero-position.html [ ImageOnlyFailure ]
 
 # wpt css-position failures
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html [ Skip ]

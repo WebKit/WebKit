@@ -9,7 +9,7 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+text-align-last
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
@@ -21,6 +21,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-recalc-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-recalc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-010-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-010.xht
@@ -85,6 +90,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-fixed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-zero-sized-font-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-zero-sized-font.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-initial.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-ink-skip-dilation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-ink-skip-dilation.html
@@ -93,8 +100,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-linethrough-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-percent-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-percent-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-single-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-single.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-valid.html
@@ -173,6 +184,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-initial.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-negative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-negative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-overline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-overline-vertical-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-overline-vertical.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-overline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-scroll-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-scroll-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-valid.html
@@ -182,6 +199,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-vertical-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-vertical-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-vertical-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-vertical-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-vertical-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-zero-position-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-zero-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-001a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-001a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/text-underline-position-001b-expected.html
