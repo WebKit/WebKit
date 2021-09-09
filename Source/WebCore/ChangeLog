@@ -1,3 +1,54 @@
+2021-09-09  Antti Koivisto  <antti@apple.com>
+
+        Add cache to InlineContent for O(1) inline box access
+        https://bugs.webkit.org/show_bug.cgi?id=230092
+
+        Reviewed by Alan Bujtas.
+
+        Add lazy caches for getting the index of the first run and all non-root inline boxes for a layout box.
+
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::indexForRun const):
+        (WebCore::LayoutIntegration::InlineContent::firstRunForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::firstRunIndexForLayoutBox const):
+
+        For small run vectors (<16) just search directly.
+
+        (WebCore::LayoutIntegration::InlineContent::nonRootInlineBoxIndexesForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::releaseCaches):
+
+        Memory cleanup support.
+
+        (WebCore::LayoutIntegration::InlineContent::shrinkToFit):
+        (WebCore::LayoutIntegration::InlineContent::iteratorForRun const): Deleted.
+        (WebCore::LayoutIntegration::InlineContent::iteratorForTextRun const): Deleted.
+
+        Cleanup the interface by removing iterator dependency (iterator depends on InlineContent, not other way round).
+
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        (WebCore::LayoutIntegration::InlineContent::traverseNonRootInlineBoxes):
+
+        Traversal helper.
+
+        (WebCore::LayoutIntegration::InlineContent::shrinkToFit): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::textRunsFor const):
+        (WebCore::LayoutIntegration::LineLayout::runFor const):
+        (WebCore::LayoutIntegration::LineLayout::firstInlineBoxRect const):
+        (WebCore::LayoutIntegration::LineLayout::visualOverflowBoundingBoxRectFor const):
+        (WebCore::LayoutIntegration::LineLayout::collectInlineBoxRects const):
+
+        Use the new cache-backed interfaces.
+
+        (WebCore::LayoutIntegration::LineLayout::releaseCaches):
+        (WebCore::LayoutIntegration::LineLayout::paintTextRunUsingPhysicalCoordinates):
+        (WebCore::LayoutIntegration::LineLayout::releaseInlineItemCache): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::textRunFor):
+        (WebCore::LayoutIntegration::runFor):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+
 2021-09-09  Frederic Wang  <fwang@igalia.com>
 
         Chromium test-case asserts with ASSERTION FAILED: propertyMissingOrEqualToNone

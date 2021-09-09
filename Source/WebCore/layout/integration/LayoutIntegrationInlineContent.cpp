@@ -78,15 +78,86 @@ const RenderBlockFlow& InlineContent::containingBlock() const
     return m_lineLayout->flow();
 }
 
-RunIterator InlineContent::iteratorForRun(const Run& run) const
+size_t InlineContent::indexForRun(const Run& run) const
 {
-    return { RunIteratorModernPath { *this, static_cast<size_t>(&run - runs.begin()) } };
+    auto index = static_cast<size_t>(&run - runs.begin());
+    RELEASE_ASSERT(index < runs.size());
+    return index;
 }
 
-TextRunIterator InlineContent::iteratorForTextRun(const Run& run) const
+const Run* InlineContent::firstRunForLayoutBox(const Layout::Box& layoutBox) const
 {
-    ASSERT(run.text());
-    return { RunIteratorModernPath { *this, static_cast<size_t>(&run - runs.begin()) } };
+    auto index = firstRunIndexForLayoutBox(layoutBox);
+    return index ? &runs[*index] : nullptr;
+}
+
+std::optional<size_t> InlineContent::firstRunIndexForLayoutBox(const Layout::Box& layoutBox) const
+{
+    constexpr auto cacheThreshold = 16;
+
+    if (runs.size() < cacheThreshold) {
+        for (size_t i = 0; i < runs.size(); ++i) {
+            auto& run = runs[i];
+            if (&run.layoutBox() == &layoutBox)
+                return i;
+        }
+        return { };
+    }
+    
+    if (!m_firstRunIndexCache) {
+        m_firstRunIndexCache = makeUnique<FirstRunIndexCache>();
+        for (size_t i = 0; i < runs.size(); ++i) {
+            auto& run = runs[i];
+            if (run.isRootInlineBox())
+                continue;
+            m_firstRunIndexCache->add(run.layoutBox(), i);
+        }
+    }
+
+    auto it = m_firstRunIndexCache->find(layoutBox);
+    if (it == m_firstRunIndexCache->end())
+        return { };
+
+    return it->value;
+}
+
+const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const Layout::Box& layoutBox) const
+{
+    ASSERT(layoutBox.isContainerBox());
+
+    if (!m_inlineBoxIndexCache) {
+        m_inlineBoxIndexCache = makeUnique<InlineBoxIndexCache>();
+        for (size_t i = 0; i < runs.size(); ++i) {
+            auto& run = runs[i];
+            if (!run.isNonRootInlineBox())
+                continue;
+            m_inlineBoxIndexCache->ensure(run.layoutBox(), [&] {
+                return Vector<size_t> { };
+            }).iterator->value.append(i);
+        }
+        for (auto entry : *m_inlineBoxIndexCache)
+            entry.value.shrinkToFit();
+    }
+
+    auto it = m_inlineBoxIndexCache->find(layoutBox);
+    if (it == m_inlineBoxIndexCache->end()) {
+        static NeverDestroyed<Vector<size_t>> emptyVector;
+        return emptyVector.get();
+    }
+
+    return it->value;
+}
+
+void InlineContent::releaseCaches()
+{
+    m_firstRunIndexCache = { };
+    m_inlineBoxIndexCache = { };
+}
+
+void InlineContent::shrinkToFit()
+{
+    runs.shrinkToFit();
+    lines.shrinkToFit();
 }
 
 }

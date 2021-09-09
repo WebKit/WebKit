@@ -195,6 +195,17 @@ TextRunIterator textRunFor(const LegacyInlineTextBox* legacyInlineTextBox)
     return { RunIteratorLegacyPath { legacyInlineTextBox } };
 }
 
+TextRunIterator textRunFor(const InlineContent& content, const Run& run)
+{
+    return textRunFor(content, content.indexForRun(run));
+}
+
+TextRunIterator textRunFor(const InlineContent& content, size_t runIndex)
+{
+    ASSERT(content.runs[runIndex].text());
+    return { RunIteratorModernPath { content, runIndex } };
+}
+
 TextRunRange textRunsFor(const RenderText& text)
 {
     return { firstTextRunFor(text) };
@@ -216,6 +227,11 @@ RunIterator runFor(const RenderBox& renderer)
         return lineLayout->runFor(renderer);
 #endif
     return { RunIteratorLegacyPath(renderer.inlineBoxWrapper()) };
+}
+
+RunIterator runFor(const InlineContent& content, size_t runIndex)
+{
+    return { RunIteratorModernPath { content, runIndex } };
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

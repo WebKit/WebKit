@@ -122,7 +122,7 @@ private:
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
-    void releaseInlineItemCache();
+    void releaseCaches();
 
     BoxTree m_boxTree;
     Layout::LayoutState m_layoutState;

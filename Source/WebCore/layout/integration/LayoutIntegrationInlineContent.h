@@ -31,6 +31,7 @@
 #include "LayoutIntegrationLine.h"
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -45,8 +46,6 @@ class Box;
 namespace LayoutIntegration {
 
 class LineLayout;
-class RunIterator;
-class TextRunIterator;
 
 using Run = Layout::Run;
 
@@ -72,19 +71,32 @@ struct InlineContent : public RefCounted<InlineContent> {
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& containingBlock() const;
 
-    RunIterator iteratorForRun(const Run&) const;
-    TextRunIterator iteratorForTextRun(const Run&) const;
+    size_t indexForRun(const Run&) const;
+
+    const Run* firstRunForLayoutBox(const Layout::Box&) const;
+    template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, Function&&);
+
+    std::optional<size_t> firstRunIndexForLayoutBox(const Layout::Box&) const;
+    const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const;
+
+    void releaseCaches();
 
 private:
     InlineContent(const LineLayout&);
 
     WeakPtr<const LineLayout> m_lineLayout;
+
+    using FirstRunIndexCache = WeakHashMap<Layout::Box, size_t>;
+    mutable std::unique_ptr<FirstRunIndexCache> m_firstRunIndexCache;
+
+    using InlineBoxIndexCache = WeakHashMap<Layout::Box, Vector<size_t>>;
+    mutable std::unique_ptr<InlineBoxIndexCache> m_inlineBoxIndexCache;
 };
 
-inline void InlineContent::shrinkToFit()
+template<typename Function> void InlineContent::traverseNonRootInlineBoxes(const Layout::Box& layoutBox, Function&& function)
 {
-    runs.shrinkToFit();
-    lines.shrinkToFit();
+    for (auto index : nonRootInlineBoxIndexesForLayoutBox(layoutBox))
+        function(runs[index]);
 }
 
 }

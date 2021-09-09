@@ -201,9 +201,12 @@ private:
 TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunIterator textRunFor(const LegacyInlineTextBox*);
+TextRunIterator textRunFor(const InlineContent&, const Run&);
+TextRunIterator textRunFor(const InlineContent&, size_t runIndex);
 TextRunRange textRunsFor(const RenderText&);
 RunIterator runFor(const RenderLineBreak&);
 RunIterator runFor(const RenderBox&);
+RunIterator runFor(const InlineContent&, size_t runIndex);
 
 // -----------------------------------------------
 
