@@ -1,3 +1,12 @@
+2021-09-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Share more bots between EWS queues
+        https://bugs.webkit.org/show_bug.cgi?id=230094
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/config.json:
+
 2021-09-08  Jonathan Bedard  <jbedard@apple.com>
 
         Exception in run-webkit-tests: Bad file descriptor (Part 2)

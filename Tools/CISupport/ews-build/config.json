@@ -31,7 +31,7 @@
     { "name": "ews105", "platform": "mac-catalina" },
     { "name": "ews106", "platform": "mac-catalina" },
     { "name": "ews107", "platform": "mac-catalina" },
-    { "name": "ews108", "platform": "ios-14" },
+    { "name": "ews108", "platform": "*" },
     { "name": "ews109", "platform": "*" },
     { "name": "ews112", "platform": "mac-catalina" },
     { "name": "ews113", "platform": "mac-catalina" },
@@ -128,7 +128,7 @@
       "factory": "iOSBuildFactory", "platform": "ios-simulator-14",
       "configuration": "release", "architectures": ["x86_64"],
       "triggers": ["api-tests-ios-sim-ews", "ios-14-sim-wk2-tests-ews"],
-      "workernames": ["ews152", "ews154", "ews156", "ews157", "ews109"]
+      "workernames": ["ews152", "ews154", "ews156", "ews157", "ews108", "ews109"]
     },
     {
       "name": "iOS-14-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
@@ -149,7 +149,7 @@
       "factory": "macOSWK2Factory", "platform": "mac-bigsur",
       "configuration": "debug", "architectures": ["arm64"],
       "triggered_by": ["macos-applesilicon-big-sur-debug-build-ews"],
-      "workernames": ["ews173", "ews174", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
+      "workernames": ["ews172", "ews173", "ews174", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
       "name": "macOS-Catalina-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
