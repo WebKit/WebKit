@@ -60,6 +60,7 @@
 #include "RTCOfferOptions.h"
 #include "RTCPeerConnectionIceErrorEvent.h"
 #include "RTCPeerConnectionIceEvent.h"
+#include "RTCSctpTransport.h"
 #include "RTCSessionDescription.h"
 #include "RTCSessionDescriptionInit.h"
 #include "Settings.h"
@@ -644,7 +645,7 @@ void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState newState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, newState);
 
-    scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
+    scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](auto&) mutable {
         if (protectedThis->isClosed() || protectedThis->m_iceConnectionState == newState)
             return;
 
@@ -697,11 +698,13 @@ RTCIceConnectionState RTCPeerConnection::computeIceConnectionStateFromIceTranspo
         return RTCIceConnectionState::Closed;
 
     auto iceTransports = m_iceTransports;
+
     iceTransports.removeAllMatching([&](auto& iceTransport) {
-        bool test = allOf(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
+        if (m_sctpTransport && &m_sctpTransport->transport().iceTransport() == iceTransport.ptr())
+            return false;
+        return allOf(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
             return !isIceTransportUsedByTransceiver(iceTransport.get(), *transceiver);
         });
-        return test;
     });
 
     if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Failed; }))
@@ -954,6 +957,26 @@ void RTCPeerConnection::updateTransceiversAfterSuccessfulLocalDescription()
 void RTCPeerConnection::updateTransceiversAfterSuccessfulRemoteDescription()
 {
     updateTransceiverTransports();
+}
+
+void RTCPeerConnection::updateSctpBackend(std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
+{
+    if (!sctpBackend) {
+        m_sctpTransport = nullptr;
+        return;
+    }
+    if (m_sctpTransport && m_sctpTransport->backend() == *sctpBackend) {
+        m_sctpTransport->update();
+        return;
+    }
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    auto dtlsTransport = getOrCreateDtlsTransport(sctpBackend->dtlsTransportBackend().moveToUniquePtr());
+    if (!dtlsTransport)
+        return;
+    m_sctpTransport = RTCSctpTransport::create(*context, makeUniqueRefFromNonNullUniquePtr(WTFMove(sctpBackend)), dtlsTransport.releaseNonNull());
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -131,7 +131,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     attribute EventHandler ontrack;
 
     // 6.1 Peer-to-peer data API
-    // FIXME 169644: missing sctp
+    readonly attribute RTCSctpTransport? sctp;
 
     RTCDataChannel createDataChannel([LegacyNullToEmptyString] USVString label, optional RTCDataChannelInit options);
     attribute EventHandler ondatachannel;

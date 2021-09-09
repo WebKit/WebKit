@@ -1,3 +1,15 @@
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Add support for RTCSctpTransport
+        https://bugs.webkit.org/show_bug.cgi?id=229292
+        <rdar://problem/82394152>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/dtls10.html:
+        We should now check for the RTCSctpTransport's RTCDtlsTransport state
+        to identify whether connection is successful or not.
+
 2021-09-09  Jean-Yves Avenard  <jya@apple.com>
 
         [WebAudio/WebM] Incorrect number of frames returned if decoding frame rate doesn't match original

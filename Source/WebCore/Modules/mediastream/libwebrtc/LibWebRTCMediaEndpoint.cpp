@@ -36,6 +36,7 @@
 #include "LibWebRTCRtpReceiverBackend.h"
 #include "LibWebRTCRtpSenderBackend.h"
 #include "LibWebRTCRtpTransceiverBackend.h"
+#include "LibWebRTCSctpTransportBackend.h"
 #include "LibWebRTCStatsCollector.h"
 #include "LibWebRTCUtils.h"
 #include "Logging.h"
@@ -672,18 +673,42 @@ void LibWebRTCMediaEndpoint::createSessionDescriptionFailed(ExceptionCode errorC
     });
 }
 
+class SctpTransportState {
+public:
+    explicit SctpTransportState(rtc::scoped_refptr<webrtc::SctpTransportInterface>&&);
+    std::unique_ptr<LibWebRTCSctpTransportBackend> createBackend();
+
+private:
+    rtc::scoped_refptr<webrtc::SctpTransportInterface> m_transport;
+    webrtc::SctpTransportInformation m_information;
+};
+
+SctpTransportState::SctpTransportState(rtc::scoped_refptr<webrtc::SctpTransportInterface>&& transport)
+    : m_transport(WTFMove(transport))
+{
+    if (m_transport)
+        m_information = m_transport->Information();
+}
+
+std::unique_ptr<LibWebRTCSctpTransportBackend> SctpTransportState::createBackend()
+{
+    if (!m_transport)
+        return nullptr;
+    return makeUnique<LibWebRTCSctpTransportBackend>(WTFMove(m_transport), m_information.dtls_transport());
+}
+
 void LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded()
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = makeRef(*this), sctpState = SctpTransportState(m_backend->GetSctpTransport())]() mutable {
         if (protectedThis->isStopped())
             return;
-        protectedThis->m_peerConnectionBackend.setLocalDescriptionSucceeded();
+        protectedThis->m_peerConnectionBackend.setLocalDescriptionSucceeded(sctpState.createBackend());
     });
 }
 
 void LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed(ExceptionCode errorCode, const char* errorMessage)
 {
-    callOnMainThread([protectedThis = makeRef(*this), errorCode, errorMessage = String(errorMessage)] () mutable {
+    callOnMainThread([protectedThis = makeRef(*this), errorCode, errorMessage = String(errorMessage)]() mutable {
         if (protectedThis->isStopped())
             return;
         protectedThis->m_peerConnectionBackend.setLocalDescriptionFailed(Exception { errorCode, WTFMove(errorMessage) });
@@ -692,10 +717,10 @@ void LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed(ExceptionCode erro
 
 void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded()
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = makeRef(*this), sctpState = SctpTransportState(m_backend->GetSctpTransport())]() mutable {
         if (protectedThis->isStopped())
             return;
-        protectedThis->m_peerConnectionBackend.setRemoteDescriptionSucceeded();
+        protectedThis->m_peerConnectionBackend.setRemoteDescriptionSucceeded(sctpState.createBackend());
     });
 }
 
