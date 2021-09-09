@@ -223,6 +223,10 @@ long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
 
 void WebGL2RenderingContext::initializeVertexArrayObjects()
 {
+#if !USE(ANGLE)
+    if (!isGLES2Compliant())
+        initVertexAttrib0();
+#endif
     m_defaultVertexArrayObject = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::Default);
     addContextObject(*m_defaultVertexArrayObject);
 #if USE(OPENGL_ES)
@@ -230,10 +234,7 @@ void WebGL2RenderingContext::initializeVertexArrayObjects()
 #else
     bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
 #endif
-#if !USE(ANGLE)
-    if (!isGLES2Compliant())
-        initVertexAttrib0();
-#endif
+
 }
 
 void WebGL2RenderingContext::initializeShaderExtensions()
@@ -1797,7 +1798,8 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
 {
     if (isContextLostOrPending())
         return;
-
+    if (!validateVertexArrayObject("drawRangeElements"))
+        return;
     m_context->drawRangeElements(mode, start, end, count, type, offset);
 }
 

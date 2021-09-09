@@ -512,6 +512,7 @@ protected:
     bool validateDrawElements(const char* functionName, GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, unsigned& numElements, GCGLsizei primcount);
     bool validateNPOTTextureLevel(GCGLsizei width, GCGLsizei height, GCGLint level, const char* functionName);
 #endif
+    bool validateVertexArrayObject(const char* functionName);
 
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GCGLenum);

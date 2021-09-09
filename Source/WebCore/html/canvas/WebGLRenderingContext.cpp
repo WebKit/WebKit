@@ -124,13 +124,13 @@ WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, Ref<GraphicsCon
 
 void WebGLRenderingContext::initializeVertexArrayObjects()
 {
-    m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(*this, WebGLVertexArrayObjectOES::Type::Default);
-    addContextObject(*m_defaultVertexArrayObject);
-    m_boundVertexArrayObject = m_defaultVertexArrayObject;
 #if !USE(ANGLE)
     if (!isGLES2Compliant())
         initVertexAttrib0();
 #endif
+    m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(*this, WebGLVertexArrayObjectOES::Type::Default);
+    addContextObject(*m_defaultVertexArrayObject);
+    m_boundVertexArrayObject = m_defaultVertexArrayObject;
 }
 
 WebGLExtension* WebGLRenderingContext::getExtension(const String& name)

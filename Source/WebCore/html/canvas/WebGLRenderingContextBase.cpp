@@ -2337,10 +2337,7 @@ void WebGLRenderingContextBase::disableVertexAttribArray(GCGLuint index)
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "disableVertexAttribArray", "index out of range");
         return;
     }
-
-    WebGLVertexArrayObjectBase::VertexAttribState& state = m_boundVertexArrayObject->getVertexAttribState(index);
-    state.enabled = false;
-
+    m_boundVertexArrayObject->setVertexAttribEnabled(index, false);
 #if !USE(ANGLE)
     if (index > 0 || isGLES2Compliant())
 #endif
@@ -2358,6 +2355,15 @@ bool WebGLRenderingContextBase::validateNPOTTextureLevel(GCGLsizei width, GCGLsi
     return true;
 }
 #endif
+
+bool WebGLRenderingContextBase::validateVertexArrayObject(const char* functionName)
+{
+    if (!m_boundVertexArrayObject->areAllEnabledAttribBuffersBound()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "no buffer is bound to enabled attribute");
+        return false;
+    }
+    return true;
+}
 
 bool WebGLRenderingContextBase::validateElementArraySize(GCGLsizei count, GCGLenum type, GCGLintptr offset)
 {
@@ -2700,6 +2706,8 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
     if (!validateDrawArrays("drawArrays", mode, first, count, 0))
         return;
 #endif
+    if (!validateVertexArrayObject("drawArrays"))
+        return;
 
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
@@ -2763,6 +2771,8 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
     if (!validateDrawElements("drawElements", mode, count, type, offset, numElements, 0))
         return;
 #endif
+    if (!validateVertexArrayObject("drawElements"))
+        return;
 
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
@@ -2831,10 +2841,7 @@ void WebGLRenderingContextBase::enableVertexAttribArray(GCGLuint index)
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "enableVertexAttribArray", "index out of range");
         return;
     }
-
-    WebGLVertexArrayObjectBase::VertexAttribState& state = m_boundVertexArrayObject->getVertexAttribState(index);
-    state.enabled = true;
-
+    m_boundVertexArrayObject->setVertexAttribEnabled(index, true);
     m_context->enableVertexAttribArray(index);
 }
 
@@ -6334,7 +6341,6 @@ void WebGLRenderingContextBase::vertexAttribPointer(GCGLuint index, GCGLint size
         return;
     }
     GCGLsizei bytesPerElement = size * typeSize;
-
     m_boundVertexArrayObject->setVertexAttribState(locker, index, bytesPerElement, size, type, normalized, stride, static_cast<GCGLintptr>(offset), false, m_boundArrayBuffer.get());
     m_context->vertexAttribPointer(index, size, type, normalized, stride, static_cast<GCGLintptr>(offset));
 }
@@ -7537,13 +7543,10 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(const char* functionName, GCG
 #if !USE(ANGLE)
 void WebGLRenderingContextBase::initVertexAttrib0()
 {
-    WebGLVertexArrayObjectBase::VertexAttribState& state = m_boundVertexArrayObject->getVertexAttribState(0);
-    
     m_vertexAttrib0Buffer = createBuffer();
     m_context->bindBuffer(GraphicsContextGL::ARRAY_BUFFER, m_vertexAttrib0Buffer->object());
     m_context->bufferData(GraphicsContextGL::ARRAY_BUFFER, 0, GraphicsContextGL::DYNAMIC_DRAW);
     m_context->vertexAttribPointer(0, 4, GraphicsContextGL::FLOAT, false, 0, 0);
-    state.bufferBinding = m_vertexAttrib0Buffer;
     m_context->bindBuffer(GraphicsContextGL::ARRAY_BUFFER, 0);
     m_context->enableVertexAttribArray(0);
     m_vertexAttrib0BufferSize = 0;
@@ -7936,6 +7939,8 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
     if (!validateDrawArrays("drawArraysInstanced", mode, first, count, primcount))
         return;
 #endif // !USE(ANGLE)
+    if (!validateVertexArrayObject("drawArraysInstanced"))
+        return;
 
     clearIfComposited(ClearCallerDrawOrClear);
 
@@ -7975,6 +7980,8 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     if (!validateDrawElements("drawElementsInstanced", mode, count, type, offset, numElements, primcount))
         return;
 #endif // !USE(ANGLE)
+    if (!validateVertexArrayObject("drawElementsInstanced"))
+        return;
 
     clearIfComposited(ClearCallerDrawOrClear);
 

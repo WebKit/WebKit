@@ -30,6 +30,7 @@
 #include "GraphicsContextGL.h"
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
+#include <optional>
 
 namespace JSC {
 class AbstractSlotVisitor;
@@ -71,7 +72,8 @@ public:
     WebGLBuffer* getElementArrayBuffer() const { return m_boundElementArrayBuffer.get(); }
     void setElementArrayBuffer(const WTF::AbstractLocker&, WebGLBuffer*);
 
-    VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
+    void setVertexAttribEnabled(int index, bool flag);
+    const VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
     void setVertexAttribState(const WTF::AbstractLocker&, GCGLuint, GCGLsizei, GCGLint, GCGLenum, GCGLboolean, GCGLsizei, GCGLintptr, bool, WebGLBuffer*);
     void unbindBuffer(const WTF::AbstractLocker&, WebGLBuffer&);
 
@@ -79,14 +81,19 @@ public:
 
     void addMembersToOpaqueRoots(const WTF::AbstractLocker&, JSC::AbstractSlotVisitor&);
 
+    bool areAllEnabledAttribBuffersBound();
 protected:
     WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, Type);
     void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override = 0;
+#if !USE(ANGLE)
+    void updateVertexAttrib0();
+#endif
 
     Type m_type;
     bool m_hasEverBeenBound { false };
     RefPtr<WebGLBuffer> m_boundElementArrayBuffer;
     Vector<VertexAttribState> m_vertexAttribState;
+    std::optional<bool> m_allEnabledAttribBuffersBoundCache;
 };
 
 } // namespace WebCore

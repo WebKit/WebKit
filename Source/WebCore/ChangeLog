@@ -1,3 +1,55 @@
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223360
+        <rdar://problem/75774546>
+
+        Reviewed by Dean Jackson.
+
+        Deleting a buffer will remove the buffer from currently active
+        vertex array buffer bindings. This worked.
+        Drawing with a vertex array object that has enabled indexes
+        but missing buffers for those indexes should fail. This
+        WebGL specific constraint is checked by ANGLE. However, WebCore
+        relies on buffer deletion to update the ANGLE VAO. The deletion
+        does not happen due to the buffers in the test being bound to
+        multiple VAOs.
+        Add this check also to WebCore.
+
+        Fixed tests:
+        webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html
+        webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::initializeVertexArrayObjects):
+        (WebCore::WebGL2RenderingContext::drawRangeElements):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeVertexArrayObjects):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContextBase::validateVertexArrayObject):
+        (WebCore::WebGLRenderingContextBase::drawArrays):
+        (WebCore::WebGLRenderingContextBase::drawElements):
+        (WebCore::WebGLRenderingContextBase::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+        (WebCore::WebGLRenderingContextBase::initVertexAttrib0):
+        (WebCore::WebGLRenderingContextBase::drawArraysInstanced):
+        (WebCore::WebGLRenderingContextBase::drawElementsInstanced):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLVertexArrayObjectBase.cpp:
+        (WebCore::WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase):
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribEnabled):
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribState):
+        (WebCore::WebGLVertexArrayObjectBase::unbindBuffer):
+        (WebCore::WebGLVertexArrayObjectBase::updateVertexAttrib0):
+        (WebCore::WebGLVertexArrayObjectBase::areAllEnabledAttribBuffersBound):
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+        (WebCore::WebGLVertexArrayObjectBase::getVertexAttribState):
+        Make VertexAttribState& a const so that we can maintain confidence
+        that the cached value of "all enabled attrib buffers are bound"
+        is maintained, e.g. that the callers cannot modify enabled or bound
+        buffer status.
+
 2021-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy CheckedRef on FocusController

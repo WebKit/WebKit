@@ -1,3 +1,23 @@
+2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223360
+        <rdar://problem/75774546>
+
+        Reviewed by Dean Jackson.
+
+        Test webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html explicitly
+        until 2.0.y suite is run by default. Same for 1.0.x.
+
+        * TestExpectations:
+        * fast/canvas/webgl/drawElements-empty-vertex-data-expected.txt:
+        * fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt:
+        Add console logs for the added errors.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        For consistency, remove all skips for vertex-array-object tests.
+        They should now work.
+
 2021-09-08  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update some test baselines.
