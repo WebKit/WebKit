@@ -1624,6 +1624,7 @@ webkit.org/b/229458 http/tests/inspector/network/har/har-page.html [ Pass Failur
 webkit.org/b/229460 [ BigSur Debug ] http/tests/inspector/network/ping-type.html [ Pass Failure ]
 
 webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/resource-request-headers.html [ Pass Failure ]
+webkit.org/b/230056 [ BigSur Debug ] http/tests/inspector/network/har/har-page-aggressive-gc.html [ Pass Failure ]
 
 webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Pass Timeout ]
 
