@@ -108,6 +108,25 @@
 namespace WebKit {
 using namespace WebCore;
 
+static unsigned s_maxProcessCount { 400 };
+
+static ListHashSet<WebProcessProxy*>& liveProcessesLRU()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<ListHashSet<WebProcessProxy*>> processes;
+    return processes;
+}
+
+void WebProcessProxy::setProcessCountLimit(unsigned limit)
+{
+    s_maxProcessCount = limit;
+}
+
+bool WebProcessProxy::hasReachedProcessCountLimit()
+{
+    return liveProcessesLRU().size() >= s_maxProcessCount;
+}
+
 static bool isMainThreadOrCheckDisabled()
 {
 #if PLATFORM(IOS_FAMILY)
@@ -150,8 +169,17 @@ void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const Secu
 Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, ShouldLaunchProcess shouldLaunchProcess)
 {
     auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed));
-    if (shouldLaunchProcess == ShouldLaunchProcess::Yes)
+    if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
+        if (liveProcessesLRU().size() >= s_maxProcessCount) {
+            for (auto& processPool : WebProcessPool::allProcessPools())
+                processPool->webProcessCache().clear();
+            if (liveProcessesLRU().size() >= s_maxProcessCount)
+                liveProcessesLRU().first()->requestTermination(ProcessTerminationReason::ExceededProcessCountLimit);
+        }
+        ASSERT(liveProcessesLRU().size() < s_maxProcessCount);
+        liveProcessesLRU().add(proxy.ptr());
         proxy->connect();
+    }
     return proxy;
 }
 
@@ -235,6 +263,8 @@ WebProcessProxy::~WebProcessProxy()
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     ASSERT(m_pageURLRetainCountMap.isEmpty());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "destructor:");
+
+    liveProcessesLRU().remove(this);
 
     for (auto identifier : m_speechRecognitionServerMap.keys())
         removeMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier);
@@ -336,6 +366,7 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
 
     ASSERT(!m_isInProcessCache);
     ASSERT(!m_provisionalPages.contains(&provisionalPage));
+    markProcessAsRecentlyUsed();
     m_provisionalPages.add(&provisionalPage);
     updateRegistrationWithDataStore();
 }
@@ -557,6 +588,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
         m_processPool->pageBeginUsingWebsiteDataStore(webPage.identifier(), webPage.websiteDataStore());
     }
 
+    markProcessAsRecentlyUsed();
     m_pageMap.set(webPage.identifier(), &webPage);
     globalPageMap().set(webPage.identifier(), &webPage);
 
@@ -887,6 +919,8 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     // Protect ourselves, as the call to shutDown() below may otherwise cause us
     // to be deleted before we can finish our work.
     auto protectedThis = makeRef(*this);
+
+    liveProcessesLRU().remove(this);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_userMediaCaptureManagerProxy->clear();
@@ -1850,6 +1884,7 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 void WebProcessProxy::establishServiceWorkerContext(const WebPreferencesStore& store, CompletionHandler<void()>&& completionHandler)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishServiceWorkerContext: Started");
+    markProcessAsRecentlyUsed();
     sendWithAsyncReply(Messages::WebProcess::EstablishWorkerContextConnectionToNetworkProcess { processPool().defaultPageGroup().pageGroupID(), m_serviceWorkerInformation->serviceWorkerPageProxyID, m_serviceWorkerInformation->serviceWorkerPageID, store, *m_registrableDomain, m_serviceWorkerInformation->initializationData }, [this, weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         if (weakThis)
             WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishServiceWorkerContext: Finished");
@@ -1998,6 +2033,12 @@ void WebProcessProxy::didDestroySleepDisabler(SleepDisablerIdentifier identifier
 bool WebProcessProxy::hasSleepDisabler() const
 {
     return !m_sleepDisablers.isEmpty();
+}
+
+void WebProcessProxy::markProcessAsRecentlyUsed()
+{
+    if (liveProcessesLRU().contains(this))
+        liveProcessesLRU().appendOrMoveToLast(this);
 }
 
 void WebProcessProxy::systemBeep()

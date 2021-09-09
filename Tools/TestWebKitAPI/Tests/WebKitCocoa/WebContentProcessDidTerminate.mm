@@ -376,3 +376,67 @@ TEST(WKNavigation, WebViewURLInProcessDidTerminate)
     kill([webView _webProcessIdentifier], 9);
     TestWebKitAPI::Util::run(&done);
 }
+
+TEST(WKNavigation, WebProcessLimit)
+{
+    constexpr unsigned maxProcessCount = 10;
+    [WKProcessPool _setWebProcessCountLimit:maxProcessCount];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        finishedLoad = true;
+    }];
+    auto createWebView = [&] {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        finishedLoad = false;
+        [webView loadTestPageNamed:@"simple"];
+        TestWebKitAPI::Util::run(&finishedLoad);
+        return webView;
+    };
+
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+        didCrash = true;
+    }];
+
+    Vector<RetainPtr<WKWebView>> views;
+    for (unsigned i = 0; i < maxProcessCount; ++i)
+        views.append(createWebView());
+    EXPECT_FALSE(didCrash);
+    for (auto& view : views)
+        EXPECT_NE([view _webProcessIdentifier], 0);
+
+    // We have now reached the WebProcess cap, let's try and launch a new one.
+    __block unsigned crashCount = 0;
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView * view) {
+        EXPECT_EQ(views[0], view);
+        ++crashCount;
+    }];
+    views.append(createWebView());
+
+    EXPECT_EQ(crashCount, 1U);
+    for (unsigned i = 0; i < views.size(); ++i) {
+        if (!i)
+            EXPECT_EQ([views[i] _webProcessIdentifier], 0);
+        else
+            EXPECT_NE([views[i] _webProcessIdentifier], 0);
+    }
+
+    crashCount = 0;
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView * view) {
+        EXPECT_EQ(views[1], view);
+        ++crashCount;
+    }];
+    views.append(createWebView());
+
+    EXPECT_EQ(crashCount, 1U);
+    for (unsigned i = 0; i < views.size(); ++i) {
+        if (i < 2)
+            EXPECT_EQ([views[i] _webProcessIdentifier], 0);
+        else
+            EXPECT_NE([views[i] _webProcessIdentifier], 0);
+    }
+
+    [WKProcessPool _setWebProcessCountLimit:400];
+}

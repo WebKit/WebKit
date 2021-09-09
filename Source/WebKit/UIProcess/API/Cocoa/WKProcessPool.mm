@@ -565,6 +565,11 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 #endif
 }
 
++ (void)_setWebProcessCountLimit:(unsigned)limit
+{
+    WebKit::WebProcessProxy::setProcessCountLimit(limit);
+}
+
 - (void)_garbageCollectJavaScriptObjectsForTesting
 {
     _processPool->garbageCollectJavaScriptObjects();
