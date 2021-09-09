@@ -1,9 +1,9 @@
 
 PASS Two way ICE exchange works
-FAIL Adding only caller -> callee candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
-FAIL Adding only callee -> caller candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc2.sctp.transport')"
-FAIL Adding callee -> caller candidates from end-of-candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc2.sctp.transport')"
-FAIL Explicit offer/answer exchange gives a connection promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pc1.sctp.transport')"
+FAIL Adding only caller -> callee candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: pc1.sctp.transport.iceTransport.getSelectedCandidatePair is not a function. (In 'pc1.sctp.transport.iceTransport.getSelectedCandidatePair()', 'pc1.sctp.transport.iceTransport.getSelectedCandidatePair' is undefined)"
+FAIL Adding only callee -> caller candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: pc2.sctp.transport.iceTransport.getSelectedCandidatePair is not a function. (In 'pc2.sctp.transport.iceTransport.getSelectedCandidatePair()', 'pc2.sctp.transport.iceTransport.getSelectedCandidatePair' is undefined)"
+FAIL Adding callee -> caller candidates from end-of-candidates gives a connection promise_test: Unhandled rejection with value: object "TypeError: pc2.sctp.transport.iceTransport.getSelectedCandidatePair is not a function. (In 'pc2.sctp.transport.iceTransport.getSelectedCandidatePair()', 'pc2.sctp.transport.iceTransport.getSelectedCandidatePair' is undefined)"
+FAIL Explicit offer/answer exchange gives a connection promise_test: Unhandled rejection with value: object "TypeError: pc1.sctp.transport.iceTransport.getSelectedCandidatePair is not a function. (In 'pc1.sctp.transport.iceTransport.getSelectedCandidatePair()', 'pc1.sctp.transport.iceTransport.getSelectedCandidatePair' is undefined)"
 PASS Candidates always arrive after setLocalDescription(offer) resolves
 PASS Candidates always arrive after setLocalDescription(answer) resolves
 

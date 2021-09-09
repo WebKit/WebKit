@@ -1,5 +1,19 @@
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
+        Rebase a few WebRTC tests marked as flaky but making progress with RTCSctpTransport introduction
+        https://bugs.webkit.org/show_bug.cgi?id=230089
+
+        Unreviewed, rebasing tests only.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https-expected.txt:
+        * web-platform-tests/webrtc/protocol/candidate-exchange.https-expected.txt:
+        * web-platform-tests/webrtc/protocol/crypto-suite.https-expected.txt:
+
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
         Rebase imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close-expected.txt
         https://bugs.webkit.org/show_bug.cgi?id=230087
 
