@@ -1004,6 +1004,13 @@ static int cssValueIdToSysColorIndex(CSSValueID cssValueId)
 
 Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::Options> options) const
 {
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    switch (cssValueId) {
+    case CSSValueWebkitControlBackground:
+        // FIXME: Dark mode isn't supported yet. https://webkit.org/b/230032
+        return Color::white;
+    }
+#endif
     int sysColorIndex = cssValueIdToSysColorIndex(cssValueId);
     if (sysColorIndex == -1)
         return RenderTheme::systemColor(cssValueId, options);

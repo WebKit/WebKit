@@ -1,3 +1,19 @@
+2021-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] REGRESSION(r282123): some layout tests are failing because the bgcolor of text input forms are unexpectedly black
+        https://bugs.webkit.org/show_bug.cgi?id=230077
+
+        Reviewed by Don Olmstead.
+
+        r282123 enabled HAVE_OS_DARK_MODE_SUPPORT for WinCairo. It uses
+        '-webkit-control-background' in the user-agent style sheet.
+        RenderThemeWin::systemColor always returned black for it. Because
+        WinCairo doesn't support dark mode yet, it is always light mode.
+        So, '-webkit-control-background' should be white at the moment.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::systemColor const): Return white for CSSValueWebkitControlBackground.
+
 2021-09-09  Sihui Liu  <sihui_liu@apple.com>
 
         Unreviewed build fix for win after r282222.
