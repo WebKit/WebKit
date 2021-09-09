@@ -318,19 +318,26 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
     if (magicCookie && magicCookieSize)
         PAL::AudioConverterSetProperty(converter, kAudioConverterDecompressionMagicCookie, magicCookieSize, magicCookie);
 
-    AudioConverterPrimeInfo primeInfo = { UInt32(m_webmData->m_track->codecDelay().value_or(MediaTime()).toDouble() * outFormat.mSampleRate), 0 };
-    INFO_LOG(LOGIDENTIFIER, "Will drop %u leading frames out of %llu", primeInfo.leadingFrames, numberOfFrames);
-    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeInfo, sizeof(primeInfo), &primeInfo);
-    UInt32 primeMethod = kConverterPrimeMethod_None;
-    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeMethod, sizeof(primeMethod), &primeMethod);
-
     AudioBufferListHolder decodedBufferList(inFormat.mChannelsPerFrame);
     if (!decodedBufferList) {
         RELEASE_LOG_FAULT(WebAudio, "Unable to create decoder");
         return { };
     }
 
+    // Instruct the decoder to not drop any frames
+    // (by default the Opus decoder assumes that SampleRate / 400 frames are to be dropped.
+    AudioConverterPrimeInfo primeInfo = { 0, 0 };
+    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeInfo, sizeof(primeInfo), &primeInfo);
+    UInt32 primeMethod = kConverterPrimeMethod_None;
+    PAL::AudioConverterSetProperty(converter, kAudioConverterPrimeMethod, sizeof(primeMethod), &primeMethod);
+
+    uint32_t leadingTrim = m_webmData->m_track->codecDelay().value_or(MediaTime::zeroTime()).toDouble() * outFormat.mSampleRate;
+    // Calculate the number of trailing frames to be trimmed by rounding to nearest integer while minimizing cummulative rounding errors.
+    uint32_t trailingTrim = (m_webmData->m_track->codecDelay().value_or(MediaTime::zeroTime()) + m_webmData->m_track->discardPadding().value_or(MediaTime::zeroTime())).toDouble() * outFormat.mSampleRate - leadingTrim + 0.5;
+    INFO_LOG(LOGIDENTIFIER, "Will drop ", leadingTrim, " leading and ", trailingTrim, " trailing frames out of ", numberOfFrames);
+
     size_t decodedFrames = 0;
+    size_t totalDecodedFrames = 0;
     OSStatus status;
     for (size_t i = 0; i < m_webmData->m_samples.size(); i++) {
         auto& sample = m_webmData->m_samples[i];
@@ -357,12 +364,14 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
 
         do {
             if (numberOfFrames < decodedFrames) {
-                RELEASE_LOG_FAULT(WebAudio, "Decoded more frames than first calculated");
+                RELEASE_LOG_FAULT(WebAudio, "Decoded more frames than first calculated, no available space left");
                 return { };
             }
             // in: the max number of packets we can handle from the decoder.
             // out: the number of packets the decoder is actually returning.
-            UInt32 numFrames = std::min<uint32_t>(std::numeric_limits<int32_t>::max() / sizeof(float), numberOfFrames - decodedFrames);
+            // The AudioConverter will sometimes pad with trailing silence if we set the free space to what it actually is (numberOfFrames - decodedFrames).
+            // So we set it to what there is left to decode instead.
+            UInt32 numFrames = std::min<uint32_t>(std::numeric_limits<int32_t>::max() / sizeof(float), numberOfFrames - totalDecodedFrames);
 
             for (UInt32 i = 0; i < inFormat.mChannelsPerFrame; i++) {
                 decodedBufferList->mBuffers[i].mNumberChannels = 1;
@@ -374,12 +383,19 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
                 RELEASE_LOG_FAULT(WebAudio, "Error decoding data");
                 return { };
             }
+            totalDecodedFrames += numFrames;
+            if (leadingTrim > 0) {
+                UInt32 toTrim = std::min(leadingTrim, numFrames);
+                for (UInt32 i = 0; i < outFormat.mChannelsPerFrame; i++)
+                    memcpy(decodedBufferList->mBuffers[i].mData, static_cast<float*>(decodedBufferList->mBuffers[i].mData) + toTrim, (numFrames - toTrim) * sizeof(float));
+                leadingTrim -= toTrim;
+                numFrames -= toTrim;
+            }
             decodedFrames += numFrames;
         } while (status != kNoMoreDataErr && status != noErr);
     }
-    size_t paddingFrames = m_webmData->m_track->discardPadding().value_or(MediaTime()).toDouble() * outFormat.mSampleRate;
-    if (decodedFrames > paddingFrames)
-        return decodedFrames - paddingFrames;
+    if (decodedFrames > trailingTrim)
+        return decodedFrames - trailingTrim;
     return 0;
 }
 #endif

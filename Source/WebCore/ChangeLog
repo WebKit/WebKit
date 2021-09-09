@@ -1,3 +1,18 @@
+2021-09-09  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio/WebM] Incorrect number of frames returned if decoding frame rate doesn't match original
+        https://bugs.webkit.org/show_bug.cgi?id=229251
+        rdar://problem/82095650
+
+        Reviewed by Eric Carlson..
+
+        We can't rely on CoreMedia to performed the trimming correctly when resampling is also to be done.
+        It gives unexpected results. Let's do it ourselves instead.
+        Test: webaudio/decode-audio-data-webm-opus-resample.html
+
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::AudioFileReader::decodeWebMData const):
+
 2021-09-08  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection.addIceCandidate takes an optional argument

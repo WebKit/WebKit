@@ -1,3 +1,14 @@
+2021-09-09  Jean-Yves Avenard  <jya@apple.com>
+
+        [WebAudio/WebM] Incorrect number of frames returned if decoding frame rate doesn't match original
+        https://bugs.webkit.org/show_bug.cgi?id=229251
+        rdar://problem/82095650
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/decode-audio-data-webm-opus-resample-expected.txt: Added.
+        * webaudio/decode-audio-data-webm-opus-resample.html: Added.
+
 2021-09-07  Tim Nguyen  <ntim@apple.com>
 
         Re-import css/css-pseudo WPT
