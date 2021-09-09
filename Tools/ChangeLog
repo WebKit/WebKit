@@ -1,3 +1,14 @@
+2021-09-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Exception in run-webkit-tests: Bad file descriptor (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=229994
+        <rdar://problem/82826083>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.launch_app): Catch OSError.
+
 2021-09-08  Sihui Liu  <sihui_liu@apple.com>
 
         Regression (r282130): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/storage/persisted.https.any.html is failing
