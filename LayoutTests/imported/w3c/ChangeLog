@@ -1,3 +1,17 @@
+2021-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        right- and bottom-relative values in background-position-x/y don't work
+        https://bugs.webkit.org/show_bug.cgi?id=202148
+
+        Reviewed by Antti Koivisto.
+
+        More passing results.
+
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-x-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-x-valid-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-y-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-y-valid-expected.txt:
+
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
         Update RTCPeerConnection descriptions as per specification

@@ -1,3 +1,41 @@
+2021-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        right- and bottom-relative values in background-position-x/y don't work
+        https://bugs.webkit.org/show_bug.cgi?id=202148
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/backgrounds/background-position-xy.html
+
+        background-position[1] and background-position-x/background-position-y allow authors
+        to specify edge-relative values, like "background-position-x: right 10px". We
+        failed to handle this syntax in background-position-x and background-position-y,
+        but we do handle it in background-position.
+
+        So fix consumePositionX()/consumePositionY(), which are used when parsing
+        background-position-x/y, -webkit-mask-position-x/y, perspective-origin-x/y, and
+        transform-origin-x.y, to handle this edge-relative form.
+
+        A failure on imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-position-x-computed.html
+        (which only passes in Firefox) suggets that we should convert "right 10px" to "calc(100% - 10px)"
+        but for now, this patch serializes with edge keywords, as we do for the shorthand.
+
+        [1] https://www.w3.org/TR/css-backgrounds-3/#background-position
+
+        Test: fast/backgrounds/background-position-xy.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createSingleAxisPositionValueForLayer):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumePositionX):
+        (WebCore::consumePositionY):
+        (WebCore::consumePositionLonghand): Deleted.
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumePositionCoordinates):
+        (WebCore::CSSPropertyParserHelpers::consumeSingleAxisPosition):
+        * css/parser/CSSPropertyParserHelpers.h:
+
 2021-09-09  Antti Koivisto  <antti@apple.com>
 
         Cull inline culling

@@ -46,6 +46,7 @@
 #include "ColorConversion.h"
 #include "ColorLuminance.h"
 #include "Pair.h"
+#include "RenderStyleConstants.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
 #include "WebKitFontFamilyNames.h"
@@ -2768,7 +2769,7 @@ std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRang
     
     if (positionSyntax != PositionSyntax::BackgroundPosition)
         return std::nullopt;
-    
+
     return backgroundPositionFromThreeValues(values);
 }
 
@@ -2788,6 +2789,33 @@ std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSP
     if (!value2)
         return positionFromOneValue(*value1);
     return positionFromTwoValues(*value1, *value2);
+}
+
+RefPtr<CSSPrimitiveValue> consumeSingleAxisPosition(CSSParserTokenRange& range, CSSParserMode parserMode, BoxOrient orientation)
+{
+    RefPtr<CSSPrimitiveValue> value1;
+
+    if (range.peek().type() == IdentToken) {
+        switch (orientation) {
+        case BoxOrient::Horizontal:
+            value1 = consumeIdent<CSSValueLeft, CSSValueRight, CSSValueCenter>(range);
+            break;
+        case BoxOrient::Vertical:
+            value1 = consumeIdent<CSSValueTop, CSSValueBottom, CSSValueCenter>(range);
+            break;
+        }
+        if (!value1)
+            return nullptr;
+
+        if (value1->valueID() == CSSValueCenter)
+            return value1;
+    }
+
+    auto value2 = consumeLengthOrPercent(range, parserMode, ValueRange::All, UnitlessQuirk::Forbid);
+    if (value1 && value2)
+        return CSSPropertyParserHelpersInternal::createPrimitiveValuePair(WTFMove(value1), WTFMove(value2));
+
+    return value1 ? value1 : value2;
 }
 
 // This should go away once we drop support for -webkit-gradient

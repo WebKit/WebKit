@@ -301,6 +301,27 @@ static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, co
     return list;
 }
 
+static Ref<CSSValue> createSingleAxisPositionValueForLayer(CSSPropertyID propertyID, const FillLayer& layer, const RenderStyle& style)
+{
+    if (propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX) {
+        if (!layer.isBackgroundXOriginSet() || layer.backgroundXOrigin() == Edge::Left)
+            return zoomAdjustedPixelValueForLength(layer.xPosition(), style);
+
+        auto list = CSSValueList::createSpaceSeparated();
+        list->append(CSSValuePool::singleton().createValue(layer.backgroundXOrigin()));
+        list->append(zoomAdjustedPixelValueForLength(layer.xPosition(), style));
+        return list;
+    }
+
+    if (!layer.isBackgroundYOriginSet() || layer.backgroundYOrigin() == Edge::Top)
+        return zoomAdjustedPixelValueForLength(layer.yPosition(), style);
+
+    auto list = CSSValueList::createSpaceSeparated();
+    list->append(CSSValuePool::singleton().createValue(layer.backgroundYOrigin()));
+    list->append(zoomAdjustedPixelValueForLength(layer.yPosition(), style));
+    return list;
+}
+
 static Length getOffsetComputedLength(const RenderStyle& style, CSSPropertyID propertyID)
 {
     // If specified as a length, the corresponding absolute length; if specified as
@@ -2699,11 +2720,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMaskPositionX: {
             auto& layers = propertyID == CSSPropertyWebkitMaskPositionX ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return cssValuePool.createValue(layers.xPosition(), style);
+                return createSingleAxisPositionValueForLayer(propertyID, layers, style);
 
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(cssValuePool.createValue(currLayer->xPosition(), style));
+                list->append(createSingleAxisPositionValueForLayer(propertyID, *currLayer, style));
 
             return list;
         }
@@ -2711,11 +2732,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMaskPositionY: {
             auto& layers = propertyID == CSSPropertyWebkitMaskPositionY ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return cssValuePool.createValue(layers.yPosition(), style);
+                return createSingleAxisPositionValueForLayer(propertyID, layers, style);
 
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(cssValuePool.createValue(currLayer->yPosition(), style));
+                list->append(createSingleAxisPositionValueForLayer(propertyID, *currLayer, style));
 
             return list;
         }

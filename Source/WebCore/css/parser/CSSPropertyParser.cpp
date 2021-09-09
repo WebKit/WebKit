@@ -2132,34 +2132,14 @@ static RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode 
     return list;
 }
 
-template <CSSValueID start, CSSValueID end>
-static RefPtr<CSSPrimitiveValue> consumePositionLonghand(CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
-    if (range.peek().type() == IdentToken) {
-        CSSValueID id = range.peek().id();
-        int percent;
-        if (id == start)
-            percent = 0;
-        else if (id == CSSValueCenter)
-            percent = 50;
-        else if (id == end)
-            percent = 100;
-        else
-            return nullptr;
-        range.consumeIncludingWhitespace();
-        return CSSPrimitiveValue::create(percent, CSSUnitType::CSS_PERCENTAGE);
-    }
-    return consumeLengthOrPercent(range, cssParserMode, ValueRange::All);
-}
-
 static RefPtr<CSSPrimitiveValue> consumePositionX(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    return consumePositionLonghand<CSSValueLeft, CSSValueRight>(range, cssParserMode);
+    return consumeSingleAxisPosition(range, cssParserMode, BoxOrient::Horizontal);
 }
 
 static RefPtr<CSSPrimitiveValue> consumePositionY(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
-    return consumePositionLonghand<CSSValueTop, CSSValueBottom>(range, cssParserMode);
+    return consumeSingleAxisPosition(range, cssParserMode, BoxOrient::Vertical);
 }
 
 static RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, const CSSParserContext& context)

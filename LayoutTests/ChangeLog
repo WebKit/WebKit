@@ -1,3 +1,19 @@
+2021-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        right- and bottom-relative values in background-position-x/y don't work
+        https://bugs.webkit.org/show_bug.cgi?id=202148
+
+        Reviewed by Antti Koivisto.
+
+        Ref test for various background-position-* values. Adjust for serialization output changes.
+
+        * fast/backgrounds/background-position-xy-expected.html: Added.
+        * fast/backgrounds/background-position-xy.html: Added.
+        * fast/css/background-position-serialize-expected.txt:
+        * fast/css/background-position-serialize.html:
+        * transitions/background-position-transitions-expected.txt:
+        * transitions/background-position-transitions.html:
+
 2021-09-09  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur wk2 Debug] 4 http/tests/inspector/network/ tests are flaky fails.

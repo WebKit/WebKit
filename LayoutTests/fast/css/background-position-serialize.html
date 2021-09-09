@@ -122,12 +122,12 @@ shouldBe("window.getComputedStyle(t).backgroundPosition", "right 20px 10px");
 run("t.setAttribute('style', 'background-position: 50% left');"); // Invalid per spec.
 shouldBe("t.style.backgroundPosition", "");
 
-run("t.setAttribute('style', 'background-position-x: right 20px');"); // This does not parse, but perhaps it should.
-shouldBe("window.getComputedStyle(t).backgroundPositionX", "0%");
+run("t.setAttribute('style', 'background-position-x: right 20px');");
+shouldBe("window.getComputedStyle(t).backgroundPositionX", "right 20px");
 
 run("t.setAttribute('style', 'background-position: right 20px bottom 10px');");
 shouldBe("window.getComputedStyle(t).backgroundPosition", "right 20px bottom 10px");
-shouldBe("window.getComputedStyle(t).backgroundPositionX", "20px"); // This is a bug. webkit.org/b/154551
+shouldBe("window.getComputedStyle(t).backgroundPositionX", "right 20px");
 
 run("t.setAttribute('style', 'background: url(about:blank) 80% 80%;');");
 run("t.style.backgroundPositionY = '50px'");
