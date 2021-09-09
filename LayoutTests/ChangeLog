@@ -1,3 +1,12 @@
+2021-09-09  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur wk2 Debug] 4 http/tests/inspector/network/ tests are flaky fails.
+        https://bugs.webkit.org/show_bug.cgi?id=230117.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-09  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS ] imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html is a flaky failure.
