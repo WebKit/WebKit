@@ -1,3 +1,12 @@
+2021-09-08  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update some test baselines.
+        https://bugs.webkit.org/show_bug.cgi?id=230074
+
+        * platform/glib/webgl/webgl-allow-shared-expected.txt:
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/wpe/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2021-09-08  Eric Hutchison  <ehutchison@apple.com>
 
         media/track/track-cue-css.html is a flaky image failure.

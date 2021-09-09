@@ -22,6 +22,7 @@ navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
+navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
@@ -48,6 +49,7 @@ navigator.productSub is OK
 navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
+navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
