@@ -107,6 +107,8 @@ FontFaceSet::PendingPromise::~PendingPromise() = default;
 
 bool FontFaceSet::has(FontFace& face) const
 {
+    if (face.backing().cssConnection())
+        m_backing->updateStyleIfNeeded();
     return m_backing->hasFace(face.backing());
 }
 

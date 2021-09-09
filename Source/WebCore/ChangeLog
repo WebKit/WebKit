@@ -1,3 +1,23 @@
+2021-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFaceSet.has() needs to react to style changes
+        https://bugs.webkit.org/show_bug.cgi?id=229848
+
+        Reviewed by Antti Koivisto.
+
+        When content says "document.fonts.has(...)", the ".has(...)" part needs to
+        update style instead of the "document.fonts" part. This is because it's
+        totally legal for content to say:
+
+        var f = document.fonts;
+        // Modify style here
+        ... f.has(...) ... <=== This needs to reflect the style changes.
+
+        Test: imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-has.html
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::has const):
+
 2021-09-09  Antti Koivisto  <antti@apple.com>
 
         RenderInline offsetTop/Left should not switch to legacy layout
