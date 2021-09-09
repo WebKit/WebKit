@@ -1236,7 +1236,7 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result.append('#include "config.h"\n')
     result.append('#include "MessageArgumentDescriptions.h"\n')
     result.append('\n')
-    result.append('#if ENABLE(IPC_TESTING_API)\n')
+    result.append('#if ENABLE(IPC_TESTING_API) || !LOG_DISABLED\n')
     result.append('\n')
     result.append('#include "JSIPCBinding.h"\n')
 
@@ -1257,6 +1257,8 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
 
     result.append('namespace IPC {\n')
     result.append('\n')
+    result.append('#if ENABLE(IPC_TESTING_API)\n')
+    result.append('\n')
 
     generate_js_value_conversion_function(result, receivers, 'jsValueForArguments', 'Arguments')
 
@@ -1264,6 +1266,8 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
 
     generate_js_value_conversion_function(result, receivers, 'jsValueForReplyArguments', 'ReplyArguments', lambda message: message.reply_parameters is not None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)))
 
+    result.append('\n')
+    result.append('#endif // ENABLE(IPC_TESTING_API)\n')
     result.append('\n')
 
     result += generate_js_argument_descriptions(receivers, 'messageArgumentDescriptions', lambda message: message.parameters)
@@ -1276,5 +1280,5 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
 
     result.append('} // namespace WebKit\n')
     result.append('\n')
-    result.append('#endif\n')
+    result.append('#endif // ENABLE(IPC_TESTING_API) || !LOG_DISABLED\n')
     return ''.join(result)

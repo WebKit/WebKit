@@ -1,3 +1,25 @@
+2021-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Enable IPCMessages debug logging for non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=230081
+
+        Reviewed by Alex Christensen.
+
+        r282177 temporarily disabled IPCMessages debug logging for
+        non-Cocoa ports because the generated
+        MessageArgumentDescriptions.cpp couldn't compile for them. Then,
+        r282190 fixed the problem. Enable it.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::logMessageImpl): Reverted the change of r282177 to enable the logging.
+        (IPC::logReply): Ditto.
+        * Scripts/webkit/messages.py:
+        (generate_message_argument_description_implementation):
+        ENABLE(IPC_TESTING_API) isn't enabled for non-Cocoa ports yet.
+        Changed the condition.
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp: Updated
+        this test expectation.
+
 2021-09-09  Alex Christensen  <achristensen@webkit.org>
 
         Add PrivateClickMeasurement daemon

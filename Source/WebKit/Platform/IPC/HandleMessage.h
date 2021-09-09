@@ -47,7 +47,7 @@ class Connection;
 
 constexpr unsigned loggingContainerSizeLimit = 200;
 
-#if !LOG_DISABLED && ENABLE(IPC_TESTING_API)
+#if !LOG_DISABLED
 enum class ForReply : bool { No, Yes };
 
 inline TextStream textStreamForLogging(const Connection& connection, MessageName messageName, ForReply forReply)
@@ -73,7 +73,7 @@ inline TextStream textStreamForLogging(const Connection& connection, MessageName
 template<typename ArgsTuple, size_t... ArgsIndex>
 void logMessageImpl(const Connection& connection, MessageName messageName, const ArgsTuple& args, std::index_sequence<ArgsIndex...>)
 {
-#if !LOG_DISABLED && ENABLE(IPC_TESTING_API)
+#if !LOG_DISABLED
     auto stream = textStreamForLogging(connection, messageName, ForReply::No);
 
     if (auto argumentDescriptions = messageArgumentDescriptions(messageName))
@@ -96,7 +96,7 @@ void logMessage(const Connection& connection, MessageName messageName, const Arg
 template<typename... T>
 void logReply(const Connection& connection, MessageName messageName, const T&... args)
 {
-#if !LOG_DISABLED && ENABLE(IPC_TESTING_API)
+#if !LOG_DISABLED
     if (!sizeof...(T))
         return;
 

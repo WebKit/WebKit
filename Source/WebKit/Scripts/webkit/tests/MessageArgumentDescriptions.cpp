@@ -25,7 +25,7 @@
 #include "config.h"
 #include "MessageArgumentDescriptions.h"
 
-#if ENABLE(IPC_TESTING_API)
+#if ENABLE(IPC_TESTING_API) || !LOG_DISABLED
 
 #include "JSIPCBinding.h"
 #include "ArgumentCoders.h"
@@ -131,6 +131,8 @@
 #endif
 
 namespace IPC {
+
+#if ENABLE(IPC_TESTING_API)
 
 std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
 {
@@ -347,6 +349,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
     }
     return std::nullopt;
 }
+
+#endif // ENABLE(IPC_TESTING_API)
 
 std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName name)
 {
@@ -710,4 +714,4 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(IPC_TESTING_API) || !LOG_DISABLED
