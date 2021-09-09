@@ -1,3 +1,13 @@
+2021-09-09  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] Rebaselining 2 imported/w3c/web-platform-tests/css/cssom-view/* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=230123
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt:
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt:
+
 2021-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         right- and bottom-relative values in background-position-x/y don't work
