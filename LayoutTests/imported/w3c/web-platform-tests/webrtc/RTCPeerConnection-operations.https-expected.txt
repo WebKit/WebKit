@@ -6,7 +6,7 @@ PASS promiseStateFinal helper works
 FAIL createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite) assert_equals: expected "InvalidStateError" but got "Error"
 PASS createAnswer must detect InvalidStateError synchronously when chain is empty (prerequisite)
 FAIL SLD(rollback) must detect InvalidStateError synchronously when chain is empty assert_equals: promise rejected on same task expected "rejected" but got "pending"
-FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "TypeError"
+FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "Error"
 PASS replaceTrack must detect InvalidStateError synchronously when chain is empty and transceiver is stopped
 PASS setParameters must detect InvalidStateError synchronously always when transceiver is stopped
 FAIL pc.getStats must detect InvalidAccessError synchronously always assert_equals: expected "InvalidAccessError" but got "Error"

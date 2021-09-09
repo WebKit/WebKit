@@ -93,7 +93,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
     readonly attribute RTCSessionDescription? currentRemoteDescription;
     readonly attribute RTCSessionDescription? pendingRemoteDescription;
 
-    Promise<undefined> addIceCandidate((RTCIceCandidateInit or RTCIceCandidate) candidate);
+    Promise<undefined> addIceCandidate(optional (RTCIceCandidateInit or RTCIceCandidate) candidate);
 
     readonly attribute RTCSignalingState signalingState;
     readonly attribute RTCIceGatheringState iceGatheringState;

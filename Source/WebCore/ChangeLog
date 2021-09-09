@@ -1,5 +1,16 @@
 2021-09-08  Youenn Fablet  <youenn@apple.com>
 
+        RTCPeerConnection.addIceCandidate takes an optional argument
+        https://bugs.webkit.org/show_bug.cgi?id=229962
+
+        Reviewed by Eric Carlson.
+
+        Covered by rebased test.
+
+        * Modules/mediastream/RTCPeerConnection.idl:
+
+2021-09-08  Youenn Fablet  <youenn@apple.com>
+
         Add video metrics logging to LocalSampleBufferDisplayLayer
         https://bugs.webkit.org/show_bug.cgi?id=229930
 
