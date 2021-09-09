@@ -371,11 +371,13 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, readonly) unsigned long numberOfDroppedVideoFrames;
 @property (nonatomic, readonly) unsigned long numberOfCorruptedVideoFrames;
 @property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfNonDisplayCompositedVideoFrames;
 @property (nonatomic, readonly) double totalFrameDelay;
 @end
 #else
 @interface AVVideoPerformanceMetrics (AVVideoPerformanceMetricsDisplayCompositedVideoFrames)
 @property (nonatomic, readonly) unsigned long numberOfDisplayCompositedVideoFrames;
+@property (nonatomic, readonly) unsigned long numberOfNonDisplayCompositedVideoFrames;
 @end
 #endif
 

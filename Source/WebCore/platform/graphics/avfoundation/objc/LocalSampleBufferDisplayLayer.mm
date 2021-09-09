@@ -41,6 +41,8 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
 
+#import <pal/spi/cocoa/AVFoundationSPI.h>
+
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 using namespace WebCore;
@@ -339,6 +341,11 @@ void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
     [m_sampleBufferDisplayLayer enqueueSampleBuffer:sampleToEnqueue];
 
 #if !RELEASE_LOG_DISABLED
+    constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps
+    if (!(m_frameRateMonitor.frameCount() % frameCountPerLog)) {
+        if (auto* metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics])
+            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%{public}s) metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoSampleQueue.size());
+    }
     m_frameRateMonitor.update();
 #endif
 }
