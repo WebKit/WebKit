@@ -1,3 +1,27 @@
+2021-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Potential crash under CachedRawResource::didAddClient()
+        https://bugs.webkit.org/show_bug.cgi?id=230121
+        <rdar://82936913>
+
+        Reviewed by Alex Christensen.
+
+        In r280083, I tried to address this crash by holding a strong reference
+        to the SharedBuffer before calling forEachSegment() on it. However, the
+        crash is still happening after this fix.
+
+        My suspicion is that the SharedBuffer's internal m_segments vector gets
+        modified as we iterate over it. As a result, I am reverting r280083 and
+        iterating over a copy of m_segments in forEachSegment() instead.
+
+        No new tests, we haven't been able to reproduce.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::forEachSegment const):
+
 2021-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] REGRESSION(r282123): some layout tests are failing because the bgcolor of text input forms are unexpectedly black

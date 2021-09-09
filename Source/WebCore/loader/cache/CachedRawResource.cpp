@@ -167,8 +167,8 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
         auto responseProcessedHandler = [this, protectedThis = WTFMove(protectedThis), client] {
             if (!hasClient(*client))
                 return;
-            if (auto data = m_data) {
-                data->forEachSegment([&](auto& segment) {
+            if (m_data) {
+                m_data->forEachSegment([&](auto& segment) {
                     if (hasClient(*client))
                         client->dataReceived(*this, segment.data(), segment.size());
                 });
