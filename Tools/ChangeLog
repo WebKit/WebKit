@@ -1,5 +1,17 @@
 2021-09-09  Aakash Jain  <aakash_jain@apple.com>
 
+        Run check-github-mirror-integrity more frequently
+        https://bugs.webkit.org/show_bug.cgi?id=230095
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/factories.py:
+        (WatchListFactory.__init__): Run check-github-mirror-integrity on watchlist ews.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Updated unit-test.
+
+2021-09-09  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Share more bots between EWS queues
         https://bugs.webkit.org/show_bug.cgi?id=230094
 

@@ -84,6 +84,7 @@ class WatchListFactory(factory.BuildFactory):
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ApplyPatch())
         self.addStep(ApplyWatchList())
+        self.addStep(VerifyGitHubIntegrity())
 
 
 class BindingsFactory(Factory):
