@@ -193,4 +193,14 @@ void PageClientImplCocoa::cameraCaptureChanged()
     [m_webView didChangeValueForKey:@"cameraCaptureState"];
 }
 
+WindowKind PageClientImplCocoa::windowKind()
+{
+    auto window = [m_webView window];
+    if (!window)
+        return WindowKind::Unparented;
+    if ([window isKindOfClass:NSClassFromString(@"_SCNSnapshotWindow")])
+        return WindowKind::InProcessSnapshotting;
+    return WindowKind::Normal;
+}
+
 }

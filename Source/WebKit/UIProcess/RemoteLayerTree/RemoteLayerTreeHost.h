@@ -81,6 +81,8 @@ private:
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
 
+    RemoteLayerBackingStore::LayerContentsType layerContentsType() const;
+
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
     RemoteLayerTreeNode* m_rootNode { nullptr };
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;

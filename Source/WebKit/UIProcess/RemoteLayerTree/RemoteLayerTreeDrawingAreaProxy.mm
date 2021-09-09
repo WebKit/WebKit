@@ -507,4 +507,10 @@ CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(uint64_t layerID
     return m_remoteLayerTreeHost->layerWithIDForTesting(layerID);
 }
 
+void RemoteLayerTreeDrawingAreaProxy::windowKindDidChange()
+{
+    if (m_webPageProxy.windowKind() == WindowKind::InProcessSnapshotting)
+        m_remoteLayerTreeHost->mapAllIOSurfaceBackingStore();
+}
+
 } // namespace WebKit

@@ -84,6 +84,7 @@ public:
     virtual void colorSpaceDidChange() { }
     virtual void minimumSizeForAutoLayoutDidChange() { }
     virtual void sizeToContentAutoSizeMaximumSizeDidChange() { }
+    virtual void windowKindDidChange() { }
 
     virtual void adjustTransientZoom(double, WebCore::FloatPoint) { }
     virtual void commitTransientZoom(double, WebCore::FloatPoint) { }

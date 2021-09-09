@@ -1,3 +1,43 @@
+2021-09-08  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView specific bug: WKWebView as the contents of a SceneKit/ARKit node doesn't work (UIWebView works)
+        https://bugs.webkit.org/show_bug.cgi?id=203060
+        <rdar://problem/82899923>
+
+        Reviewed by Dean Jackson.
+
+        SceneKit's snapshotter cannot handle CAMachPort-as-layer-contents.
+
+        If we get parented in a SceneKit snapshotting window, map all existing
+        surfaces, and prefer using actual IOSurfaces instead of CAMachPort from then on.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::windowKind):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::webViewDidMoveToWindow):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WindowKind.h: Added.
+        Keep track of the kind of window we're currently in (the only special
+        case at the moment is the SceneKit snapshotting window, but you could
+        easily imagine us caring about others).
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::windowKindDidChange):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::windowKind):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::windowKindDidChange):
+        Map CAMachPorts to IOSurfaces when we move into a SceneKit snapshotting window.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::layerContentsType const):
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        Prefer IOSurface if we're already in a SceneKit snapshotting window.
+        Also factor this code out and improve the comments.
+
 2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r282115): undefined reference to `IPC::messageArgumentDescriptions(IPC::MessageName)' in Debug build

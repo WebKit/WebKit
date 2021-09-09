@@ -79,6 +79,7 @@
 #include "WebPreferences.h"
 #include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
+#include "WindowKind.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/Color.h>
@@ -728,6 +729,8 @@ public:
     bool isViewVisible() const { return m_activityState.contains(WebCore::ActivityState::IsVisible); }
     bool isViewFocused() const { return m_activityState.contains(WebCore::ActivityState::IsFocused); }
     bool isViewWindowActive() const { return m_activityState.contains(WebCore::ActivityState::WindowIsActive); }
+
+    WindowKind windowKind() const { return m_windowKind; };
 
     void addMIMETypeWithCustomContentProvider(const String& mimeType);
 
@@ -3098,6 +3101,8 @@ private:
 #endif
 
     bool m_needsSiteSpecificViewportQuirks { true };
+
+    WindowKind m_windowKind { WindowKind::Unparented };
 };
 
 #ifdef __OBJC__

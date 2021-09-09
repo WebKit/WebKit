@@ -87,6 +87,8 @@ public:
     void microphoneCaptureChanged() final;
     void cameraCaptureChanged() final;
 
+    WindowKind windowKind() final;
+
 protected:
     WeakObjCPtr<WKWebView> m_webView;
     std::unique_ptr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;

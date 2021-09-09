@@ -10576,6 +10576,13 @@ void WebPageProxy::webViewDidMoveToWindow()
             continue;
         observer.value->webViewDidMoveToWindow();
     }
+
+    auto newWindowKind = pageClient().windowKind();
+    if (m_windowKind != newWindowKind) {
+        m_windowKind = newWindowKind;
+        if (m_drawingArea)
+            m_drawingArea->windowKindDidChange();    
+    }
 }
 
 void WebPageProxy::setCanShowPlaceholder(const WebCore::ElementContext& context, bool canShowPlaceholder)

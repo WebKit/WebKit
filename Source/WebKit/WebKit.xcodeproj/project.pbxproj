@@ -3465,6 +3465,7 @@
 		2D8786221BDB58FF00D02ABB /* APIUserStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserStyleSheet.h; sourceTree = "<group>"; };
 		2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteTiledBacking.cpp; sourceTree = "<group>"; };
 		2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteTiledBacking.h; sourceTree = "<group>"; };
+		2D922D8A26E990FC00EC1A59 /* WindowKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowKind.h; sourceTree = "<group>"; };
 		2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextCheckingControllerProxy.messages.in; sourceTree = "<group>"; };
 		2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckingControllerProxy.mm; sourceTree = "<group>"; };
 		2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextCheckingControllerProxy.h; sourceTree = "<group>"; };
@@ -10289,6 +10290,7 @@
 				51E8B68D1E712873001B7132 /* WebURLSchemeTask.cpp */,
 				51D124271E6D3F1F002B2820 /* WebURLSchemeTask.h */,
 				572FD44122265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h */,
+				2D922D8A26E990FC00EC1A59 /* WindowKind.h */,
 			);
 			path = UIProcess;
 			sourceTree = "<group>";

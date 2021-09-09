@@ -36,6 +36,7 @@
 #include "WebDataListSuggestionsDropdown.h"
 #include "WebDateTimePicker.h"
 #include "WebPopupMenuProxy.h"
+#include "WindowKind.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/ContactInfo.h>
@@ -244,6 +245,8 @@ public:
 
     // Return the layer hosting mode for the view.
     virtual LayerHostingMode viewLayerHostingMode() { return LayerHostingMode::InProcess; }
+
+    virtual WindowKind windowKind() { return isViewInWindow() ? WindowKind::Normal : WindowKind::Unparented; }
 
     virtual void processDidExit() = 0;
     virtual void processWillSwap() { processDidExit(); }
