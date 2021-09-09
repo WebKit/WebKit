@@ -160,10 +160,13 @@ promise_test(async (test) => {
 
     const channel2 = pc.createDataChannel('sendDataChannel2');
     const offer2 = await pc.createOffer();
-    const description = pc.localDescription;
 
     // Make sure we can apply the filtered description.
-    await pc.setLocalDescription(description);
+    await pc.setLocalDescription(pc.localDescription);
+
+    // Reapply description which should have candidates.
+    await pc.setLocalDescription(offer2);
+    const description = pc.localDescription;
 
     const lines = description.sdp.split('\r\n').filter(line => {
         return line.indexOf('a=candidate') === 0;

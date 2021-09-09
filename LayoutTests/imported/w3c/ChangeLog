@@ -1,3 +1,13 @@
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Update RTCPeerConnection descriptions as per specification
+        https://bugs.webkit.org/show_bug.cgi?id=229963
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-description-attributes-timing.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-rollback-expected.txt:
+
 2021-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-text-decor] Update WPT test suite

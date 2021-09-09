@@ -104,14 +104,6 @@ public:
 
     virtual void close() = 0;
 
-    virtual RefPtr<RTCSessionDescription> localDescription() const = 0;
-    virtual RefPtr<RTCSessionDescription> currentLocalDescription() const = 0;
-    virtual RefPtr<RTCSessionDescription> pendingLocalDescription() const = 0;
-
-    virtual RefPtr<RTCSessionDescription> remoteDescription() const = 0;
-    virtual RefPtr<RTCSessionDescription> currentRemoteDescription() const = 0;
-    virtual RefPtr<RTCSessionDescription> pendingRemoteDescription() const = 0;
-
     virtual void restartIce() = 0;
     virtual bool setConfiguration(MediaEndpointConfiguration&&) = 0;
 
@@ -130,7 +122,18 @@ public:
 
     virtual void emulatePlatformEvent(const String& action) = 0;
 
-    void newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL);
+    struct DescriptionStates {
+        std::optional<RTCSdpType> currentLocalDescriptionSdpType;
+        String currentLocalDescriptionSdp;
+        std::optional<RTCSdpType> pendingLocalDescriptionSdpType;
+        String pendingLocalDescriptionSdp;
+        std::optional<RTCSdpType> currentRemoteDescriptionSdpType;
+        String currentRemoteDescriptionSdp;
+        std::optional<RTCSdpType> pendingRemoteDescriptionSdpType;
+        String pendingRemoteDescriptionSdp;
+    };
+
+    void newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&&);
     virtual void disableICECandidateFiltering();
     void enableICECandidateFiltering();
 
@@ -187,6 +190,9 @@ public:
 
     bool shouldFilterICECandidates() const { return m_shouldFilterICECandidates; };
 
+    using AddIceCandidateCallbackFunction = void(ExceptionOr<std::optional<PeerConnectionBackend::DescriptionStates>>&&);
+    using AddIceCandidateCallback = Function<AddIceCandidateCallbackFunction>;
+
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&, String&& url);
     void doneGatheringCandidates();
@@ -199,14 +205,11 @@ protected:
     void createAnswerSucceeded(String&&);
     void createAnswerFailed(Exception&&);
 
-    void setLocalDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&&);
+    void setLocalDescriptionSucceeded(std::optional<DescriptionStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&);
     void setLocalDescriptionFailed(Exception&&);
 
-    void setRemoteDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&&);
+    void setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&&, std::unique_ptr<RTCSctpTransportBackend>&&);
     void setRemoteDescriptionFailed(Exception&&);
-
-    void addIceCandidateSucceeded();
-    void addIceCandidateFailed(Exception&&);
 
     void validateSDP(const String&) const;
 
@@ -223,7 +226,7 @@ private:
     virtual void doCreateAnswer(RTCAnswerOptions&&) = 0;
     virtual void doSetLocalDescription(const RTCSessionDescription*) = 0;
     virtual void doSetRemoteDescription(const RTCSessionDescription&) = 0;
-    virtual void doAddIceCandidate(RTCIceCandidate&, Function<void(ExceptionOr<void>&&)>&&) = 0;
+    virtual void doAddIceCandidate(RTCIceCandidate&, AddIceCandidateCallback&&) = 0;
     virtual void endOfIceCandidates(DOMPromiseDeferred<void>&&);
     virtual void doStop() = 0;
 

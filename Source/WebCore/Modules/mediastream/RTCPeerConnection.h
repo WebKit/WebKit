@@ -112,14 +112,14 @@ public:
 
     using Description = Variant<RTCSessionDescriptionInit, RefPtr<RTCSessionDescription>>;
     void setLocalDescription(std::optional<Description>&&, Ref<DeferredPromise>&&);
-    RefPtr<RTCSessionDescription> localDescription() const;
-    RefPtr<RTCSessionDescription> currentLocalDescription() const;
-    RefPtr<RTCSessionDescription> pendingLocalDescription() const;
+    RefPtr<RTCSessionDescription> localDescription() const { return m_pendingLocalDescription ? m_pendingLocalDescription.get() : m_currentLocalDescription.get(); }
+    RefPtr<RTCSessionDescription> currentLocalDescription() const { return m_currentLocalDescription.get(); }
+    RefPtr<RTCSessionDescription> pendingLocalDescription() const { return m_pendingLocalDescription.get(); }
 
     void setRemoteDescription(Description&&, Ref<DeferredPromise>&&);
-    RefPtr<RTCSessionDescription> remoteDescription() const;
-    RefPtr<RTCSessionDescription> currentRemoteDescription() const;
-    RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
+    RTCSessionDescription* remoteDescription() const { return m_pendingRemoteDescription ? m_pendingRemoteDescription.get() : m_currentRemoteDescription.get(); }
+    RTCSessionDescription* currentRemoteDescription() const { return m_currentRemoteDescription.get(); }
+    RTCSessionDescription* pendingRemoteDescription() const { return m_pendingRemoteDescription.get(); }
 
     using Candidate = std::optional<Variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>>;
     void addIceCandidate(Candidate&&, Ref<DeferredPromise>&&);
@@ -187,6 +187,7 @@ public:
 
     void doTask(Function<void()>&&);
 
+    void updateDescriptions(PeerConnectionBackend::DescriptionStates&&);
     void updateTransceiversAfterSuccessfulLocalDescription();
     void updateTransceiversAfterSuccessfulRemoteDescription();
     void updateSctpBackend(std::unique_ptr<RTCSctpTransportBackend>&&);
@@ -271,6 +272,11 @@ private:
     Vector<Ref<RTCDtlsTransport>> m_dtlsTransports;
     Vector<Ref<RTCIceTransport>> m_iceTransports;
     RefPtr<RTCSctpTransport> m_sctpTransport;
+
+    RefPtr<RTCSessionDescription> m_currentLocalDescription;
+    RefPtr<RTCSessionDescription> m_pendingLocalDescription;
+    RefPtr<RTCSessionDescription> m_currentRemoteDescription;
+    RefPtr<RTCSessionDescription> m_pendingRemoteDescription;
 };
 
 } // namespace WebCore

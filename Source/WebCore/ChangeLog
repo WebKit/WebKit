@@ -1,3 +1,42 @@
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Update RTCPeerConnection descriptions as per specification
+        https://bugs.webkit.org/show_bug.cgi?id=229963
+
+        Reviewed by Eric Carlson.
+
+        A peer connection has two sets of descriptions: main thread descriptions which are exposed to JS and signaling thread descriptions
+        which are used/modified internally by the backend.
+        WebRTC spec describes when signaling thread descriptions should be used to set main thread descriptions.
+        This should be done at the end of setting remote/local descriptions, as well as when adding or surfacing an ICE candidate.
+        We make sure to grab signaling thread descriptions at those moments, then hop to main thread to set the main thread descriptions.
+
+        In case of closed connection, we stop early as we do not need to surface new descriptions (as well as resolve promises/fire events).
+
+        Covered by rebased tests.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::addIceCandidate):
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::updateDescription):
+        (WebCore::RTCPeerConnection::updateDescriptions):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::fromSessionDescriptionType):
+        (WebCore::descriptionsFromPeerConnection):
+        (WebCore::LibWebRTCMediaEndpoint::addIceCandidate):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceCandidate):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::doAddIceCandidate):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
 2021-09-09  Antti Koivisto  <antti@apple.com>
 
         Add cache to InlineContent for O(1) inline box access

@@ -89,18 +89,11 @@ public:
     void getStats(webrtc::RtpReceiverInterface&, Ref<DeferredPromise>&&);
     void getStats(webrtc::RtpSenderInterface&, Ref<DeferredPromise>&&);
     std::unique_ptr<RTCDataChannelHandler> createDataChannel(const String&, const RTCDataChannelInit&);
-    void addIceCandidate(std::unique_ptr<webrtc::IceCandidateInterface>&&, std::function<void(webrtc::RTCError)>&&);
+    void addIceCandidate(std::unique_ptr<webrtc::IceCandidateInterface>&&, PeerConnectionBackend::AddIceCandidateCallback&&);
 
     void close();
     void stop();
     bool isStopped() const { return !m_backend; }
-
-    RefPtr<RTCSessionDescription> localDescription() const;
-    RefPtr<RTCSessionDescription> remoteDescription() const;
-    RefPtr<RTCSessionDescription> currentLocalDescription() const;
-    RefPtr<RTCSessionDescription> currentRemoteDescription() const;
-    RefPtr<RTCSessionDescription> pendingLocalDescription() const;
-    RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
     bool addTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&, const Vector<String>&);
     void removeTrack(LibWebRTCRtpSenderBackend&);

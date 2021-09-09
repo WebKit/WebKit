@@ -47,7 +47,6 @@
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
 #include "Settings.h"
-#include <wtf/SharedTask.h>
 
 namespace WebCore {
 
@@ -270,7 +269,7 @@ void LibWebRTCPeerConnectionBackend::doStop()
     m_pendingReceivers.clear();
 }
 
-void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidate, Function<void(ExceptionOr<void>&&)>&& callback)
+void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidate, AddIceCandidateCallback&& callback)
 {
     webrtc::SdpParseError error;
     int sdpMLineIndex = candidate.sdpMLineIndex() ? candidate.sdpMLineIndex().value() : 0;
@@ -281,15 +280,7 @@ void LibWebRTCPeerConnectionBackend::doAddIceCandidate(RTCIceCandidate& candidat
         return;
     }
 
-    m_endpoint->addIceCandidate(WTFMove(rtcCandidate), [task = createSharedTask<void(ExceptionOr<void>&&)>(WTFMove(callback))](auto&& error) mutable {
-        callOnMainThread([task = WTFMove(task), error = WTFMove(error)] {
-            if (!error.ok()) {
-                task->run(toException(error));
-                return;
-            }
-            task->run({ });
-        });
-    });
+    m_endpoint->addIceCandidate(WTFMove(rtcCandidate), WTFMove(callback));
 }
 
 Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(std::unique_ptr<LibWebRTCRtpReceiverBackend>&& backend)
@@ -309,45 +300,6 @@ Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(std::unique_p
 std::unique_ptr<RTCDataChannelHandler> LibWebRTCPeerConnectionBackend::createDataChannelHandler(const String& label, const RTCDataChannelInit& options)
 {
     return m_endpoint->createDataChannel(label, options);
-}
-
-RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::currentLocalDescription() const
-{
-    auto description = m_endpoint->currentLocalDescription();
-    if (description)
-        validateSDP(description->sdp());
-    return description;
-}
-
-RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::currentRemoteDescription() const
-{
-    return m_endpoint->currentRemoteDescription();
-}
-
-RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::pendingLocalDescription() const
-{
-    auto description = m_endpoint->pendingLocalDescription();
-    if (description)
-        validateSDP(description->sdp());
-    return description;
-}
-
-RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::pendingRemoteDescription() const
-{
-    return m_endpoint->pendingRemoteDescription();
-}
-
-RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::localDescription() const
-{
-    auto description = m_endpoint->localDescription();
-    if (description)
-        validateSDP(description->sdp());
-    return description;
-}
-
-RefPtr<RTCSessionDescription> LibWebRTCPeerConnectionBackend::remoteDescription() const
-{
-    return m_endpoint->remoteDescription();
 }
 
 static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtpTransceiver>>& transceivers, LibWebRTCRtpSenderBackend& senderBackend)

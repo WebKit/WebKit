@@ -247,21 +247,6 @@ void RTCPeerConnection::setLocalDescription(std::optional<Description>&& localDe
     });
 }
 
-RefPtr<RTCSessionDescription> RTCPeerConnection::localDescription() const
-{
-    return m_backend->localDescription();
-}
-
-RefPtr<RTCSessionDescription> RTCPeerConnection::currentLocalDescription() const
-{
-    return m_backend->currentLocalDescription();
-}
-
-RefPtr<RTCSessionDescription> RTCPeerConnection::pendingLocalDescription() const
-{
-    return m_backend->pendingLocalDescription();
-}
-
 void RTCPeerConnection::setRemoteDescription(Description&& remoteDescription, Ref<DeferredPromise>&& promise)
 {
     RefPtr<RTCSessionDescription> description;
@@ -284,21 +269,6 @@ void RTCPeerConnection::setRemoteDescription(Description&& remoteDescription, Re
     chainOperation(WTFMove(promise), [this, description = WTFMove(description)](auto&& promise) mutable {
         m_backend->setRemoteDescription(*description, WTFMove(promise));
     });
-}
-
-RefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription() const
-{
-    return m_backend->remoteDescription();
-}
-
-RefPtr<RTCSessionDescription> RTCPeerConnection::currentRemoteDescription() const
-{
-    return m_backend->currentRemoteDescription();
-}
-
-RefPtr<RTCSessionDescription> RTCPeerConnection::pendingRemoteDescription() const
-{
-    return m_backend->pendingRemoteDescription();
 }
 
 void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPromise>&& promise)
@@ -932,6 +902,25 @@ RefPtr<RTCDtlsTransport> RTCPeerConnection::getOrCreateDtlsTransport(std::unique
     }
 
     return m_dtlsTransports[index].copyRef();
+}
+
+static void updateDescription(RefPtr<RTCSessionDescription>& description, std::optional<RTCSdpType> type, String&& sdp)
+{
+    if (description && type && description->sdp() == sdp && description->type() == *type)
+        return;
+    if (!type || sdp.isEmpty()) {
+        description = nullptr;
+        return;
+    }
+    description = RTCSessionDescription::create(*type, WTFMove(sdp));
+}
+
+void RTCPeerConnection::updateDescriptions(PeerConnectionBackend::DescriptionStates&& states)
+{
+    updateDescription(m_currentLocalDescription, states.currentLocalDescriptionSdpType, WTFMove(states.currentLocalDescriptionSdp));
+    updateDescription(m_pendingLocalDescription, states.pendingLocalDescriptionSdpType, WTFMove(states.pendingLocalDescriptionSdp));
+    updateDescription(m_currentRemoteDescription, states.currentRemoteDescriptionSdpType, WTFMove(states.currentRemoteDescriptionSdp));
+    updateDescription(m_pendingRemoteDescription, states.pendingRemoteDescriptionSdpType, WTFMove(states.pendingRemoteDescriptionSdp));
 }
 
 void RTCPeerConnection::updateTransceiverTransports()

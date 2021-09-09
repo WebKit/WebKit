@@ -175,16 +175,18 @@ void PeerConnectionBackend::setLocalDescription(const RTCSessionDescription* ses
     doSetLocalDescription(sessionDescription);
 }
 
-void PeerConnectionBackend::setLocalDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
+void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
+        if (descriptionStates)
+            m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
         m_peerConnection.updateTransceiversAfterSuccessfulLocalDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
         promise->resolve();
@@ -213,7 +215,7 @@ void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& se
     doSetRemoteDescription(sessionDescription);
 }
 
-void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
+void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<DescriptionStates>&& descriptionStates, std::unique_ptr<RTCSctpTransportBackend>&& sctpBackend)
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
@@ -234,10 +236,12 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::unique_ptr<RTCSct
         track.source().setMuted(false);
     }
 
-    m_peerConnection.doTask([this, promise = WTFMove(promise), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.doTask([this, promise = WTFMove(promise), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
+        if (descriptionStates)
+            m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
         m_peerConnection.updateTransceiversAfterSuccessfulRemoteDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
         promise->resolve();
@@ -314,8 +318,16 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPr
         ASSERT(isMainThread());
         if (!weakThis || weakThis->m_peerConnection.isClosed())
             return;
-        RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate finished, success=%d", result.hasException());
-        promise.settle(WTFMove(result));
+
+        if (result.hasException()) {
+            RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate failed %d", result.exception().code());
+            promise.reject(result.releaseException());
+            return;
+        }
+
+        if (auto descriptions = result.releaseReturnValue())
+            weakThis->m_peerConnection.updateDescriptions(WTFMove(*descriptions));
+        promise.resolve();
     });
 }
 
@@ -349,11 +361,14 @@ void PeerConnectionBackend::validateSDP(const String& sdp) const
 #endif
 }
 
-void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL)
+void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&& descriptions)
 {
-    m_peerConnection.doTask([logSiteIdentifier = LOGIDENTIFIER, this, sdp = WTFMove(sdp), mid = WTFMove(mid), sdpMLineIndex, serverURL = WTFMove(serverURL)]() mutable {
+    m_peerConnection.doTask([logSiteIdentifier = LOGIDENTIFIER, this, sdp = WTFMove(sdp), mid = WTFMove(mid), sdpMLineIndex, serverURL = WTFMove(serverURL), descriptions = WTFMove(descriptions)]() mutable {
         if (m_peerConnection.isClosed())
             return;
+
+        if (descriptions)
+            m_peerConnection.updateDescriptions(WTFMove(*descriptions));
 
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "Gathered ice candidate:", sdp);
