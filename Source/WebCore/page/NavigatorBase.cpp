@@ -140,7 +140,7 @@ Vector<String> NavigatorBase::languages()
     return { defaultLanguage() };
 }
 
-ExceptionOr<StorageManager&> NavigatorBase::storage()
+StorageManager& NavigatorBase::storage()
 {
     if (!m_storageManager)
         m_storageManager = StorageManager::create(*this);

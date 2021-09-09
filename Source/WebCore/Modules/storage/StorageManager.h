@@ -43,7 +43,7 @@ public:
 private:
     explicit StorageManager(NavigatorBase&);
 
-    NavigatorBase& m_navigator;
+    WeakPtr<NavigatorBase> m_navigator;
 };
 
 } // namespace WebCore

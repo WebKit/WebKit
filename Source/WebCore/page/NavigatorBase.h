@@ -59,7 +59,7 @@ public:
     static String language();
     static Vector<String> languages();
 
-    ExceptionOr<StorageManager&> storage();
+    StorageManager& storage();
 
 protected:
     explicit NavigatorBase(ScriptExecutionContext*);

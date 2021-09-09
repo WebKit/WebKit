@@ -1,3 +1,27 @@
+2021-09-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Address post-commit comments on r282130 (Add basic support for Storage API)
+        https://bugs.webkit.org/show_bug.cgi?id=230059
+
+        Reviewed by Youenn Fablet.
+
+        No new tests as no behavior change.
+
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::StorageManager::StorageManager):
+        (WebCore::StorageManager::persisted):
+        (WebCore::StorageManager::persist):
+        (WebCore::clientOrigin): Deleted.
+        * Modules/storage/StorageManager.h:
+        * dom/Document.cpp:
+        (WebCore::Document::storageConnection):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::storageConnection):
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::storage):
+        * page/NavigatorBase.h:
+
 2021-09-09  Jer Noble  <jer.noble@apple.com>
 
         Refactor Video,Audio,TextTrack and TrackLists to not depend on HTMLMediaElement
