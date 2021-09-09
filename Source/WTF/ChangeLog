@@ -1,3 +1,11 @@
+2021-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, follow-up after r282007
+
+        Somehow, the wrong settings got enabled by the patch landed.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-09-09  Darin Adler  <darin@apple.com>
 
         Improve performance by using StringView, not "const StringView&"
