@@ -32,7 +32,6 @@
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
 #include "NWParametersSPI.h"
-#include <WebCore/RegistrableDomain.h>
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
 #include <wtf/BlockPtr.h>
@@ -40,12 +39,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if HAVE(NWPARAMETERS_TRACKER_API)
-SOFT_LINK_LIBRARY(libnetworkextension)
-SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDisposition_t)
-SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerAppInfoRef)
-SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDomainContextRef)
-SOFT_LINK(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDisposition_t*, (NEHelperTrackerAppInfoRef *app_info_ref, CFArrayRef domains, NEHelperTrackerDomainContextRef *trackerDomainContextRef, CFIndex *trackerDomainIndex), (app_info_ref, domains, trackerDomainContextRef, trackerDomainIndex))
-
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_allow_sharing_port_with_listener, void, __cdecl, (nw_parameters_t, nw_listener_t))
 #endif
@@ -72,10 +65,8 @@ private:
 
     WebCore::LibWebRTCSocketIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
-#if HAVE(NWPARAMETERS_TRACKER_API)
     bool m_isFirstParty { false };
     bool m_isKnownTracker { false };
-#endif
     bool m_shouldBypassRelay { false };
 
     CString m_sourceApplicationBundleIdentifier;
@@ -149,23 +140,11 @@ static rtc::SocketAddress socketAddressFromIncomingConnection(nw_connection_t co
     return rtc::SocketAddress { nw_endpoint_get_hostname(endpoint.get()), nw_endpoint_get_port(endpoint.get()) };
 }
 
-#if HAVE(NWPARAMETERS_TRACKER_API)
-static bool isKnownTracker(const WebCore::RegistrableDomain& domain)
-{
-    NSArray<NSString *> *domains = @[domain.string()];
-    NEHelperTrackerDomainContextRef *context = nil;
-    CFIndex index = 0;
-    return !!NEHelperTrackerGetDisposition(nullptr, (CFArrayRef)domains, context, &index);
-}
-#endif
-
 NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
     : m_identifier(identifier)
     , m_connection(WTFMove(connection))
-#if HAVE(NWPARAMETERS_TRACKER_API)
     , m_isFirstParty(isFirstParty)
     , m_isKnownTracker(isKnownTracker(domain))
-#endif
     , m_shouldBypassRelay(isRelayDisabled)
     , m_sourceApplicationBundleIdentifier(rtcProvider.applicationBundleIdentifier())
     , m_sourceApplicationAuditToken(rtcProvider.sourceApplicationAuditToken())
@@ -237,14 +216,8 @@ void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t pa
     auto options = adoptNS(nw_protocol_stack_copy_internet_protocol(protocolStack.get()));
     nw_ip_options_set_version(options.get(), version);
 
-    if (m_shouldBypassRelay)
-        nw_parameters_set_account_id(parameters, "com.apple.safari.peertopeer");
-#if HAVE(NWPARAMETERS_TRACKER_API)
-    nw_parameters_set_is_third_party_web_content(parameters, !m_isFirstParty);
-    nw_parameters_set_is_known_tracker(parameters, m_isKnownTracker);
-#endif
-
     setNWParametersApplicationIdentifiers(parameters, m_sourceApplicationBundleIdentifier.data(), m_sourceApplicationAuditToken, m_attributedBundleIdentifier);
+    setNWParametersTrackerOptions(parameters, m_shouldBypassRelay, m_isFirstParty, m_isKnownTracker);
 
     nw_parameters_set_reuse_local_address(parameters, true);
 }

@@ -51,12 +51,12 @@ static dispatch_queue_t tcpSocketQueue()
     return queue;
 }
 
-std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int tcpOptions, const String& attributedBundleIdentifier, bool isRelayDisabled, Ref<IPC::Connection>&& connection)
+std::unique_ptr<NetworkRTCProvider::Socket> NetworkRTCTCPSocketCocoa::createClientTCPSocket(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int tcpOptions, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
 {
     // FIXME: We should migrate ssltcp candidates, maybe support OPT_TLS_INSECURE as well.
     if ((tcpOptions & rtc::PacketSocketFactory::OPT_TLS_FAKE) || (tcpOptions & rtc::PacketSocketFactory::OPT_TLS_INSECURE))
         return nullptr;
-    return makeUnique<NetworkRTCTCPSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, attributedBundleIdentifier, isRelayDisabled, WTFMove(connection));
+    return makeUnique<NetworkRTCTCPSocketCocoa>(identifier, rtcProvider, remoteAddress, tcpOptions, attributedBundleIdentifier, isFirstParty, isRelayDisabled, domain, WTFMove(connection));
 }
 
 static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection, Function<Vector<uint8_t>(Vector<uint8_t>&&)>&& processData, Vector<uint8_t>&& buffer = { })
@@ -81,7 +81,7 @@ static inline void processIncomingData(RetainPtr<nw_connection_t>&& nwConnection
     }).get());
 }
 
-NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int options, const String& attributedBundleIdentifier, bool isRelayDisabled, Ref<IPC::Connection>&& connection)
+NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& remoteAddress, int options, const String& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain, Ref<IPC::Connection>&& connection)
     : m_identifier(identifier)
     , m_rtcProvider(rtcProvider)
     , m_connection(WTFMove(connection))
@@ -98,9 +98,7 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     }));
 
     setNWParametersApplicationIdentifiers(tcpTLS.get(), rtcProvider.applicationBundleIdentifier(), rtcProvider.sourceApplicationAuditToken(), attributedBundleIdentifier);
-
-    if (isRelayDisabled)
-        nw_parameters_set_account_id(tcpTLS.get(), "com.apple.safari.peertopeer");
+    setNWParametersTrackerOptions(tcpTLS.get(), isRelayDisabled, isFirstParty, isKnownTracker(domain));
 
     m_nwConnection = adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 

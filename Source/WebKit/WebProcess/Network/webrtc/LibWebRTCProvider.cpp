@@ -125,7 +125,7 @@ rtc::AsyncPacketSocket* RTCSocketFactory::CreateServerTcpSocket(const rtc::Socke
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, const rtc::PacketSocketTcpOptions& options)
 {
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options, m_pageIdentifier, m_isRelayDisabled);
+    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(this, localAddress, remoteAddress, String { m_userAgent }, options, m_pageIdentifier, m_isFirstParty, m_isRelayDisabled, m_domain);
 }
 
 rtc::AsyncResolverInterface* RTCSocketFactory::CreateAsyncResolver()

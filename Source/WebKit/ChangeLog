@@ -1,3 +1,36 @@
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Categorize WebRTC TCP nw connections like done for WebRTC UDP nw connections
+        https://bugs.webkit.org/show_bug.cgi?id=229801
+
+        Reviewed by Eric Carlson.
+
+        Move NetworkRTCUDPSocketCocoa tracker related code to its own routine in NetworkRTCUtilitiesCocoa.
+        Make use of that routine in NetworkRTCTCPSocketCocoa.
+        To do so, we need to pass more information when creating a client TCP socket from WebProcess to NetworkProcess.
+        Manually tested.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.messages.in:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::createClientTCPSocket):
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::configureParameters):
+        (WebKit::isKnownTracker): Deleted.
+        * NetworkProcess/webrtc/NetworkRTCUtilitiesCocoa.h:
+        * NetworkProcess/webrtc/NetworkRTCUtilitiesCocoa.mm:
+        (WebKit::setNWParametersTrackerOptions):
+        (WebKit::isKnownTracker):
+        * WebProcess/Network/webrtc/LibWebRTCProvider.cpp:
+        (WebKit::RTCSocketFactory::CreateClientTcpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
 2021-09-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy CheckedRef on FocusController
