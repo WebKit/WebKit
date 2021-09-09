@@ -1,3 +1,57 @@
+2021-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy CheckedRef on FocusController
+        https://bugs.webkit.org/show_bug.cgi?id=230037
+
+        Reviewed by Wenson Hsieh.
+
+        Make FocusController inherit from CanMakeCheckedPtr and deploy CheckedRef / CheckedPtr wherever appropriate.
+ 
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        (WebCore::Element::blur):
+         * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected):
+        (WebCore::FrameSelection::setFocusedElementIfNeeded):
+        * editing/cocoa/AutofillElements.cpp:
+        (WebCore::AutofillElements::computeAutofillElements):
+        * editing/cocoa/DictionaryLookup.mm:
+        (WebCore::DictionaryLookup::rangeAtHitTestResult):
+        * history/BackForwardCache.cpp:
+        (WebCore::BackForwardCache::trySuspendPage):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::handleFocusEvent):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setFocus):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handlePasteGlobalSelection):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::defaultArrowEventHandler):
+        (WebCore::EventHandler::defaultTabEventHandler):
+        (WebCore::EventHandler::focusDocumentView):
+        * page/FocusController.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::willDetachPage):
+        * page/Page.cpp:
+        (WebCore::Page::findString):
+        (WebCore::Page::replaceSelectionWithText):
+        (WebCore::Page::editableElementsInRect const):
+        (WebCore::Page::selection const):
+        (WebCore::Page::setActivityState):
+        (WebCore::Page::revealCurrentSelection):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::focusDocumentView):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::focusDocumentView):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown const):
+        (WebCore::ServicesOverlayController::telephoneNumberRangesForFocusedFrame):
+        (WebCore::ServicesOverlayController::handleClick):
+
 2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         generated MessageArgumentDescriptions.cpp can't compile for non-Cocoa ports due to missing headers

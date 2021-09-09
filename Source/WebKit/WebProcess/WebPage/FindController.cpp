@@ -435,7 +435,7 @@ bool FindController::shouldHideFindIndicatorOnScroll() const
 
 void FindController::showFindIndicatorInSelection()
 {
-    Frame& selectedFrame = m_webPage->corePage()->focusController().focusedOrMainFrame();
+    Ref selectedFrame = CheckedRef(m_webPage->corePage()->focusController())->focusedOrMainFrame();
     updateFindIndicator(selectedFrame, false);
 }
 

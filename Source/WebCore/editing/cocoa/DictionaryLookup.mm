@@ -318,7 +318,7 @@ std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAt
     if (position.isNull())
         position = firstPositionInOrBeforeNode(node);
 
-    auto selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
+    auto selection = CheckedRef(frame->page()->focusController())->focusedOrMainFrame().selection().selection();
     NSRange selectionRange;
     NSUInteger hitIndex;
     std::optional<SimpleRange> fullCharacterRange;

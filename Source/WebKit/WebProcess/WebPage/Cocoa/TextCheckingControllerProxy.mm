@@ -73,10 +73,10 @@ static OptionSet<DocumentMarker::MarkerType> relevantMarkerTypes()
 
 std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
 {
-    auto& frameSelection = m_page.corePage()->focusController().focusedOrMainFrame().selection();
-    auto& selection = frameSelection.selection();
+    auto& frameSelection = CheckedRef(m_page.corePage()->focusController()).focusedOrMainFrame().selection();
+    auto selection = frameSelection.selection();
 
-    auto root = frameSelection.rootEditableElementOrDocumentElement();
+    RefPtr root = frameSelection.rootEditableElementOrDocumentElement();
     if (!root)
         return std::nullopt;
 
@@ -96,9 +96,9 @@ std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControlle
 
 void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 {
-    Frame& frame = m_page.corePage()->focusController().focusedOrMainFrame();
-    FrameSelection& frameSelection = frame.selection();
-    auto root = frameSelection.rootEditableElementOrDocumentElement();
+    Ref frame = CheckedRef(m_page.corePage()->focusController())->focusedOrMainFrame();
+    FrameSelection frameSelection = frame.selection();
+    RefPtr root = frameSelection.rootEditableElementOrDocumentElement();
     if (!root)
         return;
 
@@ -155,7 +155,8 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
 
     auto removeCoreSpellingMarkers = annotation == "NSSpellingState";
     auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::PlatformTextChecking;
-    m_page.corePage()->focusController().focusedOrMainFrame().document()->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {
+    RefPtr document = CheckedRef(m_page.corePage()->focusController()).focusedOrMainFrame().document();
+    document->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {
         if (!WTF::holds_alternative<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()))
             return false;
         return WTF::get<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()).key != annotation;

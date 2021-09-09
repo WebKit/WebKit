@@ -777,8 +777,12 @@ void Frame::willDetachPage()
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
-    if (page() && page()->focusController().focusedFrame() == this)
-        page()->focusController().setFocusedFrame(nullptr);
+    if (page()) {
+        CheckedRef focusController { page()->focusController() };
+        if (focusController->focusedFrame() == this)
+            focusController->setFocusedFrame(nullptr);
+    }
+
 
     if (page() && page()->scrollingCoordinator() && m_view)
         page()->scrollingCoordinator()->willDestroyScrollableArea(*m_view);

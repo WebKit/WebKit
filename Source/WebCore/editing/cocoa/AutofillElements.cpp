@@ -83,7 +83,7 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
 {
     if (!start->document().page())
         return std::nullopt;
-    FocusController& focusController = start->document().page()->focusController();
+    CheckedRef focusController = { start->document().page()->focusController() };
     if (start->isPasswordField()) {
         auto previousElement = previousAutofillableElement(start.ptr(), focusController);
         auto nextElement = nextAutofillableElement(start.ptr(), focusController);

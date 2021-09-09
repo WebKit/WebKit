@@ -999,7 +999,7 @@ void DOMWindow::focus(bool allowFocus)
         return;
 
     // Clear the current frame's focused node if a new frame is about to be focused.
-    RefPtr focusedFrame = page->focusController().focusedFrame();
+    RefPtr focusedFrame = CheckedRef(page->focusController())->focusedFrame();
     if (focusedFrame && focusedFrame != frame)
         focusedFrame->document()->setFocusedElement(nullptr);
 

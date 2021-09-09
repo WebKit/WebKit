@@ -278,7 +278,7 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
     if (!page)
         return 0;
 
-    auto* focusedDocument = page->focusController().focusedOrMainFrame().document();
+    RefPtr focusedDocument = CheckedRef(page->focusController())->focusedOrMainFrame().document();
     if (!focusedDocument)
         return 0;
 

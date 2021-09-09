@@ -1,3 +1,125 @@
+2021-09-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy CheckedRef on FocusController
+        https://bugs.webkit.org/show_bug.cgi?id=230037
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameFocus):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKAccessibilityFocusedObject):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::focusPluginElement):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::changeWordCase):
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection):
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection):
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::performDictionaryLookupOfCurrentSelection):
+        (WebKit::WebPage::insertDictatedTextAsync):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::showFindIndicatorInSelection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState const):
+        (WebKit::WebPage::changeFontAttributes):
+        (WebKit::WebPage::changeFont):
+        (WebKit::WebPage::updateEditorStateAfterLayoutIfEditabilityChanged):
+        (WebKit::WebPage::executeEditingCommand):
+        (WebKit::WebPage::setEditable):
+        (WebKit::WebPage::increaseListLevel):
+        (WebKit::WebPage::decreaseListLevel):
+        (WebKit::WebPage::changeListType):
+        (WebKit::WebPage::setBaseWritingDirection):
+        (WebKit::WebPage::isEditingCommandEnabled):
+        (WebKit::WebPage::contextMenuForKeyEvent):
+        (WebKit::WebPage::handleKeyEventByRelinquishingFocusToChrome):
+        (WebKit::WebPage::validateCommand):
+        (WebKit::WebPage::requestFontAttributesAtSelectionStart):
+        (WebKit::WebPage::centerSelectionInVisibleArea):
+        (WebKit::WebPage::insertNewlineInQuotedContent):
+        (WebKit::WebPage::viewWillStartLiveResize):
+        (WebKit::WebPage::viewWillEndLiveResize):
+        (WebKit::WebPage::setInitialFocus):
+        (WebKit::WebPage::getSelectionOrContentsAsString):
+        (WebKit::WebPage::advanceToNextMisspelling):
+        (WebKit::WebPage::hasRichlyEditableSelection const):
+        (WebKit::WebPage::changeSpellingToWord):
+        (WebKit::WebPage::uppercaseWord):
+        (WebKit::WebPage::lowercaseWord):
+        (WebKit::WebPage::capitalizeWord):
+        (WebKit::WebPage::clearSelection):
+        (WebKit::WebPage::restoreSelectionInFocusedEditableElement):
+        (WebKit::WebPage::handleAlternativeTextUIResult):
+        (WebKit::WebPage::setCompositionForTesting):
+        (WebKit::WebPage::hasCompositionForTesting):
+        (WebKit::WebPage::confirmCompositionForTesting):
+        (WebKit::WebPage::setTextAsync):
+        (WebKit::WebPage::insertTextAsync):
+        (WebKit::WebPage::hasMarkedText):
+        (WebKit::WebPage::getMarkedRangeAsync):
+        (WebKit::WebPage::getSelectedRangeAsync):
+        (WebKit::WebPage::characterIndexForPointAsync):
+        (WebKit::WebPage::firstRectForCharacterRangeAsync):
+        (WebKit::WebPage::setCompositionAsync):
+        (WebKit::WebPage::confirmCompositionAsync):
+        (WebKit::WebPage::didChangeSelectionOrOverflowScrollPosition):
+        (WebKit::WebPage::didEndUserTriggeredSelectionChanges):
+        (WebKit::WebPage::sendEditorStateUpdate):
+        (WebKit::WebPage::flushPendingEditorStateUpdate):
+        (WebKit::WebPage::insertAttachment):
+        (WebKit::WebPage::createAppHighlightInSelectedRange):
+        (WebKit::WebPage::restoreAppHighlightsAndScrollToIndex):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::didFindString):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformWillPerformEditingCommand):
+        (WebKit::WebPage::getSelectionContext):
+        (WebKit::WebPage::updateSelectionAppearance):
+        (WebKit::WebPage::generateSyntheticEditingCommand):
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::didConcludeEditDrag):
+        (WebKit::WebPage::clearSelectionAfterTapIfNeeded):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::clearSelection):
+        (WebKit::WebPage::dispatchSyntheticMouseEventsForSelectionGesture):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::selectWithTwoTouches):
+        (WebKit::WebPage::extendSelection):
+        (WebKit::WebPage::platformDidSelectAll):
+        (WebKit::WebPage::selectWordBackward):
+        (WebKit::WebPage::moveSelectionByOffset):
+        (WebKit::WebPage::startAutoscrollAtPosition):
+        (WebKit::WebPage::requestEvasionRectsAboveSelection):
+        (WebKit::WebPage::getRectsForGranularityWithSelectionOffset):
+        (WebKit::WebPage::storeSelectionForAccessibility):
+        (WebKit::WebPage::getRectsAtSelectionOffsetWithText):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPage::setFocusedFrameBeforeSelectingTextAtLocation):
+        (WebKit::WebPage::setSelectionRange):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPage::updateSelectionWithExtentPoint):
+        (WebKit::WebPage::requestDictationContext):
+        (WebKit::WebPage::replaceSelectedText):
+        (WebKit::WebPage::replaceDictatedText):
+        (WebKit::WebPage::requestAutocorrectionData):
+        (WebKit::WebPage::applyAutocorrectionInternal):
+        (WebKit::WebPage::autocorrectionContext):
+        (WebKit::focusedElementPositionInformation):
+        (WebKit::nextAssistableElement):
+        (WebKit::WebPage::focusedElementInformation):
+        (WebKit::WebPage::hardwareKeyboardAvailabilityChanged):
+        (WebKit::WebPage::insertTextPlaceholder):
+        (WebKit::WebPage::updateSelectionWithDelta):
+        (WebKit::WebPage::requestDocumentEditingContext):
+        (WebKit::WebPage::focusTextInputContextAndPlaceCaret):
+        (WebKit::WebPage::animationDidFinishForElement):
+
 2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         generated MessageArgumentDescriptions.cpp can't compile for non-Cocoa ports due to missing headers

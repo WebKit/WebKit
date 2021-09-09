@@ -1976,8 +1976,8 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
 
     // Focus on the parent frame, and then select from before this element to after.
     VisibleSelection newSelection(beforeOwnerElement, afterOwnerElement);
-    if (parent->selection().shouldChangeSelection(newSelection)) {
-        page->focusController().setFocusedFrame(parent.get());
+    if (parent->selection().shouldChangeSelection(newSelection) && page) {
+        CheckedRef(page->focusController())->setFocusedFrame(parent.get());
         // Previous focus can trigger DOM events, ensure the selection did not become orphan.
         if (newSelection.isOrphan())
             parent->selection().clear();
@@ -2270,8 +2270,9 @@ void FrameSelection::setFocusedElementIfNeeded()
 
     bool caretBrowsing = m_document->settings().caretBrowsingEnabled();
     if (caretBrowsing) {
-        if (Element* anchor = enclosingAnchorElement(m_selection.base())) {
-            m_document->page()->focusController().setFocusedElement(anchor, *m_document->frame());
+        if (RefPtr anchor = enclosingAnchorElement(m_selection.base())) {
+            CheckedRef focusController { m_document->page()->focusController() };
+            focusController->setFocusedElement(anchor.get(), *m_document->frame());
             return;
         }
     }
@@ -2283,7 +2284,7 @@ void FrameSelection::setFocusedElementIfNeeded()
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
             if (target->isMouseFocusable() && !isFrameElement(target)) {
-                m_document->page()->focusController().setFocusedElement(target, *m_document->frame());
+                CheckedRef(m_document->page()->focusController())->setFocusedElement(target, *m_document->frame());
                 return;
             }
             target = target->parentOrShadowHostElement();
@@ -2292,7 +2293,7 @@ void FrameSelection::setFocusedElementIfNeeded()
     }
 
     if (caretBrowsing)
-        m_document->page()->focusController().setFocusedElement(nullptr, *m_document->frame());
+        CheckedRef(m_document->page()->focusController())->setFocusedElement(nullptr, *m_document->frame());
 }
 
 void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const

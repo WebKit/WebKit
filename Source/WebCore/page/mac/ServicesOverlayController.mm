@@ -282,7 +282,7 @@ Seconds ServicesOverlayController::remainingTimeUntilHighlightShouldBeShown(Data
         return 0_s;
 
     Seconds minimumTimeUntilHighlightShouldBeShown = 200_ms;
-    if (m_page.focusController().focusedOrMainFrame().selection().selection().isContentEditable())
+    if (CheckedRef(m_page.focusController())->focusedOrMainFrame().selection().selection().isContentEditable())
         minimumTimeUntilHighlightShouldBeShown = 1_s;
 
     bool mousePressed = mainFrame().eventHandler().mousePressed();
@@ -473,7 +473,7 @@ void ServicesOverlayController::createOverlayIfNeeded()
 
 Vector<SimpleRange> ServicesOverlayController::telephoneNumberRangesForFocusedFrame()
 {
-    return m_page.focusController().focusedOrMainFrame().editor().detectedTelephoneNumberRanges();
+    return CheckedRef(m_page.focusController())->focusedOrMainFrame().editor().detectedTelephoneNumberRanges();
 }
 
 DataDetectorHighlight* ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight(DataDetectorHighlight& selectionHighlight)
@@ -644,7 +644,7 @@ void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDete
         for (auto& range : telephoneNumberRanges)
             selectedTelephoneNumbers.append(plainText(range));
 
-        m_page.chrome().client().handleSelectionServiceClick(m_page.focusController().focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
+        m_page.chrome().client().handleSelectionServiceClick(CheckedRef(m_page.focusController())->focusedOrMainFrame().selection(), selectedTelephoneNumbers, windowPoint);
     } else if (highlight.type() == DataDetectorHighlight::Type::TelephoneNumber)
         m_page.chrome().client().handleTelephoneNumberClick(plainText(highlight.range()), windowPoint);
 }

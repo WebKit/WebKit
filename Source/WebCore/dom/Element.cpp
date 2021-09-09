@@ -3111,7 +3111,7 @@ void Element::focus(const FocusOptions& options)
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), optionsWithVisibility))
+        if (!CheckedRef(page->focusController())->setFocusedElement(newTarget.get(), *document->frame(), optionsWithVisibility))
             return;
     }
 
@@ -3170,8 +3170,8 @@ void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMod
 void Element::blur()
 {
     if (treeScope().focusedElementInScope() == this) {
-        if (Frame* frame = document().frame())
-            frame->page()->focusController().setFocusedElement(nullptr, *frame);
+        if (RefPtr frame = document().frame())
+            CheckedRef(frame->page()->focusController())->setFocusedElement(nullptr, *frame);
         else
             document().setFocusedElement(nullptr);
     }

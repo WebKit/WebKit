@@ -1101,9 +1101,9 @@ void PluginView::focusPluginElement()
     ASSERT(frame());
     
     if (Page* page = frame()->page())
-        page->focusController().setFocusedElement(m_pluginElement.get(), *frame());
+        CheckedRef(page->focusController())->setFocusedElement(m_pluginElement.get(), *frame());
     else
-        frame()->document()->setFocusedElement(m_pluginElement.get());
+        RefPtr(frame()->document())->setFocusedElement(m_pluginElement.get());
 }
 
 void PluginView::pendingURLRequestsTimerFired()
