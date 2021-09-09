@@ -2347,6 +2347,8 @@ webkit.org/b/228642 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/229517 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Pass Failure ]
 webkit.org/b/229517 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Pass Failure ]
 
+webkit.org/b/230116 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html [ Pass Failure ]
+
 # rdar://82132196 (20 webkit imported/w3c/web-platform-tests/css/ layout tests failing)
 [ Monterey ] imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ Pass ImageOnlyFailure ]
 [ Monterey ] imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-016.html [ Pass ImageOnlyFailure ]
