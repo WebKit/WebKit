@@ -1,0 +1,40 @@
+
+PASS retrieve style rule
+PASS backgroundAttachment should be applied to first-line pseudo elements.
+PASS backgroundBlendMode should be applied to first-line pseudo elements.
+PASS backgroundClip should be applied to first-line pseudo elements.
+PASS backgroundColor should be applied to first-line pseudo elements.
+PASS backgroundImage should be applied to first-line pseudo elements.
+PASS backgroundOrigin should be applied to first-line pseudo elements.
+PASS backgroundPosition should be applied to first-line pseudo elements.
+PASS backgroundRepeat should be applied to first-line pseudo elements.
+PASS backgroundSize should be applied to first-line pseudo elements.
+PASS color should be applied to first-line pseudo elements.
+PASS fontFamily should be applied to first-line pseudo elements.
+PASS fontFeatureSettings should be applied to first-line pseudo elements.
+PASS fontKerning should be applied to first-line pseudo elements.
+PASS fontSize should be applied to first-line pseudo elements.
+FAIL fontSizeAdjust should be applied to first-line pseudo elements. assert_equals: expected (string) "0.5" but got (undefined) undefined
+PASS fontStyle should be applied to first-line pseudo elements.
+PASS fontVariant should be applied to first-line pseudo elements.
+PASS fontWeight should be applied to first-line pseudo elements.
+PASS fontVariationSettings should be applied to first-line pseudo elements.
+PASS letterSpacing should be applied to first-line pseudo elements.
+PASS opacity should be applied to first-line pseudo elements.
+FAIL textDecoration should be applied to first-line pseudo elements. assert_equals: expected "overline wavy rgb(10, 20, 30)" but got "none"
+FAIL textJustify should be applied to first-line pseudo elements. assert_equals: expected (string) "none" but got (undefined) undefined
+PASS textShadow should be applied to first-line pseudo elements.
+PASS textTransform should be applied to first-line pseudo elements.
+PASS textUnderlinePosition should be applied to first-line pseudo elements.
+PASS verticalAlign should be applied to first-line pseudo elements.
+PASS wordSpacing should be applied to first-line pseudo elements.
+FAIL border should not be applied to first-line pseudo elements. assert_equals: expected "0px none rgb(0, 0, 0)" but got "40px dotted rgb(10, 20, 30)"
+FAIL borderImage should not be applied to first-line pseudo elements. assert_equals: expected "none" but got "linear-gradient(rgb(0, 0, 0), rgb(255, 255, 255)) 10% / 20 / 30px repeat"
+FAIL borderRadius should not be applied to first-line pseudo elements. assert_equals: expected "0px" but got "10px 20px"
+FAIL margin should not be applied to first-line pseudo elements. assert_equals: expected "0px" but got "10px 20px 30px 40px"
+FAIL padding should not be applied to first-line pseudo elements. assert_equals: expected "0px" but got "10px 20px 30px 40px"
+FAIL position should not be applied to first-line pseudo elements. assert_equals: expected "static" but got "absolute"
+FAIL transition should not be applied to first-line pseudo elements. assert_equals: expected "all 0s ease 0s" but got "transform 1s ease 0s"
+PASS transform should not be applied to first-line pseudo elements.
+FAIL wordBreak should not be applied to first-line pseudo elements. assert_equals: expected "normal" but got "break-all"
+

@@ -1843,7 +1843,6 @@ webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-fonts/font-language-
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-multicol/equal-gap-and-rule.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-multicol/fixed-size-child-with-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-pseudo/selection-text-shadow-016.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-pseudo/textpath-selection-011.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-000.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-004.html [ ImageOnlyFailure ]
@@ -2058,3 +2057,6 @@ webkit.org/b/229585 imported/w3c/web-platform-tests/navigation-timing/test_perfo
 
 #rdar://82183980 ([ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure)
 editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
+
+webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-011.html [ ImageOnlyFailure ]
+webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-016.html [ ImageOnlyFailure ]

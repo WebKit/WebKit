@@ -1,3 +1,201 @@
+2021-09-07  Tim Nguyen  <ntim@apple.com>
+
+        Re-import css/css-pseudo WPT
+        https://bugs.webkit.org/show_bug.cgi?id=230002
+
+        Reviewed by Youenn Fablet.
+
+        https://github.com/web-platform-tests/wpt/commit/b3958a2b77988a3e4c6948dfce1b62f7b0ab04cf
+
+        * web-platform-tests/css/css-pseudo/README.md: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-011-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-011.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-012-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-012.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-014-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-014.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-016-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-016.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-018-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-018.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-021-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-021.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-025-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-025.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-027-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-027.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-031-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-031.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-041-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-041.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-043-expected.xht: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-043.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-045-expected.xht: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-045.html: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-057-expected.xht: Added.
+        * web-platform-tests/css/css-pseudo/active-selection-057.html: Added.
+        * web-platform-tests/css/css-pseudo/before-after-dynamic-custom-property-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/before-after-dynamic-custom-property-001.html: Added.
+        * web-platform-tests/css/css-pseudo/file-selector-button-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/file-selector-button-001-notref.html: Added.
+        * web-platform-tests/css/css-pseudo/file-selector-button-001.html: Added.
+        * web-platform-tests/css/css-pseudo/file-selector-button-after-part-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/file-selector-button-after-part.html: Added.
+        * web-platform-tests/css/css-pseudo/file-selector-button-display-none-overflow-crash.html: Added.
+        * web-platform-tests/css/css-pseudo/file-selector-button-display-toggle-crash.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-005-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-005.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-digraph-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-digraph.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-punctuation-and-space-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-punctuation-and-space.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-punctuation-dynamic-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-punctuation-dynamic.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-skip-empty-span-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-skip-empty-span-nested-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-skip-empty-span-nested.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-skip-empty-span.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-with-quote-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-with-quote.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-with-span-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-letter-with-span.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-allowed-properties-expected.txt: Added.
+        * web-platform-tests/css/css-pseudo/first-line-allowed-properties.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-replaced-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-replaced-001.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-inline-block-before-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-inline-block-before.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-inline-block-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-inline-block.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-out-of-flow-and-nested-div-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-out-of-flow-and-nested-div.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-out-of-flow-and-nested-span-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/first-line-with-out-of-flow-and-nested-span.html: Added.
+        * web-platform-tests/css/css-pseudo/grammar-spelling-errors-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/grammar-spelling-errors-001.html: Added.
+        * web-platform-tests/css/css-pseudo/grammar-spelling-errors-002-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/grammar-spelling-errors-002.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-001.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-002-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-002.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-003-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-003.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-004-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-painting-004.html: Added.
+        * web-platform-tests/css/css-pseudo/highlight-pseudos-computed-expected.txt: Added.
+        * web-platform-tests/css/css-pseudo/highlight-pseudos-computed.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-animate-002-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-animate-002.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-content-023-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-content-023.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-content-024-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-content-024.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-hyphens-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-hyphens.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-letter-spacing-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-letter-spacing.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-line-break-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-line-break.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-line-height-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-line-height.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-overflow-wrap-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-overflow-wrap.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-tab-size-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-tab-size.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-align-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-align.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-decoration-skip-ink-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-decoration-skip-ink.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-emphasis-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-emphasis.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-shadow-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-shadow.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-transform-default-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-transform-default.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-transform-uppercase-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-text-transform-uppercase.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-word-break-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-word-break.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-word-spacing-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/marker-word-spacing.html: Added.
+        * web-platform-tests/css/css-pseudo/parsing/highlight-pseudos-expected.txt: Added.
+        * web-platform-tests/css/css-pseudo/parsing/highlight-pseudos.html: Added.
+        * web-platform-tests/css/css-pseudo/placeholder-excluded-properties-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/placeholder-excluded-properties.html: Added.
+        * web-platform-tests/css/css-pseudo/placeholder-input-dynamic-crash.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-contenteditable-011-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-contenteditable-011.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p1-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p1.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p2-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p2.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p3-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p3.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p4-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-decoration-p4.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-input-011-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-input-011.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-intercharacter-011-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-intercharacter-011.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-intercharacter-012-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-intercharacter-012.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-overlay-and-grammar-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-overlay-and-grammar-001.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-overlay-and-spelling-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-overlay-and-spelling-001.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-paint-image-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-paint-image-notref.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-paint-image.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-textarea-011-expected.html: Added.
+        * web-platform-tests/css/css-pseudo/selection-textarea-011.html: Added.
+        * web-platform-tests/css/css-pseudo/support/100x100-red.png: Added.
+        * web-platform-tests/css/css-pseudo/support/60x60-red.png: Added.
+        * web-platform-tests/css/css-pseudo/support/highlights.css: Added.
+        (.highlight_reftest):
+        (.hrt_layers,):
+        (.hrt_layers):
+        (.hrt_layers > *):
+        (.hrt_cover):
+        (.hrt_hider):
+        (.hrt_hider > *):
+        * web-platform-tests/css/css-pseudo/support/selections.js: Added.
+        (selectRangeWith):
+        (selectNodeContents):
+        (trySpellcheck):
+        * web-platform-tests/css/css-pseudo/support/w3c-import.log: Added.
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-pseudo/active-selection-056.html:
+        * web-platform-tests/css/css-pseudo/active-selection-063.html:
+        * web-platform-tests/css/css-pseudo/cascade-highlight-001-expected.html:
+        * web-platform-tests/css/css-pseudo/cascade-highlight-001.html:
+        * web-platform-tests/css/css-pseudo/cascade-highlight-002-expected.html:
+        * web-platform-tests/css/css-pseudo/cascade-highlight-002.html:
+        * web-platform-tests/css/css-pseudo/cascade-highlight-004-expected.html:
+        * web-platform-tests/css/css-pseudo/cascade-highlight-004.html:
+        * web-platform-tests/css/css-pseudo/file-chooser-button-001-notref.html: Removed.
+        * web-platform-tests/css/css-pseudo/file-chooser-button-001.tentative-expected.html: Removed.
+        * web-platform-tests/css/css-pseudo/file-chooser-button-001.tentative.html: Removed.
+        * web-platform-tests/css/css-pseudo/file-chooser-button-display-toggle-crash.tentative-expected.txt: Removed.
+        * web-platform-tests/css/css-pseudo/file-chooser-button-display-toggle-crash.tentative.html: Removed.
+        * web-platform-tests/css/css-pseudo/first-letter-allowed-properties-expected.txt:
+        * web-platform-tests/css/css-pseudo/first-letter-allowed-properties.html:
+        * web-platform-tests/css/css-pseudo/first-line-with-out-of-flow.html:
+        * web-platform-tests/css/css-pseudo/marker-content-008.tentative-expected.html:
+        * web-platform-tests/css/css-pseudo/marker-content-008.tentative.html:
+        * web-platform-tests/css/css-pseudo/marker-default-styles-expected.txt:
+        * web-platform-tests/css/css-pseudo/marker-default-styles.html:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation.html:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties.html:
+        * web-platform-tests/css/css-pseudo/parsing/tree-abiding-pseudo-elements-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/tree-abiding-pseudo-elements.html:
+        * web-platform-tests/css/css-pseudo/parsing/w3c-import.log:
+        * web-platform-tests/css/css-pseudo/selection-text-shadow-016-expected.html: Removed.
+        * web-platform-tests/css/css-pseudo/selection-text-shadow-016.html: Removed.
+        * web-platform-tests/css/css-pseudo/w3c-import.log:
+
 2021-09-08  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection.addIceCandidate takes an optional argument

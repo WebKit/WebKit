@@ -1,3 +1,16 @@
+2021-09-07  Tim Nguyen  <ntim@apple.com>
+
+        Re-import css/css-pseudo WPT
+        https://bugs.webkit.org/show_bug.cgi?id=230002
+
+        Reviewed by Youenn Fablet.
+
+        https://github.com/web-platform-tests/wpt/commit/b3958a2b77988a3e4c6948dfce1b62f7b0ab04cf
+
+        * tests-options.json:
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2021-09-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html fails

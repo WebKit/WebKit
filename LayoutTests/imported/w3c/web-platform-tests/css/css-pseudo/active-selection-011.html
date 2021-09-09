@@ -2,29 +2,26 @@
 
   <meta charset="UTF-8">
 
-  <title>CSS Pseudo-Elements Test: selection and text-shadow in 4 directions (static variation)</title>
+  <title>CSS Pseudo-Elements Test: active selection and color (basic)</title>
 
   <link rel="author" title="Gérard Talbot" href="http://www.gtalbot.org/BrowserBugsSection/css21testsuite/">
+  <link rel="help" href="https://www.w3.org/TR/css-pseudo-4/#highlight-selectors">
   <link rel="help" href="https://www.w3.org/TR/css-pseudo-4/#highlight-styling">
-  <link rel="match" href="selection-text-shadow-016-ref.html">
+  <link rel="match" href="reference/active-selection-011-ref.html">
 
   <meta content="" name="flags">
-  <meta content="This test checks that text selectedness must affect multiple text shadows." name="assert">
 
+  <link rel="stylesheet" href="support/highlights.css">
   <style>
   div
     {
-      color: blue;
+      color: red;
       font-size: 300%;
-      margin-left: 0.66667em;
-      margin-top: 1.5em;
-      text-shadow: red 0em -0.5em 0em, red -0.5em 0em 0em, red 0.5em 0em 0em, red 0em 0.5em 0em;
     }
 
   div::selection
     {
       color: green;
-      text-shadow: none;
     }
   </style>
 
@@ -42,6 +39,6 @@
 
   <body onload="startTest();">
 
-  <p>Test passes if each glyph of "Selected Text" is green and not red.
+  <p>Test passes if each glyph of "Selected Text" is green and <strong>not red</strong> while background color of each glyph of "Selected Text" is white.
 
-  <div id="test">Selected Text</div>
+  <div id="test" class="highlight_reftest">Selected Text</div>
