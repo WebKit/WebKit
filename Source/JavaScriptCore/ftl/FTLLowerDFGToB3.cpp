@@ -7207,8 +7207,8 @@ private:
 
                 LBasicBlock lastNext = m_out.appendTo(notNullCase, rareDataCase);
                 m_out.branch(
-                    m_out.notEqual(m_out.load32(previousOrRareData, m_heaps.JSCell_structureID), m_out.constInt32(m_graph.m_vm.structureStructure->structureID())),
-                    unsure(rareDataCase), unsure(slowCase));
+                    isCellWithType(previousOrRareData, StructureType, std::nullopt),
+                    unsure(slowCase), unsure(rareDataCase));
 
                 m_out.appendTo(rareDataCase, useCacheCase);
                 ASSERT(bitwise_cast<uintptr_t>(StructureRareData::cachedPropertyNamesSentinel()) == 1);
@@ -13314,15 +13314,25 @@ private:
     void compileGetPropertyEnumerator()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        if (m_node->child1().useKind() == CellUse) {
+        if (m_node->child1().useKind() == CellUse || m_node->child1().useKind() == CellOrOtherUse) {
             LBasicBlock checkExistingCase = m_out.newBlock();
             LBasicBlock notNullCase = m_out.newBlock();
             LBasicBlock rareDataCase = m_out.newBlock();
             LBasicBlock validationCase = m_out.newBlock();
             LBasicBlock genericCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
+            LBasicBlock lastNext = nullptr;
 
-            LValue cell = lowCell(m_node->child1());
+            LValue base = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+            speculate(m_node->child1());
+
+            Vector<ValueFromBlock, 3> results;
+            if (m_node->child1().useKind() == CellOrOtherUse) {
+                LBasicBlock cellCase = m_out.newBlock();
+                results.append(m_out.anchor(weakPointer(m_graph.m_vm.emptyPropertyNameEnumerator())));
+                m_out.branch(isOther(base, provenType(m_node->child1())), unsure(continuation), unsure(cellCase));
+                lastNext = m_out.appendTo(cellCase, checkExistingCase);
+            }
 
             // We go to the inlined fast path if the object is UndecidedShape / NoIndexingShape for simplicity.
             static_assert(!NonArray);
@@ -13332,33 +13342,71 @@ private:
             static_assert(NonArray <= ArrayWithUndecided);
             static_assert(ArrayClass <= ArrayWithUndecided);
             static_assert(ArrayWithUndecided <= ArrayWithUndecided);
-            LValue indexingType = m_out.bitAnd(m_out.load8ZeroExt32(cell, m_heaps.JSCell_indexingTypeAndMisc), m_out.constInt32(IndexingTypeMask));
-            m_out.branch(m_out.belowOrEqual(indexingType, m_out.constInt32(ArrayWithUndecided)), unsure(checkExistingCase), unsure(genericCase));
 
-            LBasicBlock lastNext = m_out.appendTo(checkExistingCase, notNullCase);
-            LValue structure = loadStructure(cell);
-            LValue previousOrRareData = m_out.loadPtr(structure, m_heaps.Structure_previousOrRareData);
+            AbstractValue& baseValue = m_state.forNode(m_node->child1());
+            RegisteredStructure onlyStructure;
+            StructureRareData* rareData = nullptr;
+            bool skipIndexingMaskCheck = false;
+            if (baseValue.isType(SpecObject) && baseValue.m_structure.isFinite()) {
+                bool hasIndexing = false;
+                baseValue.m_structure.forEach([&] (RegisteredStructure structure) {
+                    if (structure->indexingType() > ArrayWithUndecided)
+                        hasIndexing = true;
+                });
+                if (!hasIndexing)
+                    skipIndexingMaskCheck = true;
+                onlyStructure = baseValue.m_structure.onlyStructure();
+                if (onlyStructure)
+                    rareData = onlyStructure->tryRareData();
+            }
+
+            LValue notHavingIndexing = nullptr;
+            if (skipIndexingMaskCheck)
+                notHavingIndexing = m_out.booleanTrue;
+            else {
+                LValue indexingType = m_out.bitAnd(m_out.load8ZeroExt32(base, m_heaps.JSCell_indexingTypeAndMisc), m_out.constInt32(IndexingTypeMask));
+                notHavingIndexing = m_out.belowOrEqual(indexingType, m_out.constInt32(ArrayWithUndecided));
+            }
+            m_out.branch(notHavingIndexing, unsure(checkExistingCase), unsure(genericCase));
+
+            LBasicBlock lastNextCandidate = m_out.appendTo(checkExistingCase, notNullCase);
+            if (!lastNext)
+                lastNext = lastNextCandidate;
+            LValue previousOrRareData = nullptr;
+            if (rareData)
+                previousOrRareData = weakPointer(rareData);
+            else {
+                LValue structure = nullptr;
+                if (onlyStructure)
+                    structure = weakStructure(onlyStructure);
+                else
+                    structure = loadStructure(base);
+                previousOrRareData = m_out.loadPtr(structure, m_heaps.Structure_previousOrRareData);
+            }
             m_out.branch(m_out.notNull(previousOrRareData), unsure(notNullCase), unsure(genericCase));
 
             m_out.appendTo(notNullCase, rareDataCase);
-            m_out.branch(
-                m_out.notEqual(m_out.load32(previousOrRareData, m_heaps.JSCell_structureID), m_out.constInt32(m_graph.m_vm.structureStructure->structureID())),
-                unsure(rareDataCase), unsure(genericCase));
+            LValue isRareData = nullptr;
+            if (rareData)
+                isRareData = m_out.booleanTrue;
+            else
+                isRareData = m_out.logicalNot(isCellWithType(previousOrRareData, StructureType, std::nullopt));
+            m_out.branch(isRareData, unsure(rareDataCase), unsure(genericCase));
 
             m_out.appendTo(rareDataCase, validationCase);
             LValue cached = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_cachedPropertyNameEnumerator);
             m_out.branch(m_out.notNull(cached), unsure(validationCase), unsure(genericCase));
 
             m_out.appendTo(validationCase, genericCase);
-            ValueFromBlock fastResult = m_out.anchor(cached);
+            results.append(m_out.anchor(cached));
             m_out.branch(m_out.testNonZero32(m_out.load32(cached, m_heaps.JSPropertyNameEnumerator_flags), m_out.constInt32(JSPropertyNameEnumerator::ValidatedViaWatchpoint)), unsure(continuation), unsure(genericCase));
 
             m_out.appendTo(genericCase, continuation);
-            ValueFromBlock genericResult = m_out.anchor(vmCall(pointerType(), operationGetPropertyEnumeratorCell, weakPointer(globalObject), cell));
+            results.append(m_out.anchor(vmCall(pointerType(), operationGetPropertyEnumeratorCell, weakPointer(globalObject), base)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(pointerType(), fastResult, genericResult));
+            setJSValue(m_out.phi(pointerType(), results));
             return;
         }
         setJSValue(vmCall(Int64, operationGetPropertyEnumerator, weakPointer(globalObject), lowJSValue(m_node->child1())));

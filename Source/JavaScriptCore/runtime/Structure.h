@@ -742,7 +742,7 @@ private:
     friend class LLIntOffsetsExtractor;
 
     JS_EXPORT_PRIVATE Structure(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
-    Structure(VM&);
+    Structure(VM&, CreatingEarlyCellTag);
 
     static Structure* create(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     
@@ -836,9 +836,9 @@ private:
     JS_EXPORT_PRIVATE void pin(const AbstractLocker&, VM&, PropertyTable*);
     void pinForCaching(const AbstractLocker&, VM&, PropertyTable*);
     
-    bool isRareData(JSCell* cell) const
+    static bool isRareData(JSCell* cell)
     {
-        return cell && cell->structureID() != structureID();
+        return cell && cell->type() != StructureType;
     }
 
     template<typename DetailsFunc>

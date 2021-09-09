@@ -3093,6 +3093,30 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
     dispatch()
 end)
 
+llintOpWithReturn(op_get_property_enumerator, OpGetPropertyEnumerator, macro (size, get, dispatch, return)
+    get(m_base, t1)
+    loadConstantOrVariableCell(size, t1, t0, .slowPath)
+
+    loadb JSCell::m_indexingTypeAndMisc[t0], t1
+    andi IndexingTypeMask, t1
+    bia t1, ArrayWithUndecided, .slowPath
+
+    loadStructureWithScratch(t0, t1, t2, t3)
+    loadp Structure::m_previousOrRareData[t1], t1
+    btpz t1, .slowPath
+    bbeq JSCell::m_type[t1], StructureType, .slowPath
+
+    loadp StructureRareData::m_cachedPropertyNameEnumerator[t1], t1
+    btpz t1, .slowPath
+    btiz JSPropertyNameEnumerator::m_flags[t1], (constexpr JSPropertyNameEnumerator::ValidatedViaWatchpoint), .slowPath
+
+    return(t1)
+
+.slowPath:
+    callSlowPath(_slow_path_get_property_enumerator)
+    dispatch()
+end)
+
 llintOp(op_enumerator_next, OpEnumeratorNext, macro (size, get, dispatch)
     # Note: this will always call the slow path on at least the first/last execution of EnumeratorNext for any given loop.
     # The upside this is that we don't have to record any metadata or mode information here as the slow path will do it for us when transitioning from InitMode/IndexedMode to OwnStructureMode, or from OwnStructureMode to GenericMode.

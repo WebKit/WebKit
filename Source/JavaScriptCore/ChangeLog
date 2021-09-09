@@ -1,3 +1,84 @@
+2021-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize op_get_property_enumerator further
+        https://bugs.webkit.org/show_bug.cgi?id=230086
+
+        Reviewed by Saam Barati.
+
+        1. This patch adds fast path of op_get_property_enumerator to LLInt and Baseline. Previously, we only had this fast path in DFG and FTL.
+        2. From the profiled data, Speedometer2/React-Redux-TodoMVC has GetPropertyEnumerator(CellOrOther). However, DFG and FTL only optimized
+           GetPropertyEnumerator(Cell). We add CellOrOther and Other cases: if the argument is Other, then we can constant fold it to the
+           empty enumerator. If the argument is CellOrOther, we can check first, and return empty enumerator for Other case.
+        3. This patch also cleans up StructureRareData lookup by introducing StructureType to JSType.
+
+        ----------------------------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |117.388333   |117.680000   |1.002485  | 0.269607                                         |
+        | VueJS-TodoMVC                        |24.918333    |24.651667    |0.989298  | 0.157665                                         |
+        | EmberJS-TodoMVC                      |126.430000   |126.296667   |0.998945  | 0.673803                                         |
+        | BackboneJS-TodoMVC                   |48.695000    |48.411667    |0.994181  | 0.019164                                         |
+        | Preact-TodoMVC                       |17.268333    |17.511667    |1.014091  | 0.199775                                         |
+        | AngularJS-TodoMVC                    |130.246667   |129.850000   |0.996954  | 0.261543                                         |
+        | Vanilla-ES2015-TodoMVC               |63.626667    |63.611667    |0.999764  | 0.912112                                         |
+        | Inferno-TodoMVC                      |63.881667    |63.600000    |0.995591  | 0.385440                                         |
+        | Flight-TodoMVC                       |78.158333    |78.606667    |1.005736  | 0.284177                                         |
+        | Angular2-TypeScript-TodoMVC          |39.448333    |39.411667    |0.999071  | 0.890825                                         |
+        | VanillaJS-TodoMVC                    |50.858333    |51.130000    |1.005342  | 0.195409                                         |
+        | jQuery-TodoMVC                       |225.318333   |226.256667   |1.004164  | 0.011190                                         |
+        | EmberJS-Debug-TodoMVC                |340.150000   |338.450000   |0.995002  | 0.000063 (significant)                           |
+        | React-TodoMVC                        |85.703333    |85.606667    |0.998872  | 0.549298                                         |
+        | React-Redux-TodoMVC                  |141.985000   |140.418333   |0.988966  | 0.000000 (significant)                           |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |61.505000    |61.705000    |1.003252  | 0.079817                                         |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        a mean = 260.98021
+        b mean = 261.16020
+        pValue = 0.4985041089
+        (Bigger means are better.)
+        1.001 times better
+        Results ARE NOT significant
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetPropertyEnumerator):
+        (JSC::DFG::SpeculativeJIT::compileObjectKeysOrObjectGetOwnPropertyNames):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeysOrObjectGetOwnPropertyNames):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfStructure):
+        (JSC::AssemblyHelpers::branchIfNotStructure):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_property_enumerator):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_property_enumerator):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/BrandedStructure.cpp:
+        (JSC::BrandedStructure::create):
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::create):
+        * runtime/Structure.h:
+        (JSC::Structure::isRareData):
+        (JSC::Structure::isRareData const): Deleted.
+        * runtime/StructureInlines.h:
+        (JSC::Structure::create):
+        (JSC::Structure::createStructure):
+        * runtime/StructureRareData.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2021-09-09  Patrick Angle  <pangle@apple.com>
 
         run-webkit-archive crashes with dyld error

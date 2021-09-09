@@ -486,6 +486,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     if (Options::useJIT()) {
         sentinelMapBucket();
         sentinelSetBucket();
+        emptyPropertyNameEnumerator();
     }
     {
         auto* bigInt = JSBigInt::tryCreateFrom(*this, 1);

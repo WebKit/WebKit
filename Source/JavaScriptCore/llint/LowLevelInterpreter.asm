@@ -525,6 +525,7 @@ const PayloadOffset = constexpr PayloadOffset
 # Constant for reasoning about butterflies.
 const IsArray                  = constexpr IsArray
 const IndexingShapeMask        = constexpr IndexingShapeMask
+const IndexingTypeMask         = constexpr IndexingTypeMask
 const NoIndexingShape          = constexpr NoIndexingShape
 const Int32Shape               = constexpr Int32Shape
 const DoubleShape              = constexpr DoubleShape
@@ -532,8 +533,10 @@ const ContiguousShape          = constexpr ContiguousShape
 const ArrayStorageShape        = constexpr ArrayStorageShape
 const SlowPutArrayStorageShape = constexpr SlowPutArrayStorageShape
 const CopyOnWrite              = constexpr CopyOnWrite
+const ArrayWithUndecided       = constexpr ArrayWithUndecided
 
 # Type constants.
+const StructureType = constexpr StructureType
 const StringType = constexpr StringType
 const SymbolType = constexpr SymbolType
 const ObjectType = constexpr ObjectType
@@ -2051,7 +2054,6 @@ slowPathOp(create_async_generator)
 slowPathOp(define_accessor_property)
 slowPathOp(define_data_property)
 slowPathOp(get_by_val_with_this)
-slowPathOp(get_property_enumerator)
 
 if not JSVALUE64
     slowPathOp(get_prototype_of)

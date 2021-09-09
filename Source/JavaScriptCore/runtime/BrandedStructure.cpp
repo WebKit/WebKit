@@ -53,6 +53,7 @@ Structure* BrandedStructure::create(VM& vm, Structure* previous, UniquedStringIm
     ASSERT(vm.structureStructure);
     BrandedStructure* newStructure = new (NotNull, allocateCell<BrandedStructure>(vm.heap)) BrandedStructure(vm, previous, brandUid, deferred);
     newStructure->finishCreation(vm, previous);
+    ASSERT(newStructure->type() == StructureType);
     return newStructure;
 }
 

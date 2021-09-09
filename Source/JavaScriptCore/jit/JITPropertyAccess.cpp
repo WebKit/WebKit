@@ -2786,6 +2786,40 @@ void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
 
 template void JIT::emit_op_put_by_val<OpPutByVal>(const Instruction*);
 
+void JIT::emit_op_get_property_enumerator(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetPropertyEnumerator>();
+
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister dst = bytecode.m_dst;
+
+    JumpList doneCases;
+    JumpList genericCases;
+
+    emitGetVirtualRegister(base, regT0);
+    genericCases.append(branchIfNotCell(regT0));
+    load8(Address(regT0, JSCell::indexingTypeAndMiscOffset()), regT1);
+    and32(TrustedImm32(IndexingTypeMask), regT1);
+    genericCases.append(branch32(Above, regT1, TrustedImm32(ArrayWithUndecided)));
+
+    emitLoadStructure(vm(), regT0, regT1, regT2);
+    loadPtr(Address(regT1, Structure::previousOrRareDataOffset()), regT1);
+    genericCases.append(branchTestPtr(Zero, regT1));
+    genericCases.append(branchIfStructure(regT1));
+    loadPtr(Address(regT1, StructureRareData::offsetOfCachedPropertyNameEnumerator()), regT1);
+
+    genericCases.append(branchTestPtr(Zero, regT1));
+    genericCases.append(branchTest32(Zero, Address(regT1, JSPropertyNameEnumerator::flagsOffset()), TrustedImm32(JSPropertyNameEnumerator::ValidatedViaWatchpoint)));
+    emitPutVirtualRegister(dst, regT1);
+    doneCases.append(jump());
+
+    genericCases.link(this);
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_get_property_enumerator);
+    slowPathCall.call();
+
+    doneCases.link(this);
+}
+
 void JIT::emit_op_enumerator_next(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEnumeratorNext>();
