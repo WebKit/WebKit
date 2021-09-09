@@ -1663,6 +1663,7 @@
         "web-platform-tests/html/canvas/element/manual/filters/canvas-filter-object-convolve-matrix-expected.html",
         "web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmap-from-imageData-no-image-rotation-expected.html",
         "web-platform-tests/html/canvas/element/manual/line-styles/lineto_ref.html",
+        "web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors-expected.html",
         "web-platform-tests/html/canvas/element/manual/transformations/transform_ref.html",
         "web-platform-tests/html/canvas/element/manual/unclosed-canvas-1-expected.htm",
         "web-platform-tests/html/canvas/element/manual/unclosed-canvas-2-expected.htm",

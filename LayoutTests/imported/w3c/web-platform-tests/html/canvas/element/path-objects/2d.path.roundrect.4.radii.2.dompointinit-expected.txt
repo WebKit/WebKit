@@ -1,0 +1,6 @@
+2d.path.roundrect.4.radii.2.dompointinit
+Verify that when four radii are given to roundRect(), the second radius, specified as a DOMPointInit, applies to the top-right corner.
+Actual output:
+
+FAIL Verify that when four radii are given to roundRect(), the second radius, specified as a DOMPointInit, applies to the top-right corner. ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [0, {x: 40, y: 20}, 0, 0])', 'ctx.roundRect' is undefined)
+

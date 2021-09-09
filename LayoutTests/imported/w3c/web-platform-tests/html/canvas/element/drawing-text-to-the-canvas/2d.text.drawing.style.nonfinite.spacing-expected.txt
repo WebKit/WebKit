@@ -2,5 +2,5 @@
 Testing letter spacing and word spacing with nonfinite inputs
 Actual output:
 
-FAIL Testing letter spacing and word spacing with nonfinite inputs assert_equals: ctx.textLetterSpacing === 0 (got [undefined], expected 0[number]) expected (number) 0 but got (undefined) undefined
+FAIL Testing letter spacing and word spacing with nonfinite inputs assert_equals: ctx.letterSpacing === 0 (got [undefined], expected 0[number]) expected (number) 0 but got (undefined) undefined
 

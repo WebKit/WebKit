@@ -1,0 +1,7 @@
+2d.hitregions.members.exist
+
+
+FAIL context.addHitRegion Exists assert_equals: expected "function" but got "undefined"
+FAIL context.removeHitRegion Exists assert_equals: expected "function" but got "undefined"
+FAIL context.clearHitRegions Exists assert_equals: expected "function" but got "undefined"
+
