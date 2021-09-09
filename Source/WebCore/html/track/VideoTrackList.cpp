@@ -29,13 +29,12 @@
 
 #include "VideoTrackList.h"
 
-#include "HTMLMediaElement.h"
 #include "VideoTrack.h"
 
 namespace WebCore {
 
-VideoTrackList::VideoTrackList(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
-    : TrackListBase(element, context)
+VideoTrackList::VideoTrackList(ScriptExecutionContext* context)
+    : TrackListBase(context, TrackListBase::VideoTrackList)
 {
 }
 
@@ -53,8 +52,8 @@ void VideoTrackList::append(Ref<VideoTrack>&& track)
     }
     m_inbandTracks.insert(insertionIndex, track.ptr());
 
-    ASSERT(!track->mediaElement() || track->mediaElement() == mediaElement());
-    track->setMediaElement(mediaElement());
+    if (!track->trackList())
+        track->setTrackList(*this);
 
     scheduleAddTrackEvent(WTFMove(track));
 }

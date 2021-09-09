@@ -38,6 +38,7 @@
     Conditional=MEDIA_SOURCE,
     EnabledBySetting=MediaSource,
     ExportMacro=WEBCORE_EXPORT,
+    GenerateAddOpaqueRoot,
     Exposed=Window
 ] interface SourceBuffer : EventTarget {
     attribute AppendMode mode;

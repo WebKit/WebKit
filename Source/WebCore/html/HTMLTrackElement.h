@@ -84,11 +84,6 @@ private:
 
     // TextTrackClient
     void textTrackModeChanged(TextTrack&) final;
-    void textTrackKindChanged(TextTrack&) final;
-    void textTrackAddCues(TextTrack&, const TextTrackCueList&) final;
-    void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) final;
-    void textTrackAddCue(TextTrack&, TextTrackCue&) final;
-    void textTrackRemoveCue(TextTrack&, TextTrackCue&) final;
 
     bool canLoadURL(const URL&);
 

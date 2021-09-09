@@ -1,3 +1,236 @@
+2021-09-09  Jer Noble  <jer.noble@apple.com>
+
+        Refactor Video,Audio,TextTrack and TrackLists to not depend on HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=229924
+
+        Reviewed by Eric Carlson.
+
+        TrackBase and its derived classes currently are only able to handle a single "client"
+        at a time, which means a complicated re-sending of notifications from one client to
+        the next to ensure everything flows to the HTMLMediaElement. In addition to this
+        complicated client heirarchy, Tracks and their TrackLists being tightly bound to their
+        HTMLMediaElement will make MSE-in-a-Worker much more difficult to implement.
+
+        Refactor AudioTrack, VideoTrack, and TextTrack to have multiple clients, tracked by
+        a WeakHashSet. Remove HTMLMediaElement from that class heirarchy, and replace it with
+        a WeakPtr to their TrackList for opaqueRoot purposes.
+
+        Similarly, refactor AudioTrackList, VideoTrackList, and TextTrackList to not require
+        a backpointer to HTMLMediaElement, and use a WeakPtr<void> instead, allowing either
+        SourceBuffer or HTMLMediaElement to be the list's opaqueRoot.
+
+        A TrackBase needed access to a HTMLMediaElement only for the necessity of outputting
+        a warning to the console when a language error occurred; instead, make TrackBase a
+        ContextDestructionObserver, and pass a ScriptExecutionContext to the TrackBase (and
+        all its derived classes) in the constructor.
+
+        A TrackListBase now has a type() method, which allows it to be safely cast to AudioTrack,
+        VideoTrack, and TextTrack, through type trait specialization.
+
+        TextTrack used HTMLMediaElement to retrieve its TextTrackList for certain operations,
+        and now that each TrackBase has a backpointer to its TrackList, this is no longer necessary.
+
+        TextTrackList now has setDuration()/duration() member functions, so that when TextTrack
+        receives a cue with an indefinite duration, that cue's endTime can be calculated.
+
+        The AudioTrack, VideoTrack, and TextTrack IDLs previously specified GenerateIsReachable,
+        with a parameter of ImplElementRoot, which required an element() method on each; now
+        that TrackBase has an opaqueRoot() method, this parameter is no longer necessary.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::videoTracks):
+        (WebCore::SourceBuffer::audioTracks):
+        (WebCore::SourceBuffer::textTracks):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        (WebCore::SourceBuffer::videoTrackSelectedChanged):
+        (WebCore::SourceBuffer::videoTrackKindChanged):
+        (WebCore::SourceBuffer::videoTrackLabelChanged):
+        (WebCore::SourceBuffer::videoTrackLanguageChanged):
+        (WebCore::SourceBuffer::audioTrackEnabledChanged):
+        (WebCore::SourceBuffer::audioTrackKindChanged):
+        (WebCore::SourceBuffer::audioTrackLabelChanged):
+        (WebCore::SourceBuffer::audioTrackLanguageChanged):
+        (WebCore::SourceBuffer::textTrackModeChanged):
+        (WebCore::SourceBuffer::textTrackKindChanged):
+        (WebCore::SourceBuffer::textTrackLanguageChanged):
+        (WebCore::SourceBuffer::sourceBufferPrivateDurationChanged):
+        * Modules/mediasource/SourceBuffer.h:
+        * bindings/js/JSTrackCustom.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::audioTrackKindChanged):
+        (WebCore::HTMLMediaElement::audioTrackLabelChanged):
+        (WebCore::HTMLMediaElement::audioTrackLanguageChanged):
+        (WebCore::HTMLMediaElement::willRemoveAudioTrack):
+        (WebCore::HTMLMediaElement::textTrackModeChanged):
+        (WebCore::HTMLMediaElement::textTrackKindChanged):
+        (WebCore::HTMLMediaElement::textTrackLabelChanged):
+        (WebCore::HTMLMediaElement::textTrackLanguageChanged):
+        (WebCore::HTMLMediaElement::willRemoveTextTrack):
+        (WebCore::HTMLMediaElement::videoTrackKindChanged):
+        (WebCore::HTMLMediaElement::videoTrackLabelChanged):
+        (WebCore::HTMLMediaElement::videoTrackLanguageChanged):
+        (WebCore::HTMLMediaElement::willRemoveVideoTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddVideoTrack):
+        (WebCore::HTMLMediaElement::addAudioTrack):
+        (WebCore::HTMLMediaElement::addTextTrack):
+        (WebCore::HTMLMediaElement::addVideoTrack):
+        (WebCore::HTMLMediaElement::removeAudioTrack):
+        (WebCore::HTMLMediaElement::removeTextTrack):
+        (WebCore::HTMLMediaElement::removeVideoTrack):
+        (WebCore::HTMLMediaElement::ensureAudioTracks):
+        (WebCore::HTMLMediaElement::ensureTextTracks):
+        (WebCore::HTMLMediaElement::ensureVideoTracks):
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged):
+        * html/HTMLMediaElement.h:
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::~HTMLTrackElement):
+        (WebCore::HTMLTrackElement::track):
+        (WebCore::HTMLTrackElement::textTrackModeChanged):
+        * html/HTMLTrackElement.h:
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::AudioTrack):
+        (WebCore::AudioTrack::setLanguage):
+        (WebCore::AudioTrack::setEnabled):
+        (WebCore::AudioTrack::addClient):
+        (WebCore::AudioTrack::clearClient):
+        (WebCore::AudioTrack::enabledChanged):
+        (WebCore::AudioTrack::idChanged):
+        (WebCore::AudioTrack::labelChanged):
+        (WebCore::AudioTrack::willRemove):
+        * html/track/AudioTrack.h:
+        (WebCore::AudioTrackClient::audioTrackEnabledChanged):
+        (WebCore::AudioTrackClient::audioTrackIdChanged):
+        (WebCore::AudioTrackClient::audioTrackKindChanged):
+        (WebCore::AudioTrackClient::audioTrackLabelChanged):
+        (WebCore::AudioTrackClient::audioTrackLanguageChanged):
+        (WebCore::AudioTrackClient::willRemoveAudioTrack):
+        * html/track/AudioTrack.idl:
+        * html/track/AudioTrackList.cpp:
+        (WebCore::AudioTrackList::AudioTrackList):
+        (WebCore::AudioTrackList::append):
+        (WebCore::AudioTrackList::remove):
+        * html/track/AudioTrackList.h:
+        (isType):
+        * html/track/AudioTrackList.idl:
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::InbandDataTextTrack):
+        (WebCore::InbandDataTextTrack::create):
+        (WebCore::InbandDataTextTrack::addDataCue):
+        (WebCore::InbandDataTextTrack::updateDataCue):
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::InbandGenericTextTrack):
+        (WebCore::InbandGenericTextTrack::create):
+        (WebCore::InbandGenericTextTrack::updateCueFromCueData):
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::create):
+        (WebCore::InbandTextTrack::InbandTextTrack):
+        (WebCore::InbandTextTrack::willRemove):
+        * html/track/InbandTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::InbandWebVTTTextTrack):
+        (WebCore::InbandWebVTTTextTrack::create):
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::LoadableTextTrack):
+        (WebCore::LoadableTextTrack::newCuesAvailable):
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::captionMenuOffItem):
+        (WebCore::TextTrack::captionMenuAutomaticItem):
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::create):
+        (WebCore::TextTrack::~TextTrack):
+        (WebCore::TextTrack::textTrackList const):
+        (WebCore::TextTrack::addClient):
+        (WebCore::TextTrack::clearClient):
+        (WebCore::TextTrack::setKind):
+        (WebCore::TextTrack::setMode):
+        (WebCore::TextTrack::removeAllCues):
+        (WebCore::TextTrack::addCue):
+        (WebCore::TextTrack::removeCue):
+        (WebCore::TextTrack::cueWillChange):
+        (WebCore::TextTrack::cueDidChange):
+        (WebCore::TextTrack::trackIndex):
+        (WebCore::TextTrack::trackIndexRelativeToRenderedTracks):
+        (WebCore::TextTrack::setLanguage):
+        (WebCore::TextTrack::setId):
+        (WebCore::TextTrack::setLabel):
+        (WebCore::TextTrack::newCuesAvailable):
+        * html/track/TextTrack.h:
+        (WebCore::TextTrackClient::textTrackIdChanged):
+        (WebCore::TextTrackClient::textTrackKindChanged):
+        (WebCore::TextTrackClient::textTrackModeChanged):
+        (WebCore::TextTrackClient::textTrackLabelChanged):
+        (WebCore::TextTrackClient::textTrackLanguageChanged):
+        (WebCore::TextTrackClient::textTrackAddCues):
+        (WebCore::TextTrackClient::textTrackRemoveCues):
+        (WebCore::TextTrackClient::textTrackAddCue):
+        (WebCore::TextTrackClient::textTrackRemoveCue):
+        (WebCore::TextTrackClient::willRemoveTextTrack):
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackList.cpp:
+        (WebCore::TextTrackList::TextTrackList):
+        (WebCore::TextTrackList::~TextTrackList):
+        (WebCore::TextTrackList::append):
+        (WebCore::TextTrackList::remove):
+        * html/track/TextTrackList.h:
+        (isType):
+        * html/track/TextTrackList.idl:
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::TrackBase):
+        (WebCore::TrackBase::setTrackList):
+        (WebCore::TrackBase::clearTrackList):
+        (WebCore::TrackBase::trackList const):
+        (WebCore::TrackBase::setLanguage):
+        (WebCore::MediaTrackBase::MediaTrackBase):
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::id const):
+        (WebCore::TrackBase::label const):
+        (WebCore::TrackBase::language const):
+        (WebCore::TrackBase::opaqueRoot):
+        (WebCore::TrackBase::setId):
+        (WebCore::TrackBase::setLabel):
+        (WebCore::root):
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::TrackListBase):
+        (WebCore::TrackListBase::~TrackListBase):
+        (WebCore::TrackListBase::opaqueRoot):
+        (WebCore::TrackListBase::remove):
+        * html/track/TrackListBase.h:
+        (WebCore::TrackListBase::type const):
+        (WebCore::TrackListBase::setOpaqueRoot):
+        (WebCore::root):
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::VideoTrack):
+        (WebCore::VideoTrack::setSelected):
+        (WebCore::VideoTrack::addClient):
+        (WebCore::VideoTrack::clearClient):
+        (WebCore::VideoTrack::selectedChanged):
+        (WebCore::VideoTrack::idChanged):
+        (WebCore::VideoTrack::labelChanged):
+        (WebCore::VideoTrack::willRemove):
+        (WebCore::VideoTrack::setKind):
+        (WebCore::VideoTrack::setLanguage):
+        (WebCore::VideoTrack::updateKindFromPrivate):
+        * html/track/VideoTrack.h:
+        (WebCore::VideoTrackClient::videoTrackIdChanged):
+        (WebCore::VideoTrackClient::videoTrackKindChanged):
+        (WebCore::VideoTrackClient::videoTrackLabelChanged):
+        (WebCore::VideoTrackClient::videoTrackLanguageChanged):
+        (WebCore::VideoTrackClient::videoTrackSelectedChanged):
+        (WebCore::VideoTrackClient::willRemoveVideoTrack):
+        * html/track/VideoTrack.idl:
+        * html/track/VideoTrackList.cpp:
+        (WebCore::VideoTrackList::VideoTrackList):
+        (WebCore::VideoTrackList::append):
+        * html/track/VideoTrackList.h:
+        (isType):
+        * html/track/VideoTrackList.idl:
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
         Update RTCPeerConnection descriptions as per specification

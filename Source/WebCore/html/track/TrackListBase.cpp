@@ -30,7 +30,6 @@
 #include "TrackListBase.h"
 
 #include "EventNames.h"
-#include "HTMLMediaElement.h"
 #include "ScriptExecutionContext.h"
 #include "TrackEvent.h"
 #include <wtf/IsoMallocInlines.h>
@@ -39,37 +38,21 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
 
-TrackListBase::TrackListBase(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
+TrackListBase::TrackListBase(ScriptExecutionContext* context, Type type)
     : ActiveDOMObject(context)
-    , m_element(element)
+    , m_type(type)
 {
-    ASSERT(!context || is<Document>(context));
 }
 
 TrackListBase::~TrackListBase()
 {
-    clearElement();
 }
 
-void TrackListBase::clearElement()
+void* TrackListBase::opaqueRoot()
 {
-    m_element = nullptr;
-    for (auto& track : m_inbandTracks) {
-        track->setMediaElement(nullptr);
-        track->clearClient();
-    }
-}
-
-Element* TrackListBase::element() const
-{
-    return m_element.get();
-}
-
-void* TrackListBase::opaqueRoot() const
-{
-    if (auto* associatedElement = element())
-        return associatedElement->opaqueRoot();
-    return nullptr;
+    if (auto* rootObserver = m_opaqueRootObserver.get())
+        return (*rootObserver)();
+    return this;
 }
 
 unsigned TrackListBase::length() const
@@ -83,10 +66,8 @@ void TrackListBase::remove(TrackBase& track, bool scheduleEvent)
     if (index == notFound)
         return;
 
-    if (track.mediaElement()) {
-        ASSERT(track.mediaElement() == m_element);
-        track.setMediaElement(nullptr);
-    }
+    if (track.trackList() == this)
+        track.clearTrackList();
 
     Ref<TrackBase> trackRef = *m_inbandTracks[index];
 

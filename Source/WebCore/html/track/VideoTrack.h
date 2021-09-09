@@ -30,23 +30,30 @@
 
 #include "TrackBase.h"
 #include "VideoTrackPrivate.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
 class MediaDescription;
 class VideoTrack;
+class VideoTrackList;
 
-class VideoTrackClient {
+class VideoTrackClient : public CanMakeWeakPtr<VideoTrackClient> {
 public:
     virtual ~VideoTrackClient() = default;
-    virtual void videoTrackSelectedChanged(VideoTrack&) = 0;
+    virtual void videoTrackIdChanged(VideoTrack&) { }
+    virtual void videoTrackKindChanged(VideoTrack&) { }
+    virtual void videoTrackLabelChanged(VideoTrack&) { }
+    virtual void videoTrackLanguageChanged(VideoTrack&) { }
+    virtual void videoTrackSelectedChanged(VideoTrack&) { }
+    virtual void willRemoveVideoTrack(VideoTrack&) { }
 };
 
 class VideoTrack final : public MediaTrackBase, private VideoTrackPrivateClient {
 public:
-    static Ref<VideoTrack> create(VideoTrackClient& client, VideoTrackPrivate& trackPrivate)
+    static Ref<VideoTrack> create(ScriptExecutionContext* context, VideoTrackPrivate& trackPrivate)
     {
-        return adoptRef(*new VideoTrack(client, trackPrivate));
+        return adoptRef(*new VideoTrack(context, trackPrivate));
     }
     virtual ~VideoTrack();
 
@@ -60,26 +67,23 @@ public:
     bool selected() const { return m_selected; }
     virtual void setSelected(const bool);
 
-    void clearClient() final { m_client = nullptr; }
-    VideoTrackClient* client() const { return m_client; }
+    void addClient(VideoTrackClient&);
+    void clearClient(VideoTrackClient&);
 
     size_t inbandTrackIndex();
 
-#if ENABLE(MEDIA_SOURCE)
     void setKind(const AtomString&) final;
     void setLanguage(const AtomString&) final;
-#endif
 
     const MediaDescription& description() const;
 
     void setPrivate(VideoTrackPrivate&);
-    void setMediaElement(WeakPtr<HTMLMediaElement>) override;
 #if !RELEASE_LOG_DISABLED
     void setLogger(const Logger&, const void*) final;
 #endif
 
 private:
-    VideoTrack(VideoTrackClient&, VideoTrackPrivate&);
+    VideoTrack(ScriptExecutionContext*, VideoTrackPrivate&);
 
     bool isValidKind(const AtomString&) const final;
 
@@ -100,7 +104,8 @@ private:
     const char* logClassName() const final { return "VideoTrack"; }
 #endif
 
-    VideoTrackClient* m_client { nullptr };
+    WeakPtr<VideoTrackList> m_videoTrackList;
+    WeakHashSet<VideoTrackClient> m_clients;
     Ref<VideoTrackPrivate> m_private;
     bool m_selected { false };
 };

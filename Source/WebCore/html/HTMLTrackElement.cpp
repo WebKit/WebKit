@@ -69,7 +69,7 @@ HTMLTrackElement::~HTMLTrackElement()
 {
     if (m_track) {
         m_track->clearElement();
-        m_track->clearClient();
+        m_track->clearClient(*this);
     }
 }
 
@@ -152,6 +152,7 @@ LoadableTextTrack& HTMLTrackElement::track()
         if (!TextTrack::isValidKindKeyword(kind))
             kind = TextTrack::subtitlesKeyword();
         m_track = LoadableTextTrack::create(*this, kind, label(), srclang());
+        m_track->addClient(*this);
     }
     ASSERT(m_track->trackElement() == this);
 
@@ -299,44 +300,11 @@ const AtomString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
     return nullAtom();
 }
 
-void HTMLTrackElement::textTrackKindChanged(TextTrack& track)
-{
-    if (auto parent = mediaElement())
-        parent->textTrackKindChanged(track);
-}
-
-void HTMLTrackElement::textTrackModeChanged(TextTrack& track)
+void HTMLTrackElement::textTrackModeChanged(TextTrack&)
 {
     // Since we've moved to a new parent, we may now be able to load.
     if (readyState() == HTMLTrackElement::NONE)
         scheduleLoad();
-
-    if (auto parent = mediaElement())
-        parent->textTrackModeChanged(track);
-}
-
-void HTMLTrackElement::textTrackAddCues(TextTrack& track, const TextTrackCueList& cues)
-{
-    if (auto parent = mediaElement())
-        parent->textTrackAddCues(track, cues);
-}
-    
-void HTMLTrackElement::textTrackRemoveCues(TextTrack& track, const TextTrackCueList& cues)
-{
-    if (auto parent = mediaElement())
-        parent->textTrackRemoveCues(track, cues);
-}
-    
-void HTMLTrackElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
-{
-    if (auto parent = mediaElement())
-        parent->textTrackAddCue(track, cue);
-}
-    
-void HTMLTrackElement::textTrackRemoveCue(TextTrack& track, TextTrackCue& cue)
-{
-    if (auto parent = mediaElement())
-        parent->textTrackRemoveCue(track, cue);
 }
 
 RefPtr<HTMLMediaElement> HTMLTrackElement::mediaElement() const

@@ -26,8 +26,7 @@
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
-    GenerateIsReachable=ImplElementRoot,
-    GenerateAddOpaqueRoot,
+    GenerateIsReachable,
     Exposed=Window
 ] interface AudioTrack {
     readonly attribute DOMString id;

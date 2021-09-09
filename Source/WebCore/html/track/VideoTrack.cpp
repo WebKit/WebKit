@@ -34,7 +34,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "HTMLMediaElement.h"
 #include "VideoTrackList.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -80,9 +79,8 @@ const AtomString& VideoTrack::commentaryKeyword()
     return commentary;
 }
 
-VideoTrack::VideoTrack(VideoTrackClient& client, VideoTrackPrivate& trackPrivate)
-    : MediaTrackBase(MediaTrackBase::VideoTrack, trackPrivate.id(), trackPrivate.label(), trackPrivate.language())
-    , m_client(&client)
+VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& trackPrivate)
+    : MediaTrackBase(context, MediaTrackBase::VideoTrack, trackPrivate.id(), trackPrivate.label(), trackPrivate.language())
     , m_private(trackPrivate)
     , m_selected(trackPrivate.selected())
 {
@@ -130,8 +128,21 @@ void VideoTrack::setSelected(const bool selected)
     m_selected = selected;
     m_private->setSelected(selected);
 
-    if (m_client)
-        m_client->videoTrackSelectedChanged(*this);
+    m_clients.forEach([this] (auto& client) {
+        client.videoTrackSelectedChanged(*this);
+    });
+}
+
+void VideoTrack::addClient(VideoTrackClient& client)
+{
+    ASSERT(!m_clients.contains(client));
+    m_clients.add(client);
+}
+
+void VideoTrack::clearClient(VideoTrackClient& client)
+{
+    ASSERT(m_clients.contains(client));
+    m_clients.remove(client);
 }
 
 size_t VideoTrack::inbandTrackIndex()
@@ -142,16 +153,25 @@ size_t VideoTrack::inbandTrackIndex()
 void VideoTrack::selectedChanged(bool selected)
 {
     setSelected(selected);
+    m_clients.forEach([this] (auto& client) {
+        client.videoTrackSelectedChanged(*this);
+    });
 }
 
 void VideoTrack::idChanged(const AtomString& id)
 {
     setId(id);
+    m_clients.forEach([this] (auto& client) {
+        client.videoTrackIdChanged(*this);
+    });
 }
 
 void VideoTrack::labelChanged(const AtomString& label)
 {
     setLabel(label);
+    m_clients.forEach([this] (auto& client) {
+        client.videoTrackLabelChanged(*this);
+    });
 }
 
 void VideoTrack::languageChanged(const AtomString& language)
@@ -161,13 +181,10 @@ void VideoTrack::languageChanged(const AtomString& language)
 
 void VideoTrack::willRemove()
 {
-    auto element = makeRefPtr(mediaElement().get());
-    if (!element)
-        return;
-    element->removeVideoTrack(*this);
+    m_clients.forEach([this] (auto& client) {
+        client.willRemoveVideoTrack(*this);
+    });
 }
-
-#if ENABLE(MEDIA_SOURCE)
 
 void VideoTrack::setKind(const AtomString& kind)
 {
@@ -182,12 +199,11 @@ void VideoTrack::setKind(const AtomString& kind)
 
     // 3. If the sourceBuffer attribute on this track is not null, then queue a task to fire a simple
     // event named change at sourceBuffer.videoTracks.
-    if (m_sourceBuffer)
-        m_sourceBuffer->videoTracks().scheduleChangeEvent();
-
     // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
     // the videoTracks attribute on the HTMLMediaElement.
-    mediaElement()->ensureVideoTracks().scheduleChangeEvent();
+    m_clients.forEach([this] (auto& client) {
+        client.videoTrackKindChanged(*this);
+    });
 }
 
 void VideoTrack::setLanguage(const AtomString& language)
@@ -199,52 +215,43 @@ void VideoTrack::setLanguage(const AtomString& language)
     // shared between all tracks that support setting language.
 
     // 2. Update this attribute to the new value.
-    MediaTrackBase::setLanguage(language);
+    TrackBase::setLanguage(language);
 
     // 3. If the sourceBuffer attribute on this track is not null, then queue a task to fire a simple
     // event named change at sourceBuffer.videoTracks.
-    if (m_sourceBuffer)
-        m_sourceBuffer->videoTracks().scheduleChangeEvent();
-
     // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
     // the videoTracks attribute on the HTMLMediaElement.
-    if (mediaElement())
-        mediaElement()->ensureVideoTracks().scheduleChangeEvent();
+    m_clients.forEach([&] (auto& client) {
+        client.videoTrackLanguageChanged(*this);
+    });
 }
-
-#endif
 
 void VideoTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
     case VideoTrackPrivate::Alternative:
-        setKindInternal(VideoTrack::alternativeKeyword());
+        setKind(VideoTrack::alternativeKeyword());
         return;
     case VideoTrackPrivate::Captions:
-        setKindInternal(VideoTrack::captionsKeyword());
+        setKind(VideoTrack::captionsKeyword());
         return;
     case VideoTrackPrivate::Main:
-        setKindInternal(VideoTrack::mainKeyword());
+        setKind(VideoTrack::mainKeyword());
         return;
     case VideoTrackPrivate::Sign:
-        setKindInternal(VideoTrack::signKeyword());
+        setKind(VideoTrack::signKeyword());
         return;
     case VideoTrackPrivate::Subtitles:
-        setKindInternal(VideoTrack::subtitlesKeyword());
+        setKind(VideoTrack::subtitlesKeyword());
         return;
     case VideoTrackPrivate::Commentary:
-        setKindInternal(VideoTrack::commentaryKeyword());
+        setKind(VideoTrack::commentaryKeyword());
         return;
     case VideoTrackPrivate::None:
-        setKindInternal(emptyString());
+        setKind(emptyString());
         return;
     }
     ASSERT_NOT_REACHED();
-}
-
-void VideoTrack::setMediaElement(WeakPtr<HTMLMediaElement> element)
-{
-    TrackBase::setMediaElement(element);
 }
 
 #if !RELEASE_LOG_DISABLED

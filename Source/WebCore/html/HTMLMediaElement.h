@@ -44,6 +44,7 @@
 #include "VisibilityChangeClient.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/Observer.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)
@@ -383,17 +384,28 @@ public:
 
     // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;
+    void audioTrackKindChanged(AudioTrack&) final;
+    void audioTrackLabelChanged(AudioTrack&) final;
+    void audioTrackLanguageChanged(AudioTrack&) final;
+    void willRemoveAudioTrack(AudioTrack&) final;
 
     // TextTrackClient
-    void textTrackKindChanged(TextTrack&) override;
-    void textTrackModeChanged(TextTrack&) override;
-    void textTrackAddCues(TextTrack&, const TextTrackCueList&) override;
-    void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) override;
-    void textTrackAddCue(TextTrack&, TextTrackCue&) override;
-    void textTrackRemoveCue(TextTrack&, TextTrackCue&) override;
+    void textTrackKindChanged(TextTrack&) final;
+    void textTrackModeChanged(TextTrack&) final;
+    void textTrackLabelChanged(TextTrack&) final;
+    void textTrackLanguageChanged(TextTrack&) final;
+    void textTrackAddCues(TextTrack&, const TextTrackCueList&) final;
+    void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) final;
+    void textTrackAddCue(TextTrack&, TextTrackCue&) final;
+    void textTrackRemoveCue(TextTrack&, TextTrackCue&) final;
+    void willRemoveTextTrack(TextTrack&) final;
 
     // VideoTrackClient
+    void videoTrackKindChanged(VideoTrack&) final;
+    void videoTrackLabelChanged(VideoTrack&) final;
+    void videoTrackLanguageChanged(VideoTrack&) final;
     void videoTrackSelectedChanged(VideoTrack&) final;
+    void willRemoveVideoTrack(VideoTrack&) final;
 
     bool requiresTextTrackRepresentation() const;
     void setTextTrackRepresentation(TextTrackRepresentation*);
@@ -1157,6 +1169,7 @@ private:
     RefPtr<Blob> m_blob;
     URL m_blobURLForReading;
     MediaProvider m_mediaProvider;
+    WTF::Observer<void*()> m_opaqueRootProvider;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool m_hasNeedkeyListener { false };

@@ -26,7 +26,7 @@
 [
     ActiveDOMObject,
     Conditional=VIDEO,
-    GenerateIsReachable=ImplElementRoot,
+    GenerateIsReachable,
     GenerateAddOpaqueRoot,
     Exposed=Window
 ] interface VideoTrackList : EventTarget {
