@@ -1667,3 +1667,5 @@ webkit.org/b/230027 [ BigSur Debug ] http/tests/media/media-document-referer.htm
 webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Slow ]
 
 webkit.org/b/230070 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/230012 [ BigSur ] http/tests/fetch/redirectmode-and-preload.html [ Pass Failure ]
