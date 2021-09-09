@@ -31,6 +31,7 @@
 #include "CrossOriginEmbedderPolicy.h"
 #include "ResourceError.h"
 #include "ScriptBuffer.h"
+#include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
 

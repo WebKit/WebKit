@@ -1231,15 +1231,6 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
 
 
 def generate_message_argument_description_implementation(receivers, receiver_headers):
-    header_conditions = {
-        '"JSIPCBinding.h"': [None]
-    }
-    for receiver in receivers:
-        if receiver.has_attribute(BUILTIN_ATTRIBUTE):
-            continue
-        header_conditions['"%s"' % messages_header_filename(receiver)] = [None]
-        collect_header_conditions_for_receiver(receiver, header_conditions)
-
     result = []
     result.append(_license_header)
     result.append('#include "config.h"\n')
@@ -1247,7 +1238,21 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result.append('\n')
     result.append('#if ENABLE(IPC_TESTING_API)\n')
     result.append('\n')
-    result += generate_header_includes_from_conditions(header_conditions)
+    result.append('#include "JSIPCBinding.h"\n')
+
+    for receiver in receivers:
+        if receiver.has_attribute(BUILTIN_ATTRIBUTE):
+            continue
+        if receiver.condition:
+            result.append('#if %s\n' % receiver.condition)
+        header_conditions = {
+            '"%s"' % messages_header_filename(receiver): [None]
+        }
+        collect_header_conditions_for_receiver(receiver, header_conditions)
+        result += generate_header_includes_from_conditions(header_conditions)
+        if receiver.condition:
+            result.append('#endif\n')
+
     result.append('\n')
 
     result.append('namespace IPC {\n')

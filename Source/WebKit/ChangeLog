@@ -1,3 +1,23 @@
+2021-09-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        generated MessageArgumentDescriptions.cpp can't compile for non-Cocoa ports due to missing headers
+        https://bugs.webkit.org/show_bug.cgi?id=230075
+
+        Reviewed by Ryosuke Niwa.
+
+        The generated MessageArgumentDescriptions.cpp unconditionally
+        included platform specific headers, for example
+        <WebCore/CAAudioStreamDescription.h>.
+
+        generate_message_argument_description_implementation generates the
+        #includes, it should take receiver.condition into account.
+
+        * CMakeLists.txt:
+        (GENERATE_MESSAGE_SOURCES): Added MessageArgumentDescriptions.cpp to compile.
+        * Scripts/webkit/messages.py:
+        (generate_message_argument_description_implementation):
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+
 2021-09-08  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView specific bug: WKWebView as the contents of a SceneKit/ARKit node doesn't work (UIWebView works)

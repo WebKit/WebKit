@@ -455,7 +455,11 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
         )
         list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/${_name}MessageReceiver.cpp)
     endforeach ()
-    list(APPEND ${_output_source} ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp)
+
+    list(APPEND ${_output_source}
+        ${WebKit_DERIVED_SOURCES_DIR}/MessageArgumentDescriptions.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp
+    )
 
     add_custom_command(
         OUTPUT
