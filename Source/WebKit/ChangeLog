@@ -1,3 +1,17 @@
+2021-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the Mac Catalyst build after r282191
+        https://bugs.webkit.org/show_bug.cgi?id=230037
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+
+        Update some logic that's guarded by ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING) to use "->" for accessing methods on
+        Ref and CheckedRef, rather than ".".
+
+        (WebKit::TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection):
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection):
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
         Categorize WebRTC TCP nw connections like done for WebRTC UDP nw connections
