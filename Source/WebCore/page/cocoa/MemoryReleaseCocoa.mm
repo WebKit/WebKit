@@ -28,6 +28,7 @@
 
 #import "FontFamilySpecificationCoreText.h"
 #import "GCController.h"
+#import "HTMLAtomStringCache.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
 #import "LocaleCocoa.h"
@@ -83,7 +84,6 @@ void platformReleaseGraphicsMemory(Critical)
 
 void jettisonExpensiveObjectsOnTopLevelNavigation()
 {
-#if PLATFORM(IOS_FAMILY)
     // Protect against doing excessive jettisoning during repeated navigations.
     const auto minimumTimeSinceNavigation = 2_s;
 
@@ -95,10 +95,13 @@ void jettisonExpensiveObjectsOnTopLevelNavigation()
     if (!shouldJettison)
         return;
 
+#if PLATFORM(IOS_FAMILY)
     // Throw away linked JS code. Linked code is tied to a global object and is not reusable.
     // The immediate memory savings outweigh the cost of recompilation in case we go back again.
     GCController::singleton().deleteAllLinkedCode(JSC::DeleteAllCodeIfNotCollecting);
 #endif
+
+    HTMLAtomStringCache::clear();
 }
 
 void registerMemoryReleaseNotifyCallbacks()

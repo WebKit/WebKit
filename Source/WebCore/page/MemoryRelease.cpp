@@ -38,6 +38,7 @@
 #include "FontCache.h"
 #include "Frame.h"
 #include "GCController.h"
+#include "HTMLAtomStringCache.h"
 #include "HTMLMediaElement.h"
 #include "InlineStyleSheetOwner.h"
 #include "InspectorInstrumentation.h"
@@ -85,6 +86,7 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
         MemoryCache::singleton().pruneDeadResourcesToSize(0);
 
     InlineStyleSheetOwner::clearCache();
+    HTMLAtomStringCache::clear();
 }
 
 static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCache maintainBackForwardCache, MaintainMemoryCache maintainMemoryCache)
