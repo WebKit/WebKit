@@ -1,3 +1,13 @@
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
+        Rebase imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=230087
+
+        Unreviewed, we are rebasing a test.
+
+        * web-platform-tests/webrtc/RTCDataChannel-close-expected.txt:
+        Rebasing test now that we support running the test and we support RTCError.
+
 2021-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontFaceSet.has() needs to react to style changes
