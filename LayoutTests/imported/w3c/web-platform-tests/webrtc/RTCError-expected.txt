@@ -1,37 +1,27 @@
 
-FAIL RTCError constructor with errorDetail and message Can't find variable: RTCError
-FAIL RTCError constructor's message argument is optional Can't find variable: RTCError
-FAIL RTCError constructor throws TypeError if arguments are missing assert_throws_js: function "() => {
-    new RTCError();
-  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL RTCError constructor throws TypeError if the errorDetail is invalid assert_throws_js: function "() => {
-    new RTCError({errorDetail:'invalid-error-detail'}, 'message');
-  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL RTCError.name is 'OperationError' Can't find variable: RTCError
-FAIL RTCError.code is 0 Can't find variable: RTCError
-FAIL RTCError.errorDetail is readonly. Can't find variable: RTCError
-FAIL RTCErrorInit.errorDetail is the only required attribute assert_throws_js: function "() => {
-    new RTCError({}, 'message');
-  }" threw object "ReferenceError: Can't find variable: RTCError" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL RTCError.sdpLineNumber is null by default Can't find variable: RTCError
-FAIL RTCError.sdpLineNumber is settable by constructor Can't find variable: RTCError
-FAIL RTCError.sdpLineNumber is readonly Can't find variable: RTCError
-FAIL RTCError.httpRequestStatusCode is null by default Can't find variable: RTCError
-FAIL RTCError.httpRequestStatusCode is settable by constructor Can't find variable: RTCError
-FAIL RTCError.httpRequestStatusCode is readonly Can't find variable: RTCError
-FAIL RTCError.sctpCauseCode is null by default Can't find variable: RTCError
-FAIL RTCError.sctpCauseCode is settable by constructor Can't find variable: RTCError
-FAIL RTCError.sctpCauseCode is readonly Can't find variable: RTCError
-FAIL RTCError.receivedAlert is null by default Can't find variable: RTCError
-FAIL RTCError.receivedAlert is settable by constructor Can't find variable: RTCError
-FAIL RTCError.receivedAlert is readonly Can't find variable: RTCError
-FAIL RTCError.sentAlert is null by default Can't find variable: RTCError
-FAIL RTCError.sentAlert is settable by constructor Can't find variable: RTCError
-FAIL RTCError.sentAlert is readonly Can't find variable: RTCError
+PASS RTCError constructor with errorDetail and message
+PASS RTCError constructor's message argument is optional
+PASS RTCError constructor throws TypeError if arguments are missing
+PASS RTCError constructor throws TypeError if the errorDetail is invalid
+PASS RTCError.name is 'OperationError'
+PASS RTCError.code is 0
+PASS RTCError.errorDetail is readonly.
+PASS RTCErrorInit.errorDetail is the only required attribute
+PASS RTCError.sdpLineNumber is null by default
+PASS RTCError.sdpLineNumber is settable by constructor
+PASS RTCError.sdpLineNumber is readonly
+FAIL RTCError.httpRequestStatusCode is null by default assert_equals: expected (object) null but got (undefined) undefined
+FAIL RTCError.httpRequestStatusCode is settable by constructor assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL RTCError.httpRequestStatusCode is readonly assert_throws_js: function "() => {
+      error[attribute] = 42;
+    }" did not throw
+PASS RTCError.sctpCauseCode is null by default
+PASS RTCError.sctpCauseCode is settable by constructor
+PASS RTCError.sctpCauseCode is readonly
+PASS RTCError.receivedAlert is null by default
+PASS RTCError.receivedAlert is settable by constructor
+PASS RTCError.receivedAlert is readonly
+PASS RTCError.sentAlert is null by default
+PASS RTCError.sentAlert is settable by constructor
+PASS RTCError.sentAlert is readonly
 

@@ -165,6 +165,8 @@ Modules/mediastream/RTCDtlsTransport.cpp
 Modules/mediastream/RTCEncodedAudioFrame.cpp
 Modules/mediastream/RTCEncodedFrame.cpp
 Modules/mediastream/RTCEncodedVideoFrame.cpp
+Modules/mediastream/RTCError.cpp
+Modules/mediastream/RTCErrorEvent.cpp
 Modules/mediastream/RTCIceCandidate.cpp
 Modules/mediastream/RTCIceTransport.cpp
 Modules/mediastream/RTCPeerConnection.cpp
@@ -3320,6 +3322,9 @@ JSRTCDtlsTransport.cpp
 JSRTCDtlsTransportState.cpp
 JSRTCEncodedAudioFrame.cpp
 JSRTCEncodedVideoFrame.cpp
+JSRTCError.cpp
+JSRTCErrorDetailType.cpp
+JSRTCErrorEvent.cpp
 JSRTCIceCandidate.cpp
 JSRTCIceCandidateInit.cpp
 JSRTCIceCandidateType.cpp

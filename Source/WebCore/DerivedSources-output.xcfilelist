@@ -1669,6 +1669,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedAudioFrame.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedAudioFrame.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedVideoFrame.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCEncodedVideoFrame.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCError.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCError.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCErrorDetailType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCErrorDetailType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCErrorEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCErrorEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidate.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidate.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCIceCandidateInit.cpp

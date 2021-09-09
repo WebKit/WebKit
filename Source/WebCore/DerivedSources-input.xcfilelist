@@ -224,6 +224,9 @@ $(PROJECT_DIR)/Modules/mediastream/RTCDtlsTransportState.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCDtxStatus.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCEncodedAudioFrame.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCEncodedVideoFrame.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCError.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCErrorDetailType.idl
+$(PROJECT_DIR)/Modules/mediastream/RTCErrorEvent.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceCandidate.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceCandidateInit.idl
 $(PROJECT_DIR)/Modules/mediastream/RTCIceCandidateType.idl

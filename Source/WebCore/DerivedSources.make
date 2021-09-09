@@ -250,6 +250,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCDtxStatus.idl \
     $(WebCore)/Modules/mediastream/RTCEncodedAudioFrame.idl \
     $(WebCore)/Modules/mediastream/RTCEncodedVideoFrame.idl \
+    $(WebCore)/Modules/mediastream/RTCError.idl \
+    $(WebCore)/Modules/mediastream/RTCErrorDetailType.idl \
+    $(WebCore)/Modules/mediastream/RTCErrorEvent.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidate.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidateInit.idl \
     $(WebCore)/Modules/mediastream/RTCIceCandidateType.idl \

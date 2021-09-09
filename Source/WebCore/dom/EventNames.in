@@ -60,6 +60,7 @@ MediaStreamTrackEvent conditional=MEDIA_STREAM
 MerchantValidationEvent conditional=PAYMENT_REQUEST
 PaymentMethodChangeEvent conditional=PAYMENT_REQUEST
 PaymentRequestUpdateEvent conditional=PAYMENT_REQUEST
+RTCErrorEvent conditional=WEB_RTC
 RTCPeerConnectionIceErrorEvent conditional=WEB_RTC
 RTCPeerConnectionIceEvent conditional=WEB_RTC
 RTCDataChannelEvent conditional=WEB_RTC

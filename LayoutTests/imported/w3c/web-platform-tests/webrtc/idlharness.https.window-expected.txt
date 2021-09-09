@@ -480,25 +480,25 @@ PASS RTCStatsReport interface object name
 PASS RTCStatsReport interface: existence and properties of interface prototype object
 PASS RTCStatsReport interface: existence and properties of interface prototype object's "constructor" property
 PASS RTCStatsReport interface: existence and properties of interface prototype object's @@unscopables property
-FAIL RTCError interface: existence and properties of interface object assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface object length assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface object name assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: attribute errorDetail assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: attribute sdpLineNumber assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: attribute sctpCauseCode assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: attribute receivedAlert assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCError interface: attribute sentAlert assert_own_property: self does not have own property "RTCError" expected property "RTCError" missing
-FAIL RTCErrorEvent interface: existence and properties of interface object assert_own_property: self does not have own property "RTCErrorEvent" expected property "RTCErrorEvent" missing
-FAIL RTCErrorEvent interface object length assert_own_property: self does not have own property "RTCErrorEvent" expected property "RTCErrorEvent" missing
-FAIL RTCErrorEvent interface object name assert_own_property: self does not have own property "RTCErrorEvent" expected property "RTCErrorEvent" missing
-FAIL RTCErrorEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCErrorEvent" expected property "RTCErrorEvent" missing
-FAIL RTCErrorEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCErrorEvent" expected property "RTCErrorEvent" missing
-FAIL RTCErrorEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCErrorEvent" expected property "RTCErrorEvent" missing
-FAIL RTCErrorEvent interface: attribute error assert_own_property: self does not have own property "RTCErrorEvent" expected property "RTCErrorEvent" missing
-FAIL RTCErrorEvent must be primary interface of new RTCErrorEvent('error') assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: RTCErrorEvent"
-FAIL Stringification of new RTCErrorEvent('error') assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: RTCErrorEvent"
-FAIL RTCErrorEvent interface: new RTCErrorEvent('error') must inherit property "error" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: RTCErrorEvent"
+PASS RTCError interface: existence and properties of interface object
+PASS RTCError interface object length
+PASS RTCError interface object name
+PASS RTCError interface: existence and properties of interface prototype object
+PASS RTCError interface: existence and properties of interface prototype object's "constructor" property
+PASS RTCError interface: existence and properties of interface prototype object's @@unscopables property
+PASS RTCError interface: attribute errorDetail
+PASS RTCError interface: attribute sdpLineNumber
+PASS RTCError interface: attribute sctpCauseCode
+PASS RTCError interface: attribute receivedAlert
+PASS RTCError interface: attribute sentAlert
+PASS RTCErrorEvent interface: existence and properties of interface object
+PASS RTCErrorEvent interface object length
+PASS RTCErrorEvent interface object name
+PASS RTCErrorEvent interface: existence and properties of interface prototype object
+PASS RTCErrorEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS RTCErrorEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS RTCErrorEvent interface: attribute error
+FAIL RTCErrorEvent must be primary interface of new RTCErrorEvent('error') assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Not enough arguments"
+FAIL Stringification of new RTCErrorEvent('error') assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Not enough arguments"
+FAIL RTCErrorEvent interface: new RTCErrorEvent('error') must inherit property "error" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Not enough arguments"
 
