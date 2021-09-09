@@ -492,7 +492,7 @@ bool doesGC(Graph& graph, Node* node)
             || node->isBinaryUseKind(ObjectUse)
             || node->isBinaryUseKind(MiscUse, UntypedUse) || node->isBinaryUseKind(UntypedUse, MiscUse)
             || node->isBinaryUseKind(StringIdentUse, NotStringVarUse) || node->isBinaryUseKind(NotStringVarUse, StringIdentUse)
-            || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse) || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse))
+            || node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse) || node->isBinaryUseKind(NeitherDoubleNorHeapBigIntNorStringUse, NotDoubleUse))
             return false;
         return true;
 

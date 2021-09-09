@@ -1,6 +1,6 @@
 function shouldBe(actual, expected) {
     if (actual !== expected)
-        throw new Error('bad value: ' + actual);
+        throw new Error('bad value: ' + describe(actual) + ', expected: ' + describe(expected));
 }
 
 function shouldThrow(func, message) {
@@ -11,9 +11,9 @@ function shouldThrow(func, message) {
         error = e;
     }
     if (!error)
-        throw new Error('not thrown.');
+        throw new Error('not thrown. Expected: ' + message);
     if (String(error) !== message)
-        throw new Error('bad error: ' + String(error));
+        throw new Error('bad error: ' + String(error) + ', expected: ' + message);
 }
 
 function unreachable()

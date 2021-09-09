@@ -1,3 +1,74 @@
+2021-09-09  Robin Morisset  <rmorisset@apple.com>
+
+        Optimize compareStrictEq when neither side is a double and at least one is not a BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=226755
+        <rdar://problem/79321542>
+
+        Reviewed by Yusuke Suzuki.
+
+        This is a very similar patch to https://bugs.webkit.org/show_bug.cgi?id=226676.
+        The difference is that here we allow Strings on both side of the comparison, so we must add code to handle equality among strings.
+
+        Like for that other patch, the optimization is disabled for BigInt32.
+        Enabling it in that case would either need modifying the speculation (from banning HeapBigInt to banning all BigInts), or ensuring that we can never have a HeapBigInt so small it compares equal to a BigInt32.
+
+        I only implemented this optimization on 64-bits: it is just painful to write code that handles registers at such a low-level without a 32-bit machine to test things locally.
+        If anyone wants to make this optimization work on 32-bit, I don't foretell any major difficulty.
+
+        Finally, like quite a few other useKinds already, this case does not make the CompareStrictEq merge with an adjacent Branch.
+        The reason is simply that this patch relies on compileStringEquality, which currently does not support that feature.
+        I intend to fix this (for all useKinds at once) in a separate patch.
+
+        Effect on microbenchmarks:
+        poly-stricteq-not-double                  46.8000+-0.4110     ^     23.5872+-0.3061        ^ definitely 1.9841x faster
+        poly-stricteq-not-double-nor-string       16.6880+-0.2317           16.3627+-0.3729          might be 1.0199x faster
+        poly-stricteq                             49.2175+-0.6047           48.9532+-0.6758
+
+        I looked at how many cases of Untyped/Untyped compareStrictEq have been fixed by this patch and two other recent patches.
+        On JetStream2:
+        - https://bugs.webkit.org/show_bug.cgi?id=226621: 731 instances
+        - https://bugs.webkit.org/show_bug.cgi?id=226676: 944 instances
+        - This patch: only 26 instances
+        This leaves 20 instances of Untyped/Untyped.
+
+        On Speedometer2.0:
+        - https://bugs.webkit.org/show_bug.cgi?id=226621: 1587 instances
+        - https://bugs.webkit.org/show_bug.cgi?id=226676: 2784 instances
+        - This patch: 891 instances
+        This leaves 75 instances of Untyped/Untyped.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isNeitherDoubleNorHeapBigIntSpeculation):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupCompareStrictEqAndSameValue):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateNeitherDoubleNorHeapBigInt):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::emitBitwiseJSValueEquality):
+        (JSC::DFG::SpeculativeJIT::emitBranchOnBitwiseJSValueEquality):
+        (JSC::DFG::SpeculativeJIT::compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality):
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigInt):
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::checkMayCrashIfInputIsEmpty):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
 2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, add files to xcodeproj

@@ -9821,6 +9821,15 @@ private:
             return;
         }
 
+        if (m_node->isBinaryUseKind(NeitherDoubleNorHeapBigIntUse, NotDoubleUse)) {
+            compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(m_node->child1(), m_node->child2());
+            return;
+        }
+        if (m_node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntUse)) {
+            compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(m_node->child2(), m_node->child1());
+            return;
+        }
+
         // FIXME: we can do something much smarter here, see the DFGSpeculativeJIT approach in e.g. SpeculativeJIT::nonSpeculativePeepholeStrictEq
         DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse), m_node->child1().useKind(), m_node->child2().useKind());
         genericJSValueCompare(
@@ -9865,6 +9874,91 @@ private:
         m_out.jump(continuation);
 
         // Continuation.
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, fastTrue, fastFalse, slowResult));
+    }
+
+    void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Edge neitherDoubleNorHeapBigIntEdge, Edge notDoubleEdge)
+    {
+        ASSERT(neitherDoubleNorHeapBigIntEdge.useKind() == NeitherDoubleNorHeapBigIntUse);
+        ASSERT(notDoubleEdge.useKind() == NotDoubleUse);
+
+        LValue leftValue = lowJSValue(neitherDoubleNorHeapBigIntEdge, ManualOperandSpeculation);
+        LValue rightValue = lowJSValue(notDoubleEdge, ManualOperandSpeculation);
+        SpeculatedType leftValueType = provenType(neitherDoubleNorHeapBigIntEdge);
+        SpeculatedType rightValueType = provenType(notDoubleEdge);
+
+        LBasicBlock triviallyEqualCase = m_out.newBlock();
+        LBasicBlock leftIsNotInt32EqualCase = m_out.newBlock();
+        LBasicBlock leftIsCellEqualCase = m_out.newBlock();
+        LBasicBlock returnTrueBlock = m_out.newBlock();
+        LBasicBlock notTriviallyEqualCase = m_out.newBlock();
+        LBasicBlock leftIsCell = m_out.newBlock();
+        LBasicBlock leftIsString = m_out.newBlock();
+        LBasicBlock rightIsCell = m_out.newBlock();
+        LBasicBlock rightIsString = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        // We try to avoid repeated and redundant checks here, which leads to the following pseudo-code:
+        /*
+         if (left == right) {
+           speculateNeitherDoubleNorHeapBigInt(left);
+           return true;
+         }
+         speculateNotDouble(right);
+         speculateNotDouble(left);
+         if (left is not Cell)
+           return false;
+         Check that left is not HeapBigInt;
+         if (left is not String)
+           return false;
+         if (right is not Cell)
+           return false;
+         if (right is not String)
+           return false;
+         return stringEquality(left, right)
+         }
+         */
+        m_out.branch(m_out.equal(leftValue, rightValue), unsure(triviallyEqualCase), unsure(notTriviallyEqualCase));
+
+        LBasicBlock lastNext = m_out.appendTo(triviallyEqualCase, leftIsNotInt32EqualCase);
+        // Logically we want speculateNeitherDoubleNorHeapBigInt, but we cannot use it here as it changes the state of the abstract interpreter.
+        // So if we used it here, we would skip the later checks.
+        // Instead we reimplement it in this and the next few blocks, using typeCheckWithoutUpdatingInterpreter.
+        m_out.branch(isInt32(leftValue, leftValueType), unsure(returnTrueBlock), unsure(leftIsNotInt32EqualCase));
+
+        m_out.appendTo(leftIsNotInt32EqualCase, leftIsCellEqualCase);
+        typeCheckWithoutUpdatingInterpreter(jsValueValue(leftValue), neitherDoubleNorHeapBigIntEdge, ~SpecFullDouble, isNumber(leftValue));
+        m_out.branch(isCell(leftValue, leftValueType & ~SpecFullNumber), unsure(leftIsCellEqualCase), unsure(returnTrueBlock));
+
+        m_out.appendTo(leftIsCellEqualCase, returnTrueBlock);
+        typeCheckWithoutUpdatingInterpreter(jsValueValue(leftValue), neitherDoubleNorHeapBigIntEdge, ~SpecHeapBigInt, isHeapBigInt(leftValue));
+        m_out.jump(returnTrueBlock);
+
+        m_out.appendTo(returnTrueBlock, notTriviallyEqualCase);
+        ValueFromBlock fastTrue = m_out.anchor(m_out.booleanTrue);
+        m_out.jump(continuation);
+
+        m_out.appendTo(notTriviallyEqualCase, leftIsCell);
+        speculateNotDouble(neitherDoubleNorHeapBigIntEdge);
+        speculateNotDouble(notDoubleEdge);
+        ValueFromBlock fastFalse = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(isNotCell(leftValue, leftValueType & ~SpecFullDouble), unsure(continuation), unsure(leftIsCell));
+
+        m_out.appendTo(leftIsCell, leftIsString);
+        FTL_TYPE_CHECK(jsValueValue(leftValue), neitherDoubleNorHeapBigIntEdge, ~SpecHeapBigInt, isHeapBigInt(leftValue));
+        m_out.branch(isNotString(leftValue, leftValueType & SpecCell & ~SpecHeapBigInt), unsure(continuation), unsure(leftIsString));
+
+        m_out.appendTo(leftIsString, rightIsCell);
+        m_out.branch(isNotCell(rightValue, rightValueType & ~SpecFullDouble), unsure(continuation), unsure(rightIsCell));
+
+        m_out.appendTo(rightIsCell, rightIsString);
+        m_out.branch(isNotString(rightValue, rightValueType & SpecCell & ~SpecFullDouble), unsure(continuation), unsure(rightIsString));
+
+        m_out.appendTo(rightIsString, continuation);
+        ValueFromBlock slowResult = m_out.anchor(stringsEqual(leftValue, rightValue, neitherDoubleNorHeapBigIntEdge, notDoubleEdge));
+        m_out.jump(continuation);
+
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(Int32, fastTrue, fastFalse, slowResult));
     }
@@ -18047,25 +18141,25 @@ private:
     {
         m_interpreter.filter(highValue, typesPassedThrough);
     }
-    
-    void typeCheck(
+
+    void typeCheckWithoutUpdatingInterpreter(
         FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
         LValue failCondition, ExitKind exitKind = BadType)
-    {
-        appendTypeCheck(lowValue, highValue, typesPassedThrough, failCondition, exitKind);
-    }
-    
-    void appendTypeCheck(
-        FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
-        LValue failCondition, ExitKind exitKind)
     {
         if (!m_interpreter.needsTypeCheck(highValue, typesPassedThrough))
             return;
         ASSERT(mayHaveTypeCheck(highValue.useKind()));
         appendOSRExit(exitKind, lowValue, highValue.node(), failCondition, m_origin);
+    }
+
+    void typeCheck(
+        FormattedValue lowValue, Edge highValue, SpeculatedType typesPassedThrough,
+        LValue failCondition, ExitKind exitKind = BadType)
+    {
+        typeCheckWithoutUpdatingInterpreter(lowValue, highValue, typesPassedThrough, failCondition, exitKind);
         m_interpreter.filter(highValue, typesPassedThrough);
     }
-    
+
     LValue lowInt32(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == Int32Use || edge.useKind() == KnownInt32Use));
@@ -18921,6 +19015,9 @@ private:
         case NotDoubleUse:
             speculateNotDouble(edge);
             break;
+        case NeitherDoubleNorHeapBigIntUse:
+            speculateNeitherDoubleNorHeapBigInt(edge);
+            break;
         case NeitherDoubleNorHeapBigIntNorStringUse:
             speculateNeitherDoubleNorHeapBigIntNorString(edge);
             break;
@@ -18983,6 +19080,30 @@ private:
 
         LBasicBlock lastNext = m_out.appendTo(isNotInt32, continuation);
         FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecFullDouble, isNumber(value));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+    }
+
+    void speculateNeitherDoubleNorHeapBigInt(Edge edge)
+    {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+
+        LValue value = lowJSValue(edge, ManualOperandSpeculation);
+
+        LBasicBlock isNotInt32 = m_out.newBlock();
+        LBasicBlock isCellBlock = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isInt32(value, provenType(edge)), unsure(continuation), unsure(isNotInt32));
+
+        LBasicBlock lastNext = m_out.appendTo(isNotInt32, isCellBlock);
+        FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecFullDouble, isNumber(value));
+        m_out.branch(isCell(value, provenType(edge) & ~SpecFullNumber), unsure(isCellBlock), unsure(continuation));
+
+        m_out.appendTo(isCellBlock, continuation);
+        FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecHeapBigInt, isHeapBigInt(value));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);

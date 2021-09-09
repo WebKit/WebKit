@@ -336,6 +336,95 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
     }
 }
 
+void SpeculativeJIT::compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Node* node, Edge neitherDoubleNorHeapBigIntChild, Edge notDoubleChild)
+{
+    ASSERT(neitherDoubleNorHeapBigIntChild.useKind() == NeitherDoubleNorHeapBigIntUse);
+    ASSERT(notDoubleChild.useKind() == NotDoubleUse);
+
+    JSValueOperand left(this, neitherDoubleNorHeapBigIntChild, ManualOperandSpeculation);
+    JSValueOperand right(this, notDoubleChild, ManualOperandSpeculation);
+
+    GPRTemporary temp(this);
+    GPRTemporary leftTemp(this);
+    GPRTemporary rightTemp(this);
+    GPRTemporary leftTemp2(this, Reuse, left);
+    GPRTemporary rightTemp2(this, Reuse, right);
+    JSValueRegs leftRegs = left.jsValueRegs();
+    JSValueRegs rightRegs = right.jsValueRegs();
+
+    GPRReg leftGPR = leftRegs.payloadGPR();
+    GPRReg rightGPR = rightRegs.payloadGPR();
+    GPRReg tempGPR = temp.gpr();
+    GPRReg leftTempGPR = leftTemp.gpr();
+    GPRReg rightTempGPR = rightTemp.gpr();
+    GPRReg leftTemp2GPR = leftTemp2.gpr();
+    GPRReg rightTemp2GPR = rightTemp2.gpr();
+
+    // We try to avoid repeated and redundant checks here, which leads to the following pseudo-code:
+    /*
+     if (left == true) {
+       speculateNeitherDoubleNorHeapBigInt(left);
+       return true;
+     }
+     speculateNotDouble(right);
+     speculateNotDouble(left);
+     if (left is not Cell)
+       return false;
+     Check that left is not HeapBigInt;
+     if (left is not String)
+       return false;
+     if (right is not Cell)
+       return false;
+     if (right is not String)
+       return false;
+     return stringEquality(left, right)
+     }
+     */
+    // Mercifully we can often eliminate much of this soup of conditionals with the help of the abstract interpreter.
+
+    JITCompiler::JumpList trueCase;
+    JITCompiler::JumpList falseCase;
+
+    JITCompiler::Jump notEqual = m_jit.branch64(JITCompiler::NotEqual, leftGPR, rightGPR);
+    // We cannot use speculateNeitherDoubleNorHeapBigInt here, because it updates the interpreter state, and we can skip over it.
+    // So we would always skip the speculateNotDouble that follows.
+    if (needsTypeCheck(neitherDoubleNorHeapBigIntChild, ~SpecFullDouble)) {
+        if (needsTypeCheck(neitherDoubleNorHeapBigIntChild, ~SpecInt32Only))
+            trueCase.append(m_jit.branchIfInt32(leftRegs));
+        speculationCheck(BadType, leftRegs, neitherDoubleNorHeapBigIntChild.node(), m_jit.branchIfNumber(leftRegs, tempGPR));
+    }
+    if (needsTypeCheck(neitherDoubleNorHeapBigIntChild, ~SpecHeapBigInt)) {
+        if (needsTypeCheck(neitherDoubleNorHeapBigIntChild, SpecCell))
+            trueCase.append(m_jit.branchIfNotCell(leftRegs));
+        speculationCheck(BadType, leftRegs, neitherDoubleNorHeapBigIntChild.node(), m_jit.branchIfHeapBigInt(leftGPR));
+    }
+    trueCase.append(m_jit.jump());
+    notEqual.link(&m_jit);
+
+    speculateNotDouble(notDoubleChild, rightRegs, tempGPR);
+    speculateNotDouble(neitherDoubleNorHeapBigIntChild, leftRegs, tempGPR);
+
+    bool leftMayBeNotCell = needsTypeCheck(neitherDoubleNorHeapBigIntChild, SpecCellCheck);
+    if (leftMayBeNotCell)
+        falseCase.append(m_jit.branchIfNotCell(leftRegs));
+
+    DFG_TYPE_CHECK(leftRegs, neitherDoubleNorHeapBigIntChild, ~SpecHeapBigInt, m_jit.branchIfHeapBigInt(leftGPR));
+
+    bool leftMayBeNotStringKnowingCell = needsTypeCheck(neitherDoubleNorHeapBigIntChild, (~SpecString) & SpecCellCheck);
+    if (leftMayBeNotStringKnowingCell)
+        falseCase.append(m_jit.branchIfNotString(leftGPR));
+
+    bool rightMayBeNotCell = needsTypeCheck(notDoubleChild, SpecCellCheck);
+    if (rightMayBeNotCell)
+        falseCase.append(m_jit.branchIfNotCell(rightRegs));
+
+    bool rightMayBeNotStringKnowingCell = needsTypeCheck(notDoubleChild, (~SpecString) & SpecCellCheck);
+    if (rightMayBeNotStringKnowingCell)
+        falseCase.append(m_jit.branchIfNotString(rightGPR));
+
+    compileStringEquality(node, leftGPR, rightGPR, tempGPR, leftTempGPR, rightTempGPR, leftTemp2GPR, rightTemp2GPR, trueCase, falseCase);
+}
+
 void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode, bool invert)
 {
     BasicBlock* taken = branchNode->branchData()->taken.block;

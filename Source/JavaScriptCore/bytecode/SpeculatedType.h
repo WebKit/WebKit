@@ -449,6 +449,11 @@ inline bool isNeitherDoubleNorHeapBigIntNorStringSpeculation(SpeculatedType type
     return !(type & (SpecFullDouble | SpecHeapBigInt | SpecString));
 }
 
+inline bool isNeitherDoubleNorHeapBigIntSpeculation(SpeculatedType type)
+{
+    return !(type & (SpecFullDouble | SpecHeapBigInt));
+}
+
 inline bool isOtherSpeculation(SpeculatedType value)
 {
     return value == SpecOther;

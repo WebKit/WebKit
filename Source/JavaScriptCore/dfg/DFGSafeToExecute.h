@@ -94,6 +94,7 @@ public:
         case DoubleRepAnyIntUse:
         case NotDoubleUse:
         case NeitherDoubleNorHeapBigIntNorStringUse:
+        case NeitherDoubleNorHeapBigIntUse:
             return;
             
         case KnownInt32Use:

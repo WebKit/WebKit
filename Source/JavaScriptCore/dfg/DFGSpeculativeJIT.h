@@ -1248,6 +1248,11 @@ public:
     void compileSymbolEquality(Node*);
     void compileHeapBigIntEquality(Node*);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
+#if USE(JSVALUE64)
+    void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Node*, Edge neitherDoubleNorHeapBigInt, Edge notDouble);
+#endif
+    void emitBitwiseJSValueEquality(JSValueRegs&, JSValueRegs&, GPRReg& result);
+    void emitBranchOnBitwiseJSValueEquality(JSValueRegs&, JSValueRegs&, BasicBlock* taken, BasicBlock* notTaken);
     void compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Edge notDoubleEdge, Edge neitherDoubleNorHeapBigIntNorStringEdge);
     void compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Node* branchNode, Edge notDoubleEdge, Edge neitherDoubleNorHeapBigIntNorStringEdge);
     void compileSymbolUntypedEquality(Node*, Edge symbolEdge, Edge untypedEdge);
@@ -1740,6 +1745,8 @@ public:
     void speculateNotCellNorBigInt(Edge);
     void speculateNotDouble(Edge, JSValueRegs, GPRReg temp);
     void speculateNotDouble(Edge);
+    void speculateNeitherDoubleNorHeapBigInt(Edge, JSValueRegs, GPRReg temp);
+    void speculateNeitherDoubleNorHeapBigInt(Edge);
     void speculateNeitherDoubleNorHeapBigIntNorString(Edge, JSValueRegs, GPRReg temp);
     void speculateNeitherDoubleNorHeapBigIntNorString(Edge);
     void speculateOther(Edge, JSValueRegs, GPRReg temp);

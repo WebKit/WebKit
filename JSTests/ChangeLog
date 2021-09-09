@@ -1,3 +1,17 @@
+2021-09-09  Robin Morisset  <rmorisset@apple.com>
+
+        Optimize compareStrictEq when neither side is a double and at least one is not a BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=226755
+        <rdar://problem/79321542>
+
+        Reviewed by Yusuke Suzuki.
+
+        Made the error messages in stress/reflect-set a bit more informative in the process of debugging an issue with the patch.
+
+        * stress/reflect-set.js:
+        (shouldBe):
+        (shouldThrow):
+
 2021-09-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement Temporal.PlainTime

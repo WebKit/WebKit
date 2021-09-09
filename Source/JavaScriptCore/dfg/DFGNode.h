@@ -2887,6 +2887,11 @@ public:
     {
         return isNeitherDoubleNorHeapBigIntNorStringSpeculation(prediction());
     }
+
+    bool shouldSpeculateNeitherDoubleNorHeapBigInt()
+    {
+        return isNeitherDoubleNorHeapBigIntSpeculation(prediction());
+    }
     
     bool shouldSpeculateUntypedForArithmetic()
     {
