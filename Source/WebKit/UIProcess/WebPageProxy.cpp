@@ -1413,6 +1413,8 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 
     navigation.setIsLoadedWithNavigationShared(true);
 
+    process->markProcessAsRecentlyUsed();
+
     if (!process->isLaunching() || !url.isLocalFile())
         process->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
     else
@@ -1474,6 +1476,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     maybeInitializeSandboxExtensionHandle(m_process, fileURL, resourceDirectoryURL, loadParameters.sandboxExtensionHandle, checkAssumedReadAccessToResourceURL);
     addPlatformLoadParameters(m_process, loadParameters);
 
+    m_process->markProcessAsRecentlyUsed();
     if (m_process->isLaunching())
         send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(loadParameters, resourceDirectoryURL, m_identifier, checkAssumedReadAccessToResourceURL));
     else
@@ -1533,6 +1536,7 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     addPlatformLoadParameters(process, loadParameters);
 
+    process->markProcessAsRecentlyUsed();
     process->assumeReadAccessToBaseURL(*this, baseURL);
     process->send(Messages::WebPage::LoadData(loadParameters), webPageID);
     process->startResponsivenessTimer();
@@ -1590,6 +1594,7 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
 
     addPlatformLoadParameters(m_process, loadParameters);
 
+    m_process->markProcessAsRecentlyUsed();
     m_process->assumeReadAccessToBaseURL(*this, baseURL);
     m_process->send(Messages::WebPage::LoadSimulatedRequestAndResponse(loadParameters, simulatedResponse), m_webPageID);
     m_process->startResponsivenessTimer();
@@ -1633,6 +1638,7 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(process(), loadParameters);
 
+    m_process->markProcessAsRecentlyUsed();
     m_process->assumeReadAccessToBaseURL(*this, baseURL.string());
     m_process->assumeReadAccessToBaseURL(*this, unreachableURL.string());
     send(Messages::WebPage::LoadAlternateHTML(loadParameters));
@@ -1662,6 +1668,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(process(), loadParameters);
 
+    m_process->markProcessAsRecentlyUsed();
     send(Messages::WebPage::LoadData(loadParameters));
     m_process->startResponsivenessTimer();
 }
@@ -1737,6 +1744,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     if (options.contains(WebCore::ReloadOption::DisableContentBlockers))
         navigation->setUserContentExtensionsEnabled(false);
 
+    m_process->markProcessAsRecentlyUsed();
     send(Messages::WebPage::Reload(navigation->navigationID(), options.toRaw(), sandboxExtensionHandle));
     m_process->startResponsivenessTimer();
 
@@ -1815,6 +1823,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     auto transaction = m_pageLoadState.transaction();
     m_pageLoadState.setPendingAPIRequest(transaction, { navigation ? navigation->navigationID() : 0, item.url() });
 
+    m_process->markProcessAsRecentlyUsed();
     send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated));
     m_process->startResponsivenessTimer();
 
@@ -5176,6 +5185,7 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
 
 void WebPageProxy::viewIsBecomingVisible()
 {
+    m_process->markProcessAsRecentlyUsed();
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager->viewIsBecomingVisible();
@@ -7739,6 +7749,7 @@ static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:
         return true;
+    case ProcessTerminationReason::ExceededProcessCountLimit:
     case ProcessTerminationReason::NavigationSwap:
     case ProcessTerminationReason::RequestedByClient:
         break;

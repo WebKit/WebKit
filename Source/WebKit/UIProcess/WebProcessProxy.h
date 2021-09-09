@@ -166,6 +166,9 @@ public:
     
     PAL::SessionID sessionID() const;
 
+    static bool hasReachedProcessCountLimit();
+    static void setProcessCountLimit(unsigned);
+
     static WebProcessProxy* processForIdentifier(WebCore::ProcessIdentifier);
     static WebPageProxy* webPage(WebPageProxyIdentifier);
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
@@ -409,6 +412,8 @@ public:
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     static bool shouldEnableRemoteInspector();
 #endif
+
+    void markProcessAsRecentlyUsed();
 
 #if PLATFORM(MAC)
     void platformSuspendProcess();

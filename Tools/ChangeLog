@@ -1,3 +1,16 @@
+2021-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Implement a WebProcess cap
+        https://bugs.webkit.org/show_bug.cgi?id=230067
+        <rdar://79479244>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (TEST):
+
 2021-09-09  Aakash Jain  <aakash_jain@apple.com>
 
         Run check-github-mirror-integrity more frequently

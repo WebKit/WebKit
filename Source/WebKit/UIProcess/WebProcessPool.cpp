@@ -866,6 +866,9 @@ void WebProcessPool::prewarmProcess()
     if (m_prewarmedProcess)
         return;
 
+    if (WebProcessProxy::hasReachedProcessCountLimit())
+        return;
+
     WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Prewarming a WebProcess for performance");
     createNewWebProcess(nullptr, WebProcessProxy::IsPrewarmed::Yes);
 }

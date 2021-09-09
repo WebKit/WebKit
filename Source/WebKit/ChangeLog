@@ -1,3 +1,45 @@
+2021-09-09  Chris Dumez  <cdumez@apple.com>
+
+        Implement a WebProcess cap
+        https://bugs.webkit.org/show_bug.cgi?id=230067
+        <rdar://79479244>
+
+        Reviewed by Geoffrey Garen.
+
+        Implement a WebProcess cap to avoid getting into a state where we run out of resources and crash in various ways.
+        The current limit is 400 and can be changed via an SPI. The limit is per UIProcess (not per process pool).
+        When we try and launch a new WebProcess and the limit has been reached, we terminate the least recently used
+        WebProcess to avoid going over the limit.
+
+        * Shared/ProcessTerminationReason.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool _setWebProcessCountLimit:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::wkProcessTerminationReason):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadDataWithNavigationShared):
+        (WebKit::WebPageProxy::loadSimulatedRequest):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::shouldReloadAfterProcessTermination):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setProcessCountLimit):
+        (WebKit::WebProcessProxy::create):
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::addProvisionalPageProxy):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::establishServiceWorkerContext):
+        (WebKit::WebProcessProxy::markProcessAsRecentlyUsed):
+        * UIProcess/WebProcessProxy.h:
+
 2021-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the Mac Catalyst build after r282191

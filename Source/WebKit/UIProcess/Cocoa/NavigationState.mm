@@ -1060,6 +1060,7 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
         FALLTHROUGH;
     case ProcessTerminationReason::RequestedByClient:
         return _WKProcessTerminationReasonRequestedByClient;
+    case ProcessTerminationReason::ExceededProcessCountLimit:
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:
