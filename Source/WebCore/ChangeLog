@@ -1,5 +1,51 @@
 2021-09-09  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281648. rdar://problem/82944435
+
+    REGRESSION(r256659): We try to remove fonts from the CSSFontFace which were never added
+    https://bugs.webkit.org/show_bug.cgi?id=229535
+    <rdar://problem/78857440>
+    
+    Reviewed by Darin Adler.
+    
+    After r256659, asking for a failed CSSFontFace's families() returns nullopt. It's possible to add
+    a failed font to a CSSFontFaceSet (of course). When we do that, we recognize the font is failed
+    and don't update our internal data structures, because there's no need to - we can't do anything
+    useful with a failed font.
+    
+    If you _then_ try to remove the font from the CSSFontFace, we don't call families(), but instead
+    just pull out the raw m_families member, and look in our internal data structures for it, but we
+    don't find it, because it was never added.
+    
+    * css/CSSFontFaceSet.cpp:
+    (WebCore::CSSFontFaceSet::addToFacesLookupTable):
+    (WebCore::CSSFontFaceSet::removeFromFacesLookupTable):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281648 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r256659): We try to remove fonts from the CSSFontFace which were never added
+            https://bugs.webkit.org/show_bug.cgi?id=229535
+            <rdar://problem/78857440>
+
+            Reviewed by Darin Adler.
+
+            After r256659, asking for a failed CSSFontFace's families() returns nullopt. It's possible to add
+            a failed font to a CSSFontFaceSet (of course). When we do that, we recognize the font is failed
+            and don't update our internal data structures, because there's no need to - we can't do anything
+            useful with a failed font.
+
+            If you _then_ try to remove the font from the CSSFontFace, we don't call families(), but instead
+            just pull out the raw m_families member, and look in our internal data structures for it, but we
+            don't find it, because it was never added.
+
+            * css/CSSFontFaceSet.cpp:
+            (WebCore::CSSFontFaceSet::addToFacesLookupTable):
+            (WebCore::CSSFontFaceSet::removeFromFacesLookupTable):
+
+2021-09-09  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282142. rdar://problem/82931317
 
     Add a fast path for atomizing strings when parsing HTML
