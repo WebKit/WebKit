@@ -1,5 +1,31 @@
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
+        Add support for RTCDataChannel closing event
+        https://bugs.webkit.org/show_bug.cgi?id=229988
+
+        Reviewed by Eric Carlson.
+
+        Add support for the closing event.
+        Updating close method as per https://w3c.github.io/webrtc-pc/#dom-rtcdatachannel-close:
+        - make the channel enter closing state (without firing event)
+        - wait for the state to move to closed from the backend.
+
+        We also add support for the error event by checking, when entering closed state whether
+        the channel is in an error state.
+
+        Covered by rebased test.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::close):
+        (WebCore::RTCDataChannel::didChangeReadyState):
+        (WebCore::RTCDataChannel::stop):
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::checkState):
+        * dom/EventNames.h:
+
+2021-09-09  Youenn Fablet  <youenn@apple.com>
+
         Add support for RTCSctpTransport
         https://bugs.webkit.org/show_bug.cgi?id=229292
         <rdar://problem/82394152>

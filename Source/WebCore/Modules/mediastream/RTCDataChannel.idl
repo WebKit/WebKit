@@ -55,6 +55,7 @@
     attribute EventHandler onopen;
     attribute EventHandler onerror;
     attribute EventHandler onclose;
+    attribute EventHandler onclosing;
     attribute EventHandler onmessage;
     attribute EventHandler onbufferedamountlow;
 };

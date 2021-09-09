@@ -89,6 +89,7 @@ namespace WebCore {
     macro(checking) \
     macro(click) \
     macro(close) \
+    macro(closing) \
     macro(complete) \
     macro(compositionend) \
     macro(compositionstart) \

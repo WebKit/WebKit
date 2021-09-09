@@ -175,14 +175,15 @@ void RTCDataChannel::close()
     if (m_stopped)
         return;
 
-    m_stopped = true;
-    m_readyState = RTCDataChannelState::Closed;
+    if (m_readyState == RTCDataChannelState::Closing || m_readyState == RTCDataChannelState::Closed)
+        return;
+
+    m_readyState = RTCDataChannelState::Closing;
 
     m_messageQueue.clear();
 
     if (m_handler)
         m_handler->close();
-    m_handler = nullptr;
 }
 
 bool RTCDataChannel::virtualHasPendingActivity() const
@@ -198,13 +199,18 @@ void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)
     m_readyState = newState;
 
     switch (m_readyState) {
+    case RTCDataChannelState::Connecting:
+        ASSERT_NOT_REACHED();
+        break;
     case RTCDataChannelState::Open:
         scheduleDispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
         break;
+    case RTCDataChannelState::Closing:
+        scheduleDispatchEvent(Event::create(eventNames().closingEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        break;
     case RTCDataChannelState::Closed:
         scheduleDispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        break;
-    default:
+        m_stopped = true;
         break;
     }
 }
@@ -245,6 +251,8 @@ void RTCDataChannel::stop()
     removeFromDataChannelLocalMapIfNeeded();
 
     close();
+    m_stopped = true;
+    m_handler = nullptr;
 }
 
 void RTCDataChannel::scheduleDispatchEvent(Ref<Event>&& event)

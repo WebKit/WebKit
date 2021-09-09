@@ -129,6 +129,7 @@ void LibWebRTCDataChannelHandler::OnStateChange()
 
 void LibWebRTCDataChannelHandler::checkState()
 {
+    bool hasError = false;
     RTCDataChannelState state;
     switch (m_channel->state()) {
     case webrtc::DataChannelInterface::kConnecting:
@@ -141,6 +142,7 @@ void LibWebRTCDataChannelHandler::checkState()
         state = RTCDataChannelState::Closing;
         break;
     case webrtc::DataChannelInterface::kClosed:
+        hasError = !m_channel->error().ok();
         state = RTCDataChannelState::Closed;
         break;
     }
@@ -150,7 +152,9 @@ void LibWebRTCDataChannelHandler::checkState()
         m_bufferedMessages.append(state);
         return;
     }
-    postTask([protectedClient = makeRef(*m_client), state] {
+    postTask([protectedClient = makeRef(*m_client), state, hasError] {
+        if (hasError)
+            protectedClient->didDetectError();
         protectedClient->didChangeReadyState(state);
     });
 }
