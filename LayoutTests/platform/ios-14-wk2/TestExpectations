@@ -14,3 +14,6 @@ http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html [ Skip ]
 webkit.org/b/230060 [ Release ] fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-001.html [ Pass Crash ]
 
 webkit.org/b/230070 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/230099 fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html [ Pass Crash ]
+

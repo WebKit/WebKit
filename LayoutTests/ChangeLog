@@ -1,3 +1,12 @@
+2021-09-09  Eric Hutchison  <ehutchison@apple.com>
+
+         [iOS14 Sim Release iPhone] fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230099.
+
+        Unreviewed test gardening.
+
+        * platform/ios-14-wk2/TestExpectations:
+
 2021-09-09  Frederic Wang  <fwang@igalia.com>
 
         Chromium test-case asserts with ASSERTION FAILED: propertyMissingOrEqualToNone
