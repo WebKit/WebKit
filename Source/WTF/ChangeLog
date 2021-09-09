@@ -1,3 +1,15 @@
+2021-09-09  Patrick Angle  <pangle@apple.com>
+
+        run-webkit-archive crashes with dyld error
+        https://bugs.webkit.org/show_bug.cgi?id=228060
+
+        Reviewed by Alex Christensen.
+
+        Bump the maximum macOS version that `HAVE_SAFARI_FOR_WEBKIT_DEVELOPMENT_REQUIRING_EXTRA_SYMBOLS` will be enabled
+        to provide compatibility with changes made in macOS 12.
+
+        * wtf/PlatformHave.h:
+
 2021-09-08  Jean-Yves Avenard  <jya@apple.com>
 
         Safari TP 131 audio canPlayType() reports false negatives
