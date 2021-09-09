@@ -1068,40 +1068,13 @@ bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
         return false;
 
     // Check children first.
-    // We need to account for culled inline parents of the hit-tested nodes, so that they may also get included in area-based hit-tests.
-    RenderElement* culledParent = nullptr;
     for (auto* child = lastChild(); child; child = child->previousOnLine()) {
         if (is<RenderText>(child->renderer()) || !child->boxModelObject()->hasSelfPaintingLayer()) {
-            RenderElement* newParent = nullptr;
-            // Culled parents are only relevant for area-based hit-tests, so ignore it in point-based ones.
-            if (locationInContainer.isRectBasedTest()) {
-                newParent = child->renderer().parent();
-                if (newParent == &renderer())
-                    newParent = nullptr;
-            }
-            // Check the culled parent after all its children have been checked, to do this we wait until
-            // we are about to test an element with a different parent.
-            if (newParent != culledParent) {
-                if (!newParent || !newParent->isDescendantOf(culledParent)) {
-                    while (culledParent && culledParent != &renderer() && culledParent != newParent) {
-                        if (is<RenderInline>(*culledParent) && downcast<RenderInline>(*culledParent).hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
-                            return true;
-                        culledParent = culledParent->parent();
-                    }
-                }
-                culledParent = newParent;
-            }
             if (child->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction)) {
                 renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
                 return true;
             }
         }
-    }
-    // Check any culled ancestor of the final children tested.
-    while (culledParent && culledParent != &renderer()) {
-        if (is<RenderInline>(*culledParent) && downcast<RenderInline>(*culledParent).hitTestCulledInline(request, result, locationInContainer, accumulatedOffset))
-            return true;
-        culledParent = culledParent->parent();
     }
 
     // Now check ourselves. Pixel snap hit testing.

@@ -117,8 +117,6 @@ public:
     static bool isHangableStopOrComma(UChar);
     
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
-    LayoutRect linesVisualOverflowBoundingBox() const;
-
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
 
     virtual void setText(const String&, bool force = false);

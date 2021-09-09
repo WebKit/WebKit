@@ -109,7 +109,6 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_baseTypeFlags(baseTypeFlags)
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
-    , m_renderInlineAlwaysCreatesLineBoxes(false)
     , m_renderBoxNeedsLazyRepaint(false)
     , m_hasPausedImageAnimations(false)
     , m_hasCounterNodeMap(false)

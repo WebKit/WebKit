@@ -4324,11 +4324,6 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
 
     RenderObject::SetLayoutNeededForbiddenScope forbidSetNeedsLayout(rootLayer->renderer());
 
-    // To work around http://webkit.org/b/135106, ensure that the paint root isn't an inline with culled line boxes.
-    // FIXME: This can cause additional content to be included in the snapshot, so remove this once that bug is fixed.
-    while (is<RenderInline>(renderer) && !downcast<RenderInline>(*renderer).firstLineBox())
-        renderer = renderer->parent();
-
     rootLayer->paint(context, dirtyRect, LayoutSize(), m_paintBehavior, renderer, { }, securityOriginPaintPolicy == SecurityOriginPaintPolicy::AnyOrigin ? RenderLayer::SecurityOriginPaintPolicy::AnyOrigin : RenderLayer::SecurityOriginPaintPolicy::AccessibleOriginOnly, eventRegionContext);
     if (auto* scrollableRootLayer = rootLayer->scrollableArea()) {
         if (scrollableRootLayer->containsDirtyOverlayScrollbars() && !eventRegionContext)

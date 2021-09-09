@@ -70,8 +70,6 @@ public:
 
     LegacyInlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
     LegacyInlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
-    LegacyInlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
-    LegacyInlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
 
 #if PLATFORM(IOS_FAMILY)
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
@@ -82,12 +80,7 @@ public:
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) final;
     void paintOutline(PaintInfo&, const LayoutPoint&);
 
-    bool alwaysCreateLineBoxes() const { return true; }
-    void setAlwaysCreateLineBoxes() { setRenderInlineAlwaysCreatesLineBoxes(true); }
-    bool mayAffectRendering() const;
-    void updateAlwaysCreateLineBoxes(bool fullLayout);
-
-    bool hitTestCulledInline(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
+    bool mayAffectLayout() const;
 
     bool requiresLayer() const override { return isInFlowPositioned() || createsGroup() || hasClipPath() || willChangeCreatesStackingContext() || hasRunningAcceleratedAnimations(); }
 
@@ -104,16 +97,10 @@ private:
 
     bool canHaveChildren() const final { return true; }
 
-    LayoutRect culledInlineVisualOverflowBoundingBox() const;
-    LegacyInlineBox* culledInlineFirstLineBox() const;
-    LegacyInlineBox* culledInlineLastLineBox() const;
-
     void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* wasFixed) const override;
 
     template<typename GeneratorContext>
     void generateLineBoxRects(GeneratorContext& yield) const;
-    template<typename GeneratorContext>
-    void generateCulledLineBoxRects(GeneratorContext& yield, const RenderInline* container) const;
 
     void layout() final { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 

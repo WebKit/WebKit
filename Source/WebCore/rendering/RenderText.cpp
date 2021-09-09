@@ -1584,11 +1584,6 @@ IntRect RenderText::linesBoundingBox() const
     return enclosingIntRect(boundingBox);
 }
 
-LayoutRect RenderText::linesVisualOverflowBoundingBox() const
-{
-    return m_lineBoxes.visualOverflowBoundingBox(*this);
-}
-
 LayoutRect RenderText::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
     RenderObject* rendererToRepaint = containingBlock();

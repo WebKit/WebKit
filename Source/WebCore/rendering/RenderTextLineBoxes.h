@@ -56,8 +56,6 @@ public:
 
     LegacyInlineTextBox* findNext(int offset, int& position) const;
 
-    LayoutRect visualOverflowBoundingBox(const RenderText&) const;
-
 #if ASSERT_ENABLED
     ~RenderTextLineBoxes();
 #endif

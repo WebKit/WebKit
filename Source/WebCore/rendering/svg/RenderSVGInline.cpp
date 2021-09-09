@@ -36,7 +36,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGInline);
 RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderInline(element, WTFMove(style))
 {
-    setAlwaysCreateLineBoxes();
 }
 
 std::unique_ptr<LegacyInlineFlowBox> RenderSVGInline::createInlineFlowBox()

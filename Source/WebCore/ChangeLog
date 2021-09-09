@@ -1,3 +1,67 @@
+2021-09-09  Antti Koivisto  <antti@apple.com>
+
+        Cull inline culling
+        https://bugs.webkit.org/show_bug.cgi?id=202920
+
+        Reviewed by Alan Bujtas.
+
+        The optimization was already disabled in r282129.
+        This patch removes all the associated code.
+
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::nodeAtPoint):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::LegacyLineLayout::createLineBoxes):
+        (WebCore::LegacyLineLayout::layoutLineBoxes):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::setRenderInlineAlwaysCreatesLineBoxes): Deleted.
+        (WebCore::RenderElement::renderInlineAlwaysCreatesLineBoxes const): Deleted.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+        (WebCore::RenderInline::mayAffectLayout const):
+
+        Rename mayAffectRendering -> mayAffectLayout for specificity.
+
+        (WebCore::RenderInline::generateLineBoxRects const):
+        (WebCore::RenderInline::firstInlineBoxTopLeft const):
+        (WebCore::RenderInline::linesBoundingBox const):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox const):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBoxInFragment const):
+        (WebCore::RenderInline::clippedOverflowRect const):
+        (WebCore::RenderInline::dirtyLineBoxes):
+        (WebCore::RenderInline::createAndAppendInlineFlowBox):
+        (WebCore::RenderInline::mayAffectRendering const): Deleted.
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes): Deleted.
+        (WebCore::RenderInline::generateCulledLineBoxRects const): Deleted.
+        (WebCore::RenderInline::hitTestCulledInline): Deleted.
+        (WebCore::RenderInline::culledInlineFirstLineBox const): Deleted.
+        (WebCore::RenderInline::culledInlineLastLineBox const): Deleted.
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox const): Deleted.
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::lastLineBox const):
+        (WebCore::RenderInline::firstLineBoxIncludingCulling const): Deleted.
+        (WebCore::RenderInline::lastLineBoxIncludingCulling const): Deleted.
+        (WebCore::RenderInline::alwaysCreateLineBoxes const): Deleted.
+        (WebCore::RenderInline::setAlwaysCreateLineBoxes): Deleted.
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::linesVisualOverflowBoundingBox const): Deleted.
+        * rendering/RenderText.h:
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::visualOverflowBoundingBox const): Deleted.
+        * rendering/RenderTextLineBoxes.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::hasNonEmptySibling):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::RenderSVGInline):
+
 2021-09-09  Sihui Liu  <sihui_liu@apple.com>
 
         Address post-commit comments on r282130 (Add basic support for Storage API)
