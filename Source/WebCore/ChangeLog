@@ -1,3 +1,10 @@
+2021-09-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed build fix for win after r282222.
+        https://bugs.webkit.org/show_bug.cgi?id=230059
+
+        * Modules/storage/StorageManager.h:
+
 2021-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         right- and bottom-relative values in background-position-x/y don't work
