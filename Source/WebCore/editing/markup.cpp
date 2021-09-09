@@ -383,8 +383,8 @@ void StyledMarkupAccumulator::wrapWithStyleNode(StyleProperties* style, Document
 
 void StyledMarkupAccumulator::appendStyleNodeOpenTag(StringBuilder& out, StyleProperties* style, Document& document, bool isBlock)
 {
-    // wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
-    ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
+    // With AnnotateForInterchange::Yes, wrappingStyleForSerialization should have removed -webkit-text-decorations-in-effect
+    ASSERT(!shouldAnnotate() || propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
     if (isBlock)
         out.append("<div style=\"");
     else

@@ -1,3 +1,26 @@
+2021-09-09  Frederic Wang  <fwang@igalia.com>
+
+        Chromium test-case asserts with ASSERTION FAILED: propertyMissingOrEqualToNone
+        https://bugs.webkit.org/show_bug.cgi?id=202904
+
+        Reviewed by Darin Adler.
+
+        WebCore::CompositeEditCommand::moveParagraphs calls createFragmentFromMarkup with a parameter
+        AnnotateForInterchange set to No. As a consequence, StyledMarkupAccumulator::serializeNodes
+        will not call EditingStyle::wrappingStyleForSerialization (in order to remove
+        -webkit-text-decorations-in-effect) contrary to the assumption of the ASSERT in
+        propertyMissingOrEqualToNone. This can lead to the ASSERT failing e.g. with the JustifyRight
+        command. This patch fixes that wrong expectation by importing the corresponding change and
+        test from Chromium [1].
+
+        [1] https://codereview.chromium.org/1522063002
+
+        Test: imported/blink/editing/execCommand/justify-right-in-effect-crash.html
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag): Skip the assert if we should not
+        annotate and update the code comment accordingly.
+
 2021-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontFaceSet.has() needs to react to style changes

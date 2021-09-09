@@ -1,3 +1,15 @@
+2021-09-09  Frederic Wang  <fwang@igalia.com>
+
+        Chromium test-case asserts with ASSERTION FAILED: propertyMissingOrEqualToNone
+        https://bugs.webkit.org/show_bug.cgi?id=202904
+
+        Reviewed by Darin Adler.
+
+        Import regression test from Blink.
+
+        * imported/blink/editing/execCommand/justify-right-in-effect-crash-expected.txt: Added.
+        * imported/blink/editing/execCommand/justify-right-in-effect-crash.html: Added.
+
 2021-09-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-text-decor] Update WPT test suite
