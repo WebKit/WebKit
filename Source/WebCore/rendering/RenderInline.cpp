@@ -433,26 +433,23 @@ void RenderInline::absoluteQuadsForSelection(Vector<FloatQuad>& quads) const
 
 LayoutUnit RenderInline::offsetLeft() const
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
-#endif
-    LayoutPoint topLeft;
-    if (LegacyInlineBox* firstBox = firstLineBoxIncludingCulling())
-        topLeft = flooredLayoutPoint(firstBox->topLeft());
-    return adjustedPositionRelativeToOffsetParent(topLeft).x();
+    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).x();
 }
 
 LayoutUnit RenderInline::offsetTop() const
 {
+    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).y();
+}
+
+LayoutPoint RenderInline::firstInlineBoxTopLeft() const
+{
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+        return lineLayout->firstInlineBoxRect(*this).location();
 #endif
-    LayoutPoint topLeft;
     if (LegacyInlineBox* firstBox = firstLineBoxIncludingCulling())
-        topLeft = flooredLayoutPoint(firstBox->topLeft());
-    return adjustedPositionRelativeToOffsetParent(topLeft).y();
+        return flooredLayoutPoint(firstBox->topLeft());
+    return { };
 }
 
 static LayoutUnit computeMargin(const RenderInline* renderer, const Length& margin)
@@ -582,8 +579,17 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const R
 {
     // FIXME: Does not deal with relative or sticky positioned inlines (should it?)
     RenderBlock& containingBlock = *this->containingBlock();
-    if (firstLineBox()) {
-        // This inline actually has a line box.  We must have clicked in the border/padding of one of these boxes.  We
+
+    auto hasInlineBox = [&] {
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+        if (LayoutIntegration::LineLayout::containing(*this))
+            return true;
+#endif
+        return !!firstLineBox();
+    };
+
+    if (hasInlineBox()) {
+        // This inline actually has an inline box. We must have clicked in the border/padding of one of these boxes. We
         // should try to find a result by asking our containing block.
         return containingBlock.positionForPoint(point, fragment);
     }

@@ -411,6 +411,16 @@ LineIterator LineLayout::lastLine() const
     return { LineIteratorModernPath(*m_inlineContent, m_inlineContent->lines.isEmpty() ? 0 : m_inlineContent->lines.size() - 1) };
 }
 
+LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) const
+{
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
+    for (auto& run : m_inlineContent->runs) {
+        if (&run.layoutBox() == &layoutBox)
+            return Layout::toLayoutRect(run.logicalRect());
+    }
+    return { };
+}
+
 LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInline) const
 {
     if (!m_inlineContent)

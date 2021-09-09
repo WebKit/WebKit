@@ -1,3 +1,25 @@
+2021-09-09  Antti Koivisto  <antti@apple.com>
+
+        RenderInline offsetTop/Left should not switch to legacy layout
+        https://bugs.webkit.org/show_bug.cgi?id=230040
+
+        Reviewed by Alan Bujtas.
+
+        Get position of the LFC inline box.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::firstInlineBoxRect const):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetLeft const):
+        (WebCore::RenderInline::offsetTop const):
+        (WebCore::RenderInline::firstInlineBoxTopLeft const):
+        (WebCore::RenderInline::positionForPoint const):
+
+        Also fix positionForPoint as a failing test revealed a missing LFC path here.
+
+        * rendering/RenderInline.h:
+
 2021-09-09  Martin Robinson  <mrobinson@webkit.org>
 
         Position sticky does not work within table cells

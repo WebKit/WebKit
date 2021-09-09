@@ -149,9 +149,9 @@ function runTests()
         doTest("totest_linebreak_out", "select3\n");
         doTest("totest_tab_out", "select4\t");
         doTest("totest_multiple_whitespaces_out", "select5 ");
-        doTest("totest_linebreak_in", "select6\n");
-        doTest("totest_tab_in", "select7\t");
-        doTest("totest_multiple_whitespaces_in", "select8 ");
+        doTest("totest_linebreak_in", "select6\n", getPositionOfNextLineHeadOf("totest_linebreak_in"));
+        doTest("totest_tab_in", "select7\t", getPositionOfNextLineHeadOf("totest_tab_in"));
+        doTest("totest_multiple_whitespaces_in", "select8 ", getPositionOfNextLineHeadOf("totest_multiple_whitespaces_in"));
 
         doTest("totest_multiple_word_in_span", "select9 ");
         doTest("totest_word_before_here_in_line", "select10 ");
@@ -176,8 +176,8 @@ function runTests()
         doTest("totest_tab_out_preline", "select2\t");
         doTest("totest_multiple_whitespaces_out_preline", "select3 ");
         doTest("totest_linebreak_in_preline", "select4\n", getPositionOfNextLineHeadOf("totest_linebreak_in_preline"));
-        doTest("totest_tab_in_preline", "select5\t");
-        doTest("totest_multiple_whitespaces_in_preline", "select6 ");
+        doTest("totest_tab_in_preline", "select5\t", getPositionOfNextLineHeadOf("totest_tab_in_preline"));
+        doTest("totest_multiple_whitespaces_in_preline", "select6 ", getPositionOfNextLineHeadOf("totest_multiple_whitespaces_in_preline"));
 
         doTest("totest_linebreak_out_nowrap", "select1\n");
         doTest("totest_tab_out_nowrap", "select2\t");

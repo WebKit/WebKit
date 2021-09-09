@@ -1,3 +1,14 @@
+2021-09-09  Antti Koivisto  <antti@apple.com>
+
+        RenderInline offsetTop/Left should not switch to legacy layout
+        https://bugs.webkit.org/show_bug.cgi?id=230040
+
+        Reviewed by Alan Bujtas.
+
+        * editing/selection/doubleclick-beside-cr-span.html:
+
+        Update the test for more standards compliant first inline box position.
+
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCDataChannel closing event
