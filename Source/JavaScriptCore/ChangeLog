@@ -1,3 +1,16 @@
+2021-09-09  Justin Michaud  <justin_michaud@apple.com>
+
+        Differential testing: incorrect constant propagation around Uint8ClampedArray
+        https://bugs.webkit.org/show_bug.cgi?id=229869
+
+        We casted int52 values to int32 before clamping, which caused any value with the 32nd bit
+        set to be interpreted as negative. The fix is to check the full-size value when deciding to clamp.
+
+        Reviewed by Saam Barati.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+
 2021-09-09  Robin Morisset  <rmorisset@apple.com>
 
         Optimize compareStrictEq when neither side is a double and at least one is not a BigInt

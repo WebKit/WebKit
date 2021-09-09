@@ -1,3 +1,24 @@
+2021-09-09  Justin Michaud  <justin_michaud@apple.com>
+
+        Differential testing: incorrect constant propagation around Uint8ClampedArray
+        https://bugs.webkit.org/show_bug.cgi?id=229869
+
+        Reviewed by Saam Barati.
+
+        * stress/Uint8ClampedArrayClampsInt52Positive.js: Added.
+        (let.x.123.test):
+        (noInline.test.int32pos1):
+        (255.int32pos2):
+        (1.int32neg1):
+        (0.int32neg2):
+        (0.int52pos1):
+        (255.int52pos2):
+        (255.int52neg1):
+        (0.int52neg2):
+        (0.int52neg3):
+        (0.int52pos3):
+        (255.int8):
+
 2021-09-09  Robin Morisset  <rmorisset@apple.com>
 
         Optimize compareStrictEq when neither side is a double and at least one is not a BigInt

@@ -17797,15 +17797,26 @@ private:
     
     LValue getIntTypedArrayStoreOperand(Edge edge, bool isClamped = false)
     {
-        LValue intValue;
+        LValue valueAsInt32;
+        LValue value;
+        LValue zero;
+        LValue byteMax;
+        
         switch (edge.useKind()) {
         case Int52RepUse:
         case Int32Use: {
-            if (edge.useKind() == Int32Use)
-                intValue = lowInt32(edge);
-            else
-                intValue = m_out.castToInt32(lowStrictInt52(edge));
-
+            if (edge.useKind() == Int32Use) {
+                value = lowInt32(edge);
+                valueAsInt32 = value;
+                zero = m_out.int32Zero;
+                byteMax = m_out.constInt32(255);
+            } else {
+                value = lowStrictInt52(edge);
+                valueAsInt32 = m_out.castToInt32(value);
+                zero = m_out.int64Zero;
+                byteMax = m_out.constInt64(255);
+            }
+            
             if (isClamped) {
                 LBasicBlock atLeastZero = m_out.newBlock();
                 LBasicBlock continuation = m_out.newBlock();
@@ -17813,19 +17824,19 @@ private:
                 Vector<ValueFromBlock, 2> intValues;
                 intValues.append(m_out.anchor(m_out.int32Zero));
                 m_out.branch(
-                    m_out.lessThan(intValue, m_out.int32Zero),
+                    m_out.lessThan(value, zero),
                     unsure(continuation), unsure(atLeastZero));
                             
                 LBasicBlock lastNext = m_out.appendTo(atLeastZero, continuation);
                             
                 intValues.append(m_out.anchor(m_out.select(
-                    m_out.greaterThan(intValue, m_out.constInt32(255)),
+                    m_out.greaterThan(value, byteMax),
                     m_out.constInt32(255),
-                    intValue)));
+                    valueAsInt32)));
                 m_out.jump(continuation);
                             
                 m_out.appendTo(continuation, lastNext);
-                intValue = m_out.phi(Int32, intValues);
+                valueAsInt32 = m_out.phi(Int32, intValues);
             }
             break;
         }
@@ -17855,9 +17866,9 @@ private:
                 m_out.jump(continuation);
                             
                 m_out.appendTo(continuation, lastNext);
-                intValue = m_out.phi(Int32, intValues);
+                valueAsInt32 = m_out.phi(Int32, intValues);
             } else
-                intValue = doubleToInt32(doubleValue);
+                valueAsInt32 = doubleToInt32(doubleValue);
             break;
         }
                         
@@ -17865,7 +17876,7 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
         }
         
-        return intValue;
+        return valueAsInt32;
     }
     
     LValue doubleToInt32(LValue doubleValue, double low, double high, bool isSigned = true)
