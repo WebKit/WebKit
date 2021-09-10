@@ -378,6 +378,8 @@ def lstring_to_string(valobj, error, length=None):
 
     pointer = valobj.GetValueAsUnsigned()
     contents = valobj.GetProcess().ReadMemory(pointer, length, lldb.SBError())
+    if not contents:
+        return ""
 
     # lldb does not (currently) support returning unicode from python summary providers,
     # so potentially convert this to ascii by escaping
@@ -468,62 +470,91 @@ class WTFStringProvider:
 
 
 class WebCoreColorProvider:
+    SEMANTIC_FLAG                           = 1 << 0
+    USE_COLOR_FUNCTION_SERIALIZATION_FLAG   = 1 << 1
+    VALID_FLAG                              = 1 << 2
+    OUT_OF_LINE_FLAG                        = 1 << 3
+
+    COLOR_VALUE_MASK                        = (1 << 48) - 1 # only correct for 64-bit
+    FLAGS_SHIFT                             = 48
+    FLAGS_SIZE                              = 8
+    COLOR_SPACE_SHIFT                       = FLAGS_SHIFT + FLAGS_SIZE
+
     "Print a WebCore::Color"
     def __init__(self, valobj, dict):
         self.valobj = valobj
 
-    def _is_extended(self, rgba_and_flags):
-        return not bool(rgba_and_flags & 0x1)
+    def _is_out_of_line(self, rgba_and_flags):
+        flags = self._flags(rgba_and_flags)
+        return bool(flags & self.OUT_OF_LINE_FLAG)
 
     def _is_valid(self, rgba_and_flags):
-        # Assumes not extended.
-        return bool(rgba_and_flags & 0x2)
+        flags = self._flags(rgba_and_flags)
+        return bool(flags & self.VALID_FLAG)
 
     def _is_semantic(self, rgba_and_flags):
-        # Assumes not extended.
-        return bool(rgba_and_flags & 0x4)
+        flags = self._flags(rgba_and_flags)
+        return bool(flags & self.SEMANTIC_FLAG)
 
-    def _to_string_extended(self):
-        extended_color = self.valobj.GetChildMemberWithName('m_colorData').GetChildMemberWithName('extendedColor').Dereference()
-        profile = extended_color.GetChildMemberWithName('m_colorSpace').GetValue()
-        if profile == 'A98RGB':
+    def _color_space(self, rgba_and_flags):
+        return rgba_and_flags >> self.COLOR_SPACE_SHIFT
+
+    def _flags(self, rgba_and_flags):
+        return rgba_and_flags >> self.FLAGS_SHIFT
+
+    def _to_string_out_of_line(self):
+        rgba_and_flags = self.valobj.GetChildMemberWithName('m_colorAndFlags').GetValueAsUnsigned(0)
+
+        out_of_line_components_type = self.valobj.GetTarget().FindFirstType('WebCore::Color::OutOfLineComponents')
+        out_of_line_components = self.valobj.CreateValueFromAddress('out_of_line_components', rgba_and_flags & self.COLOR_VALUE_MASK, out_of_line_components_type)
+
+        color_space = self._color_space(rgba_and_flags)
+
+        if color_space == 0:
             profile = 'a98-rgb'
-        elif profile == 'DisplayP3':
+        elif color_space == 1:
             profile = 'display-p3'
-        elif profile == 'Lab':
+        elif color_space == 2:
+            profile = 'lch'
+        elif color_space == 3:
             profile = 'lab'
-        elif profile == 'LinearSRGB':
+        elif color_space == 4:
             profile = 'linear-srgb'
-        elif profile == 'ProPhotoRGB':
+        elif color_space == 5:
+            profile = 'linear-srgb'
+        elif color_space == 6:
             profile = 'prophoto-rgb'
-        elif profile == 'Rec2020':
+        elif color_space == 7:
             profile = 'rec2020'
-        elif profile == 'SRGB':
+        elif color_space == 8:
             profile = 'srgb'
-        elif profile == 'XYZ_D50':
+        elif color_space == 9:
             profile = 'xyz-d50'
         else:
             profile = 'unknown'
 
-        color_components = extended_color.GetChildMemberWithName('m_components')
+        color_components = out_of_line_components.GetChildMemberWithName('m_components')
         std_array_elems = color_components.GetChildMemberWithName('components').GetChildMemberWithName('__elems_')
 
         red = float(std_array_elems.GetChildAtIndex(0).GetValue())
         green = float(std_array_elems.GetChildAtIndex(1).GetValue())
         blue = float(std_array_elems.GetChildAtIndex(2).GetValue())
         alpha = float(std_array_elems.GetChildAtIndex(3).GetValue())
-        return "color(%s %1.2f %1.2f %1.2f / %1.2f)" % (profile, red, green, blue, alpha)
+
+        semantic = ' semantic' if self._is_semantic(rgba_and_flags) else ""
+
+        return "color(%s %1.2f %1.2f %1.2f / %1.2f)%s" % (profile, red, green, blue, alpha, semantic)
 
     def to_string(self):
-        rgba_and_flags = self.valobj.GetChildMemberWithName('m_colorData').GetChildMemberWithName('inlineColorAndFlags').GetValueAsUnsigned(0)
+        rgba_and_flags = self.valobj.GetChildMemberWithName('m_colorAndFlags').GetValueAsUnsigned(0)
 
-        if self._is_extended(rgba_and_flags):
-            return self._to_string_extended()
+        if self._is_out_of_line(rgba_and_flags):
+            return self._to_string_out_of_line()
 
         if not self._is_valid(rgba_and_flags):
             return 'invalid'
 
-        color = rgba_and_flags >> 32
+        color = rgba_and_flags & self.COLOR_VALUE_MASK
         red = (color >> 24) & 0xFF
         green = (color >> 16) & 0xFF
         blue = (color >> 8) & 0xFF

@@ -1,3 +1,31 @@
+2021-09-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some lldb data provider issues
+        https://bugs.webkit.org/show_bug.cgi?id=230134
+
+        Reviewed by Daniel Bates.
+
+        Fix the color data provider. Add a test for the URL provider. Add an
+        early return in lstring_to_string that fixed an error.
+
+        * lldb/lldbWebKitTester/main.cpp:
+        (testSummaryProviders):
+        * lldb/lldb_webkit.py:
+        (lstring_to_string):
+        (WebCoreColorProvider):
+        (WebCoreColorProvider._is_outOfLine):
+        (WebCoreColorProvider._is_valid):
+        (WebCoreColorProvider._is_semantic):
+        (WebCoreColorProvider._color_space):
+        (WebCoreColorProvider._flags):
+        (WebCoreColorProvider._to_string_outOfLine):
+        (WebCoreColorProvider.to_string):
+        (WebCoreColorProvider._is_extended): Deleted.
+        (WebCoreColorProvider._to_string_extended): Deleted.
+        * lldb/lldb_webkit_unittest.py:
+        (TestSummaryProviders):
+        (TestSummaryProviders.serial_test_WTFURL_SummaryProvider):
+
 2021-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mac Catalyst] Korean characters do not combine correctly in editable fields in WKWebView
