@@ -1,3 +1,67 @@
+2021-09-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Clean up current state of Temporal API
+        https://bugs.webkit.org/show_bug.cgi?id=230130
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch perfoms a variety of cleanup tasks following the implementation of Temporal.PlainTime.
+
+          1. Do away with the alias Subdurations and refer to ISO8601::Duration directly.
+             (But we can still say "subduration" when referring to a single ordered field, as in `largestSubduration`.)
+          2. Represent ToTemporalDuration, ToTemporalDurationRecord, and ToLimitedTemporalDuration more directly in code,
+             as TemporalDuration::{toTemporalDuration, fromDurationLike, toISO8601Duration}.
+             (Note: The last of these doesn't take a disallowedFields parameter;
+                    Temporal.Instant can do this after the fact, since no one else makes use of this functionality.)
+          3. Extract intlOption<RoundingMode> into a helper function, `temporalRoundingMode`.
+          4. Remove largestSubplainTime(), which was declared but not defined.
+          5. Correct spelling of TemporalPlainTime::constrainTime().
+
+        * runtime/TemporalDuration.cpp:
+        (JSC::TemporalDuration::create):
+        (JSC::TemporalDuration::TemporalDuration):
+        (JSC::TemporalDuration::tryCreateIfValid):
+        (JSC::TemporalDuration::fromDurationLike): Added.
+        (JSC::TemporalDuration::toISO8601Duration): Added.
+        (JSC::TemporalDuration::toTemporalDuration): Added.
+        (JSC::TemporalDuration::from):
+        (JSC::totalNanoseconds):
+        (JSC::TemporalDuration::compare):
+        (JSC::TemporalDuration::sign):
+        (JSC::TemporalDuration::with const):
+        (JSC::TemporalDuration::negated const):
+        (JSC::TemporalDuration::abs const):
+        (JSC::largestSubduration): Added.
+        (JSC::TemporalDuration::balance):
+        (JSC::TemporalDuration::add const):
+        (JSC::TemporalDuration::subtract const):
+        (JSC::TemporalDuration::round):
+        (JSC::TemporalDuration::round const):
+        (JSC::TemporalDuration::total const):
+        (JSC::TemporalDuration::toString const):
+        (JSC::TemporalDuration::toString):
+        (JSC::TemporalDuration::fromNonDurationValue): Deleted.
+        (JSC::TemporalDuration::toDuration): Deleted.
+        (JSC::TemporalDuration::toDurationRecord): Deleted.
+        (JSC::TemporalDuration::largestSubduration const): Deleted.
+        * runtime/TemporalDuration.h:
+        * runtime/TemporalDurationConstructor.cpp:
+        * runtime/TemporalDurationPrototype.cpp:
+        * runtime/TemporalObject.cpp:
+        (JSC::temporalRoundingMode): Added.
+        * runtime/TemporalObject.h:
+        * runtime/TemporalPlainTime.cpp:
+        (JSC::TemporalPlainTime::round const):
+        (JSC::TemporalPlainTime::toString const):
+        (JSC::constrainTime): Added.
+        (JSC::regulateTime):
+        (JSC::TemporalPlainTime::add const):
+        (JSC::TemporalPlainTime::subtract const):
+        (JSC::extractDifferenceOptions):
+        (JSC::constraintTime): Deleted.
+        (JSC::toLimitedTemporalDuration): Deleted.
+        * runtime/TemporalPlainTime.h:
+
 2021-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Intl.Locale weekendInfo should list all weekend days instead of range

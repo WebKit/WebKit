@@ -239,9 +239,7 @@ ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValu
     }
     TemporalUnit smallestUnit = smallest.value();
 
-    auto roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode,
-        { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
-        "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, RoundingMode::HalfExpand);
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);
@@ -265,9 +263,7 @@ String TemporalPlainTime::toString(JSGlobalObject* globalObject, JSValue options
     PrecisionData data = secondsStringPrecision(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode,
-        { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
-        "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, RoundingMode::Trunc);
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
     RETURN_IF_EXCEPTION(scope, { });
 
     // No need to make a new object if we were given explicit defaults.
@@ -355,7 +351,7 @@ static std::array<std::optional<double>, numberOfTemporalPlainTimeUnits> toParti
     return partialTime;
 }
 
-static ISO8601::PlainTime constraintTime(ISO8601::Duration&& duration)
+static ISO8601::PlainTime constrainTime(ISO8601::Duration&& duration)
 {
     auto constrainToRange = [](double value, unsigned minimum, unsigned maximum) -> unsigned {
         if (std::isnan(value))
@@ -375,7 +371,7 @@ static ISO8601::PlainTime regulateTime(JSGlobalObject* globalObject, ISO8601::Du
 {
     switch (overflow) {
     case TemporalOverflow::Constrain:
-        return constraintTime(WTFMove(duration));
+        return constrainTime(WTFMove(duration));
     case TemporalOverflow::Reject:
         return toPlainTime(globalObject, WTFMove(duration));
     }
@@ -482,44 +478,6 @@ int32_t TemporalPlainTime::compare(TemporalPlainTime* plainTime1, TemporalPlainT
     return 0;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-tolimitedtemporalduration
-static ISO8601::Duration toLimitedTemporalDuration(JSGlobalObject* globalObject, JSValue temporalDurationLike, std::initializer_list<TemporalUnit> disallowedFields)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    ISO8601::Duration duration;
-    if (!temporalDurationLike.isObject()) {
-        String string = temporalDurationLike.toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        auto durationOptional = ISO8601::parseDuration(string);
-        if (!durationOptional) {
-            throwRangeError(globalObject, scope, "Could not parse Duration string"_s);
-            return { };
-        }
-        duration = durationOptional.value();
-    } else {
-        duration = TemporalDuration::toDurationRecord(globalObject, temporalDurationLike);
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-
-    if (!ISO8601::isValidDuration(duration)) {
-        throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
-        return { };
-    }
-
-    for (size_t index = 0; index < numberOfTemporalUnits; index++) {
-        if (duration[index]) {
-            if (disallowedFields.size() && std::find(disallowedFields.begin(), disallowedFields.end(), static_cast<TemporalUnit>(index)) != disallowedFields.end()) {
-                throwRangeError(globalObject, scope, "Duration properties include disallowed field"_s);
-                return { };
-            }
-        }
-    }
-
-    return duration;
-}
-
 static ISO8601::Duration addTime(const ISO8601::PlainTime& plainTime, const ISO8601::Duration& duration)
 {
     return balanceTime(
@@ -536,7 +494,7 @@ ISO8601::PlainTime TemporalPlainTime::add(JSGlobalObject* globalObject, JSValue 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto duration = toLimitedTemporalDuration(globalObject, temporalDurationLike, { });
+    auto duration = TemporalDuration::toISO8601Duration(globalObject, temporalDurationLike);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, toPlainTime(globalObject, addTime(m_plainTime, duration)));
@@ -547,7 +505,7 @@ ISO8601::PlainTime TemporalPlainTime::subtract(JSGlobalObject* globalObject, JSV
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto duration = toLimitedTemporalDuration(globalObject, temporalDurationLike, { });
+    auto duration = TemporalDuration::toISO8601Duration(globalObject, temporalDurationLike);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, toPlainTime(globalObject, addTime(m_plainTime, -duration)));
@@ -635,9 +593,7 @@ static std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDiffe
         return { };
     }
 
-    auto roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode,
-        { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
-        "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, RoundingMode::Trunc);
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);

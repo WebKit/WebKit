@@ -32,7 +32,6 @@ namespace JSC {
 class TemporalDuration final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    using Subdurations = ISO8601::Duration;
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -40,55 +39,51 @@ public:
         return vm.temporalDurationSpace<mode>();
     }
 
-    static TemporalDuration* create(VM&, Structure*, Subdurations&&);
-    static TemporalDuration* tryCreateIfValid(JSGlobalObject*, Subdurations&&, Structure* = nullptr);
+    static TemporalDuration* create(VM&, Structure*, ISO8601::Duration&&);
+    static TemporalDuration* tryCreateIfValid(JSGlobalObject*, ISO8601::Duration&&, Structure* = nullptr);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    static TemporalDuration* toDuration(JSGlobalObject*, JSValue);
+    static TemporalDuration* toTemporalDuration(JSGlobalObject*, JSValue);
     static TemporalDuration* from(JSGlobalObject*, JSValue);
     static JSValue compare(JSGlobalObject*, JSValue, JSValue);
 
 #define JSC_DEFINE_TEMPORAL_DURATION_FIELD(name, capitalizedName) \
-    double name##s() const { return m_subdurations.name##s(); } \
-    void set##capitalizedName##s(double value) { m_subdurations.set##capitalizedName##s(value); }
+    double name##s() const { return m_duration.name##s(); } \
+    void set##capitalizedName##s(double value) { m_duration.set##capitalizedName##s(value); }
     JSC_TEMPORAL_UNITS(JSC_DEFINE_TEMPORAL_DURATION_FIELD);
 #undef JSC_DEFINE_TEMPORAL_DURATION_FIELD
 
-    int sign() const { return sign(m_subdurations); }
+    int sign() const { return sign(m_duration); }
 
-    Subdurations with(JSGlobalObject*, JSObject* durationLike) const;
-    Subdurations negated() const;
-    Subdurations abs() const;
-    Subdurations add(JSGlobalObject*, JSValue) const;
-    Subdurations subtract(JSGlobalObject*, JSValue) const;
-    Subdurations round(JSGlobalObject*, JSValue options) const;
+    ISO8601::Duration with(JSGlobalObject*, JSObject* durationLike) const;
+    ISO8601::Duration negated() const;
+    ISO8601::Duration abs() const;
+    ISO8601::Duration add(JSGlobalObject*, JSValue) const;
+    ISO8601::Duration subtract(JSGlobalObject*, JSValue) const;
+    ISO8601::Duration round(JSGlobalObject*, JSValue options) const;
     double total(JSGlobalObject*, JSValue options) const;
     String toString(JSGlobalObject*, JSValue options) const;
-    String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const { return toString(m_subdurations, precision); }
+    String toString(std::tuple<Precision, unsigned> precision = { Precision::Auto, 0 }) const { return toString(m_duration, precision); }
 
-    const Subdurations& subdurations() const { return m_subdurations; }
+    static ISO8601::Duration fromDurationLike(JSGlobalObject*, JSObject*);
+    static ISO8601::Duration toISO8601Duration(JSGlobalObject*, JSValue);
 
-    static Subdurations toDurationRecord(JSGlobalObject*, JSValue);
-
-    static int sign(const Subdurations&);
-    static double round(Subdurations&, double increment, TemporalUnit, RoundingMode);
-    static void balance(Subdurations&, TemporalUnit largestUnit);
+    static int sign(const ISO8601::Duration&);
+    static double round(ISO8601::Duration&, double increment, TemporalUnit, RoundingMode);
+    static void balance(ISO8601::Duration&, TemporalUnit largestUnit);
 
 private:
-    TemporalDuration(VM&, Structure*, Subdurations&&);
+    TemporalDuration(VM&, Structure*, ISO8601::Duration&&);
     void finishCreation(VM&);
 
     template<typename CharacterType>
-    static std::optional<Subdurations> parse(StringParsingBuffer<CharacterType>&);
-    static Subdurations fromNonDurationValue(JSGlobalObject*, JSValue);
+    static std::optional<ISO8601::Duration> parse(StringParsingBuffer<CharacterType>&);
 
-    static String toString(const Subdurations&, std::tuple<Precision, unsigned> precision);
+    static String toString(const ISO8601::Duration&, std::tuple<Precision, unsigned> precision);
 
-    TemporalUnit largestSubduration() const;
-
-    Subdurations m_subdurations;
+    ISO8601::Duration m_duration;
 };
 
 } // namespace JSC

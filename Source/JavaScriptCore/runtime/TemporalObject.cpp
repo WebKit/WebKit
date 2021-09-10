@@ -300,6 +300,15 @@ PrecisionData secondsStringPrecision(JSGlobalObject* globalObject, JSObject* opt
     return { { Precision::Fixed, digits }, TemporalUnit::Nanosecond, pow10Unsigned(9 - digits) };
 }
 
+// ToTemporalRoundingMode ( normalizedOptions, fallback )
+// https://tc39.es/proposal-temporal/#sec-temporal-totemporalroundingmode
+RoundingMode temporalRoundingMode(JSGlobalObject* globalObject, JSObject* options, RoundingMode fallback)
+{
+    return intlOption<RoundingMode>(globalObject, options, globalObject->vm().propertyNames->roundingMode,
+        { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
+        "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, fallback);
+}
+
 // MaximumTemporalDurationRoundingIncrement ( unit )
 // https://tc39.es/proposal-temporal/#sec-temporal-maximumtemporaldurationroundingincrement
 std::optional<double> maximumRoundingIncrement(TemporalUnit unit)

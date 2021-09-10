@@ -98,6 +98,7 @@ std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject*, JSObject* optio
 std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits);
 std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
+RoundingMode temporalRoundingMode(JSGlobalObject*, JSObject*, RoundingMode);
 std::optional<double> maximumRoundingIncrement(TemporalUnit);
 double temporalRoundingIncrement(JSGlobalObject*, JSObject* options, std::optional<double> dividend, bool inclusive);
 double roundNumberToIncrement(double, double increment, RoundingMode);

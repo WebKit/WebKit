@@ -48,9 +48,9 @@ static PropertyName propertyName(VM& vm, unsigned index)
 
 const ClassInfo TemporalDuration::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalDuration) };
 
-TemporalDuration* TemporalDuration::create(VM& vm, Structure* structure, Subdurations&& subdurations)
+TemporalDuration* TemporalDuration::create(VM& vm, Structure* structure, ISO8601::Duration&& duration)
 {
-    auto* object = new (NotNull, allocateCell<TemporalDuration>(vm.heap)) TemporalDuration(vm, structure, WTFMove(subdurations));
+    auto* object = new (NotNull, allocateCell<TemporalDuration>(vm.heap)) TemporalDuration(vm, structure, WTFMove(duration));
     object->finishCreation(vm);
     return object;
 }
@@ -60,9 +60,9 @@ Structure* TemporalDuration::createStructure(VM& vm, JSGlobalObject* globalObjec
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-TemporalDuration::TemporalDuration(VM& vm, Structure* structure, Subdurations&& subdurations)
+TemporalDuration::TemporalDuration(VM& vm, Structure* structure, ISO8601::Duration&& duration)
     : Base(vm, structure)
-    , m_subdurations(WTFMove(subdurations))
+    , m_duration(WTFMove(duration))
 {
 }
 
@@ -74,32 +74,33 @@ void TemporalDuration::finishCreation(VM& vm)
 
 // CreateTemporalDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds [ , newTarget ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalduration
-TemporalDuration* TemporalDuration::tryCreateIfValid(JSGlobalObject* globalObject, Subdurations&& subdurations, Structure* structure)
+TemporalDuration* TemporalDuration::tryCreateIfValid(JSGlobalObject* globalObject, ISO8601::Duration&& duration, Structure* structure)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!ISO8601::isValidDuration(subdurations)) {
+    if (!ISO8601::isValidDuration(duration)) {
         throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
         return { };
     }
 
-    return TemporalDuration::create(vm, structure ? structure : globalObject->durationStructure(), WTFMove(subdurations));
+    return TemporalDuration::create(vm, structure ? structure : globalObject->durationStructure(), WTFMove(duration));
 }
 
 // ToTemporalDurationRecord ( temporalDurationLike )
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaldurationrecord
-TemporalDuration::Subdurations TemporalDuration::fromNonDurationValue(JSGlobalObject* globalObject, JSValue durationLike)
+ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObject, JSObject* durationLike)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(!durationLike.inherits<TemporalDuration>(vm));
+    if (durationLike->inherits<TemporalDuration>(vm))
+        return jsCast<TemporalDuration*>(durationLike)->m_duration;
 
-    Subdurations result;
+    ISO8601::Duration result;
     auto hasRelevantProperty = false;
     for (size_t i = 0; i < numberOfTemporalUnits; i++) {
-        JSValue value = durationLike.get(globalObject, propertyName(vm, i));
+        JSValue value = durationLike->get(globalObject, propertyName(vm, i));
         RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
@@ -125,9 +126,41 @@ TemporalDuration::Subdurations TemporalDuration::fromNonDurationValue(JSGlobalOb
     return result;
 }
 
+// ToLimitedTemporalDuration ( temporalDurationLike, disallowedFields )
+// https://tc39.es/proposal-temporal/#sec-temporal-tolimitedtemporalduration
+ISO8601::Duration TemporalDuration::toISO8601Duration(JSGlobalObject* globalObject, JSValue itemValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ISO8601::Duration duration;
+    if (itemValue.isObject()) {
+        duration = fromDurationLike(globalObject, asObject(itemValue));
+        RETURN_IF_EXCEPTION(scope, { });
+    } else {
+        String string = itemValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto parsedDuration = ISO8601::parseDuration(string);
+        if (!parsedDuration) {
+            throwRangeError(globalObject, scope, "Could not parse Duration string"_s);
+            return { };
+        }
+
+        duration = parsedDuration.value();
+    }
+
+    if (!ISO8601::isValidDuration(duration)) {
+        throwRangeError(globalObject, scope, "Temporal.Duration properties must be finite and of consistent sign"_s);
+        return { };
+    }
+
+    return duration;
+}
+
 // ToTemporalDuration ( item )
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalduration
-TemporalDuration* TemporalDuration::toDuration(JSGlobalObject* globalObject, JSValue itemValue)
+TemporalDuration* TemporalDuration::toTemporalDuration(JSGlobalObject* globalObject, JSValue itemValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -135,33 +168,10 @@ TemporalDuration* TemporalDuration::toDuration(JSGlobalObject* globalObject, JSV
     if (itemValue.inherits<TemporalDuration>(vm))
         return jsCast<TemporalDuration*>(itemValue);
 
-    if (itemValue.isObject()) {
-        auto subdurations = fromNonDurationValue(globalObject, itemValue);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-
-        RELEASE_AND_RETURN(scope, TemporalDuration::tryCreateIfValid(globalObject, WTFMove(subdurations)));
-    }
-
-    String string = itemValue.toWTFString(globalObject);
+    auto result = toISO8601Duration(globalObject, itemValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    auto parsedSubdurations = ISO8601::parseDuration(string);
-    if (!parsedSubdurations) {
-        throwRangeError(globalObject, scope, "Could not parse Duration string"_s);
-        return nullptr;
-    }
-
-    RELEASE_AND_RETURN(scope, TemporalDuration::tryCreateIfValid(globalObject, WTFMove(parsedSubdurations.value())));
-}
-
-TemporalDuration::Subdurations TemporalDuration::toDurationRecord(JSGlobalObject* globalObject, JSValue temporalDurationLike)
-{
-    VM& vm = globalObject->vm();
-
-    if (temporalDurationLike.inherits<TemporalDuration>(vm))
-        return jsCast<TemporalDuration*>(temporalDurationLike)->subdurations();
-
-    return fromNonDurationValue(globalObject, temporalDurationLike);
+    return TemporalDuration::create(vm, globalObject->durationStructure(), WTFMove(result));
 }
 
 TemporalDuration* TemporalDuration::from(JSGlobalObject* globalObject, JSValue itemValue)
@@ -169,23 +179,23 @@ TemporalDuration* TemporalDuration::from(JSGlobalObject* globalObject, JSValue i
     VM& vm = globalObject->vm();
 
     if (itemValue.inherits<TemporalDuration>(vm)) {
-        Subdurations cloned = jsCast<TemporalDuration*>(itemValue)->m_subdurations;
+        ISO8601::Duration cloned = jsCast<TemporalDuration*>(itemValue)->m_duration;
         return TemporalDuration::create(vm, globalObject->durationStructure(), WTFMove(cloned));
     }
 
-    return toDuration(globalObject, itemValue);
+    return toTemporalDuration(globalObject, itemValue);
 }
 
 // TotalDurationNanoseconds ( days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, offsetShift )
 // https://tc39.es/proposal-temporal/#sec-temporal-totaldurationnanoseconds
-static double totalNanoseconds(TemporalDuration::Subdurations& subdurations)
+static double totalNanoseconds(ISO8601::Duration& duration)
 {
-    auto hours = 24 * subdurations.days() + subdurations.hours();
-    auto minutes = 60 * hours + subdurations.minutes();
-    auto seconds = 60 * minutes + subdurations.seconds();
-    auto milliseconds = 1000 * seconds + subdurations.milliseconds();
-    auto microseconds = 1000 * milliseconds + subdurations.microseconds();
-    return 1000 * microseconds + subdurations.nanoseconds();
+    auto hours = 24 * duration.days() + duration.hours();
+    auto minutes = 60 * hours + duration.minutes();
+    auto seconds = 60 * minutes + duration.seconds();
+    auto milliseconds = 1000 * seconds + duration.milliseconds();
+    auto microseconds = 1000 * milliseconds + duration.microseconds();
+    return 1000 * microseconds + duration.nanoseconds();
 }
 
 JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne, JSValue valueTwo)
@@ -193,10 +203,10 @@ JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* one = toDuration(globalObject, valueOne);
+    auto* one = toTemporalDuration(globalObject, valueOne);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* two = toDuration(globalObject, valueTwo);
+    auto* two = toTemporalDuration(globalObject, valueTwo);
     RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: Implement relativeTo parameter after PlainDateTime / ZonedDateTime.
@@ -205,14 +215,14 @@ JSValue TemporalDuration::compare(JSGlobalObject* globalObject, JSValue valueOne
         return { };
     }
 
-    auto nsOne = totalNanoseconds(one->m_subdurations);
-    auto nsTwo = totalNanoseconds(two->m_subdurations);
+    auto nsOne = totalNanoseconds(one->m_duration);
+    auto nsTwo = totalNanoseconds(two->m_duration);
     return jsNumber(nsOne > nsTwo ? 1 : nsOne < nsTwo ? -1 : 0);
 }
 
-int TemporalDuration::sign(const TemporalDuration::Subdurations& subdurations)
+int TemporalDuration::sign(const ISO8601::Duration& duration)
 {
-    for (auto value : subdurations) {
+    for (auto value : duration) {
         if (value < 0)
             return -1;
 
@@ -223,19 +233,19 @@ int TemporalDuration::sign(const TemporalDuration::Subdurations& subdurations)
     return 0;
 }
 
-TemporalDuration::Subdurations TemporalDuration::with(JSGlobalObject* globalObject, JSObject* durationLike) const
+ISO8601::Duration TemporalDuration::with(JSGlobalObject* globalObject, JSObject* durationLike) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Subdurations result;
+    ISO8601::Duration result;
     auto hasRelevantProperty = false;
     for (size_t i = 0; i < numberOfTemporalUnits; i++) {
         JSValue value = durationLike->get(globalObject, propertyName(vm, i));
         RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
-            result[i] = m_subdurations[i];
+            result[i] = m_duration[i];
             continue;
         }
 
@@ -257,41 +267,38 @@ TemporalDuration::Subdurations TemporalDuration::with(JSGlobalObject* globalObje
     return result;
 }
 
-TemporalDuration::Subdurations TemporalDuration::negated() const
+ISO8601::Duration TemporalDuration::negated() const
 {
-    Subdurations result;
-    for (size_t i = 0; i < numberOfTemporalUnits; i++)
-        result[i] = -m_subdurations[i];
-    return result;
+    return -m_duration;
 }
 
-TemporalDuration::Subdurations TemporalDuration::abs() const
+ISO8601::Duration TemporalDuration::abs() const
 {
-    Subdurations result;
+    ISO8601::Duration result;
     for (size_t i = 0; i < numberOfTemporalUnits; i++)
-        result[i] = std::abs(m_subdurations[i]);
+        result[i] = std::abs(m_duration[i]);
     return result;
 }
 
 // DefaultTemporalLargestUnit ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds )
 // https://tc39.es/proposal-temporal/#sec-temporal-defaulttemporallargestunit
-TemporalUnit TemporalDuration::largestSubduration() const
+static TemporalUnit largestSubduration(const ISO8601::Duration& duration)
 {
     uint8_t index = 0;
-    while (index < numberOfTemporalUnits - 1 && !m_subdurations[index])
+    while (index < numberOfTemporalUnits - 1 && !duration[index])
         index++;
     return static_cast<TemporalUnit>(index);
 }
 
 // BalanceDuration ( days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, largestUnit [ , relativeTo ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceduration
-void TemporalDuration::balance(Subdurations& subdurations, TemporalUnit largestUnit)
+void TemporalDuration::balance(ISO8601::Duration& duration, TemporalUnit largestUnit)
 {
-    auto nanoseconds = totalNanoseconds(subdurations);
-    subdurations.clear();
+    auto nanoseconds = totalNanoseconds(duration);
+    duration.clear();
 
     if (largestUnit <= TemporalUnit::Day) {
-        subdurations.setDays(std::trunc(nanoseconds / nanosecondsPerDay));
+        duration.setDays(std::trunc(nanoseconds / nanosecondsPerDay));
         nanoseconds = std::fmod(nanoseconds, nanosecondsPerDay);
     }
 
@@ -300,78 +307,78 @@ void TemporalDuration::balance(Subdurations& subdurations, TemporalUnit largestU
     double seconds = std::trunc(milliseconds / 1000);
     double minutes = std::trunc(seconds / 60);
     if (largestUnit <= TemporalUnit::Hour) {
-        subdurations.setNanoseconds(std::fmod(nanoseconds, 1000));
-        subdurations.setMicroseconds(std::fmod(microseconds, 1000));
-        subdurations.setMilliseconds(std::fmod(milliseconds, 1000));
-        subdurations.setSeconds(std::fmod(seconds, 60));
-        subdurations.setMinutes(std::fmod(minutes, 60));
-        subdurations.setHours(std::trunc(minutes / 60));
+        duration.setNanoseconds(std::fmod(nanoseconds, 1000));
+        duration.setMicroseconds(std::fmod(microseconds, 1000));
+        duration.setMilliseconds(std::fmod(milliseconds, 1000));
+        duration.setSeconds(std::fmod(seconds, 60));
+        duration.setMinutes(std::fmod(minutes, 60));
+        duration.setHours(std::trunc(minutes / 60));
     } else if (largestUnit == TemporalUnit::Minute) {
-        subdurations.setNanoseconds(std::fmod(nanoseconds, 1000));
-        subdurations.setMicroseconds(std::fmod(microseconds, 1000));
-        subdurations.setMilliseconds(std::fmod(milliseconds, 1000));
-        subdurations.setSeconds(std::fmod(seconds, 60));
-        subdurations.setMinutes(minutes);
+        duration.setNanoseconds(std::fmod(nanoseconds, 1000));
+        duration.setMicroseconds(std::fmod(microseconds, 1000));
+        duration.setMilliseconds(std::fmod(milliseconds, 1000));
+        duration.setSeconds(std::fmod(seconds, 60));
+        duration.setMinutes(minutes);
     } else if (largestUnit == TemporalUnit::Second) {
-        subdurations.setNanoseconds(std::fmod(nanoseconds, 1000));
-        subdurations.setMicroseconds(std::fmod(microseconds, 1000));
-        subdurations.setMilliseconds(std::fmod(milliseconds, 1000));
-        subdurations.setSeconds(seconds);
+        duration.setNanoseconds(std::fmod(nanoseconds, 1000));
+        duration.setMicroseconds(std::fmod(microseconds, 1000));
+        duration.setMilliseconds(std::fmod(milliseconds, 1000));
+        duration.setSeconds(seconds);
     } else if (largestUnit == TemporalUnit::Millisecond) {
-        subdurations.setNanoseconds(std::fmod(nanoseconds, 1000));
-        subdurations.setMicroseconds(std::fmod(microseconds, 1000));
-        subdurations.setMilliseconds(milliseconds);
+        duration.setNanoseconds(std::fmod(nanoseconds, 1000));
+        duration.setMicroseconds(std::fmod(microseconds, 1000));
+        duration.setMilliseconds(milliseconds);
     } else if (largestUnit == TemporalUnit::Microsecond) {
-        subdurations.setNanoseconds(std::fmod(nanoseconds, 1000));
-        subdurations.setMicroseconds(microseconds);
+        duration.setNanoseconds(std::fmod(nanoseconds, 1000));
+        duration.setMicroseconds(microseconds);
     } else
-        subdurations.setNanoseconds(nanoseconds);
+        duration.setNanoseconds(nanoseconds);
 }
 
-TemporalDuration::Subdurations TemporalDuration::add(JSGlobalObject* globalObject, JSValue otherValue) const
+ISO8601::Duration TemporalDuration::add(JSGlobalObject* globalObject, JSValue otherValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* other = toDuration(globalObject, otherValue);
+    auto other = toISO8601Duration(globalObject, otherValue);
     RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: Implement relativeTo parameter after PlainDateTime / ZonedDateTime.
-    auto largestUnit = std::min(largestSubduration(), other->largestSubduration());
+    auto largestUnit = std::min(largestSubduration(m_duration), largestSubduration(other));
     if (largestUnit <= TemporalUnit::Week) {
         throwRangeError(globalObject, scope, "Cannot add a duration of years, months, or weeks without a relativeTo option"_s);
         return { };
     }
 
-    Subdurations result {
-        0, 0, 0, days() + other->days(),
-        hours() + other->hours(), minutes() + other->minutes(), seconds() + other->seconds(),
-        milliseconds() + other->milliseconds(), microseconds() + other->microseconds(), nanoseconds() + other->nanoseconds()
+    ISO8601::Duration result {
+        0, 0, 0, days() + other.days(),
+        hours() + other.hours(), minutes() + other.minutes(), seconds() + other.seconds(),
+        milliseconds() + other.milliseconds(), microseconds() + other.microseconds(), nanoseconds() + other.nanoseconds()
     };
 
     balance(result, largestUnit);
     return result;
 }
 
-TemporalDuration::Subdurations TemporalDuration::subtract(JSGlobalObject* globalObject, JSValue otherValue) const
+ISO8601::Duration TemporalDuration::subtract(JSGlobalObject* globalObject, JSValue otherValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* other = toDuration(globalObject, otherValue);
+    auto other = toISO8601Duration(globalObject, otherValue);
     RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: Implement relativeTo parameter after PlainDateTime / ZonedDateTime.
-    auto largestUnit = std::min(largestSubduration(), other->largestSubduration());
+    auto largestUnit = std::min(largestSubduration(m_duration), largestSubduration(other));
     if (largestUnit <= TemporalUnit::Week) {
         throwRangeError(globalObject, scope, "Cannot subtract a duration of years, months, or weeks without a relativeTo option"_s);
         return { };
     }
 
-    Subdurations result {
-        0, 0, 0, days() - other->days(),
-        hours() - other->hours(), minutes() - other->minutes(), seconds() - other->seconds(),
-        milliseconds() - other->milliseconds(), microseconds() - other->microseconds(), nanoseconds() - other->nanoseconds()
+    ISO8601::Duration result {
+        0, 0, 0, days() - other.days(),
+        hours() - other.hours(), minutes() - other.minutes(), seconds() - other.seconds(),
+        milliseconds() - other.milliseconds(), microseconds() - other.microseconds(), nanoseconds() - other.nanoseconds()
     };
 
     balance(result, largestUnit);
@@ -380,60 +387,60 @@ TemporalDuration::Subdurations TemporalDuration::subtract(JSGlobalObject* global
 
 // RoundDuration ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, increment, unit, roundingMode [ , relativeTo ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundduration
-double TemporalDuration::round(TemporalDuration::Subdurations& subdurations, double increment, TemporalUnit unit, RoundingMode mode)
+double TemporalDuration::round(ISO8601::Duration& duration, double increment, TemporalUnit unit, RoundingMode mode)
 {
     ASSERT(unit >= TemporalUnit::Day);
     double remainder = 0;
 
     if (unit == TemporalUnit::Day) {
-        auto originalDays = subdurations.days();
-        subdurations.setDays(0);
-        auto nanoseconds = totalNanoseconds(subdurations);
+        auto originalDays = duration.days();
+        duration.setDays(0);
+        auto nanoseconds = totalNanoseconds(duration);
 
         auto fractionalDays = originalDays + nanoseconds / nanosecondsPerDay;
         auto newDays = roundNumberToIncrement(fractionalDays, increment, mode);
         remainder = fractionalDays - newDays;
-        subdurations.setDays(newDays);
+        duration.setDays(newDays);
     } else if (unit == TemporalUnit::Hour) {
-        auto fractionalSeconds = subdurations.seconds() + subdurations.milliseconds() * 1e-3 + subdurations.microseconds() * 1e-6 + subdurations.nanoseconds() * 1e-9;
-        auto fractionalHours = subdurations.hours() + (subdurations.minutes() + fractionalSeconds / 60) / 60;
+        auto fractionalSeconds = duration.seconds() + duration.milliseconds() * 1e-3 + duration.microseconds() * 1e-6 + duration.nanoseconds() * 1e-9;
+        auto fractionalHours = duration.hours() + (duration.minutes() + fractionalSeconds / 60) / 60;
         auto newHours = roundNumberToIncrement(fractionalHours, increment, mode);
         remainder = fractionalHours - newHours;
-        subdurations.setHours(newHours);
+        duration.setHours(newHours);
     } else if (unit == TemporalUnit::Minute) {
-        auto fractionalSeconds = subdurations.seconds() + subdurations.milliseconds() * 1e-3 + subdurations.microseconds() * 1e-6 + subdurations.nanoseconds() * 1e-9;
-        auto fractionalMinutes = subdurations.minutes() + fractionalSeconds / 60;
+        auto fractionalSeconds = duration.seconds() + duration.milliseconds() * 1e-3 + duration.microseconds() * 1e-6 + duration.nanoseconds() * 1e-9;
+        auto fractionalMinutes = duration.minutes() + fractionalSeconds / 60;
         auto newMinutes = roundNumberToIncrement(fractionalMinutes, increment, mode);
         remainder = fractionalMinutes - newMinutes;
-        subdurations.setMinutes(newMinutes);
+        duration.setMinutes(newMinutes);
     } else if (unit == TemporalUnit::Second) {
-        auto fractionalSeconds = subdurations.seconds() + subdurations.milliseconds() * 1e-3 + subdurations.microseconds() * 1e-6 + subdurations.nanoseconds() * 1e-9;
+        auto fractionalSeconds = duration.seconds() + duration.milliseconds() * 1e-3 + duration.microseconds() * 1e-6 + duration.nanoseconds() * 1e-9;
         auto newSeconds = roundNumberToIncrement(fractionalSeconds, increment, mode);
         remainder = fractionalSeconds - newSeconds;
-        subdurations.setSeconds(newSeconds);
+        duration.setSeconds(newSeconds);
     } else if (unit == TemporalUnit::Millisecond) {
-        auto fractionalMilliseconds = subdurations.milliseconds() + subdurations.microseconds() * 1e-3 + subdurations.nanoseconds() * 1e-6;
+        auto fractionalMilliseconds = duration.milliseconds() + duration.microseconds() * 1e-3 + duration.nanoseconds() * 1e-6;
         auto newMilliseconds = roundNumberToIncrement(fractionalMilliseconds, increment, mode);
         remainder = fractionalMilliseconds - newMilliseconds;
-        subdurations.setMilliseconds(newMilliseconds);
+        duration.setMilliseconds(newMilliseconds);
     } else if (unit == TemporalUnit::Microsecond) {
-        auto fractionalMicroseconds = subdurations.microseconds() + subdurations.nanoseconds() * 1e-3;
+        auto fractionalMicroseconds = duration.microseconds() + duration.nanoseconds() * 1e-3;
         auto newMicroseconds = roundNumberToIncrement(fractionalMicroseconds, increment, mode);
         remainder = fractionalMicroseconds - newMicroseconds;
-        subdurations.setMicroseconds(newMicroseconds);
+        duration.setMicroseconds(newMicroseconds);
     } else {
-        auto newNanoseconds = roundNumberToIncrement(subdurations.nanoseconds(), increment, mode);
-        remainder = subdurations.nanoseconds() - newNanoseconds;
-        subdurations.setNanoseconds(newNanoseconds);
+        auto newNanoseconds = roundNumberToIncrement(duration.nanoseconds(), increment, mode);
+        remainder = duration.nanoseconds() - newNanoseconds;
+        duration.setNanoseconds(newNanoseconds);
     }
 
     for (auto i = static_cast<uint8_t>(unit) + 1u; i < numberOfTemporalUnits; i++)
-        subdurations[i] = 0;
+        duration[i] = 0;
 
     return remainder;
 }
 
-TemporalDuration::Subdurations TemporalDuration::round(JSGlobalObject* globalObject, JSValue optionsValue) const
+ISO8601::Duration TemporalDuration::round(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -444,7 +451,7 @@ TemporalDuration::Subdurations TemporalDuration::round(JSGlobalObject* globalObj
     auto smallest = temporalSmallestUnit(globalObject, options, { });
     RETURN_IF_EXCEPTION(scope, { });
 
-    TemporalUnit defaultLargestUnit = largestSubduration();
+    TemporalUnit defaultLargestUnit = largestSubduration(m_duration);
     auto largest = temporalLargestUnit(globalObject, options, { }, defaultLargestUnit);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -461,9 +468,7 @@ TemporalDuration::Subdurations TemporalDuration::round(JSGlobalObject* globalObj
     TemporalUnit smallestUnit = smallest.value_or(TemporalUnit::Nanosecond);
     TemporalUnit largestUnit = largest.value_or(std::min(defaultLargestUnit, smallestUnit));
 
-    auto roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode,
-        { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
-        "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, RoundingMode::HalfExpand);
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);
@@ -475,10 +480,10 @@ TemporalDuration::Subdurations TemporalDuration::round(JSGlobalObject* globalObj
         return { };
     }
 
-    Subdurations newSubdurations = m_subdurations;
-    round(newSubdurations, increment, smallestUnit, roundingMode);
-    balance(newSubdurations, largestUnit);
-    return newSubdurations;
+    ISO8601::Duration newDuration = m_duration;
+    round(newDuration, increment, smallestUnit, roundingMode);
+    balance(newDuration, largestUnit);
+    return newDuration;
 }
 
 double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValue) const
@@ -505,10 +510,10 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
         return { };
     }
 
-    Subdurations newSubdurations = m_subdurations;
-    balance(newSubdurations, unit);
-    double remainder = round(newSubdurations, 1, unit, RoundingMode::Trunc);
-    return newSubdurations[static_cast<uint8_t>(unit)] + remainder;
+    ISO8601::Duration newDuration = m_duration;
+    balance(newDuration, unit);
+    double remainder = round(newDuration, 1, unit, RoundingMode::Trunc);
+    return newDuration[static_cast<uint8_t>(unit)] + remainder;
 }
 
 String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
@@ -529,32 +534,30 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
         return { };
     }
 
-    auto roundingMode = intlOption<RoundingMode>(globalObject, options, vm.propertyNames->roundingMode,
-        { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
-        "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, RoundingMode::Trunc);
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
     RETURN_IF_EXCEPTION(scope, { });
 
     // No need to make a new object if we were given explicit defaults.
     if (std::get<0>(data.precision) == Precision::Auto && roundingMode == RoundingMode::Trunc)
         return toString();
 
-    Subdurations newSubdurations = m_subdurations;
-    round(newSubdurations, data.increment, data.unit, roundingMode);
-    return toString(newSubdurations, data.precision);
+    ISO8601::Duration newDuration = m_duration;
+    round(newDuration, data.increment, data.unit, roundingMode);
+    return toString(newDuration, data.precision);
 }
 
 // TemporalDurationToString ( years, months, weeks, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds, precision )
 // https://tc39.es/proposal-temporal/#sec-temporal-temporaldurationtostring
-String TemporalDuration::toString(const TemporalDuration::Subdurations& subdurations, std::tuple<Precision, unsigned> precision)
+String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<Precision, unsigned> precision)
 {
     auto [precisionType, precisionValue] = precision;
     ASSERT(precisionType == Precision::Auto || precisionValue < 10);
 
-    auto balancedMicroseconds = subdurations.microseconds() + std::trunc(subdurations.nanoseconds() / 1000);
-    auto balancedNanoseconds = std::fmod(subdurations.nanoseconds(), 1000);
-    auto balancedMilliseconds = subdurations.milliseconds() + std::trunc(balancedMicroseconds / 1000);
+    auto balancedMicroseconds = duration.microseconds() + std::trunc(duration.nanoseconds() / 1000);
+    auto balancedNanoseconds = std::fmod(duration.nanoseconds(), 1000);
+    auto balancedMilliseconds = duration.milliseconds() + std::trunc(balancedMicroseconds / 1000);
     balancedMicroseconds = std::fmod(balancedMicroseconds, 1000);
-    auto balancedSeconds = subdurations.seconds() + std::trunc(balancedMilliseconds / 1000);
+    auto balancedSeconds = duration.seconds() + std::trunc(balancedMilliseconds / 1000);
     balancedMilliseconds = std::fmod(balancedMilliseconds, 1000);
 
     // TEMPORARY! (pending spec discussion about maximum values @ https://github.com/tc39/proposal-temporal/issues/1604)
@@ -567,30 +570,30 @@ String TemporalDuration::toString(const TemporalDuration::Subdurations& subdurat
 
     StringBuilder builder;
 
-    auto sign = TemporalDuration::sign(subdurations);
+    auto sign = TemporalDuration::sign(duration);
     if (sign < 0)
         builder.append('-');
 
     builder.append('P');
-    if (subdurations.years())
-        builder.append(formatInteger(subdurations.years()), 'Y');
-    if (subdurations.months())
-        builder.append(formatInteger(subdurations.months()), 'M');
-    if (subdurations.weeks())
-        builder.append(formatInteger(subdurations.weeks()), 'W');
-    if (subdurations.days())
-        builder.append(formatInteger(subdurations.days()), 'D');
+    if (duration.years())
+        builder.append(formatInteger(duration.years()), 'Y');
+    if (duration.months())
+        builder.append(formatInteger(duration.months()), 'M');
+    if (duration.weeks())
+        builder.append(formatInteger(duration.weeks()), 'W');
+    if (duration.days())
+        builder.append(formatInteger(duration.days()), 'D');
 
     // The zero value is displayed in seconds.
     auto usesSeconds = balancedSeconds || balancedMilliseconds || balancedMicroseconds || balancedNanoseconds || !sign;
-    if (!subdurations.hours() && !subdurations.minutes() && !usesSeconds)
+    if (!duration.hours() && !duration.minutes() && !usesSeconds)
         return builder.toString();
 
     builder.append('T');
-    if (subdurations.hours())
-        builder.append(formatInteger(subdurations.hours()), 'H');
-    if (subdurations.minutes())
-        builder.append(formatInteger(subdurations.minutes()), 'M');
+    if (duration.hours())
+        builder.append(formatInteger(duration.hours()), 'H');
+    if (duration.minutes())
+        builder.append(formatInteger(duration.minutes()), 'M');
     if (usesSeconds) {
         builder.append(formatInteger(balancedSeconds));
 
