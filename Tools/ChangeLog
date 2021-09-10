@@ -1,3 +1,18 @@
+2021-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mac Catalyst] Korean characters do not combine correctly in editable fields in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=230122
+        rdar://79062204
+
+        Reviewed by Devin Rousso.
+
+        Add a new API test to exercise the change. See WebKit/ChangeLog for more information.
+
+        * TestWebKitAPI/Tests/ios/AutocorrectionTestsIOS.mm:
+        (-[TestWKWebView synchronouslyRequestAutocorrectionContext]):
+        (TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2021-09-09  Chris Dumez  <cdumez@apple.com>
 
         Implement a WebProcess cap

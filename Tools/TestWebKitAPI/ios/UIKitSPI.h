@@ -183,6 +183,9 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @end
 
 @interface UIWKAutocorrectionContext : NSObject
+@property (nonatomic, copy) NSString *contextBeforeSelection;
+@property (nonatomic, copy) NSString *selectedText;
+@property (nonatomic, copy) NSString *contextAfterSelection;
 @end
 
 @protocol UIWebFormAccessoryDelegate

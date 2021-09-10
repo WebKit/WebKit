@@ -1,3 +1,30 @@
+2021-09-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mac Catalyst] Korean characters do not combine correctly in editable fields in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=230122
+        rdar://79062204
+
+        Reviewed by Devin Rousso.
+
+        When using Korean input method (e.g. 2-set Korean) to type into editable input fields in WKWebView on Catalyst,
+        character combination is broken. While this is partly due to a WebKit-specific UIKit bug (see rdar://82938391),
+        this is also broken due to the fact that WKContentView reports a UIWKAutocorrectionContext with a
+        `contextBeforeSelection` that starts with a newline (\n); this causes UIKit to believe that the text selection
+        range when a single character has been typed is `NSRange { 2, 0 }` instead of `NSRange { 1, 0 }`, due to the
+        extra newline. This subsequently causes character combination logic to proceed with a range that is off by one
+        character, which leads to characters not being combined (or the wrong characters being combined).
+
+        To address this, we simply avoid including the leading newline in the case where the starting position for the
+        "context before selection" is exactly at the first position inside the editable root.
+
+        Test: AutocorrectionTests.AutocorrectionContextDoesNotIncludeNewlineInTextField
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::autocorrectionContext):
+
+        Also drive-by fix a typo in "minContextLenght" while I'm here, and rename `currentPosition` to
+        `contextStartPosition`, to better describe the purpose of this local variable.
+
 2021-09-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Enable IPCMessages debug logging for non-Cocoa ports

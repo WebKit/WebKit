@@ -2500,7 +2500,7 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     VisiblePosition startPosition = frame->selection().selection().start();
     VisiblePosition endPosition = frame->selection().selection().end();
     const unsigned minContextWordCount = 3;
-    const unsigned minContextLenght = 12;
+    const unsigned minContextLength = 12;
     const unsigned maxContextLength = 30;
 
     if (frame->selection().isRange())
@@ -2515,25 +2515,26 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
             markedTextRange.length = selectedText.length();
         }
     } else {
-        if (startPosition != startOfEditableContent(startPosition)) {
-            VisiblePosition currentPosition = startPosition;
+        auto firstPositionInEditableContent = startOfEditableContent(startPosition);
+        if (startPosition != firstPositionInEditableContent) {
+            VisiblePosition contextStartPosition = startPosition;
             VisiblePosition previousPosition;
             unsigned totalContextLength = 0;
             for (unsigned i = 0; i < minContextWordCount; ++i) {
-                if (contextBefore.length() >= minContextLenght)
+                if (contextBefore.length() >= minContextLength)
                     break;
-                previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(currentPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
+                previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(contextStartPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
                 if (previousPosition.isNull())
                     break;
-                String currentWord = plainTextForContext(makeSimpleRange(previousPosition, currentPosition));
+                String currentWord = plainTextForContext(makeSimpleRange(previousPosition, contextStartPosition));
                 totalContextLength += currentWord.length();
                 if (totalContextLength >= maxContextLength)
                     break;
-                currentPosition = previousPosition;
+                contextStartPosition = previousPosition;
             }
-            if (currentPosition.isNotNull() && currentPosition != startPosition) {
-                contextBefore = plainTextForContext(makeSimpleRange(currentPosition, startPosition));
-                if (atBoundaryOfGranularity(currentPosition, TextGranularity::ParagraphGranularity, SelectionDirection::Backward))
+            if (contextStartPosition.isNotNull() && contextStartPosition != startPosition) {
+                contextBefore = plainTextForContext(makeSimpleRange(contextStartPosition, startPosition));
+                if (atBoundaryOfGranularity(contextStartPosition, TextGranularity::ParagraphGranularity, SelectionDirection::Backward) && firstPositionInEditableContent != contextStartPosition)
                     contextBefore = makeString("\n "_s, contextBefore);
             }
         }
