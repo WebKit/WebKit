@@ -1,0 +1,39 @@
+<style>
+  head {
+    display: block;
+  }
+  img {
+    content: counter(section, lower-roman);
+  }
+</style>
+<script>
+  onload = async () => {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    document.designMode = 'on';
+    let img0 = document.createElement('img');
+    document.head.appendChild(img0);
+    let embed0 = document.createElement('embed');
+    embed0.src = 'data:';
+    img0.appendChild(embed0);
+    let div0 = document.createElement('div');
+    img0.appendChild(div0);
+    let input = document.createElement('input');
+    div0.appendChild(input);
+    getSelection().setBaseAndExtent(input, 0, input, 0);
+    let promise = new Promise(function(resolve) {
+      new EventSource('#').onerror = () => {
+        document.execCommand('Indent');
+        resolve();
+      };
+    });
+    await new File([], '').text();
+    document.execCommand('SelectAll');
+    document.execCommand('Indent');
+    await promise;
+    document.body.innerHTML = "This test passes if it does not crash.";
+    testRunner.notifyDone();
+  };
+</script>

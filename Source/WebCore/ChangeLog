@@ -1,3 +1,25 @@
+2021-09-09  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=229276
+
+        Reviewed by Ryosuke Niwa.
+
+        The loop in CompositeEditCommand::splitTreeToNode calls splitElement with the parent node as an
+        argument. This patch fixes a nullptr crash by following the rule of [1]: store the parent node as
+        a local smart pointer. Additionally, it ensures that editingIgnoresContent() returns false on the
+        parent so that the corresponding ASSERT in Position's constructor does not fail when
+        firstPositionInNode is called.
+
+        [1] https://lists.webkit.org/pipermail/webkit-dev/2020-September/031386.html
+
+        Tests: editing/execCommand/indent-input-in-image-crash.html
+               editing/execCommand/indent-input-in-image-editing-ignores-content-assert.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Store parent node in a smart pointer and exit loop
+        if it returns true for editingIgnoresContent.
+
 2021-09-09  Alan Bujtas  <zalan@apple.com>
 
         [Table layout] Incorrect vertical position when the inline level box has 0px used height.

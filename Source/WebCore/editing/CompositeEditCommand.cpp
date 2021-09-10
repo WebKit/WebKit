@@ -1749,13 +1749,14 @@ RefPtr<Node> CompositeEditCommand::splitTreeToNode(Node& start, Node& end, bool 
     ASSERT(adjustedEnd);
     RefPtr<Node> node;
     for (node = &start; node && node->parentNode() != adjustedEnd; node = node->parentNode()) {
-        if (!node->parentNode() || !is<Element>(*node->parentNode()))
+        RefPtr parentNode = node->parentNode();
+        if (!parentNode || !is<Element>(*parentNode) || editingIgnoresContent(*parentNode))
             break;
         // Do not split a node when doing so introduces an empty node.
-        VisiblePosition positionInParent = firstPositionInNode(node->parentNode());
+        VisiblePosition positionInParent = firstPositionInNode(parentNode.get());
         VisiblePosition positionInNode = firstPositionInOrBeforeNode(node.get());
         if (positionInParent != positionInNode)
-            splitElement(downcast<Element>(*node->parentNode()), *node);
+            splitElement(downcast<Element>(*parentNode), *node);
     }
 
     return node;
