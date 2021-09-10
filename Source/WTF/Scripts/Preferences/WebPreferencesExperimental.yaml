@@ -102,6 +102,8 @@ BroadcastChannelEnabled:
 
 BroadcastChannelOriginPartitioningEnabled:
   type: bool
+  humanReadableName: "BroadcastChannel Origin Partitioning"
+  humanReadableDescription: "BroadcastChannel Origin Partitioning"
   defaultValue:
     WebKitLegacy:
       default: true

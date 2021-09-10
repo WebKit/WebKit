@@ -1,5 +1,13 @@
 2021-09-09  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed follow-up to r282105.
+
+        Add description for "BroadcastChannel Origin Partitioning" experimental feature.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-09-09  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, follow-up after r282007
 
         Somehow, the wrong settings got enabled by the patch landed.
