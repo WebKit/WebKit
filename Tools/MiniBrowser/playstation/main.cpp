@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "MainWindow.h"
 #include <WebKit/WKRunLoop.h>
 #include <dlfcn.h>
 #include <toolkitten/Application.h>
+#include <wtf/Platform.h>
 
 using toolkitten::Widget;
 using toolkitten::Application;
@@ -53,7 +55,9 @@ static void initialize()
     loadLibraryOrExit("libcairo");
     loadLibraryOrExit("libToolKitten");    
     loadLibraryOrExit("libSceNKWebKitRequirements");
+#if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
+#endif
     loadLibraryOrExit("libWebKit");
 }
 

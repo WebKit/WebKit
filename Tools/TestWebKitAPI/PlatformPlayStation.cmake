@@ -10,6 +10,10 @@ list(APPEND TestWTF_SOURCES
     generic/UtilitiesGeneric.cpp
 )
 
+list(APPEND TestJavaScriptCore_SOURCES
+    ${test_main_SOURCES}
+)
+
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 )

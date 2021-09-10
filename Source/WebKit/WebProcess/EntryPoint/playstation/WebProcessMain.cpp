@@ -54,7 +54,9 @@ int main(int argc, char** argv)
     loadLibraryOrExit("libharfbuzz");
     loadLibraryOrExit("libcairo");
     loadLibraryOrExit("libSceNKWebKitRequirements");
+#if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
+#endif
     loadLibraryOrExit("libWebKit");
 
     char* coreProcessIdentifier = argv[1];

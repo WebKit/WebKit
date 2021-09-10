@@ -43,6 +43,8 @@ static void initializer(void)
     loadLibraryOrExit("SystemServices");
     loadLibraryOrExit("Perf");
     loadLibraryOrExit("PosixWebKit");
+#if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
+#endif
     loadLibraryOrExit("libicu");
 }

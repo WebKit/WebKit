@@ -1,3 +1,15 @@
+2021-09-10  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Support running applications with ENABLE_STATIC_JSC=ON
+        https://bugs.webkit.org/show_bug.cgi?id=230170
+
+        Reviewed by Ross Kirsling.
+
+        Updating loading code to not load libJavaScriptCore shared library
+        if we are using a static version.
+
+        * shell/playstation/Initializer.cpp:
+
 2021-09-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Clean up current state of Temporal API

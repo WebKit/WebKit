@@ -1,3 +1,16 @@
+2021-09-10  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Support running applications with ENABLE_STATIC_JSC=ON
+        https://bugs.webkit.org/show_bug.cgi?id=230170
+
+        Reviewed by Ross Kirsling.
+
+        Updating loading code to not load libJavaScriptCore shared library
+        if we are using a static version.
+
+        * NetworkProcess/EntryPoint/playstation/NetworkProcessMain.cpp:
+        * WebProcess/EntryPoint/playstation/WebProcessMain.cpp:
+
 2021-09-10  Per Arne  <pvollan@apple.com>
 
         [macOS] Close XPC connection before entering the WP sandbox

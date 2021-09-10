@@ -46,7 +46,11 @@ int main(int argc, char** argv)
     loadLibraryOrExit("libharfbuzz");
     loadLibraryOrExit("libcairo");
     loadLibraryOrExit("libSceNKWebKitRequirements");
+#endif
+#if defined(BUILDING_TestWebCore) || defined(BUILDING_TestWebKit) || defined(BUILDING_TestJavaScriptCore)
+#if !ENABLE(STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
+#endif
 #endif
 #if defined(BUILDING_TestWebKit)
     if (!((dlopen("libcrypto", RTLD_NOW) && dlopen("libssl", RTLD_NOW)) || dlopen("LibreSSL", RTLD_NOW))) {
