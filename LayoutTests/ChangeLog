@@ -1,3 +1,12 @@
+2021-09-10  Eric Hutchison  <ehutchison@apple.com>
+
+        Remove test expectations for storage/indexeddb/dont-wedge-private.html.
+        <rdar://82134088>.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-09-10  Robert Jenner  <Jenner@apple.com>
 
         [ macOS ] media/modern-media-controls/seek-forward-support/seek-forward-support.html is a flakey timeout
