@@ -1,3 +1,50 @@
+2021-09-10  David Kilzer  <ddkilzer@apple.com>
+
+        Fix ASan+UBSan builds: part two
+        <https://webkit.org/b/230100>
+        <rdar://problem/82926910>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Overview of changes:
+        - Rename variables so no Tools/sanitizer/*.xcconfig file
+          contains a variable with the same name.  This is required due
+          to the way Xcode collects variables from an xcconfig file
+          specified on the command-line.
+        - Remove use of $(inherited) except in well-known variables.
+          That mechanism doesn't work at the time when Xcode resolves
+          variables from an xcconfig file specified on the command-line.
+        - Remove or inline existing variables in sanitizer.xcconfig.
+
+        * sanitizer/asan.xcconfig:
+        (WK_ENABLE_ADDRESS_SANITIZER):
+        - Rename from WK_ENABLE_SANITIZER.
+        (WK_ADDRESS_SANITIZER_OTHER_CPLUSPLUSFLAGS_YES):
+        - Rename from WK_SANITIZER_OTHER_CPLUSPLUSFLAGS_YES and remove
+          $(inherited).
+
+        * sanitizer/sanitizer.xcconfig:
+        (OTHER_CFLAGS):
+        - Inline WK_SANITIZER_OTHER_CFLAGS_YES and add variable defined
+          in ubsan.xcconfig.
+        (OTHER_CPLUSPLUSFLAGS):
+        - Remove WK_SANITIZER_OTHER_CPLUSPLUSFLAGS_YES and add variable
+          defined in asan.xcconfig.
+        (OTHER_LDFLAGS):
+        - Inline WK_LDFLAGS_SANITIZER_YES.
+
+        * sanitizer/tsan.xcconfig:
+        (WK_ENABLE_SANITIZER):
+        - Remove instead of renaming to WK_ENABLE_THREAD_SANITIZER since
+          this is unused.
+
+        * sanitizer/ubsan.xcconfig:
+        (WK_ENABLE_UNDEFINED_BEHAVIOR_SANITIZER):
+        - Rename from WK_ENABLE_SANITIZER.
+        (WK_UNDEFINED_BEHAVIOR_SANITIZER_OTHER_CFLAGS_YES):
+        - Rename from WK_SANITIZER_OTHER_CFLAGS_YES and remove
+          $(inherited).
+
 2021-09-10  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] model.casserole_unittest.CasseroleTest.test_asynchronous failing
