@@ -29,11 +29,33 @@ class ControlsBar extends LayoutNode
     constructor(cssClassName = "")
     {
         super(`<div role="group" class="controls-bar ${cssClassName}"></div>`);
+        this._hasBackgroundTint = true;
         this._translation = new DOMPoint;
         this._backgroundTint = this.addChild(new BackgroundTint);
     }
 
     // Public
+
+    get hasBackgroundTint()
+    {
+        return this._hasBackgroundTint;
+    }
+
+    set hasBackgroundTint(hasBackgroundTint)
+    {
+        if (this._hasBackgroundTint == hasBackgroundTint)
+            return;
+
+        this._hasBackgroundTint = hasBackgroundTint;
+
+        if (hasBackgroundTint) {
+            console.assert(!this._backgroundTint.parent);
+            this.addChild(this._backgroundTint, 0);
+        } else {
+            console.assert(this._backgroundTint.parent === this);
+            this._backgroundTint.remove();
+        }
+    }
 
     get children()
     {
@@ -42,7 +64,10 @@ class ControlsBar extends LayoutNode
 
     set children(children)
     {
-        super.children = [this._backgroundTint].concat(children);
+        if (this._hasBackgroundTint)
+            super.children = [this._backgroundTint].concat(children);
+        else
+            super.children = children;
     }
 
     get translation()

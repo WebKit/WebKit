@@ -1,3 +1,25 @@
+2021-09-10  Antoine Quint  <graouts@webkit.org>
+
+        [Media Controls] Allow buttons in a controls bar to have standalone background tint
+        https://bugs.webkit.org/show_bug.cgi?id=230149
+        <rdar://problem/82206275>
+
+        Reviewed by Dean Jackson.
+
+        Buttons hosted in a ControlsBar currently are grouped in a way that the controls bar has a single background
+        tint shared by all buttons. Some new design style require the buttons in a controls bar to be standalone rounded
+        buttons and to each have their own background tint.
+
+        To allow this, we add a new Button.Styles.Rounded style and add a new hasBackgroundTint property to ControlsBar.
+
+        * Modules/modern-media-controls/controls/button.css:
+        (button.rounded):
+        * Modules/modern-media-controls/controls/button.js:
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.get hasBackgroundTint):
+        (ControlsBar.prototype.set hasBackgroundTint):
+        (ControlsBar.prototype.set children):
+
 2021-09-10  Antti Koivisto  <antti@apple.com>
 
         Factor painting functions from LegacyInlineTextBox into a class

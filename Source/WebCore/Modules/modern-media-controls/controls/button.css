@@ -80,6 +80,13 @@ button.corner {
     height: var(--inline-controls-bar-height) !important;
 }
 
+/* Rounded style */
+
+button.rounded {
+    width: var(--inline-controls-bar-height) !important;
+    height: var(--inline-controls-bar-height) !important;
+}
+
 /* Center style */
 
 button.center,
