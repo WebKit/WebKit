@@ -1,3 +1,22 @@
+2021-09-10  Alex Christensen  <achristensen@webkit.org>
+
+        Use std::not_fn instead of lambda in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=230058
+
+        Reviewed by Darin Adler.
+
+        Since the return type of std::not_fn is not specified, it can't be converted to a bool(*)(UChar).
+        This necessitates the templatizing of CodeUnitMatchFunction to be anything that is invocable with a UChar
+        and returns a type that is convertable to a bool.
+
+        * wtf/URLParser.cpp:
+        (WTF::dnsNameEndsInNumber):
+        * wtf/text/StringCommon.h:
+        * wtf/text/StringImpl.h:
+        (WTF::find): Deleted.
+        * wtf/text/StringView.h:
+        * wtf/text/WTFString.h:
+
 2021-09-09  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed follow-up to r282105.

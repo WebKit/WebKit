@@ -1,3 +1,17 @@
+2021-09-10  Alex Christensen  <achristensen@webkit.org>
+
+        Use std::not_fn instead of lambda in URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=230058
+
+        Reviewed by Darin Adler.
+
+        Add a few explicit template parameters needed since we are passing a template parameter now instead of a function pointer.
+
+        * html/DOMTokenList.cpp:
+        (WebCore::tokenContainsHTMLSpace):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::truncateForScriptLikeAttribute):
+
 2021-09-10  Marcos Caceres  <marcos@marcosc.com>
 
         [Web-Share] handle non-fully active documents

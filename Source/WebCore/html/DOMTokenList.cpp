@@ -44,7 +44,7 @@ DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName,
 
 static inline bool tokenContainsHTMLSpace(const String& token)
 {
-    return token.find(isHTMLSpace) != notFound;
+    return token.find(isHTMLSpace<UChar>) != notFound;
 }
 
 ExceptionOr<void> DOMTokenList::validateToken(const String& token)

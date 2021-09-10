@@ -27,6 +27,7 @@
 #include <wtf/URLParser.h>
 
 #include <array>
+#include <functional>
 #include <mutex>
 #include <wtf/text/CodePointIterator.h>
 
@@ -2696,25 +2697,18 @@ static bool dnsNameEndsInNumber(StringView name)
 {
     // https://url.spec.whatwg.org/#ends-in-a-number-checker
     auto containsOctalDecimalOrHexNumber = [] (StringView segment) {
-        auto isNonDigit = [](UChar c) {
-            return !isASCIIDigit(c);
-        };
         const auto segmentLength = segment.length();
         if (!UNLIKELY(segmentLength))
             return false;
         auto firstCodeUnit = segment[0];
-        if (LIKELY(isNonDigit(firstCodeUnit)))
+        if (LIKELY(!isASCIIDigit(firstCodeUnit)))
             return false;
         if (segmentLength == 1)
             return true;
         auto secondCodeUnit = segment[1];
-        if ((secondCodeUnit == 'x' || secondCodeUnit == 'X') && firstCodeUnit == '0') {
-            auto isNonHexDigit = [](UChar c) {
-                return !isASCIIHexDigit(c);
-            };
-            return segment.find(isNonHexDigit, 2) == notFound;
-        }
-        return segment.find(isNonDigit) == notFound;
+        if ((secondCodeUnit == 'x' || secondCodeUnit == 'X') && firstCodeUnit == '0')
+            return segment.find(std::not_fn(isASCIIHexDigit<UChar>), 2) == notFound;
+        return !segment.contains(std::not_fn(isASCIIDigit<UChar>));
     };
 
     size_t lastDotLocation = name.reverseFind('.');

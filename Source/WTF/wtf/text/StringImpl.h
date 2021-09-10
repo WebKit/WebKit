@@ -593,8 +593,8 @@ WTF_EXPORT_PRIVATE bool equalIgnoringASCIICaseNonNull(const StringImpl*, const S
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl&, const char (&lowercaseLetters)[length]);
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, const char (&lowercaseLetters)[length]);
 
-size_t find(const LChar*, unsigned length, CodeUnitMatchFunction, unsigned index = 0);
-size_t find(const UChar*, unsigned length, CodeUnitMatchFunction, unsigned index = 0);
+template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>* = nullptr>
+size_t find(const CodeUnit*, unsigned length, CodeUnitMatchFunction&&, unsigned index = 0);
 
 template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned index = StringImpl::MaxLength);
 template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned index = StringImpl::MaxLength);
@@ -643,17 +643,8 @@ template<> ALWAYS_INLINE const UChar* StringImpl::characters<UChar>() const
     return characters16();
 }
 
-inline size_t find(const LChar* characters, unsigned length, CodeUnitMatchFunction matchFunction, unsigned index)
-{
-    while (index < length) {
-        if (matchFunction(characters[index]))
-            return index;
-        ++index;
-    }
-    return notFound;
-}
-
-inline size_t find(const UChar* characters, unsigned length, CodeUnitMatchFunction matchFunction, unsigned index)
+template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>*>
+inline size_t find(const CodeUnit* characters, unsigned length, CodeUnitMatchFunction&& matchFunction, unsigned index)
 {
     while (index < length) {
         if (matchFunction(characters[index]))

@@ -536,7 +536,7 @@ ALWAYS_INLINE static size_t findInner(const SearchCharacterType* searchCharacter
     return index + i;
 }
 
-template<typename CharacterType>
+template<typename CharacterType, std::enable_if_t<std::is_integral_v<CharacterType>>* = nullptr>
 inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
 {
     while (index < length) {

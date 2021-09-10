@@ -138,7 +138,8 @@ public:
     SplitResult splitAllowingEmptyEntries(UChar) const;
 
     size_t find(UChar, unsigned start = 0) const;
-    size_t find(CodeUnitMatchFunction, unsigned start = 0) const;
+    template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
+    size_t find(CodeUnitMatchFunction&&, unsigned start = 0) const;
     WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start = 0) const;
 
     size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max()) const;
@@ -151,7 +152,8 @@ public:
     WTF_EXPORT_PRIVATE AtomString convertToASCIILowercaseAtom() const;
 
     bool contains(UChar) const;
-    bool contains(CodeUnitMatchFunction) const;
+    template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
+    bool contains(CodeUnitMatchFunction&&) const;
     bool contains(StringView string) const { return find(string, 0) != notFound; }
     WTF_EXPORT_PRIVATE bool contains(const char*) const;
 
@@ -512,9 +514,10 @@ inline bool StringView::contains(UChar character) const
     return find(character) != notFound;
 }
 
-inline bool StringView::contains(CodeUnitMatchFunction function) const
+template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>*>
+inline bool StringView::contains(CodeUnitMatchFunction&& function) const
 {
-    return find(function) != notFound;
+    return find(std::forward<CodeUnitMatchFunction>(function)) != notFound;
 }
 
 template<bool isSpecialCharacter(UChar)> inline bool StringView::isAllSpecialCharacters() const
@@ -595,11 +598,12 @@ inline size_t StringView::find(UChar character, unsigned start) const
     return WTF::find(characters16(), m_length, character, start);
 }
 
-inline size_t StringView::find(CodeUnitMatchFunction matchFunction, unsigned start) const
+template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>*>
+inline size_t StringView::find(CodeUnitMatchFunction&& matchFunction, unsigned start) const
 {
     if (is8Bit())
-        return WTF::find(characters8(), m_length, matchFunction, start);
-    return WTF::find(characters16(), m_length, matchFunction, start);
+        return WTF::find(characters8(), m_length, std::forward<CodeUnitMatchFunction>(matchFunction), start);
+    return WTF::find(characters16(), m_length, std::forward<CodeUnitMatchFunction>(matchFunction), start);
 }
 
 inline size_t StringView::reverseFind(UChar character, unsigned index) const
