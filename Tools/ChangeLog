@@ -1,3 +1,16 @@
+2021-09-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] AutoInstall occasionally raising SSL error
+        https://bugs.webkit.org/show_bug.cgi?id=230169
+        <rdar://problem/82767008>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (AutoInstall._request): Pass cafile into urlopen directly.
+
 2021-09-10  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Remove ./ from command invocations

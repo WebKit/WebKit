@@ -26,7 +26,6 @@ import math
 import os
 import platform
 import re
-import ssl
 import subprocess
 import shutil
 import sys
@@ -409,10 +408,7 @@ class AutoInstall(object):
 
     @classmethod
     def _request(cls, url, ca_cert_path=None):
-        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-        if ca_cert_path or cls.ca_cert_path:
-            context.load_verify_locations(cafile=ca_cert_path or cls.ca_cert_path)
-        return urlopen(url, timeout=cls.timeout, context=context)
+        return urlopen(url, timeout=cls.timeout, cafile=ca_cert_path or cls.ca_cert_path)
 
     @classmethod
     def enabled(cls):
