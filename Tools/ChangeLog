@@ -1,3 +1,14 @@
+2021-09-10  Jonathan Bedard  <jbedard@apple.com>
+
+        Exception in run-webkit-tests: Bad file descriptor (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=229994
+        <rdar://problem/82826083>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.rmtree): shutil.rmtree doesn't ignore bad file descriptor OSErrors.
+
 2021-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some lldb data provider issues
