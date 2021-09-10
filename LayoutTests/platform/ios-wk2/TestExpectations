@@ -2047,7 +2047,8 @@ webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 
 #rdar://80386523 (REGRESSION (iOS15 19A224?): fast/events/touch/ios/long-press-then-drag-to-select-text.html is failing) [ iOS15 ] fast/events/touch/ios/long-press-then-drag-to-select-text.html [ Failure ]
 
-#rdar://82259067 ([iOS Debug]fast/events/ios/rotation/basic-rotation.html is a constant crash) fast/events/ios/rotation/basic-rotation.html [ Pass Crash Failure ]
+#rdar://82259067 ([iOS Debug]fast/events/ios/rotation/basic-rotation.html is a constant crash) 
+fast/events/ios/rotation/basic-rotation.html [ Pass Crash Failure ]
 
 webkit.org/b/229558 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure ]
 
