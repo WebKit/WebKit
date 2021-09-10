@@ -49,12 +49,11 @@ class CasseroleTest(unittest.TestCase):
             nodes = CasseroleNodes('https://casserole.webkit.org/api/cluster-endpoints', interval_seconds=10, asynchronous=True)
             self.assertEqual(['start'], nodes.nodes)
 
-            with mocks.Requests('casserole.webkit.org', **{
-                'api/cluster-endpoints': mocks.Response(text='url1,url2')
-            }):
-                self.assertEqual(['start'], nodes.nodes)
-                time.sleep(15)
-                self.assertEqual(['url1', 'url2'], nodes.nodes)
+        with mocks.Requests('casserole.webkit.org', **{
+            'api/cluster-endpoints': mocks.Response(text='url1,url2')
+        }):
+            nodes = CasseroleNodes('https://casserole.webkit.org/api/cluster-endpoints', interval_seconds=10, asynchronous=True)
+            self.assertEqual(['url1', 'url2'], nodes.nodes)
 
     def test_list_like(self):
         with mocks.Requests('casserole.webkit.org', **{

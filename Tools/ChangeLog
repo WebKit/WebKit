@@ -1,3 +1,16 @@
+2021-09-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] model.casserole_unittest.CasseroleTest.test_asynchronous failing
+        https://bugs.webkit.org/show_bug.cgi?id=230162
+        <rdar://problem/82847267>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/__init__.py: Bump version.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/casserole_unittest.py:
+        (CasseroleTest.test_asynchronous): Child processes do not pick up MockTime.
+        * Scripts/libraries/resultsdbpy/setup.py: Bump version.
+
 2021-09-10  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Support running applications with ENABLE_STATIC_JSC=ON
