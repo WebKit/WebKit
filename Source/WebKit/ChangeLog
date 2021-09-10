@@ -1,3 +1,16 @@
+2021-09-10  Per Arne  <pvollan@apple.com>
+
+        [macOS] Close XPC connection before entering the WP sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=230120
+        <rdar://82097909>
+
+        Reviewed by Tim Horton.
+
+        On macOS, close XPC connection before entering the WebContent process' sandbox.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::initializeSandboxParameters):
+
 2021-09-10  Per Arne Vollan <pvollan@apple.com>
 
         [macOS] Use macro to close XPC connection

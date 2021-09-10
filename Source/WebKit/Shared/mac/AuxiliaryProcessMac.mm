@@ -61,10 +61,7 @@
 #import <wtf/text/cf/StringConcatenateCF.h>
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/XPCConnectionAdditions.h>
 #import <rootless.h>
-#else
-#define XPC_CONNECTION_ADDITIONS
 #endif
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
@@ -75,6 +72,9 @@ SOFT_LINK_OPTIONAL(libsystem_info, lookup_close_connections, int, (), ());
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_notify)
 SOFT_LINK_OPTIONAL(libsystem_notify, notify_set_options, void, __cdecl, (uint32_t));
 #endif
+
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
+SOFT_LINK_OPTIONAL(HIServices, HIS_XPC_ResetMessageConnection, void, (), ())
 
 #if PLATFORM(MAC)
 #define USE_CACHE_COMPILED_SANDBOX 1
@@ -703,7 +703,8 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
         mbr_close_connectionsPtr()();
     if (lookup_close_connectionsPtr())
         lookup_close_connectionsPtr()();
-    XPC_CONNECTION_ADDITIONS
+    if (HIS_XPC_ResetMessageConnectionPtr())
+        HIS_XPC_ResetMessageConnectionPtr()();
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
