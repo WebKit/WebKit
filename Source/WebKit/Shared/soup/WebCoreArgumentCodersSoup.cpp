@@ -64,23 +64,25 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
     encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
 }
 
-bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& certificateInfo)
+std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
 {
     std::optional<GRefPtr<GTlsCertificate>> certificate;
     decoder >> certificate;
     if (!certificate)
-        return false;
+        return std::nullopt;
 
+    CertificateInfo certificateInfo;
     if (certificate.value()) {
-        uint32_t tlsErrors;
-        if (!decoder.decode(tlsErrors))
-            return false;
+        std::optional<uint32_t> tlsErrors;
+        decoder >> tlsErrors;
+        if (!tlsErrors)
+            return std::nullopt;
 
         certificateInfo.setCertificate(certificate->get());
-        certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(tlsErrors));
+        certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(*tlsErrors));
     }
 
-    return true;
+    return WTFMove(certificateInfo);
 }
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)

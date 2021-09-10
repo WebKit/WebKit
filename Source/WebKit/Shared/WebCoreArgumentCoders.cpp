@@ -37,7 +37,6 @@
 #include <WebCore/BlobPart.h>
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
-#include <WebCore/CertificateInfo.h>
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>

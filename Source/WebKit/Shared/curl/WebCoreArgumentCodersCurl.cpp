@@ -59,28 +59,29 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
         encoder << certificate;
 }
 
-bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& certificateInfo)
+std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
 {
-    int verificationError;
-    if (!decoder.decode(verificationError))
-        return false;
+    std::optional<int> verificationError;
+    decoder >> verificationError;
+    if (!verificationError)
+        return std::nullopt;
 
-    size_t certificateChainSize;
-    if (!decoder.decode(certificateChainSize))
-        return false;
+    std::optional<size_t> certificateChainSize;
+    decoder >> certificateChainSize;
+    if (!certificateChainSize)
+        return std::nullopt;
 
     CertificateInfo::CertificateChain certificateChain;
-    for (size_t i = 0; i < certificateChainSize; i++) {
-        CertificateInfo::Certificate certificate;
-        if (!decoder.decode(certificate))
-            return false;
+    for (size_t i = 0; i < *certificateChainSize; i++) {
+        std::optional<CertificateInfo::Certificate> certificate;
+        decoder >> certificate;
+        if (!certificate)
+            return std::nullopt;
 
-        certificateChain.append(certificate);
+        certificateChain.append(WTFMove(*certificate));
     }
 
-    certificateInfo = CertificateInfo { verificationError, WTFMove(certificateChain) };
-
-    return true;
+    return CertificateInfo { *verificationError, WTFMove(certificateChain) };
 }
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)

@@ -1,3 +1,37 @@
+2021-09-09  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize CertificateInfo decoder
+        https://bugs.webkit.org/show_bug.cgi?id=230125
+
+        Reviewed by Chris Dumez.
+
+        Return std::optional instead of bool.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::ArgumentCoder<RetainPtr<CFTypeRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFArrayRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFBooleanRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFDataRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFDateRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFDictionaryRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFNumberRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFStringRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CFURLRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<CGColorSpaceRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<SecCertificateRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<SecKeychainItemRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<SecAccessControlRef>>::decode):
+        (IPC::ArgumentCoder<RetainPtr<SecTrustRef>>::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+
 2021-09-09  Ben Nham  <nham@apple.com>
 
         Preconnected socket is sometimes not used for initial request

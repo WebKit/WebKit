@@ -294,7 +294,7 @@ template<> struct ArgumentCoder<WebCore::SpringTimingFunction> {
 
 template<> struct ArgumentCoder<WebCore::CertificateInfo> {
     static void encode(Encoder&, const WebCore::CertificateInfo&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::CertificateInfo&);
+    static std::optional<WebCore::CertificateInfo> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::FloatPoint> {

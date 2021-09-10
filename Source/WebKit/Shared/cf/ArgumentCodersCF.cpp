@@ -193,123 +193,121 @@ void ArgumentCoder<CFTypeRef>::encode(Encoder& encoder, CFTypeRef typeRef)
 template void ArgumentCoder<CFTypeRef>::encode<Encoder>(Encoder&, CFTypeRef);
 template void ArgumentCoder<CFTypeRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFTypeRef);
 
-bool ArgumentCoder<RetainPtr<CFTypeRef>>::decode(Decoder& decoder, RetainPtr<CFTypeRef>& result)
+std::optional<RetainPtr<CFTypeRef>> ArgumentCoder<RetainPtr<CFTypeRef>>::decode(Decoder& decoder)
 {
     std::optional<CFType> type;
     decoder >> type;
     if (!type)
-        return false;
+        return std::nullopt;
 
     switch (*type) {
     case CFType::CFArray: {
-        RetainPtr<CFArrayRef> array;
-        if (!decoder.decode(array))
-            return false;
-        result = WTFMove(array);
-        return true;
+        std::optional<RetainPtr<CFArrayRef>> array;
+        decoder >> array;
+        if (!array)
+            return std::nullopt;
+        return WTFMove(*array);
     }
     case CFType::CFBoolean: {
-        RetainPtr<CFBooleanRef> boolean;
-        if (!decoder.decode(boolean))
-            return false;
-        result = WTFMove(boolean);
-        return true;
+        std::optional<RetainPtr<CFBooleanRef>> boolean;
+        decoder >> boolean;
+        if (!boolean)
+            return std::nullopt;
+        return WTFMove(*boolean);
     }
     case CFType::CFData: {
-        RetainPtr<CFDataRef> data;
-        if (!decoder.decode(data))
-            return false;
-        result = WTFMove(data);
-        return true;
+        std::optional<RetainPtr<CFDataRef>> data;
+        decoder >> data;
+        if (!data)
+            return std::nullopt;
+        return WTFMove(*data);
     }
     case CFType::CFDate: {
-        RetainPtr<CFDateRef> date;
-        if (!decoder.decode(date))
-            return false;
-        result = WTFMove(date);
-        return true;
+        std::optional<RetainPtr<CFDateRef>> date;
+        decoder >> date;
+        if (!date)
+            return std::nullopt;
+        return WTFMove(*date);
     }
     case CFType::CFDictionary: {
-        RetainPtr<CFDictionaryRef> dictionary;
-        if (!decoder.decode(dictionary))
-            return false;
-        result = WTFMove(dictionary);
-        return true;
+        std::optional<RetainPtr<CFDictionaryRef>> dictionary;
+        decoder >> dictionary;
+        if (!dictionary)
+            return std::nullopt;
+        return WTFMove(*dictionary);
     }
     case CFType::CFNull:
-        result = adoptCF(kCFNull);
-        return true;
+        return RetainPtr<CFNullRef>(kCFNull);
     case CFType::CFNumber: {
-        RetainPtr<CFNumberRef> number;
-        if (!decoder.decode(number))
-            return false;
-        result = WTFMove(number);
-        return true;
+        std::optional<RetainPtr<CFNumberRef>> number;
+        decoder >> number;
+        if (!number)
+            return std::nullopt;
+        return WTFMove(*number);
     }
     case CFType::CFString: {
-        RetainPtr<CFStringRef> string;
-        if (!decoder.decode(string))
-            return false;
-        result = WTFMove(string);
-        return true;
+        std::optional<RetainPtr<CFStringRef>> string;
+        decoder >> string;
+        if (!string)
+            return std::nullopt;
+        return WTFMove(*string);
     }
     case CFType::CFURL: {
-        RetainPtr<CFURLRef> url;
-        if (!decoder.decode(url))
-            return false;
-        result = WTFMove(url);
-        return true;
+        std::optional<RetainPtr<CFURLRef>> url;
+        decoder >> url;
+        if (!url)
+            return std::nullopt;
+        return WTFMove(*url);
     }
     case CFType::CGColorSpace: {
-        RetainPtr<CGColorSpaceRef> colorSpace;
-        if (!decoder.decode(colorSpace))
-            return false;
-        result = WTFMove(colorSpace);
-        return true;
+        std::optional<RetainPtr<CGColorSpaceRef>> colorSpace;
+        decoder >> colorSpace;
+        if (!colorSpace)
+            return std::nullopt;
+        return WTFMove(*colorSpace);
     }
     case CFType::SecCertificate: {
-        RetainPtr<SecCertificateRef> certificate;
-        if (!decoder.decode(certificate))
-            return false;
-        result = WTFMove(certificate);
-        return true;
+        std::optional<RetainPtr<SecCertificateRef>> certificate;
+        decoder >> certificate;
+        if (!certificate)
+            return std::nullopt;
+        return WTFMove(*certificate);
     }
 #if HAVE(SEC_KEYCHAIN)
     case CFType::SecKeychainItem: {
-        RetainPtr<SecKeychainItemRef> keychainItem;
-        if (!decoder.decode(keychainItem))
-            return false;
-        result = WTFMove(keychainItem);
-        return true;
+        std::optional<RetainPtr<SecKeychainItemRef>> keychainItem;
+        decoder >> keychainItem;
+        if (!keychainItem)
+            return std::nullopt;
+        return WTFMove(*keychainItem);
     }
 #endif
 #if HAVE(SEC_ACCESS_CONTROL)
     case CFType::SecAccessControl: {
-        RetainPtr<SecAccessControlRef> accessControl;
-        if (!decoder.decode(accessControl))
-            return false;
-        result = WTFMove(accessControl);
-        return true;
+        std::optional<RetainPtr<SecAccessControlRef>> accessControl;
+        decoder >> accessControl;
+        if (!accessControl)
+            return std::nullopt;
+        return WTFMove(*accessControl);
     }
 #endif
 #if HAVE(SEC_TRUST_SERIALIZATION)
     case CFType::SecTrust: {
-        RetainPtr<SecTrustRef> trust;
-        if (!decoder.decode(trust))
-            return false;
-        result = WTFMove(trust);
-        return true;
+        std::optional<RetainPtr<SecTrustRef>> trust;
+        decoder >> trust;
+        if (!trust)
+            return std::nullopt;
+        return WTFMove(*trust);
     }
 #endif
     case CFType::Nullptr:
-        result = tokenNullptrTypeRef();
-        return true;
+        return tokenNullptrTypeRef();
     case CFType::Unknown:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return false;
+    return std::nullopt;
 }
 
 template<typename Encoder>
@@ -347,36 +345,36 @@ void ArgumentCoder<CFArrayRef>::encode(Encoder& encoder, CFArrayRef array)
 template void ArgumentCoder<CFArrayRef>::encode<Encoder>(Encoder&, CFArrayRef);
 template void ArgumentCoder<CFArrayRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFArrayRef);
 
-bool ArgumentCoder<RetainPtr<CFArrayRef>>::decode(Decoder& decoder, RetainPtr<CFArrayRef>& result)
+std::optional<RetainPtr<CFArrayRef>> ArgumentCoder<RetainPtr<CFArrayRef>>::decode(Decoder& decoder)
 {
-    bool isNull = false;
-    if (!decoder.decode(isNull))
-        return false;
+    std::optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull)
+        return std::nullopt;
 
-    if (isNull) {
-        result = nullptr;
-        return true;
-    }
+    if (*isNull)
+        return {{ nullptr }};
 
-    uint64_t size;
-    if (!decoder.decode(size))
-        return false;
+    std::optional<uint64_t> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
 
     auto array = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
 
-    for (size_t i = 0; i < size; ++i) {
-        RetainPtr<CFTypeRef> element;
-        if (!decoder.decode(element))
-            return false;
-
+    for (size_t i = 0; i < *size; ++i) {
+        std::optional<RetainPtr<CFTypeRef>> element;
+        decoder >> element;
         if (!element)
+            return std::nullopt;
+
+        if (!*element)
             continue;
         
-        CFArrayAppendValue(array.get(), element.get());
+        CFArrayAppendValue(array.get(), element->get());
     }
 
-    result = adoptCF(array.leakRef());
-    return true;
+    return WTFMove(array);
 }
 
 template<typename Encoder>
@@ -388,14 +386,14 @@ void ArgumentCoder<CFBooleanRef>::encode(Encoder& encoder, CFBooleanRef boolean)
 template void ArgumentCoder<CFBooleanRef>::encode<Encoder>(Encoder&, CFBooleanRef);
 template void ArgumentCoder<CFBooleanRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFBooleanRef);
 
-bool ArgumentCoder<RetainPtr<CFBooleanRef>>::decode(Decoder& decoder, RetainPtr<CFBooleanRef>& result)
+std::optional<RetainPtr<CFBooleanRef>> ArgumentCoder<RetainPtr<CFBooleanRef>>::decode(Decoder& decoder)
 {
-    bool boolean;
-    if (!decoder.decode(boolean))
-        return false;
+    std::optional<bool> boolean;
+    decoder >> boolean;
+    if (!boolean)
+        return std::nullopt;
 
-    result = adoptCF(boolean ? kCFBooleanTrue : kCFBooleanFalse);
-    return true;
+    return adoptCF(*boolean ? kCFBooleanTrue : kCFBooleanFalse);
 }
 
 template<typename Encoder>
@@ -407,14 +405,14 @@ void ArgumentCoder<CFDataRef>::encode(Encoder& encoder, CFDataRef data)
 template void ArgumentCoder<CFDataRef>::encode<Encoder>(Encoder&, CFDataRef);
 template void ArgumentCoder<CFDataRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDataRef);
 
-bool ArgumentCoder<RetainPtr<CFDataRef>>::decode(Decoder& decoder, RetainPtr<CFDataRef>& result)
+std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode(Decoder& decoder)
 {
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return false;
+    std::optional<IPC::DataReference> dataReference;
+    decoder >> dataReference;
+    if (!dataReference)
+        return std::nullopt;
 
-    result = adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
-    return true;
+    return adoptCF(CFDataCreate(0, dataReference->data(), dataReference->size()));
 }
 
 template<typename Encoder>
@@ -426,14 +424,14 @@ void ArgumentCoder<CFDateRef>::encode(Encoder& encoder, CFDateRef date)
 template void ArgumentCoder<CFDateRef>::encode<Encoder>(Encoder&, CFDateRef);
 template void ArgumentCoder<CFDateRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDateRef);
 
-bool ArgumentCoder<RetainPtr<CFDateRef>>::decode(Decoder& decoder, RetainPtr<CFDateRef>& result)
+std::optional<RetainPtr<CFDateRef>> ArgumentCoder<RetainPtr<CFDateRef>>::decode(Decoder& decoder)
 {
-    double absoluteTime;
-    if (!decoder.decode(absoluteTime))
-        return false;
+    std::optional<double> absoluteTime;
+    decoder >> absoluteTime;
+    if (!absoluteTime)
+        return std::nullopt;
 
-    result = adoptCF(CFDateCreate(0, absoluteTime));
-    return true;
+    return adoptCF(CFDateCreate(0, *absoluteTime));
 }
 
 template<typename Encoder>
@@ -477,36 +475,37 @@ void ArgumentCoder<CFDictionaryRef>::encode(Encoder& encoder, CFDictionaryRef di
 template void ArgumentCoder<CFDictionaryRef>::encode<Encoder>(Encoder&, CFDictionaryRef);
 template void ArgumentCoder<CFDictionaryRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDictionaryRef);
 
-bool ArgumentCoder<RetainPtr<CFDictionaryRef>>::decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
+std::optional<RetainPtr<CFDictionaryRef>> ArgumentCoder<RetainPtr<CFDictionaryRef>>::decode(Decoder& decoder)
 {
-    bool isNull = false;
-    if (!decoder.decode(isNull))
-        return false;
+    std::optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull)
+        return std::nullopt;
 
-    if (isNull) {
-        result = nullptr;
-        return true;
-    }
+    if (*isNull)
+        return {{ nullptr }};
 
-    uint64_t size;
-    if (!decoder.decode(size))
-        return false;
+    std::optional<uint64_t> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
 
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    for (uint64_t i = 0; i < size; ++i) {
-        RetainPtr<CFTypeRef> key;
-        if (!decoder.decode(key) || !key)
-            return false;
+    for (uint64_t i = 0; i < *size; ++i) {
+        std::optional<RetainPtr<CFTypeRef>> key;
+        decoder >> key;
+        if (!key || !*key)
+            return std::nullopt;
 
-        RetainPtr<CFTypeRef> value;
-        if (!decoder.decode(value) || !value)
-            return false;
+        std::optional<RetainPtr<CFTypeRef>> value;
+        decoder >> value;
+        if (!value || !*value)
+            return std::nullopt;
 
-        CFDictionarySetValue(dictionary.get(), key.get(), value.get());
+        CFDictionarySetValue(dictionary.get(), key->get(), value->get());
     }
 
-    result = WTFMove(dictionary);
-    return true;
+    return WTFMove(dictionary);
 }
 
 template<typename Encoder>
@@ -564,26 +563,25 @@ static size_t sizeForNumberType(CFNumberType numberType)
     return 0;
 }
 
-bool ArgumentCoder<RetainPtr<CFNumberRef>>::decode(Decoder& decoder, RetainPtr<CFNumberRef>& result)
+std::optional<RetainPtr<CFNumberRef>> ArgumentCoder<RetainPtr<CFNumberRef>>::decode(Decoder& decoder)
 {
     std::optional<uint8_t> numberTypeFromIPC;
     decoder >> numberTypeFromIPC;
     if (!numberTypeFromIPC || *numberTypeFromIPC > kCFNumberMaxType)
-        return false;
+        return std::nullopt;
     auto numberType = static_cast<CFNumberType>(*numberTypeFromIPC);
 
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return false;
+    std::optional<IPC::DataReference> dataReference;
+    decoder >> dataReference;
+    if (!dataReference)
+        return std::nullopt;
 
     size_t neededBufferSize = sizeForNumberType(numberType);
-    if (!neededBufferSize || dataReference.size() != neededBufferSize)
-        return false;
+    if (!neededBufferSize || dataReference->size() != neededBufferSize)
+        return std::nullopt;
 
-    ASSERT(dataReference.data());
-    result = adoptCF(CFNumberCreate(0, numberType, dataReference.data()));
-
-    return true;
+    ASSERT(dataReference->data());
+    return adoptCF(CFNumberCreate(0, numberType, dataReference->data()));
 }
 
 template<typename Encoder>
@@ -608,27 +606,27 @@ void ArgumentCoder<CFStringRef>::encode(Encoder& encoder, CFStringRef string)
 template void ArgumentCoder<CFStringRef>::encode<Encoder>(Encoder&, CFStringRef);
 template void ArgumentCoder<CFStringRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFStringRef);
 
-bool ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder, RetainPtr<CFStringRef>& result)
+std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder)
 {
     std::optional<uint32_t> encodingFromIPC;
     decoder >> encodingFromIPC;
     if (!encodingFromIPC)
-        return false;
+        return std::nullopt;
     auto encoding = static_cast<CFStringEncoding>(*encodingFromIPC);
 
     if (!CFStringIsEncodingAvailable(encoding))
-        return false;
+        return std::nullopt;
     
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return false;
+    std::optional<IPC::DataReference> dataReference;
+    decoder >> dataReference;
+    if (!dataReference)
+        return std::nullopt;
 
-    auto string = adoptCF(CFStringCreateWithBytes(0, dataReference.data(), dataReference.size(), encoding, false));
+    auto string = adoptCF(CFStringCreateWithBytes(0, dataReference->data(), dataReference->size(), encoding, false));
     if (!string)
-        return false;
+        return std::nullopt;
 
-    result = WTFMove(string);
-    return true;
+    return WTFMove(string);
 }
 
 template<typename Encoder>
@@ -647,34 +645,40 @@ void ArgumentCoder<CFURLRef>::encode(Encoder& encoder, CFURLRef url)
 template void ArgumentCoder<CFURLRef>::encode<Encoder>(Encoder&, CFURLRef);
 template void ArgumentCoder<CFURLRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFURLRef);
 
-bool ArgumentCoder<RetainPtr<CFURLRef>>::decode(Decoder& decoder, RetainPtr<CFURLRef>& result)
+std::optional<RetainPtr<CFURLRef>> ArgumentCoder<RetainPtr<CFURLRef>>::decode(Decoder& decoder)
 {
     RetainPtr<CFURLRef> baseURL;
-    bool hasBaseURL;
-    if (!decoder.decode(hasBaseURL))
-        return false;
-    if (hasBaseURL) {
-        if (!decoder.decode(baseURL))
-            return false;
+    std::optional<bool> hasBaseURL;
+    decoder >> hasBaseURL;
+    if (!hasBaseURL)
+        return std::nullopt;
+    if (*hasBaseURL) {
+        std::optional<RetainPtr<CFURLRef>> decodedBaseURL;
+        decoder >> decodedBaseURL;
+        if (!decodedBaseURL)
+            return std::nullopt;
+        baseURL = WTFMove(*decodedBaseURL);
     }
 
-    IPC::DataReference urlBytes;
-    if (!decoder.decode(urlBytes))
-        return false;
+    std::optional<IPC::DataReference> urlBytes;
+    decoder >> urlBytes;
+    if (!urlBytes)
+        return std::nullopt;
 
 #if USE(FOUNDATION)
     // FIXME: Move this to ArgumentCodersCFMac.mm and change this file back to be C++
     // instead of Objective-C++.
-    if (urlBytes.isEmpty()) {
+    if (urlBytes->isEmpty()) {
         // CFURL can't hold an empty URL, unlike NSURL.
         // FIXME: This discards base URL, which seems incorrect.
-        result = (__bridge CFURLRef)[NSURL URLWithString:@""];
-        return true;
+        return {{ (__bridge CFURLRef)[NSURL URLWithString:@""] }};
     }
 #endif
 
-    result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(urlBytes.data()), urlBytes.size(), kCFStringEncodingUTF8, baseURL.get(), true));
-    return result;
+    auto result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(urlBytes->data()), urlBytes->size(), kCFStringEncodingUTF8, baseURL.get(), true));
+    if (!result)
+        return std::nullopt;
+    return WTFMove(result);
 }
 
 enum class CGColorSpaceEncodingScheme { Name, PropertyList };
@@ -693,41 +697,42 @@ void ArgumentCoder<CGColorSpaceRef>::encode(Encoder& encoder, CGColorSpaceRef co
 template void ArgumentCoder<CGColorSpaceRef>::encode<Encoder>(Encoder&, CGColorSpaceRef);
 template void ArgumentCoder<CGColorSpaceRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CGColorSpaceRef);
 
-bool ArgumentCoder<RetainPtr<CGColorSpaceRef>>::decode(Decoder& decoder, RetainPtr<CGColorSpaceRef>& result)
+std::optional<RetainPtr<CGColorSpaceRef>> ArgumentCoder<RetainPtr<CGColorSpaceRef>>::decode(Decoder& decoder)
 {
-    CGColorSpaceEncodingScheme encodingScheme;
-    if (!decoder.decode(encodingScheme))
-        return false;
+    std::optional<CGColorSpaceEncodingScheme> encodingScheme;
+    decoder >> encodingScheme;
+    if (!encodingScheme)
+        return std::nullopt;
 
-    switch (encodingScheme) {
+    switch (*encodingScheme) {
     case CGColorSpaceEncodingScheme::Name: {
-        RetainPtr<CFStringRef> name;
-        if (!decoder.decode(name))
-            return false;
+        std::optional<RetainPtr<CFStringRef>> name;
+        decoder >> name;
+        if (!name)
+            return std::nullopt;
 
-        auto colorSpace = adoptCF(CGColorSpaceCreateWithName(name.get()));
+        auto colorSpace = adoptCF(CGColorSpaceCreateWithName(name->get()));
         if (!colorSpace)
-            return false;
+            return std::nullopt;
 
-        result = WTFMove(colorSpace);
-        return true;
+        return WTFMove(colorSpace);
     }
     case CGColorSpaceEncodingScheme::PropertyList: {
-        RetainPtr<CFTypeRef> propertyList;
-        if (!decoder.decode(propertyList))
-            return false;
+        std::optional<RetainPtr<CFTypeRef>> propertyList;
+        decoder >> propertyList;
+        if (!propertyList)
+            return std::nullopt;
 
-        auto colorSpace = adoptCF(CGColorSpaceCreateWithPropertyList(propertyList.get()));
+        auto colorSpace = adoptCF(CGColorSpaceCreateWithPropertyList(propertyList->get()));
         if (!colorSpace)
-            return false;
+            return std::nullopt;
 
-        result = WTFMove(colorSpace);
-        return true;
+        return WTFMove(colorSpace);
     }
     }
 
     ASSERT_NOT_REACHED();
-    return false;
+    return std::nullopt;
 }
 
 
@@ -740,14 +745,14 @@ void ArgumentCoder<SecCertificateRef>::encode(Encoder& encoder, SecCertificateRe
 template void ArgumentCoder<SecCertificateRef>::encode<Encoder>(Encoder&, SecCertificateRef);
 template void ArgumentCoder<SecCertificateRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecCertificateRef);
 
-bool ArgumentCoder<RetainPtr<SecCertificateRef>>::decode(Decoder& decoder, RetainPtr<SecCertificateRef>& result)
+std::optional<RetainPtr<SecCertificateRef>> ArgumentCoder<RetainPtr<SecCertificateRef>>::decode(Decoder& decoder)
 {
-    RetainPtr<CFDataRef> data;
-    if (!decoder.decode(data))
-        return false;
+    std::optional<RetainPtr<CFDataRef>> data;
+    decoder >> data;
+    if (!data)
+        return std::nullopt;
 
-    result = adoptCF(SecCertificateCreateWithData(0, data.get()));
-    return true;
+    return adoptCF(SecCertificateCreateWithData(0, data->get()));
 }
 
 #if HAVE(SEC_KEYCHAIN)
@@ -766,25 +771,25 @@ void ArgumentCoder<SecKeychainItemRef>::encode(Encoder& encoder, SecKeychainItem
 template void ArgumentCoder<SecKeychainItemRef>::encode<Encoder>(Encoder&, SecKeychainItemRef);
 template void ArgumentCoder<SecKeychainItemRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecKeychainItemRef);
 
-bool ArgumentCoder<RetainPtr<SecKeychainItemRef>>::decode(Decoder& decoder, RetainPtr<SecKeychainItemRef>& result)
+std::optional<RetainPtr<SecKeychainItemRef>> ArgumentCoder<RetainPtr<SecKeychainItemRef>>::decode(Decoder& decoder)
 {
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
 
-    RetainPtr<CFDataRef> data;
-    if (!decoder.decode(data))
-        return false;
+    std::optional<RetainPtr<CFDataRef>> data;
+    decoder >> data;
+    if (!data)
+        return std::nullopt;
 
-    CFDataRef dref = data.get();
+    CFDataRef dref = data->get();
     // SecKeychainItemCopyFromPersistentReference() cannot handle 0-length CFDataRefs.
     if (!CFDataGetLength(dref))
-        return false;
+        return std::nullopt;
 
     SecKeychainItemRef item;
     if (SecKeychainItemCopyFromPersistentReference(dref, &item) != errSecSuccess || !item)
-        return false;
+        return std::nullopt;
     
-    result = adoptCF(item);
-    return true;
+    return adoptCF(item);
 }
 #endif
 
@@ -800,17 +805,18 @@ void ArgumentCoder<SecAccessControlRef>::encode(Encoder& encoder, SecAccessContr
 template void ArgumentCoder<SecAccessControlRef>::encode<Encoder>(Encoder&, SecAccessControlRef);
 template void ArgumentCoder<SecAccessControlRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecAccessControlRef);
 
-bool ArgumentCoder<RetainPtr<SecAccessControlRef>>::decode(Decoder& decoder, RetainPtr<SecAccessControlRef>& result)
+std::optional<RetainPtr<SecAccessControlRef>> ArgumentCoder<RetainPtr<SecAccessControlRef>>::decode(Decoder& decoder)
 {
-    RetainPtr<CFDataRef> data;
-    if (!decoder.decode(data))
-        return false;
+    std::optional<RetainPtr<CFDataRef>> data;
+    decoder >> data;
+    if (!data)
+        return std::nullopt;
 
-    result = adoptCF(SecAccessControlCreateFromData(kCFAllocatorDefault, data.get(), nullptr));
+    auto result = adoptCF(SecAccessControlCreateFromData(kCFAllocatorDefault, data->get(), nullptr));
     if (!result)
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(result);
 }
 #endif
 
@@ -830,25 +836,26 @@ void ArgumentCoder<SecTrustRef>::encode(Encoder& encoder, SecTrustRef trust)
 template void ArgumentCoder<SecTrustRef>::encode<Encoder>(Encoder&, SecTrustRef);
 template void ArgumentCoder<SecTrustRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecTrustRef);
 
-bool ArgumentCoder<RetainPtr<SecTrustRef>>::decode(Decoder& decoder, RetainPtr<SecTrustRef>& result)
+std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode(Decoder& decoder)
 {
-    bool hasTrust;
-    if (!decoder.decode(hasTrust))
-        return false;
-
+    std::optional<bool> hasTrust;
+    decoder >> hasTrust;
     if (!hasTrust)
-        return true;
+        return std::nullopt;
 
-    RetainPtr<CFDataRef> trustData;
-    if (!decoder.decode(trustData))
-        return false;
+    if (!*hasTrust)
+        return { nullptr };
 
-    auto trust = adoptCF(SecTrustDeserialize(trustData.get(), nullptr));
+    std::optional<RetainPtr<CFDataRef>> trustData;
+    decoder >> trustData;
+    if (!trustData)
+        return std::nullopt;
+
+    auto trust = adoptCF(SecTrustDeserialize(trustData->get(), nullptr));
     if (!trust)
-        return false;
+        return std::nullopt;
 
-    result = WTFMove(trust);
-    return true;
+    return WTFMove(trust);
 }
 #endif
 
