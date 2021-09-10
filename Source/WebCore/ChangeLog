@@ -1,3 +1,20 @@
+2021-09-10  Alan Bujtas  <zalan@apple.com>
+
+        changing border size on rows with border-collapse not redrawing
+        https://bugs.webkit.org/show_bug.cgi?id=116868
+        <rdar://problem/82844412>
+
+        Reviewed by Simon Fraser.
+
+        Cells in adjacent rows share the same collapsed border.
+        When this collapsed border width changes on a row, the cells at the adjacent rows need to know about it too so that
+        they can update their size accordingly.
+
+        Test: fast/table/collapsed-border-width-change-on-row.html
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange):
+
 2021-09-10  Youenn Fablet  <youenn@apple.com>
 
         Use RTCErrorEvent for data channel error event

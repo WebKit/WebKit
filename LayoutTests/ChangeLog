@@ -1,3 +1,14 @@
+2021-09-10  Alan Bujtas  <zalan@apple.com>
+
+        changing border size on rows with border-collapse not redrawing
+        https://bugs.webkit.org/show_bug.cgi?id=116868
+        <rdar://problem/82844412>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/collapsed-border-width-change-on-row-expected.html: Added.
+        * fast/table/collapsed-border-width-change-on-row.html: Added.
+
 2021-09-10  Rob Buis  <rbuis@igalia.com>
 
         Fix aspect-ratio-intrinsic-size-004.html
