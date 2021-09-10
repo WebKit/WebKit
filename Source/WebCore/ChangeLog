@@ -1,3 +1,35 @@
+2021-09-10  Youenn Fablet  <youenn@apple.com>
+
+        Use RTCErrorEvent for data channel error event
+        https://bugs.webkit.org/show_bug.cgi?id=230090
+
+        Reviewed by Eric Carlson.
+
+        When detecting an error before closing the data channel, the backend now generates a RTCError and pass it to didDetectError.
+
+        Covered by updated test.
+
+        * Headers.cmake:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didDetectError):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannelRemoteHandler.cpp:
+        (WebCore::RTCDataChannelRemoteHandler::didDetectError):
+        * Modules/mediastream/RTCDataChannelRemoteHandler.h:
+        * Modules/mediastream/RTCDataChannelRemoteSource.h:
+        * Modules/mediastream/RTCError.h:
+        * Modules/mediastream/RTCErrorDetailType.h:
+        * Modules/mediastream/RTCErrorEvent.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::checkState):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toRTCErrorDetailType):
+        (WebCore::toRTCError):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/RTCDataChannelHandlerClient.h:
+        * platform/mediastream/RTCDataChannelRemoteSourceConnection.h:
+
 2021-09-10  Rob Buis  <rbuis@igalia.com>
 
         Fix aspect-ratio-intrinsic-size-004.html

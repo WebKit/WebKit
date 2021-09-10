@@ -1,3 +1,23 @@
+2021-09-10  Youenn Fablet  <youenn@apple.com>
+
+        Use RTCErrorEvent for data channel error event
+        https://bugs.webkit.org/show_bug.cgi?id=230090
+
+        Reviewed by Eric Carlson.
+
+        Add support for transfered data chnnel by piping error info to the transfered data channel.
+
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp:
+        (WebKit::RTCDataChannelRemoteManagerProxy::detectError):
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.h:
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.messages.in:
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp:
+        (WebKit::RTCDataChannelRemoteManager::detectError):
+        (WebKit::RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError):
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.h:
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.messages.in:
+
 2021-09-09  Alex Christensen  <achristensen@webkit.org>
 
         Modernize CertificateInfo decoder

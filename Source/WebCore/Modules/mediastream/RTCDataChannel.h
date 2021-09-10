@@ -113,7 +113,7 @@ private:
     void didChangeReadyState(RTCDataChannelState) final;
     void didReceiveStringData(const String&) final;
     void didReceiveRawData(const uint8_t*, size_t) final;
-    void didDetectError() final;
+    void didDetectError(Ref<RTCError>&&) final;
     void bufferedAmountIsDecreasing(size_t) final;
 
     std::unique_ptr<RTCDataChannelHandler> m_handler;

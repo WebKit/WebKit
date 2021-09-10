@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "RTCDataChannelRemoteHandler.h"
+#include "RTCErrorEvent.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBufferView.h>
@@ -233,9 +234,9 @@ void RTCDataChannel::didReceiveRawData(const uint8_t* data, size_t dataLength)
     ASSERT_NOT_REACHED();
 }
 
-void RTCDataChannel::didDetectError()
+void RTCDataChannel::didDetectError(Ref<RTCError>&& error)
 {
-    scheduleDispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    scheduleDispatchEvent(RTCErrorEvent::create(eventNames().errorEvent, WTFMove(error)));
 }
 
 void RTCDataChannel::bufferedAmountIsDecreasing(size_t amount)

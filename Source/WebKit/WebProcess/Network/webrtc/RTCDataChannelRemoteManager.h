@@ -57,7 +57,7 @@ private:
     // To handler
     void changeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState);
     void receiveData(WebCore::RTCDataChannelIdentifier, bool isRaw, const IPC::DataReference&);
-    void detectError(WebCore::RTCDataChannelIdentifier);
+    void detectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, String&&);
     void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t);
 
     WebCore::RTCDataChannelRemoteSourceConnection& remoteSourceConnection();
@@ -89,7 +89,7 @@ private:
         void didChangeReadyState(WebCore::RTCDataChannelIdentifier, WebCore::RTCDataChannelState) final;
         void didReceiveStringData(WebCore::RTCDataChannelIdentifier, const String&) final;
         void didReceiveRawData(WebCore::RTCDataChannelIdentifier, const uint8_t*, size_t) final;
-        void didDetectError(WebCore::RTCDataChannelIdentifier) final;
+        void didDetectError(WebCore::RTCDataChannelIdentifier, WebCore::RTCErrorDetailType, const String&) final;
         void bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier, size_t) final;
 
         Ref<IPC::Connection> m_connection;

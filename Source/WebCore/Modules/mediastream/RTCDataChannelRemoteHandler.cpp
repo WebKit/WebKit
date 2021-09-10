@@ -65,9 +65,9 @@ void RTCDataChannelRemoteHandler::didReceiveRawData(const uint8_t* data, size_t 
     m_client->didReceiveRawData(data, size);
 }
 
-void RTCDataChannelRemoteHandler::didDetectError()
+void RTCDataChannelRemoteHandler::didDetectError(Ref<RTCError>&& error)
 {
-    m_client->didDetectError();
+    m_client->didDetectError(WTFMove(error));
 }
 
 void RTCDataChannelRemoteHandler::bufferedAmountIsDecreasing(size_t amount)

@@ -31,6 +31,7 @@
 #include "LibWebRTCUtils.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
+#include "RTCError.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -129,7 +130,7 @@ void LibWebRTCDataChannelHandler::OnStateChange()
 
 void LibWebRTCDataChannelHandler::checkState()
 {
-    bool hasError = false;
+    std::optional<webrtc::RTCError> error;
     RTCDataChannelState state;
     switch (m_channel->state()) {
     case webrtc::DataChannelInterface::kConnecting:
@@ -142,7 +143,7 @@ void LibWebRTCDataChannelHandler::checkState()
         state = RTCDataChannelState::Closing;
         break;
     case webrtc::DataChannelInterface::kClosed:
-        hasError = !m_channel->error().ok();
+        error = m_channel->error();
         state = RTCDataChannelState::Closed;
         break;
     }
@@ -152,9 +153,11 @@ void LibWebRTCDataChannelHandler::checkState()
         m_bufferedMessages.append(state);
         return;
     }
-    postTask([protectedClient = makeRef(*m_client), state, hasError] {
-        if (hasError)
-            protectedClient->didDetectError();
+    postTask([protectedClient = makeRef(*m_client), state, error = WTFMove(error)] {
+        if (error && !error->ok()) {
+            if (auto rtcError = toRTCError(*error))
+                protectedClient->didDetectError(rtcError.releaseNonNull());
+        }
         protectedClient->didChangeReadyState(state);
     });
 }

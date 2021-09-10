@@ -157,10 +157,10 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
     });
 }
 
-void RTCDataChannelRemoteManager::detectError(WebCore::RTCDataChannelIdentifier handlerIdentifier)
+void RTCDataChannelRemoteManager::detectError(WebCore::RTCDataChannelIdentifier handlerIdentifier, WebCore::RTCErrorDetailType detail, String&& message)
 {
-    postTaskToHandler(handlerIdentifier, [](auto& handler) {
-        handler.didDetectError();
+    postTaskToHandler(handlerIdentifier, [detail, message = WTFMove(message)](auto& handler) mutable {
+        handler.didDetectError(RTCError::create(detail, WTFMove(message)));
     });
 }
 
@@ -190,7 +190,7 @@ void RTCDataChannelRemoteManager::RemoteHandlerConnection::connectToSource(WebCo
     m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ConnectToRTCDataChannelRemoteSource { localIdentifier, remoteIdentifier }, [localIdentifier](auto&& result) {
         RTCDataChannelRemoteManager::sharedManager().postTaskToHandler(localIdentifier, [result](auto& handler) {
             if (!result || !*result) {
-                handler.didDetectError();
+                handler.didDetectError(WebCore::RTCError::create(WebCore::RTCErrorDetailType::DataChannelFailure, "Unable to find data channel"_s));
                 return;
             }
             handler.readyToSend();
@@ -235,9 +235,9 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebC
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, true, IPC::DataReference { data, size  } }, 0);
 }
 
-void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore::RTCDataChannelIdentifier identifier)
+void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore::RTCDataChannelIdentifier identifier, RTCErrorDetailType type, const String& message)
 {
-    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::DetectError { identifier }, 0);
+    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::DetectError { identifier, type, message }, 0);
 }
 
 void RTCDataChannelRemoteManager::RemoteSourceConnection::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, size_t amount)

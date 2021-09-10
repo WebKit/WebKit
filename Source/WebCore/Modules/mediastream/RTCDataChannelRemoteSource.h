@@ -30,6 +30,7 @@
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCDataChannelIdentifier.h"
 #include "RTCDataChannelRemoteSourceConnection.h"
+#include "RTCError.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ private:
     void didChangeReadyState(RTCDataChannelState state) final { m_connection->didChangeReadyState(m_identifier, state); }
     void didReceiveStringData(const String& text) final { m_connection->didReceiveStringData(m_identifier, text); }
     void didReceiveRawData(const uint8_t* data, size_t size) final { m_connection->didReceiveRawData(m_identifier, data, size); }
-    void didDetectError() final { m_connection->didDetectError(m_identifier); }
+    void didDetectError(Ref<RTCError>&& error) final { m_connection->didDetectError(m_identifier, error->errorDetail(), error->message()); }
     void bufferedAmountIsDecreasing(size_t amount) final { m_connection->bufferedAmountIsDecreasing(m_identifier, amount); }
 
     RTCDataChannelIdentifier m_identifier;

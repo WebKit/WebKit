@@ -45,6 +45,7 @@ enum class RtpTransceiverDirection;
 namespace WebCore {
 
 class Exception;
+class RTCError;
 
 struct RTCRtpParameters;
 struct RTCRtpSendParameters;
@@ -64,6 +65,7 @@ webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit&, 
 
 ExceptionCode toExceptionCode(webrtc::RTCErrorType);
 Exception toException(const webrtc::RTCError&);
+RefPtr<RTCError> toRTCError(const webrtc::RTCError&);
 
 RTCPriorityType toRTCPriorityType(webrtc::Priority);
 webrtc::Priority fromRTCPriorityType(RTCPriorityType);

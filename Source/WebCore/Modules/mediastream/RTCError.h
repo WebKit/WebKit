@@ -45,6 +45,7 @@ public:
     };
 
     static Ref<RTCError> create(const Init& init, String&& message) { return adoptRef(*new RTCError(init, WTFMove(message))); }
+    static Ref<RTCError> create(RTCErrorDetailType type, String&& message) { return create({ type, { }, { }, { }, { } }, WTFMove(message)); }
 
     RTCErrorDetailType errorDetail() const { return m_values.errorDetail; }
     std::optional<int> sdpLineNumber() const  { return m_values.sdpLineNumber; }
@@ -53,7 +54,7 @@ public:
     std::optional<unsigned> sentAlert() const  { return m_values.sentAlert; }
 
 private:
-    RTCError(const Init&, String&&);
+    WEBCORE_EXPORT RTCError(const Init&, String&&);
 
     Init m_values;
 };

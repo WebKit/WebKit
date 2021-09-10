@@ -80,10 +80,10 @@ void RTCDataChannelRemoteManagerProxy::receiveData(WebCore::RTCDataChannelIdenti
         IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::ReceiveData { identifier, isRaw, data }, 0);
 }
 
-void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdentifier identifier)
+void RTCDataChannelRemoteManagerProxy::detectError(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCErrorDetailType detail, const String& message)
 {
     if (auto connectionID = m_webProcessConnections.get(identifier.processIdentifier))
-        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier }, 0);
+        IPC::Connection::send(connectionID, Messages::RTCDataChannelRemoteManager::DetectError { identifier, detail, message }, 0);
 }
 
 void RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing(WebCore::RTCDataChannelIdentifier identifier, size_t amount)

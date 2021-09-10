@@ -39,11 +39,15 @@ public:
         RefPtr<RTCError> error;
     };
     static Ref<RTCErrorEvent> create(const AtomString& type, Init&& init, IsTrusted isTrusted = IsTrusted::No) { return adoptRef(*new RTCErrorEvent(type, WTFMove(init), isTrusted)); }
+    static Ref<RTCErrorEvent> create(const AtomString& type, RefPtr<RTCError>&& error) { return create(type, Init { { }, WTFMove(error) }, IsTrusted::Yes); }
 
     RTCError& error() const { return m_error.get(); }
 
 private:
     RTCErrorEvent(const AtomString& type, Init&&, IsTrusted);
+
+    // Event
+    EventInterface eventInterface() const final { return RTCErrorEventInterfaceType; }
 
     Ref<RTCError> m_error;
 };
