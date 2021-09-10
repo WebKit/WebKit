@@ -126,8 +126,7 @@ static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& conte
 
 bool Navigator::canShare(Document& document, const ShareData& data)
 {
-    auto* frame = this->frame();
-    if (!frame || !frame->page())
+    if (!document.isFullyActive())
         return false;
 
     bool hasShareableTitleOrText = !data.title.isNull() || !data.text.isNull();
@@ -143,6 +142,11 @@ bool Navigator::canShare(Document& document, const ShareData& data)
 
 void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPromise>&& promise)
 {
+    if (!document.isFullyActive()) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
     if (m_hasPendingShare) {
         promise->reject(NotAllowedError);
         return;

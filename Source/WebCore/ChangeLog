@@ -1,3 +1,16 @@
+2021-09-10  Marcos Caceres  <marcos@marcosc.com>
+
+        [Web-Share] handle non-fully active documents
+        https://bugs.webkit.org/show_bug.cgi?id=230088
+
+        Reviewed by Darin Adler.
+
+        Test: imported/w3c/web-platform-tests/web-share/test-fully-active.https.html
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::canShare):
+        (WebCore::Navigator::share):
+
 2021-09-10  Youenn Fablet  <youenn@apple.com>
 
         Implement RTCPeerConnection implicit rollback
