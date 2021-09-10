@@ -201,7 +201,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/Scripts/run-bindings-tests'],
+                command=['python3', 'Tools/Scripts/run-bindings-tests'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='bindings-tests')
@@ -214,7 +214,7 @@ class TestRunBindingsTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/Scripts/run-bindings-tests'],
+                command=['python3', 'Tools/Scripts/run-bindings-tests'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAIL: (JS) JSTestInterface.cpp'),
         )
@@ -237,7 +237,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/CISupport/kill-old-processes', 'buildbot'],
+                command=['python3', 'Tools/CISupport/kill-old-processes', 'buildbot'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='killed old processes')
@@ -250,7 +250,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/CISupport/kill-old-processes', 'buildbot'],
+                command=['python3', 'Tools/CISupport/kill-old-processes', 'buildbot'],
             ) + 2
             + ExpectShell.log('stdio', stdout='Unexpected error.'),
         )
@@ -323,7 +323,7 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=1200,
                         logEnviron=True,
-                        command=['perl', './Tools/Scripts/update-webkitgtk-libs', '--release'],
+                        command=['perl', 'Tools/Scripts/update-webkitgtk-libs', '--release'],
                         )
             + 0,
         )
@@ -339,7 +339,7 @@ class TestInstallGtkDependencies(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/update-webkitgtk-libs', '--debug'],
+                command=['perl', 'Tools/Scripts/update-webkitgtk-libs', '--debug'],
             ) + 2
             + ExpectShell.log('stdio', stdout='Unexpected error.'),
         )
@@ -364,7 +364,7 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/update-webkitwpe-libs', '--release'],
+                command=['perl', 'Tools/Scripts/update-webkitwpe-libs', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='updated wpe dependencies')
@@ -379,7 +379,7 @@ class TestInstallWpeDependencies(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/update-webkitwpe-libs', '--release'],
+                command=['perl', 'Tools/Scripts/update-webkitwpe-libs', '--release'],
             ) + 2
             + ExpectShell.log('stdio', stdout='Unexpected error.'),
         )
@@ -404,7 +404,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/build-webkit', '--release'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -420,7 +420,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -436,7 +436,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/build-webkit', '--release', '--wpe'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -451,7 +451,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/build-webkit', '--debug'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
             ) + 2
             + ExpectShell.log('stdio', stdout='1 error generated.'),
         )
@@ -476,7 +476,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/build-jsc', '--release'],
+                command=['perl', 'Tools/Scripts/build-jsc', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -490,7 +490,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/build-jsc', '--debug'],
+                command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
             ) + 2
             + ExpectShell.log('stdio', stdout='1 error generated.'),
         )
@@ -552,7 +552,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/test-webkitperl'],
+                command=['perl', 'Tools/Scripts/test-webkitperl'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='webkitperl-test')
@@ -565,7 +565,7 @@ class TestRunWebKitPerlTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['perl', './Tools/Scripts/test-webkitperl'],
+                command=['perl', 'Tools/Scripts/test-webkitperl'],
             ) + 2
             + ExpectShell.log('stdio', stdout='''Failed tests:  1-3, 5-7, 9, 11-13
 Files=40, Tests=630,  4 wallclock secs ( 0.16 usr  0.09 sys +  2.78 cusr  0.64 csys =  3.67 CPU)
@@ -599,7 +599,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose',
                          '--buildbot-master', CURRENT_HOSTNAME,
                          '--builder-name', 'WebKitPy-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -617,7 +617,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose',
                          '--buildbot-master', CURRENT_HOSTNAME,
                          '--builder-name', 'WebKitPy-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -635,7 +635,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose',
                          '--buildbot-master', CURRENT_HOSTNAME,
                          '--builder-name', 'WebKitPy-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -654,7 +654,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose',
                          '--buildbot-master', CURRENT_HOSTNAME,
                          '--builder-name', 'WebKitPy-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -673,7 +673,7 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/test-webkitpy', '--verbose',
+                command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose',
                          '--buildbot-master', CURRENT_HOSTNAME,
                          '--builder-name', 'WebKitPy-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -702,7 +702,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='lldb-webkit-test')
@@ -716,7 +716,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
@@ -730,7 +730,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=2, errors=0)'),
         )
@@ -745,7 +745,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=0, errors=2)'),
         )
@@ -760,7 +760,7 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', './Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=30, errors=2)'),
         )
@@ -793,7 +793,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -817,7 +817,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -844,7 +844,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -869,7 +869,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -894,7 +894,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -936,7 +936,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'Apple-iOS-14-Simulator-Debug-Build',
                          '--build-number', '101', '--buildbot-worker', 'bot100',
@@ -959,7 +959,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 logEnviron=False,
-                command=['python3', './Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'Apple-iOS-14-Simulator-Debug-Build',
                          '--build-number', '101', '--buildbot-worker', 'bot100',
@@ -1004,7 +1004,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', './Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )
@@ -1018,7 +1018,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', './Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )

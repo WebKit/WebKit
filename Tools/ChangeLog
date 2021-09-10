@@ -1,3 +1,13 @@
+2021-09-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Remove ./ from command invocations
+        https://bugs.webkit.org/show_bug.cgi?id=230165
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/build-webkit-org/steps.py: Removed ./ from command invocations to be consistent with EWS configuration.
+        * CISupport/build-webkit-org/steps_unittest.py: Updatd unit-tests.
+
 2021-09-10  Alex Christensen  <achristensen@webkit.org>
 
         Add infrastructure to allow TLS during PCM tests
