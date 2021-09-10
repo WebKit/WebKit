@@ -243,7 +243,9 @@ void RTCPeerConnection::setLocalDescription(std::optional<Description>&& localDe
 
     ALWAYS_LOG(LOGIDENTIFIER, "Setting local description to:\n", description ? description->sdp() : "''");
     chainOperation(WTFMove(promise), [this, description = WTFMove(description)](auto&& promise) mutable {
-        m_backend->setLocalDescription(description.get(), WTFMove(promise));
+        m_backend->setLocalDescription(description.get(), [promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+            promise.settle(WTFMove(result));
+        });
     });
 }
 
@@ -267,7 +269,20 @@ void RTCPeerConnection::setRemoteDescription(Description&& remoteDescription, Re
 
     ALWAYS_LOG(LOGIDENTIFIER, "Setting remote description to:\n", description->sdp());
     chainOperation(WTFMove(promise), [this, description = WTFMove(description)](auto&& promise) mutable {
-        m_backend->setRemoteDescription(*description, WTFMove(promise));
+        if (description->type() == RTCSdpType::Offer && m_signalingState != RTCSignalingState::Stable && m_signalingState != RTCSignalingState::HaveRemoteOffer) {
+            auto rollbackDescription = RTCSessionDescription::create(RTCSdpType::Rollback, String { emptyString() });
+            m_backend->setLocalDescription(rollbackDescription.ptr(), [this, protectedThis = makeRef(*this), description = WTFMove(description), promise = WTFMove(promise)](auto&&) mutable {
+                if (isClosed())
+                    return;
+                m_backend->setRemoteDescription(*description, [promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+                    promise.settle(WTFMove(result));
+                });
+            });
+            return;
+        }
+        m_backend->setRemoteDescription(*description, [promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+            promise.settle(WTFMove(result));
+        });
     });
 }
 

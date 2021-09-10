@@ -167,11 +167,11 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
     });
 }
 
-void PeerConnectionBackend::setLocalDescription(const RTCSessionDescription* sessionDescription, DOMPromiseDeferred<void>&& promise)
+void PeerConnectionBackend::setLocalDescription(const RTCSessionDescription* sessionDescription, Function<void(ExceptionOr<void>&&)>&& callback)
 {
     ASSERT(!m_peerConnection.isClosed());
 
-    m_setDescriptionPromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_setDescriptionCallback = WTFMove(callback);
     doSetLocalDescription(sessionDescription);
 }
 
@@ -180,8 +180,8 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    ASSERT(m_setDescriptionCallback);
+    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -189,7 +189,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
         m_peerConnection.updateTransceiversAfterSuccessfulLocalDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
-        promise->resolve();
+        callback({ });
     });
 }
 
@@ -198,20 +198,20 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set local description failed:", exception.message());
 
-    ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+    ASSERT(m_setDescriptionCallback);
+    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), exception = WTFMove(exception)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
-        promise->reject(WTFMove(exception));
+        callback(WTFMove(exception));
     });
 }
 
-void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& sessionDescription, DOMPromiseDeferred<void>&& promise)
+void PeerConnectionBackend::setRemoteDescription(const RTCSessionDescription& sessionDescription, Function<void(ExceptionOr<void>&&)>&& callback)
 {
     ASSERT(!m_peerConnection.isClosed());
 
-    m_setDescriptionPromise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
+    m_setDescriptionCallback = WTFMove(callback);
     doSetRemoteDescription(sessionDescription);
 }
 
@@ -219,9 +219,9 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
-    ASSERT(m_setDescriptionPromise);
+    ASSERT(m_setDescriptionCallback);
 
-    auto promise = WTFMove(m_setDescriptionPromise);
+    auto callback = WTFMove(m_setDescriptionCallback);
     auto events = WTFMove(m_pendingTrackEvents);
     for (auto& event : events) {
         auto& track = event.track.get();
@@ -236,7 +236,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         track.source().setMuted(false);
     }
 
-    m_peerConnection.doTask([this, promise = WTFMove(promise), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.doTask([this, callback = WTFMove(callback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -244,7 +244,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
         m_peerConnection.updateTransceiversAfterSuccessfulRemoteDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
-        promise->resolve();
+        callback({ });
     });
 }
 
@@ -256,12 +256,12 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     ASSERT(m_pendingTrackEvents.isEmpty());
     m_pendingTrackEvents.clear();
 
-    ASSERT(m_setDescriptionPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_setDescriptionPromise), exception = WTFMove(exception)]() mutable {
+    ASSERT(m_setDescriptionCallback);
+    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), exception = WTFMove(exception)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
-        promise->reject(WTFMove(exception));
+        callback(WTFMove(exception));
     });
 }
 
@@ -407,7 +407,7 @@ void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingS
 void PeerConnectionBackend::stop()
 {
     m_offerAnswerPromise = nullptr;
-    m_setDescriptionPromise = nullptr;
+    m_setDescriptionCallback = nullptr;
 
     m_pendingTrackEvents.clear();
 

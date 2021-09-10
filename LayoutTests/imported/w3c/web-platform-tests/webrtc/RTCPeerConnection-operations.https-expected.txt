@@ -26,7 +26,7 @@ PASS pc.getStats does NOT use the operations chain
 PASS sender.getStats does NOT use the operations chain
 PASS receiver.getStats does NOT use the operations chain
 FAIL addIceCandidate chains onto SRD, fails before assert_equals: expected "InvalidStateError" but got "OperationError"
-FAIL Operations queue not vulnerable to recursion by chained negotiationneeded promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+PASS Operations queue not vulnerable to recursion by chained negotiationneeded
 FAIL Pack operations queue with implicit offer and answer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
 TIMEOUT Negotiate solely by operations queue and signaling state Test timed out
 

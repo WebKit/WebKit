@@ -10,14 +10,14 @@ PASS rollback of a remote offer should keep a transceiver
 PASS rollback of a remote offer should keep a transceiver created by addtrack
 PASS rollback of a remote offer should keep a transceiver without tracks
 PASS explicit rollback of local offer should remove transceivers and transport
-FAIL when using addTransceiver, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded until we settle in stable promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
-FAIL when using addTrack, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+PASS when using addTransceiver, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded until we settle in stable
+PASS when using addTrack, implicit rollback of a local offer should visit stable state, but not fire negotiationneeded
 PASS rollback of a remote offer to negotiated stable state should enable applying of a local offer
 PASS rollback of a local offer to negotiated stable state should enable applying of a remote offer
 PASS rollback a local offer with audio direction change to negotiated stable state and then add video receiver
-FAIL two transceivers with same mids promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+PASS two transceivers with same mids
 PASS onremovetrack fires during remote rollback
 FAIL rollback of a remote offer with stream changes assert_equals: expected 2 but got 1
 PASS removeTrack() with a sender being rolled back does not crash or throw
-FAIL Implicit rollback with only a datachannel works promise_test: Unhandled rejection with value: object "InvalidStateError: Failed to set remote offer sdp: Called in wrong state: have-local-offer"
+PASS Implicit rollback with only a datachannel works
 

@@ -1,5 +1,19 @@
 2021-09-10  Youenn Fablet  <youenn@apple.com>
 
+        Implement RTCPeerConnection implicit rollback
+        https://bugs.webkit.org/show_bug.cgi?id=229991
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-operations.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-rollback-expected.txt:
+
+2021-09-10  Youenn Fablet  <youenn@apple.com>
+
         Allow to subclass WritableStream
         https://bugs.webkit.org/show_bug.cgi?id=230146
 

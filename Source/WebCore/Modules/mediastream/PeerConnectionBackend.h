@@ -94,8 +94,8 @@ public:
 
     void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
-    void setLocalDescription(const RTCSessionDescription*, DOMPromiseDeferred<void>&&);
-    void setRemoteDescription(const RTCSessionDescription&, DOMPromiseDeferred<void>&&);
+    void setLocalDescription(const RTCSessionDescription*, Function<void(ExceptionOr<void>&&)>&&);
+    void setRemoteDescription(const RTCSessionDescription&, Function<void(ExceptionOr<void>&&)>&&);
     void addIceCandidate(RTCIceCandidate*, DOMPromiseDeferred<void>&&);
 
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
@@ -235,7 +235,7 @@ protected:
 
 private:
     std::unique_ptr<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
-    std::unique_ptr<DOMPromiseDeferred<void>> m_setDescriptionPromise;
+    Function<void(ExceptionOr<void>&&)> m_setDescriptionCallback;
 
     bool m_shouldFilterICECandidates { true };
 
