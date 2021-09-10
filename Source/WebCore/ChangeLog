@@ -1,3 +1,19 @@
+2021-09-10  Jean-Yves Avenard  <jya@apple.com>
+
+        Use of memcpy with overlapping memory pointers
+        https://bugs.webkit.org/show_bug.cgi?id=230140
+        rdar://82946555
+
+        Reviewed by David Kilzer.
+
+        We use memcpy with overlapping pointers which triggers Asan. In practice,
+        with how memcpy was used the behaviour wasn't undefined and so would have
+        been fine.
+        Already covered by existing tests.
+
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::AudioFileReader::decodeWebMData const): Replace memcpy with memmove
+
 2021-09-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         The document.fonts accessor should not update style
