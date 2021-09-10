@@ -41,6 +41,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TextBoxPainter.h"
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -936,7 +937,7 @@ inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& t
     
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 
-    auto documentMarkerBounds = textBox.calculateUnionOfAllDocumentMarkerBounds();
+    auto documentMarkerBounds = TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(textBox);
     documentMarkerBounds.move(textBox.logicalLeft(), textBox.logicalTop());
     logicalVisualOverflow = unionRect(logicalVisualOverflow, LayoutRect(documentMarkerBounds));
 

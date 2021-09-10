@@ -227,4 +227,155 @@ void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const F
         context.concatCTM(rotation(m_boxRect, Counterclockwise));
 }
 
+void TextBoxPainter::paintCompositionUnderlines()
+{
+    if (m_textBox.truncation() == cFullTruncation)
+        return;
+
+    for (auto& underline : m_textBox.renderer().frame().editor().customCompositionUnderlines()) {
+        if (underline.endOffset <= m_textBox.start()) {
+            // Underline is completely before this run. This might be an underline that sits
+            // before the first run we draw, or underlines that were within runs we skipped
+            // due to truncation.
+            continue;
+        }
+
+        if (underline.startOffset >= m_textBox.end())
+            break; // Underline is completely after this run, bail. A later run will paint it.
+
+        // Underline intersects this run. Paint it.
+        paintCompositionUnderline(underline);
+
+        if (underline.endOffset > m_textBox.end())
+            break; // Underline also runs into the next run. Bail now, no more marker advancement.
+    }
+}
+
+static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
+{
+    if (direction == TextDirection::LTR)
+        return;
+    start = logicalWidth - width - start;
+}
+
+void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& underline)
+{
+    auto& renderer = m_textBox.renderer();
+
+    float start = 0; // start of line to draw, relative to tx
+    float width = m_textBox.logicalWidth(); // how much line to draw
+    bool useWholeWidth = true;
+    unsigned paintStart = m_textBox.start();
+    unsigned paintEnd = m_textBox.end();
+    if (paintStart <= underline.startOffset) {
+        paintStart = underline.startOffset;
+        useWholeWidth = false;
+        start = renderer.width(m_textBox.start(), paintStart - m_textBox.start(), m_textBox.textPos(), m_textBox.isFirstLine());
+    }
+    if (paintEnd != underline.endOffset) {
+        paintEnd = std::min(paintEnd, (unsigned)underline.endOffset);
+        useWholeWidth = false;
+    }
+    if (m_textBox.truncation() != cNoTruncation) {
+        paintEnd = std::min(paintEnd, m_textBox.start() + m_textBox.truncation());
+        useWholeWidth = false;
+    }
+    if (!useWholeWidth) {
+        width = renderer.width(paintStart, paintEnd - paintStart, m_textBox.textPos() + start, m_textBox.isFirstLine());
+        mirrorRTLSegment(m_textBox.logicalWidth(), m_textBox.direction(), start, width);
+    }
+
+    // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
+    // All other marked text underlines are 1px thick.
+    // If there's not enough space the underline will touch or overlap characters.
+    int lineThickness = 1;
+    int baseline = m_textBox.lineStyle().fontMetrics().ascent();
+    if (underline.thick && m_textBox.logicalHeight() - baseline >= 2)
+        lineThickness = 2;
+
+    // We need to have some space between underlines of subsequent clauses, because some input methods do not use different underline styles for those.
+    // We make each line shorter, which has a harmless side effect of shortening the first and last clauses, too.
+    start += 1;
+    width -= 2;
+
+    GraphicsContext& context = m_paintInfo.context();
+    Color underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? renderer.style().visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : renderer.style().colorByApplyingColorFilter(underline.color);
+    context.setStrokeColor(underlineColor);
+    context.setStrokeThickness(lineThickness);
+    context.drawLineForText(FloatRect(m_boxRect.x() + start, m_boxRect.y() + m_textBox.logicalHeight() - lineThickness, width, lineThickness), renderer.document().printing());
+}
+
+void TextBoxPainter::paintPlatformDocumentMarkers()
+{
+    auto markedTexts = MarkedText::collectForDocumentMarkers(m_textBox.renderer(), m_textBox.selectableRange(), MarkedText::PaintPhase::Decoration);
+    for (auto& markedText : MarkedText::subdivide(markedTexts, MarkedText::OverlapStrategy::Frontmost))
+        paintPlatformDocumentMarker(markedText);
+}
+
+FloatRect TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox& textBox)
+{
+    // This must match paintPlatformDocumentMarkers().
+    FloatRect result;
+    auto markedTexts = MarkedText::collectForDocumentMarkers(textBox.renderer(), textBox.selectableRange(), MarkedText::PaintPhase::Decoration);
+    for (auto& markedText : MarkedText::subdivide(markedTexts, MarkedText::OverlapStrategy::Frontmost))
+        result = unionRect(result, calculateDocumentMarkerBounds(textBox, markedText));
+    return result;
+}
+
+void TextBoxPainter::paintPlatformDocumentMarker(const MarkedText& markedText)
+{
+    // Never print spelling/grammar markers (5327887)
+    if (m_textBox.renderer().document().printing())
+        return;
+
+    if (m_textBox.truncation() == cFullTruncation)
+        return;
+
+    auto bounds = calculateDocumentMarkerBounds(m_textBox, markedText);
+
+    auto lineStyleForMarkedTextType = [&]() -> DocumentMarkerLineStyle {
+        bool shouldUseDarkAppearance = m_textBox.renderer().useDarkAppearance();
+        switch (markedText.type) {
+        case MarkedText::SpellingError:
+            return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };
+        case MarkedText::GrammarError:
+            return { DocumentMarkerLineStyle::Mode::Grammar, shouldUseDarkAppearance };
+        case MarkedText::Correction:
+            return { DocumentMarkerLineStyle::Mode::AutocorrectionReplacement, shouldUseDarkAppearance };
+        case MarkedText::DictationAlternatives:
+            return { DocumentMarkerLineStyle::Mode::DictationAlternatives, shouldUseDarkAppearance };
+#if PLATFORM(IOS_FAMILY)
+        case MarkedText::DictationPhraseWithAlternatives:
+            // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS_FAMILY)-guard.
+            return { DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives, shouldUseDarkAppearance };
+#endif
+        default:
+            ASSERT_NOT_REACHED();
+            return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };
+        }
+    };
+
+    bounds.moveBy(m_boxRect.location());
+    m_paintInfo.context().drawDotsForDocumentMarker(bounds, lineStyleForMarkedTextType());
+}
+
+FloatRect TextBoxPainter::calculateDocumentMarkerBounds(const LegacyInlineTextBox& textBox, const MarkedText& markedText)
+{
+    auto& font = textBox.lineFont();
+    auto ascent = font.fontMetrics().ascent();
+    auto fontSize = std::min(std::max(font.size(), 10.0f), 40.0f);
+    auto y = ascent + 0.11035 * fontSize;
+    auto height = 0.13247 * fontSize;
+
+    // Avoid measuring the text when the entire line box is selected as an optimization.
+    if (markedText.startOffset || markedText.endOffset != textBox.selectableRange().clamp(textBox.end())) {
+        TextRun run = textBox.createTextRun();
+        LayoutRect selectionRect = LayoutRect(0, y, 0, height);
+        textBox.lineFont().adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
+        return selectionRect;
+    }
+
+    return FloatRect(0, y, textBox.logicalWidth(), height);
+}
+
 }

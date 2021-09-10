@@ -1,3 +1,35 @@
+2021-09-10  Antti Koivisto  <antti@apple.com>
+
+        Factor more text painting functions to TextBoxPainter
+        https://bugs.webkit.org/show_bug.cgi?id=230155
+
+        Reviewed by Alan Bujtas.
+
+        Composition underlines and document markers.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::paint):
+        (WebCore::LegacyInlineTextBox::paintPlatformDocumentMarkers): Deleted.
+        (WebCore::LegacyInlineTextBox::calculateUnionOfAllDocumentMarkerBounds const): Deleted.
+        (WebCore::LegacyInlineTextBox::calculateDocumentMarkerBounds const): Deleted.
+        (WebCore::LegacyInlineTextBox::paintPlatformDocumentMarker): Deleted.
+        (WebCore::LegacyInlineTextBox::paintCompositionUnderlines const): Deleted.
+        (WebCore::mirrorRTLSegment): Deleted.
+        (WebCore::LegacyInlineTextBox::paintCompositionUnderline const): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintCompositionUnderlines):
+        (WebCore::mirrorRTLSegment):
+        (WebCore::TextBoxPainter::paintCompositionUnderline):
+        (WebCore::TextBoxPainter::paintPlatformDocumentMarkers):
+        (WebCore::TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds):
+        (WebCore::TextBoxPainter::paintPlatformDocumentMarker):
+        (WebCore::TextBoxPainter::calculateDocumentMarkerBounds):
+        * rendering/TextBoxPainter.h:
+
 2021-09-10  Antoine Quint  <graouts@webkit.org>
 
         [Media Controls] Allow buttons in a controls bar to have standalone background tint

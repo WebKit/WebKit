@@ -28,9 +28,10 @@
 
 namespace WebCore {
 
-class FontCascade;
+class Color;
 class LegacyInlineTextBox;
-class RenderCombineText;
+struct CompositionUnderline;
+struct MarkedText;
 struct PaintInfo;
 struct StyledMarkedText;
 
@@ -43,10 +44,18 @@ public:
     void paintBackground(const StyledMarkedText&);
     void paintForeground(const StyledMarkedText&);
     void paintDecoration(const StyledMarkedText&, const FloatRect& clipOutRect);
+    void paintCompositionUnderlines();
+    void paintPlatformDocumentMarkers();
+
+    static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
 
 private:
     enum class BackgroundStyle { Normal, Rounded };
     void paintBackground(unsigned startOffset, unsigned endOffset, const Color&, BackgroundStyle = BackgroundStyle::Normal);
+    void paintCompositionUnderline(const CompositionUnderline&);
+    void paintPlatformDocumentMarker(const MarkedText&);
+    
+    static FloatRect calculateDocumentMarkerBounds(const LegacyInlineTextBox&, const MarkedText&);
 
     const LegacyInlineTextBox& m_textBox;
     PaintInfo& m_paintInfo;
