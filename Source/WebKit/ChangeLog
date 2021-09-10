@@ -1,3 +1,48 @@
+2021-09-10  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282174. rdar://problem/82828605
+
+    Remove responsiveness timer in NetworkProcessProxy::getNetworkProcessConnection
+    https://bugs.webkit.org/show_bug.cgi?id=230016
+    rdar://problem/80760179
+    
+    Reviewed by Chris Dumez.
+    
+    We've seen evidence that network process may be blocked in initializeNetworkProcess. Since we have a 3-second
+    responsiveness timer in NetworkProcessProxy::getNetworkProcessConnection, blocked network process will be killed
+    and a new network process will be launched for getting connection. However, the new network process may get
+    stuck in initializeNetworkProcess too. In this case, web process will crash for not being able to get network
+    process connection.
+    
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp: change RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE to
+    RELEASE_LOG_ERROR as the message is not printed in non-debug build.
+    (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282174 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-08  Sihui Liu  <sihui_liu@apple.com>
+
+            Remove responsiveness timer in NetworkProcessProxy::getNetworkProcessConnection
+            https://bugs.webkit.org/show_bug.cgi?id=230016
+            rdar://problem/80760179
+
+            Reviewed by Chris Dumez.
+
+            We've seen evidence that network process may be blocked in initializeNetworkProcess. Since we have a 3-second
+            responsiveness timer in NetworkProcessProxy::getNetworkProcessConnection, blocked network process will be killed
+            and a new network process will be launched for getting connection. However, the new network process may get
+            stuck in initializeNetworkProcess too. In this case, web process will crash for not being able to get network
+            process connection.
+
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp: change RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE to
+            RELEASE_LOG_ERROR as the message is not printed in non-debug build.
+            (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+
 2021-09-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282003. rdar://problem/82828665
