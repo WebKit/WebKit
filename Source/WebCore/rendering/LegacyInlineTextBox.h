@@ -163,26 +163,20 @@ public:
     FloatRect calculateDocumentMarkerBounds(const MarkedText&) const;
 
 private:
-    FloatPoint textOriginFromBoxRect(const FloatRect&) const;
+    friend class TextBoxPainter;
 
-    void paintMarkedTexts(PaintInfo&, MarkedText::PaintPhase, const FloatRect& boxRect, const Vector<StyledMarkedText>&, const FloatRect& decorationClipOutRect = { });
+    FloatPoint textOriginFromBoxRect(const FloatRect&) const;
 
     void paintPlatformDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkedText&);
     void paintPlatformDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin);
 
-    void paintCompositionBackground(PaintInfo&, const FloatPoint& boxOrigin);
     void paintCompositionUnderlines(PaintInfo&, const FloatPoint& boxOrigin) const;
     void paintCompositionUnderline(PaintInfo&, const FloatPoint& boxOrigin, const CompositionUnderline&) const;
-
-    enum class MarkedTextBackgroundStyle : bool { Default, Rounded };
-    void paintMarkedTextBackground(PaintInfo&, const FloatPoint& boxOrigin, const Color&, unsigned clampedStartOffset, unsigned clampedEndOffset, MarkedTextBackgroundStyle = MarkedTextBackgroundStyle::Default);
-    void paintMarkedTextForeground(PaintInfo&, const FloatRect& boxRect, const StyledMarkedText&);
-    void paintMarkedTextDecoration(PaintInfo&, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText&);
 
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
 
-    ShadowData* debugTextShadow();
+    const ShadowData* debugTextShadow() const;
 
     String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The effective text for the run.
     TextRun createTextRun(bool ignoreCombinedText = false, bool ignoreHyphen = false) const;

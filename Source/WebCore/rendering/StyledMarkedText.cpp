@@ -111,7 +111,6 @@ static StyledMarkedText::Style computeStyleForUnmarkedMarkedText(const RenderTex
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine);
     style.textStyles = computeTextPaintStyle(renderer.frame(), lineStyle, paintInfo);
     style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
-    style.alpha = 1;
     return style;
 }
 

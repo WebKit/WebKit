@@ -1,3 +1,42 @@
+2021-09-10  Antti Koivisto  <antti@apple.com>
+
+        Factor painting functions from LegacyInlineTextBox into a class
+        https://bugs.webkit.org/show_bug.cgi?id=230147
+
+        Reviewed by Alan Bujtas.
+
+        Add TextBoxPainter class and move some of the painting functions from LegacyInlineTextBox there.
+
+        This patch is largely mechanical but will make it easier to decouple text painting from the legacy
+        inline boxes in the future.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::paint):
+        (WebCore::LegacyInlineTextBox::debugTextShadow const):
+        (WebCore::LegacyInlineTextBox::paintMarkedTexts): Deleted.
+        (WebCore::LegacyInlineTextBox::paintMarkedTextBackground): Deleted.
+        (WebCore::LegacyInlineTextBox::paintMarkedTextForeground): Deleted.
+        (WebCore::LegacyInlineTextBox::paintMarkedTextDecoration): Deleted.
+        (WebCore::LegacyInlineTextBox::paintCompositionBackground): Deleted.
+        (WebCore::LegacyInlineTextBox::debugTextShadow): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        (WebCore::LegacyInlineTextBox::paintMarkedTexts): Deleted.
+        * rendering/MarkedText.h:
+        * rendering/StyledMarkedText.cpp:
+        (WebCore::resolveStyleForMarkedText):
+        (WebCore::computeStyleForUnmarkedMarkedText):
+        * rendering/StyledMarkedText.h:
+        * rendering/TextBoxPainter.cpp: Added.
+        (WebCore::TextBoxPainter::TextBoxPainter):
+        (WebCore::TextBoxPainter::~TextBoxPainter):
+        (WebCore::TextBoxPainter::paintCompositionBackground):
+        (WebCore::TextBoxPainter::paintBackground):
+        (WebCore::TextBoxPainter::paintForeground):
+        (WebCore::TextBoxPainter::paintDecoration):
+        * rendering/TextBoxPainter.h: Added.
+
 2021-09-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Add support for self-start & self-end css-align-3 positional alignment properties
