@@ -1,5 +1,26 @@
 2021-09-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
+        [GLIB] Add platform-specific baselines for WPT canvas tests added in r282203
+        https://bugs.webkit.org/show_bug.cgi?id=230163
+
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/drawimage_canvas-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/image-smoothing/imagesmoothing-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-resize-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-invalid-args-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-serializable-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-transfer-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/shadowBlur_gaussian_tolerance.1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-drawImage-offscreenCanvas-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-getImageData-e_srgb-expected.txt: Added.
+
+2021-09-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
         [GLIB] Update test baselines after r282256
         https://bugs.webkit.org/show_bug.cgi?id=230160
 
