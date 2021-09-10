@@ -32,6 +32,7 @@
 #include "PrivateClickMeasurementDecoder.h"
 #include "PrivateClickMeasurementEncoder.h"
 #include "PrivateClickMeasurementManager.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
@@ -114,6 +115,10 @@ ARGUMENTS()
 REPLY()
 END
 
+FUNCTION(allowTLSCertificateChainForLocalPCMTesting)
+ARGUMENTS(WebCore::CertificateInfo)
+END
+
 #undef FUNCTION
 #undef ARGUMENTS
 #undef REPLY
@@ -149,6 +154,7 @@ bool messageTypeSendsReply(MessageType messageType)
     case MessageType::SetEphemeralMeasurementForTesting:
     case MessageType::SetPCMFraudPreventionValuesForTesting:
     case MessageType::StartTimerImmediatelyForTesting:
+    case MessageType::AllowTLSCertificateChainForLocalPCMTesting:
         return false;
     case MessageType::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting:
     case MessageType::DestroyStoreForTesting:
@@ -249,6 +255,9 @@ void decodeMessageAndSendToManager(MessageType messageType, Vector<uint8_t>&& en
         break;
     case PCM::MessageType::DestroyStoreForTesting:
         handlePCMMessageWithReply<MessageInfo::destroyStoreForTesting>(WTFMove(encodedMessage), WTFMove(replySender));
+        break;
+    case PCM::MessageType::AllowTLSCertificateChainForLocalPCMTesting:
+        handlePCMMessage<MessageInfo::allowTLSCertificateChainForLocalPCMTesting>(WTFMove(encodedMessage));
         break;
     }
 }

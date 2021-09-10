@@ -650,7 +650,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_allowTLSCertificateChain:(NSArray *)certificateChain forHost:(NSString *)host
 {
-    _websiteDataStore->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain)).ptr(), host);
+    _websiteDataStore->allowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo((__bridge CFArrayRef)certificateChain), host);
+}
+
+- (void)_trustServerForLocalPCMTesting:(SecTrustRef)serverTrust
+{
+    _websiteDataStore->allowTLSCertificateChainForLocalPCMTesting(WebCore::CertificateInfo(serverTrust));
 }
 
 - (void)_appBoundDomains:(void (^)(NSArray<NSString *> *))completionHandler

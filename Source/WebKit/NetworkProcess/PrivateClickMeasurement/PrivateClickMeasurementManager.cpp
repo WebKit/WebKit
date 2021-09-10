@@ -548,4 +548,9 @@ void PrivateClickMeasurementManager::destroyStoreForTesting(CompletionHandler<vo
     });
 }
 
+void PrivateClickMeasurementManager::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
+{
+    PCM::NetworkLoader::allowTLSCertificateChainForLocalPCMTesting(certificateInfo);
+}
+
 } // namespace WebKit

@@ -2174,8 +2174,15 @@ void NetworkProcess::setCacheModel(CacheModel cacheModel)
 
 void NetworkProcess::setAllowsAnySSLCertificateForWebSocket(bool allows, CompletionHandler<void()>&& completionHandler)
 {
+    // FIXME: Stop using this when HAVE(NSURLSESSION_WEBSOCKET) is true.
     DeprecatedGlobalSettings::setAllowsAnySSLCertificate(allows);
     completionHandler();
+}
+
+void NetworkProcess::allowTLSCertificateChainForLocalPCMTesting(PAL::SessionID sessionID, const WebCore::CertificateInfo& certificateInfo)
+{
+    if (auto* networkSession = m_networkSessions.get(sessionID))
+        networkSession->allowTLSCertificateChainForLocalPCMTesting(certificateInfo);
 }
 
 void NetworkProcess::logDiagnosticMessage(WebPageProxyIdentifier webPageProxyID, const String& message, const String& description, ShouldSample shouldSample)

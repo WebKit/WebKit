@@ -390,6 +390,11 @@ void NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting()
     privateClickMeasurement().startTimerImmediatelyForTesting();
 }
 
+void NetworkSession::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
+{
+    privateClickMeasurement().allowTLSCertificateChainForLocalPCMTesting(certificateInfo);
+}
+
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)
 {
     ASSERT(m_sessionID == loader->sessionID());

@@ -35,7 +35,8 @@ class Decoder {
 public:
     Decoder(Vector<uint8_t>&& buffer)
         : m_buffer(WTFMove(buffer)) { }
-    
+    ~Decoder();
+
     template<typename T>
     Decoder& operator>>(std::optional<T>& t)
     {
@@ -55,7 +56,8 @@ public:
     }
 
     WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t, size_t alignment);
-    
+    const uint8_t* decodeFixedLengthReference(size_t, size_t);
+
 private:
     WARN_UNUSED_RETURN bool bufferIsLargeEnoughToContainBytes(size_t) const;
 

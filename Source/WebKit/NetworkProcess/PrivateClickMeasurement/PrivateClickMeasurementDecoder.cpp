@@ -30,6 +30,11 @@ namespace WebKit {
 
 namespace PCM {
 
+Decoder::~Decoder()
+{
+    ASSERT(m_bufferPosition == m_buffer.size());
+}
+
 bool Decoder::bufferIsLargeEnoughToContainBytes(size_t bytes) const
 {
     return bytes <= m_buffer.size() - m_bufferPosition;
@@ -42,6 +47,15 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t)
     memcpy(data, m_buffer.data() + m_bufferPosition, size);
     m_bufferPosition += size;
     return true;
+}
+
+const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t)
+{
+    if (!bufferIsLargeEnoughToContainBytes(size))
+        return nullptr;
+    const uint8_t* data = m_buffer.data() + m_bufferPosition;
+    m_bufferPosition += size;
+    return data;
 }
 
 } // namespace PCM

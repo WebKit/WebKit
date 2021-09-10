@@ -46,6 +46,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class CertificateInfo;
 class NetworkStorageSession;
 class ResourceRequest;
 enum class IncludeHttpOnlyCookies : bool;
@@ -137,6 +138,7 @@ public:
     void setPrivateClickMeasurementEphemeralMeasurementForTesting(bool);
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID);
     void firePrivateClickMeasurementTimerImmediatelyForTesting();
+    void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
     void addKeptAliveLoad(Ref<NetworkResourceLoader>&&);
     void removeKeptAliveLoad(NetworkResourceLoader&);

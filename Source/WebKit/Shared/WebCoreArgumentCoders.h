@@ -293,7 +293,9 @@ template<> struct ArgumentCoder<WebCore::SpringTimingFunction> {
 };
 
 template<> struct ArgumentCoder<WebCore::CertificateInfo> {
+    template<typename Encoder>
     static void encode(Encoder&, const WebCore::CertificateInfo&);
+    template<typename Decoder>
     static std::optional<WebCore::CertificateInfo> decode(Decoder&);
 };
 

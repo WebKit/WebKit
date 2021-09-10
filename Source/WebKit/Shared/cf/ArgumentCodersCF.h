@@ -77,7 +77,7 @@ template<> struct ArgumentCoder<CFDataRef> {
     template<typename Encoder> static void encode(Encoder&, CFDataRef);
 };
 template<> struct ArgumentCoder<RetainPtr<CFDataRef>> : CFRetainPtrArgumentCoder<CFDataRef> {
-    static std::optional<RetainPtr<CFDataRef>> decode(Decoder&);
+    template<typename Decoder> static std::optional<RetainPtr<CFDataRef>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<CFDateRef> {
@@ -152,7 +152,7 @@ template<> struct ArgumentCoder<SecTrustRef> {
     template<typename Encoder> static void encode(Encoder&, SecTrustRef);
 };
 template<> struct ArgumentCoder<RetainPtr<SecTrustRef>> : CFRetainPtrArgumentCoder<SecTrustRef> {
-    static std::optional<RetainPtr<SecTrustRef>> decode(Decoder&);
+    template<typename Decoder> static std::optional<RetainPtr<SecTrustRef>> decode(Decoder&);
 };
 #endif
 

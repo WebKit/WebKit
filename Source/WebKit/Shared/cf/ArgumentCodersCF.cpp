@@ -32,6 +32,8 @@
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "PrivateClickMeasurementDecoder.h"
+#include "PrivateClickMeasurementEncoder.h"
 #include "StreamConnectionEncoder.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/EnumTraits.h>
@@ -405,6 +407,7 @@ void ArgumentCoder<CFDataRef>::encode(Encoder& encoder, CFDataRef data)
 template void ArgumentCoder<CFDataRef>::encode<Encoder>(Encoder&, CFDataRef);
 template void ArgumentCoder<CFDataRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDataRef);
 
+template<typename Decoder>
 std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode(Decoder& decoder)
 {
     std::optional<IPC::DataReference> dataReference;
@@ -414,6 +417,9 @@ std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode(
 
     return adoptCF(CFDataCreate(0, dataReference->data(), dataReference->size()));
 }
+
+template std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode<Decoder>(Decoder&);
+template std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
 
 template<typename Encoder>
 void ArgumentCoder<CFDateRef>::encode(Encoder& encoder, CFDateRef date)
@@ -834,8 +840,10 @@ void ArgumentCoder<SecTrustRef>::encode(Encoder& encoder, SecTrustRef trust)
 }
 
 template void ArgumentCoder<SecTrustRef>::encode<Encoder>(Encoder&, SecTrustRef);
+template void ArgumentCoder<SecTrustRef>::encode<WebKit::PCM::Encoder>(WebKit::PCM::Encoder&, SecTrustRef);
 template void ArgumentCoder<SecTrustRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecTrustRef);
 
+template<typename Decoder>
 std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode(Decoder& decoder)
 {
     std::optional<bool> hasTrust;
@@ -857,6 +865,9 @@ std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::dec
 
     return WTFMove(trust);
 }
+
+template std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode<Decoder>(Decoder&);
+template std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
 #endif
 
 } // namespace IPC

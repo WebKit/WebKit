@@ -87,6 +87,7 @@ static void startListeningForMachServiceConnections()
 
         xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
             if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
+                NSLog(@"removing peer connection %p", peer);
                 peers().remove(peer);
                 return;
             }
@@ -94,7 +95,8 @@ static void startListeningForMachServiceConnections()
         });
         xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
         xpc_connection_activate(peer);
-        
+
+        NSLog(@"adding peer connection %p", peer);
         peers().add(peer);
     });
     xpc_connection_activate(listener.get().get());

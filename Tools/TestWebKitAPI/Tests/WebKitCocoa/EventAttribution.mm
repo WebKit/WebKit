@@ -75,6 +75,26 @@
 
 namespace TestWebKitAPI {
 
+static RetainPtr<SecTrustRef> secTrustFromCertificateChain(NSArray *chain)
+{
+    SecTrustRef trustRef = nullptr;
+    if (SecTrustCreateWithCertificates((__bridge CFArrayRef)chain, nullptr, &trustRef) != noErr)
+        return nullptr;
+    return adoptCF(trustRef);
+}
+
+static TestNavigationDelegate *delegateAllowingAllTLS()
+{
+    static RetainPtr<TestNavigationDelegate> delegate = [] {
+        auto delegate = adoptNS([TestNavigationDelegate new]);
+        delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        };
+        return delegate;
+    }();
+    return delegate.get();
+}
+
 static NSURL *exampleURL()
 {
     return [NSURL URLWithString:@"https://example.com/"];
@@ -122,9 +142,10 @@ void runBasicEventAttributionTest(WKWebViewConfiguration *configuration, Functio
     NSURL *serverURL = server.request().URL;
 
     auto webView = configuration ? adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]) : adoptNS([WKWebView new]);
+    webView.get().navigationDelegate = delegateAllowingAllTLS();
     addAttributionToWebView(webView.get(), server);
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-    [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
+    [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
     [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
@@ -270,9 +291,10 @@ TEST(EventAttribution, FraudPrevention)
     NSURL *serverURL = server.request().URL;
 
     auto webView = adoptNS([WKWebView new]);
+    webView.get().navigationDelegate = delegateAllowingAllTLS();
     [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789"];
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
-    [[webView configuration].websiteDataStore _allowTLSCertificateChain:@[(id)testCertificate().get()] forHost:serverURL.host];
+    [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
 
     [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{

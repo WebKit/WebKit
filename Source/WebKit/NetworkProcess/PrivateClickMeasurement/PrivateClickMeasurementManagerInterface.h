@@ -29,6 +29,10 @@
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/EnumTraits.h>
 
+namespace WebCore {
+class CertificateInfo;
+}
+
 namespace WebKit {
 
 enum class PrivateClickMeasurementAttributionType : bool { Unattributed, Attributed };
@@ -64,6 +68,7 @@ public:
     virtual void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) = 0;
     virtual void startTimerImmediatelyForTesting() = 0;
     virtual void destroyStoreForTesting(CompletionHandler<void()>&&) = 0;
+    virtual void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) = 0;
 };
 
 constexpr const char* protocolVersionKey { "version" };
@@ -87,6 +92,7 @@ enum class MessageType : uint8_t {
     SetPCMFraudPreventionValuesForTesting,
     StartTimerImmediatelyForTesting,
     DestroyStoreForTesting,
+    AllowTLSCertificateChainForLocalPCMTesting
 };
 
 constexpr const char* protocolEncodedMessageKey { "encoded message" };
@@ -119,7 +125,8 @@ template<> struct EnumTraits<WebKit::PCM::MessageType> {
         WebKit::PCM::MessageType::SetEphemeralMeasurementForTesting,
         WebKit::PCM::MessageType::SetPCMFraudPreventionValuesForTesting,
         WebKit::PCM::MessageType::StartTimerImmediatelyForTesting,
-        WebKit::PCM::MessageType::DestroyStoreForTesting
+        WebKit::PCM::MessageType::DestroyStoreForTesting,
+        WebKit::PCM::MessageType::AllowTLSCertificateChainForLocalPCMTesting
     >;
 };
 

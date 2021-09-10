@@ -62,6 +62,7 @@ public:
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
     void startTimerImmediatelyForTesting() final;
     void destroyStoreForTesting(CompletionHandler<void()>&&) final;
+    void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) final;
 
 private:
     PCM::Store& store();

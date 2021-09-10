@@ -29,6 +29,7 @@
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
+class CertificateInfo;
 class ResourceError;
 class ResourceResponse;
 }
@@ -42,6 +43,7 @@ class NetworkLoader {
 public:
     using Callback = CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&, const RefPtr<JSON::Object>&)>;
     static void start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&&);
+    static void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 };
 
 } // namespace PCM

@@ -151,6 +151,11 @@ void ManagerProxy::destroyStoreForTesting(CompletionHandler<void()>&& completion
     sendMessageWithReply<MessageType::DestroyStoreForTesting>(WTFMove(completionHandler));
 }
 
+void ManagerProxy::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
+{
+    sendMessage<MessageType::AllowTLSCertificateChainForLocalPCMTesting>(certificateInfo);
+}
+
 } // namespace PCM
 
 } // namespace WebKit

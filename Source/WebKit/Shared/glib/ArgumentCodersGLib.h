@@ -39,7 +39,9 @@ template<> struct ArgumentCoder<GRefPtr<GVariant>> {
 };
 
 template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
+    template<typename Encoder>
     static void encode(Encoder&, GRefPtr<GTlsCertificate>);
+    template<typename Decoder>
     static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
 };
 

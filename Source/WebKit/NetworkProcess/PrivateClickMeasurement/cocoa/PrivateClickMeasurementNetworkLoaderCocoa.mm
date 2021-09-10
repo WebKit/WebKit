@@ -27,11 +27,25 @@
 #import "PrivateClickMeasurementNetworkLoader.h"
 
 #import "NetworkDataTaskCocoa.h"
-#import "NetworkSessionCocoa.h"
 #import <WebCore/HTTPHeaderValues.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/NeverDestroyed.h>
+
+static RetainPtr<SecTrustRef>& allowedLocalTestServerTrust()
+{
+    static NeverDestroyed<RetainPtr<SecTrustRef>> serverTrust;
+    return serverTrust.get();
+}
+
+static bool trustsServerForLocalTests(NSURLAuthenticationChallenge *challenge)
+{
+    if (![challenge.protectionSpace.host isEqualToString:@"127.0.0.1"]
+        || !allowedLocalTestServerTrust())
+        return false;
+
+    return WebCore::certificatesMatch(allowedLocalTestServerTrust().get(), challenge.protectionSpace.serverTrust);
+}
 
 @interface WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON : NSObject <NSURLSessionDataDelegate>
 @end
@@ -52,9 +66,8 @@
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    // FIXME: Add plubming so that we can tell the daemon which certificates to accept without using NetworkSessionCocoa.
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]
-        && NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
+        && trustsServerForLocalTests(challenge))
         return completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
     completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, nil);
 }
@@ -88,8 +101,18 @@ static NSURLSession *statelessSessionWithoutRedirects()
     return session.get().get();
 }
 
+void NetworkLoader::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
+{
+    allowedLocalTestServerTrust() = certificateInfo.trust();
+}
+
 void NetworkLoader::start(URL&& url, RefPtr<JSON::Object>&& jsonPayload, WebCore::PrivateClickMeasurement::PcmDataCarried pcmDataCarried, Callback&& callback)
 {
+    // Prevent contacting non-local servers when a test certificate chain is used for 127.0.0.1.
+    // FIXME: Use a proxy server to have tests cover the reports sent to the destination, too.
+    if (allowedLocalTestServerTrust() && url.host() != "127.0.0.1")
+        return callback({ }, { }, { });
+
     auto request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
     [request setValue:WebCore::HTTPHeaderValues::maxAge0() forHTTPHeaderField:@"Cache-Control"];
     if (jsonPayload) {

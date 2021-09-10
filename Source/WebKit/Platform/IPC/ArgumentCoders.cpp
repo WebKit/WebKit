@@ -84,6 +84,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<AtomString>::decode(Decoder& decoder, Atom
     return true;
 }
 
+template<typename Encoder>
 void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
 {
     // Special case the null string.
@@ -96,31 +97,37 @@ void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
     encoder << length;
     encoder.encodeFixedLengthData(string.dataAsUInt8Ptr(), length, 1);
 }
+template void ArgumentCoder<CString>::encode<Encoder>(Encoder&, const CString&);
+template void ArgumentCoder<CString>::encode<WebKit::PCM::Encoder>(WebKit::PCM::Encoder&, const CString&);
 
-WARN_UNUSED_RETURN bool ArgumentCoder<CString>::decode(Decoder& decoder, CString& result)
+template<typename Decoder>
+std::optional<CString> ArgumentCoder<CString>::decode(Decoder& decoder)
 {
-    uint32_t length;
-    if (!decoder.decode(length))
-        return false;
+    std::optional<uint32_t> length;
+    decoder >> length;
+    if (!length)
+        return std::nullopt;
 
-    if (length == std::numeric_limits<uint32_t>::max()) {
+    if (*length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
-        result = CString();
-        return true;
+        return CString();
     }
 
     // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<char>(length))
-        return false;
+    if (!decoder.template bufferIsLargeEnoughToContain<char>(*length))
+        return std::nullopt;
 
     char* buffer;
-    CString string = CString::newUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length, 1))
-        return false;
+    CString string = CString::newUninitialized(*length, buffer);
+    if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), *length, 1))
+        return std::nullopt;
 
-    result = string;
-    return true;
+    return WTFMove(string);
 }
+template
+std::optional<CString> ArgumentCoder<CString>::decode<Decoder>(Decoder&);
+template
+std::optional<CString> ArgumentCoder<CString>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
 
 template<typename Encoder>
 void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)

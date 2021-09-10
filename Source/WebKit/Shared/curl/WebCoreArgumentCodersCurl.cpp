@@ -27,6 +27,8 @@
 #include "WebCoreArgumentCoders.h"
 
 #include "DataReference.h"
+#include "PrivateClickMeasurementDecoder.h"
+#include "PrivateClickMeasurementEncoder.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CurlProxySettings.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -50,6 +52,7 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, Resour
     return resourceRequest.decodeWithPlatformData(decoder);
 }
 
+template<typename Encoder>
 void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
 {
     encoder << certificateInfo.verificationError();
@@ -58,7 +61,10 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
     for (auto certificate : certificateInfo.certificateChain())
         encoder << certificate;
 }
+template void ArgumentCoder<WebCore::CertificateInfo>::encode<Encoder>(Encoder&, const WebCore::CertificateInfo&);
+template void ArgumentCoder<WebCore::CertificateInfo>::encode<WebKit::PCM::Encoder>(WebKit::PCM::Encoder&, const WebCore::CertificateInfo&);
 
+template<typename Decoder>
 std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
 {
     std::optional<int> verificationError;
@@ -83,6 +89,8 @@ std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& d
 
     return CertificateInfo { *verificationError, WTFMove(certificateChain) };
 }
+template std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode<Decoder>(Decoder&);
+template std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {

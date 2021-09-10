@@ -72,6 +72,7 @@ class HTTPCookieStore;
 }
 
 namespace WebCore {
+class CertificateInfo;
 class RegistrableDomain;
 class SecurityOrigin;
 
@@ -85,7 +86,6 @@ class SecKeyProxyStore;
 class DeviceIdHashSaltStorage;
 class NetworkProcessProxy;
 class SOAuthorizationCoordinator;
-class WebCertificateInfo;
 class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
@@ -262,7 +262,8 @@ public:
 
     static void setCachedProcessSuspensionDelayForTesting(Seconds);
 
-    void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
+    void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
+    void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
     DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
 

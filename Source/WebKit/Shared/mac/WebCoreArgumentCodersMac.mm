@@ -30,6 +30,8 @@
 #import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
 #import "DataReference.h"
+#import "PrivateClickMeasurementDecoder.h"
+#import "PrivateClickMeasurementEncoder.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/ContentFilterUnblockHandler.h>
 #import <WebCore/Credential.h>
@@ -44,6 +46,7 @@
 
 namespace IPC {
 
+template<>
 void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
     encoder << certificateInfo.type();
@@ -63,6 +66,14 @@ void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const Web
     }
 }
 
+template<>
+void ArgumentCoder<WebCore::CertificateInfo>::encode(WebKit::PCM::Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
+{
+    ASSERT(certificateInfo.type() == WebCore::CertificateInfo::Type::Trust);
+    encoder << certificateInfo.trust();
+}
+
+template<>
 std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode(Decoder& decoder)
 {
     std::optional<WebCore::CertificateInfo::Type> certificateInfoType;
@@ -95,6 +106,16 @@ std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>:
     }
 
     return {{ }};
+}
+
+template<>
+std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode(WebKit::PCM::Decoder& decoder)
+{
+    std::optional<RetainPtr<SecTrustRef>> trust;
+    decoder >> trust;
+    if (!trust || !*trust)
+        return std::nullopt;
+    return WebCore::CertificateInfo(WTFMove(*trust));
 }
 
 static void encodeNSError(Encoder& encoder, NSError *nsError)

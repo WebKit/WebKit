@@ -30,6 +30,8 @@
 
 #include "ArgumentCodersGLib.h"
 #include "DataReference.h"
+#include "PrivateClickMeasurementDecoder.h"
+#include "PrivateClickMeasurementEncoder.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Credential.h>
 #include <WebCore/DictionaryPopupInfo.h>
@@ -54,6 +56,7 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, Resour
     return resourceRequest.decodeWithPlatformData(decoder);
 }
 
+template<typename Encoder>
 void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
 {
     GRefPtr<GTlsCertificate> certificate = certificateInfo.certificate();
@@ -63,7 +66,10 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
 
     encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
 }
+template void ArgumentCoder<CertificateInfo>::encode<Encoder>(Encoder&, const CertificateInfo&);
+template void ArgumentCoder<CertificateInfo>::encode<WebKit::PCM::Encoder>(WebKit::PCM::Encoder&, const CertificateInfo&);
 
+template<typename Decoder>
 std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
 {
     std::optional<GRefPtr<GTlsCertificate>> certificate;
@@ -84,6 +90,8 @@ std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& d
 
     return WTFMove(certificateInfo);
 }
+template std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode<Decoder>(Decoder&);
+template std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {
@@ -245,7 +253,7 @@ void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& 
     ASSERT_NOT_REACHED();
 }
 
-std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
+std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, SerializedPlatformDataCueValue::PlatformType platformType)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;

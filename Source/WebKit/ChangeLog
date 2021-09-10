@@ -1,3 +1,80 @@
+2021-09-10  Alex Christensen  <achristensen@webkit.org>
+
+        Add infrastructure to allow TLS during PCM tests
+        https://bugs.webkit.org/show_bug.cgi?id=230137
+
+        Reviewed by Chris Dumez.
+
+        We were using NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost but that doesn't work when we are in a daemon,
+        where there is no NetworkSession or NetworkSessionCocoa.  We needed a new SPI for setting the test TLS certificates wherever
+        the networking is being done.
+
+        I also found that we were unnecessarily pinging example.com when running these unit tests.  I added an early return to prevent that
+        when running tests with a local server.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::setAllowsAnySSLCertificateForWebSocket):
+        (WebKit::NetworkProcess::allowTLSCertificateChainForLocalPCMTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::allowTLSCertificateChainForLocalPCMTesting):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDecoder.cpp:
+        (WebKit::PCM::Decoder::~Decoder):
+        (WebKit::PCM::Decoder::decodeFixedLengthReference):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDecoder.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::allowTLSCertificateChainForLocalPCMTesting):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        (WebKit::PCM::messageTypeSendsReply):
+        (WebKit::PCM::decodeMessageAndSendToManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        (WebKit::PCM::ManagerProxy::allowTLSCertificateChainForLocalPCMTesting):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.cpp:
+        (WebKit::PCM::NetworkLoader::allowTLSCertificateChainForLocalPCMTesting):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementNetworkLoader.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm:
+        (allowedLocalTestServerTrust):
+        (trustsServerForLocalTests):
+        (-[WKNetworkSessionDelegateAllowingOnlyNonRedirectedJSON URLSession:task:didReceiveChallenge:completionHandler:]):
+        (WebKit::PCM::NetworkLoader::allowTLSCertificateChainForLocalPCMTesting):
+        (WebKit::PCM::NetworkLoader::start):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost): Deleted.
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost): Deleted.
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::startListeningForMachServiceConnections):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        * Shared/cf/ArgumentCodersCF.h:
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        * Shared/glib/ArgumentCodersGLib.cpp:
+        * Shared/glib/ArgumentCodersGLib.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::encode):
+        (IPC::ArgumentCoder<WebCore::CertificateInfo>::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _allowTLSCertificateChain:forHost:]):
+        (-[WKWebsiteDataStore _trustServerForLocalPCMTesting:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_allow_tls_certificate_for_host):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::allowSpecificHTTPSCertificateForHost):
+        (WebKit::WebsiteDataStore::allowTLSCertificateChainForLocalPCMTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-09-10  Youenn Fablet  <youenn@apple.com>
 
         Use RTCErrorEvent for data channel error event
