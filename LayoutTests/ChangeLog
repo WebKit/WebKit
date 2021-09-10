@@ -1,5 +1,15 @@
 2021-09-10  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ MacOS wk2 & iOS Release ]imported/w3c/web-platform-tests/webrtc/no-media-call.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230157
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2021-09-10  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ Mac WK2 & iOS ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html is flaky.
         https://bugs.webkit.org/show_bug.cgi?id=214286
 

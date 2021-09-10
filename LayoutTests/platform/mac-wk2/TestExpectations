@@ -1503,6 +1503,8 @@ webkit.org/b/227639 [ BigSur Release ] fast/history/visited-href-mutation.html [
 
 webkit.org/b/226054 [ BigSur ] imported/w3c/web-platform-tests/webrtc/RTCRtpSender-encode-same-track-twice.https.html [ Pass Failure ]
 
+webkit.org/b/230157 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Pass Failure ]
+
 # rdar://80345048 ([ Monterey wk2 ] webrtc/h264-high.html is a constant timeout)
 [ Monterey ] webrtc/h264-high.html [ Timeout ]
 
