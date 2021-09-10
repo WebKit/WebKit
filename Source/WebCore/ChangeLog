@@ -1,3 +1,19 @@
+2021-09-09  Alan Bujtas  <zalan@apple.com>
+
+        [Table layout] Incorrect vertical position when the inline level box has 0px used height.
+        https://bugs.webkit.org/show_bug.cgi?id=230118
+
+        Reviewed by Antti Koivisto.
+
+        Intrinsic padding is used in table cells to offset the content with their alignments as the content box may not be as tall as the cell itself.
+        This patch ensures that zero height content (where the baseline is also 0) gets the alignment offset as well.
+        (This patch also fixes the bug where we may reset the intrinsic padding to 0 on subsequent layouts.)
+
+        Test: fast/table/vertical-position-with-0-height-box.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeIntrinsicPadding):
+
 2021-09-09  Diego Pino Garcia  <dpino@igalia.com>
 
         Build fix for Ubuntu LTS and Debian after r282211
