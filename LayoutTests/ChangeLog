@@ -1,3 +1,12 @@
+2021-09-10  Alan Bujtas  <zalan@apple.com>
+
+        css/css-position/position-absolute-dynamic-static-position-table-cell.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=203448
+
+        Unreviewed.
+
+        * TestExpectations: Progressed at r268616.
+
 2021-09-10  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS wk2 & iOS Release ]imported/w3c/web-platform-tests/webrtc/no-media-call.html is a flaky failure.

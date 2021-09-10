@@ -3447,7 +3447,6 @@ webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/p
 webkit.org/b/203447 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-auto-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/203447 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-overflow-001.html [ ImageOnlyFailure ]
 webkit.org/b/203447 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-overflow-002.html [ ImageOnlyFailure ]
-webkit.org/b/203448 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-table-cell.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-001.sub.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-002.sub.html [ ImageOnlyFailure ]
 webkit.org/b/228994 imported/w3c/web-platform-tests/css/css-position/position-absolute-in-inline-003.html [ ImageOnlyFailure ]
