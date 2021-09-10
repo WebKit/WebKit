@@ -1,3 +1,15 @@
+2021-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFaceSet.load() needs to react to style changes
+        https://bugs.webkit.org/show_bug.cgi?id=230132
+
+        Reviewed by Antti Koivisto.
+
+        This test is being upstreamed in https://github.com/web-platform-tests/wpt/pull/30491
+
+        * web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected-expected.txt: Added.
+        * web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected.html: Added.
+
 2021-09-09  Simon Fraser  <simon.fraser@apple.com>
 
         right- and bottom-relative values in background-position-x/y don't work

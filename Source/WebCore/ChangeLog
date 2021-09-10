@@ -1,3 +1,22 @@
+2021-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFaceSet.load() needs to react to style changes
+        https://bugs.webkit.org/show_bug.cgi?id=230132
+
+        Reviewed by Antti Koivisto.
+
+        If content does something like
+        let fonts = document.fonts;
+        ... modify style sheets ...
+        fonts.load(...)
+
+        The load() function needs to see the result of hte style sheet modification.
+
+        Test: imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected.html
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::load):
+
 2021-09-09  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply

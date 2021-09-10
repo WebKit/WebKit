@@ -149,6 +149,7 @@ void FontFaceSet::clear()
 
 void FontFaceSet::load(const String& font, const String& text, LoadPromise&& promise)
 {
+    m_backing->updateStyleIfNeeded();
     auto matchingFacesResult = m_backing->matchingFacesExcludingPreinstalledFonts(font, text);
     if (matchingFacesResult.hasException()) {
         promise.reject(matchingFacesResult.releaseException());
