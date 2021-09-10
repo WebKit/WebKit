@@ -201,12 +201,16 @@ private:
 TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunIterator textRunFor(const LegacyInlineTextBox*);
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 TextRunIterator textRunFor(const InlineContent&, const Run&);
 TextRunIterator textRunFor(const InlineContent&, size_t runIndex);
+#endif
 TextRunRange textRunsFor(const RenderText&);
 RunIterator runFor(const RenderLineBreak&);
 RunIterator runFor(const RenderBox&);
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 RunIterator runFor(const InlineContent&, size_t runIndex);
+#endif
 
 // -----------------------------------------------
 

@@ -1,3 +1,12 @@
+2021-09-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        Build fix for Ubuntu LTS and Debian after r282211
+
+        Some functions need to be guarded by ENABLE(LAYOUT_FORMATTING_CONTEXT)
+
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        * layout/integration/LayoutIntegrationRunIterator.h:
+
 2021-09-09  Darin Adler  <darin@apple.com>
 
         Improve performance by using StringView, not "const StringView&"
