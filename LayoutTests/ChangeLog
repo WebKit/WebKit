@@ -1,3 +1,9 @@
+2021-09-10  Alan Bujtas  <zalan@apple.com>
+
+        Unreviewed test gardening after r282266.
+
+        * platform/ios/fast/table/border-collapsing/cached-change-row-border-width-expected.txt:
+
 2021-09-07  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Add support for self-start & self-end css-align-3 positional alignment properties
