@@ -4167,9 +4167,8 @@ webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-ite
 webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-flex-item-002.html [ ImageOnlyFailure ]
 webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-flex-item-003.html [ ImageOnlyFailure ]
 
+# The test works fine but the expected result fails due to a missing layout.
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-002.xhtml [ ImageOnlyFailure ]
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-002.xhtml [ ImageOnlyFailure ]
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-005.xhtml [ ImageOnlyFailure ]
 
 # align baseline in flexbox.
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001a.xhtml [ ImageOnlyFailure ]

@@ -39,6 +39,7 @@
 #include "RenderLayoutState.h"
 #include "RenderStyleConstants.h"
 #include "RenderView.h"
+#include "WritingMode.h"
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
@@ -1570,6 +1571,8 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
         break;
     case ItemPosition::Start:
     case ItemPosition::End:
+    case ItemPosition::SelfStart:
+    case ItemPosition::SelfEnd:
     case ItemPosition::Left:
     case ItemPosition::Right:
         ASSERT_NOT_REACHED("%u alignmentForChild should have transformed this position value to something we handle below.", static_cast<uint8_t>(position));
@@ -1596,8 +1599,6 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
         // https://bugs.webkit.org/show_bug.cgi?id=98076
         return maxAscent - ascent;
     case ItemPosition::LastBaseline:
-    case ItemPosition::SelfStart:
-    case ItemPosition::SelfEnd:
         // FIXME: Implement last baseline.
         break;
     }
@@ -1721,6 +1722,26 @@ ItemPosition RenderFlexibleBox::alignmentForChild(const RenderBox& child) const
         return ItemPosition::FlexStart;
     if (align == ItemPosition::End)
         return ItemPosition::FlexEnd;
+
+    if (align == ItemPosition::SelfStart || align == ItemPosition::SelfEnd) {
+        // self-start corresponds to flex-start (and self-end to flex-end) in the majority of the cases
+        // for orthogonal layouts except when the container is flipped blocks writing mode (vrl/hbt) and
+        // the child is ltr or the other way around. For example:
+        // 1) htb ltr child inside a vrl container: self-start corresponds to flex-end
+        // 2) htb rtl child inside a vlr container: self-end corresponds to flex-start
+        bool isOrthogonal = style().isHorizontalWritingMode() != child.style().isHorizontalWritingMode();
+        if (isOrthogonal && (style().isFlippedBlocksWritingMode() == child.style().isLeftToRightDirection()))
+            return align == ItemPosition::SelfStart ? ItemPosition::FlexEnd : ItemPosition::FlexStart;
+
+        if (!isOrthogonal) {
+            if (style().isFlippedLinesWritingMode() != child.style().isFlippedLinesWritingMode())
+                return align == ItemPosition::SelfStart ? ItemPosition::FlexEnd : ItemPosition::FlexStart;
+            if (style().isLeftToRightDirection() != child.style().isLeftToRightDirection())
+                return align == ItemPosition::SelfStart ? ItemPosition::FlexEnd : ItemPosition::FlexStart;
+        }
+
+        return align == ItemPosition::SelfStart ? ItemPosition::FlexStart : ItemPosition::FlexEnd;
+    }
 
     if (style().flexWrap() == FlexWrap::Reverse) {
         if (align == ItemPosition::FlexStart)

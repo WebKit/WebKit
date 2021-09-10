@@ -1,3 +1,20 @@
+2021-09-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Add support for self-start & self-end css-align-3 positional alignment properties
+        https://bugs.webkit.org/show_bug.cgi?id=229996
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Added support for SelfStart and SelfEnd positional alignment properties from
+        https://drafts.csswg.org/css-align-3/#positional-values. These two properties
+        align the alignment subject (flex item) to be flush with the edge of the alignment container (flex line)
+        corresponding to the alignment subject's start side in the appropriate axis. This allows authors to align
+        the flex items based on their writing modes instead of the writing mode of the container.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::alignmentOffset):
+        (WebCore::RenderFlexibleBox::alignmentForChild const):
+
 2021-09-10  Alan Bujtas  <zalan@apple.com>
 
         changing border size on rows with border-collapse not redrawing
