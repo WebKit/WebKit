@@ -1345,6 +1345,9 @@ webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.ht
 
 webkit.org/b/207386 imported/w3c/web-platform-tests/css/css-transitions/properties-value-002.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/css/css-transforms/transform-input-003.html [ ImageOnlyFailure ]
+
 webkit.org/b/207465 [ Debug ] storage/indexeddb/intversion-long-queue.html [ Pass Failure ]
 
 webkit.org/b/207466 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Slow Pass Failure ]

@@ -1,68 +1,68 @@
 
-FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (-1) should be [90deg] assert_equals: expected "90deg " but got "- 10deg "
-FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (0) should be [110deg] assert_equals: expected "110deg " but got "10deg "
-FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (0.25) should be [115deg] assert_equals: expected "115deg " but got "15deg "
-FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (0.75) should be [125deg] assert_equals: expected "125deg " but got "25deg "
-FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (1) should be [130deg] assert_equals: expected "130deg " but got "30deg "
-FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (2) should be [150deg] assert_equals: expected "150deg " but got "50deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (-1) should be [1 0 0 160deg] assert_equals: expected "x 160deg " but got "x - 240deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (0) should be [1 0 0 100deg] assert_equals: expected "x 100deg " but got "x - 100deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (0.25) should be [1 0 0 85deg] assert_equals: expected "x 85deg " but got "x - 65deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (0.75) should be [1 0 0 55deg] assert_equals: expected "x 55deg " but got "x 5deg "
+FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (-1) should be [90deg] assert_equals: expected "0 0 1 90deg" but got "0 0 1 -10deg"
+FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (0) should be [110deg] assert_equals: expected "0 0 1 110deg" but got "0 0 1 10deg"
+FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (0.25) should be [115deg] assert_equals: expected "0 0 1 115deg" but got "0 0 1 15deg"
+FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (0.75) should be [125deg] assert_equals: expected "0 0 1 125deg" but got "0 0 1 25deg"
+FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (1) should be [130deg] assert_equals: expected "0 0 1 130deg" but got "0 0 1 30deg"
+FAIL Compositing: property <rotate> underlying [100deg] from add [10deg] to add [30deg] at (2) should be [150deg] assert_equals: expected "0 0 1 150deg" but got "0 0 1 50deg"
+FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (-1) should be [1 0 0 160deg] assert_equals: expected "1 0 0  160deg" but got "1 0 0  -240deg"
+FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (0) should be [1 0 0 100deg] assert_equals: expected "1 0 0  100deg" but got "1 0 0  -100deg"
+FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (0.25) should be [1 0 0 85deg] assert_equals: expected "1 0 0  85deg" but got "1 0 0  -65deg"
+FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (0.75) should be [1 0 0 55deg] assert_equals: expected "1 0 0  55deg" but got "1 0 0  5deg"
 PASS Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (1) should be [1 0 0 40deg]
-FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (2) should be [1 0 0 -20deg] assert_equals: expected "x - 20deg " but got "x 180deg "
-FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (-1) should be [0 1 0 130deg] assert_equals: expected "y 130deg " but got "y 90deg "
+FAIL Compositing: property <rotate> underlying [1 0 0 200deg] from add [1 0 0 -100deg] to replace [1 0 0 40deg] at (2) should be [1 0 0 -20deg] assert_equals: expected "1 0 0  -20deg" but got "1 0 0  180deg"
+FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (-1) should be [0 1 0 130deg] assert_equals: expected "0 1 0 130deg" but got "0 1 0 90deg"
 PASS Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (0) should be [0 1 0 50deg]
-FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (0.25) should be [0 1 0 30deg] assert_equals: expected "y 30deg " but got "y 40deg "
-FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (0.75) should be [0 1 0 -10deg] assert_equals: expected "y - 10deg " but got "y 20deg "
-FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (1) should be [0 1 0 -30deg] assert_equals: expected "y - 30deg " but got "y 10deg "
-FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (2) should be [0 1 0 -110deg] assert_equals: expected "y - 110deg " but got "y - 30deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (-1) should be [1 2 3 10deg] assert_equals: expected "1 2 3 10deg " but got "- 0.27 - 0.53 - 0.8 30deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (0) should be [1 2 3 50deg] assert_equals: expected "1 2 3 50deg " but got "0.27 0.53 0.8 10deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (0.25) should be [1 2 3 60deg] assert_equals: expected "1 2 3 60deg " but got "0.27 0.53 0.8 20deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (0.75) should be [1 2 3 80deg] assert_equals: expected "1 2 3 80deg " but got "0.27 0.53 0.8 40deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (1) should be [1 2 3 90deg] assert_equals: expected "1 2 3 90deg " but got "0.27 0.53 0.8 50deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (2) should be [1 2 3 130deg] assert_equals: expected "1 2 3 130deg " but got "0.27 0.53 0.8 90deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (-1) should be [-5.49276e-17 -1 -1.64783e-16 100deg] assert_equals: expected "0 - 1 0 100deg " but got "0.31 - 0.22 0.92 131.66deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (0) should be [1 2 3 360deg] assert_equals: expected "1 2 3 360deg " but got "0.27 0.53 0.8 90deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (0.25) should be [-1.20172e-16 1 -3.60516e-16 25deg] assert_equals: expected "0 1 0 25deg " but got "0.21 0.73 0.64 86.72deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (0.75) should be [-1.51909e-17 1 -4.55726e-17 75deg] assert_equals: expected "0 1 0 75deg " but got "0.07 0.97 0.21 92.05deg "
-PASS Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (1) should be [0 1 0 100deg]
-FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (2) should be [-3.3235e-17 -1 -9.97049e-17 160deg] assert_equals: expected "0 - 1 0 160deg " but got "- 0.2 0.79 - 0.59 151.11deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (-1) should be [-5.49276e-17 -1 -1.64783e-16 100deg] assert_equals: expected "0 - 1 0 100deg " but got "0.07 0.98 0.21 131.66deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (0) should be [1 2 3 360deg] assert_equals: expected "1 2 3 360deg " but got "- 0.27 - 0.53 - 0.8 90deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (0.25) should be [-1.20172e-16 1 -3.60516e-16 25deg] assert_equals: expected "0 1 0 25deg " but got "- 0.31 - 0.12 - 0.94 64.12deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (0.75) should be [-1.51909e-17 1 -4.55726e-17 75deg] assert_equals: expected "0 1 0 75deg " but got "- 0.11 0.93 - 0.34 71.18deg "
-PASS Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (1) should be [0 1 0 100deg]
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (2) should be [-3.3235e-17 -1 -9.97049e-17 160deg] assert_equals: expected "0 - 1 0 160deg " but got "- 0.22 - 0.73 - 0.65 120.66deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 90deg] from add [0 1 0 180deg] to replace [0 0 1 90deg] at (-1) should be [-6.12323e-17 -1 1.57009e-16 90deg] assert_equals: expected "0 - 1 0 90deg " but got "0 0 1 90deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 90deg] from add [0 1 0 180deg] to replace [0 0 1 90deg] at (0) should be [-4.32978e-17 -0.707107 -0.707107 180deg] assert_equals: expected "0 - 0.71 - 0.71 180deg " but got "y 180deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 90deg] from add [0 1 0 180deg] to replace [0 0 1 90deg] at (0.25) should be [-1.48952e-16 -0.894427 -0.447214 131.81deg] assert_equals: expected "0 - 0.89 - 0.45 131.81deg " but got "0 0.96 0.28 148.6deg "
-FAIL Compositing: property <rotate> underlying [1 0 0 90deg] from add [0 1 0 180deg] to replace [0 0 1 90deg] at (0.75) should be [-2.94392e-17 -0.707107 0.707107 70.5288deg] assert_equals: expected "0 - 0.71 0.71 70.53deg " but got "0 0.51 0.86 98.42deg "
-PASS Compositing: property <rotate> underlying [1 0 0 90deg] from add [0 1 0 180deg] to replace [0 0 1 90deg] at (1) should be [90deg]
-FAIL Compositing: property <rotate> underlying [1 0 0 90deg] from add [0 1 0 180deg] to replace [0 0 1 90deg] at (2) should be [-6.12323e-17 -1 -4.71028e-16 90deg] assert_equals: expected "0 - 1 0 90deg " but got "0 - 1 0 180deg "
-PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (-1) should be [0 1 0 -100deg]
-PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (0) should be [none]
-PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (0.25) should be [0 1 0 25deg]
-PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (0.75) should be [0 1 0 75deg]
-PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (1) should be [0 1 0 100deg]
-PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (2) should be [0 1 0 200deg]
-FAIL Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (-1) should be [2 4 6 540deg] assert_equals: expected "2 4 6 540deg " but got "0.27 0.53 0.8 540deg "
-FAIL Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (0) should be [2 4 6 270deg] assert_equals: expected "2 4 6 270deg " but got "0.27 0.53 0.8 270deg "
-FAIL Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (0.25) should be [2 4 6 202.5deg] assert_equals: expected "2 4 6 202.5deg " but got "0.27 0.53 0.8 202.5deg "
-FAIL Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (0.75) should be [2 4 6 67.5deg] assert_equals: expected "2 4 6 67.5deg " but got "0.27 0.53 0.8 67.5deg "
-PASS Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (1) should be [none]
-FAIL Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (2) should be [2 4 6 -270deg] assert_equals: expected "2 4 6 - 270deg " but got "0.27 0.53 0.8 - 270deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (-1) should be [0.31 -0.22 0.92 131.66deg] assert_equals: expected "0.31 - 0.22 0.92 131.66deg " but got "y - 100deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (0) should be [1 2 3 90deg] assert_equals: expected "1 2 3 90deg " but got "none "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (0.25) should be [0.21 0.73 0.64 86.72deg] assert_equals: expected "0.21 0.73 0.64 86.72deg " but got "y 25deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (0.75) should be [0.07 0.97 0.21 92.05deg] assert_equals: expected "0.07 0.97 0.21 92.05deg " but got "y 75deg "
+FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (0.25) should be [0 1 0 30deg] assert_equals: expected "0 1 0 30deg" but got "0 1 0 40deg"
+FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (0.75) should be [0 1 0 -10deg] assert_equals: expected "0 1 0 -10deg" but got "0 1 0 20deg"
+FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (1) should be [0 1 0 -30deg] assert_equals: expected "0 1 0 -30deg" but got "0 1 0 10deg"
+FAIL Compositing: property <rotate> underlying [0 1 0 -40deg] from replace [0 1 0 50deg] to add [0 1 0 10deg] at (2) should be [0 1 0 -110deg] assert_equals: expected "0 1 0 -110deg" but got "0 1 0 -30deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (-1) should be [0.27 0.53 0.8 10deg] assert_equals: expected "0.27 0.53 0.8 10deg" but got "-0.27 -0.53 -0.8 30deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (0) should be [0.27 0.53 0.8 50deg] assert_equals: expected "0.27 0.53 0.8 50deg" but got "0.27 0.53 0.8 10deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (0.25) should be [0.27 0.53 0.8 60deg] assert_equals: expected "0.27 0.53 0.8 60deg" but got "0.27 0.53 0.8 20deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (0.75) should be [0.27 0.53 0.8 80deg] assert_equals: expected "0.27 0.53 0.8 80deg" but got "0.27 0.53 0.8 40deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (1) should be [0.27 0.53 0.8 90deg] assert_equals: expected "0.27 0.53 0.8 90deg" but got "0.27 0.53 0.8 50deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 40deg] from add [2 4 6 10deg] to add [3 6 9 50deg] at (2) should be [0.27 0.53 0.8 130deg] assert_equals: expected "0.27 0.53 0.8 130deg" but got "0.27 0.53 0.8 90deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (-1) should be [0 -1 0 100deg] assert_equals: expected "0 1 0 100deg" but got "0.31 -0.22 0.92 131.66deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (0) should be [0.27 0.53 0.8 360deg] assert_equals: expected "0.27 0.53 0.8 360deg" but got "0.27 0.53 0.8 90deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (0.25) should be [y 25deg] assert_equals: expected "0 1 0 25deg" but got "0.21 0.73 0.64 86.72deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (0.75) should be [y 75deg] assert_equals: expected "0 1 0 75deg" but got "0.07 0.97 0.21 92.05deg"
+PASS Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (1) should be [y 100deg]
+FAIL Compositing: property <rotate> underlying [1 2 3 270deg] from add [1 2 3 90deg] to replace [0 1 0 100deg] at (2) should be [y 200deg] assert_equals: expected "0 1 0 200deg" but got "-0.2 0.79 -0.59 151.11deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (-1) should be [0 -1 0 100deg] assert_equals: expected "0 1 0 100deg" but got "0.07 0.98 0.21 131.66deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (0) should be [0.27 0.53 0.8 360deg] assert_equals: expected "0.27 0.53 0.8 360deg" but got "-0.27 -0.53 -0.8 90deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (0.25) should be [y 25deg] assert_equals: expected "0 1 0 25deg" but got "-0.31 -0.12 -0.94 64.12deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (0.75) should be [y 75deg] assert_equals: expected "0 1 0 75deg" but got "-0.11 0.93 -0.34 71.18deg"
+PASS Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (1) should be [y 100deg]
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [0 1 0 100deg] at (2) should be [y 200deg] assert_equals: expected "0 1 0 200deg" but got "-0.22 -0.73 -0.65 120.66deg"
+FAIL Compositing: property <rotate> underlying [1 0 0 0deg] from add [1 1 0 90deg] to replace [0 1 1 135deg] at (-1) should be [0.67 -0.06 -0.74 124.97deg] assert_equals: expected "0.67 -0.06 -0.74 124.97deg" but got "0.67 -0.06 -0.74 124.98deg"
+PASS Compositing: property <rotate> underlying [1 0 0 0deg] from add [1 1 0 90deg] to replace [0 1 1 135deg] at (0) should be [0.71 0.71 0 90deg]
+PASS Compositing: property <rotate> underlying [1 0 0 0deg] from add [1 1 0 90deg] to replace [0 1 1 135deg] at (0.25) should be [0.54 0.8 0.26 94.83deg]
+PASS Compositing: property <rotate> underlying [1 0 0 0deg] from add [1 1 0 90deg] to replace [0 1 1 135deg] at (0.75) should be [0.17 0.78 0.61 118.68deg]
+PASS Compositing: property <rotate> underlying [1 0 0 0deg] from add [1 1 0 90deg] to replace [0 1 1 135deg] at (1) should be [0 0.71 0.71 135deg]
+FAIL Compositing: property <rotate> underlying [1 0 0 0deg] from add [1 1 0 90deg] to replace [0 1 1 135deg] at (2) should be [-0.52 0.29 0.81 208.96deg] assert_equals: expected "-0.52 0.29 0.81 208.96deg" but got "0.52 -0.29 -0.81 151.04deg"
+PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (-1) should be [y -100deg]
+PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (0) should be [y 0deg]
+PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (0.25) should be [y 25deg]
+PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (0.75) should be [y 75deg]
+PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (1) should be [y 100deg]
+PASS Compositing: property <rotate> underlying [none] from add [none] to replace [0 1 0 100deg] at (2) should be [y 200deg]
+PASS Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (-1) should be [0.27 0.53 0.8 540deg]
+PASS Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (0) should be [0.27 0.53 0.8 270deg]
+PASS Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (0.25) should be [0.27 0.53 0.8 202.5deg]
+PASS Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (0.75) should be [0.27 0.53 0.8 67.5deg]
+PASS Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (1) should be [0.27 0.53 0.8 0deg]
+PASS Compositing: property <rotate> underlying [none] from add [2 4 6 270deg] to replace [none] at (2) should be [0.27 0.53 0.8 -270deg]
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (-1) should be [0.31 -0.22 0.92 131.66deg] assert_equals: expected "0.31 -0.22 0.92 131.66deg" but got "0 1 0 -100deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (0) should be [1 2 3 90deg] assert_equals: expected "0.27 0.53 0.8 90deg" but got "none"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (0.25) should be [0.21 0.73 0.64 86.72deg] assert_equals: expected "0.21 0.73 0.64 86.72deg" but got "0 1 0 25deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (0.75) should be [0.07 0.97 0.21 92.05deg] assert_equals: expected "0.07 0.97 0.21 92.05deg" but got "0 1 0 75deg"
 PASS Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (1) should be [0 1 0 100deg]
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (2) should be [-0.2 0.79 -0.59 151.11deg] assert_equals: expected "- 0.2 0.79 - 0.59 151.11deg " but got "y 200deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (-1) should be [1 2 3 720deg] assert_equals: expected "1 2 3 720deg " but got "0.27 0.53 0.8 540deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (0) should be [1 2 3 360deg] assert_equals: expected "1 2 3 360deg " but got "0.27 0.53 0.8 270deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (0.25) should be [1 2 3 270deg] assert_equals: expected "1 2 3 270deg " but got "0.27 0.53 0.8 202.5deg "
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (0.75) should be [1 2 3 90deg] assert_equals: expected "1 2 3 90deg " but got "0.27 0.53 0.8 67.5deg "
-PASS Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (1) should be [none]
-FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (2) should be [1 2 3 -360deg] assert_equals: expected "1 2 3 - 360deg " but got "0.27 0.53 0.8 - 270deg "
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [none] to replace [0 1 0 100deg] at (2) should be [-0.2 0.79 -0.59 151.11deg] assert_equals: expected "-0.2 0.79 -0.59 151.11deg" but got "0 1 0 200deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (-1) should be [0.27 0.53 0.8 720deg] assert_equals: expected "0.27 0.53 0.8 720deg" but got "0.27 0.53 0.8 540deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (0) should be [0.27 0.53 0.8 360deg] assert_equals: expected "0.27 0.53 0.8 360deg" but got "0.27 0.53 0.8 270deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (0.25) should be [0.27 0.53 0.8 270deg] assert_equals: expected "0.27 0.53 0.8 270deg" but got "0.27 0.53 0.8 202.5deg"
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (0.75) should be [0.27 0.53 0.8 90deg] assert_equals: expected "0.27 0.53 0.8 90deg" but got "0.27 0.53 0.8 67.5deg"
+PASS Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (1) should be [0.27 0.53 0.8 0deg]
+FAIL Compositing: property <rotate> underlying [1 2 3 90deg] from add [2 4 6 270deg] to replace [none] at (2) should be [0.27 0.53 0.8 -360deg] assert_equals: expected "0.27 0.53 0.8 -360deg" but got "0.27 0.53 0.8 -270deg"
 

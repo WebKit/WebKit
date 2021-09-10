@@ -1,0 +1,4 @@
+
+PASS Hit test within unscaled box
+FAIL Hit test intersecting scaled box assert_equals: expected Element node <div id="scaled"></div> but got Element node <div id="normal"></div>
+

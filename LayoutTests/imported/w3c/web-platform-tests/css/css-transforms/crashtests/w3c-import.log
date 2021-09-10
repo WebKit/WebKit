@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/large-scaley-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/preserve3d-containing-block-inline-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/preserve3d-containing-block-inline-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/preserve3d-scene-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/preserve3d-scene-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/w-crossing-zero-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/w-negative-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/w-negative-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/crashtests/w-negative-003.html

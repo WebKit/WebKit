@@ -1,0 +1,14 @@
+
+PASS Direct DOM parent is root of rendering context (normal flow)
+PASS Direct DOM parent is root of rendering context (absolute)
+PASS Direct DOM parent is root of rendering context (fixed)
+PASS Intermediate DOM nodes cause rendering context to end (normal flow)
+FAIL Intermediate DOM nodes cause rendering context to end (absolute) assert_equals: expected 100 but got 200
+FAIL Intermediate DOM nodes cause rendering context to end (fixed) assert_equals: expected 100 but got 200
+PASS Perspective applies to direct DOM normal-flow children
+PASS Perspective applies to direct DOM abs-pos children
+FAIL Perspective applies to direct DOM fixed-pos children assert_approx_equals: expected 161 +/- 1 but got 141.42135620117188
+PASS Perspective does not apply to DOM normal-flow grandchildren
+FAIL Perspective does not apply to DOM abs-pos grandchildren assert_approx_equals: expected 141 +/- 1 but got 161.62440490722656
+PASS Perspective does not apply to DOM fixed-pos grandchildren
+

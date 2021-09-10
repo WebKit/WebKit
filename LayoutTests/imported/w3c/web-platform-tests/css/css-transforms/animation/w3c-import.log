@@ -1,0 +1,52 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/composited-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/list-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/matrix-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/perspective-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/perspective-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/perspective-origin-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-transform-equivalent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-transform-equivalent.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/scale-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/scale-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-matrix.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-scale.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-skew.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-translate-em.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-translate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-matrix-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-origin-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-perspective-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-rotate-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-scale-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-skew-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-translate-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/translate-composition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transforms/animation/translate-interpolation.html

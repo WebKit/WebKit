@@ -1,0 +1,5 @@
+Rotate via JS
+
+
+FAIL JS test: Rotate via javascript must show the correct computed rotation assert_equals: expected "matrix(0.866025, 0.5, -0.5, 0.866025, 0, 0)" but got "matrix(0.8660254037844387, 0.49999999999999994, -0.49999999999999994, 0.8660254037844387, 0, 0)"
+

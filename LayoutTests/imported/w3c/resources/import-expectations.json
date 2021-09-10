@@ -18,6 +18,7 @@
     "css/css-sizing": "import", 
     "css/css-syntax": "import", 
     "css/css-text-decor": "import", 
+    "css/css-transforms": "import", 
     "css/css-transforms/parsing": "import", 
     "css/css-values": "import", 
     "css/geometry": "import", 

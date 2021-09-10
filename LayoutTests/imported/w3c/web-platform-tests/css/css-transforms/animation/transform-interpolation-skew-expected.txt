@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x376
+  RenderBlock {HTML} at (0,0) size 800x376
+    RenderFlexibleBox {BODY} at (8,8) size 784x360
+layer at (58,58) size 120x80
+  RenderBlock {DIV} at (50,50) size 120x80 [bgcolor=#008000] [border: none (40px solid #0000FF)]
+layer at (278,58) size 120x80
+  RenderBlock {DIV} at (270,50) size 120x80 [bgcolor=#008000] [border: none (40px solid #0000FF)]
+layer at (498,58) size 120x80
+  RenderBlock {DIV} at (490,50) size 120x80 [bgcolor=#008000] [border: none (40px solid #0000FF)]
+layer at (58,238) size 120x80
+  RenderBlock {DIV} at (50,230) size 120x80 [bgcolor=#008000] [border: none (40px solid #0000FF)]
+layer at (278,238) size 120x80
+  RenderBlock {DIV} at (270,230) size 120x80 [bgcolor=#008000] [border: none (40px solid #0000FF)]

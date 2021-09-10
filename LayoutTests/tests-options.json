@@ -17,6 +17,18 @@
     "imported/w3c/css/css-font-loading/idlharness.https.html": [
         "slow"
     ],
+    "imported/w3c/css/css-transforms/animation/rotate-interpolation.html": [
+        "slow"
+    ],
+    "imported/w3c/css/css-transforms/animation/transform-interpolation-001.html": [
+        "slow"
+    ],
+    "imported/w3c/css/css-transforms/animation/transform-interpolation-005.html": [
+        "slow"
+    ],
+    "imported/w3c/css/css-transforms/animation/translate-interpolation.html": [
+        "slow"
+    ],
     "imported/w3c/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],
