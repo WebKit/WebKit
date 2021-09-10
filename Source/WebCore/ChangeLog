@@ -1,3 +1,78 @@
+2021-09-10  Youenn Fablet  <youenn@apple.com>
+
+        Allow to subclass WritableStream
+        https://bugs.webkit.org/show_bug.cgi?id=230146
+
+        Reviewed by Alex Christensen.
+
+        Introduce a WebIDL-based WritableStream C++ class.
+        To keep the existing implementation, the previous JS WritableStream implementation is wrapped around an InternalWritableStream C++ class
+        which is a wrapper around JS-builtins manipulated objects.
+        InternalWritableStream is made DOMGuarded to enable to keep a ref to the JS object from WritableStream.
+
+        Update JS built-in code to manage hopping to the InternalWritableStream JS object from the exposed WritableStream JS object.
+        We introduce getInternalWritableStream routine for that purpose.
+
+        Transition existing WritableStream users to the new C++ class.
+        Minor code generator change to make use of the now available JSWritableStream.
+
+        Covered by existing and rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::RTCRtpSFrameTransform::isAttached const):
+        (WebCore::RTCRtpSFrameTransform::createStreams):
+        (WebCore::RTCRtpSFrameTransform::readable):
+        (WebCore::RTCRtpSFrameTransform::writable):
+        * Modules/mediastream/RTCRtpSFrameTransform.h:
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough):
+        * Modules/streams/TransformStreamInternals.js:
+        (initializeTransformStream):
+        (transformStreamErrorWritableAndUnblockWrite):
+        (transformStreamDefaultSinkWriteAlgorithm):
+        * Modules/streams/WritableStream.cpp: Added.
+        (WebCore::WritableStream::create):
+        (WebCore::WritableStream::WritableStream):
+        (WebCore::JSWritableStream::abort):
+        (WebCore::JSWritableStream::close):
+        (WebCore::JSWritableStream::getWriter):
+        * Modules/streams/WritableStream.h: Added.
+        (WebCore::WritableStream::lock):
+        (WebCore::WritableStream::locked const):
+        (WebCore::WritableStream::internalWritableStream):
+
+        * Modules/streams/WritableStream.idl:
+        * Modules/streams/WritableStream.js: Removed.
+        * Modules/streams/WritableStreamDefaultWriter.js:
+        (initializeWritableStreamDefaultWriter):
+        * Modules/streams/WritableStreamInternals.js:
+        (initializeWritableStreamSlots):
+        (writableStreamCloseForBindings):
+        (writableStreamAbortForBindings):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/InternalWritableStream.cpp: Added.
+        (WebCore::invokeWritableStreamFunction):
+        (WebCore::InternalWritableStream::create):
+        (WebCore::InternalWritableStream::locked const):
+        (WebCore::InternalWritableStream::lock):
+        (WebCore::InternalWritableStream::abort):
+        (WebCore::InternalWritableStream::close):
+        (WebCore::InternalWritableStream::getWriter):
+        * bindings/js/InternalWritableStream.h: Added.
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/js/WritableStream.cpp: Removed.
+        * bindings/js/WritableStream.h: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+
 2021-09-10  Antti Koivisto  <antti@apple.com>
 
         Factor more text painting functions to TextBoxPainter

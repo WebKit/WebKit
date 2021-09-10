@@ -2058,7 +2058,6 @@ set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/streams/TransformStream.js
     ${WEBCORE_DIR}/Modules/streams/TransformStreamDefaultController.js
     ${WEBCORE_DIR}/Modules/streams/TransformStreamInternals.js
-    ${WEBCORE_DIR}/Modules/streams/WritableStream.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultController.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultWriter.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamInternals.js

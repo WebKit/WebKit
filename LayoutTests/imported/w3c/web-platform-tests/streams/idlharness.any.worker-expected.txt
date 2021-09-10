@@ -128,7 +128,7 @@ PASS WritableStream interface: existence and properties of interface prototype o
 PASS WritableStream interface: existence and properties of interface prototype object's "constructor" property
 PASS WritableStream interface: existence and properties of interface prototype object's @@unscopables property
 PASS WritableStream interface: attribute locked
-FAIL WritableStream interface: operation abort(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS WritableStream interface: operation abort(optional any)
 PASS WritableStream interface: operation close()
 PASS WritableStream interface: operation getWriter()
 PASS WritableStream must be primary interface of new WritableStream()

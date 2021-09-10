@@ -57,7 +57,66 @@ function createWritableStream(startAlgorithm, writeAlgorithm, closeAlgorithm, ab
     return new @WritableStream(underlyingSink, { sizeAlgorithm: writableSizeAlgorithm, highWaterMark: writableHighWaterMark });
 }
 
-function privateInitializeWritableStream(stream, underlyingSink)
+function createInternalWritableStream(underlyingSink, strategy)
+{
+    "use strict";
+
+    const stream = { };
+
+    if (underlyingSink === @undefined)
+        underlyingSink = { };
+
+    if (strategy === @undefined)
+        strategy = { };
+
+    if (!@isObject(underlyingSink))
+        @throwTypeError("WritableStream constructor takes an object as first argument");
+
+    // createWriteStream code path.
+    if (@getByIdDirectPrivate(underlyingSink, "WritableStream")) {
+        @initializeWritableStreamSlots(stream, underlyingSink);
+
+        const controller = new @WritableStreamDefaultController();
+
+        @setUpWritableStreamDefaultController(stream, controller, underlyingSink.startAlgorithm, underlyingSink.writeAlgorithm, underlyingSink.closeAlgorithm, underlyingSink.abortAlgorithm, strategy.highWaterMark, strategy.sizeAlgorithm);
+        return stream;
+    }
+
+    if ("type" in underlyingSink)
+        @throwRangeError("Invalid type is specified");
+
+    const sizeAlgorithm = @extractSizeAlgorithm(strategy);
+    const highWaterMark = @extractHighWaterMark(strategy, 1);
+
+    const underlyingSinkDict = { };
+    if ("start" in underlyingSink) {
+        underlyingSinkDict["start"] = underlyingSink["start"];
+        if (typeof underlyingSinkDict["start"] !== "function")
+            @throwTypeError("underlyingSink.start should be a function");
+    }
+    if ("write" in underlyingSink) {
+        underlyingSinkDict["write"] = underlyingSink["write"];
+        if (typeof underlyingSinkDict["write"] !== "function")
+            @throwTypeError("underlyingSink.write should be a function");
+    }
+    if ("close" in underlyingSink) {
+        underlyingSinkDict["close"] = underlyingSink["close"];
+        if (typeof underlyingSinkDict["close"] !== "function")
+            @throwTypeError("underlyingSink.close should be a function");
+    }
+    if ("abort" in underlyingSink) {
+        underlyingSinkDict["abort"] = underlyingSink["abort"];
+        if (typeof underlyingSinkDict["abort"] !== "function")
+            @throwTypeError("underlyingSink.abort should be a function");
+    }
+
+    @initializeWritableStreamSlots(stream, underlyingSink);
+    @setUpWritableStreamDefaultControllerFromUnderlyingSink(stream, underlyingSink, underlyingSinkDict, highWaterMark, sizeAlgorithm);
+
+    return stream;
+}
+
+function initializeWritableStreamSlots(stream, underlyingSink)
 {
     @putByIdDirectPrivate(stream, "state", "writable");
     @putByIdDirectPrivate(stream, "storedError", @undefined);
@@ -70,6 +129,25 @@ function privateInitializeWritableStream(stream, underlyingSink)
     @putByIdDirectPrivate(stream, "writeRequests", []);
     @putByIdDirectPrivate(stream, "backpressure", false);
     @putByIdDirectPrivate(stream, "underlyingSink", underlyingSink);
+}
+
+function writableStreamCloseForBindings(stream)
+{
+    if (@isWritableStreamLocked(stream))
+        return @Promise.@reject(@makeTypeError("WritableStream.close method can only be used on non locked WritableStream"));
+
+    if (@writableStreamCloseQueuedOrInFlight(stream))
+        return @Promise.@reject(@makeTypeError("WritableStream.close method can only be used on a being close WritableStream"));
+
+    return @writableStreamClose(stream);
+}
+
+function writableStreamAbortForBindings(stream, reason)
+{
+    if (@isWritableStreamLocked(stream))
+        return @Promise.@reject(@makeTypeError("WritableStream.abort method can only be used on non locked WritableStream"));
+
+    return @writableStreamAbort(stream, reason);
 }
 
 function isWritableStreamLocked(stream)

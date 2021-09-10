@@ -123,7 +123,8 @@ function pipeThrough(streams, options)
             throw @makeTypeError("readable should be ReadableStream");
 
         const writable = transforms["writable"];
-        if (!@isWritableStream(writable))
+        const internalWritable = @getInternalWritableStream(writable);
+        if (!@isWritableStream(internalWritable))
             throw @makeTypeError("writable should be WritableStream");
 
         let preventClose = false;
@@ -149,10 +150,10 @@ function pipeThrough(streams, options)
         if (@isReadableStreamLocked(this))
             throw @makeTypeError("ReadableStream is locked");
 
-        if (@isWritableStreamLocked(writable))
+        if (@isWritableStreamLocked(internalWritable))
             throw @makeTypeError("WritableStream is locked");
 
-        @readableStreamPipeToWritableStream(this, writable, preventClose, preventAbort, preventCancel, signal);
+        @readableStreamPipeToWritableStream(this, internalWritable, preventClose, preventAbort, preventCancel, signal);
 
         return readable;
     }
@@ -196,7 +197,8 @@ function pipeTo(destination)
                 return @Promise.@reject(@makeTypeError("options.signal must be AbortSignal"));
         }
 
-        if (!@isWritableStream(destination))
+        const internalDestination = @getInternalWritableStream(destination);
+        if (!@isWritableStream(internalDestination))
             return @Promise.@reject(@makeTypeError("ReadableStream pipeTo requires a WritableStream"));
 
         if (!@isReadableStream(this))
@@ -205,10 +207,10 @@ function pipeTo(destination)
         if (@isReadableStreamLocked(this))
             return @Promise.@reject(@makeTypeError("ReadableStream is locked"));
 
-        if (@isWritableStreamLocked(destination))
+        if (@isWritableStreamLocked(internalDestination))
             return @Promise.@reject(@makeTypeError("WritableStream is locked"));
 
-        return @readableStreamPipeToWritableStream(this, destination, preventClose, preventAbort, preventCancel, signal);
+        return @readableStreamPipeToWritableStream(this, internalDestination, preventClose, preventAbort, preventCancel, signal);
     }
 
     // FIXME: rewrite pipeTo so as to require to have 'this' as a ReadableStream and destination be a WritableStream.

@@ -348,6 +348,7 @@ namespace WebCore {
     macro(flushAlgorithm) \
     macro(focus) \
     macro(frames) \
+    macro(getInternalWritableStream) \
     macro(getTracks) \
     macro(getUserMedia) \
     macro(gpu) \
@@ -359,6 +360,8 @@ namespace WebCore {
     macro(inFlightWriteRequest) \
     macro(indexedDB) \
     macro(initializeWith) \
+    macro(internalStream) \
+    macro(internalWritable) \
     macro(isAbortSignal) \
     macro(isDisturbed) \
     macro(isLoading) \

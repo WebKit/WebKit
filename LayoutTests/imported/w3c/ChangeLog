@@ -1,5 +1,17 @@
 2021-09-10  Youenn Fablet  <youenn@apple.com>
 
+        Allow to subclass WritableStream
+        https://bugs.webkit.org/show_bug.cgi?id=230146
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/streams/idlharness.any-expected.txt:
+        * web-platform-tests/streams/idlharness.any.worker-expected.txt:
+        * web-platform-tests/streams/writable-streams/general.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/general.any.worker-expected.txt:
+
+2021-09-10  Youenn Fablet  <youenn@apple.com>
+
         Use RTCErrorEvent for data channel error event
         https://bugs.webkit.org/show_bug.cgi?id=230090
 

@@ -93,7 +93,7 @@ private:
 
     enum class Side { Sender, Receiver };
     void initializeTransformer(RTCRtpTransformBackend&, Side);
-    void createStreams(JSC::JSGlobalObject&);
+    ExceptionOr<void> createStreams();
 
     bool m_isAttached { false };
     bool m_hasWritable { false };
