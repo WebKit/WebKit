@@ -5,11 +5,14 @@ function shouldBe(actual, expected) {
 
 {
     let he = new Intl.Locale("he")
-    shouldBe(JSON.stringify(he.weekInfo), `{"firstDay":7,"weekendStart":5,"weekendEnd":6,"minimalDays":1}`);
+    shouldBe(JSON.stringify(he.weekInfo), `{"firstDay":7,"weekend":[5,6],"minimalDays":1}`);
     let af = new Intl.Locale("af")
-    shouldBe(JSON.stringify(af.weekInfo), `{"firstDay":7,"weekendStart":6,"weekendEnd":7,"minimalDays":1}`);
+    shouldBe(JSON.stringify(af.weekInfo), `{"firstDay":7,"weekend":[6,7],"minimalDays":1}`);
     let enGB = new Intl.Locale("en-GB")
-    shouldBe(JSON.stringify(enGB.weekInfo), `{"firstDay":1,"weekendStart":6,"weekendEnd":7,"minimalDays":4}`);
+    shouldBe(JSON.stringify(enGB.weekInfo), `{"firstDay":1,"weekend":[6,7],"minimalDays":4}`);
+    let msBN = new Intl.Locale("ms-BN");
+    // "weekend" should be [5,7]. But currently ICU/CLDR does not support representing non-contiguous weekend.
+    shouldBe(JSON.stringify(msBN.weekInfo), `{"firstDay":1,"weekend":[6,7],"minimalDays":1}`);
 }
 {
     let l = new Intl.Locale("ar")

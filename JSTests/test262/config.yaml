@@ -72,6 +72,9 @@ skip:
     - test/intl402/Locale/constructor-non-iana-canon.js
     - test/intl402/Locale/likely-subtags.js
 
+    # The spec is changed, but the test is not updated yet. https://github.com/tc39/proposal-intl-locale-info/pull/44
+    - test/intl402/Locale/prototype/weekInfo/output-object-keys.js
+
     # Pass only in ICU 68~
     - test/intl402/Locale/constructor-options-region-valid.js
     - test/intl402/Locale/constructor-tag.js

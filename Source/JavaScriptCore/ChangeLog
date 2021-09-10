@@ -1,3 +1,23 @@
+2021-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl.Locale weekendInfo should list all weekend days instead of range
+        https://bugs.webkit.org/show_bug.cgi?id=230108
+
+        Reviewed by Ross Kirsling.
+
+        We cannot assume that weekend is contiguous. For example, Burnei's weekend is Friday and Sunday.
+        This is raised in [1], and our conclusion in Sep-9 meeting is that we should have an array which
+        includes all the weekend days. The change is merged in [2], and this patch changes our implementation
+        accordingly.
+
+        [1]: https://github.com/tc39/proposal-intl-locale-info/issues/25
+        [2]: https://github.com/tc39/proposal-intl-locale-info/commit/afb1e269dd698476a2514129235cdad88af60e6f
+
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::weekInfo):
+        * runtime/IntlObjectInlines.h:
+        (JSC::createArrayFromIntVector):
+
 2021-09-09  Darin Adler  <darin@apple.com>
 
         Improve performance by using StringView, not "const StringView&"

@@ -1,5 +1,17 @@
 2021-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Intl.Locale weekendInfo should list all weekend days instead of range
+        https://bugs.webkit.org/show_bug.cgi?id=230108
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-locale-info.js:
+        (throw.new.Error):
+        (let.enGB.new.Intl.Locale.shouldBe): Deleted.
+        * test262/config.yaml:
+
+2021-09-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Optimize op_get_property_enumerator further
         https://bugs.webkit.org/show_bug.cgi?id=230086
 
