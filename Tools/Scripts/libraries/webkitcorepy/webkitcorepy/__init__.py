@@ -42,7 +42,7 @@ from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 
-version = Version(0, 10, 2)
+version = Version(0, 10, 3)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

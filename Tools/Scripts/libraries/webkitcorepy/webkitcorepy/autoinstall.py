@@ -178,68 +178,80 @@ class Package(object):
 
         AutoInstall._verify_index()
         path = 'simple/{}/'.format(self.pypi_name)
-        response = AutoInstall._request('https://{}/{}'.format(AutoInstall.index, path))
-        try:
-            if response.code != 200:
-                raise ValueError('The package {} was not found on {}'.format(self.pypi_name, AutoInstall.index))
+        count = 0
+        while count <= (AutoInstall.times_to_retry or 0):
+            response = None
+            try:
+                response = AutoInstall._request('https://{}/{}'.format(AutoInstall.index, path))
+                if response.code != 200:
+                    raise ValueError('The package {} was not found on {}'.format(self.pypi_name, AutoInstall.index))
 
-            packages = SimplyPypiIndexPageParser.parse(response.read().decode("UTF-8"))
-            cached_tags = None
+                packages = SimplyPypiIndexPageParser.parse(response.read().decode("UTF-8"))
+                cached_tags = None
 
-            for package in reversed(packages):
-                if self.wheel:
-                    match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', package['name'])
-                    if not match:
-                        continue
+                for package in reversed(packages):
+                    if self.wheel:
+                        match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', package['name'])
+                        if not match:
+                            continue
 
-                    from packaging import tags
+                        from packaging import tags
 
-                    if not cached_tags:
-                        cached_tags = set(AutoInstall.tags())
+                        if not cached_tags:
+                            cached_tags = set(AutoInstall.tags())
 
-                    if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
-                        continue
+                        if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
+                            continue
 
-                    extension = 'whl'
+                        extension = 'whl'
 
-                else:
-                    if package['name'].endswith(('.tar.gz', '.tar.bz2')):
-                        extension = 'tar.gz'
-                    elif package['name'].endswith('.zip'):
-                        extension = 'zip'
                     else:
+                        if package['name'].endswith(('.tar.gz', '.tar.bz2')):
+                            extension = 'tar.gz'
+                        elif package['name'].endswith('.zip'):
+                            extension = 'zip'
+                        else:
+                            continue
+
+                    requires = package.get('data-requires-python')
+                    if requires and not AutoInstall.version.matches(requires):
                         continue
 
-                requires = package.get('data-requires-python')
-                if requires and not AutoInstall.version.matches(requires):
-                    continue
+                    version_candidate = re.search(r'\d+\.\d+(\.\d+)?', package["name"])
+                    if not version_candidate:
+                        continue
+                    version = Version(*version_candidate.group().split('.'))
+                    if self.version and version not in self.version:
+                        continue
 
-                version_candidate = re.search(r'\d+\.\d+(\.\d+)?', package["name"])
-                if not version_candidate:
-                    continue
-                version = Version(*version_candidate.group().split('.'))
-                if self.version and version not in self.version:
-                    continue
+                    link = package['href'].split('#')[0]
+                    if '://' not in link:
+                        depth = 0
+                        while link.startswith('../'):
+                            depth += 1
+                            link = link[3:]
+                        link = 'https://{}/{}{}'.format(AutoInstall.index, '/'.join(path.split('/')[depth:]), link)
 
-                link = package['href'].split('#')[0]
-                if '://' not in link:
-                    depth = 0
-                    while link.startswith('../'):
-                        depth += 1
-                        link = link[3:]
-                    link = 'https://{}/{}{}'.format(AutoInstall.index, '/'.join(path.split('/')[depth:]), link)
+                    self._archives.append(self.Archive(
+                        name=self.pypi_name,
+                        link=link,
+                        version=version,
+                        extension=extension,
+                    ))
 
-                self._archives.append(self.Archive(
-                    name=self.pypi_name,
-                    link=link,
-                    version=version,
-                    extension=extension,
-                ))
+                self._archives = sorted(self._archives, key=lambda archive: archive.version)
+                return self._archives
 
-            self._archives = sorted(self._archives, key=lambda archive: archive.version)
-            return self._archives
-        finally:
-            response.close()
+            except (IOError, URLError) as e:
+                if count > (AutoInstall.times_to_retry or 0):
+                    raise
+                else:
+                    AutoInstall.log(str(e))
+                    AutoInstall.log('Failed to download {}, retrying'.format(self.name))
+            finally:
+                if response:
+                    response.close()
+                count += 1
 
     def is_cached(self):
         manifest = AutoInstall.manifest.get(self.name)
