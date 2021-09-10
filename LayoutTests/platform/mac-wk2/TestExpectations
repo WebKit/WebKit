@@ -780,7 +780,7 @@ webkit.org/b/168065 inspector/unit-tests/heap-snapshot.html [ Pass Failure Timeo
 
 webkit.org/b/168235 [ Debug ] imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Pass Failure ]
 
-webkit.org/b/229831 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
+webkit.org/b/229831 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/168085 tiled-drawing/scrolling/latched-to-deleted-node.html [ Pass Failure ]
 
