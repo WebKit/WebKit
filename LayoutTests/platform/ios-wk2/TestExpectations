@@ -1966,6 +1966,8 @@ webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-can
 
 webkit.org/b/228462 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getContributingSources.https.html [ Pass Failure ]
 
+webkit.org/b/214286 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html [ Pass Failure ]
+
 webkit.org/b/219438 [ Release ] fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
 
 webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Pass ]
