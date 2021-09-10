@@ -1,3 +1,17 @@
+2021-09-10  Rob Buis  <rbuis@igalia.com>
+
+        Fix aspect-ratio-intrinsic-size-004.html
+        https://bugs.webkit.org/show_bug.cgi?id=228283
+
+        Reviewed by Sergio Villar Senin.
+
+        Flex items using aspect-ratio that are stretched
+        and depend on flex container height also need
+        to have the preferred widths recalculated.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::needsPreferredWidthsRecalculation const):
+
 2021-09-10  Jean-Yves Avenard  <jya@apple.com>
 
         Use of memcpy with overlapping memory pointers

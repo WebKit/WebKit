@@ -1,3 +1,12 @@
+2021-09-10  Rob Buis  <rbuis@igalia.com>
+
+        Fix aspect-ratio-intrinsic-size-004.html
+        https://bugs.webkit.org/show_bug.cgi?id=228283
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations:
+
 2021-09-09  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr crash in CompositeEditCommand::splitTreeToNode via InsertParagraphSeparatorCommand::doApply
