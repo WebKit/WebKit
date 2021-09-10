@@ -61,7 +61,10 @@
 #import <wtf/text/cf/StringConcatenateCF.h>
 
 #if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/XPCConnectionAdditions.h>
 #import <rootless.h>
+#else
+#define XPC_CONNECTION_ADDITIONS
 #endif
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
@@ -700,6 +703,7 @@ static void initializeSandboxParameters(const AuxiliaryProcessInitializationPara
         mbr_close_connectionsPtr()();
     if (lookup_close_connectionsPtr())
         lookup_close_connectionsPtr()();
+    XPC_CONNECTION_ADDITIONS
 }
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
