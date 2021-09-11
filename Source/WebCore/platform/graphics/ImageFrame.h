@@ -33,6 +33,12 @@
 #include "NativeImage.h"
 #include <wtf/Seconds.h>
 
+// X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
+// As a workaround, we explicitly undef them here.
+#if defined(None)
+#undef None
+#endif
+
 namespace WebCore {
 
 class ImageFrame {

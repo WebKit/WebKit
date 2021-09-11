@@ -1418,11 +1418,6 @@ webkit.org/b/216359 fast/text/emoji-synthesis.html [ ImageOnlyFailure ]
 # Failing since added in r268138.
 webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ ImageOnlyFailure ]
 
-# MediaSession is not enabled in GTK/WPE.
-webkit.org/b/217991 imported/w3c/web-platform-tests/mediasession/ [ Skip ]
-webkit.org/b/217991 media/media-session/ [ Skip ]
-webkit.org/b/217991 fast/mediasession/ [ Skip ]
-
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
 

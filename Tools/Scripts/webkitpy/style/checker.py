@@ -181,6 +181,11 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/enum_casing"]),
 
     ([
+     # Forward declarations of GLib/GIO functions use underscores.
+     os.path.join('Source', 'WTF', 'wtf', 'glib', 'GRefPtr.h')],
+     ["-readability/naming/underscores"]),
+
+    ([
       # To use GStreamer GL without conflicts of GL symbols,
       # we should include gst/gl/gl.h before including OpenGL[ES]Shims
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'MediaPlayerPrivateGStreamer.cpp')],

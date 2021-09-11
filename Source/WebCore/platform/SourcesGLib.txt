@@ -22,11 +22,14 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 platform/audio/glib/AudioBusGLib.cpp
+platform/audio/glib/MediaSessionManagerGLib.cpp
 
+platform/glib/ApplicationGLib.cpp
 platform/glib/FileMonitorGLib.cpp
 platform/glib/KeyedDecoderGlib.cpp
 platform/glib/KeyedEncoderGlib.cpp
 platform/glib/LowPowerModeNotifierGLib.cpp
+platform/glib/RemoteCommandListenerGLib.cpp
 platform/glib/SharedBufferGlib.cpp
 platform/glib/UserAgentGLib.cpp
 

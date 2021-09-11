@@ -196,6 +196,13 @@ static void webKitSettingsConstructed(GObject* object)
     prefs->setPeerConnectionEnabled(true);
 #endif
 #endif
+
+    // FIXME: Expose API for this when this feature is officially non-experimental.
+#if ENABLE(MEDIA_SESSION)
+    prefs->setMediaSessionEnabled(true);
+    prefs->setMediaSessionCoordinatorEnabled(true);
+    prefs->setMediaSessionPlaylistEnabled(true);
+#endif
 }
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)

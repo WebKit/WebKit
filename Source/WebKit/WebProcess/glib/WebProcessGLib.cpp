@@ -35,6 +35,7 @@
 #include <WebCore/GStreamerCommon.h>
 #endif
 
+#include <WebCore/ApplicationGLib.h>
 #include <WebCore/MemoryCache.h>
 
 #if PLATFORM(WAYLAND)
@@ -108,6 +109,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (parameters.memoryPressureHandlerConfiguration)
         MemoryPressureHandler::singleton().setConfiguration(WTFMove(*parameters.memoryPressureHandlerConfiguration));
+
+    if (!parameters.applicationID.isEmpty())
+        WebCore::setApplicationID(parameters.applicationID);
+
+    if (!parameters.applicationName.isEmpty())
+        WebCore::setApplicationName(parameters.applicationName);
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)

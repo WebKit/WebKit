@@ -93,7 +93,9 @@ public:
     };
     WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&, TriggerGestureIndicator = TriggerGestureIndicator::Yes);
 
+#if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return *m_logger.get(); }
+#endif
 
     class Observer : public CanMakeWeakPtr<Observer> {
     public:

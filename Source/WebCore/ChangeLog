@@ -1,3 +1,80 @@
+2021-09-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GLIB] MediaSession is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=217991
+        <rdar://problem/70740119>
+
+        Reviewed by Michael Catanzaro.
+
+        Implementation of a GLib MediaSessionManager, able to provide a MPRIS DBus service, so that
+        third-party host tools can query the media playback status and potentially emit remote
+        control commands as well.
+
+        Covered by media-session layout tests now unskipped.
+
+        * Modules/mediasession/MediaImage.h:
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::logChannel):
+        (WebCore::logClassName):
+        * Modules/mediasession/MediaSession.h:
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * platform/LogInitialization.cpp:
+        (WebCore::getLogChannel):
+        * platform/PlatformScreen.h:
+        * platform/RemoteCommandListener.cpp:
+        (WebCore::RemoteCommandListener::resetCreationFunction):
+        * platform/SourcesGLib.txt:
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        * platform/audio/glib/MediaSessionManagerGLib.cpp: Added.
+        (WebCore::PlatformMediaSessionManager::create):
+        (WebCore::MediaSessionManagerGLib::MediaSessionManagerGLib):
+        (WebCore::MediaSessionManagerGLib::~MediaSessionManagerGLib):
+        (WebCore::getCommand):
+        (WebCore::handleMethodCall):
+        (WebCore::getProperty):
+        (WebCore::handleGetProperty):
+        (WebCore::handleSetProperty):
+        (WebCore::MediaSessionManagerGLib::setupMpris):
+        (WebCore::MediaSessionManagerGLib::busAcquired):
+        (WebCore::MediaSessionManagerGLib::nameLost):
+        (WebCore::MediaSessionManagerGLib::beginInterruption):
+        (WebCore::MediaSessionManagerGLib::scheduleSessionStatusUpdate):
+        (WebCore::MediaSessionManagerGLib::sessionWillBeginPlayback):
+        (WebCore::MediaSessionManagerGLib::sessionDidEndRemoteScrubbing):
+        (WebCore::MediaSessionManagerGLib::addSession):
+        (WebCore::MediaSessionManagerGLib::removeSession):
+        (WebCore::MediaSessionManagerGLib::setCurrentSession):
+        (WebCore::MediaSessionManagerGLib::sessionWillEndPlayback):
+        (WebCore::MediaSessionManagerGLib::sessionStateChanged):
+        (WebCore::MediaSessionManagerGLib::clientCharacteristicsChanged):
+        (WebCore::MediaSessionManagerGLib::sessionCanProduceAudioChanged):
+        (WebCore::MediaSessionManagerGLib::addSupportedCommand):
+        (WebCore::MediaSessionManagerGLib::removeSupportedCommand):
+        (WebCore::MediaSessionManagerGLib::nowPlayingEligibleSession):
+        (WebCore::MediaSessionManagerGLib::updateNowPlayingInfo):
+        (WebCore::MediaSessionManagerGLib::getPlaybackStatusAsGVariant):
+        (WebCore::MediaSessionManagerGLib::getActiveSessionPosition):
+        (WebCore::MediaSessionManagerGLib::dispatch):
+        (WebCore::MediaSessionManagerGLib::emitPropertiesChanged):
+        * platform/audio/glib/MediaSessionManagerGLib.h: Added.
+        (WebCore::MediaSessionManagerGLib::nameAcquired):
+        (WebCore::MediaSessionManagerGLib::getMetadataAsGVariant const):
+        (WebCore::MediaSessionManagerGLib::providePresentingApplicationPIDIfNecessary):
+        * platform/glib/ApplicationGLib.cpp: Added.
+        (WebCore::setApplicationName):
+        (WebCore::getApplicationName):
+        (WebCore::setApplicationID):
+        (WebCore::getApplicationID):
+        * platform/glib/ApplicationGLib.h: Added.
+        * platform/glib/RemoteCommandListenerGLib.cpp: Added.
+        (WebCore::RemoteCommandListenerGLib::create):
+        (WebCore::RemoteCommandListenerGLib::updateSupportedCommands):
+        (WebCore::RemoteCommandListenerGLib::RemoteCommandListenerGLib):
+        * platform/glib/RemoteCommandListenerGLib.h: Added.
+        * platform/graphics/ImageFrame.h:
+        * platform/graphics/ImageOrientation.h:
+
 2021-09-10  Alan Bujtas  <zalan@apple.com>
 
         [Legacy Line Layout] Do not integral round the root inlinebox's top position

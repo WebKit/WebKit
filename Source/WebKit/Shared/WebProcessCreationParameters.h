@@ -260,6 +260,11 @@ struct WebProcessCreationParameters {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
 #endif
+
+#if USE(GLIB)
+    String applicationID;
+    String applicationName;
+#endif
 };
 
 } // namespace WebKit

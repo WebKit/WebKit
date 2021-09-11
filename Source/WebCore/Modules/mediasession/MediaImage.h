@@ -27,6 +27,9 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 struct MediaImage {

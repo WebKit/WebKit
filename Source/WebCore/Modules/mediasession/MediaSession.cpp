@@ -51,8 +51,17 @@ static const void* nextLogIdentifier()
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 
-static WTFLogChannel& logChannel() { return LogMedia; }
-static const char* logClassName() { return "MediaSession"; }
+#if !RELEASE_LOG_DISABLED
+static WTFLogChannel& logChannel()
+{
+    return LogMedia;
+}
+
+static const char* logClassName()
+{
+    return "MediaSession";
+}
+#endif
 
 static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSessionAction(MediaSessionAction action)
 {
