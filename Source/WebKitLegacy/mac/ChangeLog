@@ -1,3 +1,22 @@
+2021-09-11  David Kilzer  <ddkilzer@apple.com>
+
+        CFNotificationCenterAddObserver() should use weak observers
+        <https://webkit.org/b/230168>
+        <rdar://problem/82987695>
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebHTMLView.mm:
+        (hardwareKeyboardAvailabilityChangedCallback):
+        - Modernize syntax for WeakObjCPtr constructor.
+        (-[WebHTMLView initWithFrame:]):
+        - Use _CFNotificationObserverIsObjC to fix the bug.
+        - Extract local variables and change notificationName cast to be
+          ARC-ready.  Remove notificationName from autoreleasePool.
+        (-[WebHTMLView dealloc]):
+        - Extract local variable and change notificationName cast to be
+          ARC-ready.  Remove notificationName from autoreleasePool.
+
 2021-09-08  Jean-Yves Avenard  <jya@apple.com>
 
         Safari TP 131 audio canPlayType() reports false negatives
