@@ -23,6 +23,7 @@
 #include "WidthIterator.h"
 
 #include "CharacterProperties.h"
+#include "ComposedCharacterClusterTextIterator.h"
 #include "Font.h"
 #include "FontCascade.h"
 #include "GlyphBuffer.h"
@@ -671,7 +672,11 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
         Latin1TextIterator textIterator(m_run.data8(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
         advanceInternal(textIterator, glyphBuffer);
     } else {
+#if USE(CLUSTER_AWARE_WIDTH_ITERATOR)
+        ComposedCharacterClusterTextIterator textIterator(m_run.data16(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
+#else
         SurrogatePairAwareTextIterator textIterator(m_run.data16(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
+#endif
         advanceInternal(textIterator, glyphBuffer);
     }
 

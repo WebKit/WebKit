@@ -1,3 +1,26 @@
+2021-09-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Start teaching WidthIterator about character clusters
+        https://bugs.webkit.org/show_bug.cgi?id=229393
+
+        Reviewed by Fujii Hironori.
+
+        If we remove the complex text codepath, we have to teach the fast text
+        codepath about character clusters, so it can perform font fallback correctly.
+        We don't want to do things like split up emoji families because we didn't realize
+        they should all be kept together as an atomic unit!
+
+        No new tests because this isn't enabled yet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ComposedCharacterClusterTextIterator.h: Added.
+        (WebCore::ComposedCharacterClusterTextIterator::ComposedCharacterClusterTextIterator):
+        (WebCore::ComposedCharacterClusterTextIterator::consume):
+        (WebCore::ComposedCharacterClusterTextIterator::advance):
+        (WebCore::ComposedCharacterClusterTextIterator::currentIndex const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+
 2021-09-10  Alex Christensen  <achristensen@webkit.org>
 
         Use std::not_fn instead of lambda in URLParser
