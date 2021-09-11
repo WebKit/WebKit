@@ -79,6 +79,7 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
+#include "ReportingEndpointsCache.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
@@ -632,6 +633,11 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         DOCUMENTLOADER_RELEASE_LOG("willSendRequest: With no provisional document loader");
 
     bool didReceiveRedirectResponse = !redirectResponse.isNull();
+    if (didReceiveRedirectResponse && m_frame->isMainFrame()) {
+        if (auto reportingEndpointsCache = m_frame->page() ? m_frame->page()->reportingEndpointsCache() : nullptr)
+            reportingEndpointsCache->addEndPointsFromResponse(redirectResponse);
+    }
+
     if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse)) {
         DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - form action not allowed by CSP");
         cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
@@ -759,6 +765,21 @@ static bool checkIfCOOPValuesRequireBrowsingContextGroupSwitch(bool isInitialAbo
     return true;
 }
 
+// https://html.spec.whatwg.org/multipage/origin.html#check-bcg-switch-navigation-report-only
+static bool checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch(bool isInitialAboutBlank, const CrossOriginOpenerPolicy& activeDocumentCOOP, const SecurityOrigin& activeDocumentNavigationOrigin, const CrossOriginOpenerPolicy& responseCOOP, const SecurityOrigin& responseOrigin)
+{
+    if (!checkIfCOOPValuesRequireBrowsingContextGroupSwitch(isInitialAboutBlank, activeDocumentCOOP.reportOnlyValue, activeDocumentNavigationOrigin, responseCOOP.reportOnlyValue, responseOrigin))
+        return false;
+
+    if (checkIfCOOPValuesRequireBrowsingContextGroupSwitch(isInitialAboutBlank, activeDocumentCOOP.reportOnlyValue, activeDocumentNavigationOrigin, responseCOOP.value, responseOrigin))
+        return true;
+
+    if (checkIfCOOPValuesRequireBrowsingContextGroupSwitch(isInitialAboutBlank, activeDocumentCOOP.value, activeDocumentNavigationOrigin, responseCOOP.reportOnlyValue, responseOrigin))
+        return true;
+
+    return false;
+}
+
 static std::tuple<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseOriginAndCOOP(const ResourceResponse& response, const Document& document, const std::optional<NavigationAction::Requester>& requester, ContentSecurityPolicy* responseCSP)
 {
     // Non-initial empty documents (about:blank) should inherit their cross-origin-opener-policy from the navigation's initiator top level document,
@@ -813,6 +834,12 @@ CrossOriginOpenerPolicyEnforcementResult DocumentLoader::enforceResponseCrossOri
             m_frame->document()->crossOriginOpenerPolicy(),
             currentContextIsSource,
         };
+        if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(m_frame->document()->url())) {
+            if (auto openerFrame = m_frame->loader().opener()) {
+                if (auto openerDocument = openerFrame->document())
+                    m_currentCoopEnforcementResult->url = openerDocument->url();
+            }
+        }
     }
 
     CrossOriginOpenerPolicyEnforcementResult newCOOPEnforcementResult = {
@@ -824,8 +851,25 @@ CrossOriginOpenerPolicyEnforcementResult DocumentLoader::enforceResponseCrossOri
         true
     };
 
-    if (checkIfCOOPValuesRequireBrowsingContextGroupSwitch(frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), m_currentCoopEnforcementResult->crossOriginOpenerPolicy.value, m_currentCoopEnforcementResult->currentOrigin, responseCOOP.value, responseOrigin))
+    if (checkIfCOOPValuesRequireBrowsingContextGroupSwitch(frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), m_currentCoopEnforcementResult->crossOriginOpenerPolicy.value, m_currentCoopEnforcementResult->currentOrigin, responseCOOP.value, responseOrigin)) {
         newCOOPEnforcementResult.needsBrowsingContextGroupSwitch = true;
+
+        // FIXME: Add the concept of browsing context group like in the specification instead of treating the whole process as a group.
+        if (Page::nonUtilityPageCount() > 1) {
+            sendViolationReportWhenNavigatingToCOOPResponse(*m_frame, responseCOOP, COOPDisposition::Enforce, responseURL, m_currentCoopEnforcementResult->url, responseOrigin, m_currentCoopEnforcementResult->currentOrigin, m_request.httpReferrer(), m_request.httpUserAgent());
+            sendViolationReportWhenNavigatingAwayFromCOOPResponse(*m_frame, m_currentCoopEnforcementResult->crossOriginOpenerPolicy, COOPDisposition::Enforce, m_currentCoopEnforcementResult->url, responseURL, m_currentCoopEnforcementResult->currentOrigin, responseOrigin, m_currentCoopEnforcementResult->isCurrentContextNavigationSource, m_request.httpUserAgent());
+        }
+    }
+
+    if (checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch(frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), m_currentCoopEnforcementResult->crossOriginOpenerPolicy, m_currentCoopEnforcementResult->currentOrigin, responseCOOP, responseOrigin)) {
+        newCOOPEnforcementResult.needsBrowsingContextGroupSwitchDueToReportOnly = true;
+
+        // FIXME: Add the concept of browsing context group like in the specification instead of treating the whole process as a group.
+        if (Page::nonUtilityPageCount() > 1) {
+            sendViolationReportWhenNavigatingToCOOPResponse(*m_frame, responseCOOP, COOPDisposition::Reporting, responseURL, m_currentCoopEnforcementResult->url, responseOrigin, m_currentCoopEnforcementResult->currentOrigin, m_request.httpReferrer(), m_request.httpUserAgent());
+            sendViolationReportWhenNavigatingAwayFromCOOPResponse(*m_frame, m_currentCoopEnforcementResult->crossOriginOpenerPolicy, COOPDisposition::Reporting, m_currentCoopEnforcementResult->url, responseURL, m_currentCoopEnforcementResult->currentOrigin, responseOrigin, m_currentCoopEnforcementResult->isCurrentContextNavigationSource, m_request.httpUserAgent());
+        }
+    }
 
     return newCOOPEnforcementResult;
 }
@@ -986,6 +1030,11 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
 
     if (willLoadFallback)
         return;
+
+    if (m_frame->isMainFrame()) {
+        if (auto reportingEndpointsCache = m_frame->page() ? m_frame->page()->reportingEndpointsCache() : nullptr)
+            reportingEndpointsCache->addEndPointsFromResponse(response);
+    }
 
     ASSERT(m_identifierForLoadWithoutResourceLoader || m_mainResource);
     unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();

@@ -1,3 +1,38 @@
+2021-09-10  Chris Dumez  <cdumez@apple.com>
+
+        Implement navigation reporting for Cross-Origin-Opener-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230046
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT COOP navigation reporting tests now that they are passing.
+
+        Merge the following fix to WPT tests so they can run with the WebKit infrastructure:
+        - https://github.com/web-platform-tests/wpt/pull/30411
+
+        Merge the following WPT test fix to address flakiness:
+        - https://github.com/web-platform-tests/wpt/pull/30548
+
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-four-reports.https.html.sub.headers:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-from-unsafe-none.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-report-to.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin-report-to.https.html.sub.headers:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/report-only-same-origin.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-popup.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-allow-popups-report-to.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-allow-popups-report-to.https.html.sub.headers:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-coep-report-to.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-coep-report-to.https.html.sub.headers:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-report-to.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin-report-to.https.html.sub.headers:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-same-origin.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unsafe-none-report-to.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-popup-unsafe-none-report-to.https.html.sub.headers:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-redirect-with-same-origin-allow-popups.https-expected.txt:
+        * web-platform-tests/html/cross-origin-opener-policy/reporting/resources/reporting-common.js:
+
 2021-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Update css-transforms WPT

@@ -45,6 +45,7 @@
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ThreadableLoader.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerThread.h"

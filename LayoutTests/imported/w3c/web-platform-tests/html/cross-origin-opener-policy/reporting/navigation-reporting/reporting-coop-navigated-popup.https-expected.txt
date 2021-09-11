@@ -1,4 +1,4 @@
 
-FAIL Open a popup to a document without COOP, then navigate it to a document with promise_test: Unhandled rejection with value: "No report matched the expected report for endpoint: coop-popup-report-endpoint, expected report: {\"body\":{\"disposition\":\"enforce\",\"effectivePolicy\":\"unsafe-none\",\"nextResponseURL\":\"/uuid=(uuid)$/\",\"type\":\"navigation-from-response\"},\"url\":\"/uuid=(uuid)$/\",\"type\":\"coop\"}, within available reports: []"
+PASS Open a popup to a document without COOP, then navigate it to a document with
 PASS verify remaining reports
 

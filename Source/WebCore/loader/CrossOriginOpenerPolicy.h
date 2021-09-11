@@ -106,8 +106,12 @@ struct CrossOriginOpenerPolicyEnforcementResult {
     bool isCurrentContextNavigationSource { true };
 };
 
+enum class COOPDisposition : bool { Reporting , Enforce };
+
 CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&, const ScriptExecutionContext&);
 WEBCORE_EXPORT void addCrossOriginOpenerPolicyHeaders(ResourceResponse&, const CrossOriginOpenerPolicy&);
+void sendViolationReportWhenNavigatingToCOOPResponse(Frame&, CrossOriginOpenerPolicy, COOPDisposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, const String& referrer, const String& userAgent);
+void sendViolationReportWhenNavigatingAwayFromCOOPResponse(Frame&, CrossOriginOpenerPolicy, COOPDisposition, const URL& coopURL, const URL& nextResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& nextResponseOrigin, bool isCOOPResponseNavigationSource, const String& userAgent);
 
 } // namespace WebCore
 

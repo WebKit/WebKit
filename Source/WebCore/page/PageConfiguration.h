@@ -62,6 +62,7 @@ class PerformanceLoggingClient;
 class PermissionController;
 class PluginInfoProvider;
 class ProgressTrackerClient;
+class ReportingEndpointsCache;
 class SocketProvider;
 class SpeechRecognitionProvider;
 class StorageNamespaceProvider;
@@ -133,6 +134,7 @@ public:
     Vector<UserContentURLPattern> corsDisablingPatterns;
     UniqueRef<SpeechRecognitionProvider> speechRecognitionProvider;
     UniqueRef<MediaRecorderProvider> mediaRecorderProvider;
+    RefPtr<ReportingEndpointsCache> reportingEndpointsCache;
 
     // FIXME: These should be all be Settings.
     bool loadsSubresources { true };
