@@ -10,7 +10,7 @@ depends:
 build-depends:
 - freedesktop-sdk.bst:components/pkg-config.bst
 - freedesktop-sdk.bst:components/which.bst
-- sdk/libdrm.bst
+- freedesktop-sdk.bst:components/libdrm.bst
 
 variables:
   conf-local: |

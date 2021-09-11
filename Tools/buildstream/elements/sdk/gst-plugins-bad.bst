@@ -11,11 +11,11 @@ build-depends:
 depends:
 - sdk/gstreamer.bst
 - sdk/gst-plugins-base.bst
-- sdk/openjpeg.bst
-- sdk/libdrm.bst
+- freedesktop-sdk.bst:components/openjpeg.bst
+- freedesktop-sdk.bst:components/libdrm.bst
 - sdk/libkate.bst
 - sdk/libusrsctp.bst
-- sdk-build-depends/libusb.bst
+- freedesktop-sdk.bst:components/libusb.bst
 - filtered-openh264.bst
 - freedesktop-sdk.bst:components/aom.bst
 - freedesktop-sdk.bst:components/librsvg.bst

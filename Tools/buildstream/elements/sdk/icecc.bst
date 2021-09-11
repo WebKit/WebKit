@@ -5,9 +5,10 @@ build-depends:
 
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
-- sdk/libzstd.bst
+- freedesktop-sdk.bst:components/zstd.bst
 - sdk/libcap-ng.bst
 - freedesktop-sdk.bst:components/libarchive.bst
+- freedesktop-sdk.bst:components/lzo.bst
 
 variables:
   conf-local: >-
@@ -16,5 +17,5 @@ variables:
 sources:
 - kind: git_tag
   url: github_com:icecc/icecream
-  ref: 1.3
+  ref: 1.3.1
 

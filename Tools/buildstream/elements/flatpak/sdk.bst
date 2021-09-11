@@ -85,9 +85,19 @@ config:
       download-if: have-intel-gpu
       version: '%{freedesktop-sdk-flatpak-branch}'
 
-    Extension org.freedesktop.Sdk.Extension.rust-stable:
-      directory: 'lib/sdk/rust-stable'
-      version: '%{freedesktop-sdk-flatpak-branch}'
+    Extension org.freedesktop.Platform.GL:
+      # 1.4 is for Nvidia drivers
+      versions: "%{freedesktop-sdk-flatpak-branch};1.4"
+      version: "1.4"
+      directory: "%{lib}/GL"
+      subdirectories: "true"
+      no-autodownload: "true"
+      autodelete: "false"
+      add-ld-path: "lib"
+      merge-dirs: "vulkan/icd.d;glvnd/egl_vendor.d;OpenCL/vendors;lib/dri;lib/d3d;vulkan/explicit_layer.d;vulkan/implicit_layer.d"
+      download-if: "active-gl-driver"
+      enable-if: "active-gl-driver"
+      autoprune-unless: active-gl-driver
 
     (?):
     - arch in ["x86_64", "aarch64"]:

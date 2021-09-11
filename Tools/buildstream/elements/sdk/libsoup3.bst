@@ -12,7 +12,7 @@ depends:
 - freedesktop-sdk.bst:components/gnutls.bst
 - sdk/glib.bst
 - sdk/krb5.bst
-- sdk/nghttp2.bst
+- freedesktop-sdk.bst:components/libnghttp2.bst
 - freedesktop-sdk.bst:components/libpsl.bst
 - freedesktop-sdk.bst:components/libxml2.bst
 - freedesktop-sdk.bst:components/sqlite.bst

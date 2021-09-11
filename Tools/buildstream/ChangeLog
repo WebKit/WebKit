@@ -1,3 +1,72 @@
+2021-09-11  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to FDO 21.08
+        https://bugs.webkit.org/show_bug.cgi?id=229918
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Highlights:
+
+        - GCC 11.2
+        - clang 12
+        - ICU 69.1
+        - Mesa as extension again
+        - Ruby 3 (as side effect we now ship the webrick gem)
+        - Our SDK branch number is now the same as FDO SDK
+        - Some of our recipes no longer needed because maintained in FDO SDK
+
+        The actual runtime upgrade will happen after https://bugs.webkit.org/show_bug.cgi?id=229919
+        lands.
+
+        * Pipfile: Update to bst 1.6.3.
+        * Pipfile.lock: Ditto
+        * elements/flatpak/sdk.bst: Remove rust extension as in parent SDK and re-add GL extension.
+        * elements/freedesktop-sdk.bst: Bump to 21.08, remove vendored patches
+        * elements/qt5/qtbase.bst: Fix libdrm dependency, we no longer ship this recipe.
+        * elements/qt5/qtwayland.bst: Ditto.
+        * elements/sdk-build-depends/libusb.bst: Removed.
+        * elements/sdk-build-depends/rapidjson.bst: Fix build for GCC-11
+        * elements/sdk-platform.bst: Add openssl in runtime, since it moved out of bootstrap in
+        parent SDK. Sync list of recipes, order alphabetically.
+        * elements/sdk/cargo-c.bst: Switch to internal rustc component.
+        * elements/sdk/gst-plugin-closedcaption.bst: Ditto.
+        * elements/sdk/gst-plugin-dav1d.bst: Ditto.
+        * elements/sdk/gst-plugins-bad.bst: Sync dependencies.
+        * elements/sdk/gst-plugins-base.bst: Add a few build fix patches, sync dependencies.
+        * elements/sdk/gst-plugins-good.bst: Ditto.
+        * elements/sdk/gtk+-3.bst: Bump to 3.24.30 + build fix patch.
+        * elements/sdk/icecc.bst: Bump to 1.3.1, sync dependencies.
+        * elements/sdk/libdrm.bst: Removed.
+        * elements/sdk/libgcrypt.bst: Bump to 1.8.8.
+        * elements/sdk/libsoup.bst: Removed.
+        * elements/sdk/libsoup3.bst: Sync dependencies.
+        * elements/sdk/libzstd.bst: Removed.
+        * elements/sdk/lzo2.bst: Removed.
+        * elements/sdk/mesa.bst: Removed.
+        * elements/sdk/monado.bst: Ditto.
+        * elements/sdk/nghttp2.bst: Removed.
+        * elements/sdk/openjpeg.bst: Removed.
+        * elements/sdk/openxr.bst: Build with clang to avoid std filesystem issues with GCC.
+        * elements/sdk/pycairo.bst: Removed.
+        * elements/sdk/pygobject.bst: Removed.
+        * elements/sdk/python2.bst: Bump to 2.7.18.
+        * elements/sdk/ruby-webrick.bst: Added.
+        * elements/sdk/sccache.bst: Switch to internal rustc component.
+        * elements/sdk/xorg-server.bst: Sync dependencies.
+        * elements/test-infra/httpd.bst: Ditto.
+        * patches/fdo-0001-dav1d-Bump-to-version-0.8.2.patch: Removed.
+        * patches/fdo-0001-libvpx-Enable-high-bit-depth-support.patch: Removed.
+        * patches/fdo-0001-pango-Bump-to-1.47.patch: Removed.
+        * patches/gst-plugins-base-0001-gst-don-t-use-volatile-to-mean-atomic.patch: Added.
+        * patches/gst-plugins-base-0001-gstgl-Fix-build-when-Meson-0.58.0rc1.patch: Added.
+        * patches/gst-plugins-good-0001-gst-don-t-use-volatile-to-mean-atomic.patch: Added.
+        * patches/gtk-gcc11-build-fix.patch: Added.
+        * patches/mesa/0001-i915-Prevent-invalid-framebuffer-usage.patch: Removed.
+        * patches/mesa/0002-i965-Prevent-invalid-framebuffer-usage.patch: Removed.
+        * patches/mesa/mesa_libdrm_deps.patch: Removed.
+        * patches/nettle-no-debug.diff: Removed.
+        * project.conf: Sync our branch with parent SDK.
+
 2021-08-05  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Flatpak SDK] Update libwpe to 1.11.1

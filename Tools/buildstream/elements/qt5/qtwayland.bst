@@ -2,7 +2,7 @@ kind: qmake
 
 depends:
 - qt5/qtdeclarative.bst
-- sdk/libdrm.bst
+- freedesktop-sdk.bst:components/libdrm.bst
 
 sources:
 - kind: git_tag

@@ -6,6 +6,6 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-buildstream = "==1.6.0"
+buildstream = "==1.6.3"
 buildstream-external = "*"
 pygobject = "==3.36"

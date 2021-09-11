@@ -3,6 +3,9 @@ sources:
 - kind: tar
   url: gst_downloads:gst-plugins-good/gst-plugins-good-1.18.4.tar.xz
   ref: b6e50e3a9bbcd56ee6ec71c33aa8332cc9c926b0c1fae995aac8b3040ebe39b0
+# These patches are upstream already, to be released in 1.18.5.
+- kind: patch
+  path: patches/gst-plugins-good-0001-gst-don-t-use-volatile-to-mean-atomic.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -10,7 +13,7 @@ depends:
 - sdk/gstreamer.bst
 - sdk/gst-plugins-base.bst
 - sdk/gtk+-3.bst
-- sdk/libsoup.bst
+- freedesktop-sdk.bst:components/libsoup.bst
 - freedesktop-sdk.bst:components/v4l-utils.bst
 - qt5/qtdeclarative.bst
 - qt5/qtquickcontrols2.bst

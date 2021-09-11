@@ -1,0 +1,315 @@
+From a1bf3d8d540a25268d612a489e1e836d6ea737b0 Mon Sep 17 00:00:00 2001
+From: Matthew Waters <matthew@centricular.com>
+Date: Thu, 18 Mar 2021 19:52:53 +1100
+Subject: [PATCH] gst: don't use volatile to mean atomic
+
+volatile is not sufficient to provide atomic guarantees and real atomics
+should be used instead.  GCC 11 has started warning about using volatile
+with atomic operations.
+
+https://gitlab.gnome.org/GNOME/glib/-/merge_requests/1719
+
+Discovered in https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/issues/868
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/merge_requests/941>
+---
+ ext/jack/gstjack.c             |  6 +++---
+ ext/jack/gstjackaudiosink.c    |  2 +-
+ ext/jack/gstjackaudiosrc.c     |  2 +-
+ ext/pulse/pulsesink.h          |  2 +-
+ ext/qt/gstqsgtexture.cc        |  2 +-
+ ext/qt/gstqtglutility.cc       |  2 +-
+ ext/qt/qtglrenderer.cc         |  6 +++---
+ ext/qt/qtitem.cc               |  2 +-
+ ext/qt/qtwindow.cc             |  4 ++--
+ ext/vpx/gstvpxdec.c            |  2 +-
+ ext/vpx/gstvpxenc.c            | 14 +++++++-------
+ gst/audioparsers/gstac3parse.h |  2 +-
+ sys/rpicamsrc/gstrpicamsrc.c   |  2 +-
+ sys/ximage/ximageutil.c        |  2 +-
+ 14 files changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/ext/jack/gstjack.c b/ext/jack/gstjack.c
+index ca98dc405..fdd507d87 100644
+--- a/ext/jack/gstjack.c
++++ b/ext/jack/gstjack.c
+@@ -28,7 +28,7 @@
+ GType
+ gst_jack_connect_get_type (void)
+ {
+-  static volatile gsize jack_connect_type = 0;
++  static gsize jack_connect_type = 0;
+ 
+   if (g_once_init_enter (&jack_connect_type)) {
+     static const GEnumValue jack_connect_enums[] = {
+@@ -50,7 +50,7 @@ gst_jack_connect_get_type (void)
+ GType
+ gst_jack_transport_get_type (void)
+ {
+-  static volatile gsize type = 0;
++  static gsize type = 0;
+ 
+   if (g_once_init_enter (&type)) {
+     static const GFlagsValue flag_values[] = {
+@@ -84,7 +84,7 @@ gst_jack_client_free (gpointer jclient)
+ GType
+ gst_jack_client_get_type (void)
+ {
+-  static volatile gsize jack_client_type = 0;
++  static gsize jack_client_type = 0;
+ 
+   if (g_once_init_enter (&jack_client_type)) {
+     /* hackish, but makes it show up nicely in gst-inspect */
+diff --git a/ext/jack/gstjackaudiosink.c b/ext/jack/gstjackaudiosink.c
+index ee7cea8c0..6e8d04ae5 100644
+--- a/ext/jack/gstjackaudiosink.c
++++ b/ext/jack/gstjackaudiosink.c
+@@ -131,7 +131,7 @@ gst_jack_audio_sink_free_channels (GstJackAudioSink * sink)
+ static GType
+ gst_jack_ring_buffer_get_type (void)
+ {
+-  static volatile gsize ringbuffer_type = 0;
++  static gsize ringbuffer_type = 0;
+ 
+   if (g_once_init_enter (&ringbuffer_type)) {
+     static const GTypeInfo ringbuffer_info = {
+diff --git a/ext/jack/gstjackaudiosrc.c b/ext/jack/gstjackaudiosrc.c
+index 1d2cf82ee..d43a447a7 100644
+--- a/ext/jack/gstjackaudiosrc.c
++++ b/ext/jack/gstjackaudiosrc.c
+@@ -151,7 +151,7 @@ gst_jack_audio_src_free_channels (GstJackAudioSrc * src)
+ static GType
+ gst_jack_ring_buffer_get_type (void)
+ {
+-  static volatile gsize ringbuffer_type = 0;
++  static gsize ringbuffer_type = 0;
+ 
+   if (g_once_init_enter (&ringbuffer_type)) {
+     static const GTypeInfo ringbuffer_info = { sizeof (GstJackRingBufferClass),
+diff --git a/ext/pulse/pulsesink.h b/ext/pulse/pulsesink.h
+index 86f3dcdbb..51ec86a25 100644
+--- a/ext/pulse/pulsesink.h
++++ b/ext/pulse/pulsesink.h
+@@ -72,7 +72,7 @@ struct _GstPulseSink
+   GstStructure *properties;
+   pa_proplist *proplist;
+ 
+-  volatile gint format_lost;
++  gint format_lost;
+   GstClockTime format_lost_time;
+ };
+ 
+diff --git a/ext/qt/gstqsgtexture.cc b/ext/qt/gstqsgtexture.cc
+index a05d26edd..bfa79cda0 100644
+--- a/ext/qt/gstqsgtexture.cc
++++ b/ext/qt/gstqsgtexture.cc
+@@ -35,7 +35,7 @@ GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
+ 
+ GstQSGTexture::GstQSGTexture ()
+ {
+-  static volatile gsize _debug;
++  static gsize _debug;
+ 
+   initializeOpenGLFunctions();
+ 
+diff --git a/ext/qt/gstqtglutility.cc b/ext/qt/gstqtglutility.cc
+index acb89b6e1..d2c092202 100644
+--- a/ext/qt/gstqtglutility.cc
++++ b/ext/qt/gstqtglutility.cc
+@@ -66,7 +66,7 @@ gst_qt_get_gl_display ()
+ {
+   GstGLDisplay *display = NULL;
+   QGuiApplication *app = static_cast<QGuiApplication *> (QCoreApplication::instance ());
+-  static volatile gsize _debug;
++  static gsize _debug;
+ 
+   g_assert (app != NULL);
+ 
+diff --git a/ext/qt/qtglrenderer.cc b/ext/qt/qtglrenderer.cc
+index 2ad5601fc..52965fd0b 100644
+--- a/ext/qt/qtglrenderer.cc
++++ b/ext/qt/qtglrenderer.cc
+@@ -22,7 +22,7 @@ GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
+ static void
+ init_debug (void)
+ {
+-  static volatile gsize _debug;
++  static gsize _debug;
+ 
+   if (g_once_init_enter (&_debug)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "qtglrenderer", 0,
+@@ -115,7 +115,7 @@ typedef enum
+ 
+ struct SharedRenderData
+ {
+-  volatile int refcount;
++  int refcount;
+   SharedRenderDataState state;
+   GMutex lock;
+   GCond cond;
+@@ -130,7 +130,7 @@ shared_render_data_new (void)
+ {
+   struct SharedRenderData *ret = g_new0 (struct SharedRenderData, 1);
+ 
+-  ret->refcount = 1;
++  g_atomic_int_set (&ret->refcount, 1);
+   g_mutex_init (&ret->lock);
+ 
+   return ret;
+diff --git a/ext/qt/qtitem.cc b/ext/qt/qtitem.cc
+index 7659800b6..bc99639b4 100644
+--- a/ext/qt/qtitem.cc
++++ b/ext/qt/qtitem.cc
+@@ -104,7 +104,7 @@ void InitializeSceneGraph::run()
+ 
+ QtGLVideoItem::QtGLVideoItem()
+ {
+-  static volatile gsize _debug;
++  static gsize _debug;
+ 
+   if (g_once_init_enter (&_debug)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "qtglwidget", 0, "Qt GL Widget");
+diff --git a/ext/qt/qtwindow.cc b/ext/qt/qtwindow.cc
+index 9360c3337..7c44ac54e 100644
+--- a/ext/qt/qtwindow.cc
++++ b/ext/qt/qtwindow.cc
+@@ -103,7 +103,7 @@ QtGLWindow::QtGLWindow ( QWindow * parent, QQuickWindow *src ) :
+   QQuickWindow( parent ), source (src)
+ {
+   QGuiApplication *app = static_cast<QGuiApplication *> (QCoreApplication::instance ());
+-  static volatile gsize _debug;
++  static gsize _debug;
+ 
+   g_assert (app != NULL);
+ 
+@@ -152,7 +152,7 @@ QtGLWindow::beforeRendering()
+ 
+   g_mutex_lock (&this->priv->lock);
+ 
+-  static volatile gsize once = 0;
++  static gsize once = 0;
+   if (g_once_init_enter(&once)) {
+     this->priv->start = QDateTime::currentDateTime().toMSecsSinceEpoch();
+     g_once_init_leave(&once,1);
+diff --git a/ext/vpx/gstvpxdec.c b/ext/vpx/gstvpxdec.c
+index e92aa85c7..74cc3c970 100644
+--- a/ext/vpx/gstvpxdec.c
++++ b/ext/vpx/gstvpxdec.c
+@@ -79,7 +79,7 @@ gst_vpx_dec_post_processing_flags_get_type (void)
+     {C_FLAGS (VP8_MFQE), "Multi-frame quality enhancement", "mfqe"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+diff --git a/ext/vpx/gstvpxenc.c b/ext/vpx/gstvpxenc.c
+index cd5b30d14..4b3b4f770 100644
+--- a/ext/vpx/gstvpxenc.c
++++ b/ext/vpx/gstvpxenc.c
+@@ -165,7 +165,7 @@ gst_vpx_enc_end_usage_get_type (void)
+     {VPX_CQ, "Constant Quality Mode (CQ) mode", "cq"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -188,7 +188,7 @@ gst_vpx_enc_multipass_mode_get_type (void)
+     {VPX_RC_LAST_PASS, "Last pass of multipass encoding", "last-pass"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -210,7 +210,7 @@ gst_vpx_enc_kf_mode_get_type (void)
+     {VPX_KF_DISABLED, "Don't automatically place keyframes", "disabled"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -232,7 +232,7 @@ gst_vpx_enc_tuning_get_type (void)
+     {VP8_TUNE_SSIM, "Tune for SSIM", "ssim"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -256,7 +256,7 @@ gst_vpx_enc_scaling_mode_get_type (void)
+     {VP8E_ONETWO, "1:2", "1:2"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -280,7 +280,7 @@ gst_vpx_enc_token_partitions_get_type (void)
+     {VP8_EIGHT_TOKENPARTITION, "Eight token partitions", "8"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -303,7 +303,7 @@ gst_vpx_enc_er_flags_get_type (void)
+         "Allow partitions to be decoded independently", "partitions"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+diff --git a/gst/audioparsers/gstac3parse.h b/gst/audioparsers/gstac3parse.h
+index 0e7af5acd..81e2104d5 100644
+--- a/gst/audioparsers/gstac3parse.h
++++ b/gst/audioparsers/gstac3parse.h
+@@ -62,7 +62,7 @@ struct _GstAc3Parse {
+   gint                  blocks;
+   gboolean              eac;
+   gboolean              sent_codec_tag;
+-  volatile gint         align;
++  gint                  align;
+   GstPadChainFunction   baseparse_chainfunc;
+ };
+ 
+diff --git a/sys/rpicamsrc/gstrpicamsrc.c b/sys/rpicamsrc/gstrpicamsrc.c
+index a148d4106..f719acb4c 100644
+--- a/sys/rpicamsrc/gstrpicamsrc.c
++++ b/sys/rpicamsrc/gstrpicamsrc.c
+@@ -292,7 +292,7 @@ gst_rpi_cam_src_sensor_mode_get_type (void)
+         "640x480 4:3 60.1-90fps", "640x480-fast"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+     _id = g_enum_register_static ("GstRpiCamSrcSensorMode", values);
+diff --git a/sys/ximage/ximageutil.c b/sys/ximage/ximageutil.c
+index 57c9392c7..018b60515 100644
+--- a/sys/ximage/ximageutil.c
++++ b/sys/ximage/ximageutil.c
+@@ -26,7 +26,7 @@
+ GType
+ gst_meta_ximage_api_get_type (void)
+ {
+-  static volatile GType type;
++  static GType type;
+   static const gchar *tags[] = { "memory", NULL };
+ 
+   if (g_once_init_enter (&type)) {
+-- 
+2.31.1
+

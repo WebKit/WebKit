@@ -1,8 +1,10 @@
 kind: meson
 sources:
 - kind: tar
-  url: gnome_downloads:gtk+/3.24/gtk+-3.24.26.tar.xz
-  ref: 2cc1b2dc5cad15d25b6abd115c55ffd8331e8d4677745dd3ce6db725b4fff1e9
+  url: gnome_downloads:gtk+/3.24/gtk+-3.24.30.tar.xz
+  ref: ba75bfff320ad1f4cfbee92ba813ec336322cc3c660d406aad014b07087a3ba9
+- kind: patch
+  path: patches/gtk-gcc11-build-fix.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:

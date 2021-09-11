@@ -1,0 +1,840 @@
+From 5eb5bec7b5e3d0a2972784bbe1d28b21257a3734 Mon Sep 17 00:00:00 2001
+From: Matthew Waters <matthew@centricular.com>
+Date: Thu, 18 Mar 2021 19:18:36 +1100
+Subject: [PATCH] gst: don't use volatile to mean atomic
+
+volatile is not sufficient to provide atomic guarantees and real atomics
+should be used instead.  GCC 11 has started warning about using volatile
+with atomic operations.
+
+https://gitlab.gnome.org/GNOME/glib/-/merge_requests/1719
+
+Discovered in https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/issues/868
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/-/merge_requests/1106>
+---
+ ext/gl/gstgleffects.c                                 |  2 +-
+ ext/gl/gstglimagesink.h                               |  2 +-
+ ext/opus/gstopusenc.c                                 | 10 +++++-----
+ gst-libs/gst/audio/gstaudiodecoder.c                  |  2 +-
+ gst-libs/gst/audio/gstaudiometa.c                     |  6 +++---
+ gst-libs/gst/audio/streamvolume.c                     |  2 +-
+ gst-libs/gst/gl/cocoa/gstglcaopengllayer.m            |  2 +-
+ gst-libs/gst/gl/egl/gstgldisplay_egl.c                |  2 +-
+ gst-libs/gst/gl/egl/gstglmemoryegl.c                  |  2 +-
+ gst-libs/gst/gl/gbm/gstgldisplay_gbm.c                |  2 +-
+ gst-libs/gst/gl/gl_mkenum.py                          |  4 ++--
+ gst-libs/gst/gl/gstglbasememory.c                     |  2 +-
+ gst-libs/gst/gl/gstglbuffer.c                         |  2 +-
+ gst-libs/gst/gl/gstglcontext.c                        |  4 ++--
+ gst-libs/gst/gl/gstgldebug.c                          |  2 +-
+ gst-libs/gst/gl/gstgldisplay.c                        |  2 +-
+ gst-libs/gst/gl/gstglfeature.c                        |  2 +-
+ gst-libs/gst/gl/gstglmemory.c                         |  2 +-
+ gst-libs/gst/gl/gstglmemorypbo.c                      |  2 +-
+ gst-libs/gst/gl/gstglquery.c                          |  2 +-
+ gst-libs/gst/gl/gstglrenderbuffer.c                   |  2 +-
+ gst-libs/gst/gl/gstglsl.c                             |  2 +-
+ gst-libs/gst/gl/gstglsyncmeta.c                       |  4 ++--
+ gst-libs/gst/gl/gstglutils.c                          |  4 ++--
+ gst-libs/gst/gl/gstglwindow.c                         |  2 +-
+ gst-libs/gst/gl/wayland/wayland_event_source.c        |  2 +-
+ gst-libs/gst/pbutils/encoding-profile.c               |  8 ++++----
+ gst-libs/gst/pbutils/gstaudiovisualizer.c             |  2 +-
+ gst-libs/gst/rtp/gstrtpmeta.c                         |  2 +-
+ gst-libs/gst/rtsp/gstrtspextension.c                  |  2 +-
+ gst-libs/gst/tag/gsttagmux.c                          |  2 +-
+ gst-libs/gst/tag/xmpwriter.c                          |  2 +-
+ gst-libs/gst/video/gstvideoaffinetransformationmeta.c |  2 +-
+ gst-libs/gst/video/gstvideoaggregator.c               |  8 ++++----
+ gst-libs/gst/video/gstvideodecoder.c                  |  2 +-
+ gst-libs/gst/video/gstvideoencoder.c                  |  2 +-
+ gst-libs/gst/video/gstvideometa.c                     | 10 +++++-----
+ gst-libs/gst/video/video-anc.c                        |  6 +++---
+ gst-libs/gst/video/video-multiview.c                  |  4 ++--
+ gst-libs/gst/video/video-overlay-composition.c        |  2 +-
+ gst/adder/gstadder.h                                  |  4 ++--
+ gst/encoding/gstencodebin.c                           |  2 +-
+ gst/playback/gstplay-enum.c                           |  4 ++--
+ gst/videorate/gstvideorate.h                          |  2 +-
+ gst/videoscale/gstvideoscale.c                        |  2 +-
+ 45 files changed, 70 insertions(+), 70 deletions(-)
+
+diff --git a/ext/gl/gstgleffects.c b/ext/gl/gstgleffects.c
+index 70f727a0f9..85798b0c32 100644
+--- a/ext/gl/gstgleffects.c
++++ b/ext/gl/gstgleffects.c
+@@ -650,7 +650,7 @@ gst_gl_effects_filters_descriptors (void)
+ gboolean
+ gst_gl_effects_register_filters (GstPlugin * plugin, GstRank rank)
+ {
+-  static volatile gsize registered = 0;
++  static gsize registered = 0;
+ 
+   if (g_once_init_enter (&registered)) {
+     GTypeInfo info = {
+diff --git a/ext/gl/gstglimagesink.h b/ext/gl/gstglimagesink.h
+index 1a75fb9371..78fed89dc4 100644
+--- a/ext/gl/gstglimagesink.h
++++ b/ext/gl/gstglimagesink.h
+@@ -106,7 +106,7 @@ struct _GstGLImageSink
+     GstBuffer *next_sync;
+     GstGLSyncMeta *next_sync_meta;
+ 
+-    volatile gint to_quit;
++    gint to_quit;
+     gboolean keep_aspect_ratio;
+     gint par_n, par_d;
+ 
+diff --git a/ext/opus/gstopusenc.c b/ext/opus/gstopusenc.c
+index bbe1f99cf4..b875b547da 100644
+--- a/ext/opus/gstopusenc.c
++++ b/ext/opus/gstopusenc.c
+@@ -78,7 +78,7 @@ gst_opus_enc_bandwidth_get_type (void)
+     {OPUS_AUTO, "Auto", "auto"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -104,7 +104,7 @@ gst_opus_enc_frame_size_get_type (void)
+     {60, "60", "60"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -128,7 +128,7 @@ gst_opus_enc_audio_type_get_type (void)
+         "restricted-lowdelay"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -151,7 +151,7 @@ gst_opus_enc_bitrate_type_get_type (void)
+     {BITRATE_TYPE_CONSTRAINED_VBR, "Constrained VBR", "constrained-vbr"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -815,7 +815,7 @@ gst_opus_enc_sink_event (GstAudioEncoder * benc, GstEvent * event)
+ static GstCaps *
+ gst_opus_enc_get_sink_template_caps (void)
+ {
+-  static volatile gsize init = 0;
++  static gsize init = 0;
+   static GstCaps *caps = NULL;
+ 
+   if (g_once_init_enter (&init)) {
+diff --git a/gst-libs/gst/audio/gstaudiodecoder.c b/gst-libs/gst/audio/gstaudiodecoder.c
+index ee32141da0..47e9e1f53c 100644
+--- a/gst-libs/gst/audio/gstaudiodecoder.c
++++ b/gst-libs/gst/audio/gstaudiodecoder.c
+@@ -338,7 +338,7 @@ static void gst_audio_decoder_init (GstAudioDecoder * dec,
+ GType
+ gst_audio_decoder_get_type (void)
+ {
+-  static volatile gsize audio_decoder_type = 0;
++  static gsize audio_decoder_type = 0;
+ 
+   if (g_once_init_enter (&audio_decoder_type)) {
+     GType _type;
+diff --git a/gst-libs/gst/audio/gstaudiometa.c b/gst-libs/gst/audio/gstaudiometa.c
+index ec937443ae..e010ca3375 100644
+--- a/gst-libs/gst/audio/gstaudiometa.c
++++ b/gst-libs/gst/audio/gstaudiometa.c
+@@ -177,7 +177,7 @@ gst_buffer_add_audio_downmix_meta (GstBuffer * buffer,
+ GType
+ gst_audio_downmix_meta_api_get_type (void)
+ {
+-  static volatile GType type;
++  static GType type;
+   static const gchar *tags[] =
+       { GST_META_TAG_AUDIO_STR, GST_META_TAG_AUDIO_CHANNELS_STR, NULL };
+ 
+@@ -280,7 +280,7 @@ gst_buffer_add_audio_clipping_meta (GstBuffer * buffer,
+ GType
+ gst_audio_clipping_meta_api_get_type (void)
+ {
+-  static volatile GType type;
++  static GType type;
+   static const gchar *tags[] =
+       { GST_META_TAG_AUDIO_STR, GST_META_TAG_AUDIO_RATE_STR, NULL };
+ 
+@@ -463,7 +463,7 @@ gst_buffer_add_audio_meta (GstBuffer * buffer, const GstAudioInfo * info,
+ GType
+ gst_audio_meta_api_get_type (void)
+ {
+-  static volatile GType type;
++  static GType type;
+   static const gchar *tags[] = {
+     GST_META_TAG_AUDIO_STR, GST_META_TAG_AUDIO_CHANNELS_STR,
+     GST_META_TAG_AUDIO_RATE_STR, NULL
+diff --git a/gst-libs/gst/audio/streamvolume.c b/gst-libs/gst/audio/streamvolume.c
+index cdcacc1b14..72a845ac0f 100644
+--- a/gst-libs/gst/audio/streamvolume.c
++++ b/gst-libs/gst/audio/streamvolume.c
+@@ -66,7 +66,7 @@ gst_stream_volume_class_init (GstStreamVolumeInterface * iface)
+ GType
+ gst_stream_volume_get_type (void)
+ {
+-  static volatile gsize type = 0;
++  static gsize type = 0;
+   if (g_once_init_enter (&type)) {
+     GType tmp;
+     static const GTypeInfo info = {
+diff --git a/gst-libs/gst/gl/cocoa/gstglcaopengllayer.m b/gst-libs/gst/gl/cocoa/gstglcaopengllayer.m
+index 254a3f21f4..f8895fd68c 100644
+--- a/gst-libs/gst/gl/cocoa/gstglcaopengllayer.m
++++ b/gst-libs/gst/gl/cocoa/gstglcaopengllayer.m
+@@ -33,7 +33,7 @@ GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT(gst_gl_ca_opengl_layer_debug, "glcaopengllayer",
+diff --git a/gst-libs/gst/gl/egl/gstgldisplay_egl.c b/gst-libs/gst/gl/egl/gstgldisplay_egl.c
+index 84911658e5..6562d8d374 100644
+--- a/gst-libs/gst/gl/egl/gstgldisplay_egl.c
++++ b/gst-libs/gst/gl/egl/gstgldisplay_egl.c
+@@ -74,7 +74,7 @@ static guintptr gst_gl_display_egl_get_handle (GstGLDisplay * display);
+ static void
+ init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "gldisplayegl", 0,
+diff --git a/gst-libs/gst/gl/egl/gstglmemoryegl.c b/gst-libs/gst/gl/egl/gstglmemoryegl.c
+index 84b07c99c9..c33d129498 100644
+--- a/gst-libs/gst/gl/egl/gstglmemoryegl.c
++++ b/gst-libs/gst/gl/egl/gstglmemoryegl.c
+@@ -257,7 +257,7 @@ gst_gl_memory_egl_allocator_init (GstGLMemoryEGLAllocator * allocator)
+ void
+ gst_gl_memory_egl_init_once (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     gst_gl_memory_init_once ();
+diff --git a/gst-libs/gst/gl/gbm/gstgldisplay_gbm.c b/gst-libs/gst/gl/gbm/gstgldisplay_gbm.c
+index 3e81ed7213..485c5d013b 100644
+--- a/gst-libs/gst/gl/gbm/gstgldisplay_gbm.c
++++ b/gst-libs/gst/gl/gbm/gstgldisplay_gbm.c
+@@ -398,7 +398,7 @@ gst_gl_display_gbm_shutdown_gbm (GstGLDisplayGBM * display_gbm)
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_GET (gst_gl_display_debug, "gldisplay");
+diff --git a/gst-libs/gst/gl/gl_mkenum.py b/gst-libs/gst/gl/gl_mkenum.py
+index 7056a96572..1f52f77b31 100644
+--- a/gst-libs/gst/gl/gl_mkenum.py
++++ b/gst-libs/gst/gl/gl_mkenum.py
+@@ -22,11 +22,11 @@ c_array = ['--fhead',
+            '--fprod',
+            "\n/* enumerations from \"@basename@\" */",
+            '--vhead',
+-           "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {",
++           "GType\n@enum_name@_get_type (void)\n{\n  static gsize static_g_define_type_id = 0;\n  if (g_once_init_enter (&static_g_define_type_id)) {\n    static const G@Type@Value values[] = {",
+            '--vprod',
+            "      { C_@TYPE@ (@VALUENAME@), \"@VALUENAME@\", \"@valuenick@\" },",
+            '--vtail',
+-           "      { 0, NULL, NULL }\n    };\n    GType g_define_type_id = g_@type@_register_static (\"@EnumName@\", values);\n    g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);\n  }\n  return g_define_type_id__volatile;\n}\n"
++           "      { 0, NULL, NULL }\n    };\n    GType g_define_type_id = g_@type@_register_static (\"@EnumName@\", values);\n    g_once_init_leave (&static_g_define_type_id, g_define_type_id);\n  }\n  return static_g_define_type_id;\n}\n"
+ ]
+ 
+ cmd = []
+diff --git a/gst-libs/gst/gl/gstglbasememory.c b/gst-libs/gst/gl/gstglbasememory.c
+index 534b3133c4..6fe37fa4f0 100644
+--- a/gst-libs/gst/gl/gstglbasememory.c
++++ b/gst-libs/gst/gl/gstglbasememory.c
+@@ -502,7 +502,7 @@ _mem_free (GstAllocator * allocator, GstMemory * memory)
+ void
+ gst_gl_base_memory_init_once (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_GL_BASE_MEMORY, "glbasememory", 0,
+diff --git a/gst-libs/gst/gl/gstglbuffer.c b/gst-libs/gst/gl/gstglbuffer.c
+index 5a45007571..d76a8910f9 100644
+--- a/gst-libs/gst/gl/gstglbuffer.c
++++ b/gst-libs/gst/gl/gstglbuffer.c
+@@ -455,7 +455,7 @@ gst_gl_buffer_allocator_init (GstGLBufferAllocator * allocator)
+ void
+ gst_gl_buffer_init_once (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     gst_gl_base_memory_init_once ();
+diff --git a/gst-libs/gst/gl/gstglcontext.c b/gst-libs/gst/gl/gstglcontext.c
+index 446524996e..4278d0b05a 100644
+--- a/gst-libs/gst/gl/gstglcontext.c
++++ b/gst-libs/gst/gl/gstglcontext.c
+@@ -150,7 +150,7 @@ load_self_module (gpointer user_data)
+  */
+ struct ContextShareGroup
+ {
+-  volatile int refcount;
++  int refcount;
+ };
+ 
+ static struct ContextShareGroup *
+@@ -305,7 +305,7 @@ gst_gl_context_class_init (GstGLContextClass * klass)
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (gst_gl_context_debug, "glcontext", 0,
+diff --git a/gst-libs/gst/gl/gstgldebug.c b/gst-libs/gst/gl/gstgldebug.c
+index 4c653b8f87..bc7e319d38 100644
+--- a/gst-libs/gst/gl/gstgldebug.c
++++ b/gst-libs/gst/gl/gstgldebug.c
+@@ -105,7 +105,7 @@ GST_DEBUG_CATEGORY_STATIC (gst_gl_marker_debug);
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_GET (gst_performance, "GST_PERFORMANCE");
+diff --git a/gst-libs/gst/gl/gstgldisplay.c b/gst-libs/gst/gl/gstgldisplay.c
+index 5bf9fc5891..dbd2d0ad52 100644
+--- a/gst-libs/gst/gl/gstgldisplay.c
++++ b/gst-libs/gst/gl/gstgldisplay.c
+@@ -277,7 +277,7 @@ gst_gl_display_new (void)
+ {
+   GstGLDisplay *display = NULL;
+   const gchar *user_choice, *platform_choice;
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (gst_gl_display_debug, "gldisplay", 0,
+diff --git a/gst-libs/gst/gl/gstglfeature.c b/gst-libs/gst/gl/gstglfeature.c
+index eed0dbc9ce..ba84e7e50b 100644
+--- a/gst-libs/gst/gl/gstglfeature.c
++++ b/gst-libs/gst/gl/gstglfeature.c
+@@ -43,7 +43,7 @@ GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "glfeature", 0,
+diff --git a/gst-libs/gst/gl/gstglmemory.c b/gst-libs/gst/gl/gstglmemory.c
+index 76c04eb1b5..01a378fcc3 100644
+--- a/gst-libs/gst/gl/gstglmemory.c
++++ b/gst-libs/gst/gl/gstglmemory.c
+@@ -1107,7 +1107,7 @@ gst_gl_memory_get_texture_id (GstGLMemory * gl_mem)
+ void
+ gst_gl_memory_init_once (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     gst_gl_base_memory_init_once ();
+diff --git a/gst-libs/gst/gl/gstglmemorypbo.c b/gst-libs/gst/gl/gstglmemorypbo.c
+index 260f193828..b5d9f0f16a 100644
+--- a/gst-libs/gst/gl/gstglmemorypbo.c
++++ b/gst-libs/gst/gl/gstglmemorypbo.c
+@@ -816,7 +816,7 @@ gst_gl_memory_pbo_upload_transfer (GstGLMemoryPBO * gl_mem)
+ void
+ gst_gl_memory_pbo_init_once (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     gst_gl_memory_init_once ();
+diff --git a/gst-libs/gst/gl/gstglquery.c b/gst-libs/gst/gl/gstglquery.c
+index 588b572bea..c9ba2684e6 100644
+--- a/gst-libs/gst/gl/gstglquery.c
++++ b/gst-libs/gst/gl/gstglquery.c
+@@ -58,7 +58,7 @@ GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "glquery", 0, "glquery element");
+diff --git a/gst-libs/gst/gl/gstglrenderbuffer.c b/gst-libs/gst/gl/gstglrenderbuffer.c
+index 4399c7ef87..7f93d912c6 100644
+--- a/gst-libs/gst/gl/gstglrenderbuffer.c
++++ b/gst-libs/gst/gl/gstglrenderbuffer.c
+@@ -310,7 +310,7 @@ gst_gl_renderbuffer_get_id (GstGLRenderbuffer * gl_mem)
+ void
+ gst_gl_renderbuffer_init_once (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     gst_gl_base_memory_init_once ();
+diff --git a/gst-libs/gst/gl/gstglsl.c b/gst-libs/gst/gl/gstglsl.c
+index a9811ad075..ce01a6ca31 100644
+--- a/gst-libs/gst/gl/gstglsl.c
++++ b/gst-libs/gst/gl/gstglsl.c
+@@ -40,7 +40,7 @@ GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "glsl", 0,
+diff --git a/gst-libs/gst/gl/gstglsyncmeta.c b/gst-libs/gst/gl/gstglsyncmeta.c
+index d74b3cd461..31fa6796c5 100644
+--- a/gst-libs/gst/gl/gstglsyncmeta.c
++++ b/gst-libs/gst/gl/gstglsyncmeta.c
+@@ -333,7 +333,7 @@ static gboolean
+ _gst_gl_sync_meta_init (GstGLSyncMeta * sync_meta, gpointer params,
+     GstBuffer * buffer)
+ {
+-  static volatile gsize _init;
++  static gsize _init;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (gst_gl_sync_meta_debug, "glsyncmeta", 0,
+@@ -359,7 +359,7 @@ _gst_gl_sync_meta_init (GstGLSyncMeta * sync_meta, gpointer params,
+ GType
+ gst_gl_sync_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] = { NULL };
+ 
+   if (g_once_init_enter (&type)) {
+diff --git a/gst-libs/gst/gl/gstglutils.c b/gst-libs/gst/gl/gstglutils.c
+index a60aa45198..6120e8bce1 100644
+--- a/gst-libs/gst/gl/gstglutils.c
++++ b/gst-libs/gst/gl/gstglutils.c
+@@ -56,7 +56,7 @@ GST_DEBUG_CATEGORY_STATIC (gst_gl_utils_debug);
+ static GstDebugCategory *
+ _init_gl_utils_debug_category (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (gst_gl_utils_debug, "glutils", 0,
+@@ -87,7 +87,7 @@ static void
+ _init_context_debug (void)
+ {
+ #ifndef GST_DISABLE_GST_DEBUG
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_GET (GST_CAT_CONTEXT, "GST_CONTEXT");
+diff --git a/gst-libs/gst/gl/gstglwindow.c b/gst-libs/gst/gl/gstglwindow.c
+index 2348ff0909..419ce177cf 100644
+--- a/gst-libs/gst/gl/gstglwindow.c
++++ b/gst-libs/gst/gl/gstglwindow.c
+@@ -160,7 +160,7 @@ gst_gl_window_default_close (GstGLWindow * window)
+ static void
+ _init_debug (void)
+ {
+-  static volatile gsize _init = 0;
++  static gsize _init = 0;
+ 
+   if (g_once_init_enter (&_init)) {
+     GST_DEBUG_CATEGORY_INIT (gst_gl_window_debug, "glwindow", 0,
+diff --git a/gst-libs/gst/gl/wayland/wayland_event_source.c b/gst-libs/gst/gl/wayland/wayland_event_source.c
+index 99dd2ac2ac..8e9a6848c2 100644
+--- a/gst-libs/gst/gl/wayland/wayland_event_source.c
++++ b/gst-libs/gst/gl/wayland/wayland_event_source.c
+@@ -45,7 +45,7 @@ GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
+ static void
+ init_debug (void)
+ {
+-  static volatile gsize _debug;
++  static gsize _debug;
+ 
+   if (g_once_init_enter (&_debug)) {
+     GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "glwaylandeventsource", 0,
+diff --git a/gst-libs/gst/pbutils/encoding-profile.c b/gst-libs/gst/pbutils/encoding-profile.c
+index ec6115f87f..0046e03452 100644
+--- a/gst-libs/gst/pbutils/encoding-profile.c
++++ b/gst-libs/gst/pbutils/encoding-profile.c
+@@ -338,9 +338,9 @@ gst_encoding_profile_class_intern_init (gpointer klass)
+ GType
+ gst_encoding_profile_get_type (void)
+ {
+-  static volatile gsize g_define_type_id__volatile = 0;
++  static gsize g_define_type_id_init = 0;
+ 
+-  if (g_once_init_enter (&g_define_type_id__volatile)) {
++  if (g_once_init_enter (&g_define_type_id_init)) {
+     GType g_define_type_id = g_type_register_static_simple (G_TYPE_OBJECT,
+         g_intern_static_string ("GstEncodingProfile"),
+         sizeof (GstEncodingProfileClass),
+@@ -363,9 +363,9 @@ gst_encoding_profile_get_type (void)
+     /* Register gst-specific GValue functions */
+     gst_value_register (&gstvtable);
+ 
+-    g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);
++    g_once_init_leave (&g_define_type_id_init, g_define_type_id);
+   }
+-  return g_define_type_id__volatile;
++  return g_define_type_id_init;
+ }
+ 
+ 
+diff --git a/gst-libs/gst/pbutils/gstaudiovisualizer.c b/gst-libs/gst/pbutils/gstaudiovisualizer.c
+index 91a02fc7dc..336079757b 100644
+--- a/gst-libs/gst/pbutils/gstaudiovisualizer.c
++++ b/gst-libs/gst/pbutils/gstaudiovisualizer.c
+@@ -499,7 +499,7 @@ gst_audio_visualizer_change_shader (GstAudioVisualizer * scope)
+ GType
+ gst_audio_visualizer_get_type (void)
+ {
+-  static volatile gsize audio_visualizer_type = 0;
++  static gsize audio_visualizer_type = 0;
+ 
+   if (g_once_init_enter (&audio_visualizer_type)) {
+     static const GTypeInfo audio_visualizer_info = {
+diff --git a/gst-libs/gst/rtp/gstrtpmeta.c b/gst-libs/gst/rtp/gstrtpmeta.c
+index 9028db82db..1968f49643 100644
+--- a/gst-libs/gst/rtp/gstrtpmeta.c
++++ b/gst-libs/gst/rtp/gstrtpmeta.c
+@@ -190,7 +190,7 @@ gst_rtp_source_meta_append_csrc (GstRTPSourceMeta * meta, const guint32 * csrc,
+ GType
+ gst_rtp_source_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] = { NULL };
+ 
+   if (g_once_init_enter (&type)) {
+diff --git a/gst-libs/gst/rtsp/gstrtspextension.c b/gst-libs/gst/rtsp/gstrtspextension.c
+index ab31791747..73903f5426 100644
+--- a/gst-libs/gst/rtsp/gstrtspextension.c
++++ b/gst-libs/gst/rtsp/gstrtspextension.c
+@@ -49,7 +49,7 @@ static guint gst_rtsp_extension_signals[LAST_SIGNAL] = { 0 };
+ GType
+ gst_rtsp_extension_get_type (void)
+ {
+-  static volatile gsize gst_rtsp_extension_type = 0;
++  static gsize gst_rtsp_extension_type = 0;
+   static const GTypeInfo gst_rtsp_extension_info = {
+     sizeof (GstRTSPExtensionInterface),
+     (GBaseInitFunc) gst_rtsp_extension_iface_init,
+diff --git a/gst-libs/gst/tag/gsttagmux.c b/gst-libs/gst/tag/gsttagmux.c
+index 0b90acf80b..f7ba1e8da1 100644
+--- a/gst-libs/gst/tag/gsttagmux.c
++++ b/gst-libs/gst/tag/gsttagmux.c
+@@ -90,7 +90,7 @@ static gboolean gst_tag_mux_sink_event (GstPad * pad, GstObject * parent,
+ GType
+ gst_tag_mux_get_type (void)
+ {
+-  static volatile gsize tag_mux_type = 0;
++  static gsize tag_mux_type = 0;
+ 
+   if (g_once_init_enter (&tag_mux_type)) {
+     const GInterfaceInfo interface_info = { NULL, NULL, NULL };
+diff --git a/gst-libs/gst/tag/xmpwriter.c b/gst-libs/gst/tag/xmpwriter.c
+index d714e0a034..f16b4917bd 100644
+--- a/gst-libs/gst/tag/xmpwriter.c
++++ b/gst-libs/gst/tag/xmpwriter.c
+@@ -53,7 +53,7 @@ typedef struct
+ GType
+ gst_tag_xmp_writer_get_type (void)
+ {
+-  static volatile gsize xmp_config_type = 0;
++  static gsize xmp_config_type = 0;
+ 
+   if (g_once_init_enter (&xmp_config_type)) {
+     GType _type;
+diff --git a/gst-libs/gst/video/gstvideoaffinetransformationmeta.c b/gst-libs/gst/video/gstvideoaffinetransformationmeta.c
+index 0032249ba9..22903b29fc 100644
+--- a/gst-libs/gst/video/gstvideoaffinetransformationmeta.c
++++ b/gst-libs/gst/video/gstvideoaffinetransformationmeta.c
+@@ -36,7 +36,7 @@
+ GType
+ gst_video_affine_transformation_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] =
+       { GST_META_TAG_VIDEO_STR, GST_META_TAG_VIDEO_ORIENTATION_STR,
+     GST_META_TAG_VIDEO_ORIENTATION_STR, NULL
+diff --git a/gst-libs/gst/video/gstvideoaggregator.c b/gst-libs/gst/video/gstvideoaggregator.c
+index eb4170e1e3..72dc5e9f04 100644
+--- a/gst-libs/gst/video/gstvideoaggregator.c
++++ b/gst-libs/gst/video/gstvideoaggregator.c
+@@ -770,9 +770,9 @@ static gint video_aggregator_private_offset = 0;
+ GType
+ gst_video_aggregator_get_type (void)
+ {
+-  static volatile gsize g_define_type_id_volatile = 0;
++  static gsize static_g_define_type_id = 0;
+ 
+-  if (g_once_init_enter (&g_define_type_id_volatile)) {
++  if (g_once_init_enter (&static_g_define_type_id)) {
+     GType g_define_type_id = g_type_register_static_simple (GST_TYPE_AGGREGATOR,
+         g_intern_static_string ("GstVideoAggregator"),
+         sizeof (GstVideoAggregatorClass),
+@@ -785,9 +785,9 @@ gst_video_aggregator_get_type (void)
+         g_type_add_instance_private (g_define_type_id,
+         sizeof (GstVideoAggregatorPrivate));
+ 
+-    g_once_init_leave (&g_define_type_id_volatile, g_define_type_id);
++    g_once_init_leave (&static_g_define_type_id, g_define_type_id);
+   }
+-  return g_define_type_id_volatile;
++  return static_g_define_type_id;
+ }
+ 
+ static inline GstVideoAggregatorPrivate *
+diff --git a/gst-libs/gst/video/gstvideodecoder.c b/gst-libs/gst/video/gstvideodecoder.c
+index 935a2ff3a6..36f19de6df 100644
+--- a/gst-libs/gst/video/gstvideodecoder.c
++++ b/gst-libs/gst/video/gstvideodecoder.c
+@@ -499,7 +499,7 @@ static gboolean gst_video_decoder_transform_meta_default (GstVideoDecoder *
+ GType
+ gst_video_decoder_get_type (void)
+ {
+-  static volatile gsize type = 0;
++  static gsize type = 0;
+ 
+   if (g_once_init_enter (&type)) {
+     GType _type;
+diff --git a/gst-libs/gst/video/gstvideoencoder.c b/gst-libs/gst/video/gstvideoencoder.c
+index d45a4f6e70..9811ba0d4d 100644
+--- a/gst-libs/gst/video/gstvideoencoder.c
++++ b/gst-libs/gst/video/gstvideoencoder.c
+@@ -291,7 +291,7 @@ static gboolean gst_video_encoder_transform_meta_default (GstVideoEncoder *
+ GType
+ gst_video_encoder_get_type (void)
+ {
+-  static volatile gsize type = 0;
++  static gsize type = 0;
+ 
+   if (g_once_init_enter (&type)) {
+     GType _type;
+diff --git a/gst-libs/gst/video/gstvideometa.c b/gst-libs/gst/video/gstvideometa.c
+index 6bb45dc081..bfd91465cb 100644
+--- a/gst-libs/gst/video/gstvideometa.c
++++ b/gst-libs/gst/video/gstvideometa.c
+@@ -120,7 +120,7 @@ gst_video_meta_transform (GstBuffer * dest, GstMeta * meta,
+ GType
+ gst_video_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] =
+       { GST_META_TAG_VIDEO_STR, GST_META_TAG_MEMORY_STR,
+     GST_META_TAG_VIDEO_COLORSPACE_STR,
+@@ -577,7 +577,7 @@ gst_video_crop_meta_transform (GstBuffer * dest, GstMeta * meta,
+ GType
+ gst_video_crop_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] =
+       { GST_META_TAG_VIDEO_STR, GST_META_TAG_VIDEO_SIZE_STR,
+     GST_META_TAG_VIDEO_ORIENTATION_STR, NULL
+@@ -638,7 +638,7 @@ gst_video_meta_transform_scale_get_quark (void)
+ GType
+ gst_video_gl_texture_upload_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] =
+       { GST_META_TAG_VIDEO_STR, GST_META_TAG_MEMORY_STR, NULL };
+ 
+@@ -806,7 +806,7 @@ gst_video_gl_texture_upload_meta_upload (GstVideoGLTextureUploadMeta * meta,
+ GType
+ gst_video_region_of_interest_meta_api_get_type (void)
+ {
+-  static volatile GType type;
++  static GType type;
+   static const gchar *tags[] =
+       { GST_META_TAG_VIDEO_STR, GST_META_TAG_VIDEO_ORIENTATION_STR,
+     GST_META_TAG_VIDEO_SIZE_STR, NULL
+@@ -1064,7 +1064,7 @@ gst_video_region_of_interest_meta_get_param (GstVideoRegionOfInterestMeta *
+ GType
+ gst_video_time_code_meta_api_get_type (void)
+ {
+-  static volatile GType type;
++  static GType type;
+ 
+   if (g_once_init_enter (&type)) {
+     static const gchar *tags[] = { NULL };
+diff --git a/gst-libs/gst/video/video-anc.c b/gst-libs/gst/video/video-anc.c
+index 4748c50913..638266d06e 100644
+--- a/gst-libs/gst/video/video-anc.c
++++ b/gst-libs/gst/video/video-anc.c
+@@ -932,7 +932,7 @@ gst_video_vbi_encoder_write_line (GstVideoVBIEncoder * encoder, guint8 * data)
+ GType
+ gst_video_caption_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+ 
+   if (g_once_init_enter (&type)) {
+     static const gchar *tags[] = { NULL };
+@@ -1135,7 +1135,7 @@ gst_video_caption_type_to_caps (GstVideoCaptionType type)
+ GType
+ gst_video_afd_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+ 
+   if (g_once_init_enter (&type)) {
+     static const gchar *tags[] = {
+@@ -1274,7 +1274,7 @@ gst_buffer_add_video_afd_meta (GstBuffer * buffer, guint8 field,
+ GType
+ gst_video_bar_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+ 
+   if (g_once_init_enter (&type)) {
+     static const gchar *tags[] = {
+diff --git a/gst-libs/gst/video/video-multiview.c b/gst-libs/gst/video/video-multiview.c
+index 2a6d04881f..107728db02 100644
+--- a/gst-libs/gst/video/video-multiview.c
++++ b/gst-libs/gst/video/video-multiview.c
+@@ -28,7 +28,7 @@
+ GType
+ gst_video_multiview_flagset_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+ 
+   if (g_once_init_enter (&type)) {
+     GType _type = gst_flagset_register (GST_TYPE_VIDEO_MULTIVIEW_FLAGS);
+@@ -405,7 +405,7 @@ gst_video_multiview_guess_half_aspect (GstVideoMultiviewMode mv_mode,
+ GType
+ gst_video_multiview_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] =
+       { GST_META_TAG_VIDEO_STR, GST_META_TAG_MEMORY_STR,
+     NULL
+diff --git a/gst-libs/gst/video/video-overlay-composition.c b/gst-libs/gst/video/video-overlay-composition.c
+index 315e91f7e1..3984647dfd 100644
+--- a/gst-libs/gst/video/video-overlay-composition.c
++++ b/gst-libs/gst/video/video-overlay-composition.c
+@@ -236,7 +236,7 @@ gst_video_overlay_composition_meta_transform (GstBuffer * dest, GstMeta * meta,
+ GType
+ gst_video_overlay_composition_meta_api_get_type (void)
+ {
+-  static volatile GType type = 0;
++  static GType type = 0;
+   static const gchar *tags[] = { NULL };
+ 
+   if (g_once_init_enter (&type)) {
+diff --git a/gst/adder/gstadder.h b/gst/adder/gstadder.h
+index 369209cbdb..cb20979860 100644
+--- a/gst/adder/gstadder.h
++++ b/gst/adder/gstadder.h
+@@ -53,8 +53,8 @@ struct _GstAdder {
+ 
+   /* sink event handling */
+   GstSegment      segment;
+-  volatile gboolean new_segment_pending;
+-  volatile gboolean flush_stop_pending;
++  gboolean new_segment_pending;
++  gboolean flush_stop_pending;
+ 
+   /* current caps */
+   GstCaps *current_caps;
+diff --git a/gst/encoding/gstencodebin.c b/gst/encoding/gstencodebin.c
+index 1f354cfbf6..f5f314e2d9 100644
+--- a/gst/encoding/gstencodebin.c
++++ b/gst/encoding/gstencodebin.c
+@@ -266,7 +266,7 @@ gst_encodebin_flags_get_type (void)
+           "conversion elements", "no-video-conversion"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+diff --git a/gst/playback/gstplay-enum.c b/gst/playback/gstplay-enum.c
+index c1b666d608..ccef2f09ad 100644
+--- a/gst/playback/gstplay-enum.c
++++ b/gst/playback/gstplay-enum.c
+@@ -32,7 +32,7 @@ gst_autoplug_select_result_get_type (void)
+     {C_ENUM (GST_AUTOPLUG_SELECT_SKIP), "GST_AUTOPLUG_SELECT_SKIP", "skip"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+@@ -74,7 +74,7 @@ gst_play_flags_get_type (void)
+         "force-sw-decoders"},
+     {0, NULL, NULL}
+   };
+-  static volatile GType id = 0;
++  static GType id = 0;
+ 
+   if (g_once_init_enter ((gsize *) & id)) {
+     GType _id;
+diff --git a/gst/videorate/gstvideorate.h b/gst/videorate/gstvideorate.h
+index cafff0dd24..c17f98a24b 100644
+--- a/gst/videorate/gstvideorate.h
++++ b/gst/videorate/gstvideorate.h
+@@ -70,7 +70,7 @@ struct _GstVideoRate
+   gboolean drop_only;
+   guint64 average_period_set;
+ 
+-  volatile int max_rate;
++  int max_rate;
+   gdouble rate;
+   gdouble pending_rate;
+ };
+diff --git a/gst/videoscale/gstvideoscale.c b/gst/videoscale/gstvideoscale.c
+index f73950c367..ff080628c8 100644
+--- a/gst/videoscale/gstvideoscale.c
++++ b/gst/videoscale/gstvideoscale.c
+@@ -161,7 +161,7 @@ static GstCaps *
+ gst_video_scale_get_capslist (void)
+ {
+   static GstCaps *caps = NULL;
+-  static volatile gsize inited = 0;
++  static gsize inited = 0;
+ 
+   if (g_once_init_enter (&inited)) {
+     caps = gst_static_caps_get (&gst_video_scale_format_caps);
+-- 
+2.31.1
+
