@@ -51,10 +51,7 @@ public:
     InlineLayoutUnit contentLogicalLeft() const { return m_contentLogicalLeft; }
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
-    bool needsIntegralPosition() const { return m_needsIntegralPosition; }
-
     void moveVertically(InlineLayoutUnit offset) { m_lineBoxLogicalRect.moveVertically(offset); }
-    void setNeedsIntegralPosition(bool needsIntegralPosition) { m_needsIntegralPosition = needsIntegralPosition; }
 
 private:
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
@@ -66,9 +63,6 @@ private:
     InlineLayoutUnit m_aligmentBaseline { 0 };
     InlineLayoutUnit m_contentLogicalLeft { 0 };
     InlineLayoutUnit m_contentLogicalWidth { 0 };
-    // FIXME: This is just matching legacy line layout integral snapping.
-    // See shouldClearDescendantsHaveSameLineHeightAndBaseline in LegacyInlineFlowBox::addToLine.
-    bool m_needsIntegralPosition { true };
 };
 
 inline LineGeometry::LineGeometry(const InlineRect& lineBoxLogicalRect, EnclosingTopAndBottom enclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth)

@@ -9,17 +9,17 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 239x226 [border: (1px solid #808080) none (1px solid #808080) none]
           RenderTableRow {TR} at (0,0) size 239x29
             RenderTableCell {TH} at (0,0) size 83x29 [border: (0.50px none #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (9,5) size 64x19
-                text run at (9,5) width 64: "Weekday"
+              RenderText {#text} at (9,4) size 64x20
+                text run at (9,4) width 64: "Weekday"
             RenderTableCell {TH} at (82,0) size 46x29 [border: (0.50px none #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (6,5) size 33x19
-                text run at (6,5) width 33: "Date"
+              RenderText {#text} at (6,4) size 33x20
+                text run at (6,4) width 33: "Date"
             RenderTableCell {TH} at (127,0) size 71x29 [border: (0.50px none #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (4,5) size 63x19
-                text run at (4,5) width 63: "Manager"
+              RenderText {#text} at (4,4) size 63x20
+                text run at (4,4) width 63: "Manager"
             RenderTableCell {TH} at (197,0) size 42x29 [border: (0.50px none #000000)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (7,5) size 26x19
-                text run at (7,5) width 26: "Qty"
+              RenderText {#text} at (7,4) size 26x20
+                text run at (7,4) width 26: "Qty"
           RenderTableRow {TR} at (0,28) size 239x29
             RenderTableCell {TD} at (0,28) size 83x29 [border: none] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 54x19

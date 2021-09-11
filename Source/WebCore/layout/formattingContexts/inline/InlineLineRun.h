@@ -113,8 +113,6 @@ struct Run {
 
     size_t lineIndex() const { return m_lineIndex; }
 
-    void setVerticalPositionIntegral();
-
 private:
     const size_t m_lineIndex;
     const Type m_type;
@@ -148,12 +146,6 @@ inline Run::Text::Text(size_t start, size_t length, const String& originalConten
     , m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)
 {
-}
-
-inline void Run::setVerticalPositionIntegral()
-{
-    m_logicalRect.setTop(roundToInt(m_logicalRect.top()));
-    m_inkOverflow.setTop(roundToInt(m_inkOverflow.top()));
 }
 
 }

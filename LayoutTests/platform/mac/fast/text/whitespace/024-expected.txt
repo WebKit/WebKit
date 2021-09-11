@@ -34,27 +34,27 @@ layer at (0,0) size 785x1187
           RenderTableRow {TR} at (0,2) size 769x167
             RenderTableCell {TD} at (2,2) size 174x167 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 172x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
-                RenderText {#text} at (7,8) size 95x30
-                  text run at (7,8) width 95: "        2003"
-                  text run at (101,8) width 1: " "
-                  text run at (7,23) width 1: " "
+                RenderText {#text} at (7,7) size 95x31
+                  text run at (7,7) width 95: "        2003"
+                  text run at (101,7) width 1: " "
+                  text run at (7,22) width 1: " "
                 RenderInline {SPAN} at (0,0) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,37) size 157x16
                     text run at (7,37) width 157: " D  M  T  W  J  F  S"
                 RenderText {#text} at (163,37) size 157x121
                   text run at (163,37) width 1: " "
-                  text run at (7,53) width 1: " "
-                  text run at (7,68) width 118: "      September"
-                  text run at (124,68) width 1: " "
-                  text run at (7,83) width 157: "    1  2  3  4  5  6"
-                  text run at (163,83) width 1: " "
-                  text run at (7,98) width 157: " 7  8  9 10 11 12 13"
-                  text run at (163,98) width 1: " "
-                  text run at (7,113) width 157: "14 15 16 17 18 19 20"
-                  text run at (163,113) width 1: " "
-                  text run at (7,128) width 157: "21 22 23 24 25 26 27"
-                  text run at (163,128) width 1: " "
-                  text run at (7,143) width 63: "28 29 30"
+                  text run at (7,52) width 1: " "
+                  text run at (7,67) width 118: "      September"
+                  text run at (124,67) width 1: " "
+                  text run at (7,82) width 157: "    1  2  3  4  5  6"
+                  text run at (163,82) width 1: " "
+                  text run at (7,97) width 157: " 7  8  9 10 11 12 13"
+                  text run at (163,97) width 1: " "
+                  text run at (7,112) width 157: "14 15 16 17 18 19 20"
+                  text run at (163,112) width 1: " "
+                  text run at (7,127) width 157: "21 22 23 24 25 26 27"
+                  text run at (163,127) width 1: " "
+                  text run at (7,142) width 63: "28 29 30"
             RenderTableCell {TD} at (177,2) size 590x20 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 491x18
                 text run at (1,1) width 346: "The blank line between '2003' and the nested element "
@@ -69,27 +69,27 @@ layer at (0,0) size 785x1187
           RenderTableRow {TR} at (0,2) size 769x167
             RenderTableCell {TD} at (2,2) size 174x167 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 172x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
-                RenderText {#text} at (7,8) size 95x30
-                  text run at (7,8) width 95: "        2003"
-                  text run at (101,8) width 1: " "
-                  text run at (7,23) width 1: " "
+                RenderText {#text} at (7,7) size 95x31
+                  text run at (7,7) width 95: "        2003"
+                  text run at (101,7) width 1: " "
+                  text run at (7,22) width 1: " "
                 RenderInline {SPAN} at (0,0) size 95x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,37) size 95x16
                     text run at (7,37) width 95: " D  M  TWJFS"
                 RenderText {#text} at (101,37) size 157x121
                   text run at (101,37) width 1: " "
-                  text run at (7,53) width 1: " "
-                  text run at (7,68) width 118: "      September"
-                  text run at (124,68) width 1: " "
-                  text run at (7,83) width 157: "    1  2  3  4  5  6"
-                  text run at (163,83) width 1: " "
-                  text run at (7,98) width 157: " 7  8  9 10 11 12 13"
-                  text run at (163,98) width 1: " "
-                  text run at (7,113) width 157: "14 15 16 17 18 19 20"
-                  text run at (163,113) width 1: " "
-                  text run at (7,128) width 157: "21 22 23 24 25 26 27"
-                  text run at (163,128) width 1: " "
-                  text run at (7,143) width 63: "28 29 30"
+                  text run at (7,52) width 1: " "
+                  text run at (7,67) width 118: "      September"
+                  text run at (124,67) width 1: " "
+                  text run at (7,82) width 157: "    1  2  3  4  5  6"
+                  text run at (163,82) width 1: " "
+                  text run at (7,97) width 157: " 7  8  9 10 11 12 13"
+                  text run at (163,97) width 1: " "
+                  text run at (7,112) width 157: "14 15 16 17 18 19 20"
+                  text run at (163,112) width 1: " "
+                  text run at (7,127) width 157: "21 22 23 24 25 26 27"
+                  text run at (163,127) width 1: " "
+                  text run at (7,142) width 63: "28 29 30"
             RenderTableCell {TD} at (177,2) size 590x72 [r=0 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (1,1) size 588x18
                 RenderText {#text} at (0,0) size 491x18
@@ -110,26 +110,26 @@ layer at (0,0) size 785x1187
           RenderTableRow {TR} at (0,2) size 769x152
             RenderTableCell {TD} at (2,2) size 174x152 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 172x150 [bgcolor=#CCCC99] [border: (1px solid #000000)]
-                RenderText {#text} at (7,8) size 95x15
-                  text run at (7,8) width 95: "        2003"
-                  text run at (101,8) width 1: " "
+                RenderText {#text} at (7,7) size 95x16
+                  text run at (7,7) width 95: "        2003"
+                  text run at (101,7) width 1: " "
                 RenderInline {SPAN} at (0,0) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,22) size 157x16
                     text run at (7,22) width 157: " D  M  T  W  J  F  S"
                 RenderText {#text} at (163,22) size 157x121
                   text run at (163,22) width 1: " "
-                  text run at (7,38) width 1: " "
-                  text run at (7,53) width 118: "      September"
-                  text run at (124,53) width 1: " "
-                  text run at (7,68) width 157: "    1  2  3  4  5  6"
-                  text run at (163,68) width 1: " "
-                  text run at (7,83) width 157: " 7  8  9 10 11 12 13"
-                  text run at (163,83) width 1: " "
-                  text run at (7,98) width 157: "14 15 16 17 18 19 20"
-                  text run at (163,98) width 1: " "
-                  text run at (7,113) width 157: "21 22 23 24 25 26 27"
-                  text run at (163,113) width 1: " "
-                  text run at (7,128) width 63: "28 29 30"
+                  text run at (7,37) width 1: " "
+                  text run at (7,52) width 118: "      September"
+                  text run at (124,52) width 1: " "
+                  text run at (7,67) width 157: "    1  2  3  4  5  6"
+                  text run at (163,67) width 1: " "
+                  text run at (7,82) width 157: " 7  8  9 10 11 12 13"
+                  text run at (163,82) width 1: " "
+                  text run at (7,97) width 157: "14 15 16 17 18 19 20"
+                  text run at (163,97) width 1: " "
+                  text run at (7,112) width 157: "21 22 23 24 25 26 27"
+                  text run at (163,112) width 1: " "
+                  text run at (7,127) width 63: "28 29 30"
             RenderTableCell {TD} at (177,2) size 590x38 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 575x36
                 text run at (1,1) width 346: "The blank line between '2003' and the nested element "
@@ -145,29 +145,29 @@ layer at (0,0) size 785x1187
           RenderTableRow {TR} at (0,2) size 769x167
             RenderTableCell {TD} at (2,2) size 174x167 [r=0 c=0 rs=1 cs=1]
               RenderBlock {PRE} at (1,1) size 172x165 [bgcolor=#CCCC99] [border: (1px solid #000000)]
-                RenderInline {SPAN} at (0,0) size 95x15
-                  RenderText {#text} at (7,8) size 95x15
-                    text run at (7,8) width 95: "        2003"
-                RenderText {#text} at (101,8) size 95x30
-                  text run at (101,8) width 1: " "
-                  text run at (7,23) width 1: " "
+                RenderInline {SPAN} at (0,0) size 95x16
+                  RenderText {#text} at (7,7) size 95x16
+                    text run at (7,7) width 95: "        2003"
+                RenderText {#text} at (101,7) size 95x31
+                  text run at (101,7) width 1: " "
+                  text run at (7,22) width 1: " "
                 RenderInline {SPAN} at (0,0) size 157x19 [border: (1px solid #000000) none (2px solid #000000) none]
                   RenderText {#text} at (7,37) size 157x16
                     text run at (7,37) width 157: " D  M  T  W  J  F  S"
                 RenderText {#text} at (163,37) size 157x121
                   text run at (163,37) width 1: " "
-                  text run at (7,53) width 1: " "
-                  text run at (7,68) width 118: "      September"
-                  text run at (124,68) width 1: " "
-                  text run at (7,83) width 157: "    1  2  3  4  5  6"
-                  text run at (163,83) width 1: " "
-                  text run at (7,98) width 157: " 7  8  9 10 11 12 13"
-                  text run at (163,98) width 1: " "
-                  text run at (7,113) width 157: "14 15 16 17 18 19 20"
-                  text run at (163,113) width 1: " "
-                  text run at (7,128) width 157: "21 22 23 24 25 26 27"
-                  text run at (163,128) width 1: " "
-                  text run at (7,143) width 63: "28 29 30"
+                  text run at (7,52) width 1: " "
+                  text run at (7,67) width 118: "      September"
+                  text run at (124,67) width 1: " "
+                  text run at (7,82) width 157: "    1  2  3  4  5  6"
+                  text run at (163,82) width 1: " "
+                  text run at (7,97) width 157: " 7  8  9 10 11 12 13"
+                  text run at (163,97) width 1: " "
+                  text run at (7,112) width 157: "14 15 16 17 18 19 20"
+                  text run at (163,112) width 1: " "
+                  text run at (7,127) width 157: "21 22 23 24 25 26 27"
+                  text run at (163,127) width 1: " "
+                  text run at (7,142) width 63: "28 29 30"
             RenderTableCell {TD} at (177,2) size 590x38 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 585x36
                 text run at (1,1) width 346: "The blank line between '2003' and the nested element "

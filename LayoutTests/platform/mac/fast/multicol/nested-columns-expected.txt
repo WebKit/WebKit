@@ -27,7 +27,7 @@ layer at (8,8) size 367x1018 backgroundClip at (0,0) size 1141x585 clip at (0,0)
       RenderText {#text} at (0,0) size 167x37
         text run at (0,0) width 167: "Header Two"
     RenderBlock (anonymous) at (0,357) size 367x215
-      RenderText {#text} at (0,0) size 367x214
+      RenderText {#text} at (0,0) size 367x215
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 362: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 332: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"

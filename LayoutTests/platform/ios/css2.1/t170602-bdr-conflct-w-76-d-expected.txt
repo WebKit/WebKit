@@ -10,14 +10,14 @@ layer at (0,0) size 800x240
         RenderTableSection {TBODY} at (2,2) size 153x176
           RenderTableRow {TR} at (0,0) size 152x58
             RenderTableCell {TD} at (0,15) size 48x28 [border: (2.50px outset #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 39x20
-                text run at (3,4) width 39: "outset"
+              RenderText {#text} at (3,2) size 39x21
+                text run at (3,3) width 39: "outset"
             RenderTableCell {TD} at (47,14) size 58x30 [border: (2.50px outset #00FF00) (5px outset #FF0000) (2.50px outset #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,4) size 39x19
-                text run at (3,4) width 39: "outset"
-            RenderTableCell {TD} at (104,15) size 48x28 [border: (2.50px outset #00FF00)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (3,3) size 39x20
-                text run at (3,4) width 39: "outset"
+                text run at (3,3) width 39: "outset"
+            RenderTableCell {TD} at (104,15) size 48x28 [border: (2.50px outset #00FF00)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (3,2) size 39x21
+                text run at (3,3) width 39: "outset"
           RenderTableRow {TR} at (0,57) size 152x61
             RenderTableCell {TD} at (0,74) size 48x27 [border: (2.50px outset #00FF00) (5px outset #FF0000) (2.50px outset #00FF00)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 39x20
@@ -30,11 +30,11 @@ layer at (0,0) size 800x240
                 text run at (6,4) width 39: "outset"
           RenderTableRow {TR} at (0,117) size 152x58
             RenderTableCell {TD} at (0,132) size 48x28 [border: (2.50px outset #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 39x20
-                text run at (3,4) width 39: "outset"
+              RenderText {#text} at (3,2) size 39x21
+                text run at (3,3) width 39: "outset"
             RenderTableCell {TD} at (47,131) size 58x30 [border: (5px outset #FF0000) (2.50px outset #00FF00)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (3,6) size 39x19
                 text run at (3,6) width 39: "outset"
             RenderTableCell {TD} at (104,132) size 48x28 [border: (2.50px outset #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 39x20
-                text run at (3,4) width 39: "outset"
+              RenderText {#text} at (3,2) size 39x21
+                text run at (3,3) width 39: "outset"

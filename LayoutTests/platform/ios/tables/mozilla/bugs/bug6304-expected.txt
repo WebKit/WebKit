@@ -89,15 +89,15 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (1,1) size 20x19
                           text run at (1,1) width 20: "2,1"
                       RenderTableCell {TD} at (32,45) size 22x23 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                        RenderText {#text} at (1,1) size 20x20
-                          text run at (1,2) width 20: "2,2"
+                        RenderText {#text} at (1,0) size 20x21
+                          text run at (1,1) width 20: "2,2"
                       RenderTableCell {TD} at (59,32) size 22x22 [bgcolor=#FFFF66] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 20x19
                           text run at (1,1) width 20: "2,3"
                     RenderTableRow {TR} at (0,59) size 86x22
                       RenderTableCell {TD} at (5,72) size 22x23 [border: (1px inset #808080)] [r=2 c=0 rs=2 cs=1]
-                        RenderText {#text} at (1,1) size 20x20
-                          text run at (1,2) width 20: "3,1"
+                        RenderText {#text} at (1,0) size 20x21
+                          text run at (1,1) width 20: "3,1"
                       RenderTableCell {TD} at (59,59) size 22x22 [bgcolor=#FFFF66] [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 20x19
                           text run at (1,1) width 20: "3,3"
@@ -140,13 +140,13 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (1,1) size 20x19
                           text run at (1,1) width 20: "2,1"
                       RenderTableCell {TD} at (32,35) size 22x23 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                        RenderText {#text} at (1,1) size 20x20
-                          text run at (1,2) width 20: "2,2"
+                        RenderText {#text} at (1,0) size 20x21
+                          text run at (1,1) width 20: "2,2"
                       RenderTableCell {TD} at (59,42) size 22x2 [bgcolor=#FFFF66] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                     RenderTableRow {TR} at (0,59) size 86x2
                       RenderTableCell {TD} at (5,62) size 22x23 [border: (1px inset #808080)] [r=2 c=0 rs=2 cs=1]
-                        RenderText {#text} at (1,1) size 20x20
-                          text run at (1,2) width 20: "3,1"
+                        RenderText {#text} at (1,0) size 20x21
+                          text run at (1,1) width 20: "3,1"
                       RenderTableCell {TD} at (59,59) size 22x2 [bgcolor=#FFFF66] [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                     RenderTableRow {TR} at (0,66) size 86x22
                       RenderTableCell {TD} at (32,66) size 22x22 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
@@ -182,12 +182,12 @@ layer at (0,0) size 800x600
                         RenderText {#text} at (1,1) size 20x19
                           text run at (1,1) width 20: "2,1"
                       RenderTableCell {TD} at (32,34) size 22x23 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
-                        RenderText {#text} at (1,1) size 20x20
-                          text run at (1,2) width 20: "2,2"
+                        RenderText {#text} at (1,0) size 20x21
+                          text run at (1,1) width 20: "2,2"
                     RenderTableRow {TR} at (0,59) size 59x0
                       RenderTableCell {TD} at (5,61) size 22x23 [border: (1px inset #808080)] [r=2 c=0 rs=2 cs=1]
-                        RenderText {#text} at (1,1) size 20x20
-                          text run at (1,2) width 20: "3,1"
+                        RenderText {#text} at (1,0) size 20x21
+                          text run at (1,1) width 20: "3,1"
                     RenderTableRow {TR} at (0,64) size 59x22
                       RenderTableCell {TD} at (32,64) size 22x22 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
                         RenderText {#text} at (1,1) size 20x19

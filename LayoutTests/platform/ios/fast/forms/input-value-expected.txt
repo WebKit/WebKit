@@ -30,30 +30,30 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,26) size 784x445
             RenderTableRow {TR} at (0,0) size 784x27
               RenderTableCell {TD} at (2,2) size 378x23 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 211x20
-                  text run at (1,2) width 211: "text with value property changed"
+                RenderText {#text} at (1,0) size 211x21
+                  text run at (1,1) width 211: "text with value property changed"
               RenderTableCell {TD} at (381,0) size 273x27 [r=0 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
               RenderTableCell {TD} at (655,2) size 63x23 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 30x20
-                  text run at (1,2) width 30: "after"
+                RenderText {#text} at (1,0) size 30x21
+                  text run at (1,1) width 30: "after"
               RenderTableCell {TD} at (719,2) size 63x23 [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 41x20
-                  text run at (1,2) width 41: "before"
+                RenderText {#text} at (1,0) size 41x21
+                  text run at (1,1) width 41: "before"
             RenderTableRow {TR} at (0,29) size 784x27
               RenderTableCell {TD} at (2,31) size 378x23 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 248x20
-                  text run at (1,2) width 248: "password with value property changed"
+                RenderText {#text} at (1,0) size 248x21
+                  text run at (1,1) width 248: "password with value property changed"
               RenderTableCell {TD} at (381,29) size 273x27 [r=1 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
                   RenderFlexibleBox {DIV} at (6,3) size 143x15
                     RenderBlock {DIV} at (0,0) size 142x14
               RenderTableCell {TD} at (655,31) size 63x23 [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 30x20
-                  text run at (1,2) width 30: "after"
+                RenderText {#text} at (1,0) size 30x21
+                  text run at (1,1) width 30: "after"
               RenderTableCell {TD} at (719,31) size 63x23 [r=1 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 41x20
-                  text run at (1,2) width 41: "before"
+                RenderText {#text} at (1,0) size 41x21
+                  text run at (1,1) width 41: "before"
             RenderTableRow {TR} at (0,58) size 784x24
               RenderTableCell {TD} at (2,59) size 378x22 [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 252x19
@@ -118,16 +118,16 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 30: "after"
             RenderTableRow {TR} at (0,186) size 784x27
               RenderTableCell {TD} at (2,188) size 378x23 [r=7 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 210x20
-                  text run at (1,2) width 210: "text with value attribute changed"
+                RenderText {#text} at (1,0) size 210x21
+                  text run at (1,1) width 210: "text with value attribute changed"
               RenderTableCell {TD} at (381,186) size 273x27 [r=7 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
               RenderTableCell {TD} at (655,188) size 63x23 [r=7 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 30x20
-                  text run at (1,2) width 30: "after"
+                RenderText {#text} at (1,0) size 30x21
+                  text run at (1,1) width 30: "after"
               RenderTableCell {TD} at (719,188) size 63x23 [r=7 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 30x20
-                  text run at (1,2) width 30: "after"
+                RenderText {#text} at (1,0) size 30x21
+                  text run at (1,1) width 30: "after"
             RenderTableRow {TR} at (0,215) size 784x24
               RenderTableCell {TD} at (2,216) size 378x22 [r=8 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 252x19

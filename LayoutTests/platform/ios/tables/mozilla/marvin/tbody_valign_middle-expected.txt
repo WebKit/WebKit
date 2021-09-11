@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 304x189 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 300x185
             RenderTableCell {TD} at (308,72) size 472x45 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 462x40
-                text run at (2,3) width 462: "This text is within the TBODY element and should be vertically aligned"
-                text run at (2,23) width 85: "to the middle"
+              RenderText {#text} at (2,1) size 462x41
+                text run at (2,2) width 462: "This text is within the TBODY element and should be vertically aligned"
+                text run at (2,22) width 85: "to the middle"
         RenderTableSection {TBODY} at (1,220) size 782x0

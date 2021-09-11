@@ -1637,6 +1637,8 @@ imported/w3c/web-platform-tests/mathml/relations/css-styling/transform.html [ Im
 # This MathML test should be rewritten.
 webkit.org/b/201356 mathml/presentation/stretchy-depth-height-symmetric.html [ Skip ]
 
+webkit.org/b/230171 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Failure ]
+
 # These webmessaging WPT tests time out.
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/MessageEvent_onmessage_postMessage_infinite_loop.html [ Skip ]
 webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/MessageEvent_properties.htm [ Skip ]

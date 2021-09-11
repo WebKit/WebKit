@@ -37,8 +37,8 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 167x105
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (167,105) size 4x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x20
-                text run at (0,1) width 4: " "
+              RenderText {#text} at (0,-1) size 4x21
+                text run at (0,0) width 4: " "
             RenderTableCell {TD} at (171,17) size 154x80 [r=1 c=2 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 144x79
                 RenderInline {B} at (0,0) size 66x15

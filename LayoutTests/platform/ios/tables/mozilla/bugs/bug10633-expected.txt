@@ -46,11 +46,11 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 20x22
           RenderTableRow {TR} at (0,23) size 468x85
             RenderTableCell {TD} at (0,55) size 9x21 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x20
-                text run at (0,1) width 4: " "
+              RenderText {#text} at (0,-1) size 4x21
+                text run at (0,0) width 4: " "
             RenderTableCell {TD} at (9,55) size 9x21 [bgcolor=#EBEBE4] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x20
-                text run at (0,1) width 4: " "
+              RenderText {#text} at (0,-1) size 4x21
+                text run at (0,0) width 4: " "
             RenderTableCell {TD} at (18,23) size 207x85 [bgcolor=#EBEBE4] [r=2 c=2 rs=1 cs=3]
               RenderBlock {P} at (0,0) size 207x85
                 RenderImage {IMG} at (0,0) size 1x5
@@ -68,14 +68,14 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,69) size 4x15
                     text run at (0,69) width 4: " "
             RenderTableCell {TD} at (225,55) size 18x21 [r=2 c=5 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x20
-                text run at (0,1) width 4: " "
+              RenderText {#text} at (0,-1) size 4x21
+                text run at (0,0) width 4: " "
             RenderTableCell {TD} at (243,55) size 9x21 [r=2 c=6 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x20
-                text run at (0,1) width 4: " "
+              RenderText {#text} at (0,-1) size 4x21
+                text run at (0,0) width 4: " "
             RenderTableCell {TD} at (252,55) size 9x21 [bgcolor=#EBEBE4] [r=2 c=7 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 4x20
-                text run at (0,1) width 4: " "
+              RenderText {#text} at (0,-1) size 4x21
+                text run at (0,0) width 4: " "
             RenderTableCell {TD} at (261,23) size 207x53 [bgcolor=#EBEBE4] [r=2 c=8 rs=1 cs=3]
               RenderInline {FONT} at (0,0) size 205x59
                 RenderImage {IMG} at (0,0) size 1x5

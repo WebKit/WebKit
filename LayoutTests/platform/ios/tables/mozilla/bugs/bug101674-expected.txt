@@ -13,8 +13,8 @@ layer at (0,0) size 800x1591
               RenderImage {IMG} at (266,2) size 88x65
               RenderImage {IMG} at (354,2) size 88x65
             RenderTableCell {TD} at (448,24) size 332x25 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 160x20
-                text run at (2,3) width 160: "Nothing between images"
+              RenderText {#text} at (2,1) size 160x21
+                text run at (2,2) width 160: "Nothing between images"
       RenderTable {TABLE} at (0,75) size 784x335 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x333
           RenderTableRow {TR} at (0,2) size 782x329
@@ -29,8 +29,8 @@ layer at (0,0) size 800x1591
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (2,262) size 88x65
             RenderTableCell {TD} at (96,154) size 684x25 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 152x20
-                text run at (2,3) width 152: "Spaces between images"
+              RenderText {#text} at (2,1) size 152x21
+                text run at (2,2) width 152: "Spaces between images"
       RenderTable {TABLE} at (0,410) size 784x335 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x333
           RenderTableRow {TR} at (0,2) size 782x329
@@ -45,8 +45,8 @@ layer at (0,0) size 800x1591
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (2,262) size 88x65
             RenderTableCell {TD} at (96,154) size 684x25 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 168x20
-                text run at (2,3) width 168: "Newlines between images"
+              RenderText {#text} at (2,1) size 168x21
+                text run at (2,2) width 168: "Newlines between images"
       RenderTable {TABLE} at (0,745) size 784x80 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x78
           RenderTableRow {TR} at (0,2) size 782x74
@@ -89,8 +89,8 @@ layer at (0,0) size 800x1591
                 text run at (90,282) width 29: "Five"
               RenderImage {IMG} at (2,302) size 88x65
             RenderTableCell {TD} at (133,174) size 647x25 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 214x20
-                text run at (2,3) width 214: "Text with spaces between images"
+              RenderText {#text} at (2,1) size 214x21
+                text run at (2,2) width 214: "Text with spaces between images"
       RenderTable {TABLE} at (0,1200) size 784x375 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x373
           RenderTableRow {TR} at (0,2) size 782x369
@@ -111,5 +111,5 @@ layer at (0,0) size 800x1591
                 text run at (90,282) width 40: "Five e"
               RenderImage {IMG} at (2,302) size 88x65
             RenderTableCell {TD} at (141,174) size 639x25 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 305x20
-                text run at (2,3) width 305: "Text with spaces and more text between images"
+              RenderText {#text} at (2,1) size 305x21
+                text run at (2,2) width 305: "Text with spaces and more text between images"

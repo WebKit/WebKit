@@ -65,8 +65,8 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 8: "5"
           RenderTableRow {TR} at (0,95) size 35x22
             RenderTableCell {TD} at (5,108) size 10x23 [border: (1px inset #808080)] [r=4 c=0 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 8x20
-                text run at (1,2) width 8: "6"
+              RenderText {#text} at (1,0) size 8x21
+                text run at (1,1) width 8: "6"
           RenderTableRow {TR} at (0,122) size 35x22
             RenderTableCell {TD} at (20,122) size 10x22 [border: (1px inset #808080)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x19

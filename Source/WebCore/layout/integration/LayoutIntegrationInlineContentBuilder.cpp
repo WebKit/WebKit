@@ -89,8 +89,6 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         // Collect overflow from runs.
         for (; runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex; ++runIndex) {
             auto& run = runs[runIndex];
-            if (line.needsIntegralPosition())
-                run.setVerticalPositionIntegral();
 
             lineInkOverflowRect.unite(run.inkOverflow());
 
@@ -125,11 +123,6 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
         // Final enclosing top and bottom values are in the same coordinate space as the line itself.
         auto enclosingTopAndBottom = line.enclosingTopAndBottom() + lineBoxLogicalRect.top();
-        if (line.needsIntegralPosition()) {
-            adjustedLineBoxRect.setY(roundToInt(adjustedLineBoxRect.y()));
-            enclosingTopAndBottom.top = roundToInt(enclosingTopAndBottom.top);
-            enclosingTopAndBottom.bottom = roundToInt(enclosingTopAndBottom.bottom);
-        }
         auto runCount = runIndex - firstRunIndex;
         inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
     }

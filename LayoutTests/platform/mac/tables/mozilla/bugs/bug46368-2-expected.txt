@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
                 text run at (125,39) width 141: "See the for more info."
               RenderBR {BR} at (265,39) size 1x18
             RenderTableCell {TD} at (308,20) size 472x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 245x19
-                text run at (2,3) width 245: "foo bar foo bar foo bar foo bar foo bar"
+              RenderText {#text} at (2,1) size 245x20
+                text run at (2,2) width 245: "foo bar foo bar foo bar foo bar foo bar"
       RenderBlock (anonymous) at (0,65) size 784x41
         RenderBR {BR} at (0,0) size 0x18
         RenderButton {INPUT} at (2,21) size 52x18 [color=#000000D8] [bgcolor=#C0C0C0]

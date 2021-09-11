@@ -33,11 +33,11 @@ layer at (0,0) size 800x1272
                 RenderTableSection {TBODY} at (1,1) size 382x285
                   RenderTableRow {TR} at (0,2) size 382x281
                     RenderTableCell {TD} at (2,130) size 188x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 136x20
-                        text run at (2,3) width 136: " Inner Table (yellow)"
+                      RenderText {#text} at (2,1) size 136x21
+                        text run at (2,2) width 136: " Inner Table (yellow)"
                     RenderTableCell {TD} at (192,130) size 188x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 4x20
-                        text run at (2,3) width 4: " "
+                      RenderText {#text} at (2,1) size 4x21
+                        text run at (2,2) width 4: " "
             RenderTableCell {TD} at (392,279) size 388x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 123x19
                 text run at (2,2) width 123: " Outer Table (grey)"

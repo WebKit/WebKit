@@ -35,8 +35,8 @@ layer at (0,0) size 800x600
                 text run at (2,119) width 11: "ff"
                 text run at (2,139) width 16: "gg"
             RenderTableCell {TD} at (28,70) size 752x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x20
-                text run at (2,3) width 12: "X"
+              RenderText {#text} at (2,1) size 12x21
+                text run at (2,2) width 12: "X"
       RenderBlock {HR} at (0,325) size 77x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,335) size 784x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x50

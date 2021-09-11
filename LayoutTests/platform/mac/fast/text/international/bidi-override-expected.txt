@@ -10,8 +10,8 @@ layer at (0,0) size 800x344
         RenderTableSection {TBODY} at (0,0) size 582x112
           RenderTableRow {TR} at (0,0) size 582x28
             RenderTableCell {TD} at (0,0) size 98x28 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (29,5) size 65x19
-                text run at (29,6) width 65: "Reference"
+              RenderText {#text} at (29,4) size 65x20
+                text run at (29,5) width 65: "Reference"
             RenderTableCell {TD} at (97,0) size 243x28 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (5,6) size 233x18
                 text run at (5,6) width 43: "abcdef"
@@ -31,8 +31,8 @@ layer at (0,0) size 800x344
                 text run at (200,6) width 38: "ghijkl"
           RenderTableRow {TR} at (0,28) size 582x28
             RenderTableCell {TD} at (0,28) size 98x28 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (7,5) size 87x19
-                text run at (7,6) width 87: "CSS, siblings"
+              RenderText {#text} at (7,4) size 87x20
+                text run at (7,5) width 87: "CSS, siblings"
             RenderTableCell {TD} at (97,28) size 243x28 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (5,6) size 23x18
                 text run at (5,6) width 23: "abc"
@@ -63,8 +63,8 @@ layer at (0,0) size 800x344
                 text run at (5,6) width 23 RTL: "\x{5D9}\x{5DB}\x{5DC}"
           RenderTableRow {TR} at (0,56) size 582x28
             RenderTableCell {TD} at (0,56) size 98x28 [border: (1px solid #008000)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (5,5) size 89x19
-                text run at (5,6) width 89: "CSS, children"
+              RenderText {#text} at (5,4) size 89x20
+                text run at (5,5) width 89: "CSS, children"
             RenderTableCell {TD} at (97,56) size 243x28 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 107x18
                 RenderText {#text} at (5,6) size 23x18
@@ -105,8 +105,8 @@ layer at (0,0) size 800x344
                   text run at (5,6) width 23 RTL: "\x{5D9}\x{5DB}\x{5DC}"
           RenderTableRow {TR} at (0,84) size 582x28
             RenderTableCell {TD} at (0,84) size 98x28 [border: (1px solid #008000)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (39,5) size 55x19
-                text run at (39,6) width 55: "Unicode"
+              RenderText {#text} at (39,4) size 55x20
+                text run at (39,5) width 55: "Unicode"
             RenderTableCell {TD} at (97,84) size 243x28 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (5,6) size 233x18
                 text run at (5,6) width 23: "abc"

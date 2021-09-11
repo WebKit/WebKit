@@ -761,36 +761,22 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
     LayoutUnit& lineTopIncludingMargins, LayoutUnit& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
     bool isRootBox = isRootInlineBox();
-    LayoutUnit rootInlineBoxRoundedOverflow;
-    if (isRootBox) {
-        const FontMetrics& fontMetrics = lineStyle().fontMetrics();
-        // RootInlineBoxes are always placed on at pixel boundaries in their logical y direction. Not doing
-        // so results in incorrect rendering of text decorations, most notably underlines.
-        auto logicalTop = top + maxAscent - fontMetrics.ascent(baselineType);
-        // FIXME: Let's do device pixel snapping at paint time instead (webkit.org/b/227751).
-        auto adjustedLogicalTop = roundToInt(logicalTop);
-        setLogicalTop(adjustedLogicalTop);
-        rootInlineBoxRoundedOverflow = LayoutUnit { adjustedLogicalTop } - logicalTop;
-    }
+    if (isRootBox)
+        setLogicalTop(top + maxAscent - lineStyle().fontMetrics().ascent(baselineType));
 
     placeChildInlineBoxesInBlockDirection(*this, top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop, lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
 
     if (isRootBox) {
         if (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-            // The root inlinebox is supposed to fit the [top, top + maxHeight] space. However due to the integral rounding on the root inlinebox's logical top,
-            // it may accidentally leak out of the containing block and trigger unintended layout overflow (see above).
-            // Make sure we don't stretch the line with the rounded root inlinebox.
-            auto rootInlineBoxLogicalTop = LayoutUnit { logicalTop() } - rootInlineBoxRoundedOverflow;
-            auto rootInlineBoxLogicalBottom = LayoutUnit { logicalBottom() } - rootInlineBoxRoundedOverflow;
             if (!setLineTop) {
                 setLineTop = true;
-                lineTop = rootInlineBoxLogicalTop;
+                lineTop = logicalTop();
                 lineTopIncludingMargins = lineTop;
             } else {
-                lineTop = std::min(lineTop, rootInlineBoxLogicalTop);
+                lineTop = std::min(lineTop, LayoutUnit(logicalTop()));
                 lineTopIncludingMargins = std::min(lineTop, lineTopIncludingMargins);
             }
-            lineBottom = std::max(lineBottom, rootInlineBoxLogicalBottom);
+            lineBottom = std::max(lineBottom, LayoutUnit(logicalBottom()));
             lineBottomIncludingMargins = std::max(lineBottom, lineBottomIncludingMargins);
         }
         

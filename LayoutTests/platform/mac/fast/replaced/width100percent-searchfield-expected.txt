@@ -28,8 +28,8 @@ layer at (0,0) size 800x600
                   RenderBlock {DIV} at (8,3) size 0x13
                   RenderBlock {DIV} at (8,0) size 19x19
             RenderTableCell {TD} at (28,3) size 755x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
-                text run at (1,2) width 4: " "
+              RenderText {#text} at (1,0) size 4x20
+                text run at (1,1) width 4: " "
       RenderBlock (anonymous) at (0,45) size 784x36
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
@@ -55,5 +55,5 @@ layer at (0,0) size 800x600
                   RenderBlock {DIV} at (22,3) size 0x13
                   RenderBlock {DIV} at (22,0) size 19x19
             RenderTableCell {TD} at (28,3) size 755x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 4x19
-                text run at (1,2) width 4: " "
+              RenderText {#text} at (1,0) size 4x20
+                text run at (1,1) width 4: " "

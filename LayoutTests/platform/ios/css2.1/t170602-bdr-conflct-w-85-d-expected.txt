@@ -10,14 +10,14 @@ layer at (0,0) size 800x240
         RenderTableSection {TBODY} at (2,2) size 128x176
           RenderTableRow {TR} at (0,0) size 127x58
             RenderTableCell {TD} at (0,15) size 43x28 [border: (2.50px ridge #00FF00)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 34x20
-                text run at (3,4) width 34: "ridge"
+              RenderText {#text} at (3,2) size 34x21
+                text run at (3,3) width 34: "ridge"
             RenderTableCell {TD} at (42,14) size 43x30 [border: (2.50px ridge #00FF00) (5px ridge #FF0000) (2.50px ridge #00FF00)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (3,4) size 34x19
-                text run at (3,4) width 34: "ridge"
-            RenderTableCell {TD} at (84,15) size 43x28 [border: (2.50px ridge #00FF00)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (3,3) size 34x20
-                text run at (3,4) width 34: "ridge"
+                text run at (3,3) width 34: "ridge"
+            RenderTableCell {TD} at (84,15) size 43x28 [border: (2.50px ridge #00FF00)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (3,2) size 34x21
+                text run at (3,3) width 34: "ridge"
           RenderTableRow {TR} at (0,57) size 127x61
             RenderTableCell {TD} at (0,74) size 43x27 [border: (2.50px ridge #00FF00) (5px ridge #FF0000) (2.50px ridge #00FF00)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,3) size 34x20
@@ -30,11 +30,11 @@ layer at (0,0) size 800x240
                 text run at (6,4) width 33: "ridge"
           RenderTableRow {TR} at (0,117) size 127x58
             RenderTableCell {TD} at (0,132) size 43x28 [border: (2.50px ridge #00FF00)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 34x20
-                text run at (3,4) width 34: "ridge"
+              RenderText {#text} at (3,2) size 34x21
+                text run at (3,3) width 34: "ridge"
             RenderTableCell {TD} at (42,131) size 43x30 [border: (5px ridge #FF0000) (2.50px ridge #00FF00)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (3,6) size 34x19
                 text run at (3,6) width 34: "ridge"
             RenderTableCell {TD} at (84,132) size 43x28 [border: (2.50px ridge #00FF00)] [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (3,3) size 34x20
-                text run at (3,4) width 34: "ridge"
+              RenderText {#text} at (3,2) size 34x21
+                text run at (3,3) width 34: "ridge"

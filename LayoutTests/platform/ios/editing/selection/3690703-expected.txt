@@ -80,8 +80,8 @@ layer at (0,0) size 800x600
             RenderTableSection {TBODY} at (0,0) size 780x49
               RenderTableRow {TR} at (0,0) size 780x49
                 RenderTableCell {TD} at (0,14) size 187x21 [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (0,0) size 4x20
-                    text run at (0,1) width 4: " "
+                  RenderText {#text} at (0,-1) size 4x21
+                    text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (186,0) size 405x49 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 400x22 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
                   RenderBR {BR} at (403,1) size 1x19

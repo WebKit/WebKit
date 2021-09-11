@@ -1,3 +1,27 @@
+2021-09-10  Alan Bujtas  <zalan@apple.com>
+
+        [Legacy Line Layout] Do not integral round the root inlinebox's top position
+        https://bugs.webkit.org/show_bug.cgi?id=227751
+        <rdar://problem/80584346>
+
+        Reviewed by Antti Koivisto.
+
+        Pixel (in this case integral) snapping should be reserved for paint time only.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/formattingContexts/inline/InlineLineGeometry.h:
+        (WebCore::Layout::LineGeometry::moveVertically):
+        (WebCore::Layout::LineGeometry::needsIntegralPosition const): Deleted.
+        (WebCore::Layout::LineGeometry::setNeedsIntegralPosition): Deleted.
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::Run::setVerticalPositionIntegral): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::placeBoxesInBlockDirection):
+
 2021-09-10  Chris Dumez  <cdumez@apple.com>
 
         Implement navigation reporting for Cross-Origin-Opener-Policy

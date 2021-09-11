@@ -11,14 +11,14 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 412x25
             RenderTableCell {TH} at (0,10) size 122x5 [border: (2.50px none #000000)] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TH} at (121,0) size 110x25 [border: (2.50px none #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 108x19
-                text run at (1,4) width 108: "Macintosh PPC"
+              RenderText {#text} at (1,3) size 108x20
+                text run at (1,3) width 108: "Macintosh PPC"
             RenderTableCell {TH} at (230,0) size 87x25 [border: (2.50px none #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 84x19
-                text run at (1,4) width 84: "Windows 95"
+              RenderText {#text} at (1,3) size 84x20
+                text run at (1,3) width 84: "Windows 95"
             RenderTableCell {TH} at (316,0) size 96x25 [border: (2.50px none #000000)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,4) size 90x19
-                text run at (1,4) width 90: "Windows NT"
+              RenderText {#text} at (1,3) size 90x20
+                text run at (1,3) width 90: "Windows NT"
           RenderTableRow {TR} at (0,24) size 412x23
             RenderTableCell {TD} at (0,24) size 122x23 [border: none] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (3,1) size 76x19
