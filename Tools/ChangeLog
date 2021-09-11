@@ -1,3 +1,28 @@
+2021-09-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an lldb summary provider for the WebCore::Length type
+        https://bugs.webkit.org/show_bug.cgi?id=230185
+
+        Reviewed by Alan Bujtas.
+
+        Make Length types easier to visualize when debugging in lldb.
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (WebCoreLength_SummaryProvider):
+        (WebCoreLengthProvider):
+        (WebCoreLengthProvider.__init__):
+        (WebCoreLengthProvider.get_type):
+        (WebCoreLengthProvider.get_type_string):
+        (WebCoreLengthProvider.is_auto):
+        (WebCoreLengthProvider.is_undefined):
+        (WebCoreLengthProvider.is_calculated):
+        (WebCoreLengthProvider.is_fixed):
+        (WebCoreLengthProvider.is_percent):
+        (WebCoreLengthProvider.has_quirk):
+        (WebCoreLengthProvider.is_float):
+        (WebCoreLengthProvider.get_numeric_value):
+
 2021-09-10  Chris Dumez  <cdumez@apple.com>
 
         Implement navigation reporting for Cross-Origin-Opener-Policy

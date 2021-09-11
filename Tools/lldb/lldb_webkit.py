@@ -85,6 +85,8 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatPoint_SummaryProvider WebCore::FloatPoint')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFloatRect_SummaryProvider WebCore::FloatRect')
 
+    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLength_SummaryProvider WebCore::Length')
+
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreSecurityOrigin_SummaryProvider WebCore::SecurityOrigin')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreFrame_SummaryProvider WebCore::Frame')
 
@@ -247,6 +249,28 @@ def WebCoreIntRect_SummaryProvider(valobj, dict):
 def WebCoreFloatRect_SummaryProvider(valobj, dict):
     provider = WebCoreFloatRectProvider(valobj, dict)
     return "{ x = %s, y = %s, width = %s, height = %s }" % (provider.get_x(), provider.get_y(), provider.get_width(), provider.get_height())
+
+
+def WebCoreLength_SummaryProvider(valobj, dict):
+    provider = WebCoreLengthProvider(valobj, dict)
+    quirky = ' (quirky)' if provider.has_quirk() else ""
+
+    if (provider.is_auto()):
+        return "{ auto%s }" % (quirky)
+
+    if (provider.is_undefined()):
+        return "{ undefined%s }" % (quirky)
+
+    if (provider.is_calculated()):
+        return "{ calc%s }" % (quirky)
+
+    if (provider.is_fixed()):
+        return "{ %spx%s }" % (provider.get_numeric_value(), quirky)
+
+    if (provider.is_percent()):
+        return "{ %s%%%s }" % (provider.get_numeric_value(), quirky)
+
+    return "{ %s %s%s }" % (provider.get_type_string(), provider.get_numeric_value(), quirky)
 
 
 def WebCoreSecurityOrigin_SummaryProvider(valobj, dict):
@@ -700,6 +724,84 @@ class WebCoreFloatRectProvider:
 
     def get_height(self):
         return WebCoreFloatSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_height()
+
+
+class WebCoreLengthProvider:
+    "Print a WebCore::Length"
+
+    AUTO_TYPE           = 0
+    RELATIVE_TYPE       = 1
+    PERCENT_TYPE        = 2
+    FIXED_TYPE          = 3
+    INTRINSIC_TYPE      = 4
+    MIN_INTRINSIC_TYPE  = 5
+    MIN_CONTENT_TYPE    = 6
+    MAX_CONTENT_TYPE    = 7
+    FILL_AVAILABLE_TYPE = 8
+    FIT_CONTENT_TYPE    = 9
+    CALCULATED_TYPE     = 10
+    UNDEFINED_TYPE      = 11
+
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def get_type(self):
+        return self.valobj.GetChildMemberWithName('m_type').GetValueAsUnsigned(0)
+
+    def get_type_string(self):
+        length_type = self.get_type()
+
+        type_names = [
+            "Auto",
+            "Relative",
+            "Percent",
+            "Fixed",
+            "Intrinsic",
+            "MinIntrinsic",
+            "MinContent",
+            "MaxContent",
+            "FillAvailable",
+            "FitContent",
+            "Calculated",
+            "Undefined",
+        ]
+
+        if (length_type <= self.UNDEFINED_TYPE):
+            return type_names[length_type]
+
+        return "Unknown"
+
+    def is_auto(self):
+        return self.get_type() == self.AUTO_TYPE
+
+    def is_undefined(self):
+        return self.get_type() == self.UNDEFINED_TYPE
+
+    def is_calculated(self):
+        return self.get_type() == self.CALCULATED_TYPE
+
+    def is_fixed(self):
+        return self.get_type() == self.FIXED_TYPE
+
+    def is_percent(self):
+        return self.get_type() == self.PERCENT_TYPE
+
+    def has_quirk(self):
+        return bool(self.valobj.GetChildMemberWithName('m_hasQuirk').GetValueAsUnsigned(0))
+
+    def is_float(self):
+        return bool(self.valobj.GetChildMemberWithName('m_isFloat').GetValueAsUnsigned(0))
+
+    def get_numeric_value(self):
+        length_type = self.get_type()
+        if (length_type == self.CALCULATED_TYPE):
+            return 0
+
+        if (self.is_float()):
+            return self.valobj.GetChildMemberWithName('m_floatValue').GetValue()
+
+        return self.valobj.GetChildMemberWithName('m_intValue').GetValueAsSigned()
+
 
 
 class WTFURLProvider:
