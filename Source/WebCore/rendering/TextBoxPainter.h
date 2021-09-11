@@ -29,7 +29,9 @@
 namespace WebCore {
 
 class Color;
+class Document;
 class LegacyInlineTextBox;
+class RenderText;
 struct CompositionUnderline;
 struct MarkedText;
 struct PaintInfo;
@@ -37,29 +39,40 @@ struct StyledMarkedText;
 
 class TextBoxPainter {
 public:
-    TextBoxPainter(const LegacyInlineTextBox&, PaintInfo&, const FloatRect& boxRect);
+    TextBoxPainter(const LegacyInlineTextBox&, PaintInfo&, const LayoutPoint& paintOffset);
     ~TextBoxPainter();
 
-    void paintCompositionBackground();
-    void paintBackground(const StyledMarkedText&);
-    void paintForeground(const StyledMarkedText&);
-    void paintDecoration(const StyledMarkedText&, const FloatRect& clipOutRect);
-    void paintCompositionUnderlines();
-    void paintPlatformDocumentMarkers();
+    void paint();
 
     static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
 
 private:
+    void paintBackground();
+    void paintForegroundAndDecorations();
+    void paintCompositionBackground();
+    void paintCompositionUnderlines();
+    void paintPlatformDocumentMarkers();
+
     enum class BackgroundStyle { Normal, Rounded };
     void paintBackground(unsigned startOffset, unsigned endOffset, const Color&, BackgroundStyle = BackgroundStyle::Normal);
+    void paintBackground(const StyledMarkedText&);
+    void paintForeground(const StyledMarkedText&);
+    void paintDecoration(const StyledMarkedText&, const FloatRect& clipOutRect);
     void paintCompositionUnderline(const CompositionUnderline&);
     void paintPlatformDocumentMarker(const MarkedText&);
-    
+
+    static FloatRect computePaintRect(const LegacyInlineTextBox&, const LayoutPoint& paintOffset);
     static FloatRect calculateDocumentMarkerBounds(const LegacyInlineTextBox&, const MarkedText&);
 
     const LegacyInlineTextBox& m_textBox;
+    const RenderText& m_renderer;
+    const Document& m_document;
     PaintInfo& m_paintInfo;
-    const FloatRect m_boxRect;
+    const FloatRect m_paintRect;
+    const bool m_isPrinting;
+    const bool m_haveSelection;
+    const bool m_containsComposition;
+    const bool m_useCustomUnderlines;
 };
 
 }

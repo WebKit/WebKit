@@ -219,7 +219,7 @@ public:
 
     WEBCORE_EXPORT virtual void dirtyLineBoxes();
     
-    WEBCORE_EXPORT virtual RenderObject::HighlightState selectionState();
+    WEBCORE_EXPORT virtual RenderObject::HighlightState selectionState() const;
 
     WEBCORE_EXPORT virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const;
     // visibleLeftEdge, visibleRightEdge are in the parent's coordinate system.

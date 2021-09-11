@@ -159,7 +159,7 @@ bool LegacyInlineTextBox::isSelectable(unsigned startPosition, unsigned endPosit
     return selectableRange().intersects(startPosition, endPosition);
 }
 
-RenderObject::HighlightState LegacyInlineTextBox::selectionState()
+RenderObject::HighlightState LegacyInlineTextBox::selectionState() const
 {
     auto state = renderer().view().selection().highlightStateForTextBox(renderer(), selectableRange());
     
@@ -404,14 +404,6 @@ std::optional<bool> LegacyInlineTextBox::emphasisMarkExistsAndIsAbove(const Rend
     return isAbove;
 }
 
-static MarkedText createMarkedTextFromSelectionInBox(const LegacyInlineTextBox& box)
-{
-    auto [selectionStart, selectionEnd] = box.selectionStartEnd();
-    if (selectionStart < selectionEnd)
-        return { selectionStart, selectionEnd, MarkedText::Selection };
-    return { };
-}
-
 void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
@@ -427,187 +419,12 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     
     LayoutUnit paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
     LayoutUnit paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
-    
-    FloatPoint localPaintOffset(paintOffset);
-    
+
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
 
-    bool isPrinting = renderer().document().printing();
-    
-    // Determine whether or not we're selected.
-    bool haveSelection = !isPrinting && paintInfo.phase != PaintPhase::TextClip && selectionState() != RenderObject::HighlightState::None;
-    if (!haveSelection && paintInfo.phase == PaintPhase::Selection) {
-        // When only painting the selection, don't bother to paint if there is none.
-        return;
-    }
-
-    if (m_truncation != cNoTruncation) {
-        if (renderer().containingBlock()->style().isLeftToRightDirection() != isLeftToRightDirection()) {
-            // Make the visible fragment of text hug the edge closest to the rest of the run by moving the origin
-            // at which we start drawing text.
-            // e.g. In the case of LTR text truncated in an RTL Context, the correct behavior is:
-            // |Hello|CBA| -> |...He|CBA|
-            // In order to draw the fragment "He" aligned to the right edge of it's box, we need to start drawing
-            // farther to the right.
-            // NOTE: WebKit's behavior differs from that of IE which appears to just overlay the ellipsis on top of the
-            // truncated string i.e.  |Hello|CBA| -> |...lo|CBA|
-            LayoutUnit widthOfVisibleText { renderer().width(m_start, m_truncation, textPos(), isFirstLine()) };
-            LayoutUnit widthOfHiddenText { logicalWidth() - widthOfVisibleText };
-            LayoutSize truncationOffset(isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0_lu);
-            localPaintOffset.move(isHorizontal() ? truncationOffset : truncationOffset.transposedSize());
-        }
-    }
-
-    const RenderStyle& lineStyle = this->lineStyle();
-    
-    localPaintOffset.move(0, lineStyle.isHorizontalWritingMode() ? 0 : -logicalHeight());
-
-    FloatPoint boxOrigin = locationIncludingFlipping();
-    boxOrigin.moveBy(localPaintOffset);
-    FloatRect boxRect(boxOrigin, FloatSize(logicalWidth(), logicalHeight()));
-
-    if (paintInfo.phase == PaintPhase::EventRegion) {
-        if (visibleToHitTesting())
-            paintInfo.eventRegionContext->unite(enclosingIntRect(boxRect), renderer().style());
-        return;
-    }
-
-    TextBoxPainter textBoxPainter(*this, paintInfo, boxRect);
-
-    // Determine whether or not we have composition underlines to draw.
-    bool containsComposition = renderer().textNode() && renderer().frame().editor().compositionNode() == renderer().textNode();
-    bool useCustomUnderlines = containsComposition && renderer().frame().editor().compositionUsesCustomUnderlines();
-
-    // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
-    // and composition underlines.
-    if (paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::TextClip && !isPrinting) {
-        if (containsComposition && !useCustomUnderlines)
-            textBoxPainter.paintCompositionBackground();
-
-        auto selectableRange = this->selectableRange();
-
-        Vector<MarkedText> markedTexts;
-        markedTexts.appendVector(MarkedText::collectForDocumentMarkers(renderer(), selectableRange, MarkedText::PaintPhase::Background));
-        markedTexts.appendVector(MarkedText::collectForHighlights(renderer(), parent()->renderer(), selectableRange, MarkedText::PaintPhase::Background));
-
-#if ENABLE(TEXT_SELECTION)
-        GraphicsContext& context = paintInfo.context();
-        if (haveSelection && !useCustomUnderlines && !context.paintingDisabled()) {
-            auto selectionMarkedText = createMarkedTextFromSelectionInBox(*this);
-            if (!selectionMarkedText.isEmpty())
-                markedTexts.append(WTFMove(selectionMarkedText));
-        }
-#endif
-        auto styledMarkedTexts = StyledMarkedText::subdivideAndResolve(markedTexts, renderer(), isFirstLine(), paintInfo);
-
-        // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
-        auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualBackground(styledMarkedTexts);
-
-        for (auto& markedText : coalescedStyledMarkedTexts)
-            textBoxPainter.paintBackground(markedText);
-    }
-
-    // FIXME: Right now, LegacyInlineTextBoxes never call addRelevantUnpaintedObject() even though they might
-    // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
-    // when we do, we will have to account for the fact the LegacyInlineTextBoxes do not always have unique
-    // renderers and Page currently relies on each unpainted object having a unique renderer.
-    if (paintInfo.phase == PaintPhase::Foreground)
-        renderer().page().addRelevantRepaintedObject(&renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
-
-    if (paintInfo.phase == PaintPhase::Foreground)
-        textBoxPainter.paintPlatformDocumentMarkers();
-
-    // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
-    bool shouldPaintSelectionForeground = haveSelection && !useCustomUnderlines;
-    Vector<MarkedText> markedTexts;
-    if (paintInfo.phase != PaintPhase::Selection) {
-        auto selectableRange = this->selectableRange();
-
-        // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
-        markedTexts.append({ selectableRange.clamp(m_start), selectableRange.clamp(end()), MarkedText::Unmarked });
-        
-        if (!isPrinting) {
-            markedTexts.appendVector(MarkedText::collectForDocumentMarkers(renderer(), selectableRange, MarkedText::PaintPhase::Foreground));
-            markedTexts.appendVector(MarkedText::collectForHighlights(renderer(), parent()->renderer(), selectableRange, MarkedText::PaintPhase::Foreground));
-
-            bool shouldPaintDraggedContent = !(paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection));
-            if (shouldPaintDraggedContent) {
-                auto markedTextsForDraggedContent = MarkedText::collectForDraggedContent(renderer(), selectableRange);
-                if (!markedTextsForDraggedContent.isEmpty()) {
-                    shouldPaintSelectionForeground = false;
-                    markedTexts.appendVector(markedTextsForDraggedContent);
-                }
-            }
-        }
-    }
-    // The selection marked text acts as a placeholder when computing the marked texts for the gaps...
-    if (shouldPaintSelectionForeground) {
-        ASSERT(!isPrinting);
-        auto selectionMarkedText = createMarkedTextFromSelectionInBox(*this);
-        if (!selectionMarkedText.isEmpty())
-            markedTexts.append(WTFMove(selectionMarkedText));
-    }
-
-    auto styledMarkedTexts = StyledMarkedText::subdivideAndResolve(markedTexts, renderer(), isFirstLine(), paintInfo);
-
-    // ... now remove the selection marked text if we are excluding selection.
-    if (!isPrinting && paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) {
-        styledMarkedTexts.removeAllMatching([] (const StyledMarkedText& markedText) {
-            return markedText.type == MarkedText::Selection;
-        });
-    }
-
-    // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
-    auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualForeground(styledMarkedTexts);
-
-    for (auto& markedText : coalescedStyledMarkedTexts)
-        textBoxPainter.paintForeground(markedText);
-
-    // Paint decorations
-    auto textDecorations = lineStyle.textDecorationsInEffect();
-    bool highlightDecorations = !MarkedText::collectForHighlights(renderer(), parent()->renderer(), selectableRange(), MarkedText::PaintPhase::Decoration).isEmpty();
-    bool lineDecorations = !textDecorations.isEmpty();
-    if ((lineDecorations || highlightDecorations) && paintInfo.phase != PaintPhase::Selection) {
-        TextRun textRun = createTextRun();
-        unsigned length = textRun.length();
-        if (m_truncation != cNoTruncation)
-            length = m_truncation;
-        unsigned selectionStart = 0;
-        unsigned selectionEnd = 0;
-        if (haveSelection)
-            std::tie(selectionStart, selectionEnd) = selectionStartEnd();
-
-        FloatRect textDecorationSelectionClipOutRect;
-        if ((paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) && selectionStart < selectionEnd && selectionEnd <= length) {
-            textDecorationSelectionClipOutRect = logicalOverflowRect();
-            textDecorationSelectionClipOutRect.moveBy(localPaintOffset);
-            float logicalWidthBeforeRange;
-            float logicalWidthAfterRange;
-            float logicalSelectionWidth = lineFont().widthOfTextRange(textRun, selectionStart, selectionEnd, nullptr, &logicalWidthBeforeRange, &logicalWidthAfterRange);
-            // FIXME: Do we need to handle vertical bottom to top text?
-            if (!isHorizontal()) {
-                textDecorationSelectionClipOutRect.move(0, logicalWidthBeforeRange);
-                textDecorationSelectionClipOutRect.setHeight(logicalSelectionWidth);
-            } else if (direction() == TextDirection::RTL) {
-                textDecorationSelectionClipOutRect.move(logicalWidthAfterRange, 0);
-                textDecorationSelectionClipOutRect.setWidth(logicalSelectionWidth);
-            } else {
-                textDecorationSelectionClipOutRect.move(logicalWidthBeforeRange, 0);
-                textDecorationSelectionClipOutRect.setWidth(logicalSelectionWidth);
-            }
-        }
-
-        // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
-        auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualDecorations(styledMarkedTexts);
-
-        for (auto& markedText : coalescedStyledMarkedTexts)
-            textBoxPainter.paintDecoration(markedText, textDecorationSelectionClipOutRect);
-    }
-
-    // 3. Paint fancy decorations, including composition underlines and platform-specific underlines for spelling errors, grammar errors, et cetera.
-    if (paintInfo.phase == PaintPhase::Foreground && useCustomUnderlines)
-        textBoxPainter.paintCompositionUnderlines();
+    TextBoxPainter textBoxPainter(*this, paintInfo, paintOffset);
+    textBoxPainter.paint();
 }
 
 TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const

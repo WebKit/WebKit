@@ -41,7 +41,7 @@ public:
 private:
     void paintMarkupBox(PaintInfo&, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle&);
     int height() const { return m_height; }
-    RenderObject::HighlightState selectionState() override { return m_selectionState; }
+    RenderObject::HighlightState selectionState() const override { return m_selectionState; }
     void paintSelection(GraphicsContext&, const LayoutPoint&, const RenderStyle&, const FontCascade&);
     LegacyInlineBox* markupBox() const;
 

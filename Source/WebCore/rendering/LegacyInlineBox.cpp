@@ -245,7 +245,7 @@ LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
     return leaf;
 }
 
-RenderObject::HighlightState LegacyInlineBox::selectionState()
+RenderObject::HighlightState LegacyInlineBox::selectionState() const
 {
     return renderer().selectionState();
 }

@@ -1,3 +1,48 @@
+2021-09-11  Antti Koivisto  <antti@apple.com>
+
+        Move rest of the LegacyInlineTextBox painting code to TextBoxPainter
+        https://bugs.webkit.org/show_bug.cgi?id=230188
+
+        Reviewed by Alan Bujtas.
+
+        Move the remaining painting code.
+
+        * rendering/LegacyEllipsisBox.h:
+        * rendering/LegacyInlineBox.cpp:
+        (WebCore::LegacyInlineBox::selectionState const):
+        (WebCore::LegacyInlineBox::selectionState): Deleted.
+        * rendering/LegacyInlineBox.h:
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::selectionState const):
+        (WebCore::LegacyInlineFlowBox::selectionState): Deleted.
+        * rendering/LegacyInlineFlowBox.h:
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::selectionState const):
+        (WebCore::LegacyInlineTextBox::paint):
+        (WebCore::LegacyInlineTextBox::selectionState): Deleted.
+        (WebCore::createMarkedTextFromSelectionInBox): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::selectionState const):
+        (WebCore::LegacyRootInlineBox::selectionState): Deleted.
+        * rendering/LegacyRootInlineBox.h:
+        * rendering/MarkedText.cpp:
+        (WebCore::MarkedText::collectForHighlights):
+        * rendering/MarkedText.h:
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::TextBoxPainter):
+        (WebCore::TextBoxPainter::~TextBoxPainter):
+        (WebCore::TextBoxPainter::paint):
+        (WebCore::createMarkedTextFromSelectionInBox):
+        (WebCore::TextBoxPainter::paintBackground):
+        (WebCore::TextBoxPainter::paintForegroundAndDecorations):
+        (WebCore::TextBoxPainter::paintForeground):
+        (WebCore::TextBoxPainter::paintDecoration):
+        (WebCore::TextBoxPainter::paintCompositionUnderline):
+        (WebCore::TextBoxPainter::paintPlatformDocumentMarker):
+        (WebCore::TextBoxPainter::computePaintRect):
+        * rendering/TextBoxPainter.h:
+
 2021-09-11  Philippe Normand  <pnormand@igalia.com>
 
         [GLIB] MediaSession is not enabled

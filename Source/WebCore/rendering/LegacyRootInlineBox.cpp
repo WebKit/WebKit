@@ -482,7 +482,7 @@ GapRects LegacyRootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const Lay
     return result;
 }
 
-RenderObject::HighlightState LegacyRootInlineBox::selectionState()
+RenderObject::HighlightState LegacyRootInlineBox::selectionState() const
 {
     // Walk over all of the selected boxes.
     RenderObject::HighlightState state = RenderObject::HighlightState::None;

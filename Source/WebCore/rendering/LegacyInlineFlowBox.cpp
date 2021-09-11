@@ -1456,7 +1456,7 @@ LegacyInlineBox* LegacyInlineFlowBox::lastLeafDescendant() const
     return leaf;
 }
 
-RenderObject::HighlightState LegacyInlineFlowBox::selectionState()
+RenderObject::HighlightState LegacyInlineFlowBox::selectionState() const
 {
     return RenderObject::HighlightState::None;
 }

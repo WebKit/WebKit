@@ -128,7 +128,7 @@ private:
     void attachLine() final;
     
 public:
-    RenderObject::HighlightState selectionState() final;
+    RenderObject::HighlightState selectionState() const final;
 
 private:
     void clearTruncation() final { m_truncation = cNoTruncation; }
