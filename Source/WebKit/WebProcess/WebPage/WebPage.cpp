@@ -6321,12 +6321,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
-    bool needsSiteSpecificViewportQuirks = frame->coreFrame()->settings().needsSiteSpecificQuirks();
-    if (m_needsSiteSpecificViewportQuirks != needsSiteSpecificViewportQuirks) {
-        m_needsSiteSpecificViewportQuirks = needsSiteSpecificViewportQuirks;
-        send(Messages::WebPageProxy::SetNeedsSiteSpecificViewportQuirks(needsSiteSpecificViewportQuirks));
-    }
-
     if (m_drawingArea)
         m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 

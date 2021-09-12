@@ -1,3 +1,27 @@
+2021-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove support for -[WKWebView _needsSiteSpecificViewportQuirks]
+        https://bugs.webkit.org/show_bug.cgi?id=230193
+
+        Reviewed by Tim Horton.
+
+        This SPI is no longer needed; for the brief moment it existed, it was only used to allow Safari's lowered bar
+        (which previously overlapped page content) to additionally apply obscured bottom insets on a handful of
+        webpages.
+
+        This method has no internal clients (including Safari).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _needsSiteSpecificViewportQuirks]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-09-11  David Kilzer  <ddkilzer@apple.com>
 
         CFNotificationCenterAddObserver() should use weak observers
