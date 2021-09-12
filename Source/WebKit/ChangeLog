@@ -1,3 +1,14 @@
+2021-09-12  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r280758): WebKit project won't open in Xcode 11.4
+
+        Unreviewed Xcode project fix.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        - Change objectVersion back to 52.  There was no need to make
+          this change in the original patch, and other projects use even
+          older values for objectVersion.  Found by `git bisect`.
+
 2021-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove support for -[WKWebView _needsSiteSpecificViewportQuirks]
