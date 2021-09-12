@@ -1,3 +1,17 @@
+2021-09-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement getClientRects() for SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=230197
+
+        Reviewed by Sam Weinig.
+
+        For SVG elements we can just use absoluteQuads().
+
+        Test: svg/custom/getClientRects.xhtml
+
+        * dom/Element.cpp:
+        (WebCore::Element::getClientRects):
+
 2021-09-11  Simon Fraser  <simon.fraser@apple.com>
 
         css/css-transforms/translate-getComputedStyle.html fails

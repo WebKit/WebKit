@@ -1641,8 +1641,9 @@ Ref<DOMRectList> Element::getClientRects()
         quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
     } else if (auto* renderBoxModelObject = this->renderBoxModelObject())
         renderBoxModelObject->absoluteQuads(quads);
+    else if (isSVGElement() && renderer)
+        renderer->absoluteQuads(quads);
 
-    // FIXME: Handle SVG elements.
     // FIXME: Handle table/inline-table with a caption.
 
     if (quads.isEmpty())
