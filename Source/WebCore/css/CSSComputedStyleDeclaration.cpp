@@ -623,29 +623,22 @@ static Ref<CSSValue> computedTransform(RenderObject* renderer, const RenderStyle
     return list;
 }
 
+// https://drafts.csswg.org/css-transforms-2/#propdef-translate
+// Computed value: the keyword none or a pair of computed <length-percentage> values and an absolute length
 static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle& style)
 {
     auto* translate = style.translate();
     if (!translate || !rendererCanBeTransformed(renderer) || translate->isIdentity())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
-    FloatRect pixelSnappedRect;
-    if (is<RenderBox>(*renderer))
-        pixelSnappedRect = snapRectToDevicePixels(downcast<RenderBox>(*renderer).borderBoxRect(), renderer->document().deviceScaleFactor());
-
-    TransformationMatrix transform;
-    translate->apply(transform, pixelSnappedRect.size());
-
     auto list = CSSValueList::createSpaceSeparated();
-    if (transform.isAffine()) {
-        list->append(zoomAdjustedPixelValue(transform.e(), style));
-        if (transform.f())
-            list->append(zoomAdjustedPixelValue(transform.f(), style));
-    } else {
-        list->append(zoomAdjustedPixelValue(transform.m41(), style));
-        list->append(zoomAdjustedPixelValue(transform.m42(), style));
-        list->append(zoomAdjustedPixelValue(transform.m43(), style));
-    }
+    list->append(zoomAdjustedPixelValueForLength(translate->x(), style));
+
+    if (!translate->y().isZero() || !translate->z().isZero())
+        list->append(zoomAdjustedPixelValueForLength(translate->y(), style));
+
+    if (!translate->z().isZero())
+        list->append(zoomAdjustedPixelValueForLength(translate->z(), style));
 
     return list;
 }

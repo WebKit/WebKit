@@ -1,3 +1,21 @@
+2021-09-11  Simon Fraser  <simon.fraser@apple.com>
+
+        css/css-transforms/translate-getComputedStyle.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=230178
+
+        Reviewed by Antti Koivisto.
+        
+        https://drafts.csswg.org/css-transforms-2/#propdef-translate says that the computed value of
+        the translate property is "the keyword none or a pair of computed <length-percentage> values
+        and an absolute length" and has a note saying "Note: The resolved value of the translate
+        property is the computed value, and thus getComputedStyle() includes percentage values in
+        its results." so implement that.
+
+        Tested by imported/w3c/web-platform-tests/css/css-transforms/translate-getComputedStyle.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTranslate):
+
 2021-09-11  Antti Koivisto  <antti@apple.com>
 
         Move rest of the LegacyInlineTextBox painting code to TextBoxPainter
