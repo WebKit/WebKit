@@ -23,8 +23,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 30x19
                 text run at (4,4) width 30: "ridge"
             RenderTableCell {TD} at (37,71) size 42x23 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 40x20
-                text run at (1,2) width 40: "hidden"
+              RenderText {#text} at (1,0) size 40x21
+                text run at (1,1) width 40: "hidden"
             RenderTableCell {TD} at (79,69) size 37x27 [border: (3px ridge #00FF00) none] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,4) size 30x19
                 text run at (1,4) width 30: "ridge"
@@ -33,8 +33,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 30x19
                 text run at (4,4) width 30: "ridge"
             RenderTableCell {TD} at (37,125) size 42x25 [border: none (2px ridge #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 30x20
-                text run at (4,2) width 30: "ridge"
+              RenderText {#text} at (4,0) size 30x21
+                text run at (4,1) width 30: "ridge"
             RenderTableCell {TD} at (79,124) size 37x27 [border: (3px ridge #00FF00)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 30x19
                 text run at (4,4) width 30: "ridge"

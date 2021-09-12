@@ -84,8 +84,8 @@ layer at (0,0) size 785x1290
                 text run at (2,2) width 61: "\x{A1}jalape\x{F1}o!"
           RenderTableRow {TR} at (0,212) size 769x28
             RenderTableCell {TH} at (2,213) size 53x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (21,2) size 11x20
-                text run at (21,3) width 11: "fr"
+              RenderText {#text} at (21,1) size 11x21
+                text run at (21,2) width 11: "fr"
             RenderTableCell {TD} at (57,212) size 710x28 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,5) size 195x19
                 text run at (2,5) width 195: "quelqu'un l\x{2019}amour t'appelles\x{2011}tu 3"
@@ -177,8 +177,8 @@ layer at (0,0) size 785x1290
                 text run at (2,2) width 63: "\x{A1}Jalape\x{F1}o!"
           RenderTableRow {TR} at (0,212) size 769x28
             RenderTableCell {TH} at (2,213) size 53x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (21,2) size 11x20
-                text run at (21,3) width 11: "fr"
+              RenderText {#text} at (21,1) size 11x21
+                text run at (21,2) width 11: "fr"
             RenderTableCell {TD} at (57,212) size 710x28 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,5) size 212x19
                 text run at (2,5) width 212: "Quelqu'un l\x{2019}Amour t'Appelles\x{2011}Tu 3"
@@ -286,8 +286,8 @@ layer at (0,0) size 785x1290
                 text run at (2,2) width 63: "\x{A1}Jalape\x{F1}o!"
           RenderTableRow {TR} at (0,212) size 769x28
             RenderTableCell {TH} at (2,213) size 53x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (21,2) size 11x20
-                text run at (21,3) width 11: "fr"
+              RenderText {#text} at (21,1) size 11x21
+                text run at (21,2) width 11: "fr"
             RenderTableCell {TD} at (57,212) size 710x28 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,5) size 215x19
                 text run at (2,5) width 215: "Quelqu'un L\x{2019}amour T'appelles\x{2011}Tu 3"

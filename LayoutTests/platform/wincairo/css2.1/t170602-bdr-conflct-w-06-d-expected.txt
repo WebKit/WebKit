@@ -23,8 +23,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 36x19
                 text run at (4,4) width 36: "outset"
             RenderTableCell {TD} at (43,71) size 43x23 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 40x20
-                text run at (1,2) width 40: "hidden"
+              RenderText {#text} at (1,0) size 40x21
+                text run at (1,1) width 40: "hidden"
             RenderTableCell {TD} at (86,69) size 43x27 [border: (3px outset #00FF00) none] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,4) size 36x19
                 text run at (1,4) width 36: "outset"
@@ -33,8 +33,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 36x19
                 text run at (4,4) width 36: "outset"
             RenderTableCell {TD} at (43,125) size 43x25 [border: none (2px outset #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 36x20
-                text run at (4,2) width 36: "outset"
+              RenderText {#text} at (4,0) size 36x21
+                text run at (4,1) width 36: "outset"
             RenderTableCell {TD} at (86,124) size 43x27 [border: (3px outset #00FF00)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 36x19
                 text run at (4,4) width 36: "outset"

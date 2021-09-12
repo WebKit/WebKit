@@ -23,8 +23,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 41x19
                 text run at (4,4) width 41: "double"
             RenderTableCell {TD} at (48,71) size 48x23 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 40x20
-                text run at (1,2) width 40: "hidden"
+              RenderText {#text} at (1,0) size 40x21
+                text run at (1,1) width 40: "hidden"
             RenderTableCell {TD} at (96,69) size 48x27 [border: (3px double #00FF00) none] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,4) size 41x19
                 text run at (1,4) width 41: "double"
@@ -33,8 +33,8 @@ layer at (0,0) size 800x230
               RenderText {#text} at (4,4) size 41x19
                 text run at (4,4) width 41: "double"
             RenderTableCell {TD} at (48,125) size 48x25 [border: none (2px double #00FF00)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,1) size 41x20
-                text run at (4,2) width 41: "double"
+              RenderText {#text} at (4,0) size 41x21
+                text run at (4,1) width 41: "double"
             RenderTableCell {TD} at (96,124) size 48x27 [border: (3px double #00FF00)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 41x19
                 text run at (4,4) width 41: "double"
