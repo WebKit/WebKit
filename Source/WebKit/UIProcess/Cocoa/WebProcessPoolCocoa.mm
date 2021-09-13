@@ -96,6 +96,10 @@
 #import <WebCore/SystemBattery.h>
 #endif
 
+#if ENABLE(GPU_PROCESS)
+#import "GPUProcessMessages.h"
+#endif
+
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #include <WebCore/CaptionUserPreferencesMediaAF.h>
 #include <WebCore/MediaAccessibilitySoftLink.h>
@@ -983,6 +987,11 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
 {
     for (auto process : m_processes)
         process->send(Messages::WebProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
+
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+        gpuProcess->send(Messages::GPUProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
+#endif
 }
 #endif
 

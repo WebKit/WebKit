@@ -1131,17 +1131,8 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
     }
 }
 
-static void setPreferenceValue(const String& domain, const String& key, id value)
+static void handlePreferenceChange(const String& domain, const String& key, id value)
 {
-    if (domain.isEmpty()) {
-        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-#if ASSERT_ENABLED
-        id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages");
-#endif
-    } else
-        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-
     if (key == "AppleLanguages") {
         // We need to set AppleLanguages for the volatile domain, similarly to what we do in XPCServiceMain.mm.
         NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
@@ -1171,26 +1162,20 @@ static void setPreferenceValue(const String& domain, const String& key, id value
     if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey())
         [NSWorkspace _invalidateAccessibilityDisplayValues];
 #endif
+
+    dispatchSimulatedNotificationsForPreferenceChange(key);
 }
 
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
-    if (!encodedValue) {
-        setPreferenceValue(domain, key, nil);
-        dispatchSimulatedNotificationsForPreferenceChange(key);
-        return;
+    id value = nil;
+    if (encodedValue) {
+        value = decodePreferenceValue(encodedValue);
+        if (!value)
+            return;
     }
-    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:*encodedValue options:0]);
-    if (!encodedData)
-        return;
-    NSError *err = nil;
-    auto classes = [NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDate class], [NSDictionary class], [NSArray class], [NSData class]]];
-    id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:encodedData.get() error:&err];
-    ASSERT(!err);
-    if (err)
-        return;
-    setPreferenceValue(domain, key, object);
-    dispatchSimulatedNotificationsForPreferenceChange(key);
+    setPreferenceValue(domain, key, value);
+    handlePreferenceChange(domain, key, value);
 }
 
 void WebProcess::unblockPreferenceService(Vector<SandboxExtension::Handle>&& handleArray)

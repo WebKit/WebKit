@@ -63,6 +63,10 @@ messages -> GPUProcess LegacyReceiver {
 #if ENABLE(VORBIS)
     SetVorbisDecoderEnabled(bool enabled);
 #endif
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

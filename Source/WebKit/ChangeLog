@@ -1,3 +1,30 @@
+2021-09-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Send preference updates to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=230159
+        <rdar://81049367>
+
+        Reviewed by Brent Fulgham.
+
+        Like the WebContent process, the GPU process should also receive preference updates since it is blocking the preference service in the sandbox.
+        The common code to set a preference is being moved to the AuxiliaryProcess base class, so that also the GPU process can make use of it. When
+        the UI process is sending preference update messages to all the WebContent processes, it will now also send to the GPU process.
+
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/cocoa/GPUProcessCocoa.mm:
+        (WebKit::GPUProcess::notifyPreferencesChanged):
+        * Shared/AuxiliaryProcess.h:
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::decodePreferenceValue):
+        (WebKit::AuxiliaryProcess::setPreferenceValue):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::notifyPreferencesChanged):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::handlePreferenceChange):
+        (WebKit::WebProcess::notifyPreferencesChanged):
+        (WebKit::setPreferenceValue): Deleted.
+
 2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make PDFs loaded via <embed> accessible
