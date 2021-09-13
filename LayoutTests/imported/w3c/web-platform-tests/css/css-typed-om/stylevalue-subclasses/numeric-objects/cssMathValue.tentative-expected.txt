@@ -1,5 +1,22 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
-
+FAIL Constructing a CSSMathSum with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
+PASS CSSMathSum can be constructed from a single number CSSUnitValue
+PASS CSSMathSum can be constructed from more than one number CSSUnitValue
+PASS CSSMathSum.operator is readonly
+FAIL Constructing a CSSMathProduct with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
+PASS CSSMathProduct can be constructed from a single number CSSUnitValue
+PASS CSSMathProduct can be constructed from more than one number CSSUnitValue
+PASS CSSMathProduct.operator is readonly
+FAIL Constructing a CSSMathMin with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
+PASS CSSMathMin can be constructed from a single number CSSUnitValue
+PASS CSSMathMin can be constructed from more than one number CSSUnitValue
+PASS CSSMathMin.operator is readonly
+FAIL Constructing a CSSMathMax with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
+PASS CSSMathMax can be constructed from a single number CSSUnitValue
+PASS CSSMathMax can be constructed from more than one number CSSUnitValue
+PASS CSSMathMax.operator is readonly
+PASS CSSMathNegate can be constructed from a single numberish value
+PASS CSSMathNegate.operator is readonly
+PASS CSSMathInvert can be constructed from a single numberish value
+PASS CSSMathInvert.operator is readonly
 

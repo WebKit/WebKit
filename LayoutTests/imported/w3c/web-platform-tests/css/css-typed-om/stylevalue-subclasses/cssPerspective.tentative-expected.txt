@@ -1,5 +1,35 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
-
+FAIL Constructing a CSSPerspective with a keyword throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSPerspective with a double throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSPerspective with a unitless zero throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSPerspective with a string length throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSPerspective with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSPerspective with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSPerspective with a CSSMathValue of angle type throws a TypeError assert_throws_js: function "() => new CSSPerspective(length)" threw object "ReferenceError: Can't find variable: CSSPerspective" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Updating CSSPerspective.length with a keyword throws a TypeError Can't find variable: CSSPerspective
+FAIL Updating CSSPerspective.length with a double throws a TypeError Can't find variable: CSSPerspective
+FAIL Updating CSSPerspective.length with a unitless zero throws a TypeError Can't find variable: CSSPerspective
+FAIL Updating CSSPerspective.length with a string length throws a TypeError Can't find variable: CSSPerspective
+FAIL Updating CSSPerspective.length with a number CSSUnitValue throws a TypeError Can't find variable: CSSPerspective
+FAIL Updating CSSPerspective.length with a time dimension CSSUnitValue throws a TypeError Can't find variable: CSSPerspective
+FAIL Updating CSSPerspective.length with a CSSMathValue of angle type throws a TypeError Can't find variable: CSSPerspective
+FAIL CSSPerspective can be constructed from a length CSSUnitValue Can't find variable: CSSPerspective
+FAIL CSSPerspective.length can be updated to a length CSSUnitValue Can't find variable: CSSPerspective
+FAIL CSSPerspective can be constructed from a CSSMathValue of length type Can't find variable: CSSPerspective
+FAIL CSSPerspective.length can be updated to a CSSMathValue of length type Can't find variable: CSSPerspective
+FAIL Modifying CSSPerspective.is2D is a no-op Can't find variable: CSSPerspective
 

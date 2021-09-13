@@ -1,3 +1,81 @@
+2021-09-13  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Addition of CSSNumericValue and subclasses. (CSS Typed OM)
+        https://bugs.webkit.org/show_bug.cgi?id=230031
+
+        Reviewed by Alex Christensen.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/typedom/CSSKeywordValue.h:
+        * css/typedom/CSSNumericValue.cpp:
+        (WebCore::CSSNumericValue::add):
+        (WebCore::CSSNumericValue::sub):
+        (WebCore::CSSNumericValue::mul):
+        (WebCore::CSSNumericValue::div):
+        (WebCore::CSSNumericValue::min):
+        (WebCore::CSSNumericValue::max):
+        (WebCore::CSSNumericValue::rectifyNumberish):
+        (WebCore::CSSNumericValue::equals):
+        (WebCore::CSSNumericValue::to):
+        (WebCore::CSSNumericValue::toSum):
+        (WebCore::CSSNumericValue::type):
+        (WebCore::CSSNumericValue::parse):
+        * css/typedom/CSSNumericValue.h:
+        * css/typedom/CSSNumericValue.idl:
+        * css/typedom/numeric/CSSMathInvert.cpp:
+        (WebCore::CSSMathInvert::create):
+        (WebCore::CSSMathInvert::CSSMathInvert):
+        * css/typedom/numeric/CSSMathInvert.h:
+        (isType):
+        * css/typedom/numeric/CSSMathMax.cpp:
+        (WebCore::CSSMathMax::create):
+        (WebCore::CSSMathMax::CSSMathMax):
+        (WebCore::CSSMathMax::values):
+        * css/typedom/numeric/CSSMathMax.h:
+        (isType):
+        (WebCore::CSSMathMax::values): Deleted.
+        * css/typedom/numeric/CSSMathMin.cpp:
+        (WebCore::CSSMathMin::create):
+        (WebCore::CSSMathMin::CSSMathMin):
+        (WebCore::CSSMathMin::values):
+        * css/typedom/numeric/CSSMathMin.h:
+        (isType):
+        (WebCore::CSSMathMin::values): Deleted.
+        * css/typedom/numeric/CSSMathMin.idl:
+        * css/typedom/numeric/CSSMathNegate.cpp:
+        (WebCore::CSSMathNegate::create):
+        (WebCore::CSSMathNegate::CSSMathNegate):
+        * css/typedom/numeric/CSSMathNegate.h:
+        (isType):
+        * css/typedom/numeric/CSSMathOperator.cpp:
+        * css/typedom/numeric/CSSMathOperator.h:
+        * css/typedom/numeric/CSSMathProduct.cpp:
+        (WebCore::CSSMathProduct::create):
+        (WebCore::CSSMathProduct::CSSMathProduct):
+        (WebCore::CSSMathProduct::values):
+        * css/typedom/numeric/CSSMathProduct.h:
+        (isType):
+        (WebCore::CSSMathProduct::values): Deleted.
+        * css/typedom/numeric/CSSMathSum.cpp:
+        (WebCore::CSSMathSum::create):
+        (WebCore::CSSMathSum::CSSMathSum):
+        (WebCore::CSSMathSum::values):
+        * css/typedom/numeric/CSSMathSum.h:
+        (isType):
+        (WebCore::CSSMathSum::values): Deleted.
+        * css/typedom/numeric/CSSMathValue.cpp:
+        (WebCore::CSSMathValue::CSSMathValue):
+        * css/typedom/numeric/CSSMathValue.h:
+        (WebCore::CSSMathValue::getOperator const):
+        (isType):
+        * css/typedom/numeric/CSSNumericArray.cpp:
+        (WebCore::CSSNumericArray::create):
+        (WebCore::CSSNumericArray::CSSNumericArray):
+        * css/typedom/numeric/CSSNumericArray.h:
+        * css/typedom/numeric/CSSNumericBaseType.cpp: Copied from Source/WebCore/css/typedom/numeric/CSSMathMin.cpp.
+        * css/typedom/numeric/CSSNumericType.cpp: Copied from Source/WebCore/css/typedom/numeric/CSSMathMin.cpp.
+        * css/typedom/numeric/CSSNumericType.idl:
+
 2021-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r282278): ASSERTION FAILED: !m_needExceptionCheck in JSC::VM::verifyExceptionCheckNeedIsSatisfied

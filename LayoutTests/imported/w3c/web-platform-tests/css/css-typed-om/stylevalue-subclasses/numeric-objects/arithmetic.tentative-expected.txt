@@ -1,5 +1,65 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
-
+PASS Calling CSSUnitValue.add with no arguments returns itself
+PASS Calling CSSMathValue.add with no arguments returns itself
+FAIL Calling CSSNumericValue.add with a single CSSNumericValue returns correct type assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+PASS Calling CSSMathValue.add with a single CSSNumericValue returns correct type
+FAIL Calling CSSNumericValue.add with more than one number CSSNumericValues returns correct type assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+PASS Calling CSSNumericValue.add can take numberish values
+FAIL Calling CSSMathSum.add with number CSSUnitValues simplifies to a CSSUnitValue assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Calling CSSNumericValue.add with incompatible types throws TypeError
+PASS Calling CSSUnitValue.sub with no arguments returns itself
+PASS Calling CSSMathValue.sub with no arguments returns itself
+FAIL Calling CSSNumericValue.sub with a single CSSNumericValue returns correct type assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+PASS Calling CSSMathValue.sub with a single CSSNumericValue returns correct type
+FAIL Calling CSSNumericValue.sub with more than one number CSSNumericValues returns correct type assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+PASS Calling CSSNumericValue.sub can take numberish values
+FAIL Calling CSSMathSum.sub with number CSSUnitValues simplifies to a CSSUnitValue assert_equals: expected "CSSUnitValue" but got "CSSMathSum"
+PASS Calling CSSNumericValue.sub with incompatible types throws TypeError
+PASS Calling CSSUnitValue.mul with no arguments returns itself
+PASS Calling CSSMathValue.mul with no arguments returns itself
+FAIL Calling CSSNumericValue.mul with a single CSSNumericValue returns correct type assert_equals: expected "CSSMathProduct" but got "CSSUnitValue"
+PASS Calling CSSMathValue.mul with a single CSSNumericValue returns correct type
+FAIL Calling CSSNumericValue.mul with more than one number CSSNumericValues returns correct type assert_equals: expected "CSSMathProduct" but got "CSSUnitValue"
+PASS Calling CSSNumericValue.mul can take numberish values
+FAIL Calling CSSMathProduct.mul with number CSSUnitValues simplifies to a CSSUnitValue assert_equals: expected "CSSUnitValue" but got "CSSMathProduct"
+PASS Calling CSSNumericValue.mul with incompatible types throws TypeError
+PASS Calling CSSUnitValue.div with no arguments returns itself
+PASS Calling CSSMathValue.div with no arguments returns itself
+FAIL Calling CSSNumericValue.div with a single CSSNumericValue returns correct type assert_equals: expected "CSSMathProduct" but got "CSSUnitValue"
+PASS Calling CSSMathValue.div with a single CSSNumericValue returns correct type
+FAIL Calling CSSNumericValue.div with more than one number CSSNumericValues returns correct type assert_equals: expected "CSSMathProduct" but got "CSSUnitValue"
+PASS Calling CSSNumericValue.div can take numberish values
+FAIL Calling CSSMathProduct.div with number CSSUnitValues simplifies to a CSSUnitValue assert_equals: expected "CSSUnitValue" but got "CSSMathProduct"
+PASS Calling CSSNumericValue.div with incompatible types throws TypeError
+PASS Calling CSSUnitValue.min with no arguments returns itself
+PASS Calling CSSMathValue.min with no arguments returns itself
+FAIL Calling CSSNumericValue.min with a single CSSNumericValue returns correct type assert_equals: expected "CSSMathMin" but got "CSSUnitValue"
+PASS Calling CSSMathValue.min with a single CSSNumericValue returns correct type
+FAIL Calling CSSNumericValue.min with more than one number CSSNumericValues returns correct type assert_equals: expected "CSSMathMin" but got "CSSUnitValue"
+PASS Calling CSSNumericValue.min can take numberish values
+FAIL Calling CSSMathMin.min with number CSSUnitValues simplifies to a CSSUnitValue assert_equals: expected "CSSUnitValue" but got "CSSMathMin"
+PASS Calling CSSNumericValue.min with incompatible types throws TypeError
+PASS Calling CSSUnitValue.max with no arguments returns itself
+PASS Calling CSSMathValue.max with no arguments returns itself
+FAIL Calling CSSNumericValue.max with a single CSSNumericValue returns correct type assert_equals: expected "CSSMathMax" but got "CSSUnitValue"
+PASS Calling CSSMathValue.max with a single CSSNumericValue returns correct type
+FAIL Calling CSSNumericValue.max with more than one number CSSNumericValues returns correct type assert_equals: expected "CSSMathMax" but got "CSSUnitValue"
+PASS Calling CSSNumericValue.max can take numberish values
+FAIL Calling CSSMathMax.max with number CSSUnitValues simplifies to a CSSUnitValue assert_equals: expected "CSSUnitValue" but got "CSSMathMax"
+PASS Calling CSSNumericValue.max with incompatible types throws TypeError
+FAIL Calling CSSUnitValue.add with CSSUnitValues with same unit simplifies to a CSSUnitValue assert_equals: expected 17 but got 10
+FAIL Calling CSSUnitValue.sub with CSSUnitValues with same unit simplifies to a CSSUnitValue assert_equals: expected 3 but got 10
+FAIL Calling CSSUnitValue.mul with all numbers simplifies to a CSSUnitValue assert_equals: expected 100 but got 10
+FAIL Calling CSSUnitValue.mul with only one non-number simplifies to a CSSUnitValue assert_equals: expected 100 but got 10
+FAIL Calling CSSUnitValue.mul with more than one non-number does not simplify to a CSSUnitValue assert_equals: expected "CSSMathProduct" but got "CSSUnitValue"
+FAIL Calling CSSUnitValue.div with all numbers simplifies to a CSSUnitValue assert_equals: expected 1 but got 10
+FAIL Calling CSSUnitValue.div on a non-number value simplifies to a CSSUnitValue assert_equals: expected 1 but got 10
+FAIL Calling CSSUnitValue.div with a non-number value in the arguments does not simplify to a CSSUnitValue assert_equals: expected "CSSMathProduct" but got "CSSUnitValue"
+FAIL Calling CSSUnitValue.min with CSSUnitValues with same unit simplifies to a CSSUnitValue assert_equals: expected 2 but got 10
+PASS Calling CSSUnitValue.max with CSSUnitValues with same unit simplifies to a CSSUnitValue
+FAIL Calling CSSNumericValue.sub negates all argument values assert_equals: expected "CSSMathSum" but got "CSSUnitValue"
+FAIL Calling CSSNumericValue.div inverts all argument values assert_equals: expected "CSSMathProduct" but got "CSSUnitValue"
+FAIL Can not divide with CSSUnitValue which has zero value and number type assert_throws_js: function "() => CSS.number(2).div(CSS.number(0))" did not throw
+FAIL CSSNumericValue.add should throw TypeError when the types are different. assert_throws_js: function "() => CSS.number(3).add(CSS.px(10) ,CSS.number(0))" did not throw
+FAIL CSSNumericValue.sub should throw TypeError when the types are different. assert_throws_js: function "() => CSS.number(3).sub(CSS.px(10) ,CSS.number(0))" did not throw
 

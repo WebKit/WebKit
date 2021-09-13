@@ -1,5 +1,65 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
-
+FAIL Constructing a CSSRGB with an angle CSSUnitValue for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" threw object "ReferenceError: Can't find variable: CSSRGB" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSRGB with a CSSMathValue that doesn"t match <number> for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" threw object "ReferenceError: Can't find variable: CSSRGB" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSRGB with undefined for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" threw object "ReferenceError: Can't find variable: CSSRGB" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSRGB with a CSS math calculation for the color channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(color, 0, 0)" threw object "ReferenceError: Can't find variable: CSSRGB" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSRGB with a CSS number for the alpha channels throws a TypeError. assert_throws_js: function "() => new CSSRGB(0, 0, 0, CSS.number(1))" threw object "ReferenceError: Can't find variable: CSSRGB" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Updating CSSRGB. r to an angle CSSUnitValue throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. r to a CSSMathValue that doesn"t match <number> throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. r to undefined throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. r to a CSS math calculation throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. g to an angle CSSUnitValue throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. g to a CSSMathValue that doesn"t match <number> throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. g to undefined throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. g to a CSS math calculation throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. b to an angle CSSUnitValue throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. b to a CSSMathValue that doesn"t match <number> throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. b to undefined throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. b to a CSS math calculation throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. alpha to an angle CSSUnitValue throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. alpha to a CSSMathValue that doesn"t match <number> throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. alpha to undefined throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating CSSRGB. alpha to a CSS math calculation throws a TypeError. Can't find variable: CSSRGB
+FAIL Updating the alpha channel to a CSS number throws a TypeError. Can't find variable: CSSRGB
+FAIL CSSRGB can be constructed from three numbers and will get an alpha of 100%. Can't find variable: CSSRGB
+FAIL CSSRGB can be constructed from four numbers. Can't find variable: CSSRGB
+FAIL CSSRGB.r can be updated with a number with the resulting value being a percentage. Can't find variable: CSSRGB
+FAIL CSSRGB.r can be updated with a CSS number. Can't find variable: CSSRGB
+FAIL CSSRGB.r can be updated with CSS percent. Can't find variable: CSSRGB
+FAIL CSSRGB.r can be updated with CSS math sum. Can't find variable: CSSRGB
+FAIL CSSRGB.r can be updated with CSS math product. Can't find variable: CSSRGB
+FAIL CSSRGB.r can be updated with CSS math max. Can't find variable: CSSRGB
+FAIL CSSRGB.r can be updated with CSS math min. Can't find variable: CSSRGB
+FAIL CSSRGB.g can be updated with a number with the resulting value being a percentage. Can't find variable: CSSRGB
+FAIL CSSRGB.g can be updated with a CSS number. Can't find variable: CSSRGB
+FAIL CSSRGB.g can be updated with CSS percent. Can't find variable: CSSRGB
+FAIL CSSRGB.g can be updated with CSS math sum. Can't find variable: CSSRGB
+FAIL CSSRGB.g can be updated with CSS math product. Can't find variable: CSSRGB
+FAIL CSSRGB.g can be updated with CSS math max. Can't find variable: CSSRGB
+FAIL CSSRGB.g can be updated with CSS math min. Can't find variable: CSSRGB
+FAIL CSSRGB.b can be updated with a number with the resulting value being a percentage. Can't find variable: CSSRGB
+FAIL CSSRGB.b can be updated with a CSS number. Can't find variable: CSSRGB
+FAIL CSSRGB.b can be updated with CSS percent. Can't find variable: CSSRGB
+FAIL CSSRGB.b can be updated with CSS math sum. Can't find variable: CSSRGB
+FAIL CSSRGB.b can be updated with CSS math product. Can't find variable: CSSRGB
+FAIL CSSRGB.b can be updated with CSS math max. Can't find variable: CSSRGB
+FAIL CSSRGB.b can be updated with CSS math min. Can't find variable: CSSRGB
+FAIL CSSRGB.alpha can be updated with a number with the resulting value being a percentage. Can't find variable: CSSRGB
+FAIL CSSRGB.alpha can be updated with CSS percent. Can't find variable: CSSRGB
+FAIL CSSRGB.alpha can be updated with CSS math sum. Can't find variable: CSSRGB
+FAIL CSSRGB.alpha can be updated with CSS math product. Can't find variable: CSSRGB
+FAIL CSSRGB.alpha can be updated with CSS math max. Can't find variable: CSSRGB
+FAIL CSSRGB.alpha can be updated with CSS math min. Can't find variable: CSSRGB
+FAIL toRGB function evaluates sum, product and max objects. Can't find variable: CSSRGB
+FAIL toRGB() function works as expected and values can be updated. Can't find variable: CSSRGB
 

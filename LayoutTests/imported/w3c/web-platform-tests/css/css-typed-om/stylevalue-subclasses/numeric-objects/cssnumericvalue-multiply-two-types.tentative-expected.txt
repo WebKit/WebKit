@@ -1,9 +1,9 @@
 
-FAIL Multiplying two types with different non-null percent hints throws TypeError Can't find variable: CSSMathSum
-FAIL Multiplying two types with same base types adds exponents Can't find variable: CSSMathProduct
-FAIL Multiplying two types with different base types adds exponents Can't find variable: CSSMathProduct
-FAIL Multiplying two types respects the sign of the exponents Can't find variable: CSSMathInvert
-FAIL Multiplying a type with no exponents is a no-op Can't find variable: CSSMathProduct
-FAIL Multiplying a type with percent hint applies the percent hint Can't find variable: CSSMathSum
-FAIL Multiplying two types with same percent hint applies the percent hint Can't find variable: CSSMathSum
+FAIL Multiplying two types with different non-null percent hints throws TypeError assert_throws_js: function "() => new CSSMathProduct(a, b)" did not throw
+FAIL Multiplying two types with same base types adds exponents assert_equals: length expected 2 but got 0
+FAIL Multiplying two types with different base types adds exponents assert_equals: length expected 1 but got 0
+FAIL Multiplying two types respects the sign of the exponents assert_equals: length expected 1 but got 0
+FAIL Multiplying a type with no exponents is a no-op assert_equals: length expected 1 but got 0
+FAIL Multiplying a type with percent hint applies the percent hint assert_equals: length expected 2 but got 0
+FAIL Multiplying two types with same percent hint applies the percent hint assert_equals: length expected 2 but got 0
 

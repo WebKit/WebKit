@@ -1,5 +1,5 @@
 
-FAIL Inverting a type with empty map returns the empty map Can't find variable: CSSMathInvert
-FAIL Inverting a type negates all its exponents Can't find variable: CSSMathProduct
-FAIL Inverting an inverted type returns the original type Can't find variable: CSSMathInvert
+FAIL Inverting a type with empty map returns the empty map assert_equals: length expected (undefined) undefined but got (number) 0
+FAIL Inverting a type negates all its exponents assert_equals: length expected -1 but got 0
+FAIL Inverting an inverted type returns the original type assert_equals: length expected 1 but got 0
 

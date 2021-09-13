@@ -1,10 +1,10 @@
 
-FAIL Parsing an invalid string throws SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('%#(')" threw object "TypeError: Not enough arguments" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL Parsing a string with a non numeric token throws SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('auto')" threw object "TypeError: Not enough arguments" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL Parsing a string with left over numeric tokens throws SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('1 2')" threw object "TypeError: Not enough arguments" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL Parsing a calc with incompatible units throws a SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('calc(calc(1px * 2s) + 3%)')" threw object "TypeError: Not enough arguments" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL Parsing ignores surrounding spaces Not enough arguments
-FAIL Parsing min() is successful Can't find variable: CSSMathMin
-FAIL Parsing max() is successful Can't find variable: CSSMathMax
-FAIL Parsing clamp() is successful Can't find variable: CSSMathMax
+FAIL Parsing an invalid string throws SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('%#(')" threw object "NotSupportedError: Not implemented Error" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL Parsing a string with a non numeric token throws SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('auto')" threw object "NotSupportedError: Not implemented Error" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL Parsing a string with left over numeric tokens throws SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('1 2')" threw object "NotSupportedError: Not implemented Error" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL Parsing a calc with incompatible units throws a SyntaxError assert_throws_dom: function "() => CSSNumericValue.parse('calc(calc(1px * 2s) + 3%)')" threw object "NotSupportedError: Not implemented Error" that is not a DOMException SyntaxError: property "code" is equal to 9, expected 12
+FAIL Parsing ignores surrounding spaces Not implemented Error
+FAIL Parsing min() is successful Not implemented Error
+FAIL Parsing max() is successful Not implemented Error
+FAIL Parsing clamp() is successful Not implemented Error
 

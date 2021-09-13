@@ -1,5 +1,33 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
-
+FAIL Constructing a CSSScale with an angle CSSUnitValue for the coordinates throws a TypeError assert_throws_js: function "() => new CSSScale(coord, 0)" threw object "ReferenceError: Can't find variable: CSSScale" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSScale with a CSSMathValue that doesn't match <number> for the coordinates throws a TypeError assert_throws_js: function "() => new CSSScale(coord, 0)" threw object "ReferenceError: Can't find variable: CSSScale" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSScale with an invalid division by px/px for the coordinates throws a TypeError assert_throws_js: function "() => new CSSScale(coord, 0)" threw object "ReferenceError: Can't find variable: CSSScale" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Updating CSSScale.x to an angle CSSUnitValue throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.x to a CSSMathValue that doesn't match <number> throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.x to an invalid division by px/px throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.y to an angle CSSUnitValue throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.y to a CSSMathValue that doesn't match <number> throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.y to an invalid division by px/px throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.z to an angle CSSUnitValue throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.z to a CSSMathValue that doesn't match <number> throws a TypeError Can't find variable: CSSScale
+FAIL Updating CSSScale.z to an invalid division by px/px throws a TypeError Can't find variable: CSSScale
+FAIL CSSScale can be constructed from two number coordinates Can't find variable: CSSScale
+FAIL CSSScale can be constructed from three number coordinates Can't find variable: CSSScale
+FAIL CSSScale can be constructed from CSSMathValue coordinates Can't find variable: CSSScale
+FAIL CSSScale.x can be updated to a number Can't find variable: CSSScale
+FAIL CSSScale.x can be updated to a numberish Can't find variable: CSSScale
+FAIL CSSScale.x can be updated to a CSSMathValue Can't find variable: CSSScale
+FAIL CSSScale.y can be updated to a number Can't find variable: CSSScale
+FAIL CSSScale.y can be updated to a numberish Can't find variable: CSSScale
+FAIL CSSScale.y can be updated to a CSSMathValue Can't find variable: CSSScale
+FAIL CSSScale.z can be updated to a number Can't find variable: CSSScale
+FAIL CSSScale.z can be updated to a numberish Can't find variable: CSSScale
+FAIL CSSScale.z can be updated to a CSSMathValue Can't find variable: CSSScale
+FAIL Modifying CSSScale.is2D can be updated to true or false Can't find variable: CSSScale
 

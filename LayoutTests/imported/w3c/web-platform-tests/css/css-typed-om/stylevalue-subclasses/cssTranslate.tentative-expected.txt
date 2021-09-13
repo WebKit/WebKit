@@ -1,5 +1,30 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSMathSum
-
+FAIL Constructing a CSSTranslate with a CSSUnitValue with type other than length or percent for the coordinates throws a TypeError assert_throws_js: function "() => new CSSTranslate(coord, CSS.px(0), CSS.px(0))" threw object "ReferenceError: Can't find variable: CSSTranslate" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSTranslate with a CSSMathValue that doesn't match <length-percentage> for the coordinates throws a TypeError assert_throws_js: function "() => new CSSTranslate(coord, CSS.px(0), CSS.px(0))" threw object "ReferenceError: Can't find variable: CSSTranslate" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Constructing a CSSTranslate with a percent for the Z coordinate throws a TypeError assert_throws_js: function "() => new CSSTranslate(CSS.px(0), CSS.px(0), CSS.percent(0))" threw object "ReferenceError: Can't find variable: CSSTranslate" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Updating CSSTranslate.x to a CSSUnitValue with type other than length or percent throws a TypeError Can't find variable: CSSTranslate
+FAIL Updating CSSTranslate.x to a CSSMathValue that doesn't match <length-percentage> throws a TypeError Can't find variable: CSSTranslate
+FAIL Updating CSSTranslate.y to a CSSUnitValue with type other than length or percent throws a TypeError Can't find variable: CSSTranslate
+FAIL Updating CSSTranslate.y to a CSSMathValue that doesn't match <length-percentage> throws a TypeError Can't find variable: CSSTranslate
+FAIL Updating CSSTranslate.z to a CSSUnitValue with type other than length or percent throws a TypeError Can't find variable: CSSTranslate
+FAIL Updating CSSTranslate.z to a CSSMathValue that doesn't match <length-percentage> throws a TypeError Can't find variable: CSSTranslate
+FAIL Updating CSSTranslate.z to a percent throws a TypeError Can't find variable: CSSTranslate
+FAIL CSSTranslate can be constructed from two length or percent coordinates Can't find variable: CSSTranslate
+FAIL CSSTranslate can be constructed from three length or percent coordinates Can't find variable: CSSTranslate
+FAIL CSSTranslate can be constructed from CSSMathValues Can't find variable: CSSTranslate
+FAIL CSSTranslate.x can be updated to a length Can't find variable: CSSTranslate
+FAIL CSSTranslate.x can be updated to a percent Can't find variable: CSSTranslate
+FAIL CSSTranslate.x can be updated to a CSSMathValue Can't find variable: CSSTranslate
+FAIL CSSTranslate.y can be updated to a length Can't find variable: CSSTranslate
+FAIL CSSTranslate.y can be updated to a percent Can't find variable: CSSTranslate
+FAIL CSSTranslate.y can be updated to a CSSMathValue Can't find variable: CSSTranslate
+FAIL CSSTranslate.z can be updated to a length Can't find variable: CSSTranslate
+FAIL CSSTranslate.z can be updated to a CSSMathValue Can't find variable: CSSTranslate
+FAIL Modifying CSSTranslate.is2D can be updated to true or false Can't find variable: CSSTranslate
 

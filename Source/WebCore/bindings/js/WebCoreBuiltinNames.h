@@ -80,6 +80,14 @@ namespace WebCore {
     macro(CSSCounterStyleRule) \
     macro(CSSImageValue) \
     macro(CSSKeywordValue) \
+    macro(CSSMathInvert) \
+    macro(CSSMathMax) \
+    macro(CSSMathMin) \
+    macro(CSSMathNegate) \
+    macro(CSSMathProduct) \
+    macro(CSSMathSum) \
+    macro(CSSMathValue) \
+    macro(CSSNumericArray) \
     macro(CSSNumericValue) \
     macro(CSSPaintSize) \
     macro(CSSStyleValue) \

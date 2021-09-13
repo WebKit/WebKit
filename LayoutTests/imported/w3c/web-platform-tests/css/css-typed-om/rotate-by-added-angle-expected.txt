@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSMathSum
+CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSTransformValue
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x50

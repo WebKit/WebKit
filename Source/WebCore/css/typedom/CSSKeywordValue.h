@@ -42,6 +42,8 @@ public:
     
     const String& value() const { return m_value; }
     ExceptionOr<void> setValue(const String&);
+    
+    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSKeywordValue; }
 private:
     explicit CSSKeywordValue(const String& value)
         : m_value(value) { }

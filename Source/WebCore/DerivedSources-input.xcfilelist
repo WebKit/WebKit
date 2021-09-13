@@ -749,6 +749,17 @@ $(PROJECT_DIR)/css/typedom/CSSUnitValue.idl
 $(PROJECT_DIR)/css/typedom/CSSUnparsedValue.idl
 $(PROJECT_DIR)/css/typedom/StylePropertyMap.idl
 $(PROJECT_DIR)/css/typedom/StylePropertyMapReadOnly.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathInvert.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathMax.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathMin.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathNegate.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathOperator.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathProduct.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathSum.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSMathValue.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSNumericArray.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSNumericBaseType.idl
+$(PROJECT_DIR)/css/typedom/numeric/CSSNumericType.idl
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl

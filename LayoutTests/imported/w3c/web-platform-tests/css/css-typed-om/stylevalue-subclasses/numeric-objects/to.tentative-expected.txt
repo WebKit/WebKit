@@ -1,25 +1,17 @@
 
-FAIL Converting a CSSUnitValue to an invalid unit throws SyntaxError assert_throws_dom: function "() => CSS.px(1).to('lemon')" threw object "TypeError: CSS.px(1).to is not a function. (In 'CSS.px(1).to('lemon')', 'CSS.px(1).to' is undefined)" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL Converting a CSSNumericValue with invalid sum value throws TypeError assert_throws_js: function "() => new CSSMathMax(1, CSS.px(1)).to('number')" threw object "ReferenceError: Can't find variable: CSSMathMax" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Converting a CSSNumericValue with sum value containing more than one value throws TypeError assert_throws_js: function "() => new CSSMathProduct(CSS.px(1), CSS.s(1)).to('number')" threw object "ReferenceError: Can't find variable: CSSMathProduct" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-PASS Converting a CSSUnitValue to an incompatible unit throws TypeError
-FAIL Converting a CSSUnitValue to its own unit returns itself CSS[unit](1).to is not a function. (In 'CSS[unit](1).to(unit)', 'CSS[unit](1).to' is undefined)
-FAIL Converting a CSSUnitValue to its canonical unit returns correct value CSS.cm(1).to is not a function. (In 'CSS.cm(1).to('px')', 'CSS.cm(1).to' is undefined)
-FAIL Converting a CSSMathSum to a single unit adds the values Can't find variable: CSSMathSum
-FAIL Converting a CSSMathProduct to a single unit multiplies the values Can't find variable: CSSMathProduct
-FAIL Converting a CSSMathMin to a single unit finds the min value Can't find variable: CSSMathMin
-FAIL Converting a CSSMathMin to a single unit with different units throws a TypeError assert_throws_js: function "() => new CSSMathMin(CSS.px(2), CSS.s(3)).to('px')" threw object "ReferenceError: Can't find variable: CSSMathMin" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Converting a CSSMathMax to a single unit finds the max value Can't find variable: CSSMathMax
-FAIL Converting a CSSMathMax to a single unit with different units throws a TypeError assert_throws_js: function "() => new CSSMathMax(CSS.px(2), CSS.s(3)).to('px')" threw object "ReferenceError: Can't find variable: CSSMathMax" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Converting a CSSMathNegate to a single unit negates its value Can't find variable: CSSMathNegate
-FAIL Converting a CSSMathInvert to a single unit inverts its value and units Can't find variable: CSSMathProduct
-FAIL Converting a complex expression to a single unit Can't find variable: CSSMathSum
+FAIL Converting a CSSUnitValue to an invalid unit throws SyntaxError assert_throws_dom: function "() => CSS.px(1).to('lemon')" did not throw
+FAIL Converting a CSSNumericValue with invalid sum value throws TypeError assert_throws_js: function "() => new CSSMathMax(1, CSS.px(1)).to('number')" did not throw
+FAIL Converting a CSSNumericValue with sum value containing more than one value throws TypeError assert_throws_js: function "() => new CSSMathProduct(CSS.px(1), CSS.s(1)).to('number')" did not throw
+FAIL Converting a CSSUnitValue to an incompatible unit throws TypeError assert_throws_js: function "() => CSS.px(1).to('number')" did not throw
+FAIL Converting a CSSUnitValue to its own unit returns itself assert_equals: expected "percent" but got "number"
+FAIL Converting a CSSUnitValue to its canonical unit returns correct value assert_approx_equals: expected 37.7952755 +/- 0.000001 but got 1
+FAIL Converting a CSSMathSum to a single unit adds the values assert_approx_equals: expected 2 +/- 0.000001 but got 1
+FAIL Converting a CSSMathProduct to a single unit multiplies the values assert_approx_equals: expected 6 +/- 0.000001 but got 1
+FAIL Converting a CSSMathMin to a single unit finds the min value assert_equals: expected "mm" but got "number"
+FAIL Converting a CSSMathMin to a single unit with different units throws a TypeError assert_throws_js: function "() => new CSSMathMin(CSS.px(2), CSS.s(3)).to('px')" did not throw
+FAIL Converting a CSSMathMax to a single unit finds the max value assert_approx_equals: expected 10 +/- 0.000001 but got 1
+FAIL Converting a CSSMathMax to a single unit with different units throws a TypeError assert_throws_js: function "() => new CSSMathMax(CSS.px(2), CSS.s(3)).to('px')" did not throw
+FAIL Converting a CSSMathNegate to a single unit negates its value assert_approx_equals: expected -1 +/- 0.000001 but got 1
+FAIL Converting a CSSMathInvert to a single unit inverts its value and units assert_approx_equals: expected 2 +/- 0.000001 but got 1
+FAIL Converting a complex expression to a single unit assert_approx_equals: expected 3500 +/- 0.000001 but got 1
 

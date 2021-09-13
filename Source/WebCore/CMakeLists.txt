@@ -83,6 +83,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/css/calc"
     "${WEBCORE_DIR}/css/parser"
     "${WEBCORE_DIR}/css/typedom"
+    "${WEBCORE_DIR}/css/typedom/numeric"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/display"
     "${WEBCORE_DIR}/display/compositing"
@@ -214,6 +215,8 @@ set(WebCore_IDL_INCLUDES
     bindings/js
 
     css/typedom
+
+    css/typedom/numeric
 
     html/canvas
     html/shadow
@@ -743,6 +746,18 @@ set(WebCore_NON_SVG_IDL_FILES
     css/typedom/CSSUnparsedValue.idl
     css/typedom/StylePropertyMap.idl
     css/typedom/StylePropertyMapReadOnly.idl
+
+    css/typedom/numeric/CSSMathInvert.idl
+    css/typedom/numeric/CSSMathMax.idl
+    css/typedom/numeric/CSSMathMin.idl
+    css/typedom/numeric/CSSMathNegate.idl
+    css/typedom/numeric/CSSMathOperator.idl
+    css/typedom/numeric/CSSMathProduct.idl
+    css/typedom/numeric/CSSMathSum.idl
+    css/typedom/numeric/CSSMathValue.idl
+    css/typedom/numeric/CSSNumericArray.idl
+    css/typedom/numeric/CSSNumericBaseType.idl
+    css/typedom/numeric/CSSNumericType.idl
 
     dom/AbortAlgorithm.idl
     dom/AbortController.idl

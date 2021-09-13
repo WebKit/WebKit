@@ -621,6 +621,17 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/typedom/CSSUnitValue.idl \
     $(WebCore)/css/typedom/CSSUnparsedValue.idl \
     $(WebCore)/css/typedom/CSSOMVariableReferenceValue.idl \
+    $(WebCore)/css/typedom/numeric/CSSMathInvert.idl \
+    $(WebCore)/css/typedom/numeric/CSSMathMax.idl \
+    $(WebCore)/css/typedom/numeric/CSSMathMin.idl \
+	$(WebCore)/css/typedom/numeric/CSSMathNegate.idl \
+    $(WebCore)/css/typedom/numeric/CSSMathOperator.idl \
+    $(WebCore)/css/typedom/numeric/CSSMathProduct.idl \
+    $(WebCore)/css/typedom/numeric/CSSMathSum.idl \
+    $(WebCore)/css/typedom/numeric/CSSMathValue.idl \
+    $(WebCore)/css/typedom/numeric/CSSNumericArray.idl \
+    $(WebCore)/css/typedom/numeric/CSSNumericBaseType.idl \
+    $(WebCore)/css/typedom/numeric/CSSNumericType.idl \
     $(WebCore)/dom/AbortAlgorithm.idl \
     $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \
