@@ -1,3 +1,19 @@
+2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] -toggleAutomaticSpellingCorrection: menu item validation shouldn't require post-layout editor state
+        https://bugs.webkit.org/show_bug.cgi?id=230205
+
+        Reviewed by Darin Adler.
+
+        See WebKit ChangeLog for more details.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::canEnableAutomaticSpellingCorrection const):
+
+        Slightly improve the performance of this method in the case where we're focusing a text field, by only
+        consulting the host form control element, rather than both the form control and the contenteditable shadow root
+        element.
+
 2021-09-13  Andres Gonzalez  <andresg_22@apple.com>
 
         AX: set insertion point to the end of a native text control does not work when passing a collapsed TextMarkerRange with both start and end equals to the end TextMarker for the element.

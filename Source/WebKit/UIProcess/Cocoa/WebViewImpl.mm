@@ -3242,8 +3242,7 @@ bool WebViewImpl::validateUserInterfaceItem(id <NSValidatedUserInterfaceItem> it
     }
 
     if (action == @selector(toggleAutomaticSpellingCorrection:)) {
-        auto& editorState = m_page->editorState();
-        bool enable = editorState.isContentEditable && (editorState.isMissingPostLayoutData || editorState.postLayoutData().canEnableAutomaticSpellingCorrection);
+        bool enable = m_page->editorState().canEnableAutomaticSpellingCorrection;
         menuItem(item).state = TextChecker::state().isAutomaticSpellingCorrectionEnabled && enable ? NSControlStateValueOn : NSControlStateValueOff;
         return enable;
     }

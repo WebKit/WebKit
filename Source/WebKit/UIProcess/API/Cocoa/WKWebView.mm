@@ -1703,14 +1703,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     else
         attributes |= _WKSelectionAttributeIsCaret;
 
-    if (!editorState.isMissingPostLayoutData) {
-#if PLATFORM(IOS_FAMILY)
-        if (editorState.postLayoutData().atStartOfSentence)
-            attributes |= _WKSelectionAttributeAtStartOfSentence;
-#endif
-    } else if (previousAttributes & _WKSelectionAttributeAtStartOfSentence)
-        attributes |= _WKSelectionAttributeAtStartOfSentence;
-
     return attributes;
 }
 

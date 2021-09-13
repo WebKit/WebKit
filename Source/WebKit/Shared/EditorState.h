@@ -82,6 +82,9 @@ struct EditorState {
     bool isInPlugin { false };
     bool hasComposition { false };
     bool triggeredByAccessibilitySelectionChange { false };
+#if PLATFORM(MAC)
+    bool canEnableAutomaticSpellingCorrection { true };
+#endif
     bool isMissingPostLayoutData { true };
 
     struct PostLayoutData {
@@ -127,7 +130,6 @@ struct EditorState {
         uint64_t candidateRequestStartPosition { 0 };
         String paragraphContextForCandidateRequest;
         String stringForCandidateRequest;
-        bool canEnableAutomaticSpellingCorrection { true };
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
         String surroundingContext;

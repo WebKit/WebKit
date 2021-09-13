@@ -333,7 +333,6 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     }
 #endif
 
-    postLayoutData.atStartOfSentence = frame.selection().selectionAtSentenceStart();
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
         if (selection.hasEditableStyle()) {
