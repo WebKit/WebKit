@@ -1441,6 +1441,11 @@ void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, R
     ASSERT(webFrame);
     m_page.requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, scope, WTFMove(completionHandler));
 }
+
+bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const
+{
+    return m_page.hasPageLevelStorageAccess(topLevelDomain, resourceDomain);
+}
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

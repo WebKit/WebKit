@@ -1,5 +1,16 @@
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
+        Relax BroadcastChannel origin partitioning if iframe has storage access
+        https://bugs.webkit.org/show_bug.cgi?id=230164
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::hasPageLevelStorageAccess const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+2021-09-13  Chris Dumez  <cdumez@apple.com>
+
         Crash under WebPage::runJavaScript()
         https://bugs.webkit.org/show_bug.cgi?id=230223
         <rdar://80172436>

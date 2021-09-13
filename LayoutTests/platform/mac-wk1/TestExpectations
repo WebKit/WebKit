@@ -79,6 +79,9 @@ editing/async-clipboard/clipboard-read-text-from-platform.html [ Skip ]
 editing/async-clipboard/clipboard-read-text-same-origin.html [ Skip ]
 editing/async-clipboard/sanitize-when-reading-markup.html [ Skip ]
 
+# No requestStorageAccess() support for WK1.
+http/tests/messaging/broadcastchannel-partitioning-with-storage-access.html [ Skip ]
+
 imported/w3c/web-platform-tests/websockets/Close-1000-reason.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/Close-1000-reason.any.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/binary/001.html [ Pass Failure ]

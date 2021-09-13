@@ -1,3 +1,39 @@
+2021-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Relax BroadcastChannel origin partitioning if iframe has storage access
+        https://bugs.webkit.org/show_bug.cgi?id=230164
+
+        Reviewed by Alex Christensen.
+
+        In r282105, we started partitioning origins for BroadcastChannel using topOrigin/frameOrigin.
+        This prevents a topFrame of origin A to message a subframe of origin A if that subframe if under
+        another domain B. However, the `document.requestStorageAccess()` API exists to relax storage
+        partitioning and Gecko relies on this to relax BroadcastChannel origin partitioning as well.
+        This patch aligns WebKit's behavior with Gecko.
+
+        Test: http/tests/messaging/broadcastchannel-partitioning-with-storage-access.html
+
+        * dom/BroadcastChannel.cpp:
+        (WebCore::shouldPartitionOrigin):
+        (WebCore::BroadcastChannel::MainThreadBridge::create):
+        (WebCore::BroadcastChannel::MainThreadBridge::name const):
+        (WebCore::BroadcastChannel::MainThreadBridge::identifier const):
+        (WebCore::BroadcastChannel::MainThreadBridge::MainThreadBridge):
+        (WebCore::BroadcastChannel::MainThreadBridge::ensureOnMainThread):
+        (WebCore::BroadcastChannel::MainThreadBridge::registerChannel):
+        (WebCore::BroadcastChannel::MainThreadBridge::unregisterChannel):
+        (WebCore::BroadcastChannel::MainThreadBridge::postMessage):
+        (WebCore::BroadcastChannel::BroadcastChannel):
+        (WebCore::BroadcastChannel::~BroadcastChannel):
+        (WebCore::BroadcastChannel::identifier const):
+        (WebCore::BroadcastChannel::name const):
+        (WebCore::BroadcastChannel::postMessage):
+        (WebCore::BroadcastChannel::close):
+        (WebCore::BroadcastChannel::dispatchMessage):
+        * dom/BroadcastChannel.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::hasPageLevelStorageAccess const):
+
 2021-09-13  Youenn Fablet  <youenn@apple.com>
 
         Fire RTCPeerConnection.signalstatechange as per spec
