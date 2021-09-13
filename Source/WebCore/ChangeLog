@@ -1,3 +1,60 @@
+2021-09-13  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not pass in the InvalidationState to the layout functions
+        https://bugs.webkit.org/show_bug.cgi?id=229221
+        <rdar://problem/82321574>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for introducing formatting context specific invalidation.
+        Each type of formatting context may require a very different invalidation logic. While BFC could mark whole subtrees dirty, IFC's invalidation logic should be looking at lines instead.
+        The invalidation code (triggered by style/content change) produces a "damage state" which is input to the FormattingContext construction
+        the same way we pass in the FormattingState 
+        (i.e. FormattinContext takes the root of the formatting subtree (the extent of the formatting context), the damaged state (how much we need to layout in this frame) and the formatting state (the data we can use from previous layout))
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layout):
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        (WebCore::Layout::LayoutContext::layoutWithPreparedRootGeometry): Deleted.
+        * layout/LayoutContext.h:
+        * layout/formattingContexts/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        * layout/formattingContexts/FormattingContext.h:
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        * layout/formattingContexts/block/BlockFormattingContext.h:
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::layoutTableBox):
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.h:
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        * layout/formattingContexts/flex/FlexFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayoutForIntergration):
+        (WebCore::Layout::InlineFormattingContext::invalidateFormattingState):
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraSpace):
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        * layout/invalidation/InvalidationContext.cpp: Removed.
+        * layout/invalidation/InvalidationContext.h: Removed.
+        * layout/invalidation/InvalidationState.cpp: Removed.
+        * layout/invalidation/InvalidationState.h: Removed.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::printLayoutTreeForLiveDocuments):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutUsingFormattingContext):
+
 2021-09-13  Youenn Fablet  <youenn@apple.com>
 
         Remove WritableStream runtime flag

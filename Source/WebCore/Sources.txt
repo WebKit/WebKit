@@ -1487,8 +1487,6 @@ layout/integration/LayoutIntegrationLineIterator.cpp
 layout/integration/LayoutIntegrationLineLayout.cpp
 layout/integration/LayoutIntegrationPagination.cpp
 layout/integration/LayoutIntegrationRunIterator.cpp
-layout/invalidation/InvalidationContext.cpp
-layout/invalidation/InvalidationState.cpp
 layout/layouttree/LayoutBox.cpp
 layout/layouttree/LayoutContainerBox.cpp
 layout/layouttree/LayoutBoxGeometry.cpp

@@ -31,7 +31,6 @@
 #include "FormattingGeometry.h"
 #include "FormattingQuirks.h"
 #include "FormattingState.h"
-#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
@@ -135,7 +134,7 @@ void FormattingContext::computeBorderAndPadding(const Box& layoutBox, const Hori
     boxGeometry.setPadding(formattingGeometry().computedPadding(layoutBox, horizontalConstraint.logicalWidth));
 }
 
-void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationState, const ConstraintsForOutOfFlowContent& constraints)
+void FormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent& constraints)
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "Start: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 
@@ -148,9 +147,6 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
 
     for (auto& outOfFlowBox : formattingState().outOfFlowBoxes()) {
         ASSERT(outOfFlowBox->establishesFormattingContext());
-        if (!invalidationState.needsLayout(*outOfFlowBox))
-            continue;
-
         auto containingBlockConstraints = constraintsForLayoutBox(*outOfFlowBox);
         auto horizontalConstraintsForBorderAndPadding = HorizontalConstraints { containingBlockConstraints.horizontal.logicalLeft, containingBlockConstraints.borderAndPaddingConstraints };
         computeBorderAndPadding(*outOfFlowBox, horizontalConstraintsForBorderAndPadding);
@@ -161,9 +157,9 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
             auto& containerBox = downcast<ContainerBox>(*outOfFlowBox);
             auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
             if (containerBox.hasInFlowOrFloatingChild())
-                formattingContext->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(containerBox));
+                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(containerBox));
             computeOutOfFlowVerticalGeometry(containerBox, containingBlockConstraints);
-            formattingContext->layoutOutOfFlowContent(invalidationState, formattingGeometry().constraintsForOutOfFlowContent(containerBox));
+            formattingContext->layoutOutOfFlowContent(formattingGeometry().constraintsForOutOfFlowContent(containerBox));
         } else
             computeOutOfFlowVerticalGeometry(*outOfFlowBox, containingBlockConstraints);
     }

@@ -35,14 +35,13 @@
 namespace WebCore {
 namespace Layout {
 
-class InvalidationState;
 // This class implements the layout logic for flex formatting contexts.
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FlexFormattingContext);
 public:
     FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState&);
-    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) override;
+    void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;

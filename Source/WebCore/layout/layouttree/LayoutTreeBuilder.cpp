@@ -35,8 +35,6 @@
 #include "HTMLTableColElement.h"
 #include "HTMLTableElement.h"
 #include "InlineFormattingState.h"
-#include "InvalidationContext.h"
-#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
@@ -591,9 +589,7 @@ void printLayoutTreeForLiveDocuments()
         auto layoutState = LayoutState { *document, layoutTree->root() };
 
         auto& layoutRoot = layoutState.root();
-        auto invalidationState = InvalidationState { };
-
-        LayoutContext(layoutState).layout(renderView.size(), invalidationState);
+        LayoutContext(layoutState).layout(renderView.size());
         showLayoutTree(layoutRoot, &layoutState);
     }
 }

@@ -31,7 +31,6 @@
 #include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
 #include "InlineRect.h"
-#include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
@@ -49,7 +48,7 @@ FlexFormattingContext::FlexFormattingContext(const ContainerBox& formattingConte
 {
 }
 
-void FlexFormattingContext::layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent& constraints)
+void FlexFormattingContext::layoutInFlowContent(const ConstraintsForInFlowContent& constraints)
 {
     computeIntrinsicWidthConstraintsForFlexItems();
     sizeAndPlaceFlexItems(constraints);
@@ -81,8 +80,7 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
         auto flexItemLogicalWidth = std::min(std::max(intrinsicWidths->minimum, constraints.horizontal().logicalWidth), intrinsicWidths->maximum);
         auto flexItemConstraints = ConstraintsForInFlowContent { { { }, flexItemLogicalWidth }, { } };
 
-        auto invalidationState = InvalidationState { };
-        LayoutContext::createFormattingContext(flexItem, layoutState())->layoutInFlowContent(invalidationState, flexItemConstraints);
+        LayoutContext::createFormattingContext(flexItem, layoutState())->layoutInFlowContent(flexItemConstraints);
 
         auto computeFlexItemGeometry = [&] {
             auto& flexItemGeometry = formattingState.boxGeometry(flexItem);

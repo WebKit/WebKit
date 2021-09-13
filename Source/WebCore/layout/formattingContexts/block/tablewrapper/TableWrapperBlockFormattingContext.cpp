@@ -31,7 +31,6 @@
 #include "BlockFormattingGeometry.h"
 #include "BlockFormattingState.h"
 #include "BlockMarginCollapse.h"
-#include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
@@ -52,7 +51,7 @@ TableWrapperBlockFormattingContext::TableWrapperBlockFormattingContext(const Con
 {
 }
 
-void TableWrapperBlockFormattingContext::layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent& constraints)
+void TableWrapperBlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowContent& constraints)
 {
     // The table generates a principal block container box called the table wrapper box that contains the table box itself and any caption boxes
     // (in document order). The table box is a block-level box that contains the table's internal table boxes.
@@ -80,9 +79,8 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tabl
 
     if (tableBox.hasChild()) {
         auto& formattingGeometry = this->formattingGeometry();
-        auto invalidationState = InvalidationState { };
         auto constraints = ConstraintsForTableContent { formattingGeometry.constraintsForInFlowContent(tableBox), formattingGeometry.computedHeight(tableBox) };
-        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(invalidationState, constraints);
+        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(constraints);
     }
 
     computeHeightAndMarginForTableBox(tableBox, constraints);

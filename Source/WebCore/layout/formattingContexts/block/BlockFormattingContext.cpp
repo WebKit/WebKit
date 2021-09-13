@@ -33,7 +33,6 @@
 #include "BlockMarginCollapse.h"
 #include "FloatingContext.h"
 #include "FloatingState.h"
-#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
@@ -58,7 +57,7 @@ BlockFormattingContext::BlockFormattingContext(const ContainerBox& formattingCon
 {
 }
 
-void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const ConstraintsForInFlowContent& constraints)
+void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowContent& constraints)
 {
     // 9.4.1 Block formatting contexts
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -77,8 +76,6 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
             if (!is<ContainerBox>(layoutBox))
                 return false;
             for (auto* child = downcast<ContainerBox>(layoutBox).firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
-                if (!invalidationState.needsLayout(*child))
-                    continue;
                 layoutQueue.append(child);
                 return true;
             }
@@ -87,8 +84,6 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
 
         if (direction == LayoutDirection::Sibling) {
             for (auto* nextSibling = layoutBox.nextInFlowOrFloatingSibling(); nextSibling; nextSibling = nextSibling->nextInFlowOrFloatingSibling()) {
-                if (!invalidationState.needsLayout(*nextSibling))
-                    continue;
                 layoutQueue.append(nextSibling);
                 return true;
             }
@@ -133,7 +128,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                     auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
                     if (containerBox.isTableWrapperBox())
                         downcast<TableWrapperBlockFormattingContext>(*formattingContext).setHorizontalConstraintsIgnoringFloats(containingBlockConstraints.horizontal());
-                    formattingContext->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(containerBox));
+                    formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(containerBox));
                 }
                 break;
             }
@@ -164,7 +159,7 @@ void BlockFormattingContext::layoutInFlowContent(InvalidationState& invalidation
                 // Now that we computed the box's height, we can layout the out-of-flow descendants.
                 if (is<ContainerBox>(layoutBox) && downcast<ContainerBox>(layoutBox).hasChild()) {
                     auto& containerBox = downcast<ContainerBox>(layoutBox);
-                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutOutOfFlowContent(invalidationState, formattingGeometry().constraintsForOutOfFlowContent(containerBox));
+                    LayoutContext::createFormattingContext(containerBox, layoutState())->layoutOutOfFlowContent(formattingGeometry().constraintsForOutOfFlowContent(containerBox));
                 }
             }
             if (!establishesFormattingContext && is<ContainerBox>(layoutBox))

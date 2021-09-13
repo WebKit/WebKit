@@ -112,7 +112,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/layout/formattingContexts/inline"
     "${WEBCORE_DIR}/layout/formattingContexts/inline/text"
     "${WEBCORE_DIR}/layout/integration"
-    "${WEBCORE_DIR}/layout/invalidation"
     "${WEBCORE_DIR}/layout/layouttree"
     "${WEBCORE_DIR}/layout/formattingContexts/table"
     "${WEBCORE_DIR}/loader"

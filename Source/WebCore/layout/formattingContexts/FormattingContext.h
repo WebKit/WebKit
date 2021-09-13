@@ -50,7 +50,6 @@ class FormattingGeometry;
 class FormattingState;
 class FormattingQuirks;
 struct IntrinsicWidthConstraints;
-class InvalidationState;
 class LayoutState;
 
 class FormattingContext {
@@ -58,8 +57,8 @@ class FormattingContext {
 public:
     virtual ~FormattingContext();
 
-    virtual void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) = 0;
-    void layoutOutOfFlowContent(InvalidationState&, const ConstraintsForOutOfFlowContent&);
+    virtual void layoutInFlowContent(const ConstraintsForInFlowContent&) = 0;
+    void layoutOutOfFlowContent(const ConstraintsForOutOfFlowContent&);
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
     virtual LayoutUnit usedContentHeight() const = 0;
 

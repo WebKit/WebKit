@@ -35,7 +35,6 @@
 #include "HitTestResult.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
-#include "InvalidationState.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
@@ -216,10 +215,9 @@ void LineLayout::layout()
     auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox);
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState };
 
-    auto invalidationState = Layout::InvalidationState { };
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
 
-    inlineFormattingContext.lineLayoutForIntergration(invalidationState, { horizontalConstraints, rootGeometry.contentBoxTop() });
+    inlineFormattingContext.lineLayoutForIntergration({ horizontalConstraints, rootGeometry.contentBoxTop() });
 
     constructContent();
 }

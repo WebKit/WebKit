@@ -36,7 +36,6 @@
 #include "InlineLineBoxBuilder.h"
 #include "InlineLineRun.h"
 #include "InlineTextItem.h"
-#include "InvalidationState.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
@@ -83,12 +82,12 @@ static inline const Box* nextInlineLevelBoxToLayout(const Box& layoutBox, const 
     return nullptr;
 }
 
-void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidationState, const ConstraintsForInFlowContent& constraints)
+void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowContent& constraints)
 {
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     ASSERT(root().hasInFlowOrFloatingChild());
 
-    invalidateFormattingState(invalidationState);
+    invalidateFormattingState();
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     // 1. Visit each inline box and partially compute their geometry (margins, padding and borders).
     // 2. Collect the inline items (flatten the the layout tree) and place them on lines in bidirectional order. 
@@ -106,9 +105,9 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
                 if (formattingRoot.hasChild()) {
                     auto formattingContext = LayoutContext::createFormattingContext(formattingRoot, layoutState());
                     if (formattingRoot.hasInFlowOrFloatingChild())
-                        formattingContext->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(formattingRoot));
+                        formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(formattingRoot));
                     computeHeightAndMargin(formattingRoot, constraints.horizontal());
-                    formattingContext->layoutOutOfFlowContent(invalidationState, formattingGeometry().constraintsForOutOfFlowContent(formattingRoot));
+                    formattingContext->layoutOutOfFlowContent(formattingGeometry().constraintsForOutOfFlowContent(formattingRoot));
                 } else
                     computeHeightAndMargin(formattingRoot, constraints.horizontal());
             } else {
@@ -146,9 +145,9 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::lineLayoutForIntergration(InvalidationState& invalidationState, const ConstraintsForInFlowContent& constraints)
+void InlineFormattingContext::lineLayoutForIntergration(const ConstraintsForInFlowContent& constraints)
 {
-    invalidateFormattingState(invalidationState);
+    invalidateFormattingState();
     collectContentIfNeeded();
     auto& inlineItems = formattingState().inlineItems();
     lineLayout(inlineItems, { 0, inlineItems.size() }, constraints);
@@ -583,7 +582,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
     return lineBoxLogicalRect;
 }
 
-void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)
+void InlineFormattingContext::invalidateFormattingState()
 {
     // Find out what we need to invalidate. This is where we add some smarts to do partial line layout.
     // For now let's just clear the runs.

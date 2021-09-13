@@ -42,7 +42,7 @@ class TableWrapperBlockFormattingContext final : public BlockFormattingContext {
 public:
     TableWrapperBlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState&);
 
-    void layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent&) final;
+    void layoutInFlowContent(const ConstraintsForInFlowContent&) final;
 
     void setHorizontalConstraintsIgnoringFloats(const HorizontalConstraints& horizontalConstraints) { m_horizontalConstraintsIgnoringFloats = horizontalConstraints; }
 
