@@ -407,7 +407,8 @@ class AutoInstall(object):
     packages = defaultdict(list)
     manifest = {}
 
-    # Rely on our own certificates for PyPi, since we use PyPi to standardize root certificates
+    # Rely on our own certificates for PyPi, since we use PyPi to standardize root certificates.
+    # This is not needed in Linux platforms.
     ca_cert_path = os.path.join(os.path.dirname(__file__), 'cacert.pem')
 
     _previous_index = None
@@ -420,7 +421,11 @@ class AutoInstall(object):
 
     @classmethod
     def _request(cls, url, ca_cert_path=None):
-        return urlopen(url, timeout=cls.timeout, cafile=ca_cert_path or cls.ca_cert_path)
+        if sys.platform.startswith('linux'):
+            cafile = None
+        else:
+            cafile = ca_cert_path or cls.ca_cert_path
+        return urlopen(url, timeout=cls.timeout, cafile=cafile)
 
     @classmethod
     def enabled(cls):

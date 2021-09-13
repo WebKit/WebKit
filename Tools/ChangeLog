@@ -1,3 +1,11 @@
+2021-09-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, AutoInstall hotfix for Linux platforms
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (AutoInstall):
+        (AutoInstall._request): Disable custom cacert on Linux, OpenSSL fails validate this cert.
+
 2021-09-10  Simon Fraser  <simon.fraser@apple.com>
 
         Add an lldb summary provider for the WebCore::Length type
