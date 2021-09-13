@@ -1598,9 +1598,6 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 [ Monterey Release ] platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html [ Pass Crash ]
 [ Monterey Release ] media/media-fragments/TC0004.html [ Pass Timeout ]
 
-#rdar://82036119 ([Monterey wk2 Release] performance-api/paint-timing/paint-timing-with-worker.html is a flaky crash)
-performance-api/paint-timing/paint-timing-with-worker.html [ Pass Crash ]
-
 #rdar://82043074 ([Star wk2 Debug arm64,Sky/AzulE wk2 Guard-Malloc] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html is a flaky failure)
 imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html [ Pass Failure ]
 

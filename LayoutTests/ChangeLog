@@ -1,3 +1,12 @@
+2021-09-13  Eric Hutchison  <ehutchison@apple.com>
+
+        Updated test expectations for performance-api/paint-timing/paint-timing-with-worker.html.
+        <rdar://82036119>.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-13  Simon Fraser  <simon.fraser@apple.com>
 
         Update css/cssom-view WPT tests
