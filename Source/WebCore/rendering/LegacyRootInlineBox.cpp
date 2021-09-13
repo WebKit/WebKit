@@ -438,8 +438,8 @@ GapRects LegacyRootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const Lay
 
     GapRects result;
 
-    LegacyInlineBox* firstBox = firstSelectedBox();
-    LegacyInlineBox* lastBox = lastSelectedBox();
+    auto* firstBox = firstSelectedBox();
+    auto* lastBox = lastSelectedBox();
     if (leftGap) {
         result.uniteLeft(blockFlow().logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &firstBox->parent()->renderer(), LayoutUnit(firstBox->logicalLeft()),
             selTop, selHeight, cache, paintInfo));
@@ -505,7 +505,7 @@ RenderObject::HighlightState LegacyRootInlineBox::selectionState() const
     return state;
 }
 
-LegacyInlineBox* LegacyRootInlineBox::firstSelectedBox()
+const LegacyInlineBox* LegacyRootInlineBox::firstSelectedBox() const
 {
     for (auto* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)
@@ -514,7 +514,7 @@ LegacyInlineBox* LegacyRootInlineBox::firstSelectedBox()
     return nullptr;
 }
 
-LegacyInlineBox* LegacyRootInlineBox::lastSelectedBox()
+const LegacyInlineBox* LegacyRootInlineBox::lastSelectedBox() const
 {
     for (auto* box = lastLeafDescendant(); box; box = box->previousLeafOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)

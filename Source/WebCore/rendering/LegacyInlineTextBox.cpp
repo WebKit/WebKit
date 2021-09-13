@@ -161,28 +161,7 @@ bool LegacyInlineTextBox::isSelectable(unsigned startPosition, unsigned endPosit
 
 RenderObject::HighlightState LegacyInlineTextBox::selectionState() const
 {
-    auto state = renderer().view().selection().highlightStateForTextBox(renderer(), selectableRange());
-    
-    // FIXME: this code mutates selection state, but it's used at a simple getter elsewhere
-    // in this file. This code should likely live in HighlightData, or somewhere else.
-    // <rdar://problem/58125978>
-    // https://bugs.webkit.org/show_bug.cgi?id=205528
-    // If there are ellipsis following, make sure their selection is updated.
-    if (m_truncation != cNoTruncation && root().ellipsisBox()) {
-        LegacyEllipsisBox* ellipsis = root().ellipsisBox();
-        if (state != RenderObject::HighlightState::None) {
-            auto [selectionStart, selectionEnd] = selectionStartEnd();
-            // The ellipsis should be considered to be selected if the end of
-            // the selection is past the beginning of the truncation and the
-            // beginning of the selection is before or at the beginning of the
-            // truncation.
-            ellipsis->setSelectionState(selectionEnd >= m_truncation && selectionStart <= m_truncation ?
-                RenderObject::HighlightState::Inside : RenderObject::HighlightState::None);
-        } else
-            ellipsis->setSelectionState(RenderObject::HighlightState::None);
-    }
-    
-    return state;
+    return renderer().view().selection().highlightStateForTextBox(renderer(), selectableRange());
 }
 
 const FontCascade& LegacyInlineTextBox::lineFont() const

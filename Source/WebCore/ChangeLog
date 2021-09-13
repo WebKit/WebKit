@@ -1,3 +1,35 @@
+2021-09-13  Antti Koivisto  <antti@apple.com>
+
+        LegacyInlineTextBox::selectionState accessor mutates ellipsis selection state
+        https://bugs.webkit.org/show_bug.cgi?id=205528
+        <rdar://problem/58125978>
+
+        Reviewed by Alan Bujtas.
+
+        An accessor shouldn't mutate state.
+
+        * rendering/LegacyEllipsisBox.cpp:
+        (WebCore::LegacyEllipsisBox::paintSelection):
+
+        Also position ellipsis selection correctly when painting.
+
+        (WebCore::LegacyEllipsisBox::nodeAtPoint):
+        (WebCore::LegacyEllipsisBox::selectionState const):
+        * rendering/LegacyEllipsisBox.h:
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::selectionState const):
+
+        Compute the selection state of the ellipsis box by looking at the selection state of the
+        last text box on the line.
+
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::lineSelectionGap):
+        (WebCore::LegacyRootInlineBox::firstSelectedBox const):
+        (WebCore::LegacyRootInlineBox::lastSelectedBox const):
+        (WebCore::LegacyRootInlineBox::firstSelectedBox): Deleted.
+        (WebCore::LegacyRootInlineBox::lastSelectedBox): Deleted.
+        * rendering/LegacyRootInlineBox.h:
+
 2021-09-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         image-rendering: pixelated does not work with WebGL (but does with Canvas2D)

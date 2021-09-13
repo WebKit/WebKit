@@ -112,7 +112,7 @@ void LegacyEllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& 
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
-IntRect LegacyEllipsisBox::selectionRect()
+IntRect LegacyEllipsisBox::selectionRect() const
 {
     const RenderStyle& lineStyle = this->lineStyle();
     const FontCascade& font = lineStyle.fontCascade();
@@ -139,7 +139,7 @@ void LegacyEllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoi
     const LegacyRootInlineBox& rootBox = root();
     GraphicsContextStateSaver stateSaver(context);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    LayoutRect selectionRect { LayoutUnit(x() + paintOffset.x()), LayoutUnit(y() + paintOffset.y() + rootBox.selectionTop()), 0_lu, rootBox.selectionHeight() };
+    LayoutRect selectionRect { LayoutUnit(x() + paintOffset.x()), rootBox.selectionTop() + paintOffset.y(), 0_lu, rootBox.selectionHeight() };
     TextRun run = RenderBlock::constructTextRun(m_str, style, AllowRightExpansion);
     font.adjustSelectionRectForText(run, selectionRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
@@ -168,6 +168,21 @@ bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult
     }
 
     return false;
+}
+
+RenderObject::HighlightState LegacyEllipsisBox::selectionState() const
+{
+    auto* lastSelectedBox = root().lastSelectedBox();
+    if (!is<LegacyInlineTextBox>(lastSelectedBox))
+        return RenderObject::HighlightState::None;
+
+    auto& textBox = downcast<LegacyInlineTextBox>(*lastSelectedBox);
+
+    auto [selectionStart, selectionEnd] = textBox.selectionStartEnd();
+    if (selectionEnd >= textBox.truncation() && selectionStart <= textBox.truncation())
+        return RenderObject::HighlightState::Inside;
+
+    return RenderObject::HighlightState::None;
 }
 
 } // namespace WebCore

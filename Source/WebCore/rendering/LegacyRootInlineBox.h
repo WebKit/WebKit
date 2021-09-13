@@ -127,8 +127,8 @@ public:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
     RenderObject::HighlightState selectionState() const final;
-    LegacyInlineBox* firstSelectedBox();
-    LegacyInlineBox* lastSelectedBox();
+    const LegacyInlineBox* firstSelectedBox() const;
+    const LegacyInlineBox* lastSelectedBox() const;
 
     GapRects lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
