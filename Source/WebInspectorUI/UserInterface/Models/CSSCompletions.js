@@ -85,14 +85,14 @@ WI.CSSCompletions = class CSSCompletions
         if (WI.CSSCompletions.cssNameCompletions)
             return;
 
-        function propertyNamesCallback(error, names)
+        function propertiesCallback(error, cssProperties)
         {
             if (error)
                 return;
 
-            WI.CSSCompletions.cssNameCompletions = new WI.CSSCompletions(names, false);
+            WI.CSSCompletions.cssNameCompletions = new WI.CSSCompletions(cssProperties, false);
 
-            WI.CSSKeywordCompletions.addCustomCompletions(names);
+            WI.CSSKeywordCompletions.addCustomCompletions(cssProperties);
 
             // CodeMirror is not included by tests so we shouldn't assume it always exists.
             // If it isn't available we skip MIME type associations.
@@ -119,7 +119,7 @@ WI.CSSCompletions = class CSSCompletions
                 valueKeywordsForCodeMirror[codeMirrorPropertyName] = true;
             }
 
-            for (var property of names)
+            for (var property of cssProperties)
                 collectPropertyNameForCodeMirror(property.name);
 
             for (var propertyName in WI.CSSKeywordCompletions._propertyKeywordMap) {
@@ -164,7 +164,7 @@ WI.CSSCompletions = class CSSCompletions
             WI.CSSKeywordCompletions.addPropertyCompletionValues("font", fontFamilyNames);
         }
 
-        target.CSSAgent.getSupportedCSSProperties(propertyNamesCallback);
+        target.CSSAgent.getSupportedCSSProperties(propertiesCallback);
         if (target.hasCommand("CSS.getSupportedSystemFontFamilyNames"))
             target.CSSAgent.getSupportedSystemFontFamilyNames(fontFamilyNamesCallback);
     }

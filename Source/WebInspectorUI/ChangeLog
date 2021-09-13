@@ -1,3 +1,20 @@
+2021-09-13  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Update naming of WI.CSSCompletions callback used for collecting supported CSS properties from the target
+        https://bugs.webkit.org/show_bug.cgi?id=230153
+
+        Reviewed by Devin Rousso.
+
+        Rename `WI.CSSCompletions.initializeCSSCompletions.propertyNamesCallback(names)` to `propertiesCallback(properties)` 
+        to remove confusion about what the payload actually contains: not a list of property names, but a list of objects with 
+        CSS property names, values, aliases, longhands, etc.
+
+        The constructor of `WI.CSSCompletions` expects and handles this payload.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.initializeCSSCompletions):
+        (WI.CSSCompletions.initializeCSSCompletions.propertyNamesCallback): Deleted.
+
 2021-08-27  Russell Epstein  <repstein@apple.com>
 
         Land Windows build fixes from safari-612.1.29.14-branch.
