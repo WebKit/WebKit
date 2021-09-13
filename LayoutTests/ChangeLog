@@ -1,5 +1,14 @@
 2021-09-13  Eric Hutchison  <ehutchison@apple.com>
 
+        Remove test expectations for inspector/timeline/timeline-event-TimerInstall.html.
+        <rdar://82039288>.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-09-13  Eric Hutchison  <ehutchison@apple.com>
+
         Updated test expectations for performance-api/paint-timing/paint-timing-with-worker.html.
         <rdar://82036119>.
 

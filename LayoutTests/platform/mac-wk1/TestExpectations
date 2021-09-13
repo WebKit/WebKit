@@ -1386,9 +1386,6 @@ webkit.org/b/229058 imported/w3c/web-platform-tests/FileAPI/url/url-in-tags.wind
 imported/w3c/web-platform-tests/css/css-position/position-relative-003.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-position/position-relative-004.html [ Pass ImageOnlyFailure ]
 
-#rdar://82039288 ([Monterey wk1 Debug] inspector/timeline/timeline-event-TimerInstall.html is a flaky crash)
-inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ] 
-
 #rdar://82039967 [ Monterey Debug ] inspector/css/getMatchedStylesForNodeMarkerPseudoId.html is a flaky failure)
 inspector/css/getMatchedStylesForNodeMarkerPseudoId.html [ Pass Failure ]
 
