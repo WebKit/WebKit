@@ -1,3 +1,11 @@
+2021-09-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Fix non-unified builds
+
+        Unreviewed non-unified build fixes.
+
+        * workers/Worker.h: Add missing wtf/Deque.h header.
+
 2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontFaceSet.clear() should not clear CSS-connected members
