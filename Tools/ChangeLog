@@ -1,3 +1,14 @@
+2021-09-13  Aakash Jain  <aakash_jain@apple.com>
+
+        Reduce EWS email notifications to Aakash
+
+        Unreviewed. Do not email to Aakash anymore for every build/test failure. It was added initially so that I
+        can debug any issue in these email notifications. But these have been stable and I don't need a copy of every
+        EWS email.
+
+        * CISupport/ews-build/send_email.py:
+        (send_email_to_patch_author):
+
 2021-09-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, AutoInstall hotfix for Linux platforms
