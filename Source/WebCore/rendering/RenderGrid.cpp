@@ -1578,7 +1578,7 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
     LayoutUnit end;
     auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
     auto& outOfFlowItemLine = isRowAxis ? m_outOfFlowItemColumn : m_outOfFlowItemRow;
-    LayoutUnit borderEdge = isRowAxis ? borderLogicalLeft() : borderBefore();
+    LayoutUnit borderEdge = isRowAxis ? (style().isLeftToRightDirection() ? borderLogicalLeft() : borderLogicalRight()) : borderBefore();
     if (startIsAuto)
         start = resolveAutoStartGridPosition(direction) + borderEdge;
     else {
@@ -1626,7 +1626,7 @@ void RenderGrid::gridAreaPositionForOutOfFlowChild(const RenderBox& child, GridT
     LayoutUnit trackBreadth = GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction).value();
     bool isRowAxis = direction == ForColumns;
     auto& outOfFlowItemLine = isRowAxis ? m_outOfFlowItemColumn : m_outOfFlowItemRow;
-    start = isRowAxis ? borderLogicalLeft() : borderBefore();
+    start = isRowAxis ? (style().isLeftToRightDirection() ? borderLogicalLeft() : borderLogicalRight()) : borderBefore();
     if (auto line = outOfFlowItemLine.get(&child)) {
         auto& positions = isRowAxis ? m_columnPositions : m_rowPositions;
         start = positions[line.value()];

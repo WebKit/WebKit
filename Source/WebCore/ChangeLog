@@ -1,3 +1,16 @@
+2021-09-13  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] calling correct offset function for RTL for out of flow child
+        https://bugs.webkit.org/show_bug.cgi?id=229968
+
+        Reviewed by Javier Fernandez.
+
+        Handle RTL case to return the correct border values when calculating offsets for start and end edges
+        of a column for out of flow child.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::gridAreaPositionForOutOfFlowChild const):
+
 2021-09-13  Antti Koivisto  <antti@apple.com>
 
         Expose TextBoxSelectableRange in the iterator
