@@ -149,23 +149,6 @@ FlexFormattingState& LayoutState::establishedFlexFormattingState(const Container
     return *m_flexFormattingStates.get(&formattingContextRoot);
 }
 
-FormattingState& LayoutState::ensureFormattingState(const ContainerBox& formattingContextRoot)
-{
-    if (formattingContextRoot.establishesInlineFormattingContext())
-        return ensureInlineFormattingState(formattingContextRoot);
-
-    if (formattingContextRoot.establishesBlockFormattingContext())
-        return ensureBlockFormattingState(formattingContextRoot);
-
-    if (formattingContextRoot.establishesTableFormattingContext())
-        return ensureTableFormattingState(formattingContextRoot);
-
-    if (formattingContextRoot.establishesFlexFormattingContext())
-        return ensureFlexFormattingState(formattingContextRoot);
-
-    CRASH();
-}
-
 InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
@@ -179,7 +162,7 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerB
 
         // Otherwise, the formatting context inherits the floats from the parent formatting context.
         // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
-        auto& parentFormattingState = ensureFormattingState(formattingContextRoot.formattingContextRoot());
+        auto& parentFormattingState = establishedBlockFormattingState(formattingContextRoot.formattingContextRoot());
         auto& parentFloatingState = parentFormattingState.floatingState();
         return makeUnique<InlineFormattingState>(parentFloatingState, *this);
     };

@@ -52,7 +52,6 @@ public:
     LayoutState(const Document&, const ContainerBox& rootContainer);
     ~LayoutState();
 
-    FormattingState& ensureFormattingState(const ContainerBox& formattingContextRoot);
     InlineFormattingState& ensureInlineFormattingState(const ContainerBox& formattingContextRoot);
     BlockFormattingState& ensureBlockFormattingState(const ContainerBox& formattingContextRoot);
     TableFormattingState& ensureTableFormattingState(const ContainerBox& formattingContextRoot);

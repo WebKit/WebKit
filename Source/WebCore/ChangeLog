@@ -1,3 +1,15 @@
+2021-09-13  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Remove redundant LayoutState::ensureFormattingState
+        https://bugs.webkit.org/show_bug.cgi?id=229259
+
+        Reviewed by Antti Koivisto.
+
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::ensureInlineFormattingState): No need to call ensure*. There has to be a parent formatting state at this point.
+        (WebCore::Layout::LayoutState::ensureFormattingState): Deleted.
+        * layout/LayoutState.h:
+
 2021-09-13  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed build fix for Ubuntu LTS/Debian r282270 
