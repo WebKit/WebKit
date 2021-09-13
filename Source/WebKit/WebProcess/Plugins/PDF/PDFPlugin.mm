@@ -101,6 +101,7 @@
 #import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/WTFSemaphore.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
@@ -155,31 +156,49 @@ static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::
 
 @interface WKPDFPluginAccessibilityObject : NSObject {
     PDFLayerController *_pdfLayerController;
-    __unsafe_unretained NSObject *_parent;
+    WeakObjCPtr<NSObject> _parent;
     WebKit::PDFPlugin* _pdfPlugin;
+    WeakPtr<WebCore::HTMLPlugInElement> _pluginElement;
 }
 
 @property (assign) PDFLayerController *pdfLayerController;
-@property (assign) NSObject *parent;
 @property (assign) WebKit::PDFPlugin* pdfPlugin;
+@property (assign) WeakPtr<WebCore::HTMLPlugInElement> pluginElement;
 
-- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
+- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin andElement:(WebCore::HTMLPlugInElement *)element;
 
 @end
 
 @implementation WKPDFPluginAccessibilityObject
 
-@synthesize parent = _parent;
 @synthesize pdfPlugin = _pdfPlugin;
+@synthesize pluginElement = _pluginElement;
 
-- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin
+- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin andElement:(WebCore::HTMLPlugInElement *)element
 {
     if (!(self = [super init]))
         return nil;
 
     _pdfPlugin = plugin;
+    _pluginElement = makeWeakPtr(element);
 
     return self;
+}
+
+- (NSObject *)parent
+{
+    if (!_parent) {
+        if (auto* axObjectCache = _pdfPlugin->axObjectCache()) {
+            if (auto* pluginAxObject = axObjectCache->getOrCreate(_pluginElement.get()))
+                _parent = pluginAxObject->wrapper();
+        }
+    }
+    return _parent.get().get();
+}
+
+- (void)setParent:(NSObject *)parent
+{
+    _parent = parent;
 }
 
 - (PDFLayerController *)pdfLayerController
@@ -211,15 +230,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
-        return _parent;
+        return [self parent];
     if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
     if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityWindowAttribute];
     if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
         return [NSValue valueWithSize:_pdfPlugin->boundsOnScreen().size()];
     if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityEnabledAttribute];
     if ([attribute isEqualToString:NSAccessibilityPositionAttribute])
         return [NSValue valueWithPoint:_pdfPlugin->boundsOnScreen().location()];
 
@@ -228,7 +247,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
     if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityPrimaryScreenHeightAttribute];
+        return [[self parent] accessibilityAttributeValue:NSAccessibilityPrimaryScreenHeightAttribute];
+    if ([attribute isEqualToString:NSAccessibilitySubroleAttribute])
+        return @"AXPDFPluginSubrole";
 
     return 0;
 }
@@ -273,7 +294,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityFocusedAttribute,
         // PDFLayerController has its own accessibilityChildren.
         NSAccessibilityChildrenAttribute,
-        NSAccessibilityPrimaryScreenHeightAttribute
+        NSAccessibilityPrimaryScreenHeightAttribute,
+        NSAccessibilitySubroleAttribute
     ];
 
     return attributeNames.get().get();
@@ -346,10 +368,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return object->wrapper();
 }
 
+- (id)accessibilityHitTestIntPoint:(const WebCore::IntPoint&)point
+{
+    auto convertedPoint = _pdfPlugin->convertFromRootViewToPDFView(point);
+    return [_pdfLayerController accessibilityHitTest:convertedPoint];
+}
+
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    point = _pdfPlugin->convertFromRootViewToPDFView(WebCore::IntPoint(point));
-    return [_pdfLayerController accessibilityHitTest:point];
+    return [self accessibilityHitTestIntPoint:WebCore::IntPoint(point)];
 }
 
 @end
@@ -360,6 +387,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 @property (assign) WebKit::PDFPlugin* pdfPlugin;
+
+- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
 
 @end
 
@@ -394,6 +423,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 @property (assign) WebKit::PDFPlugin* pdfPlugin;
+
+- (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin;
 
 @end
 
@@ -595,12 +626,12 @@ static void getAllScriptsInPDFDocument(CGPDFDocumentRef pdfDocument, Vector<Reta
     }
 }
 
-Ref<PDFPlugin> PDFPlugin::create(WebFrame& frame)
+Ref<PDFPlugin> PDFPlugin::create(WebFrame& frame, HTMLPlugInElement* pluginElement)
 {
-    return adoptRef(*new PDFPlugin(frame));
+    return adoptRef(*new PDFPlugin(frame, pluginElement));
 }
 
-inline PDFPlugin::PDFPlugin(WebFrame& frame)
+inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
     : Plugin(PDFPluginType)
     , m_frame(makeWeakPtr(frame))
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
@@ -620,7 +651,8 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
     m_pdfLayerController.get().parentLayer = m_contentLayer.get();
 
-    if (isFullFramePlugin()) {
+    bool isFullFrame = isFullFramePlugin();
+    if (isFullFrame) {
         auto* document = frame.coreFrame()->document();
 
         // FIXME: <rdar://problem/75332948> get the background color from PDFKit instead of hardcoding it
@@ -639,9 +671,11 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame)
         document->bodyOrFrameset()->appendChild(*m_annotationContainer);
     }
 
-    m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this]);
+    m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:pluginElement]);
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
-    [m_accessibilityObject setParent:frame.page()->accessibilityRemoteObject()];
+    if (isFullFrame)
+        [m_accessibilityObject setParent:frame.page()->accessibilityRemoteObject()];
+    // If the plugin is not full-frame, we'll need to set the parent later after the AXObjectCache for the document has been initialized.
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
@@ -3026,7 +3060,12 @@ id PDFPlugin::accessibilityAssociatedPluginParentForElement(WebCore::Element* el
     return [m_activeAnnotation->annotation() accessibilityNode];
 }
 
-NSObject *PDFPlugin::accessibilityObject() const
+id PDFPlugin::accessibilityHitTest(const WebCore::IntPoint& point) const
+{
+    return [m_accessibilityObject accessibilityHitTestIntPoint:point];
+}
+
+id PDFPlugin::accessibilityObject() const
 {
     return m_accessibilityObject.get();
 }

@@ -1,3 +1,65 @@
+2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make PDFs loaded via <embed> accessible
+        https://bugs.webkit.org/show_bug.cgi?id=229556
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        This patch makes PDFs loaded in `<embed>` elements accessible to
+        clients by exposing the underlying `WKPDFPluginAccessibilityObject`
+        created by PDF plugins.
+
+        Full-frame PDF accessibility support (e.g. file:///path/to/example.pdf) was
+        implemented in https://bugs.webkit.org/show_bug.cgi?id=170589, but this
+        wasn't sufficient for PDFs loaded in `<embed>`s.
+
+        This patch only implements `<embed>` PDF support for Mac - iOS support will
+        need to follow in a separate patch.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFPluginAccessibilityObject initWithPDFPlugin:andElement:]):
+        Change this method to also accept the `HTMLPlugInElement` that the plugin
+        originates from.
+        (-[WKPDFPluginAccessibilityObject parent]):
+        Added. Returns the cached parent if present, otherwises tries to cache
+        the parent in the form of the `HTMLPlugInElement` that the plugin
+        originates from.
+        (-[WKPDFPluginAccessibilityObject setParent:]): Added.
+        (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:]):
+        Query against newly added `parent` getter when fulfilling attribute
+        value requests.
+        (-[WKPDFPluginAccessibilityObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WKPDFPluginAccessibilityObject accessibilityHitTestIntPoint:]): Added.
+        (-[WKPDFPluginAccessibilityObject accessibilityHitTest:]):
+        Changed to convert `NSPoint` to `WebCore::IntPoint` and call
+        `accessibilityHitTestIntPoint`.
+        (WebKit::PDFPlugin::create):
+        Add parameter to accept the `HTMLPlugInElement` that the plugin
+        originates from.
+        (WebKit::PDFPlugin::PDFPlugin):
+        Add parameter to accept the `HTMLPlugInElement` that the plugin
+        originates from.
+        (WebKit::PDFPlugin::accessibilityHitTest const): Added.
+        (-[WKPDFPluginAccessibilityObject initWithPDFPlugin:]): Deleted.
+
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::accessibilityHitTest const): Added.
+        (WebKit::Plugin::accessibilityObject const): Change the return type to
+        `id` as that is more common practice.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add `id accessibilityHitTest` and change `accessibilityObject()`
+        to return `id`.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::accessibilityObject const): Change return type to
+        `id`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Pass the originating `pluginElement` to `PDFPlugin::create`.
+
 2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to r282320 - avoid a potential memory leak

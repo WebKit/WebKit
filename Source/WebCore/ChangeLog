@@ -1,3 +1,53 @@
+2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make PDFs loaded via <embed> accessible
+        https://bugs.webkit.org/show_bug.cgi?id=229556
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        This patch makes PDFs loaded in `<embed>` elements accessible to
+        clients by exposing the underlying `WKPDFPluginAccessibilityObject`
+        created by PDF plugins.
+
+        Full-frame PDF accessibility support (e.g. file:///path/to/example.pdf) was
+        implemented in https://bugs.webkit.org/show_bug.cgi?id=170589, but this
+        wasn't sufficient for PDFs loaded in `<embed>`s.
+
+        This patch only implements `<embed>` PDF support for Mac - iOS support will
+        need to follow in a separate patch.
+
+        Test: accessibility/mac/basic-embed-pdf-accessibility.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        Change comment that suggests PluginViewBase Widgets are not supported,
+        because they are now.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isAttachment const):
+        Don't consider plugins to be attachments since they need to be handled
+        differently.
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+        Don't ignore widgets with underlying accessibilty objects (such as PDF
+        plugins).
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper renderWidgetChildren]):
+        Extract underlying accessibility object from widgets that have one.
+        (-[WebAccessibilityObjectWrapper accessibilityHitTest:]):
+        Forward hit test to underlying plugin accessibility object if one
+        exists.
+        (isMatchingPlugin): Added.
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        Match `renderWidgetChildren` for searches with `SearchKey::AnyType`
+        criteria.
+
+        * platform/Widget.h:
+        (WebCore::Widget::accessibilityHitTest const): Added this virtual
+        method.
+        (WebCore::Widget::accessibilityObject const): Added this virtual
+        method.
+
 2021-09-13  Sam Sneddon  <gsnedders@apple.com>
 
         Move ENABLE_RESOLUTION_MEDIA_QUERY to a runtime flag, start running tests again

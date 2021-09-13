@@ -76,6 +76,7 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "PathUtilities.h"
+#include "PluginViewBase.h"
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RenderButton.h"
@@ -531,6 +532,11 @@ bool AccessibilityRenderObject::isAttachment() const
     RenderBoxModelObject* renderer = renderBoxModelObject();
     if (!renderer)
         return false;
+
+    // Although plugins are also a type of widget, we need to treat them differently than attachments.
+    if (is<PluginViewBase>(widget()))
+        return false;
+
     // Widgets are the replaced elements that we represent to AX as attachments
     bool isWidget = renderer->isWidget();
 
@@ -1344,6 +1350,12 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     // Allow the platform to decide if the attachment is ignored or not.
     if (isAttachment())
         return accessibilityIgnoreAttachment();
+
+#if PLATFORM(COCOA)
+    // If this widget has an underlying AX object, don't ignore it.
+    if (widget() && widget()->accessibilityObject())
+        return false;
+#endif
     
     // ignore popup menu items because AppKit does
     if (m_renderer && ancestorsOfType<RenderMenuList>(*m_renderer).first())

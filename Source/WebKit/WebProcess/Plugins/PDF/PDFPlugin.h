@@ -82,7 +82,7 @@ struct FrameInfoData;
 class PDFPlugin final : public Plugin, public WebCore::ScrollableArea
 {
 public:
-    static Ref<PDFPlugin> create(WebFrame&);
+    static Ref<PDFPlugin> create(WebFrame&, WebCore::HTMLPlugInElement*);
     ~PDFPlugin();
 
     static WebCore::PluginInfo pluginInfo();
@@ -156,7 +156,7 @@ public:
 #endif
 
 private:
-    explicit PDFPlugin(WebFrame&);
+    explicit PDFPlugin(WebFrame&, WebCore::HTMLPlugInElement*);
 
     // Plugin functions.
     bool initialize(const Parameters&) final;
@@ -213,7 +213,8 @@ private:
     
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const final { return m_pdfDocument; }
     WebCore::FloatSize pdfDocumentSizeForPrinting() const final;
-    NSObject *accessibilityObject() const final;
+    id accessibilityHitTest(const WebCore::IntPoint&) const final;
+    id accessibilityObject() const final;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const final;
 
     unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount) final;

@@ -545,7 +545,7 @@ id PluginView::accessibilityAssociatedPluginParentForElement(Element* element) c
     return m_plugin->accessibilityAssociatedPluginParentForElement(element);
 }
     
-NSObject *PluginView::accessibilityObject() const
+id PluginView::accessibilityObject() const
 {
     if (!m_isInitialized || !m_plugin)
         return 0;

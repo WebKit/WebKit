@@ -1,3 +1,17 @@
+2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Make PDFs loaded via <embed> accessible
+        https://bugs.webkit.org/show_bug.cgi?id=229556
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        Add a test ensuring the PDF accessibility tree of PDFs loaded via
+        `<embed>` elements is accessible.
+
+        * accessibility/mac/basic-embed-pdf-accessibility-expected.txt: Added.
+        * accessibility/mac/basic-embed-pdf-accessibility.html: Added.
+        * accessibility/resources/simple-webkit-pages.pdf: Added.
+
 2021-09-13  Sam Sneddon  <gsnedders@apple.com>
 
         Move ENABLE_RESOLUTION_MEDIA_QUERY to a runtime flag, start running tests again
