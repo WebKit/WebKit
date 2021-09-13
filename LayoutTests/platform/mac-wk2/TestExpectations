@@ -1598,9 +1598,6 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 [ Monterey Release ] platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html [ Pass Crash ]
 [ Monterey Release ] media/media-fragments/TC0004.html [ Pass Timeout ]
 
-#rdar://82034073 ([Monterey wk2 Release] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html is flaky image-only fail)
-[ Monterey Release ] security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html  [ Pass Failure ]
-
 #rdar://82035182 ([Monterey wk2 Release] performance-api/performance-observer-no-document-leak.html is a flaky crash)
 performance-api/performance-observer-no-document-leak.html [ Pass Crash ]
 

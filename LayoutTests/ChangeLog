@@ -1,5 +1,14 @@
 2021-09-13  Eric Hutchison  <ehutchison@apple.com>
 
+        Updated test expectations for security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html.
+        <rdar://82034073>.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-09-13  Eric Hutchison  <ehutchison@apple.com>
+
         Update test expectations for css3/background/background-repeat-round-padding.html and css3/background/background-repeat-round-border.html.
         <rdar://82000141>.
 
