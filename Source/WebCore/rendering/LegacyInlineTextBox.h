@@ -24,12 +24,12 @@
 
 #include "LegacyInlineBox.h"
 #include "RenderText.h"
+#include "TextBoxSelectableRange.h"
 #include "TextRun.h"
 
 namespace WebCore {
 
 class RenderCombineText;
-struct TextBoxSelectableRange;
 
 const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;
