@@ -46,7 +46,7 @@ inline Layout::LineGeometry::EnclosingTopAndBottom operator+(const Layout::LineG
     return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
 }
 
-inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::InlineLayoutUnit lineBoxLogicalWidth, Layout::InlineLayoutUnit lineContentLogicalWidth)
+inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::InlineLayoutUnit lineContentLogicalWidth)
 {
     // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
     auto endPadding = flow.hasNonVisibleOverflow() ? flow.paddingEnd() : 0_lu;
@@ -54,13 +54,11 @@ inline static float lineOverflowWidth(const RenderBlockFlow& flow, Layout::Inlin
         endPadding = flow.endPaddingWidthForCaret();
     if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && flow.element()->isRootEditableElement())
         endPadding = 1;
-    lineContentLogicalWidth += endPadding;
-    return std::max(lineBoxLogicalWidth, lineContentLogicalWidth);
+    return lineContentLogicalWidth + endPadding;
 }
 
-InlineContentBuilder::InlineContentBuilder(const Layout::LayoutState& layoutState, const RenderBlockFlow& blockFlow, const BoxTree& boxTree)
-    : m_layoutState(layoutState)
-    , m_blockFlow(blockFlow)
+InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, const BoxTree& boxTree)
+    : m_blockFlow(blockFlow)
     , m_boxTree(boxTree)
 {
 }
@@ -80,9 +78,9 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
     inlineContent.lines.reserveInitialCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
-        auto& lineBoxLogicalRect = line.lineBoxLogicalRect();
-        // FIXME: This is where the logical to physical translate should happen.
-        auto scrollableOverflowRect = FloatRect { lineBoxLogicalRect.left(), lineBoxLogicalRect.top(), lineOverflowWidth(m_blockFlow, lineBoxLogicalRect.width(), line.contentLogicalWidth()), lineBoxLogicalRect.height() };
+        auto scrollableOverflowRect = FloatRect { line.scrollableOverflow() };
+        if (auto overflowWidth = lineOverflowWidth(m_blockFlow, line.contentLogicalWidth()); overflowWidth > scrollableOverflowRect.width())
+            scrollableOverflowRect.setWidth(overflowWidth);
 
         auto firstRunIndex = runIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
@@ -93,17 +91,6 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
             lineInkOverflowRect.unite(run.inkOverflow());
 
             auto& layoutBox = run.layoutBox();
-            if (run.isNonRootInlineBox()) {
-                // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
-                auto hasScrollableContent = [&] {
-                    // In standards mode, inline boxes always start with an imaginary strut.
-                    auto& boxGeometry = inlineFormattingState.boxGeometry(layoutBox);
-                    return m_layoutState.inStandardsMode() || run.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
-                };
-                if (hasScrollableContent())
-                    scrollableOverflowRect.unite(run.logicalRect());
-                continue;
-            }
             if (layoutBox.isReplacedBox()) {
                 // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
                 auto& box = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
@@ -116,15 +103,11 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
                 auto childScrollableOverflow = box.logicalLayoutOverflowRectForPropagation(&box.parent()->style());
                 childScrollableOverflow.move(runLogicalRect.left(), runLogicalRect.top());
                 scrollableOverflowRect.unite(childScrollableOverflow);
-                continue;
             }
         }
-
-        auto adjustedLineBoxRect = FloatRect { lineBoxLogicalRect };
-        // Final enclosing top and bottom values are in the same coordinate space as the line itself.
-        auto enclosingTopAndBottom = line.enclosingTopAndBottom() + lineBoxLogicalRect.top();
+        auto lineBoxLogicalRect = FloatRect { line.lineBoxLogicalRect() };
         auto runCount = runIndex - firstRunIndex;
-        inlineContent.lines.append({ firstRunIndex, runCount, adjustedLineBoxRect, enclosingTopAndBottom.top, enclosingTopAndBottom.bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
+        inlineContent.lines.append({ firstRunIndex, runCount, lineBoxLogicalRect, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
     }
 }
 

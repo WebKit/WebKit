@@ -120,28 +120,40 @@ LineBoxBuilder::LineBoxAndGeometry LineBoxBuilder::build(const LineBuilder::Line
 
     auto lineGeometry = [&] {
         auto lineBoxLogicalRect = InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
+        auto scrollableOverflowRect = lineBoxLogicalRect;
         auto& rootInlineBox = lineBox.rootInlineBox();
-        auto enclosingTopAndBottom = LineGeometry::EnclosingTopAndBottom { rootInlineBox.logicalTop(), rootInlineBox.logicalBottom() };
+        auto enclosingTopAndBottom = LineGeometry::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBox.logicalTop(), lineBoxLogicalRect.top() + rootInlineBox.logicalBottom() };
 
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-            if (!inlineLevelBox.isAtomicInlineLevelBox() || !inlineLevelBox.isInlineBox())
+            if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox())
                 continue;
 
             auto& layoutBox = inlineLevelBox.layoutBox();
             auto borderBox = InlineRect { };
 
-            if (inlineLevelBox.isAtomicInlineLevelBox())
+            if (inlineLevelBox.isAtomicInlineLevelBox()) {
                 borderBox = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingContext().geometryForBox(layoutBox));
-            else if (inlineLevelBox.isInlineBox())
-                borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingContext().geometryForBox(layoutBox));
-            else
+                borderBox.moveBy(lineBoxLogicalRect.topLeft());
+            } else if (inlineLevelBox.isInlineBox()) {
+                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+                borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
+                borderBox.moveBy(lineBoxLogicalRect.topLeft());
+                // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
+                auto hasScrollableContent = [&] {
+                    // In standards mode, inline boxes always start with an imaginary strut.
+                    return layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+                };
+                if (lineBox.hasContent() && hasScrollableContent()) {
+                    // Empty lines (e.g. continuation pre/post blocks) don't expect scrollbar overflow.
+                    scrollableOverflowRect.expandToContain(borderBox);
+                }
+            } else
                 ASSERT_NOT_REACHED();
 
-            borderBox.moveBy(lineBoxLogicalRect.topLeft());
             enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top());
             enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom());
         }
-        return LineGeometry { lineBoxLogicalRect, enclosingTopAndBottom, rootInlineBox.logicalTop() + rootInlineBox.baseline(), rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth() };
+        return LineGeometry { lineBoxLogicalRect, scrollableOverflowRect, enclosingTopAndBottom, rootInlineBox.logicalTop() + rootInlineBox.baseline(), rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth() };
     };
     return { lineBox, lineGeometry() };
 }
