@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
                 text run at (22,77) width 48: " around"
                 text run at (2,95) width 61: "the image"
             RenderTableCell {TD} at (78,48) size 702x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x18
-                text run at (2,3) width 12: "X"
+              RenderText {#text} at (2,1) size 12x19
+                text run at (2,2) width 12: "X"
       RenderBlock {HR} at (0,129) size 77x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,139) size 784x153 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x151
@@ -35,8 +35,8 @@ layer at (0,0) size 800x600
                 text run at (2,109) width 10: "ff"
                 text run at (2,127) width 16: "gg"
             RenderTableCell {TD} at (28,64) size 752x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x18
-                text run at (2,3) width 12: "X"
+              RenderText {#text} at (2,1) size 12x19
+                text run at (2,2) width 12: "X"
       RenderBlock {HR} at (0,300) size 77x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,310) size 784x49 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x47
@@ -48,8 +48,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (22,23) size 105x17
                 text run at (22,23) width 105: " aroundtheimage"
             RenderTableCell {TD} at (217,12) size 563x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x18
-                text run at (2,3) width 12: "X"
+              RenderText {#text} at (2,1) size 12x19
+                text run at (2,2) width 12: "X"
       RenderBlock {HR} at (0,367) size 77x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,377) size 784x31 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x29
@@ -61,5 +61,5 @@ layer at (0,0) size 800x600
               RenderText {#text} at (231,5) size 101x17
                 text run at (231,5) width 101: "aroundtheimage"
             RenderTableCell {TD} at (338,3) size 442x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 12x18
-                text run at (2,3) width 12: "X"
+              RenderText {#text} at (2,1) size 12x19
+                text run at (2,2) width 12: "X"

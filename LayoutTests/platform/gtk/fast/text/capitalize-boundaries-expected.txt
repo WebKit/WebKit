@@ -40,15 +40,15 @@ layer at (0,0) size 785x1199
                 text run at (2,2) width 24: "\x{175}yl"
           RenderTableRow {TR} at (0,86) size 769x23
             RenderTableCell {TH} at (2,86) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (21,2) size 11x18
-                text run at (21,3) width 11: "el"
+              RenderText {#text} at (21,1) size 11x19
+                text run at (21,2) width 11: "el"
             RenderTableCell {TD} at (57,86) size 710x23 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 204x17
                 text run at (2,3) width 204: "\x{3B3}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3C3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{3AE}\x{3C4}\x{3B1}"
           RenderTableRow {TR} at (0,111) size 769x59
             RenderTableCell {TH} at (2,129) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 17x18
-                text run at (18,3) width 17: "en"
+              RenderText {#text} at (18,1) size 17x19
+                text run at (18,2) width 17: "en"
             RenderTableCell {TD} at (57,111) size 710x59 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 425x17
                 text run at (2,2) width 425: "'cept nut'in safari\x{2019}s \x{2018}sure\x{2019} nai\x{308}ve r\x{E9}sum\x{E9}\x{2014}h\x{E1}c\x{30C}ek full\x{2010}time one-to-one"
@@ -83,8 +83,8 @@ layer at (0,0) size 785x1199
                 text run at (2,2) width 63: "\x{A1}jalape\x{F1}o!"
           RenderTableRow {TR} at (0,196) size 769x27
             RenderTableCell {TH} at (2,198) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 13x18
-                text run at (20,3) width 13: "fr"
+              RenderText {#text} at (20,1) size 13x19
+                text run at (20,2) width 13: "fr"
             RenderTableCell {TD} at (57,196) size 710x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,7) size 207x17
                 text run at (2,7) width 207: "quelqu'un l\x{2019}amour t'appelles\x{2011}tu 3"
@@ -93,8 +93,8 @@ layer at (0,0) size 785x1199
                   text run at (209,2) width 22: "eme"
           RenderTableRow {TR} at (0,225) size 769x23
             RenderTableCell {TH} at (2,225) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,2) size 19x18
-                text run at (17,3) width 19: "hu"
+              RenderText {#text} at (17,1) size 19x19
+                text run at (17,2) width 19: "hu"
             RenderTableCell {TD} at (57,225) size 710x23 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 109x17
                 text run at (2,3) width 109: "11-ei london\x{2011}ban"
@@ -149,8 +149,8 @@ layer at (0,0) size 785x1199
                 text run at (2,2) width 27: "\x{174}yl"
           RenderTableRow {TR} at (0,86) size 769x23
             RenderTableCell {TH} at (2,86) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (21,2) size 11x18
-                text run at (21,3) width 11: "el"
+              RenderText {#text} at (21,1) size 11x19
+                text run at (21,2) width 11: "el"
             RenderTableCell {TD} at (57,86) size 710x23 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 211x17
                 text run at (2,3) width 211: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
@@ -176,8 +176,8 @@ layer at (0,0) size 785x1199
                 text run at (2,2) width 65: "\x{A1}Jalape\x{F1}o!"
           RenderTableRow {TR} at (0,197) size 769x27
             RenderTableCell {TH} at (2,199) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 13x18
-                text run at (20,3) width 13: "fr"
+              RenderText {#text} at (20,1) size 13x19
+                text run at (20,2) width 13: "fr"
             RenderTableCell {TD} at (57,197) size 710x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,7) size 227x17
                 text run at (2,7) width 227: "Quelqu'un l\x{2019}Amour t'Appelles\x{2011}Tu 3"
@@ -186,8 +186,8 @@ layer at (0,0) size 785x1199
                   text run at (228,2) width 23: "eme"
           RenderTableRow {TR} at (0,226) size 769x23
             RenderTableCell {TH} at (2,226) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,2) size 19x18
-                text run at (17,3) width 19: "hu"
+              RenderText {#text} at (17,1) size 19x19
+                text run at (17,2) width 19: "hu"
             RenderTableCell {TD} at (57,226) size 710x23 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 115x17
                 text run at (2,3) width 115: "11-ei London\x{2011}ban"
@@ -242,15 +242,15 @@ layer at (0,0) size 785x1199
                 text run at (2,2) width 27: "\x{174}yl"
           RenderTableRow {TR} at (0,86) size 769x23
             RenderTableCell {TH} at (2,86) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (21,2) size 11x18
-                text run at (21,3) width 11: "el"
+              RenderText {#text} at (21,1) size 11x19
+                text run at (21,2) width 11: "el"
             RenderTableCell {TD} at (57,86) size 710x23 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 211x17
                 text run at (2,3) width 211: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
           RenderTableRow {TR} at (0,111) size 769x59
             RenderTableCell {TH} at (2,129) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 17x18
-                text run at (18,3) width 17: "en"
+              RenderText {#text} at (18,1) size 17x19
+                text run at (18,2) width 17: "en"
             RenderTableCell {TD} at (57,111) size 710x59 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 476x17
                 text run at (2,2) width 476: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Nai\x{308}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}c\x{30C}ek Full\x{2010}Time One-To-One"
@@ -285,8 +285,8 @@ layer at (0,0) size 785x1199
                 text run at (2,2) width 65: "\x{A1}Jalape\x{F1}o!"
           RenderTableRow {TR} at (0,196) size 769x27
             RenderTableCell {TH} at (2,198) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 13x18
-                text run at (20,3) width 13: "fr"
+              RenderText {#text} at (20,1) size 13x19
+                text run at (20,2) width 13: "fr"
             RenderTableCell {TD} at (57,196) size 710x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,7) size 227x17
                 text run at (2,7) width 227: "Quelqu'un L\x{2019}amour T'appelles\x{2011}Tu 3"
@@ -295,8 +295,8 @@ layer at (0,0) size 785x1199
                   text run at (228,2) width 23: "eme"
           RenderTableRow {TR} at (0,225) size 769x23
             RenderTableCell {TH} at (2,225) size 53x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (17,2) size 19x18
-                text run at (17,3) width 19: "hu"
+              RenderText {#text} at (17,1) size 19x19
+                text run at (17,2) width 19: "hu"
             RenderTableCell {TD} at (57,225) size 710x23 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
               RenderText {#text} at (2,3) size 121x17
                 text run at (2,3) width 121: "11-Ei London\x{2011}Ban"

@@ -79,31 +79,31 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 28: "after"
             RenderTableRow {TR} at (0,108) size 784x33
               RenderTableCell {TD} at (2,114) size 340x21 [r=4 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 224x18
-                  text run at (1,2) width 224: "button with value property changed"
+                RenderText {#text} at (1,0) size 224x19
+                  text run at (1,1) width 224: "button with value property changed"
               RenderTableCell {TD} at (343,108) size 313x33 [r=4 c=1 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 47x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 31x18
                     RenderText at (0,0) size 31x17
                       text run at (0,0) width 31: "after"
               RenderTableCell {TD} at (657,114) size 62x21 [r=4 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 28x18
-                  text run at (1,2) width 28: "after"
+                RenderText {#text} at (1,0) size 28x19
+                  text run at (1,1) width 28: "after"
               RenderTableCell {TD} at (721,114) size 61x21 [r=4 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 28x18
-                  text run at (1,2) width 28: "after"
+                RenderText {#text} at (1,0) size 28x19
+                  text run at (1,1) width 28: "after"
             RenderTableRow {TR} at (0,143) size 784x23
               RenderTableCell {TD} at (2,144) size 340x21 [r=5 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 222x18
-                  text run at (1,2) width 222: "image with value property changed"
+                RenderText {#text} at (1,0) size 222x19
+                  text run at (1,1) width 222: "image with value property changed"
               RenderTableCell {TD} at (343,143) size 313x23 [r=5 c=1 rs=1 cs=1]
                 RenderImage {INPUT} at (1,1) size 49x21
               RenderTableCell {TD} at (657,144) size 62x21 [r=5 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 28x18
-                  text run at (1,2) width 28: "after"
+                RenderText {#text} at (1,0) size 28x19
+                  text run at (1,1) width 28: "after"
               RenderTableCell {TD} at (721,144) size 61x21 [r=5 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 28x18
-                  text run at (1,2) width 28: "after"
+                RenderText {#text} at (1,0) size 28x19
+                  text run at (1,1) width 28: "after"
             RenderTableRow {TR} at (0,168) size 784x20
               RenderTableCell {TD} at (2,168) size 340x20 [r=6 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 216x17
@@ -194,8 +194,8 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 28: "after"
             RenderTableRow {TR} at (0,404) size 784x33
               RenderTableCell {TD} at (2,410) size 340x21 [r=13 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 204x18
-                  text run at (1,2) width 204: "file with value property changed"
+                RenderText {#text} at (1,0) size 204x19
+                  text run at (1,1) width 204: "file with value property changed"
               RenderTableCell {TD} at (343,404) size 313x33 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (3,3) size 306x27 "no file selected"
                   RenderButton {INPUT} at (0,0) size 103x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -204,8 +204,8 @@ layer at (0,0) size 800x600
                         text run at (0,0) width 87: "Choose File"
               RenderTableCell {TD} at (657,419) size 62x3 [r=13 c=2 rs=1 cs=1]
               RenderTableCell {TD} at (721,410) size 61x21 [r=13 c=3 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 40x18
-                  text run at (1,2) width 40: "before"
+                RenderText {#text} at (1,0) size 40x19
+                  text run at (1,1) width 40: "before"
 layer at (357,134) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
     RenderText {#text} at (0,0) size 45x17

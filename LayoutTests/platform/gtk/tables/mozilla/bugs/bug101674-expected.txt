@@ -13,8 +13,8 @@ layer at (0,0) size 785x1582
               RenderImage {IMG} at (266,2) size 88x65
               RenderImage {IMG} at (354,2) size 88x65
             RenderTableCell {TD} at (448,25) size 317x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 157x18
-                text run at (2,3) width 157: "Nothing between images"
+              RenderText {#text} at (2,1) size 157x19
+                text run at (2,2) width 157: "Nothing between images"
       RenderTable {TABLE} at (0,75) size 769x335 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x333
           RenderTableRow {TR} at (0,2) size 767x329
@@ -29,8 +29,8 @@ layer at (0,0) size 785x1582
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (2,262) size 88x65
             RenderTableCell {TD} at (96,155) size 669x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 149x18
-                text run at (2,3) width 149: "Spaces between images"
+              RenderText {#text} at (2,1) size 149x19
+                text run at (2,2) width 149: "Spaces between images"
       RenderTable {TABLE} at (0,410) size 769x335 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x333
           RenderTableRow {TR} at (0,2) size 767x329
@@ -45,8 +45,8 @@ layer at (0,0) size 785x1582
               RenderText {#text} at (0,0) size 0x0
               RenderImage {IMG} at (2,262) size 88x65
             RenderTableCell {TD} at (96,155) size 669x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 165x18
-                text run at (2,3) width 165: "Newlines between images"
+              RenderText {#text} at (2,1) size 165x19
+                text run at (2,2) width 165: "Newlines between images"
       RenderTable {TABLE} at (0,745) size 769x79 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x77
           RenderTableRow {TR} at (0,2) size 767x73
@@ -67,8 +67,8 @@ layer at (0,0) size 785x1582
                 text run at (476,53) width 29: "Five"
               RenderImage {IMG} at (504,2) size 89x65
             RenderTableCell {TD} at (598,27) size 167x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 133x18
-                text run at (2,3) width 133: "Text between images"
+              RenderText {#text} at (2,1) size 133x19
+                text run at (2,2) width 133: "Text between images"
       RenderTable {TABLE} at (0,824) size 769x369 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x367
           RenderTableRow {TR} at (0,2) size 767x363
@@ -89,8 +89,8 @@ layer at (0,0) size 785x1582
                 text run at (90,278) width 28: "Five"
               RenderImage {IMG} at (2,296) size 88x65
             RenderTableCell {TD} at (133,172) size 632x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 210x18
-                text run at (2,3) width 210: "Text with spaces between images"
+              RenderText {#text} at (2,1) size 210x19
+                text run at (2,2) width 210: "Text with spaces between images"
       RenderTable {TABLE} at (0,1193) size 769x373 [border: (1px solid #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x371
           RenderTableRow {TR} at (0,2) size 767x367
@@ -116,5 +116,5 @@ layer at (0,0) size 785x1582
                 text run at (2,347) width 7: "e"
               RenderImage {IMG} at (9,296) size 88x65
             RenderTableCell {TD} at (141,174) size 624x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 300x18
-                text run at (2,3) width 300: "Text with spaces and more text between images"
+              RenderText {#text} at (2,1) size 300x19
+                text run at (2,2) width 300: "Text with spaces and more text between images"

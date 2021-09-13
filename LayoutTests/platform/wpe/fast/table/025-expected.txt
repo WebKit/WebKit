@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x43
           RenderTableRow {TR} at (0,0) size 784x43
             RenderTableCell {TD} at (0,8) size 208x27 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 8x18
-                text run at (4,5) width 8: "d"
+              RenderText {#text} at (4,3) size 8x19
+                text run at (4,4) width 8: "d"
             RenderTableCell {TD} at (207,0) size 342x43 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 333x35
                 RenderTableSection {TBODY} at (0,0) size 333x35
@@ -52,8 +52,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 784x43
           RenderTableRow {TR} at (0,0) size 784x43
             RenderTableCell {TD} at (0,8) size 220x27 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 8x18
-                text run at (4,5) width 8: "d"
+              RenderText {#text} at (4,3) size 8x19
+                text run at (4,4) width 8: "d"
             RenderTableCell {TD} at (219,0) size 329x43 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 321x35
                 RenderTableSection {TBODY} at (0,0) size 321x35
