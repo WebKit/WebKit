@@ -1,3 +1,29 @@
+==================
+WPE WebKit 2.33.90
+==================
+
+What's new in WPE WebKit 2.33.90?
+
+  - Add new API to access/modify capture devices states.
+  - Add new API to configure the memory pressure handler.
+  - Add multi-track support to media backend.
+  - Add support for A420 compositing in the media player.
+  - Add support for authentication using client side certificates.
+  - Add support for dark scrollbars.
+  - Add support for display capture.
+  - Add support for drawing the scrollbars corner.
+  - Add support for the Fullscreen API, which needs libwpe 1.11.1 or newer.
+  - Add support for the color-schemes CSS property.
+  - Allow to opt-out of GL rendering at runtime for the media player.
+  - Avoid strong alias computations in font fallback code.
+  - Fix cookies configuration after a network process crash.
+  - Fix deadlock tearing down pipeline when using fallback sink.
+  - Fix rendering of elliptic radial gradients.
+  - Fix several crashes and rendering issues.
+  - Fix touchscreen navigation swipe when the page scrolls horizontally.
+  - Improve pinch to zoom gesture in accerlerated compositing mode.
+  - Show TLS protocol version and ciphersuite in the inspector when building with libsoup3.
+
 =================
 WPE WebKit 2.33.2
 =================
