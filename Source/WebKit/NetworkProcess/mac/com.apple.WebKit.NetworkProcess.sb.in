@@ -358,6 +358,7 @@
 )
 
 (allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
+(allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))
 
 (with-filter (uid 0)
     (allow mach-lookup

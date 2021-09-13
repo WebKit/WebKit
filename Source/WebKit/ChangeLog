@@ -1,3 +1,66 @@
+2021-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add unit test that uses PCM daemon
+        https://bugs.webkit.org/show_bug.cgi?id=230191
+
+        Reviewed by Chris Dumez.
+
+        I make a way to specify what mach service to connect to,
+        then I temporarily register an executable with launchd to provide that mach service,
+        then I run the test communicating with that executable.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::managerOrProxy):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp:
+        (WebKit::PCM::Connection::Connection):
+        (WebKit::PCM::Connection::send const):
+        (WebKit::PCM::Connection::sendWithReply const):
+        (WebKit::PCM::Connection::connectionToDaemon): Deleted.
+        (WebKit::PCM::Connection::send): Deleted.
+        (WebKit::PCM::Connection::sendWithReply): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        (WebKit::PCM::managerPointer):
+        (WebKit::PCM::initializePCMStorageInDirectory):
+        (WebKit::PCM::daemonManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        (WebKit::PCM::ManagerProxy::sendMessage const):
+        (WebKit::PCM::ManagerProxy::sendMessageWithReply const):
+        (WebKit::PCM::ManagerProxy::ManagerProxy):
+        (WebKit::PCM::sendMessage): Deleted.
+        (WebKit::PCM::sendMessageWithReply): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementDaemonConnectionCocoa.mm:
+        (WebKit::PCM::Connection::Connection):
+        (WebKit::PCM::Connection::initializeConnectionIfNeeded const):
+        (WebKit::PCM::Connection::send const):
+        (WebKit::PCM::Connection::sendWithReply const):
+        (WebKit::PCM::Connection::connectionToDaemon): Deleted.
+        (WebKit::PCM::Connection::send): Deleted.
+        (WebKit::PCM::Connection::sendWithReply): Deleted.
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::startListeningForMachServiceConnections):
+        (WebKit::registerScheduledActivityHandler):
+        (WebKit::PCMDaemonMain):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration pcmMachServiceName]):
+        (-[_WKWebsiteDataStoreConfiguration setPCMMachServiceName:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::setPCMMachServiceName):
+        (WebKit::WebsiteDataStoreConfiguration::pcmMachServiceName const):
+
 2021-09-13  Tim Horton  <timothy_horton@apple.com>
 
         Postprocess framework headers in parallel

@@ -180,6 +180,9 @@ public:
     bool allowsHSTSWithUntrustedRootCertificate() const { return m_allowsHSTSWithUntrustedRootCertificate; }
     void setAllowsHSTSWithUntrustedRootCertificate(bool allows) { m_allowsHSTSWithUntrustedRootCertificate = allows; }
     
+    void setPCMMachServiceName(String&& name) { m_pcmMachServiceName = WTFMove(name); }
+    const String& pcmMachServiceName() const { return m_pcmMachServiceName; }
+
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
@@ -232,6 +235,7 @@ private:
     URL m_standaloneApplicationURL;
     bool m_enableInAppBrowserPrivacyForTesting { false };
     bool m_allowsHSTSWithUntrustedRootCertificate { false };
+    String m_pcmMachServiceName;
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

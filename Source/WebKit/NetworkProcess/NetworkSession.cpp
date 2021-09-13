@@ -95,11 +95,8 @@ static String pcmStoreDirectory(const NetworkSession& session, const String& res
 
 static UniqueRef<PCM::ManagerInterface> managerOrProxy(NetworkSession& networkSession, NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
 {
-    // FIXME: Turn this on and remove ManagerInterface once rdar://80701098 is closed.
-    constexpr bool usePCMDaemon = false;
-
-    if (usePCMDaemon)
-        return makeUniqueRef<PCM::ManagerProxy>();
+    if (!parameters.pcmMachServiceName.isEmpty())
+        return makeUniqueRef<PCM::ManagerProxy>(parameters.pcmMachServiceName);
     return makeUniqueRef<PrivateClickMeasurementManager>(makeUniqueRef<PCM::ClientImpl>(networkSession, networkProcess), pcmStoreDirectory(networkSession, parameters.resourceLoadStatisticsParameters.directory, parameters.resourceLoadStatisticsParameters.privateClickMeasurementStorageDirectory));
 }
 

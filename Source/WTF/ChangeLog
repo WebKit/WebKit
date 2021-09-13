@@ -1,3 +1,13 @@
+2021-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add unit test that uses PCM daemon
+        https://bugs.webkit.org/show_bug.cgi?id=230191
+
+        Reviewed by Chris Dumez.
+
+        * wtf/PlatformHave.h:
+        * wtf/spi/darwin/XPCSPI.h:
+
 2021-09-13  Sihui Liu  <sihui_liu@apple.com>
 
         Add stub for File System Access API

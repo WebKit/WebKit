@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "PrivateClickMeasurementConnection.h"
 #include "PrivateClickMeasurementManagerInterface.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
@@ -35,6 +37,8 @@ namespace PCM {
 class ManagerProxy : public ManagerInterface {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    ManagerProxy(const String& machServiceName);
+
     void storeUnattributed(WebCore::PrivateClickMeasurement&&) final;
     void handleAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL) final;
     void clear(CompletionHandler<void()>&&) final;
@@ -53,6 +57,14 @@ public:
     void startTimerImmediatelyForTesting() final;
     void destroyStoreForTesting(CompletionHandler<void()>&&) final;
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) final;
+
+private:
+    template<MessageType messageType, typename... Args>
+    void sendMessage(Args&&...) const;
+    template<MessageType messageType, typename... Args, typename... ReplyArgs>
+    void sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&&, Args&&...) const;
+
+    Connection m_connection;
 };
 
 } // namespace PCM

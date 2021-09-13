@@ -2060,6 +2060,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.requiresSecureHTTPSProxyConnection = m_configuration->requiresSecureHTTPSProxyConnection();
     networkSessionParameters.preventsSystemHTTPProxyAuthentication = m_configuration->preventsSystemHTTPProxyAuthentication();
     networkSessionParameters.allowsHSTSWithUntrustedRootCertificate = m_configuration->allowsHSTSWithUntrustedRootCertificate();
+    networkSessionParameters.pcmMachServiceName = m_configuration->pcmMachServiceName();
 
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 

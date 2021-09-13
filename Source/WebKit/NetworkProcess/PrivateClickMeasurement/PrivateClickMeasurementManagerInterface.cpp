@@ -167,11 +167,22 @@ bool messageTypeSendsReply(MessageType messageType)
     return false;
 }
 
+static std::unique_ptr<PrivateClickMeasurementManager>& managerPointer()
+{
+    static NeverDestroyed<std::unique_ptr<PrivateClickMeasurementManager>> manager;
+    return manager.get();
+}
+
+void initializePCMStorageInDirectory(const String& storageDirectory)
+{
+    ASSERT(!managerPointer());
+    managerPointer() = makeUnique<PrivateClickMeasurementManager>(makeUniqueRef<PCM::DaemonClient>(), storageDirectory);
+}
+
 static PrivateClickMeasurementManager& daemonManager()
 {
-    // FIXME: Give the manager a valid storage directory.
-    static NeverDestroyed<PrivateClickMeasurementManager> instance(makeUniqueRef<PCM::DaemonClient>(), String());
-    return instance.get();
+    ASSERT(managerPointer());
+    return *managerPointer();
 }
 
 template<typename Info>

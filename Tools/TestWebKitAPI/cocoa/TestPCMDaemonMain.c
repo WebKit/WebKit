@@ -23,35 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PrivateClickMeasurementConnection.h"
+#include <os/availability.h>
+#include <WebKit/WKMain.h>
 
-#include <WebCore/NotImplemented.h>
-
-namespace WebKit {
-
-namespace PCM {
-
-#if !PLATFORM(COCOA)
-
-Connection::Connection(CString&&)
+int main(int argc, const char** argv)
 {
-    notImplemented();
+    WKPCMDaemonMain(argc, argv);
 }
-
-void Connection::send(MessageType, EncodedMessage&&) const
-{
-    notImplemented();
-}
-
-void Connection::sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&& completionHandler) const
-{
-    notImplemented();
-    completionHandler({ });
-}
-
-#endif
-
-} // namespace PCM
-
-} // namespace WebKit

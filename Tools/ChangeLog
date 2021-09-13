@@ -1,3 +1,19 @@
+2021-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add unit test that uses PCM daemon
+        https://bugs.webkit.org/show_bug.cgi?id=230191
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Configurations/TestPCMDaemon.xcconfig: Added.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::currentExecutableLocation):
+        (TestWebKitAPI::testDaemonPList):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestPCMDaemonMain.c: Copied from Source/WebKit/NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.cpp.
+        (main):
+
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebPage::runJavaScript()

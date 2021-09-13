@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>com.apple.private.xpc.launchd.job-manager</key>
+	<string>TestWebKitAPI</string>
 	<key>com.apple.hid.manager.user-access-device</key>
 	<true/>
 	<key>com.apple.private.hid.client.event-filter</key>

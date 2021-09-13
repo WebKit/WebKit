@@ -33,26 +33,25 @@ namespace WebKit {
 
 namespace PCM {
 
-Connection::Connection(OSObjectPtr<xpc_connection_t>&& connection)
-    : m_connection(WTFMove(connection)) { }
+Connection::Connection(CString&& machServiceName)
+    : m_machServiceName(WTFMove(machServiceName)) { }
 
-Connection Connection::connectionToDaemon()
+void Connection::initializeConnectionIfNeeded() const
 {
-    ASSERT(RunLoop::isMain());
-    static NeverDestroyed<OSObjectPtr<xpc_connection_t>> connection;
-    if (!connection.get()) {
-        connection.get() = adoptOSObject(xpc_connection_create_mach_service("com.apple.webkit.adattributiond.service", dispatch_get_main_queue(), 0));
-        xpc_connection_set_event_handler(connection.get().get(), ^(xpc_object_t event) {
-            ASSERT(RunLoop::isMain());
-            if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-                // Daemon crashed, we will need to make a new connection to a new instance of the daemon.
-                connection.get() = nullptr;
-            } else
-                ASSERT_NOT_REACHED();
-        });
-        xpc_connection_activate(connection.get().get());
-    }
-    return Connection(OSObjectPtr<xpc_connection_t>(connection.get()));
+    if (m_connection)
+        return;
+    m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.data(), dispatch_get_main_queue(), 0));
+    xpc_connection_set_event_handler(m_connection.get(), [weakThis = makeWeakPtr(*this)](xpc_object_t event) {
+        if (!weakThis)
+            return;
+        if (event == XPC_ERROR_CONNECTION_INVALID)
+            WTFLogAlways("Failed to connect to mach service %s, likely because it is not registered with launchd", weakThis->m_machServiceName.data());
+        if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
+            // Daemon crashed, we will need to make a new connection to a new instance of the daemon.
+            weakThis->m_connection = nullptr;
+        }
+    });
+    xpc_connection_activate(m_connection.get());
 }
 
 static OSObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType messageType, EncodedMessage&& message)
@@ -63,25 +62,22 @@ static OSObjectPtr<xpc_object_t> dictionaryFromMessage(MessageType messageType, 
     return dictionary;
 }
 
-void Connection::send(MessageType messageType, EncodedMessage&& message)
+void Connection::send(MessageType messageType, EncodedMessage&& message) const
 {
-    if (!m_connection) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    ASSERT(RunLoop::isMain());
+    initializeConnectionIfNeeded();
 
     xpc_connection_send_message(m_connection.get(), dictionaryFromMessage(messageType, WTFMove(message)).get());
 }
 
-void Connection::sendWithReply(MessageType messageType, EncodedMessage&& message, CompletionHandler<void(EncodedMessage&&)>&& completionHandler)
+void Connection::sendWithReply(MessageType messageType, EncodedMessage&& message, CompletionHandler<void(EncodedMessage&&)>&& completionHandler) const
 {
-    if (!m_connection) {
-        ASSERT_NOT_REACHED();
-        return completionHandler({ });
-    }
+    ASSERT(RunLoop::isMain());
+    initializeConnectionIfNeeded();
 
     auto dictionary = dictionaryFromMessage(messageType, WTFMove(message));
     xpc_connection_send_message_with_reply(m_connection.get(), dictionary.get(), dispatch_get_main_queue(), makeBlockPtr([completionHandler = WTFMove(completionHandler)] (xpc_object_t reply) mutable {
+        ASSERT(RunLoop::isMain());
         if (xpc_get_type(reply) != XPC_TYPE_DICTIONARY) {
             ASSERT_NOT_REACHED();
             return completionHandler({ });

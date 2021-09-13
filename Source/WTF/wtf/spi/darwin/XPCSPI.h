@@ -114,7 +114,19 @@ extern "C" void xpc_activity_register(const char *identifier, xpc_object_t crite
 #if USE(APPLE_INTERNAL_SDK)
 #include <os/transaction_private.h>
 #include <xpc/private.h>
-#else
+#if HAVE(OS_LAUNCHD_JOB)
+#include <AppServerSupport/OSLaunchdJob.h>
+#endif // HAVE(OS_LAUNCHD_JOB)
+#else // USE(APPLE_INTERNAL_SDK)
+
+#ifdef __OBJC__
+#if HAVE(OS_LAUNCHD_JOB)
+@interface OSLaunchdJob : NSObject
+- (instancetype)initWithPlist:(xpc_object_t)plist;
+- (BOOL)submit:(NSError **)errorOut;
+@end
+#endif // HAVE(OS_LAUNCHD_JOB)
+#endif // __OBJC__
 
 extern "C" const char * const XPC_ACTIVITY_RANDOM_INITIAL_DELAY;
 extern "C" const char * const XPC_ACTIVITY_REQUIRE_NETWORK_CONNECTIVITY;

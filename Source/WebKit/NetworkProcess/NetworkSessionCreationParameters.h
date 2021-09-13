@@ -102,6 +102,7 @@ struct NetworkSessionCreationParameters {
     bool appHasRequestedCrossWebsiteTrackingPermission { false };
     bool useNetworkLoader { false };
     bool allowsHSTSWithUntrustedRootCertificate { false };
+    String pcmMachServiceName;
 
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };

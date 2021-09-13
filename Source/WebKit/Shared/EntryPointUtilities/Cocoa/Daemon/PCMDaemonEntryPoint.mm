@@ -31,6 +31,7 @@
 #import "PrivateClickMeasurementXPCUtilities.h"
 #import <Foundation/Foundation.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/FileSystem.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -76,9 +77,9 @@ static void connectionEventHandler(xpc_object_t request)
     decodeMessageAndSendToManager(messageType, WTFMove(encodedMessage), replySender(messageType, request));
 }
 
-static void startListeningForMachServiceConnections()
+static void startListeningForMachServiceConnections(const char* serviceName)
 {
-    static NeverDestroyed<OSObjectPtr<xpc_connection_t>> listener = xpc_connection_create_mach_service("com.apple.webkit.adattributiond.service", dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
+    static NeverDestroyed<OSObjectPtr<xpc_connection_t>> listener = xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
     xpc_connection_set_event_handler(listener.get().get(), ^(xpc_object_t peer) {
         if (xpc_get_type(peer) != XPC_TYPE_CONNECTION)
             return;
@@ -86,6 +87,8 @@ static void startListeningForMachServiceConnections()
         // FIXME: Add an entitlement check here so that only the network process can successfully connect.
 
         xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
+            if (event == XPC_ERROR_CONNECTION_INVALID)
+                NSLog(@"Failed to start listening for connections to mach service %s, likely because it is not registered with launchd", serviceName);
             if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
                 NSLog(@"removing peer connection %p", peer);
                 peers().remove(peer);
@@ -104,6 +107,7 @@ static void startListeningForMachServiceConnections()
 
 static void registerScheduledActivityHandler()
 {
+    NSLog(@"Registering XPC activity");
     xpc_activity_register("com.apple.webkit.adattributiond.activity", XPC_ACTIVITY_CHECK_IN, ^(xpc_activity_t activity) {
         if (xpc_activity_get_state(activity) == XPC_ACTIVITY_STATE_CHECK_IN) {
             xpc_object_t criteria = xpc_activity_copy_criteria(activity);
@@ -125,15 +129,21 @@ static void enterSandbox()
 
 int PCMDaemonMain(int argc, const char** argv)
 {
-    if (argc != 2 || strcmp(argv[1], "runAsDaemon")) {
-        NSLog(@"This executable is intended to be run as a daemon.");
+    if (argc < 5 || strcmp(argv[1], "--machServiceName") || strcmp(argv[3], "--storageLocation")) {
+        NSLog(@"Usage: %s --machServiceName <name> --storageLocation <location> [--startActivity]", argv[0]);
         return -1;
     }
+    const char* machServiceName = argv[2];
+    const char* storageLocation = argv[4];
+    bool startActivity = argc > 5 && !strcmp(argv[5], "--startActivity");
+
     @autoreleasepool {
         enterSandbox();
-        startListeningForMachServiceConnections();
-        registerScheduledActivityHandler();
+        startListeningForMachServiceConnections(machServiceName);
+        if (startActivity)
+            registerScheduledActivityHandler();
         WTF::initializeMainThread();
+        PCM::initializePCMStorageInDirectory(FileSystem::stringFromFileSystemRepresentation(storageLocation));
     }
     CFRunLoopRun();
     return 0;

@@ -27,13 +27,18 @@
 
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
+#import <WebKit/WKMain.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <mach-o/dyld.h>
+#import <wtf/OSObjectPtr.h>
+#import <wtf/spi/darwin/XPCSPI.h>
 
 #if HAVE(RSA_BSSA)
 
@@ -359,6 +364,130 @@ TEST(EventAttribution, DatabaseLocation)
     [webViewToKeepNetworkProcessAlive synchronouslyLoadHTMLString:@"start network process again if it crashed during teardown"];
     EXPECT_EQ(webViewToKeepNetworkProcessAlive.get().configuration.websiteDataStore._networkProcessIdentifier, originalNetworkProcessPid);
 }
+
+// FIXME: Get this working in the iOS simulator.
+#if PLATFORM(MAC)
+
+static RetainPtr<NSURL> currentExecutableLocation()
+{
+    uint32_t size { 0 };
+    _NSGetExecutablePath(nullptr, &size);
+    Vector<char> buffer;
+    buffer.resize(size + 1);
+    _NSGetExecutablePath(buffer.data(), &size);
+    buffer[size] = '\0';
+    auto pathString = adoptNS([[NSString alloc] initWithUTF8String:buffer.data()]);
+    return adoptNS([[NSURL alloc] initFileURLWithPath:pathString.get() isDirectory:NO]);
+}
+
+static RetainPtr<NSURL> currentExecutableDirectory()
+{
+    return [currentExecutableLocation() URLByDeletingLastPathComponent];
+}
+
+static RetainPtr<NSURL> testPCMDaemonLocation()
+{
+    return [currentExecutableDirectory() URLByAppendingPathComponent:@"TestPCMDaemon" isDirectory:NO];
+}
+
+#if HAVE(OS_LAUNCHD_JOB)
+
+static OSObjectPtr<xpc_object_t> testDaemonPList(NSURL *storageLocation)
+{
+    auto plist = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    xpc_dictionary_set_string(plist.get(), "_ManagedBy", "TestWebKitAPI");
+    xpc_dictionary_set_string(plist.get(), "Label", "org.webkit.pcmtestdaemon");
+    xpc_dictionary_set_bool(plist.get(), "LaunchOnlyOnce", true);
+
+    {
+        auto environmentVariables = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_string(environmentVariables.get(), "DYLD_FRAMEWORK_PATH", currentExecutableDirectory().get().fileSystemRepresentation);
+        xpc_dictionary_set_value(plist.get(), "EnvironmentVariables", environmentVariables.get());
+    }
+    {
+        auto machServices = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_bool(machServices.get(), "org.webkit.pcmtestdaemon.service", true);
+        xpc_dictionary_set_value(plist.get(), "MachServices", machServices.get());
+    }
+    {
+        auto programArguments = adoptOSObject(xpc_array_create(nullptr, 0));
+        auto executableLocation = testPCMDaemonLocation();
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, executableLocation.get().fileSystemRepresentation);
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--machServiceName");
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "org.webkit.pcmtestdaemon.service");
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, "--storageLocation");
+        xpc_array_set_string(programArguments.get(), XPC_ARRAY_APPEND, storageLocation.fileSystemRepresentation);
+        xpc_dictionary_set_value(plist.get(), "ProgramArguments", programArguments.get());
+    }
+    return plist;
+}
+
+#else
+
+static RetainPtr<NSDictionary> testDaemonPList(NSURL *storageLocation)
+{
+    return @{
+        @"Label" : @"org.webkit.pcmtestdaemon",
+        @"LaunchOnlyOnce" : @YES,
+        @"EnvironmentVariables" : @{ @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path },
+        @"MachServices" : @{ @"org.webkit.pcmtestdaemon.service" : @YES },
+        @"ProgramArguments" : @[
+            testPCMDaemonLocation().get().path,
+            @"--machServiceName",
+            @"org.webkit.pcmtestdaemon.service",
+            @"--storageLocation",
+            storageLocation.path
+        ]
+    };
+}
+
+#endif
+
+TEST(EventAttribution, Daemon)
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"EventAttributionDaemonTest"] isDirectory:YES];
+    NSError *error = nil;
+    if ([fileManager fileExistsAtPath:tempDir.path])
+        [fileManager removeItemAtURL:tempDir error:&error];
+    EXPECT_NULL(error);
+
+    auto plist = testDaemonPList(tempDir);
+#if HAVE(OS_LAUNCHD_JOB)
+    auto launchDJob = adoptNS([[OSLaunchdJob alloc] initWithPlist:plist.get()]);
+    [launchDJob submit:&error];
+#else
+    NSURL *plistLocation = [tempDir URLByAppendingPathComponent:@"DaemonInfo.plist"];
+    BOOL success = [fileManager createDirectoryAtURL:tempDir withIntermediateDirectories:YES attributes:nil error:&error];
+    EXPECT_TRUE(success);
+    EXPECT_NULL(error);
+    success = [plist writeToURL:plistLocation error:&error];
+    EXPECT_TRUE(success);
+    system([NSString stringWithFormat:@"launchctl load %@", plistLocation.path].UTF8String);
+#endif
+    EXPECT_NULL(error);
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().pcmMachServiceName = @"org.webkit.pcmtestdaemon.service";
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    viewConfiguration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
+    runBasicEventAttributionTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
+    });
+
+    system("killall TestPCMDaemon -9");
+#if HAVE(OS_LAUNCHD_JOB)
+    // LaunchOnlyOnce takes care of cleanup with launchd.
+#else
+    system([NSString stringWithFormat:@"launchctl unload %@", plistLocation.path].UTF8String);
+#endif
+
+    EXPECT_TRUE([fileManager fileExistsAtPath:tempDir.path]);
+    [fileManager removeItemAtURL:tempDir error:&error];
+    EXPECT_NULL(error);
+}
+
+#endif // PLATFORM(MAC)
 
 #if HAVE(UI_EVENT_ATTRIBUTION)
 

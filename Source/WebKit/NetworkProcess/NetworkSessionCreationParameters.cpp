@@ -87,6 +87,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << appHasRequestedCrossWebsiteTrackingPermission;
     encoder << useNetworkLoader;
     encoder << allowsHSTSWithUntrustedRootCertificate;
+    encoder << pcmMachServiceName;
     encoder << resourceLoadStatisticsParameters;
 }
 
@@ -293,12 +294,17 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     decoder >> allowsHSTSWithUntrustedRootCertificate;
     if (!allowsHSTSWithUntrustedRootCertificate)
         return std::nullopt;
-    
+
+    std::optional<String> pcmMachServiceName;
+    decoder >> pcmMachServiceName;
+    if (!pcmMachServiceName)
+        return std::nullopt;
+
     std::optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
         return std::nullopt;
-    
+
     return {{
         *sessionID
         , WTFMove(*boundInterfaceIdentifier)
@@ -347,6 +353,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*appHasRequestedCrossWebsiteTrackingPermission)
         , WTFMove(*useNetworkLoader)
         , WTFMove(*allowsHSTSWithUntrustedRootCertificate)
+        , WTFMove(*pcmMachServiceName)
         , WTFMove(*resourceLoadStatisticsParameters)
     }};
 }

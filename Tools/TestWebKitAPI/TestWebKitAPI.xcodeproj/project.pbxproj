@@ -36,6 +36,7 @@
 				537CF84822EFD72000C6EBB3 /* Check .xcfilelists */,
 			);
 			dependencies = (
+				5C1B1D1C26EC2EEC00882DA2 /* PBXTargetDependency */,
 				7C83E0301D0A5E1B00FEBCF3 /* PBXTargetDependency */,
 				7C83E0321D0A5E1D00FEBCF3 /* PBXTargetDependency */,
 			);
@@ -478,6 +479,7 @@
 		5C121E8D2410704900486F9B /* ContentWorldPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C121E8C2410703200486F9B /* ContentWorldPlugIn.mm */; };
 		5C16F8FC230C94370074C4A8 /* TextSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C16F8FB230C942B0074C4A8 /* TextSize.mm */; };
 		5C19A5241FD0F60100EEA323 /* CookiePrivateBrowsing.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */; };
+		5C1B1D1726EC27DE00882DA2 /* TestPCMDaemonMain.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C1B1D1626EC27C500882DA2 /* TestPCMDaemonMain.c */; };
 		5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C23DF0A2245C9D700F454B6 /* Challenge.mm */; };
 		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
@@ -1297,6 +1299,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5C1B1D1B26EC2EEC00882DA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C1B1D0826EC278500882DA2;
+			remoteInfo = TestPCMDaemon;
+		};
 		5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -2331,6 +2340,9 @@
 		5C121E8C2410703200486F9B /* ContentWorldPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentWorldPlugIn.mm; sourceTree = "<group>"; };
 		5C16F8FB230C942B0074C4A8 /* TextSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextSize.mm; sourceTree = "<group>"; };
 		5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookiePrivateBrowsing.mm; sourceTree = "<group>"; };
+		5C1B1D1426EC278500882DA2 /* TestPCMDaemon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestPCMDaemon; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C1B1D1626EC27C500882DA2 /* TestPCMDaemonMain.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = TestPCMDaemonMain.c; path = cocoa/TestPCMDaemonMain.c; sourceTree = "<group>"; };
+		5C1B1D1A26EC284E00882DA2 /* TestPCMDaemon.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestPCMDaemon.xcconfig; sourceTree = "<group>"; };
 		5C23DF0A2245C9D700F454B6 /* Challenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Challenge.mm; sourceTree = "<group>"; };
 		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
 		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
@@ -3162,6 +3174,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5C1B1D0E26EC278500882DA2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7C83DF641D0A590C00FEBCF3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3306,6 +3325,7 @@
 				5C72E8CE244FFCE400381EB7 /* TestLegacyDownloadDelegate.mm */,
 				2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */,
 				2D1C04A61D76298B000A6816 /* TestNavigationDelegate.mm */,
+				5C1B1D1626EC27C500882DA2 /* TestPCMDaemonMain.c */,
 				516281232325C17A00BB7E42 /* TestPDFDocument.h */,
 				516281242325C17B00BB7E42 /* TestPDFDocument.mm */,
 				A14FC58D1B8AE36500D107EB /* TestProtocol.h */,
@@ -3364,6 +3384,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				5C1B1D1426EC278500882DA2 /* TestPCMDaemon */,
 				8DD76FA10486AA7600D96B5E /* TestWebKitAPI */,
 				7C83E0231D0A5AE400FEBCF3 /* TestWTF */,
 				BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */,
@@ -4293,6 +4314,7 @@
 				BC90957F12554CF900083756 /* DebugRelease.xcconfig */,
 				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
 				A1B89B99221E029F00EB4CEA /* SDKVariant.xcconfig */,
+				5C1B1D1A26EC284E00882DA2 /* TestPCMDaemon.xcconfig */,
 				5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */,
 				51EB125324C66BCB000CB030 /* TestWebKitAPI-macOS-internal.entitlements */,
 				7AB0173923FB2BF0002F8366 /* TestWebKitAPI-macOS.entitlements */,
@@ -4979,6 +5001,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5C1B1D0826EC278500882DA2 /* TestPCMDaemon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C1B1D1126EC278500882DA2 /* Build configuration list for PBXNativeTarget "TestPCMDaemon" */;
+			buildPhases = (
+				5C1B1D0B26EC278500882DA2 /* Sources */,
+				5C1B1D0E26EC278500882DA2 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestPCMDaemon;
+			productInstallPath = "$(HOME)/bin";
+			productName = TestPCMDaemon;
+			productReference = 5C1B1D1426EC278500882DA2 /* TestPCMDaemon */;
+			productType = "com.apple.product-type.tool";
+		};
 		7C83DE951D0A590C00FEBCF3 /* TestWTFLibrary */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7C83DF651D0A590C00FEBCF3 /* Build configuration list for PBXNativeTarget "TestWTFLibrary" */;
@@ -5138,6 +5177,7 @@
 				BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */,
 				A13EBB481B87339E00097110 /* WebProcessPlugIn */,
 				537CF84322EFD64100C6EBB3 /* Apply Configuration to XCFileLists */,
+				5C1B1D0826EC278500882DA2 /* TestPCMDaemon */,
 			);
 		};
 /* End PBXProject section */
@@ -5214,6 +5254,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5C1B1D0B26EC278500882DA2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C1B1D1726EC27DE00882DA2 /* TestPCMDaemonMain.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7C83DE961D0A590C00FEBCF3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6078,6 +6126,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5C1B1D1C26EC2EEC00882DA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C1B1D0826EC278500882DA2 /* TestPCMDaemon */;
+			targetProxy = 5C1B1D1B26EC2EEC00882DA2 /* PBXContainerItemProxy */;
+		};
 		5C9D922222D7DC84008E9266 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5C9D921422D7DA02008E9266 /* Generate Unified Sources */;
@@ -6156,6 +6209,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5C1B1D1226EC278500882DA2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C1B1D1A26EC284E00882DA2 /* TestPCMDaemon.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5C1B1D1326EC278500882DA2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5C1B1D1A26EC284E00882DA2 /* TestPCMDaemon.xcconfig */;
+			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -6284,6 +6353,15 @@
 			buildConfigurations = (
 				537CF84422EFD64100C6EBB3 /* Debug */,
 				537CF84522EFD64100C6EBB3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5C1B1D1126EC278500882DA2 /* Build configuration list for PBXNativeTarget "TestPCMDaemon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C1B1D1226EC278500882DA2 /* Debug */,
+				5C1B1D1326EC278500882DA2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

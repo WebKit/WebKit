@@ -101,6 +101,8 @@ using EncodedMessage = Vector<uint8_t>;
 void decodeMessageAndSendToManager(MessageType, Vector<uint8_t>&& message, CompletionHandler<void(Vector<uint8_t>&&)>&&);
 bool messageTypeSendsReply(MessageType);
 
+void initializePCMStorageInDirectory(const String&);
+
 } // namespace PCM
 
 } // namespace WebKit

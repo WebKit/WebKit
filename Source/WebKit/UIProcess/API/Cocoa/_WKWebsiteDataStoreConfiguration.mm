@@ -521,6 +521,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setAllowsHSTSWithUntrustedRootCertificate(allows);
 }
 
+- (NSString *)pcmMachServiceName
+{
+    return _configuration->pcmMachServiceName();
+}
+
+- (void)setPCMMachServiceName:(NSString *)name
+{
+    _configuration->setPCMMachServiceName(name);
+}
+
 - (BOOL)allLoadsBlockedByDeviceManagementRestrictionsForTesting
 {
     return _configuration->allLoadsBlockedByDeviceManagementRestrictionsForTesting();

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/OSObjectPtr.h>
@@ -39,18 +40,19 @@ namespace PCM {
 enum class MessageType : uint8_t;
 using EncodedMessage = Vector<uint8_t>;
 
-class Connection {
+class Connection : public CanMakeWeakPtr<Connection> {
 public:
-    static Connection connectionToDaemon();
+    explicit Connection(CString&& machServiceName);
 
-    void send(MessageType, EncodedMessage&&);
-    void sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&&);
+    void send(MessageType, EncodedMessage&&) const;
+    void sendWithReply(MessageType, EncodedMessage&&, CompletionHandler<void(EncodedMessage&&)>&&) const;
 
 private:
 #if PLATFORM(COCOA)
-    Connection(OSObjectPtr<xpc_connection_t>&&);
+    void initializeConnectionIfNeeded() const;
 
-    OSObjectPtr<xpc_connection_t> m_connection;
+    const CString m_machServiceName;
+    mutable OSObjectPtr<xpc_connection_t> m_connection;
 #endif
 };
 
