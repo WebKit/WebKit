@@ -29,7 +29,6 @@
  */
 
 [
-    EnabledAtRuntime=WritableStreamAPI,
     Exposed=(Window,Worker),
     PrivateIdentifier,
     PublicIdentifier,

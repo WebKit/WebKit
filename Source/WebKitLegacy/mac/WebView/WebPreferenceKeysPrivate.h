@@ -275,7 +275,6 @@
 #define WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey @"WebKitLinkPreloadResponsiveImagesEnabled"
 #define WebKitRemotePlaybackEnabledPreferenceKey @"WebKitRemotePlaybackEnabled"
 #define WebKitDialogElementEnabledPreferenceKey @"WebKitDialogElementEnabledPreferenceKey"
-#define WebKitWritableStreamAPIEnabledPreferenceKey @"WebKitWritableStreamAPIEnabled"
 #define WebKitReadableByteStreamAPIEnabledPreferenceKey @"WebKitReadableByteStreamAPIEnabled"
 #define WebKitTransformStreamAPIEnabledPreferenceKey @"WebKitTransformStreamAPIEnabled"
 #define WebKitMediaRecorderEnabledPreferenceKey @"WebKitMediaRecorderEnabled"

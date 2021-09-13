@@ -473,7 +473,6 @@ namespace WebCore {
     macro(whenSignalAborted) \
     macro(window) \
     macro(writable) \
-    macro(writableStreamAPIEnabled) \
     macro(writeAlgorithm) \
     macro(writing) \
     macro(writer) \

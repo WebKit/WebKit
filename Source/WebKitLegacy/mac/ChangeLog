@@ -1,3 +1,16 @@
+2021-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Remove WritableStream runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=230148
+
+        Reviewed by Sihui Liu.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences writableStreamAPIEnabled]): Deleted.
+        (-[WebPreferences setWritableStreamAPIEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2021-09-11  David Kilzer  <ddkilzer@apple.com>
 
         CFNotificationCenterAddObserver() should use weak observers

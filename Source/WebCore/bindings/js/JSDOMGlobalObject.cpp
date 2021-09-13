@@ -73,7 +73,6 @@ JSC_DECLARE_HOST_FUNCTION(makeGetterTypeErrorForBuiltins);
 JSC_DECLARE_HOST_FUNCTION(makeDOMExceptionForBuiltins);
 JSC_DECLARE_HOST_FUNCTION(isReadableByteStreamAPIEnabled);
 JSC_DECLARE_HOST_FUNCTION(getInternalWritableStream);
-JSC_DECLARE_HOST_FUNCTION(isWritableStreamAPIEnabled);
 JSC_DECLARE_HOST_FUNCTION(whenSignalAborted);
 JSC_DECLARE_HOST_FUNCTION(isAbortSignal);
 
@@ -160,11 +159,6 @@ JSC_DEFINE_HOST_FUNCTION(isReadableByteStreamAPIEnabled, (JSGlobalObject*, CallF
     return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().readableByteStreamAPIEnabled()));
 }
 
-JSC_DEFINE_HOST_FUNCTION(isWritableStreamAPIEnabled, (JSGlobalObject*, CallFrame*))
-{
-    return JSValue::encode(jsBoolean(RuntimeEnabledFeatures::sharedFeatures().writableStreamAPIEnabled()));
-}
-
 JSC_DEFINE_HOST_FUNCTION(getInternalWritableStream, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame);
@@ -226,7 +220,6 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWaitingPrivateName(), jsNumber(5), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().streamWritablePrivateName(), jsNumber(6), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().readableByteStreamAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isReadableByteStreamAPIEnabled), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
-        JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().writableStreamAPIEnabledPrivateName(), JSFunction::create(vm, this, 0, String(), isWritableStreamAPIEnabled), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().isAbortSignalPrivateName(), JSFunction::create(vm, this, 1, String(), isAbortSignal), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().getInternalWritableStreamPrivateName(), JSFunction::create(vm, this, 1, String(), getInternalWritableStream), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
     };

@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledAtRuntime=WritableStreamAPI,
     Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier,

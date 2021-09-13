@@ -1517,15 +1517,3 @@ WheelEventGesturesBecomeNonBlocking:
       default: true
     WebCore:
       default: true
-
-WritableStreamAPIEnabled:
-  type: bool
-  humanReadableName: "WritableStream API"
-  humanReadableDescription: "Enable Writable Stream API"
-  webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
