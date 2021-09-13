@@ -1,3 +1,13 @@
+2021-09-13  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for css3/background/background-repeat-round-padding.html and css3/background/background-repeat-round-border.html.
+        <rdar://82000141>.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Drawing the rounded system ui font into canvas causes a crash
