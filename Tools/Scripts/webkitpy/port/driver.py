@@ -243,7 +243,7 @@ class Driver(object):
             # In the timeout case, we kill the hung process as well.
             out, err = self._server_process.stop(self._port.driver_stop_timeout() if stop_when_done else 0.0)
             if out:
-                text += string_utils.decode(out, target_type=str)
+                text += string_utils.decode(out, target_type=str, errors='backslashreplace')
             if err:
                 self.error_from_test += string_utils.decode(err, target_type=str)
             self._server_process = None

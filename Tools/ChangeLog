@@ -1,3 +1,14 @@
+2021-09-13  Jonathan Bedard  <jbedard@apple.com>
+
+        Running iOS layout tests sometimes fails with a utf-8 error
+        https://bugs.webkit.org/show_bug.cgi?id=230082
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.run_test): Decode errors should not be fatal, since it's possible
+        that stdout may be a png from a timed out test.
+
 2021-09-13  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [TestWTF] Hash tests for denorm_min should be skipped if denorm is not supported.
