@@ -1,5 +1,31 @@
 2021-09-13  Antti Koivisto  <antti@apple.com>
 
+        Remove redundant copy of visibleToHitTesting function
+        https://bugs.webkit.org/show_bug.cgi?id=230212
+
+        Reviewed by Alan Bujtas.
+
+        Remove the LegacyInlineBox version.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+
+        Also use visibleToHitTesting here.
+
+        * rendering/LegacyEllipsisBox.cpp:
+        (WebCore::LegacyEllipsisBox::nodeAtPoint):
+        * rendering/LegacyInlineBox.h:
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::nodeAtPoint):
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::nodeAtPoint):
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::nodeAtPoint):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paint):
+
+2021-09-13  Antti Koivisto  <antti@apple.com>
+
         LegacyInlineTextBox::selectionState accessor mutates ellipsis selection state
         https://bugs.webkit.org/show_bug.cgi?id=205528
         <rdar://problem/58125978>

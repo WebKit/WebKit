@@ -312,7 +312,7 @@ bool LegacyInlineTextBox::isLineBreak() const
 bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
     HitTestAction /*hitTestAction*/)
 {
-    if (!visibleToHitTesting(request))
+    if (!renderer().parent()->visibleToHitTesting(request))
         return false;
 
     if (isLineBreak())

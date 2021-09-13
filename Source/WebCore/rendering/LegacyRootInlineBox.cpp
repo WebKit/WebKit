@@ -175,7 +175,7 @@ void LegacyRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
 bool LegacyRootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
 {
-    if (hasEllipsisBox() && visibleToHitTesting(request)) {
+    if (hasEllipsisBox() && renderer().visibleToHitTesting(request)) {
         if (ellipsisBox()->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction)) {
             renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
             return true;

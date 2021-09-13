@@ -230,17 +230,6 @@ public:
     void invalidateParentChildList();
 #endif
 
-    bool visibleToHitTesting(std::optional<HitTestRequest> hitTestRequest = std::nullopt) const
-    {
-        if (renderer().style().visibility() != Visibility::Visible)
-            return false;
-
-        if ((!hitTestRequest || !hitTestRequest->ignoreCSSPointerEventsProperty()) && renderer().style().pointerEvents() == PointerEvents::None)
-            return false;
-
-        return true;
-    }
-
     const RenderStyle& lineStyle() const { return m_bitfields.firstLine() ? renderer().firstLineStyle() : renderer().style(); }
     
     VerticalAlign verticalAlign() const { return lineStyle().verticalAlign(); }

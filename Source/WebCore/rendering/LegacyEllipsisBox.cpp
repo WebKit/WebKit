@@ -161,7 +161,7 @@ bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult
     }
 
     auto boundsRect = LayoutRect { adjustedLocation, LayoutSize(LayoutUnit(logicalWidth()), m_height) };
-    if (visibleToHitTesting(request) && locationInContainer.intersects(boundsRect)) {
+    if (renderer().visibleToHitTesting(request) && locationInContainer.intersects(boundsRect)) {
         blockFlow().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
         if (result.addNodeToListBasedTestResult(blockFlow().nodeForHitTest(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
             return true;

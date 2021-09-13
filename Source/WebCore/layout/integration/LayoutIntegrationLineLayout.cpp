@@ -519,8 +519,8 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
         if (!locationInContainer.intersects(runRect))
             continue;
 
-        auto& style = run.style();
-        if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
+        auto& elementRenderer = is<RenderElement>(renderer) ? downcast<RenderElement>(renderer) : *renderer.parent();
+        if (!elementRenderer.visibleToHitTesting(request))
             continue;
         
         renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));

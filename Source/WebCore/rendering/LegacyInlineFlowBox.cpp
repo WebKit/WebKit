@@ -1065,7 +1065,7 @@ bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
     }
 
     // Now check ourselves. Pixel snap hit testing.
-    if (!visibleToHitTesting(request))
+    if (!renderer().visibleToHitTesting(request))
         return false;
 
     // Do not hittest content beyond the ellipsis box.

@@ -61,7 +61,7 @@ void TextBoxPainter::paint()
         return;
 
     if (m_paintInfo.phase == PaintPhase::EventRegion) {
-        if (m_textBox.visibleToHitTesting())
+        if (m_renderer.parent()->visibleToHitTesting())
             m_paintInfo.eventRegionContext->unite(enclosingIntRect(m_paintRect), m_renderer.style());
         return;
     }
