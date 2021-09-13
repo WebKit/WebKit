@@ -1,5 +1,14 @@
 2021-09-13  Eric Hutchison  <ehutchison@apple.com>
 
+        Removed test expectations for inspector/css/getMatchedStylesForNodeMarkerPseudoId.html.
+        <rdar://82039967>.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-09-13  Eric Hutchison  <ehutchison@apple.com>
+
         Remove test expectations for inspector/timeline/timeline-event-TimerInstall.html.
         <rdar://82039288>.
 
