@@ -1,3 +1,22 @@
+2021-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Drawing the rounded system ui font into canvas causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=230187
+        <rdar://problem/81436658>
+
+        Reviewed by Wenson Hsieh.
+
+        It turns out that r281792 didn't do the right thing. It was trying to differentiate between
+        system fonts and installed fonts by looking at various values in the font's attribute dictionary.
+        However, the right way to do this is to treat the dictionary as opaque, and let
+        kCTFontOptionsSystemUIFont do the heavy lifting to make sure the font round-trips properly.
+
+        Test: fast/text/canvas-fonts.html
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::createCTFont):
+        (IPC::findFontDescriptor):
+
 2021-09-12  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r280758): WebKit project won't open in Xcode 11.4
