@@ -1,5 +1,14 @@
 2021-09-13  Eric Hutchison  <ehutchison@apple.com>
 
+        Updated test expectations for performance-api/performance-observer-no-document-leak.html.
+        <rdar://82035182>.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-09-13  Eric Hutchison  <ehutchison@apple.com>
+
         Updated test expectations for security/contentSecurityPolicy/image-with-file-url-allowed-by-img-src-star.html.
         <rdar://82034073>.
 
