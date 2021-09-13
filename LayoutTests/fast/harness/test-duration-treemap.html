@@ -61,6 +61,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     #map {
         position: relative;
+        z-index: 0;
         flex-grow: 1;
         cursor: pointer;
         -webkit-user-select: none;
@@ -142,6 +143,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         font-size: 11px;
         padding: 2px;
         text-align: center;
+    }
+    
+    #slow-tests {
+        position: absolute;
+        z-index: 1;
+        top: 10px;
+        left: 10px;
+        box-sizing: border-box;
+        width: calc(100% - 20px);
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 2em;
+        border-radius: 10px;
+        border: 1px solid gray;
+    }
+    
+    #slow-tests.hidden {
+        display: none;
     }
 </style>
 
@@ -394,6 +412,20 @@ class DataConverter {
     {
         return DataConverter._recursiveConvertNode(rootNodeName, tree);
     }
+
+    static convertToFlatListSortedByRuntime(tree)
+    {
+        let testList = [];
+        DataConverter._recursiveBuildTestList(tree, '', testList);
+        
+        testList.sort(function(a, b) {
+            let aTime = a.runtime;
+            let bTime = b.runtime;
+            return bTime - aTime;
+        });
+        
+        return testList;
+    }
   
     /*
         stats.json looks like:
@@ -462,14 +494,36 @@ class DataConverter {
             'path': path
         };
     }
+
+    static _recursiveBuildTestList(tree, path, list)
+    {
+        for (let name in tree) {
+            let treeNode = tree[name];
+            if ('results' in treeNode) {
+                let times = treeNode.results;
+                if (!times.hasOwnProperty('length'))
+                    continue;
+
+                let test_total_time = treeNode.results[4];
+                let node = {
+                    'name' : path + '/' + name,
+                    'runtime' : test_total_time,
+                    'human_readable_runtime' : Utils.humanReadableTime(test_total_time),
+                };
+                list.push(node);
+            } else {
+                let newPath = path ? path + '/' + name : name;
+                let subtree = DataConverter._recursiveBuildTestList(treeNode, newPath, list);
+            }
+        }
+    }
 };
 
 let treeMapController;
 class TreeMapController {
   
-    constructor(statsJSONString, containerElement)
+    constructor(jsonData, containerElement)
     {
-        let jsonData = JSON.parse(statsJSONString);
         this.treeMapData = DataConverter.convertToWebTreemapFormat('LayoutTests', jsonData);
         this.treeMap = new WebTreeMap(this.treeMapData, containerElement);
     }
@@ -480,9 +534,68 @@ class TreeMapController {
     }
 };
 
+let slowTestListController;
+class SlowTestListController {
+  
+    constructor(jsonData, containerElement)
+    {
+        this.numTestsToShow = 200;
+        this.testList = DataConverter.convertToFlatListSortedByRuntime(jsonData);
+        this.containerElement = containerElement;
+        this.contentsElement = containerElement.querySelector('.content');
+        this.contentsElement.innerHTML = '';
+        this._buildTestListTable();
+    }
+    
+    show()
+    {
+        this.containerElement.classList.remove('hidden');
+    }
+    
+    hide()
+    {
+        this.containerElement.classList.add('hidden');
+    }
+    
+    _buildTestListTable()
+    {
+        let tableContainer = document.createElement('div');
+        
+        tableContainer.innerHTML = `<table>
+                 <tr><th>Test</th><th>Runtime</th></tr>
+            </table>
+        `;
+        
+        let table = tableContainer.firstChild;
+        let testList = this.testList.slice(0, this.numTestsToShow);
+        
+        for (let test of testList) {
+            let tr = document.createElement('tr');
+            let labelCell = document.createElement('td');
+            let dataCell = document.createElement('td');
+            
+            labelCell.textContent = test['name'];
+            dataCell.textContent = test['human_readable_runtime'];
+            
+            tr.appendChild(labelCell);
+            tr.appendChild(dataCell);
+            table.appendChild(tr);
+        }
+        
+        this.contentsElement.appendChild(tableContainer);
+    }
+};
+
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+}
+
+function setupControllers(jsonString)
+{
+    let jsonData = JSON.parse(jsonString);
+    treeMapController = new TreeMapController(jsonData, document.getElementById('map'));
+    slowTestListController = new SlowTestListController(jsonData, document.getElementById('slow-tests'));
 }
 
 function setupInterface()
@@ -504,7 +617,7 @@ function setupInterface()
     var request = new XMLHttpRequest();
     request.open("GET", filename, true);
     request.addEventListener('load', () => {
-        treeMapController = new TreeMapController(request.responseText, document.getElementById('map'));
+        setupControllers(request.responseText);
         if (window.testRunner)
             testRunner.notifyDone();
     });
@@ -543,7 +656,7 @@ function setupInterface()
             let reader = new FileReader();
             reader.filename = file.name;
             reader.onload = function(e) {
-                treeMapController = new TreeMapController(reader.result, document.getElementById('map'));
+                setupControllers(reader.result);
             };
 
             reader.readAsText(file);
@@ -557,9 +670,13 @@ window.addEventListener('load', setupInterface, false);
 <body>
 <header>
     <div id="dropTarget">Drop stats.json file here to load.</div>
-    <p>Click on a box to zoom in. Click on the outermost box to zoom out. <a href="" onclick="treeMapController.resetZoom()">Reset</a></p>
+    <p>Click on a box to zoom in. Click on the outermost box to zoom out. <a href="" onclick="treeMapController.resetZoom()">Reset</a> <button onclick="slowTestListController.show()">Show Slowest Tests</button></p>
     </div>
 </header>
 <section id='map'></section>
+<section id='slow-tests' class="hidden">
+    <button class='close' onclick="slowTestListController.hide()">Close</button>
+    <div class="content"></div>
+</section>
 </body>
 </html>

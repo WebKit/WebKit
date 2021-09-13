@@ -1,5 +1,5 @@
 Drop stats.json file here to load.
-Click on a box to zoom in. Click on the outermost box to zoom out. Reset
+Click on a box to zoom in. Click on the outermost box to zoom out. Reset Show Slowest Tests
 
 LayoutTests (42s - 23 tests)
 fast (42s - 23 tests)
