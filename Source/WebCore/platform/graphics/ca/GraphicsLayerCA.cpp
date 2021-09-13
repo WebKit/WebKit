@@ -302,6 +302,20 @@ static inline bool supportsAcceleratedFilterAnimations()
 #endif
 }
 
+static PlatformCALayer::FilterType toPlatformCALayerFilterType(GraphicsLayer::ScalingFilter filter)
+{
+    switch (filter) {
+    case GraphicsLayer::ScalingFilter::Linear:
+        return PlatformCALayer::Linear;
+    case GraphicsLayer::ScalingFilter::Nearest:
+        return PlatformCALayer::Nearest;
+    case GraphicsLayer::ScalingFilter::Trilinear:
+        return PlatformCALayer::Trilinear;
+    }
+    ASSERT_NOT_REACHED();
+    return PlatformCALayer::Linear;
+}
+
 bool GraphicsLayer::supportsLayerType(Type type)
 {
     switch (type) {
@@ -1341,6 +1355,22 @@ PlatformLayer* GraphicsLayerCA::contentsLayerForMedia() const
 }
 #endif
 
+void GraphicsLayerCA::setContentsMinificationFilter(ScalingFilter filter)
+{
+    if (filter == m_contentsMinificationFilter)
+        return;
+    GraphicsLayer::setContentsMinificationFilter(filter);
+    noteLayerPropertyChanged(ContentsScalingFiltersChanged);
+}
+
+void GraphicsLayerCA::setContentsMagnificationFilter(ScalingFilter filter)
+{
+    if (filter == m_contentsMagnificationFilter)
+        return;
+    GraphicsLayer::setContentsMagnificationFilter(filter);
+    noteLayerPropertyChanged(ContentsScalingFiltersChanged);
+}
+
 void GraphicsLayerCA::layerDidDisplay(PlatformCALayer* layer)
 {
     if (!m_layerClones)
@@ -2025,6 +2055,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         updateIsDescendentOfSeparatedPortal();
 #endif
 #endif
+    if (m_uncommittedChanges & ContentsScalingFiltersChanged)
+        updateContentsScalingFilters();
 
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
@@ -2485,6 +2517,14 @@ void GraphicsLayerCA::updateIsDescendentOfSeparatedPortal()
 #endif
 #endif
 
+void GraphicsLayerCA::updateContentsScalingFilters()
+{
+    if (!m_contentsLayer)
+        return;
+    m_contentsLayer->setMinificationFilter(toPlatformCALayerFilterType(m_contentsMinificationFilter));
+    m_contentsLayer->setMagnificationFilter(toPlatformCALayerFilterType(m_contentsMagnificationFilter));
+}
+
 bool GraphicsLayerCA::updateStructuralLayer()
 {
     return ensureStructuralLayer(structuralLayerPurpose());
@@ -2758,6 +2798,7 @@ void GraphicsLayerCA::updateContentsPlatformLayer()
         m_contentsLayer->setNeedsDisplay();
 
     updateContentsRects();
+    updateContentsScalingFilters();
 }
 
 void GraphicsLayerCA::updateContentsColorLayer()
@@ -4186,6 +4227,7 @@ const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
     case LayerChange::DescendentOfSeparatedPortalChanged: return "DescendentOfSeparatedPortalChanged";
 #endif
 #endif
+    case LayerChange::ContentsScalingFiltersChanged: return "ContentsScalingFiltersChanged";
     }
     ASSERT_NOT_REACHED();
     return "";

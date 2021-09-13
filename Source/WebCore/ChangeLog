@@ -1,3 +1,43 @@
+2021-09-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        image-rendering: pixelated does not work with WebGL (but does with Canvas2D)
+        https://bugs.webkit.org/show_bug.cgi?id=193895
+        <rdar://problem/47656086>
+
+        Reviewed by Simon Fraser.
+
+        Implement image-rendering: crisp-edges for WebGL canvas elements
+        normal on-screen compositing code path on Cocoa by using CA layer filtering
+        properties.
+
+        Similar to non-compositing code path, approximate image-rendering: pixelated
+        by making it an alias of crisp-edges.
+
+        Test: webgl/webgl-image-rendering.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsMinificationFilter):
+        (WebCore::GraphicsLayer::contentsMinificationFilter const):
+        (WebCore::GraphicsLayer::setContentsMagnificationFilter):
+        (WebCore::GraphicsLayer::contentsMagnificationFilter const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::toPlatformCALayerFilterType):
+        (WebCore::GraphicsLayerCA::setContentsMinificationFilter):
+        (WebCore::GraphicsLayerCA::setContentsMagnificationFilter):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateContentsScalingFilters):
+        (WebCore::GraphicsLayerCA::updateContentsPlatformLayer):
+        (WebCore::GraphicsLayerCA::layerChangeAsString):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateContentsScalingFilters):
+        (WebCore::RenderLayerBacking::updateConfigurationAfterStyleChange):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerBacking.h:
+
 2021-09-13  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Remove redundant LayoutState::ensureFormattingState

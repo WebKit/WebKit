@@ -1,3 +1,18 @@
+2021-09-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        image-rendering: pixelated does not work with WebGL (but does with Canvas2D)
+        https://bugs.webkit.org/show_bug.cgi?id=193895
+        <rdar://problem/47656086>
+
+        Reviewed by Simon Fraser.
+
+        Add a test comparing upscaling of WebGL canvas element and an image element
+        with the same contents when using image-rendering: properties.
+
+        * platform/mac/webgl/webgl-image-rendering-expected.png: Added.
+        * webgl/webgl-image-rendering-expected.txt: Added.
+        * webgl/webgl-image-rendering.html: Added.
+
 2021-09-13  Eric Hutchison  <ehutchison@apple.com>
 
         Updated test expectations for performance-api/performance-observer-no-document-leak.html.

@@ -540,6 +540,12 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
+    enum class ScalingFilter { Linear, Nearest, Trilinear };
+    virtual void setContentsMinificationFilter(ScalingFilter filter) { m_contentsMinificationFilter = filter; }
+    ScalingFilter contentsMinificationFilter() const { return m_contentsMinificationFilter; }
+    virtual void setContentsMagnificationFilter(ScalingFilter filter) { m_contentsMagnificationFilter = filter; }
+    ScalingFilter contentsMagnificationFilter() const { return m_contentsMagnificationFilter; }
+
     void dumpLayer(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions> = { }) const;
 
     virtual void setShowDebugBorder(bool show) { m_showDebugBorder = show; }
@@ -769,6 +775,8 @@ protected:
     FloatRoundedRect m_masksToBoundsRect;
     FloatSize m_contentsTilePhase;
     FloatSize m_contentsTileSize;
+    ScalingFilter m_contentsMinificationFilter = ScalingFilter::Linear;
+    ScalingFilter m_contentsMagnificationFilter = ScalingFilter::Linear;
     FloatRoundedRect m_backdropFiltersRect;
     std::optional<FloatRect> m_animationExtent;
 

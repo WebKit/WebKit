@@ -155,6 +155,8 @@ public:
     WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&) override;
     WEBCORE_EXPORT PlatformLayerID contentsLayerIDForModel() const override;
 #endif
+    WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;
+    WEBCORE_EXPORT void setContentsMagnificationFilter(ScalingFilter) override;
 
     bool usesContentsLayer() const override { return m_contentsLayerPurpose != ContentsLayerPurpose::None; }
     
@@ -463,6 +465,7 @@ private:
     void updateIsDescendentOfSeparatedPortal();
 #endif
 #endif
+    void updateContentsScalingFilters();
 
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
@@ -578,6 +581,7 @@ private:
         DescendentOfSeparatedPortalChanged      = 1LLU << 43,
 #endif
 #endif
+        ContentsScalingFiltersChanged           = 1LLU << 44,
     };
     typedef uint64_t LayerChangeFlags;
     static const char* layerChangeAsString(LayerChange);
