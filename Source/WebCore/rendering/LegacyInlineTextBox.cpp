@@ -154,11 +154,6 @@ LayoutUnit LegacyInlineTextBox::selectionHeight() const
     return root().selectionHeight();
 }
 
-bool LegacyInlineTextBox::isSelectable(unsigned startPosition, unsigned endPosition) const
-{
-    return selectableRange().intersects(startPosition, endPosition);
-}
-
 RenderObject::HighlightState LegacyInlineTextBox::selectionState() const
 {
     return renderer().view().selection().highlightStateForTextBox(renderer(), selectableRange());

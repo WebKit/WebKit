@@ -28,6 +28,7 @@
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderText.h"
+#include "TextBoxSelectableRange.h"
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
@@ -74,7 +75,7 @@ public:
     unsigned offsetForPosition(float x) const { return inlineTextBox()->offsetForPosition(x); }
     float positionForOffset(unsigned offset) const { return inlineTextBox()->positionForOffset(offset); }
 
-    bool isSelectable(unsigned start, unsigned end) const { return inlineTextBox()->isSelectable(start, end); }
+    TextBoxSelectableRange selectableRange() const { return inlineTextBox()->selectableRange(); }
     LayoutRect selectionRect(unsigned start, unsigned end) const { return inlineTextBox()->localSelectionRect(start, end); }
 
     const RenderObject& renderer() const

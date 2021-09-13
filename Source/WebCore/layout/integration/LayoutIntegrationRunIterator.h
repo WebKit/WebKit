@@ -114,7 +114,7 @@ public:
     unsigned offsetForPosition(float x) const;
     float positionForOffset(unsigned) const;
 
-    bool isSelectable(unsigned start, unsigned end) const;
+    TextBoxSelectableRange selectableRange() const;
     LayoutRect selectionRect(unsigned start, unsigned end) const;
 
     const RenderText& renderer() const { return downcast<RenderText>(PathRun::renderer()); }
@@ -343,10 +343,10 @@ inline float PathTextRun::positionForOffset(unsigned offset) const
     });
 }
 
-inline bool PathTextRun::isSelectable(unsigned start, unsigned end) const
+inline TextBoxSelectableRange PathTextRun::selectableRange() const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
-        return path.isSelectable(start, end);
+        return path.selectableRange();
     });
 }
 

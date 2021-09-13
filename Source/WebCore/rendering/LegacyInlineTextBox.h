@@ -115,7 +115,6 @@ private:
 
 public:
     virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
-    bool isSelectable(unsigned startPosition, unsigned endPosition) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
 
 protected:

@@ -100,9 +100,14 @@ public:
         return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
     }
 
-    bool isSelectable(unsigned start, unsigned end) const
+    TextBoxSelectableRange selectableRange() const
     {
-        return selectableRange().intersects(start, end);
+        return {
+            start(),
+            length(),
+            run().style().hyphenString().length(),
+            run().isLineBreak()
+        };
     }
 
     LayoutRect selectionRect(unsigned rangeStart, unsigned rangeEnd) const
@@ -217,16 +222,6 @@ private:
         do {
             m_runIndex = m_runIndex ? m_runIndex - 1 : runs().size();
         } while (!atEnd() && run().isInlineBox());
-    }
-
-    TextBoxSelectableRange selectableRange() const
-    {
-        return {
-            start(),
-            length(),
-            run().style().hyphenString().length(),
-            run().isLineBreak()
-        };
     }
 
     enum class HyphenMode { Include, Ignore };

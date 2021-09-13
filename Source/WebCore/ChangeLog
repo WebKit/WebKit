@@ -1,5 +1,32 @@
 2021-09-13  Antti Koivisto  <antti@apple.com>
 
+        Expose TextBoxSelectableRange in the iterator
+        https://bugs.webkit.org/show_bug.cgi?id=230213
+
+        Reviewed by Alan Bujtas.
+
+        Replace isSelectable with more generic TextBoxSelectableRange accessor.
+        This will be helpful in the future.
+
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathTextRun::selectableRange const):
+        (WebCore::LayoutIntegration::PathTextRun::isSelectable const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::selectableRange const):
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::isSelectable const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectableRange const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::isSelectable const): Deleted.
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::isSelectable const): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuadsForRange const):
+
+2021-09-13  Antti Koivisto  <antti@apple.com>
+
         Remove redundant copy of visibleToHitTesting function
         https://bugs.webkit.org/show_bug.cgi?id=230212
 

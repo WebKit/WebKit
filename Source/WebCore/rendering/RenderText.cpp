@@ -491,7 +491,7 @@ Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end
 
     Vector<FloatQuad> quads;
     for (auto& run : LayoutIntegration::textRunsFor(*this)) {
-        if (ignoreEmptyTextSelections && !run.isSelectable(start, end))
+        if (ignoreEmptyTextSelections && !run.selectableRange().intersects(start, end))
             continue;
         if (start <= run.start() && run.end() <= end) {
             auto boundaries = boundariesForTextRun(run);
