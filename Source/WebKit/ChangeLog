@@ -1,3 +1,16 @@
+2021-09-13  David Kilzer  <ddkilzer@apple.com>
+
+        Linker warnings for WKWebViewConfiguration.limitsNavigationsToAppBoundDomains property methods
+        <https://webkit.org/b/230190>
+
+        Reviewed by Kate Cheney.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration limitsNavigationsToAppBoundDomains]):
+        (-[WKWebViewConfiguration setLimitsNavigationsToAppBoundDomains:]):
+        - Move methods from category WKWebViewConfiguration (WKPrivate) to
+          @implementation WKWebViewConfiguration to fix the warnings.
+
 2021-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Drawing the rounded system ui font into canvas causes a crash
