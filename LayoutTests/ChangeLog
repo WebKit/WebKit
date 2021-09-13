@@ -1,3 +1,15 @@
+2021-09-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Add stub for File System Access API
+        https://bugs.webkit.org/show_bug.cgi?id=230101
+
+        Reviewed by Youenn Fablet.
+
+        Enable file-system-access/ tests only on WK2 platforms where StorageManager is implemented.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make PDFs loaded via <embed> accessible

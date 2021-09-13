@@ -1,3 +1,51 @@
+2021-09-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Add stub for File System Access API
+        https://bugs.webkit.org/show_bug.cgi?id=230101
+
+        Reviewed by Youenn Fablet.
+
+        Add some bindings code and a feature flag for File System Access API.
+        Spec: https://wicg.github.io/file-system-access/
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Modules/filesystemaccess/FileSystemDirectoryHandle.cpp: Added.
+        (WebCore::FileSystemDirectoryHandle::create):
+        (WebCore::FileSystemDirectoryHandle::FileSystemDirectoryHandle):
+        (WebCore::FileSystemDirectoryHandle::getFileHandle):
+        (WebCore::FileSystemDirectoryHandle::getDirectoryHandle):
+        (WebCore::FileSystemDirectoryHandle::removeEntry):
+        (WebCore::FileSystemDirectoryHandle::resolve):
+        * Modules/filesystemaccess/FileSystemDirectoryHandle.h: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        * Modules/filesystemaccess/FileSystemDirectoryHandle.idl: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        * Modules/filesystemaccess/FileSystemFileHandle.cpp: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        (WebCore::FileSystemFileHandle::create):
+        (WebCore::FileSystemFileHandle::FileSystemFileHandle):
+        (WebCore::FileSystemFileHandle::getFile):
+        * Modules/filesystemaccess/FileSystemFileHandle.h: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        * Modules/filesystemaccess/FileSystemFileHandle.idl: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        * Modules/filesystemaccess/FileSystemHandle.cpp: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        (WebCore::FileSystemHandle::FileSystemHandle):
+        (WebCore::FileSystemHandle::isSameEntry):
+        * Modules/filesystemaccess/FileSystemHandle.h: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        (WebCore::FileSystemHandle::kind const):
+        (WebCore::FileSystemHandle::name const):
+        * Modules/filesystemaccess/FileSystemHandle.idl: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        * Modules/filesystemaccess/StorageManager+FileSystemAccess.idl: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        * Modules/filesystemaccess/StorageManagerFileSystemAccess.h: Copied from Source/WebCore/Modules/storage/StorageManager.h.
+        (WebCore::StorageManagerFileSystemAccess::getDirectory):
+        * Modules/permissions/PermissionDescriptor.h:
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::StorageManager::fileSystemAccessGetDirectory):
+        * Modules/storage/StorageManager.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2021-09-13  Joonghun Park  <jh718.park@samsung.com>
 
         transform-origin should not accept 4 lengths

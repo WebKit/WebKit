@@ -435,6 +435,18 @@ FetchAPIKeepAliveEnabled:
     WebKit:
       default: true
 
+FileSystemAccessEnabled:
+  type: bool
+  humanReadableName: "File System Access API"
+  humanReadableDescription: "Enable File System Access API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FocusVisibleEnabled:
   type: bool
   humanReadableName: ":focus-visible pseudo-class"

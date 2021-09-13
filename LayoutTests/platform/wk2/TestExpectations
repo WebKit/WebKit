@@ -863,4 +863,4 @@ fast/speechrecognition/start-second-recognition.html [ Pass ]
 fullscreen/full-screen-enter-while-exiting.html [ Pass ]
 imported/w3c/web-platform-tests/permissions/ [ Pass ]
 imported/w3c/web-platform-tests/storage/ [ Pass ]
-
+imported/w3c/web-platform-tests/file-system-access/ [ Pass ]

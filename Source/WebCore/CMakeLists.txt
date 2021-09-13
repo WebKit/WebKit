@@ -31,6 +31,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
     "${WEBCORE_DIR}/Modules/entriesapi"
     "${WEBCORE_DIR}/Modules/fetch"
+    "${WEBCORE_DIR}/Modules/filesystemaccess"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/highlight"
     "${WEBCORE_DIR}/Modules/indexeddb"
@@ -194,6 +195,7 @@ set(WebCore_IDL_INCLUDES
     Modules/encryptedmedia/legacy
     Modules/entriesapi
     Modules/fetch
+    Modules/filesystemaccess
     Modules/geolocation
     Modules/highlight
     Modules/indexeddb
@@ -285,6 +287,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/fetch/FetchRequestRedirect.idl
     Modules/fetch/FetchResponse.idl
     Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl
+
+    Modules/filesystemaccess/FileSystemDirectoryHandle.idl
+    Modules/filesystemaccess/FileSystemFileHandle.idl
+    Modules/filesystemaccess/FileSystemHandle.idl
+    Modules/filesystemaccess/StorageManager+FileSystemAccess.idl
 
     Modules/geolocation/Geolocation.idl
     Modules/geolocation/GeolocationCoordinates.idl
