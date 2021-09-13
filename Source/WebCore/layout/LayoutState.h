@@ -57,12 +57,12 @@ public:
     TableFormattingState& ensureTableFormattingState(const ContainerBox& formattingContextRoot);
     FlexFormattingState& ensureFlexFormattingState(const ContainerBox& formattingContextRoot);
 
-    FormattingState& establishedFormattingState(const ContainerBox& formattingRoot) const;
-    InlineFormattingState& establishedInlineFormattingState(const ContainerBox& formattingContextRoot) const;
-    BlockFormattingState& establishedBlockFormattingState(const ContainerBox& formattingContextRoot) const;
-    TableFormattingState& establishedTableFormattingState(const ContainerBox& formattingContextRoot) const;
-    FlexFormattingState& establishedFlexFormattingState(const ContainerBox& formattingContextRoot) const;
+    InlineFormattingState& formattingStateForInlineFormattingContext(const ContainerBox& inlineFormattingContextRoot) const;
+    BlockFormattingState& formattingStateForBlockFormattingContext(const ContainerBox& blockFormattingContextRoot) const;
+    TableFormattingState& formattingStateForTableFormattingContext(const ContainerBox& tableFormattingContextRoot) const;
+    FlexFormattingState& formattingStateForFlexFormattingContext(const ContainerBox& flexFormattingContextRoot) const;
 
+    FormattingState& formattingStateForFormattingContext(const ContainerBox& formattingRoot) const;
     FormattingState& formattingStateForBox(const Box&) const;
 
     bool hasFormattingState(const ContainerBox& formattingRoot) const;

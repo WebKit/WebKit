@@ -154,14 +154,14 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                     // Normally by the time we start positioning the child content, we already have computed borders and padding for the containing block.
                     // This is different with table cells where the final padding offset depends on the content height as we use
                     // the padding box to vertically align the table cell content.
-                    auto& formattingState = layoutState().establishedFormattingState(cellBox);
+                    auto& formattingState = layoutState().formattingStateForFormattingContext(cellBox);
                     for (auto* child = cellBox.firstInFlowOrFloatingChild(); child; child = child->nextInFlowOrFloatingSibling()) {
                         if (child->isInlineTextBox())
                             continue;
                         formattingState.boxGeometry(*child).moveVertically(intrinsicPaddingTop);
                     }
                     if (cellBox.establishesInlineFormattingContext()) {
-                        auto& inlineFormattingStatee = layoutState().establishedInlineFormattingState(cellBox);
+                        auto& inlineFormattingStatee = layoutState().formattingStateForInlineFormattingContext(cellBox);
                         for (auto& run : inlineFormattingStatee.runs())
                             run.moveVertically(intrinsicPaddingTop);
                         for (auto& line : inlineFormattingStatee.lines())

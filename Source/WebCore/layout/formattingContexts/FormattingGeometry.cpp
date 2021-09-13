@@ -149,7 +149,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layo
             ASSERT(containerBox.establishesFormattingContext());
             auto& layoutState = this->layoutState();
             if (layoutState.hasFormattingState(containerBox)) {
-                if (auto intrinsicWidthConstraints = layoutState.establishedFormattingState(containerBox).intrinsicWidthConstraints())
+                if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(containerBox).intrinsicWidthConstraints())
                     return *intrinsicWidthConstraints;
             }
             return LayoutContext::createFormattingContext(containerBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
@@ -313,7 +313,7 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
         auto& layoutState = this->layoutState();
         auto& root = downcast<ContainerBox>(formattingContextRoot);
         if (layoutState.hasFormattingState(root)) {
-            if (auto intrinsicWidthConstraints = layoutState.establishedFormattingState(root).intrinsicWidthConstraints())
+            if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(root).intrinsicWidthConstraints())
                 return *intrinsicWidthConstraints;
         }
         return LayoutContext::createFormattingContext(root, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
@@ -798,7 +798,7 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
             auto& initialContainingBlock = documentBox.formattingContextRoot();
-            auto floatingContext = FloatingContext { formattingContext(), layoutState().establishedFormattingState(initialContainingBlock).floatingState() };
+            auto floatingContext = FloatingContext { formattingContext(), layoutState().formattingStateForFormattingContext(initialContainingBlock).floatingState() };
             if (auto floatBottom = floatingContext.bottom()) {
                 bottom = std::max<LayoutUnit>(*floatBottom, bottom);
                 auto floatTop = floatingContext.top();

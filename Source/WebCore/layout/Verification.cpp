@@ -117,7 +117,7 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Lega
 
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ContainerBox& inlineFormattingRoot)
 {
-    auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
+    auto& inlineFormattingState = layoutState.formattingStateForFormattingContext(inlineFormattingRoot);
     auto& runs = downcast<InlineFormattingState>(inlineFormattingState).runs();
     // Collect inlineboxes.
     Vector<WebCore::LegacyInlineBox*> inlineBoxes;

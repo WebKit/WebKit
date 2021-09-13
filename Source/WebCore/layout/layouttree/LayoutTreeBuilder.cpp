@@ -383,7 +383,7 @@ void TreeBuilder::buildSubTree(const RenderElement& parentRenderer, ContainerBox
 #if ENABLE(TREE_DEBUGGING)
 void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, const ContainerBox& inlineFormattingRoot, size_t depth)
 {
-    auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
+    auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(inlineFormattingRoot);
     auto& lines = inlineFormattingState.lines();
     auto& runs = inlineFormattingState.runs();
 

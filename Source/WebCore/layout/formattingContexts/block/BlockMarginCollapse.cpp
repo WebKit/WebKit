@@ -413,7 +413,7 @@ bool BlockMarginCollapse::marginsCollapseThrough(const Box& layoutBox) const
                 return false;
 
             auto isConsideredEmpty = [&] {
-                auto& inlineFormattingState = layoutState.establishedInlineFormattingState(containerBox);
+                auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(containerBox);
                 if (!inlineFormattingState.lines().isEmpty())
                     return false;
                 // Any float box in this formatting context prevents collapsing through.

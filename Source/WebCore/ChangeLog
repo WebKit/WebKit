@@ -1,5 +1,57 @@
 2021-09-13  Alan Bujtas  <zalan@apple.com>
 
+        [LFC] Rename LayoutState::established*FormattingState to formattingStateFor*FormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=229263
+        <rdar://problem/82365067>
+
+        Reviewed by Antti Koivisto.
+
+        Stop using "established" when asking for the state object associated with a formatting context. 
+        The spec term, "established", is used to indicate that a particular node in the layout tree forces a set of formatting rules on its descendants.
+        This terms works well in the context of forming formatting contexts. However the corresponding (persistent)formatting states are not "established" in the same sense.
+
+        * display/DisplayTreeBuilder.cpp:
+        (WebCore::Display::TreeBuilder::buildInlineDisplayTree):
+        * layout/FormattingState.cpp:
+        (WebCore::Layout::FormattingState::boxGeometry):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::formattingStateForBox const):
+        (WebCore::Layout::LayoutState::formattingStateForFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForInlineFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForBlockFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForTableFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForFlexFormattingContext const):
+        (WebCore::Layout::LayoutState::ensureInlineFormattingState):
+        (WebCore::Layout::LayoutState::establishedFormattingState const): Deleted.
+        (WebCore::Layout::LayoutState::establishedInlineFormattingState const): Deleted.
+        (WebCore::Layout::LayoutState::establishedBlockFormattingState const): Deleted.
+        (WebCore::Layout::LayoutState::establishedTableFormattingState const): Deleted.
+        (WebCore::Layout::LayoutState::establishedFlexFormattingState const): Deleted.
+        * layout/LayoutState.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/formattingContexts/FormattingGeometry.cpp:
+        (WebCore::Layout::FormattingGeometry::computedWidthValue const):
+        (WebCore::Layout::FormattingGeometry::shrinkToFitWidth const):
+        (WebCore::Layout::FormattingGeometry::complicatedCases const):
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp:
+        (WebCore::Layout::BlockFormattingGeometry::inFlowNonReplacedContentHeightAndMargin const):
+        * layout/formattingContexts/block/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockMarginCollapse::marginsCollapseThrough const):
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::usedBaselineForCell const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::showInlineTreeAndRuns):
+
+2021-09-13  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Do not pass in the InvalidationState to the layout functions
         https://bugs.webkit.org/show_bug.cgi?id=229221
         <rdar://problem/82321574>

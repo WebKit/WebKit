@@ -303,7 +303,7 @@ StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionP
 
 void TreeBuilder::buildInlineDisplayTree(const Layout::LayoutState& layoutState, const Layout::ContainerBox& inlineFormattingRoot, InsertionPosition& insertionPosition)
 {
-    auto& inlineFormattingState = layoutState.establishedInlineFormattingState(inlineFormattingRoot);
+    auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(inlineFormattingRoot);
 
     for (auto& run : inlineFormattingState.runs()) {
         if (run.isRootInlineBox()) {
