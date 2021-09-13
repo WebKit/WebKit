@@ -32,6 +32,36 @@
     "imported/w3c/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],
+    "imported/w3c/css/cssom-view/idlharness.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-default-css.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-element.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-main-frame-root.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-main-frame-window.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-scrollintoview-nested.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-smooth-positions.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-smooth.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-subframe-root.html": [
+        "slow"
+    ],
+    "imported/w3c/css/cssom-view/scroll-behavior-subframe-window.html": [
+        "slow"
+    ],
     "imported/w3c/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html": [
         "slow"
     ],

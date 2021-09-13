@@ -21,6 +21,7 @@
     "css/css-transforms": "import", 
     "css/css-transforms/parsing": "import", 
     "css/css-values": "import", 
+    "css/cssom-view": "import", 
     "css/geometry": "import", 
     "css/selectors": "import", 
     "css/support": "import", 

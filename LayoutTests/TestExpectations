@@ -5141,7 +5141,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-002.htm
 
 # Tests that fail because they assume a vertical scrollbar in `writing-mode: vertical-rl` elements will be on the right-hand side
 webkit.org/b/224357 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vrl-in-htb-013.xht [ ImageOnlyFailure ]
-webkit.org/b/224357 imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl.html [ ImageOnlyFailure ]
 
 # Counter style tests that fail on some platforms because of subtle character positioning differences, presumably from subpixel rounding.
 # These failures are slightly different per-platform, but it seems unwise to move the expectations into platform-specific expectations files.

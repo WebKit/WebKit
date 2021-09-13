@@ -1,3 +1,60 @@
+2021-09-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Update css/cssom-view WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=230196
+
+        Reviewed by Antti Koivisto.
+        
+        Update CSS OM View tests from WPT efb73b2ce6da4c65350be9a0c8aa23700e253f07.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/cssom-view/MediaQueryList-addListener-removeListener-expected.txt:
+        * web-platform-tests/css/cssom-view/MediaQueryList-addListener-removeListener.html:
+        * web-platform-tests/css/cssom-view/MediaQueryList-change-event-matches-value-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/MediaQueryList-change-event-matches-value.html: Added.
+        * web-platform-tests/css/cssom-view/add-background-attachment-fixed-during-smooth-scroll-expected.html: Added.
+        * web-platform-tests/css/cssom-view/add-background-attachment-fixed-during-smooth-scroll.html: Added.
+        * web-platform-tests/css/cssom-view/background-change-during-smooth-scroll-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/background-change-during-smooth-scroll.html: Added.
+        * web-platform-tests/css/cssom-view/client-props-input-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/client-props-input.html: Added.
+        * web-platform-tests/css/cssom-view/client-props-root-display-none-crash-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/client-props-root-display-none-crash.html: Added.
+        * web-platform-tests/css/cssom-view/client-props-root-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/client-props-root.html: Added.
+        * web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl-expected.html:
+        * web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl.html:
+        * web-platform-tests/css/cssom-view/devicePixelRatio-undisplayed-iframe.tentative-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/devicePixelRatio-undisplayed-iframe.tentative.html: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-ellipsis-in-inline-box-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-ellipsis-in-inline-box.html: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-float-in-relative-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-float-in-relative.html: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-visibility-hidden-resizer-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/elementFromPoint-visibility-hidden-resizer.html: Added.
+        * web-platform-tests/css/cssom-view/elementFromPosition.html:
+        * web-platform-tests/css/cssom-view/elementsFromPoint-svg-text.html:
+        * web-platform-tests/css/cssom-view/getBoundingClientRect-shy-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/getBoundingClientRect-shy.html: Added.
+        * web-platform-tests/css/cssom-view/long_scroll_composited-expected.html:
+        * web-platform-tests/css/cssom-view/long_scroll_composited.html:
+        * web-platform-tests/css/cssom-view/mouseEvent-offsetXY-svg-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/mouseEvent-offsetXY-svg.html: Added.
+        * web-platform-tests/css/cssom-view/position-sticky-root-scroller-with-scroll-behavior-expected.txt:
+        * web-platform-tests/css/cssom-view/position-sticky-root-scroller-with-scroll-behavior.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html:
+        * web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html:
+        * web-platform-tests/css/cssom-view/scroll-overflow-clip-quirks-001-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-overflow-clip-quirks-001.html: Added.
+        * web-platform-tests/css/cssom-view/scroll-overflow-clip-quirks-002-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scroll-overflow-clip-quirks-002.html: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-inline-image-expected.txt: Added.
+        * web-platform-tests/css/cssom-view/scrollIntoView-inline-image.html: Added.
+        * web-platform-tests/css/cssom-view/scrollingElement-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollingElement.html:
+        * web-platform-tests/css/cssom-view/w3c-import.log:
+
 2021-09-11  Simon Fraser  <simon.fraser@apple.com>
 
         css/css-transforms/translate-getComputedStyle.html fails

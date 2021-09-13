@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: element click intercepted error
+
+Harness Error (FAIL), message = Unhandled rejection: element click intercepted error
+
+NOTRUN MouseEvent.offsetX/Y returns coordinates relative to the root svg
+

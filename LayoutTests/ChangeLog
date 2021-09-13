@@ -1,3 +1,15 @@
+2021-09-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Update css/cssom-view WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=230196
+
+        Reviewed by Antti Koivisto.
+
+        Update CSS OM View tests from WPT efb73b2ce6da4c65350be9a0c8aa23700e253f07.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-09-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         image-rendering: pixelated does not work with WebGL (but does with Canvas2D)
