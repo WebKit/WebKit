@@ -440,14 +440,10 @@ static bool devicePixelRatioEvaluate(CSSValue* value, const CSSToLengthConversio
 
 static bool resolutionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-#if ENABLE(RESOLUTION_MEDIA_QUERY)
+    if (!frame.settings().resolutionMediaFeatureEnabled())
+        return false;
+
     return (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isResolution())) && evaluateResolution(value, frame, op);
-#else
-    UNUSED_PARAM(value);
-    UNUSED_PARAM(frame);
-    UNUSED_PARAM(op);
-    return false;
-#endif
 }
 
 static bool dynamicRangeEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)

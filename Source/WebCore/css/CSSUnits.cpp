@@ -75,10 +75,8 @@ CSSUnitType canonicalUnitTypeForCategory(CSSUnitCategory category)
         return CSSUnitType::CSS_DEG;
     case CSSUnitCategory::Frequency:
         return CSSUnitType::CSS_HZ;
-#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
     case CSSUnitCategory::Resolution:
         return CSSUnitType::CSS_DPPX;
-#endif
     default:
         return CSSUnitType::CSS_UNKNOWN;
     }

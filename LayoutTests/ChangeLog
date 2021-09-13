@@ -1,3 +1,17 @@
+2021-09-13  Sam Sneddon  <gsnedders@apple.com>
+
+        Move ENABLE_RESOLUTION_MEDIA_QUERY to a runtime flag, start running tests again
+        https://bugs.webkit.org/show_bug.cgi?id=229776
+
+        Reviewed by Simon Fraser.
+
+        * fast/media/mq-resolution-expected.txt:
+        * fast/media/mq-resolution.html: Use the backing scale-factor, not zoom
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-09-13  Simon Fraser  <simon.fraser@apple.com>
 
         Add the ability to show a flat list of the slowest 200 tests in the tests treemap viewer

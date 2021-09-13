@@ -113,14 +113,6 @@ private:
 // FIXME: Seems strange to have this here in this file, and unclear exactly who should call this and when.
 void reportMediaQueryWarningIfNeeded(Document*, const MediaQuerySet*);
 
-#if !ENABLE(RESOLUTION_MEDIA_QUERY)
-
-inline void reportMediaQueryWarningIfNeeded(Document*, const MediaQuerySet*)
-{
-}
-
-#endif
-
 WTF::TextStream& operator<<(WTF::TextStream&, const MediaQuerySet&);
 WTF::TextStream& operator<<(WTF::TextStream&, const MediaList&);
 

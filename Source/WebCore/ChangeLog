@@ -1,3 +1,24 @@
+2021-09-13  Sam Sneddon  <gsnedders@apple.com>
+
+        Move ENABLE_RESOLUTION_MEDIA_QUERY to a runtime flag, start running tests again
+        https://bugs.webkit.org/show_bug.cgi?id=229776
+
+        Reviewed by Simon Fraser.
+
+        No new tests, unskipped & rebaselined existing tests.
+
+        * css/CSSUnits.cpp:
+        (WebCore::canonicalUnitTypeForCategory):
+        * css/MediaList.cpp:
+        Fix compilation with resolution enabled.
+        (WebCore::addResolutionWarningMessageToConsole):
+        Simplify code generating message.
+        (WebCore::reportMediaQueryWarningIfNeeded):
+        * css/MediaList.h:
+        (WebCore::reportMediaQueryWarningIfNeeded): Deleted.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::resolutionEvaluate):
+
 2021-09-13  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Addition of CSSNumericValue and subclasses. (CSS Typed OM)
