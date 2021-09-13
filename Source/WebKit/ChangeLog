@@ -1,3 +1,25 @@
+2021-09-13  Tim Horton  <timothy_horton@apple.com>
+
+        Postprocess framework headers in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=230198
+
+        Reviewed by Wenson Hsieh.
+
+        * mac/postprocess-framework-headers.sh:
+        Previously, the framework header postprocessing step operated serially
+        on each of our 665 framework headers; not doing a particularly large
+        amount of work on any, but still, 20 wall clock ms * 665 headers is
+        a good chunk of time.
+
+        Instead, run them in parallel and wait on the result.
+
+        On a 10 core machine, this better than halves the time of a WebKit-only
+        null build (from 36 seconds to 15).
+
+        This is definitely not an ideal solution; we're still wasting a ton
+        of time launching processes; it's likely possible to get further wins
+        here; on the other hand, header postprocessing only takes 2 seconds now.
+
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
         Relax BroadcastChannel origin partitioning if iframe has storage access
