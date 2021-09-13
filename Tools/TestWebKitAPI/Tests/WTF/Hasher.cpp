@@ -123,7 +123,8 @@ TEST(WTF, Hasher_floatingPoint)
 {
     EXPECT_EQ(zero64BitHash, computeHash(0.0));
     EXPECT_EQ(1264532604U, computeHash(-0.0)); // Note, not same as hash of 0.0.
-    EXPECT_EQ(one64BitHash, computeHash(std::numeric_limits<double>::denorm_min()));
+    if (std::numeric_limits<double>::has_denorm == std::denorm_present)
+        EXPECT_EQ(one64BitHash, computeHash(std::numeric_limits<double>::denorm_min()));
 
     EXPECT_EQ(2278399980U, computeHash(1.0));
     EXPECT_EQ(3870689297U, computeHash(-1.0));
@@ -140,7 +141,8 @@ TEST(WTF, Hasher_floatingPoint)
 
     EXPECT_EQ(zero32BitHash, computeHash(0.0f));
     EXPECT_EQ(2425683428U, computeHash(-0.0f)); // Note, not same as hash of 0.0f.
-    EXPECT_EQ(one32BitHash, computeHash(std::numeric_limits<float>::denorm_min()));
+    if (std::numeric_limits<float>::has_denorm == std::denorm_present)
+        EXPECT_EQ(one32BitHash, computeHash(std::numeric_limits<float>::denorm_min()));
 
     EXPECT_EQ(1081575966U, computeHash(1.0f));
     EXPECT_EQ(3262093188U, computeHash(-1.0f));

@@ -1,3 +1,17 @@
+2021-09-13  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [TestWTF] Hash tests for denorm_min should be skipped if denorm is not supported.
+        https://bugs.webkit.org/show_bug.cgi?id=230177
+
+        Reviewed by Don Olmstead.
+
+        std::numeric_limits::denorm_min does not return a denormalized value
+        if denormal number is not supported. Test denorm_min only if 
+        (has_denorm == denorm_present).
+
+        * TestWebKitAPI/Tests/WTF/Hasher.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-09-13  Aakash Jain  <aakash_jain@apple.com>
 
         Reduce EWS email notifications to Aakash
