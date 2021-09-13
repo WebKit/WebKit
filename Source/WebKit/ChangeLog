@@ -1,3 +1,16 @@
+2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Followup to r282320 - avoid a potential memory leak
+        https://bugs.webkit.org/show_bug.cgi?id=230187
+        <rdar://problem/81436658>
+
+        Reviewed by Myles C. Maxfield.
+
+        Use `adoptCF` to prevent leaking the last resort font descriptor.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::createCTFont):
+
 2021-09-13  David Kilzer  <ddkilzer@apple.com>
 
         Linker warnings for WKWebViewConfiguration.limitsNavigationsToAppBoundDomains property methods
