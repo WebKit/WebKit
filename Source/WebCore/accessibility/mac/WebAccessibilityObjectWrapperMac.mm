@@ -3050,6 +3050,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             @"AXBoundsForTextMarkerRange",
             @"AXAttributedStringForTextMarkerRange",
             @"AXAttributedStringForTextMarkerRangeWithOptions",
+            @"AXTextMarkerRangeForTextMarkers",
             @"AXTextMarkerRangeForUnorderedTextMarkers",
             @"AXNextTextMarkerForTextMarker",
             @"AXPreviousTextMarkerForTextMarker",
@@ -4086,11 +4087,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return nil;
     }
 
-    if ([attribute isEqualToString:@"AXTextMarkerRangeForUnorderedTextMarkers"]) {
-        if ([array count] < 2)
+    if ([attribute isEqualToString:@"AXTextMarkerRangeForTextMarkers"]) {
+        if (array.count < 2
+            || !AXObjectIsTextMarker([array objectAtIndex:0])
+            || !AXObjectIsTextMarker([array objectAtIndex:1]))
             return nil;
+        return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&array] () -> RetainPtr<id> {
+            return (id)textMarkerRangeFromMarkers((AXTextMarkerRef)[array objectAtIndex:0], (AXTextMarkerRef)[array objectAtIndex:1]).get();
+        });
+    }
 
-        if (!AXObjectIsTextMarker([array objectAtIndex:0]) || !AXObjectIsTextMarker([array objectAtIndex:0]))
+    if ([attribute isEqualToString:@"AXTextMarkerRangeForUnorderedTextMarkers"]) {
+        if (array.count < 2
+            || !AXObjectIsTextMarker([array objectAtIndex:0])
+            || !AXObjectIsTextMarker([array objectAtIndex:1]))
             return nil;
 
         AXTextMarkerRef textMarker1 = (AXTextMarkerRef)[array objectAtIndex:0];

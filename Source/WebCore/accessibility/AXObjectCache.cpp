@@ -1926,7 +1926,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
         || textMarkerData.node->isPseudoElement())
         return { };
 
-    auto visiblePosition = VisiblePosition(makeContainerOffsetPosition(textMarkerData.node, textMarkerData.offset), textMarkerData.affinity);
+    auto visiblePosition = VisiblePosition({ textMarkerData.node, textMarkerData.offset, textMarkerData.anchorType }, textMarkerData.affinity);
     auto deepPosition = visiblePosition.deepEquivalent();
     if (deepPosition.isNull())
         return { };
@@ -2510,7 +2510,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
         return std::nullopt;
 
     Position deepPos = visiblePos.deepEquivalent();
-    Node* domNode = deepPos.deprecatedNode();
+    Node* domNode = deepPos.anchorNode();
     ASSERT(domNode);
     if (!domNode)
         return std::nullopt;
@@ -2541,6 +2541,7 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
     textMarkerData.axID = obj.get()->objectID();
     textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.deprecatedEditingOffset();
+    textMarkerData.anchorType = deepPos.anchorType();
     textMarkerData.affinity = visiblePos.affinity();
 
     textMarkerData.characterOffset = characterOffset.offset;

@@ -65,6 +65,7 @@ struct CharacterOffset;
 // TextMarker and TextMarkerRange public funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes on their own right, wrapping the system objects.
 
+RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef, AXTextMarkerRef);
 AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache*, AXTextMarkerRef);
 
 // TextMarker <-> VisiblePosition conversion.

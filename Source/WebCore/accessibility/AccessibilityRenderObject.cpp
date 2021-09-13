@@ -2320,10 +2320,16 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
         if (range.start.deepEquivalent().anchorNode() == range.end.deepEquivalent().anchorNode()
             && range.start.deepEquivalent().anchorNode() == textControl) {
             if (auto innerText = textControl->innerTextElement()) {
+                auto textControlRange = makeVisiblePositionRange(AXObjectCache::rangeForNodeContents(*textControl));
                 auto innerRange = makeVisiblePositionRange(AXObjectCache::rangeForNodeContents(*innerText));
-                if (range.start < innerRange.start)
+
+                if (range.start.equals(textControlRange.end))
+                    start = textControl->value().length();
+                else if (range.start <= innerRange.start)
                     start = 0;
-                if (range.end >= innerRange.end)
+
+                if (range.end >= innerRange.end
+                    || range.end.equals(textControlRange.end))
                     end = textControl->value().length();
             }
         }

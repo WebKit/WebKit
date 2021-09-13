@@ -1,3 +1,15 @@
+2021-09-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: set insertion point to the end of a native text control does not work when passing a collapsed TextMarkerRange with both start and end equals to the end TextMarker for the element.
+        https://bugs.webkit.org/show_bug.cgi?id=230166
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+        Use AXTextMarkerRangeForTextMarkers instead of
+        AXTextMarkerRangeForUnorderedTextMarkers.
+
 2021-09-13  Alex Christensen  <achristensen@webkit.org>
 
         Add unit test that uses PCM daemon

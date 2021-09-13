@@ -1,3 +1,20 @@
+2021-09-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: set insertion point to the end of a native text control does not work when passing a collapsed TextMarkerRange with both start and end equals to the end TextMarker for the element.
+        https://bugs.webkit.org/show_bug.cgi?id=230166
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/bounds-for-range-expected.txt:
+        Added AXTextMarkerRangeForTextMarkers attribute name.
+        * accessibility/mac/native-text-control-set-selected-textmarker-range-expected.txt:
+        * accessibility/mac/native-text-control-set-selected-textmarker-range.html:
+        Expanded to include the test cases to move the insertion point to the
+        beginning and end of the text cotnrol.
+        * accessibility/text-marker/text-marker-previous-next-expected.txt:
+        * accessibility/text-marker/text-marker-previous-next.html:
+        Adjusted expected value to include linebreak character.
+
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
         Relax BroadcastChannel origin partitioning if iframe has storage access

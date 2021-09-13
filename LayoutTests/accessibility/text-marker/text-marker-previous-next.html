@@ -83,8 +83,11 @@ f
         previousMarker = result.previous;
         currentMarker = result.current;
         markerRange = text.textMarkerRangeForMarkers(previousMarker, currentMarker);
-        shouldBe("text.stringForTextMarkerRange(markerRange)", "'t'");
-        
+        if (accessibilityController.platformName == "mac")
+            shouldBe("text.stringForTextMarkerRange(markerRange)", "'t' + newline");
+        else
+            shouldBe("text.stringForTextMarkerRange(markerRange)", "'t'");
+
         // Check the case with replaced node
         var text2 = accessibilityController.accessibleElementById("text2");
         var textMarkerRange2 = text2.textMarkerRangeForElement(text2);
