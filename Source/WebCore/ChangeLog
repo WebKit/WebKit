@@ -1,3 +1,22 @@
+2021-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r282278): ASSERTION FAILED: !m_needExceptionCheck in JSC::VM::verifyExceptionCheckNeedIsSatisfied
+        https://bugs.webkit.org/show_bug.cgi?id=230208
+
+        Reviewed by Youenn Fablet.
+
+        r282278 introduced a new assertion failure for
+        js/dom/transform-stream.html in WinCairo Debug WK2.
+
+        JSObject::get throws an simulated exception. DECLARE_THROW_SCOPE
+        failed the assertion after that.
+
+        * bindings/js/InternalWritableStream.cpp:
+        (WebCore::invokeWritableStreamFunction): Removed
+        DECLARE_THROW_SCOPE because this function doesn't throw. Added
+        DECLARE_CATCH_SCOPE to use assertNoExceptionExceptTermination
+        after JSObject::get.
+
 2021-09-13  Alan Bujtas  <zalan@apple.com>
 
         [LFC] Rename LayoutState::established*FormattingState to formattingStateFor*FormattingContext
