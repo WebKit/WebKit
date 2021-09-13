@@ -123,6 +123,7 @@ public:
     virtual void emulatePlatformEvent(const String& action) = 0;
 
     struct DescriptionStates {
+        std::optional<RTCSignalingState> signalingState;
         std::optional<RTCSdpType> currentLocalDescriptionSdpType;
         String currentLocalDescriptionSdp;
         std::optional<RTCSdpType> pendingLocalDescriptionSdpType;

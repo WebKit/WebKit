@@ -282,35 +282,8 @@ void LibWebRTCMediaEndpoint::getStats(webrtc::RtpSenderInterface& sender, Ref<De
         m_backend->GetStats(rtc::scoped_refptr<webrtc::RtpSenderInterface>(&sender), createStatsCollector(WTFMove(promise)));
 }
 
-static RTCSignalingState signalingState(webrtc::PeerConnectionInterface::SignalingState state)
+void LibWebRTCMediaEndpoint::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState)
 {
-    switch (state) {
-    case webrtc::PeerConnectionInterface::kStable:
-        return RTCSignalingState::Stable;
-    case webrtc::PeerConnectionInterface::kHaveLocalOffer:
-        return RTCSignalingState::HaveLocalOffer;
-    case webrtc::PeerConnectionInterface::kHaveLocalPrAnswer:
-        return RTCSignalingState::HaveLocalPranswer;
-    case webrtc::PeerConnectionInterface::kHaveRemoteOffer:
-        return RTCSignalingState::HaveRemoteOffer;
-    case webrtc::PeerConnectionInterface::kHaveRemotePrAnswer:
-        return RTCSignalingState::HaveRemotePranswer;
-    case webrtc::PeerConnectionInterface::kClosed:
-        return RTCSignalingState::Stable;
-    }
-
-    ASSERT_NOT_REACHED();
-    return RTCSignalingState::Stable;
-}
-
-void LibWebRTCMediaEndpoint::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState rtcState)
-{
-    auto state = signalingState(rtcState);
-    callOnMainThread([protectedThis = makeRef(*this), state] {
-        if (protectedThis->isStopped())
-            return;
-        protectedThis->m_peerConnectionBackend.updateSignalingState(state);
-    });
 }
 
 MediaStream& LibWebRTCMediaEndpoint::mediaStreamFromRTCStream(webrtc::MediaStreamInterface& rtcStream)
@@ -579,7 +552,29 @@ static inline RTCSdpType fromSessionDescriptionType(const webrtc::SessionDescrip
     return RTCSdpType::Pranswer;
 }
 
-static std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromPeerConnection(webrtc::PeerConnectionInterface* connection)
+static RTCSignalingState toRTCSignalingState(webrtc::PeerConnectionInterface::SignalingState state)
+{
+    switch (state) {
+    case webrtc::PeerConnectionInterface::kStable:
+        return RTCSignalingState::Stable;
+    case webrtc::PeerConnectionInterface::kHaveLocalOffer:
+        return RTCSignalingState::HaveLocalOffer;
+    case webrtc::PeerConnectionInterface::kHaveLocalPrAnswer:
+        return RTCSignalingState::HaveLocalPranswer;
+    case webrtc::PeerConnectionInterface::kHaveRemoteOffer:
+        return RTCSignalingState::HaveRemoteOffer;
+    case webrtc::PeerConnectionInterface::kHaveRemotePrAnswer:
+        return RTCSignalingState::HaveRemotePranswer;
+    case webrtc::PeerConnectionInterface::kClosed:
+        return RTCSignalingState::Stable;
+    }
+
+    ASSERT_NOT_REACHED();
+    return RTCSignalingState::Stable;
+}
+
+enum class GatherSignalingState { No, Yes };
+static std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromPeerConnection(webrtc::PeerConnectionInterface* connection, GatherSignalingState gatherSignalingState = GatherSignalingState::No)
 {
     if (!connection)
         return { };
@@ -603,7 +598,11 @@ static std::optional<PeerConnectionBackend::DescriptionStates> descriptionsFromP
         description->ToString(&pendingRemoteDescriptionSdp);
     }
 
+    std::optional<RTCSignalingState> signalingState;
+    if (gatherSignalingState == GatherSignalingState::Yes)
+        signalingState = toRTCSignalingState(connection->signaling_state());
     return PeerConnectionBackend::DescriptionStates {
+        signalingState,
         currentLocalDescriptionSdpType, fromStdString(currentLocalDescriptionSdp),
         pendingLocalDescriptionSdpType, fromStdString(pendingLocalDescriptionSdp),
         currentRemoteDescriptionSdpType, fromStdString(currentRemoteDescriptionSdp),
@@ -698,7 +697,7 @@ std::unique_ptr<LibWebRTCSctpTransportBackend> SctpTransportState::createBackend
 
 void LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded()
 {
-    callOnMainThread([protectedThis = makeRef(*this), descriptions = descriptionsFromPeerConnection(m_backend.get()), sctpState = SctpTransportState(m_backend->GetSctpTransport())]() mutable {
+    callOnMainThread([protectedThis = makeRef(*this), descriptions = descriptionsFromPeerConnection(m_backend.get(), GatherSignalingState::Yes), sctpState = SctpTransportState(m_backend->GetSctpTransport())]() mutable {
         if (protectedThis->isStopped())
             return;
         protectedThis->m_peerConnectionBackend.setLocalDescriptionSucceeded(WTFMove(descriptions), sctpState.createBackend());
@@ -716,7 +715,7 @@ void LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed(ExceptionCode erro
 
 void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded()
 {
-    callOnMainThread([protectedThis = makeRef(*this), descriptions = descriptionsFromPeerConnection(m_backend.get()), sctpState = SctpTransportState(m_backend->GetSctpTransport())]() mutable {
+    callOnMainThread([protectedThis = makeRef(*this), descriptions = descriptionsFromPeerConnection(m_backend.get(), GatherSignalingState::Yes), sctpState = SctpTransportState(m_backend->GetSctpTransport())]() mutable {
         if (protectedThis->isStopped())
             return;
         protectedThis->m_peerConnectionBackend.setRemoteDescriptionSucceeded(WTFMove(descriptions), sctpState.createBackend());

@@ -608,8 +608,12 @@ void RTCPeerConnection::addInternalTransceiver(Ref<RTCRtpTransceiver>&& transcei
 
 void RTCPeerConnection::setSignalingState(RTCSignalingState newState)
 {
+    if (m_signalingState == newState)
+        return;
+
     ALWAYS_LOG(LOGIDENTIFIER, newState);
     m_signalingState = newState;
+    dispatchEventWhenFeasible(Event::create(eventNames().signalingstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
@@ -932,6 +936,9 @@ static void updateDescription(RefPtr<RTCSessionDescription>& description, std::o
 
 void RTCPeerConnection::updateDescriptions(PeerConnectionBackend::DescriptionStates&& states)
 {
+    if (states.signalingState)
+        setSignalingState(*states.signalingState);
+
     updateDescription(m_currentLocalDescription, states.currentLocalDescriptionSdpType, WTFMove(states.currentLocalDescriptionSdp));
     updateDescription(m_pendingLocalDescription, states.pendingLocalDescriptionSdpType, WTFMove(states.pendingLocalDescriptionSdp));
     updateDescription(m_currentRemoteDescription, states.currentRemoteDescriptionSdpType, WTFMove(states.currentRemoteDescriptionSdp));

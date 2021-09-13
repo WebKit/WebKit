@@ -221,27 +221,29 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
     ASSERT(m_setDescriptionCallback);
 
-    auto callback = WTFMove(m_setDescriptionCallback);
-    auto events = WTFMove(m_pendingTrackEvents);
-    for (auto& event : events) {
-        auto& track = event.track.get();
-
-        m_peerConnection.dispatchEventWhenFeasible(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
-        ALWAYS_LOG(LOGIDENTIFIER, "Dispatched if feasible track of type ", track.source().type());
-
-        if (m_peerConnection.isClosed())
-            return;
-
-        // FIXME: As per spec, we should set muted to 'false' when starting to receive the content from network.
-        track.source().setMuted(false);
-    }
-
-    m_peerConnection.doTask([this, callback = WTFMove(callback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend), events = WTFMove(m_pendingTrackEvents)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
         if (descriptionStates)
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
+
+        for (auto& event : events) {
+            auto& track = event.track.get();
+
+            m_peerConnection.dispatchEventWhenFeasible(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
+            ALWAYS_LOG(LOGIDENTIFIER, "Dispatched if feasible track of type ", track.source().type());
+
+            if (m_peerConnection.isClosed())
+                return;
+
+            // FIXME: As per spec, we should set muted to 'false' when starting to receive the content from network.
+            track.source().setMuted(false);
+        }
+
+        if (m_peerConnection.isClosed())
+            return;
+
         m_peerConnection.updateTransceiversAfterSuccessfulRemoteDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
         callback({ });
@@ -369,6 +371,9 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
 
         if (descriptions)
             m_peerConnection.updateDescriptions(WTFMove(*descriptions));
+
+        if (m_peerConnection.isClosed())
+            return;
 
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "Gathered ice candidate:", sdp);
