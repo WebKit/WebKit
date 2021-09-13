@@ -1,3 +1,12 @@
+2021-09-13  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [GTK][l10n] Updated Polish translation of WebKitGTK for 2.34
+        https://bugs.webkit.org/show_bug.cgi?id=229921
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * pl.po:
+
 2021-08-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         French translation of webkit.HEAD
