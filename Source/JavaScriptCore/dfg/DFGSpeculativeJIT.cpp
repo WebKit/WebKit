@@ -13833,7 +13833,7 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
 
 #if USE(JSVALUE32_64)
         m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
-        auto baseRegs = JSValueRegs(baseCellGPR, resultRegs.tagGPR());
+        auto baseRegs = JSValueRegs(resultRegs.tagGPR(), baseCellGPR);
 #else
         auto baseRegs = base;
 #endif

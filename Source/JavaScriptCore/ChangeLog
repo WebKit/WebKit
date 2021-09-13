@@ -1,3 +1,16 @@
+2021-09-13  Xan López  <xan@igalia.com>
+
+        [JSC][32bit] in-by-val fails inside for-in loop after delete
+        https://bugs.webkit.org/show_bug.cgi?id=230150
+
+        Reviewed by Carlos Garcia Campos.
+
+        The order of payload and tag was reversed when constructing the
+        base value for compileEnumeratorHasProperty.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasProperty):
+
 2021-09-10  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Support running applications with ENABLE_STATIC_JSC=ON
