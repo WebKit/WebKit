@@ -1,3 +1,18 @@
+2021-09-13  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebPage::runJavaScript()
+        https://bugs.webkit.org/show_bug.cgi?id=230223
+        <rdar://80172436>
+
+        Reviewed by Brady Eidson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+        (-[AsyncJSUIDelegate initWithAlertHandler:]):
+        (-[AsyncJSUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TestWebKitAPI::TEST):
+
 2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make PDFs loaded via <embed> accessible
