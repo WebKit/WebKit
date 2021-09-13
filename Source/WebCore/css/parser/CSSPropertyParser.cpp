@@ -357,7 +357,7 @@ bool CSSPropertyParser::consumeTransformOrigin(bool important)
         bool atEnd = m_range.atEnd();
         auto resultZ = consumeLength(m_range, m_context.mode, ValueRange::All);
         bool hasZ = resultZ;
-        if (!hasZ && !atEnd)
+        if ((!hasZ && !atEnd) || !m_range.atEnd())
             return false;
         addProperty(CSSPropertyTransformOriginX, CSSPropertyTransformOrigin, WTFMove(resultXY->x), important);
         addProperty(CSSPropertyTransformOriginY, CSSPropertyTransformOrigin, WTFMove(resultXY->y), important);

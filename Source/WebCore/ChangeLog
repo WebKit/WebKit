@@ -1,3 +1,16 @@
+2021-09-13  Joonghun Park  <jh718.park@samsung.com>
+
+        transform-origin should not accept 4 lengths
+        https://bugs.webkit.org/show_bug.cgi?id=186965
+
+        transform-origin accepts 1, 2, or 3 values per the spec below.
+        https://drafts.csswg.org/css-transforms/#propdef-transform-origin
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeTransformOrigin):
+
 2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Make PDFs loaded via <embed> accessible

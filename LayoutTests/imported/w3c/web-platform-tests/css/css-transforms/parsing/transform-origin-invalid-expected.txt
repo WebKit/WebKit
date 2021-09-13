@@ -1,7 +1,7 @@
 
 PASS e.style['transform-origin'] = "1px 2px 3%" should not set the property value
 PASS e.style['transform-origin'] = "1px 2px left" should not set the property value
-FAIL e.style['transform-origin'] = "1px 2px 3px 4px" should not set the property value assert_equals: expected "" but got "1px 2px 3px"
+PASS e.style['transform-origin'] = "1px 2px 3px 4px" should not set the property value
 PASS e.style['transform-origin'] = "1px left" should not set the property value
 PASS e.style['transform-origin'] = "top 1px" should not set the property value
 PASS e.style['transform-origin'] = "right left" should not set the property value
