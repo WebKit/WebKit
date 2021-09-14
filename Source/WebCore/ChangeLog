@@ -1,3 +1,18 @@
+2021-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Enable H265 codec
+        https://bugs.webkit.org/show_bug.cgi?id=229920
+
+        Reviewed by Philippe Normand.
+
+        Check for H265 decoder and parser and add the corresponding
+        variants.
+
+        Test: media/media-can-play-h265-video.html
+
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::initializeDecoders):
+
 2021-09-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Fix bug in calc functions sin/cos/tan
