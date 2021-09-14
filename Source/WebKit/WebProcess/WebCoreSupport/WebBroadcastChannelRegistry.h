@@ -27,6 +27,13 @@
 
 #include "Connection.h"
 #include <WebCore/BroadcastChannelRegistry.h>
+#include <WebCore/ClientOrigin.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+
+namespace WTF {
+class CallbackAggregator;
+}
 
 namespace WebCore {
 struct MessageWithMessagePorts;
@@ -50,7 +57,10 @@ public:
 private:
     WebBroadcastChannelRegistry() = default;
 
-    void postMessageToRemote(WebCore::BroadcastChannelIdentifier, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
+    void postMessageToRemote(const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
+    void postMessageLocally(const WebCore::ClientOrigin&, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&&, Ref<WTF::CallbackAggregator>&&);
+
+    HashMap<WebCore::ClientOrigin, HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>> m_channelsPerOrigin;
 };
 
 } // namespace WebKit

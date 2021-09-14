@@ -1,3 +1,22 @@
+2021-09-13  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Reduce amount of IPC needed by BroadcastChannel
+        https://bugs.webkit.org/show_bug.cgi?id=230181
+
+        Reviewed by Alex Christensen.
+
+        Introduce ScriptExecutionContext::ensureOnContextThread() which is similar to
+        ScriptExecutionContext::postTaskTo() but doesn't call postTask() if we're already
+        on the ScriptExecutionContext's context thread. Use it in BroadcastChannel::dispatchMessageTo()
+        to avoid unnecessary thread hopping when the BroadcastChannel belongs to a Window
+        environment.
+
+        * dom/BroadcastChannel.cpp:
+        (WebCore::BroadcastChannel::dispatchMessageTo):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ensureOnContextThread):
+        * dom/ScriptExecutionContext.h:
+
 2021-09-13  Jean-Yves Avenard  <jya@apple.com>
 
         Playback stops although the progress bar moves

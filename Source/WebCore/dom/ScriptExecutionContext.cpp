@@ -650,4 +650,24 @@ bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identif
     return true;
 }
 
+bool ScriptExecutionContext::ensureOnContextThread(ScriptExecutionContextIdentifier identifier, Task&& task)
+{
+    ScriptExecutionContext* context = nullptr;
+    {
+        Locker locker { allScriptExecutionContextsMapLock };
+        context = allScriptExecutionContextsMap().get(identifier);
+
+        if (!context)
+            return false;
+
+        if (!context->isContextThread()) {
+            context->postTask(WTFMove(task));
+            return true;
+        }
+    }
+
+    task.performTask(*context);
+    return true;
+}
+
 } // namespace WebCore

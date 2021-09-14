@@ -226,7 +226,7 @@ void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdent
         return completionHandler();
 
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    ScriptExecutionContext::postTaskTo(contextIdentifier, [channelIdentifier, message = WTFMove(message), callbackAggregator = WTFMove(callbackAggregator)](auto&) mutable {
+    ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [channelIdentifier, message = WTFMove(message), callbackAggregator = WTFMove(callbackAggregator)](auto&) mutable {
         RefPtr<BroadcastChannel> channel;
         {
             Locker locker { allBroadcastChannelsLock };

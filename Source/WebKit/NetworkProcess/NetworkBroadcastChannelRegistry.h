@@ -45,23 +45,13 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    void registerChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier);
-    void unregisterChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier);
-    void postMessage(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier source, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
+    void registerChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);
+    void unregisterChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);
+    void postMessage(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 
 private:
-    struct GlobalBroadcastChannelIdentifier {
-        IPC::Connection::UniqueID connectionIdentifier;
-        WebCore::BroadcastChannelIdentifier channelIndentifierInProcess;
-
-        bool operator==(const GlobalBroadcastChannelIdentifier& other) const
-        {
-            return connectionIdentifier == other.connectionIdentifier && channelIndentifierInProcess == other.channelIndentifierInProcess;
-        }
-    };
-
-    using NameToChannelIdentifiersMap = HashMap<String, Vector<GlobalBroadcastChannelIdentifier>>;
-    HashMap<WebCore::ClientOrigin, NameToChannelIdentifiersMap> m_broadcastChannels;
+    using NameToConnectionIdentifiersMap = HashMap<String, Vector<IPC::Connection::UniqueID>>;
+    HashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;
 };
 
 } // namespace WebKit

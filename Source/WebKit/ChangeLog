@@ -1,3 +1,41 @@
+2021-09-13  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Reduce amount of IPC needed by BroadcastChannel
+        https://bugs.webkit.org/show_bug.cgi?id=230181
+
+        Reviewed by Alex Christensen.
+
+        Reduce amount of IPC needed by BroadcastChannel for both registration / unregistration
+        and communication. Each WebBroadcastChannelRegistry in the WebProcess now maintains
+        a map of BroadcastChannels within the WebProcess. As a result, we are able to dispatch
+        messages to other BroadcastChannels within the same process without going via the
+        NetworkProcess.
+
+        Also, the NetworkBroadcastChannelRegistry on the NetworkProcess side no longer needs
+        to store individual BroadcastChannelIdentifiers. It merely needs to know which
+        WebProcesses have one or more BroadcastChannels for a given ClientOrigin / name.
+        When NetworkBroadcastChannelRegistry::postMessage() is called, we no longer send
+        IPC to the source process in case there are other BroadcastChannels than the source
+        with the given ClientOrigin / name in that process. Also, if there is more than
+        one BroadcastChannel for the given ClientOrigin / name within a given destination
+        WebProcess, we now send a single IPC message instead of sending one per BroadcastChannel.
+
+        * NetworkProcess/NetworkBroadcastChannelRegistry.cpp:
+        (WebKit::NetworkBroadcastChannelRegistry::registerChannel):
+        (WebKit::NetworkBroadcastChannelRegistry::unregisterChannel):
+        (WebKit::NetworkBroadcastChannelRegistry::postMessage):
+        (WebKit::NetworkBroadcastChannelRegistry::removeConnection):
+        * NetworkProcess/NetworkBroadcastChannelRegistry.h:
+        * NetworkProcess/NetworkBroadcastChannelRegistry.messages.in:
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+        (WebKit::WebBroadcastChannelRegistry::registerChannel):
+        (WebKit::WebBroadcastChannelRegistry::unregisterChannel):
+        (WebKit::WebBroadcastChannelRegistry::postMessage):
+        (WebKit::WebBroadcastChannelRegistry::postMessageLocally):
+        (WebKit::WebBroadcastChannelRegistry::postMessageToRemote):
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.h:
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.messages.in:
+
 2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor -[WKWebViewConfiguration _setRequiresUserActionForEditingControlsManager:] to use API::PageConfiguration

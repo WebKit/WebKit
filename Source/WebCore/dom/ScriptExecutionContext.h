@@ -281,6 +281,7 @@ public:
     ServiceWorkerContainer* ensureServiceWorkerContainer();
 #endif
     WEBCORE_EXPORT static bool postTaskTo(ScriptExecutionContextIdentifier, Task&&);
+    WEBCORE_EXPORT static bool ensureOnContextThread(ScriptExecutionContextIdentifier, Task&&);
 
     ScriptExecutionContextIdentifier contextIdentifier() const;
 
