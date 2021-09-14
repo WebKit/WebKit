@@ -875,7 +875,7 @@ class RunBuiltinsTests(shell.Test):
     name = "builtins-generator-tests"
     description = ["builtins-generator-tests running"]
     descriptionDone = ["builtins-generator-tests"]
-    command = ["python", "Tools/Scripts/run-builtins-generator-tests"]
+    command = ["python3", "Tools/Scripts/run-builtins-generator-tests"]
 
 
 class RunGLibAPITests(shell.Test):

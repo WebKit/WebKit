@@ -1,3 +1,15 @@
+2021-09-14  Kevin Neal  <kevin_neal@apple.com>
+
+        [builtins-generator-tests] Invoke with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=229879
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunBuiltinsTests):
+        * Scripts/run-builtins-generator-tests:
+        (main): Deleted.
+
 2021-09-14  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Reset author time when editing commits (Part 2)
