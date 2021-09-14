@@ -32,7 +32,8 @@
 namespace WebCore {
 class InternalWritableStream final : public DOMGuarded<JSC::JSObject> {
 public:
-    static ExceptionOr<Ref<InternalWritableStream>> create(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy);
+    static ExceptionOr<Ref<InternalWritableStream>> createFromUnderlyingSink(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy);
+    static Ref<InternalWritableStream> fromObject(JSDOMGlobalObject&, JSC::JSObject&);
 
     operator JSC::JSValue() const { return guarded(); }
 

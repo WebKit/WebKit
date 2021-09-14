@@ -46,7 +46,7 @@ ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& glo
 
 ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& globalObject, JSC::JSValue underlyingSink, JSC::JSValue strategy)
 {
-    auto result = InternalWritableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&globalObject), underlyingSink, strategy);
+    auto result = InternalWritableStream::createFromUnderlyingSink(*JSC::jsCast<JSDOMGlobalObject*>(&globalObject), underlyingSink, strategy);
     if (result.hasException())
         return result.releaseException();
 
@@ -56,6 +56,11 @@ ExceptionOr<Ref<WritableStream>> WritableStream::create(JSC::JSGlobalObject& glo
 ExceptionOr<Ref<WritableStream>> WritableStream::create(JSDOMGlobalObject& globalObject, Ref<WritableStreamSink>&& sink)
 {
     return create(globalObject, toJSNewlyCreated(&globalObject, &globalObject, WTFMove(sink)), JSC::jsUndefined());
+}
+
+Ref<WritableStream> WritableStream::create(Ref<InternalWritableStream>&& internalWritableStream)
+{
+    return adoptRef(*new WritableStream(WTFMove(internalWritableStream)));
 }
 
 WritableStream::WritableStream(Ref<InternalWritableStream>&& internalWritableStream)

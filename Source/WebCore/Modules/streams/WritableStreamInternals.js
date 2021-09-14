@@ -45,19 +45,21 @@ function acquireWritableStreamDefaultWriter(stream)
     return new @WritableStreamDefaultWriter(stream);
 }
 
-function createWritableStream(startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, writableHighWaterMark, writableSizeAlgorithm)
+// https://streams.spec.whatwg.org/#create-writable-stream
+function createWritableStream(startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm)
 {
-    if (arguments.length < 5)
-        writableHighWaterMark = 1;
-    if (arguments.length < 6)
-        writableSizeAlgorithm = () => { return 1; };
+    @assert(typeof highWaterMark === "number" && !@isNaN(highWaterMark) && highWaterMark >= 0);
 
-    let underlyingSink = { startAlgorithm: startAlgorithm, writeAlgorithm: writeAlgorithm, closeAlgorithm: closeAlgorithm, abortAlgorithm: abortAlgorithm};
-    @putByIdDirectPrivate(underlyingSink, "WritableStream", true);
-    return new @WritableStream(underlyingSink, { sizeAlgorithm: writableSizeAlgorithm, highWaterMark: writableHighWaterMark });
+    const internalStream = { };
+    @initializeWritableStreamSlots(internalStream, { });
+    const controller = new @WritableStreamDefaultController();
+
+    @setUpWritableStreamDefaultController(internalStream, controller, startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm);
+
+    return @createWritableStreamFromInternal(internalStream);
 }
 
-function createInternalWritableStream(underlyingSink, strategy)
+function createInternalWritableStreamFromUnderlyingSink(underlyingSink, strategy)
 {
     "use strict";
 
@@ -71,16 +73,6 @@ function createInternalWritableStream(underlyingSink, strategy)
 
     if (!@isObject(underlyingSink))
         @throwTypeError("WritableStream constructor takes an object as first argument");
-
-    // createWriteStream code path.
-    if (@getByIdDirectPrivate(underlyingSink, "WritableStream")) {
-        @initializeWritableStreamSlots(stream, underlyingSink);
-
-        const controller = new @WritableStreamDefaultController();
-
-        @setUpWritableStreamDefaultController(stream, controller, underlyingSink.startAlgorithm, underlyingSink.writeAlgorithm, underlyingSink.closeAlgorithm, underlyingSink.abortAlgorithm, strategy.highWaterMark, strategy.sizeAlgorithm);
-        return stream;
-    }
 
     if ("type" in underlyingSink)
         @throwRangeError("Invalid type is specified");

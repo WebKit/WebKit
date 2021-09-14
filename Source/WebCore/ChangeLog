@@ -1,3 +1,36 @@
+2021-09-14  Youenn Fablet  <youenn@apple.com>
+
+        Refactor WritableStream to better integrate https://streams.spec.whatwg.org/#create-writable-stream
+        https://bugs.webkit.org/show_bug.cgi?id=230219
+
+        Reviewed by Sihui Liu.
+
+        Previously to create a WritableStream as https://streams.spec.whatwg.org/#create-writable-stream,
+        we were still going through the WritableStream constructor taking an underlying sink.
+        We refactor code to stop doing that, which will make it easy to introduce https://streams.spec.whatwg.org/#writablestream-set-up
+        which is now used in other web specifications.
+
+        To do so, we introduce a createFromUnderlyingSink built-in function that creates a WritableStream from an InternalWritableStream.
+        Covered by existing tests.
+
+        * Modules/streams/StreamInternals.js:
+        (extractHighWaterMark): Make sure extractHighWaterMark returns a number as WebIDL defines HWM as a double.
+        * Modules/streams/WritableStream.cpp:
+        (WebCore::WritableStream::create):
+        * Modules/streams/WritableStream.h:
+        * Modules/streams/WritableStreamInternals.js:
+        (createWritableStream):
+        (createInternalWritableStreamFromUnderlyingSink):
+        * bindings/js/InternalWritableStream.cpp:
+        (WebCore::InternalWritableStream::createFromUnderlyingSink):
+        (WebCore::InternalWritableStream::fromObject):
+        (WebCore::InternalWritableStream::create): Deleted.
+        * bindings/js/InternalWritableStream.h:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2021-09-14  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()

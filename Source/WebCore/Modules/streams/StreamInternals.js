@@ -185,7 +185,7 @@ function extractHighWaterMark(strategy, defaultHWM)
     if (@isNaN(highWaterMark) || highWaterMark < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
 
-    return highWaterMark;
+    return @toNumber(highWaterMark);
 }
 
 function createFulfilledPromise(value)

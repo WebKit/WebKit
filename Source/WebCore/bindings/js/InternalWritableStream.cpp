@@ -50,10 +50,10 @@ static ExceptionOr<JSC::JSValue> invokeWritableStreamFunction(JSC::JSGlobalObjec
     return result;
 }
 
-ExceptionOr<Ref<InternalWritableStream>> InternalWritableStream::create(JSDOMGlobalObject& globalObject, JSC::JSValue underlyingSink, JSC::JSValue strategy)
+ExceptionOr<Ref<InternalWritableStream>> InternalWritableStream::createFromUnderlyingSink(JSDOMGlobalObject& globalObject, JSC::JSValue underlyingSink, JSC::JSValue strategy)
 {
     auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
-    auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().createInternalWritableStreamPrivateName();
+    auto& privateName = clientData->builtinFunctions().writableStreamInternalsBuiltins().createInternalWritableStreamFromUnderlyingSinkPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(underlyingSink);
@@ -66,6 +66,11 @@ ExceptionOr<Ref<InternalWritableStream>> InternalWritableStream::create(JSDOMGlo
 
     ASSERT(result.returnValue().isObject());
     return adoptRef(*new InternalWritableStream(globalObject, *result.returnValue().toObject(&globalObject)));
+}
+
+Ref<InternalWritableStream> InternalWritableStream::fromObject(JSDOMGlobalObject& globalObject, JSC::JSObject& object)
+{
+    return adoptRef(*new InternalWritableStream(globalObject, object));
 }
 
 bool InternalWritableStream::locked() const
