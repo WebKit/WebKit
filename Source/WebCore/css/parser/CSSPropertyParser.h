@@ -103,6 +103,7 @@ private:
     bool consumePlaceSelfShorthand(bool important);
 
     bool consumeFont(bool important);
+    bool consumeTextDecorationSkip(bool important);
     bool consumeFontVariantShorthand(bool important);
     bool consumeSystemFont(bool important);
 

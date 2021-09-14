@@ -119,7 +119,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textAlignLast(static_cast<unsigned>(RenderStyle::initialTextAlignLast()))
     , textJustify(static_cast<unsigned>(RenderStyle::initialTextJustify()))
 #endif
-    , textDecorationSkip(RenderStyle::initialTextDecorationSkip().toRaw())
+    , textDecorationSkipInk(static_cast<unsigned>(RenderStyle::initialTextDecorationSkipInk()))
     , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition()))
     , rubyPosition(static_cast<unsigned>(RenderStyle::initialRubyPosition()))
     , textZoom(static_cast<unsigned>(RenderStyle::initialTextZoom()))
@@ -216,7 +216,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textAlignLast(o.textAlignLast)
     , textJustify(o.textJustify)
 #endif
-    , textDecorationSkip(o.textDecorationSkip)
+    , textDecorationSkipInk(o.textDecorationSkipInk)
     , textUnderlinePosition(o.textUnderlinePosition)
     , rubyPosition(o.rubyPosition)
     , textZoom(o.textZoom)
@@ -341,7 +341,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textAlignLast == o.textAlignLast
         && textJustify == o.textJustify
 #endif // CSS3_TEXT
-        && textDecorationSkip == o.textDecorationSkip
+        && textDecorationSkipInk == o.textDecorationSkipInk
         && textUnderlinePosition == o.textUnderlinePosition
         && rubyPosition == o.rubyPosition
         && textZoom == o.textZoom

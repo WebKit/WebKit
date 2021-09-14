@@ -44,7 +44,7 @@ FAIL Property tab-size value '10px' in ::marker assert_equals: expected "10px" b
 FAIL Property text-transform value 'uppercase' in ::marker assert_equals: expected "uppercase" but got "none"
 FAIL Property word-break value 'break-word' in ::marker assert_equals: expected "break-word" but got "normal"
 FAIL Property word-spacing value '10px' in ::marker assert_equals: expected "10px" but got "0px"
-FAIL Property text-decoration-skip-ink value 'none' in ::marker assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false
+FAIL Property text-decoration-skip-ink value 'none' in ::marker assert_equals: expected "none" but got "auto"
 FAIL Property text-emphasis value 'dot rgb(0, 255, 0)' in ::marker assert_equals: expected "dot rgb(0, 255, 0)" but got ""
 FAIL Property text-emphasis-color value 'rgb(0, 255, 0)' in ::marker assert_equals: expected "rgb(0, 255, 0)" but got "rgb(0, 0, 0)"
 FAIL Property text-emphasis-position value 'under left' in ::marker assert_equals: expected "under left" but got "over right"

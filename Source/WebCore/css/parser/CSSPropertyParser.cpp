@@ -1676,25 +1676,25 @@ static RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)
     return list;
 }
 
-static RefPtr<CSSValue> consumeTextDecorationSkip(CSSParserTokenRange& range)
+bool CSSPropertyParser::consumeTextDecorationSkip(bool important)
 {
-    CSSValueID id = range.peek().id();
-    if (id == CSSValueNone)
-        return consumeIdent(range);
-
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    while (true) {
-        auto ident = consumeIdent<CSSValueAuto, CSSValueInk, CSSValueObjects>(range);
-        if (!ident)
-            break;
-        if (list->hasValue(ident.get()))
-            return nullptr;
-        list->append(ident.releaseNonNull());
+    if (RefPtr<CSSPrimitiveValue> skip = consumeIdent<CSSValueNone, CSSValueAuto, CSSValueInk>(m_range)) {
+        switch (skip->valueID()) {
+        case CSSValueNone:
+            addProperty(CSSPropertyTextDecorationSkipInk, CSSPropertyTextDecorationSkip, skip.releaseNonNull(), important);
+            return m_range.atEnd();
+        case CSSValueAuto:
+            addProperty(CSSPropertyTextDecorationSkipInk, CSSPropertyTextDecorationSkip, skip.releaseNonNull(), important);
+            return m_range.atEnd();
+        case CSSValueInk:
+            addProperty(CSSPropertyTextDecorationSkipInk, CSSPropertyTextDecorationSkip, CSSValuePool::singleton().createIdentifierValue(CSSValueAuto), important);
+            return m_range.atEnd();
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
+        }
     }
-
-    if (!list->length())
-        return nullptr;
-    return list;
+    return false;
 }
 
 static RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange& range)
@@ -4192,8 +4192,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumePositiveInteger(m_range);
     case CSSPropertyTextDecorationColor:
         return consumeColor(m_range, m_context);
-    case CSSPropertyTextDecorationSkip:
-        return consumeTextDecorationSkip(m_range);
     case CSSPropertyWebkitTextStrokeWidth:
         return consumeTextStrokeWidth(m_range, m_context.mode);
     case CSSPropertyWebkitTextFillColor:
@@ -6165,6 +6163,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumePlaceItemsShorthand(important);
     case CSSPropertyPlaceSelf:
         return consumePlaceSelfShorthand(important);
+    case CSSPropertyTextDecorationSkip:
+        return consumeTextDecorationSkip(important);
     default:
         return false;
     }

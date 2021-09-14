@@ -6735,14 +6735,28 @@
         "text-decoration-skip": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "TextDecorationSkip",
                 "aliases": [
                     "-webkit-text-decoration-skip"
+                ],
+                "longhands": [
+                    "text-decoration-skip-ink"
                 ]
             },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-skip"
+            }
+        },
+        "text-decoration-skip-ink": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none",
+                "all"
+            ],
+            "specification": {
+                "category": "css-text-decor",
+                "url": "https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip-ink-property"
             }
         },
         "text-underline-position": {

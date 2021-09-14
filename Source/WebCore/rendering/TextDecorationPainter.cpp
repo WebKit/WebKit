@@ -223,7 +223,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         if (style == TextDecorationStyle::Wavy)
             strokeWavyTextDecoration(m_context, rect, m_lineStyle.computedFontPixelSize());
         else if (decoration == TextDecoration::Underline || decoration == TextDecoration::Overline) {
-            if ((m_lineStyle.textDecorationSkip() == TextDecorationSkip::Ink || m_lineStyle.textDecorationSkip() == TextDecorationSkip::Auto) && m_isHorizontal) {
+            if ((m_lineStyle.textDecorationSkipInk() == TextDecorationSkipInk::Auto || m_lineStyle.textDecorationSkipInk() == TextDecorationSkipInk::All) && m_isHorizontal) {
                 if (!m_context.paintingDisabled()) {
                     FloatRect underlineBoundingBox = m_context.computeUnderlineBoundsForText(rect, m_isPrinting);
                     DashArray intersections = m_font.dashesForIntersectionsWithRect(textRun, textOrigin, underlineBoundingBox);

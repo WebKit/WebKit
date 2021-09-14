@@ -15,6 +15,6 @@ PASS Property text-shadow has initial value none
 PASS Property text-shadow inherits
 PASS Property text-underline-position has initial value auto
 PASS Property text-underline-position inherits
-FAIL Property text-decoration-skip-ink has initial value auto assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false
-FAIL Property text-decoration-skip-ink inherits assert_true: text-decoration-skip-ink doesn't seem to be supported in the computed style expected true got false
+PASS Property text-decoration-skip-ink has initial value auto
+PASS Property text-decoration-skip-ink inherits
 

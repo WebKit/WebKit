@@ -1619,18 +1619,15 @@ static Ref<CSSValue> renderTextDecorationStyleFlagsToCSSValue(TextDecorationStyl
     return CSSValuePool::singleton().createExplicitInitialValue();
 }
 
-static Ref<CSSValue> renderTextDecorationSkipFlagsToCSSValue(OptionSet<TextDecorationSkip> textDecorationSkip)
+static RefPtr<CSSValue> renderTextDecorationSkipToCSSValue(TextDecorationSkipInk textDecorationSkipInk)
 {
-    // FIXME: This should probably return a CSSValueList with the set of all TextDecorationSkips.
-    switch (static_cast<TextDecorationSkip>(textDecorationSkip.toRaw())) {
-    case TextDecorationSkip::Auto:
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
-    case TextDecorationSkip::None:
+    switch (textDecorationSkipInk) {
+    case TextDecorationSkipInk::None:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-    case TextDecorationSkip::Ink:
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueInk);
-    case TextDecorationSkip::Objects:
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueObjects);
+    case TextDecorationSkipInk::Auto:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+    case TextDecorationSkipInk::All:
+        return nullptr;
     }
 
     ASSERT_NOT_REACHED();
@@ -3233,7 +3230,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTextDecorationColor:
             return currentColorOrValidColor(&style, style.textDecorationColor());
         case CSSPropertyTextDecorationSkip:
-            return renderTextDecorationSkipFlagsToCSSValue(style.textDecorationSkip());
+            return renderTextDecorationSkipToCSSValue(style.textDecorationSkipInk());
+        case CSSPropertyTextDecorationSkipInk:
+            return cssValuePool.createValue(style.textDecorationSkipInk());
         case CSSPropertyTextUnderlinePosition:
             return cssValuePool.createValue(style.textUnderlinePosition());
         case CSSPropertyTextUnderlineOffset:

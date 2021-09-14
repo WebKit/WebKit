@@ -59,6 +59,7 @@ static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     case CSSPropertyTextDecorationStyle:
     case CSSPropertyTextDecorationColor:
     case CSSPropertyTextDecorationSkip:
+    case CSSPropertyTextDecorationSkipInk:
     case CSSPropertyTextUnderlinePosition:
     case CSSPropertyTextUnderlineOffset:
     case CSSPropertyTextDecorationThickness:

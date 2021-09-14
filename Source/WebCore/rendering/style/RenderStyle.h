@@ -373,7 +373,7 @@ public:
     OptionSet<TextDecoration> textDecorationsInEffect() const { return OptionSet<TextDecoration>::fromRaw(m_inheritedFlags.textDecorations); }
     OptionSet<TextDecoration> textDecoration() const { return OptionSet<TextDecoration>::fromRaw(m_visualData->textDecoration); }
     TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(m_rareNonInheritedData->textDecorationStyle); }
-    OptionSet<TextDecorationSkip> textDecorationSkip() const { return OptionSet<TextDecorationSkip>::fromRaw(m_rareInheritedData->textDecorationSkip); }
+    TextDecorationSkipInk textDecorationSkipInk() const { return static_cast<TextDecorationSkipInk>(m_rareInheritedData->textDecorationSkipInk); }
     TextUnderlinePosition textUnderlinePosition() const { return static_cast<TextUnderlinePosition>(m_rareInheritedData->textUnderlinePosition); }
     TextUnderlineOffset textUnderlineOffset() const { return m_rareInheritedData->textUnderlineOffset; }
     TextDecorationThickness textDecorationThickness() const { return m_rareInheritedData->textDecorationThickness; }
@@ -979,7 +979,7 @@ public:
     void setTextDecorationsInEffect(OptionSet<TextDecoration> v) { m_inheritedFlags.textDecorations = v.toRaw(); }
     void setTextDecoration(OptionSet<TextDecoration> v) { SET_VAR(m_visualData, textDecoration, v.toRaw()); }
     void setTextDecorationStyle(TextDecorationStyle v) { SET_VAR(m_rareNonInheritedData, textDecorationStyle, static_cast<unsigned>(v)); }
-    void setTextDecorationSkip(OptionSet<TextDecorationSkip> skip) { SET_VAR(m_rareInheritedData, textDecorationSkip, skip.toRaw()); }
+    void setTextDecorationSkipInk(TextDecorationSkipInk skipInk) { SET_VAR(m_rareInheritedData, textDecorationSkipInk, static_cast<unsigned>(skipInk)); }
     void setTextUnderlinePosition(TextUnderlinePosition position) { SET_VAR(m_rareInheritedData, textUnderlinePosition, static_cast<unsigned>(position)); }
     void setTextUnderlineOffset(TextUnderlineOffset textUnderlineOffset) { SET_VAR(m_rareInheritedData, textUnderlineOffset, textUnderlineOffset); }
     void setTextDecorationThickness(TextDecorationThickness textDecorationThickness) { SET_VAR(m_rareInheritedData, textDecorationThickness, textDecorationThickness); }
@@ -1597,7 +1597,7 @@ public:
     static TextAlignMode initialTextAlign() { return TextAlignMode::Start; }
     static OptionSet<TextDecoration> initialTextDecoration() { return OptionSet<TextDecoration> { }; }
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyle::Solid; }
-    static OptionSet<TextDecorationSkip> initialTextDecorationSkip() { return TextDecorationSkip::Auto; }
+    static TextDecorationSkipInk initialTextDecorationSkipInk() { return TextDecorationSkipInk::Auto; }
     static TextUnderlinePosition initialTextUnderlinePosition() { return TextUnderlinePosition::Auto; }
     static TextUnderlineOffset initialTextUnderlineOffset() { return TextUnderlineOffset::createWithAuto(); }
     static TextDecorationThickness initialTextDecorationThickness() { return TextDecorationThickness::createWithAuto(); }

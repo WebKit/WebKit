@@ -901,6 +901,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyFontOpticalSizing:
         return valueID == CSSValueAuto || valueID == CSSValueNone;
 #endif
+    case CSSPropertyTextDecorationSkipInk:
+        return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAll;
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -1061,6 +1063,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFontOpticalSizing:
 #endif
     case CSSPropertyMathStyle:
+    case CSSPropertyTextDecorationSkipInk:
         return true;
     default:
         return false;

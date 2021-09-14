@@ -782,11 +782,10 @@ enum class TextJustify : uint8_t {
 };
 #endif // CSS3_TEXT
 
-enum class TextDecorationSkip : uint8_t {
-    None      = 0,
-    Ink       = 1 << 0,
-    Objects   = 1 << 1,
-    Auto      = 1 << 2
+enum class TextDecorationSkipInk : uint8_t {
+    None,
+    Auto,
+    All
 };
 
 enum class TextUnderlinePosition : uint8_t {
@@ -1342,7 +1341,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextAlignMode);
 WTF::TextStream& operator<<(WTF::TextStream&, TextCombine);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecoration);
-WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationSkip);
+WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationSkipInk);
 WTF::TextStream& operator<<(WTF::TextStream&, TextDecorationStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEmphasisFill);
 WTF::TextStream& operator<<(WTF::TextStream&, TextEmphasisMark);

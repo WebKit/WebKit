@@ -1405,3 +1405,8 @@ attachment {
 @media (inverted-colors) {
     img, picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
 }
+
+/* https://drafts.csswg.org/css-text-decor-4/#text-decoration-skipping */
+ins, del {
+    text-decoration-skip: none;
+}

@@ -239,6 +239,8 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return fontValue();
     case CSSPropertyFontVariant:
         return fontVariantValue();
+    case CSSPropertyTextDecorationSkip:
+        return textDecorationSkipValue();
     case CSSPropertyInset:
         return get4Values(insetShorthand());
     case CSSPropertyInsetBlock:
@@ -417,6 +419,17 @@ String StyleProperties::fontValue() const
     if (isCSSWideValueKeyword(commonValue))
         return commonValue;
     return result.toString();
+}
+
+String StyleProperties::textDecorationSkipValue() const
+{
+    int textDecorationSkipInkPropertyIndex = findPropertyIndex(CSSPropertyTextDecorationSkipInk);
+    if (textDecorationSkipInkPropertyIndex == -1)
+        return emptyString();
+    PropertyReference textDecorationSkipInkProperty = propertyAt(textDecorationSkipInkPropertyIndex);
+    if (textDecorationSkipInkProperty.isImplicit())
+        return emptyString();
+    return textDecorationSkipInkProperty.value()->cssText();
 }
 
 String StyleProperties::fontVariantValue() const

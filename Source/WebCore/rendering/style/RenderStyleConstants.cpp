@@ -1070,13 +1070,12 @@ TextStream& operator<<(TextStream& ts, TextDecoration textDecoration)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextDecorationSkip skip)
+TextStream& operator<<(TextStream& ts, TextDecorationSkipInk skip)
 {
     switch (skip) {
-    case TextDecorationSkip::None: ts << "none"; break;
-    case TextDecorationSkip::Ink: ts << "ink"; break;
-    case TextDecorationSkip::Objects: ts << "objects"; break;
-    case TextDecorationSkip::Auto: ts << "auto"; break;
+    case TextDecorationSkipInk::None: ts << "none"; break;
+    case TextDecorationSkipInk::Auto: ts << "auto"; break;
+    case TextDecorationSkipInk::All: ts << "all"; break;
     }
     return ts;
 }

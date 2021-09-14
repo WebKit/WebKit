@@ -61,7 +61,7 @@ static void minLogicalTopForTextDecorationLine(const LayoutIntegration::LineIter
         if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &run->renderer()))
             continue;
 
-        if (run->isText() || run->style().textDecorationSkip().isEmpty())
+        if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)
             minLogicalTop = std::min<float>(minLogicalTop, run->logicalTop());
     }
 }
@@ -78,7 +78,7 @@ static void maxLogicalBottomForTextDecorationLine(const LayoutIntegration::LineI
         if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &run->renderer()))
             continue;
 
-        if (run->isText() || run->style().textDecorationSkip().isEmpty())
+        if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)
             maxLogicalBottom = std::max<float>(maxLogicalBottom, run->logicalBottom());
     }
 }

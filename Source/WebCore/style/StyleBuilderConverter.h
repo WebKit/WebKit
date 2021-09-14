@@ -107,7 +107,6 @@ public:
     static IntSize convertInitialLetter(BuilderState&, const CSSValue&);
     static float convertTextStrokeWidth(BuilderState&, const CSSValue&);
     static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
-    static OptionSet<TextDecorationSkip> convertTextDecorationSkip(BuilderState&, const CSSValue&);
     static RefPtr<ShapeValue> convertShapeValue(BuilderState&, CSSValue&);
     static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
     static ScrollSnapAlign convertScrollSnapAlign(BuilderState&, const CSSValue&);
@@ -172,7 +171,6 @@ private:
 
     static Length convertToRadiusLength(CSSToLengthConversionData&, const CSSPrimitiveValue&);
     static OptionSet<TextEmphasisPosition> valueToEmphasisPosition(const CSSPrimitiveValue&);
-    static OptionSet<TextDecorationSkip> valueToDecorationSkip(const CSSPrimitiveValue&);
     static Length parseSnapCoordinate(BuilderState&, const CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
@@ -818,38 +816,6 @@ inline OptionSet<LineBoxContain> BuilderConverter::convertLineBoxContain(Builder
     }
 
     return downcast<CSSLineBoxContainValue>(value).value();
-}
-
-inline OptionSet<TextDecorationSkip> BuilderConverter::valueToDecorationSkip(const CSSPrimitiveValue& primitiveValue)
-{
-    ASSERT(primitiveValue.isValueID());
-
-    switch (primitiveValue.valueID()) {
-    case CSSValueAuto:
-        return TextDecorationSkip::Auto;
-    case CSSValueNone:
-        return OptionSet<TextDecorationSkip> { };
-    case CSSValueInk:
-        return TextDecorationSkip::Ink;
-    case CSSValueObjects:
-        return TextDecorationSkip::Objects;
-    default:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return OptionSet<TextDecorationSkip> { };
-}
-
-inline OptionSet<TextDecorationSkip> BuilderConverter::convertTextDecorationSkip(BuilderState&, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value))
-        return valueToDecorationSkip(downcast<CSSPrimitiveValue>(value));
-
-    OptionSet<TextDecorationSkip> skip;
-    for (auto& currentValue : downcast<CSSValueList>(value))
-        skip.add(valueToDecorationSkip(downcast<CSSPrimitiveValue>(currentValue.get())));
-    return skip;
 }
 
 static inline bool isImageShape(const CSSValue& value)

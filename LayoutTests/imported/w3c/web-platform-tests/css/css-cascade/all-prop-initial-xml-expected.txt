@@ -270,6 +270,7 @@ PASS text-decoration
 PASS text-decoration-color
 PASS text-decoration-line
 PASS text-decoration-skip
+PASS text-decoration-skip-ink
 PASS text-decoration-style
 PASS text-decoration-thickness
 PASS text-indent

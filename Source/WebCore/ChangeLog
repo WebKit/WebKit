@@ -1,3 +1,91 @@
+2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement text-decoration-skip-ink
+        https://bugs.webkit.org/show_bug.cgi?id=230244
+
+        Reviewed by Antti Koivisto.
+
+        First, there was "text-decoration-skip: ink", and that was what we implemented in WebKit. That had a
+        problem, though, which was that you couldn't add a value into the set without resetting the entire
+        property, so the CSSWG split it up into a bunch of constituent properties:
+        - text-decoration-skip-self
+        - text-decoration-skip-box
+        - text-decoration-skip-inset
+        - text-decoration-skip-spaces
+        - text-decoration-skip-ink
+        text-decoration-skip was turned into a shorthand for all of these constituent properties.
+
+        Chrome and Firefox, however, implemented text-decoration-skip-ink rather than text-decoration-skip.
+        From what I understand, Firefox isn't interested in implementing the shorthand until they implement
+        all the longhands. Therefore, because WebKit implements only the shorthand and Firefox implements only
+        the longhand, authors have to write two different properties in their style for the two different
+        browsers. That's unfortunate, so this patch makes WebKit follow the CSSWG, and turns
+        text-decoration-skip into a shorthand, and adds support for text-decoration-skip-ink. Therefore,
+        there's no new behavior here; it's just a new way of accessing the same functionality we already have.
+
+        The spec actually removed the "ink" value from the text-decoration-skip shorthand, but we have to
+        maintain it because of compat. So, this patch maps "text-decoration-skip: ink" to
+        "text-decoration-skip-ink: auto". There's an issue in the spec about this:
+        https://drafts.csswg.org/css-text-decor-4/#issue-070668ae
+
+        Back when we implemented text-decoration-skip: ink, we only implemented the "ink" value, and none of
+        the other values. This patch also doesn't implement the other values.
+
+        Also, previously, we used to parse "text-decoration-skip: objects" but we didn't do anything with it.
+        This patch removes parsing support for that, so @supports works properly.
+
+        Covered by existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationSkipToCSSValue):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        (WebCore::renderTextDecorationSkipFlagsToCSSValue): Deleted.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator TextDecorationSkipInk const):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::StyleProperties::textDecorationSkipValue const):
+        * css/StyleProperties.h:
+        * css/html.css:
+        (ins, del):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeTextDecorationSkip):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        (WebCore::consumeTextDecorationSkip): Deleted.
+        * css/parser/CSSPropertyParser.h:
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::textDecorationSkipInk const):
+        (WebCore::RenderStyle::setTextDecorationSkipInk):
+        (WebCore::RenderStyle::initialTextDecorationSkipInk):
+        (WebCore::RenderStyle::textDecorationSkip const): Deleted.
+        (WebCore::RenderStyle::setTextDecorationSkip): Deleted.
+        (WebCore::RenderStyle::initialTextDecorationSkip): Deleted.
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::minLogicalTopForTextDecorationLine):
+        (WebCore::maxLogicalBottomForTextDecorationLine):
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::shouldApplyPropertyInParseOrder):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::valueToDecorationSkip): Deleted.
+        (WebCore::Style::BuilderConverter::convertTextDecorationSkip): Deleted.
+
 2021-09-14  Sam Sneddon  <gsnedders@apple.com>
 
         Support the `x` resolution unit

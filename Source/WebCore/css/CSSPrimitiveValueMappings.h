@@ -2535,6 +2535,42 @@ template<> inline CSSPrimitiveValue::operator TextSecurity() const
     return TextSecurity::None;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextDecorationSkipInk e)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (e) {
+    case TextDecorationSkipInk::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    case TextDecorationSkipInk::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case TextDecorationSkipInk::All:
+        m_value.valueID = CSSValueAll;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextDecorationSkipInk() const
+{
+    ASSERT(isValueID());
+
+    switch (m_value.valueID) {
+    case CSSValueNone:
+        return TextDecorationSkipInk::None;
+    case CSSValueAuto:
+        return TextDecorationSkipInk::Auto;
+    case CSSValueAll:
+        return TextDecorationSkipInk::All;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return TextDecorationSkipInk::None;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextTransform e)
     : CSSValue(PrimitiveClass)
 {
