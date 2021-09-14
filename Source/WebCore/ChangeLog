@@ -1,3 +1,16 @@
+2021-09-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Fix bug in calc functions sin/cos/tan
+        https://bugs.webkit.org/show_bug.cgi?id=230133
+
+        Reviewed by Myles Maxfield.
+
+        WPTs added in seperate patch: https://bugs.webkit.org/show_bug.cgi?id=230129.
+
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        Fix bug where sin,cos,tan functions are applied twice when root.
+
 2021-09-13  Simon Fraser  <simon.fraser@apple.com>
 
         Fix computed style for transform-origin on SVG boxes

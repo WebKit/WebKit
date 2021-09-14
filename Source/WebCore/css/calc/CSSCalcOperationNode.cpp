@@ -645,7 +645,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
         if (calcOperationNode.isMinOrMaxNode())
             calcOperationNode.combineChildren();
         
-        if (calcOperationNode.isTrigNode())
+        if (calcOperationNode.isTrigNode() && depth)
             calcOperationNode.combineChildren();
         
         // If only one child remains, return the child (except at the root).
