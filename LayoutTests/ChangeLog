@@ -1,3 +1,14 @@
+2021-09-14  Darin Adler  <darin@apple.com>
+
+        URLs in CSS variables must be resolved against the base URL of the stylesheet, not the document
+        https://bugs.webkit.org/show_bug.cgi?id=230243
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/variables/support/styles/url-with-variable-is-sheet-relative.css: Added 10 more test cases.
+        * fast/css/variables/url-with-variable-is-sheet-relative-expected.html: Ditto.
+        * fast/css/variables/url-with-variable-is-sheet-relative.html: Ditto.
+
 2021-09-14  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Create platform specific baselines for new web platform tests imported in r282287

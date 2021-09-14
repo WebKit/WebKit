@@ -1,3 +1,35 @@
+2021-09-14  Darin Adler  <darin@apple.com>
+
+        URLs in CSS variables must be resolved against the base URL of the stylesheet, not the document
+        https://bugs.webkit.org/show_bug.cgi?id=230243
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/css/variables/url-with-variable-is-sheet-relative.html
+
+        * css/CSSPendingSubstitutionValue.h: Removed baseURL, since CSSVariableReferenceValue now
+        contains an appropriate parsing context, which includes the base URL.
+
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::CSSVariableReferenceValue::CSSVariableReferenceValue): Store a CSSParserContext.
+        (WebCore::CSSVariableReferenceValue::create): Ditto.
+        * css/CSSVariableReferenceValue.h: Updated for the above.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences): Use the context from the
+        variable reference, not the current one in the parser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseValueStart): Pass a parser context when creating a
+        CSSVariableReferenceValue.
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::CSSVariableParser::parseDeclarationValue): Ditto.
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::resolvedVariableValue): Remove the special case for
+        CSSPendingSubstitutionValue since CSSParser::parseValueWithVariableReferences
+        now takes care of this.
+
 2021-09-14  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Introduce InlineInvalidation/InlineDamage
