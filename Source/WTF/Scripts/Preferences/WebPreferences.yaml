@@ -2309,13 +2309,13 @@ TextInteractionEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(WATCH_OS)": false
+      "PLATFORM(WATCHOS)": false
       default: true
     WebKit:
-      "PLATFORM(WATCH_OS)": false
+      "PLATFORM(WATCHOS)": false
       default: true
     WebCore:
-      "PLATFORM(WATCH_OS)": false
+      "PLATFORM(WATCHOS)": false
       default: true
 
 ThreadedScrollingEnabled:
