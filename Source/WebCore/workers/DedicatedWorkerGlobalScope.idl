@@ -46,4 +46,4 @@
 };
 
 [Conditional=OFFSCREEN_CANVAS_IN_WORKERS, EnabledAtRuntime=OffscreenCanvasInWorkers] DedicatedWorkerGlobalScope includes AnimationFrameProvider;
-[Conditional=WEB_RTC, EnabledBySetting=WebRTCInsertableStreams] DedicatedWorkerGlobalScope includes RTCRtpScriptTransformProvider;
+[Conditional=WEB_RTC, EnabledBySetting=WebRTCEncodedTransform] DedicatedWorkerGlobalScope includes RTCRtpScriptTransformProvider;
