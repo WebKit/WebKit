@@ -1,3 +1,21 @@
+2021-09-14  Antti Koivisto  <antti@apple.com>
+
+        Don't schedule text rendering updates for a non-rendered Document
+        https://bugs.webkit.org/show_bug.cgi?id=230246
+        rdar://81905586
+
+        Reviewed by Anders Carlsson.
+
+        Memory use could grow without limit as these updates would not get cleared until
+        the document was destroyed.
+
+        No test, hard to make a reasonable regression test as the memory growth is not extreme.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateTextRenderer):
+
+        Bail out if the Document has no render tree.
+
 2021-09-14  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineDisplayContentBuilder should not operate on the global inline run list
