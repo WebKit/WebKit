@@ -1,3 +1,18 @@
+2021-09-14  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update platform test expectations and baselines after WPT import in r282287
+        https://bugs.webkit.org/show_bug.cgi?id=230281
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-001-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-computed-value-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/css-transform-inherit-rotate-expected.png: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-transforms/css-transform-inherit-rotate-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ Catalina EWS ] http/tests/media/hls/range-request.html is a flaky failure.

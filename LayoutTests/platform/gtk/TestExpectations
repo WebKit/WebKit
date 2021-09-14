@@ -2133,6 +2133,8 @@ webkit.org/b/228153 platform/gtk/fonts/webkit-font-smoothing.html [ ImageOnlyFai
 webkit.org/b/228153 svg/batik/text/verticalText.svg [ Failure ]
 webkit.org/b/228153 svg/text/offset-square-svg-font.html [ ImageOnlyFailure ]
 
+webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-filter-no-perspective-001.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
