@@ -1,3 +1,12 @@
+2021-09-14  Eric Hutchison  <ehutchison@apple.com>
+
+        Remove test expectations for pointerevents/mouse/compatibility-mouse-events-prevention-mouse-released.html.
+        https://bugs.webkit.org/show_bug.cgi?id=229522.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r282408.

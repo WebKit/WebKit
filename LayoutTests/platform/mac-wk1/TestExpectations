@@ -1405,8 +1405,6 @@ webkit.org/b/229506 imported/w3c/web-platform-tests/css/css-fonts/downloadable-f
 
 webkit.org/b/229519 media/media-session/actionHandlerInternalMappings.html [ Pass Failure ]
 
-webkit.org/b/229522 pointerevents/mouse/compatibility-mouse-events-prevention-mouse-released.html [ Pass Failure ]
-
 webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
