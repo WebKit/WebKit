@@ -414,7 +414,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
         _contentView = adoptNS([[WKContentView alloc] initWithFrame:self.bounds page:_page.copyRef()]);
 
     _impl->setAutomaticallyAdjustsContentInsets(true);
-    _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
 
     [self _setupScrollAndContentViews];
 #endif

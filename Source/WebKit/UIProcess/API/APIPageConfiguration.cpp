@@ -99,6 +99,9 @@ Ref<PageConfiguration> PageConfiguration::copy() const
 #if PLATFORM(IOS_FAMILY)
     copy->m_appInitiatedOverrideValueForTesting = this->m_appInitiatedOverrideValueForTesting;
 #endif
+#if HAVE(TOUCH_BAR)
+    copy->m_requiresUserActionForEditingControlsManager = this->m_requiresUserActionForEditingControlsManager;
+#endif
 
     return copy;
 }

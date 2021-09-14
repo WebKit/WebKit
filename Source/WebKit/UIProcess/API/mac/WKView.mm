@@ -1346,16 +1346,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
     _data->_impl->setInspectorAttachmentView(newView);
 }
 
-- (BOOL)_requiresUserActionForEditingControlsManager
-{
-    return _data->_impl->requiresUserActionForEditingControlsManager();
-}
-
-- (void)_setRequiresUserActionForEditingControlsManager:(BOOL)requiresUserAction
-{
-    _data->_impl->setRequiresUserActionForEditingControlsManager(requiresUserAction);
-}
-
 - (NSView *)fullScreenPlaceholderView
 {
     return _data->_impl->fullScreenPlaceholderView();
