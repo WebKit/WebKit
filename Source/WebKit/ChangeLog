@@ -1,3 +1,18 @@
+2021-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r274929): [CoordinatedGraphics] DrawingAreaCoordinatedGraphics::createDisplayRefreshMonitor is no longer used
+        https://bugs.webkit.org/show_bug.cgi?id=230214
+
+        Reviewed by Adrian Perez de Castro.
+
+        That means we use the right display refresh monitor in the threaded compositor but a different one for rendering
+        update scheduler.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::displayRefreshMonitorFactory const): Remove platform ifdef, DrawingArea
+        unconditionally inherits from DisplayRefreshMonitorFactory and the default implementation of
+        createDisplayRefreshMonitor() returns nullptr.
+
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Reduce amount of IPC needed by BroadcastChannel
