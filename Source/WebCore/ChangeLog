@@ -1,3 +1,32 @@
+2021-09-13  Jean-Yves Avenard  <jya@apple.com>
+
+        Playback stops although the progress bar moves
+        https://bugs.webkit.org/show_bug.cgi?id=230210
+        rdar://81123838
+
+        Reviewed by Eric Carlson.
+
+        When playback has stalled due to insufficient data being buffered, the effective rate
+        should be 0 as time is no longer progressing.
+        While the GPU process would indicate that the rate has changed once the player has
+        stalled, the effective rate reported would remain the same causing the current time
+        position to continue moving as it's estimated based on the effective rate.
+        This is also workaround rdar://83048005 which can report that the buffer is both
+        full and empty at the same time.
+
+        Fly-By fix: set the new rate in HTMLMediaElement if previously the requested rate
+        is different.
+
+        The buffering is handled by the AVPlayer and is dependent on network conditions making
+        it difficult to test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlaybackRate):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playerItemStatus const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::effectiveRate const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange):
+
 2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] -toggleAutomaticSpellingCorrection: menu item validation shouldn't require post-layout editor state

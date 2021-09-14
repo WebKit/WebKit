@@ -1229,10 +1229,18 @@ MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::p
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusFailed;
     if (m_cachedLikelyToKeepUp)
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp;
+    // From AVPlayer.h:
+    // AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate
+    // This state is entered when
+    // 1) the playback buffer becomes empty and playback stalls in AVPlayerTimeControlStatusPlaying,
+    // 2) when rate is set from zero to non-zero in AVPlayerTimeControlStatusPaused and insufficient media data has been buffered for playback to occur, or
+    // 3) when the player has no item to play, i.e. when the receiver's currentItem is nil.
+    // In this state, the value of the rate property is not currently effective but instead indicates the rate at which playback will start or resume.
+    // We can't rely on just m_cachedBufferFull and m_cachedBufferEmpty due to rdar://83048005.
+    if (m_cachedTimeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate || m_cachedBufferEmpty)
+        return MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty;
     if (m_cachedBufferFull)
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackBufferFull;
-    if (m_cachedBufferEmpty)
-        return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty;
 
     return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusReadyToPlay;
 }
@@ -1600,7 +1608,7 @@ double MediaPlayerPrivateAVFoundationObjC::effectiveRate() const
     if (!metaDataAvailable())
         return 0;
 
-    return m_cachedRate;
+    return m_cachedTimeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate ? 0.0 : m_cachedRate;
 }
 
 double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() const
@@ -3451,6 +3459,7 @@ void MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange(int timeCont
         return;
 
     m_cachedTimeControlStatus = timeControlStatus;
+    updateStates();
     rateChanged();
     m_wallClockAtCachedCurrentTime = std::nullopt;
 
