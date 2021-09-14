@@ -1,3 +1,14 @@
+2021-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Enable IPCMessages debug logging for non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=230081
+        <rdar://problem/82939596>
+
+        Reviewed by Don Olmstead.
+
+        * Platform/IPC/MessageArgumentDescriptions.h: Added some #if to
+        align with the generated MessageArgumentDescriptions.cpp.
+
 2021-09-14  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()
