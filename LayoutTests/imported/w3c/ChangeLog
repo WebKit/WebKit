@@ -1,3 +1,14 @@
+2021-09-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Add wpts for sin,cos,tan
+        https://bugs.webkit.org/show_bug.cgi?id=230129
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/support/numeric-testcommon.js:
+        (test_math_used):
+        Added helper function for testing approximate equals.
+
 2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement text-decoration-skip-ink
