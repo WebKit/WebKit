@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "CSSFontFaceSrcValue.h"
+#include "CSSMarkup.h"
 #include "CachedFont.h"
 #include "CachedFontLoadRequest.h"
 #include "CachedResourceLoader.h"
@@ -65,10 +66,11 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
 
 String CSSFontFaceSrcValue::customCSSText() const
 {
+    // FIXME: URLs should not be absolutized, but instead should be serialized exactly as they were specified.
     const char* prefix = isLocal() ? "local(" : "url(";
     if (m_format.isEmpty())
-        return makeString(prefix, m_resource, ')');
-    return makeString(prefix, m_resource, ')', " format(", m_format, ')');
+        return makeString(prefix, serializeString(m_resource), ")");
+    return makeString(prefix, serializeString(m_resource), ")", " format(", serializeString(m_format), ")");
 }
 
 bool CSSFontFaceSrcValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const

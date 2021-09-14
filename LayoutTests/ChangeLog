@@ -1,3 +1,13 @@
+2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontFaceSrcValue.cssText should be quoted consistently with other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=230273
+        <rdar://problem/79644124>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/font-face-src-parsing-expected.txt:
+
 2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Run tests in fast/forms/ios by default in EWS.

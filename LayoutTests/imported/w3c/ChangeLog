@@ -1,3 +1,17 @@
+2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontFaceSrcValue.cssText should be quoted consistently with other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=230273
+        <rdar://problem/79644124>
+
+        Reviewed by Darin Adler.
+
+        This is being upstreamed in https://github.com/web-platform-tests/wpt/pull/30784.
+
+        * web-platform-tests/css/css-fonts/font-family-src-quoted-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/font-family-src-quoted.html: Added.
+        * web-platform-tests/css/cssom/cssom-fontfacerule-expected.txt:
+
 2021-09-14  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Add wpts for sin,cos,tan

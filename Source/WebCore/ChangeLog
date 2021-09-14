@@ -1,3 +1,23 @@
+2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontFaceSrcValue.cssText should be quoted consistently with other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=230273
+        <rdar://problem/79644124>
+
+        Reviewed by Darin Adler.
+
+        In a src: line like "src: local(foobar)", Firefox and Chrome will both quote
+        "foobar" when reading out of the OM. Same thing with "src: url(foobar)".
+        We should match them.
+
+        Test: imported/w3c/web-platform-tests/css/css-fonts/font-family-src-quoted.html
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::customCSSText const):
+        * css/CSSMarkup.cpp:
+        (WebCore::serializeIdentifier):
+        (WebCore::serializeString):
+
 2021-09-14  Youenn Fablet  <youenn@apple.com>
 
         Enable RTCRtpScriptTransform by default
