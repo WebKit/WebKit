@@ -1,3 +1,13 @@
+2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS Mac Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230268
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-14  Darin Adler  <darin@apple.com>
 
         URLs in CSS variables must be resolved against the base URL of the stylesheet, not the document
