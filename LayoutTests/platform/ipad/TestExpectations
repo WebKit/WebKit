@@ -34,6 +34,8 @@ media/modern-media-controls/media-documents/media-document-video-iphone-sizing.h
 # This test is iPad-specific
 media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Pass ]
 
+webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
+
 webkit.org/b/194221 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
 webkit.org/b/194221 fast/forms/datalist/datalist-show-hide.html [ Skip ]
 

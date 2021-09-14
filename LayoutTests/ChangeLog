@@ -1,3 +1,12 @@
+2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Run tests in fast/forms/ios by default in EWS.
+        https://bugs.webkit.org/show_bug.cgi?id=229656
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
 2021-09-14  Youenn Fablet  <youenn@apple.com>
 
         Enable RTCRtpScriptTransform by default
