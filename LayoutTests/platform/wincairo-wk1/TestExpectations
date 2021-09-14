@@ -458,4 +458,4 @@ webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
 fast/html/broadcast-channel-between-different-sessions.html [ Skip ]
 http/tests/messaging/broadcastchannel-partitioning.html [ Skip ]
 
-https://webkit.org/b/230141 [ Debug ] editing/pasteboard/paste-contents-with-side-effects.html [ Crash ]
+webkit.org/b/230141 [ Debug ] editing/pasteboard/paste-contents-with-side-effects.html [ Pass Crash ]

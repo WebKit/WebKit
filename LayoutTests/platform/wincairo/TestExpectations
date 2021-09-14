@@ -2095,3 +2095,5 @@ workers/bomb.html [ Skip ] # Timeout
 
 fast/masking/clip-path-selection.html [ Failure ]
 animations/remove-syncing-animation.html [ Pass Failure ]
+
+editing/execCommand/indent-input-in-image-crash.html [ Failure ]

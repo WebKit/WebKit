@@ -1,3 +1,10 @@
+2021-09-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-09-13  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [iOS] Investigate unclassified CSS LayoutTest failures.
