@@ -88,7 +88,7 @@ std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& d
         certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(*tlsErrors));
     }
 
-    return WTFMove(certificateInfo);
+    return certificateInfo;
 }
 template std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode<Decoder>(Decoder&);
 template std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode<WebKit::PCM::Decoder>(WebKit::PCM::Decoder&);

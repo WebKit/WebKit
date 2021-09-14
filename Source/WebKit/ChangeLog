@@ -1,3 +1,15 @@
+2021-09-14  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix -Wredundant-move warnings
+        https://bugs.webkit.org/show_bug.cgi?id=230282
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<CString>::decode):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+
 2021-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Avoid computing post-layout EditorState data unless necessary

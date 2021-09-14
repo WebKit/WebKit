@@ -122,7 +122,7 @@ std::optional<CString> ArgumentCoder<CString>::decode(Decoder& decoder)
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), *length, 1))
         return std::nullopt;
 
-    return WTFMove(string);
+    return string;
 }
 template
 std::optional<CString> ArgumentCoder<CString>::decode<Decoder>(Decoder&);
