@@ -923,11 +923,7 @@ GraphicsLayerFactory* WebChromeClient::graphicsLayerFactory() const
 
 WebCore::DisplayRefreshMonitorFactory* WebChromeClient::displayRefreshMonitorFactory() const
 {
-#if PLATFORM(COCOA)
     return m_page.drawingArea();
-#else
-    return nullptr;
-#endif
 }
 
 #if ENABLE(GPU_PROCESS)
