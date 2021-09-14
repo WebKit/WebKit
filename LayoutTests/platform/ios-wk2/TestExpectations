@@ -1975,6 +1975,8 @@ webkit.org/b/214286 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-con
 
 webkit.org/b/230157 [ Release ] imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Pass Failure ]
 
+webkit.org/b/230266 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-explicit-rollback-iceGatheringState.html [ Pass Failure ]
+
 webkit.org/b/219438 [ Release ] fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
 
 webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Pass ]

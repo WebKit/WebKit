@@ -1,5 +1,15 @@
 2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ Mac wk2 iOS ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-explicit-rollback-iceGatheringState.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=230266
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ MacOS & iOS ] imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html is flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=228089
 
