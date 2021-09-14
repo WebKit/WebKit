@@ -1,7 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT rolling back an ICE restart when gathering is complete should not result in iceGatheringState changes Test timed out
-NOTRUN setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "complete"
-NOTRUN setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "gathering"
+PASS rolling back an ICE restart when gathering is complete should not result in iceGatheringState changes
+FAIL setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "complete" promise_test: Unhandled rejection with value: "Unexpected gathering state: complete, was expecting gathering"
+FAIL setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "gathering" promise_test: Unhandled rejection with value: "Unexpected gathering state: complete, was expecting gathering"
 

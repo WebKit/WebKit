@@ -1,12 +1,10 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Initial iceGatheringState should be new
 PASS iceGatheringState should eventually become complete after setLocalDescription
-TIMEOUT setLocalDescription(reoffer) with no new transports should not cause iceGatheringState to change Test timed out
-NOTRUN setLocalDescription() with no transports should not cause iceGatheringState to change
-NOTRUN setLocalDescription(reoffer) with a new transport should cause iceGatheringState to go to "checking" and then "complete"
-NOTRUN sRD does not cause ICE gathering state changes
-NOTRUN renegotiation that closes all transports should result in ICE gathering state "new"
+FAIL setLocalDescription(reoffer) with no new transports should not cause iceGatheringState to change promise_test: Unhandled rejection with value: "Unexpected gathering state: complete, was expecting gathering"
+PASS setLocalDescription() with no transports should not cause iceGatheringState to change
+FAIL setLocalDescription(reoffer) with a new transport should cause iceGatheringState to go to "checking" and then "complete" promise_test: Unhandled rejection with value: "Unexpected gathering state: complete, was expecting gathering"
+PASS sRD does not cause ICE gathering state changes
+FAIL renegotiation that closes all transports should result in ICE gathering state "new" promise_test: Unhandled rejection with value: "Unexpected gathering state: complete, was expecting gathering"
 FAIL connection with one data channel should eventually have connected connection state assert_equals: Expect ICE transport to be in checking gatheringState when iceGatheringState is checking expected "gathering" but got "new"
 
