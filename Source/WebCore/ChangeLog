@@ -1,3 +1,15 @@
+2021-09-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r282408.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Enable RTCRtpScriptTransform by default"
+        https://bugs.webkit.org/show_bug.cgi?id=230220
+        https://commits.webkit.org/r282408
+
 2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontFaceSrcValue.cssText should be quoted consistently with other browsers
