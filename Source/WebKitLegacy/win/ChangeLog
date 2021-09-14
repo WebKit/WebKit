@@ -1,3 +1,13 @@
+2021-09-14  Chris Dumez  <cdumez@apple.com>
+
+        [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()
+        https://bugs.webkit.org/show_bug.cgi?id=230233
+        <rdar://79562514>
+
+        Reviewed by Brady Eidson.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
 2021-09-07  Sihui Liu  <sihui_liu@apple.com>
 
         Add basic support for Storage API

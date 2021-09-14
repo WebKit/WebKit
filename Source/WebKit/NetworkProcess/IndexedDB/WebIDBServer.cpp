@@ -255,9 +255,34 @@ void WebIDBServer::renameIndex(const WebCore::IDBRequestData& requestData, uint6
     m_server->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
 }
 
-void WebIDBServer::putOrAdd(const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, WebCore::IndexedDB::ObjectStoreOverwriteMode overWriteMode)
+void WebIDBServer::putOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, WebCore::IndexedDB::ObjectStoreOverwriteMode overWriteMode)
 {
     ASSERT(!RunLoop::isMain());
+
+    if (value.blobURLs().size() != value.blobFilePaths().size()) {
+        RELEASE_LOG_FAULT(IndexedDB, "WebIDBServer::putOrAdd: Number of blob URLs doesn't match the number of blob file paths.");
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // Validate temporary blob paths in |value| to make sure they belong to the source process.
+    if (!value.blobFilePaths().isEmpty()) {
+        auto it = m_temporaryBlobPathsPerConnection.find(connection.uniqueID());
+        if (it == m_temporaryBlobPathsPerConnection.end()) {
+            RELEASE_LOG_FAULT(IndexedDB, "WebIDBServer::putOrAdd: IDBValue contains blob paths but none are allowed for this process");
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        auto& temporaryBlobPathsForConnection = it->value;
+        for (auto& blobFilePath : value.blobFilePaths()) {
+            if (!temporaryBlobPathsForConnection.remove(blobFilePath)) {
+                RELEASE_LOG_FAULT(IndexedDB, "WebIDBServer::putOrAdd: Blob path was not created for this WebProcess");
+                ASSERT_NOT_REACHED();
+                return;
+            }
+        }
+    }
 
     Locker locker { m_serverLock };
     m_server->putOrAdd(requestData, keyData, value, overWriteMode);
@@ -397,12 +422,26 @@ void WebIDBServer::removeConnection(IPC::Connection& connection)
 
     connection.removeWorkQueueMessageReceiver(Messages::WebIDBServer::messageReceiverName());
     postTask([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID()] {
+        m_temporaryBlobPathsPerConnection.remove(connectionID);
         auto connection = m_connectionMap.take(connectionID);
 
         ASSERT(connection);
 
         Locker locker { m_serverLock };
         m_server->unregisterConnection(connection->connectionToClient());
+    });
+}
+
+void WebIDBServer::registerTemporaryBlobFilePaths(IPC::Connection& connection, const Vector<String>& filePaths)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID(), filePaths = crossThreadCopy(filePaths)] {
+        if (!m_connectionMap.contains(connectionID))
+            return;
+
+        auto& temporaryBlobPaths = m_temporaryBlobPathsPerConnection.ensure(connectionID, [] { return HashSet<String> { }; }).iterator->value;
+        temporaryBlobPaths.add(filePaths.begin(), filePaths.end());
     });
 }
 

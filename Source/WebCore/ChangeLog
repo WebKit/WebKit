@@ -1,3 +1,22 @@
+2021-09-14  Chris Dumez  <cdumez@apple.com>
+
+        [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()
+        https://bugs.webkit.org/show_bug.cgi?id=230233
+        <rdar://79562514>
+
+        Reviewed by Brady Eidson.
+
+        Rename writeBlobsToTemporaryFiles() to writeBlobsToTemporaryFilesForIndexedDB() for clarity
+        since it is currently only used for IndexedDB and we wouldn't want to expand usage to
+        other things.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB):
+        * platform/network/BlobRegistryImpl.h:
+
 2021-09-14  Antti Koivisto  <antti@apple.com>
 
         Don't schedule text rendering updates for a non-rendered Document
