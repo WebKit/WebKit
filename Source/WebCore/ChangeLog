@@ -1,5 +1,21 @@
 2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Migrate to CTFontHasTable() from CTFontCopyAvailableTables()
+        https://bugs.webkit.org/show_bug.cgi?id=230248
+
+        Reviewed by Anders Carlsson.
+
+        CTFontHasTable() has been around for a while, but it's only actually
+        faster than CTFontCopyAvailableTables() on certain operating systems.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::fontHasTable):
+        (WebCore::fontHasEitherTable):
+
+2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Implement text-decoration-skip-ink
         https://bugs.webkit.org/show_bug.cgi?id=230244
 

@@ -108,6 +108,9 @@ static bool isAhemFont(CFStringRef familyName)
 
 bool fontHasTable(CTFontRef ctFont, unsigned tableTag)
 {
+#if USE(CTFONTHASTABLE)
+    return CTFontHasTable(ctFont, tableTag);
+#else
     auto tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
     if (!tableTags)
         return false;
@@ -118,10 +121,14 @@ bool fontHasTable(CTFontRef ctFont, unsigned tableTag)
             return true;
     }
     return false;
+#endif
 }
 
 bool fontHasEitherTable(CTFontRef ctFont, unsigned tableTag1, unsigned tableTag2)
 {
+#if USE(CTFONTHASTABLE)
+    return fontHasTable(ctFont, tableTag1) || fontHasTable(ctFont, tableTag2);
+#else
     auto tableTags = adoptCF(CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
     if (!tableTags)
         return false;
@@ -132,6 +139,7 @@ bool fontHasEitherTable(CTFontRef ctFont, unsigned tableTag1, unsigned tableTag2
             return true;
     }
     return false;
+#endif
 }
 
 void Font::platformInit()
