@@ -160,6 +160,7 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_VMIN:
     case CSSUnitType::CSS_VMAX:
     case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_FR:

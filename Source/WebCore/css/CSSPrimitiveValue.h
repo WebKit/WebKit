@@ -108,6 +108,7 @@ public:
     bool isDotsPerInch() const { return primitiveType() == CSSUnitType::CSS_DPI; }
     bool isDotsPerPixel() const { return primitiveType() == CSSUnitType::CSS_DPPX; }
     bool isDotsPerCentimeter() const { return primitiveType() == CSSUnitType::CSS_DPCM; }
+    bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
     bool isViewportPercentageWidth() const { return primitiveUnitType() == CSSUnitType::CSS_VW; }

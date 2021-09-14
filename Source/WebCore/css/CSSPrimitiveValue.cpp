@@ -88,6 +88,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
         return true;
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_COUNTER:
@@ -136,6 +137,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_FONT_FAMILY:
@@ -510,6 +512,7 @@ void CSSPrimitiveValue::cleanup()
     case CSSUnitType::CSS_VMIN:
     case CSSUnitType::CSS_VMAX:
     case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_FR:
@@ -768,6 +771,9 @@ double CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSUnitType unit
     case CSSUnitType::CSS_HZ:
     case CSSUnitType::CSS_DPPX:
         break;
+    case CSSUnitType::CSS_X:
+        // This is semantically identical to (canonical) dppx
+        break;
     case CSSUnitType::CSS_CM:
         factor = cssPixelsPerInch / cmPerInch;
         break;
@@ -966,6 +972,7 @@ String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_VMIN: return "vmin";
         case CSSUnitType::CSS_VMAX: return "vmax";
         case CSSUnitType::CSS_DPPX: return "dppx";
+        case CSSUnitType::CSS_X: return "x";
         case CSSUnitType::CSS_DPI: return "dpi";
         case CSSUnitType::CSS_DPCM: return "dpcm";
         case CSSUnitType::CSS_FR: return "fr";
@@ -1029,6 +1036,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return formatNumberValue("cm");
     case CSSUnitType::CSS_DPPX:
         return formatNumberValue("dppx");
+    case CSSUnitType::CSS_X:
+        return formatNumberValue("x");
     case CSSUnitType::CSS_DPI:
         return formatNumberValue("dpi");
     case CSSUnitType::CSS_DPCM:
@@ -1168,6 +1177,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_MM:

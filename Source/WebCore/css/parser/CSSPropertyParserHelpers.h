@@ -62,7 +62,6 @@ CSSParserTokenRange consumeFunction(CSSParserTokenRange&);
 
 enum class UnitlessQuirk { Allow, Forbid };
 enum class UnitlessZeroQuirk { Allow, Forbid };
-enum class AllowXResolutionUnit { Allow, Forbid };
 
 struct AngleRaw {
     CSSUnitType type;
@@ -97,7 +96,7 @@ std::optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange&, CSSParserMode, Uni
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeAngleWorkerSafe(CSSParserTokenRange&, CSSParserMode, CSSValuePool&, UnitlessQuirk = UnitlessQuirk::Forbid, UnitlessZeroQuirk = UnitlessZeroQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&, AllowXResolutionUnit = AllowXResolutionUnit::Forbid);
+RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange&);
 
 std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);

@@ -28,7 +28,7 @@ function testImageSetRule(description, property, rule)
 
     var fullRule = "image-set(" + rule + ")";
     style = testComputedStyle(property, fullRule);
-    shouldBeEqualToString('style.backgroundImage', fullRule.replace(/x(?=[,)])/g, 'dppx'));
+    shouldBeEqualToString('style.backgroundImage', fullRule);
 }
 
 testImageSetRule("Single value for background-image",

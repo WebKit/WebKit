@@ -629,14 +629,12 @@ static RefPtr<CSSPrimitiveValue> consumeTimeCSSPrimitiveValueWithCalcWithKnownTo
 
 // MARK: Resolution (CSSPrimitiveValue - no calc)
 
-static RefPtr<CSSPrimitiveValue> consumeResolutionCSSPrimitiveValueWithKnownTokenTypeDimension(CSSParserTokenRange& range, AllowXResolutionUnit allowX, CSSValuePool& pool)
+static RefPtr<CSSPrimitiveValue> consumeResolutionCSSPrimitiveValueWithKnownTokenTypeDimension(CSSParserTokenRange& range, CSSValuePool& pool)
 {
     ASSERT(range.peek().type() == DimensionToken);
 
-    if (auto unit = range.peek().unitType(); unit == CSSUnitType::CSS_DPPX || unit == CSSUnitType::CSS_DPI || unit == CSSUnitType::CSS_DPCM)
+    if (auto unit = range.peek().unitType(); unit == CSSUnitType::CSS_DPPX || unit == CSSUnitType::CSS_X || unit == CSSUnitType::CSS_DPI || unit == CSSUnitType::CSS_DPCM)
         return pool.createValue(range.consumeIncludingWhitespace().numericValue(), unit);
-    if (allowX == AllowXResolutionUnit::Allow && range.peek().unitString() == "x")
-        return pool.createValue(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_DPPX);
 
     return nullptr;
 }
@@ -888,7 +886,7 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
     return nullptr;
 }
 
-RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range, AllowXResolutionUnit allowX)
+RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
 {
     // NOTE: Unlike the other types, calc() does not work with <resolution>.
 
@@ -896,7 +894,7 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range, AllowXRe
 
     switch (token.type()) {
     case DimensionToken:
-        return consumeResolutionCSSPrimitiveValueWithKnownTokenTypeDimension(range, allowX, CSSValuePool::singleton());
+        return consumeResolutionCSSPrimitiveValueWithKnownTokenTypeDimension(range, CSSValuePool::singleton());
     
     default:
         break;
@@ -3330,7 +3328,7 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSPar
 
         imageSet->append(image.releaseNonNull());
 
-        auto resolution = consumeResolution(args, AllowXResolutionUnit::Allow);
+        auto resolution = consumeResolution(args);
         if (!resolution || resolution->floatValue() <= 0)
             return nullptr;
 

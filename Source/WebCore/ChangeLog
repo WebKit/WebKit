@@ -1,3 +1,40 @@
+2021-09-14  Sam Sneddon  <gsnedders@apple.com>
+
+        Support the `x` resolution unit
+        https://bugs.webkit.org/show_bug.cgi?id=229777
+
+        Reviewed by Simon Fraser.
+
+        Covered by existing (progressing) tests.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::isStringType):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor):
+        (WebCore::CSSPrimitiveValue::unitTypeString):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        (WebCore::CSSPrimitiveValue::equals const):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSUnits.cpp:
+        (WebCore::unitCategory):
+        (WebCore::operator<<):
+        * css/CSSUnits.h:
+        * css/DeprecatedCSSOMPrimitiveValue.cpp:
+        (WebCore::DeprecatedCSSOMPrimitiveValue::primitiveType const):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getFloatValue const):
+        * css/calc/CSSCalcCategoryMapping.cpp:
+        (WebCore::hasDoubleValue):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::cssPrimitiveValueUnitFromTrie):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeResolutionCSSPrimitiveValueWithKnownTokenTypeDimension):
+        (WebCore::CSSPropertyParserHelpers::consumeResolution):
+        (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+        * css/parser/CSSPropertyParserHelpers.h:
+        (WebCore::CSSPropertyParserHelpers::consumeResolution):
+        Remove the optional allowX argument now it's part of the normal syntax.
+
 2021-09-14  Youenn Fablet  <youenn@apple.com>
 
         Refactor WritableStream to better integrate https://streams.spec.whatwg.org/#create-writable-stream

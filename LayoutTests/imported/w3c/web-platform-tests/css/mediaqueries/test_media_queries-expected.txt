@@ -790,9 +790,9 @@ PASS subtest_660
 PASS subtest_661
 PASS subtest_662
 PASS subtest_663
-FAIL subtest_664 assert_true: expected true got false
+PASS subtest_664
 PASS subtest_665
-FAIL subtest_666 assert_true: expected true got false
+PASS subtest_666
 PASS subtest_667
 PASS subtest_668
 PASS subtest_669
@@ -804,9 +804,9 @@ PASS subtest_674
 PASS subtest_675
 PASS subtest_676
 PASS subtest_677
-FAIL subtest_678 assert_true: expected true got false
+PASS subtest_678
 PASS subtest_679
-FAIL subtest_680 assert_true: expected true got false
+PASS subtest_680
 PASS subtest_681
 PASS subtest_682
 PASS subtest_683
@@ -818,9 +818,9 @@ PASS subtest_688
 PASS subtest_689
 PASS subtest_690
 PASS subtest_691
-FAIL subtest_692 assert_true: expected true got false
+PASS subtest_692
 PASS subtest_693
-FAIL subtest_694 assert_true: expected true got false
+PASS subtest_694
 PASS subtest_695
 PASS subtest_696
 PASS subtest_697
@@ -829,7 +829,7 @@ PASS subtest_699
 PASS find_resolution
 PASS subtest_700
 PASS subtest_701
-FAIL subtest_702 assert_true: (resolution: 1x) should apply expected true got false
+PASS subtest_702
 PASS subtest_703
 PASS subtest_704
 PASS subtest_705

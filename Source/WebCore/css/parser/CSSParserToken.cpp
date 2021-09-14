@@ -52,6 +52,8 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             return CSSUnitType::CSS_Q;
         case 's':
             return CSSUnitType::CSS_S;
+        case 'x':
+            return CSSUnitType::CSS_X;
         }
         break;
     case 2:

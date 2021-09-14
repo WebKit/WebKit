@@ -52,6 +52,7 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_KHZ:
         return CSSUnitCategory::Frequency;
     case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
         return CSSUnitCategory::Resolution;
@@ -137,6 +138,7 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_VMIN: ts << "vmin"; break;
     case CSSUnitType::CSS_VMAX: ts << "vmax"; break;
     case CSSUnitType::CSS_DPPX: ts << "dppx"; break;
+    case CSSUnitType::CSS_X: ts << "x"; break;
     case CSSUnitType::CSS_DPI: ts << "dpi"; break;
     case CSSUnitType::CSS_DPCM: ts << "dpcm"; break;
     case CSSUnitType::CSS_FR: ts << "fr"; break;
