@@ -415,11 +415,11 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if re.match(r'^[A-Za-z0-9-]+/[A-Za-z0-9/-]+$', args[2]) else mocks.ProcessCompletion(),
             ), mocks.Subprocess.Route(
-                self.executable, 'commit',
+                self.executable, 'commit', '--date=now',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=False),
             ), mocks.Subprocess.Route(
-                self.executable, 'commit', '--amend',
+                self.executable, 'commit', '--date=now', '--amend',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.commit(amend=True),
             ), mocks.Subprocess.Route(

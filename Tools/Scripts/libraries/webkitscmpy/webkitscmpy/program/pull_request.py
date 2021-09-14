@@ -75,7 +75,7 @@ class PullRequest(Command):
             sys.stderr.write('No modified files\n')
             return 1
         log.warning('Amending commit...' if has_commit else 'Creating commit...')
-        if run([repository.executable(), 'commit'] + (['--amend'] if has_commit else []), cwd=repository.root_path).returncode:
+        if run([repository.executable(), 'commit', '--date=now'] + (['--amend'] if has_commit else []), cwd=repository.root_path).returncode:
             sys.stderr.write('Failed to generate commit\n')
             return 1
 

@@ -1,3 +1,15 @@
+2021-09-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Reset author time when editing commits (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=230224
+        <rdar://problem/83065417>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py: Capture 'git commit date=now'.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.create_commit): Always reset commit date.
+
 2021-09-14  Hoa Dinh  <dvh@apple.com>
 
         Provide a way to update the commit message with an updated list of changed files/functions
