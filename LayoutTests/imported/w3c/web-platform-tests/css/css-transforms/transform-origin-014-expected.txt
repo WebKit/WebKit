@@ -1,6 +1,6 @@
 
-FAIL Percentage 'transform-origin' with 'fill-box' transform-box assert_equals: expected "50px 50px" but got "0px 0px"
-FAIL Percentage 'transform-origin' with 'view-box' transform-box assert_equals: expected "150px 75px" but got "0px 0px"
-FAIL Percentage 'transform-origin' with 'view-box' transform-box in nested <svg> with 'viewBox' assert_equals: expected "25px 25px" but got "0px 0px"
-FAIL Percentage 'transform-origin' with 'view-box' transform-box in nested <svg> without 'viewBox' assert_equals: expected "50px 50px" but got "0px 0px"
+PASS Percentage 'transform-origin' with 'fill-box' transform-box
+PASS Percentage 'transform-origin' with 'view-box' transform-box
+PASS Percentage 'transform-origin' with 'view-box' transform-box in nested <svg> with 'viewBox'
+PASS Percentage 'transform-origin' with 'view-box' transform-box in nested <svg> without 'viewBox'
 

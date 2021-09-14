@@ -65,6 +65,7 @@
 #include "RenderInline.h"
 #include "RenderStyle.h"
 #include "SVGElement.h"
+#include "SVGRenderSupport.h"
 #include "Settings.h"
 #include "ShapeValue.h"
 #include "StyleProperties.h"
@@ -556,6 +557,17 @@ static LayoutRect sizingBox(RenderObject& renderer)
 
     auto& box = downcast<RenderBox>(renderer);
     return box.style().boxSizing() == BoxSizing::BorderBox ? box.borderBoxRect() : box.computedCSSContentBoxRect();
+}
+
+static FloatRect transformReferenceBox(const RenderStyle& style, const RenderElement& renderer)
+{
+    if (is<RenderBox>(renderer))
+        return downcast<RenderBox>(renderer).referenceBox(transformBoxToCSSBoxType(style.transformBox()));
+
+    if (is<SVGElement>(renderer.element()))
+        return SVGRenderSupport::transformReferenceBox(renderer, downcast<SVGElement>(*renderer.element()), style);
+
+    return { };
 }
 
 static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& transform, const RenderStyle& style)
@@ -3582,10 +3594,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyPerspectiveOrigin: {
             auto list = CSSValueList::createSpaceSeparated();
             if (renderer) {
-                LayoutRect box;
-                if (is<RenderBox>(*renderer))
-                    box = downcast<RenderBox>(*renderer).borderBoxRect();
-
+                auto box = transformReferenceBox(style, *renderer);
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.perspectiveOriginX(), box.width()), style));
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.perspectiveOriginY(), box.height()), style));
             } else {
@@ -3641,10 +3650,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTransformOrigin: {
             auto list = CSSValueList::createSpaceSeparated();
             if (renderer) {
-                LayoutRect box;
-                if (is<RenderBox>(*renderer))
-                    box = downcast<RenderBox>(*renderer).borderBoxRect();
-
+                auto box = transformReferenceBox(style, *renderer);
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.transformOriginX(), box.width()), style));
                 list->append(zoomAdjustedPixelValue(minimumValueForLength(style.transformOriginY(), box.height()), style));
                 if (style.transformOriginZ())

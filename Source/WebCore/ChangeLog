@@ -1,3 +1,30 @@
+2021-09-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix computed style for transform-origin on SVG boxes
+        https://bugs.webkit.org/show_bug.cgi?id=230172
+
+        Reviewed by Alan Bujtas.
+
+        When getting the computed value for transform-origin on SVG boxes, we need to get
+        the appropriate "reference box" from the renderer. Do minor refactoring to share
+        code between rendering and computed style for SVG and non-SVG boxes.
+
+        Tested by imported/w3c/web-platform-tests/css/css-transforms/transform-origin-014.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::transformReferenceBox):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * rendering/RenderLayer.cpp:
+        (WebCore::transformBoxToCSSBoxType): Deleted.
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::transformBoxToCSSBoxType):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::transformReferenceBox):
+        * rendering/svg/SVGRenderSupport.h:
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const):
+
 2021-09-13  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Reduce amount of IPC needed by BroadcastChannel

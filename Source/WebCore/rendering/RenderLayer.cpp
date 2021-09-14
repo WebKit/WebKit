@@ -1256,25 +1256,6 @@ static inline LayoutRect computeReferenceBox(const RenderObject& renderer, CSSBo
     return computeReferenceRectFromBox(downcast<RenderBox>(renderer), boxType, offsetFromRoot);
 }
 
-static inline CSSBoxType transformBoxToCSSBoxType(TransformBox transformBox)
-{
-    switch (transformBox) {
-    case TransformBox::StrokeBox:
-        return CSSBoxType::StrokeBox;
-    case TransformBox::ContentBox:
-        return CSSBoxType::ContentBox;
-    case TransformBox::BorderBox:
-        return CSSBoxType::BorderBox;
-    case TransformBox::FillBox:
-        return CSSBoxType::FillBox;
-    case TransformBox::ViewBox:
-        return CSSBoxType::ViewBox;
-    default:
-        ASSERT_NOT_REACHED();
-        return CSSBoxType::BorderBox;
-    }
-}
-
 void RenderLayer::updateTransform()
 {
     bool hasTransform = renderer().hasTransform();
