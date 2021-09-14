@@ -191,12 +191,13 @@ class TestDoPullRequest(testing.PathTestCase):
             self.assertDictEqual(repo.staged, {})
             self.assertEqual(repo.head.hash, 'e4390abc95a2026370b8c9813b7e55c61c5d6ebb')
 
-        self.assertEqual(captured.root.log.getvalue(), '''Creating the local development branch 'eng/pr-branch'...
+        self.assertEqual(
+            '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
+            """Creating the local development branch 'eng/pr-branch'...
 Creating commit...
     Found 1 commit...
 Rebasing 'eng/pr-branch' on 'main'...
-Rebased 'eng/pr-branch' on 'main!'
-''')
+Rebased 'eng/pr-branch' on 'main!'""")
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
 
     def test_modified(self):
@@ -211,13 +212,14 @@ Rebased 'eng/pr-branch' on 'main!'
             self.assertEqual(repo.head.hash, 'd05082bf6707252aef3472692598a587ed3fb213')
 
         self.assertEqual(captured.stderr.getvalue(), "'{}' doesn't have a recognized remote\n".format(self.path))
-        self.assertEqual(captured.root.log.getvalue(), '''Creating the local development branch 'eng/pr-branch'...
+        self.assertEqual(
+            '\n'.join([line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line]),
+            """Creating the local development branch 'eng/pr-branch'...
     Adding modified.txt...
 Creating commit...
     Found 1 commit...
 Rebasing 'eng/pr-branch' on 'main'...
-Rebased 'eng/pr-branch' on 'main!'
-''')
+Rebased 'eng/pr-branch' on 'main!'""")
 
     def test_github(self):
         with OutputCapture() as captured, mocks.remote.GitHub() as remote, \
@@ -232,7 +234,7 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
-            log[:6] + log[9 if sys.version_info > (3, 0) else 7:], [
+            [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
                 'Creating commit...',
                 '    Found 1 commit...',
@@ -262,8 +264,9 @@ Rebased 'eng/pr-branch' on 'main!'
 
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
+        self.maxDiff = None
         self.assertEqual(
-            log[:5] + log[8 if sys.version_info > (3, 0) else 6:], [
+            [line for line in log if 'Mock process' not in line], [
                 "Amending commit...",
                 '    Found 1 commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
@@ -288,7 +291,7 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
-            log[:6] + log[9 if sys.version_info > (3, 0) else 7:], [
+            [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/pr-branch'...",
                 'Creating commit...',
                 '    Found 1 commit...',
@@ -321,7 +324,7 @@ Rebased 'eng/pr-branch' on 'main!'
         self.assertEqual(captured.stderr.getvalue(), '')
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
-            log[:5] + log[8 if sys.version_info > (3, 0) else 6:], [
+            [line for line in log if 'Mock process' not in line], [
                 "Amending commit...",
                 '    Found 1 commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",

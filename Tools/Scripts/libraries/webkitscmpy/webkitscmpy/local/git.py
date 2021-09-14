@@ -768,15 +768,33 @@ class Git(Scm):
             cwd=self.root_path,
         ).returncode else self.commit()
 
-    def pull(self, rebase=None, branch=None):
-        commit = self.commit() if self.is_svn else None
+    def pull(self, rebase=None, branch=None, remote='origin'):
+        commit = self.commit() if self.is_svn or branch else None
         code = run(
             [self.executable(), 'pull'] + (
-                ['origin', branch] if branch else []
+                [remote, branch] if branch else []
             ) + (
                 [] if rebase is None else ['--rebase={}'.format('True' if rebase else 'False')]
             ), cwd=self.root_path,
         ).returncode
+
+        if not code and branch:
+            code = run(
+                [self.executable(), 'update-ref', branch, '{}/{}'.format(remote, branch)],
+                cwd=self.root_path,
+            ).returncode
+
+        if not code and branch and rebase:
+            result = run([self.executable(), 'rev-parse', 'HEAD'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if not result.returncode and result.stdout.rstrip() != commit.hash:
+                code = run([
+                    self.executable(),
+                    'filter-branch', '-f',
+                    '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(
+                        date='{} -{}'.format(int(time.time()), int(time.localtime().tm_gmtoff * 100 / (60 * 60)))
+                    ), 'HEAD...{}'.format('{}/{}'.format(remote, branch)),
+                ], cwd=self.root_path, env={'FILTER_BRANCH_SQUELCH_WARNING': '1'}).returncode
+
         if not code and self.is_svn:
             return run([
                 self.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '{}:HEAD'.format(commit.revision),
