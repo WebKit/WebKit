@@ -1,3 +1,32 @@
+2021-09-14  Xan López  <xan@igalia.com>
+
+        [JSC] ASSERT failed in stress/for-in-tests.js (32bit)
+        https://bugs.webkit.org/show_bug.cgi?id=229543
+
+        Reviewed by Yusuke Suzuki.
+
+        Since r280760 DFG::SpeculativeJIT::compileEnumeratorGetByVal uses
+        too many registers for 32bit. Revert to the slow path as a
+        temporary measure to avoid crashes, we'll try to reenable the
+        optimizations later on (see bug #230189).
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION): define a generic call
+        operation for compileEnumeratorGetByVal.
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp: move the current version of
+        compileEnumeratorGetByVal to 64bit, since it won't work on 32bit.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal): call the generic call op always.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorGetByVal): use the previous version here.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH): refactor a bit the slow path
+        for enumeratorGetByVal so it can be called from DFG as a call
+        operation.
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opEnumeratorGetByVal):
+
 2021-09-13  Xan López  <xan@igalia.com>
 
         [JSC][32bit] in-by-val fails inside for-in loop after delete
