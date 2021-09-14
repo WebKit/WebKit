@@ -2530,7 +2530,6 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorInByVal, EncodedJSValue, (JSGlobalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue base = JSValue::decode(baseValue);
-    RETURN_IF_EXCEPTION(scope, { });
     if (modeNumber == JSPropertyNameEnumerator::IndexedMode && base.isObject())
         RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(jsCast<JSObject*>(base)->hasProperty(globalObject, index))));
 
@@ -2558,7 +2557,6 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorHasOwnProperty, EncodedJSValue, (JSG
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue base = JSValue::decode(baseValue);
-    RETURN_IF_EXCEPTION(scope, { });
     if (modeNumber == JSPropertyNameEnumerator::IndexedMode && base.isObject())
         RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(jsCast<JSObject*>(base)->hasOwnProperty(globalObject, index))));
 

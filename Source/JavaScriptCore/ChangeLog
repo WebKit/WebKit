@@ -1,3 +1,16 @@
+2021-09-14  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Remove unnecessary exception checks in DFGOperations
+        https://bugs.webkit.org/show_bug.cgi?id=230247
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        JSValue::decode cannot throw an exception, remove a couple of
+        unnecessary RETURN_IF_EXCEPTION() calls.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+
 2021-09-14  Xan López  <xan@igalia.com>
 
         [JSC] ASSERT failed in stress/for-in-tests.js (32bit)
