@@ -1,3 +1,14 @@
+2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        REGRESSION (r281981): [iOS, BigSur+] webrtc/datachannel/getStats-no-prflx-remote-candidate.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=229877
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-14  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines after r282307
