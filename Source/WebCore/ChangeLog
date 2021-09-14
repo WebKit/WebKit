@@ -1,3 +1,25 @@
+2021-09-14  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineDisplayContentBuilder should not operate on the global inline run list
+        https://bugs.webkit.org/show_bug.cgi?id=230232
+
+        Reviewed by Antti Koivisto.
+
+        InlineDisplayContentBuilder builds one line worth of runs. It should not have access to the global (all runs in the formatting context) run list.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        (WebCore::Layout::InlineDisplayContentBuilder::collectInkOverflowForInlineBoxRuns):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::addRuns):
+        (WebCore::Layout::InlineFormattingState::addRun): Deleted.
+        * layout/formattingContexts/inline/InlineLineRun.h:
+
 2021-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Enable H265 codec

@@ -62,7 +62,7 @@ public:
 
     const InlineRuns& runs() const { return m_runs; }
     InlineRuns& runs() { return m_runs; }
-    void addRun(Run&& run) { m_runs.append(WTFMove(run)); }
+    void addRuns(InlineRuns&& runs) { m_runs.appendVector(WTFMove(runs)); }
 
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }

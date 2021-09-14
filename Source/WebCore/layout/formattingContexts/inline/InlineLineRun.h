@@ -114,8 +114,8 @@ struct Run {
     size_t lineIndex() const { return m_lineIndex; }
 
 private:
-    const size_t m_lineIndex;
-    const Type m_type;
+    const size_t m_lineIndex { 0 };
+    const Type m_type { Type::GenericInlineLevelBox };
     WeakPtr<const Layout::Box> m_layoutBox;
     InlineRect m_logicalRect;
     InlineRect m_inkOverflow;

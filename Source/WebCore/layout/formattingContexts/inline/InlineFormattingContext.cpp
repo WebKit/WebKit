@@ -570,15 +570,15 @@ void InlineFormattingContext::collectContentIfNeeded()
 InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuilder::LineContent& lineContent)
 {
     auto& formattingState = this->formattingState();
-    auto currentLineIndex = formattingState.lines().size();
-
     auto lineBoxAndGeometry = LineBoxBuilder(*this).build(lineContent);
+    auto lineBoxLogicalRect = lineBoxAndGeometry.lineGeometry.lineBoxLogicalRect();
+
+    auto inlineContentBuilder = InlineDisplayContentBuilder { root(), formattingState };
+    auto currentLineIndex = formattingState.lines().size();
+    formattingState.addRuns(inlineContentBuilder.build(lineContent, lineBoxAndGeometry.lineBox, lineBoxLogicalRect.topLeft(), currentLineIndex));
     formattingState.addLineBox(WTFMove(lineBoxAndGeometry.lineBox));
     formattingState.addLine(lineBoxAndGeometry.lineGeometry);
 
-    auto lineBoxLogicalRect = lineBoxAndGeometry.lineGeometry.lineBoxLogicalRect();
-
-    InlineDisplayContentBuilder(root(), formattingState).build(lineContent, formattingState.lineBoxes().last(), lineBoxLogicalRect.topLeft(), currentLineIndex);
     return lineBoxLogicalRect;
 }
 
