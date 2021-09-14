@@ -264,7 +264,10 @@ struct WebPageCreationParameters {
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility appHighlightsVisible { WebCore::HighlightVisibility::Hidden };
 #endif
-    
+
+#if HAVE(TOUCH_BAR)
+    bool requiresUserActionForEditingControlsManager { false };
+#endif
 };
 
 } // namespace WebKit

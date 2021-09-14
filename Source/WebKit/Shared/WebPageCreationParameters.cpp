@@ -189,6 +189,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(APP_HIGHLIGHTS)
     encoder << appHighlightsVisible;
 #endif
+
+#if HAVE(TOUCH_BAR)
+    encoder << requiresUserActionForEditingControlsManager;
+#endif
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -605,6 +609,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     
 #if ENABLE(APP_HIGHLIGHTS)
     if (!decoder.decode(parameters.appHighlightsVisible))
+        return std::nullopt;
+#endif
+
+#if HAVE(TOUCH_BAR)
+    if (!decoder.decode(parameters.requiresUserActionForEditingControlsManager))
         return std::nullopt;
 #endif
 

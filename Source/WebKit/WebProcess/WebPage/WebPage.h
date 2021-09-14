@@ -1496,7 +1496,7 @@ private:
     void platformReinitialize();
     void platformDetach();
     void getPlatformEditorState(WebCore::Frame&, EditorState&) const;
-    bool platformNeedsLayoutForEditorState(const WebCore::Frame&) const;
+    bool requiresPostLayoutDataForEditorState(const WebCore::Frame&) const;
     void platformWillPerformEditingCommand();
     void sendEditorStateUpdate();
     void getPlatformEditorStateCommon(const WebCore::Frame&, EditorState&) const;
@@ -1920,6 +1920,7 @@ private:
     void consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>&);
 
     bool hasPendingEditorStateUpdate() const;
+    bool shouldAvoidComputingPostLayoutDataForEditorState() const;
 
     WebCore::PageIdentifier m_identifier;
 
@@ -2165,9 +2166,10 @@ private:
     std::optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 
     bool m_userIsInteracting { false };
-    bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
 
 #if HAVE(TOUCH_BAR)
+    bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
+    bool m_requiresUserActionForEditingControlsManager { false };
     bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
 #endif
@@ -2380,8 +2382,12 @@ private:
 
 #if !PLATFORM(IOS_FAMILY)
 inline void WebPage::platformWillPerformEditingCommand() { }
-inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) const { return false; }
+inline bool WebPage::requiresPostLayoutDataForEditorState(const WebCore::Frame&) const { return false; }
 inline void WebPage::prepareToRunModalJavaScriptDialog() { }
+#endif
+
+#if !PLATFORM(MAC)
+inline bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const { return false; }
 #endif
 
 } // namespace WebKit
