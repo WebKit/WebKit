@@ -1,3 +1,12 @@
+2021-09-14  Hoa Dinh  <dvh@apple.com>
+
+        Add dvh@apple.com to the list of contributors.
+        https://bugs.webkit.org/show_bug.cgi?id=230276
+
+        Reviewed by Jonathan Bedard.
+
+        * metadata/contributors.json:
+
 2021-09-13  Sam Sneddon  <gsnedders@apple.com>
 
         Move ENABLE_RESOLUTION_MEDIA_QUERY to a runtime flag, start running tests again

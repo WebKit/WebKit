@@ -6451,6 +6451,12 @@
    },
    {
       "emails" : [
+         "dvh@apple.com"
+      ],
+      "name" : "Viet Hoa Dinh"
+   },
+   {
+      "emails" : [
          "scheib@chromium.org"
       ],
       "name" : "Vincent Scheib",
