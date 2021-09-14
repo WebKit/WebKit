@@ -84,7 +84,7 @@ sub findChangeLogs($$);
 sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$\%);
 sub generateFunctionLists($$$$$);
-sub generateNewChangeLogs($$$$$$$$$$$$$$);
+sub generateNewChangeLogs($$$$$$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_cpp($$);
@@ -145,6 +145,7 @@ sub main()
     my $showHelp = 0;
     my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
     my $updateChangeLogs = 1;
+    my $onlyFiles = 0;
     my $parseOptionsResult =
         GetOptions("diff|d!" => \$spewDiff,
                    "bug|b:i" => \$bugNumber,
@@ -160,7 +161,8 @@ sub main()
                    "style!" => \$checkWebKitStyle,
                    "open|o!" => \$openChangeLogs,
                    "write!" => \$writeChangeLogs,
-                   "update!" => \$updateChangeLogs);
+                   "update!" => \$updateChangeLogs,
+                   "only-files" => \$onlyFiles);
     if (!$parseOptionsResult || $showHelp) {
         print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [-g|--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
         print STDERR "  -b|--bug        Fill in the ChangeLog bug information from the given bug.\n";
@@ -178,6 +180,7 @@ sub main()
         print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
         print STDERR "  --delimiters    When writing to stdout, label and print a \"~\" after each entry\n";
         print STDERR "  --email=        Specify the email address to be used in the patch\n";
+        print STDERR "  --only-files    Exclude the standard changelog header and only include references to files.\n";
         return 1;
     }
 
@@ -237,7 +240,7 @@ sub main()
         resolveConflictedChangeLogs($changeLogs);
     }
 
-    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters);
+    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters, $onlyFiles);
 
     if ($writeChangeLogs) {
         print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -631,9 +634,9 @@ sub resolveConflictedChangeLogs($)
     close RESOLVE;
 }
 
-sub generateNewChangeLogs($$$$$$$$$$$$$$)
+sub generateNewChangeLogs($$$$$$$$$$$$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $requiresTests, $functionLists, $bugURL, $bugDescription, $bugRadarURL, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs, $delimiters, $onlyFiles) = @_;
 
     my $hasWebCoreChange = 0;
     foreach my $prefix (@$prefixes) {
@@ -667,8 +670,10 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$)
             print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1 && !$delimiters;
         }
 
-        my $date = changeLogDate(ChangeLogTimeZone);
-        print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
+        if (!$onlyFiles) {
+            my $date = changeLogDate(ChangeLogTimeZone);
+            print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
+        }
 
         my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit, $gitReviewer) if $gitCommit;
         $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
@@ -680,13 +685,15 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$)
         $bugDescription = "Need a short description (OOPS!)." unless $bugDescription;
         $bugURL = "Need the bug URL (OOPS!)." unless $bugURL;
 
-        print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
-        print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
-        print CHANGE_LOG normalizeLineEndings("        $bugRadarURL\n", $endl) if $bugRadarURL;
-        print CHANGE_LOG normalizeLineEndings("\n", $endl);
+        if (!$onlyFiles) {
+            print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
+            print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
+            print CHANGE_LOG normalizeLineEndings("        $bugRadarURL\n", $endl) if $bugRadarURL;
+            print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
-        print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
-        print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
+            print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
+            print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
+        }
 
         my $shouldMentionTests = @$requiresTests;
         $shouldMentionTests |= !$hasWebCoreChange && unixPath($prefix) =~ m|/WebKit/$|;

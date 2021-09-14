@@ -1,3 +1,16 @@
+2021-09-14  Hoa Dinh  <dvh@apple.com>
+
+        Provide a way to update the commit message with an updated list of changed files/functions
+        https://bugs.webkit.org/show_bug.cgi?id=230195
+
+        Reviewed by Jonathan Bedard.
+
+        Add a new parameter --only-files to request generation of only the part of the changed files/functions.
+
+        * Scripts/prepare-ChangeLog:
+        (main):
+        (generateNewChangeLogs):
+
 2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] -toggleAutomaticSpellingCorrection: menu item validation shouldn't require post-layout editor state
