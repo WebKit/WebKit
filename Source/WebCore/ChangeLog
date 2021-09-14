@@ -1,3 +1,35 @@
+2021-09-14  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Introduce InlineInvalidation/InlineDamage
+        https://bugs.webkit.org/show_bug.cgi?id=229225
+        <rdar://problem/82324227>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting partial inline layout.
+
+        The initial implementation is going to only support a single type of damage (content changed, style changed etc) on a single line.
+        Anything more involved either
+        1. folds into a full damage type of layout (i.e. no range support) e.g changing multiple images on different lines triggers vertical alignment on all the lines
+        2. triggers the lowest level type of layout e.g. changing content on the first line while resizing the containing block folds into NeedsContentUpdateAndLineLayout.
+
+        * CMakeLists.txt:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/inline/invalidation/InlineDamage.h: Added.
+        (WebCore::Layout::InlineDamage::type const):
+        (WebCore::Layout::InlineDamage::line const):
+        (WebCore::Layout::InlineDamage::setDamageType):
+        (WebCore::Layout::InlineDamage::setDamagedLine):
+        * layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp: Added.
+        (WebCore::Layout::InlineInvalidation::InlineInvalidation):
+        (WebCore::Layout::InlineInvalidation::styleChanged):
+        (WebCore::Layout::InlineInvalidation::textInserted):
+        (WebCore::Layout::InlineInvalidation::textWillBeRemoved):
+        (WebCore::Layout::InlineInvalidation::inlineLevelBoxInserted):
+        (WebCore::Layout::InlineInvalidation::inlineLevelBoxWillBeRemoved):
+        * layout/formattingContexts/inline/invalidation/InlineInvalidation.h: Added.
+
 2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Migrate to CTFontHasTable() from CTFontCopyAvailableTables()
