@@ -1,3 +1,16 @@
+2021-09-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        StackTrace outputs a garbage prefix because WTF::StackTrace::m_prefix is filled with the stack content
+        https://bugs.webkit.org/show_bug.cgi?id=230207
+
+        Reviewed by Yusuke Suzuki.
+
+        r278474 (Bug 226390) added a new member m_prefix to StackTrace at
+        the bottom of the structure. However, StackTrace isn't a normal
+        structure. The members are filled with the stack content.
+
+        * wtf/StackTrace.h: Moved the m_prefix to the top of the members.
+
 2021-09-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Followup to https://bugs.webkit.org/show_bug.cgi?id=217784
