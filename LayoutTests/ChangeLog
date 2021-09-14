@@ -1,3 +1,12 @@
+2021-09-14  Eric Hutchison  <ehutchison@apple.com>
+
+        Remove test expectations for 3 iOS tests.
+        https://bugs.webkit.org/show_bug.cgi?id=229573.
+
+        Unreviewed test gardening.
+
+        * platform/ios-14/TestExpectations:
+
 2021-09-14  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update platform test expectations and baselines after WPT import in r282287
