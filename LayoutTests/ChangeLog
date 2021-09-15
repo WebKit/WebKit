@@ -1,3 +1,11 @@
+2021-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip a couple of SharedWorker tests.
+
+        These tests are flaky and we do not support SharedWorkers at the moment.
+
+        * TestExpectations:
+
 2021-09-15  Martin Robinson  <mrobinson@webkit.org>
 
         imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html depends on scrollbar placement and width

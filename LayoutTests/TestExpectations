@@ -879,6 +879,8 @@ imported/w3c/web-platform-tests/workers/SharedWorker-replace-EventHandler.any.wo
 imported/w3c/web-platform-tests/workers/SharedWorker-script-error.html [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker-simple.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html [ Skip ]
+imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Skip ]
+imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html [ Skip ]
 
 imported/w3c/web-platform-tests/workers/constructors/SharedWorker [ Skip ]
 imported/w3c/web-platform-tests/workers/SharedWorker_blobUrl.html [ Skip ]
