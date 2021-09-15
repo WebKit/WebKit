@@ -1,4 +1,4 @@
 
 PASS Perfect negotiation stress glare
-FAIL Perfect negotiation stress glare with roles reversed assert_unreached: Error in iframe: OperationError: Error processing ICE candidate Reached unreachable code
+PASS Perfect negotiation stress glare with roles reversed
 

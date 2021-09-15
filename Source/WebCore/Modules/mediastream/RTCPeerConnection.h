@@ -176,7 +176,7 @@ public:
 
     void updateNegotiationNeededFlag(std::optional<uint32_t>);
 
-    void dispatchEventWhenFeasible(Ref<Event>&&);
+    void scheduleEvent(Ref<Event>&&);
 
     void disableICECandidateFiltering() { m_backend->disableICECandidateFiltering(); }
     void enableICECandidateFiltering() { m_backend->enableICECandidateFiltering(); }
@@ -184,8 +184,6 @@ public:
     void clearController() { m_controller = nullptr; }
 
     Document* document();
-
-    void doTask(Function<void()>&&);
 
     void updateDescriptions(PeerConnectionBackend::DescriptionStates&&);
     void updateTransceiversAfterSuccessfulLocalDescription();
@@ -195,6 +193,9 @@ public:
     void processIceTransportStateChange(RTCIceTransport&);
 
     RTCSctpTransport* sctp() { return m_sctpTransport.get(); }
+
+    // EventTarget implementation.
+    void dispatchEvent(Event&) final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
@@ -217,7 +218,6 @@ private:
     // EventTarget implementation.
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
-    void dispatchEvent(Event&) final;
 
     // ActiveDOMObject
     WEBCORE_EXPORT void stop() final;
@@ -265,7 +265,6 @@ private:
     RTCController* m_controller { nullptr };
     Vector<RefPtr<RTCCertificate>> m_certificates;
     bool m_shouldDelayTasks { false };
-    Vector<Function<void()>> m_pendingTasks;
     Deque<std::pair<Ref<DeferredPromise>, Function<void(Ref<DeferredPromise>&&)>>> m_operations;
     bool m_hasPendingOperation { false };
     std::optional<uint32_t> m_negotiationNeededEventId;

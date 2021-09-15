@@ -1,3 +1,18 @@
+2021-09-15  Youenn Fablet  <youenn@apple.com>
+
+        Use event queue to fire RTCPeerConnection events
+        https://bugs.webkit.org/show_bug.cgi?id=229944
+        <rdar://problem/83045723>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-media-setup-single-dialog-expected.txt:
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer-expected.txt:
+        * webrtc/peerconnection-page-cache-long.html:
+        The peer connection object might not be in disconnected state synchronously in 
+        pageshow event handler. In that case, we should wait for disconnected state.
+
 2021-09-15  Said Abou-Hallawa  <said@apple.com>
 
         Linear gradient sometimes is drawn incorrectly and sometimes hangs

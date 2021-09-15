@@ -287,7 +287,7 @@ private:
     const webrtc::SessionDescriptionInterface* remote_description() const override { return nullptr; }
     bool AddIceCandidate(const webrtc::IceCandidateInterface*) override { return true; }
     void AddIceCandidate(std::unique_ptr<webrtc::IceCandidateInterface>, std::function<void(webrtc::RTCError)> callback) override { callback({ }); }
-    SignalingState signaling_state() override { return kStable; }
+    SignalingState signaling_state() override;
     IceConnectionState ice_connection_state() override { return kIceConnectionNew; }
     IceGatheringState ice_gathering_state() override { return kIceGatheringNew; }
     void StopRtcEventLog() override { }

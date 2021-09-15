@@ -460,7 +460,7 @@ void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChanne
         if (protectedThis->isStopped())
             return;
         auto& connection = protectedThis->m_peerConnectionBackend.connection();
-        connection.dispatchEventWhenFeasible(LibWebRTCDataChannelHandler::channelEvent(*connection.document(), WTFMove(dataChannel)));
+        connection.scheduleEvent(LibWebRTCDataChannelHandler::channelEvent(*connection.document(), WTFMove(dataChannel)));
     });
 }
 
@@ -527,17 +527,26 @@ void LibWebRTCMediaEndpoint::OnIceConnectionChange(webrtc::PeerConnectionInterfa
     });
 }
 
+static inline RTCIceGatheringState toRTCIceGatheringState(webrtc::PeerConnectionInterface::IceGatheringState state)
+{
+    switch (state) {
+    case webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringNew:
+        return RTCIceGatheringState::New;
+    case webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringGathering:
+        return RTCIceGatheringState::Gathering;
+    case webrtc::PeerConnectionInterface::IceGatheringState::kIceGatheringComplete:
+        return RTCIceGatheringState::Complete;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void LibWebRTCMediaEndpoint::OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState state)
 {
     callOnMainThread([protectedThis = makeRef(*this), state] {
         if (protectedThis->isStopped())
             return;
-        if (state == webrtc::PeerConnectionInterface::kIceGatheringComplete)
-            protectedThis->m_peerConnectionBackend.doneGatheringCandidates();
-        else if (state == webrtc::PeerConnectionInterface::kIceGatheringGathering)
-            protectedThis->m_peerConnectionBackend.connection().updateIceGatheringState(RTCIceGatheringState::Gathering);
-        else if (state == webrtc::PeerConnectionInterface::kIceGatheringNew)
-            protectedThis->m_peerConnectionBackend.connection().updateIceGatheringState(RTCIceGatheringState::New);
+        protectedThis->m_peerConnectionBackend.iceGatheringStateChanged(toRTCIceGatheringState(state));
     });
 }
 

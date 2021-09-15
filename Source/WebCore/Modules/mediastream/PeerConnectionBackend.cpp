@@ -108,7 +108,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
 
     ASSERT(m_offerAnswerPromise);
     validateSDP(sdp);
-    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -122,7 +122,7 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
     ALWAYS_LOG(LOGIDENTIFIER, "Create offer failed:", exception.message());
 
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -145,7 +145,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
     ALWAYS_LOG(LOGIDENTIFIER, "Create answer succeeded:\n", sdp);
 
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -159,7 +159,7 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
     ALWAYS_LOG(LOGIDENTIFIER, "Create answer failed:", exception.message());
 
     ASSERT(m_offerAnswerPromise);
-    m_peerConnection.doTask([this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -181,7 +181,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(m_setDescriptionCallback);
-    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -189,6 +189,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
         m_peerConnection.updateTransceiversAfterSuccessfulLocalDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
+
         callback({ });
     });
 }
@@ -199,7 +200,7 @@ void PeerConnectionBackend::setLocalDescriptionFailed(Exception&& exception)
     ALWAYS_LOG(LOGIDENTIFIER, "Set local description failed:", exception.message());
 
     ASSERT(m_setDescriptionCallback);
-    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), exception = WTFMove(exception)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -221,7 +222,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
     ALWAYS_LOG(LOGIDENTIFIER, "Set remote description succeeded");
     ASSERT(m_setDescriptionCallback);
 
-    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend), events = WTFMove(m_pendingTrackEvents)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), descriptionStates = WTFMove(descriptionStates), sctpBackend = WTFMove(sctpBackend), events = WTFMove(m_pendingTrackEvents)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -231,7 +232,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         for (auto& event : events) {
             auto& track = event.track.get();
 
-            m_peerConnection.dispatchEventWhenFeasible(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
+            m_peerConnection.dispatchEvent(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
             ALWAYS_LOG(LOGIDENTIFIER, "Dispatched if feasible track of type ", track.source().type());
 
             if (m_peerConnection.isClosed())
@@ -259,11 +260,22 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     m_pendingTrackEvents.clear();
 
     ASSERT(m_setDescriptionCallback);
-    m_peerConnection.doTask([this, callback = WTFMove(m_setDescriptionCallback), exception = WTFMove(exception)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, callback = WTFMove(m_setDescriptionCallback), exception = WTFMove(exception)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
         callback(WTFMove(exception));
+    });
+}
+
+void PeerConnectionBackend::iceGatheringStateChanged(RTCIceGatheringState state)
+{
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, state] {
+        if (state == RTCIceGatheringState::Complete) {
+            doneGatheringCandidates();
+            return;
+        }
+        m_peerConnection.updateIceGatheringState(state);
     });
 }
 
@@ -333,13 +345,6 @@ void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPr
     });
 }
 
-void PeerConnectionBackend::fireICECandidateEvent(RefPtr<RTCIceCandidate>&& candidate, String&& serverURL)
-{
-    ASSERT(isMainThread());
-
-    m_peerConnection.dispatchEventWhenFeasible(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, WTFMove(candidate), WTFMove(serverURL)));
-}
-
 void PeerConnectionBackend::enableICECandidateFiltering()
 {
     m_shouldFilterICECandidates = true;
@@ -365,7 +370,7 @@ void PeerConnectionBackend::validateSDP(const String& sdp) const
 
 void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&& descriptions)
 {
-    m_peerConnection.doTask([logSiteIdentifier = LOGIDENTIFIER, this, sdp = WTFMove(sdp), mid = WTFMove(mid), sdpMLineIndex, serverURL = WTFMove(serverURL), descriptions = WTFMove(descriptions)]() mutable {
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [logSiteIdentifier = LOGIDENTIFIER, this, sdp = WTFMove(sdp), mid = WTFMove(mid), sdpMLineIndex, serverURL = WTFMove(serverURL), descriptions = WTFMove(descriptions)]() mutable {
         if (m_peerConnection.isClosed())
             return;
 
@@ -380,7 +385,8 @@ void PeerConnectionBackend::newICECandidate(String&& sdp, String&& mid, unsigned
         m_finishedGatheringCandidates = false;
 
         ASSERT(!m_shouldFilterICECandidates || sdp.contains(".local"));
-        fireICECandidateEvent(RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex), WTFMove(serverURL));
+        auto candidate = RTCIceCandidate::create(WTFMove(sdp), WTFMove(mid), sdpMLineIndex);
+        m_peerConnection.dispatchEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, WTFMove(candidate), WTFMove(serverURL)));
     });
 }
 
@@ -390,23 +396,13 @@ void PeerConnectionBackend::doneGatheringCandidates()
     ALWAYS_LOG(LOGIDENTIFIER, "Finished ice candidate gathering");
     m_finishedGatheringCandidates = true;
 
-    m_peerConnection.dispatchEventWhenFeasible(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, nullptr, { }));
+    m_peerConnection.scheduleEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, nullptr, { }));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
 }
 
 void PeerConnectionBackend::endOfIceCandidates(DOMPromiseDeferred<void>&& promise)
 {
     promise.resolve();
-}
-
-void PeerConnectionBackend::updateSignalingState(RTCSignalingState newSignalingState)
-{
-    ASSERT(isMainThread());
-
-    if (newSignalingState != m_peerConnection.signalingState()) {
-        m_peerConnection.setSignalingState(newSignalingState);
-        m_peerConnection.dispatchEventWhenFeasible(Event::create(eventNames().signalingstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    }
 }
 
 void PeerConnectionBackend::stop()

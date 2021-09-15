@@ -35,6 +35,7 @@
 
 #include "IDLTypes.h"
 #include "LibWebRTCProvider.h"
+#include "RTCIceGatheringState.h"
 #include "RTCRtpSendParameters.h"
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
@@ -194,11 +195,10 @@ public:
     using AddIceCandidateCallbackFunction = void(ExceptionOr<std::optional<PeerConnectionBackend::DescriptionStates>>&&);
     using AddIceCandidateCallback = Function<AddIceCandidateCallbackFunction>;
 
-protected:
-    void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&, String&& url);
-    void doneGatheringCandidates();
+    void iceGatheringStateChanged(RTCIceGatheringState);
 
-    void updateSignalingState(RTCSignalingState);
+protected:
+    void doneGatheringCandidates();
 
     void createOfferSucceeded(String&&);
     void createOfferFailed(Exception&&);

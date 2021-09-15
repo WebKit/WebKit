@@ -259,6 +259,24 @@ rtc::scoped_refptr<webrtc::MediaStreamInterface> MockLibWebRTCPeerConnectionFact
     return new rtc::RefCountedObject<webrtc::MediaStream>(label);
 }
 
+webrtc::PeerConnectionInterface::SignalingState MockLibWebRTCPeerConnection::signaling_state()
+{
+    switch (m_signalingState) {
+    case RTCSignalingState::Stable:
+        return SignalingState::kStable;
+    case RTCSignalingState::HaveLocalOffer:
+        return SignalingState::kHaveLocalOffer;
+    case RTCSignalingState::HaveLocalPranswer:
+        return SignalingState::kHaveLocalPrAnswer;
+    case RTCSignalingState::HaveRemoteOffer:
+        return SignalingState::kHaveRemoteOffer;
+    case RTCSignalingState::HaveRemotePranswer:
+        return SignalingState::kHaveRemotePrAnswer;
+    case RTCSignalingState::Closed:
+        return SignalingState::kClosed;
+    }
+}
+
 void MockLibWebRTCPeerConnection::SetLocalDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription, rtc::scoped_refptr<webrtc::SetLocalDescriptionObserverInterface> observer)
 {
     bool isCorrectState = true;

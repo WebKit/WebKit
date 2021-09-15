@@ -21,7 +21,7 @@ A: add media
 A: create offer
 A: got offer, set it as local description
 A: local offer set
-FAIL pcA.signalingState should be have-local-offer. Was stable.
+PASS pcA.signalingState is 'have-local-offer'
 FAIL pcA.pendingLocalDescription is not an instance of RTCSessionDescription
 PASS pcA.currentLocalDescription is null
 

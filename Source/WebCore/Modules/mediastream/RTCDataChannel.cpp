@@ -197,6 +197,9 @@ void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)
     if (m_stopped || m_readyState == RTCDataChannelState::Closed || m_readyState == newState)
         return;
 
+    if (m_readyState == RTCDataChannelState::Closing && newState == RTCDataChannelState::Open)
+        return;
+
     m_readyState = newState;
 
     switch (m_readyState) {

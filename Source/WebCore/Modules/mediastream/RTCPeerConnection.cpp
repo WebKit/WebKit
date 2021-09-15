@@ -208,6 +208,10 @@ void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromi
     }
 
     chainOperation(WTFMove(promise), [this, options = WTFMove(options)](auto&& promise) mutable {
+        if (m_signalingState != RTCSignalingState::Stable && m_signalingState != RTCSignalingState::HaveLocalOffer) {
+            promise->reject(InvalidStateError);
+            return;
+        }
         m_backend->createOffer(WTFMove(options), WTFMove(promise));
     });
 }
@@ -221,6 +225,10 @@ void RTCPeerConnection::createAnswer(RTCAnswerOptions&& options, Ref<DeferredPro
     }
 
     chainOperation(WTFMove(promise), [this, options = WTFMove(options)](auto&& promise) mutable {
+        if (m_signalingState != RTCSignalingState::HaveRemoteOffer && m_signalingState != RTCSignalingState::HaveLocalPranswer) {
+            promise->reject(InvalidStateError);
+            return;
+        }
         m_backend->createAnswer(WTFMove(options), WTFMove(promise));
     });
 }
@@ -580,15 +588,6 @@ void RTCPeerConnection::resume()
 
     m_shouldDelayTasks = false;
     m_backend->resume();
-
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](auto&) {
-        if (m_isStopped || m_shouldDelayTasks)
-            return;
-
-        auto tasks = WTFMove(m_pendingTasks);
-        for (auto& task : tasks)
-            task();
-    });
 }
 
 bool RTCPeerConnection::virtualHasPendingActivity() const
@@ -613,20 +612,20 @@ void RTCPeerConnection::setSignalingState(RTCSignalingState newState)
 
     ALWAYS_LOG(LOGIDENTIFIER, newState);
     m_signalingState = newState;
-    dispatchEventWhenFeasible(Event::create(eventNames().signalingstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    dispatchEvent(Event::create(eventNames().signalingstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, newState);
 
-    scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
-        if (protectedThis->isClosed() || protectedThis->m_iceGatheringState == newState)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, newState] {
+        if (isClosed() || m_iceGatheringState == newState)
             return;
 
-        protectedThis->m_iceGatheringState = newState;
-        protectedThis->dispatchEventWhenFeasible(Event::create(eventNames().icegatheringstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        protectedThis->updateConnectionState();
+        m_iceGatheringState = newState;
+        dispatchEvent(Event::create(eventNames().icegatheringstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        updateConnectionState();
     });
 }
 
@@ -634,13 +633,13 @@ void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState newState)
 {
     ALWAYS_LOG(LOGIDENTIFIER, newState);
 
-    scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](auto&) mutable {
-        if (protectedThis->isClosed() || protectedThis->m_iceConnectionState == newState)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, newState] {
+        if (isClosed() || m_iceConnectionState == newState)
             return;
 
-        protectedThis->m_iceConnectionState = newState;
-        protectedThis->dispatchEventWhenFeasible(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        protectedThis->updateConnectionState();
+        m_iceConnectionState = newState;
+        dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        updateConnectionState();
     });
 }
 
@@ -671,7 +670,7 @@ void RTCPeerConnection::updateConnectionState()
     INFO_LOG(LOGIDENTIFIER, "state changed from: " , m_connectionState, " to ", state);
 
     m_connectionState = state;
-    dispatchEventWhenFeasible(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    scheduleEvent(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 static bool isIceTransportUsedByTransceiver(const RTCIceTransport& iceTransport, RTCRtpTransceiver& transceiver)
@@ -723,14 +722,14 @@ void RTCPeerConnection::processIceTransportStateChange(RTCIceTransport& iceTrans
 
     iceTransport.dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
     if (iceConnectionStateChanged)
-        dispatchEventWhenFeasible(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     if (connectionStateChanged)
-        dispatchEventWhenFeasible(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        dispatchEvent(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void RTCPeerConnection::updateNegotiationNeededFlag(std::optional<uint32_t> eventId)
 {
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this), eventId](auto&) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, eventId]() mutable {
         if (isClosed())
             return;
         if (!eventId) {
@@ -750,22 +749,13 @@ void RTCPeerConnection::updateNegotiationNeededFlag(std::optional<uint32_t> even
         if (!m_backend->isNegotiationNeeded(*eventId))
             return;
 
-        dispatchEventWhenFeasible(Event::create(eventNames().negotiationneededEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        dispatchEvent(Event::create(eventNames().negotiationneededEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
 }
 
-void RTCPeerConnection::doTask(Function<void()>&& task)
+void RTCPeerConnection::scheduleEvent(Ref<Event>&& event)
 {
-    if (m_shouldDelayTasks || !m_pendingTasks.isEmpty()) {
-        m_pendingTasks.append(WTFMove(task));
-        return;
-    }
-    task();
-}
-
-void RTCPeerConnection::dispatchEventWhenFeasible(Ref<Event>&& event)
-{
-    doTask([this, event = WTFMove(event)] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, event = WTFMove(event)]() mutable {
         dispatchEvent(event);
     });
 }

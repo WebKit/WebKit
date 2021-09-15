@@ -1,10 +1,10 @@
 
 PASS setLocalDescription with valid offer should succeed
 FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
-FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for m= section with mid='0': Local fingerprint does not match identity. Expected: sha-256 D8:63:74:FC:91:AB:D7:9A:50:2B:E2:6F:88:D1:42:11:A5:B4:11:A6:CC:11:A8:07:FA:54:B2:C9:46:C4:84:8D Got: sha-256 BA:25:CA:E3:4A:0A:80:3C:AB:45:0D:96:04:CD:6E:6E:E0:E9:D2:39:DA:7C:6A:21:B0:FE:5B:40:DF:F8:3D:1C" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for m= section with mid='0': Local fingerprint does not match identity. Expected: sha-256 88:43:B2:95:49:DE:C2:A7:77:5E:EC:22:6F:D4:3E:B6:D4:FD:96:24:2B:77:6F:18:85:4B:F8:8A:BC:32:46:2F Got: sha-256 14:DC:27:7A:00:73:83:85:21:8B:2A:81:8F:F9:04:01:D3:31:54:68:7D:35:9C:6A:A2:F9:1D:0B:4C:8E:90:2D" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
 FAIL Set created offer other than last offer should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Creating and setting offer multiple times should succeed
 PASS Setting previously generated offer after a call to createAnswer should work
 PASS Negotiation works when there has been a repeated setLocalDescription(offer)
-FAIL setLocalDescription(offer) should update internal state with a queued task, in the right order assert_equals: pendingRemoteDescription should never be set due to sLD expected null but got object "[object RTCSessionDescription]"
+FAIL setLocalDescription(offer) should update internal state with a queued task, in the right order assert_not_equals: pendingLocalDescription should be updated before the signalingstatechange event got disallowed value null
 

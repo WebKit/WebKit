@@ -1,5 +1,67 @@
 2021-09-15  Youenn Fablet  <youenn@apple.com>
 
+        Use event queue to fire RTCPeerConnection events
+        https://bugs.webkit.org/show_bug.cgi?id=229944
+        <rdar://problem/83045723>
+
+        Reviewed by Eric Carlson.
+
+        Instead of using a dedicated task queue in peer connection to handle the suspend cases,
+        we now rely on queueTask to do this.
+        We do this for both promise resolution and dispatching events.
+
+        This allows to better order some promise resolutions and some event dispatching as well.
+        Previously, we were sometimes resolving a promise, then scheduling a task to fire an event.
+        The promise resolution callbacks in that case are expected to run first, in the same event loop,
+        then the event listeners are supposed to be executed.
+        It was not happening since we were not in the event loop, so the event was fired then the promise resolution callbacks executed.
+
+        Drive-by fix to reject createOffer/createAnswer in case signaling state is not correct as per
+        https://w3c.github.io/webrtc-pc/#dfn-creating-an-offer and https://w3c.github.io/webrtc-pc/#dfn-creating-an-answer.
+        Drive-by fix to not fire open event when data channel is closing as per https://w3c.github.io/webrtc-pc/#announcing-a-data-channel-as-open.
+
+        Update mock backend to correctly report signaling state.
+
+        Covered by updated tests.
+        Some tests are still flaky which might mean we still have some races that need to be investigated.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createOfferFailed):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerFailed):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionFailed):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionFailed):
+        (WebCore::PeerConnectionBackend::iceGatheringStateChanged):
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didChangeReadyState):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        (WebCore::RTCPeerConnection::resume):
+        (WebCore::RTCPeerConnection::setSignalingState):
+        (WebCore::RTCPeerConnection::updateIceGatheringState):
+        (WebCore::RTCPeerConnection::updateIceConnectionState):
+        (WebCore::RTCPeerConnection::updateConnectionState):
+        (WebCore::RTCPeerConnection::processIceTransportStateChange):
+        (WebCore::RTCPeerConnection::updateNegotiationNeededFlag):
+        (WebCore::RTCPeerConnection::scheduleEvent):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnDataChannel):
+        (WebCore::toRTCIceGatheringState):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceGatheringChange):
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::signaling_state):
+        * testing/MockLibWebRTCPeerConnection.h:
+
+2021-09-15  Youenn Fablet  <youenn@apple.com>
+
         Migrate to libwebrtc non-racy setRemoteDescription/setLocalDescription variants
         https://bugs.webkit.org/show_bug.cgi?id=230262
 

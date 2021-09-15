@@ -1,5 +1,5 @@
 
 PASS rolling back an ICE restart when gathering is complete should not result in iceGatheringState changes
-FAIL setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "complete" promise_test: Unhandled rejection with value: "Unexpected gathering state: complete, was expecting gathering"
-FAIL setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "gathering" promise_test: Unhandled rejection with value: "Unexpected gathering state: complete, was expecting gathering"
+PASS setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "complete"
+PASS setLocalDescription(rollback) of original offer should cause iceGatheringState to reach "new" when starting in "gathering"
 

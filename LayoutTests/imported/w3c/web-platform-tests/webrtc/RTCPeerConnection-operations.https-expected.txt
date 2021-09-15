@@ -3,7 +3,7 @@ Harness Error (TIMEOUT), message = null
 
 PASS promiseState helper works
 PASS promiseStateFinal helper works
-FAIL createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite) assert_equals: expected "InvalidStateError" but got "Error"
+PASS createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite)
 PASS createAnswer must detect InvalidStateError synchronously when chain is empty (prerequisite)
 FAIL SLD(rollback) must detect InvalidStateError synchronously when chain is empty assert_equals: promise rejected on same task expected "rejected" but got "pending"
 FAIL addIceCandidate must detect InvalidStateError synchronously when chain is empty assert_equals: expected "InvalidStateError" but got "Error"
@@ -12,12 +12,12 @@ PASS setParameters must detect InvalidStateError synchronously always when trans
 FAIL pc.getStats must detect InvalidAccessError synchronously always assert_equals: expected "InvalidAccessError" but got "Error"
 PASS isOperationsChainEmpty detects empty in stable
 PASS isOperationsChainEmpty detects empty in have-local-offer
-FAIL isOperationsChainEmpty detects empty in have-remote-offer assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS isOperationsChainEmpty detects empty in have-remote-offer
 PASS createOffer uses operations chain
-FAIL createAnswer uses operations chain assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS createAnswer uses operations chain
 PASS setLocalDescription uses operations chain
 PASS setRemoteDescription uses operations chain
-FAIL addIceCandidate uses operations chain assert_equals: isOperationsChainEmpty is working expected "InvalidStateError" but got "Error"
+PASS addIceCandidate uses operations chain
 PASS Firing of negotiationneeded does NOT use operations chain
 PASS Negotiationneeded only fires once operations chain is empty
 PASS replaceTrack uses operations chain
