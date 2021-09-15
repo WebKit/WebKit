@@ -374,7 +374,7 @@ list(APPEND WebCore_SOURCES
     platform/mac/PublicSuffixMac.mm
     platform/mac/SSLKeyGeneratorMac.mm
     platform/mac/ScrollAnimatorMac.mm
-    platform/mac/ScrollController.mm
+    platform/mac/ScrollingEffectsController.mm
     platform/mac/ScrollViewMac.mm
     platform/mac/ScrollbarThemeMac.mm
     platform/mac/SerializedPlatformDataCueMac.mm
@@ -554,7 +554,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MainThreadSharedTimer.h
     platform/PictureInPictureSupport.h
     platform/PlatformContentFilter.h
-    platform/ScrollController.h
+    platform/ScrollingEffectsController.h
     platform/ScrollSnapAnimatorState.h
     platform/SharedTimer.h
     platform/SystemSoundManager.h

@@ -37,8 +37,8 @@
 #include "LayoutSize.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimationSmooth.h"
-#include "ScrollController.h"
 #include "ScrollableArea.h"
+#include "ScrollingEffectsController.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -321,16 +321,16 @@ float ScrollAnimator::pageScaleFactor() const
     return m_scrollableArea.pageScaleFactor();
 }
 
-std::unique_ptr<ScrollControllerTimer> ScrollAnimator::createTimer(Function<void()>&& function)
+std::unique_ptr<ScrollingEffectsControllerTimer> ScrollAnimator::createTimer(Function<void()>&& function)
 {
-    return WTF::makeUnique<ScrollControllerTimer>(RunLoop::current(), [function = WTFMove(function), weakScrollableArea = makeWeakPtr(m_scrollableArea)] {
+    return WTF::makeUnique<ScrollingEffectsControllerTimer>(RunLoop::current(), [function = WTFMove(function), weakScrollableArea = makeWeakPtr(m_scrollableArea)] {
         if (!weakScrollableArea)
             return;
         function();
     });
 }
 
-void ScrollAnimator::startAnimationCallback(ScrollController&)
+void ScrollAnimator::startAnimationCallback(ScrollingEffectsController&)
 {
     if (m_scrollControllerAnimationTimer.isActive())
         return;
@@ -338,7 +338,7 @@ void ScrollAnimator::startAnimationCallback(ScrollController&)
     m_scrollControllerAnimationTimer.startRepeating(1_s / 60.);
 }
 
-void ScrollAnimator::stopAnimationCallback(ScrollController&)
+void ScrollAnimator::stopAnimationCallback(ScrollingEffectsController&)
 {
     m_scrollControllerAnimationTimer.stop();
 }

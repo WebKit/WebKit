@@ -29,7 +29,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
-#include "ScrollController.h"
+#include "ScrollingEffectsController.h"
 #include <wtf/RunLoop.h>
 
 OBJC_CLASS NSScrollerImp;
@@ -43,7 +43,7 @@ class ScrollingStateScrollingNode;
 class ScrollingTreeScrollingNode;
 class ScrollingTree;
 
-class ScrollingTreeScrollingNodeDelegateMac : public ScrollingTreeScrollingNodeDelegate, private ScrollControllerClient {
+class ScrollingTreeScrollingNodeDelegateMac : public ScrollingTreeScrollingNodeDelegate, private ScrollingEffectsControllerClient {
 public:
     explicit ScrollingTreeScrollingNodeDelegateMac(ScrollingTreeScrollingNode&);
     virtual ~ScrollingTreeScrollingNodeDelegateMac();
@@ -70,10 +70,10 @@ public:
 private:
     bool isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis, float scrollLimit = 0) const;
 
-    // ScrollControllerClient.
-    std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
-    void startAnimationCallback(ScrollController&) final;
-    void stopAnimationCallback(ScrollController&) final;
+    // ScrollingEffectsControllerClient.
+    std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
+    void startAnimationCallback(ScrollingEffectsController&) final;
+    void stopAnimationCallback(ScrollingEffectsController&) final;
 
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
@@ -102,7 +102,7 @@ private:
 
     void releaseReferencesToScrollerImpsOnTheMainThread();
 
-    ScrollController m_scrollController;
+    ScrollingEffectsController m_scrollController;
 
     RetainPtr<NSScrollerImp> m_verticalScrollerImp;
     RetainPtr<NSScrollerImp> m_horizontalScrollerImp;

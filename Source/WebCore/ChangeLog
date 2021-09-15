@@ -1,3 +1,90 @@
+2021-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename ScrollController to ScollingEffectsController
+        https://bugs.webkit.org/show_bug.cgi?id=230312
+
+        Reviewed by Tim Horton.
+
+        ScrollController is about rubberbanding, momentum etc, which are scrolling "effects",
+        so rename to ScrollingEffectsController.
+
+        ScrollController is the name I want to ultimately use for ScrollAnimator.
+
+        * PlatformMac.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scrollableAreaCanHandleEvent):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching const):
+        * platform/KeyboardScrollingAnimator.cpp:
+        (WebCore::KeyboardScrollingAnimator::KeyboardScrollingAnimator):
+        * platform/KeyboardScrollingAnimator.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::startAnimationCallback):
+        (WebCore::ScrollAnimator::stopAnimationCallback):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollingEffectsController.cpp: Renamed from Source/WebCore/platform/ScrollController.cpp.
+        (WebCore::ScrollingEffectsController::ScrollingEffectsController):
+        (WebCore::ScrollingEffectsController::animationCallback):
+        (WebCore::ScrollingEffectsController::startOrStopAnimationCallbacks):
+        (WebCore::ScrollingEffectsController::beginKeyboardScrolling):
+        (WebCore::ScrollingEffectsController::stopKeyboardScrolling):
+        (WebCore::ScrollingEffectsController::setIsAnimatingRubberBand):
+        (WebCore::ScrollingEffectsController::setIsAnimatingScrollSnap):
+        (WebCore::ScrollingEffectsController::setIsAnimatingKeyboardScrolling):
+        (WebCore::ScrollingEffectsController::usesScrollSnap const):
+        (WebCore::ScrollingEffectsController::setSnapOffsetsInfo):
+        (WebCore::ScrollingEffectsController::snapOffsetsInfo const):
+        (WebCore::ScrollingEffectsController::activeScrollSnapIndexForAxis const):
+        (WebCore::ScrollingEffectsController::setActiveScrollSnapIndexForAxis):
+        (WebCore::ScrollingEffectsController::setNearestScrollSnapIndexForAxisAndOffset):
+        (WebCore::ScrollingEffectsController::adjustScrollDestination):
+        (WebCore::ScrollingEffectsController::updateActiveScrollSnapIndexForClientOffset):
+        (WebCore::ScrollingEffectsController::resnapAfterLayout):
+        (WebCore::ScrollingEffectsController::updateKeyboardScrollingAnimatingState):
+        (WebCore::ScrollingEffectsController::~ScrollingEffectsController):
+        (WebCore::ScrollingEffectsController::stopAllTimers):
+        (WebCore::ScrollingEffectsController::scrollPositionChanged):
+        (WebCore::ScrollingEffectsController::updateScrollSnapAnimatingState):
+        (WebCore::ScrollingEffectsController::updateRubberBandAnimatingState):
+        * platform/ScrollingEffectsController.h: Renamed from Source/WebCore/platform/ScrollController.h.
+        * platform/mac/ScrollingEffectsController.mm: Renamed from Source/WebCore/platform/mac/ScrollController.mm.
+        (WebCore::ScrollingEffectsController::~ScrollingEffectsController):
+        (WebCore::ScrollingEffectsController::stopAllTimers):
+        (WebCore::ScrollingEffectsController::handleWheelEvent):
+        (WebCore::ScrollingEffectsController::wheelDeltaBiasingTowardsVertical):
+        (WebCore::ScrollingEffectsController::directionFromEvent):
+        (WebCore::ScrollingEffectsController::updateRubberBandAnimatingState):
+        (WebCore::ScrollingEffectsController::scrollPositionChanged):
+        (WebCore::ScrollingEffectsController::isUserScrollInProgress const):
+        (WebCore::ScrollingEffectsController::isRubberBandInProgress const):
+        (WebCore::ScrollingEffectsController::isScrollSnapInProgress const):
+        (WebCore::ScrollingEffectsController::stopRubberbanding):
+        (WebCore::ScrollingEffectsController::startRubberbandAnimation):
+        (WebCore::ScrollingEffectsController::stopSnapRubberbandAnimation):
+        (WebCore::ScrollingEffectsController::snapRubberBand):
+        (WebCore::ScrollingEffectsController::shouldRubberBandInHorizontalDirection const):
+        (WebCore::ScrollingEffectsController::shouldRubberBandInDirection const):
+        (WebCore::ScrollingEffectsController::isRubberBandInProgressInternal const):
+        (WebCore::ScrollingEffectsController::updateRubberBandingState):
+        (WebCore::ScrollingEffectsController::updateRubberBandingEdges):
+        (WebCore::ScrollingEffectsController::shouldOverrideMomentumScrolling const):
+        (WebCore::ScrollingEffectsController::scheduleStatelessScrollSnap):
+        (WebCore::ScrollingEffectsController::statelessSnapTransitionTimerFired):
+        (WebCore::ScrollingEffectsController::startDeferringWheelEventTestCompletionDueToScrollSnapping):
+        (WebCore::ScrollingEffectsController::stopDeferringWheelEventTestCompletionDueToScrollSnapping):
+        (WebCore::ScrollingEffectsController::processWheelEventForScrollSnap):
+        (WebCore::ScrollingEffectsController::updateGestureInProgressState):
+        (WebCore::ScrollingEffectsController::startScrollSnapAnimation):
+        (WebCore::ScrollingEffectsController::stopScrollSnapAnimation):
+        (WebCore::ScrollingEffectsController::updateScrollSnapAnimatingState):
+
 2021-09-15  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, build fix after r282464

@@ -36,7 +36,7 @@ class KeyboardScrollingAnimator {
     WTF_MAKE_NONCOPYABLE(KeyboardScrollingAnimator);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    KeyboardScrollingAnimator(ScrollAnimator&, ScrollController&);
+    KeyboardScrollingAnimator(ScrollAnimator&, ScrollingEffectsController&);
 
     bool beginKeyboardScrollGesture(KeyboardEvent&);
     void handleKeyUpEvent();
@@ -49,7 +49,7 @@ private:
     float scrollDistance(ScrollDirection, ScrollGranularity) const;
 
     ScrollAnimator& m_scrollAnimator;
-    ScrollController& m_scrollController;
+    ScrollingEffectsController& m_scrollController;
     std::optional<WebCore::KeyboardScroll> m_currentKeyboardScroll;
     bool m_scrollTriggeringKeyIsPressed { false };
     FloatSize m_velocity;

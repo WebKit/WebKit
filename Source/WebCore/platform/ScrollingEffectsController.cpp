@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ScrollController.h"
+#include "ScrollingEffectsController.h"
 
 #include "KeyboardScrollingAnimator.h"
 #include "LayoutSize.h"
@@ -37,21 +37,21 @@
 
 namespace WebCore {
 
-ScrollController::ScrollController(ScrollControllerClient& client)
+ScrollingEffectsController::ScrollingEffectsController(ScrollingEffectsControllerClient& client)
     : m_client(client)
 {
 }
 
-void ScrollController::animationCallback(MonotonicTime currentTime)
+void ScrollingEffectsController::animationCallback(MonotonicTime currentTime)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollController " << this << " animationCallback: isAnimatingRubberBand " << m_isAnimatingRubberBand << " isAnimatingScrollSnap " << m_isAnimatingScrollSnap << "isAnimatingKeyboardScrolling" << m_isAnimatingKeyboardScrolling);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingEffectsController " << this << " animationCallback: isAnimatingRubberBand " << m_isAnimatingRubberBand << " isAnimatingScrollSnap " << m_isAnimatingScrollSnap << "isAnimatingKeyboardScrolling" << m_isAnimatingKeyboardScrolling);
 
     updateScrollSnapAnimatingState(currentTime);
     updateRubberBandAnimatingState(currentTime);
     updateKeyboardScrollingAnimatingState(currentTime);
 }
 
-void ScrollController::startOrStopAnimationCallbacks()
+void ScrollingEffectsController::startOrStopAnimationCallbacks()
 {
     bool needsCallbacks = m_isAnimatingRubberBand || m_isAnimatingScrollSnap || m_isAnimatingKeyboardScrolling;
     if (needsCallbacks == m_isRunningAnimatingCallback)
@@ -67,35 +67,35 @@ void ScrollController::startOrStopAnimationCallbacks()
     m_isRunningAnimatingCallback = false;
 }
 
-void ScrollController::beginKeyboardScrolling()
+void ScrollingEffectsController::beginKeyboardScrolling()
 {
     setIsAnimatingKeyboardScrolling(true);
 }
 
-void ScrollController::stopKeyboardScrolling()
+void ScrollingEffectsController::stopKeyboardScrolling()
 {
     setIsAnimatingKeyboardScrolling(false);
 }
 
-void ScrollController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)
+void ScrollingEffectsController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)
 {
     if (isAnimatingRubberBand == m_isAnimatingRubberBand)
         return;
-        
+
     m_isAnimatingRubberBand = isAnimatingRubberBand;
     startOrStopAnimationCallbacks();
 }
 
-void ScrollController::setIsAnimatingScrollSnap(bool isAnimatingScrollSnap)
+void ScrollingEffectsController::setIsAnimatingScrollSnap(bool isAnimatingScrollSnap)
 {
     if (isAnimatingScrollSnap == m_isAnimatingScrollSnap)
         return;
-        
+
     m_isAnimatingScrollSnap = isAnimatingScrollSnap;
     startOrStopAnimationCallbacks();
 }
 
-void ScrollController::setIsAnimatingKeyboardScrolling(bool isAnimatingKeyboardScrolling)
+void ScrollingEffectsController::setIsAnimatingKeyboardScrolling(bool isAnimatingKeyboardScrolling)
 {
     if (isAnimatingKeyboardScrolling == m_isAnimatingKeyboardScrolling)
         return;
@@ -104,12 +104,12 @@ void ScrollController::setIsAnimatingKeyboardScrolling(bool isAnimatingKeyboardS
     startOrStopAnimationCallbacks();
 }
 
-bool ScrollController::usesScrollSnap() const
+bool ScrollingEffectsController::usesScrollSnap() const
 {
     return !!m_scrollSnapState;
 }
 
-void ScrollController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
+void ScrollingEffectsController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
 {
     if (snapOffsetInfo.isEmpty()) {
         m_scrollSnapState = nullptr;
@@ -125,22 +125,22 @@ void ScrollController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& sna
     if (shouldComputeCurrentSnapIndices)
         updateActiveScrollSnapIndexForClientOffset();
 
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " setSnapOffsetsInfo new state: " << ValueOrNull(m_scrollSnapState.get()));
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " setSnapOffsetsInfo new state: " << ValueOrNull(m_scrollSnapState.get()));
 }
 
-const LayoutScrollSnapOffsetsInfo* ScrollController::snapOffsetsInfo() const
+const LayoutScrollSnapOffsetsInfo* ScrollingEffectsController::snapOffsetsInfo() const
 {
     return m_scrollSnapState ? &m_scrollSnapState->snapOffsetInfo() : nullptr;
 }
 
-std::optional<unsigned> ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
+std::optional<unsigned> ScrollingEffectsController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const
 {
     if (!usesScrollSnap())
         return std::nullopt;
     return m_scrollSnapState->activeSnapIndexForAxis(axis);
 }
 
-void ScrollController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, std::optional<unsigned> index)
+void ScrollingEffectsController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, std::optional<unsigned> index)
 {
     if (!usesScrollSnap())
         return;
@@ -148,7 +148,7 @@ void ScrollController::setActiveScrollSnapIndexForAxis(ScrollEventAxis axis, std
     m_scrollSnapState->setActiveSnapIndexForAxis(axis, index);
 }
 
-void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, ScrollOffset scrollOffset)
+void ScrollingEffectsController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, ScrollOffset scrollOffset)
 {
     if (!usesScrollSnap())
         return;
@@ -170,7 +170,7 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     setActiveScrollSnapIndexForAxis(axis, activeIndex);
 }
 
-float ScrollController::adjustScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset)
+float ScrollingEffectsController::adjustScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset)
 {
     if (!usesScrollSnap())
         return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
@@ -191,7 +191,7 @@ float ScrollController::adjustScrollDestination(ScrollEventAxis axis, FloatPoint
 }
 
 
-void ScrollController::updateActiveScrollSnapIndexForClientOffset()
+void ScrollingEffectsController::updateActiveScrollSnapIndexForClientOffset()
 {
     if (!usesScrollSnap())
         return;
@@ -201,7 +201,7 @@ void ScrollController::updateActiveScrollSnapIndexForClientOffset()
     setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset);
 }
 
-void ScrollController::resnapAfterLayout()
+void ScrollingEffectsController::resnapAfterLayout()
 {
     if (!usesScrollSnap())
         return;
@@ -220,7 +220,7 @@ void ScrollController::resnapAfterLayout()
 
 }
 
-void ScrollController::updateKeyboardScrollingAnimatingState(MonotonicTime currentTime)
+void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(MonotonicTime currentTime)
 {
     if (!m_isAnimatingKeyboardScrolling)
         return;
@@ -231,24 +231,24 @@ void ScrollController::updateKeyboardScrollingAnimatingState(MonotonicTime curre
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding
 // so all of these methods are a noop on non-Mac platforms.
 #if !PLATFORM(MAC)
-ScrollController::~ScrollController()
+ScrollingEffectsController::~ScrollingEffectsController()
 {
 }
 
-void ScrollController::stopAllTimers()
+void ScrollingEffectsController::stopAllTimers()
 {
 }
 
-void ScrollController::scrollPositionChanged()
+void ScrollingEffectsController::scrollPositionChanged()
 {
 }
 
-void ScrollController::updateScrollSnapAnimatingState(MonotonicTime)
+void ScrollingEffectsController::updateScrollSnapAnimatingState(MonotonicTime)
 {
 
 }
 
-void ScrollController::updateRubberBandAnimatingState(MonotonicTime)
+void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime)
 {
 
 }

@@ -3066,7 +3066,7 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
 bool EventHandler::scrollableAreaCanHandleEvent(const PlatformWheelEvent& wheelEvent, ScrollableArea& scrollableArea)
 {
 #if PLATFORM(MAC)
-    auto biasedDelta = ScrollController::wheelDeltaBiasingTowardsVertical(wheelEvent);
+    auto biasedDelta = ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(wheelEvent);
 #else
     auto biasedDelta = wheelEvent.delta();
 #endif

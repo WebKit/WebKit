@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollAnimator& scrollAnimator, ScrollController& scrollController)
+KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollAnimator& scrollAnimator, ScrollingEffectsController& scrollController)
     : m_scrollAnimator(scrollAnimator)
     , m_scrollController(scrollController)
 {

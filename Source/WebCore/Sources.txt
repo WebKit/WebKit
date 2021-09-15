@@ -1813,7 +1813,7 @@ platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
 platform/ScrollAnimationSmooth.cpp
 platform/ScrollAnimator.cpp
-platform/ScrollController.cpp
+platform/ScrollingEffectsController.cpp
 platform/ScrollSnapAnimatorState.cpp
 platform/ScrollTypes.cpp
 platform/ScrollView.cpp

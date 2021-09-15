@@ -33,7 +33,7 @@
 
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
-#include "ScrollController.h"
+#include "ScrollingEffectsController.h"
 #include "Timer.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/FastMalloc.h>
@@ -49,9 +49,9 @@ class ScrollableArea;
 class Scrollbar;
 class WheelEventTestMonitor;
 
-class ScrollControllerTimer;
+class ScrollingEffectsControllerTimer;
 
-class ScrollAnimator : private ScrollControllerClient {
+class ScrollAnimator : private ScrollingEffectsControllerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<ScrollAnimator> create(ScrollableArea&);
@@ -138,10 +138,10 @@ public:
     FloatPoint adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod);
     float adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod);
 
-    std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) final;
+    std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
 
-    void startAnimationCallback(ScrollController&) final;
-    void stopAnimationCallback(ScrollController&) final;
+    void startAnimationCallback(ScrollingEffectsController&) final;
+    void stopAnimationCallback(ScrollingEffectsController&) final;
 
     void scrollControllerAnimationTimerFired();
 
@@ -154,7 +154,7 @@ public:
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void resnapAfterLayout();
 
-    // ScrollControllerClient.
+    // ScrollingEffectsControllerClient.
     FloatPoint scrollOffset() const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     float pageScaleFactor() const override;
@@ -175,7 +175,7 @@ protected:
 
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
-    ScrollController m_scrollController;
+    ScrollingEffectsController m_scrollController;
     Timer m_scrollControllerAnimationTimer;
     FloatPoint m_currentPosition;
 

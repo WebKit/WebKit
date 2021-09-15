@@ -142,7 +142,7 @@ private:
 
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&) override;
 
-    // ScrollControllerClient.
+    // ScrollingEffectsControllerClient.
 #if ENABLE(RUBBER_BANDING)
     IntSize stretchAmount() const final;
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;

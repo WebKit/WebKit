@@ -213,15 +213,15 @@ bool ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDeltaOnAxis(float s
     return false;
 }
 
-std::unique_ptr<ScrollControllerTimer> ScrollingTreeScrollingNodeDelegateMac::createTimer(Function<void()>&& function)
+std::unique_ptr<ScrollingEffectsControllerTimer> ScrollingTreeScrollingNodeDelegateMac::createTimer(Function<void()>&& function)
 {
-    return WTF::makeUnique<ScrollControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = makeRef(scrollingNode())] {
+    return WTF::makeUnique<ScrollingEffectsControllerTimer>(RunLoop::current(), [function = WTFMove(function), protectedNode = makeRef(scrollingNode())] {
         Locker locker { protectedNode->scrollingTree().treeLock() };
         function();
     });
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback(ScrollController&)
+void ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback(ScrollingEffectsController&)
 {
     if (!m_scrollControllerAnimationTimer)
         m_scrollControllerAnimationTimer = WTF::makeUnique<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>>(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateMac::scrollControllerAnimationTimerFired);
@@ -232,7 +232,7 @@ void ScrollingTreeScrollingNodeDelegateMac::startAnimationCallback(ScrollControl
     m_scrollControllerAnimationTimer->startRepeating(1_s / 60.);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback(ScrollController&)
+void ScrollingTreeScrollingNodeDelegateMac::stopAnimationCallback(ScrollingEffectsController&)
 {
     if (m_scrollControllerAnimationTimer)
         m_scrollControllerAnimationTimer->stop();
@@ -254,7 +254,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching(const Pla
     case ScrollElasticityNone:
         return false;
     case ScrollElasticityAllowed: {
-        auto scrollDirection = ScrollController::directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
+        auto scrollDirection = ScrollingEffectsController::directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
         if (scrollDirection)
             return shouldRubberBandInDirection(scrollDirection.value());
         return true;
@@ -276,7 +276,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching(const Platf
     case ScrollElasticityNone:
         return false;
     case ScrollElasticityAllowed: {
-        auto scrollDirection = ScrollController::directionFromEvent(wheelEvent, ScrollEventAxis::Vertical);
+        auto scrollDirection = ScrollingEffectsController::directionFromEvent(wheelEvent, ScrollEventAxis::Vertical);
         if (scrollDirection)
             return shouldRubberBandInDirection(scrollDirection.value());
         return true;

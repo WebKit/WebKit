@@ -41,13 +41,13 @@ namespace WebCore {
 class KeyboardScrollingAnimator;
 class LayoutSize;
 class PlatformWheelEvent;
-class ScrollController;
+class ScrollingEffectsController;
 class ScrollableArea;
 class WheelEventTestMonitor;
 
-class ScrollControllerTimer : public RunLoop::TimerBase {
+class ScrollingEffectsControllerTimer : public RunLoop::TimerBase {
 public:
-    ScrollControllerTimer(RunLoop& runLoop, Function<void()>&& callback)
+    ScrollingEffectsControllerTimer(RunLoop& runLoop, Function<void()>&& callback)
         : RunLoop::TimerBase(runLoop)
         , m_callback(WTFMove(callback))
     {
@@ -62,16 +62,16 @@ private:
     Function<void()> m_callback;
 };
 
-class ScrollControllerClient {
+class ScrollingEffectsControllerClient {
 protected:
-    virtual ~ScrollControllerClient() = default;
+    virtual ~ScrollingEffectsControllerClient() = default;
 
 public:
     // Only used for non-animation timers.
-    virtual std::unique_ptr<ScrollControllerTimer> createTimer(Function<void()>&&) = 0;
+    virtual std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) = 0;
 
-    virtual void startAnimationCallback(ScrollController&) = 0;
-    virtual void stopAnimationCallback(ScrollController&) = 0;
+    virtual void startAnimationCallback(ScrollingEffectsController&) = 0;
+    virtual void stopAnimationCallback(ScrollingEffectsController&) = 0;
 
     virtual void updateKeyboardScrollPosition(MonotonicTime) { }
     virtual KeyboardScrollingAnimator *keyboardScrollingAnimator() const { return nullptr; }
@@ -115,12 +115,12 @@ public:
     virtual FloatSize viewportSize() const = 0;
 };
 
-class ScrollController {
-    WTF_MAKE_NONCOPYABLE(ScrollController);
+class ScrollingEffectsController {
+    WTF_MAKE_NONCOPYABLE(ScrollingEffectsController);
 
 public:
-    explicit ScrollController(ScrollControllerClient&);
-    ~ScrollController();
+    explicit ScrollingEffectsController(ScrollingEffectsControllerClient&);
+    ~ScrollingEffectsController();
 
     bool usesScrollSnap() const;
     void stopAllTimers();
@@ -201,7 +201,7 @@ private:
 
     void startOrStopAnimationCallbacks();
 
-    ScrollControllerClient& m_client;
+    ScrollingEffectsControllerClient& m_client;
     std::unique_ptr<ScrollSnapAnimatorState> m_scrollSnapState;
     bool m_activeScrollSnapIndexDidChange { false };
 
@@ -222,7 +222,7 @@ private:
     bool m_isRubberBanding { false };
 
     FloatSize m_dragEndedScrollingVelocity;
-    std::unique_ptr<ScrollControllerTimer> m_statelessSnapTransitionTimer;
+    std::unique_ptr<ScrollingEffectsControllerTimer> m_statelessSnapTransitionTimer;
 
 #if ENABLE(RUBBER_BANDING)
     // Rubber band state.
