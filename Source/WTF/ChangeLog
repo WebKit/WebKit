@@ -1,3 +1,12 @@
+2021-09-14  Chris Dumez  <cdumez@apple.com>
+
+        Enable BroadcastChannel for modern WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=230235
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r282408.
