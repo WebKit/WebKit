@@ -241,6 +241,10 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
     }
 }
 
+#if !USE(APPLE_INTERNAL_SDK)
+static void merge(PKPaymentRequest *, const WebCore::ApplePaySessionPaymentRequest&) { }
+#endif
+
 RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
@@ -321,9 +325,7 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [result setShippingContactEditingMode:toPKShippingContactEditingMode(*shippingContactEditingMode)];
 #endif
 
-#if defined(WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest)
-    WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest
-#endif
+    merge(result.get(), paymentRequest);
 
     return result;
 }

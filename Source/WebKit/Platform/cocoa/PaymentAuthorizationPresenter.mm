@@ -208,6 +208,10 @@ void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::Pa
     [platformDelegate() completeMerchantValidation:merchantSession.pkPaymentMerchantSession() error:nil];
 }
 
+#if !USE(APPLE_INTERNAL_SDK)
+static void merge(PKPaymentRequestUpdate *, WebCore::ApplePayDetailsUpdateBase&) { }
+#endif
+
 void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
 {
     ASSERT(platformDelegate());
@@ -224,9 +228,7 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
 #if HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
     [paymentMethodUpdate setInstallmentGroupIdentifier:WTFMove(update->installmentGroupIdentifier)];
 #endif // HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
-#if defined(PaymentAuthorizationPresenterAdditions_completePaymentMethodSelection)
-    PaymentAuthorizationPresenterAdditions_completePaymentMethodSelection
-#endif
+    merge(paymentMethodUpdate.get(), *update);
     [platformDelegate() completePaymentMethodSelection:paymentMethodUpdate.get()];
 }
 
@@ -249,9 +251,7 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(std::option
     auto shippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:toNSErrors(WTFMove(update->errors)).get()
         paymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems))
         shippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()]);
-#if defined(PaymentAuthorizationPresenterAdditions_completeShippingContactSelection)
-    PaymentAuthorizationPresenterAdditions_completeShippingContactSelection
-#endif
+    merge(shippingContactUpdate.get(), *update);
     [platformDelegate() completeShippingContactSelection:shippingContactUpdate.get()];
 }
 
@@ -267,9 +267,7 @@ void PaymentAuthorizationPresenter::completeShippingMethodSelection(std::optiona
 #if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
     [shippingMethodUpdate setShippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()];
 #endif
-#if defined(PaymentAuthorizationPresenterAdditions_completeShippingMethodSelection)
-    PaymentAuthorizationPresenterAdditions_completeShippingMethodSelection
-#endif
+    merge(shippingMethodUpdate.get(), *update);
     [platformDelegate() completeShippingMethodSelection:shippingMethodUpdate.get()];
 }
 
@@ -284,9 +282,7 @@ void PaymentAuthorizationPresenter::completeCouponCodeChange(std::optional<WebCo
     }
 
     auto couponCodeUpdate = adoptNS([PAL::allocPKPaymentRequestCouponCodeUpdateInstance() initWithErrors:toNSErrors(WTFMove(update->errors)).get() paymentSummaryItems:WebCore::platformSummaryItems(WTFMove(update->newTotal), WTFMove(update->newLineItems)) shippingMethods:toPKShippingMethods(WTFMove(update->newShippingMethods)).get()]);
-#if defined(PaymentAuthorizationPresenterAdditions_completeCouponCodeChange)
-    PaymentAuthorizationPresenterAdditions_completeCouponCodeChange
-#endif
+    merge(couponCodeUpdate.get(), *update);
     [platformDelegate() completeCouponCodeChange:couponCodeUpdate.get()];
 }
 

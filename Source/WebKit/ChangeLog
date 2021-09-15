@@ -1,3 +1,22 @@
+2021-09-15  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] Clean up some WKA hooks
+        https://bugs.webkit.org/show_bug.cgi?id=230182
+        <rdar://problem/78824639>
+
+        Reviewed by Tim Horton.
+
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::merge):
+        (WebKit::PaymentAuthorizationPresenter::completePaymentMethodSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingContactSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeShippingMethodSelection):
+        (WebKit::PaymentAuthorizationPresenter::completeCouponCodeChange):
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::merge):
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+        Instead of using `#define`, create actual functions so that the code in WKA is cleaner.
+
 2021-09-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Silence -Wswitch warning enumeration value ‘ExceededProcessCountLimit’ not handled in switch

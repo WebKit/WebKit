@@ -28,11 +28,23 @@
 #if ENABLE(APPLE_PAY)
 
 OBJC_CLASS NSArray;
+OBJC_CLASS PKDeferredPaymentSummaryItem;
+OBJC_CLASS PKPaymentSummaryItem;
+OBJC_CLASS PKRecurringPaymentSummaryItem;
 
 namespace WebCore {
 
 struct ApplePayLineItem;
 
+#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+WEBCORE_EXPORT PKRecurringPaymentSummaryItem *platformRecurringSummaryItem(const ApplePayLineItem&);
+#endif
+
+#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
+WEBCORE_EXPORT PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem&);
+#endif
+
+WEBCORE_EXPORT PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem&);
 WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>&);
 
 } // namespace WebCore

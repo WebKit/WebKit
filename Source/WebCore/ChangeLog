@@ -1,3 +1,39 @@
+2021-09-15  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] Clean up some WKA hooks
+        https://bugs.webkit.org/show_bug.cgi?id=230182
+        <rdar://problem/78824639>
+
+        Reviewed by Tim Horton.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        (WebCore::merge):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::convertAndValidate):
+        * testing/MockPaymentCoordinator.h:
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::showPaymentUI):
+        (WebCore::MockPaymentCoordinator::completeShippingMethodSelection):
+        (WebCore::MockPaymentCoordinator::completeShippingContactSelection):
+        (WebCore::MockPaymentCoordinator::completePaymentMethodSelection):
+        (WebCore::MockPaymentCoordinator::completeCouponCodeChange):
+        (WebCore::MockPaymentCoordinator::merge):
+        Instead of using `#define`, create actual functions so that the code in WKA is cleaner.
+
+        * Modules/applepay/ApplePayRequestBase.h:
+        * Modules/applepay/ApplePayRequestBase.cpp:
+        (WebCore::convertAndValidate):
+        Remove unnecessary WKA hooks.
+
+        * Modules/applepay/PaymentSummaryItems.h:
+        * Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm:
+        (WebCore::platformRecurringSummaryItem): Added.
+        (WebCore::platformDeferredSummaryItem): Added.
+        (WebCore::platformSummaryItem): Added.
+        (WebCore::toPKPaymentSummaryItem): Deleted.
+        Expose functions that convert `ApplePayLineItem` to `PKPaymentSummaryItem` (and subclasses).
+
 2021-09-15  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Overflow should be computed with the actual logical bottom

@@ -45,7 +45,9 @@
 
 namespace WebCore {
 
+class ApplePaySessionPaymentRequest;
 class Page;
+struct ApplePayDetailsUpdateBase;
 struct ApplePayPaymentMethod;
 
 class MockPaymentCoordinator final : public PaymentCoordinatorClient {
@@ -116,6 +118,9 @@ private:
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
 
     void dispatchIfShowing(Function<void()>&&);
+
+    void merge(const ApplePaySessionPaymentRequest&);
+    void merge(ApplePayDetailsUpdateBase&);
 
     Page& m_page;
     bool m_canMakePayments { true };

@@ -227,9 +227,9 @@ static void mergePaymentOptions(const PaymentOptions& options, ApplePaySessionPa
         request.setShippingType(convert(options.shippingType));
 }
 
-#if !ENABLE(APPLE_PAY_PAYMENT_DETAILS_DATA)
+#if !USE(APPLE_INTERNAL_SDK)
 static void merge(ApplePaySessionPaymentRequest&, ApplePayModifier&&) { }
-#endif // !ENABLE(APPLE_PAY_PAYMENT_DETAILS_DATA)
+#endif
 
 ExceptionOr<void> ApplePayPaymentHandler::show(Document& document)
 {
@@ -537,9 +537,9 @@ ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSVal
     return { };
 }
 
-#if !ENABLE(APPLE_PAY_PAYMENT_DETAILS_DATA)
+#if !USE(APPLE_INTERNAL_SDK)
 static void merge(ApplePayDetailsUpdateBase&, ApplePayModifier&&) { }
-#endif // !ENABLE(APPLE_PAY_PAYMENT_DETAILS_DATA)
+#endif
 
 ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(Vector<RefPtr<ApplePayError>>&& errors)
 {

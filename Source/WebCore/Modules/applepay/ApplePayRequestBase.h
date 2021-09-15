@@ -33,10 +33,6 @@
 #include "ApplePayPaymentContact.h"
 #include "ApplePayShippingContactEditingMode.h"
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayRequestBaseAdditions.h>
-#endif
-
 namespace WebCore {
 
 class Document;
@@ -67,10 +63,6 @@ struct ApplePayRequestBase {
 
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
     std::optional<ApplePayShippingContactEditingMode> shippingContactEditingMode;
-#endif
-
-#if defined(ApplePayRequestBaseAdditions_members)
-    ApplePayRequestBaseAdditions_members
 #endif
 };
 

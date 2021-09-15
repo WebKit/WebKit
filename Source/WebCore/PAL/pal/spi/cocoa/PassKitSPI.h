@@ -71,6 +71,8 @@ WTF_EXTERN_C_END
 #import <PassKitCore/PKDateComponentsRange.h>
 #endif
 
+#import <WebKitAdditions/PassKitSPIAdditions.h>
+
 #else
 
 #import <Foundation/Foundation.h>
