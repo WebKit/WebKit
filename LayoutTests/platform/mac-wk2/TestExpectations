@@ -1595,7 +1595,6 @@ webkit.org/b/229166 webrtc/utf8-sdp.html [ Pass Failure ]
 [ BigSur+ ] webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Pass Failure ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Monetery on OpenSource:
-[ Monterey ] imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-cross-origin.https.html [ Failure ]
 [ Monterey ] model-element/model-element-source.html [ Pass Crash ]
 [ Monterey Release ] platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html [ Pass Crash ]
 [ Monterey Release ] media/media-fragments/TC0004.html [ Pass Timeout ]
