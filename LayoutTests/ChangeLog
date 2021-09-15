@@ -1,3 +1,14 @@
+2021-09-15  Said Abou-Hallawa  <said@apple.com>
+
+        Linear gradient sometimes is drawn incorrectly and sometimes hangs
+        https://bugs.webkit.org/show_bug.cgi?id=230145
+        <rdar://82428383>
+
+        Reviewed by Simon Fraser.
+
+        * svg/gradients/gradient-flipped-start-end-points-expected.svg: Added.
+        * svg/gradients/gradient-flipped-start-end-points.svg: Added.
+
 2021-09-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontFaceSrcValue.cssText should be quoted consistently with other browsers

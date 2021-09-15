@@ -1,3 +1,30 @@
+2021-09-15  Said Abou-Hallawa  <said@apple.com>
+
+        Linear gradient sometimes is drawn incorrectly and sometimes hangs
+        https://bugs.webkit.org/show_bug.cgi?id=230145
+        <rdar://82428383>
+
+        Reviewed by Simon Fraser.
+
+        Gradient::paint() has a few flaws:
+
+        1) We have to use atan2() instead of acos() to get the angle of the vector
+           (p0, p1) in the correct quadrant. acos() returns an angle between [0, pi].
+
+        2) The order in the case of 'repeat' and 'reflect' should be the following:
+            -- Move the points forward towards the bounding box.
+            -- Draw gradient and move the points forward till they are not
+               intersecting the bounding box.
+            -- Move the points backward towards the bounding box.
+            -- Draw gradient and move the points backward till they are not
+               intersecting the bounding box.
+
+        Tests: svg/gradients/gradient-flipped-start-end-points-expected.svg
+               svg/gradients/gradient-flipped-start-end-points.svg
+
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint):
+
 2021-09-14  Simon Fraser  <simon.fraser@apple.com>
 
         Implement the borderBoxSize/contentBoxSize parts of ResizeObserver
