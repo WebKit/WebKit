@@ -1631,8 +1631,6 @@ webkit.org/b/229478 [ Catalina BigSur ] media/track/track-in-band.html [ Pass Ti
 
 webkit.org/b/229502 [ BigSur Debug ] http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html [ Pass Failure ]
 
-webkit.org/b/229516 imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html [ Pass Failure ]
-
 webkit.org/b/229523 [ Debug ] fast/canvas/webgl/lose-context-on-timeout.html [ Pass Timeout ]
 
 webkit.org/b/229561 http/tests/navigation/page-cache-video.html [ Pass Failure ]
