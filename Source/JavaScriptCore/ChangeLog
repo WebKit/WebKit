@@ -1,3 +1,64 @@
+2021-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize leaf object creation in JSON.parse
+        https://bugs.webkit.org/show_bug.cgi?id=230298
+
+        Reviewed by Keith Miller.
+
+        This patch optimizes JSON.parse.
+
+        1. Use table in isJSONWhiteSpace.
+        2. Extract primitive value creation as parsePrimitiveValue function to use it in different place.
+        3. Add leaf-object creation fast path. Previously, when creating a leaf-object from JSON.parse we
+           are too generic and jumping around the code. Instead we add a fast path that does not perform
+           unnecessary operations and code gets tight.
+
+        It offers 3-4% improvement in microbenchmarks.
+                                                             ToT                     Patched
+
+        vanilla-es2015-babel-webpack-todomvc-json-parse
+                                                      104.7169+-0.1113     ^    101.4836+-0.2168        ^ definitely 1.0319x faster
+        flight-todomvc-json-parse                      53.9074+-0.0957     ^     52.1347+-0.0802        ^ definitely 1.0340x faster
+        vanilla-es2015-todomvc-json-parse             104.9373+-0.1631     ^    101.4978+-0.1073        ^ definitely 1.0339x faster
+        vanilla-todomvc-json-parse                     79.1330+-0.0963     ^     76.7568+-0.1606        ^ definitely 1.0310x faster
+
+        This offers 0.2% improvement in Speedometer2.
+
+        ----------------------------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |116.860000   |116.825000   |0.999700  | 0.901070                                         |
+        | VueJS-TodoMVC                        |24.658333    |24.763333    |1.004258  | 0.571728                                         |
+        | EmberJS-TodoMVC                      |126.666667   |126.335000   |0.997382  | 0.289517                                         |
+        | BackboneJS-TodoMVC                   |48.435000    |48.523333    |1.001824  | 0.455638                                         |
+        | Preact-TodoMVC                       |17.585000    |17.368333    |0.987679  | 0.247658                                         |
+        | AngularJS-TodoMVC                    |129.576667   |129.398333   |0.998624  | 0.625634                                         |
+        | Vanilla-ES2015-TodoMVC               |62.746667    |62.241667    |0.991952  | 0.000019 (significant)                           |
+        | Inferno-TodoMVC                      |63.741667    |63.495000    |0.996130  | 0.448861                                         |
+        | Flight-TodoMVC                       |78.021667    |77.306667    |0.990836  | 0.087137                                         |
+        | Angular2-TypeScript-TodoMVC          |39.823333    |39.923333    |1.002511  | 0.736279                                         |
+        | VanillaJS-TodoMVC                    |50.073333    |49.791667    |0.994375  | 0.136495                                         |
+        | jQuery-TodoMVC                       |221.300000   |221.586667   |1.001295  | 0.418008                                         |
+        | EmberJS-Debug-TodoMVC                |340.145000   |339.965000   |0.999471  | 0.691490                                         |
+        | React-TodoMVC                        |85.698333    |85.650000    |0.999436  | 0.761586                                         |
+        | React-Redux-TodoMVC                  |140.510000   |140.785000   |1.001957  | 0.285922                                         |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |60.928333    |60.500000    |0.992970  | 0.000069 (significant)                           |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        a mean = 262.15844
+        b mean = 262.72261
+        pValue = 0.0428052487
+        (Bigger means are better.)
+        1.002 times better
+        Results ARE significant
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::makeIdentifier):
+        (JSC::isJSONWhiteSpace):
+        (JSC::LiteralParser<CharType>::Lexer::lex):
+        (JSC::LiteralParser<CharType>::parsePrimitiveValue):
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/LiteralParser.h:
+
 2021-09-14  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, mid September 2021 edition
