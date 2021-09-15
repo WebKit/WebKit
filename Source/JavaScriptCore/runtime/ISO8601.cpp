@@ -448,7 +448,7 @@ static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneBracketedAnno
         return std::nullopt;
     buffer.advance();
 
-    switch (*buffer) {
+    switch (static_cast<UChar>(*buffer)) {
     case '+':
     case '-':
     case minusSign: {
@@ -576,7 +576,7 @@ static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneBracketedAnno
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return WTFMove(result);
+        return result;
     }
     }
 }
@@ -584,7 +584,7 @@ static std::optional<Variant<Vector<LChar>, int64_t>> parseTimeZoneBracketedAnno
 template<typename CharacterType>
 static bool canBeTimeZone(const StringParsingBuffer<CharacterType>& buffer, CharacterType character)
 {
-    switch (character) {
+    switch (static_cast<UChar>(character)) {
     // UTCDesignator
     // https://tc39.es/proposal-temporal/#prod-UTCDesignator
     case 'z':
@@ -615,7 +615,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
 {
     if (buffer.atEnd())
         return std::nullopt;
-    switch (*buffer) {
+    switch (static_cast<UChar>(*buffer)) {
     // UTCDesignator
     // https://tc39.es/proposal-temporal/#prod-UTCDesignator
     case 'z':

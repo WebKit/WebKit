@@ -1,3 +1,19 @@
+2021-09-15  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Avoid GCC warnings introduced in r282125
+        https://bugs.webkit.org/show_bug.cgi?id=230154
+
+        Reviewed by Fujii Hironori.
+
+        Yusuke suggested casting to UChar to avoid -Wswitch-out-of-range. This works!
+
+        Also, avoid -Wredundant-move by removing one unnecessary WTFMove.
+
+        * runtime/ISO8601.cpp:
+        (JSC::ISO8601::parseTimeZoneBracketedAnnotation):
+        (JSC::ISO8601::canBeTimeZone):
+        (JSC::ISO8601::parseTimeZone):
+
 2021-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize leaf object creation in JSON.parse
