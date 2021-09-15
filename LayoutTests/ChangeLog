@@ -1,3 +1,12 @@
+2021-09-15  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html.
+        https://bugs.webkit.org/show_bug.cgi?id=229505.
+
+        Unreviewed test gardening .
+
+        * TestExpectations:
+
 2021-09-15  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS Mac Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html is a flaky failure.

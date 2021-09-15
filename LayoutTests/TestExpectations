@@ -2392,6 +2392,7 @@ webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-youtube-
 webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
 webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
 webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
+webkit.org/b/229505 security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
 
 # These state object tests purposefully stress a resource limit, and take multiple seconds to run.
 loader/stateobjects/pushstate-size-iframe.html [ Slow ]
