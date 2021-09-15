@@ -58,6 +58,7 @@
 #import "RenderWidget.h"
 #import "ScrollView.h"
 #import "TextCheckerClient.h"
+#import "TextIterator.h"
 #import "VisibleUnits.h"
 #import <wtf/cocoa/VectorCocoa.h>
 

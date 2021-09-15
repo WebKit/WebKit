@@ -46,6 +46,7 @@
 #import "Page.h"
 #import "PageOverlayController.h"
 #import "Settings.h"
+#import "TextIterator.h"
 #import <QuartzCore/QuartzCore.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 

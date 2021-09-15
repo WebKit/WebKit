@@ -3782,7 +3782,14 @@ static bool isAccessibilityTextSearchMatch(AXCoreObject* axObject, Accessibility
 {
     if (!axObject)
         return false;
-    return axObject->containsText(criteria.searchText);
+
+    // If text is empty we return true.
+    if (criteria.searchText.isEmpty())
+        return true;
+
+    return containsPlainText(axObject->title(), criteria.searchText, CaseInsensitive)
+        || containsPlainText(axObject->accessibilityDescription(), criteria.searchText, CaseInsensitive)
+        || containsPlainText(axObject->stringValue(), criteria.searchText, CaseInsensitive);
 }
 
 static bool objectMatchesSearchCriteriaWithResultLimit(AXCoreObject* object, AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)

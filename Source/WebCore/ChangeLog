@@ -1,3 +1,22 @@
+2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: Remove AXCoreObject::containsText
+        https://bugs.webkit.org/show_bug.cgi?id=230299
+        <rdar://problem/83134668>
+
+        Reviewed by Adrian Perez de Castro.
+
+        It's only used by isAccessibilityTextSearchMatch() in AccessibilityObject.cpp. We can move the implementation
+        there and avoid to include TextIterator.h in AccessibilityObjectInterface.h.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::Accessibility::isAccessibilityTextSearchMatch):
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::AXCoreObject::containsText const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        * page/mac/ServicesOverlayController.mm:
+
 2021-09-15  Martin Robinson  <mrobinson@webkit.org>
 
         offsetLeft on display:inline element in vertical-rl parent can return a negative number

@@ -30,7 +30,8 @@
 #include "FrameLoaderClient.h"
 #include "HTMLTextFormControlElement.h"
 #include "LayoutRect.h"
-#include "TextIterator.h"
+#include "SimpleRange.h"
+#include "TextIteratorBehavior.h"
 #include "VisibleSelection.h"
 #include "Widget.h"
 #include <wtf/HashSet.h>
@@ -1126,14 +1127,6 @@ public:
     virtual String accessibilityDescription() const = 0;
     virtual String title() const = 0;
     virtual String helpText() const = 0;
-    bool containsText(String const& text) const
-    {
-        // If text is empty we return true.
-        return text.isEmpty()
-            || containsPlainText(title(), text, CaseInsensitive)
-            || containsPlainText(accessibilityDescription(), text, CaseInsensitive)
-            || containsPlainText(stringValue(), text, CaseInsensitive);
-    }
 
     // Methods for determining accessibility text.
     virtual bool isARIAStaticText() const = 0;
