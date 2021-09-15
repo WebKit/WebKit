@@ -660,6 +660,23 @@ void RenderBlock::addOverflowFromChildren()
     }
 }
 
+LayoutSize RenderBlock::clientLogicalRightAndBottomAfterRepositioning() const
+{
+    LayoutUnit maxChildLogicalRight;
+    LayoutUnit maxChildLogicalBottom;
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+        LayoutUnit childLogicalRight = logicalLeftForChild(*child) + logicalWidthForChild(*child) + marginEndForChild(*child);
+        LayoutUnit childLogicalBottom = logicalTopForChild(*child) + logicalHeightForChild(*child) + marginAfterForChild(*child);
+        maxChildLogicalRight = std::max(maxChildLogicalRight, childLogicalRight);
+        maxChildLogicalBottom = std::max(maxChildLogicalBottom, childLogicalBottom);
+
+    }
+    return LayoutSize(maxChildLogicalRight + paddingRight(), std::max(clientLogicalBottom(), maxChildLogicalBottom + paddingAfter()));
+}
+
+
 // Overflow is always relative to the border-box of the element in question.
 // Therefore, if the element has a vertical scrollbar placed on the left, an overflow rect at x=2px would conceptually intersect the scrollbar.
 void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
@@ -670,15 +687,22 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
     addOverflowFromPositionedObjects();
 
     if (hasNonVisibleOverflow()) {
+        // Set the axis we don't care about to be 1, since we want this overflow to always be considered reachable.
+        LayoutUnit rectWidth = 1_lu;
+        // For grid, width of the overflow rect should be the width of the grid area of the items rather than the container block.
+        // As per https://github.com/w3c/csswg-drafts/issues/3653, child's margins along with padding should contribute to the
+        // scrollable overflow area.
+        if (this->isRenderGrid())
+            rectWidth = clientLogicalRightAndBottomAfterRepositioning().width();
+
         // When we have overflow clip, propagate the original spillout since it will include collapsed bottom margins
-        // and bottom padding.  Set the axis we don't care about to be 1, since we want this overflow to always
-        // be considered reachable.
+        // and bottom padding.
         LayoutRect clientRect(flippedClientBoxRect());
         LayoutRect rectToApply;
         if (isHorizontalWritingMode())
-            rectToApply = LayoutRect(clientRect.x(), clientRect.y(), 1_lu, std::max(0_lu, oldClientAfterEdge - clientRect.y()));
+            rectToApply = LayoutRect(clientRect.x(), clientRect.y(), rectWidth, std::max(0_lu, oldClientAfterEdge - clientRect.y()));
         else
-            rectToApply = LayoutRect(clientRect.x(), clientRect.y(), std::max(0_lu, oldClientAfterEdge - clientRect.x()), 1_lu);
+            rectToApply = LayoutRect(clientRect.x(), clientRect.y(), std::max(0_lu, oldClientAfterEdge - clientRect.x()), rectWidth);
         addLayoutOverflow(rectToApply);
         if (hasRenderOverflow())
             m_overflow->setLayoutClientAfterEdge(oldClientAfterEdge);

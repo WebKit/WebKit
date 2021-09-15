@@ -170,7 +170,6 @@ private:
     bool hasAutoMarginsInCrossAxis(const RenderBox& child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUnit availableAlignmentSpace);
     void repositionLogicalHeightDependentFlexItems(Vector<LineContext>&, LayoutUnit gapBetweenLines);
-    LayoutUnit clientLogicalBottomAfterRepositioning();
     
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, const RenderBox& child);
     LayoutUnit marginBoxAscentForChild(const RenderBox& child);

@@ -1,3 +1,29 @@
+2021-09-15  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Overflow should be computed with the actual logical bottom
+        https://bugs.webkit.org/show_bug.cgi?id=226981
+
+        Reviewed by Javier Fernandez.
+
+        When computing the overflow area in the grid container, we need to obtain the result of ClientLogicalBottom
+        function. This value should be retrieved after computing the actual logical height rather than before.
+
+        For grid, width/height of the overflow rect should be the width/height of the grid area of the items rather than
+        the width/height of the container block. As per https://github.com/w3c/csswg-drafts/issues/3653, child's margins
+        along with padding should contribute to the scrollable overflow area.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/alignment/grid-content-alignment-overflow-002.html
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clientLogicalBottomAfterRepositioning):
+        (WebCore::RenderBlock::computeOverflow):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalLeftForChild const):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::clientLogicalBottomAfterRepositioning): Deleted.
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+
 2021-09-15  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html is failing after https://trac.webkit.org/changeset/282445/webkit

@@ -263,7 +263,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         setLogicalHeight(trackBasedLogicalHeight);
 
-        LayoutUnit oldClientAfterEdge = clientLogicalBottom();
         updateLogicalHeight();
 
         // Once grid's indefinite height is resolved, we can compute the
@@ -300,7 +299,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
 
-        computeOverflow(oldClientAfterEdge);
+        computeOverflow(clientLogicalRightAndBottomAfterRepositioning().height());
     }
 
     updateLayerTransform();
