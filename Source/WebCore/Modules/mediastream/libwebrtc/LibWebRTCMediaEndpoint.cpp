@@ -457,10 +457,14 @@ std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel
 void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel)
 {
     callOnMainThread([protectedThis = makeRef(*this), dataChannel = WTFMove(dataChannel)]() mutable {
-        if (protectedThis->isStopped())
-            return;
         auto& connection = protectedThis->m_peerConnectionBackend.connection();
-        connection.scheduleEvent(LibWebRTCDataChannelHandler::channelEvent(*connection.document(), WTFMove(dataChannel)));
+        connection.queueTaskKeepingObjectAlive(connection, TaskSource::Networking, [protectedThis = WTFMove(protectedThis), dataChannel = WTFMove(dataChannel)]() mutable {
+            if (protectedThis->isStopped())
+                return;
+
+            auto& connection = protectedThis->m_peerConnectionBackend.connection();
+            connection.dispatchEvent(LibWebRTCDataChannelHandler::channelEvent(*connection.document(), WTFMove(dataChannel)));
+        });
     });
 }
 

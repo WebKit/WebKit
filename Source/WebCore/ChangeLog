@@ -1,3 +1,18 @@
+2021-09-15  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html is failing after https://trac.webkit.org/changeset/282445/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=230308
+
+        Reviewed by Eric Carlson.
+
+        Covered by no longer failing test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnDataChannel):
+        We need to create the data channel object at the time we fire the event,
+        so that JS can transfer it synchronously in the same event loop.
+        This got regressed as we were creating the data channel, enqueuing a task to fire the data channel event.
+
 2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         AX: Move platform specific code for isolated tree mode to the platform files
