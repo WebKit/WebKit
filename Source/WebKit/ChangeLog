@@ -1,3 +1,17 @@
+2021-09-15  Tim Horton  <timothy_horton@apple.com>
+
+        Remove the "Replace WebKitAdditions in Framework Headers" build phase
+        https://bugs.webkit.org/show_bug.cgi?id=230300
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * mac/replace-webkit-additions-includes.py: Removed.
+        As Wenson pointed out in bug 230198, this build phase is currently unused.
+        It's also wasting a quarter of the WebKit-only null build time, so let's
+        just remove it and hope we never need it again (but if we do, it's in the history!).
+        This gets us down to 11 seconds on the same benchmark mentioned in r282367.
+
 2021-09-14  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, mid September 2021 edition

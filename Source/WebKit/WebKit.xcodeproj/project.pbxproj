@@ -13412,7 +13412,6 @@
 				1A6280C81919956B006AD9F9 /* Migrate WebKitLegacy Headers */,
 				375A248817E5048E00C9A086 /* Postprocess WKBase.h */,
 				1AD98ECF191D867300CAA6DF /* Postprocess WKFoundation.h */,
-				F4EFBAD522540CBB00049BA6 /* Replace WebKitAdditions in Framework Headers */,
 				1A1D2115191D96380001619F /* Postprocess Framework Headers */,
 				2E16B6F42019BC25008996D6 /* Copy Additional Resources */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -14249,20 +14248,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "echo \"Preprocessing sandbox\"\nScripts/generate-derived-sources.sh sandbox-profiles-ios\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2/com.apple.WebKit.WebContent.sb ${DSTROOT}/${INSTALL_PATH}\n";
-		};
-		F4EFBAD522540CBB00049BA6 /* Replace WebKitAdditions in Framework Headers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Replace WebKitAdditions in Framework Headers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nif [ \"${ACTION}\" = \"analyze\" -o \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    for HEADERS_DIRECTORY in \"${PUBLIC_HEADERS_FOLDER_PATH}\" \"${PRIVATE_HEADERS_FOLDER_PATH}\"; do\n        for HEADER_PATH in \"${TARGET_BUILD_DIR}/${HEADERS_DIRECTORY}/\"*.*; do\n            if [[ ! -z `grep '#import <WebKitAdditions/.*>' \"${HEADER_PATH}\"` ]]; then\n                python \"${SRCROOT}/mac/replace-webkit-additions-includes.py\" \"${HEADER_PATH}\" \"${BUILT_PRODUCTS_DIR}\" \"${SDKROOT}\" || exit $?\n            fi\n        done\n    done\nfi\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
