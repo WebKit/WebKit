@@ -1,3 +1,17 @@
+2021-09-15  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: `DOMTreeUpdater` doesn't complete deferred updating/clear updated lists when a node isn't found in the tree
+        https://bugs.webkit.org/show_bug.cgi?id=230289
+
+        Reviewed by Devin Rousso.
+
+        Instead of an early return when a tree element can't be found, we should continue on to the next updated node
+        and finish out by clearing the collections of updated nodes, otherwise a node that will never be findable again
+        will cause extra work to be done on every update.
+
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WI.DOMTreeUpdater.prototype._updateModifiedNodes):
+
 2021-09-13  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Update naming of WI.CSSCompletions callback used for collecting supported CSS properties from the target

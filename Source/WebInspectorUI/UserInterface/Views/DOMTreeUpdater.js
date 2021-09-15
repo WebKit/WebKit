@@ -143,7 +143,7 @@ WI.DOMTreeUpdater.prototype = {
         for (let node of this._recentlyModifiedNodes.values()) {
             let nodeTreeElement = this._treeOutline.findTreeElement(node);
             if (!nodeTreeElement)
-                return;
+                continue;
 
             for (let [attribute, nodes] of this._recentlyModifiedAttributes.entries()) {
                 // Don't report textContent changes as attribute modifications.
