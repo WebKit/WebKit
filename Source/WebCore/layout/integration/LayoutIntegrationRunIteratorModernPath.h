@@ -105,7 +105,7 @@ public:
         return {
             start(),
             length(),
-            run().style().hyphenString().length(),
+            run().text()->hasHyphen() ? run().style().hyphenString().length() : 0,
             run().isLineBreak()
         };
     }

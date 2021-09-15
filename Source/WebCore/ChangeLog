@@ -1,3 +1,16 @@
+2021-09-15  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] TextBoxSelectableRange::additionalLengthAtEnd miscomputed
+        https://bugs.webkit.org/show_bug.cgi?id=230306
+
+        Reviewed by Alan Bujtas.
+
+        It should be non-zero only if the run contains a hyphen. This doesn't yet affect
+        anything, but it will.
+
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectableRange const):
+
 2021-09-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Search inputs with '-webkit-appearance: textfield' should have a textfield background color
