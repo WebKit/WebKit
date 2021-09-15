@@ -587,13 +587,19 @@ def frameworkFromJSCPath(jscPath)
     end
 end
 
-def pathToBundleResourceFromBenchmarkDirectory(resourcePath)
-    dir = Pathname.new(".")
-    $benchmarkDirectory.each_filename {
+
+# Frequently repeated path computations. Cache results for speed.
+$bundleResourcePathCache = Hash.new do |h, key|
+    resourcePath, benchmarkDirectory, dir = key
+    benchmarkDirectory.each_filename {
         | pathComponent |
-        dir += ".."
+        dir = dir.parent
     }
-    dir + resourcePath
+    h[key] = dir + resourcePath
+end
+
+def pathToBundleResourceFromBenchmarkDirectory(resourcePath)
+    $bundleResourcePathCache[[resourcePath, $benchmarkDirectory, Pathname.new(".")]]
 end
 
 def pathToVM

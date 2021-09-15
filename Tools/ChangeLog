@@ -1,3 +1,16 @@
+2021-09-15  Geza Lore  <gezalore@gmail.com>
+
+        Cache resource paths in run-jsc-stress-tests for speedup
+        https://bugs.webkit.org/show_bug.cgi?id=230263
+
+        Reviewed by Adrian Perez de Castro.
+
+        A large portion of the serial startup time of run-jsc-stress-tests is
+        just re-computing file system paths of bundle resources over and over
+        again. Cache results for a 40% speedup of the test enumeration phase.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-09-14  Don Olmstead  <don.olmstead@sony.com>
 
         Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION
