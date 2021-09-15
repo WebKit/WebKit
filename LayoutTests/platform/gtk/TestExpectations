@@ -1232,6 +1232,8 @@ webkit.org/b/229270 fast/events/monotonic-event-time.html [ Failure Pass ]
 
 webkit.org/b/230017 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Failure Pass ]
 
+webkit.org/b/228089 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html  [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2132,6 +2134,7 @@ webkit.org/b/228153 mathml/presentation/roots.xhtml [ Failure ]
 webkit.org/b/228153 platform/gtk/fonts/webkit-font-smoothing.html [ ImageOnlyFailure ]
 webkit.org/b/228153 svg/batik/text/verticalText.svg [ Failure ]
 webkit.org/b/228153 svg/text/offset-square-svg-font.html [ ImageOnlyFailure ]
+webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-with-quote.html [ ImageOnlyFailure ]
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-filter-no-perspective-001.html [ ImageOnlyFailure ]
 

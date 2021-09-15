@@ -25,8 +25,8 @@ layer at (0,0) size 800x360
               RenderText {#text} at (2,2) size 25x17
                 text run at (2,2) width 25: "Top"
             RenderTableCell {TD} at (352,48) size 50x23 [border: (1px solid #000000)] [r=0 c=4 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x18
-                text run at (2,3) width 45: "Middle"
+              RenderText {#text} at (2,1) size 45x19
+                text run at (2,2) width 45: "Middle"
             RenderTableCell {TD} at (403,95) size 52x22 [border: (1px solid #000000)] [r=0 c=5 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x17
                 text run at (2,2) width 47: "Bottom"
@@ -37,8 +37,8 @@ layer at (0,0) size 800x360
               RenderText {#text} at (2,2) size 25x17
                 text run at (2,2) width 25: "Top"
             RenderTableCell {TD} at (32,48) size 50x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 45x18
-                text run at (2,3) width 45: "Middle"
+              RenderText {#text} at (2,1) size 45x19
+                text run at (2,2) width 45: "Middle"
             RenderTableCell {TD} at (83,95) size 52x22 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 47x17
                 text run at (2,2) width 47: "Bottom"

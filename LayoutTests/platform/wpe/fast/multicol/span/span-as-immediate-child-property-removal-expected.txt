@@ -17,7 +17,7 @@ layer at (13,65) size 367x684
       RenderText {#text} at (0,0) size 276x26
         text run at (0,0) width 276: "This is a spanning element."
     RenderBlock (anonymous) at (0,66) size 367x618
-      RenderText {#text} at (0,0) size 363x616
+      RenderText {#text} at (0,0) size 363x617
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
         text run at (0,36) width 325: "lectus. Quisque adipiscing rhoncus sem. Proin nulla"

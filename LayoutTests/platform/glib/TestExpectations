@@ -2461,6 +2461,24 @@ webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass 
 
 webkit.org/b/229979 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
+webkit.org/b/230315 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html [ ImageOnlyFailure ]
+
+webkit.org/b/230317 http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html [ Failure ]
+webkit.org/b/230317 http/tests/privateClickMeasurement/send-attribution-conversion-request.html [ Failure ]
+
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/cues.html [ Pass Crash ]
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/kind.html [ Pass Crash ]
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/label.html [ Pass Crash ]
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language.html [ Pass Crash ]
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/oncuechange.html [ Pass Crash ]
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/removeCue.html [ Pass Crash ]
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange-dynamically-created-track-element.html [ Pass Crash ]
+webkit.org/b/230318 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-seeking.html [ Pass Crash ]
+webkit.org/b/230318 media/track/track-cue-inline-assertion-crash.html [ Pass Crash ]
+webkit.org/b/230318 media/track/track-cue-left-align.html [ Pass Crash ]
+webkit.org/b/230318 media/track/track-cue-line-position.html [ Pass Crash ]
+webkit.org/b/230318 media/track/track-cues-cuechange.html [ Pass Crash ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

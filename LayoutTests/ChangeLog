@@ -1,3 +1,91 @@
+2021-09-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of tests: report new failures and rebaseline tests.
+
+        Unreviewed test gardening.
+
+        Mark some expected new failures and also rebaseline several tests.
+
+        rebaseline after r282356
+            imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle.html
+            imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em.html
+            imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em.html
+
+        rebaseline after r282341
+            imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-empty-inline.html
+            imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-shy.html
+            imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline.html
+            imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline.html
+
+        rebaseline after r282143
+            imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext.html
+            imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
+
+        rebaseline after r282357
+            imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html
+
+        rebaseline after r282441
+            imported/w3c/web-platform-tests/resize-observer/svg.html
+
+        rebaseline after r282306
+            tables/mozilla/bugs/bug39209.html
+            tables/mozilla/bugs/bug44505.html
+            tables/mozilla/marvin/x_col_valign_baseline.xml
+            tables/mozilla/marvin/x_colgroup_valign_baseline.xml
+            tables/mozilla_expected_failures/bugs/bug1725.html
+            fast/forms/file/file-input-direction.html
+            fast/multicol/span/span-as-immediate-child-property-removal.html
+            fast/replaced/width100percent-button.html
+            fast/table/mozilla-bug10296-vertical-align-1.html
+            fast/table/mozilla-bug10296-vertical-align-2.html
+            fast/table/rowspan-paint-order-vertical.html
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-shy-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/file/file-input-direction-expected.txt:
+        * platform/gtk/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/gtk/fast/replaced/width100percent-button-expected.txt:
+        * platform/gtk/fast/table/mozilla-bug10296-vertical-align-1-expected.txt:
+        * platform/gtk/fast/table/mozilla-bug10296-vertical-align-2-expected.txt:
+        * platform/gtk/fast/table/rowspan-paint-order-vertical-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/getBoundingClientRect-empty-inline-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/resize-observer/svg-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_col_valign_baseline-expected.txt:
+        * platform/gtk/tables/mozilla/marvin/x_colgroup_valign_baseline-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/wpe/fast/forms/file/file-input-direction-expected.txt: Added.
+        * platform/wpe/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/wpe/fast/replaced/width100percent-button-expected.txt:
+        * platform/wpe/fast/table/mozilla-bug10296-vertical-align-1-expected.txt:
+        * platform/wpe/fast/table/mozilla-bug10296-vertical-align-2-expected.txt:
+        * platform/wpe/fast/table/rowspan-paint-order-vertical-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-typed-om/width-by-max-px-em-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-typed-om/width-by-min-px-em-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-empty-inline-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-leading-space-inline-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/resize-observer/svg-expected.txt: Removed.
+        * platform/wpe/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/x_col_valign_baseline-expected.txt:
+        * platform/wpe/tables/mozilla/marvin/x_colgroup_valign_baseline-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+
 2021-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize leaf object creation in JSON.parse
