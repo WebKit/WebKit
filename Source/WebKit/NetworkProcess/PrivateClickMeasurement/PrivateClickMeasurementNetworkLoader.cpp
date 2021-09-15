@@ -27,13 +27,15 @@
 #include "PrivateClickMeasurementNetworkLoader.h"
 
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceResponse.h>
 
 namespace WebKit {
 
 namespace PCM {
 
 #if !PLATFORM(COCOA)
-void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
+void NetworkLoader::start(URL&&, RefPtr<JSON::Object>&&, WebCore::PrivateClickMeasurement::PcmDataCarried, Callback&& completionHandler)
 {
     notImplemented();
     completionHandler({ }, { }, { });

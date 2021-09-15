@@ -29,6 +29,7 @@
 #include "PrivateClickMeasurementConnection.h"
 #include "PrivateClickMeasurementDecoder.h"
 #include "PrivateClickMeasurementEncoder.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

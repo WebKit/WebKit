@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TemporalPlainTimeConstructor.h"
 
+#include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "TemporalPlainTime.h"
 #include "TemporalPlainTimePrototype.h"

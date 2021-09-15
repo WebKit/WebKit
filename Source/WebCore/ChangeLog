@@ -1,3 +1,19 @@
+2021-09-14  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, mid September 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=230110
+
+        Unreviewed non-unified build fixes.
+
+        * css/calc/CSSCalcOperationNode.cpp:
+        * css/calc/CSSCalcPrimitiveValueNode.cpp:
+        * layout/formattingContexts/FormattingQuirks.cpp:
+        * layout/formattingContexts/inline/invalidation/InlineDamage.h:
+        * layout/formattingContexts/inline/invalidation/InlineInvalidation.h:
+        * loader/CrossOriginOpenerPolicy.cpp:
+        * loader/DocumentWriter.cpp:
+        * rendering/TextBoxPainter.cpp:
+
 2021-09-14  John Wilander  <wilander@apple.com>
 
         Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION

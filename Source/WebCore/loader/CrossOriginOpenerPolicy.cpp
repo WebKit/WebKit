@@ -27,8 +27,11 @@
 #include "CrossOriginOpenerPolicy.h"
 
 #include "CrossOriginEmbedderPolicy.h"
+#include "FormData.h"
+#include "Frame.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "Page.h"
 #include "PingLoader.h"
 #include "ReportingEndpointsCache.h"
 #include "ResourceResponse.h"

@@ -34,6 +34,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSUnits.h"
 #include "CalcExpressionOperation.h"
+#include "Logging.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

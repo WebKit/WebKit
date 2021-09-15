@@ -27,9 +27,11 @@
 
 #include "CompositionHighlight.h"
 #include "Editor.h"
+#include "EventRegion.h"
 #include "GraphicsContext.h"
 #include "LegacyInlineTextBox.h"
 #include "PaintInfo.h"
+#include "RenderBlock.h"
 #include "RenderText.h"
 #include "StyledMarkedText.h"
 #include "TextPaintStyle.h"

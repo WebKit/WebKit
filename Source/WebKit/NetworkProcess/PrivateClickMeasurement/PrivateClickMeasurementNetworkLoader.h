@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
 

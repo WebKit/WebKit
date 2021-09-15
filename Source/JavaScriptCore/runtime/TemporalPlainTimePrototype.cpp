@@ -27,6 +27,8 @@
 #include "TemporalPlainTimePrototype.h"
 
 #include "JSCInlines.h"
+#include "ObjectConstructor.h"
+#include "TemporalDuration.h"
 #include "TemporalPlainTime.h"
 
 namespace JSC {

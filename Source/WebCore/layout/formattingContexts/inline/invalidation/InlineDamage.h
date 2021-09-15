@@ -32,6 +32,8 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineInvalidation;
+
 class InlineDamage {
     WTF_MAKE_ISO_ALLOCATED_INLINE(InlineDamage);
 public:
