@@ -1,5 +1,17 @@
 2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        AX: Move platform specific code for isolated tree mode to the platform files
+        https://bugs.webkit.org/show_bug.cgi?id=230301
+        <rdar://problem/83138024>
+
+        Unreviewed follow up after r282450.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData): Remove PreventKeyboardDOMEventDispatch property set that
+        I forgot in r282450, since it's now done in initializePlatformProperties().
+
+2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Fix size calculation in ImageBufferCairoImageSurfaceBackend::create()
         https://bugs.webkit.org/show_bug.cgi?id=229365
 
