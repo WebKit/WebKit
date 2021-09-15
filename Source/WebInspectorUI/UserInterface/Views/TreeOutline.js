@@ -516,8 +516,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             // FIXME: we could do something faster than findTreeElement since we will know the next
             // ancestor exists in the tree.
             item = this.findTreeElement(ancestors[i], isAncestor, getParent);
-            if (item)
-                item.onpopulate();
+            if (!item)
+                return null;
+
+            item.onpopulate();
         }
 
         return this.getCachedTreeElement(representedObject);

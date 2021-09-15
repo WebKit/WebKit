@@ -1,5 +1,17 @@
 2021-09-15  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: `TreeOutline` should return early when failing to find an ancestor while populating the tree
+        https://bugs.webkit.org/show_bug.cgi?id=230287
+
+        Reviewed by Devin Rousso.
+
+        When an ancestor can not be found, we should return to prevent additional work (which will fail) from being done.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.findTreeElement):
+
+2021-09-15  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: `DOMTreeUpdater` doesn't complete deferred updating/clear updated lists when a node isn't found in the tree
         https://bugs.webkit.org/show_bug.cgi?id=230289
 
