@@ -374,6 +374,10 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
 bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock,
     JSScope* scope)
 {
+    // We can't finalize a GC while in here since we need to make sure to
+    // make sure our ValueProfiles and ArrayProfiles all point to proper locations.
+    RELEASE_ASSERT(vm.heap.isDeferred()); 
+
     Base::finishCreation(vm);
     finishCreationCommon(vm);
 
@@ -383,8 +387,11 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(vm), ownerExecutable->typeProfilingEndOffset(vm));
 
     ScriptExecutable* topLevelExecutable = ownerExecutable->topLevelExecutable();
-    setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation(), topLevelExecutable);
-    RETURN_IF_EXCEPTION(throwScope, false);
+
+    // We wait to initialize template objects until the end of finishCreation beecause it can
+    // throw. We rely on linking to put the CodeBlock into a coherent state, so we can't throw
+    // until we're all done linking.
+    Vector<unsigned> templateObjectIndices = setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
 
     // We already have the cloned symbol table for the module environment since we need to instantiate
     // the module environments before linking the code block. We replace the stored symbol table with the already cloned one.
@@ -435,7 +442,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // Bookkeep the strongly referenced module environments.
     HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
-    auto link_profile = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& /*metadata*/) {
+    auto link_profile = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& metadata) {
+        static_assert(std::is_same_v<ValueProfile*, decltype(metadata.m_profile)>);
         m_numberOfNonArgumentValueProfiles++;
     };
 
@@ -499,9 +507,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpGetById, profile)
 
-        LINK(OpEnumeratorNext, profile)
-        LINK(OpEnumeratorInByVal, profile)
-        LINK(OpEnumeratorHasOwnProperty, profile)
+        LINK(OpEnumeratorNext)
+        LINK(OpEnumeratorInByVal)
+        LINK(OpEnumeratorHasOwnProperty)
         LINK(OpEnumeratorGetByVal, profile)
 
         LINK(OpCall, profile)
@@ -563,7 +571,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             RELEASE_ASSERT(bytecode.m_resolveType != ResolvedClosureVar);
 
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
-            RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_resolveType = op.type;
             metadata.m_localScopeDepth = op.depth;
@@ -598,7 +605,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
             const Identifier& ident = identifier(bytecode.m_var);
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
-            RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
             if (op.type == ModuleVar)
@@ -632,7 +638,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             const Identifier& ident = identifier(bytecode.m_var);
             metadata.m_watchpointSet = nullptr;
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_symbolTableOrScopeDepth.scopeDepth(), scope, ident, Put, bytecode.m_getPutInfo.resolveType(), bytecode.m_getPutInfo.initializationMode());
-            RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
@@ -665,7 +670,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 // Even though type profiling may be profiling either a Get or a Put, we can always claim a Get because
                 // we're abstractly "read"ing from a JSScope.
                 ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
-                RETURN_IF_EXCEPTION(throwScope, false);
 
                 if (op.type == ClosureVar || op.type == ModuleVar)
                     symbolTable = op.lexicalEnvironment->symbolTable();
@@ -761,6 +765,56 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 #undef LINK_FIELD
 #undef LINK
 
+    {
+        unsigned index = numberOfArgumentValueProfiles(); // The first numberOfArgumentValueProfiles() profiles are argument value profiles
+
+        if (m_metadata) {
+            auto assign = [&] (ValueProfile*& profile) {
+                profile = &unlinkedCodeBlock->valueProfile(index++);
+            };
+
+#define VISIT(__op) \
+            m_metadata->forEach<__op>([&] (auto& metadata) { assign(metadata.m_profile); });
+            FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
+#undef VISIT
+
+            m_metadata->forEach<OpIteratorOpen>([&] (auto& metadata) { 
+                assign(metadata.m_iterableProfile);
+                assign(metadata.m_iteratorProfile);
+                assign(metadata.m_nextProfile);
+            });
+
+            m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
+                assign(metadata.m_nextResultProfile);
+                assign(metadata.m_doneProfile);
+                assign(metadata.m_valueProfile);
+            });
+        }
+
+        RELEASE_ASSERT(index == unlinkedCodeBlock->numValueProfiles());
+    }
+
+    if (m_metadata) {
+        unsigned index = 0;
+
+        auto assign = [&] (ArrayProfile*& profile) {
+            profile = &unlinkedCodeBlock->arrayProfile(index++);
+        };
+
+        // We only share array profiles for the opcodes in FOR_EACH_OPCODE_WITH_ARRAY_PROFILE.
+        // We don't yet share array profiles for things with LLInt CallLinkInfos.
+#define VISIT(__op) \
+        m_metadata->forEach<__op>([&] (auto& metadata) { assign(metadata.m_arrayProfile); });
+        FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT)
+#undef VISIT
+
+        m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
+            assign(metadata.m_iterableProfile);
+        });
+
+        RELEASE_ASSERT(index == unlinkedCodeBlock->numArrayProfiles());
+    }
+
     if (m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes())
         insertBasicBlockBoundariesForControlFlowProfiler();
 
@@ -780,6 +834,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     if (m_metadata)
         vm.heap.reportExtraMemoryAllocated(m_metadata->sizeInBytes());
+
+    initializeTemplateObjects(topLevelExecutable, templateObjectIndices);
+    RETURN_IF_EXCEPTION(throwScope, false);
 
     return true;
 }
@@ -869,19 +926,20 @@ CodeBlock::~CodeBlock()
 #endif // ENABLE(JIT)
 }
 
-void CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation, ScriptExecutable* topLevelExecutable)
+Vector<unsigned> CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
 {
     VM& vm = *m_vm;
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = m_globalObject.get();
 
+    Vector<unsigned> templateObjectIndices;
+
     ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
-    size_t count = constants.size();
+    unsigned count = constants.size();
     {
         ConcurrentJSLocker locker(m_lock);
         m_constantRegisters.resizeToFit(count);
     }
-    for (size_t i = 0; i < count; i++) {
+    for (unsigned i = 0; i < count; i++) {
         JSValue constant = constants[i].get();
         SourceCodeRepresentation representation = constantsSourceCodeRepresentation[i];
         switch (representation) {
@@ -905,16 +963,26 @@ void CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& c
                             clone->setRareDataCodeBlock(this);
 
                         constant = clone;
-                    } else if (auto* descriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
-                        auto* templateObject = topLevelExecutable->createTemplateObject(globalObject, descriptor);
-                        RETURN_IF_EXCEPTION(scope, void());
-                        constant = templateObject;
-                    }
+                    } else if (jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell))
+                        templateObjectIndices.append(i);
                 }
             }
             break;
         }
         m_constantRegisters[i].set(vm, this, constant);
+    }
+
+    return templateObjectIndices;
+}
+
+void CodeBlock::initializeTemplateObjects(ScriptExecutable* topLevelExecutable, const Vector<unsigned>& templateObjectIndices)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm());
+    for (unsigned i : templateObjectIndices) {
+        auto* descriptor = jsCast<JSTemplateObjectDescriptor*>(m_constantRegisters[i].get());
+        auto* templateObject = topLevelExecutable->createTemplateObject(globalObject(), descriptor);
+        RETURN_IF_EXCEPTION(scope, void());
+        m_constantRegisters[i].set(vm(), this, templateObject);
     }
 }
 
@@ -928,8 +996,6 @@ void CodeBlock::setAlternative(VM& vm, CodeBlock* alternative)
 void CodeBlock::setNumParameters(unsigned newValue)
 {
     m_numParameters = newValue;
-
-    m_argumentValueProfiles = FixedVector<ValueProfile>(Options::useJIT() ? newValue : 0);
 }
 
 CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
@@ -990,7 +1056,7 @@ void CodeBlock::visitChildren(Visitor& visitor)
     stronglyVisitStrongReferences(locker, visitor);
     stronglyVisitWeakReferences(locker, visitor);
     
-    VM::SpaceAndSet::setFor(*subspace()).add(this);
+    vm().codeBlockSpace.set.add(this);
 }
 
 template<typename Visitor>
@@ -1517,7 +1583,35 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
 {
     UNUSED_PARAM(vm);
 
-    updateAllPredictions();
+    {
+        // We only update the profiles that the UnlinkedCodeBlock doesn't own.
+
+        if (m_metadata) {
+#define UPDATE(__op) \
+            m_metadata->forEach<__op>([&] (auto& metadata) { metadata.m_callLinkInfo.m_arrayProfile.computeUpdatedPrediction(this); });
+            FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(UPDATE)
+#undef UPDATE
+
+            m_metadata->forEach<OpCatch>([&](auto& metadata) {
+                if (metadata.m_buffer) {
+                    metadata.m_buffer->forEach([&](ValueProfileAndVirtualRegister& profile) {
+                        profile.computeUpdatedPrediction();
+                    });
+                }
+            });
+        }
+
+        {
+            ConcurrentJSLocker locker(m_lock);
+#if ENABLE(DFG_JIT)
+            lazyOperandValueProfiles(locker).computeUpdatedPredictions(locker);
+#endif
+        }
+
+        forEachArrayAllocationProfile([&](ArrayAllocationProfile& profile) {
+            profile.updateProfile();
+        });
+    }
 
 #if ENABLE(JIT)
     bool isEligibleForLLIntDowngrade = m_isEligibleForLLIntDowngrade;
@@ -1603,7 +1697,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
     };
     updateActivity();
 
-    VM::SpaceAndSet::setFor(*subspace()).remove(this);
+    vm.codeBlockSpace.set.remove(this);
 
     // In CodeBlock::shouldVisitStrongly() we may have decided to skip visiting this
     // codeBlock. By the time we get here, we're done with the verifier GC. So, let's
@@ -2773,7 +2867,7 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeInde
     switch (instruction->opcodeID()) {
 #define CASE1(Op) \
     case Op::opcodeID: \
-        return &instruction->as<Op>().metadata(this).m_arrayProfile;
+        return instruction->as<Op>().metadata(this).m_arrayProfile;
 
 #define CASE2(Op) \
     case Op::opcodeID: \
@@ -2785,13 +2879,6 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeInde
 #undef CASE1
 #undef CASE2
 
-    case OpGetById::opcodeID: {
-        auto bytecode = instruction->as<OpGetById>();
-        auto& metadata = bytecode.metadata(this);
-        if (metadata.m_modeMetadata.mode == GetByIdMode::ArrayLength)
-            return &metadata.m_modeMetadata.arrayLengthMode.arrayProfile;
-        break;
-    }
     default:
         break;
     }
@@ -2900,19 +2987,19 @@ void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(unsigned& numbe
             numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
         numberOfSamplesInProfiles += numSamples;
         if (isArgument) {
-            profile.computeUpdatedPrediction(locker);
+            profile.computeUpdatedPrediction();
             return;
         }
         if (profile.numberOfSamples() || profile.isSampledBefore())
             numberOfLiveNonArgumentValueProfiles++;
-        profile.computeUpdatedPrediction(locker);
+        profile.computeUpdatedPrediction();
     });
 
     if (m_metadata) {
         m_metadata->forEach<OpCatch>([&](auto& metadata) {
             if (metadata.m_buffer) {
                 metadata.m_buffer->forEach([&](ValueProfileAndVirtualRegister& profile) {
-                    profile.computeUpdatedPrediction(locker);
+                    profile.computeUpdatedPrediction();
                 });
             }
         });
@@ -2931,10 +3018,8 @@ void CodeBlock::updateAllValueProfilePredictions()
 
 void CodeBlock::updateAllArrayPredictions()
 {
-    ConcurrentJSLocker locker(m_lock);
-    
     forEachArrayProfile([&](ArrayProfile& profile) {
-        profile.computeUpdatedPrediction(locker, this);
+        profile.computeUpdatedPrediction(this);
     });
     
     forEachArrayAllocationProfile([&](ArrayAllocationProfile& profile) {
@@ -3164,7 +3249,7 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
 
 #define CASE(Op) \
     case Op::opcodeID: \
-        return &instruction->as<Op>().metadata(this).m_profile;
+        return instruction->as<Op>().metadata(this).m_profile;
 
         FOR_EACH_OPCODE_WITH_VALUE_PROFILE(CASE)
 
@@ -3181,10 +3266,10 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
     }
 }
 
-SpeculatedType CodeBlock::valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker& locker, BytecodeIndex bytecodeIndex)
+SpeculatedType CodeBlock::valueProfilePredictionForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
     if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeIndex(bytecodeIndex))
-        return valueProfile->computeUpdatedPrediction(locker);
+        return valueProfile->computeUpdatedPrediction();
     return SpecNone;
 }
 

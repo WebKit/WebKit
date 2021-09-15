@@ -118,18 +118,41 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         out.print(comma, "BigUint64ArrayMode");
 }
 
-void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
+void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock)
 {
-    if (!m_lastSeenStructureID)
+    // Multiple threads could be calling into this at the same time.
+    StructureID id = m_lastSeenStructureID;
+    if (!id)
         return;
     
-    Structure* lastSeenStructure = codeBlock->heap()->structureIDTable().get(m_lastSeenStructureID);
-    computeUpdatedPrediction(locker, codeBlock, lastSeenStructure);
+    Structure* lastSeenStructure = codeBlock->heap()->structureIDTable().get(id);
+    computeUpdatedPrediction(codeBlock, lastSeenStructure);
     m_lastSeenStructureID = 0;
 }
 
-void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock* codeBlock, Structure* lastSeenStructure)
+void ArrayProfile::computeUpdatedPrediction(UnlinkedCodeBlock* unlinkedCodeBlock)
 {
+    // Multiple threads could be calling into this at the same time.
+    StructureID id = m_lastSeenStructureID;
+    if (!id)
+        return;
+
+    Structure* lastSeenStructure = unlinkedCodeBlock->heap()->structureIDTable().get(id);
+    computeUpdatedPrediction(lastSeenStructure, nullptr);
+    
+    m_lastSeenStructureID = 0;
+}
+
+void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* lastSeenStructure)
+{
+    computeUpdatedPrediction(lastSeenStructure, codeBlock->globalObject());
+}
+
+void ArrayProfile::computeUpdatedPrediction(Structure* lastSeenStructure, JSGlobalObject* lexicalGlobalObject)
+{
+    // Multiple threads could be calling into this at the same time. That won't lead
+    // to any form of corruption, but could cause us to go down !m_didPerformFirstRunPruning
+    // path simultaneously.
     m_observedArrayModes |= arrayModesFromStructure(lastSeenStructure);
     
     if (!m_didPerformFirstRunPruning
@@ -140,8 +163,11 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock
     
     m_mayInterceptIndexedAccesses |=
         lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
-    JSGlobalObject* globalObject = codeBlock->globalObject();
-    if (!globalObject->isOriginalArrayStructure(lastSeenStructure)
+    JSGlobalObject* globalObject = lastSeenStructure->globalObject();
+    if (lexicalGlobalObject && globalObject && globalObject != lexicalGlobalObject)
+        m_observedDifferentGlobalObject = true;
+    if (globalObject
+        && !globalObject->isOriginalArrayStructure(lastSeenStructure)
         && !globalObject->isOriginalTypedArrayStructure(lastSeenStructure))
         m_usesOriginalArrayStructures = false;
 }
@@ -163,13 +189,13 @@ void ArrayProfile::observeIndexedRead(VM& vm, JSCell* cell, unsigned index)
     }
 }
 
-CString ArrayProfile::briefDescription(const ConcurrentJSLocker& locker, CodeBlock* codeBlock)
+CString ArrayProfile::briefDescription(CodeBlock* codeBlock)
 {
-    computeUpdatedPrediction(locker, codeBlock);
-    return briefDescriptionWithoutUpdating(locker);
+    computeUpdatedPrediction(codeBlock);
+    return briefDescriptionWithoutUpdating();
 }
 
-CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJSLocker&)
+CString ArrayProfile::briefDescriptionWithoutUpdating()
 {
     StringPrintStream out;
     CommaPrinter comma;
@@ -184,6 +210,8 @@ CString ArrayProfile::briefDescriptionWithoutUpdating(const ConcurrentJSLocker&)
         out.print(comma, "Intercept");
     if (m_usesOriginalArrayStructures)
         out.print(comma, "Original");
+    if (m_observedDifferentGlobalObject)
+        out.print(comma, "DifferentGlobal");
 
     return out.toCString();
 }

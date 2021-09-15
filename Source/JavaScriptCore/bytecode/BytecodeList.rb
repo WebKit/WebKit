@@ -167,7 +167,7 @@ op :get_argument,
         index: int,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :argument_count,
@@ -183,7 +183,7 @@ op :to_this,
     metadata: {
         cachedStructureID: StructureID,
         toThisStatus: ToThisStatus,
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :check_tdz,
@@ -309,7 +309,7 @@ op_group :ValueProfiledBinaryOp,
         rhs: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile
+        profile: ValueProfile.*
     }
 
 op :bitnot,
@@ -318,7 +318,7 @@ op :bitnot,
         operand: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile
+        profile: ValueProfile.*
     }
 
 op_group :UnaryOp,
@@ -363,7 +363,7 @@ op :to_object,
         message: unsigned,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op_group :ValueProfiledUnaryOp,
@@ -376,7 +376,7 @@ op_group :ValueProfiledUnaryOp,
         operand: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :negate,
@@ -445,7 +445,7 @@ op :in_by_val,
         property: VirtualRegister,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
+        arrayProfile: ArrayProfile.*,
     }
 
 op :in_by_id,
@@ -476,8 +476,9 @@ op :get_by_id,
         property: unsigned,
     },
     metadata: {
+        profile: ValueProfile.*,
+        arrayProfile: ArrayProfile.*,
         modeMetadata: GetByIdModeMetadata,
-        profile: ValueProfile,
     }
 
 op :get_by_id_with_this,
@@ -488,7 +489,7 @@ op :get_by_id_with_this,
         property: unsigned,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :get_by_val_with_this,
@@ -499,7 +500,7 @@ op :get_by_val_with_this,
         property: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :get_by_id_direct,
@@ -509,7 +510,7 @@ op :get_by_id_direct,
         property: unsigned,
     },
     metadata: {
-        profile: ValueProfile, # not used in llint
+        profile: ValueProfile.*, # not used in llint
         structureID: StructureID,
         offset: unsigned,
     }
@@ -520,7 +521,7 @@ op :get_prototype_of,
         value: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :try_get_by_id,
@@ -530,7 +531,7 @@ op :try_get_by_id,
         property: unsigned,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :put_by_id,
@@ -571,8 +572,8 @@ op :get_by_val,
         property: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile,
-        arrayProfile: ArrayProfile,
+        profile: ValueProfile.*,
+        arrayProfile: ArrayProfile.*,
         seenIdentifiers: GetByValHistory,
     }
 
@@ -583,7 +584,7 @@ op :get_private_name,
         property: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
         structureID: StructureID,
         offset: unsigned,
         property: WriteBarrier[JSCell],
@@ -632,7 +633,7 @@ op :put_by_val,
         ecmaMode: ECMAMode,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
+        arrayProfile: ArrayProfile.*,
     }
 
 op :put_by_val_with_this,
@@ -652,7 +653,7 @@ op :put_by_val_direct,
         ecmaMode: ECMAMode,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
+        arrayProfile: ArrayProfile.*,
     }
 
 op :del_by_val,
@@ -842,7 +843,7 @@ op :call,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :tail_call,
@@ -854,7 +855,7 @@ op :tail_call,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :call_eval,
@@ -867,7 +868,7 @@ op :call_eval,
     },
     metadata: {
         callLinkInfo: LLIntCallLinkInfo,
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :call_varargs,
@@ -880,8 +881,8 @@ op :call_varargs,
         firstVarArg: int,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
-        profile: ValueProfile,
+        arrayProfile: ArrayProfile.*,
+        profile: ValueProfile.*,
     },
     tmps: {
         argCountIncludingThis: unsigned,
@@ -901,8 +902,8 @@ op :tail_call_varargs,
         firstVarArg: int,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
-        profile: ValueProfile,
+        arrayProfile: ArrayProfile.*,
+        profile: ValueProfile.*,
     },
     tmps: {
         argCountIncludingThis: unsigned
@@ -922,8 +923,8 @@ op :tail_call_forward_arguments,
         firstVarArg: int,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
-        profile: ValueProfile,
+        arrayProfile: ArrayProfile.*,
+        profile: ValueProfile.*,
     }
 
 op :construct,
@@ -934,8 +935,8 @@ op :construct,
         argv: unsigned,
     },
     metadata: {
+        profile: ValueProfile.*,
         callLinkInfo: LLIntCallLinkInfo,
-        profile: ValueProfile,
     }
 
 op :construct_varargs,
@@ -948,8 +949,8 @@ op :construct_varargs,
         firstVarArg: int,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
-        profile: ValueProfile,
+        arrayProfile: ArrayProfile.*,
+        profile: ValueProfile.*,
     },
     tmps: {
         argCountIncludingThis: unsigned
@@ -1028,7 +1029,7 @@ op :get_from_scope,
             structure: WriteBarrierBase[Structure],
         },
         operand: uintptr_t, #offset 6
-        profile: ValueProfile, # offset 7
+        profile: ValueProfile.*, # offset 7
     },
     metadata_initializers: {
         getPutInfo: :getPutInfo,
@@ -1065,7 +1066,7 @@ op :get_from_arguments,
         index: unsigned,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :put_to_arguments,
@@ -1173,7 +1174,7 @@ op :enumerator_next,
         enumerator: VirtualRegister,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
+        arrayProfile: ArrayProfile.*,
         enumeratorMetadata: EnumeratorMetadata,
     }
 
@@ -1187,8 +1188,8 @@ op :enumerator_get_by_val,
         enumerator: VirtualRegister,
     },
     metadata: {
-        profile: ValueProfile,
-        arrayProfile: ArrayProfile,
+        profile: ValueProfile.*,
+        arrayProfile: ArrayProfile.*,
         enumeratorMetadata: EnumeratorMetadata,
     }
 
@@ -1202,7 +1203,7 @@ op :enumerator_in_by_val,
         enumerator: VirtualRegister,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
+        arrayProfile: ArrayProfile.*,
         enumeratorMetadata: EnumeratorMetadata,
     }
 
@@ -1216,7 +1217,7 @@ op :enumerator_has_own_property,
         enumerator: VirtualRegister,
     },
     metadata: {
-        arrayProfile: ArrayProfile,
+        arrayProfile: ArrayProfile.*,
         enumeratorMetadata: EnumeratorMetadata,
     }
 
@@ -1248,12 +1249,12 @@ op :iterator_open,
         stackOffset: unsigned,
     },
     metadata: {
+        iterableProfile: ValueProfile.*,
+        iteratorProfile: ValueProfile.*,
+        nextProfile: ValueProfile.*,
         iterationMetadata: IterationModeMetadata,
-        iterableProfile: ValueProfile,
         callLinkInfo: LLIntCallLinkInfo,
-        iteratorProfile: ValueProfile,
         modeMetadata: GetByIdModeMetadata,
-        nextProfile: ValueProfile,
     },
     checkpoints: {
         symbolCall: nil,
@@ -1271,14 +1272,14 @@ op :iterator_next,
         stackOffset: unsigned,
     },
     metadata: {
+        nextResultProfile: ValueProfile.*,
+        doneProfile: ValueProfile.*,
+        valueProfile: ValueProfile.*,
+        iterableProfile: ArrayProfile.*,
         iterationMetadata: IterationModeMetadata,
-        iterableProfile: ArrayProfile,
         callLinkInfo: LLIntCallLinkInfo,
-        nextResultProfile: ValueProfile,
         doneModeMetadata: GetByIdModeMetadata,
-        doneProfile: ValueProfile,
         valueModeMetadata: GetByIdModeMetadata,
-        valueProfile: ValueProfile,
     },
     tmps: {
         nextResult: JSValue,
@@ -1322,7 +1323,7 @@ op :get_internal_field,
         index: unsigned,
     },
     metadata: {
-        profile: ValueProfile,
+        profile: ValueProfile.*,
     }
 
 op :put_internal_field,

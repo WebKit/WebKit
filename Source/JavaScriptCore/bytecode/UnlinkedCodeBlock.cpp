@@ -108,6 +108,8 @@ void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     extraMemory += thisObject->m_functionExprs.byteSize();
 
     visitor.reportExtraMemoryVisited(extraMemory);
+
+    VM::SpaceAndSet::setFor(*thisObject->subspace()).add(thisObject);
 }
 
 DEFINE_VISIT_CHILDREN(UnlinkedCodeBlock);
@@ -314,6 +316,47 @@ int UnlinkedCodeBlock::outOfLineJumpOffset(InstructionStream::Offset bytecodeOff
 {
     ASSERT(m_outOfLineJumpTargets.contains(bytecodeOffset));
     return m_outOfLineJumpTargets.get(bytecodeOffset);
+}
+
+void UnlinkedCodeBlock::allocateSharedProfiles()
+{
+    RELEASE_ASSERT(!m_metadata->isFinalized());
+
+    {
+        unsigned numberOfValueProfiles = numParameters();
+        if (m_metadata->hasMetadata()) {
+#define COUNT(__op) \
+            numberOfValueProfiles += m_metadata->numEntries<__op>();
+            FOR_EACH_OPCODE_WITH_VALUE_PROFILE(COUNT)
+#undef COUNT
+            numberOfValueProfiles += m_metadata->numEntries<OpIteratorOpen>() * 3;
+            numberOfValueProfiles += m_metadata->numEntries<OpIteratorNext>() * 3;
+        }
+
+        m_valueProfiles = FixedVector<ValueProfile>(numberOfValueProfiles);
+    }
+
+    if (m_metadata->hasMetadata()) {
+        unsigned numberOfArrayProfiles = 0;
+
+#define COUNT(__op) \
+        numberOfArrayProfiles += m_metadata->numEntries<__op>();
+        FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(COUNT)
+#undef COUNT
+        numberOfArrayProfiles += m_metadata->numEntries<OpIteratorNext>();
+
+        m_arrayProfiles = FixedVector<ArrayProfile>(numberOfArrayProfiles);
+    }
+}
+
+void UnlinkedCodeBlock::finalizeUnconditionally(VM&)
+{
+    for (auto& profile : m_valueProfiles)
+        profile.computeUpdatedPrediction();
+    for (auto& profile : m_arrayProfiles)
+        profile.computeUpdatedPrediction(this);
+
+    VM::SpaceAndSet::setFor(*subspace()).remove(this);
 }
 
 } // namespace JSC

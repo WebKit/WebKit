@@ -53,7 +53,7 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
@@ -93,7 +93,7 @@ void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEn
     if (hasAnySlowCases(iter)) {
         VirtualRegister dst = bytecode.m_dst;
         auto& metadata = bytecode.metadata(m_codeBlock);
-        ArrayProfile* profile = &metadata.m_arrayProfile;
+        ArrayProfile* profile = metadata.m_arrayProfile;
 
         linkAllSlowCases(iter);
 
@@ -439,7 +439,7 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
     VirtualRegister value = bytecode.m_value;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
@@ -482,7 +482,7 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
         value = bytecode.m_value;
         ecmaMode = bytecode.m_ecmaMode;
         auto& metadata = bytecode.metadata(m_codeBlock);
-        profile = &metadata.m_arrayProfile;
+        profile = metadata.m_arrayProfile;
     };
 
     if (isDirect)
@@ -1108,11 +1108,8 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
     
-    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
-        Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
-        emitArrayProfilingSiteWithCell(regT0, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile, regT1);
-        notArrayLengthMode.link(this);
-    }
+    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling())
+        emitArrayProfilingSiteWithCell(regT0, metadata.m_arrayProfile, regT1);
 
     JSValueRegs resultRegs = JSValueRegs(regT0);
 
@@ -1511,7 +1508,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
     auto& metadata = bytecode.metadata(m_codeBlock);
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
@@ -1538,7 +1535,7 @@ void JIT::emitSlow_op_in_by_val(const Instruction* currentInstruction, Vector<Sl
     auto bytecode = currentInstruction->as<OpInByVal>();
     VirtualRegister dst = bytecode.m_dst;
     auto& metadata = bytecode.metadata(m_codeBlock);
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
 
@@ -2393,7 +2390,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(ResolveTy
     }
 
     static_assert(ValueProfile::numberOfBuckets == 1);
-    store64(regT0, Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_profile)));
+    loadPtr(Address(metadataGPR, OBJECT_OFFSETOF(Metadata, m_profile)), regT1);
+    store64(regT0, Address(regT1, ValueProfile::offsetOfFirstBucket()));
 
     ret();
 
@@ -2449,7 +2447,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     Call operation = jit.call(OperationPtrTag);
     Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
 
-    jit.store64(regT0, Address(GPRInfo::numberTagRegister, OBJECT_OFFSETOF(Metadata, m_profile)));
+    jit.loadPtr(Address(GPRInfo::numberTagRegister, OBJECT_OFFSETOF(Metadata, m_profile)), GPRInfo::numberTagRegister);
+    jit.store64(regT0, Address(GPRInfo::numberTagRegister, ValueProfile::offsetOfFirstBucket()));
     jit.move(TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
 
 #if CPU(X86_64)
@@ -2888,7 +2887,7 @@ void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
     VirtualRegister index = bytecode.m_index;
     VirtualRegister propertyName = bytecode.m_propertyName;
     VirtualRegister enumerator = bytecode.m_enumerator;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     JumpList doneCases;
 

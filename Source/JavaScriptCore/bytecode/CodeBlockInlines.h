@@ -39,22 +39,22 @@ void CodeBlock::forEachValueProfile(const Functor& func)
 
     if (m_metadata) {
 #define VISIT(__op) \
-        m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_profile, false); });
+        m_metadata->forEach<__op>([&] (auto& metadata) { func(*metadata.m_profile, false); });
 
         FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
 
 #undef VISIT
 
         m_metadata->forEach<OpIteratorOpen>([&] (auto& metadata) { 
-            func(metadata.m_iterableProfile, false);
-            func(metadata.m_iteratorProfile, false);
-            func(metadata.m_nextProfile, false);
+            func(*metadata.m_iterableProfile, false);
+            func(*metadata.m_iteratorProfile, false);
+            func(*metadata.m_nextProfile, false);
         });
 
         m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
-            func(metadata.m_nextResultProfile, false);
-            func(metadata.m_doneProfile, false);
-            func(metadata.m_valueProfile, false);
+            func(*metadata.m_nextResultProfile, false);
+            func(*metadata.m_doneProfile, false);
+            func(*metadata.m_valueProfile, false);
         });
     }   
 
@@ -64,13 +64,8 @@ template<typename Functor>
 void CodeBlock::forEachArrayProfile(const Functor& func)
 {
     if (m_metadata) {
-        m_metadata->forEach<OpGetById>([&] (auto& metadata) {
-            if (metadata.m_modeMetadata.mode == GetByIdMode::ArrayLength)
-                func(metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
-        });
-
 #define VISIT1(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_arrayProfile); });
+    m_metadata->forEach<__op>([&] (auto& metadata) { func(*metadata.m_arrayProfile); });
 
 #define VISIT2(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_callLinkInfo.m_arrayProfile); });
@@ -82,7 +77,7 @@ void CodeBlock::forEachArrayProfile(const Functor& func)
 #undef VISIT2
 
         m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
-            func(metadata.m_iterableProfile);
+            func(*metadata.m_iterableProfile);
         });
     }
 }

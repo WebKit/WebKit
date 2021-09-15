@@ -31,6 +31,7 @@
 #include "ConcurrentJSLock.h"
 #include "SpeculatedType.h"
 #include "Structure.h"
+#include "VirtualRegister.h"
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
@@ -45,6 +46,11 @@ struct ValueProfileBase {
     
     ValueProfileBase()
     {
+        clearBuckets();
+    }
+
+    void clearBuckets()
+    {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
             m_buckets[i] = JSValue::encode(JSValue());
     }
@@ -53,17 +59,6 @@ struct ValueProfileBase {
     {
         ASSERT(numberOfBuckets + i < totalNumberOfBuckets);
         return m_buckets + numberOfBuckets + i;
-    }
-    
-    const ClassInfo* classInfo(unsigned bucket) const
-    {
-        JSValue value = JSValue::decode(m_buckets[bucket]);
-        if (!!value) {
-            if (!value.isCell())
-                return nullptr;
-            return value.asCell()->structure()->classInfo();
-        }
-        return nullptr;
     }
     
     unsigned numberOfSamples() const
@@ -92,9 +87,9 @@ struct ValueProfileBase {
         return false;
     }
     
-    CString briefDescription(const ConcurrentJSLocker& locker)
+    CString briefDescription()
     {
-        computeUpdatedPrediction(locker);
+        computeUpdatedPrediction();
         
         StringPrintStream out;
         out.print("predicting ", SpeculationDump(m_prediction));
@@ -118,10 +113,10 @@ struct ValueProfileBase {
         }
     }
     
-    // Updates the prediction and returns the new one. Never call this from any thread
-    // that isn't executing the code.
-    SpeculatedType computeUpdatedPrediction(const ConcurrentJSLocker&)
+    SpeculatedType computeUpdatedPrediction()
     {
+        // Multiple threads could be calling into this at the same time.
+        // The import part is that we don't end up corrupting any values.
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
             if (!value)
@@ -156,6 +151,7 @@ struct ValueProfileWithLogNumberOfBuckets : public ValueProfileBase<1 << logNumb
 
 struct ValueProfile : public ValueProfileWithLogNumberOfBuckets<0> {
     ValueProfile() : ValueProfileWithLogNumberOfBuckets<0>() { }
+    static ptrdiff_t offsetOfFirstBucket() { return OBJECT_OFFSETOF(ValueProfile, m_buckets[0]); }
 };
 
 struct ValueProfileAndVirtualRegister : public ValueProfile {

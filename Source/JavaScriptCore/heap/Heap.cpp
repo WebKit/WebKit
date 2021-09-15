@@ -583,10 +583,10 @@ void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
     }
 }
 
-template<typename CellType, typename CellSet>
-void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
+template<typename CellType, typename CellSetOrIsoSubspace>
+void Heap::finalizeMarkedUnconditionalFinalizers(CellSetOrIsoSubspace& setOrSubspace)
 {
-    cellSet.forEachMarkedCell(
+    setOrSubspace.forEachMarkedCell(
         [&] (HeapCell* cell, HeapCell::Kind) {
             static_cast<CellType*>(cell)->finalizeUnconditionally(vm());
         });
@@ -598,10 +598,12 @@ void Heap::finalizeUnconditionalFinalizers()
     finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(vm().functionExecutableSpace.space);
     finalizeMarkedUnconditionalFinalizers<SymbolTable>(vm().symbolTableSpace);
     finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm().executableToCodeBlockEdgesWithFinalizers); // We run this before CodeBlock's unconditional finalizer since CodeBlock looks at the owner executable's installed CodeBlock in its finalizeUnconditionally.
-    vm().forEachCodeBlockSpace(
-        [&] (auto& space) {
-            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set);
-        });
+    finalizeMarkedUnconditionalFinalizers<CodeBlock>(vm().codeBlockSpace.set);
+    vm().forEachUnlinkedCodeBlockSpace([&] (VM::SpaceAndSet* spaceAndSet) {
+        if (!spaceAndSet)
+            return;
+        finalizeMarkedUnconditionalFinalizers<UnlinkedCodeBlock>(spaceAndSet->set);
+    });
     finalizeMarkedUnconditionalFinalizers<StructureRareData>(vm().structureRareDataSpace);
     finalizeMarkedUnconditionalFinalizers<UnlinkedFunctionExecutable>(vm().unlinkedFunctionExecutableSpace.set);
     if (vm().m_weakSetSpace)
@@ -973,7 +975,7 @@ void Heap::deleteUnmarkedCompiledCode()
     vm().forEachScriptExecutableSpace([] (auto& space) { space.space.sweep(); });
     // Sweeping must occur before deleting stubs, otherwise the stubs might still think they're alive as they get deleted.
     // And CodeBlock destructor is assuming that CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed.
-    vm().forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); });
+    vm().codeBlockSpace.space.sweep();
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
 
@@ -1486,6 +1488,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     iterateExecutingAndCompilingCodeBlocks(visitor,
         [&] (CodeBlock* codeBlock) {
             writeBarrier(codeBlock);
+            writeBarrier(codeBlock->unlinkedCodeBlock());
         });
 
     updateObjectCounts();
@@ -1523,6 +1526,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     m_codeBlocks->iterateCurrentlyExecuting(
         [&] (CodeBlock* codeBlock) {
             writeBarrier(codeBlock);
+            writeBarrier(codeBlock->unlinkedCodeBlock());
         });
     m_codeBlocks->clearCurrentlyExecuting();
         
@@ -2886,10 +2890,14 @@ void Heap::addCoreConstraints()
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::CodeBlocks);
             iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(visitor,
                 [&] (CodeBlock* codeBlock) {
+                    auto handle = [&] (auto* cell) {
+                        if (visitor.isMarked(cell)
+                            && cell->cellState() == CellState::PossiblyBlack)
+                            visitor.visitAsConstraint(cell);
+                    };
                     // Visit the CodeBlock as a constraint only if it's black.
-                    if (visitor.isMarked(codeBlock)
-                        && codeBlock->cellState() == CellState::PossiblyBlack)
-                        visitor.visitAsConstraint(codeBlock);
+                    handle(codeBlock);
+                    handle(codeBlock->unlinkedCodeBlock());
                 });
         })),
         ConstraintVolatility::SeldomGreyed);

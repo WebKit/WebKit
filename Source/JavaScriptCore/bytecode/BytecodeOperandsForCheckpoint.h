@@ -57,20 +57,20 @@ ValueProfile* valueProfileForImpl(BytecodeMetadata& metadata, unsigned checkpoin
     UNUSED_PARAM(checkpointIndex);
     if constexpr (BytecodeMetadata::opcodeID == op_iterator_open) {
         switch (checkpointIndex) {
-        case OpIteratorOpen::symbolCall: return &metadata.m_iteratorProfile;
-        case OpIteratorOpen::getNext: return &metadata.m_nextProfile;
+        case OpIteratorOpen::symbolCall: return metadata.m_iteratorProfile;
+        case OpIteratorOpen::getNext: return metadata.m_nextProfile;
         default: RELEASE_ASSERT_NOT_REACHED();
         }
 
     } else if constexpr (BytecodeMetadata::opcodeID == op_iterator_next) {
         switch (checkpointIndex) {
-        case OpIteratorNext::computeNext: return &metadata.m_nextResultProfile;
-        case OpIteratorNext::getDone: return &metadata.m_doneProfile;
-        case OpIteratorNext::getValue: return &metadata.m_valueProfile;
+        case OpIteratorNext::computeNext: return metadata.m_nextResultProfile;
+        case OpIteratorNext::getDone: return metadata.m_doneProfile;
+        case OpIteratorNext::getValue: return metadata.m_valueProfile;
         default: RELEASE_ASSERT_NOT_REACHED();
         }
     } else 
-        return &metadata.m_profile;
+        return metadata.m_profile;
 }
 
 template<typename BytecodeMetadata>

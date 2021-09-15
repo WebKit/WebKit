@@ -895,11 +895,7 @@ private:
     {
         auto getValueProfilePredictionFromForCodeBlockAndBytecodeOffset = [&] (CodeBlock* codeBlock, const CodeOrigin& codeOrigin)
         {
-            SpeculatedType prediction;
-            {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                prediction = codeBlock->valueProfilePredictionForBytecodeIndex(locker, codeOrigin.bytecodeIndex());
-            }
+            SpeculatedType prediction = codeBlock->valueProfilePredictionForBytecodeIndex(codeOrigin.bytecodeIndex());
             auto* fuzzerAgent = m_vm->fuzzerAgent();
             if (UNLIKELY(fuzzerAgent))
                 return fuzzerAgent->getPrediction(codeBlock, codeOrigin, prediction) & SpecBytecodeTop;
@@ -983,10 +979,9 @@ private:
 
     ArrayMode getArrayMode(ArrayProfile& profile, Array::Action action)
     {
-        ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-        profile.computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
-        bool makeSafe = profile.outOfBounds(locker);
-        return ArrayMode::fromObserved(locker, &profile, action, makeSafe);
+        profile.computeUpdatedPrediction(m_inlineStackTop->m_profiledBlock);
+        bool makeSafe = profile.outOfBounds();
+        return ArrayMode::fromObserved(m_graph, currentCodeOrigin(), &profile, action, makeSafe);
     }
 
     Node* makeSafe(Node* node)
@@ -2058,9 +2053,8 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
             // arguments received inside the callee. But that probably won't matter for most
             // calls.
             if (codeBlock && argument < static_cast<unsigned>(codeBlock->numParameters())) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
                 ValueProfile& profile = codeBlock->valueProfileForArgument(argument);
-                variable->predict(profile.computeUpdatedPrediction(locker));
+                variable->predict(profile.computeUpdatedPrediction());
             }
             
             Node* setArgument = addToGraph(numSetArguments >= mandatoryMinimum ? SetArgumentMaybe : SetArgumentDefinitely, OpInfo(variable));
@@ -6305,7 +6299,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (shouldCompileAsGetById)
                 handleGetById(bytecode.m_dst, prediction, base, identifier, identifierNumber, getByStatus, AccessType::GetById, nextOpcodeIndex());
             else {
-                ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
+                ArrayMode arrayMode = getArrayMode(*bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
                 // FIXME: We could consider making this not vararg, since it only uses three child
                 // slots.
                 // https://bugs.webkit.org/show_bug.cgi?id=184192
@@ -7075,11 +7069,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenArguments;
 
             {
-                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-
                 buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
                     VirtualRegister operand(profile.m_operand);
-                    SpeculatedType prediction = profile.computeUpdatedPrediction(locker);
+                    SpeculatedType prediction = profile.computeUpdatedPrediction();
                     if (operand.isLocal())
                         localPredictions.append(prediction);
                     else {
@@ -7431,7 +7423,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 BasicBlock* isDoneBlock = allocateUntargetableBlock();
                 BasicBlock* doLoadBlock = allocateUntargetableBlock();
 
-                ArrayMode arrayMode = getArrayMode(metadata.m_iterableProfile, Array::Read);
+                ArrayMode arrayMode = getArrayMode(*metadata.m_iterableProfile, Array::Read);
                 auto prediction = getPredictionWithoutOSRExit(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue));
 
                 {
@@ -8326,7 +8318,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             if (!compiledAsInById) {
-                ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
+                ArrayMode arrayMode = getArrayMode(*bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
                 set(bytecode.m_dst, addToGraph(InByVal, OpInfo(arrayMode.asWord()), base, property));
             }
             NEXT_OPCODE(op_in_by_val);
@@ -8410,7 +8402,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_enumerator_next: {
             auto bytecode = currentInstruction->as<OpEnumeratorNext>();
             auto& metadata = bytecode.metadata(codeBlock);
-            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(*metadata.m_arrayProfile, Array::Read);
             Node* base = get(bytecode.m_base);
             Node* index = get(bytecode.m_index);
             Node* enumerator = get(bytecode.m_enumerator);
@@ -8442,7 +8434,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_enumerator_get_by_val: {
             auto bytecode = currentInstruction->as<OpEnumeratorGetByVal>();
             auto& metadata = bytecode.metadata(codeBlock);
-            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(*metadata.m_arrayProfile, Array::Read);
             SpeculatedType speculation = getPredictionWithoutOSRExit();
 
             Node* base = get(bytecode.m_base);
@@ -8506,7 +8498,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_enumerator_in_by_val: {
             auto bytecode = currentInstruction->as<OpEnumeratorInByVal>();
             auto& metadata = bytecode.metadata(codeBlock);
-            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(*metadata.m_arrayProfile, Array::Read);
 
             addVarArgChild(get(bytecode.m_base));
             addVarArgChild(get(bytecode.m_propertyName));
@@ -8521,7 +8513,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_enumerator_has_own_property: {
             auto bytecode = currentInstruction->as<OpEnumeratorHasOwnProperty>();
             auto& metadata = bytecode.metadata(codeBlock);
-            ArrayMode arrayMode = getArrayMode(metadata.m_arrayProfile, Array::Read);
+            ArrayMode arrayMode = getArrayMode(*metadata.m_arrayProfile, Array::Read);
 
             addVarArgChild(get(bytecode.m_base));
             addVarArgChild(get(bytecode.m_propertyName));
@@ -8881,7 +8873,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
     }
 
     if (!compiledAsPutById) {
-        ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Write);
+        ArrayMode arrayMode = getArrayMode(*bytecode.metadata(codeBlock).m_arrayProfile, Array::Write);
 
         addVarArgChild(base);
         addVarArgChild(property);

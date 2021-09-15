@@ -1,3 +1,205 @@
+2021-09-15  Saam Barati  <sbarati@apple.com>
+
+        Move some profiling to UnlinkedCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=230078
+        <rdar://problem/82947571>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch moves ValueProfiles and ArrayProfiles for non-call opcodes into
+        UnlinkedCodeBlock. This way, the data is shared between the linked CodeBlocks
+        of the same UnlinkedCodeBlock. The profiling bet here is that when the same code
+        runs in a different global object, it largely runs in the same way. We've made
+        this same bet in other ways with our profiling, and it largely makes sense
+        to do for ValueProfile and ArrayProfile since they both hold global object
+        independent data.
+        
+        Because ArrayProfiles are now shared between CodeBlocks, the existing m_usesOriginalArrayStructures
+        bit is slightly harder to track now, since the ArrayProfile may see inputs from a different
+        global object, an array may be an original array in one lexical global object,
+        but not another. So we now track when an ArrayProfile sees a different global
+        object than the lexical global object, and when we observe exits in the DFG,
+        we propagate that bit to the m_usesOriginalArrayStructures bit.
+        
+        This patch also makes it so we no longer hold the CodeBlock lock when
+        processing ValueProfiles and ArrayProfiles. We now allow multiple compiler
+        threads to race against each other when updating these profiles. This is fine.
+        It may end up with incomplete data in the profiles, but it won't corrupt them.
+        
+        This patch also makes it so we finalized visited UnlinkedCodeBlocks to finalize
+        their value profiles. We no longer do that work inside CodeBlock for the
+        ValueProfiles that UnlinkedCodeBlock owns. This also means that we have to
+        WriteBarrier UnlinkedCodeBlock when executing in the LLInt, Baseline, and
+        other areas, such as OSR exit, and in the GC when a CodeBlock was executing.
+        That way we're guaranteed to visit the UnlinkedCodeBlock, add it to the
+        visited set, and then finalize it at the end of GC.
+        
+        This patch also makes it so that inside CodeBlock::finishCreation, we finish
+        linking before we do anything that can throw an exception. It's not valid to
+        finalize a CodeBlock that isn't linked.
+        
+        This was measured as a 0.5-1% speedup on Speedometer2.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        (JSC::ArrayProfile::briefDescription):
+        (JSC::ArrayProfile::briefDescriptionWithoutUpdating):
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::observedArrayModes const):
+        (JSC::ArrayProfile::mayInterceptIndexedAccesses const):
+        (JSC::ArrayProfile::mayStoreToHole const):
+        (JSC::ArrayProfile::outOfBounds const):
+        (JSC::ArrayProfile::usesOriginalArrayStructures const):
+        (JSC::ArrayProfile::setDoesNotUseOriginalArrayStructures):
+        (JSC::ArrayProfile::observedDifferentGlobalObject const):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeOperandsForCheckpoint.h:
+        (JSC::valueProfileForImpl):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::initializeTemplateObjects):
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC::CodeBlock::updateAllValueProfilePredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        (JSC::CodeBlock::tryGetValueProfileForBytecodeIndex):
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeIndex):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfUnlinkedCodeBlock):
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+        (JSC::CodeBlock::valueProfileForArgument):
+        (JSC::CodeBlock::metadata):
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachValueProfile):
+        (JSC::CodeBlock::forEachArrayProfile):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::hasAnyExitsAt const):
+        * bytecode/DFGExitProfile.h:
+        * bytecode/GetByIdMetadata.h:
+        (JSC::GetByIdModeMetadata::setArrayLengthMode):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        (JSC::LazyOperandValueProfileParser::prediction const):
+        * bytecode/MetadataTable.cpp:
+        (JSC::DeallocTable::withOpcodeType):
+        * bytecode/MetadataTable.h:
+        (JSC::MetadataTable::get):
+        (JSC::MetadataTable::forEach):
+        (JSC::MetadataTable::getWithoutAligning):
+        (JSC::MetadataTable::getImpl): Deleted.
+        * bytecode/Opcode.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildrenImpl):
+        (JSC::UnlinkedCodeBlock::allocateSharedProfiles):
+        (JSC::UnlinkedCodeBlock::finalizeUnconditionally):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::hasAnyExitsAt const):
+        (JSC::UnlinkedCodeBlock::hasAnyExitsAt):
+        (JSC::UnlinkedCodeBlock::valueProfile):
+        (JSC::UnlinkedCodeBlock::arrayProfile):
+        (JSC::UnlinkedCodeBlock::numValueProfiles const):
+        (JSC::UnlinkedCodeBlock::numArrayProfiles const):
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedMetadataTable.cpp:
+        (JSC::UnlinkedMetadataTable::finalize):
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::isFinalized):
+        (JSC::UnlinkedMetadataTable::hasMetadata):
+        * bytecode/UnlinkedMetadataTableInlines.h:
+        (JSC::UnlinkedMetadataTable::numEntries):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::ValueProfileBase):
+        (JSC::ValueProfileBase::clearBuckets):
+        (JSC::ValueProfileBase::briefDescription):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        (JSC::ValueProfile::offsetOfFirstBucket):
+        (JSC::ValueProfileBase::classInfo const): Deleted.
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withSpeculationFromProfile const):
+        (JSC::DFG::ArrayMode::withProfile const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        * dfg/DFGGraph.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::osrWriteBarrier):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterateViaSubspaces):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeMarkedUnconditionalFinalizers):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::addCoreConstraints):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitValueProfilingSiteIfProfiledOpcode):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_handlerGenerator):
+        * jit/JITOperations.cpp:
+        (JSC::putByValOptimize):
+        (JSC::directPutByValOptimize):
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::generateGetByValSlowCase):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        (JSC::JIT::generateOpGetFromScopeThunk):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::performLLIntGetByID):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::getByVal):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::numValueProfiles const):
+        (JSC::CachedCodeBlock::numArrayProfiles const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::iteratorNextTryFastImpl):
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::abstractResolve):
+        * runtime/VM.cpp:
+        * runtime/VM.h:
+        (JSC::VM::forEachUnlinkedCodeBlockSpace):
+        (JSC::VM::forEachCodeBlockSpace): Deleted.
+
 2021-09-15  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Avoid GCC warnings introduced in r282125

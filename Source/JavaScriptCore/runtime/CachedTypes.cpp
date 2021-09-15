@@ -1916,6 +1916,9 @@ public:
 
     UnlinkedCodeBlock::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
 
+    unsigned numValueProfiles() const { return m_numValueProfiles; }
+    unsigned numArrayProfiles() const { return m_numArrayProfiles; }
+
 private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
@@ -1946,6 +1949,9 @@ private:
     int m_numVars;
     int m_numCalleeLocals;
     int m_numParameters;
+
+    unsigned m_numValueProfiles;
+    unsigned m_numArrayProfiles;
 
     CachedMetadataTable m_metadata;
 
@@ -2152,6 +2158,8 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_metadata(cachedCodeBlock.metadata(decoder))
     , m_instructions(cachedCodeBlock.instructions(decoder))
 
+    , m_valueProfiles(cachedCodeBlock.numValueProfiles())
+    , m_arrayProfiles(cachedCodeBlock.numArrayProfiles())
     , m_rareData(cachedCodeBlock.rareData(decoder))
 {
 }
@@ -2322,6 +2330,8 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_numVars = codeBlock.m_numVars;
     m_numCalleeLocals = codeBlock.m_numCalleeLocals;
     m_numParameters = codeBlock.m_numParameters;
+    m_numValueProfiles = codeBlock.m_valueProfiles.size();
+    m_numArrayProfiles = codeBlock.m_arrayProfiles.size();
     m_features = codeBlock.m_features;
     m_lexicalScopeFeatures = codeBlock.m_lexicalScopeFeatures;
     m_parseMode = codeBlock.m_parseMode;

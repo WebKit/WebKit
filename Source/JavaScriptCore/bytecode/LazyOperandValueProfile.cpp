@@ -33,13 +33,13 @@ namespace JSC {
 CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder() { }
 CompressedLazyOperandValueProfileHolder::~CompressedLazyOperandValueProfileHolder() { }
 
-void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJSLocker& locker)
+void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJSLocker&)
 {
     if (!m_data)
         return;
     
     for (unsigned i = 0; i < m_data->size(); ++i)
-        m_data->at(i).computeUpdatedPrediction(locker);
+        m_data->at(i).computeUpdatedPrediction();
 }
 
 LazyOperandValueProfile* CompressedLazyOperandValueProfileHolder::add(
@@ -87,13 +87,13 @@ LazyOperandValueProfile* LazyOperandValueProfileParser::getIfPresent(
 }
 
 SpeculatedType LazyOperandValueProfileParser::prediction(
-    const ConcurrentJSLocker& locker, const LazyOperandValueProfileKey& key) const
+    const ConcurrentJSLocker&, const LazyOperandValueProfileKey& key) const
 {
     LazyOperandValueProfile* profile = getIfPresent(key);
     if (!profile)
         return SpecNone;
     
-    return profile->computeUpdatedPrediction(locker);
+    return profile->computeUpdatedPrediction();
 }
 
 } // namespace JSC

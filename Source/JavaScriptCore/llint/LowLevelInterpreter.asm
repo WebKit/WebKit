@@ -413,6 +413,11 @@ macro metadata(size, opcode, dst, scratch)
     muli sizeof %opcode%::Metadata, scratch # scratch *= sizeof(Op::Metadata)
     addi scratch, dst # offset += scratch
     addp metadataTable, dst # return &metadataTable[offset]
+    # roundUpToMultipleOf(alignof(Metadata), dst)
+    const adder = (constexpr (alignof(%opcode%::Metadata))) - 1
+    const mask = ~adder
+    addp adder, dst
+    andp mask, dst
 end
 
 macro jumpImpl(dispatchIndirect, targetOffsetReg)
@@ -1287,11 +1292,12 @@ macro getterSetterOSRExitReturnPoint(opName, size)
     loadi LLIntReturnPC[cfr], PC
 end
 
-macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
+macro arrayProfile(offset, cellAndIndexingType, metadata, scratch1, scratch2)
     const cell = cellAndIndexingType
     const indexingType = cellAndIndexingType 
-    loadi JSCell::m_structureID[cell], scratch
-    storei scratch, offset + ArrayProfile::m_lastSeenStructureID[metadata]
+    loadp offset[metadata], scratch2
+    loadi JSCell::m_structureID[cell], scratch1
+    storei scratch1, ArrayProfile::m_lastSeenStructureID[scratch2]
     loadb JSCell::m_indexingTypeAndMisc[cell], indexingType
 end
 
@@ -1615,8 +1621,8 @@ macro functionInitialization(profileArgSkip)
     addp -profileArgSkip, t0 # Use addi because that's what has the peephole
     assert(macro (ok) bpgteq t0, 0, ok end)
     btpz t0, .argumentProfileDone
-    loadp CodeBlock::m_argumentValueProfiles + FixedVector::m_storage + RefCountedArray::m_data[t1], t3
-    btpz t3, .argumentProfileDone # When we can't JIT, we don't allocate any argument value profiles.
+    loadp CodeBlock::m_unlinkedCode[t1], t3
+    loadp UnlinkedCodeBlock::m_valueProfiles + FixedVector::m_storage + RefCountedArray::m_data[t3], t3
     mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
     lshiftp 3, t0 # offset of last JSValue arguments on the stack.
     addp t2, t3 # pointer to end of ValueProfile array in CodeBlock::m_argumentValueProfiles.

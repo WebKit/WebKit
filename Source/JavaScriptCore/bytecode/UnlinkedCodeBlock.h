@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ArrayProfile.h"
 #include "BytecodeConventions.h"
 #include "CodeType.h"
 #include "DFGExitProfile.h"
@@ -38,6 +39,7 @@
 #include "RegExp.h"
 #include "UnlinkedFunctionExecutable.h"
 #include "UnlinkedMetadataTable.h"
+#include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include <algorithm>
 #include <wtf/BitVector.h>
@@ -324,6 +326,17 @@ public:
         return hasExitSite(locker, site);
     }
 
+    bool hasAnyExitsAt(const ConcurrentJSLocker& locker, BytecodeIndex bytecodeIndex) const
+    {
+        return m_exitProfile.hasAnyExitsAt(locker, bytecodeIndex);
+    }
+
+    bool hasAnyExitsAt(BytecodeIndex bytecodeIndex)
+    {
+        ConcurrentJSLocker locker(m_lock);
+        return hasAnyExitsAt(locker, bytecodeIndex);
+    }
+
     DFG::ExitProfile& exitProfile() { return m_exitProfile; }
 #endif
 
@@ -334,6 +347,9 @@ public:
         return m_metadata->sizeInBytes();
     }
 
+    void allocateSharedProfiles();
+
+    void finalizeUnconditionally(VM&);
 
 protected:
     UnlinkedCodeBlock(VM&, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
@@ -419,6 +435,8 @@ private:
     FixedVector<Identifier> m_identifiers;
     FixedVector<WriteBarrier<Unknown>> m_constantRegisters;
     FixedVector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
+    FixedVector<ValueProfile> m_valueProfiles; // The first numParameters() are argument profiles.
+    FixedVector<ArrayProfile> m_arrayProfiles;
     using FunctionExpressionVector = FixedVector<WriteBarrier<UnlinkedFunctionExecutable>>;
     FunctionExpressionVector m_functionDecls;
     FunctionExpressionVector m_functionExprs;
@@ -455,6 +473,11 @@ public:
     {
         return outOfLineJumpOffset(instruction.offset());
     }
+
+    ValueProfile& valueProfile(unsigned i) { return m_valueProfiles[i]; }
+    ArrayProfile& arrayProfile(unsigned i) { return m_arrayProfiles[i]; }
+    unsigned numValueProfiles() const { return m_valueProfiles.size(); }
+    unsigned numArrayProfiles() const { return m_arrayProfiles.size(); }
 
 private:
     using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;

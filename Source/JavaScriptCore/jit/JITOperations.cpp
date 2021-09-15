@@ -1028,10 +1028,8 @@ static ALWAYS_INLINE void putByValOptimize(JSGlobalObject* globalObject, CodeBlo
         if (!isCopyOnWrite(baseObject->indexingMode()) && subscript.isInt32()) {
             Structure* structure = baseObject->structure(vm);
             if (stubInfo->considerCachingGeneric(vm, codeBlock, structure)) {
-                if (profile) {
-                    ConcurrentJSLocker locker(codeBlock->m_lock);
-                    profile->computeUpdatedPrediction(locker, codeBlock, structure);
-                }
+                if (profile)
+                    profile->computeUpdatedPrediction(codeBlock, structure);
                 repatchArrayPutByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, PutKind::NotDirect, ecmaMode);
             }
         }
@@ -1098,10 +1096,8 @@ static ALWAYS_INLINE void directPutByValOptimize(JSGlobalObject* globalObject, C
     if (!isCopyOnWrite(baseObject->indexingMode()) && subscript.isInt32()) {
         Structure* structure = baseObject->structure(vm);
         if (stubInfo->considerCachingGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayPutByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, PutKind::Direct, ecmaMode);
         }
     }
@@ -2412,10 +2408,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (JSGlobalObj
     if (baseValue.isCell() && subscript.isInt32()) {
         Structure* structure = baseValue.asCell()->structure(vm);
         if (stubInfo->considerCachingGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo);
         }
     }

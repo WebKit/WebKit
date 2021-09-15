@@ -52,6 +52,8 @@ public:
     ~UnlinkedMetadataTable();
 
     unsigned addEntry(OpcodeID);
+    template <typename Bytecode>
+    unsigned numEntries();
 
     size_t sizeInBytes();
 
@@ -63,6 +65,9 @@ public:
     {
         return adoptRef(*new UnlinkedMetadataTable);
     }
+
+    bool isFinalized() { return m_isFinalized; }
+    bool hasMetadata() { return m_hasMetadata; }
 
 private:
     enum EmptyTag { Empty };

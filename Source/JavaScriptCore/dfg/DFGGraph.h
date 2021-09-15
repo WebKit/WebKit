@@ -520,7 +520,12 @@ public:
     {
         return hasExitSite(node->origin.semantic, exitKind);
     }
-    
+
+    bool hasAnyExitsAt(const CodeOrigin& codeOrigin)
+    {
+        return baselineCodeBlockFor(codeOrigin)->unlinkedCodeBlock()->hasAnyExitsAt(codeOrigin.bytecodeIndex());
+    }
+
     MethodOfGettingAValueProfile methodOfGettingAValueProfileFor(Node* currentNode, Node* operandNode);
     
     BlockIndex numBlocks() const { return m_blocks.size(); }

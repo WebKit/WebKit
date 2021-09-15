@@ -4047,9 +4047,8 @@ private:
             profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex());
         ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions, Array::Read);
         if (arrayProfile) {
-            ConcurrentJSLocker locker(profiledBlock->m_lock);
-            arrayProfile->computeUpdatedPrediction(locker, profiledBlock);
-            arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
+            arrayProfile->computeUpdatedPrediction(profiledBlock);
+            arrayMode = ArrayMode::fromObserved(m_graph, node->origin.semantic, arrayProfile, Array::Read, false);
             if (arrayMode.type() == Array::Unprofiled) {
                 // For normal array operations, it makes sense to treat Unprofiled
                 // accesses as ForceExit and get more data rather than using

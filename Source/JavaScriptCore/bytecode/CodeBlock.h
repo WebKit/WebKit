@@ -144,6 +144,7 @@ public:
     JS_EXPORT_PRIVATE ~CodeBlock();
 
     UnlinkedCodeBlock* unlinkedCodeBlock() const { return m_unlinkedCode.get(); }
+    static ptrdiff_t offsetOfUnlinkedCodeBlock() { return OBJECT_OFFSETOF(CodeBlock, m_unlinkedCode); }
 
     CString inferredName() const;
     CodeBlockHash hash() const;
@@ -474,19 +475,16 @@ public:
 
     unsigned numberOfArgumentValueProfiles()
     {
-        ASSERT(m_argumentValueProfiles.size() == static_cast<unsigned>(m_numParameters) || !Options::useJIT());
-        return m_argumentValueProfiles.size();
+        return numParameters();
     }
 
     ValueProfile& valueProfileForArgument(unsigned argumentIndex)
     {
-        ASSERT(Options::useJIT()); // This is only called from the various JIT compilers or places that first check numberOfArgumentValueProfiles before calling this.
-        ValueProfile& result = m_argumentValueProfiles[argumentIndex];
-        return result;
+        return unlinkedCodeBlock()->valueProfile(argumentIndex);
     }
 
     ValueProfile& valueProfileForBytecodeIndex(BytecodeIndex);
-    SpeculatedType valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
+    SpeculatedType valueProfilePredictionForBytecodeIndex(BytecodeIndex);
 
     template<typename Functor> void forEachValueProfile(const Functor&);
     template<typename Functor> void forEachArrayProfile(const Functor&);
@@ -886,7 +884,8 @@ public:
     Metadata& metadata(OpcodeID opcodeID, unsigned metadataID)
     {
         ASSERT(m_metadata);
-        return bitwise_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
+        ASSERT_UNUSED(opcodeID, opcodeID == Metadata::opcodeID);
+        return m_metadata->get<Metadata>()[metadataID];
     }
 
     template<typename Metadata>
@@ -939,7 +938,8 @@ private:
 
     void updateAllValueProfilePredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
-    void setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation, ScriptExecutable* topLevelExecutable);
+    Vector<unsigned> setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation);
+    void initializeTemplateObjects(ScriptExecutable* topLevelExecutable, const Vector<unsigned>&);
 
     void replaceConstant(VirtualRegister reg, JSValue value)
     {
@@ -1015,7 +1015,6 @@ private:
     // for DFG code blocks.
     CompressedLazyOperandValueProfileHolder m_lazyOperandValueProfiles;
 #endif
-    FixedVector<ValueProfile> m_argumentValueProfiles;
 
     // Constant Pool
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);

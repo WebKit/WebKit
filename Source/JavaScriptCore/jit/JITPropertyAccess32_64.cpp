@@ -241,7 +241,7 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
     VirtualRegister dst = bytecode.m_dst;
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
 
@@ -276,7 +276,7 @@ void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<S
         auto bytecode = currentInstruction->as<OpGetByVal>();
         VirtualRegister dst = bytecode.m_dst;
         auto& metadata = bytecode.metadata(m_codeBlock);
-        ArrayProfile* profile = &metadata.m_arrayProfile;
+        ArrayProfile* profile = metadata.m_arrayProfile;
 
         JITGetByValGenerator& gen = m_getByVals[m_getByValIndex];
         ++m_getByValIndex;
@@ -469,7 +469,7 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
     VirtualRegister value = bytecode.m_value;
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
     emitLoad(value, regT5, regT4);
@@ -505,7 +505,7 @@ void JIT::emitSlow_op_put_by_val(const Instruction* currentInstruction, Vector<S
         value = bytecode.m_value;
         ecmaMode = JIT::ecmaMode(bytecode);
         auto& metadata = bytecode.metadata(m_codeBlock);
-        profile = &metadata.m_arrayProfile;
+        profile = metadata.m_arrayProfile;
     };
 
     if (isDirect)
@@ -622,11 +622,8 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     emitLoad(base, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
 
-    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling()) {
-        Jump notArrayLengthMode = branch8(NotEqual, AbsoluteAddress(&metadata.m_modeMetadata.mode), TrustedImm32(static_cast<uint8_t>(GetByIdMode::ArrayLength)));
-        emitArrayProfilingSiteWithCell(regT0, &metadata.m_modeMetadata.arrayLengthMode.arrayProfile, regT2);
-        notArrayLengthMode.link(this);
-    }
+    if (*ident == m_vm->propertyNames->length && shouldEmitProfiling())
+        emitArrayProfilingSiteWithCell(regT0, metadata.m_arrayProfile, regT2);
 
     JSValueRegs resultRegs = JSValueRegs(regT1, regT0);
     JITGetByIdGenerator gen(
@@ -797,7 +794,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     VirtualRegister base = bytecode.m_base;
     VirtualRegister property = bytecode.m_property;
     auto& metadata = bytecode.metadata(m_codeBlock);
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     emitLoad2(base, regT1, regT0, property, regT3, regT2);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
@@ -820,7 +817,7 @@ void JIT::emitSlow_op_in_by_val(const Instruction* currentInstruction, Vector<Sl
     auto bytecode = currentInstruction->as<OpInByVal>();
     VirtualRegister dst = bytecode.m_dst;
     auto& metadata = bytecode.metadata(m_codeBlock);
-    ArrayProfile* profile = &metadata.m_arrayProfile;
+    ArrayProfile* profile = metadata.m_arrayProfile;
 
     JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
 

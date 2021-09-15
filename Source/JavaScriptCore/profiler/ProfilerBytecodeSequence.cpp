@@ -37,8 +37,7 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
     StringPrintStream out;
     
     for (unsigned i = 0; i < codeBlock->numberOfArgumentValueProfiles(); ++i) {
-        ConcurrentJSLocker locker(codeBlock->m_lock);
-        CString description = codeBlock->valueProfileForArgument(i).briefDescription(locker);
+        CString description = codeBlock->valueProfileForArgument(i).briefDescription();
         if (!description.length())
             continue;
         out.reset();

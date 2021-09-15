@@ -62,12 +62,9 @@ void CodeBlockSet::iterate(const AbstractLocker&, const Functor& functor)
 template<typename Functor>
 void CodeBlockSet::iterateViaSubspaces(VM& vm, const Functor& functor)
 {
-    vm.forEachCodeBlockSpace(
-        [&] (auto& spaceAndSet) {
-            spaceAndSet.space.forEachLiveCell(
-                [&] (HeapCell* cell, HeapCell::Kind) {
-                    functor(jsCast<CodeBlock*>(static_cast<JSCell*>(cell)));
-                });
+    vm.codeBlockSpace.space.forEachLiveCell(
+        [&] (HeapCell* cell, HeapCell::Kind) {
+            functor(jsCast<CodeBlock*>(static_cast<JSCell*>(cell)));
         });
 }
 

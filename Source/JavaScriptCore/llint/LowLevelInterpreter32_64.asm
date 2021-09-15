@@ -67,7 +67,7 @@ macro makeReturnProfiled(opcodeStruct, get, metadata, dispatch, fn)
         move payload, t0
 
         metadata(t5, t2)
-        valueProfile(opcodeStruct, m_profile, t5, t1, t0)
+        valueProfile(opcodeStruct, m_profile, t5, t1, t0, t2)
         get(m_dst, t2)
         storei t1, TagOffset[cfr, t2, 8]
         storei t0, PayloadOffset[cfr, t2, 8]
@@ -85,7 +85,7 @@ macro dispatchAfterCall(size, opcodeStruct, valueProfileName, dstVirtualRegister
     storei r1, TagOffset[cfr, t3, 8]
     storei r0, PayloadOffset[cfr, t3, 8]
     metadata(size, opcodeStruct, t2, t3)
-    valueProfile(opcodeStruct, valueProfileName, t2, r1, r0)
+    valueProfile(opcodeStruct, valueProfileName, t2, r1, r0, t3)
     dispatch()
 
 end
@@ -677,9 +677,10 @@ macro writeBarrierOnGlobalLexicalEnvironment(size, get, valueFieldName)
         end)
 end
 
-macro valueProfile(opcodeStruct, profileName, metadata, tag, payload)
-    storei tag, %opcodeStruct%::Metadata::%profileName%.m_buckets + TagOffset[metadata]
-    storei payload, %opcodeStruct%::Metadata::%profileName%.m_buckets + PayloadOffset[metadata]
+macro valueProfile(opcodeStruct, profileName, metadata, tag, payload, scratch)
+    loadp %opcodeStruct%::Metadata::%profileName%[metadata], scratch
+    storei tag, ValueProfile::m_buckets + TagOffset[scratch]
+    storei payload, ValueProfile::m_buckets + PayloadOffset[scratch]
 end
 
 
@@ -1437,7 +1438,7 @@ llintOpWithMetadata(op_get_by_id_direct, OpGetByIdDirect, macro (size, get, disp
     loadi OpGetByIdDirect::Metadata::m_offset[t5], t2
     bineq JSCell::m_structureID[t3], t1, .opGetByIdDirectSlow
     loadPropertyAtVariableOffset(t2, t3, t0, t1)
-    valueProfile(OpGetByIdDirect, m_profile, t5, t0, t1)
+    valueProfile(OpGetByIdDirect, m_profile, t5, t0, t1, t3)
     return(t0, t1)
 
 .opGetByIdDirectSlow:
@@ -1458,37 +1459,29 @@ macro performGetByIDHelper(opcodeStruct, modeMetadataName, valueProfileName, slo
     bineq t0, t1, slowLabel
     loadis %opcodeStruct%::Metadata::%modeMetadataName%.defaultMode.cachedOffset[t2], t1
     loadPropertyAtVariableOffset(t1, t3, t0, t1)
-    valueProfile(opcodeStruct, valueProfileName, t2, t0, t1)
+    valueProfile(opcodeStruct, valueProfileName, t2, t0, t1, t3)
     return(t0, t1)
 
 .opGetByIdProtoLoad:
-    bbneq t1, constexpr GetByIdMode::ProtoLoad, .opGetByIdArrayLength
+    bbneq t1, constexpr GetByIdMode::ProtoLoad, .opGetByIdUnset
     loadi JSCell::m_structureID[t3], t1
     loadi %opcodeStruct%::Metadata::%modeMetadataName%.protoLoadMode.structureID[t2], t3
     bineq t3, t1, slowLabel
     loadis %opcodeStruct%::Metadata::%modeMetadataName%.protoLoadMode.cachedOffset[t2], t1
     loadp %opcodeStruct%::Metadata::%modeMetadataName%.protoLoadMode.cachedSlot[t2], t3
     loadPropertyAtVariableOffset(t1, t3, t0, t1)
-    valueProfile(opcodeStruct, valueProfileName, t2, t0, t1)
+    valueProfile(opcodeStruct, valueProfileName, t2, t0, t1, t3)
     return(t0, t1)
 
-.opGetByIdArrayLength:
-    bbneq t1, constexpr GetByIdMode::ArrayLength, .opGetByIdUnset
-    move t3, t0
-    arrayProfile(%opcodeStruct%::Metadata::%modeMetadataName%.arrayLengthMode.arrayProfile, t0, t2, t5)
-    btiz t0, IsArray, slowLabel
-    btiz t0, IndexingShapeMask, slowLabel
-    loadp JSObject::m_butterfly[t3], t0
-    loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
-    bilt t0, 0, slowLabel
-    valueProfile(opcodeStruct, valueProfileName, t2, Int32Tag, t0)
-    return(Int32Tag, t0)
+# It can't be array length since we don't use this for arbitrary get_by_id's that could
+# access "length". We only use it for iterator opcodes which aren't using "length" as an
+# identifier.
     
 .opGetByIdUnset:
     loadi JSCell::m_structureID[t3], t1
     loadi %opcodeStruct%::Metadata::%modeMetadataName%.unsetMode.structureID[t2], t0
     bineq t0, t1, slowLabel
-    valueProfile(opcodeStruct, valueProfileName, t2, UndefinedTag, 0)
+    valueProfile(opcodeStruct, valueProfileName, t2, UndefinedTag, 0, t3)
     return(UndefinedTag, 0)
 
 end
@@ -1506,20 +1499,20 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     bineq JSCell::m_structureID[t3], t1, .opGetByIdSlow
     loadp OpGetById::Metadata::m_modeMetadata.protoLoadMode.cachedSlot[t5], t3
     loadPropertyAtVariableOffset(t2, t3, t0, t1)
-    valueProfile(OpGetById, m_profile, t5, t0, t1)
+    valueProfile(OpGetById, m_profile, t5, t0, t1, t3)
     return(t0, t1)
 
 .opGetByIdArrayLength:
     bbneq t1, constexpr GetByIdMode::ArrayLength, .opGetByIdUnset
     loadConstantOrVariablePayload(size, t0, CellTag, t3, .opGetByIdSlow)
     move t3, t2
-    arrayProfile(OpGetById::Metadata::m_modeMetadata.arrayLengthMode.arrayProfile, t2, t5, t0)
+    arrayProfile(OpGetById::Metadata::m_arrayProfile, t2, t5, t0, t1)
     btiz t2, IsArray, .opGetByIdSlow
     btiz t2, IndexingShapeMask, .opGetByIdSlow
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetByIdSlow
-    valueProfile(OpGetById, m_profile, t5, Int32Tag, t0)
+    valueProfile(OpGetById, m_profile, t5, Int32Tag, t0, t3)
     return(Int32Tag, t0)
 
 .opGetByIdUnset:
@@ -1527,7 +1520,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     loadi OpGetById::Metadata::m_modeMetadata.unsetMode.structureID[t5], t1
     loadConstantOrVariablePayload(size, t0, CellTag, t3, .opGetByIdSlow)
     bineq JSCell::m_structureID[t3], t1, .opGetByIdSlow
-    valueProfile(OpGetById, m_profile, t5, UndefinedTag, 0)
+    valueProfile(OpGetById, m_profile, t5, UndefinedTag, 0, t3)
     return(UndefinedTag, 0)
 
 .opGetByIdDefault:
@@ -1536,7 +1529,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     loadis OpGetById::Metadata::m_modeMetadata.defaultMode.cachedOffset[t5], t2
     bineq JSCell::m_structureID[t3], t1, .opGetByIdSlow
     loadPropertyAtVariableOffset(t2, t3, t0, t1)
-    valueProfile(OpGetById, m_profile, t5, t0, t1)
+    valueProfile(OpGetById, m_profile, t5, t0, t1, t3)
     return(t0, t1)
 
 .opGetByIdSlow:
@@ -1546,7 +1539,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
 .osrReturnPoint:
     getterSetterOSRExitReturnPoint(op_get_by_id, size)
     metadata(t2, t3)
-    valueProfile(OpGetById, m_profile, t2, r1, r0)
+    valueProfile(OpGetById, m_profile, t2, r1, r0, t3)
     return(r1, r0)
 
 end)
@@ -1624,7 +1617,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
         get(m_dst, scratch)
         storei Int32Tag, TagOffset[cfr, scratch, 8]
         storei resultPayload, PayloadOffset[cfr, scratch, 8]
-        valueProfile(OpGetByVal, m_profile, t5, Int32Tag, resultPayload)
+        valueProfile(OpGetByVal, m_profile, t5, Int32Tag, resultPayload, scratch)
         dispatch()
     end
 
@@ -1633,7 +1626,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
         fd2ii result, scratch2, scratch3
         storei scratch3, TagOffset[cfr, scratch1, 8]
         storei scratch2, PayloadOffset[cfr, scratch1, 8]
-        valueProfile(OpGetByVal, m_profile, t5, scratch3, scratch2)
+        valueProfile(OpGetByVal, m_profile, t5, scratch3, scratch2, scratch1)
         dispatch()
     end
 
@@ -1641,7 +1634,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     get(m_base, t2)
     loadConstantOrVariablePayload(size, t2, CellTag, t0, .opGetByValSlow)
     move t0, t2
-    arrayProfile(OpGetByVal::Metadata::m_arrayProfile, t2, t5, t1)
+    arrayProfile(OpGetByVal::Metadata::m_arrayProfile, t2, t5, t1, t3)
     get(m_property, t3)
     loadConstantOrVariablePayload(size, t3, Int32Tag, t1, .opGetByValSlow)
     loadp JSObject::m_butterfly[t0], t3
@@ -1678,7 +1671,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 .opGetByValNotEmpty:
     storei t2, TagOffset[cfr, t0, 8]
     storei t1, PayloadOffset[cfr, t0, 8]
-    valueProfile(OpGetByVal, m_profile, t5, t2, t1)
+    valueProfile(OpGetByVal, m_profile, t5, t2, t1, t3)
     dispatch()
 
 .opGetByValNotIndexedStorage:
@@ -1691,7 +1684,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 .osrReturnPoint:
     getterSetterOSRExitReturnPoint(op_get_by_val, size)
     metadata(t2, t3)
-    valueProfile(OpGetByVal, m_profile, t2, r1, r0)
+    valueProfile(OpGetByVal, m_profile, t2, r1, r0, t3)
     return(r1, r0)
 
 end)
@@ -1712,7 +1705,7 @@ llintOpWithMetadata(op_get_private_name, OpGetPrivateName, macro (size, get, dis
     bineq JSCell::m_structureID[t3], t1, .opGetPrivateNameSlow
 
     loadPropertyAtVariableOffset(t2, t3, t0, t1)
-    valueProfile(OpGetPrivateName, m_profile, t5, t0, t1)
+    valueProfile(OpGetPrivateName, m_profile, t5, t0, t1, t3)
     return(t0, t1)
 
 .opGetPrivateNameSlow:
@@ -1774,7 +1767,8 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
 
         .outOfBounds:
             biaeq t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t0], .opPutByValOutOfBounds
-            storeb 1, %opcodeStruct%::Metadata::m_arrayProfile.m_mayStoreToHole[t5]
+            loadp %opcodeStruct%::Metadata::m_arrayProfile[t5], t2
+            storeb 1, ArrayProfile::m_mayStoreToHole[t2]
             addi 1, t3, t2
             storei t2, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0]
             jmp .storeResult
@@ -1785,7 +1779,7 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         get(m_base, t0)
         loadConstantOrVariablePayload(size, t0, CellTag, t1, .opPutByValSlow)
         move t1, t2
-        arrayProfile(%opcodeStruct%::Metadata::m_arrayProfile, t2, t5, t0)
+        arrayProfile(%opcodeStruct%::Metadata::m_arrayProfile, t2, t5, t0, t3)
         get(m_property, t0)
         loadConstantOrVariablePayload(size, t0, Int32Tag, t3, .opPutByValSlow)
         loadp JSObject::m_butterfly[t1], t0
@@ -1839,7 +1833,8 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         dispatch()
 
     .opPutByValArrayStorageEmpty:
-        storeb 1, %opcodeStruct%::Metadata::m_arrayProfile.m_mayStoreToHole[t5]
+        loadp %opcodeStruct%::Metadata::m_arrayProfile[t5], t1
+        storeb 1, ArrayProfile::m_mayStoreToHole[t1]
         addi 1, ArrayStorage::m_numValuesInVector[t0]
         bib t3, -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], .opPutByValArrayStorageStoreResult
         addi 1, t3, t1
@@ -1847,7 +1842,8 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         jmp .opPutByValArrayStorageStoreResult
 
     .opPutByValOutOfBounds:
-        storeb 1, %opcodeStruct%::Metadata::m_arrayProfile.m_outOfBounds[t5]
+        loadp %opcodeStruct%::Metadata::m_arrayProfile[t5], t1
+        storeb 1, ArrayProfile::m_outOfBounds[t1]
     .opPutByValSlow:
         callSlowPath(_llint_slow_path_%opcodeName%)
         dispatch()
@@ -2515,7 +2511,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
     macro getProperty()
         loadp OpGetFromScope::Metadata::m_operand[t5], t3
         loadPropertyAtVariableOffset(t3, t0, t1, t2)
-        valueProfile(OpGetFromScope, m_profile, t5, t1, t2)
+        valueProfile(OpGetFromScope, m_profile, t5, t1, t2, t3)
         return(t1, t2)
     end
 
@@ -2524,7 +2520,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
         loadp TagOffset[t0], t1
         loadp PayloadOffset[t0], t2
         tdzCheckIfNecessary(t1)
-        valueProfile(OpGetFromScope, m_profile, t5, t1, t2)
+        valueProfile(OpGetFromScope, m_profile, t5, t1, t2, t3)
         return(t1, t2)
     end
 
@@ -2532,7 +2528,7 @@ llintOpWithMetadata(op_get_from_scope, OpGetFromScope, macro (size, get, dispatc
         loadp OpGetFromScope::Metadata::m_operand[t5], t3
         loadp JSLexicalEnvironment_variables + TagOffset[t0, t3, 8], t1
         loadp JSLexicalEnvironment_variables + PayloadOffset[t0, t3, 8], t2
-        valueProfile(OpGetFromScope, m_profile, t5, t1, t2)
+        valueProfile(OpGetFromScope, m_profile, t5, t1, t2, t3)
         return(t1, t2)
     end
 

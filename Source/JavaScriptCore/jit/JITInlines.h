@@ -312,7 +312,7 @@ inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile, JSValueRegs 
 }
 
 template<typename Op>
-inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
+inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile*>::value, void> JIT::emitValueProfilingSiteIfProfiledOpcode(Op bytecode)
 {
 #if USE(JSVALUE64)
     emitValueProfilingSite(bytecode.metadata(m_codeBlock), regT0);
