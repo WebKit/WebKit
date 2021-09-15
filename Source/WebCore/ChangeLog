@@ -1,3 +1,79 @@
+2021-09-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement the borderBoxSize/contentBoxSize parts of ResizeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=230242
+
+        Reviewed by Sam Weinig.
+
+        The Resize Observer spec has been updated to allow authors to observe
+        "content-box", "border-box" and "device-pixel-content-box". Add support
+        for the first two, adding ResizeObserverSize, ResizeObserverBoxOptions and
+        ResizeObserverOptions per spec.
+
+        ResizeObserverEntry also contains borderBoxSize and contentBoxSize now,
+        so support that.
+
+        Add some helpers to make it easier to get box logical sizes.
+
+        "device-pixel-content-box" is not yet supported because it's expensive to compute[2].
+
+        [1] https://drafts.csswg.org/resize-observer
+        [2] https://github.com/w3c/csswg-drafts/issues/6608
+
+        Tested by WPT.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/ResizeObservation.cpp:
+        (WebCore::ResizeObservation::create):
+        (WebCore::ResizeObservation::ResizeObservation):
+        (WebCore::ResizeObservation::updateObservationSize):
+        (WebCore::ResizeObservation::computeObservedSizes const):
+        (WebCore::ResizeObservation::computeContentRect const):
+        (WebCore::ResizeObservation::borderBoxSize const):
+        (WebCore::ResizeObservation::contentBoxSize const):
+        (WebCore::ResizeObservation::snappedContentBoxSize const):
+        (WebCore::ResizeObservation::elementSizeChanged const):
+        (WebCore::ResizeObservation::~ResizeObservation): Deleted.
+        (WebCore::ResizeObservation::computeObservedSize const): Deleted.
+        * page/ResizeObservation.h:
+        (WebCore::ResizeObservation::observedBox const):
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::observe):
+        (WebCore::ResizeObserver::gatherObservations):
+        (WebCore::ResizeObserver::deliverObservations):
+        * page/ResizeObserver.h:
+        * page/ResizeObserver.idl:
+        * page/ResizeObserverBoxOptions.h: Added.
+        * page/ResizeObserverBoxOptions.idl: Copied from Source/WebCore/page/ResizeObserverEntry.idl.
+        * page/ResizeObserverEntry.h:
+        (WebCore::ResizeObserverEntry::create):
+        (WebCore::ResizeObserverEntry::contentRect const):
+        (WebCore::ResizeObserverEntry::borderBoxSize const):
+        (WebCore::ResizeObserverEntry::contentBoxSize const):
+        (WebCore::ResizeObserverEntry::ResizeObserverEntry):
+        (WebCore::ResizeObserverEntry::m_contentBoxSizes):
+        * page/ResizeObserverEntry.idl:
+        * page/ResizeObserverOptions.h: Added.
+        * page/ResizeObserverOptions.idl: Copied from Source/WebCore/page/ResizeObserverEntry.idl.
+        * page/ResizeObserverSize.h: Added.
+        (WebCore::ResizeObserverSize::create):
+        (WebCore::ResizeObserverSize::inlineSize const):
+        (WebCore::ResizeObserverSize::blockSize const):
+        (WebCore::ResizeObserverSize::ResizeObserverSize):
+        * page/ResizeObserverSize.idl: Copied from Source/WebCore/page/ResizeObserverEntry.idl.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::logicalSize const):
+        (WebCore::RenderBox::borderBoxLogicalSize const):
+        (WebCore::RenderBox::contentLogicalSize const):
+        * rendering/RenderElement.h:
+        (WebCore::adjustLayoutSizeForAbsoluteZoom):
+        * rendering/style/RenderStyle.h:
+        (WebCore::adjustLayoutSizeForAbsoluteZoom):
+
 2021-09-14  Rob Buis  <rbuis@igalia.com>
 
         Fix button-min-width.html

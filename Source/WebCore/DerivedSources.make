@@ -1038,8 +1038,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/PerformanceTiming.idl \
     $(WebCore)/page/RemoteDOMWindow.idl \
     $(WebCore)/page/ResizeObserver.idl \
+    $(WebCore)/page/ResizeObserverBoxOptions.idl \
     $(WebCore)/page/ResizeObserverCallback.idl \
     $(WebCore)/page/ResizeObserverEntry.idl \
+    $(WebCore)/page/ResizeObserverOptions.idl \
+    $(WebCore)/page/ResizeObserverSize.idl \
     $(WebCore)/page/Screen.idl \
     $(WebCore)/page/ScrollBehavior.idl \
     $(WebCore)/page/ScrollIntoViewOptions.idl \

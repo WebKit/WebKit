@@ -1191,8 +1191,11 @@ $(PROJECT_DIR)/page/PerformanceTiming.idl
 $(PROJECT_DIR)/page/PostMessageOptions.idl
 $(PROJECT_DIR)/page/RemoteDOMWindow.idl
 $(PROJECT_DIR)/page/ResizeObserver.idl
+$(PROJECT_DIR)/page/ResizeObserverBoxOptions.idl
 $(PROJECT_DIR)/page/ResizeObserverCallback.idl
 $(PROJECT_DIR)/page/ResizeObserverEntry.idl
+$(PROJECT_DIR)/page/ResizeObserverOptions.idl
+$(PROJECT_DIR)/page/ResizeObserverSize.idl
 $(PROJECT_DIR)/page/Screen.idl
 $(PROJECT_DIR)/page/ScrollBehavior.idl
 $(PROJECT_DIR)/page/ScrollIntoViewOptions.idl

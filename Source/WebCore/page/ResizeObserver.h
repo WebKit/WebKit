@@ -44,6 +44,7 @@ namespace WebCore {
 
 class Document;
 class Element;
+struct ResizeObserverOptions;
 
 struct ResizeObserverData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -58,7 +59,7 @@ public:
     bool hasObservations() const { return m_observations.size(); }
     bool hasActiveObservations() const { return m_activeObservations.size(); }
 
-    void observe(Element&);
+    void observe(Element&, const ResizeObserverOptions&);
     void unobserve(Element&);
     void disconnect();
     void targetDestroyed(Element&);

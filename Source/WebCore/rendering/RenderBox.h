@@ -138,6 +138,7 @@ public:
     LayoutPoint location() const { return m_frameRect.location(); }
     LayoutSize locationOffset() const { return LayoutSize(x(), y()); }
     LayoutSize size() const { return m_frameRect.size(); }
+    LayoutSize logicalSize() const { return style().isHorizontalWritingMode() ? m_frameRect.size() : m_frameRect.size().transposedSize(); }
 
     void setLocation(const LayoutPoint& location) { m_frameRect.setLocation(location); }
     
@@ -157,6 +158,7 @@ public:
     }
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
     LayoutRect borderBoundingBox() const final { return borderBoxRect(); }
+    LayoutSize borderBoxLogicalSize() const { return logicalSize(); }
 
     WEBCORE_EXPORT RoundedRect::Radii borderRadii() const;
     RoundedRect roundedBorderBoxRect() const;
@@ -221,6 +223,7 @@ public:
     LayoutSize contentSize() const { return { contentWidth(), contentHeight() }; }
     LayoutUnit contentWidth() const { return std::max(0_lu, paddingBoxWidth() - paddingLeft() - paddingRight()); }
     LayoutUnit contentHeight() const { return std::max(0_lu, paddingBoxHeight() - paddingTop() - paddingBottom()); }
+    LayoutSize contentLogicalSize() const { return style().isHorizontalWritingMode() ? contentSize() : contentSize().transposedSize(); }
     LayoutUnit contentLogicalWidth() const { return style().isHorizontalWritingMode() ? contentWidth() : contentHeight(); }
     LayoutUnit contentLogicalHeight() const { return style().isHorizontalWritingMode() ? contentHeight() : contentWidth(); }
 

@@ -3403,8 +3403,11 @@ JSRemotePlayback.cpp
 JSRemotePlaybackAvailabilityCallback.cpp
 JSRequestAnimationFrameCallback.cpp
 JSResizeObserver.cpp
+JSResizeObserverBoxOptions.cpp
 JSResizeObserverCallback.cpp
 JSResizeObserverEntry.cpp
+JSResizeObserverOptions.cpp
+JSResizeObserverSize.cpp
 JSRsaHashedImportParams.cpp
 JSRsaHashedKeyGenParams.cpp
 JSRsaKeyGenParams.cpp

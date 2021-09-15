@@ -531,6 +531,11 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
 }
 
+inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderElement& renderer)
+{
+    return adjustLayoutSizeForAbsoluteZoom(size, renderer.style());
+}
+
 inline RenderObject* RenderElement::firstInFlowChild() const
 {
     if (auto* firstChild = this->firstChild()) {

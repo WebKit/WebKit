@@ -2005,6 +2005,7 @@ private:
 int adjustForAbsoluteZoom(int, const RenderStyle&);
 float adjustFloatForAbsoluteZoom(float, const RenderStyle&);
 LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit, const RenderStyle&);
+LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize, const RenderStyle&);
 
 BorderStyle collapsedBorderStyle(BorderStyle);
 
@@ -2125,6 +2126,15 @@ inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle& style)
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderStyle& style)
 {
     return LayoutUnit(value / style.effectiveZoom());
+}
+
+inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderStyle& style)
+{
+    auto zoom = style.effectiveZoom();
+    return {
+        size.width() / zoom,
+        size.height() / zoom
+    };
 }
 
 inline BorderStyle collapsedBorderStyle(BorderStyle style)

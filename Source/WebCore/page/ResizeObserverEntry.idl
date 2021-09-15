@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://wicg.github.io/ResizeObserver/
-
+// https://drafts.csswg.org/resize-observer/#resize-observer-entry-interface
 [
     Conditional=RESIZE_OBSERVER,
     ImplementationLacksVTable,
@@ -34,4 +33,6 @@
 ] interface ResizeObserverEntry {
     readonly attribute Element target;
     readonly attribute DOMRectReadOnly contentRect;
+    readonly attribute FrozenArray<ResizeObserverSize> borderBoxSize;
+    readonly attribute FrozenArray<ResizeObserverSize> contentBoxSize;
 };
