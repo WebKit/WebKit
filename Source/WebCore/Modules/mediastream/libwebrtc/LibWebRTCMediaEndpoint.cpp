@@ -127,21 +127,18 @@ bool LibWebRTCMediaEndpoint::isNegotiationNeeded(uint32_t eventId) const
     return m_backend ? m_backend->ShouldFireNegotiationNeededEvent(eventId) : false;
 }
 
-static inline const char* sessionDescriptionType(RTCSdpType sdpType)
+static inline webrtc::SdpType sessionDescriptionType(RTCSdpType sdpType)
 {
     switch (sdpType) {
     case RTCSdpType::Offer:
-        return "offer";
+        return webrtc::SdpType::kOffer;
     case RTCSdpType::Pranswer:
-        return "pranswer";
+        return webrtc::SdpType::kPrAnswer;
     case RTCSdpType::Answer:
-        return "answer";
+        return webrtc::SdpType::kAnswer;
     case RTCSdpType::Rollback:
-        return "rollback";
+        return webrtc::SdpType::kRollback;
     }
-
-    ASSERT_NOT_REACHED();
-    return "";
 }
 
 void LibWebRTCMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* description)
@@ -154,7 +151,7 @@ void LibWebRTCMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
     }
 
     webrtc::SdpParseError error;
-    std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription(webrtc::CreateSessionDescription(sessionDescriptionType(description->type()), description->sdp().utf8().data(), &error));
+    auto sessionDescription = webrtc::CreateSessionDescription(sessionDescriptionType(description->type()), description->sdp().utf8().data(), &error);
 
     if (!sessionDescription) {
         m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, fromStdString(error.description) });
@@ -167,7 +164,7 @@ void LibWebRTCMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
         return;
     }
 
-    m_backend->SetLocalDescription(&m_setLocalSessionDescriptionObserver, sessionDescription.release());
+    m_backend->SetLocalDescription(WTFMove(sessionDescription), &m_setLocalSessionDescriptionObserver);
 }
 
 void LibWebRTCMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription& description)
@@ -175,12 +172,13 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
     ASSERT(m_backend);
 
     webrtc::SdpParseError error;
-    std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription(webrtc::CreateSessionDescription(sessionDescriptionType(description.type()), description.sdp().utf8().data(), &error));
+    auto sessionDescription = webrtc::CreateSessionDescription(sessionDescriptionType(description.type()), description.sdp().utf8().data(), &error);
     if (!sessionDescription) {
         m_peerConnectionBackend.setRemoteDescriptionFailed(Exception { SyntaxError, fromStdString(error.description) });
         return;
     }
-    m_backend->SetRemoteDescription(&m_setRemoteSessionDescriptionObserver, sessionDescription.release());
+
+    m_backend->SetRemoteDescription(WTFMove(sessionDescription), &m_setRemoteSessionDescriptionObserver);
 
     startLoggingStats();
 }
@@ -538,6 +536,8 @@ void LibWebRTCMediaEndpoint::OnIceGatheringChange(webrtc::PeerConnectionInterfac
             protectedThis->m_peerConnectionBackend.doneGatheringCandidates();
         else if (state == webrtc::PeerConnectionInterface::kIceGatheringGathering)
             protectedThis->m_peerConnectionBackend.connection().updateIceGatheringState(RTCIceGatheringState::Gathering);
+        else if (state == webrtc::PeerConnectionInterface::kIceGatheringNew)
+            protectedThis->m_peerConnectionBackend.connection().updateIceGatheringState(RTCIceGatheringState::New);
     });
 }
 

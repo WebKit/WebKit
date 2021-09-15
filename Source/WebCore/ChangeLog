@@ -1,3 +1,31 @@
+2021-09-15  Youenn Fablet  <youenn@apple.com>
+
+        Migrate to libwebrtc non-racy setRemoteDescription/setLocalDescription variants
+        https://bugs.webkit.org/show_bug.cgi?id=230262
+
+        Reviewed by Darin Adler.
+
+        We were using the old versions of libwebrtc SetLocalDescription/SetRemoteDescription.
+        As per the header file, these versions are potentially racy.
+        This patch migrates to new versions of the same API which in addition take more modern parameters instead of raw pointers.
+        We also modernize a bit the code by using methods manipulating unique_ptr instead of raw pointers.
+        Drive-by fix: Add support for getting back to new for ICE gathering state. This was missing and without it,
+        imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-explicit-rollback-iceGatheringState.html would time out.
+        Update mock to implement the new method versions.
+
+        Covered by existing tests.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::sessionDescriptionType):
+        (WebCore::LibWebRTCMediaEndpoint::doSetLocalDescription):
+        (WebCore::LibWebRTCMediaEndpoint::doSetRemoteDescription):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceGatheringChange):
+        * Modules/mediastream/libwebrtc/LibWebRTCObservers.h:
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::MockLibWebRTCPeerConnection::SetLocalDescription):
+        (WebCore::MockLibWebRTCPeerConnection::SetRemoteDescription):
+        * testing/MockLibWebRTCPeerConnection.h:
+
 2021-09-15  Said Abou-Hallawa  <said@apple.com>
 
         Linear gradient sometimes is drawn incorrectly and sometimes hangs

@@ -205,9 +205,8 @@ public:
     virtual ~MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription() = default;
 
 private:
-    void SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription) final
+    void SetLocalDescription(std::unique_ptr<webrtc::SessionDescriptionInterface>, rtc::scoped_refptr<webrtc::SetLocalDescriptionObserverInterface> observer) final
     {
-        std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
         releaseInNetworkThread(*this, *observer);
     }
 };
@@ -260,7 +259,7 @@ rtc::scoped_refptr<webrtc::MediaStreamInterface> MockLibWebRTCPeerConnectionFact
     return new rtc::RefCountedObject<webrtc::MediaStream>(label);
 }
 
-void MockLibWebRTCPeerConnection::SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription)
+void MockLibWebRTCPeerConnection::SetLocalDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription, rtc::scoped_refptr<webrtc::SetLocalDescriptionObserverInterface> observer)
 {
     bool isCorrectState = true;
     switch (m_signalingState) {
@@ -282,19 +281,18 @@ void MockLibWebRTCPeerConnection::SetLocalDescription(webrtc::SetSessionDescript
     }
     if (!isCorrectState) {
         LibWebRTCProvider::callOnWebRTCSignalingThread([observer] {
-            observer->OnFailure(webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE));
+            observer->OnSetLocalDescriptionComplete(webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE));
         });
         return;
     }
 
-    std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
     LibWebRTCProvider::callOnWebRTCSignalingThread([this, observer] {
-        observer->OnSuccess();
+        observer->OnSetLocalDescriptionComplete(webrtc::RTCError::OK());
         gotLocalDescription();
     });
 }
 
-void MockLibWebRTCPeerConnection::SetRemoteDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface* sessionDescription)
+void MockLibWebRTCPeerConnection::SetRemoteDescription(std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription, rtc::scoped_refptr<webrtc::SetRemoteDescriptionObserverInterface> observer)
 {
     bool isCorrectState = true;
     switch (m_signalingState) {
@@ -316,14 +314,13 @@ void MockLibWebRTCPeerConnection::SetRemoteDescription(webrtc::SetSessionDescrip
     }
     if (!isCorrectState) {
         LibWebRTCProvider::callOnWebRTCSignalingThread([observer] {
-            observer->OnFailure(webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE));
+            observer->OnSetRemoteDescriptionComplete(webrtc::RTCError(webrtc::RTCErrorType::INVALID_STATE));
         });
         return;
     }
 
-    std::unique_ptr<webrtc::SessionDescriptionInterface> toBeFreed(sessionDescription);
     LibWebRTCProvider::callOnWebRTCSignalingThread([observer] {
-        observer->OnSuccess();
+        observer->OnSetRemoteDescriptionComplete(webrtc::RTCError::OK());
     });
     ASSERT(sessionDescription);
     if (sessionDescription->type() == "offer") {

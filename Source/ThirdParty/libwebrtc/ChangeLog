@@ -1,3 +1,14 @@
+2021-09-15  Youenn Fablet  <youenn@apple.com>
+
+        Migrate to libwebrtc non-racy setRemoteDescription/setLocalDescription variants
+        https://bugs.webkit.org/show_bug.cgi?id=230262
+
+        Reviewed by Darin Adler.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2021-09-09  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCSctpTransport
