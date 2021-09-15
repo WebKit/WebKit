@@ -4962,6 +4962,7 @@ imported/w3c/web-platform-tests/worklets/animation-worklet-csp.https.html [ Skip
 imported/w3c/web-platform-tests/worklets/animation-worklet-referrer.https.html [ Skip ]
 imported/w3c/web-platform-tests/worklets/layout-worklet-referrer.https.html [ Skip ]
 imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-interception.https.html [ Skip ]
+imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Skip ]
 
 # These tests are all flaky
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-fetch-error-external-classic.html [ Pass Failure ]

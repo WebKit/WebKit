@@ -1,5 +1,11 @@
 2021-09-15  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, skip a layout worklet test as it is not supported.
+
+        * TestExpectations:
+
+2021-09-15  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip a couple of SharedWorker tests.
 
         These tests are flaky and we do not support SharedWorkers at the moment.
