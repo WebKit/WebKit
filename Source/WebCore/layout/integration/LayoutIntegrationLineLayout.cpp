@@ -547,7 +547,7 @@ void LineLayout::releaseCaches()
         m_inlineContent->releaseCaches();
 }
 
-void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const Line& line, const Run& run)
+void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const Line& line, const Layout::Run& run)
 {
     auto& style = run.style();
     if (run.style().visibility() != Visibility::Visible)

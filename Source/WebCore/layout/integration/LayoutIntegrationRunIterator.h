@@ -202,7 +202,7 @@ TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunIterator textRunFor(const LegacyInlineTextBox*);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-TextRunIterator textRunFor(const InlineContent&, const Run&);
+TextRunIterator textRunFor(const InlineContent&, const Layout::Run&);
 TextRunIterator textRunFor(const InlineContent&, size_t runIndex);
 #endif
 TextRunRange textRunsFor(const RenderText&);

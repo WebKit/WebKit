@@ -196,7 +196,7 @@ TextRunIterator textRunFor(const LegacyInlineTextBox* legacyInlineTextBox)
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-TextRunIterator textRunFor(const InlineContent& content, const Run& run)
+TextRunIterator textRunFor(const InlineContent& content, const Layout::Run& run)
 {
     return textRunFor(content, content.indexForRun(run));
 }

@@ -47,13 +47,11 @@ namespace LayoutIntegration {
 
 class LineLayout;
 
-using Run = Layout::Run;
-
 struct InlineContent : public RefCounted<InlineContent> {
     static Ref<InlineContent> create(const LineLayout& lineLayout) { return adoptRef(*new InlineContent(lineLayout)); }
     ~InlineContent();
 
-    using Runs = Vector<Run>;
+    using Runs = Vector<Layout::Run>;
     using Lines = Vector<Line>;
 
     Runs runs;
@@ -63,17 +61,17 @@ struct InlineContent : public RefCounted<InlineContent> {
 
     bool hasContent() const;
     
-    const Line& lineForRun(const Run& run) const { return lines[run.lineIndex()]; }
-    WTF::IteratorRange<const Run*> runsForRect(const LayoutRect&) const;
+    const Line& lineForRun(const Layout::Run& run) const { return lines[run.lineIndex()]; }
+    WTF::IteratorRange<const Layout::Run*> runsForRect(const LayoutRect&) const;
     void shrinkToFit();
 
     const LineLayout& lineLayout() const;
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& containingBlock() const;
 
-    size_t indexForRun(const Run&) const;
+    size_t indexForRun(const Layout::Run&) const;
 
-    const Run* firstRunForLayoutBox(const Layout::Box&) const;
+    const Layout::Run* firstRunForLayoutBox(const Layout::Box&) const;
     template<typename Function> void traverseNonRootInlineBoxes(const Layout::Box&, Function&&);
 
     std::optional<size_t> firstRunIndexForLayoutBox(const Layout::Box&) const;

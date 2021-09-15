@@ -140,9 +140,9 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
         };
     };
 
-    auto adjustedRun = [&](const Run& run, float offset)
+    auto adjustedRun = [&](const Layout::Run& run, float offset)
     {
-        return Run {
+        return Layout::Run {
             run.lineIndex(),
             run.type(),
             run.layoutBox(),

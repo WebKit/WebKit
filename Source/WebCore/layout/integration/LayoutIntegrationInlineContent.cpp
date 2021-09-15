@@ -47,7 +47,7 @@ bool InlineContent::hasContent() const
     return runs.size() > 1;
 };
 
-WTF::IteratorRange<const Run*> InlineContent::runsForRect(const LayoutRect&) const
+WTF::IteratorRange<const Layout::Run*> InlineContent::runsForRect(const LayoutRect&) const
 {
     // FIXME: Do something efficient e.g. using line boxes.
     if (runs.isEmpty())
@@ -78,14 +78,14 @@ const RenderBlockFlow& InlineContent::containingBlock() const
     return m_lineLayout->flow();
 }
 
-size_t InlineContent::indexForRun(const Run& run) const
+size_t InlineContent::indexForRun(const Layout::Run& run) const
 {
     auto index = static_cast<size_t>(&run - runs.begin());
     RELEASE_ASSERT(index < runs.size());
     return index;
 }
 
-const Run* InlineContent::firstRunForLayoutBox(const Layout::Box& layoutBox) const
+const Layout::Run* InlineContent::firstRunForLayoutBox(const Layout::Box& layoutBox) const
 {
     auto index = firstRunIndexForLayoutBox(layoutBox);
     return index ? &runs[*index] : nullptr;

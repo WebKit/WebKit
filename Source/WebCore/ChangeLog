@@ -1,3 +1,31 @@
+2021-09-15  Antti Koivisto  <antti@apple.com>
+
+        [Layout][Integration] Remove unnecessary Run typedef
+        https://bugs.webkit.org/show_bug.cgi?id=230303
+
+        Reviewed by Alan Bujtas.
+
+        Use Layout::Run directly instead of LayoutIntegration::Run.
+
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration:: const):
+        (WebCore::LayoutIntegration::InlineContent::indexForRun const):
+        (WebCore::LayoutIntegration::InlineContent::firstRunForLayoutBox const):
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        (WebCore::LayoutIntegration::InlineContent::lineForRun const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paintTextRunUsingPhysicalCoordinates):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::textRunFor):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::run const):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::clearGlyphDisplayLists):
+
 2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         AX: Remove AXCoreObject::containsText

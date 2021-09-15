@@ -247,7 +247,7 @@ private:
     void setAtEnd() { m_runIndex = runs().size(); }
 
     const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
-    const Run& run() const { return runs()[m_runIndex]; }
+    const Layout::Run& run() const { return runs()[m_runIndex]; }
     const Line& line() const { return m_inlineContent->lineForRun(run()); }
 
     RefPtr<const InlineContent> m_inlineContent;
