@@ -1,3 +1,17 @@
+2021-09-15  Martin Robinson  <mrobinson@webkit.org>
+
+        offsetLeft on display:inline element in vertical-rl parent can return a negative number
+        https://bugs.webkit.org/show_bug.cgi?id=230217
+
+        Reviewed by Darin Adler.
+
+        No new tests. This is covered by imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-inline.html.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::firstInlineBoxTopLeft const): When calculating offsetLeft and offsetTop instead
+        of using topLeft unconditionally, use LegacyInlineBox::locationIncludingFlipping which takes into
+        account writing mode.
+
 2021-09-15  Youenn Fablet  <youenn@apple.com>
 
         Use event queue to fire RTCPeerConnection events

@@ -3348,8 +3348,6 @@ fast/dom/linkify-phone-numbers.html [ ImageOnlyFailure ]
 
 webkit.org/b/199039 editing/deleting/smart-delete-paragraph-003.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/cssom-view/offsetTopLeft-inline.html [ ImageOnlyFailure ]
-
 # Test is failing and is printing different values when it fails.
 fast/mediastream/captureStream/canvas2d.html [ Failure Pass ]
 

@@ -7,5 +7,5 @@ ref
 
 PASS offsetTop/Left of empty inline elements should work as if they were not empty: 0
 FAIL offsetTop/Left of empty inline elements should work as if they were not empty: 1 assert_equals: offsetLeft expected 34 but got 0
-FAIL offsetTop/Left of empty inline elements should work as if they were not empty: 2 assert_equals: offsetLeft expected 34 but got 0
+FAIL offsetTop/Left of empty inline elements should work as if they were not empty: 2 assert_equals: offsetLeft expected 108 but got 0
 

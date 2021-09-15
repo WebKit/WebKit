@@ -344,7 +344,7 @@ LayoutPoint RenderInline::firstInlineBoxTopLeft() const
         return lineLayout->firstInlineBoxRect(*this).location();
 #endif
     if (LegacyInlineBox* firstBox = firstLineBox())
-        return flooredLayoutPoint(firstBox->topLeft());
+        return flooredLayoutPoint(firstBox->locationIncludingFlipping());
     return { };
 }
 
