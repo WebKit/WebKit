@@ -71,7 +71,7 @@ private:
     AXIsolatedObject(AXCoreObject&, AXIsolatedTree*, AXID parentID);
     bool isAXIsolatedObjectInstance() const override { return true; }
     void initializeAttributeData(AXCoreObject&, bool isRoot);
-    void initializePlatformProperties(const AXCoreObject&);
+    void initializePlatformProperties(const AXCoreObject&, bool isRoot);
     AXCoreObject* associatedAXObject() const;
 
     void setProperty(AXPropertyName, AXPropertyValueVariant&&, bool shouldRemove = false);
@@ -100,7 +100,13 @@ private:
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);
     void insertMathPairs(Vector<std::pair<AXID, AXID>>&, AccessibilityMathMultiscriptPairs&);
-    template<typename U> void performFunctionOnMainThread(U&&) const;
+    template<typename U> void performFunctionOnMainThread(U&& lambda) const
+    {
+        Accessibility::performFunctionOnMainThread([&lambda, this]() {
+            if (auto* object = associatedAXObject())
+                lambda(object);
+        });
+    }
 
     // Attribute retrieval overrides.
     bool isHeading() const override { return boolAttributeValue(AXPropertyName::IsHeading); }
@@ -320,11 +326,13 @@ private:
     bool isAnonymousMathOperator() const override { return boolAttributeValue(AXPropertyName::IsAnonymousMathOperator); }
     void mathPrescripts(AccessibilityMathMultiscriptPairs&) override;
     void mathPostscripts(AccessibilityMathMultiscriptPairs&) override;
+#if PLATFORM(COCOA)
     bool fileUploadButtonReturnsValueInTitle() const override { return boolAttributeValue(AXPropertyName::FileUploadButtonReturnsValueInTitle); }
     String speechHintAttributeValue() const override { return stringAttributeValue(AXPropertyName::SpeechHint); }
     String descriptionAttributeValue() const override { return stringAttributeValue(AXPropertyName::Description); }
     String helpTextAttributeValue() const override { return stringAttributeValue(AXPropertyName::HelpText); }
     String titleAttributeValue() const override { return stringAttributeValue(AXPropertyName::TitleAttributeValue); }
+#endif
 #if PLATFORM(MAC)
     bool caretBrowsingEnabled() const override { return boolAttributeValue(AXPropertyName::CaretBrowsingEnabled); }
 #endif
@@ -369,7 +377,9 @@ private:
     uint64_t sessionID() const override;
     String documentURI() const override;
     String documentEncoding() const override;
+#if PLATFORM(COCOA)
     bool preventKeyboardDOMEventDispatch() const override;
+#endif
 
     // PlainTextRange support.
     PlainTextRange selectedTextRange() const override;
@@ -444,7 +454,9 @@ private:
 #if PLATFORM(MAC)
     void setCaretBrowsingEnabled(bool) override;
 #endif
+#if PLATFORM(COCOA)
     void setPreventKeyboardDOMEventDispatch(bool) override;
+#endif
 
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     std::optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override;
@@ -634,7 +646,9 @@ private:
     void overrideAttachmentParent(AXCoreObject* parent) override;
     bool accessibilityIgnoreAttachment() const override;
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const override;
+#if PLATFORM(COCOA)
     bool hasApplePDFAnnotationAttribute() const override { return boolAttributeValue(AXPropertyName::HasApplePDFAnnotationAttribute); }
+#endif
     const AccessibilityScrollView* ancestorAccessibilityScrollView(bool includeSelf) const override;
     AXCoreObject* webAreaObject() const override { return objectAttributeValue(AXPropertyName::WebArea); }
     void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData&) override;

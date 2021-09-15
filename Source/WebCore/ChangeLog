@@ -1,3 +1,37 @@
+2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        AX: Move platform specific code for isolated tree mode to the platform files
+        https://bugs.webkit.org/show_bug.cgi?id=230301
+        <rdar://problem/83138024>
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add missing ifdefs in the headers and move the mac specific code to mac files.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::isolatedTreeRootObject):
+        (WebCore::AXObjectCache::clientSupportsIsolatedTree): Deleted.
+        (WebCore::AXObjectCache::isIsolatedTreeEnabled): Deleted.
+        (WebCore::AXObjectCache::initializeSecondaryAXThread): Deleted.
+        (WebCore::AXObjectCache::usedOnAXThread): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::children):
+        (WebCore::AXIsolatedObject::preventKeyboardDOMEventDispatch const): Deleted.
+        (WebCore::AXIsolatedObject::setPreventKeyboardDOMEventDispatch): Deleted.
+        (WebCore::AXIsolatedObject::convertRectToPlatformSpace const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm:
+        (WebCore::AXIsolatedObject::initializePlatformProperties):
+        (WebCore::AXIsolatedObject::convertRectToPlatformSpace const):
+        (WebCore::AXIsolatedObject::preventKeyboardDOMEventDispatch const):
+        (WebCore::AXIsolatedObject::setPreventKeyboardDOMEventDispatch):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::clientSupportsIsolatedTree):
+        (WebCore::AXObjectCache::isIsolatedTreeEnabled):
+        (WebCore::AXObjectCache::initializeSecondaryAXThread):
+        (WebCore::AXObjectCache::usedOnAXThread):
+
 2021-09-15  Antti Koivisto  <antti@apple.com>
 
         [Layout][Integration] Remove unnecessary Run typedef

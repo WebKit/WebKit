@@ -32,9 +32,15 @@
 #import "AccessibilityObject.h"
 #import "AccessibilityTable.h"
 #import "RenderObject.h"
+#import "RuntimeEnabledFeatures.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>
@@ -599,6 +605,49 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
 void AXObjectCache::platformPerformDeferredCacheUpdate()
 {
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool AXObjectCache::clientSupportsIsolatedTree()
+{
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    return client == kAXClientTypeVoiceOver
+        || UNLIKELY(client == kAXClientTypeWebKitTesting);
+}
+
+bool AXObjectCache::isIsolatedTreeEnabled()
+{
+    static std::atomic<bool> enabled { false };
+    if (enabled)
+        return true;
+
+    if (!isMainThread()) {
+        ASSERT(_AXUIElementRequestServicedBySecondaryAXThread());
+        enabled = true;
+    } else {
+        enabled = RuntimeEnabledFeatures::sharedFeatures().isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
+            && _AXSIsolatedTreeModeFunctionIsAvailable()
+            && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff // Used to switch via system defaults.
+            && clientSupportsIsolatedTree();
+    }
+
+    return enabled;
+}
+
+void AXObjectCache::initializeSecondaryAXThread()
+{
+    // Now that we have created our tree, initialize the secondary thread,
+    // so future requests come in on the other thread.
+    if (_AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread)
+        _AXUIElementUseSecondaryAXThread(true);
+}
+
+bool AXObjectCache::usedOnAXThread()
+{
+    ASSERT(isIsolatedTreeEnabled());
+    return _AXSIsolatedTreeModeFunctionIsAvailable()
+        && _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread;
+}
+#endif
 
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
