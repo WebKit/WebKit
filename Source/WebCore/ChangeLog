@@ -1,3 +1,11 @@
+2021-09-15  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, build fix after r282464
+
+        * Modules/applepay/ApplePayDetailsUpdateData.h:
+        (WebCore::ApplePayDetailsUpdateData::encode const):
+        (WebCore::ApplePayDetailsUpdateData::decodeData):
+
 2021-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build failure on Big Sur

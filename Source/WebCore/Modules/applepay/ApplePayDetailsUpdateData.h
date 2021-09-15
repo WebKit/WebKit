@@ -51,6 +51,8 @@ void ApplePayDetailsUpdateData::encode(Encoder& encoder) const
 #if defined(ApplePayDetailsUpdateDataAdditions_encode)
     ApplePayDetailsUpdateDataAdditions_encode
 #endif
+
+    UNUSED_PARAM(encoder);
 }
 
 template<class Decoder>
@@ -79,6 +81,7 @@ bool ApplePayDetailsUpdateData::decodeData(Decoder& decoder)
 
 #undef DECODE
 
+    UNUSED_PARAM(decoder);
     return true;
 }
 
