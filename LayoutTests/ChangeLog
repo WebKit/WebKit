@@ -1,3 +1,12 @@
+2021-09-14  Eric Hutchison  <ehutchison@apple.com>
+
+        Remove test expectations for imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-in-iframe-print.html.
+        https://bugs.webkit.org/show_bug.cgi?id=229506.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-14  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [MacOS wk2 & iOS] 2 fast/canvas tests are flaky timeouts.

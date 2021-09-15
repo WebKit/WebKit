@@ -1398,8 +1398,6 @@ webkit.org/b/229425 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Pass T
 
 webkit.org/b/229481 media/video-poster-background.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/229506 imported/w3c/web-platform-tests/css/css-fonts/downloadable-font-in-iframe-print.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/229519 media/media-session/actionHandlerInternalMappings.html [ Pass Failure ]
 
 webkit.org/b/229247 http/tests/fetch/keepalive-fetch-2.html [ Pass Failure ]
