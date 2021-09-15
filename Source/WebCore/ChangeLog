@@ -1,3 +1,16 @@
+2021-09-14  Rob Buis  <rbuis@igalia.com>
+
+        imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=203508
+
+        Reviewed by Simon Fraser.
+
+        For replaced elements like images, non specified min/max logical widths are a
+        reason for re-layout after intrinsic size change (for example min-width: min-content).
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange):
+
 2021-09-14  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, mid September 2021 edition

@@ -1,3 +1,12 @@
+2021-09-14  Rob Buis  <rbuis@igalia.com>
+
+        imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=203508
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2021-09-14  Eric Hutchison  <ehutchison@apple.com>
 
         Remove test expectations for imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html.
