@@ -1,3 +1,20 @@
+2021-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Accomodate cbcs as cipher-mode instead of mime
+        https://bugs.webkit.org/show_bug.cgi?id=230265
+
+        Reviewed by Philippe Normand.
+
+        In https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/-/merge_requests/1013
+        it was decided that there should not be x-cbcs as mime type but
+        rather x-cenc with cbcs as cipher-mode.
+
+        Fly-by change, we will return GST_FLOW_NOT_SUPPORTED when we get
+        skip and crypt cbcs encryption scheme.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (transformInPlace):
+
 2021-09-14  Rob Buis  <rbuis@igalia.com>
 
         imported/w3c/web-platform-tests/css/css-sizing/image-min-max-content-intrinsic-size-change* tests fail
