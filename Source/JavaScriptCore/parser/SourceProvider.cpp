@@ -40,9 +40,6 @@ SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& source
 {
 }
 
-SourceProvider::~SourceProvider()
-{
-}
 
 static Lock providerIdLock;
 
