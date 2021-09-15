@@ -1543,8 +1543,6 @@ webkit.org/b/227922 inspector/canvas/setShaderProgramDisabled.html [ Pass Failur
 
 webkit.org/b/227874 [ Release ] fullscreen/full-screen-remove-children.html [ Pass Crash ]
 
-webkit.org/b/228082 fast/canvas/getPutImageDataPairTest.html [ Pass Timeout ]
-
 webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Failure Timeout ]
 
 webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure ]
