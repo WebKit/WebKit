@@ -1,3 +1,15 @@
+2021-09-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Search inputs with '-webkit-appearance: textfield' should have a textfield background color
+        https://bugs.webkit.org/show_bug.cgi?id=229883
+        rdar://82146288
+
+        Reviewed by Tim Horton.
+
+        * fast/forms/ios/form-control-refresh/search/textfield-appearance-background-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/search/textfield-appearance-background.html: Added.
+        * platform/ios/fast/css/input-search-padding-expected.txt: Rebaseline.
+
 2021-09-15  Martin Robinson  <mrobinson@webkit.org>
 
         offsetLeft on display:inline element in vertical-rl parent can return a negative number

@@ -1,0 +1,11 @@
+Test that setting -webkit-appearance: textfield on a search input sets the background color to match the text input background color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textBackgroundColor is "rgb(255, 255, 255)"
+PASS searchBackgroundColor is textBackgroundColor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

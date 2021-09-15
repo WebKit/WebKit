@@ -530,6 +530,24 @@ void RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintI
     }
 }
 
+void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
+{
+    if (!element)
+        return;
+
+    // Do not force a background color for elements that have a textfield
+    // appearance by default, so that their background color can be styled.
+    if (is<HTMLInputElement>(*element)) {
+        auto& input = downcast<HTMLInputElement>(*element);
+        // <input type=search> is the only TextFieldInputType that has a
+        // non-textfield appearance value.
+        if (input.isTextField() && !input.isSearchField())
+            return;
+    }
+
+    style.setBackgroundColor(systemColor(CSSValueWebkitControlBackground, element->document().styleColorOptions(&style)));
+}
+
 void RenderThemeIOS::paintTextFieldDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
