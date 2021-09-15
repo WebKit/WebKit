@@ -50,6 +50,14 @@ IntSize ImageBufferCairoImageSurfaceBackend::calculateSafeBackendSize(const Para
     if (backendSize.width() > cairoMaxImageSize || backendSize.height() > cairoMaxImageSize)
         return { };
 
+    int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, backendSize.width());
+    if (stride == -1)
+        return { };
+
+    CheckedSize bytes = CheckedUint32(backendSize.height()) * stride;
+    if (bytes.hasOverflowed())
+        return { };
+
     return backendSize;
 }
 
@@ -77,7 +85,7 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
 
     int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, backendSize.width());
     void* surfaceData;
-    if (!tryFastZeroedMalloc(backendSize.height() * stride).getValue(surfaceData))
+    if (!tryFastCalloc(backendSize.height(), stride).getValue(surfaceData))
         return nullptr;
 
     auto surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(surfaceData), CAIRO_FORMAT_ARGB32, backendSize.width(), backendSize.height(), stride));
