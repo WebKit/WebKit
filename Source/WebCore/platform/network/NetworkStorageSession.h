@@ -182,7 +182,7 @@ public:
     WEBCORE_EXPORT bool supportsCookieChangeListenerAPI() const;
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WEBCORE_EXPORT void setResourceLoadStatisticsEnabled(bool);
     WEBCORE_EXPORT bool resourceLoadStatisticsEnabled() const;
     WEBCORE_EXPORT void setResourceLoadStatisticsDebugLoggingEnabled(bool);
@@ -270,7 +270,7 @@ private:
 
     CredentialStorage m_credentialStorage;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool m_isResourceLoadStatisticsEnabled = false;
     bool m_isResourceLoadStatisticsDebugLoggingEnabled = false;
     std::optional<Seconds> clientSideCookieCap(const TopFrameDomain&, std::optional<PageIdentifier>) const;

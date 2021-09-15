@@ -114,7 +114,7 @@ void WebsiteDataRecord::addAlternativeServicesHostname(const String& hostName)
 #endif
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebsiteDataRecord::addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain& domain)
 {
     types.add(WebsiteDataType::ResourceLoadStatistics);
@@ -184,7 +184,7 @@ WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const
 #endif
         crossThreadCopy(HSTSCacheHostNames),
         crossThreadCopy(alternativeServicesHostNames),
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         crossThreadCopy(resourceLoadStatisticsRegistrableDomains),
 #endif
     };

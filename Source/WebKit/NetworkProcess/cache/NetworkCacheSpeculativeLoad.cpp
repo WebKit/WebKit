@@ -91,7 +91,7 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
     LOG(NetworkCacheSpeculativePreloading, "Speculative redirect %s -> %s", request.url().string().utf8().data(), redirectRequest.url().string().utf8().data());
 
     std::optional<Seconds> maxAgeCap;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (auto* networkStorageSession = m_cache->networkProcess().storageSession(m_cache->sessionID()))
         maxAgeCap = networkStorageSession->maxAgeCacheCap(request);
 #endif

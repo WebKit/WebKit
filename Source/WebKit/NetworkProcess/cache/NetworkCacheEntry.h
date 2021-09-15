@@ -71,7 +71,7 @@ public:
 
     void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool hasReachedPrevalentResourceAgeCap() const;
     void capMaxAge(const Seconds);
 #endif

@@ -1,3 +1,19 @@
+2021-09-14  John Wilander  <wilander@apple.com>
+
+        Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION
+        https://bugs.webkit.org/show_bug.cgi?id=230279
+        <rdar://problem/83118683>
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-09-14  Hoa Dinh  <dvh@apple.com>
 
         Add dvh@apple.com to the list of contributors.

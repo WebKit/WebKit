@@ -52,7 +52,7 @@ public:
     std::optional<WebCore::PageIdentifier> pageID() const final;
     std::optional<WebCore::FrameIdentifier> frameID() const final;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final { return !!m_frameSpecificStorageAccessIdentifier; }
     
     struct FrameSpecificStorageAccessIdentifier {
@@ -277,7 +277,7 @@ private:
     bool m_frameHasCustomContentProvider { false };
     bool m_frameCameFromBackForwardCache { false };
     bool m_useIconLoadingClient { false };
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     std::optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
 #endif
 

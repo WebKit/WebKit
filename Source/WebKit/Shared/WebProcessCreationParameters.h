@@ -190,7 +190,7 @@ struct WebProcessCreationParameters {
     WebCore::ScreenProperties screenProperties;
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     bool shouldLogUserInteraction { false };
 #endif
 

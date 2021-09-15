@@ -96,7 +96,7 @@ public:
 
     void recreatePrivateClickMeasurementStore(CompletionHandler<void()>&&);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void setResourceLoadStatisticsEnabled(bool);
     bool isResourceLoadStatisticsEnabled() const;
@@ -186,14 +186,14 @@ public:
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     void forwardResourceLoadStatisticsSettings();
 #endif
 
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
     WeakHashSet<NetworkDataTask> m_dataTaskSet;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     String m_resourceLoadStatisticsDirectory;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
     ShouldIncludeLocalhost m_shouldIncludeLocalhostInResourceLoadStatistics { ShouldIncludeLocalhost::Yes };

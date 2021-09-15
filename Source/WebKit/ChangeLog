@@ -1,3 +1,224 @@
+2021-09-14  John Wilander  <wilander@apple.com>
+
+        Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION
+        https://bugs.webkit.org/show_bug.cgi?id=230279
+        <rdar://problem/83118683>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::clearPageSpecificData):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::restrictRequestReferrerToOriginIfNeeded):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::resume):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntryInternal):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidation):
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::invalidateAndCancel):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::storeRedirect):
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::willSendRedirectedRequest):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::NetworkDataTaskCurl):
+        (WebKit::NetworkDataTaskCurl::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTaskCurl::blockCookies):
+        (WebKit::NetworkDataTaskCurl::unblockCookies):
+        (WebKit::NetworkDataTaskCurl::shouldBlockCookies):
+        * NetworkProcess/curl/NetworkSessionCurl.cpp:
+        (WebKit::NetworkSessionCurl::NetworkSessionCurl):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest):
+        * Shared/ResourceLoadStatisticsParameters.h:
+        (WebKit::ResourceLoadStatisticsParameters::encode const):
+        (WebKit::ResourceLoadStatisticsParameters::decode):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::encode const):
+        (WebKit::WebsiteData::decode):
+        (WebKit::WebsiteData::isolatedCopy const):
+        * Shared/WebsiteData/WebsiteData.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadedSubresourceDomains):
+        (WKPageClearLoadedSubresourceDomains):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveITPDataForDomain):
+        (WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabase):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsEnabled):
+        (WKWebsiteDataStoreIsStatisticsEphemeral):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsDebugModeWithCompletionHandler):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode):
+        (WKWebsiteDataStoreSetStatisticsLastSeen):
+        (WKWebsiteDataStoreSetStatisticsMergeStatistic):
+        (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+        (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+        (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreDumpResourceLoadStatistics):
+        (WKWebsiteDataStoreIsStatisticsPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubresourceUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubFrameUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsRedirectingTo):
+        (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreIsStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreIsStatisticsOnlyInDatabaseOnce):
+        (WKWebsiteDataStoreSetStatisticsGrandfathered):
+        (WKWebsiteDataStoreIsStatisticsGrandfathered):
+        (WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration):
+        (WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction):
+        (WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords):
+        (WKWebsiteDataStoreStatisticsUpdateCookieBlocking):
+        (WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WKWebsiteDataStoreSetStatisticsIsRunningTest):
+        (WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WKWebsiteDataStoreSetStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        (WKWebsiteDataStoreSetStatisticsGrandfatheringTime):
+        (WKWebsiteDataStoreSetStatisticsMaxStatisticsEntries):
+        (WKWebsiteDataStoreSetStatisticsPruneEntriesDownTo):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WKWebsiteDataStoreStatisticsDeleteCookiesForTesting):
+        (WKWebsiteDataStoreStatisticsHasLocalStorage):
+        (WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap):
+        (WKWebsiteDataStoreStatisticsHasIsolatedSession):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsShouldDowngradeReferrerForTesting):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyWebsiteDataRemovalModeForTesting):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsToSameSiteStrictCookiesForTesting):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting):
+        (WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting):
+        (WKWebsiteDataStoreStatisticsResetToConsistentState):
+        (WKWebsiteDataStoreGetAllStorageAccessEntries):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:thirdParty:shouldScheduleNotification:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsDebugMode]):
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsDebugMode:]):
+        (-[WKWebsiteDataStore _setResourceLoadStatisticsTestingCallback:]):
+        (-[WKWebsiteDataStore _loadedSubresourceDomainsFor:completionHandler:]):
+        (-[WKWebsiteDataStore _clearLoadedSubresourceDomainsFor:]):
+        (-[WKWebsiteDataStore _getAllStorageAccessEntriesFor:completionHandler:]):
+        (-[WKWebsiteDataStore _scheduleCookieBlockingUpdate:]):
+        (-[WKWebsiteDataStore _logUserInteraction:completionHandler:]):
+        (-[WKWebsiteDataStore _setPrevalentDomain:completionHandler:]):
+        (-[WKWebsiteDataStore _getIsPrevalentDomain:completionHandler:]):
+        (-[WKWebsiteDataStore _clearPrevalentDomain:completionHandler:]):
+        (-[WKWebsiteDataStore _clearResourceLoadStatistics:]):
+        (-[WKWebsiteDataStore _getResourceLoadStatisticsDataSummary:]):
+        (-[WKWebsiteDataStore _isRelationshipOnlyInDatabaseOnce:thirdParty:completionHandler:]):
+        (-[WKWebsiteDataStore _isRegisteredAsSubresourceUnderFirstParty:thirdParty:completionHandler:]):
+        (-[WKWebsiteDataStore _statisticsDatabaseHasAllTables:]):
+        (-[WKWebsiteDataStore _processStatisticsAndDataRecords:]):
+        (-[WKWebsiteDataStore _setThirdPartyCookieBlockingMode:onlyOnSitesWithoutUserInteraction:completionHandler:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::isolatedCopy const):
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::setCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::resetCacheMaxAgeCapForPrevalentResources):
+        (WebKit::WebsiteDataStore::resourceLoadStatisticsEnabled const):
+        (WebKit::WebsiteDataStore::resourceLoadStatisticsDebugMode const):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsDebugMode):
+        (WebKit::WebsiteDataStore::isResourceLoadStatisticsEphemeral const):
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebPage/WebCookieJar.cpp:
+        (WebKit::WebCookieJar::cookies const):
+        (WebKit::WebCookieJar::setCookies):
+        (WebKit::WebCookieJar::cookiesEnabled const):
+        (WebKit::WebCookieJar::cookieRequestHeaderFieldValue const):
+        (WebKit::WebCookieJar::getRawCookies const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        (WebKit::WebProcess::setResourceLoadStatisticsEnabled):
+        (WebKit::WebProcess::clearResourceLoadStatistics):
+        (WebKit::WebProcess::flushResourceLoadStatistics):
+        (WebKit::WebProcess::seedResourceLoadStatisticsForTesting):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2021-09-14  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix -Wredundant-move warnings

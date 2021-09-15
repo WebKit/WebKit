@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebResourceLoadObserver.h"
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
@@ -445,4 +445,4 @@ void WebResourceLoadObserver::setDomainsWithCrossPageStorageAccess(HashMap<TopFr
 
 } // namespace WebKit
 
-#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)

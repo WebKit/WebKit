@@ -439,7 +439,7 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
     EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"JSON.stringify(result.arguments)"] UTF8String], "[{\"type\":\"String\",\"value\":\"foo\"}]");
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -501,7 +501,7 @@ TEST(IPCTestingAPI, CanInterceptAlert)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
 {
     auto webView = createWebViewWithIPCTestingAPI();

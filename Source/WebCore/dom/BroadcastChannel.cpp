@@ -64,7 +64,7 @@ static bool shouldPartitionOrigin(Document& document)
     if (!document.settings().broadcastChannelOriginPartitioningEnabled())
         return false;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (!document.settings().storageAccessAPIEnabled())
         return true;
 

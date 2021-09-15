@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoadObserver.h>
@@ -96,4 +96,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)

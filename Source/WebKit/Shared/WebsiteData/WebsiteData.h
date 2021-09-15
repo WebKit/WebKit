@@ -63,7 +63,7 @@ struct WebsiteData {
     HashSet<String> hostNamesWithPluginData;
 #endif
     HashSet<String> hostNamesWithHSTSCache;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> registrableDomainsWithResourceLoadStatistics;
 #endif
 

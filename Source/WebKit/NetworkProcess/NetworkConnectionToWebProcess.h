@@ -289,7 +289,7 @@ private:
 
     void clearPageSpecificData(WebCore::PageIdentifier);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     void removeStorageAccessForFrame(WebCore::FrameIdentifier, WebCore::PageIdentifier);
 
     void logUserInteraction(const RegistrableDomain&);

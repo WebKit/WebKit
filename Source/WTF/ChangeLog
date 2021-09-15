@@ -1,3 +1,13 @@
+2021-09-14  John Wilander  <wilander@apple.com>
+
+        Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION
+        https://bugs.webkit.org/show_bug.cgi?id=230279
+        <rdar://problem/83118683>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-09-14  Chris Dumez  <cdumez@apple.com>
 
         Enable BroadcastChannel for modern WebKit

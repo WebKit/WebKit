@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ResourceLoadStatisticsStore.h"
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include "Logging.h"
 #include "NetworkProcess.h"
@@ -375,7 +375,7 @@ void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
 {
     ASSERT(!RunLoop::isMain());
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.clientSideCookiesAgeCapTime] () {
         if (auto* networkSession = store->networkSession()) {
             if (auto* storageSession = networkSession->networkStorageSession())

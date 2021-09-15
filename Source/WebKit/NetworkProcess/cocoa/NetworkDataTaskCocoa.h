@@ -94,7 +94,7 @@ private:
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, bool shouldContentEncodingSniff);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     void updateFirstPartyInfoForSession(const URL&);
@@ -114,7 +114,7 @@ private:
     WebCore::PageIdentifier m_pageID;
     WebPageProxyIdentifier m_webPageProxyID;
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
 #if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
     Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };

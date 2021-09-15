@@ -1,3 +1,54 @@
+2021-09-14  John Wilander  <wilander@apple.com>
+
+        Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION
+        https://bugs.webkit.org/show_bug.cgi?id=230279
+        <rdar://problem/83118683>
+
+        Reviewed by Darin Adler.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * dom/BroadcastChannel.cpp:
+        (WebCore::shouldPartitionOrigin):
+        * dom/Document+StorageAccess.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::referrer):
+        * dom/Document.h:
+        * dom/DocumentStorageAccess.cpp:
+        * dom/DocumentStorageAccess.h:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/EmptyClients.cpp:
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/ChromeClient.h:
+        * page/CrossSiteNavigationDataTransfer.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open):
+        * page/Quirks.cpp:
+        (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+        * page/Quirks.h:
+        * platform/network/NetworkStorageSession.cpp:
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::cookiesForURL const):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::cookiesForSession):
+
 2021-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Avoid computing post-layout EditorState data unless necessary

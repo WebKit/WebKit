@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
@@ -150,4 +150,4 @@ std::optional<RequestStorageAccessResult> RequestStorageAccessResult::decode(Dec
 
 } // namespace WebCore
 
-#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)

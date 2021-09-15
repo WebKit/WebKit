@@ -541,7 +541,7 @@ WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
     return globalPageMap().get(pageID);
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
 {
     for (auto& page : globalPageMap())

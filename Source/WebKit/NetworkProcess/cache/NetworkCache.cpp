@@ -520,7 +520,7 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
 
     auto cacheEntry = makeRedirectEntry(request, response, redirectRequest);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (maxAgeCap) {
         LOG(NetworkCache, "(NetworkProcess) capping max age for redirect %s -> %s", request.url().string().latin1().data(), redirectRequest.url().string().latin1().data());
         cacheEntry->capMaxAge(maxAgeCap.value());

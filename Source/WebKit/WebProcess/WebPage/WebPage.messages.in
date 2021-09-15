@@ -589,7 +589,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetCanShowPlaceholder(struct WebCore::ElementContext context, bool canShowPlaceholder)
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WasLoadedWithDataTransferFromPrevalentResource()
     ClearLoadedSubresourceDomains()
     GetLoadedSubresourceDomains() -> (Vector<WebCore::RegistrableDomain> domains) Async

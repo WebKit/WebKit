@@ -32,7 +32,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 #include "ResourceRequest.h"
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"
@@ -65,7 +65,7 @@ Vector<Cookie> NetworkStorageSession::domCookiesForHost(const String&)
 }
 #endif // !PLATFORM(COCOA)
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #if !USE(SOUP)
 void NetworkStorageSession::setResourceLoadStatisticsEnabled(bool enabled)
@@ -429,6 +429,6 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
     return std::nullopt;
 }
 
-#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 }

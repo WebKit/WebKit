@@ -577,7 +577,7 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     removeStorageManagerForSession(sessionID);
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
@@ -1337,7 +1337,7 @@ void NetworkProcess::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID
         networkSession->setThirdPartyCNAMEDomainForTesting(WTFMove(domain));
     completionHandler();
 }
-#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 void NetworkProcess::setPrivateClickMeasurementEnabled(bool enabled)
 {
@@ -1553,7 +1553,7 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (auto* session = networkSession(sessionID)) {
             if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
@@ -1605,7 +1605,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         swServerForSession(sessionID).clearAll([clearTasksHandler] { });
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (auto* networkSession = this->networkSession(sessionID)) {
             if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
@@ -1735,7 +1735,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originDatas);
     }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (auto* networkSession = this->networkSession(sessionID)) {
             for (auto& domain : registrableDomains) {
@@ -1761,7 +1761,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 static Vector<String> filterForRegistrableDomains(const Vector<RegistrableDomain>& registrableDomains, const HashSet<String>& foundValues)
 {
     Vector<String> result;
@@ -2084,7 +2084,7 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
         });
     }
 }
-#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
+#endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 CacheStorage::Engine* NetworkProcess::findCacheEngine(PAL::SessionID sessionID)
 {
@@ -2261,7 +2261,7 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
         completionHandler();
     });
     
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
 #endif
     PCM::Store::prepareForProcessToSuspend([callbackAggregator] { });
@@ -2304,7 +2304,7 @@ void NetworkProcess::resume()
     for (auto& connection : m_webProcessConnections.values())
         connection->endSuspension();
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore::resume();
 #endif
     PCM::Store::processDidResume();

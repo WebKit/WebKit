@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ResourceLoadStatisticsMemoryStore.h"
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 #include "Logging.h"
 #include "NetworkSession.h"

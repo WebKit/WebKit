@@ -44,7 +44,7 @@ NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, NetworkSe
         networkStorageSession()->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
     networkStorageSession()->setProxySettings(WTFMove(parameters.proxySettings));
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsParameters.directory;
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
     m_enableResourceLoadStatisticsDebugMode = parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;

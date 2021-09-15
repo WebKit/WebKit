@@ -5313,7 +5313,7 @@ ExceptionOr<void> Document::setCookie(const String& value)
 
 String Document::referrer()
 {
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (!m_referrerOverride.isEmpty())
         return m_referrerOverride;
     if (DeprecatedGlobalSettings::resourceLoadStatisticsEnabled() && frame()) {
@@ -8381,7 +8381,7 @@ void Document::updateMainArticleElementAfterLayout()
     m_mainArticleElement = makeWeakPtr(tallestArticle.get());
 }
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 
 bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain& domain)
 {

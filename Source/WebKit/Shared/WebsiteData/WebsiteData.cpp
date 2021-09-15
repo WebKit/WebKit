@@ -69,7 +69,7 @@ void WebsiteData::encode(IPC::Encoder& encoder) const
     encoder << hostNamesWithPluginData;
 #endif
     encoder << hostNamesWithHSTSCache;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     encoder << registrableDomainsWithResourceLoadStatistics;
 #endif
 }
@@ -86,7 +86,7 @@ bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
 #endif
     if (!decoder.decode(result.hostNamesWithHSTSCache))
         return false;
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     if (!decoder.decode(result.registrableDomainsWithResourceLoadStatistics))
         return false;
 #endif
@@ -165,7 +165,7 @@ WebsiteData WebsiteData::isolatedCopy() const
         crossThreadCopy(hostNamesWithPluginData),
 #endif
         crossThreadCopy(hostNamesWithHSTSCache),
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         crossThreadCopy(registrableDomainsWithResourceLoadStatistics),
 #endif
     };

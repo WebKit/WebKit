@@ -430,7 +430,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     if (isRedirect) {
         RESOURCELOADER_RELEASE_LOG("willSendRequestInternal: Processing cross-origin redirect");
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         frameLoader()->client().didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
 #endif
     }

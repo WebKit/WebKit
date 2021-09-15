@@ -68,7 +68,7 @@ private:
 #endif
     bool m_needsDeviceOrPageScaleChanged { false };
     bool m_needsUpdateContentsSize { false };
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     Vector<RegistrableDomain> m_loadedSubresourceDomains;
 #endif
 };
