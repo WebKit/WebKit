@@ -1,3 +1,16 @@
+2021-09-14  Rob Buis  <rbuis@igalia.com>
+
+        Fix button-min-width.html
+        https://bugs.webkit.org/show_bug.cgi?id=229984
+
+        Reviewed by Simon Fraser.
+
+        Do not use theme min-width/min-height values unless
+        it is bigger than the actual CSS property values.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+
 2021-09-14  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Accomodate cbcs as cipher-mode instead of mime

@@ -1,3 +1,12 @@
+2021-09-14  Rob Buis  <rbuis@igalia.com>
+
+        Fix button-min-width.html
+        https://bugs.webkit.org/show_bug.cgi?id=229984
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-sizing/button-min-width-expected.txt:
+
 2021-09-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontFaceSrcValue.cssText should be quoted consistently with other browsers

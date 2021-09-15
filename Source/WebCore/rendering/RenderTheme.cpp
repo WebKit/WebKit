@@ -167,9 +167,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 
         // Min-Width / Min-Height
         LengthSize minControlSize = Theme::singleton().minimumControlSize(part, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.effectiveZoom());
-        if (minControlSize.width != style.minWidth())
+        if (minControlSize.width.value() > style.minWidth().value())
             style.setMinWidth(WTFMove(minControlSize.width));
-        if (minControlSize.height != style.minHeight())
+        if (minControlSize.height.value() > style.minHeight().value())
             style.setMinHeight(WTFMove(minControlSize.height));
 
         // Font
