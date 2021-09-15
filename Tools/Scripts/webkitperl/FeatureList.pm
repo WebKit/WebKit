@@ -103,6 +103,7 @@ my (
     $inputTypeWeekSupport,
     $inspectorAlternateDispatchersSupport,
     $inspectorTelemetrySupport,
+    $intelligentTrackingPrevention,
     $intersectionObserverSupport,
     $iosGestureEventsSupport,
     $iosTouchEventsSupport,
@@ -142,7 +143,6 @@ my (
     $remoteInspectorSupport,
     $resizeObserverSupport,
     $resolutionMediaQuerySupport,
-    $resourceLoadStatisticsSupport,
     $resourceUsageSupport,
     $rubberBandingSupport,
     $samplingProfilerSupport,
@@ -347,6 +347,9 @@ my @features = (
     { option => "inspector-telemetry", desc => "Toggle inspector telemetry support",
       define => "ENABLE_INSPECTOR_TELEMETRY", value => \$inspectorTelemetrySupport },
 
+    { option => "intelligent-tracking-prevention", desc => "Toggle intelligent tracking prevention support",
+      define => "ENABLE_INTELLIGENT_TRACKING_PREVENTION", value => \$intelligentTrackingPrevention },
+
     { option => "intersection-observer", desc => "Enable Intersection Observer support",
       define => "ENABLE_INTERSECTION_OBSERVER", value => \$intersectionObserverSupport },
 
@@ -457,9 +460,6 @@ my @features = (
 
     { option => "resolution-media-query", desc => "Toggle resolution media query support",
       define => "ENABLE_RESOLUTION_MEDIA_QUERY", value => \$resolutionMediaQuerySupport },
-
-    { option => "resource-load-statistics", desc => "Toggle resource load statistics support",
-      define => "ENABLE_RESOURCE_LOAD_STATISTICS", value => \$resourceLoadStatisticsSupport },
 
     { option => "resource-usage", desc => "Toggle resource usage support",
       define => "ENABLE_RESOURCE_USAGE", value => \$resourceUsageSupport },
