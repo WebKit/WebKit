@@ -1,5 +1,18 @@
 2021-09-15  Martin Robinson  <mrobinson@webkit.org>
 
+        imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html depends on scrollbar placement and width
+        https://bugs.webkit.org/show_bug.cgi?id=230305
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Modify this test so that scrollbars are not shown, which should make it independent
+        of scrollbar size and placement.
+
+        * web-platform-tests/css/css-position/sticky/position-sticky-writing-modes-expected.html:
+        * web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html:
+
+2021-09-15  Martin Robinson  <mrobinson@webkit.org>
+
         offsetLeft on display:inline element in vertical-rl parent can return a negative number
         https://bugs.webkit.org/show_bug.cgi?id=230217
 
