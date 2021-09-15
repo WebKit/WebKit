@@ -1,3 +1,15 @@
+2021-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Fix size calculation in ImageBufferCairoImageSurfaceBackend::create()
+        https://bugs.webkit.org/show_bug.cgi?id=229365
+
+        Reviewed by Don Olmstead.
+
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::calculateSafeBackendSize): Check the result of
+        cairo_format_stride_for_width() and the multiplication doesn't overflow.
+        (WebCore::ImageBufferCairoImageSurfaceBackend::create): Use tryFastCalloc() instead of tryFastZeroedMalloc().
+
 2021-09-15  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] TextBoxSelectableRange::additionalLengthAtEnd miscomputed
