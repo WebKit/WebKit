@@ -1,3 +1,13 @@
+2021-09-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build failure on Big Sur
+
+        Whether encoder / decoder are used is relying on the Internal code expanded by the macro.
+
+        * Modules/applepay/ApplePayDetailsUpdateData.h:
+        (WebCore::ApplePayDetailsUpdateData::encode const):
+        (WebCore::ApplePayDetailsUpdateData::decodeData):
+
 2021-09-15  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] Clean up some WKA hooks

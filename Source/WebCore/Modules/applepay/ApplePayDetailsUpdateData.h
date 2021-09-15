@@ -47,10 +47,9 @@ struct ApplePayDetailsUpdateData {
 template<class Encoder>
 void ApplePayDetailsUpdateData::encode(Encoder& encoder) const
 {
+    UNUSED_PARAM(encoder);
 #if defined(ApplePayDetailsUpdateDataAdditions_encode)
     ApplePayDetailsUpdateDataAdditions_encode
-#else
-    UNUSED_PARAM(encoder);
 #endif
 }
 
@@ -73,10 +72,9 @@ bool ApplePayDetailsUpdateData::decodeData(Decoder& decoder)
         return false; \
     this->name = WTFMove(*name); \
 
+    UNUSED_PARAM(decoder);
 #if defined(ApplePayDetailsUpdateDataAdditions_decodeData)
     ApplePayDetailsUpdateDataAdditions_decodeData
-#else
-    UNUSED_PARAM(decoder);
 #endif
 
 #undef DECODE
