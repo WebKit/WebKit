@@ -545,6 +545,7 @@ namespace JSC {
         template<typename OpcodeType>
         void generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
 
+        void emit_op_get_property_enumerator(const Instruction*);
         void emit_op_enumerator_next(const Instruction*);
         void emit_op_enumerator_get_by_val(const Instruction*);
         void emitSlow_op_enumerator_get_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);

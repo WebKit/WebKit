@@ -39,6 +39,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
 {
     switch (type) {
     CASE(CellType)
+    CASE(StructureType)
     CASE(StringType)
     CASE(SymbolType)
     CASE(HeapBigIntType)

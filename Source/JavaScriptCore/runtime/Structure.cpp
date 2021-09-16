@@ -236,7 +236,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
 
 const ClassInfo Structure::s_info = { "Structure", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Structure) };
 
-Structure::Structure(VM& vm)
+Structure::Structure(VM& vm, CreatingEarlyCellTag)
     : JSCell(CreatingEarlyCell)
     , m_inlineCapacity(0)
     , m_bitField(0)
@@ -263,7 +263,7 @@ Structure::Structure(VM& vm)
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
  
-    TypeInfo typeInfo = TypeInfo(CellType, StructureFlags);
+    TypeInfo typeInfo = TypeInfo(StructureType, StructureFlags);
     m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), 0, typeInfo);
     m_outOfLineTypeFlags = typeInfo.outOfLineTypeFlags();
 
@@ -349,6 +349,7 @@ Structure* Structure::create(PolyProtoTag, VM& vm, JSGlobalObject* globalObject,
             result->setMaxOffset(vm, newMaxOffset);
         });
 
+    ASSERT(result->type() == StructureType);
     return result;
 }
 

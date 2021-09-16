@@ -934,6 +934,8 @@ public:
     Jump branchIfNotHeapBigInt(GPRReg cellGPR) { return branchIfNotType(cellGPR, HeapBigIntType); }
     Jump branchIfFunction(GPRReg cellGPR) { return branchIfType(cellGPR, JSFunctionType); }
     Jump branchIfNotFunction(GPRReg cellGPR) { return branchIfNotType(cellGPR, JSFunctionType); }
+    Jump branchIfStructure(GPRReg cellGPR) { return branchIfType(cellGPR, StructureType); }
+    Jump branchIfNotStructure(GPRReg cellGPR) { return branchIfNotType(cellGPR, StructureType); }
     
     void isEmpty(GPRReg gpr, GPRReg dst)
     {
