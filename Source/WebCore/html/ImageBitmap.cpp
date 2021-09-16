@@ -640,6 +640,8 @@ class PendingImageBitmap final : public ActiveDOMObject, public FileReaderLoader
 public:
     static void fetch(ScriptExecutionContext& scriptExecutionContext, RefPtr<Blob>&& blob, ImageBitmapOptions&& options, Optional<IntRect> rect, ImageBitmap::Promise&& promise)
     {
+        if (scriptExecutionContext.activeDOMObjectsAreStopped())
+            return;
         auto pendingImageBitmap = new PendingImageBitmap(scriptExecutionContext, WTFMove(blob), WTFMove(options), WTFMove(rect), WTFMove(promise));
         pendingImageBitmap->start(scriptExecutionContext);
     }
