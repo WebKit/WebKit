@@ -86,7 +86,6 @@ my (
     $downloadAttributeSupport,
     $dragSupportSupport,
     $encryptedMediaSupport,
-    $fastJITPermissionsSupport,
     $filtersLevel2Support,
     $ftlJITSupport,
     $ftpDirSupport,
@@ -109,7 +108,6 @@ my (
     $iosTouchEventsSupport,
     $jitSupport,
     $layoutFormattingContextSupport,
-    $legacyCSSVendorPrefixesSupport,
     $legacyCustomProtocolManagerSupport,
     $legacyEncryptedMediaSupport,
     $letterpressSupport,
@@ -177,7 +175,6 @@ my (
     $webAuthNSupport,
     $webCryptoSupport,
     $webRTCSupport,
-    $webassemblyStreamingAPISupport,
     $webdriverKeyboardInteractionsSupport,
     $webdriverMouseInteractionsSupport,
     $webdriverSupport,
@@ -185,7 +182,6 @@ my (
     $webdriverWheelInteractionsSupport,
     $webgl2Support,
     $webglSupport,
-    $webgpuSupport,
     $webXRSupport,
     $wirelessPlaybackTargetSupport,
     $xsltSupport,
@@ -299,9 +295,6 @@ my @features = (
     { option => "encrypted-media", desc => "Toggle EME V3 support",
       define => "ENABLE_ENCRYPTED_MEDIA", value => \$encryptedMediaSupport },
 
-    { option => "fast-jit-permissions", desc => "Toggle fast JIT permissions support",
-      define => "ENABLE_FAST_JIT_PERMISSIONS", value => \$fastJITPermissionsSupport },
-
     { option => "filters-level-2", desc => "Toggle Filters Module Level 2",
       define => "ENABLE_FILTERS_LEVEL_2", value => \$filtersLevel2Support },
 
@@ -364,9 +357,6 @@ my @features = (
 
     { option => "layout-formatting-context", desc => "Toggle Layout Formatting Context support",
       define => "ENABLE_LAYOUT_FORMATTING_CONTEXT", value => \$layoutFormattingContextSupport },
-
-    { option => "legacy-css-vendor-prefixes", desc => "Toggle legacy css vendor prefix support",
-      define => "ENABLE_LEGACY_CSS_VENDOR_PREFIXES", value => \$legacyCSSVendorPrefixesSupport },
 
     { option => "legacy-custom-protocol-manager", desc => "Toggle legacy protocol manager support",
       define => "ENABLE_LEGACY_CUSTOM_PROTOCOL_MANAGER", value => \$legacyCustomProtocolManagerSupport },
@@ -530,9 +520,6 @@ my @features = (
     { option => "webassembly-b3jit", desc => "Toggle WebAssembly B3 JIT support",
       define => "ENABLE_WEBASSEMBLY_B3JIT", value => \$webAssemblyB3JITSupport },
 
-    { option => "webassembly-streaming-api", desc => "Toggle WebAssembly streaming api support.",
-      define => "ENABLE_WEBASSEMBLY_STREAMING_API", value => \$webassemblyStreamingAPISupport },
-
     { option => "webdriver", desc => "Toggle WebDriver service process",
       define => "ENABLE_WEBDRIVER", value => \$webdriverSupport },
 
@@ -553,9 +540,6 @@ my @features = (
 
     { option => "webgl2", desc => "Toggle WebGL2 support",
       define => "ENABLE_WEBGL2", value => \$webgl2Support },
-
-    { option => "webgpu", desc => "Toggle WebGPU support",
-      define => "ENABLE_WEBGPU", value => \$webgpuSupport },
 
     { option => "webxr", desc => "Toggle WebXR support",
       define => "ENABLE_WEBXR", value => \$webXRSupport },
