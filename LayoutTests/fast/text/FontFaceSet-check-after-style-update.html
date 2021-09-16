@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head id="head">
+<script>
+if (window.internals) {
+    internals.invalidateFontCache();
+    internals.clearMemoryCache();
+}
+</script>
 <style id="style">
 @font-face {
     font-family: "WebFont";
@@ -8,12 +14,6 @@
 }
 </style>
 <script src="../../resources/js-test.js"></script>
-<script>
-if (window.internals) {
-    internals.invalidateFontCache();
-    internals.clearMemoryCache();
-}
-</script>
 </head>
 <body>
 <script>
