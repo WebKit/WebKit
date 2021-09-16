@@ -1,3 +1,17 @@
+2021-09-16  Youenn Fablet  <youenn@apple.com>
+
+        Use libwebrtc OnStandardizedIceConnectionChange callback instead of OnIceConnectionChange
+        https://bugs.webkit.org/show_bug.cgi?id=230314
+
+        Reviewed by Eric Carlson.
+
+        Migrate to standardized variant.
+        Covered by existing tests.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnStandardizedIceConnectionChange):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+
 2021-09-15  Philip Chimento  <pchimento@igalia.com>
 
         Fixes for build-webkit --minimal

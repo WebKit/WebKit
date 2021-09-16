@@ -128,7 +128,7 @@ private:
     void OnRemoveTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>) final;
 
     void OnNegotiationNeededEvent(uint32_t) final;
-    void OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState) final;
+    void OnStandardizedIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState) final;
     void OnIceGatheringChange(webrtc::PeerConnectionInterface::IceGatheringState) final;
     void OnIceCandidate(const webrtc::IceCandidateInterface*) final;
     void OnIceCandidatesRemoved(const std::vector<cricket::Candidate>&) final;

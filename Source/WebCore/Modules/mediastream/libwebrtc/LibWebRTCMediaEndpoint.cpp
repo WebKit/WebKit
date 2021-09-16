@@ -521,7 +521,7 @@ static inline RTCIceConnectionState toRTCIceConnectionState(webrtc::PeerConnecti
     return RTCIceConnectionState::New;
 }
 
-void LibWebRTCMediaEndpoint::OnIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state)
+void LibWebRTCMediaEndpoint::OnStandardizedIceConnectionChange(webrtc::PeerConnectionInterface::IceConnectionState state)
 {
     auto connectionState = toRTCIceConnectionState(state);
     callOnMainThread([protectedThis = makeRef(*this), connectionState] {
