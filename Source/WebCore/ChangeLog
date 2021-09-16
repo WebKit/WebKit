@@ -1,5 +1,51 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281975. rdar://problem/83183224
+
+    The CSS Font Loading API shouldn't be able to delete a CSS-connected font
+    https://bugs.webkit.org/show_bug.cgi?id=229640
+    
+    Reviewed by Alan Bujtas.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected-expected.txt:
+    
+    Source/WebCore:
+    
+    https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-delete
+    "1. If font is CSS-connected, return false and exit this algorithm immediately."
+    
+    Tests: web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected.html
+           web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected-2.html
+    
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::remove):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281975 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            The CSS Font Loading API shouldn't be able to delete a CSS-connected font
+            https://bugs.webkit.org/show_bug.cgi?id=229640
+
+            Reviewed by Alan Bujtas.
+
+            https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-delete
+            "1. If font is CSS-connected, return false and exit this algorithm immediately."
+
+            Tests: web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected.html
+                   web-platform-tests/css/css-font-loading/fontfaceset-delete-css-connected-2.html
+
+            * css/FontFaceSet.cpp:
+            (WebCore::FontFaceSet::remove):
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281951. rdar://problem/83183268
 
     FontFaceSet.add() needs to throw when called on a CSS-connected font
