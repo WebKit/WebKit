@@ -1,5 +1,24 @@
 2021-09-16  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Regression(r279613) Audit result scope toggles are missing
+        https://bugs.webkit.org/show_bug.cgi?id=230322
+
+        Reviewed by Devin Rousso.
+
+        The sizing calculations modified in r279613 were erroneously applied to both the minimum space calculation as
+        well as the navigation item hiding calculations, despite hiding navigation items never being done for non-sidebar
+        navigation bars. The logic in `WI.NavigationBar.prototype._calculateMinimumWidth` remains unchanged, as we still
+        need sidebars to provide a minimum width that can accommodate all items in a flex layout in order to avoid
+        flowing navigation items on to another row. The navigation bar in a sidebar is unique in this respect, as other
+        navigation bars will gracefully hide components if they truly don't have enough space, but a sidebar relies on
+        getting a minimum size that can actually accommodate all items in a single row.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype.layout.calculateVisibleItemWidth):
+        (WI.NavigationBar.prototype.layout):
+
+2021-09-16  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Don't maintain a back-forward stack for `ContentBrowser`/`ContentViewContainer` when not necessary
         https://bugs.webkit.org/show_bug.cgi?id=230286
 
