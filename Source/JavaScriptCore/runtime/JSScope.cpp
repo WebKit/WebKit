@@ -27,12 +27,10 @@
 #include "JSScope.h"
 
 #include "AbstractModuleRecord.h"
-#include "DeferTermination.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "JSWithScope.h"
-#include "VMTrapsInlines.h"
 #include "VariableEnvironment.h"
 
 namespace JSC {
@@ -56,7 +54,7 @@ DEFINE_VISIT_CHILDREN(JSScope);
 static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, size_t depth, bool& needsVarInjectionChecks, ResolveOp& op, InitializationMode initializationMode)
 {
     VM& vm = globalObject->vm();
-    DeferTerminationForAWhile deferScope(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (scope->isJSLexicalEnvironment()) {
         JSLexicalEnvironment* lexicalEnvironment = jsCast<JSLexicalEnvironment*>(scope);
@@ -82,9 +80,8 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
         if (scope->type() == ModuleEnvironmentType) {
             JSModuleEnvironment* moduleEnvironment = jsCast<JSModuleEnvironment*>(scope);
             AbstractModuleRecord* moduleRecord = moduleEnvironment->moduleRecord();
-            auto catchScope = DECLARE_CATCH_SCOPE(vm);
             AbstractModuleRecord::Resolution resolution = moduleRecord->resolveImport(globalObject, ident);
-            catchScope.releaseAssertNoException();
+            RETURN_IF_EXCEPTION(throwScope, false);
             if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
                 AbstractModuleRecord* importedRecord = resolution.moduleRecord;
                 JSModuleEnvironment* importedEnvironment = importedRecord->moduleEnvironment();
@@ -307,6 +304,9 @@ JSObject* JSScope::resolve(JSGlobalObject* globalObject, JSScope* scope, const I
 
 ResolveOp JSScope::abstractResolve(JSGlobalObject* globalObject, size_t depthOffset, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType, InitializationMode initializationMode)
 {
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
     ResolveOp op(Dynamic, 0, nullptr, nullptr, nullptr, 0);
     if (unlinkedType == Dynamic)
         return op;
@@ -315,6 +315,7 @@ ResolveOp JSScope::abstractResolve(JSGlobalObject* globalObject, size_t depthOff
     size_t depth = depthOffset;
     for (; scope; scope = scope->next()) {
         bool success = abstractAccess(globalObject, scope, ident, getOrPut, depth, needsVarInjectionChecks, op, initializationMode);
+        RETURN_IF_EXCEPTION(throwScope, ResolveOp(Dynamic, 0, nullptr, nullptr, nullptr, 0));
         if (success)
             break;
         ++depth;

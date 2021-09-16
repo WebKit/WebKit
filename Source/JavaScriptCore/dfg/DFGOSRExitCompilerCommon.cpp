@@ -337,29 +337,26 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     }
 }
 
-static void osrWriteBarrier(VM& vm, CCallHelpers& jit, CodeBlock* codeBlock, GPRReg owner, GPRReg scratch)
+static void osrWriteBarrier(VM& vm, CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 {
-    auto emitBarrier = [&] (auto* cell) {
-        jit.move(AssemblyHelpers::TrustedImmPtr(cell), owner);
-        AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
+    AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
 
-        jit.setupArguments<decltype(operationOSRWriteBarrier)>(&vm, owner);
-        jit.prepareCallOperation(vm);
-        jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationOSRWriteBarrier)), scratch);
-        jit.call(scratch, OperationPtrTag);
+    jit.setupArguments<decltype(operationOSRWriteBarrier)>(&vm, owner);
+    jit.prepareCallOperation(vm);
+    jit.move(MacroAssembler::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationOSRWriteBarrier)), scratch);
+    jit.call(scratch, OperationPtrTag);
 
-        ownerIsRememberedOrInEden.link(&jit);
-    };
-
-    emitBarrier(codeBlock);
-    emitBarrier(codeBlock->unlinkedCodeBlock());
+    ownerIsRememberedOrInEden.link(&jit);
 }
 
 void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 {
     jit.memoryFence();
     
-    osrWriteBarrier(vm, jit, jit.codeBlock()->baselineAlternative(), GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
+    jit.move(
+        AssemblyHelpers::TrustedImmPtr(
+            jit.codeBlock()->baselineAlternative()), GPRInfo::argumentGPR1);
+    osrWriteBarrier(vm, jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
 
     // We barrier all inlined frames -- and not just the current inline stack --
     // because we don't know which inlined function owns the value profile that
@@ -370,8 +367,12 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     // the value profile.
     InlineCallFrameSet* inlineCallFrames = jit.codeBlock()->jitCode()->dfgCommon()->inlineCallFrames.get();
     if (inlineCallFrames) {
-        for (InlineCallFrame* inlineCallFrame : *inlineCallFrames)
-            osrWriteBarrier(vm, jit, inlineCallFrame->baselineCodeBlock.get(), GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
+        for (InlineCallFrame* inlineCallFrame : *inlineCallFrames) {
+            jit.move(
+                AssemblyHelpers::TrustedImmPtr(
+                    inlineCallFrame->baselineCodeBlock.get()), GPRInfo::argumentGPR1);
+            osrWriteBarrier(vm, jit, GPRInfo::argumentGPR1, GPRInfo::nonArgGPR0);
+        }
     }
 
     auto* exitInlineCallFrame = exit.m_codeOrigin.inlineCallFrame();

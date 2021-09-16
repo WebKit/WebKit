@@ -182,8 +182,6 @@ public:
     // Get the frequent exit sites for a bytecode index. This is O(n), and is
     // meant to only be used from debugging/profiling code.
     Vector<FrequentExitSite> exitSitesFor(BytecodeIndex);
-
-    bool hasAnyExitsAt(const ConcurrentJSLocker&, BytecodeIndex) const;
     
     // This is O(n) and should be called on less-frequently executed code paths
     // in the compiler. It should be strictly cheaper than building a

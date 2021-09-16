@@ -178,7 +178,7 @@ public:
         return ArrayMode(word);
     }
     
-    static ArrayMode fromObserved(Graph&, const CodeOrigin&, ArrayProfile*, Array::Action, bool makeSafe);
+    static ArrayMode fromObserved(const ConcurrentJSLocker&, ArrayProfile*, Array::Action, bool makeSafe);
     
     ArrayMode withSpeculation(Array::Speculation speculation) const
     {
@@ -190,18 +190,39 @@ public:
         return ArrayMode(type(), arrayClass, speculation(), conversion(), action());
     }
     
-    ArrayMode withSpeculationFromProfile(ArrayProfile* profile, bool makeSafe) const
+    ArrayMode withSpeculationFromProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe) const
     {
         Array::Speculation mySpeculation;
 
         if (makeSafe)
             mySpeculation = Array::OutOfBounds;
-        else if (profile->mayStoreToHole())
+        else if (profile->mayStoreToHole(locker))
             mySpeculation = Array::ToHole;
         else
             mySpeculation = Array::InBounds;
         
         return withSpeculation(mySpeculation);
+    }
+    
+    ArrayMode withProfile(const ConcurrentJSLocker& locker, ArrayProfile* profile, bool makeSafe) const
+    {
+        Array::Class myArrayClass;
+
+        if (isJSArray()) {
+            if (profile->usesOriginalArrayStructures(locker) && benefitsFromOriginalArray()) {
+                ArrayModes arrayModes = profile->observedArrayModes(locker);
+                if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
+                    myArrayClass = Array::OriginalCopyOnWriteArray;
+                else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
+                    myArrayClass = Array::OriginalArray;
+                else
+                    myArrayClass = Array::Array;
+            } else
+                myArrayClass = Array::Array;
+        } else
+            myArrayClass = arrayClass();
+        
+        return withArrayClass(myArrayClass).withSpeculationFromProfile(locker, profile, makeSafe);
     }
     
     ArrayMode withType(Array::Type type) const
@@ -517,28 +538,6 @@ private:
     {
         u.asWord = word;
     }
-
-    ArrayMode withProfile(ArrayProfile* profile, bool makeSafe) const
-    {
-        Array::Class myArrayClass;
-
-        if (isJSArray()) {
-            if (profile->usesOriginalArrayStructures() && benefitsFromOriginalArray()) {
-                ArrayModes arrayModes = profile->observedArrayModes();
-                if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
-                    myArrayClass = Array::OriginalCopyOnWriteArray;
-                else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
-                    myArrayClass = Array::OriginalArray;
-                else
-                    myArrayClass = Array::Array;
-            } else
-                myArrayClass = Array::Array;
-        } else
-            myArrayClass = arrayClass();
-        
-        return withArrayClass(myArrayClass).withSpeculationFromProfile(profile, makeSafe);
-    }
-    
     
     ArrayModes arrayModesWithIndexingShapes(IndexingType shape) const
     {

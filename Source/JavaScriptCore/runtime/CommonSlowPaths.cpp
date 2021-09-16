@@ -139,7 +139,7 @@ namespace JSC {
     PROFILE_VALUE_IN(value__, m_profile)
 
 #define PROFILE_VALUE_IN(value, profileName) do { \
-        bytecode.metadata(codeBlock).profileName->m_buckets[0] = JSValue::encode(value); \
+        bytecode.metadata(codeBlock).profileName.m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
 static void throwArityCheckStackOverflowError(JSGlobalObject* globalObject, ThrowScope& scope)
@@ -887,7 +887,7 @@ ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(VM& vm, JSGlobalObject*
     JSCell* iterable = GET(bytecode.m_iterable).jsValue().asCell();
     if (auto arrayIterator = jsDynamicCast<JSArrayIterator*>(vm, iterator)) {
         if (auto array = jsDynamicCast<JSArray*>(vm, iterable)) {
-            metadata.m_iterableProfile->observeStructureID(array->structureID());
+            metadata.m_iterableProfile.observeStructureID(array->structureID());
 
             metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
             auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
@@ -951,9 +951,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_primitive)
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enter)
 {
     BEGIN();
-    Heap& heap = *Heap::heap(codeBlock);
-    heap.writeBarrier(codeBlock);
-    heap.writeBarrier(codeBlock->unlinkedCodeBlock());
+    Heap::heap(codeBlock)->writeBarrier(codeBlock);
     END();
 }
 
@@ -995,7 +993,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_next)
     ASSERT(!baseValue.isUndefinedOrNull());
     JSObject* base = baseValue.toObject(globalObject);
     CHECK_EXCEPTION();
-    metadata.m_arrayProfile->observeStructureID(base->structureID());
+    metadata.m_arrayProfile.observeStructureID(base->structureID());
 
     JSString* name = enumerator->computeNext(globalObject, base, index, mode);
     CHECK_EXCEPTION();
@@ -1019,7 +1017,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_get_by_val)
     JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(GET(bytecode.m_enumerator).jsValue());
     unsigned index = GET(bytecode.m_index).jsValue().asInt32();
 
-    RETURN_PROFILED(CommonSlowPaths::opEnumeratorGetByVal(globalObject, baseValue, propertyName, index, mode, enumerator, metadata.m_arrayProfile, &metadata.m_enumeratorMetadata));
+    RETURN_PROFILED(CommonSlowPaths::opEnumeratorGetByVal(globalObject, baseValue, propertyName, index, mode, enumerator, &metadata.m_arrayProfile, &metadata.m_enumeratorMetadata));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_in_by_val)
@@ -1042,7 +1040,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_in_by_val)
     }
 
     JSString* string = asString(GET(bytecode.m_propertyName).jsValue());
-    RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, baseValue, string, metadata.m_arrayProfile)));
+    RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, baseValue, string, &metadata.m_arrayProfile)));
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_has_own_property)

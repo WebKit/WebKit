@@ -302,7 +302,7 @@ namespace JSC {
 
         void emitValueProfilingSiteIfProfiledOpcode(...);
         template<typename Op>
-        std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile*>::value, void>
+        std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void>
         emitValueProfilingSiteIfProfiledOpcode(Op bytecode);
 
         void emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile*, RegisterID scratchGPR);

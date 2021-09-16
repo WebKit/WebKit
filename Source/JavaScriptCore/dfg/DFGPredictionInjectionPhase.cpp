@@ -48,13 +48,16 @@ public:
         
         ASSERT(codeBlock()->numParameters() >= 1);
         {
+            ConcurrentJSLocker locker(profiledBlock()->m_lock);
+            
             // We only do this for the arguments at the first block. The arguments from
             // other entrypoints have already been populated with their predictions.
             auto& arguments = m_graph.m_rootToArguments.find(m_graph.block(0))->value;
 
             for (size_t arg = 0; arg < static_cast<size_t>(codeBlock()->numParameters()); ++arg) {
                 ValueProfile& profile = profiledBlock()->valueProfileForArgument(arg);
-                arguments[arg]->variableAccessData()->predict(profile.computeUpdatedPrediction());
+                arguments[arg]->variableAccessData()->predict(
+                    profile.computeUpdatedPrediction(locker));
             }
         }
         

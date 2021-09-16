@@ -603,6 +603,10 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint8ClampedArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint16ArraySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(uint32ArraySpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedEvalCodeBlockSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedFunctionCodeBlockSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedModuleProgramCodeBlockSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(unlinkedProgramCodeBlockSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(finalizationRegistrySpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakObjectRefSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(weakSetSpace)
@@ -674,24 +678,18 @@ public:
     
     SpaceAndSet codeBlockSpace;
 
+    template<typename Func>
+    void forEachCodeBlockSpace(const Func& func)
+    {
+        // This should not include webAssemblyCodeBlockSpace because this is about subsclasses of
+        // JSC::CodeBlock.
+        func(codeBlockSpace);
+    }
+
     DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(evalExecutableSpace)
     DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(moduleProgramExecutableSpace)
     SpaceAndSet functionExecutableSpace;
     SpaceAndSet programExecutableSpace;
-
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(unlinkedEvalCodeBlockSpace)
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(unlinkedFunctionCodeBlockSpace)
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(unlinkedModuleProgramCodeBlockSpace)
-    DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(unlinkedProgramCodeBlockSpace)
-
-    template<typename Func>
-    void forEachUnlinkedCodeBlockSpace(const Func& func)
-    {
-        func(m_unlinkedEvalCodeBlockSpace.get());
-        func(m_unlinkedFunctionCodeBlockSpace.get());
-        func(m_unlinkedModuleProgramCodeBlockSpace.get());
-        func(m_unlinkedProgramCodeBlockSpace.get());
-    }
 
     template<typename Func>
     void forEachScriptExecutableSpace(const Func& func)

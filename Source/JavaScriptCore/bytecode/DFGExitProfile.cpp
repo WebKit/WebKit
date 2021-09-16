@@ -89,19 +89,6 @@ Vector<FrequentExitSite> ExitProfile::exitSitesFor(BytecodeIndex bytecodeIndex)
     return result;
 }
 
-bool ExitProfile::hasAnyExitsAt(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex) const
-{
-    if (!m_frequentExitSites)
-        return false;
-
-    for (unsigned i = 0; i < m_frequentExitSites->size(); ++i) {
-        if (m_frequentExitSites->at(i).bytecodeIndex() == bytecodeIndex)
-            return true;
-    }
-
-    return false;
-}
-
 bool ExitProfile::hasExitSite(const ConcurrentJSLocker&, const FrequentExitSite& site) const
 {
     if (!m_frequentExitSites)

@@ -48,6 +48,11 @@ struct GetByIdModeMetadataUnset {
 };
 static_assert(sizeof(GetByIdModeMetadataUnset) == 12);
 
+struct GetByIdModeMetadataArrayLength {
+    ArrayProfile arrayProfile;
+};
+static_assert(sizeof(GetByIdModeMetadataArrayLength) == 12);
+
 struct GetByIdModeMetadataProtoLoad {
     StructureID structureID;
     PropertyOffset cachedOffset;
@@ -85,6 +90,7 @@ union GetByIdModeMetadata {
     };
     GetByIdModeMetadataDefault defaultMode;
     GetByIdModeMetadataUnset unsetMode;
+    GetByIdModeMetadataArrayLength arrayLengthMode;
     GetByIdModeMetadataProtoLoad protoLoadMode;
 };
 static_assert(sizeof(GetByIdModeMetadata) == 16);
@@ -107,6 +113,7 @@ struct GetByIdModeMetadata {
     union {
         GetByIdModeMetadataDefault defaultMode;
         GetByIdModeMetadataUnset unsetMode;
+        GetByIdModeMetadataArrayLength arrayLengthMode;
         GetByIdModeMetadataProtoLoad protoLoadMode;
     };
     GetByIdMode mode;
@@ -130,6 +137,7 @@ inline void GetByIdModeMetadata::setUnsetMode(Structure* structure)
 inline void GetByIdModeMetadata::setArrayLengthMode()
 {
     mode = GetByIdMode::ArrayLength;
+    new (&arrayLengthMode.arrayProfile) ArrayProfile;
     // Prevent the prototype cache from ever happening.
     hitCountForLLIntCaching = 0;
 }

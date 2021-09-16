@@ -32,7 +32,6 @@ namespace JSC {
 
 class CodeBlock;
 class LLIntOffsetsExtractor;
-class UnlinkedCodeBlock;
 
 // This is a bitfield where each bit represents an type of array access that we have seen.
 // There are 19 indexing types that use the lower bits.
@@ -202,7 +201,6 @@ public:
         : m_mayInterceptIndexedAccesses(false)
         , m_usesOriginalArrayStructures(true)
         , m_didPerformFirstRunPruning(false)
-        , m_observedDifferentGlobalObject(false)
     {
     }
     
@@ -219,27 +217,22 @@ public:
     void observeStructureID(StructureID structureID) { m_lastSeenStructureID = structureID; }
     void observeStructure(Structure* structure) { m_lastSeenStructureID = structure->id(); }
 
-    void computeUpdatedPrediction(UnlinkedCodeBlock*);
-    void computeUpdatedPrediction(CodeBlock*);
-    void computeUpdatedPrediction(CodeBlock*, Structure* lastSeenStructure);
-    void computeUpdatedPrediction(Structure* lastSeenStructure, JSGlobalObject* lexicalGlobalObject);
+    void computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock*);
+    void computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock*, Structure* lastSeenStructure);
     
     void observeArrayMode(ArrayModes mode) { m_observedArrayModes |= mode; }
     void observeIndexedRead(VM&, JSCell*, unsigned index);
 
-    ArrayModes observedArrayModes() const { return m_observedArrayModes; }
-    bool mayInterceptIndexedAccesses() const { return m_mayInterceptIndexedAccesses; }
+    ArrayModes observedArrayModes(const ConcurrentJSLocker&) const { return m_observedArrayModes; }
+    bool mayInterceptIndexedAccesses(const ConcurrentJSLocker&) const { return m_mayInterceptIndexedAccesses; }
     
-    bool mayStoreToHole() const { return m_mayStoreToHole; }
-    bool outOfBounds() const { return m_outOfBounds; }
+    bool mayStoreToHole(const ConcurrentJSLocker&) const { return m_mayStoreToHole; }
+    bool outOfBounds(const ConcurrentJSLocker&) const { return m_outOfBounds; }
     
-    bool usesOriginalArrayStructures() const { return m_usesOriginalArrayStructures; }
-    void setDoesNotUseOriginalArrayStructures() { m_usesOriginalArrayStructures = false; }
+    bool usesOriginalArrayStructures(const ConcurrentJSLocker&) const { return m_usesOriginalArrayStructures; }
 
-    bool observedDifferentGlobalObject() const { return m_observedDifferentGlobalObject; }
-
-    CString briefDescription(CodeBlock*);
-    CString briefDescriptionWithoutUpdating();
+    CString briefDescription(const ConcurrentJSLocker&, CodeBlock*);
+    CString briefDescriptionWithoutUpdating(const ConcurrentJSLocker&);
     
 private:
     friend class LLIntOffsetsExtractor;
@@ -252,7 +245,6 @@ private:
     bool m_mayInterceptIndexedAccesses : 1;
     bool m_usesOriginalArrayStructures : 1;
     bool m_didPerformFirstRunPruning : 1;
-    bool m_observedDifferentGlobalObject : 1;
     ArrayModes m_observedArrayModes { 0 };
 };
 static_assert(sizeof(ArrayProfile) == 12);

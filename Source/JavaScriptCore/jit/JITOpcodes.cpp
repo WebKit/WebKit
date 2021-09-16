@@ -1194,7 +1194,6 @@ void JIT::emit_op_enter(const Instruction*)
         emitInitRegister(virtualRegisterForLocal(j));
 
     emitWriteBarrier(m_codeBlock);
-    emitWriteBarrier(m_codeBlock->unlinkedCodeBlock());
 
     emitEnterOptimizationCheck();
 #else
@@ -1246,29 +1245,17 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     initDone.link(&jit);
 
     // emitWriteBarrier(m_codeBlock).
-    // emitWriteBarrier(m_codeBlock->unlinkedCodeBlock()).
     jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
+    Jump ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
+
     jit.move(canBeOptimizedGPR, GPRInfo::numberTagRegister); // save.
-    Call operationWriteBarrierCall1;
-    Call operationWriteBarrierCall2;
-    {
-        Jump ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
-        jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(&vm, argumentGPR1);
-        jit.prepareCallOperation(vm);
-        operationWriteBarrierCall1 = jit.call(OperationPtrTag);
-        jit.loadPtr(addressFor(CallFrameSlot::codeBlock), argumentGPR1);
-        ownerIsRememberedOrInEden.link(&jit);
-    }
-    {
-        jit.loadPtr(Address(argumentGPR1, CodeBlock::offsetOfUnlinkedCodeBlock()), argumentGPR1);
-        Jump ownerIsRememberedOrInEden = jit.barrierBranch(vm, argumentGPR1, argumentGPR2);
-        jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(&vm, argumentGPR1);
-        jit.prepareCallOperation(vm);
-        operationWriteBarrierCall2 = jit.call(OperationPtrTag);
-        ownerIsRememberedOrInEden.link(&jit);
-    }
+    jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(&vm, argumentGPR1);
+    jit.prepareCallOperation(vm);
+    Call operationWriteBarrierCall = jit.call(OperationPtrTag);
+
     jit.move(GPRInfo::numberTagRegister, canBeOptimizedGPR); // restore.
     jit.move(TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
+    ownerIsRememberedOrInEden.link(&jit);
 
 #if ENABLE(DFG_JIT)
     Call operationOptimizeCall;
@@ -1302,8 +1289,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(operationWriteBarrierCall1, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
-    patchBuffer.link(operationWriteBarrierCall2, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
+    patchBuffer.link(operationWriteBarrierCall, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
 #if ENABLE(DFG_JIT)
     if (Options::useDFGJIT())
         patchBuffer.link(operationOptimizeCall, FunctionPtr<OperationPtrTag>(operationOptimize));

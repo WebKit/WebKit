@@ -139,7 +139,6 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpEnumeratorGetByVal) \
     macro(OpEnumeratorInByVal) \
     macro(OpEnumeratorHasOwnProperty) \
-    macro(OpGetById) \
 
 #define FOR_EACH_OPCODE_WITH_ARRAY_ALLOCATION_PROFILE(macro) \
     macro(OpNewArray) \
