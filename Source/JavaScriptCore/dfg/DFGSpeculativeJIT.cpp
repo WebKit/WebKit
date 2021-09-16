@@ -13701,7 +13701,7 @@ void SpeculativeJIT::compileEnumeratorGetByVal(Node* node)
                 m_jit.signExtend32ToPtr(scratchGPR, scratchGPR);
                 if (!haveStorage)
                     m_jit.loadPtr(MacroAssembler::Address(baseCellGPR, JSObject::butterflyOffset()), storageGPR);
-                int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
+                constexpr intptr_t offsetOfFirstProperty = offsetInButterfly(firstOutOfLineOffset) * static_cast<intptr_t>(sizeof(EncodedJSValue));
                 m_jit.loadValue(MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesEight, offsetOfFirstProperty), resultRegs);
                 doneCases.append(m_jit.jump());
             }
