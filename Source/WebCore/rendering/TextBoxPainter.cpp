@@ -179,9 +179,7 @@ void TextBoxPainter::paintForegroundAndDecorations()
     bool lineDecorations = !textDecorations.isEmpty();
     if ((lineDecorations || highlightDecorations) && m_paintInfo.phase != PaintPhase::Selection) {
         TextRun textRun = m_textBox.createTextRun();
-        unsigned length = textRun.length();
-        if (m_textBox.truncation() != cNoTruncation)
-            length = m_textBox.truncation();
+        unsigned length = m_textBox.truncation().value_or(textRun.length());
         unsigned selectionStart = 0;
         unsigned selectionEnd = 0;
         if (m_haveSelection)
@@ -327,7 +325,10 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
 
 void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const FloatRect& clipOutRect)
 {
-    if (m_textBox.truncation() == cFullTruncation)
+    // 1. Compute text selection
+    unsigned startOffset = markedText.startOffset;
+    unsigned endOffset = markedText.endOffset;
+    if (startOffset >= endOffset)
         return;
 
     GraphicsContext& context = m_paintInfo.context();
@@ -339,12 +340,6 @@ void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const F
     bool isCombinedText = m_textBox.combinedText();
     if (isCombinedText)
         context.concatCTM(rotation(m_paintRect, Clockwise));
-
-    // 1. Compute text selection
-    unsigned startOffset = markedText.startOffset;
-    unsigned endOffset = markedText.endOffset;
-    if (startOffset >= endOffset)
-        return;
 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own decoration.
@@ -390,9 +385,6 @@ void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const F
 
 void TextBoxPainter::paintCompositionUnderlines()
 {
-    if (m_textBox.truncation() == cFullTruncation)
-        return;
-
     for (auto& underline : m_renderer.frame().editor().customCompositionUnderlines()) {
         if (underline.endOffset <= m_textBox.start()) {
             // Underline is completely before this run. This might be an underline that sits
@@ -435,8 +427,8 @@ void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& under
         paintEnd = std::min(paintEnd, (unsigned)underline.endOffset);
         useWholeWidth = false;
     }
-    if (m_textBox.truncation() != cNoTruncation) {
-        paintEnd = std::min(paintEnd, m_textBox.start() + m_textBox.truncation());
+    if (m_textBox.truncation()) {
+        paintEnd = std::min(paintEnd, m_textBox.start() + *m_textBox.truncation());
         useWholeWidth = false;
     }
     if (!useWholeWidth) {
@@ -489,9 +481,6 @@ void TextBoxPainter::paintPlatformDocumentMarker(const MarkedText& markedText)
     if (m_document.printing())
         return;
 
-    if (m_textBox.truncation() == cFullTruncation)
-        return;
-
     auto bounds = calculateDocumentMarkerBounds(m_textBox, markedText);
 
     auto lineStyleForMarkedTextType = [&]() -> DocumentMarkerLineStyle {
@@ -524,7 +513,7 @@ FloatRect TextBoxPainter::computePaintRect(const LegacyInlineTextBox& textBox, c
 {
     FloatPoint localPaintOffset(paintOffset);
 
-    if (textBox.truncation() != cNoTruncation) {
+    if (textBox.truncation()) {
         auto& renderer = textBox.renderer();
         if (renderer.containingBlock()->style().isLeftToRightDirection() != textBox.isLeftToRightDirection()) {
             // Make the visible fragment of text hug the edge closest to the rest of the run by moving the origin
@@ -535,7 +524,7 @@ FloatRect TextBoxPainter::computePaintRect(const LegacyInlineTextBox& textBox, c
             // farther to the right.
             // NOTE: WebKit's behavior differs from that of IE which appears to just overlay the ellipsis on top of the
             // truncated string i.e.  |Hello|CBA| -> |...lo|CBA|
-            LayoutUnit widthOfVisibleText { renderer.width(textBox.start(), textBox.truncation(), textBox.textPos(), textBox.isFirstLine()) };
+            LayoutUnit widthOfVisibleText { renderer.width(textBox.start(), *textBox.truncation(), textBox.textPos(), textBox.isFirstLine()) };
             LayoutUnit widthOfHiddenText { textBox.logicalWidth() - widthOfVisibleText };
             LayoutSize truncationOffset(textBox.isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0_lu);
             localPaintOffset.move(textBox.isHorizontal() ? truncationOffset : truncationOffset.transposedSize());

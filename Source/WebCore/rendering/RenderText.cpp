@@ -402,8 +402,8 @@ static IntRect ellipsisRectForTextRun(const LayoutIntegration::PathTextRun& run,
 
     auto& box = *run.legacyInlineBox();
 
-    unsigned short truncation = box.truncation();
-    if (truncation == cNoTruncation)
+    auto truncation = box.truncation();
+    if (!truncation)
         return { };
 
     auto ellipsis = box.root().ellipsisBox();
@@ -416,7 +416,7 @@ static IntRect ellipsisRectForTextRun(const LayoutIntegration::PathTextRun& run,
     // The ellipsis should be considered to be selected if the end of
     // the selection is past the beginning of the truncation and the
     // beginning of the selection is before or at the beginning of the truncation.
-    if (ellipsisEndPosition < truncation && ellipsisStartPosition > truncation)
+    if (ellipsisEndPosition < *truncation && ellipsisStartPosition > *truncation)
         return { };
 
     return ellipsis->selectionRect();

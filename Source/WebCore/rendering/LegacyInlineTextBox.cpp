@@ -69,9 +69,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineTextBox);
 
 struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
-    unsigned variables[1];
-    unsigned short variables2[2];
     void* pointers[2];
+    unsigned variables[2];
+    unsigned short variables2;
 };
 
 COMPILE_ASSERT(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), LegacyInlineTextBox_should_stay_small);
@@ -234,7 +234,7 @@ void LegacyInlineTextBox::attachLine()
 float LegacyInlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
 {
     if (foundBox) {
-        m_truncation = cFullTruncation;
+        m_truncation = 0;
         return -1;
     }
 
@@ -248,7 +248,7 @@ float LegacyInlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdg
     bool rtlFullTruncation = !flowIsLTR && ellipsisX >= left() + logicalWidth();
     if (ltrFullTruncation || rtlFullTruncation) {
         // Too far. Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
-        m_truncation = cFullTruncation;
+        m_truncation = 0;
         foundBox = true;
         return -1;
     }
@@ -272,7 +272,7 @@ float LegacyInlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdg
         if (!offset) {
             // No characters should be rendered. Set ourselves to full truncation and place the ellipsis at the min of our start
             // and the ellipsis edge.
-            m_truncation = cFullTruncation;
+            m_truncation = 0;
             truncatedWidth += ellipsisWidth;
             return flowIsLTR ? std::min(ellipsisX, x()) : std::max(ellipsisX, right() - ellipsisWidth);
         }
@@ -313,13 +313,13 @@ bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
     if (isLineBreak())
         return false;
 
-    if (m_truncation == cFullTruncation)
+    if (m_truncation && !*m_truncation)
         return false;
 
     FloatRect rect(locationIncludingFlipping(), size());
     // Make sure truncated text is ignored while hittesting.
-    if (m_truncation != cNoTruncation) {
-        LayoutUnit widthOfVisibleText { renderer().width(m_start, m_truncation, textPos(), isFirstLine()) };
+    if (m_truncation) {
+        LayoutUnit widthOfVisibleText { renderer().width(m_start, *m_truncation, textPos(), isFirstLine()) };
 
         if (isHorizontal())
             renderer().style().isLeftToRightDirection() ? rect.setWidth(widthOfVisibleText) : rect.shiftXEdgeTo(right() - widthOfVisibleText);
@@ -381,7 +381,7 @@ std::optional<bool> LegacyInlineTextBox::emphasisMarkExistsAndIsAbove(const Rend
 void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
-        || m_truncation == cFullTruncation || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
+        || (m_truncation && !*m_truncation) || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
         return;
 
     ASSERT(paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines);
@@ -414,20 +414,12 @@ TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const
         return 0u;
     }();
 
-    auto truncation = [&]() -> std::optional<unsigned> {
-        if (m_truncation == cNoTruncation)
-            return { };
-        if (m_truncation == cFullTruncation)
-            return std::numeric_limits<unsigned>::max();
-        return m_truncation;
-    }();
-
     return {
         m_start,
         m_len,
         additionalLengthAtEnd,
         isLineBreak(),
-        truncation
+        m_truncation
     };
 }
 

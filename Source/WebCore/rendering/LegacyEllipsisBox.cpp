@@ -178,8 +178,10 @@ RenderObject::HighlightState LegacyEllipsisBox::selectionState() const
 
     auto& textBox = downcast<LegacyInlineTextBox>(*lastSelectedBox);
 
+    auto truncation = textBox.truncation();
     auto [selectionStart, selectionEnd] = textBox.selectionStartEnd();
-    if (selectionEnd >= textBox.truncation() && selectionStart <= textBox.truncation())
+
+    if (truncation && selectionEnd >= *truncation && selectionStart <= *truncation)
         return RenderObject::HighlightState::Inside;
 
     return RenderObject::HighlightState::None;

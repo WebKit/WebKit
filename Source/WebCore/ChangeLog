@@ -1,3 +1,43 @@
+2021-09-16  Antti Koivisto  <antti@apple.com>
+
+        Use std::optional for truncation
+        https://bugs.webkit.org/show_bug.cgi?id=230311
+
+        Reviewed by Myles Maxfield.
+
+        Replace the constants.
+        Use 0 truncation value for "full" truncation.
+
+        * rendering/LegacyEllipsisBox.cpp:
+        (WebCore::LegacyEllipsisBox::selectionState const):
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::placeEllipsisBox):
+        (WebCore::LegacyInlineTextBox::nodeAtPoint):
+        (WebCore::LegacyInlineTextBox::paint):
+        (WebCore::LegacyInlineTextBox::selectableRange const):
+        * rendering/LegacyInlineTextBox.h:
+        (WebCore::LegacyInlineTextBox::truncation const):
+        * rendering/RenderText.cpp:
+        (WebCore::ellipsisRectForTextRun):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintForegroundAndDecorations):
+        (WebCore::TextBoxPainter::paintDecoration):
+
+        Remove various full truncation checks. Zero truncation value will make them not paint without needing extra checks.
+
+        (WebCore::TextBoxPainter::paintCompositionUnderlines):
+        (WebCore::TextBoxPainter::paintCompositionUnderline):
+        (WebCore::TextBoxPainter::paintPlatformDocumentMarker):
+        (WebCore::TextBoxPainter::computePaintRect):
+        * rendering/TextBoxSelectableRange.h:
+        (WebCore::TextBoxSelectableRange::clamp const):
+
+        Maintain the behavior where fully truncated text is selectable so fast/text/scroll-text-overflow-ellipsis.html keeps passing.
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+
 2021-09-16  Youenn Fablet  <youenn@apple.com>
 
         Support RTCPeerConnection lastCreatedOffer/lastCreatedAnswer
