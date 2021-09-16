@@ -3214,6 +3214,63 @@ void RenderBlockFlow::setSelectionState(HighlightState state)
     RenderBoxModelObject::setSelectionState(state);
 }
 
+LayoutUnit RenderBlockFlow::adjustSelectionTopForPrecedingBlock(LayoutUnit top) const
+{
+    if (selectionState() != RenderObject::HighlightState::Inside && selectionState() != RenderObject::HighlightState::End)
+        return top;
+
+    if (isSelectionRoot())
+        return top;
+
+    LayoutSize offsetToBlockBefore;
+
+    auto blockBeforeWithinSelectionRoot = [&]() -> const RenderBlockFlow* {
+        const RenderElement* object = this;
+        const RenderObject* sibling = nullptr;
+        do {
+            sibling = object->previousSibling();
+            while (sibling && (!is<RenderBlock>(*sibling) || downcast<RenderBlock>(*sibling).isSelectionRoot()))
+                sibling = sibling->previousSibling();
+
+            offsetToBlockBefore -= LayoutSize(downcast<RenderBlock>(*object).logicalLeft(), downcast<RenderBlock>(*object).logicalTop());
+            object = object->parent();
+        } while (!sibling && is<RenderBlock>(object) && !downcast<RenderBlock>(*object).isSelectionRoot());
+
+        if (!sibling)
+            return nullptr;
+
+        auto* beforeBlock = downcast<RenderBlock>(sibling);
+
+        offsetToBlockBefore += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
+
+        auto* child = beforeBlock->lastChild();
+        while (is<RenderBlock>(child)) {
+            beforeBlock = downcast<RenderBlock>(child);
+            offsetToBlockBefore += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
+            child = beforeBlock->lastChild();
+        }
+        return is<RenderBlockFlow>(beforeBlock) ? downcast<RenderBlockFlow>(beforeBlock) : nullptr;
+    };
+
+    auto* blockBefore = blockBeforeWithinSelectionRoot();
+    if (!blockBefore)
+        return top;
+
+    // Do not adjust blocks sharing the same line.
+    if (!offsetToBlockBefore.height())
+        return top;
+
+    if (auto lastLine = LayoutIntegration::lastLineFor(*blockBefore)) {
+        RenderObject::HighlightState lastLineSelectionState = lastLine->selectionState();
+        if (lastLineSelectionState != RenderObject::HighlightState::Inside && lastLineSelectionState != RenderObject::HighlightState::Start)
+            return top;
+
+        LayoutUnit lastLineSelectionBottom = lastLine->selectionBottom() + offsetToBlockBefore.height();
+        top = std::max(top, lastLineSelectionBottom);
+    }
+    return top;
+}
+
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
     LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {

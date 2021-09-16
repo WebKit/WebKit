@@ -61,6 +61,7 @@ public:
     LayoutUnit lineBoxBottom() const;
 
     LayoutRect selectionRect() const;
+    RenderObject::HighlightState selectionState() const;
 
     float y() const;
     float contentLogicalLeft() const;
@@ -76,7 +77,10 @@ public:
     const RenderBlockFlow& containingBlock() const;
     const LegacyRootInlineBox* legacyRootInlineBox() const;
 
-protected:
+private:
+    RunIterator firstRun() const;
+    RunIterator lastRun() const;
+
     friend class LineIterator;
 
     PathVariant m_pathVariant;

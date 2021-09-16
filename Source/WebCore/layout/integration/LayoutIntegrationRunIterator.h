@@ -79,6 +79,8 @@ public:
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
 
+    RenderObject::HighlightState selectionState() const;
+
     const RenderObject& renderer() const;
     const RenderStyle& style() const;
 

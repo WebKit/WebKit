@@ -95,6 +95,16 @@ const RenderStyle& PathRun::style() const
     return line().isFirst() ? renderer().firstLineStyle() : renderer().style();
 }
 
+RenderObject::HighlightState PathRun::selectionState() const
+{
+    if (isText()) {
+        auto& text = downcast<PathTextRun>(*this);
+        auto& renderer = text.renderer();
+        return renderer.view().selection().highlightStateForTextBox(renderer, text.selectableRange());
+    }
+    return renderer().selectionState();
+}
+
 TextRunIterator::TextRunIterator(PathRun::PathVariant&& pathVariant)
     : RunIterator(WTFMove(pathVariant))
 {

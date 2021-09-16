@@ -1,3 +1,30 @@
+2021-09-16  Antti Koivisto  <antti@apple.com>
+
+        Move selection gap adjustment code form LegacyRootInlineBox to RenderBlockFlow
+        https://bugs.webkit.org/show_bug.cgi?id=230352
+
+        Reviewed by Alan Bujtas.
+
+        Move the code out of legacy lineboxes and make it use inline iterators.
+        Also add selectionState() to the iterators.
+
+        * layout/integration/LayoutIntegrationLineIterator.cpp:
+        (WebCore::LayoutIntegration::LineIterator::firstRun const):
+        (WebCore::LayoutIntegration::LineIterator::lastRun const):
+        (WebCore::LayoutIntegration::PathLine::firstRun const):
+        (WebCore::LayoutIntegration::PathLine::lastRun const):
+        (WebCore::LayoutIntegration::PathLine::selectionState const):
+        * layout/integration/LayoutIntegrationLineIterator.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::PathRun::selectionState const):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::selectionTopAdjustedForPrecedingBlock const):
+        (WebCore::blockBeforeWithinSelectionRoot): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustSelectionTopForPrecedingBlock const):
+        * rendering/RenderBlockFlow.h:
+
 2021-09-16  Tim Horton  <timothy_horton@apple.com>
 
         Adjust ARKIT_INLINE_PREVIEW* compile time flags

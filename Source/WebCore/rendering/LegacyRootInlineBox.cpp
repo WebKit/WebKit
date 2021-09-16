@@ -587,65 +587,9 @@ LayoutUnit LegacyRootInlineBox::selectionTop(ForHitTesting forHitTesting) const
     return prevBottom;
 }
 
-static RenderBlock* blockBeforeWithinSelectionRoot(const RenderBlockFlow& blockFlow, LayoutSize& offset)
-{
-    if (blockFlow.isSelectionRoot())
-        return nullptr;
-
-    const RenderElement* object = &blockFlow;
-    RenderObject* sibling;
-    do {
-        sibling = object->previousSibling();
-        while (sibling && (!is<RenderBlock>(*sibling) || downcast<RenderBlock>(*sibling).isSelectionRoot()))
-            sibling = sibling->previousSibling();
-
-        offset -= LayoutSize(downcast<RenderBlock>(*object).logicalLeft(), downcast<RenderBlock>(*object).logicalTop());
-        object = object->parent();
-    } while (!sibling && is<RenderBlock>(object) && !downcast<RenderBlock>(*object).isSelectionRoot());
-
-    if (!sibling)
-        return nullptr;
-
-    RenderBlock* beforeBlock = downcast<RenderBlock>(sibling);
-
-    offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
-
-    RenderObject* child = beforeBlock->lastChild();
-    while (is<RenderBlock>(child)) {
-        beforeBlock = downcast<RenderBlock>(child);
-        offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
-        child = beforeBlock->lastChild();
-    }
-    return beforeBlock;
-}
-
 LayoutUnit LegacyRootInlineBox::selectionTopAdjustedForPrecedingBlock() const
 {
-    const LegacyRootInlineBox& rootBox = root();
-    LayoutUnit top = selectionTop();
-
-    auto blockSelectionState = rootBox.blockFlow().selectionState();
-    if (blockSelectionState != RenderObject::HighlightState::Inside && blockSelectionState != RenderObject::HighlightState::End)
-        return top;
-
-    LayoutSize offsetToBlockBefore;
-    auto* blockBefore = blockBeforeWithinSelectionRoot(rootBox.blockFlow(), offsetToBlockBefore);
-    if (!is<RenderBlockFlow>(blockBefore))
-        return top;
-
-    // Do not adjust blocks sharing the same line.
-    if (!offsetToBlockBefore.height())
-        return top;
-
-    if (auto* lastLine = downcast<RenderBlockFlow>(*blockBefore).lastRootBox()) {
-        RenderObject::HighlightState lastLineSelectionState = lastLine->selectionState();
-        if (lastLineSelectionState != RenderObject::HighlightState::Inside && lastLineSelectionState != RenderObject::HighlightState::Start)
-            return top;
-
-        LayoutUnit lastLineSelectionBottom = lastLine->selectionBottom() + offsetToBlockBefore.height();
-        top = std::max(top, lastLineSelectionBottom);
-    }
-    return top;
+    return blockFlow().adjustSelectionTopForPrecedingBlock(selectionTop());
 }
 
 LayoutUnit LegacyRootInlineBox::selectionBottom() const

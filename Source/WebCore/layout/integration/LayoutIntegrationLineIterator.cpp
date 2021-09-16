@@ -78,16 +78,12 @@ bool LineIterator::operator==(const LineIterator& other) const
 
 RunIterator LineIterator::firstRun() const
 {
-    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.firstRun() };
-    });
+    return m_line.firstRun();
 }
 
 RunIterator LineIterator::lastRun() const
 {
-    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.lastRun() };
-    });
+    return m_line.lastRun();
 }
 
 RunIterator LineIterator::logicalStartRun() const
@@ -187,9 +183,48 @@ RunIterator LineIterator::closestRunForLogicalLeftPosition(int leftPosition, boo
     return closestRun;
 }
 
+RunIterator PathLine::firstRun() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.firstRun() };
+    });
+}
+
+RunIterator PathLine::lastRun() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.lastRun() };
+    });
+}
+
 int PathLine::blockDirectionPointInLine() const
 {
     return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), selectionTop()) : std::min(bottom(), selectionBottom());
+}
+
+RenderObject::HighlightState PathLine::selectionState() const
+{
+    auto& block = containingBlock();
+    if (block.selectionState() == RenderObject::None)
+        return RenderObject::None;
+
+    auto state = RenderObject::None;
+    for (auto box = firstRun(); box; box.traverseNextOnLine()) {
+        auto boxState = box->selectionState();
+        if ((boxState == RenderObject::HighlightState::Start && state == RenderObject::HighlightState::End)
+            || (boxState == RenderObject::HighlightState::End && state == RenderObject::HighlightState::Start))
+            state = RenderObject::HighlightState::Both;
+        else if (state == RenderObject::HighlightState::None || ((boxState == RenderObject::HighlightState::Start || boxState == RenderObject::HighlightState::End)
+            && (state == RenderObject::HighlightState::None || state == RenderObject::HighlightState::Inside)))
+            state = boxState;
+        else if (boxState == RenderObject::HighlightState::None && state == RenderObject::HighlightState::Start) {
+            // We are past the end of the selection.
+            state = RenderObject::HighlightState::Both;
+        }
+        if (state == RenderObject::HighlightState::Both)
+            break;
+    }
+    return state;
 }
 
 }
