@@ -416,11 +416,11 @@ RefPtr<Memory> Memory::tryCreate(PageCount initial, PageCount maximum, MemorySha
     if (UNLIKELY(Options::crashIfWebAssemblyCantFastMemory()))
         webAssemblyCouldntGetFastMemory();
 
-    if (!initialBytes)
-        return adoptRef(new Memory(initial, maximum, sharingMode, WTFMove(notifyMemoryPressure), WTFMove(syncTryToReclaimMemory), WTFMove(growSuccessCallback)));
-
     switch (sharingMode) {
     case MemorySharingMode::Default: {
+        if (!initialBytes)
+            return adoptRef(new Memory(initial, maximum, sharingMode, WTFMove(notifyMemoryPressure), WTFMove(syncTryToReclaimMemory), WTFMove(growSuccessCallback)));
+
         void* slowMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, initialBytes);
         if (!slowMemory) {
             memoryManager().freePhysicalBytes(initialBytes);

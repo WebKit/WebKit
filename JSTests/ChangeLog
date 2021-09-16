@@ -1,3 +1,12 @@
+2021-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Release assert memory in JSC::Wasm::Memory::growShared(JSC::Wasm::PageCount)::<lambda()>
+        https://bugs.webkit.org/show_bug.cgi?id=227180
+
+        Reviewed by Keith Miller.
+
+        * stress/shared-wasm-memory-with-zero-byte.js: Added.
+
 2021-03-16  Saam Barati  <sbarati@apple.com>
 
         Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies

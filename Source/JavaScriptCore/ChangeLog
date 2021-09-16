@@ -1,3 +1,17 @@
+2021-06-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Release assert memory in JSC::Wasm::Memory::growShared(JSC::Wasm::PageCount)::<lambda()>
+        https://bugs.webkit.org/show_bug.cgi?id=227180
+
+        Reviewed by Keith Miller.
+
+        When Wasm.Memory is shared, we should allocate bound growable memory even if initial size is 0 bytes,
+        since this range can be later extended by mprotect. If maximum size is also 0 byte, we already have
+        a path that does not allocate anything.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::tryCreate):
+
 2021-04-12  BJ Burg  <bburg@apple.com>
 
         Modernize uses of ConsoleClient
