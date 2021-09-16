@@ -1,5 +1,27 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282071. rdar://problem/83184019
+
+    [GTK][WPE] Gardening of two flaky tests and timeout.
+    
+    Unreviewed test gardening.
+    
+    * TestExpectations:
+    * platform/glib/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282071 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+            [GTK][WPE] Gardening of two flaky tests and timeout.
+
+            Unreviewed test gardening.
+
+            * TestExpectations:
+            * platform/glib/TestExpectations:
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282017. rdar://problem/83183644
 
     @font-face rules accessed over file: urls to a file which does not exist are not visible to document.fonts

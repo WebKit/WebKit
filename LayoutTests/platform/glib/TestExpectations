@@ -2358,6 +2358,10 @@ webkit.org/b/229266 imported/w3c/web-platform-tests/html/browsers/offline/introd
 
 webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Pass ]
 
+webkit.org/b/229764 animations/background-position.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/229979 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

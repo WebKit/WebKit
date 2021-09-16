@@ -5154,3 +5154,5 @@ http/wpt/crypto/aes-cbc-crash.any.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/crypto/aes-ctr-crash.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.html [ DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/229975 fast/text/FontFaceSet-status-after-style-update.html [ Failure Pass ]
