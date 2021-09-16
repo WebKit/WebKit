@@ -1,3 +1,38 @@
+2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Add validation when reading DisplayListSharedMemoryHeader::waitingStatus in DisplayListReaderHandle
+        https://bugs.webkit.org/show_bug.cgi?id=226306
+        rdar://78118900
+
+        Reviewed by Chris Dumez.
+
+        Store this waiting status (an enum class with three valid states) as a raw `uint8_t` in shared memory, rather
+        than an `enum class`. This allows us to verify that this value indicates a valid waiting status (using
+        `isValidEnum`) upon reading this flag in the GPU process, and perform a `MESSAGE_CHECK` in the case where it is
+        invalid.
+
+        * GPUProcess/graphics/DisplayListReaderHandle.h:
+        (WebKit::DisplayListReaderHandle::startWaiting):
+        (WebKit::DisplayListReaderHandle::stopWaiting):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        * Shared/SessionState.cpp:
+        (WebKit::PageState::decode):
+        * Shared/SessionState.h:
+
+        Drive-by fix: remove a non-templated declaration of `isValidEnum()`. This is necessary in order to use
+        `WTF::isValidEnum` without the explicit WTF namespace prefix inside `DisplayListReaderHandle`, since WTF's
+        declaration of `isValidEnum` clashes with this declaration.
+
+        Instead of using this separate method for validating the enum, simply encode and decode the
+        `shouldOpenExternalURLsPolicy` enum using << and >> operators, respectively; this ensures that the decoded value
+        of `shouldOpenExternalURLsPolicy` is either valid, or the result will be WTF::nullopt if decoding fails or
+        results in an invalid enum.
+
+        * Shared/SharedDisplayListHandle.h:
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.h:
+        (WebKit::DisplayListWriterHandle::tryToResume):
+
 2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs

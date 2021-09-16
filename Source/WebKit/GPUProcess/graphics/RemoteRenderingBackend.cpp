@@ -244,7 +244,10 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             sleep(30_us);
 #endif
 
-            auto resumeReadingInfo = handle.stopWaiting();
+            auto stopWaitingResult = handle.stopWaiting();
+            MESSAGE_CHECK_WITH_RETURN_VALUE(stopWaitingResult, nullptr, "Invalid waiting status detected when resuming display list processing");
+
+            auto resumeReadingInfo = stopWaitingResult.value();
             if (!resumeReadingInfo)
                 break;
 

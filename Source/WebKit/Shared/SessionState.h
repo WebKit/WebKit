@@ -44,8 +44,6 @@ class Encoder;
 
 namespace WebKit {
 
-bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy);
-
 struct HTTPBody {
     struct Element {
         void encode(IPC::Encoder&) const;

@@ -32,17 +32,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy policy)
-{
-    switch (policy) {
-    case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow:
-    case WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks:
-    case WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow:
-        return true;
-    }
-    return false;
-}
-
 void HTTPBody::Element::encode(IPC::Encoder& encoder) const
 {
     encoder << type;
@@ -219,9 +208,12 @@ bool PageState::decode(IPC::Decoder& decoder, PageState& result)
         result.sessionStateObject = SerializedScriptValue::createFromWireBytes(WTFMove(wireBytes));
     }
 
-    if (!decoder.decode(result.shouldOpenExternalURLsPolicy) || !isValidEnum(result.shouldOpenExternalURLsPolicy))
+    Optional<ShouldOpenExternalURLsPolicy> shouldOpenExternalURLsPolicy;
+    decoder >> shouldOpenExternalURLsPolicy;
+    if (!shouldOpenExternalURLsPolicy)
         return false;
 
+    result.shouldOpenExternalURLsPolicy = *shouldOpenExternalURLsPolicy;
     return true;
 }
 
