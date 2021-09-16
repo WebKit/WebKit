@@ -1406,7 +1406,7 @@ webkit.org/b/208576 [ Debug ] fast/forms/textarea-no-scroll-on-blur.html [ Failu
 
 webkit.org/b/208576 [ Debug ] fast/forms/textarea-scrolled-type.html [ Failure ]
 
-webkit.org/b/208581 http/wpt/service-workers/skipFetchEvent.https.html [ Pass Timeout ]
+webkit.org/b/230374 http/wpt/service-workers/skipFetchEvent.https.html [ Pass Failure ]
 
 webkit.org/b/208582 http/wpt/service-workers/server-trust-evaluation.https.html [ Pass Failure ]
 
