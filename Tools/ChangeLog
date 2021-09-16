@@ -9,6 +9,17 @@
         * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
         (TestWebKitAPI::TEST):
 
+2021-05-28  Alex Christensen  <achristensen@webkit.org>
+
+        Punycode encode U+0BE6 when not in context of other Tamil characters
+        https://bugs.webkit.org/show_bug.cgi?id=226409
+        <rdar://78160926>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs
