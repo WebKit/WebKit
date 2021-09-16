@@ -7755,9 +7755,32 @@ static bool shouldReloadAfterProcessTermination(ProcessTerminationReason reason)
     return false;
 }
 
+static const char* processTerminationReasonToString(ProcessTerminationReason reason)
+{
+    switch (reason) {
+    case ProcessTerminationReason::ExceededMemoryLimit:
+        return "ExceededMemoryLimit";
+    case ProcessTerminationReason::ExceededCPULimit:
+        return "ExceededCPULimit";
+    case ProcessTerminationReason::RequestedByNetworkProcess:
+        return "RequestedByNetworkProcess";
+    case ProcessTerminationReason::RequestedByGPUProcess:
+        return "RequestedByGPUProcess";
+    case ProcessTerminationReason::ExceededProcessCountLimit:
+        return "ExceededProcessCountLimit";
+    case ProcessTerminationReason::NavigationSwap:
+        return "NavigationSwap";
+    case ProcessTerminationReason::RequestedByClient:
+        return "RequestedByClient";
+    case ProcessTerminationReason::Crash:
+        break;
+    }
+    return "Crash";
+}
+
 void WebPageProxy::dispatchProcessDidTerminate(ProcessTerminationReason reason)
 {
-    WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: reason=%d", reason);
+    WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "dispatchProcessDidTerminate: reason=%{public}s", processTerminationReasonToString(reason));
 
     bool handledByClient = false;
     if (m_loaderClient)
