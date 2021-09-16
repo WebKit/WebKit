@@ -31,6 +31,7 @@
 #import "CachedRawResource.h"
 #import "CachedResourceLoader.h"
 #import "CachedResourceRequest.h"
+#import "DataURLDecoder.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 #import "ResourceLoaderOptions.h"
 #import "SharedBuffer.h"
@@ -225,32 +226,29 @@ public:
 
 private:
     WebCoreAVFResourceLoader& m_parent;
-    std::unique_ptr<ResourceResponse> m_response;
+    ResourceResponse m_response;
     RefPtr<SharedBuffer> m_buffer;
 };
 
 DataURLResourceMediaLoader::DataURLResourceMediaLoader(WebCoreAVFResourceLoader& parent, ResourceRequest&& request)
     : m_parent(parent)
 {
-    ASSERT(request.url().protocolIsData());
+    RELEASE_ASSERT(request.url().protocolIsData());
 
-    if (request.url().protocolIsData()) {
-        auto mimeType = mimeTypeFromDataURL(request.url().string());
-        auto nsData = adoptNS([[NSData alloc] initWithContentsOfURL:request.url()]);
-        ASSERT(nsData);
-        m_buffer = SharedBuffer::create(nsData.get());
-        m_response = WTF::makeUnique<ResourceResponse>(request.url(), mimeType, m_buffer->size(), emptyString());
+    if (auto result = DataURLDecoder::decode(request.url(), DataURLDecoder::Mode::ForgivingBase64)) {
+        m_response = ResourceResponse::dataURLResponse(request.url(), *result);
+        m_buffer = SharedBuffer::create(WTFMove(result->data));
     }
 
     callOnMainThread([this, weakThis = makeWeakPtr(*this)] {
         if (!weakThis)
             return;
 
-        if (!m_buffer || !m_response) {
+        if (!m_buffer || m_response.isNull()) {
             m_parent.loadFailed(ResourceError(ResourceError::Type::General));
             return;
         }
-        m_parent.responseReceived(*m_response);
+        m_parent.responseReceived(m_response);
         if (!weakThis)
             return;
 

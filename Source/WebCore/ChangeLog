@@ -1,5 +1,22 @@
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
+        ASSERTION FAILED: nsData under DataURLResourceMediaLoader::DataURLResourceMediaLoader()
+        https://bugs.webkit.org/show_bug.cgi?id=230355
+        <rdar://82980375>
+
+        Reviewed by Eric Carlson.
+
+        Port DataURLResourceMediaLoader to use WebKit's DataURLDecoder instead of relying on
+        NSData to do so. Also, add data url decoding failure handling instead of crashing in
+        debug with an assertion.
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::DataURLResourceMediaLoader::DataURLResourceMediaLoader):
+
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
         [ MacOS & iOS ] imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html is flaky failing
         https://bugs.webkit.org/show_bug.cgi?id=228089
         <rdar://problem/80801807>
