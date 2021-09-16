@@ -1,3 +1,14 @@
+2021-08-21  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: crash when triggering IDBOpenRequest completion back on a worker thread
+        https://bugs.webkit.org/show_bug.cgi?id=229375
+
+        Protect callee in CrossThreadTask if it inherits from ThreadSafeRefCounted<T>.
+
+        Reviewed by Brady Eidson.
+
+        * wtf/CrossThreadTask.h:
+
 2021-04-12  Youenn Fablet  <youenn@apple.com>
 
         Block loading for port 10080

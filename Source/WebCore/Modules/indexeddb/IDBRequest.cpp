@@ -311,7 +311,8 @@ void IDBRequest::dispatchEvent(Event& event)
     else if (m_transaction && !m_transaction->didDispatchAbortOrCommit())
         targets = { this, m_transaction.get(), &m_transaction->database() };
 
-    m_hasPendingActivity = false;
+    if (event.isTrusted())
+        m_hasPendingActivity = false;
 
     {
         TransactionActivator activator(m_transaction.get());
