@@ -131,6 +131,8 @@ ExceptionOr<FontFaceSet&> FontFaceSet::add(FontFace& face)
 
 bool FontFaceSet::remove(FontFace& face)
 {
+    if (face.backing().cssConnection())
+        return false;
     bool result = m_backing->hasFace(face.backing());
     if (result)
         m_backing->remove(face.backing());
