@@ -363,7 +363,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
             return false;
         }
 
-        if (!m_document) {
+        if (!m_document || (!m_document->frame() && !newSelection.document())) {
             m_selection = newSelection;
             updateAssociatedLiveRange();
             return false;
@@ -376,6 +376,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
             clear();
             return false;
         }
+        ASSERT(m_document->frame());
 
         if (closeTyping)
             TypingCommand::closeTyping(*m_document);
