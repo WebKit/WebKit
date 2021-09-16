@@ -162,11 +162,12 @@ void ComposedTreeIterator::traverseNextInShadowTree()
     if (is<HTMLSlotElement>(current())) {
         auto& slot = downcast<HTMLSlotElement>(current());
         if (auto* assignedNodes = slot.assignedNodes()) {
-            if (auto assignedNode = assignedNodes->at(0)) {
-                context().slotNodeIndex = 0;
-                m_contextStack.append(Context(*assignedNode->parentElement(), *assignedNode, Context::Slotted));
-                return;
-            }
+            context().slotNodeIndex = 0;
+            auto* assignedNode = assignedNodes->at(0).get();
+            ASSERT(assignedNode);
+            ASSERT(assignedNode->parentElement());
+            m_contextStack.append(Context(*assignedNode->parentElement(), *assignedNode, Context::Slotted));
+            return;
         }
     }
 
@@ -199,8 +200,8 @@ bool ComposedTreeIterator::advanceInSlot(int direction)
         return false;
 
     auto* slotNode = assignedNodes.at(context().slotNodeIndex).get();
-    if (!slotNode)
-        return false;
+    ASSERT(slotNode);
+    ASSERT(slotNode->parentElement());
     m_contextStack.append(Context(*slotNode->parentElement(), *slotNode, Context::Slotted));
     return true;
 }
