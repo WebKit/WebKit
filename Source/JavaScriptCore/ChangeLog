@@ -1,3 +1,22 @@
+2021-09-16  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Fix crash in 32 bits due to not enough scratch registers available
+        https://bugs.webkit.org/show_bug.cgi?id=230241
+
+        Reviewed by Filip Pizlo.
+
+        Since patch 229229 (Polymorphic PutByVal) landed, jsc is now reaching
+        the case Transition in `AccessCase::generateImpl` which needs three
+        scratch registers when reallocating, but in ARMv7/MIPS, there are only
+        two registers available.
+
+        So in this patch, `AccessCase::createTransition` is changed to actually
+        check if there are enough registers available before creating the
+        AccessCase object.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+
 2021-09-15  Saam Barati  <sbarati@apple.com>
 
         Move some profiling to UnlinkedCodeBlock
