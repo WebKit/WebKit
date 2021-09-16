@@ -1,3 +1,19 @@
+2021-04-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add U+0581 and U+0585 to list of Armenian characters that look like Latin characters
+        https://bugs.webkit.org/show_bug.cgi?id=224219
+        <rdar://75896365>
+
+        Reviewed by Brent Fulgham.
+
+        These code points are allowed in the context of other Armenian code points and punctuation, but not other script code points.
+        This was already implemented for the others, but I consolidated the list to one location to avoid having two locations for the list.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::isArmenianLookalikeCharacter):
+        (WTF::URLHelpers::isArmenianLookalikeSequence):
+        (WTF::URLHelpers::isLookalikeCharacter):
+
 2021-08-21  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: crash when triggering IDBOpenRequest completion back on a worker thread
