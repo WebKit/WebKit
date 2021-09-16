@@ -2071,26 +2071,26 @@ private:
 
 #if ENABLE(INLINE_PATH_DATA)
 
-class StrokeInlinePath {
+class StrokeInlinePath : public InlinePathDataStorage {
 public:
     static constexpr ItemType itemType = ItemType::StrokeInlinePath;
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    StrokeInlinePath(const InlinePathData& pathData)
-        : m_pathData(pathData)
+    StrokeInlinePath(const StrokeInlinePath& other)
+        : InlinePathDataStorage(other.m_pathData)
     {
     }
 
-    Path path() const { return Path::from(m_pathData); }
+    StrokeInlinePath(const InlinePathData& pathData)
+        : InlinePathDataStorage(pathData)
+    {
+    }
 
     void apply(GraphicsContext&) const;
 
     Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
-
-private:
-    InlinePathData m_pathData;
 };
 
 #endif // ENABLE(INLINE_PATH_DATA)
