@@ -50,6 +50,8 @@ ServiceWorker conditional=SERVICE_WORKER
 ServiceWorkerContainer conditional=SERVICE_WORKER
 ServiceWorkerGlobalScope conditional=SERVICE_WORKER
 ServiceWorkerRegistration conditional=SERVICE_WORKER
+SharedWorker
+SharedWorkerGlobalScope
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition

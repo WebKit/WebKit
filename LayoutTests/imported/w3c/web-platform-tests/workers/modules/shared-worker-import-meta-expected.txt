@@ -1,5 +1,5 @@
 
-FAIL Test import.meta.url on the top-level module script. Can't find variable: SharedWorker
-FAIL Test import.meta.url on the imported module script. Can't find variable: SharedWorker
-FAIL Test import.meta.url on the imported module script with a fragment. Can't find variable: SharedWorker
+FAIL Test import.meta.url on the top-level module script. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.onmessage = resolve')"
+FAIL Test import.meta.url on the imported module script. null is not an object (evaluating 'worker.port.postMessage')
+FAIL Test import.meta.url on the imported module script with a fragment. null is not an object (evaluating 'worker.port.postMessage')
 

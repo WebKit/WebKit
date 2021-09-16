@@ -43,6 +43,7 @@
 #include "SecurityOrigin.h"
 #include "StructuredSerializeOptions.h"
 #include "WorkerGlobalScopeProxy.h"
+#include "WorkerOptions.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
@@ -69,7 +70,7 @@ void Worker::networkStateChanged(bool isOnLine)
         worker->notifyNetworkStateChange(isOnLine);
 }
 
-inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, const Options& options)
+inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, const WorkerOptions& options)
     : ActiveDOMObject(&context)
     , m_name(options.name)
     , m_identifier("worker:" + Inspector::IdentifiersFactory::createIdentifier())
@@ -88,7 +89,7 @@ inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtime
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, const String& url, const Options& options)
+ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::RuntimeFlags runtimeFlags, const String& url, const WorkerOptions& options)
 {
     ASSERT(isMainThread());
 

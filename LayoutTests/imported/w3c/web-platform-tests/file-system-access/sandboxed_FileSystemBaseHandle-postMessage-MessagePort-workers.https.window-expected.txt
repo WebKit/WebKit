@@ -1,4 +1,5 @@
 
 FAIL Send and receive messages using a message port in a dedicated worker. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
 FAIL Send and receive messages using a message port in a service worker. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
+FAIL Send and receive messages using a message port in a shared  worker. promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented"
 

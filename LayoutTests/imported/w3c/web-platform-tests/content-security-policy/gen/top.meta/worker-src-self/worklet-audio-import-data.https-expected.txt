@@ -1,7 +1,9 @@
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=deeadecc-9c75-4bf6-94f7-e69555256bd5&path=/mixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=d5712ae0-1239-466f-b246-173de8cd096b&path=/mixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=83af4f0b-8fd3-4b10-8c4e-2c415bb9b27e&path=/mixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=17334bd4-5114-4fc1-8878-249579d6ebaa&path=%2Fmixed-content
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=b8972efb-eb43-4d58-837e-1815723618b6&path=/mixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=e11c5ed7-48d9-4848-bb59-ad1025439db1&path=/mixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=928b53f6-abeb-40f2-b99b-7885801d35a0&path=/mixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=14b68e94-62c8-4306-a373-2ba65d3b4d10&path=%2Fmixed-content
 
 FAIL Content Security Policy: Expects allowed for worklet-audio-import-data to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "AbortError: Cross-origin script load denied by Cross-Origin Resource Sharing policy."
 PASS Content Security Policy: Expects allowed for worklet-audio-import-data to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation

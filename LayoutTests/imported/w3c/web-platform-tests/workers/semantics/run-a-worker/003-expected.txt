@@ -1,4 +1,6 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS worker
-FAIL shared Can't find variable: SharedWorker
+TIMEOUT shared Test timed out
 

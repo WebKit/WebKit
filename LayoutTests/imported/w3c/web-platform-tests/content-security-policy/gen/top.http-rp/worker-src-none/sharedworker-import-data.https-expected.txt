@@ -1,14 +1,16 @@
 
-PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and keep-origin redirection from https context.
+Harness Error (FAIL), message = Unhandled rejection: null is not an object (evaluating 'resolveObject.addEventListener')
+
+FAIL Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 FAIL Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and no-redirect redirection from https context.
+FAIL Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 FAIL Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-PASS Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and swap-origin redirection from https context.
+FAIL Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 FAIL Content Security Policy: Expects blocked for sharedworker-import-data to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and keep-origin redirection from https context.
+FAIL Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 FAIL Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and keep-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and no-redirect redirection from https context.
+FAIL Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 FAIL Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and no-redirect redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
-PASS Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and swap-origin redirection from https context.
+FAIL Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 FAIL Content Security Policy: Expects blocked for sharedworker-import-data to same-https origin and swap-origin redirection from https context.: securitypolicyviolation assert_equals: One violation event should be fired expected 1 but got 0
 

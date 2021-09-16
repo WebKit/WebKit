@@ -1,5 +1,7 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS Initialize global state
 PASS DedicatedWorker fetches with a "worker" Request.destination
-FAIL SharedWorker fetches with a "sharedworker" Request.destination promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.SharedWorker("dummy.html?t=sharedworker&dest=sharedworker")')"
+TIMEOUT SharedWorker fetches with a "sharedworker" Request.destination Test timed out
 

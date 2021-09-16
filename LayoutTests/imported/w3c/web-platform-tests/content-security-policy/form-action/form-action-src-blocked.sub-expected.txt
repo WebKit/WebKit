@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8800/common/redirect.py?location=/content-security-policy/support/postmessage-fail.html because it does not appear in the form-action directive of the Content Security Policy.
 
 
 Tests that blocking form actions works correctly.

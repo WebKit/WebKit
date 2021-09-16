@@ -46,6 +46,7 @@ my $windowConstructorsFile;
 my $workerGlobalScopeConstructorsFile;
 my $dedicatedWorkerGlobalScopeConstructorsFile;
 my $serviceWorkerGlobalScopeConstructorsFile;
+my $sharedWorkerGlobalScopeConstructorsFile;
 my $workletGlobalScopeConstructorsFile;
 my $paintWorkletGlobalScopeConstructorsFile;
 my $audioWorkletGlobalScopeConstructorsFile;
@@ -70,6 +71,7 @@ GetOptions('defines=s' => \$defines,
            'workerGlobalScopeConstructorsFile=s' => \$workerGlobalScopeConstructorsFile,
            'dedicatedWorkerGlobalScopeConstructorsFile=s' => \$dedicatedWorkerGlobalScopeConstructorsFile,
            'serviceWorkerGlobalScopeConstructorsFile=s' => \$serviceWorkerGlobalScopeConstructorsFile,
+           'sharedWorkerGlobalScopeConstructorsFile=s' => \$sharedWorkerGlobalScopeConstructorsFile,
            'workletGlobalScopeConstructorsFile=s' => \$workletGlobalScopeConstructorsFile,
            'paintWorkletGlobalScopeConstructorsFile=s' => \$paintWorkletGlobalScopeConstructorsFile,
            'audioWorkletGlobalScopeConstructorsFile=s' => \$audioWorkletGlobalScopeConstructorsFile,
@@ -85,6 +87,7 @@ die('Must specify an output file using --windowConstructorsFile.') unless define
 die('Must specify an output file using --workerGlobalScopeConstructorsFile.') unless defined($workerGlobalScopeConstructorsFile);
 die('Must specify an output file using --dedicatedWorkerGlobalScopeConstructorsFile.') unless defined($dedicatedWorkerGlobalScopeConstructorsFile);
 die('Must specify an output file using --serviceWorkerGlobalScopeConstructorsFile.') unless defined($serviceWorkerGlobalScopeConstructorsFile);
+die('Must specify an output file using --sharedWorkerGlobalScopeConstructorsFile.') unless defined($sharedWorkerGlobalScopeConstructorsFile);
 die('Must specify an output file using --workletGlobalScopeConstructorsFile.') unless defined($workletGlobalScopeConstructorsFile);
 die('Must specify an output file using --paintWorkletGlobalScopeConstructorsFile.') unless defined($paintWorkletGlobalScopeConstructorsFile);
 die('Must specify an output file using --audioWorkletGlobalScopeConstructorsFile.') unless defined($audioWorkletGlobalScopeConstructorsFile);
@@ -140,6 +143,7 @@ my $windowConstructorsCode = "";
 my $workerGlobalScopeConstructorsCode = "";
 my $dedicatedWorkerGlobalScopeConstructorsCode = "";
 my $serviceWorkerGlobalScopeConstructorsCode = "";
+my $sharedWorkerGlobalScopeConstructorsCode = "";
 my $workletGlobalScopeConstructorsCode = "";
 my $paintWorkletGlobalScopeConstructorsCode = "";
 my $audioWorkletGlobalScopeConstructorsCode = "";
@@ -255,6 +259,8 @@ foreach my $idlFileName (sort keys %idlFileNameHash) {
                 $dedicatedWorkerGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq "ServiceWorker") {
                 $serviceWorkerGlobalScopeConstructorsCode .= $attributeCode;
+            } elsif ($globalContext eq "SharedWorker") {
+                $sharedWorkerGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq "Worklet") {
                 $workletGlobalScopeConstructorsCode .= $attributeCode;
             } elsif ($globalContext eq "PaintWorklet") {
@@ -282,6 +288,7 @@ GeneratePartialInterface("DOMWindow", $windowConstructorsCode, $windowConstructo
 GeneratePartialInterface("WorkerGlobalScope", $workerGlobalScopeConstructorsCode, $workerGlobalScopeConstructorsFile);
 GeneratePartialInterface("DedicatedWorkerGlobalScope", $dedicatedWorkerGlobalScopeConstructorsCode, $dedicatedWorkerGlobalScopeConstructorsFile);
 GeneratePartialInterface("ServiceWorkerGlobalScope", $serviceWorkerGlobalScopeConstructorsCode, $serviceWorkerGlobalScopeConstructorsFile);
+GeneratePartialInterface("SharedWorkerGlobalScope", $sharedWorkerGlobalScopeConstructorsCode, $sharedWorkerGlobalScopeConstructorsFile);
 GeneratePartialInterface("WorkletGlobalScope", $workletGlobalScopeConstructorsCode, $workletGlobalScopeConstructorsFile);
 GeneratePartialInterface("PaintWorkletGlobalScope", $paintWorkletGlobalScopeConstructorsCode, $paintWorkletGlobalScopeConstructorsFile);
 GeneratePartialInterface("AudioWorkletGlobalScope", $audioWorkletGlobalScopeConstructorsCode, $audioWorkletGlobalScopeConstructorsFile);

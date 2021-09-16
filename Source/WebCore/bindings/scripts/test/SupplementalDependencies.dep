@@ -18,6 +18,10 @@ JSServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
 DOMServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
 WebDOMServiceWorkerGlobalScope.h: ServiceWorkerGlobalScopeConstructors.idl
 ServiceWorkerGlobalScopeConstructors.idl:
+JSSharedWorkerGlobalScope.h: SharedWorkerGlobalScopeConstructors.idl
+DOMSharedWorkerGlobalScope.h: SharedWorkerGlobalScopeConstructors.idl
+WebDOMSharedWorkerGlobalScope.h: SharedWorkerGlobalScopeConstructors.idl
+SharedWorkerGlobalScopeConstructors.idl:
 JSTestCEReactions.h: 
 DOMTestCEReactions.h: 
 WebDOMTestCEReactions.h: 

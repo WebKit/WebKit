@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'message_port.start')
 
-PASS This browser doesn't implement SharedWorker, and so passes this test automatically
+Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'message_port.start')
+
 

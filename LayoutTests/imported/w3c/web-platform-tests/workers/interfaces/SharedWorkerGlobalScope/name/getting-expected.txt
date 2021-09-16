@@ -1,5 +1,14 @@
 
-FAIL getting name Can't find variable: SharedWorker
-FAIL getting name 1 Can't find variable: SharedWorker
-FAIL getting name 2 Can't find variable: SharedWorker
+FAIL getting name null is not an object (evaluating 'w.port.onmessage = this.step_func(function(e) {
+      assert_true(e.data);
+      this.done();
+    })')
+FAIL getting name 1 null is not an object (evaluating 'w.port.onmessage = this.step_func(function(e) {
+      assert_true(e.data);
+      this.done();
+    })')
+FAIL getting name 2 null is not an object (evaluating 'w.port.onmessage = this.step_func(function(e) {
+      assert_true(e.data);
+      this.done();
+    })')
 

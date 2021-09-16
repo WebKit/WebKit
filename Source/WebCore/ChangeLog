@@ -1,3 +1,41 @@
+2021-09-15  Alex Christensen  <achristensen@webkit.org>
+
+        Add IDL skeleton for SharedWorker
+        https://bugs.webkit.org/show_bug.cgi?id=230293
+
+        Reviewed by Geoff Garen.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * bindings/js/WebCoreJSClientData.h:
+        * bindings/scripts/preprocess-idls.pl:
+        * dom/EventTargetFactory.in:
+        * workers/SharedWorker.cpp: Added.
+        (WebCore::SharedWorker::SharedWorker):
+        (WebCore::SharedWorker::port const):
+        (WebCore::SharedWorker::scriptExecutionContext const):
+        (WebCore::SharedWorker::eventTargetInterface const):
+        * workers/SharedWorker.h: Added.
+        * workers/SharedWorker.idl: Added.
+        * workers/SharedWorkerGlobalScope.cpp: Added.
+        (WebCore::SharedWorkerGlobalScope::name const):
+        (WebCore::SharedWorkerGlobalScope::close):
+        * workers/SharedWorkerGlobalScope.h: Added.
+        (isType):
+        * workers/SharedWorkerGlobalScope.idl: Added.
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        (WebCore::Worker::create):
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::isSharedWorkerGlobalScope const):
+        * workers/WorkerOptions.h: Copied from Source/WebCore/workers/Worker.idl.
+        * workers/WorkerOptions.idl: Copied from Source/WebCore/workers/Worker.idl.
+
 2021-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         Rename ScrollController to ScollingEffectsController

@@ -97,6 +97,7 @@ public:
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSDedicatedWorkerGlobalScope;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSRemoteDOMWindow;
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSWorkerGlobalScope;
+    std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSSharedWorkerGlobalScope;
 #if ENABLE(SERVICE_WORKER)
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSServiceWorkerGlobalScope;
 #endif

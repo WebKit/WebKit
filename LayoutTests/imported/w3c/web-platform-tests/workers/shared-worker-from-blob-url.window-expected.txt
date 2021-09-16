@@ -1,5 +1,5 @@
 
-FAIL Creating a shared worker from a blob URL works. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
-FAIL Creating a shared worker from a blob URL works immediately before revoking. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
-FAIL Connecting to a shared worker on a revoked blob URL works. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Creating a shared worker from a blob URL works. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'port.onmessage = e => resolve(e.data)')"
+FAIL Creating a shared worker from a blob URL works immediately before revoking. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'port.onmessage = e => resolve(e.data)')"
+FAIL Connecting to a shared worker on a revoked blob URL works. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'port.onmessage = e => resolve(e.data)')"
 

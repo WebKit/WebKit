@@ -1,20 +1,20 @@
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
 
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = msg => window.opener.postMessage(msg.data, '*')')
 
 FAIL worker-src 'self' directive should disallow cross origin static import. assert_array_equals: value is object "[object Object]", expected array
 FAIL worker-src * directive should allow cross origin static import. assert_array_equals: value is object "[object Object]", expected array

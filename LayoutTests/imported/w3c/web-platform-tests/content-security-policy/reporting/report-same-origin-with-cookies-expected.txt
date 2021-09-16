@@ -2,5 +2,5 @@
 
 PASS Image should not load
 PASS Violation report status OK.
-PASS Test report cookies.
+FAIL Test report cookies. assert_true: Report should contain cookie: cspViolationReportCookie2 expected true got false
 

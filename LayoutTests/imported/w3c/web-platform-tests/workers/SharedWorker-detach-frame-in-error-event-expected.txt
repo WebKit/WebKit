@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
 
 
 Harness Error (TIMEOUT), message = null

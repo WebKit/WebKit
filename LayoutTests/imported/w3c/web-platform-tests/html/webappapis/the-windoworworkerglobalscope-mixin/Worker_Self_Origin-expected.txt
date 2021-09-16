@@ -1,8 +1,8 @@
 
 PASS Same Origin Worker
-FAIL Same Origin SharedWorker Can't find variable: SharedWorker
+FAIL Same Origin SharedWorker null is not an object (evaluating 'w.port.start')
 PASS Data Url Worker
-FAIL Data Url SharedWorker Can't find variable: SharedWorker
+FAIL Data Url SharedWorker null is not an object (evaluating 'w.port.start')
 PASS Blob Url Worker
-FAIL Blob Url SharedWorker Can't find variable: SharedWorker
+FAIL Blob Url SharedWorker null is not an object (evaluating 'w.port.start')
 

@@ -1,10 +1,10 @@
 Verify the Cross-Origin Embedder Policy for Shared Workers by performing a cross-domain "fetch" request for a resource that does not specify a COEP. Only Shared Workers with the default COEP should be able to successfully perform this operation.
 
 
-FAIL default policy (derived from response) promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.SharedWorker(workerUrl)')"
-FAIL "require-corp" (derived from response) promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.SharedWorker(workerUrl)')"
-FAIL default policy (derived from owner set due to use of local scheme - blob URL) promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.SharedWorker(workerUrl)')"
-FAIL "require-corp" (derived from owner set due to use of local scheme - blob URL) promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.SharedWorker(workerUrl)')"
-FAIL default policy (derived from owner set due to use of local scheme - data URL) promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.SharedWorker(workerUrl)')"
-FAIL "require-corp" (derived from owner set due to use of local scheme - data URL) promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.SharedWorker(workerUrl)')"
+FAIL default policy (derived from response) promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sw.port.addEventListener')"
+FAIL "require-corp" (derived from response) promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sw.port.addEventListener')"
+FAIL default policy (derived from owner set due to use of local scheme - blob URL) promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sw.port.addEventListener')"
+FAIL "require-corp" (derived from owner set due to use of local scheme - blob URL) promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sw.port.addEventListener')"
+FAIL default policy (derived from owner set due to use of local scheme - data URL) promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sw.port.addEventListener')"
+FAIL "require-corp" (derived from owner set due to use of local scheme - data URL) promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'sw.port.addEventListener')"
 

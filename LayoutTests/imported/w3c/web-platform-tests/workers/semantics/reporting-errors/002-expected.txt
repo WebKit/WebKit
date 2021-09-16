@@ -1,3 +1,5 @@
 
-FAIL shared worker, addEventListener Can't find variable: SharedWorker
+FAIL shared worker, addEventListener null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
+    assert_equals(e.data, '');
+  })')
 

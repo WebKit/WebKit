@@ -1,6 +1,10 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'w1.port.onmessage = function(e) {
+  i++;
+  check_result();
+}')
 
-FAIL shared worker with multiple documents ReferenceError: Can't find variable: SharedWorker
+FAIL shared worker with multiple documents TypeError: null is not an object (evaluating 'w1.port.onmessage = function(e) {
+  i++;
+  check_result();
+}')
 

@@ -70,6 +70,7 @@ public:
     virtual ~WorkerGlobalScope();
 
     virtual bool isDedicatedWorkerGlobalScope() const { return false; }
+    virtual bool isSharedWorkerGlobalScope() const { return false; }
     virtual bool isServiceWorkerGlobalScope() const { return false; }
 
     const URL& url() const final { return m_url; }

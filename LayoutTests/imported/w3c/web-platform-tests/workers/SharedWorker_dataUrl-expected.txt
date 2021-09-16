@@ -1,5 +1,9 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = e => {
+  parent.postMessage(e.data, '*');
+}')
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker.port.onmessage = e => {
+  parent.postMessage(e.data, '*');
+}')
 
 
 Harness Error (TIMEOUT), message = null

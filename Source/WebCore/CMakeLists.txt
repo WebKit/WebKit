@@ -1160,9 +1160,12 @@ set(WebCore_NON_SVG_IDL_FILES
 
     workers/AbstractWorker.idl
     workers/DedicatedWorkerGlobalScope.idl
+    workers/SharedWorker.idl
+    workers/SharedWorkerGlobalScope.idl
     workers/Worker.idl
     workers/WorkerGlobalScope.idl
     workers/WorkerLocation.idl
+    workers/WorkerOptions.idl
     workers/WorkerType.idl
 
     workers/service/ExtendableEvent.idl
@@ -1853,6 +1856,7 @@ set(WINDOW_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/DOMWindowConstructor
 set(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/WorkerGlobalScopeConstructors.idl)
 set(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/DedicatedWorkerGlobalScopeConstructors.idl)
 set(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/ServiceWorkerGlobalScopeConstructors.idl)
+set(SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/SharedWorkerGlobalScopeConstructors.idl)
 set(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/WorkletGlobalScopeConstructors.idl)
 set(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/PaintWorkletGlobalScopeConstructors.idl)
 set(AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/AudioWorkletGlobalScopeConstructors.idl)
@@ -2042,6 +2046,7 @@ GENERATE_BINDINGS(WebCoreBindings
         --workerGlobalScopeConstructorsFile ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
         --dedicatedWorkerGlobalScopeConstructorsFile ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
         --serviceWorkerGlobalScopeConstructorsFile ${SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
+        --sharedWorkerGlobalScopeConstructorsFile ${SHAREDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
         --workletGlobalScopeConstructorsFile ${WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE}
         --paintWorkletGlobalScopeConstructorsFile ${PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE}
         --audioWorkletGlobalScopeConstructorsFile ${AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE})

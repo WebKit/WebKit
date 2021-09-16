@@ -1,4 +1,7 @@
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=89b7169c-610e-4f79-bdb6-961d4eee7798&path=%2Fmixed-content
+CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=e7438aa8-40ec-4752-85f1-28ba17ee395f&path=%2Fmixed-content because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=ecac46ab-1b07-4adc-9f0e-d1d8fcfb9534&path=%2Fmixed-content because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=b0a5ac6d-dd12-4491-8950-cca0c00466a8&path=%2Fmixed-content because it does not appear in the script-src directive of the Content Security Policy.
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=14fba811-5ddb-4194-8154-ef210608d575&path=%2Fmixed-content
 
 PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and keep-origin redirection from https context.
 PASS Content Security Policy: Expects allowed for worklet-audio to same-https origin and keep-origin redirection from https context.: securitypolicyviolation

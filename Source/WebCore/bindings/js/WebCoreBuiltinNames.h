@@ -247,6 +247,8 @@ namespace WebCore {
     macro(ServiceWorkerGlobalScope) \
     macro(ServiceWorkerRegistration) \
     macro(ShadowRoot) \
+    macro(SharedWorker) \
+    macro(SharedWorkerGlobalScope) \
     macro(SpeechRecognition) \
     macro(SpeechRecognitionAlternative) \
     macro(SpeechRecognitionErrorEvent) \

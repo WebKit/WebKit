@@ -19,8 +19,8 @@ PASS dedicated worker: scheme = blob, value = undefined
 PASS dedicated worker: scheme = blob, value = *
 PASS dedicated worker: scheme = blob, value = self
 FAIL dedicated worker: scheme = blob, value = (\) assert_equals: expected false but got true
-FAIL shared worker: withCoopCoep = false Can't find variable: SharedWorker
-FAIL shared worker: withCoopCoep = true Can't find variable: SharedWorker
+PASS shared worker: withCoopCoep = false
+FAIL shared worker: withCoopCoep = true null is not an object (evaluating 'worker.port.postMessage')
 FAIL service worker: withCoopCoep = false assert_equals: expected (boolean) false but got (undefined) undefined
 FAIL service worker: withCoopCoep = true assert_equals: expected (boolean) true but got (undefined) undefined
 

@@ -1,7 +1,9 @@
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=7aa84c6c-e050-46c7-8415-1e69d8c70f54&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=4762bd36-8ed1-461e-bc92-f9b98dd9e7bd&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=dda47751-9fe9-4cc6-bab2-44f03ebbe27a&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=137d1df6-34b2-4e04-a5ff-7d37a83218d5&path=%2Fmixed-content
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
+
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=keep-origin&action=purge&key=449f92c8-893e-461c-bde9-87aaa4afda08&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=no-redirect&action=purge&key=4690c1a7-f1e9-422c-8c6e-7162838e23c1&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?redirection=swap-origin&action=purge&key=0cfb2c2d-993f-40c9-8b98-f3958624bc8e&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/worker.py?action=purge&key=7a5fce01-5a0d-45df-a12c-4de9a5b734de&path=%2Fmixed-content
 
 FAIL Content Security Policy: Expects allowed for worklet-audio to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "AbortError: Cross-origin script load denied by Cross-Origin Resource Sharing policy."
 PASS Content Security Policy: Expects allowed for worklet-audio to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation

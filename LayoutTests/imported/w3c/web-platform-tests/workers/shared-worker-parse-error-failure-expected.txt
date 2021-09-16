@@ -1,4 +1,6 @@
 
-FAIL Classic shared worker construction for script with syntax error should dispatch an event named error. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
-FAIL Static import on classic shared worker should dispatch an event named error. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Classic shared worker construction for script with syntax error should dispatch an event named error. Test timed out
+NOTRUN Static import on classic shared worker should dispatch an event named error.
 

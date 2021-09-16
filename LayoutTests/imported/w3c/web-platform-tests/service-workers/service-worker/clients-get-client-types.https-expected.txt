@@ -1,3 +1,5 @@
 
-FAIL Test Clients.get() with window and worker clients promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Test Clients.get() with window and worker clients promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'w.port.onmessage = function(e) {
+                resolve(e.data.clientId);
+              }')"
 

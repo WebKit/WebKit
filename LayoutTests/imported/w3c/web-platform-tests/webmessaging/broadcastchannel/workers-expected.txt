@@ -1,6 +1,6 @@
 
 PASS BroadcastChannel works in workers
-FAIL BroadcastChannel works in shared workers Can't find variable: SharedWorker
+FAIL BroadcastChannel works in shared workers null is not an object (evaluating 'worker.port')
 PASS Closing and re-opening a channel works.
 PASS BroadcastChannel created after a worker self.close()
 PASS BroadcastChannel used after a worker self.close()

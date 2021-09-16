@@ -1,3 +1,6 @@
 
-FAIL encoding, shared worker Can't find variable: SharedWorker
+FAIL encoding, shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func(function(e) {
+    assert_equals(e.data, '\u00e5');
+    this.done();
+  })')
 

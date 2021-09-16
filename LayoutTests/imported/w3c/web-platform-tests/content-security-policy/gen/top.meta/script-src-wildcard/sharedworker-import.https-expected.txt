@@ -1,14 +1,16 @@
 
-FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+Harness Error (FAIL), message = Unhandled rejection: null is not an object (evaluating 'resolveObject.addEventListener')
+
+FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 PASS Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 PASS Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 PASS Content Security Policy: Expects allowed for sharedworker-import to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to same-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Content Security Policy: Expects allowed for sharedworker-import to same-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to same-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Content Security Policy: Expects allowed for sharedworker-import to same-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
-FAIL Content Security Policy: Expects allowed for sharedworker-import to same-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Content Security Policy: Expects allowed for sharedworker-import to same-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'worker.port.start')"
 PASS Content Security Policy: Expects allowed for sharedworker-import to same-https origin and swap-origin redirection from https context.: securitypolicyviolation
 

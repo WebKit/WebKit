@@ -1,11 +1,9 @@
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
-
-FAIL postMessage Can't find variable: worker
-FAIL start Can't find variable: worker
-FAIL close Can't find variable: worker
-FAIL onmessage Can't find variable: worker
-FAIL addEventListener Can't find variable: worker
-FAIL removeEventListener Can't find variable: worker
-FAIL despatchEvent Can't find variable: worker
+FAIL postMessage null is not an object (evaluating 'worker.port.postMessage = 1')
+FAIL start null is not an object (evaluating 'worker.port.start = 1')
+FAIL close null is not an object (evaluating 'worker.port.close = 1')
+FAIL onmessage null is not an object (evaluating 'worker.port.onmessage = f')
+FAIL addEventListener null is not an object (evaluating 'worker.port.addEventListener = 1')
+FAIL removeEventListener null is not an object (evaluating 'worker.port.removeEventListener = 1')
+FAIL despatchEvent null is not an object (evaluating 'worker.port.despatchEvent = 1')
 

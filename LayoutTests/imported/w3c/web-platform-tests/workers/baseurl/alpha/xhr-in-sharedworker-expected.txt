@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'message_port.start')
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: SharedWorker
+Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'message_port.start')
 
 

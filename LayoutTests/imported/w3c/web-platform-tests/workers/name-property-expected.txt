@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'message_port.start')
 
-Harness Error (FAIL), message = Unhandled rejection: Can't find variable: SharedWorker
+Harness Error (FAIL), message = Unhandled rejection: null is not an object (evaluating 'message_port.start')
 
 PASS name property value for DedicatedWorkerGlobalScope
 PASS name property is replaceable for DedicatedWorkerGlobalScope

@@ -1,4 +1,6 @@
 
-FAIL DedicatedWorker should correctly handle abrupt completion promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
-FAIL SharedWorker should correctly handle abrupt completion promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+Harness Error (TIMEOUT), message = null
+
+PASS DedicatedWorker should correctly handle abrupt completion
+TIMEOUT SharedWorker should correctly handle abrupt completion Test timed out
 

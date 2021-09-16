@@ -1,6 +1,6 @@
 Blocked access to external URL https://www.localhost:9444/common/blank.html
 
-FAIL Test that local scheme workers inherit COEP: require-corp from the creating document promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedWorker"
+FAIL Test that local scheme workers inherit COEP: require-corp from the creating document promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'message_port.start')"
 PASS blob URL dedicated worker: Same origin should be allowed.
 PASS blob URL dedicated worker: Cross origin should be blocked.
 

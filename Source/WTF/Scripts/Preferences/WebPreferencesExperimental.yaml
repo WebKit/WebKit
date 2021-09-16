@@ -1089,6 +1089,18 @@ ServerTimingEnabled:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
+SharedWorkerEnabled:
+  type: bool
+  humanReadableName: "SharedWorker"
+  humanReadableDescription: "Enabled SharedWorker API"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 ShouldDeferAsynchronousScriptsUntilAfterDocumentLoadOrFirstPaint:
   type: bool
   humanReadableName: "Defer async scripts until DOMContentLoaded or first-paint"

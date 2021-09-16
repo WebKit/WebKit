@@ -2616,6 +2616,8 @@ workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp
 workers/DedicatedWorkerThread.cpp
 workers/ScriptBuffer.cpp
+workers/SharedWorker.cpp
+workers/SharedWorkerGlobalScope.cpp
 workers/Worker.cpp
 workers/WorkerAnimationController.cpp
 workers/WorkerConsoleClient.cpp
@@ -3586,6 +3588,8 @@ JSShadowRoot.cpp
 JSShadowRootInit.cpp
 JSShadowRootMode.cpp
 JSShareData.cpp
+JSSharedWorker.cpp
+JSSharedWorkerGlobalScope.cpp
 JSSlotable.cpp
 JSSourceBuffer.cpp
 JSSourceBufferList.cpp
@@ -3743,6 +3747,7 @@ JSWindowOrWorkerGlobalScope.cpp
 JSWorker.cpp
 JSWorkerGlobalScope.cpp
 JSWorkerLocation.cpp
+JSWorkerOptions.cpp
 JSWorkerNavigator.cpp
 JSWorkerType.cpp
 JSWorklet.cpp

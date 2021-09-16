@@ -1,4 +1,6 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'w1.port.onmessage = function(e) {
+  e.ports[0].postMessage(2);
+}')
 
-FAIL messagechannel in shared worker Can't find variable: SharedWorker
+FAIL messagechannel in shared worker null is not an object (evaluating 'w1.port')
 

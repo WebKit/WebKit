@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: SharedWorker
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'worker1.port.onmessage = receiveMessage')
 
-FAIL Test the name property of shared workers mixing constructor options and constructor strings ReferenceError: Can't find variable: SharedWorker
+FAIL Test the name property of shared workers mixing constructor options and constructor strings TypeError: null is not an object (evaluating 'worker1.port.onmessage = receiveMessage')
 

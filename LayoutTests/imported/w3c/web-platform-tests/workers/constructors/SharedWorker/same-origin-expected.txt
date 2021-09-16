@@ -1,8 +1,10 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL unsupported_scheme assert_throws: function "function () { new SharedWorker('unsupported:', ''); }" threw object "ReferenceError: Can't find variable: SharedWorker" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
-FAIL data_url Can't find variable: SharedWorker
+FAIL unsupported_scheme assert_throws_dom: function "() => { new SharedWorker('unsupported:', ''); }" did not throw
+FAIL data_url null is not an object (evaluating 'worker.port.onmessage = t.step_func_done(e => {
+    assert_equals(e.data, 1);
+  })')
 TIMEOUT javascript_url Test timed out
 TIMEOUT about_blank Test timed out
 TIMEOUT opera_com Test timed out

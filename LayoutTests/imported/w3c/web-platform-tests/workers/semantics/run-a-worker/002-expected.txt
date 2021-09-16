@@ -1,3 +1,6 @@
 
-FAIL worker global scope, shared worker Can't find variable: SharedWorker
+FAIL worker global scope, shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func(function(e) {
+    assert_true(e.data);
+    this.done();
+  })')
 
