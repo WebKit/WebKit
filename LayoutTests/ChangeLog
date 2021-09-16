@@ -1,3 +1,15 @@
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Mac Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=230268
+        <rdar://problem/83104971>
+
+        Unreviewed, move console logging to stderr to address flakiness.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-16  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html.

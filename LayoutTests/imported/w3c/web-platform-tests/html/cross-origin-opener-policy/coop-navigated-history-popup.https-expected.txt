@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Can't close the window since it was not opened by JavaScript
 
 PASS Popup navigating to other origin with COOP: same-origin and back in history
 
