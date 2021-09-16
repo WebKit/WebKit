@@ -2141,6 +2141,9 @@ void Document::resolveStyle(ResolveStyleType type)
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
 {
+    if (!hasLivingRenderTree())
+        return;
+
     if (!m_pendingRenderTreeTextUpdate)
         m_pendingRenderTreeTextUpdate = makeUnique<Style::Update>(*this);
 

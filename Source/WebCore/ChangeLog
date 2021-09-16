@@ -1,5 +1,46 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282390. rdar://problem/83183334
+
+    Don't schedule text rendering updates for a non-rendered Document
+    https://bugs.webkit.org/show_bug.cgi?id=230246
+    rdar://81905586
+    
+    Reviewed by Anders Carlsson.
+    
+    Memory use could grow without limit as these updates would not get cleared until
+    the document was destroyed.
+    
+    No test, hard to make a reasonable regression test as the memory growth is not extreme.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::updateTextRenderer):
+    
+    Bail out if the Document has no render tree.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282390 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-14  Antti Koivisto  <antti@apple.com>
+
+            Don't schedule text rendering updates for a non-rendered Document
+            https://bugs.webkit.org/show_bug.cgi?id=230246
+            rdar://81905586
+
+            Reviewed by Anders Carlsson.
+
+            Memory use could grow without limit as these updates would not get cleared until
+            the document was destroyed.
+
+            No test, hard to make a reasonable regression test as the memory growth is not extreme.
+
+            * dom/Document.cpp:
+            (WebCore::Document::updateTextRenderer):
+
+            Bail out if the Document has no render tree.
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282370. rdar://problem/83183884
 
     [macOS] -toggleAutomaticSpellingCorrection: menu item validation shouldn't require post-layout editor state
