@@ -26,9 +26,16 @@
 #pragma once
 
 #include <WebCore/LoadSchedulingMode.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class ResourceError;
+}
 
 namespace WebKit {
 
@@ -41,18 +48,41 @@ public:
     ~NetworkLoadScheduler();
 
     void schedule(NetworkLoad&);
-    void unschedule(NetworkLoad&);
+    void unschedule(NetworkLoad&, const WebCore::NetworkLoadMetrics* = nullptr);
+
+    void startedPreconnectForMainResource(const URL&);
+    void finishedPreconnectForMainResource(const URL&, const WebCore::ResourceError&);
 
     void setResourceLoadSchedulingMode(WebCore::PageIdentifier, WebCore::LoadSchedulingMode);
     void prioritizeLoads(const Vector<NetworkLoad*>&);
     void clearPageData(WebCore::PageIdentifier);
 
 private:
+    void scheduleLoad(NetworkLoad&);
+    void unscheduleLoad(NetworkLoad&);
+
+    void scheduleMainResourceLoad(NetworkLoad&);
+    void unscheduleMainResourceLoad(NetworkLoad&, const WebCore::NetworkLoadMetrics*);
+
+    bool isOriginHTTP1X(const String&);
+    void updateOriginProtocolInfo(const String&, const String&);
+
     class HostContext;
     HostContext* contextForLoad(const NetworkLoad&);
 
     using PageContext = HashMap<String, std::unique_ptr<HostContext>>;
     HashMap<WebCore::PageIdentifier, std::unique_ptr<PageContext>> m_pageContexts;
+
+    struct PendingMainResourcePreconnectInfo {
+        unsigned pendingPreconnects {1};
+        ListHashSet<NetworkLoad *> pendingLoads;
+    };
+    using PendingPreconnectMap = HashMap<String, PendingMainResourcePreconnectInfo>;
+    PendingPreconnectMap m_pendingMainResourcePreconnects;
+
+    void maybePrunePreconnectInfo(PendingPreconnectMap::iterator&);
+
+    HashSet<String> m_http1XOrigins;
 };
 
 }

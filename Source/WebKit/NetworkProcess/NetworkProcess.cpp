@@ -1381,6 +1381,7 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     parameters.request = ResourceRequest { url };
     parameters.request.setIsAppInitiated(lastNavigationWasAppInitiated == LastNavigationWasAppInitiated::Yes);
     parameters.request.setFirstPartyForCookies(url);
+    parameters.request.setPriority(WebCore::ResourceLoadPriority::VeryHigh);
     parameters.webPageProxyID = webPageProxyID;
     parameters.webPageID = webPageID;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
@@ -1392,7 +1393,12 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 
-    (new PreconnectTask(*networkSession, WTFMove(parameters), [](const WebCore::ResourceError&) { }))->start();
+    networkSession->networkLoadScheduler().startedPreconnectForMainResource(url);
+    auto task = new PreconnectTask(*networkSession, WTFMove(parameters), [networkSession, url](const WebCore::ResourceError& error) {
+        networkSession->networkLoadScheduler().finishedPreconnectForMainResource(url, error);
+    });
+    task->setTimeout(10_s);
+    task->start();
 #else
     UNUSED_PARAM(url);
     UNUSED_PARAM(userAgent);

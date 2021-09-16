@@ -1,3 +1,112 @@
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282252. rdar://problem/83184010
+
+    Preconnected socket is sometimes not used for initial request
+    https://bugs.webkit.org/show_bug.cgi?id=229686
+    
+    Reviewed by Alex Christensen.
+    
+    In the previous release, we preconnected to the main resource origin early in page load from
+    UIProcess to save ~10-15 ms per page load (https://bugs.webkit.org/show_bug.cgi?id=204992).
+    The savings comes from the fact that there's some latency in initiating the request in
+    WebProcess and waiting for the nav delegate reply in UIProcess. We hide that latency by
+    having the eventual main resource request reuse the early preconnected socket.
+    
+    However, this optimization doesn't work for connections to known HTTP/1.1 origins due to
+    CFNetwork's in-memory cache of known HTTP/1.1 origins. If an origin is in this cache, and
+    a preconnect is still in flight, then the network stack will go wide immediately and issue
+    the main resource request on a new socket rather than trying to wait for the preconnect to
+    finish and reuse the preconnected socket. Thus the preconneted socket just goes to waste.
+    This can also cause issues with single-threaded web servers that serve only one request at
+    a time, as the main resource request can get head-of-line blocked by the preconnect that
+    is wasted.
+    
+    To work around this, this patch tracks a small number of known HTTP/1.1 origins in memory.
+    If there is a pending preconnect to an HTTP/1.1 origin and a main resource request to that
+    origin comes in, then we block the request from going out until the preconnect finishes.
+    This allows the main resource request to utilize the preconnected socket.
+    
+    This is worth ~1.25%-2.5% on PLT5 depending on device.
+    
+    * NetworkProcess/NetworkLoad.cpp:
+    (WebKit::NetworkLoad::didCompleteWithError):
+    * NetworkProcess/NetworkLoadScheduler.cpp:
+    (WebKit::NetworkLoadScheduler::schedule):
+    (WebKit::NetworkLoadScheduler::unschedule):
+    (WebKit::NetworkLoadScheduler::scheduleLoad):
+    (WebKit::NetworkLoadScheduler::unscheduleLoad):
+    (WebKit::NetworkLoadScheduler::scheduleMainResourceLoad):
+    (WebKit::NetworkLoadScheduler::unscheduleMainResourceLoad):
+    (WebKit::NetworkLoadScheduler::startedPreconnectForMainResource):
+    (WebKit::NetworkLoadScheduler::finishedPreconnectForMainResource):
+    (WebKit::NetworkLoadScheduler::maybePrunePreconnectInfo):
+    (WebKit::NetworkLoadScheduler::isOriginHTTP1X):
+    (WebKit::NetworkLoadScheduler::updateOriginProtocolInfo):
+    * NetworkProcess/NetworkLoadScheduler.h:
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::preconnectTo):
+    * NetworkProcess/PreconnectTask.cpp:
+    (WebKit::PreconnectTask::PreconnectTask):
+    (WebKit::PreconnectTask::setTimeout):
+    (WebKit::PreconnectTask::start):
+    * NetworkProcess/PreconnectTask.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282252 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-09  Ben Nham  <nham@apple.com>
+
+            Preconnected socket is sometimes not used for initial request
+            https://bugs.webkit.org/show_bug.cgi?id=229686
+
+            Reviewed by Alex Christensen.
+
+            In the previous release, we preconnected to the main resource origin early in page load from
+            UIProcess to save ~10-15 ms per page load (https://bugs.webkit.org/show_bug.cgi?id=204992).
+            The savings comes from the fact that there's some latency in initiating the request in
+            WebProcess and waiting for the nav delegate reply in UIProcess. We hide that latency by
+            having the eventual main resource request reuse the early preconnected socket.
+
+            However, this optimization doesn't work for connections to known HTTP/1.1 origins due to
+            CFNetwork's in-memory cache of known HTTP/1.1 origins. If an origin is in this cache, and
+            a preconnect is still in flight, then the network stack will go wide immediately and issue
+            the main resource request on a new socket rather than trying to wait for the preconnect to
+            finish and reuse the preconnected socket. Thus the preconneted socket just goes to waste.
+            This can also cause issues with single-threaded web servers that serve only one request at
+            a time, as the main resource request can get head-of-line blocked by the preconnect that
+            is wasted.
+
+            To work around this, this patch tracks a small number of known HTTP/1.1 origins in memory.
+            If there is a pending preconnect to an HTTP/1.1 origin and a main resource request to that
+            origin comes in, then we block the request from going out until the preconnect finishes.
+            This allows the main resource request to utilize the preconnected socket.
+
+            This is worth ~1.25%-2.5% on PLT5 depending on device.
+
+            * NetworkProcess/NetworkLoad.cpp:
+            (WebKit::NetworkLoad::didCompleteWithError):
+            * NetworkProcess/NetworkLoadScheduler.cpp:
+            (WebKit::NetworkLoadScheduler::schedule):
+            (WebKit::NetworkLoadScheduler::unschedule):
+            (WebKit::NetworkLoadScheduler::scheduleLoad):
+            (WebKit::NetworkLoadScheduler::unscheduleLoad):
+            (WebKit::NetworkLoadScheduler::scheduleMainResourceLoad):
+            (WebKit::NetworkLoadScheduler::unscheduleMainResourceLoad):
+            (WebKit::NetworkLoadScheduler::startedPreconnectForMainResource):
+            (WebKit::NetworkLoadScheduler::finishedPreconnectForMainResource):
+            (WebKit::NetworkLoadScheduler::maybePrunePreconnectInfo):
+            (WebKit::NetworkLoadScheduler::isOriginHTTP1X):
+            (WebKit::NetworkLoadScheduler::updateOriginProtocolInfo):
+            * NetworkProcess/NetworkLoadScheduler.h:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::preconnectTo):
+            * NetworkProcess/PreconnectTask.cpp:
+            (WebKit::PreconnectTask::PreconnectTask):
+            (WebKit::PreconnectTask::setTimeout):
+            (WebKit::PreconnectTask::start):
+            * NetworkProcess/PreconnectTask.h:
+
 2021-09-09  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281792. rdar://problem/82949614
