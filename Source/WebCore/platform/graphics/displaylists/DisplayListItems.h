@@ -176,6 +176,8 @@ public:
 
     SetInlineFillGradient(const Gradient&, const AffineTransform& gradientSpaceTransform);
     WEBCORE_EXPORT SetInlineFillGradient(float offsets[maxColorStopCount], SRGBA<uint8_t> colors[maxColorStopCount], const Gradient::Data&, const AffineTransform& gradientSpaceTransform, GradientSpreadMethod, uint8_t colorStopCount);
+    SetInlineFillGradient(const SetInlineFillGradient&);
+    bool isValid() const { return m_isValid; }
 
     static bool isInline(const Gradient&);
     Ref<Gradient> gradient() const;
@@ -189,6 +191,7 @@ private:
     AffineTransform m_gradientSpaceTransform;
     GradientSpreadMethod m_spreadMethod { GradientSpreadMethod::Pad };
     uint8_t m_colorStopCount { 0 };
+    bool m_isValid { true };
 };
 
 class SetInlineFillColor {
