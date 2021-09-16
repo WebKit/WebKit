@@ -331,7 +331,7 @@ String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
     return tempDirectoryFileSystemRepresentation("JavaScriptCoreDebug", ShouldCreateDirectory::No);
 }
 
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
 String WebsiteDataStore::defaultModelElementCacheDirectory()
 {
     return tempDirectoryFileSystemRepresentation("ModelElement", ShouldCreateDirectory::No);

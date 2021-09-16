@@ -51,7 +51,7 @@ struct WebProcessDataStoreParameters {
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
     HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccessQuirk;
 #endif
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
     String modelElementCacheDirectory;
     SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
 #endif
@@ -79,7 +79,7 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
     encoder << domainsWithUserInteraction;
     encoder << domainsWithStorageAccessQuirk;
 #endif
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
     encoder << modelElementCacheDirectory;
     encoder << modelElementCacheDirectoryExtensionHandle;
 #endif
@@ -150,7 +150,7 @@ std::optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::deco
     if (!domainsWithStorageAccessQuirk)
         return std::nullopt;
 #endif
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
         String modelElementCacheDirectory;
         if (!decoder.decode(modelElementCacheDirectory))
             return std::nullopt;
@@ -181,7 +181,7 @@ std::optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::deco
         WTFMove(*domainsWithUserInteraction),
         WTFMove(*domainsWithStorageAccessQuirk),
 #endif
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
         WTFMove(modelElementCacheDirectory),
         WTFMove(*modelElementCacheDirectoryExtensionHandle),
 #endif

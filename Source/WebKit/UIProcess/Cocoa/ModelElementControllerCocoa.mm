@@ -26,12 +26,12 @@
 #import "config.h"
 #import "ModelElementController.h"
 
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
 
 #import "Logging.h"
 #import "WebPageProxy.h"
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 #import "APIUIClient.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeHost.h"
@@ -41,7 +41,7 @@
 #import <pal/spi/ios/SystemPreviewSPI.h>
 #endif
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 #import <pal/spi/mac/SystemPreviewSPI.h>
 #import <wtf/MainThread.h>
 #endif
@@ -51,7 +51,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 
 namespace WebKit {
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId)
 {
@@ -122,7 +122,7 @@ void ModelElementController::takeModelElementFullscreen(WebCore::GraphicsLayer::
 
 #endif
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 void ModelElementController::modelElementDidCreatePreview(const WebCore::ElementContext& context, const URL& fileURL, const String& uuid, const WebCore::FloatSize& size)
 {

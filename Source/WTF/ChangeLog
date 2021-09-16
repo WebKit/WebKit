@@ -1,3 +1,20 @@
+2021-09-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust ARKIT_INLINE_PREVIEW* compile time flags
+        https://bugs.webkit.org/show_bug.cgi?id=230332
+
+        Reviewed by Sam Weinig.
+
+        * wtf/PlatformEnableCocoa.h:
+        Make these ENABLE()s instead of HAVE()s (as they control a WebKit feature).
+        Also, disable the ASVInlinePreview version if WKSeparatedModelView is enabled,
+        we don't need both, and we currently always make a WKSeparatedModelView
+        in that case anyway.
+
+        * wtf/PlatformHave.h:
+        Stop using __has_include in favor of version checks, now that
+        the header has been around for a while.
+
 2021-09-16  Youenn Fablet  <youenn@apple.com>
 
         Enable RTCRtpScriptTransform by default

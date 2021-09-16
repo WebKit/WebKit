@@ -35,7 +35,7 @@
 #include "SharedBuffer.h"
 #include <wtf/UniqueRef.h>
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 #include "PlatformLayer.h"
 OBJC_CLASS ASVInlinePreview;
 #endif
@@ -61,12 +61,12 @@ public:
     RefPtr<SharedBuffer> modelData() const;
     RefPtr<Model> model() const;
 
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
     WEBCORE_EXPORT static void setModelElementCacheDirectory(const String&);
     WEBCORE_EXPORT static const String& modelElementCacheDirectory();
 #endif
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     PlatformLayer* platformLayer() const;
     WEBCORE_EXPORT void inlinePreviewDidObtainContextId(const String& uuid, uint32_t contextId);
 #endif
@@ -79,7 +79,7 @@ private:
     void setSourceURL(const URL&);
     HTMLModelElement& readyPromiseResolve();
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void clearFile();
     void createFile();
     void modelDidChange();
@@ -102,7 +102,7 @@ private:
     UniqueRef<ReadyPromise> m_readyPromise;
     bool m_dataComplete { false };
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     String m_filePath;
     RetainPtr<ASVInlinePreview> m_inlinePreview;
 #endif

@@ -42,7 +42,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -70,7 +70,7 @@ HTMLModelElement::~HTMLModelElement()
         m_resource = nullptr;
     }
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     clearFile();
 #endif
 }
@@ -136,7 +136,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve);
 
     if (m_sourceURL.isEmpty()) {
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
         clearFile();
 #endif
         return;
@@ -167,7 +167,7 @@ HTMLModelElement& HTMLModelElement::readyPromiseResolve()
     return *this;
 }
 
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
 static String& sharedModelElementCacheDirectory()
 {
     static NeverDestroyed<String> sharedModelElementCacheDirectory;
@@ -235,14 +235,14 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
 
     m_readyPromise->resolve(*this);
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     modelDidChange();
 #endif
 }
 
 void HTMLModelElement::enterFullscreen()
 {
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     auto* page = document().page();
     if (!page)
         return;

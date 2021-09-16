@@ -639,7 +639,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     ModelElementPreviewDidObtainContextId(struct WebCore::ElementContext elementContext, String uuid, uint32_t contextId)
 #endif
 }

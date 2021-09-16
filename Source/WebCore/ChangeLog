@@ -1,3 +1,24 @@
+2021-09-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust ARKIT_INLINE_PREVIEW* compile time flags
+        https://bugs.webkit.org/show_bug.cgi?id=230332
+
+        Reviewed by Sam Weinig.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        (WebCore::HTMLModelElement::~HTMLModelElement):
+        (WebCore::HTMLModelElement::setSourceURL):
+        (WebCore::HTMLModelElement::notifyFinished):
+        (WebCore::HTMLModelElement::enterFullscreen):
+        * Modules/model-element/HTMLModelElement.h:
+        * Modules/model-element/HTMLModelElementCocoa.mm:
+        * loader/EmptyClients.cpp:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        Adopt the new name.
+
 2021-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some WEBCORE_EXPORTS on FrameView

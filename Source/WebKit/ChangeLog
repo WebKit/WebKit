@@ -1,3 +1,49 @@
+2021-09-16  Tim Horton  <timothy_horton@apple.com>
+
+        Adjust ARKIT_INLINE_PREVIEW* compile time flags
+        https://bugs.webkit.org/show_bug.cgi?id=230332
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebProcessDataStoreParameters.h:
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        * UIProcess/ModelElementController.cpp:
+        * UIProcess/ModelElementController.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::webProcessDataStoreParameters):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        * UIProcess/ios/WKModelInteractionGestureRecognizer.h:
+        * UIProcess/ios/WKModelInteractionGestureRecognizer.mm:
+        * UIProcess/ios/WKModelView.h:
+        * UIProcess/ios/WKModelView.mm:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformSetWebsiteDataStoreParameters):
+        Adopt the new name.
+
 2021-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] test animations/steps-transform-rendering-updates.html fails

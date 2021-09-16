@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
 
 #include <WebCore/ElementContext.h>
 #include <WebCore/GraphicsLayer.h>
@@ -33,7 +33,7 @@
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 OBJC_CLASS ASVInlinePreview;
 #endif
 
@@ -48,16 +48,16 @@ public:
 
     WebPageProxy& page() { return m_webPageProxy; }
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     void takeModelElementFullscreen(WebCore::GraphicsLayer::PlatformLayerID contentLayerId);
 #endif
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     void modelElementDidCreatePreview(const WebCore::ElementContext&, const URL&, const String&, const WebCore::FloatSize&);
 #endif
 
 private:
     WebPageProxy& m_webPageProxy;
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     HashMap<String, RetainPtr<ASVInlinePreview>> m_inlinePreviews;
 #endif
 };

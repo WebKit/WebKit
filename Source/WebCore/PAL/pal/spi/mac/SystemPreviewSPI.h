@@ -25,13 +25,13 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 #import <AssetViewer/ASVInlinePreview.h>
 #endif
 
 #else
 
-#if HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 @class ASVInlinePreview;
 

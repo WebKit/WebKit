@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HTMLModelElement.h"
 
-#if ENABLE(MODEL_ELEMENT) && HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#if ENABLE(MODEL_ELEMENT) && ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -130,4 +130,4 @@ PlatformLayer* HTMLModelElement::platformLayer() const
 
 }
 
-#endif // ENABLE(MODEL_ELEMENT) && HAVE(ARKIT_INLINE_PREVIEW_MAC)
+#endif // ENABLE(MODEL_ELEMENT) && ENABLE(ARKIT_INLINE_PREVIEW_MAC)

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKModelView.h"
 
-#if HAVE(ARKIT_INLINE_PREVIEW_IOS)
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 #import "Logging.h"
 #import "RemoteLayerTreeViews.h"

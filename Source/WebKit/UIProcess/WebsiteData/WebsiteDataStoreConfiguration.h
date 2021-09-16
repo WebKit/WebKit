@@ -74,7 +74,7 @@ public:
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
     void setLocalStorageDirectory(String&& directory) { m_localStorageDirectory = WTFMove(directory); }
 
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
     const String& modelElementCacheDirectory() const { return m_modelElementCacheDirectory; }
     void setModelElementCacheDirectory(String&& directory) { m_modelElementCacheDirectory = WTFMove(directory); }
 #endif
@@ -197,7 +197,7 @@ private:
     String m_serviceWorkerRegistrationDirectory;
     String m_webSQLDatabaseDirectory;
     String m_hstsStorageDirectory;
-#if HAVE(ARKIT_INLINE_PREVIEW)
+#if ENABLE(ARKIT_INLINE_PREVIEW)
     String m_modelElementCacheDirectory;
 #endif
 #if USE(GLIB)
