@@ -101,6 +101,7 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
         if (auto renderOperator = toVerticalStretchyOperator(child)) {
             renderOperator->stretchTo(stretchAscent, stretchDescent);
             renderOperator->layoutIfNeeded();
+            child->layoutIfNeeded();
         }
     }
 }
