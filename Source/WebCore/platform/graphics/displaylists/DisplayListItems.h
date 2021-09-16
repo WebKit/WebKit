@@ -1809,26 +1809,45 @@ Optional<FillRectWithRoundedHole> FillRectWithRoundedHole::decode(Decoder& decod
 
 #if ENABLE(INLINE_PATH_DATA)
 
-class FillInlinePath {
+class InlinePathDataStorage {
+public:
+    InlinePathDataStorage(const InlinePathData& pathData)
+    {
+        if (pathData.index() >= 0 && static_cast<size_t>(pathData.index()) < WTF::variant_size<InlinePathData>::value)
+            m_pathData = pathData;
+        else {
+            auto moved = WTFMove(m_pathData);
+            UNUSED_VARIABLE(moved);
+        }
+    }
+
+    bool isValid() const { return !m_pathData.valueless_by_exception(); }
+
+    Path path() const { return Path::from(m_pathData); }
+
+protected:
+    InlinePathData m_pathData;
+};
+
+class FillInlinePath : public InlinePathDataStorage {
 public:
     static constexpr ItemType itemType = ItemType::FillInlinePath;
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    FillInlinePath(const InlinePathData& pathData)
-        : m_pathData(pathData)
+    FillInlinePath(const FillInlinePath& other)
+        : InlinePathDataStorage(other.m_pathData)
     {
     }
-
-    Path path() const { return Path::from(m_pathData); }
+    FillInlinePath(const InlinePathData& pathData)
+        : InlinePathDataStorage(pathData)
+    {
+    }
 
     void apply(GraphicsContext&) const;
 
     Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
-
-private:
-    InlinePathData m_pathData;
 };
 
 #endif // ENABLE(INLINE_PATH_DATA)
