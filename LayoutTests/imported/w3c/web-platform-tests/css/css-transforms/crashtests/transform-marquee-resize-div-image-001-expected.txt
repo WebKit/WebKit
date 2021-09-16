@@ -4,7 +4,7 @@ layer at (0,0) size 800x44
   RenderBlock {HTML} at (0,0) size 800x44
 layer at (8,8) size 784x28
   RenderBody {BODY} at (8,8) size 784x28
-layer at (8,8) size 784x24 scrollX -757
+layer at (8,8) size 784x24 scrollX -784
   RenderBlock {MARQUEE} at (0,0) size 784x24
     RenderBlock {DIV} at (0,0) size 20x24
       RenderImage {IMG} at (0,0) size 20x20
