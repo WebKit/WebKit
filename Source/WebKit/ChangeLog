@@ -1,3 +1,17 @@
+2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs
+        https://bugs.webkit.org/show_bug.cgi?id=225886
+        rdar://78114708
+
+        Reviewed by Chris Dumez.
+
+        See WebCore/ChangeLog for more details. Use `ObjectIdentifier::isValid()` instead of just checking for the empty
+        value, when determining whether an object identifier should trigger a message check to the web process.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+
 2021-05-12  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in WebPageProxy::endColorPicker()

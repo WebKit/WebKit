@@ -143,15 +143,24 @@ TEST(DisplayListTests, InlineItemValidationFailure)
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
     GraphicsContext context { cgContext.get() };
 
-    DisplayList list;
-    list.append<FlushContext>(FlushIdentifier { });
+    auto runTestWithInvalidIdentifier = [&](FlushIdentifier identifier) {
+        EXPECT_FALSE(identifier.isValid());
 
-    Replayer replayer { context, list };
-    auto result = replayer.replay();
-    EXPECT_EQ(result.numberOfBytesRead, 0U);
-    EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
-    EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
-    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItem);
+        DisplayList list;
+        ReadingClient reader;
+        list.setItemBufferReadingClient(&reader);
+        list.append<FlushContext>(identifier);
+
+        Replayer replayer { context, list };
+        auto result = replayer.replay();
+        EXPECT_EQ(result.numberOfBytesRead, 0U);
+        EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
+        EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+        EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
+    };
+
+    runTestWithInvalidIdentifier(FlushIdentifier { });
+    runTestWithInvalidIdentifier(FlushIdentifier { WTF::HashTableDeletedValue });
 }
 
 } // namespace TestWebKitAPI

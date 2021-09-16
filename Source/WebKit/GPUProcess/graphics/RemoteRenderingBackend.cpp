@@ -252,7 +252,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             MESSAGE_CHECK_WITH_RETURN_VALUE(sizeToRead, nullptr, "No unread bytes when resuming display list processing");
 
             auto newDestinationIdentifier = makeObjectIdentifier<RenderingResourceIdentifierType>(resumeReadingInfo->destination);
-            MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier, nullptr, "Invalid image buffer destination when resuming display list processing");
+            MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier.isValid(), nullptr, "Invalid image buffer destination when resuming display list processing");
 
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(newDestinationIdentifier));
             MESSAGE_CHECK_WITH_RETURN_VALUE(destination, nullptr, "Missing image buffer destination when resuming display list processing");

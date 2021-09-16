@@ -63,6 +63,7 @@ public:
 
     ObjectIdentifier(HashTableDeletedValueType) : m_identifier(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_identifier == hashTableDeletedValue(); }
+    bool isValid() const { return isValidIdentifier(m_identifier); }
 
     template<typename Encoder> void encode(Encoder& encoder) const
     {

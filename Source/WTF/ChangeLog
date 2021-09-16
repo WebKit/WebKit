@@ -1,3 +1,17 @@
+2021-05-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [GPU Process] Object identifiers with the deleted value should cause MESSAGE_CHECKs
+        https://bugs.webkit.org/show_bug.cgi?id=225886
+        rdar://78114708
+
+        Reviewed by Chris Dumez.
+
+        See WebCore/ChangeLog for more details. Add a helper method on `ObjectIdentifier` that returns true only if it
+        is the empty value or deleted value.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::ObjectIdentifier::isValid const):
+
 2021-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Add U+0581 and U+0585 to list of Armenian characters that look like Latin characters
