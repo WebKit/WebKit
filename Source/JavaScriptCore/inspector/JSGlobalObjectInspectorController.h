@@ -81,7 +81,7 @@ public:
 
     void reportAPIException(JSC::JSGlobalObject*, JSC::Exception*);
 
-    JSC::ConsoleClient* consoleClient() const;
+    WeakPtr<JSC::ConsoleClient> consoleClient() const;
 
     bool developerExtrasEnabled() const final;
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const final { return true; }

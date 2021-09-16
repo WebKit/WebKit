@@ -54,6 +54,7 @@
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CodeBlockSetInlines.h"
+#include "ConsoleClient.h"
 #include "ConsoleObject.h"
 #include "DateConstructor.h"
 #include "DatePrototype.h"
@@ -2327,6 +2328,11 @@ void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
 void JSGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception* exception)
 {
     dataLogLn("Uncaught Exception at run loop: ", exception->value());
+}
+
+void JSGlobalObject::setConsoleClient(WeakPtr<ConsoleClient>&& consoleClient)
+{
+    m_consoleClient = WTFMove(consoleClient);
 }
 
 void JSGlobalObject::setDebugger(Debugger* debugger)

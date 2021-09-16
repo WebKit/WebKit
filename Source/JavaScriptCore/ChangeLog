@@ -1,3 +1,27 @@
+2021-04-12  BJ Burg  <bburg@apple.com>
+
+        Modernize uses of ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=224398
+
+        Reviewed by David Kilzer.
+
+        ConsoleClient acts like a delegate, so its callers
+        should be using weak references to it.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::consoleClient const):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::consoleLogWithLevel):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::setConsoleClient):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::consoleClient const):
+        (JSC::JSGlobalObject::setConsoleClient): Deleted.
+
 2021-03-16  Saam Barati  <sbarati@apple.com>
 
         Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies

@@ -129,7 +129,7 @@ static String valueToStringWithUndefinedOrNullCheck(JSGlobalObject* globalObject
 
 static EncodedJSValue consoleLogWithLevel(JSGlobalObject* globalObject, CallFrame* callFrame, MessageLevel level)
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -164,7 +164,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncWarn, (JSGlobalObject* globalObject, Ca
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncClear, (JSGlobalObject* globalObject, CallFrame*))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -174,7 +174,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncClear, (JSGlobalObject* globalObject, C
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncDir, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -184,7 +184,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncDir, (JSGlobalObject* globalObject, Cal
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncDirXML, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -194,7 +194,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncDirXML, (JSGlobalObject* globalObject, 
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTable, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -204,7 +204,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTable, (JSGlobalObject* globalObject, C
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTrace, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -216,7 +216,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncAssert, (JSGlobalObject* globalObject, 
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -233,7 +233,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncAssert, (JSGlobalObject* globalObject, 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncCount, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    auto* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -247,7 +247,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncCount, (JSGlobalObject* globalObject, C
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncCountReset, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    auto* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -262,7 +262,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncProfile, (JSGlobalObject* globalObject,
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -283,7 +283,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncProfileEnd, (JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -304,7 +304,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTakeHeapSnapshot, (JSGlobalObject* glob
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -324,7 +324,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTakeHeapSnapshot, (JSGlobalObject* glob
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    auto* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -338,7 +338,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTime, (JSGlobalObject* globalObject, Ca
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTimeLog, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    auto* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -352,7 +352,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTimeLog, (JSGlobalObject* globalObject,
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTimeEnd, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    auto* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -365,7 +365,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTimeEnd, (JSGlobalObject* globalObject,
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTimeStamp, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -375,7 +375,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncTimeStamp, (JSGlobalObject* globalObjec
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncGroup, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -385,7 +385,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncGroup, (JSGlobalObject* globalObject, C
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncGroupCollapsed, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -395,7 +395,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncGroupCollapsed, (JSGlobalObject* global
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncGroupEnd, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -405,7 +405,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncGroupEnd, (JSGlobalObject* globalObject
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncRecord, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -415,7 +415,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncRecord, (JSGlobalObject* globalObject, 
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncRecordEnd, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 
@@ -425,7 +425,7 @@ JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncRecordEnd, (JSGlobalObject* globalObjec
 
 JSC_DEFINE_HOST_FUNCTION(consoleProtoFuncScreenshot, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ConsoleClient* client = globalObject->consoleClient();
+    auto client = globalObject->consoleClient();
     if (!client)
         return JSValue::encode(jsUndefined());
 

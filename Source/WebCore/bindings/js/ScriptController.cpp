@@ -276,7 +276,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
     if (Page* page = m_frame.page()) {
         windowProxy.attachDebugger(page->debugger());
         windowProxy.window()->setProfileGroup(page->group().identifier());
-        windowProxy.window()->setConsoleClient(&page->console());
+        windowProxy.window()->setConsoleClient(makeWeakPtr(page->console()));
     }
 
     m_frame.loader().dispatchDidClearWindowObjectInWorld(world);
