@@ -293,6 +293,7 @@ const HashSet<SVGElement*>& SVGElement::instances() const
 
 bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
 {
+    // FIXME: should retrieve the value from the associated RenderObject.
     if (is<SVGGraphicsElement>(*this)) {
         rect = downcast<SVGGraphicsElement>(*this).getBBox(styleUpdateStrategy);
         return true;

@@ -1613,7 +1613,7 @@ Optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWitho
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
         FloatRect localRect;
-        if (svgElement.getBoundingBox(localRect))
+        if (svgElement.getBoundingBox(localRect, SVGLocatable::DisallowStyleUpdate))
             quads.append(renderer->localToAbsoluteQuad(localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = pair.value().first;
