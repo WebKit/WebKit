@@ -1,3 +1,15 @@
+2021-03-31  Venky Dass  <yaranamavenkataramana@apple.com>
+
+        Null pointer access crash in WebCore::makeBoundaryPoint(..)
+        https://bugs.webkit.org/show_bug.cgi?id=223977
+
+        Reviewed by Darin Adler.
+
+        Adding a refression test case.
+
+        * editing/inserting/crash-make-boundary-point-expected.txt: Added.
+        * editing/inserting/crash-make-boundary-point.html: Added.
+
 2021-03-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r274992): Nullptr crash in FontCache::retrieveOrAddCachedFonts
