@@ -1,3 +1,57 @@
+2021-09-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Throttle a couple of editing-related timers in cases where the user has not interacted with subframes
+        https://bugs.webkit.org/show_bug.cgi?id=230326
+
+        Reviewed by Tim Horton.
+
+        This patch (1) delays the firing of a WebCore::Timer that is responsible for notifying the injected bundle about
+        newly inserted form controls, and (2) limits spellchecking and automatic text replacement to editing contexts in
+        documents that are either the main document, or have had user interaction or editing.
+
+        This gives us a small but measurable performance boost on Speedometer, where the DOM manipulations that occur
+        during the synchronous script execution phase currently schedule zero-delay WebCore::Timers via these two
+        codepaths, which then fire right after we begin counting time in the subsequent asynchronous phase, but before
+        that asynchronous phase has ended. This means that we're effectively penalized during the second async phase,
+        for timers that are scheduled during the first sync phase.
+
+        While most timers that are scheduled simply trigger work that we would've performed anyways when ensuring layout
+        near the end of the async phase (e.g. zero-delay style recalc timers and layout timers), these two timers -
+        `Editor::m_editorUIUpdateTimer` and `Document::m_didAssociateFormControlsTimer` - cause us to occasionally do
+        nontrivial work (that we would otherwise not have done) before ending the async phase.
+
+        Since these two timers are only used for AutoFill and text checking (respectively), it's likely that we can just
+        defer and avoid this work in these (relatively) narrow scenarios.
+
+        * dom/Document.cpp:
+        (WebCore::Document::commonTeardown):
+
+        When tearing down the document, additionally avoid triggering the associated form control timer by stopping the
+        timer and clearing out all the elements in the weak set.
+
+        (WebCore::Document::didAssociateFormControl):
+        (WebCore::Document::didAssociateFormControlsTimerFired):
+
+        Extend the delay to a second in the case of non-top-level documents that have not had any form of user
+        interaction.
+
+        * dom/Document.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::willApplyEditing):
+
+        Right before we're about to apply any edit command, set a bit indicating that the Editor has handled editing.
+        The editor UI update timer then consults this bit below, when determining whether or not it should schedule any
+        work.
+
+        (WebCore::Editor::respondToChangedSelection):
+
+        Additionally avoid repeatedly stopping and restarting `m_telephoneNumberDetectionUpdateTimer` when the DOM
+        selection changes, by making it a DeferrableOneShotTimer instead; this allows us to just set a bit on the timer
+        to reschedule it, instead of having to stop and restart every time.
+
+        (WebCore::Editor::willApplyEditing const): Deleted.
+        * editing/Editor.h:
+
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: nsData under DataURLResourceMediaLoader::DataURLResourceMediaLoader()

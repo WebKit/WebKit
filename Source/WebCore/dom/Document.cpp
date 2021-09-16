@@ -870,6 +870,8 @@ void Document::commonTeardown()
         m_timelinesController->detachFromDocument();
 
     m_timeline = nullptr;
+    m_associatedFormControls.clear();
+    m_didAssociateFormControlsTimer.stop();
 }
 
 Element* Document::elementForAccessKey(const String& key)
@@ -7535,18 +7537,24 @@ void Document::didAssociateFormControl(Element& element)
     auto* page = this->page();
     if (!page || !page->chrome().client().shouldNotifyOnFormChanges())
         return;
-    m_associatedFormControls.add(&element);
-    if (!m_didAssociateFormControlsTimer.isActive())
-        m_didAssociateFormControlsTimer.startOneShot(0_s);
+
+    auto isNewEntry = m_associatedFormControls.add(&element).isNewEntry;
+    if (isNewEntry && !m_didAssociateFormControlsTimer.isActive())
+        m_didAssociateFormControlsTimer.startOneShot(isTopDocument() || hasHadUserInteraction() ? 0_s : 1_s);
 }
 
 void Document::didAssociateFormControlsTimerFired()
 {
-    auto vector = copyToVector(m_associatedFormControls);
-    m_associatedFormControls.clear();
-    if (auto* page = this->page()) {
+    Vector<RefPtr<Element>> controls;
+    controls.reserveInitialCapacity(m_associatedFormControls.computeSize());
+    for (auto& element : std::exchange(m_associatedFormControls, { })) {
+        if (element.isConnected())
+            controls.uncheckedAppend(&element);
+    }
+
+    if (auto page = this->page(); page && !controls.isEmpty()) {
         ASSERT(m_frame);
-        page->chrome().client().didAssociateFormControls(vector, *m_frame);
+        page->chrome().client().didAssociateFormControls(controls, *m_frame);
     }
 }
 

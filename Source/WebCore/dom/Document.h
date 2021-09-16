@@ -2040,7 +2040,7 @@ private:
 
     std::optional<WallTime> m_overrideLastModified;
 
-    HashSet<RefPtr<Element>> m_associatedFormControls;
+    WeakHashSet<Element> m_associatedFormControls;
     unsigned m_disabledFieldsetElementsCount { 0 };
 
     unsigned m_dataListElementCount { 0 };
