@@ -515,7 +515,7 @@ static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size,
     fontDescriptor = findFontDescriptor(referenceURL, desiredPostScriptName);
     if (!fontDescriptor) {
         ASSERT_NOT_REACHED();
-        fontDescriptor = CTFontDescriptorCreateLastResort();
+        fontDescriptor = adoptCF(CTFontDescriptorCreateLastResort());
     }
     ASSERT(fontDescriptor);
     return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, kCTFontOptionsSystemUIFont));

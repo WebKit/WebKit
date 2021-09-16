@@ -1,5 +1,36 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282349. rdar://problem/83183743
+
+    Followup to r282320 - avoid a potential memory leak
+    https://bugs.webkit.org/show_bug.cgi?id=230187
+    <rdar://problem/81436658>
+    
+    Patch by Wenson Hsieh <wenson_hsieh@apple.com> on 2021-09-13
+    Reviewed by Myles C. Maxfield.
+    
+    Use `adoptCF` to prevent leaking the last resort font descriptor.
+    
+    * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+    (IPC::createCTFont):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282349 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Followup to r282320 - avoid a potential memory leak
+            https://bugs.webkit.org/show_bug.cgi?id=230187
+            <rdar://problem/81436658>
+
+            Reviewed by Myles C. Maxfield.
+
+            Use `adoptCF` to prevent leaking the last resort font descriptor.
+
+            * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+            (IPC::createCTFont):
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282320. rdar://problem/83183743
 
     [Cocoa] Drawing the rounded system ui font into canvas causes a crash
