@@ -245,7 +245,7 @@ void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 void NetworkLoad::didCompleteWithError(const ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)
 {
     if (m_scheduler) {
-        m_scheduler->unschedule(*this);
+        m_scheduler->unschedule(*this, &networkLoadMetrics);
         m_scheduler = nullptr;
     }
 
