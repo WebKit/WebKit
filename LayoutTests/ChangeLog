@@ -1,3 +1,17 @@
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
+        [ MacOS & iOS ] imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=228089
+        <rdar://problem/80801807>
+
+        Reviewed by Darin Adler.
+
+        Unskip test that should no longer be flaky.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html is a flaky timeout.

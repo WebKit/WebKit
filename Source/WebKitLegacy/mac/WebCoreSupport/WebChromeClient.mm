@@ -467,7 +467,7 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame& 
     return CallUIDelegateReturningBoolean(true, m_webView, @selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:), message, kit(&frame));
 }
 
-void WebChromeClient::closeWindowSoon()
+void WebChromeClient::closeWindow()
 {
     // We need to remove the parent WebView from WebViewSets here, before it actually
     // closes, to make sure that JavaScript code that executes before it closes
@@ -484,7 +484,7 @@ void WebChromeClient::closeWindowSoon()
 
     [m_webView setGroupName:nil];
     [m_webView stopLoading:nil];
-    [m_webView performSelector:@selector(_closeWindow) withObject:nil afterDelay:0.0];
+    [m_webView _closeWindow];
 }
 
 void WebChromeClient::runJavaScriptAlert(Frame& frame, const String& message)

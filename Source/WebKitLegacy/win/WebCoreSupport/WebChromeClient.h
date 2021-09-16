@@ -85,7 +85,7 @@ public:
     bool canRunBeforeUnloadConfirmPanel() final;
     bool runBeforeUnloadConfirmPanel(const WTF::String& message, WebCore::Frame&) final;
 
-    void closeWindowSoon() final;
+    void closeWindow() final;
 
     void runJavaScriptAlert(WebCore::Frame&, const WTF::String&) final;
     bool runJavaScriptConfirm(WebCore::Frame&, const WTF::String&) final;

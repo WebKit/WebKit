@@ -87,7 +87,7 @@ class EmptyChromeClient : public ChromeClient {
     bool canRunBeforeUnloadConfirmPanel() final { return false; }
     bool runBeforeUnloadConfirmPanel(const String&, Frame&) final { return true; }
 
-    void closeWindowSoon() final { }
+    void closeWindow() final { }
 
     void runJavaScriptAlert(Frame&, const String&) final { }
     bool runJavaScriptConfirm(Frame&, const String&) final { return false; }

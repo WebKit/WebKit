@@ -438,8 +438,6 @@ public:
     void repaint(const WebCore::IntRect&, bool contentChanged, bool immediate = false, bool repaintContentOnly = false);
     void frameRect(RECT* rect);
     void closeWindow();
-    void closeWindowSoon();
-    void closeWindowTimerFired();
     bool didClose() const { return m_didClose; }
 
     bool transparent() const { return m_transparent; }
@@ -680,7 +678,6 @@ protected:
 
     static bool s_allowSiteSpecificHacks;
 
-    WebCore::SuspendableTimerBase* m_closeWindowTimer { nullptr };
     std::unique_ptr<TRACKMOUSEEVENT> m_mouseOutTracker;
 
     HWND m_topLevelParent { nullptr };

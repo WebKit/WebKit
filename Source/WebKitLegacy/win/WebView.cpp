@@ -1456,78 +1456,6 @@ void WebView::frameRect(RECT* rect)
     ::GetWindowRect(m_viewWindow, rect);
 }
 
-class WindowCloseTimer final : public WebCore::SuspendableTimerBase {
-public:
-    static WindowCloseTimer* create(WebView*);
-
-private:
-    WindowCloseTimer(ScriptExecutionContext&, WebView*);
-
-    // ActiveDOMObject API.
-    void contextDestroyed() override;
-    const char* activeDOMObjectName() const override { return "WindowCloseTimer"; }
-
-    // SuspendableTimerBase API.
-    void fired() override;
-
-    WebView* m_webView;
-};
-
-WindowCloseTimer* WindowCloseTimer::create(WebView* webView)
-{
-    ASSERT_ARG(webView, webView);
-    Frame* frame = core(webView->topLevelFrame());
-    ASSERT(frame);
-    if (!frame)
-        return nullptr;
-
-    Document* document = frame->document();
-    ASSERT(document);
-    if (!document)
-        return nullptr;
-
-    auto closeTimer = new WindowCloseTimer(*document, webView);
-    closeTimer->suspendIfNeeded();
-    return closeTimer;
-}
-
-WindowCloseTimer::WindowCloseTimer(ScriptExecutionContext& context, WebView* webView)
-    : SuspendableTimerBase(&context)
-    , m_webView(webView)
-{
-    ASSERT_ARG(webView, webView);
-}
-
-void WindowCloseTimer::contextDestroyed()
-{
-    SuspendableTimerBase::contextDestroyed();
-    delete this;
-}
-
-void WindowCloseTimer::fired()
-{
-    m_webView->closeWindowTimerFired();
-}
-
-void WebView::closeWindowSoon()
-{
-    if (m_closeWindowTimer)
-        return;
-
-    m_closeWindowTimer = WindowCloseTimer::create(this);
-    if (!m_closeWindowTimer)
-        return;
-    m_closeWindowTimer->startOneShot(0_s);
-
-    AddRef();
-}
-
-void WebView::closeWindowTimerFired()
-{
-    closeWindow();
-    Release();
-}
-
 void WebView::closeWindow()
 {
     if (m_hasSpellCheckerDocumentTag) {
@@ -5557,8 +5485,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 
     settings.setShowsToolTipOverTruncatedText(enabled);
 
-    if (!m_closeWindowTimer)
-        m_mainFrame->invalidate(); // FIXME
+    m_mainFrame->invalidate(); // FIXME
 
     hr = updateSharedSettingsFromPreferencesIfNeeded(preferences.get());
     if (FAILED(hr))

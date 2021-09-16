@@ -1056,7 +1056,11 @@ void DOMWindow::close()
     ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
 
     page->setIsClosing();
-    page->chrome().closeWindowSoon();
+
+    document()->eventLoop().queueTask(TaskSource::DOMManipulation, [this, protectedThis = makeRef(*this)] {
+        if (auto* page = this->page())
+            page->chrome().closeWindow();
+    });
 }
 
 void DOMWindow::print()

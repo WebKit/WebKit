@@ -140,7 +140,7 @@ public:
     bool canRunBeforeUnloadConfirmPanel();
     bool runBeforeUnloadConfirmPanel(const String& message, Frame&);
 
-    void closeWindowSoon();
+    void closeWindow();
 
     void runJavaScriptAlert(Frame&, const String&);
     bool runJavaScriptConfirm(Frame&, const String&);

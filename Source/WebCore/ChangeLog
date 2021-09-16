@@ -1,5 +1,27 @@
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
+        [ MacOS & iOS ] imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=228089
+        <rdar://problem/80801807>
+
+        Reviewed by Darin Adler.
+
+        As per the HTML specification, window.close() should schedule a task on the event loop to actually
+        close the window:
+        - https://html.spec.whatwg.org/multipage/window-object.html#dom-window-close
+
+        We were failing to do so and this was causing flakiness because event ordering was inconsistent.
+
+        This was discussed on upstream WPT here:
+        - https://github.com/web-platform-tests/wpt/pull/30001
+
+        No new tests, unskipped existing test.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::close):
+
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
         Add violations reporting support for Cross-Origin-Embedder-Policy
         https://bugs.webkit.org/show_bug.cgi?id=230269
 

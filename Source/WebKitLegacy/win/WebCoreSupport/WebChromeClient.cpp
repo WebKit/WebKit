@@ -373,7 +373,7 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame& 
     return !!result;
 }
 
-void WebChromeClient::closeWindowSoon()
+void WebChromeClient::closeWindow()
 {
     // We need to remove the parent WebView from WebViewSets here, before it actually
     // closes, to make sure that JavaScript code that executes before it closes
@@ -390,7 +390,7 @@ void WebChromeClient::closeWindowSoon()
 
     m_webView->setGroupName(0);
     m_webView->stopLoading(0);
-    m_webView->closeWindowSoon();
+    m_webView->closeWindow();
 }
 
 void WebChromeClient::runJavaScriptAlert(Frame&, const String& message)

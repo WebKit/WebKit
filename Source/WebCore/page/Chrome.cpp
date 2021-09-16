@@ -286,9 +286,9 @@ bool Chrome::runBeforeUnloadConfirmPanel(const String& message, Frame& frame)
     return m_client.runBeforeUnloadConfirmPanel(message, frame);
 }
 
-void Chrome::closeWindowSoon()
+void Chrome::closeWindow()
 {
-    m_client.closeWindowSoon();
+    m_client.closeWindow();
 }
 
 void Chrome::runJavaScriptAlert(Frame& frame, const String& message)

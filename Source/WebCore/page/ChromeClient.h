@@ -185,7 +185,7 @@ public:
     virtual bool canRunBeforeUnloadConfirmPanel() = 0;
     virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame&) = 0;
 
-    virtual void closeWindowSoon() = 0;
+    virtual void closeWindow() = 0;
 
     virtual void runJavaScriptAlert(Frame&, const String&) = 0;
     virtual bool runJavaScriptConfirm(Frame&, const String&) = 0;
