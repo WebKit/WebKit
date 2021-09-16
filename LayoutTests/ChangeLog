@@ -1,3 +1,19 @@
+2021-09-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=230369
+
+        * platform/glib/fast/table/border-collapsing/cached-change-row-border-width-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/mathml/relations/css-styling/default-properties-on-the-math-root-expected.txt:
+        * platform/gtk/editing/deleting/delete-first-list-item-expected.txt:
+        * platform/gtk/editing/inserting/insert-div-022-expected.txt:
+        * platform/gtk/editing/pasteboard/3976872-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2021-09-16  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html.
