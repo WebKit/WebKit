@@ -1,3 +1,14 @@
+2021-09-16  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r281981): [iOS, BigSur+] webrtc/datachannel/getStats-no-prflx-remote-candidate.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=229877
+        <rdar://problem/82728080>
+
+        Unreviewed.
+
+        * platform/mac-wk1/TestExpectations:
+        Test is no longer flaky.
+
 2021-09-16  Eric Hutchison  <ehutchison@apple.com>
 
         [BigSur+ wk2 Debug] webrtc/video-mute-vp8.html is a flaky failure.
