@@ -191,9 +191,9 @@ void IndentOutdentCommand::outdentParagraph()
         splitElement(*enclosingNode, highestInlineNode ? *highestInlineNode : *visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
     auto placeholder = HTMLBRElement::create(document());
-    auto* placeholderPtr = placeholder.ptr();
-    insertNodeBefore(WTFMove(placeholder), *splitBlockquoteNode);
-    moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), positionBeforeNode(placeholderPtr), true);
+    insertNodeBefore(placeholder, *splitBlockquoteNode);
+    if (placeholder->isConnected())
+        moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), positionBeforeNode(placeholder.ptr()), true);
 }
 
 // FIXME: We should merge this function with ApplyBlockElementCommand::formatSelection
