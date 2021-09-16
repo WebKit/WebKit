@@ -1,5 +1,46 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282320. rdar://problem/83183743
+
+    [Cocoa] Drawing the rounded system ui font into canvas causes a crash
+    https://bugs.webkit.org/show_bug.cgi?id=230187
+    <rdar://problem/81436658>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    It turns out that r281792 didn't do the right thing. It was trying to differentiate between
+    system fonts and installed fonts by looking at various values in the font's attribute dictionary.
+    However, the right way to do this is to treat the dictionary as opaque, and let
+    kCTFontOptionsSystemUIFont do the heavy lifting to make sure the font round-trips properly.
+    
+    Test: fast/text/canvas-fonts.html
+    
+    * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+    (IPC::createCTFont):
+    (IPC::findFontDescriptor):
+    
+    LayoutTests:
+    
+    * fast/text/canvas-fonts-expected.txt: Added.
+    * fast/text/canvas-fonts.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282320 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] Drawing the rounded system ui font into canvas causes a crash
+            https://bugs.webkit.org/show_bug.cgi?id=230187
+            <rdar://problem/81436658>
+
+            Reviewed by Wenson Hsieh.
+
+            * fast/text/canvas-fonts-expected.txt: Added.
+            * fast/text/canvas-fonts.html: Added.
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282016. rdar://problem/83183608
 
     FontFaceSet.check() needs to react to style changes
