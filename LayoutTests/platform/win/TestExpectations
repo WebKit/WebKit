@@ -2413,6 +2413,7 @@ webkit.org/b/140947 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip
 
 webkit.org/b/229626 [ Release ] js/dfg-int32array.html [ Pass Crash ]
 webkit.org/b/229626 js/dfg-intrinsic-unused-this.html [ Pass Crash ]
+webkit.org/b/229626 js/dfg-uint8array.html [ Pass Crash ]
 
 # The following fails due to DOM exception 18.
 js/dom/callback-function-with-handle-event.html [ Skip ] #  [ Timeout ]
