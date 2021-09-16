@@ -52,7 +52,7 @@ enum TokenType : uint8_t {
     TokLBracket, TokRBracket, TokLBrace, TokRBrace,
     TokString, TokIdentifier, TokNumber, TokColon,
     TokLParen, TokRParen, TokComma, TokTrue, TokFalse,
-    TokNull, TokEnd, TokDot, TokAssign, TokSemi, TokError };
+    TokNull, TokEnd, TokDot, TokAssign, TokSemi, TokError, TokErrorSpace };
 
 struct JSONPPathEntry {
     Identifier m_pathEntryName;
@@ -138,7 +138,7 @@ private:
         TokenType next();
         
 #if !ASSERT_ENABLED
-        typedef const LiteralParserToken<CharType>* LiteralParserTokenPtr;
+        using LiteralParserTokenPtr = const LiteralParserToken<CharType>*;
 
         LiteralParserTokenPtr currentToken()
         {
@@ -195,8 +195,13 @@ private:
     class StackGuard;
     JSValue parse(ParserState);
 
+    JSValue parsePrimitiveValue(VM&);
+
+    ALWAYS_INLINE Identifier makeIdentifier(typename Lexer::LiteralParserTokenPtr);
     template<typename LiteralCharType>
     ALWAYS_INLINE Identifier makeIdentifier(const LiteralCharType* characters, size_t length);
+
+    void setErrorMessageForToken(TokenType);
 
     JSGlobalObject* m_globalObject;
     CodeBlock* m_nullOrCodeBlock;
