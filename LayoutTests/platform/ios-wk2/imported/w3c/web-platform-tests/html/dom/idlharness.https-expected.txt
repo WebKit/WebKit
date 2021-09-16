@@ -4997,14 +4997,14 @@ PASS Worker interface: operation postMessage(any, optional PostMessageOptions)
 PASS Worker interface: attribute onmessage
 FAIL Worker interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
 PASS Worker interface: attribute onerror
-FAIL SharedWorker interface: existence and properties of interface object assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface object length assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface object name assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: attribute port assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: attribute onerror assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
+PASS SharedWorker interface: existence and properties of interface object
+PASS SharedWorker interface object length
+PASS SharedWorker interface object name
+PASS SharedWorker interface: existence and properties of interface prototype object
+PASS SharedWorker interface: existence and properties of interface prototype object's "constructor" property
+PASS SharedWorker interface: existence and properties of interface prototype object's @@unscopables property
+PASS SharedWorker interface: attribute port
+PASS SharedWorker interface: attribute onerror
 PASS WorkerNavigator interface: existence and properties of interface object
 PASS WorkerLocation interface: existence and properties of interface object
 PASS WorkletGlobalScope interface: existence and properties of interface object
