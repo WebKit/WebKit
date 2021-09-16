@@ -98,7 +98,7 @@ TEST(WebKit, AppHighlightsInImageOverlays)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
-    EXPECT_EQ([contentView targetForAction:createHighlightForCurrentQuickNoteWithRangeSelector withSender:nil], contentView);
+    EXPECT_NULL([contentView targetForAction:createHighlightForCurrentQuickNoteWithRangeSelector withSender:nil]);
     EXPECT_EQ([contentView targetForAction:createHighlightForNewQuickNoteWithRangeSelector withSender:nil], contentView);
 }
 
