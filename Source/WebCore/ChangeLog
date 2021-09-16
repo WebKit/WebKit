@@ -1,5 +1,52 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281951. rdar://problem/83183268
+
+    FontFaceSet.add() needs to throw when called on a CSS-connected font
+    https://bugs.webkit.org/show_bug.cgi?id=229641
+    
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-font-loading/fontfaceset-add-css-connected-expected.txt:
+    
+    Source/WebCore:
+    
+    https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-add
+    "2. If font is CSS-connected, throw an InvalidModificationError exception and exit this algorithm immediately."
+    
+    Test: imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-add-css-connected.html
+    
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::add): Deleted.
+    * css/FontFaceSet.h:
+    
+    LayoutTests:
+    
+    * fast/text/font-face-set-document-expected.txt:
+    * fast/text/font-face-set-document.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281951 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            FontFaceSet.add() needs to throw when called on a CSS-connected font
+            https://bugs.webkit.org/show_bug.cgi?id=229641
+
+            Reviewed by Simon Fraser.
+
+            https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-add
+            "2. If font is CSS-connected, throw an InvalidModificationError exception and exit this algorithm immediately."
+
+            Test: imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-add-css-connected.html
+
+            * css/FontFaceSet.cpp:
+            (WebCore::FontFaceSet::add): Deleted.
+            * css/FontFaceSet.h:
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281845. rdar://problem/83183887
 
     document.fonts.size needs to update style so it doesn't return stale values
