@@ -57,8 +57,8 @@ public:
         if (__asan_address_is_poisoned(this))
             __asan_unpoison_memory_region(this, sizeof(*this));
 #endif
-        if (m_ptr)
-            PtrTraits::unwrap(m_ptr)->deref();
+        if (auto* ptr = PtrTraits::exchange(m_ptr, nullptr))
+            ptr->deref();
     }
 
     Ref(T& object)
