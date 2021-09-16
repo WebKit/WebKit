@@ -1640,6 +1640,8 @@ private:
     void drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t first, uint32_t count);
 #endif
 
+    void endPrintingImmediately();
+
 #if HAVE(APP_ACCENT_COLORS)
     void setAccentColor(WebCore::Color);
 #endif
@@ -2010,6 +2012,31 @@ private:
 #endif
 
     std::unique_ptr<WebCore::PrintContext> m_printContext;
+    bool m_inActivePrintContextAccessScope { false };
+    bool m_shouldEndPrintingImmediately { false };
+
+    class PrintContextAccessScope {
+    public:
+        PrintContextAccessScope(WebPage& webPage)
+            : m_webPage { webPage }
+            , m_wasInActivePrintContextAccessScope { webPage.m_inActivePrintContextAccessScope }
+        {
+            m_webPage->m_inActivePrintContextAccessScope = true;
+        }
+
+        ~PrintContextAccessScope()
+        {
+            m_webPage->m_inActivePrintContextAccessScope = m_wasInActivePrintContextAccessScope;
+            if (!m_wasInActivePrintContextAccessScope && m_webPage->m_shouldEndPrintingImmediately)
+                m_webPage->endPrintingImmediately();
+        }
+    private:
+        Ref<WebPage> m_webPage;
+        const bool m_wasInActivePrintContextAccessScope;
+    };
+
+    friend class PrintContextAccessScope;
+
 #if PLATFORM(GTK)
     RefPtr<WebPrintOperationGtk> m_printOperation;
 #endif

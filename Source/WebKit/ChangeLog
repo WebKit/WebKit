@@ -1,3 +1,27 @@
+2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Delay the end of printing while PrintContext is in use.
+        https://bugs.webkit.org/show_bug.cgi?id=224229
+
+        Reviewed by Antti Koivisto.
+
+        Added a new RAII object, PrintContextAccessScope, to delay the call to endPrinting
+        and deployed in various IPC messages used during printing.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::beginPrinting): Deployed PrintContextAccessScope.
+        (WebKit::WebPage::endPrinting): Exit early without ending printing if there is an active
+        PrintContextAccessScope in the stack.
+        (WebKit::WebPage::endPrintingImmediately): Extracted from endPrintingImmediately.
+        (WebKit::WebPage::computePagesForPrinting): Deployed PrintContextAccessScope.
+        (WebKit::WebPage::computePagesForPrintingImpl): Ditto.
+        (WebKit::WebPage::drawRectToImage): Ditto.
+        (WebKit::WebPage::drawPagesToPDF): Ditto.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::PrintContextAccessScope): Added.
+        (WebKit::WebPage::PrintContextAccessScope::PrintContextAccessScope): Added.
+        (WebKit::WebPage::PrintContextAccessScope::~PrintContextAccessScope): Added.
+
 2021-03-09  Chris Dumez  <cdumez@apple.com>
 
         [IPC Hardening] Protect against bad input in WebProcessProxy::createSpeechRecognitionServer() and MessageReceiverMap
