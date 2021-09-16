@@ -622,7 +622,7 @@ public:
     static const int maxNumberOfFrames = 1000;
 
     void setEditable(bool isEditable) { m_isEditable = isEditable; }
-    bool isEditable() { return m_isEditable; }
+    bool isEditable() const { return m_isEditable; }
 
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
