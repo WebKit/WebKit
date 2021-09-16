@@ -330,9 +330,10 @@ static ExceptionOr<FontSelectionRequest> computeFontSelectionRequest(MutableStyl
     return {{ weightSelectionValue, stretchSelectionValue, styleSelectionValue }};
 }
 
-static HashSet<UChar32> codePointsFromString(StringView stringView)
+using CodePointsMap = HashSet<UChar32, DefaultHash<UChar32>, WTF::UnsignedWithZeroKeyHashTraits<UChar32>>;
+static CodePointsMap codePointsFromString(StringView stringView)
 {
-    HashSet<UChar32> result;
+    CodePointsMap result;
     auto graphemeClusters = stringView.graphemeClusters();
     for (auto cluster : graphemeClusters) {
         ASSERT(cluster.length() > 0);
