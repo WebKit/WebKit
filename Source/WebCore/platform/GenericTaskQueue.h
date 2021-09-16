@@ -58,7 +58,7 @@ private:
 };
 
 template<>
-class TaskDispatcher<Timer> : public CanMakeWeakPtr<TaskDispatcher<Timer>> {
+class TaskDispatcher<Timer> : public CanMakeWeakPtr<TaskDispatcher<Timer>, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     TaskDispatcher();
@@ -82,17 +82,20 @@ public:
     GenericTaskQueue()
         : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>())
     {
+        ASSERT(isMainThread());
     }
 
     explicit GenericTaskQueue(T& t)
         : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>(&t))
     {
+        ASSERT(isMainThread());
     }
 
     explicit GenericTaskQueue(T* t)
         : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>(t))
         , m_isClosed(!t)
     {
+        ASSERT(isMainThread());
     }
 
     ~GenericTaskQueue()
