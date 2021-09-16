@@ -91,10 +91,12 @@ void WebAudioBufferList::setSampleCount(uint32_t sampleCount)
     if (!sampleCount || m_sampleCount == sampleCount)
         return;
 
-    m_sampleCount = sampleCount;
-
-    auto bufferSizes = computeBufferSizes(m_channelCount, m_bytesPerFrame, m_canonicalList->mNumberBuffers, m_sampleCount);
+    auto bufferSizes = computeBufferSizes(m_channelCount, m_bytesPerFrame, m_canonicalList->mNumberBuffers, sampleCount);
     ASSERT(bufferSizes);
+    if (!bufferSizes)
+        return;
+
+    m_sampleCount = sampleCount;
 
     m_flatBuffer.resize(bufferSizes->second);
     auto* data = m_flatBuffer.data();
