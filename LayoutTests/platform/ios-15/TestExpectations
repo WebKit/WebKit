@@ -9,3 +9,7 @@ webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure ]
 [ Debug ] editing/caret/ios/caret-in-overflow-area.html [ Pass Timeout Failure ]
 
 webkit.org/b/229832 [ Release ] imported/w3c/web-platform-tests/beacon/beacon-redirect.https.window.html [ Pass Failure ]
+
+# rdar://83207621 ([ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing (230366))
+[ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Timeout Failure ]
+fast/canvas/canvas-blending-text.html [ Pass Failure ]

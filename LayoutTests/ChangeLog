@@ -1,5 +1,15 @@
 2021-09-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing (230366).
+        <rdar://83207621>
+
+        Unreviewed test gardening.
+
+        * platform/ios-15/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2021-09-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ BigSur wk2 Release ] 2 fast/canvas/ tests are flaky failing.
         https://bugs.webkit.org/show_bug.cgi?id=230366
 

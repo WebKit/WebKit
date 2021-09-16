@@ -1533,7 +1533,7 @@ webkit.org/b/227776 [ Catalina Release ] scrollbars/corner-resizer-window-inacti
 
 webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Crash ]
 
-webkit.org/b/230366 [ Release ] fast/canvas/canvas-blending-text.html [ Pass Failure ]
+webkit.org/b/230366 [ Release ] fast/canvas/canvas-blending-text.html [ Pass Failure Crash ]
 webkit.org/b/230366 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Failure ]
 
 webkit.org/b/226828 [ BigSur+ ] media/modern-media-controls/overflow-support/chapters.html [ Pass Failure Timeout ]
