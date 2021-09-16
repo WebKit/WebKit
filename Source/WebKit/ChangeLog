@@ -1,5 +1,106 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282375. rdar://problem/83183884
+
+    Refactor -[WKWebViewConfiguration _setRequiresUserActionForEditingControlsManager:] to use API::PageConfiguration
+    https://bugs.webkit.org/show_bug.cgi?id=230238
+    rdar://83078713
+    
+    Reviewed by Tim Horton.
+    
+    Move the `_requiresUserActionForEditingControlsManager` bit out of WebViewImpl and into API::PageConfiguration.
+    This makes it easier to introduce state in WebPage that keeps track of whether or not user action is required
+    for showing text editing controls on the touch bar, since we can fetch the (unchanging) state off of
+    API::PageConfiguration, and propagate it to the web process via WebPageCreationParameters.
+    
+    No change in behavior.
+    
+    * UIProcess/API/APIPageConfiguration.cpp:
+    (API::PageConfiguration::copy const):
+    * UIProcess/API/APIPageConfiguration.h:
+    (API::PageConfiguration::requiresUserActionForEditingControlsManager const):
+    (API::PageConfiguration::setRequiresUserActionForEditingControlsManager):
+    * UIProcess/API/Cocoa/WKViewPrivate.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _initializeWithConfiguration:]):
+    * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+    (-[WKWebViewConfiguration init]):
+    (-[WKWebViewConfiguration copyWithZone:]):
+    (-[WKWebViewConfiguration _requiresUserActionForEditingControlsManager]):
+    (-[WKWebViewConfiguration _setRequiresUserActionForEditingControlsManager:]):
+    
+    Call into API::PageConfiguration instead.
+    
+    * UIProcess/API/mac/WKView.mm:
+    (-[WKView _requiresUserActionForEditingControlsManager]): Deleted.
+    (-[WKView _setRequiresUserActionForEditingControlsManager:]): Deleted.
+    
+    Additionally delete this private method on WKView, which was only used by Safari on macOS, back before Safari
+    used WKWebView. There are currently no internal clients of this SPI method.
+    
+    * UIProcess/Cocoa/WebViewImpl.h:
+    (WebKit::WebViewImpl::setRequiresUserActionForEditingControlsManager): Deleted.
+    (WebKit::WebViewImpl::requiresUserActionForEditingControlsManager const): Deleted.
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (WebKit::WebViewImpl::requiresUserActionForEditingControlsManager const):
+    
+    Turn this into a helper method that just asks the API::PageConfiguration.
+    
+    (WebKit::WebViewImpl::updateTouchBar):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282375 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Refactor -[WKWebViewConfiguration _setRequiresUserActionForEditingControlsManager:] to use API::PageConfiguration
+            https://bugs.webkit.org/show_bug.cgi?id=230238
+            rdar://83078713
+
+            Reviewed by Tim Horton.
+
+            Move the `_requiresUserActionForEditingControlsManager` bit out of WebViewImpl and into API::PageConfiguration.
+            This makes it easier to introduce state in WebPage that keeps track of whether or not user action is required
+            for showing text editing controls on the touch bar, since we can fetch the (unchanging) state off of
+            API::PageConfiguration, and propagate it to the web process via WebPageCreationParameters.
+
+            No change in behavior.
+
+            * UIProcess/API/APIPageConfiguration.cpp:
+            (API::PageConfiguration::copy const):
+            * UIProcess/API/APIPageConfiguration.h:
+            (API::PageConfiguration::requiresUserActionForEditingControlsManager const):
+            (API::PageConfiguration::setRequiresUserActionForEditingControlsManager):
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _initializeWithConfiguration:]):
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+            (-[WKWebViewConfiguration init]):
+            (-[WKWebViewConfiguration copyWithZone:]):
+            (-[WKWebViewConfiguration _requiresUserActionForEditingControlsManager]):
+            (-[WKWebViewConfiguration _setRequiresUserActionForEditingControlsManager:]):
+
+            Call into API::PageConfiguration instead.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _requiresUserActionForEditingControlsManager]): Deleted.
+            (-[WKView _setRequiresUserActionForEditingControlsManager:]): Deleted.
+
+            Additionally delete this private method on WKView, which was only used by Safari on macOS, back before Safari
+            used WKWebView. There are currently no internal clients of this SPI method.
+
+            * UIProcess/Cocoa/WebViewImpl.h:
+            (WebKit::WebViewImpl::setRequiresUserActionForEditingControlsManager): Deleted.
+            (WebKit::WebViewImpl::requiresUserActionForEditingControlsManager const): Deleted.
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::requiresUserActionForEditingControlsManager const):
+
+            Turn this into a helper method that just asks the API::PageConfiguration.
+
+            (WebKit::WebViewImpl::updateTouchBar):
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282370. rdar://problem/83183884
 
     [macOS] -toggleAutomaticSpellingCorrection: menu item validation shouldn't require post-layout editor state

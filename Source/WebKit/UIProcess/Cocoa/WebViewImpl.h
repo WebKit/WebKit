@@ -611,8 +611,7 @@ public:
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 
-    void setRequiresUserActionForEditingControlsManager(bool requiresUserActionForEditingControlsManager) { m_requiresUserActionForEditingControlsManager = requiresUserActionForEditingControlsManager; }
-    bool requiresUserActionForEditingControlsManager() const { return m_requiresUserActionForEditingControlsManager; }
+    bool requiresUserActionForEditingControlsManager() const;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection();
     void setUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection);
@@ -877,7 +876,6 @@ private:
     NSInteger m_lastCandidateRequestSequenceNumber;
     NSRange m_softSpaceRange { NSNotFound, 0 };
     bool m_isHandlingAcceptedCandidate { false };
-    bool m_requiresUserActionForEditingControlsManager { false };
     bool m_editableElementIsFocused { false };
     bool m_isTextInsertionReplacingSoftSpace { false };
     RetainPtr<WKSafeBrowsingWarning> m_safeBrowsingWarning;

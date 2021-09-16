@@ -158,7 +158,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     WKRetainPtr<WKPageGroupRef> _pageGroup;
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
-    BOOL _requiresUserActionForEditingControlsManager;
 #endif
     BOOL _waitsForPaintAfterViewDidMoveToWindow;
     BOOL _controlledByAutomation;
@@ -229,7 +228,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _respectsImageOrientation = NO;
     _showsURLsInToolTips = NO;
     _serviceControlsEnabled = NO;
-    _requiresUserActionForEditingControlsManager = NO;
 #endif
     _waitsForPaintAfterViewDidMoveToWindow = YES;
 
@@ -428,7 +426,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
     configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
-    configuration->_requiresUserActionForEditingControlsManager = self->_requiresUserActionForEditingControlsManager;
     configuration->_pageGroup = self._pageGroup;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -1160,12 +1157,12 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (BOOL)_requiresUserActionForEditingControlsManager
 {
-    return _requiresUserActionForEditingControlsManager;
+    return _pageConfiguration->requiresUserActionForEditingControlsManager();
 }
 
 - (void)_setRequiresUserActionForEditingControlsManager:(BOOL)requiresUserAction
 {
-    _requiresUserActionForEditingControlsManager = requiresUserAction;
+    _pageConfiguration->setRequiresUserActionForEditingControlsManager(requiresUserAction);
 }
 
 - (WKPageGroupRef)_pageGroup

@@ -31,6 +31,7 @@
 #import "APIAttachment.h"
 #import "APILegacyContextHistoryClient.h"
 #import "APINavigation.h"
+#import "APIPageConfiguration.h"
 #import "AppKitSPI.h"
 #import "CoreTextHelpers.h"
 #import "FontInfo.h"
@@ -1047,13 +1048,18 @@ NSTouchBar *WebViewImpl::makeTouchBar()
     return m_currentTouchBar.get();
 }
 
+bool WebViewImpl::requiresUserActionForEditingControlsManager() const
+{
+    return m_page->configuration().requiresUserActionForEditingControlsManager();
+}
+
 void WebViewImpl::updateTouchBar()
 {
     if (!m_canCreateTouchBars)
         return;
 
     NSTouchBar *touchBar = nil;
-    bool userActionRequirementsHaveBeenMet = m_requiresUserActionForEditingControlsManager ? m_page->hasHadSelectionChangesFromUserInteraction() : true;
+    bool userActionRequirementsHaveBeenMet = !requiresUserActionForEditingControlsManager() || m_page->hasHadSelectionChangesFromUserInteraction();
     if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSupressedForHiddenContentEditable()) {
         updateTextTouchBar();
         if (userActionRequirementsHaveBeenMet)
