@@ -1,5 +1,49 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282261. rdar://problem/83183323
+
+    FontFaceSet.load() needs to react to style changes
+    https://bugs.webkit.org/show_bug.cgi?id=230132
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    This test is being upstreamed in https://github.com/web-platform-tests/wpt/pull/30491
+    
+    * web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected-expected.txt: Added.
+    * web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected.html: Added.
+    
+    Source/WebCore:
+    
+    If content does something like
+    let fonts = document.fonts;
+    ... modify style sheets ...
+    fonts.load(...)
+    
+    The load() function needs to see the result of hte style sheet modification.
+    
+    Test: imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected.html
+    
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::load):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282261 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            FontFaceSet.load() needs to react to style changes
+            https://bugs.webkit.org/show_bug.cgi?id=230132
+
+            Reviewed by Antti Koivisto.
+
+            This test is being upstreamed in https://github.com/web-platform-tests/wpt/pull/30491
+
+            * web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected-expected.txt: Added.
+            * web-platform-tests/css/css-font-loading/fontfaceset-load-css-connected.html: Added.
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282204. rdar://problem/83183703
 
     FontFaceSet.has() needs to react to style changes
