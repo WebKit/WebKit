@@ -7439,7 +7439,6 @@ Ref<DocumentFragment> Document::documentFragmentForInnerOuterHTML()
 
 Ref<FontFaceSet> Document::fonts()
 {
-    updateStyleIfNeeded(); // FIXME: This is unnecessary. Instead, the actual accessors in the FontFaceSet need to update style.
     return fontSelector().fontFaceSet();
 }
     
