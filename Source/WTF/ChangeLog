@@ -1,3 +1,28 @@
+2021-05-27  Mikhail R. Gadelha  <mikhail.ramalho@gmail.com>
+
+        Increase NumberToStringBuffer to account for negative number
+        https://bugs.webkit.org/show_bug.cgi?id=226014
+
+        Reviewed by Robin Morisset.
+
+        In r250389, NumberToStringBuffer length was increased from 96 to 123 because:
+
+        <21 digits> + decimal point + <100 digits> + null char = 123.
+
+        however,
+
+        a = -100000000000000000000
+        a.toFixed(100)
+
+        is a valid conversion and it is 124 chars long, because of the "-" sign.
+
+        So this patch increases the length of NumberToStringBuffer to 124 and adds new
+        test cases.
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/dtoa.h:
+
 2021-05-26  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Have the Ref<> destructor null out its pointer

@@ -27,7 +27,9 @@
 
 namespace WTF {
 
-using NumberToStringBuffer = std::array<char, 123>;
+// Only toFixed() can use all the 124 positions. The format is:
+// <-> + <21 digits> + decimal point + <100 digits> + null char = 124.
+using NumberToStringBuffer = std::array<char, 124>;
 
 WTF_EXPORT_PRIVATE const char* numberToString(float, NumberToStringBuffer&);
 WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer&, bool truncateTrailingZeros = false);
