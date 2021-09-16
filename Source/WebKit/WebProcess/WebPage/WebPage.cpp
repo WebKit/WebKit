@@ -1323,6 +1323,7 @@ void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     EditorStateIsContentEditable editorStateIsContentEditable = frame.selection().selection().isContentEditable() ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     if (m_lastEditorStateWasContentEditable != editorStateIsContentEditable)
+        return;
     if (hasPendingEditorStateUpdate())
         return;
 
