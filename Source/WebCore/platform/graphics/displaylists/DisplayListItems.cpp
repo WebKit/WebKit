@@ -576,7 +576,10 @@ static TextStream& operator<<(TextStream& ts, const DrawLinesForText& item)
 
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
-    context.drawDotsForDocumentMarker(m_rect, m_style);
+    context.drawDotsForDocumentMarker(m_rect, {
+        static_cast<DocumentMarkerLineStyle::Mode>(m_styleMode),
+        m_styleShouldUseDarkAppearance,
+    });
 }
 
 Optional<FloatRect> DrawDotsForDocumentMarker::localBounds(const GraphicsContext&) const
