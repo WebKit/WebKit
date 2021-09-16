@@ -250,7 +250,7 @@ bool WebPage::isTransparentOrFullyClipped(const Element& element) const
     return renderer->hasNonEmptyVisibleRectRespectingParentFrames();
 }
 
-bool WebPage::platformNeedsLayoutForEditorState(const Frame& frame) const
+bool WebPage::requiresPostLayoutDataForEditorState(const Frame& frame) const
 {
     // If we have a composition or are using a hardware keyboard then we need to send the full
     // editor so that the UIProcess can update UI, including the position of the caret.

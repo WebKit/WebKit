@@ -1084,6 +1084,21 @@ void WebPage::didEndMagnificationGesture()
 #endif
 }
 
+bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const
+{
+    if (m_needsFontAttributes) {
+        // Font attribute information is propagated to the UI process through post-layout data on EditorState.
+        return false;
+    }
+
+    if (!m_requiresUserActionForEditingControlsManager || m_hasEverFocusedElementDueToUserInteractionSincePageTransition) {
+        // Text editing controls on the touch bar depend on having post-layout editor state data.
+        return false;
+    }
+
+    return true;
+}
+
 #if HAVE(APP_ACCENT_COLORS)
 
 void WebPage::setAccentColor(WebCore::Color color)

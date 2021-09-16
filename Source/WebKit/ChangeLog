@@ -1,5 +1,163 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282419. rdar://problem/83183884
+
+    [macOS] Avoid computing post-layout EditorState data unless necessary
+    https://bugs.webkit.org/show_bug.cgi?id=230204
+    <rdar://problem/83078713>
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebCore:
+    
+    See WebKit/ChangeLog for more details.
+    
+    * page/Page.h:
+    (WebCore::Page::isEditable const): Mark this getter `const`.
+    (WebCore::Page::isEditable): Deleted.
+    
+    Source/WebKit:
+    
+    Add a new codepath on macOS that allows us to entirely avoid post-layout EditorState computation in the case
+    where it's not needed for anything; in particular, unless the text touch bar may be presented or the UI delegate
+    implements the `-webView:didChangeFontAttributes:` method, the post-layout portion of EditorState is not needed
+    at all.
+    
+    See below for more details.
+    
+    * Shared/WebPageCreationParameters.cpp:
+    (WebKit::WebPageCreationParameters::encode const):
+    (WebKit::WebPageCreationParameters::decode):
+    * Shared/WebPageCreationParameters.h:
+    
+    Plumb a bit indicating whether user interaction is required in order to show the text touch bar. See
+    `WebPage::shouldAvoidComputingPostLayoutDataForEditorState` below for more details.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::creationParameters):
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::editorState const):
+    (WebKit::WebPage::updateEditorStateAfterLayoutIfEditabilityChanged):
+    
+    When computing `EditorState.isContentEditable`, use VisibleSelection's `hasEditableStyle` method instead of
+    `isContentEditable`. Unlike the latter, the former does not trigger style resolution.
+    
+    (WebKit::WebPage::didStartPageTransition):
+    
+    Make a slight adjustment to only set the `m_hasEverFocusedElementDueToUserInteractionSincePageTransition` bit if
+    the user is actually interacting with text form control or editable element. This allows us to still avoid
+    computing post-layout editor state data in cases where the user has clicked on non-editable elements on the
+    page, such that text editing controls in the touch bar are still not being shown.
+    
+    (WebKit::WebPage::didChangeSelectionOrOverflowScrollPosition):
+    (WebKit::WebPage::sendEditorStateUpdate):
+    
+    Don't bother scheduling another post-layout EditorState in the case where post-layout data is missing, but we're
+    avoiding post-layout data computation altogether due to `shouldAvoidComputingPostLayoutDataForEditorState`
+    returning `true`.
+    
+    * WebProcess/WebPage/WebPage.h:
+    (WebKit::WebPage::requiresPostLayoutDataForEditorState const):
+    (WebKit::WebPage::shouldAvoidComputingPostLayoutDataForEditorState const):
+    (WebKit::WebPage::platformNeedsLayoutForEditorState const): Deleted.
+    
+    Rename this to `requiresPostLayoutDataForEditorState`, to avoid some confusion with the new method,
+    `shouldAvoidComputingPostLayoutDataForEditorState`. The former is a way for platforms to indicate that post-
+    layout data *must* be included, even if layout is not up to date yet upon computing the EditorState. The latter
+    is a way for platforms to indicate that we can completely avoid all post-layout editor state computation,
+    regardless of whether or not layout is up to date.
+    
+    By default, if both of the above methods return `false`, we compute and include post-layout data only if layout
+    is up-to-date when computing the EditorState, and schedule a subsequent "full" EditorState update after the
+    next rendering update in the case where layout was *not* up-to-date already (indicated by the EditorState's
+    `isMissingPostLayoutData` flag).
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::requiresPostLayoutDataForEditorState const):
+    (WebKit::WebPage::platformNeedsLayoutForEditorState const): Deleted.
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::shouldAvoidComputingPostLayoutDataForEditorState const):
+    
+    Only return `true` here if the user interaction requirements for showing text editing controls on the touch bar
+    have not been met, and the UI delegate method for observing font attributes is also not implemented by the
+    client.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282419 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macOS] Avoid computing post-layout EditorState data unless necessary
+            https://bugs.webkit.org/show_bug.cgi?id=230204
+            <rdar://problem/83078713>
+
+            Reviewed by Devin Rousso.
+
+            Add a new codepath on macOS that allows us to entirely avoid post-layout EditorState computation in the case
+            where it's not needed for anything; in particular, unless the text touch bar may be presented or the UI delegate
+            implements the `-webView:didChangeFontAttributes:` method, the post-layout portion of EditorState is not needed
+            at all.
+
+            See below for more details.
+
+            * Shared/WebPageCreationParameters.cpp:
+            (WebKit::WebPageCreationParameters::encode const):
+            (WebKit::WebPageCreationParameters::decode):
+            * Shared/WebPageCreationParameters.h:
+
+            Plumb a bit indicating whether user interaction is required in order to show the text touch bar. See
+            `WebPage::shouldAvoidComputingPostLayoutDataForEditorState` below for more details.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::creationParameters):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::editorState const):
+            (WebKit::WebPage::updateEditorStateAfterLayoutIfEditabilityChanged):
+
+            When computing `EditorState.isContentEditable`, use VisibleSelection's `hasEditableStyle` method instead of
+            `isContentEditable`. Unlike the latter, the former does not trigger style resolution.
+
+            (WebKit::WebPage::didStartPageTransition):
+
+            Make a slight adjustment to only set the `m_hasEverFocusedElementDueToUserInteractionSincePageTransition` bit if
+            the user is actually interacting with text form control or editable element. This allows us to still avoid
+            computing post-layout editor state data in cases where the user has clicked on non-editable elements on the
+            page, such that text editing controls in the touch bar are still not being shown.
+
+            (WebKit::WebPage::didChangeSelectionOrOverflowScrollPosition):
+            (WebKit::WebPage::sendEditorStateUpdate):
+
+            Don't bother scheduling another post-layout EditorState in the case where post-layout data is missing, but we're
+            avoiding post-layout data computation altogether due to `shouldAvoidComputingPostLayoutDataForEditorState`
+            returning `true`.
+
+            * WebProcess/WebPage/WebPage.h:
+            (WebKit::WebPage::requiresPostLayoutDataForEditorState const):
+            (WebKit::WebPage::shouldAvoidComputingPostLayoutDataForEditorState const):
+            (WebKit::WebPage::platformNeedsLayoutForEditorState const): Deleted.
+
+            Rename this to `requiresPostLayoutDataForEditorState`, to avoid some confusion with the new method,
+            `shouldAvoidComputingPostLayoutDataForEditorState`. The former is a way for platforms to indicate that post-
+            layout data *must* be included, even if layout is not up to date yet upon computing the EditorState. The latter
+            is a way for platforms to indicate that we can completely avoid all post-layout editor state computation,
+            regardless of whether or not layout is up to date.
+
+            By default, if both of the above methods return `false`, we compute and include post-layout data only if layout
+            is up-to-date when computing the EditorState, and schedule a subsequent "full" EditorState update after the
+            next rendering update in the case where layout was *not* up-to-date already (indicated by the EditorState's
+            `isMissingPostLayoutData` flag).
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::requiresPostLayoutDataForEditorState const):
+            (WebKit::WebPage::platformNeedsLayoutForEditorState const): Deleted.
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+            (WebKit::WebPage::shouldAvoidComputingPostLayoutDataForEditorState const):
+
+            Only return `true` here if the user interaction requirements for showing text editing controls on the touch bar
+            have not been met, and the UI delegate method for observing font attributes is also not implemented by the
+            client.
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282375. rdar://problem/83183884
 
     Refactor -[WKWebViewConfiguration _setRequiresUserActionForEditingControlsManager:] to use API::PageConfiguration
