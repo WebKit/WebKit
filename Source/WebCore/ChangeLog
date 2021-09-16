@@ -1,5 +1,58 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282262. rdar://problem/83183871
+
+    The document.fonts accessor should not update style
+    https://bugs.webkit.org/show_bug.cgi?id=229850
+    
+    Reviewed by Antti Koivisto.
+    
+    For example, when content says "document.fonts.has(...)", the ".has(...)" part
+    needs to update style instead of the "document.fonts" part. This is because it's
+    totally legal for content to say:
+    
+    var f = document.fonts;
+    // Modify style here
+    ... f.has(...) ... <=== This needs to reflect the style changes.
+    
+    The child bugs of this bug migrate the updateStyle() calls into the specific
+    operations on the FontFaceSet, so now it's okay stop updating style in the
+    accessor.
+    
+    Test: PerformanceTests/CSS/FontFaceSetUpdateStyle.html
+    
+    * dom/Document.cpp:
+    (WebCore::Document::fonts):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282262 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            The document.fonts accessor should not update style
+            https://bugs.webkit.org/show_bug.cgi?id=229850
+
+            Reviewed by Antti Koivisto.
+
+            For example, when content says "document.fonts.has(...)", the ".has(...)" part
+            needs to update style instead of the "document.fonts" part. This is because it's
+            totally legal for content to say:
+
+            var f = document.fonts;
+            // Modify style here
+            ... f.has(...) ... <=== This needs to reflect the style changes.
+
+            The child bugs of this bug migrate the updateStyle() calls into the specific
+            operations on the FontFaceSet, so now it's okay stop updating style in the
+            accessor.
+
+            Test: PerformanceTests/CSS/FontFaceSetUpdateStyle.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::fonts):
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282049. rdar://problem/83183765
 
     Remove unnecessary uses of Ref protect = m_backing from FontFaceSet
