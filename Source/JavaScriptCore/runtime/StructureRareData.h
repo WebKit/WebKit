@@ -35,6 +35,7 @@
 namespace JSC {
 
 class JSPropertyNameEnumerator;
+class LLIntOffsetsExtractor;
 class Structure;
 class StructureChain;
 class CachedSpecialPropertyAdaptiveStructureWatchpoint;
@@ -119,6 +120,7 @@ public:
     void invalidateWatchpointBasedValidation();
 
 private:
+    friend class LLIntOffsetsExtractor;
     friend class Structure;
     friend class CachedSpecialPropertyAdaptiveStructureWatchpoint;
     friend class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint;

@@ -13942,16 +13942,26 @@ void SpeculativeJIT::compileMatchStructure(Node* node)
 
 void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
 {
-    if (node->child1().useKind() == CellUse) {
-        SpeculateCellOperand base(this, node->child1());
+    if (node->child1().useKind() == CellUse || node->child1().useKind() == CellOrOtherUse) {
+        JSValueOperand base(this, node->child1(), ManualOperandSpeculation);
         GPRTemporary scratch1(this);
         GPRTemporary scratch2(this);
 
-        GPRReg baseGPR = base.gpr();
+        speculate(node, node->child1());
+
+        JSValueRegs baseRegs = base.jsValueRegs();
         GPRReg scratch1GPR = scratch1.gpr();
         GPRReg scratch2GPR = scratch2.gpr();
 
         CCallHelpers::JumpList slowCases;
+        CCallHelpers::JumpList doneCases;
+
+        if (node->child1().useKind() == CellOrOtherUse) {
+            auto notOther = m_jit.branchIfNotOther(baseRegs, scratch1GPR);
+            m_jit.move(TrustedImmPtr::weakPointer(m_graph, vm().emptyPropertyNameEnumerator()), scratch1GPR);
+            doneCases.append(m_jit.jump());
+            notOther.link(&m_jit);
+        }
 
         // We go to the inlined fast path if the object is UndecidedShape / NoIndexingShape for simplicity.
         static_assert(!NonArray);
@@ -13961,26 +13971,56 @@ void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
         static_assert(NonArray <= ArrayWithUndecided);
         static_assert(ArrayClass <= ArrayWithUndecided);
         static_assert(ArrayWithUndecided <= ArrayWithUndecided);
-        m_jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratch1GPR);
-        m_jit.and32(CCallHelpers::TrustedImm32(IndexingTypeMask), scratch1GPR);
-        slowCases.append(m_jit.branch32(CCallHelpers::Above, scratch1GPR, CCallHelpers::TrustedImm32(ArrayWithUndecided)));
-        m_jit.emitLoadStructure(vm(), baseGPR, scratch1GPR, scratch2GPR);
-        m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, Structure::previousOrRareDataOffset()), scratch1GPR);
+
+        AbstractValue& baseValue = m_state.forNode(node->child1());
+        RegisteredStructure onlyStructure;
+        StructureRareData* rareData = nullptr;
+        bool skipIndexingMaskCheck = false;
+        if (baseValue.isType(SpecObject) && baseValue.m_structure.isFinite()) {
+            bool hasIndexing = false;
+            baseValue.m_structure.forEach([&] (RegisteredStructure structure) {
+                if (structure->indexingType() > ArrayWithUndecided)
+                    hasIndexing = true;
+            });
+            if (!hasIndexing)
+                skipIndexingMaskCheck = true;
+            onlyStructure = baseValue.m_structure.onlyStructure();
+            if (onlyStructure)
+                rareData = onlyStructure->tryRareData();
+        }
+
+        if (!skipIndexingMaskCheck) {
+            m_jit.load8(CCallHelpers::Address(baseRegs.payloadGPR(), JSCell::indexingTypeAndMiscOffset()), scratch1GPR);
+            m_jit.and32(CCallHelpers::TrustedImm32(IndexingTypeMask), scratch1GPR);
+            slowCases.append(m_jit.branch32(CCallHelpers::Above, scratch1GPR, CCallHelpers::TrustedImm32(ArrayWithUndecided)));
+        }
+
+        if (rareData) {
+            FrozenValue* frozenRareData = m_graph.freeze(rareData);
+            m_jit.move(TrustedImmPtr(frozenRareData), scratch1GPR);
+            m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StructureRareData::offsetOfCachedPropertyNameEnumerator()), scratch1GPR);
+        } else {
+            if (onlyStructure)
+                m_jit.move(TrustedImmPtr(onlyStructure), scratch1GPR);
+            else
+                m_jit.emitLoadStructure(vm(), baseRegs.payloadGPR(), scratch1GPR, scratch2GPR);
+            m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, Structure::previousOrRareDataOffset()), scratch1GPR);
+            slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratch1GPR));
+            slowCases.append(m_jit.branchIfStructure(scratch1GPR));
+            m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StructureRareData::offsetOfCachedPropertyNameEnumerator()), scratch1GPR);
+        }
 
         slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratch1GPR));
-        slowCases.append(m_jit.branch32(CCallHelpers::Equal, CCallHelpers::Address(scratch1GPR, JSCell::structureIDOffset()), TrustedImm32(bitwise_cast<int32_t>(vm().structureStructure->structureID()))));
-        m_jit.loadPtr(CCallHelpers::Address(scratch1GPR, StructureRareData::offsetOfCachedPropertyNameEnumerator()), scratch1GPR);
-        slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratch1GPR));
         slowCases.append(m_jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch1GPR, JSPropertyNameEnumerator::flagsOffset()), CCallHelpers::TrustedImm32(JSPropertyNameEnumerator::ValidatedViaWatchpoint)));
-        auto done = m_jit.jump();
+        doneCases.append(m_jit.jump());
 
         slowCases.link(&m_jit);
         silentSpillAllRegisters(scratch1GPR, scratch2GPR);
-        callOperation(operationGetPropertyEnumeratorCell, scratch1GPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR);
+        callOperation(operationGetPropertyEnumeratorCell, scratch1GPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs.payloadGPR());
         silentFillAllRegisters();
         m_jit.exceptionCheck();
 
-        done.link(&m_jit);
+        doneCases.link(&m_jit);
         cellResult(scratch1GPR, node);
         return;
     }
@@ -14241,7 +14281,7 @@ void SpeculativeJIT::compileObjectKeysOrObjectGetOwnPropertyNames(Node* node)
             m_jit.loadPtr(CCallHelpers::Address(structureGPR, Structure::previousOrRareDataOffset()), scratchGPR);
 
             slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratchGPR));
-            slowCases.append(m_jit.branch32(CCallHelpers::Equal, CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()), TrustedImm32(bitwise_cast<int32_t>(vm().structureStructure->structureID()))));
+            slowCases.append(m_jit.branchIfStructure(scratchGPR));
 
             m_jit.loadPtr(CCallHelpers::Address(scratchGPR, StructureRareData::offsetOfCachedPropertyNames(node->op() == ObjectKeys ? CachedPropertyNamesKind::Keys : CachedPropertyNamesKind::GetOwnPropertyNames)), scratchGPR);
 

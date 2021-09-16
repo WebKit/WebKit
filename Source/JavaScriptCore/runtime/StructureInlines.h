@@ -62,13 +62,14 @@ inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValu
 
     Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingModeIncludingHistory, inlineCapacity);
     structure->finishCreation(vm);
+    ASSERT(structure->type() == StructureType);
     return structure;
 }
 
 inline Structure* Structure::createStructure(VM& vm)
 {
     ASSERT(!vm.structureStructure);
-    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm);
+    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, CreatingEarlyCell);
     structure->finishCreation(vm, CreatingEarlyCell);
     return structure;
 }
