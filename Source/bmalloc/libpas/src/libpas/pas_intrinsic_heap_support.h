@@ -27,7 +27,7 @@
 #define PAS_INTRINSIC_HEAP_SUPPORT_H
 
 #include "pas_allocator_index.h"
-#include "pas_compact_atomic_segregated_global_size_directory_ptr.h"
+#include "pas_compact_atomic_segregated_size_directory_ptr.h"
 #include "pas_internal_config.h"
 #include "pas_utils.h"
 
@@ -37,7 +37,7 @@ struct pas_intrinsic_heap_support;
 typedef struct pas_intrinsic_heap_support pas_intrinsic_heap_support;
 
 struct pas_intrinsic_heap_support {
-    pas_compact_atomic_segregated_global_size_directory_ptr index_to_size_directory[
+    pas_compact_atomic_segregated_size_directory_ptr index_to_size_directory[
         PAS_NUM_INTRINSIC_SIZE_CLASSES];
     pas_allocator_index index_to_allocator_index[PAS_NUM_INTRINSIC_SIZE_CLASSES];
 };

@@ -63,6 +63,11 @@ void* bmalloc_try_allocate_zeroed(size_t size)
     return bmalloc_try_allocate_zeroed_inline(size);
 }
 
+PAS_NEVER_INLINE void* bmalloc_allocate_slow(size_t size)
+{
+    return (void*)bmalloc_allocate_impl_medium_slow_case(size, 1).begin;
+}
+
 void* bmalloc_allocate(size_t size)
 {
     return bmalloc_allocate_inline(size);

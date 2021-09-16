@@ -38,6 +38,7 @@ struct pas_enumerator;
 struct pas_heap_config;
 struct pas_page_base;
 struct pas_page_base_config;
+struct pas_physical_memory_transaction;
 struct pas_segregated_heap;
 struct pas_segregated_page_config;
 typedef struct pas_bitfit_page_config pas_bitfit_page_config;
@@ -45,6 +46,7 @@ typedef struct pas_enumerator pas_enumerator;
 typedef struct pas_heap_config pas_heap_config;
 typedef struct pas_page_base pas_page_base;
 typedef struct pas_page_base_config pas_page_base_config;
+typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
 typedef struct pas_segregated_heap pas_segregated_heap;
 typedef struct pas_segregated_page_config pas_segregated_page_config;
 
@@ -52,7 +54,8 @@ typedef pas_page_base* (*pas_page_base_config_page_header_for_boundary)(void* bo
 typedef void* (*pas_page_base_config_boundary_for_page_header)(pas_page_base* page);
 typedef pas_page_base* (*pas_page_base_config_page_header_for_boundary_remote)(
     pas_enumerator* enumerator, void* boundary);
-typedef void* (*pas_page_base_config_page_allocator)(pas_segregated_heap*);
+typedef void* (*pas_page_base_config_page_allocator)(
+    pas_segregated_heap*, pas_physical_memory_transaction* transaction);
 typedef pas_page_base* (*pas_page_base_config_create_page_header)(
     void* boundary, pas_lock_hold_mode heap_lock_hold_mode);
 typedef void (*pas_page_base_config_destroy_page_header)(

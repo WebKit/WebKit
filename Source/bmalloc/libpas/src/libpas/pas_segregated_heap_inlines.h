@@ -27,21 +27,21 @@
 #define PAS_SEGREGATED_HEAP_INLINES_H
 
 #include "pas_segregated_heap.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 
 PAS_BEGIN_EXTERN_C;
 
-static PAS_ALWAYS_INLINE pas_segregated_global_size_directory*
+static PAS_ALWAYS_INLINE pas_segregated_size_directory*
 pas_segregated_heap_size_directory_for_index(
     pas_segregated_heap* heap,
     size_t index,
     unsigned* cached_index)
 {
-    pas_compact_atomic_segregated_global_size_directory_ptr* index_to_size_directory;
+    pas_compact_atomic_segregated_size_directory_ptr* index_to_size_directory;
     
     if (index == (cached_index ? *cached_index : 1)) {
-        pas_segregated_global_size_directory* result;
-        result = pas_compact_atomic_segregated_global_size_directory_ptr_load(
+        pas_segregated_size_directory* result;
+        result = pas_compact_atomic_segregated_size_directory_ptr_load(
             &heap->basic_size_directory_and_head);
         if (result && result->base.is_basic_size_directory)
             return result;
@@ -61,10 +61,10 @@ pas_segregated_heap_size_directory_for_index(
         return NULL;
     }
     
-    return pas_compact_atomic_segregated_global_size_directory_ptr_load(index_to_size_directory + index);
+    return pas_compact_atomic_segregated_size_directory_ptr_load(index_to_size_directory + index);
 }
 
-static PAS_ALWAYS_INLINE pas_segregated_global_size_directory*
+static PAS_ALWAYS_INLINE pas_segregated_size_directory*
 pas_segregated_heap_size_directory_for_count(
     pas_segregated_heap* heap,
     size_t count,

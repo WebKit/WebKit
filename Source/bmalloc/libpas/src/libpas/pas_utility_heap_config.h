@@ -58,11 +58,12 @@ static inline void* pas_utility_heap_boundary_for_page_header(pas_page_base* pag
     return page;
 }
 
-PAS_API void* pas_utility_heap_allocate_page(pas_segregated_heap* heap);
+PAS_API void* pas_utility_heap_allocate_page(
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction);
 
 static inline pas_segregated_shared_page_directory*
 pas_utility_heap_shared_page_directory_selector(pas_segregated_heap* heap,
-                                                pas_segregated_global_size_directory* directory)
+                                                pas_segregated_size_directory* directory)
 {
     PAS_UNUSED_PARAM(heap);
     PAS_UNUSED_PARAM(directory);
@@ -126,6 +127,7 @@ PAS_API bool pas_utility_heap_config_for_each_shared_page_directory(
             .use_reversed_current_word = PAS_ARM64, \
             .check_deallocation = false, \
             .enable_empty_word_eligibility_optimization = false, \
+            .enable_view_cache = false, \
             .shared_page_directory_selector = pas_utility_heap_shared_page_directory_selector, \
             PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATIONS(pas_utility_heap_page_config) \
         }, \

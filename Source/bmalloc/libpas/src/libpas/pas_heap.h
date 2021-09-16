@@ -35,11 +35,11 @@ PAS_BEGIN_EXTERN_C;
 
 struct pas_heap;
 struct pas_heap_ref;
-struct pas_segregated_global_size_directory;
+struct pas_segregated_size_directory;
 struct pas_segregated_page;
 typedef struct pas_heap pas_heap;
 typedef struct pas_heap_ref pas_heap_ref;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_page pas_segregated_page;
 
 struct pas_heap {

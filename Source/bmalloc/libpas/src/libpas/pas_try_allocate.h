@@ -73,7 +73,7 @@ pas_try_allocate_impl(pas_heap_ref* heap_ref,
             cache,
             allocator_index);
         if (PAS_LIKELY(allocator.did_succeed)) {
-            pas_intrinsic_allocation_result result;
+            pas_allocation_result result;
             pas_try_allocate_impl_size_thunk_data size_thunk_data;
             
             /* This thing with the size thunk means that isoheaps usually don't have to get the
@@ -83,7 +83,8 @@ pas_try_allocate_impl(pas_heap_ref* heap_ref,
             size_thunk_data.heap_ref = heap_ref;
 
             result = try_allocate_common_fast(
-                allocator.allocator, pas_try_allocate_impl_size_thunk, &size_thunk_data, 1);
+                (pas_local_allocator*)allocator.allocator, pas_try_allocate_impl_size_thunk,
+                &size_thunk_data, 1);
 
             type = heap_ref->type;
             return pas_typed_allocation_result_create_with_intrinsic_allocation_result(

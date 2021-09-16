@@ -55,7 +55,7 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     ISO_TEST_HEAP_CONFIG,
     &iso_test_intrinsic_primitive_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error,
+    pas_allocation_result_crash_on_error,
     &iso_test_common_primitive_heap,
     &iso_test_common_primitive_heap_support,
     pas_intrinsic_heap_is_not_designated);
@@ -65,18 +65,18 @@ PAS_CREATE_TRY_ALLOCATE(
     ISO_TEST_HEAP_CONFIG,
     &iso_test_typed_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 PAS_CREATE_TRY_ALLOCATE_ARRAY(
     test_allocate_array_impl,
     ISO_TEST_HEAP_CONFIG,
     &iso_test_typed_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 void* iso_test_allocate_common_primitive(size_t size)
 {
-    return test_allocate_common_primitive(size, 1).ptr;
+    return (void*)test_allocate_common_primitive(size, 1).begin;
 }
 
 void* iso_test_allocate(pas_heap_ref* heap_ref)

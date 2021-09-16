@@ -46,10 +46,6 @@ struct pas_segregated_shared_page_directory {
          .next = NULL \
      })
 
-/* NOTE: It doesn't matter which kind of first_eligible we use. We just pick one. */
-#define PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_FIRST_ELIGIBLE_KIND \
-    pas_segregated_directory_first_eligible_but_not_tabled_kind
-
 extern PAS_API unsigned pas_segregated_shared_page_directory_probability_of_ineligibility;
 
 PAS_API pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_eligible(

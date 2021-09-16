@@ -76,6 +76,15 @@ void (*selectedDeallocate)(void* ptr);
 pas_heap* selectedCommonPrimitiveHeap;
 pas_heap* (*selectedHeapRefGetHeap)(pas_heap_ref* heapRef);
 
+#if PAS_ENABLE_BMALLOC
+pas_primitive_heap_ref gigacageHeapRef;
+
+void* gigacageAllocate(size_t size)
+{
+    return bmalloc_allocate_auxiliary(&gigacageHeapRef, size);
+}
+#endif // PAS_ENABLE_BMALLOC
+
 void flushDeallocationLogAndStopAllocators()
 {
 #if TLC
@@ -337,9 +346,23 @@ void enumeratorRecorder(pas_enumerator* enumerator,
     recordedRanges[kind].insert(range);
 }
 
+unsigned uniformlyRandomUpTo5000()
+{
+    return deterministicRandomNumber(5000);
+}
+
+unsigned sometimesSmallSometimesBig()
+{
+    if (deterministicRandomNumber(300))
+        return deterministicRandomNumber(5000);
+    unsigned result = deterministicRandomNumber(1000000);
+    return result;
+}
+
 void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
-                         unsigned numInitialAllocations, unsigned numActions, unsigned maxTotalSize,
-                         bool testEnumerator)
+                         unsigned numInitialAllocations, unsigned numActions,
+                         unsigned (*chooseSize)(),
+                         unsigned maxTotalSize, bool testEnumerator)
 {
     PAS_ASSERT(!pas_epoch_is_counter); // We don't want to run these tests in the fake scavenger mode.
     
@@ -389,8 +412,10 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
             optionalObjects.push_back(OptionalObject());
     }
 
-    if (!selectedAllocate)
-        numIsolatedHeaps = 0;
+    if (!selectedAllocate && numIsolatedHeaps) {
+        cout << "Skipping because test requires isolated heaps and we don't support them in this configuration.\n";
+        return;
+    }
     
     vector<pas_heap_ref*> isolatedHeaps;
     for (unsigned isolatedHeapIndex = numIsolatedHeaps; isolatedHeapIndex--;) {
@@ -427,7 +452,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
     
     auto allocateSomething = [&] (unsigned threadIndex) {
         unsigned heapIndex = deterministicRandomNumber(static_cast<unsigned>(isolatedHeaps.size() + 1));
-        unsigned size = deterministicRandomNumber(5000);
+        unsigned size = chooseSize();
 
         if (heapIndex == isolatedHeaps.size()) {
             logOptionalObject(threadIndex, size);
@@ -581,6 +606,15 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                                                                pas_enumerator_record_object_records);
             
             pas_enumerator_enumerate_all(enumerator);
+
+            if (verbose) {
+                for (auto& entry : recordedRanges) {
+                    pas_enumerator_record_kind kind = entry.first;
+                    for (auto& range : entry.second)
+                        cout << pas_enumerator_record_kind_get_string(kind) << ": "
+                             << range.base << "..." << range.end() << "\n";
+                }
+            }
 
             auto checkNonOverlapping =
                 [&] (const char* aSetName, set<RecordedRange>& aSet,
@@ -781,6 +815,7 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
                 break;
             default:
                 PAS_ASSERT(!"bad random number");
+                break;
             }
         }
         if (verbose)
@@ -852,35 +887,39 @@ void testAllocationChaos(unsigned numThreads, unsigned numIsolatedHeaps,
     pas_heap_lock_unlock();
 }
 
-void addTheTests(bool testEnumerator)
+void addTheTests(unsigned multiplier, bool testEnumerator)
 {
-    ADD_TEST(testAllocationChaos(1, 10, 1000, 1000000, 10000000, false));
-    ADD_TEST(testAllocationChaos(10, 10, 1000, 200000, 10000000, false));
+    ADD_TEST(testAllocationChaos(1, 0, 1000 * multiplier, 1000000 * multiplier, uniformlyRandomUpTo5000, 10000000 * multiplier, false));
+    ADD_TEST(testAllocationChaos(1, 10, 1000 * multiplier, 500000 * multiplier, sometimesSmallSometimesBig, 10000000 * multiplier, false));
+    ADD_TEST(testAllocationChaos(10, 0, 1000 * multiplier, 200000 * multiplier, sometimesSmallSometimesBig, 10000000 * multiplier, false));
+    ADD_TEST(testAllocationChaos(10, 10, 1000 * multiplier, 200000 * multiplier, uniformlyRandomUpTo5000, 10000000 * multiplier, false));
     if (testEnumerator) {
-        ADD_TEST(testAllocationChaos(1, 10, 1000, 7000, 10000000, true));
-        ADD_TEST(testAllocationChaos(10, 10, 1000, 4000, 10000000, true));
+        ADD_TEST(testAllocationChaos(1, 0, 1000, 7000, sometimesSmallSometimesBig, 10000000, true));
+        ADD_TEST(testAllocationChaos(1, 10, 1000, 7000, uniformlyRandomUpTo5000, 10000000, true));
+        ADD_TEST(testAllocationChaos(10, 0, 1000, 4000, uniformlyRandomUpTo5000, 10000000, true));
+        ADD_TEST(testAllocationChaos(10, 10, 1000, 4000, sometimesSmallSometimesBig, 10000000, true));
     }
 }
 
 void addSpotTests(bool testEnumerator)
 {
-    addTheTests(testEnumerator);
+    ADD_GROUP(addTheTests(10, testEnumerator));
     
     {
         ForceExclusives forceExclusives;
         DisableBitfit disableBitfit;
-        addTheTests(testEnumerator);
+        ADD_GROUP(addTheTests(1, testEnumerator));
     }
     
     {
         ForceTLAs forceTLAs;
         ForcePartials forcePartials;
-        addTheTests(false);
+        ADD_GROUP(addTheTests(1, false));
     }
     
     {
         ForceBitfit forceBitfit;
-        addTheTests(false);
+        ADD_GROUP(addTheTests(1, false));
     }
 }
 
@@ -904,55 +943,55 @@ void addIsoHeapChaosTests()
                 selectedHeapRefGetHeap = iso_heap_ref_get_heap;
             });
     
-        addTheTests(true);
+        ADD_GROUP(addTheTests(10, true));
 
         {
             DisableBitfit disableBitfit;
-            addTheTests(false);
+            ADD_GROUP(addTheTests(1, false));
         }
     
         {
             ForceExclusives forceExclusives;
-            addTheTests(false);
+            ADD_GROUP(addTheTests(1, false));
         }
     
         {
             ForceExclusives forceExclusives;
             DisableBitfit disableBitfit;
-            addTheTests(true); // This tests enumeration with exclusives on for sure.
+            ADD_GROUP(addTheTests(1, true)); // This tests enumeration with exclusives on for sure.
         }
     
         {
             ForceTLAs forceTLAs;
             ForcePartials forcePartials;
-            addTheTests(true); // This tests enumeration with partials and TLAs on for sure.
+            ADD_GROUP(addTheTests(1, true)); // This tests enumeration with partials and TLAs on for sure.
         }
     
         {
             ForceBitfit forceBitfit;
-            addTheTests(true); // This tests enumeration with bitfit on for sure.
+            ADD_GROUP(addTheTests(1, true)); // This tests enumeration with bitfit on for sure.
         }
     
         {
             ForceBaselines forceBaselines;
             DisableBitfit disableBitfit;
-            addTheTests(true); // This tests enumeration with baselines and segheaps on for sure.
+            ADD_GROUP(addTheTests(1, true)); // This tests enumeration with baselines and segheaps on for sure.
         }
     
         {
             ForceTLAs forceTLAs;
-            addTheTests(false);
+            ADD_GROUP(addTheTests(1, false));
         }
     
         {
             ForceBaselines forceBaselines;
             ForcePartials forcePartials;
-            addTheTests(false);
+            ADD_GROUP(addTheTests(1, false));
         }
 
         {
             TestScope frequentScavenging(
-                "frequenct-scavenging",
+                "frequent-scavenging",
                 [] () {
                     pas_scavenger_period_in_milliseconds = 1.;
                     pas_scavenger_max_epoch_delta = -1ll * 1000ll * 1000ll;
@@ -1030,7 +1069,45 @@ void addIsoHeapChaosTests()
                 selectedHeapRefGetHeap = bmalloc_heap_ref_get_heap;
             });
     
+        addSpotTests(true);
+    }
+
+    {
+        TestScope iso(
+            "bmalloc-gigacage",
+            [] () {
+                gigacageHeapRef = BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER;
+
+                size_t reservationSize = 1000000000;
+                void* reservation = malloc(reservationSize);
+                PAS_ASSERT(reservation);
+
+                pas_heap* heap = bmalloc_force_auxiliary_heap_into_reserved_memory(
+                    &gigacageHeapRef,
+                    reinterpret_cast<uintptr_t>(reservation),
+                    reinterpret_cast<uintptr_t>(reservation) + reservationSize);
+                
+                selectedHeapConfig = &bmalloc_heap_config;
+                selectedAllocateCommonPrimitive = gigacageAllocate;
+                selectedAllocate = nullptr;
+                selectedAllocateArray = nullptr;
+                selectedDeallocate = bmalloc_deallocate;
+                selectedCommonPrimitiveHeap = heap;
+                selectedHeapRefGetHeap = nullptr;
+            });
+    
         addSpotTests(false);
+
+        {
+            TestScope frequentScavenging(
+                "frequent-scavenging",
+                [] () {
+                    pas_scavenger_period_in_milliseconds = 1.;
+                    pas_scavenger_max_epoch_delta = -1ll * 1000ll * 1000ll;
+                });
+
+            addSpotTests(false);
+        }
     }
 #endif // PAS_ENABLE_BMALLOC
 
@@ -1068,7 +1145,7 @@ void addIsoHeapChaosTests()
 
         BootJITHeap bootJITHeap;
 
-        addTheTests(true);
+        ADD_GROUP(addTheTests(1, true));
     }
 
     {
@@ -1087,7 +1164,7 @@ void addIsoHeapChaosTests()
 
         BootJITHeap bootJITHeap;
 
-        addTheTests(false);
+        ADD_GROUP(addTheTests(1, false));
     }
 #endif // PAS_ENABLE_HOTBIT
 #endif // PAS_ENABLE_ISO

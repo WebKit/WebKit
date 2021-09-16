@@ -33,7 +33,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-#define PAS_BOOTSTRAP_FREE_LIST_MINIMUM_SIZE 4
+#define PAS_BOOTSTRAP_FREE_LIST_MINIMUM_SIZE 4u
 
 #define PAS_SIMPLE_FREE_HEAP_NAME pas_bootstrap_free_heap
 #define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_bootstrap_free_heap ## suffix

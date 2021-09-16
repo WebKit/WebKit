@@ -48,8 +48,19 @@ pas_thread_local_cache_node* pas_thread_local_cache_node_allocate(void)
 
     result = pas_thread_local_cache_node_first_free;
     if (!result) {
-        result = pas_immortal_heap_allocate(
-            sizeof(pas_thread_local_cache_node),
+        const size_t interference_padding = 64;
+        
+        size_t size;
+
+        size = PAS_MAX(
+            interference_padding,
+            pas_round_up_to_next_power_of_2(sizeof(pas_thread_local_cache_node)));
+
+        if (verbose)
+            pas_log("Allocating TLC node with size/alignment = %zu.\n", size);
+        
+        result = pas_immortal_heap_allocate_with_alignment(
+            size, size,
             "pas_thread_local_cache_node",
             pas_object_allocation);
         

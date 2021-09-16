@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_BITFIT_DIRECTORY_AND_INDEX_H
-#define PAS_BITFIT_DIRECTORY_AND_INDEX_H
+#ifndef PAS_LOCAL_ALLOCATOR_KIND
+#define PAS_LOCAL_ALLOCATOR_KIND
 
-#include "pas_bitfit_directory_kind.h"
+#include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_directory;
-struct pas_bitfit_directory_and_index;
-typedef struct pas_bitfit_directory pas_bitfit_directory;
-typedef struct pas_bitfit_directory_and_index pas_bitfit_directory_and_index;
-
-struct pas_bitfit_directory_and_index {
-    pas_bitfit_directory* directory;
-    unsigned index;
-    pas_bitfit_directory_kind kind;
+enum pas_local_allocator_kind {
+    pas_local_allocator_allocator_kind,
+    pas_local_allocator_view_cache_kind
 };
 
-static inline pas_bitfit_directory_and_index pas_bitfit_directory_and_index_create(
-    pas_bitfit_directory* directory, unsigned index, pas_bitfit_directory_kind kind)
+typedef enum pas_local_allocator_kind pas_local_allocator_kind;
+
+static inline const char* pas_local_allocator_kind_get_string(pas_local_allocator_kind kind)
 {
-    pas_bitfit_directory_and_index result;
-    result.directory = directory;
-    result.index = index;
-    result.kind = kind;
-    return result;
+    switch (kind) {
+    case pas_local_allocator_allocator_kind:
+        return "allocator";
+    case pas_local_allocator_view_cache_kind:
+        return "view_cache";
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return NULL;
 }
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_BITFIT_DIRECTORY_AND_INDEX_H */
+#endif /* PAS_LOCAL_ALLOCATOR_KIND */
 

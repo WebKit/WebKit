@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #ifndef PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_H
 #define PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_H
 
+#include "pas_log.h"
 #include "pas_utils.h"
+#include <unistd.h>
 
 PAS_BEGIN_EXTERN_C;
 
@@ -51,6 +53,12 @@ struct PAS_ALIGNED(sizeof(pas_pair)) pas_lock_free_read_ptr_ptr_hashtable_table 
     ((pas_lock_free_read_ptr_ptr_hashtable){ \
          .table = NULL \
      })
+
+#define PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_ENABLE_COLLISION_COUNT 0
+
+#if PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_ENABLE_COLLISION_COUNT
+PAS_API extern uint64_t pas_lock_free_read_ptr_ptr_hashtable_collision_count;
+#endif /* PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_ENABLE_COLLISION_COUNT */
 
 static PAS_ALWAYS_INLINE void* pas_lock_free_read_ptr_ptr_hashtable_find(
     pas_lock_free_read_ptr_ptr_hashtable* hashtable,
@@ -85,6 +93,24 @@ static PAS_ALWAYS_INLINE void* pas_lock_free_read_ptr_ptr_hashtable_find(
 
         if (loaded_key == UINTPTR_MAX)
             return NULL;
+
+#if PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_ENABLE_COLLISION_COUNT
+        for (;;) {
+            uint64_t old_collision_count;
+            uint64_t new_collision_count;
+
+            old_collision_count = pas_lock_free_read_ptr_ptr_hashtable_collision_count;
+            new_collision_count = old_collision_count + 1;
+
+            if (pas_compare_and_swap_uint64_weak(
+                    &pas_lock_free_read_ptr_ptr_hashtable_collision_count,
+                    old_collision_count, new_collision_count)) {
+                if (!(new_collision_count % 10000))
+                    pas_log("%d: Saw %llu collisions.\n", getpid(), new_collision_count);
+                break;
+            }
+        }
+#endif /* PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_ENABLE_COLLISION_COUNT */
     }
 }
 

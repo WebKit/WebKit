@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -88,18 +88,22 @@ void pas_string_stream_vprintf(pas_string_stream* stream, const char* format, va
     number_of_bytes_not_including_terminator_that_would_have_been_written =
         pas_vsnprintf(stream->buffer + stream->next, stream->size - stream->next,
                       format, first_pass_arg_list);
+
+    PAS_ASSERT(number_of_bytes_not_including_terminator_that_would_have_been_written >= 0);
     
     va_end(first_pass_arg_list);
     
     number_of_bytes_that_would_have_been_written =
         number_of_bytes_not_including_terminator_that_would_have_been_written + 1;
+
+    PAS_ASSERT(number_of_bytes_that_would_have_been_written >= 0);
     
-    if (stream->next + number_of_bytes_that_would_have_been_written <= stream->size) {
-        stream->next += number_of_bytes_not_including_terminator_that_would_have_been_written;
+    if (stream->next + (size_t)number_of_bytes_that_would_have_been_written <= stream->size) {
+        stream->next += (size_t)number_of_bytes_not_including_terminator_that_would_have_been_written;
         return;
     }
     
-    new_size = (stream->next + number_of_bytes_that_would_have_been_written) << 1;
+    new_size = (stream->next + (size_t)number_of_bytes_that_would_have_been_written) << 1;
     
     new_buffer = stream->allocation_config.allocate(
         new_size, "pas_stream/buffer", pas_object_allocation, stream->allocation_config.arg);
@@ -114,13 +118,17 @@ void pas_string_stream_vprintf(pas_string_stream* stream, const char* format, va
     number_of_bytes_not_including_terminator_that_were_written =
         pas_vsnprintf(stream->buffer + stream->next, stream->size - stream->next,
                       format, arg_list);
+
+    PAS_ASSERT(number_of_bytes_not_including_terminator_that_were_written >= 0);
     
     number_of_bytes_that_were_written =
         number_of_bytes_not_including_terminator_that_were_written + 1;
+
+    PAS_ASSERT(number_of_bytes_that_were_written >= 0);
     
-    PAS_ASSERT(stream->next + number_of_bytes_that_were_written <= stream->size);
+    PAS_ASSERT(stream->next + (size_t)number_of_bytes_that_were_written <= stream->size);
     
-    stream->next += number_of_bytes_not_including_terminator_that_were_written;
+    stream->next += (size_t)number_of_bytes_not_including_terminator_that_were_written;
     
     PAS_ASSERT(stream->next < stream->size);
     PAS_ASSERT(!stream->buffer[stream->next]);

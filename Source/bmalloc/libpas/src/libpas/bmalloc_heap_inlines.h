@@ -44,7 +44,7 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_intrinsic_primitive_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_identity,
+    pas_allocation_result_identity,
     &bmalloc_common_primitive_heap,
     &bmalloc_common_primitive_heap_support,
     pas_intrinsic_heap_is_designated);
@@ -56,7 +56,7 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_intrinsic_primitive_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_identity,
+    pas_allocation_result_identity,
     &bmalloc_common_primitive_heap,
     &bmalloc_common_primitive_heap_support,
     pas_intrinsic_heap_is_not_designated);
@@ -66,7 +66,7 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_intrinsic_primitive_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error,
+    pas_allocation_result_crash_on_error,
     &bmalloc_common_primitive_heap,
     &bmalloc_common_primitive_heap_support,
     pas_intrinsic_heap_is_designated);
@@ -76,73 +76,79 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_intrinsic_primitive_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error,
+    pas_allocation_result_crash_on_error,
     &bmalloc_common_primitive_heap,
     &bmalloc_common_primitive_heap_support,
     pas_intrinsic_heap_is_not_designated);
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_inline(size_t size)
 {
-    return bmalloc_try_allocate_impl(size, 1).ptr;
+    return (void*)bmalloc_try_allocate_impl(size, 1).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
 bmalloc_try_allocate_with_alignment_inline(size_t size, size_t alignment)
 {
-    return bmalloc_try_allocate_with_alignment_impl(size, alignment).ptr;
+    return (void*)bmalloc_try_allocate_with_alignment_impl(size, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_zeroed_inline(size_t size)
 {
-    return pas_intrinsic_allocation_result_zero(
+    return (void*)pas_allocation_result_zero(
         bmalloc_try_allocate_impl(size, 1),
-        size).ptr;
+        size).begin;
 }
+
+PAS_API void* bmalloc_allocate_slow(size_t size);
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_inline(size_t size)
 {
-    return bmalloc_allocate_impl(size, 1).ptr;
+    pas_allocation_result result;
+    result = bmalloc_allocate_impl_inline_only(size, 1);
+    if (PAS_LIKELY(result.did_succeed))
+        return (void*)result.begin;
+    return bmalloc_allocate_slow(size);
 }
 
 static PAS_ALWAYS_INLINE void*
 bmalloc_allocate_with_alignment_inline(size_t size, size_t alignment)
 {
-    return bmalloc_allocate_with_alignment_impl(size, alignment).ptr;
+    return (void*)bmalloc_allocate_with_alignment_impl(size, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_zeroed_inline(size_t size)
 {
-    return pas_intrinsic_allocation_result_zero(
+    return (void*)pas_allocation_result_zero(
         bmalloc_allocate_impl(size, 1),
-        size).ptr;
+        size).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
 bmalloc_try_reallocate_inline(void* old_ptr, size_t new_size,
                               pas_reallocate_free_mode free_mode)
 {
-    return pas_try_reallocate_intrinsic_primitive(
+    return (void*)pas_try_reallocate_intrinsic_primitive(
         old_ptr,
         &bmalloc_common_primitive_heap,
         new_size,
         BMALLOC_HEAP_CONFIG,
         bmalloc_try_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).ptr;
+        free_mode).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
 bmalloc_reallocate_inline(void* old_ptr, size_t new_size,
                           pas_reallocate_free_mode free_mode)
 {
-    return pas_try_reallocate_intrinsic_primitive(
+    return (void*)pas_try_reallocate_intrinsic_primitive(
         old_ptr,
         &bmalloc_common_primitive_heap,
         new_size,
         BMALLOC_HEAP_CONFIG,
         bmalloc_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).ptr;
+        free_mode).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE(
@@ -150,7 +156,7 @@ PAS_CREATE_TRY_ALLOCATE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_typed_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_identity);
+    pas_allocation_result_identity);
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_inline(pas_heap_ref* heap_ref)
 {
@@ -162,7 +168,7 @@ PAS_CREATE_TRY_ALLOCATE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_typed_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_inline(pas_heap_ref* heap_ref)
 {
@@ -174,12 +180,12 @@ PAS_CREATE_TRY_ALLOCATE_PRIMITIVE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_primitive_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_identity);
+    pas_allocation_result_identity);
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_auxiliary_inline(pas_primitive_heap_ref* heap_ref,
                                                                      size_t size)
 {
-    return bmalloc_try_allocate_auxiliary_impl(heap_ref, size, 1).ptr;
+    return (void*)bmalloc_try_allocate_auxiliary_impl(heap_ref, size, 1).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE_PRIMITIVE(
@@ -187,29 +193,29 @@ PAS_CREATE_TRY_ALLOCATE_PRIMITIVE(
     BMALLOC_HEAP_CONFIG,
     &bmalloc_primitive_runtime_config.base,
     &bmalloc_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_auxiliary_inline(pas_primitive_heap_ref* heap_ref,
                                                                  size_t size)
 {
-    return bmalloc_allocate_auxiliary_impl(heap_ref, size, 1).ptr;
+    return (void*)bmalloc_allocate_auxiliary_impl(heap_ref, size, 1).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_allocate_auxiliary_zeroed_inline(
     pas_primitive_heap_ref* heap_ref,
     size_t size)
 {
-    return pas_intrinsic_allocation_result_zero(
+    return (void*)pas_allocation_result_zero(
         bmalloc_try_allocate_auxiliary_impl(heap_ref, size, 1),
-        size).ptr;
+        size).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_allocate_auxiliary_zeroed_inline(pas_primitive_heap_ref* heap_ref,
                                                                         size_t size)
 {
-    return pas_intrinsic_allocation_result_zero(
+    return (void*)pas_allocation_result_zero(
         bmalloc_allocate_auxiliary_impl(heap_ref, size, 1),
-        size).ptr;
+        size).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -217,7 +223,7 @@ bmalloc_try_allocate_auxiliary_with_alignment_inline(pas_primitive_heap_ref* hea
                                                      size_t size,
                                                      size_t alignment)
 {
-    return bmalloc_try_allocate_auxiliary_impl(heap_ref, size, alignment).ptr;
+    return (void*)bmalloc_try_allocate_auxiliary_impl(heap_ref, size, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -225,7 +231,7 @@ bmalloc_allocate_auxiliary_with_alignment_inline(pas_primitive_heap_ref* heap_re
                                                  size_t size,
                                                  size_t alignment)
 {
-    return bmalloc_allocate_auxiliary_impl(heap_ref, size, alignment).ptr;
+    return (void*)bmalloc_allocate_auxiliary_impl(heap_ref, size, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_reallocate_auxiliary_inline(
@@ -234,7 +240,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_reallocate_auxiliary_inline(
     size_t new_size,
     pas_reallocate_free_mode free_mode)
 {
-    return pas_try_reallocate_primitive(
+    return (void*)pas_try_reallocate_primitive(
         old_ptr,
         heap_ref,
         new_size,
@@ -242,7 +248,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_reallocate_auxiliary_inline(
         bmalloc_try_allocate_auxiliary_impl_for_realloc,
         &bmalloc_primitive_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).ptr;
+        free_mode).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_reallocate_auxiliary_inline(void* old_ptr,
@@ -250,7 +256,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_reallocate_auxiliary_inline(void* old_ptr
                                                                    size_t new_size,
                                                                    pas_reallocate_free_mode free_mode)
 {
-    return pas_try_reallocate_primitive(
+    return (void*)pas_try_reallocate_primitive(
         old_ptr,
         heap_ref,
         new_size,
@@ -258,7 +264,7 @@ static PAS_ALWAYS_INLINE void* bmalloc_reallocate_auxiliary_inline(void* old_ptr
         bmalloc_allocate_auxiliary_impl_for_realloc,
         &bmalloc_primitive_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).ptr;
+        free_mode).begin;
 }
 
 static PAS_ALWAYS_INLINE void bmalloc_deallocate_inline(void* ptr)

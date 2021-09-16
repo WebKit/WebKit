@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_MAGAZINE_H
-#define PAS_MAGAZINE_H
+#include "pas_config.h"
 
-#include "pas_lock.h"
-#include "pas_utils.h"
+#if LIBPAS_ENABLED
 
-PAS_BEGIN_EXTERN_C;
+#include "pas_heap_runtime_config.h"
 
-struct pas_magazine;
-struct pas_thread_local_cache_node;
-typedef struct pas_magazine pas_magazine;
-typedef struct pas_thread_local_cache_node pas_thread_local_cache_node;
+#include "pas_designated_intrinsic_heap_inlines.h"
 
-struct pas_magazine {
-    /* This is the lock that we bias pages to.
-     
-       For lock ordering, we say that:
-    
-       - Magazine locks are acquired before page ownership locks.
-    
-       - Magazine locks are acquired in pointer-as-integer order relative to one another. */
-    pas_lock lock;
+uint8_t pas_heap_runtime_config_view_cache_capacity_for_object_size(
+    pas_heap_runtime_config* config,
+    size_t object_size,
+    pas_segregated_page_config* page_config)
+{
+    size_t result;
 
-    /* This gets used as an index in biasing directories. */
-    unsigned magazine_index;
-};
+    result = config->view_cache_capacity_for_object_size(object_size, page_config);
 
-PAS_API pas_magazine* pas_magazine_create(unsigned magazine_index);
+    PAS_ASSERT((uint8_t)result == result);
+    return (uint8_t)result;
+}
 
-PAS_END_EXTERN_C;
+size_t pas_heap_runtime_config_zero_view_cache_capacity(
+    size_t object_size, pas_segregated_page_config* page_config)
+{
+    PAS_UNUSED_PARAM(object_size);
+    PAS_UNUSED_PARAM(page_config);
+    return 0;
+}
 
-#endif /* PAS_MAGAZINE_H */
+size_t pas_heap_runtime_config_aggressive_view_cache_capacity(
+    size_t object_size, pas_segregated_page_config* page_config)
+{
+    static const size_t cache_size = 1638400;
+
+    PAS_UNUSED_PARAM(object_size);
+
+    PAS_ASSERT(page_config->base.page_size < cache_size);
+
+    return cache_size / page_config->base.page_size;
+}
+
+#endif /* LIBPAS_ENABLED */
 

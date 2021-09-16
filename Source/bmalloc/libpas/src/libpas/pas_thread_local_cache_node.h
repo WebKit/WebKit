@@ -27,7 +27,6 @@
 #define PAS_THREAD_LOCAL_CACHE_NODE_H
 
 #include "pas_config.h"
-#include "pas_magazine.h"
 #include "pas_lock.h"
 #include "pas_utils.h"
 

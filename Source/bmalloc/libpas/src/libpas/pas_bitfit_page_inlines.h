@@ -323,13 +323,13 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
             uintptr_t end_bit_index;
             uintptr_t fixed_start_bit_index;
             
-            start_bit_index = __builtin_ctzll(shifted_free_word);
+            start_bit_index = (uintptr_t)__builtin_ctzll(shifted_free_word);
             fixed_start_bit_index = start_bit_index + num_lost_bits;
 
             remaining_word = ~(shifted_free_word >> start_bit_index);
 
             if (remaining_word)
-                num_available_bits = __builtin_ctzll(remaining_word);
+                num_available_bits = (uintptr_t)__builtin_ctzll(remaining_word);
             else
                 num_available_bits = PAS_BITVECTOR_BITS_PER_WORD64;
 
@@ -403,7 +403,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
                     other_alloc_word = ~other_free_word;
 
                     if (other_alloc_word) {
-                        num_available_leading_bits = __builtin_ctzll(other_alloc_word);
+                        num_available_leading_bits = (uint64_t)__builtin_ctzll(other_alloc_word);
                         if (num_available_leading_bits < num_remaining_needed_bits ||
                             !pas_bitfit_page_allocation_satisfies_alignment(
                                 &word_index,
@@ -599,7 +599,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
         
     case pas_bitfit_page_deallocate_with_page_impl_deallocate_mode:
     case pas_bitfit_page_deallocate_with_page_impl_shrink_mode:
-        pas_bitfit_view_lock_ownership_lock(owner);
+        pas_lock_lock(&owner->ownership_lock);
         
         pas_bitfit_page_testing_verify(page);
 
@@ -639,7 +639,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
     if (shifted_object_end_word) {
         uint64_t object_end_bit_index;
 
-        object_end_bit_index = __builtin_ctzll(shifted_object_end_word);
+        object_end_bit_index = (uint64_t)__builtin_ctzll(shifted_object_end_word);
         num_bits = object_end_bit_index + 1;
 
         if (verbose) {
@@ -695,7 +695,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
                 uint64_t object_end_bit_index;
                 uintptr_t intermediate_word_index;
 
-                object_end_bit_index = __builtin_ctzll(object_end_word);
+                object_end_bit_index = (uint64_t)__builtin_ctzll(object_end_word);
 
                 if (verbose) {
                     pas_log("Found end bit word at %lu, bit index %llu\n",

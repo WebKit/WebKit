@@ -1,3 +1,729 @@
+2021-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] Update to 38b9b0b92ccc9628627c742523de6200acc08211 and fully enable on AS
+        https://bugs.webkit.org/show_bug.cgi?id=230124
+
+        Reviewed by Yusuke Suzuki.
+
+        This updates libpas to the latest version and enables it completely on AS (not just for
+        jit_heap as before).
+
+        The main changes are:
+
+        - Replace biasing and magazines with per-thread view caches. A view cache is a bounded-size
+          queue of exclusive_views (i.e. pages) that is local to a thread. Each thread has a view
+          cache for every segregated_size_directory that it talks to and that has view caching
+          enabled. The size directories can control view cache size somewhat dynamically (different
+          directories can have different size view caches). Views get enqueued when a thread frees
+          the first object in the page. Views get dequeued whenever a thread would have asked the
+          directory for a view but the view cache was non-empty.
+
+          This change increases the efficiency of local_allocator_refill, since pages have a longer
+          time to "cook" before anyone allocates from them (since the view cache is a queue). As
+          well, view caches' thread-locality means that there is no locking or contention when
+          accessing them. The scavenger has clever tricks for clearing out view caches, similarly to
+          how it clears out local allocators (it uses thread_suspend).
+
+        - Fix hash collisions in the page header table. Previously, I was using an unacceptably
+          trivial hash function and it _sometimes_ caused perf pathologies.
+
+        - Get rid of intrinsic_allocation_result, since this was annoyingly redundant with
+          allocation_result.
+
+        - Refactor some allocation fast paths so that they have fewer callee-saves.
+
+        - Make scavenging a whole lot more precise. Scavenging is now based on time since when a
+          page become empty. If enough time passes (currently 300ms) then such a page is decommitted.
+          Previously the heuristic was not nearly so clear. This improves memory usage without
+          really hurting performance (it shifts the time-memory curve closer to the origin, and
+          this also changes tuning parameters so that it's a slight speed-up and a slight memory
+          improvement, but it could have been a bigger memory improvement with no speed-up, or an
+          even bigger memory improvement with a slow-down).
+
+        - Make the gigacage work more like bmalloc's; in particular, this makes large free objects
+          reusable for small/medium/marge objects. This fixes
+          LayoutTests/storage/indexeddb/IDBKey-create-array-buffer-view-oom.html.
+
+        - Modify libpas.xcodeproj to have more warnings and fix those warnings. This includes fixes
+          to warnings that WebKit doesn't compile with and some of those fixes smelled like they
+          could possibly fix real issues or prevent them by making the code much more clear
+          (especially about numerical types and when they are converted).
+
+        - Add better libpas tests for gigacage and for large allocations in general. This caught
+          some issues. They were the kinds of issues that probably would not have affected
+          WebKit, but I fixed them anyway.
+
+        1.3% faster on Speedometer2. Neutral on JetStream2. 3.7% less memory on RAMification. Last
+        I tested it, it was a big win on PLUM and membuster as well.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BPlatform.h:
+        * libpas/export.sh: Added.
+        * libpas/libpas.xcodeproj/project.pbxproj:
+        * libpas/src/libpas/bmalloc_heap.c:
+        (bmalloc_allocate_slow):
+        * libpas/src/libpas/bmalloc_heap_config.c:
+        * libpas/src/libpas/bmalloc_heap_config.h:
+        * libpas/src/libpas/bmalloc_heap_inlines.h:
+        (bmalloc_try_allocate_inline):
+        (bmalloc_try_allocate_with_alignment_inline):
+        (bmalloc_try_allocate_zeroed_inline):
+        (bmalloc_allocate_inline):
+        (bmalloc_allocate_with_alignment_inline):
+        (bmalloc_allocate_zeroed_inline):
+        (bmalloc_try_reallocate_inline):
+        (bmalloc_reallocate_inline):
+        (bmalloc_try_allocate_auxiliary_inline):
+        (bmalloc_allocate_auxiliary_inline):
+        (bmalloc_try_allocate_auxiliary_zeroed_inline):
+        (bmalloc_allocate_auxiliary_zeroed_inline):
+        (bmalloc_try_allocate_auxiliary_with_alignment_inline):
+        (bmalloc_allocate_auxiliary_with_alignment_inline):
+        (bmalloc_try_reallocate_auxiliary_inline):
+        (bmalloc_reallocate_auxiliary_inline):
+        * libpas/src/libpas/hotbit_heap_config.c:
+        * libpas/src/libpas/hotbit_heap_config.h:
+        * libpas/src/libpas/hotbit_heap_inlines.h:
+        (hotbit_try_allocate_inline):
+        (hotbit_try_allocate_with_alignment_inline):
+        (hotbit_try_reallocate_inline):
+        * libpas/src/libpas/iso_heap_config.c:
+        * libpas/src/libpas/iso_heap_config.h:
+        * libpas/src/libpas/iso_heap_inlines.h:
+        (iso_try_allocate_common_primitive_inline):
+        (iso_try_allocate_common_primitive_with_alignment_inline):
+        (iso_try_allocate_common_primitive_zeroed_inline):
+        (iso_allocate_common_primitive_inline):
+        (iso_allocate_common_primitive_with_alignment_inline):
+        (iso_allocate_common_primitive_zeroed_inline):
+        (iso_try_reallocate_common_primitive_inline):
+        (iso_reallocate_common_primitive_inline):
+        (iso_try_allocate_primitive_inline):
+        (iso_allocate_primitive_inline):
+        (iso_try_allocate_primitive_zeroed_inline):
+        (iso_allocate_primitive_zeroed_inline):
+        (iso_try_allocate_primitive_with_alignment_inline):
+        (iso_allocate_primitive_with_alignment_inline):
+        (iso_try_reallocate_primitive_inline):
+        (iso_reallocate_primitive_inline):
+        (iso_try_allocate_for_objc_inline):
+        * libpas/src/libpas/iso_test_heap.c:
+        (iso_test_allocate_common_primitive):
+        * libpas/src/libpas/iso_test_heap_config.c:
+        * libpas/src/libpas/iso_test_heap_config.h:
+        * libpas/src/libpas/jit_heap.c:
+        (jit_heap_try_allocate):
+        * libpas/src/libpas/jit_heap_config.c:
+        * libpas/src/libpas/minalign32_heap.c:
+        (minalign32_allocate_common_primitive):
+        * libpas/src/libpas/minalign32_heap_config.c:
+        * libpas/src/libpas/minalign32_heap_config.h:
+        * libpas/src/libpas/pagesize64k_heap.c:
+        (pagesize64k_allocate_common_primitive):
+        * libpas/src/libpas/pagesize64k_heap_config.c:
+        * libpas/src/libpas/pagesize64k_heap_config.h:
+        * libpas/src/libpas/pas_all_biasing_directories.c: Removed.
+        * libpas/src/libpas/pas_all_biasing_directories.h: Removed.
+        * libpas/src/libpas/pas_all_heaps.c:
+        (for_each_segregated_directory_size_directory_callback):
+        (for_each_segregated_directory_segregated_heap_callback):
+        (dump_directory_nicely):
+        (compute_total_non_utility_segregated_summary_directory_callback):
+        (for_each_segregated_directory_global_size_directory_callback): Deleted.
+        * libpas/src/libpas/pas_all_magazines.c: Removed.
+        * libpas/src/libpas/pas_all_magazines.h: Removed.
+        * libpas/src/libpas/pas_allocation_result.c: Removed.
+        * libpas/src/libpas/pas_allocation_result.h:
+        (pas_allocation_result_identity):
+        (pas_allocation_result_zero):
+        (pas_allocation_result_set_errno):
+        (pas_allocation_result_crash_on_error):
+        * libpas/src/libpas/pas_baseline_allocator.c:
+        (pas_baseline_allocator_attach_directory):
+        (pas_baseline_allocator_detach_directory):
+        * libpas/src/libpas/pas_baseline_allocator.h:
+        * libpas/src/libpas/pas_biasing_directory.c: Removed.
+        * libpas/src/libpas/pas_biasing_directory.h: Removed.
+        * libpas/src/libpas/pas_biasing_directory_inlines.h: Removed.
+        * libpas/src/libpas/pas_bitfit_allocator.c:
+        (pas_bitfit_allocator_commit_view):
+        (pas_bitfit_allocator_finish_failing):
+        * libpas/src/libpas/pas_bitfit_allocator.h:
+        * libpas/src/libpas/pas_bitfit_allocator_inlines.h:
+        (pas_bitfit_allocator_reset):
+        (pas_bitfit_allocator_assert_reset):
+        (pas_bitfit_allocator_try_allocate):
+        * libpas/src/libpas/pas_bitfit_biasing_directory.c: Removed.
+        * libpas/src/libpas/pas_bitfit_biasing_directory.h: Removed.
+        * libpas/src/libpas/pas_bitfit_directory.c:
+        (pas_bitfit_directory_construct):
+        (pas_bitfit_directory_max_free_did_become_unprocessed):
+        (pas_bitfit_directory_max_free_did_become_unprocessed_unchecked):
+        (pas_bitfit_directory_max_free_did_become_empty):
+        (pas_bitfit_directory_get_first_free_view):
+        (pas_bitfit_directory_does_sharing):
+        (pas_bitfit_directory_get_use_epoch):
+        (pas_bitfit_directory_get_empty_bit_at_index):
+        (pas_bitfit_directory_set_empty_bit_at_index):
+        (pas_bitfit_directory_view_did_become_empty_at_index):
+        (pas_bitfit_directory_view_did_become_empty):
+        (pas_bitfit_directory_take_last_empty):
+        (pas_bitfit_directory_dump_reference):
+        (pas_bitfit_directory_dump_for_spectrum):
+        (pas_bitfit_directory_update_biasing_eligibility): Deleted.
+        (pas_bitfit_directory_max_free_did_become_empty_without_biasing_update): Deleted.
+        * libpas/src/libpas/pas_bitfit_directory.h:
+        * libpas/src/libpas/pas_bitfit_directory_and_index.h: Removed.
+        * libpas/src/libpas/pas_bitfit_directory_inlines.h:
+        (pas_bitfit_directory_get_global): Deleted.
+        * libpas/src/libpas/pas_bitfit_directory_kind.h: Removed.
+        * libpas/src/libpas/pas_bitfit_global_directory.c: Removed.
+        * libpas/src/libpas/pas_bitfit_global_directory.h: Removed.
+        * libpas/src/libpas/pas_bitfit_global_size_class.c: Removed.
+        * libpas/src/libpas/pas_bitfit_global_size_class.h: Removed.
+        * libpas/src/libpas/pas_bitfit_heap.c:
+        (pas_bitfit_heap_create):
+        (pas_bitfit_heap_ensure_size_class):
+        (pas_bitfit_heap_compute_summary):
+        (pas_bitfit_heap_for_each_live_object):
+        (pas_bitfit_heap_ensure_global_size_class): Deleted.
+        * libpas/src/libpas/pas_bitfit_heap.h:
+        (pas_bitfit_heap_get_directory):
+        * libpas/src/libpas/pas_bitfit_page.c:
+        (pas_bitfit_page_get_config):
+        (pas_bitfit_page_for_each_live_object):
+        * libpas/src/libpas/pas_bitfit_page_config.h:
+        (pas_bitfit_page_config_uses_subpages): Deleted.
+        * libpas/src/libpas/pas_bitfit_page_inlines.h:
+        (pas_bitfit_page_deallocate_with_page_impl):
+        * libpas/src/libpas/pas_bitfit_size_class.c:
+        (pas_bitfit_size_class_create):
+        (pas_bitfit_size_class_get_first_free_view):
+        * libpas/src/libpas/pas_bitfit_size_class.h:
+        * libpas/src/libpas/pas_bitfit_view.c:
+        (pas_bitfit_view_create):
+        (pas_bitfit_view_note_nonemptiness):
+        (did_become_empty_for_bits):
+        (pas_bitfit_view_note_full_emptiness):
+        (pas_bitfit_view_note_max_free):
+        (compute_summary):
+        (for_each_live_object):
+        (pas_bitfit_view_lock_ownership_lock_slow): Deleted.
+        * libpas/src/libpas/pas_bitfit_view.h:
+        (pas_bitfit_view_lock_ownership_lock): Deleted.
+        * libpas/src/libpas/pas_bitfit_view_inlines.h:
+        (pas_bitfit_view_current_directory_and_index): Deleted.
+        (pas_bitfit_view_current_directory): Deleted.
+        (pas_bitfit_view_index_in_current): Deleted.
+        * libpas/src/libpas/pas_compact_atomic_bitfit_global_size_class_ptr.h:
+        * libpas/src/libpas/pas_compact_atomic_segregated_global_size_directory_ptr.h: Removed.
+        * libpas/src/libpas/pas_compact_atomic_segregated_size_directory_ptr.h: Added.
+        * libpas/src/libpas/pas_compact_segregated_exclusive_view_ptr.h: Added.
+        * libpas/src/libpas/pas_compact_segregated_global_size_directory_ptr.h: Removed.
+        * libpas/src/libpas/pas_compact_segregated_size_directory_ptr.h: Added.
+        * libpas/src/libpas/pas_compact_subpage_map_entry_ptr.h: Removed.
+        * libpas/src/libpas/pas_deallocate.c:
+        (deallocate_segregated):
+        * libpas/src/libpas/pas_deallocator_scavenge_action.h:
+        (pas_deallocator_scavenge_action_get_string):
+        * libpas/src/libpas/pas_designated_intrinsic_heap.c:
+        (set_up_range):
+        (pas_designated_intrinsic_heap_initialize):
+        * libpas/src/libpas/pas_designated_intrinsic_heap_inlines.h:
+        (pas_designated_intrinsic_heap_num_allocator_indices):
+        (pas_designated_intrinsic_heap_num_designated_indices_for_small_config):
+        (pas_designated_intrinsic_heap_designated_index_for_small_config):
+        (pas_designated_intrinsic_heap_num_designated_indices):
+        (pas_designated_intrinsic_heap_designated_index):
+        * libpas/src/libpas/pas_enumerate_bitfit_heaps.c:
+        (view_callback):
+        (enumerate_bitfit_directory):
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (record_page_objects):
+        (enumerate_exclusive_view):
+        (enumerate_partial_view):
+        (enumerate_segregated_heap_callback):
+        (pas_enumerate_segregated_heaps):
+        * libpas/src/libpas/pas_exclusive_view_template_memo_table.h:
+        * libpas/src/libpas/pas_full_alloc_bits_inlines.h:
+        (pas_full_alloc_bits_create_for_exclusive):
+        (pas_full_alloc_bits_create_for_view_and_directory):
+        (pas_full_alloc_bits_create_for_view):
+        * libpas/src/libpas/pas_get_heap.h:
+        (pas_get_heap):
+        * libpas/src/libpas/pas_heap.c:
+        (pas_heap_ensure_size_directory_for_count_slow):
+        * libpas/src/libpas/pas_heap.h:
+        * libpas/src/libpas/pas_heap_config.h:
+        * libpas/src/libpas/pas_heap_config_inlines.h:
+        * libpas/src/libpas/pas_heap_config_utils.h:
+        * libpas/src/libpas/pas_heap_config_utils_inlines.h:
+        * libpas/src/libpas/pas_heap_inlines.h:
+        (pas_heap_ensure_size_directory_for_count):
+        * libpas/src/libpas/pas_heap_runtime_config.c: Added.
+        (pas_heap_runtime_config_view_cache_capacity_for_object_size):
+        (pas_heap_runtime_config_zero_view_cache_capacity):
+        (pas_heap_runtime_config_aggressive_view_cache_capacity):
+        * libpas/src/libpas/pas_heap_runtime_config.h:
+        * libpas/src/libpas/pas_internal_config.h:
+        * libpas/src/libpas/pas_intrinsic_allocation_result.h: Removed.
+        * libpas/src/libpas/pas_intrinsic_heap_support.h:
+        * libpas/src/libpas/pas_large_heap_physical_page_sharing_cache.c:
+        (large_aligned_allocator):
+        * libpas/src/libpas/pas_local_allocator.c:
+        (pas_local_allocator_construct):
+        (pas_local_allocator_reset):
+        (pas_local_allocator_move):
+        (pas_local_allocator_finish_refill_with_bitfit):
+        (stop_impl):
+        (pas_local_allocator_stop):
+        (pas_local_allocator_scavenge):
+        (pas_local_allocator_destruct): Deleted.
+        * libpas/src/libpas/pas_local_allocator.h:
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_reset_impl):
+        (pas_local_allocator_set_up_bump):
+        (pas_local_allocator_scan_bits_to_set_up_free_bits):
+        (pas_local_allocator_set_up_free_bits):
+        (pas_local_allocator_prepare_to_allocate):
+        (pas_local_allocator_start_allocating_in_primordial_partial_view):
+        (pas_local_allocator_refill_with_known_config):
+        (pas_local_allocator_return_memory_to_page_set_bit_callback):
+        (pas_local_allocator_return_memory_to_page):
+        (pas_local_allocator_try_allocate_with_free_bits):
+        (pas_local_allocator_try_allocate_inline_cases):
+        (pas_local_allocator_try_allocate_small_segregated_slow):
+        (pas_local_allocator_try_allocate_slow):
+        (pas_local_allocator_try_allocate_inline_only):
+        (pas_local_allocator_try_allocate):
+        * libpas/src/libpas/pas_local_allocator_kind.h: Added.
+        (pas_local_allocator_kind_get_string):
+        * libpas/src/libpas/pas_local_allocator_line.h: Removed.
+        * libpas/src/libpas/pas_local_allocator_result.h:
+        (pas_local_allocator_result_create_success):
+        * libpas/src/libpas/pas_local_allocator_scavenger_data.c: Added.
+        (pas_local_allocator_scavenger_data_is_active):
+        (pas_local_allocator_scavenger_data_stop):
+        * libpas/src/libpas/pas_local_allocator_scavenger_data.h: Added.
+        (pas_local_allocator_scavenger_data_construct):
+        (pas_local_allocator_scavenger_data_did_use_for_allocation):
+        * libpas/src/libpas/pas_local_view_cache.c: Added.
+        (pas_local_view_cache_construct):
+        (pas_local_view_cache_move):
+        (stop_impl):
+        (pas_local_view_cache_stop):
+        * libpas/src/libpas/pas_local_view_cache.h: Added.
+        (pas_local_view_cache_is_empty):
+        (pas_local_view_cache_pop):
+        (pas_local_view_cache_is_full):
+        (pas_local_view_cache_push):
+        * libpas/src/libpas/pas_local_view_cache_node.c: Added.
+        (pas_local_view_cache_node_create):
+        * libpas/src/libpas/pas_local_view_cache_node.h: Added.
+        * libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.c:
+        * libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.h:
+        (pas_lock_free_read_ptr_ptr_hashtable_find):
+        * libpas/src/libpas/pas_magazine.c: Removed.
+        * libpas/src/libpas/pas_magazine.h: Removed.
+        * libpas/src/libpas/pas_page_base_config_utils.h:
+        * libpas/src/libpas/pas_page_header_table.h:
+        (pas_page_header_table_hash):
+        * libpas/src/libpas/pas_page_sharing_participant.c:
+        (pas_page_sharing_participant_get_payload):
+        (pas_page_sharing_participant_get_use_epoch):
+        (pas_page_sharing_participant_get_parent_pool):
+        (pas_page_sharing_participant_is_eligible):
+        (pas_page_sharing_participant_take_least_recently_used):
+        * libpas/src/libpas/pas_page_sharing_participant.h:
+        * libpas/src/libpas/pas_page_sharing_participant_kind.h:
+        (pas_page_sharing_participant_kind_select_for_segregated_directory):
+        (pas_page_sharing_participant_kind_get_string):
+        * libpas/src/libpas/pas_page_sharing_pool.c:
+        (pas_physical_page_sharing_pool_scavenge):
+        (pas_bias_page_sharing_pool_take): Deleted.
+        * libpas/src/libpas/pas_page_sharing_pool.h:
+        * libpas/src/libpas/pas_page_sharing_pool_scavenge_result.h: Added.
+        (pas_page_sharing_pool_scavenge_result_create):
+        * libpas/src/libpas/pas_redundant_local_allocator_node.c:
+        (pas_redundant_local_allocator_node_create):
+        * libpas/src/libpas/pas_redundant_local_allocator_node.h:
+        * libpas/src/libpas/pas_scavenger.c:
+        (scavenger_thread_main):
+        (pas_scavenger_clear_all_caches_except_remote_tlcs):
+        (pas_scavenger_decommit_free_memory):
+        * libpas/src/libpas/pas_scavenger.h:
+        * libpas/src/libpas/pas_segregated_biasing_directory.c: Removed.
+        * libpas/src/libpas/pas_segregated_biasing_directory.h: Removed.
+        * libpas/src/libpas/pas_segregated_biasing_view.c: Removed.
+        * libpas/src/libpas/pas_segregated_biasing_view.h: Removed.
+        * libpas/src/libpas/pas_segregated_deallocation_mode.h: Added.
+        (pas_segregated_deallocation_mode_get_string):
+        * libpas/src/libpas/pas_segregated_directory.c:
+        (pas_segregated_directory_get_data_slow):
+        (pas_segregated_directory_minimize_first_eligible):
+        (pas_segregated_directory_update_first_eligible_after_search):
+        (pas_segregated_directory_view_did_become_eligible_at_index):
+        (pas_segregated_directory_append):
+        (pas_segregated_directory_view_did_become_eligible_at_index_without_biasing_update): Deleted.
+        (pas_segregated_directory_view_did_become_eligible_without_biasing_update): Deleted.
+        * libpas/src/libpas/pas_segregated_directory.h:
+        (pas_segregated_directory_spoof_inline_segment):
+        (pas_segregated_directory_get_first_eligible_impl):
+        (pas_segregated_directory_get_first_eligible):
+        (pas_segregated_directory_get_first_eligible_torn):
+        (pas_segregated_directory_watch_first_eligible):
+        (pas_segregated_directory_data_get_first_eligible_ptr): Deleted.
+        (pas_segregated_directory_is_tabled): Deleted.
+        * libpas/src/libpas/pas_segregated_directory_bit_reference.h:
+        * libpas/src/libpas/pas_segregated_directory_inlines.h:
+        (pas_segregated_directory_iterate_forward_to_take_first_eligible):
+        * libpas/src/libpas/pas_segregated_directory_kind.h:
+        (pas_segregated_directory_kind_get_string):
+        * libpas/src/libpas/pas_segregated_exclusive_view.c:
+        (pas_segregated_exclusive_view_create):
+        (pas_segregated_exclusive_view_note_emptiness):
+        (compute_summary_impl):
+        (pas_segregated_exclusive_view_compute_summary):
+        (pas_segregated_exclusive_view_install_full_use_counts):
+        (pas_segregated_exclusive_view_is_eligible):
+        (pas_segregated_exclusive_view_is_empty):
+        (pas_segregated_exclusive_view_should_table): Deleted.
+        (pas_segregated_exclusive_ish_view_note_eligibility_impl): Deleted.
+        (pas_segregated_exclusive_view_note_eligibility): Deleted.
+        (pas_segregated_exclusive_ish_view_compute_summary_impl): Deleted.
+        * libpas/src/libpas/pas_segregated_exclusive_view.h:
+        * libpas/src/libpas/pas_segregated_exclusive_view_inlines.h:
+        (pas_segregated_exclusive_view_did_start_allocating):
+        (pas_segregated_exclusive_view_did_stop_allocating):
+        (pas_segregated_exclusive_view_note_eligibility):
+        (pas_segregated_exclusive_ish_view_did_start_allocating): Deleted.
+        * libpas/src/libpas/pas_segregated_exclusive_view_ownership_kind.h: Removed.
+        * libpas/src/libpas/pas_segregated_global_size_directory.c: Removed.
+        * libpas/src/libpas/pas_segregated_global_size_directory.h: Removed.
+        * libpas/src/libpas/pas_segregated_global_size_directory_inlines.h: Removed.
+        * libpas/src/libpas/pas_segregated_heap.c:
+        (pas_segregated_heap_construct):
+        (pas_segregated_heap_medium_size_directory_for_index):
+        (ensure_count_lookup):
+        (pas_segregated_heap_ensure_allocator_index):
+        (pas_segregated_heap_ensure_size_directory_for_count):
+        (pas_segregated_heap_for_each_size_directory):
+        (for_each_committed_size_directory_callback):
+        (pas_segregated_heap_for_each_committed_view):
+        (for_each_view_index_directory_callback):
+        (pas_segregated_heap_for_each_view_index):
+        (for_each_live_object_object_callback):
+        (for_each_live_object_directory_callback):
+        (pas_segregated_heap_for_each_live_object):
+        (num_committed_views_directory_callback):
+        (pas_segregated_heap_num_committed_views):
+        (num_empty_views_directory_callback):
+        (pas_segregated_heap_num_empty_views):
+        (num_empty_granules_directory_callback):
+        (pas_segregated_heap_num_empty_granules):
+        (num_views_directory_callback):
+        (pas_segregated_heap_num_views):
+        (compute_summary_directory_callback):
+        (pas_segregated_heap_compute_summary):
+        (pas_segregated_heap_for_each_global_size_directory): Deleted.
+        * libpas/src/libpas/pas_segregated_heap.h:
+        * libpas/src/libpas/pas_segregated_heap_inlines.h:
+        (pas_segregated_heap_size_directory_for_index):
+        * libpas/src/libpas/pas_segregated_page.c:
+        (pas_segregated_page_switch_lock_and_rebias_while_ineligible_impl):
+        (pas_segregated_page_construct):
+        (pas_segregated_page_commit_fully):
+        (pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_impl): Deleted.
+        * libpas/src/libpas/pas_segregated_page.h:
+        (pas_segregated_page_qualifies_for_decommit):
+        * libpas/src/libpas/pas_segregated_page_config.h:
+        * libpas/src/libpas/pas_segregated_page_config_inlines.h:
+        * libpas/src/libpas/pas_segregated_page_config_utils.h:
+        * libpas/src/libpas/pas_segregated_page_config_utils_inlines.h:
+        * libpas/src/libpas/pas_segregated_page_inlines.h:
+        (pas_segregated_page_offset_from_page_boundary_to_first_object):
+        (pas_segregated_page_initialize_full_use_counts):
+        (pas_segregated_page_switch_lock_impl):
+        (pas_segregated_page_switch_lock_with_mode):
+        (pas_segregated_page_switch_lock_and_rebias_while_ineligible):
+        (pas_segregated_page_deallocate_with_page):
+        (pas_segregated_page_deallocate):
+        (pas_segregated_page_get_directory_for_address_in_page):
+        (pas_segregated_page_get_object_size_for_address_in_page):
+        (pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible): Deleted.
+        (pas_segregated_page_qualifies_for_decommit): Deleted.
+        * libpas/src/libpas/pas_segregated_partial_view.c:
+        (pas_segregated_partial_view_create):
+        (pas_segregated_partial_view_note_eligibility):
+        (compute_summary):
+        (pas_segregated_partial_view_is_eligible):
+        * libpas/src/libpas/pas_segregated_partial_view.h:
+        * libpas/src/libpas/pas_segregated_shared_page_directory.c:
+        (pas_segregated_shared_page_directory_find_first_eligible):
+        (take_last_empty_consider_view):
+        * libpas/src/libpas/pas_segregated_shared_page_directory.h:
+        * libpas/src/libpas/pas_segregated_size_directory.c:
+        (pas_segregated_size_directory_create):
+        (pas_segregated_size_directory_finish_creation):
+        (pas_segregated_size_directory_ensure_data):
+        (pas_segregated_size_directory_get_extended_data):
+        (pas_segregated_size_directory_create_tlc_allocator):
+        (pas_segregated_size_directory_create_tlc_view_cache):
+        (pas_segregated_size_directory_enable_exclusive_views):
+        (pas_segregated_size_directory_select_allocator_slow):
+        (take_first_eligible_direct_create_new_view_callback):
+        (pas_segregated_size_directory_take_first_eligible):
+        (take_last_empty_should_consider_view_parallel):
+        (take_last_empty_consider_view):
+        (pas_segregated_size_directory_take_last_empty):
+        (pas_segregated_size_directory_for_object):
+        (pas_segregated_size_directory_get_allocator_from_tlc):
+        (pas_segregated_size_directory_compute_summary_for_unowned_exclusive):
+        (for_each_live_object_object_callback):
+        (pas_segregated_size_directory_for_each_live_object):
+        (pas_segregated_size_directory_view_cache_capacity):
+        (pas_segregated_size_directory_local_allocator_size):
+        (pas_segregated_size_directory_num_allocator_indices):
+        (pas_segregated_size_directory_dump_reference):
+        (pas_segregated_size_directory_dump_for_spectrum):
+        (pas_segregated_size_directory_construct): Deleted.
+        * libpas/src/libpas/pas_segregated_size_directory.h:
+        (pas_segregated_size_directory_as_view):
+        (pas_segregated_size_directory_alignment):
+        (pas_segregated_size_directory_did_try_to_create_view_cache):
+        (pas_segregated_size_directory_set_did_try_to_create_view_cache):
+        (pas_segregated_size_directory_has_tlc_allocator):
+        (pas_segregated_size_directory_are_exclusive_views_enabled):
+        * libpas/src/libpas/pas_segregated_size_directory_creation_mode.h: Added.
+        (pas_segregated_size_directory_creation_mode_get_string):
+        * libpas/src/libpas/pas_segregated_size_directory_inlines.h:
+        (pas_segregated_size_directory_select_allocator):
+        (pas_segregated_size_directory_local_allocator_size_for_null_config):
+        (pas_segregated_size_directory_local_allocator_size_for_config):
+        (pas_segregated_size_directory_num_allocator_indices_for_allocator_size):
+        (pas_segregated_size_directory_num_allocator_indices_for_config):
+        (pas_segregated_size_directory_take_first_eligible_impl_should_consider_view_parallel):
+        (pas_segregated_size_directory_take_first_eligible_impl):
+        (pas_segregated_size_directory_take_first_eligible_impl_should_consider_view_not_tabled_parallel): Deleted.
+        (pas_segregated_size_directory_take_first_eligible_impl_should_consider_view_tabled_parallel): Deleted.
+        (pas_segregated_size_directory_get_global): Deleted.
+        * libpas/src/libpas/pas_segregated_view.c:
+        (pas_segregated_view_get_size_directory_slow):
+        (pas_segregated_view_get_page_config_kind):
+        (pas_segregated_view_get_index):
+        (pas_segregated_view_get_page_boundary):
+        (pas_segregated_view_get_commit_lock):
+        (pas_segregated_view_get_ownership_lock):
+        (pas_segregated_view_is_owned):
+        (pas_segregated_view_lock_ownership_lock):
+        (pas_segregated_view_lock_ownership_lock_conditionally):
+        (pas_segregated_view_lock_ownership_lock_if_owned_conditionally):
+        (pas_segregated_view_note_emptiness):
+        (for_each_live_object):
+        (pas_segregated_view_for_each_live_object):
+        (should_be_eligible):
+        (pas_segregated_view_should_be_eligible):
+        (pas_segregated_view_for_object):
+        (pas_segregated_view_compute_summary):
+        (pas_segregated_view_is_eligible):
+        (pas_segregated_view_is_empty):
+        (pas_segregated_view_get_global_size_directory_slow): Deleted.
+        (pas_segregated_view_should_restart): Deleted.
+        (pas_segregated_view_could_bump): Deleted.
+        (pas_segregated_view_should_table): Deleted.
+        (pas_segregated_view_is_biased_exclusive): Deleted.
+        (pas_segregated_view_note_eligibility): Deleted.
+        (pas_segregated_view_is_eligible_or_biased): Deleted.
+        (pas_segregated_view_is_empty_or_biased): Deleted.
+        * libpas/src/libpas/pas_segregated_view.h:
+        (pas_segregated_view_is_some_exclusive):
+        (pas_segregated_view_as_ineligible):
+        (pas_segregated_view_as_eligible):
+        (pas_segregated_view_get_exclusive):
+        (pas_segregated_view_is_size_directory):
+        (pas_segregated_view_get_size_directory):
+        (pas_segregated_view_is_exclusive_ish): Deleted.
+        (pas_segregated_view_is_biasing): Deleted.
+        (pas_segregated_view_is_ineligible_biasing): Deleted.
+        (pas_segregated_view_is_some_biasing): Deleted.
+        (pas_segregated_view_get_biasing): Deleted.
+        (pas_segregated_view_is_eligible_kind): Deleted.
+        (pas_segregated_view_is_ineligible_kind): Deleted.
+        (pas_segregated_view_is_global_size_directory): Deleted.
+        (pas_segregated_view_get_global_size_directory): Deleted.
+        * libpas/src/libpas/pas_segregated_view_allocator_inlines.h:
+        (pas_segregated_view_will_start_allocating):
+        (pas_segregated_view_did_stop_allocating):
+        * libpas/src/libpas/pas_segregated_view_inlines.h: Removed.
+        * libpas/src/libpas/pas_segregated_view_kind.h:
+        (pas_segregated_view_kind_get_character_code):
+        (pas_segregated_view_kind_get_string):
+        (pas_segregated_view_kind_is_some_exclusive):
+        (pas_segregated_view_kind_can_become_empty):
+        (pas_segregated_view_kind_is_eligible): Deleted.
+        (pas_segregated_view_kind_is_exclusive_ish): Deleted.
+        (pas_segregated_view_kind_is_ineligible): Deleted.
+        * libpas/src/libpas/pas_status_reporter.c:
+        (report_bitfit_directory_contents):
+        (pas_status_reporter_dump_bitfit_directory):
+        (report_segregated_directory_contents):
+        (pas_status_reporter_dump_segregated_size_directory):
+        (dump_segregated_heap_directory_callback):
+        (pas_status_reporter_dump_bitfit_heap):
+        (pas_status_reporter_dump_segregated_heap):
+        (total_fragmentation_size_directory_callback):
+        (total_fragmentation_heap_callback):
+        (pas_status_reporter_dump_total_fragmentation):
+        (tier_up_rate_size_directory_callback):
+        (tier_up_rate_heap_callback):
+        (pas_status_reporter_dump_baseline_allocators):
+        (pas_status_reporter_dump_thread_local_caches):
+        (pas_status_reporter_dump_bitfit_biasing_directory): Deleted.
+        (pas_status_reporter_dump_bitfit_global_directory): Deleted.
+        (pas_status_reporter_dump_segregated_biasing_directory): Deleted.
+        (pas_status_reporter_dump_segregated_global_size_directory): Deleted.
+        (total_fragmentation_global_size_directory_callback): Deleted.
+        (tier_up_rate_global_size_directory_callback): Deleted.
+        * libpas/src/libpas/pas_status_reporter.h:
+        * libpas/src/libpas/pas_subpage_map.c: Removed.
+        * libpas/src/libpas/pas_subpage_map.h: Removed.
+        * libpas/src/libpas/pas_subpage_map_entry.c: Removed.
+        * libpas/src/libpas/pas_subpage_map_entry.h: Removed.
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (deallocate):
+        (pas_thread_local_cache_create):
+        (pas_thread_local_cache_get_local_allocator_slow):
+        (pas_thread_local_cache_stop_local_allocators):
+        (stop_local_allocators_if_necessary_set_bit_callback):
+        (process_deallocation_log_with_config):
+        (flush_deallocation_log):
+        (flush_deallocation_log_for_scavenger):
+        (pas_thread_local_cache_flush_deallocation_log):
+        (resume):
+        (pas_thread_local_cache_for_all):
+        * libpas/src/libpas/pas_thread_local_cache.h:
+        (pas_thread_local_cache_get_local_allocator_impl):
+        (pas_thread_local_cache_get_local_allocator):
+        * libpas/src/libpas/pas_thread_local_cache_layout.c:
+        (pas_thread_local_cache_layout_add_node):
+        (pas_thread_local_cache_layout_add):
+        (pas_thread_local_cache_layout_duplicate):
+        (pas_thread_local_cache_layout_add_view_cache):
+        * libpas/src/libpas/pas_thread_local_cache_layout.h:
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.c:
+        (pas_thread_local_cache_layout_node_get_directory):
+        (pas_thread_local_cache_layout_num_allocator_indices):
+        (allocator_index_ptr):
+        (pas_thread_local_cache_layout_node_get_allocator_index_generic):
+        (pas_thread_local_cache_layout_node_get_allocator_index_for_allocator):
+        (pas_thread_local_cache_layout_node_get_allocator_index_for_view_cache):
+        (next_ptr):
+        (pas_thread_local_cache_layout_node_set_next):
+        (pas_thread_local_cache_layout_node_construct):
+        (pas_thread_local_cache_layout_node_move):
+        (pas_thread_local_cache_layout_node_stop):
+        (pas_thread_local_cache_layout_node_get_allocator_index): Deleted.
+        * libpas/src/libpas/pas_thread_local_cache_layout_node.h:
+        (pas_thread_local_cache_layout_node_get_ptr):
+        (pas_thread_local_cache_layout_node_get_kind):
+        (pas_thread_local_cache_layout_node_create):
+        (pas_wrap_segregated_size_directory):
+        (pas_wrap_redundant_local_allocator_node):
+        (pas_wrap_local_view_cache_node):
+        (pas_is_wrapped_segregated_size_directory):
+        (pas_is_wrapped_redundant_local_allocator_node):
+        (pas_is_wrapped_local_view_cache_node):
+        (pas_unwrap_segregated_size_directory):
+        (pas_unwrap_redundant_local_allocator_node):
+        (pas_unwrap_local_view_cache_node):
+        (pas_thread_local_cache_layout_node_represents_allocator):
+        (pas_thread_local_cache_layout_node_represents_view_cache):
+        (pas_wrap_segregated_global_size_directory): Deleted.
+        (pas_is_wrapped_segregated_global_size_directory): Deleted.
+        (pas_unwrap_segregated_global_size_directory): Deleted.
+        * libpas/src/libpas/pas_thread_local_cache_layout_node_kind.h: Added.
+        (pas_thread_local_cache_layout_node_kind_get_string):
+        * libpas/src/libpas/pas_thread_local_cache_node.c:
+        (pas_thread_local_cache_node_allocate):
+        * libpas/src/libpas/pas_thread_local_cache_node.h:
+        * libpas/src/libpas/pas_try_allocate.h:
+        (pas_try_allocate_impl):
+        * libpas/src/libpas/pas_try_allocate_array.h:
+        (pas_try_allocate_array_impl):
+        * libpas/src/libpas/pas_try_allocate_common.h:
+        (pas_try_allocate_common_impl_fast_inline_only):
+        (pas_try_allocate_common_impl_fast):
+        (pas_try_allocate_common_impl_slow):
+        (pas_try_allocate_common_impl):
+        * libpas/src/libpas/pas_try_allocate_intrinsic_primitive.h:
+        (pas_try_allocate_intrinsic_primitive_impl_medium_slow_case):
+        (pas_try_allocate_intrinsic_primitive_impl_inline_only):
+        (pas_try_allocate_intrinsic_primitive_impl): Deleted.
+        * libpas/src/libpas/pas_try_allocate_primitive.h:
+        (pas_try_allocate_primitive_impl):
+        * libpas/src/libpas/pas_try_reallocate.h:
+        (pas_try_allocate_for_reallocate_and_copy):
+        (pas_try_reallocate_table_segregated_case):
+        (pas_try_reallocate_table_bitfit_case):
+        (pas_try_reallocate):
+        (pas_try_reallocate_primitive_allocate_callback):
+        * libpas/src/libpas/pas_typed_allocation_result.h:
+        (pas_typed_allocation_result_as_intrinsic_allocation_result):
+        (pas_typed_allocation_result_create_with_intrinsic_allocation_result):
+        (pas_typed_allocation_result_zero):
+        (pas_typed_allocation_result_set_errno):
+        (pas_typed_allocation_result_crash_on_error):
+        * libpas/src/libpas/pas_utility_heap.c:
+        (pas_utility_heap_deallocate):
+        * libpas/src/libpas/pas_utility_heap.h:
+        * libpas/src/libpas/pas_utility_heap_config.h:
+        (pas_utility_heap_shared_page_directory_selector):
+        * libpas/src/libpas/pas_utility_heap_support.h:
+        * libpas/src/libpas/pas_utils.h:
+        (pas_round_up_to_next_power_of_2):
+        * libpas/src/libpas/thingy_heap.c:
+        (thingy_try_allocate_primitive):
+        (thingy_try_allocate_primitive_zeroed):
+        (thingy_try_allocate_primitive_with_alignment):
+        (thingy_try_reallocate_primitive):
+        (thingy_utility_heap_allocate):
+        * libpas/src/libpas/thingy_heap_config.c:
+        * libpas/src/libpas/thingy_heap_config.h:
+        * libpas/src/test/IsoHeapChaosTests.cpp:
+        (std::testAllocationChaos):
+        (std::addTheTests):
+        (std::addSpotTests):
+        (addIsoHeapChaosTests):
+        * libpas/src/test/IsoHeapPageSharingTests.cpp:
+        (std::testTakePages):
+        (std::testTakePagesFromCorrectHeap):
+        (std::allocateThingiesImpl):
+        (addIsoHeapPageSharingTests):
+        * libpas/src/test/IsoHeapPartialAndBaselineTests.cpp:
+        (std::testSimplePartialAllocations):
+        (std::testMultiplePartialsFromDifferentThreadsPerShared):
+        (std::addScavengerDependentTests):
+        * libpas/src/test/IsoHeapTablingTests.cpp: Removed.
+        * libpas/src/test/RaceTests.cpp:
+        (std::testLocalAllocatorStopRace):
+        (std::testLocalAllocatorStopRaceAgainstScavenge):
+        * libpas/src/test/TestHarness.cpp:
+        (main):
+        (DisableExplosion::DisableExplosion): Deleted.
+        (ForceExplosion::ForceExplosion): Deleted.
+        (ForceOneMagazine::ForceOneMagazine): Deleted.
+        * libpas/src/test/TestHarness.h:
+        * libpas/src/test/ThingyAndUtilityHeapAllocationTests.cpp:
+        (std::sizeClassFor):
+        (std::forEachCommittedViewAdapter):
+        (std::verifyHeapEmpty):
+        (std::testInternalScavengeFromCorrectDirectory):
+        (std::testSizeClassCreationImpl):
+        (std::testSpuriousEligibility):
+        (std::testComplexLargeAllocationImpl):
+        (std::addAllTests):
+        (addThingyAndUtilityHeapAllocationTests):
+
 2021-09-02  Mark Lam  <mark.lam@apple.com>
 
         Add more support for JIT operation validation testing.

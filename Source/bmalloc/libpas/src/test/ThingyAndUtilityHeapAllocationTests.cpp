@@ -47,7 +47,7 @@
 #include "pas_megapage_cache.h"
 #include "pas_page_malloc.h"
 #include "pas_scavenger.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 #include "pas_segregated_size_directory_inlines.h"
 #include "pas_thread_local_cache.h"
 #include "pas_utility_heap.h"
@@ -81,10 +81,10 @@ void flushDeallocationLogAndStopAllocators()
 // FIXME: Once we add real scavenging, we will want to add a shrinkHeaps() function that does
 // flushDeallocationLogAndStopAllocators() plus the actual scavenging.
 
-pas_segregated_global_size_directory* sizeClassFor(void* object)
+pas_segregated_size_directory* sizeClassFor(void* object)
 {
 #if SEGHEAP
-    return pas_segregated_global_size_directory_for_object(
+    return pas_segregated_size_directory_for_object(
         reinterpret_cast<uintptr_t>(object), &thingy_heap_config);
 #else
     return nullptr;
@@ -113,7 +113,7 @@ void forEachLiveUtilityObject(function<bool(void*, size_t)> callback)
 
 #if SEGHEAP
 bool forEachCommittedViewAdapter(pas_segregated_heap* heap,
-                                 pas_segregated_global_size_directory* sizeClass,
+                                 pas_segregated_size_directory* sizeClass,
                                  pas_segregated_view view,
                                  void* arg)
 {
@@ -262,9 +262,9 @@ void verifyHeapEmpty(pas_heap* heap)
     forEachCommittedView(
         heap,
         [&] (pas_segregated_view view) -> bool {
-            CHECK(pas_segregated_view_is_eligible_or_biased(view));
+            CHECK(pas_segregated_view_is_eligible(view));
 #if TLC
-            CHECK(pas_segregated_view_is_empty_or_biased(view));
+            CHECK(pas_segregated_view_is_empty(view));
 #endif
             return true;
         });
@@ -966,28 +966,26 @@ void testInternalScavengeFromCorrectDirectory(size_t firstSize, size_t secondSiz
     pas_segregated_view view1 = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(object1),
                                                                &thingy_heap_config);
     
-    pas_segregated_directory* directory1 = pas_segregated_size_directory_for_object(
+    pas_segregated_size_directory* directory1 = pas_segregated_size_directory_for_object(
         reinterpret_cast<uintptr_t>(object1), &thingy_heap_config);
-    pas_segregated_global_size_directory* globalDirectory1 =
-        pas_segregated_size_directory_get_global(directory1);
     
-    CHECK_EQUAL(globalDirectory1->object_size, firstSize);
-    CHECK_EQUAL(pas_segregated_directory_size(directory1), 1);
-    CHECK(!pas_segregated_directory_is_eligible(directory1, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory1->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory1, 0));
+    CHECK_EQUAL(directory1->object_size, firstSize);
+    CHECK_EQUAL(pas_segregated_directory_size(&directory1->base), 1);
+    CHECK(!pas_segregated_directory_is_eligible(&directory1->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory1->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory1->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory1, 0),
+        pas_segregated_directory_get(&directory1->base, 0),
         view1);
     
     flushDeallocationLogAndStopAllocators();
 
-    CHECK_EQUAL(pas_segregated_directory_size(directory1), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory1, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory1->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory1, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory1->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory1->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory1->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory1->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory1, 0),
+        pas_segregated_directory_get(&directory1->base, 0),
         view1);
     
     void* object2 = thingy_try_allocate_primitive(secondSize);
@@ -996,45 +994,43 @@ void testInternalScavengeFromCorrectDirectory(size_t firstSize, size_t secondSiz
     pas_segregated_view view2 = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(object2),
                                                                &thingy_heap_config);
     
-    pas_segregated_directory* directory2 = pas_segregated_size_directory_for_object(
+    pas_segregated_size_directory* directory2 = pas_segregated_size_directory_for_object(
         reinterpret_cast<uintptr_t>(object2), &thingy_heap_config);
-    pas_segregated_global_size_directory* globalDirectory2 =
-        pas_segregated_size_directory_get_global(directory2);
     
-    CHECK_EQUAL(globalDirectory2->object_size, secondSize);
+    CHECK_EQUAL(directory2->object_size, secondSize);
 
-    CHECK_EQUAL(pas_segregated_directory_size(directory1), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory1, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory1->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory1, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory1->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory1->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory1->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory1->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory1, 0),
+        pas_segregated_directory_get(&directory1->base, 0),
         view1);
     
-    CHECK_EQUAL(pas_segregated_directory_size(directory2), 1);
-    CHECK(!pas_segregated_directory_is_eligible(directory2, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory2->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory2, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory2->base), 1);
+    CHECK(!pas_segregated_directory_is_eligible(&directory2->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory2->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory2->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory2, 0),
+        pas_segregated_directory_get(&directory2->base, 0),
         view2);
     
     flushDeallocationLogAndStopAllocators();
 
-    CHECK_EQUAL(pas_segregated_directory_size(directory1), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory1, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory1->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory1, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory1->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory1->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory1->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory1->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory1, 0),
+        pas_segregated_directory_get(&directory1->base, 0),
         view1);
     
-    CHECK_EQUAL(pas_segregated_directory_size(directory2), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory2, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory2->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory2, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory2->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory2->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory2->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory2->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory2, 0),
+        pas_segregated_directory_get(&directory2->base, 0),
         view2);
     
     thingy_deallocate(object1);
@@ -1042,20 +1038,20 @@ void testInternalScavengeFromCorrectDirectory(size_t firstSize, size_t secondSiz
 
     flushDeallocationLogAndStopAllocators();
 
-    CHECK_EQUAL(pas_segregated_directory_size(directory1), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory1, 0));
-    CHECK(pas_segregated_directory_is_empty(&globalDirectory1->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory1, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory1->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory1->base, 0));
+    CHECK(pas_segregated_directory_is_empty(&directory1->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory1->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory1, 0),
+        pas_segregated_directory_get(&directory1->base, 0),
         view1);
 
-    CHECK_EQUAL(pas_segregated_directory_size(directory2), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory2, 0));
-    CHECK(pas_segregated_directory_is_empty(&globalDirectory2->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory2, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory2->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory2->base, 0));
+    CHECK(pas_segregated_directory_is_empty(&directory2->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory2->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory2, 0),
+        pas_segregated_directory_get(&directory2->base, 0),
         view2);
     
     void* object3 = thingy_try_allocate_primitive(thirdSize);
@@ -1064,31 +1060,29 @@ void testInternalScavengeFromCorrectDirectory(size_t firstSize, size_t secondSiz
     pas_segregated_view view3 = pas_segregated_view_for_object(reinterpret_cast<uintptr_t>(object3),
                                                                &thingy_heap_config);
     
-    pas_segregated_directory* directory3 = pas_segregated_size_directory_for_object(
+    pas_segregated_size_directory* directory3 = pas_segregated_size_directory_for_object(
         reinterpret_cast<uintptr_t>(object3), &thingy_heap_config);
-    pas_segregated_global_size_directory* globalDirectory3 =
-        pas_segregated_size_directory_get_global(directory3);
-    CHECK_EQUAL(globalDirectory3->object_size, thirdSize);
+    CHECK_EQUAL(directory3->object_size, thirdSize);
     
-    CHECK_EQUAL(pas_segregated_directory_size(directory1), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory1, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory1->base, 0));
-    CHECK(!pas_segregated_directory_is_committed(directory1, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory1->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory1->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory1->base, 0));
+    CHECK(!pas_segregated_directory_is_committed(&directory1->base, 0));
 
-    CHECK_EQUAL(pas_segregated_directory_size(directory2), 1);
-    CHECK(pas_segregated_directory_is_eligible(directory2, 0));
-    CHECK(pas_segregated_directory_is_empty(&globalDirectory2->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory2, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory2->base), 1);
+    CHECK(pas_segregated_directory_is_eligible(&directory2->base, 0));
+    CHECK(pas_segregated_directory_is_empty(&directory2->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory2->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory2, 0),
+        pas_segregated_directory_get(&directory2->base, 0),
         view2);
     
-    CHECK_EQUAL(pas_segregated_directory_size(directory3), 1);
-    CHECK(!pas_segregated_directory_is_eligible(directory3, 0));
-    CHECK(!pas_segregated_directory_is_empty(&globalDirectory3->base, 0));
-    CHECK(pas_segregated_directory_is_committed(directory3, 0));
+    CHECK_EQUAL(pas_segregated_directory_size(&directory3->base), 1);
+    CHECK(!pas_segregated_directory_is_eligible(&directory3->base, 0));
+    CHECK(!pas_segregated_directory_is_empty(&directory3->base, 0));
+    CHECK(pas_segregated_directory_is_committed(&directory3->base, 0));
     CHECK_EQUAL(
-        pas_segregated_directory_get(directory3, 0),
+        pas_segregated_directory_get(&directory3->base, 0),
         view3);
 
     CHECK_EQUAL(pas_scavenger_current_state, pas_scavenger_state_no_thread);
@@ -1130,11 +1124,11 @@ void testSizeClassCreationImpl(const vector<SizeClassProgram>& programs)
 #if TLC
     pas_large_sharing_pool_validate_each_splat = true;
 #endif
-    map<size_t, pas_segregated_global_size_directory*> sizeMap;
+    map<size_t, pas_segregated_size_directory*> sizeMap;
     for (const SizeClassProgram& program : programs) {
         cout << "    Program: " << program.name << endl;
         
-        pas_segregated_global_size_directory* resultingSizeClass = nullptr;
+        pas_segregated_size_directory* resultingSizeClass = nullptr;
         
         {
 #if PAS_ENABLE_TESTING
@@ -1177,7 +1171,6 @@ void testSpuriousEligibility()
 #if TLC
     pas_scavenger_suspend();
     pas_large_sharing_pool_validate_each_splat = true;
-    pas_segregated_size_directory_use_tabling = false;
 #endif
     
     unsigned objectSize = 16;
@@ -1538,6 +1531,8 @@ void testComplexLargeAllocationImpl(const ComplexAllocator& allocator,
                                     ExpectedBytes expectedNumMappedBytes,
                                     const vector<AllocationProgram>& programs)
 {
+    static constexpr bool verbose = false;
+    
 #if TLC
     pas_large_sharing_pool_validate_each_splat = true;
 #endif
@@ -1550,6 +1545,10 @@ void testComplexLargeAllocationImpl(const ComplexAllocator& allocator,
             cout << "    Program: allocate(" << program.key() << ", " << program.count() << ", "
                  << program.alignment() << ")" << endl;
             void* ptr = allocator.allocate(program.count(), program.alignment());
+            if (verbose) {
+                cout << "Allocated ptr = " << ptr << " with kind "
+                     << pas_get_object_kind(ptr, THINGY_HEAP_CONFIG) << endl;
+            }
             CHECK(pas_is_aligned(reinterpret_cast<uintptr_t>(ptr), program.alignment()));
             CHECK(!objectByKey.count(program.key()));
             objectByKey[program.key()] = ptr;
@@ -3218,15 +3217,7 @@ void addAllTests()
             });
         
         addAllTestsImpl();
-
-        {
-            DisableExplosion DisableExplosion;
-            addSmallHeapTests();
-        }
-        {
-            ForceExplosion forceExplosion;
-            addSmallHeapTests();
-        }
+        addSmallHeapTests();
     }
 }
 
@@ -3244,7 +3235,6 @@ void addThingyAndUtilityHeapAllocationTests()
 
     ForceExclusives forceExclusives;
     ForceTLAs forceTLAs;
-    ForceOneMagazine forceOneMagazine;
     EpochIsCounter epochIsCounter;
 
     {

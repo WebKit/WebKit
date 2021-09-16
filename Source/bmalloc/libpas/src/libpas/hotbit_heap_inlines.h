@@ -42,7 +42,7 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     HOTBIT_HEAP_CONFIG,
     &hotbit_intrinsic_primitive_runtime_config.base,
     &hotbit_allocator_counts,
-    pas_intrinsic_allocation_result_identity,
+    pas_allocation_result_identity,
     &hotbit_common_primitive_heap,
     &hotbit_common_primitive_heap_support,
     pas_intrinsic_heap_is_designated);
@@ -54,34 +54,34 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     HOTBIT_HEAP_CONFIG,
     &hotbit_intrinsic_primitive_runtime_config.base,
     &hotbit_allocator_counts,
-    pas_intrinsic_allocation_result_identity,
+    pas_allocation_result_identity,
     &hotbit_common_primitive_heap,
     &hotbit_common_primitive_heap_support,
     pas_intrinsic_heap_is_not_designated);
 
 static PAS_ALWAYS_INLINE void* hotbit_try_allocate_inline(size_t size)
 {
-    return hotbit_try_allocate_impl(size, 1).ptr;
+    return (void*)hotbit_try_allocate_impl(size, 1).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
 hotbit_try_allocate_with_alignment_inline(size_t size, size_t alignment)
 {
-    return hotbit_try_allocate_with_alignment_impl(size, alignment).ptr;
+    return (void*)hotbit_try_allocate_with_alignment_impl(size, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
 hotbit_try_reallocate_inline(void* old_ptr, size_t new_size,
                               pas_reallocate_free_mode free_mode)
 {
-    return pas_try_reallocate_intrinsic_primitive(
+    return (void*)pas_try_reallocate_intrinsic_primitive(
         old_ptr,
         &hotbit_common_primitive_heap,
         new_size,
         HOTBIT_HEAP_CONFIG,
         hotbit_try_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).ptr;
+        free_mode).begin;
 }
 
 static PAS_ALWAYS_INLINE void hotbit_deallocate_inline(void* ptr)

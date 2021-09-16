@@ -33,11 +33,12 @@
 #include "pas_enumerator_internal.h"
 #include "pas_full_alloc_bits.h"
 #include "pas_hashtable.h"
+#include "pas_local_view_cache_node.h"
 #include "pas_ptr_hash_set.h"
 #include "pas_redundant_local_allocator_node.h"
 #include "pas_root.h"
 #include "pas_segregated_exclusive_view.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 #include "pas_segregated_partial_view.h"
 #include "pas_segregated_shared_handle.h"
 #include "pas_segregated_shared_view.h"
@@ -228,7 +229,7 @@ static void record_page_payload_and_meta(pas_enumerator* enumerator,
 
 static void record_page_objects(pas_enumerator* enumerator,
                                 enumeration_context* context,
-                                pas_segregated_global_size_directory* directory,
+                                pas_segregated_size_directory* directory,
                                 pas_segregated_page_config* page_config,
                                 uintptr_t page_boundary,
                                 pas_segregated_page* page,
@@ -314,16 +315,16 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
                                      pas_segregated_exclusive_view* view,
                                      enumeration_context* context)
 {
-    pas_segregated_global_size_directory* directory;
+    pas_segregated_size_directory* directory;
     pas_segregated_page_config* page_config;
-    pas_segregated_global_size_directory_data* data;
+    pas_segregated_size_directory_data* data;
     uintptr_t page_boundary;
     pas_segregated_page* page;
     local_allocator_node* allocator_node;
     pas_local_allocator* allocator;
     pas_full_alloc_bits alloc_bits;
 
-    directory = pas_compact_segregated_global_size_directory_ptr_load_remote(enumerator, &view->directory);
+    directory = pas_compact_segregated_size_directory_ptr_load_remote(enumerator, &view->directory);
     page_config = pas_segregated_page_config_kind_get_config(directory->base.page_config_kind);
 
     page_boundary = (uintptr_t)view->page_boundary;
@@ -334,10 +335,10 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
     pas_enumerator_exclude_accounted_pages(
         enumerator, (void*)page_boundary, page_config->base.page_size);
     
-    if (!pas_segregated_exclusive_view_ownership_kind_is_owned(view->ownership_kind))
+    if (!view->is_owned)
         return true;
 
-    data = pas_segregated_global_size_directory_data_ptr_load_remote(enumerator, &directory->data);
+    data = pas_segregated_size_directory_data_ptr_load_remote(enumerator, &directory->data);
 
     page = (pas_segregated_page*)page_config->base.page_header_for_boundary_remote(
         enumerator, (void*)page_boundary);
@@ -448,7 +449,7 @@ static bool enumerate_partial_view(pas_enumerator* enumerator,
                                    pas_segregated_partial_view* view,
                                    enumeration_context* context)
 {
-    pas_segregated_global_size_directory* directory;
+    pas_segregated_size_directory* directory;
     pas_segregated_page_config* page_config;
     pas_segregated_shared_view* shared_view;
     pas_shared_handle_or_page_boundary shared_handle_or_page_boundary;
@@ -462,7 +463,7 @@ static bool enumerate_partial_view(pas_enumerator* enumerator,
     if (!view->is_attached_to_shared_handle)
         return true;
 
-    directory = pas_compact_segregated_global_size_directory_ptr_load_remote(enumerator, &view->directory);
+    directory = pas_compact_segregated_size_directory_ptr_load_remote(enumerator, &view->directory);
     page_config = pas_segregated_page_config_kind_get_config(directory->base.page_config_kind);
 
     shared_view = pas_compact_segregated_shared_view_ptr_load_remote(enumerator, &view->shared_view);
@@ -566,14 +567,14 @@ static bool enumerate_segregated_heap_callback(pas_enumerator* enumerator,
                                                void* arg)
 {
     enumeration_context* context;
-    pas_segregated_global_size_directory* directory;
+    pas_segregated_size_directory* directory;
 
     context = arg;
 
-    for (directory = pas_compact_atomic_segregated_global_size_directory_ptr_load_remote(
+    for (directory = pas_compact_atomic_segregated_size_directory_ptr_load_remote(
              enumerator, &heap->segregated_heap.basic_size_directory_and_head);
          directory;
-         directory = pas_compact_atomic_segregated_global_size_directory_ptr_load_remote(
+         directory = pas_compact_atomic_segregated_size_directory_ptr_load_remote(
              enumerator, &directory->next_for_heap))
         for_each_view(enumerator, &directory->base, size_directory_view_callback, context);
     
@@ -678,23 +679,24 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
 
         layout_node = pas_enumerator_read_compact(enumerator, *tlc_layout_first_node_ptr);
         while (layout_node) {
+            bool has_allocator;
             unsigned allocator_index;
-            pas_local_allocator* allocator;
             
-            if (pas_is_wrapped_segregated_global_size_directory(layout_node)) {
-                pas_segregated_global_size_directory* directory;
-                pas_segregated_global_size_directory_data* data;
+            if (pas_is_wrapped_segregated_size_directory(layout_node)) {
+                pas_segregated_size_directory* directory;
+                pas_segregated_size_directory_data* data;
 
-                directory = pas_unwrap_segregated_global_size_directory(layout_node);
+                directory = pas_unwrap_segregated_size_directory(layout_node);
 
-                data = pas_segregated_global_size_directory_data_ptr_load_remote(
+                data = pas_segregated_size_directory_data_ptr_load_remote(
                     enumerator, &directory->data);
 
                 layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(
                     enumerator, &data->next_for_layout);
 
                 allocator_index = data->allocator_index;
-            } else {
+                has_allocator = true;
+            } else if (pas_is_wrapped_redundant_local_allocator_node(layout_node)) {
                 pas_redundant_local_allocator_node* redundant_node;
 
                 redundant_node = pas_unwrap_redundant_local_allocator_node(layout_node);
@@ -703,14 +705,31 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
                     enumerator, &redundant_node->next);
 
                 allocator_index = redundant_node->allocator_index;
+                has_allocator = true;
+            } else {
+                pas_local_view_cache_node* cache_node;
+                
+                PAS_ASSERT(pas_is_wrapped_local_view_cache_node(layout_node));
+
+                cache_node = pas_unwrap_local_view_cache_node(layout_node);
+
+                layout_node = pas_compact_atomic_thread_local_cache_layout_node_load_remote(
+                    enumerator, &cache_node->next);
+
+                allocator_index = UINT_MAX;
+                has_allocator = false;
             }
 
-            if (allocator_index >= tlc->allocator_index_upper_bound)
-                break;
+            if (has_allocator) {
+                pas_local_allocator* allocator;
+                
+                if (allocator_index >= tlc->allocator_index_upper_bound)
+                    break;
 
-            allocator = pas_thread_local_cache_get_local_allocator_impl(tlc, allocator_index);
-
-            consider_allocator(enumerator, &context, allocator);
+                allocator = pas_thread_local_cache_get_local_allocator_impl(tlc, allocator_index);
+                
+                consider_allocator(enumerator, &context, allocator);
+            }
         }
     }
 

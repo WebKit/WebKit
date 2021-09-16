@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #include "pas_allocator_scavenge_action.h"
 #include "pas_compact_atomic_allocator_index_ptr.h"
 #include "pas_compact_atomic_ptr.h"
-#include "pas_compact_atomic_segregated_global_size_directory_ptr.h"
+#include "pas_compact_atomic_segregated_size_directory_ptr.h"
 #include "pas_compact_heap_ptr.h"
 #include "pas_config.h"
 #include "pas_count_lookup_mode.h"
@@ -41,6 +41,7 @@
 #include "pas_local_allocator.h"
 #include "pas_mutation_count.h"
 #include "pas_segregated_heap_lookup_kind.h"
+#include "pas_segregated_size_directory_creation_mode.h"
 #include "pas_page_sharing_mode.h"
 #include "pas_segregated_page.h"
 
@@ -58,12 +59,12 @@ enum pas_segregated_heap_medium_size_directory_search_mode {
 typedef enum pas_segregated_heap_medium_size_directory_search_mode pas_segregated_heap_medium_size_directory_search_mode;
 
 struct pas_heap;
-struct pas_segregated_global_size_directory;
+struct pas_segregated_size_directory;
 struct pas_segregated_heap;
 struct pas_segregated_heap_medium_directory_tuple;
 struct pas_segregated_heap_rare_data;
 typedef struct pas_heap pas_heap;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_heap pas_segregated_heap;
 typedef struct pas_segregated_heap_medium_directory_tuple pas_segregated_heap_medium_directory_tuple;
 typedef struct pas_segregated_heap_rare_data pas_segregated_heap_rare_data;
@@ -76,12 +77,12 @@ struct pas_segregated_heap {
     pas_heap_runtime_config* runtime_config;
     
     pas_allocator_index* index_to_small_allocator_index;
-    pas_compact_atomic_segregated_global_size_directory_ptr* index_to_small_size_directory;
+    pas_compact_atomic_segregated_size_directory_ptr* index_to_small_size_directory;
 
     /* This is the head of the linked list of segregated size directories. Also, if there is
        a basic size directory (the one for index == 1 or index == *cached_index), then it will
        be at the head of the list with the is_basic_size_directory bit set. */
-    pas_compact_atomic_segregated_global_size_directory_ptr basic_size_directory_and_head;
+    pas_compact_atomic_segregated_size_directory_ptr basic_size_directory_and_head;
     
     pas_segregated_heap_rare_data_ptr rare_data;
 
@@ -106,7 +107,7 @@ struct pas_segregated_heap_medium_directory_tuple {
     /* NOTE: This directory is always going to be medium sized because this data structure is only
        used for sizes that are beyond the max object size for small pages. But nobody strongly
        relies on that property. */
-    pas_compact_atomic_segregated_global_size_directory_ptr directory;
+    pas_compact_atomic_segregated_size_directory_ptr directory;
 
     pas_allocator_index allocator_index;
     
@@ -189,7 +190,7 @@ PAS_API unsigned pas_segregated_heap_medium_allocator_index_for_index(
     pas_segregated_heap_medium_size_directory_search_mode search_mode,
     pas_lock_hold_mode heap_lock_hold_mode);
 
-PAS_API pas_segregated_global_size_directory* pas_segregated_heap_medium_size_directory_for_index(
+PAS_API pas_segregated_size_directory* pas_segregated_heap_medium_size_directory_for_index(
     pas_segregated_heap* heap,
     size_t index,
     pas_segregated_heap_medium_size_directory_search_mode search_mode,
@@ -231,7 +232,7 @@ pas_segregated_heap_allocator_index_for_count_not_primitive(pas_segregated_heap*
 PAS_API unsigned
 pas_segregated_heap_ensure_allocator_index(
     pas_segregated_heap* heap,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     size_t count,
     pas_count_lookup_mode count_lookup_mode,
     pas_heap_config* config,
@@ -257,29 +258,30 @@ pas_segregated_heap_ensure_allocator_index(
    pas_segregated_heap_ensure_allocator_index_for_count. Need to hold heap lock to
    call this. OK to pass NULL for cached_index; only primitive_heap_ref's use
    that. */
-PAS_API pas_segregated_global_size_directory*
+PAS_API pas_segregated_size_directory*
 pas_segregated_heap_ensure_size_directory_for_count(
     pas_segregated_heap* heap,
     size_t count, size_t alignment,
     pas_count_lookup_mode count_lookup_mode,
     pas_heap_config* config,
-    unsigned* cached_index);
+    unsigned* cached_index,
+    pas_segregated_size_directory_creation_mode creation_mode);
 
 PAS_API size_t pas_segregated_heap_get_num_free_bytes(pas_segregated_heap* heap);
 
-typedef bool (*pas_segregated_heap_for_each_global_size_directory_callback)(
+typedef bool (*pas_segregated_heap_for_each_size_directory_callback)(
     pas_segregated_heap* heap,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     void* arg);
 
-PAS_API bool pas_segregated_heap_for_each_global_size_directory(
+PAS_API bool pas_segregated_heap_for_each_size_directory(
     pas_segregated_heap* heap,
-    pas_segregated_heap_for_each_global_size_directory_callback callback,
+    pas_segregated_heap_for_each_size_directory_callback callback,
     void* arg);
 
 typedef bool (*pas_segregated_heap_for_each_committed_view_callback)(
     pas_segregated_heap* heap,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     pas_segregated_view view,
     void* arg);
 
@@ -290,7 +292,7 @@ PAS_API bool pas_segregated_heap_for_each_committed_view(
 
 typedef bool (*pas_segregated_heap_for_each_view_index_callback)(
     pas_segregated_heap* heap,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     size_t index,
     pas_segregated_view viewp,
     void* arg);
