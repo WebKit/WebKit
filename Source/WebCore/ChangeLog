@@ -1,5 +1,46 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282049. rdar://problem/83183765
+
+    Remove unnecessary uses of Ref protect = m_backing from FontFaceSet
+    https://bugs.webkit.org/show_bug.cgi?id=229911
+    
+    Reviewed by Anders Carlsson.
+    
+    The only callers of these are from JS. So, JS will maintain a ref to
+    the FontFaceSet, and the FontFaceSet will maintain a ref to its
+    CSSFontFaceSet. So it doesn't need to be protected.
+    
+    No new tests because there is no behavior change.
+    
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::size):
+    (WebCore::FontFaceSet::check):
+    (WebCore::FontFaceSet::status const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282049 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Remove unnecessary uses of Ref protect = m_backing from FontFaceSet
+            https://bugs.webkit.org/show_bug.cgi?id=229911
+
+            Reviewed by Anders Carlsson.
+
+            The only callers of these are from JS. So, JS will maintain a ref to
+            the FontFaceSet, and the FontFaceSet will maintain a ref to its
+            CSSFontFaceSet. So it doesn't need to be protected.
+
+            No new tests because there is no behavior change.
+
+            * css/FontFaceSet.cpp:
+            (WebCore::FontFaceSet::size):
+            (WebCore::FontFaceSet::check):
+            (WebCore::FontFaceSet::status const):
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282017. rdar://problem/83183644
 
     @font-face rules accessed over file: urls to a file which does not exist are not visible to document.fonts
