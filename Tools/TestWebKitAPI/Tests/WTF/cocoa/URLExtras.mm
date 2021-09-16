@@ -119,6 +119,8 @@ TEST(WTF_URLExtras, URLExtras_Spoof)
         "xn--o-qdc", // 'o' U+0585
         "xn--g-hdc", // U+0581 'g'
         "xn--g-idc", // 'g' U+0581
+        "xn--o-00e", // U+0BE6 'o'
+        "xn--o-10e", // 'o' U+0BE6
     };
     for (const String& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -142,6 +144,9 @@ TEST(WTF_URLExtras, URLExtras_NotSpoofed)
     EXPECT_STREQ("https://\u0581%67/", userVisibleString(literalURL("https://\u0581g/")));
     EXPECT_STREQ("https://o%D5%95%2F", userVisibleString(literalURL("https://o\u0555/")));
     EXPECT_STREQ("https://o%D6%85%2F", userVisibleString(literalURL("https://o\u0585/")));
+
+    // Tamil
+    EXPECT_STREQ("https://\u0BE6\u0BE7\u0BE8\u0BE9count/", userVisibleString(literalURL("https://\u0BE6\u0BE7\u0BE8\u0BE9count/")));
 }
 
 TEST(WTF_URLExtras, URLExtras_DivisionSign)

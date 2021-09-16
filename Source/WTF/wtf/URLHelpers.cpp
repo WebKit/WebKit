@@ -67,7 +67,9 @@ void loadIDNAllowedScriptList()
 
 #endif // !PLATFORM(COCOA)
 
-static bool isArmenianLookalikeCharacter(UChar32 codePoint)
+template<UScriptCode> bool isLookalikeCharacterOfScriptType(UChar32);
+
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>(UChar32 codePoint)
 {
     switch (codePoint) {
     case 0x0548: /* ARMENIAN CAPITAL LETTER VO */
@@ -84,7 +86,18 @@ static bool isArmenianLookalikeCharacter(UChar32 codePoint)
     }
 }
 
-static bool isArmenianScriptCharacter(UChar32 codePoint)
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(UChar32 codePoint)
+{
+    switch (codePoint) {
+    case 0x0BE6: /* TAMIL DIGIT ZERO */
+        return true;
+    default:
+        return false;
+    }
+}
+
+template <UScriptCode ScriptType>
+bool isOfScriptType(UChar32 codePoint)
 {
     UErrorCode error = U_ZERO_ERROR;
     UScriptCode script = uscript_getScript(codePoint, &error);
@@ -92,8 +105,7 @@ static bool isArmenianScriptCharacter(UChar32 codePoint)
         LOG_ERROR("got ICU error while trying to look at scripts: %d", error);
         return false;
     }
-
-    return script == USCRIPT_ARMENIAN;
+    return script == ScriptType;
 }
 
 template<typename CharacterType> inline bool isASCIIDigitOrValidHostCharacter(CharacterType charCode)
@@ -118,16 +130,17 @@ template<typename CharacterType> inline bool isASCIIDigitOrValidHostCharacter(Ch
     }
 }
 
-static bool isArmenianLookalikeSequence(const Optional<UChar32>& previousCodePoint, UChar32 codePoint)
+template <UScriptCode ScriptType>
+bool isLookalikeSequence(const Optional<UChar32>& previousCodePoint, UChar32 codePoint)
 {
     if (!previousCodePoint || *previousCodePoint == '/')
         return false;
 
-    auto isArmenianLookalikePair = [] (UChar first, UChar second) {
-        return isArmenianLookalikeCharacter(first) && !(isArmenianScriptCharacter(second) || isASCIIDigitOrValidHostCharacter(second));
+    auto isLookalikePair = [] (UChar first, UChar second) {
+        return isLookalikeCharacterOfScriptType<ScriptType>(first) && !(isOfScriptType<ScriptType>(second) || isASCIIDigitOrValidHostCharacter(second));
     };
-    return isArmenianLookalikePair(codePoint, *previousCodePoint)
-        || isArmenianLookalikePair(*previousCodePoint, codePoint);
+    return isLookalikePair(codePoint, *previousCodePoint)
+        || isLookalikePair(*previousCodePoint, codePoint);
 }
 
 static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UChar32 codePoint)
@@ -277,7 +290,8 @@ static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UCh
     case '.':
         return false;
     default:
-        return isArmenianLookalikeSequence(previousCodePoint, codePoint);
+        return isLookalikeSequence<USCRIPT_ARMENIAN>(previousCodePoint, codePoint)
+            || isLookalikeSequence<USCRIPT_TAMIL>(previousCodePoint, codePoint);
     }
 }
 

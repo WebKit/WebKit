@@ -1,3 +1,24 @@
+2021-05-28  Alex Christensen  <achristensen@webkit.org>
+
+        Punycode encode U+0BE6 when not in context of other Tamil characters
+        https://bugs.webkit.org/show_bug.cgi?id=226409
+        <rdar://78160926>
+
+        Reviewed by Tim Horton.
+
+        It has quite legitimate use, so we don't want to always punycode encode it,
+        but when used in the context of non-Tamil characters we want to punycode encode it.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>):
+        (WTF::URLHelpers::isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>):
+        (WTF::URLHelpers::isOfScriptType):
+        (WTF::URLHelpers::isLookalikeSequence):
+        (WTF::URLHelpers::isLookalikeCharacter):
+        (WTF::URLHelpers::isArmenianLookalikeCharacter): Deleted.
+        (WTF::URLHelpers::isArmenianScriptCharacter): Deleted.
+        (WTF::URLHelpers::isArmenianLookalikeSequence): Deleted.
+
 2021-05-27  Mikhail R. Gadelha  <mikhail.ramalho@gmail.com>
 
         Increase NumberToStringBuffer to account for negative number
