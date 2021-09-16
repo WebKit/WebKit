@@ -42,6 +42,7 @@
 #include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCPeerConnection.h"
+#include "JSRTCSessionDescriptionInit.h"
 #include "Logging.h"
 #include "MediaEndpointConfiguration.h"
 #include "MediaStream.h"
@@ -212,7 +213,17 @@ void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromi
             promise->reject(InvalidStateError);
             return;
         }
-        m_backend->createOffer(WTFMove(options), WTFMove(promise));
+        m_backend->createOffer(WTFMove(options), [this, protectedThis = makeRef(*this), promise = PeerConnection::SessionDescriptionPromise(WTFMove(promise))](auto&& result) mutable {
+            if (isClosed())
+                return;
+            if (result.hasException()) {
+                promise.reject(result.releaseException());
+                return;
+            }
+            // https://w3c.github.io/webrtc-pc/#dfn-final-steps-to-create-an-offer steps 4,5 and 6.
+            m_lastCreatedOffer = result.returnValue().sdp;
+            promise.resolve(result.releaseReturnValue());
+        });
     });
 }
 
@@ -229,66 +240,87 @@ void RTCPeerConnection::createAnswer(RTCAnswerOptions&& options, Ref<DeferredPro
             promise->reject(InvalidStateError);
             return;
         }
-        m_backend->createAnswer(WTFMove(options), WTFMove(promise));
+        m_backend->createAnswer(WTFMove(options), [this, protectedThis = makeRef(*this), promise = PeerConnection::SessionDescriptionPromise(WTFMove(promise))](auto&& result) mutable {
+            if (isClosed())
+                return;
+            if (result.hasException()) {
+                promise.reject(result.releaseException());
+                return;
+            }
+            // https://w3c.github.io/webrtc-pc/#dfn-final-steps-to-create-an-answer steps 4,5 and 6.
+            m_lastCreatedAnswer = result.returnValue().sdp;
+            promise.resolve(result.releaseReturnValue());
+        });
     });
 }
 
-void RTCPeerConnection::setLocalDescription(std::optional<Description>&& localDescription, Ref<DeferredPromise>&& promise)
+static RTCSdpType typeForSetLocalDescription(const std::optional<RTCLocalSessionDescriptionInit>& description, RTCSignalingState signalingState)
+{
+    std::optional<RTCSdpType> type;
+    if (description)
+        type = description->type;
+
+    // https://w3c.github.io/webrtc-pc/#dom-peerconnection-setlocaldescription step 4.1.
+    if (!type) {
+        bool shouldBeOffer = signalingState == RTCSignalingState::Stable || signalingState == RTCSignalingState::HaveLocalOffer || signalingState == RTCSignalingState::HaveRemotePranswer;
+        return shouldBeOffer ? RTCSdpType::Offer : RTCSdpType::Answer;
+    }
+    return *type;
+}
+
+void RTCPeerConnection::setLocalDescription(std::optional<RTCLocalSessionDescriptionInit>&& localDescription, Ref<DeferredPromise>&& promise)
 {
     if (isClosed()) {
         promise->reject(InvalidStateError);
         return;
     }
 
-    RefPtr<RTCSessionDescription> description;
-    if (localDescription) {
-        description = switchOn(*localDescription, [](RTCSessionDescriptionInit& init) -> RefPtr<RTCSessionDescription> {
-            return RTCSessionDescription::create(WTFMove(init));
-        }, [](RefPtr<RTCSessionDescription>& description) {
-            return WTFMove(description);
-        });
-    }
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting local description to:\n", localDescription ? localDescription->sdp : "''");
+    chainOperation(WTFMove(promise), [this, localDescription = WTFMove(localDescription)](auto&& promise) mutable {
+        auto type = typeForSetLocalDescription(localDescription, m_signalingState);
+        String sdp;
+        if (localDescription)
+            sdp = localDescription->sdp;
+        if (type == RTCSdpType::Offer && sdp.isEmpty())
+            sdp = m_lastCreatedOffer;
+        else if (type == RTCSdpType::Answer && sdp.isEmpty())
+            sdp = m_lastCreatedAnswer;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "Setting local description to:\n", description ? description->sdp() : "''");
-    chainOperation(WTFMove(promise), [this, description = WTFMove(description)](auto&& promise) mutable {
-        m_backend->setLocalDescription(description.get(), [promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+        RefPtr<RTCSessionDescription> description;
+        if (!sdp.isEmpty() || (type != RTCSdpType::Offer && type != RTCSdpType::Answer))
+            description = RTCSessionDescription::create(type, WTFMove(sdp));
+        m_backend->setLocalDescription(description.get(), [protectedThis = makeRef(*this), promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+            if (protectedThis->isClosed())
+                return;
             promise.settle(WTFMove(result));
         });
     });
 }
 
-void RTCPeerConnection::setRemoteDescription(Description&& remoteDescription, Ref<DeferredPromise>&& promise)
+void RTCPeerConnection::setRemoteDescription(RTCSessionDescriptionInit&& remoteDescription, Ref<DeferredPromise>&& promise)
 {
-    RefPtr<RTCSessionDescription> description;
-    description = switchOn(remoteDescription, [](RTCSessionDescriptionInit& init) -> RefPtr<RTCSessionDescription> {
-        return RTCSessionDescription::create(WTFMove(init));
-    }, [](RefPtr<RTCSessionDescription>& description) {
-        return WTFMove(description);
-    });
-    if (!description) {
-        promise->reject(TypeError);
-        return;
-    }
-
     if (isClosed()) {
         promise->reject(InvalidStateError);
         return;
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER, "Setting remote description to:\n", description->sdp());
-    chainOperation(WTFMove(promise), [this, description = WTFMove(description)](auto&& promise) mutable {
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting remote description to:\n", remoteDescription.sdp);
+    chainOperation(WTFMove(promise), [this, remoteDescription = WTFMove(remoteDescription)](auto&& promise) mutable {
+        auto description = RTCSessionDescription::create(WTFMove(remoteDescription));
         if (description->type() == RTCSdpType::Offer && m_signalingState != RTCSignalingState::Stable && m_signalingState != RTCSignalingState::HaveRemoteOffer) {
             auto rollbackDescription = RTCSessionDescription::create(RTCSdpType::Rollback, String { emptyString() });
             m_backend->setLocalDescription(rollbackDescription.ptr(), [this, protectedThis = makeRef(*this), description = WTFMove(description), promise = WTFMove(promise)](auto&&) mutable {
                 if (isClosed())
                     return;
-                m_backend->setRemoteDescription(*description, [promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+                m_backend->setRemoteDescription(description.get(), [protectedThis = makeRef(*this), promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+                    if (protectedThis->isClosed())
+                        return;
                     promise.settle(WTFMove(result));
                 });
             });
             return;
         }
-        m_backend->setRemoteDescription(*description, [promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+        m_backend->setRemoteDescription(description.get(), [promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
             promise.settle(WTFMove(result));
         });
     });
@@ -926,13 +958,18 @@ static void updateDescription(RefPtr<RTCSessionDescription>& description, std::o
 
 void RTCPeerConnection::updateDescriptions(PeerConnectionBackend::DescriptionStates&& states)
 {
-    if (states.signalingState)
-        setSignalingState(*states.signalingState);
-
     updateDescription(m_currentLocalDescription, states.currentLocalDescriptionSdpType, WTFMove(states.currentLocalDescriptionSdp));
     updateDescription(m_pendingLocalDescription, states.pendingLocalDescriptionSdpType, WTFMove(states.pendingLocalDescriptionSdp));
     updateDescription(m_currentRemoteDescription, states.currentRemoteDescriptionSdpType, WTFMove(states.currentRemoteDescriptionSdp));
     updateDescription(m_pendingRemoteDescription, states.pendingRemoteDescriptionSdpType, WTFMove(states.pendingRemoteDescriptionSdp));
+
+    if (states.signalingState)
+        setSignalingState(*states.signalingState);
+
+    if (!m_pendingRemoteDescription && !m_pendingLocalDescription) {
+        m_lastCreatedOffer = { };
+        m_lastCreatedAnswer = { };
+    }
 }
 
 void RTCPeerConnection::updateTransceiverTransports()

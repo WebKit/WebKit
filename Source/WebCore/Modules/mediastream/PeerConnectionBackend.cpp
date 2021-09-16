@@ -35,8 +35,6 @@
 #if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
-#include "JSDOMPromiseDeferred.h"
-#include "JSRTCSessionDescriptionInit.h"
 #include "LibWebRTCCertificateGenerator.h"
 #include "Logging.h"
 #include "Page.h"
@@ -92,12 +90,12 @@ PeerConnectionBackend::PeerConnectionBackend(RTCPeerConnection& peerConnection)
 
 PeerConnectionBackend::~PeerConnectionBackend() = default;
 
-void PeerConnectionBackend::createOffer(RTCOfferOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
+void PeerConnectionBackend::createOffer(RTCOfferOptions&& options, CreateCallback&& callback)
 {
-    ASSERT(!m_offerAnswerPromise);
+    ASSERT(!m_offerAnswerCallback);
     ASSERT(!m_peerConnection.isClosed());
 
-    m_offerAnswerPromise = WTF::makeUnique<PeerConnection::SessionDescriptionPromise>(WTFMove(promise));
+    m_offerAnswerCallback = WTFMove(callback);
     doCreateOffer(WTFMove(options));
 }
 
@@ -106,13 +104,10 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create offer succeeded:\n", sdp);
 
-    ASSERT(m_offerAnswerPromise);
+    ASSERT(m_offerAnswerCallback);
     validateSDP(sdp);
-    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
-        if (m_peerConnection.isClosed())
-            return;
-
-        promise->resolve(RTCSessionDescriptionInit { RTCSdpType::Offer, sdp });
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [callback = WTFMove(m_offerAnswerCallback), sdp = WTFMove(sdp)]() mutable {
+        callback(RTCSessionDescriptionInit { RTCSdpType::Offer, sdp });
     });
 }
 
@@ -121,21 +116,18 @@ void PeerConnectionBackend::createOfferFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create offer failed:", exception.message());
 
-    ASSERT(m_offerAnswerPromise);
-    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
-        if (m_peerConnection.isClosed())
-            return;
-
-        promise->reject(WTFMove(exception));
+    ASSERT(m_offerAnswerCallback);
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [callback = WTFMove(m_offerAnswerCallback), exception = WTFMove(exception)]() mutable {
+        callback(WTFMove(exception));
     });
 }
 
-void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, PeerConnection::SessionDescriptionPromise&& promise)
+void PeerConnectionBackend::createAnswer(RTCAnswerOptions&& options, CreateCallback&& callback)
 {
-    ASSERT(!m_offerAnswerPromise);
+    ASSERT(!m_offerAnswerCallback);
     ASSERT(!m_peerConnection.isClosed());
 
-    m_offerAnswerPromise = WTF::makeUnique<PeerConnection::SessionDescriptionPromise>(WTFMove(promise));
+    m_offerAnswerCallback = WTFMove(callback);
     doCreateAnswer(WTFMove(options));
 }
 
@@ -144,12 +136,9 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create answer succeeded:\n", sdp);
 
-    ASSERT(m_offerAnswerPromise);
-    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), sdp = WTFMove(sdp)]() mutable {
-        if (m_peerConnection.isClosed())
-            return;
-
-        promise->resolve(RTCSessionDescriptionInit { RTCSdpType::Answer, sdp });
+    ASSERT(m_offerAnswerCallback);
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [callback = WTFMove(m_offerAnswerCallback), sdp = WTFMove(sdp)]() mutable {
+        callback(RTCSessionDescriptionInit { RTCSdpType::Answer, sdp });
     });
 }
 
@@ -158,12 +147,9 @@ void PeerConnectionBackend::createAnswerFailed(Exception&& exception)
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "Create answer failed:", exception.message());
 
-    ASSERT(m_offerAnswerPromise);
-    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [this, promise = WTFMove(m_offerAnswerPromise), exception = WTFMove(exception)]() mutable {
-        if (m_peerConnection.isClosed())
-            return;
-
-        promise->reject(WTFMove(exception));
+    ASSERT(m_offerAnswerCallback);
+    m_peerConnection.queueTaskKeepingObjectAlive(m_peerConnection, TaskSource::Networking, [callback = WTFMove(m_offerAnswerCallback), exception = WTFMove(exception)]() mutable {
+        callback(WTFMove(exception));
     });
 }
 
@@ -407,7 +393,7 @@ void PeerConnectionBackend::endOfIceCandidates(DOMPromiseDeferred<void>&& promis
 
 void PeerConnectionBackend::stop()
 {
-    m_offerAnswerPromise = nullptr;
+    m_offerAnswerCallback = nullptr;
     m_setDescriptionCallback = nullptr;
 
     m_pendingTrackEvents.clear();

@@ -44,9 +44,11 @@
 #include "RTCDataChannel.h"
 #include "RTCIceConnectionState.h"
 #include "RTCIceGatheringState.h"
+#include "RTCLocalSessionDescriptionInit.h"
 #include "RTCPeerConnectionState.h"
 #include "RTCRtpEncodingParameters.h"
 #include "RTCRtpTransceiver.h"
+#include "RTCSessionDescriptionInit.h"
 #include "RTCSignalingState.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/LoggerHelper.h>
@@ -110,13 +112,12 @@ public:
     void createOffer(RTCOfferOptions&&, Ref<DeferredPromise>&&);
     void createAnswer(RTCAnswerOptions&&, Ref<DeferredPromise>&&);
 
-    using Description = Variant<RTCSessionDescriptionInit, RefPtr<RTCSessionDescription>>;
-    void setLocalDescription(std::optional<Description>&&, Ref<DeferredPromise>&&);
+    void setLocalDescription(std::optional<RTCLocalSessionDescriptionInit>&&, Ref<DeferredPromise>&&);
     RefPtr<RTCSessionDescription> localDescription() const { return m_pendingLocalDescription ? m_pendingLocalDescription.get() : m_currentLocalDescription.get(); }
     RefPtr<RTCSessionDescription> currentLocalDescription() const { return m_currentLocalDescription.get(); }
     RefPtr<RTCSessionDescription> pendingLocalDescription() const { return m_pendingLocalDescription.get(); }
 
-    void setRemoteDescription(Description&&, Ref<DeferredPromise>&&);
+    void setRemoteDescription(RTCSessionDescriptionInit&&, Ref<DeferredPromise>&&);
     RTCSessionDescription* remoteDescription() const { return m_pendingRemoteDescription ? m_pendingRemoteDescription.get() : m_currentRemoteDescription.get(); }
     RTCSessionDescription* currentRemoteDescription() const { return m_currentRemoteDescription.get(); }
     RTCSessionDescription* pendingRemoteDescription() const { return m_pendingRemoteDescription.get(); }
@@ -276,6 +277,9 @@ private:
     RefPtr<RTCSessionDescription> m_pendingLocalDescription;
     RefPtr<RTCSessionDescription> m_currentRemoteDescription;
     RefPtr<RTCSessionDescription> m_pendingRemoteDescription;
+
+    String m_lastCreatedOffer;
+    String m_lastCreatedAnswer;
 };
 
 } // namespace WebCore

@@ -1,3 +1,15 @@
+2021-09-16  Youenn Fablet  <youenn@apple.com>
+
+        Support RTCPeerConnection lastCreatedOffer/lastCreatedAnswer
+        https://bugs.webkit.org/show_bug.cgi?id=230260
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-operations.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-parameterless.https-expected.txt:
+
 2021-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Add IDL skeleton for SharedWorker

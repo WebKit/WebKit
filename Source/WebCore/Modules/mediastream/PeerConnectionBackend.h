@@ -93,8 +93,9 @@ public:
     explicit PeerConnectionBackend(RTCPeerConnection&);
     virtual ~PeerConnectionBackend();
 
-    void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
-    void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
+    using CreateCallback = Function<void(ExceptionOr<RTCSessionDescriptionInit>&&)>;
+    void createOffer(RTCOfferOptions&&, CreateCallback&&);
+    void createAnswer(RTCAnswerOptions&&, CreateCallback&&);
     void setLocalDescription(const RTCSessionDescription*, Function<void(ExceptionOr<void>&&)>&&);
     void setRemoteDescription(const RTCSessionDescription&, Function<void(ExceptionOr<void>&&)>&&);
     void addIceCandidate(RTCIceCandidate*, DOMPromiseDeferred<void>&&);
@@ -235,7 +236,7 @@ protected:
     RTCPeerConnection& m_peerConnection;
 
 private:
-    std::unique_ptr<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
+    CreateCallback m_offerAnswerCallback;
     Function<void(ExceptionOr<void>&&)> m_setDescriptionCallback;
 
     bool m_shouldFilterICECandidates { true };

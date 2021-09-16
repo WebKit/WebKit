@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS promiseState helper works
 PASS promiseStateFinal helper works
 PASS createOffer must detect InvalidStateError synchronously when chain is empty (prerequisite)
@@ -27,6 +25,6 @@ PASS sender.getStats does NOT use the operations chain
 PASS receiver.getStats does NOT use the operations chain
 FAIL addIceCandidate chains onto SRD, fails before assert_equals: expected "InvalidStateError" but got "OperationError"
 PASS Operations queue not vulnerable to recursion by chained negotiationneeded
-FAIL Pack operations queue with implicit offer and answer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
-TIMEOUT Negotiate solely by operations queue and signaling state Test timed out
+PASS Pack operations queue with implicit offer and answer
+PASS Negotiate solely by operations queue and signaling state
 

@@ -83,12 +83,12 @@ typedef (object or DOMString) AlgorithmIdentifier;
     Promise<RTCSessionDescriptionInit> createOffer(optional RTCOfferOptions offerOptions);
     Promise<RTCSessionDescriptionInit> createAnswer(optional RTCAnswerOptions answerOptions);
 
-    Promise<undefined> setLocalDescription(optional (RTCSessionDescriptionInit or RTCSessionDescription) description);
+    Promise<undefined> setLocalDescription(optional RTCLocalSessionDescriptionInit description);
     readonly attribute RTCSessionDescription? localDescription;
     readonly attribute RTCSessionDescription? currentLocalDescription;
     readonly attribute RTCSessionDescription? pendingLocalDescription;
 
-    Promise<undefined> setRemoteDescription((RTCSessionDescriptionInit or RTCSessionDescription) description);
+    Promise<undefined> setRemoteDescription(RTCSessionDescriptionInit description);
     readonly attribute RTCSessionDescription? remoteDescription;
     readonly attribute RTCSessionDescription? currentRemoteDescription;
     readonly attribute RTCSessionDescription? pendingRemoteDescription;

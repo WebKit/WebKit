@@ -1,5 +1,49 @@
 2021-09-16  Youenn Fablet  <youenn@apple.com>
 
+        Support RTCPeerConnection lastCreatedOffer/lastCreatedAnswer
+        https://bugs.webkit.org/show_bug.cgi?id=230260
+
+        Reviewed by Eric Carlson.
+
+        Update WebIDL to handle optional RTCLocalSessionDescriptionInit.type value.
+        In case type is missing, compute its value in setLocalDescription as per
+        https://w3c.github.io/webrtc-pc/#dom-peerconnection-setlocaldescription step 4.1.
+        If sdp is empty, use local offer/answer as per steps 4.2 and 4.3.
+        Store local offer and answer as per spec.
+        Refactor code to let PeerConnectionBackend createOffer and createAnswer take a callback instead of a promise
+        to store the last offer/answer.
+
+        Covered by existing and rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOffer):
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createOfferFailed):
+        (WebCore::PeerConnectionBackend::createAnswer):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerFailed):
+        (WebCore::PeerConnectionBackend::stop):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCLocalSessionDescriptionInit.h: Added.
+        * Modules/mediastream/RTCLocalSessionDescriptionInit.idl: Added.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        (WebCore::typeForSetLocalDescription):
+        (WebCore::RTCPeerConnection::setLocalDescription):
+        (WebCore::RTCPeerConnection::setRemoteDescription):
+        (WebCore::RTCPeerConnection::updateDescriptions):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2021-09-16  Youenn Fablet  <youenn@apple.com>
+
         Enable RTCRtpScriptTransform by default
         https://bugs.webkit.org/show_bug.cgi?id=230220
 
