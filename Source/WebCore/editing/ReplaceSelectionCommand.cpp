@@ -967,7 +967,7 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     // To avoid this, we add a placeholder node before the start of the paragraph.
     if (endOfParagraph(startOfParagraphToMove) == destination) {
         auto placeholder = HTMLBRElement::create(document());
-        insertNodeBefore(placeholder.copyRef(), *startOfParagraphToMove.deepEquivalent().deprecatedNode());
+        insertNodeBefore(placeholder, *startOfParagraphToMove.deepEquivalent().deprecatedNode());
         destination = VisiblePosition(positionBeforeNode(placeholder.ptr()));
     }
 
