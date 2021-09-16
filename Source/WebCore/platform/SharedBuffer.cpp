@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
@@ -345,7 +345,12 @@ const char* SharedBufferDataView::data() const
 RefPtr<SharedBuffer> utf8Buffer(const String& string)
 {
     // Allocate a buffer big enough to hold all the characters.
-    const int length = string.length();
+    const size_t length = string.length();
+    if constexpr (String::MaxLength > std::numeric_limits<size_t>::max() / 3) {
+        if (length > std::numeric_limits<size_t>::max() / 3)
+            return nullptr;
+    }
+
     Vector<char> buffer(length * 3);
 
     // Convert to runs of 8-bit characters.
