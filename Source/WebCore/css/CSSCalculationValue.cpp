@@ -1345,7 +1345,16 @@ std::unique_ptr<CalcExpressionNode> CSSCalcOperationNode::createCalcExpression(c
             return nullptr;
         nodes.uncheckedAppend(WTFMove(node));
     }
-    return makeUnique<CalcExpressionOperation>(WTFMove(nodes), m_operator);
+
+    // Reverse the operation we did when creating this node, recovering a suitable destination category for otherwise-ambiguous min/max/clamp nodes.
+    // Note that this category is really only good enough for that purpose and is not accurate for other node types; we could use a boolean instead.
+    auto destinationCategory = CalculationCategory::Other;
+    if (category() == CalculationCategory::PercentLength)
+        destinationCategory = CalculationCategory::Length;
+    else if (category() == CalculationCategory::PercentNumber)
+        destinationCategory = CalculationCategory::Number;
+
+    return makeUnique<CalcExpressionOperation>(WTFMove(nodes), m_operator, destinationCategory);
 }
 
 double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
@@ -2007,7 +2016,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             auto children = createCSS(operationChildren, style);
             if (children.isEmpty())
                 return nullptr;
-            return CSSCalcOperationNode::createMinOrMaxOrClamp(op, WTFMove(children), CalculationCategory::Other);
+            return CSSCalcOperationNode::createMinOrMaxOrClamp(op, WTFMove(children), operationNode.destinationCategory());
         }
         }
         return nullptr;

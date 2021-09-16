@@ -180,9 +180,9 @@ bool CalcExpressionOperation::operator==(const CalcExpressionNode& other) const
 
 bool operator==(const CalcExpressionOperation& a, const CalcExpressionOperation& b)
 {
-    if (a.getOperator() != b.getOperator())
+    if (a.getOperator() != b.getOperator() || a.destinationCategory() != b.destinationCategory())
         return false;
-    // Maybe Vectors of unique_ptrs should always do deep compare?
+    // FIXME: Would be nice to have a helper function for doing a deep compare on a vector of pointers.
     if (a.children().size() != b.children().size())
         return false;
     for (unsigned i = 0; i < a.children().size(); ++i) {

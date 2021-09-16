@@ -42,6 +42,19 @@ class TextStream;
 
 namespace WebCore {
 
+// FIXME: Find a way to unify this with CSSPrimitiveValue::UnitCategory?
+enum class CalculationCategory : uint8_t {
+    Number,
+    Length,
+    Percent,
+    PercentNumber,
+    PercentLength,
+    Angle,
+    Time,
+    Frequency,
+    Other
+};
+
 // Don't change these values; parsing uses them.
 enum class CalcOperator : uint8_t {
     Add = '+',
@@ -151,9 +164,10 @@ bool operator==(const CalcExpressionInversion&, const CalcExpressionInversion&);
 
 class CalcExpressionOperation final : public CalcExpressionNode {
 public:
-    CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator);
+    CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator, CalculationCategory destinationCategory = CalculationCategory::Other);
 
     CalcOperator getOperator() const { return m_operator; }
+    CalculationCategory destinationCategory() const { return m_destinationCategory; }
 
     const Vector<std::unique_ptr<CalcExpressionNode>>& children() const { return m_children; }
 
@@ -164,6 +178,7 @@ private:
 
     Vector<std::unique_ptr<CalcExpressionNode>> m_children;
     CalcOperator m_operator;
+    CalculationCategory m_destinationCategory { CalculationCategory::Other };
 };
 
 class CalcExpressionBlendLength final : public CalcExpressionNode {
@@ -237,10 +252,11 @@ inline bool operator==(const CalcExpressionLength& a, const CalcExpressionLength
     return a.length() == b.length();
 }
 
-inline CalcExpressionOperation::CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator op)
+inline CalcExpressionOperation::CalcExpressionOperation(Vector<std::unique_ptr<CalcExpressionNode>>&& children, CalcOperator op, CalculationCategory destinationCategory)
     : CalcExpressionNode(CalcExpressionNodeType::Operation)
     , m_children(WTFMove(children))
     , m_operator(op)
+    , m_destinationCategory(destinationCategory)
 {
 }
 

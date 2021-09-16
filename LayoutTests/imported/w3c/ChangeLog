@@ -1,3 +1,13 @@
+2021-04-19  Darin Adler  <darin@apple.com>
+
+        Nullptr crash in CSSCalcValue::category() via HTMLConverterCaches::floatPropertyValueForNode
+        https://bugs.webkit.org/show_bug.cgi?id=221392
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/minmax-length-percent-serialize-expected.txt:
+        Updated to reflect 8 tests passing that were failing before.
+
 2021-04-12  Youenn Fablet  <youenn@apple.com>
 
         Block loading for port 10080
