@@ -102,7 +102,7 @@ private:
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryBackingStoreTransaction>> m_transactions;
 
     HashMap<uint64_t, RefPtr<MemoryObjectStore>> m_objectStoresByIdentifier;
-    HashMap<String, MemoryObjectStore*> m_objectStoresByName;
+    HashMap<String, RefPtr<MemoryObjectStore>> m_objectStoresByName;
 };
 
 } // namespace IDBServer

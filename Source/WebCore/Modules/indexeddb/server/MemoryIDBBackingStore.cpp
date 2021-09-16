@@ -584,8 +584,8 @@ IDBError MemoryIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
 
 void MemoryIDBBackingStore::registerObjectStore(Ref<MemoryObjectStore>&& objectStore)
 {
-    ASSERT(!m_objectStoresByIdentifier.contains(objectStore->info().identifier()));
-    ASSERT(!m_objectStoresByName.contains(objectStore->info().name()));
+    RELEASE_ASSERT(!m_objectStoresByIdentifier.contains(objectStore->info().identifier()));
+    RELEASE_ASSERT(!m_objectStoresByName.contains(objectStore->info().name()));
 
     auto identifier = objectStore->info().identifier();
     m_objectStoresByName.set(objectStore->info().name(), &objectStore.get());
