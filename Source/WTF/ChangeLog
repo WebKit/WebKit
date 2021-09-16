@@ -1,3 +1,15 @@
+2021-09-16  Youenn Fablet  <youenn@apple.com>
+
+        Enable RTCRtpScriptTransform by default
+        https://bugs.webkit.org/show_bug.cgi?id=230220
+
+        Reviewed by Eric Carlson.
+
+        Splitting  WebRTCInsertableStreamsEnabled to WebRTCEncodedTransformEnabled and WebRTCSFrameTransformEnabled.
+        Keeping WebRTCSFrameTransformEnabled as off by default until SFrame solidifies and mark WebRTCEncodedTransformEnabled as on by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-09-16  Cameron McCormack  <heycam@apple.com>
 
         Disable display-p3 canvas and ImageData on platforms other than Monterey+ and iOS 15+

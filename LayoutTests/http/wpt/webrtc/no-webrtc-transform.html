@@ -9,7 +9,7 @@
         <script>
 promise_test(async (test) => {
     if (window.internals)
-        internals.settings.setWebRTCInsertableStreamsEnabled(true);
+        internals.settings.setWebRTCEncodedTransformEnabled(true);
 
     const worker = new Worker('no-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
@@ -18,7 +18,7 @@ promise_test(async (test) => {
 
 promise_test(async (test) => {
     if (window.internals)
-        internals.settings.setWebRTCInsertableStreamsEnabled(false);
+        internals.settings.setWebRTCEncodedTransformEnabled(false);
 
     const worker = new Worker('no-transform.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));

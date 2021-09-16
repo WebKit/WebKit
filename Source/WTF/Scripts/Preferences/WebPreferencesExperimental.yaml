@@ -1403,6 +1403,19 @@ WebMParserEnabled:
     WebKit:
       default: WebKit::defaultWebMParserEnabled()
 
+WebRTCEncodedTransformEnabled:
+  type: bool
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC Encoded Transform API"
+  humanReadableDescription: "Enable WebRTC Encoded Transform API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH264LowLatencyEncoderEnabled:
   type: bool
@@ -1427,19 +1440,6 @@ WebRTCH265CodecEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
-
-WebRTCInsertableStreamsEnabled:
-  type: bool
-  condition: ENABLE(WEB_RTC)
-  humanReadableName: "WebRTC Insertable Streams API"
-  humanReadableDescription: "Enable WebRTC Insertable Streams API"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
       default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
@@ -1475,6 +1475,19 @@ WebRTCPlatformUDPSocketsEnabled:
   defaultValue:
     WebKit:
       default: true
+
+WebRTCSFrameTransformEnabled:
+  type: bool
+  condition: ENABLE(WEB_RTC)
+  humanReadableName: "WebRTC SFrame Transform API"
+  humanReadableDescription: "Enable WebRTC SFrame Transform API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 WebRTCSocketsProxyingEnabled:
   type: bool
