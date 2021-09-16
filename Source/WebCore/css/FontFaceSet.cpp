@@ -183,7 +183,10 @@ ExceptionOr<bool> FontFaceSet::check(const String& family, const String& text)
     
 auto FontFaceSet::status() const -> LoadStatus
 {
-    switch (m_backing->status()) {
+    Ref protect = m_backing;
+    protect->updateStyleIfNeeded();
+
+    switch (protect->status()) {
     case CSSFontFaceSet::Status::Loading:
         return LoadStatus::Loading;
     case CSSFontFaceSet::Status::Loaded:

@@ -1,3 +1,48 @@
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282015. rdar://problem/83183864
+
+    FontFaceSet.status needs to react to style changes
+    https://bugs.webkit.org/show_bug.cgi?id=229839
+    
+    Reviewed by Sam Weinig.
+    
+    Source/WebCore:
+    
+    When content says "document.fonts.status", the ".status" part needs to
+    update style instead of the "document.fonts" part. This is because it's
+    totally legal for content to say:
+    
+    var f = document.fonts;
+    // Modify style here
+    ... f.status ... <=== This needs to reflect the style changes.
+    
+    Test: fast/text/FontFaceSet-status-after-style-update.html
+    
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::status const):
+    
+    LayoutTests:
+    
+    This is not a WPT test because it requires internals.invalidateFontCache().
+    
+    * fast/text/FontFaceSet-status-after-style-update-expected.txt: Added.
+    * fast/text/FontFaceSet-status-after-style-update.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282015 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            FontFaceSet.status needs to react to style changes
+            https://bugs.webkit.org/show_bug.cgi?id=229839
+
+            Reviewed by Sam Weinig.
+
+            This is not a WPT test because it requires internals.invalidateFontCache().
+
+            * fast/text/FontFaceSet-status-after-style-update-expected.txt: Added.
+            * fast/text/FontFaceSet-status-after-style-update.html: Added.
+
 2021-09-09  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281792. rdar://problem/82949614
