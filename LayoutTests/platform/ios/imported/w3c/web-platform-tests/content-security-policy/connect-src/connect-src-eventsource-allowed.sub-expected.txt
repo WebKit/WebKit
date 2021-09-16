@@ -1,0 +1,3 @@
+
+FAIL Expecting logs: ["allowed"] assert_unreached: unexpected log: blocked Reached unreachable code
+

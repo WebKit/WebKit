@@ -1,3 +1,21 @@
+2021-09-16  Alex Christensen  <achristensen@webkit.org>
+
+        Regression (r282484): [ Catalina ] 2 imported/w3c/web-platform-tests/content-security-policy/ tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=230353
+
+        Reviewed by Chris Dumez.
+
+        A change unrelated to CSP made some tests fail on some bots.  This makes them pass on those bots.
+
+        connect-src-eventsource-allowed.sub.html switched from failing everywhere except Catalina to failing only on Catalina because I updated the test expectations.
+        It also needs iOS test expectations.
+
+        form-action-src-blocked.sub.html needs iOS test expectations.
+
+        * platform/ios/imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-allowed.sub-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub-expected.txt: Added.
+        * platform/mac/TestExpectations:
+
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
         [ MacOS & iOS ] imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html is flaky failing
