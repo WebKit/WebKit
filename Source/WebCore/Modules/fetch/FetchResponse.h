@@ -47,7 +47,7 @@ class FetchRequest;
 struct ReadableStreamChunk;
 class ReadableStreamSource;
 
-class FetchResponse final : public FetchBodyOwner, public CanMakeWeakPtr<FetchResponse> {
+class FetchResponse final : public FetchBodyOwner {
 public:
     using Type = ResourceResponse::Type;
 
