@@ -1,3 +1,22 @@
+2021-09-16  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: `FrameDOMTreeContentView` may update after it has `closed` called, causing hangs on some webpages on reload
+        https://bugs.webkit.org/show_bug.cgi?id=230186
+
+        Reviewed by Devin Rousso.
+
+        `FrameDOMTreeContentView` may be `closed` between a call to `_requestRootDOMNode` and the response being
+        provided to `_rootDOMNodeAvailable`. This can result in an attempt to select a DOM node in an old and detached
+        DOM tree. To combat this, add a flag to `ContentView` to mark a closed `ContentView` as such, and then return
+        early from `_rootDOMNodeAvailable` if the `ContentView` is already closed.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView):
+        (WI.ContentView.prototype.closed):
+        (WI.ContentView.prototype.get isClosed):
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        (WI.FrameDOMTreeContentView.prototype._rootDOMNodeAvailable):
+
 2021-09-15  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: `TreeOutline` should return early when failing to find an ancestor while populating the tree

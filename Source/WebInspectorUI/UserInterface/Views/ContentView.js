@@ -37,6 +37,7 @@ WI.ContentView = class ContentView extends WI.View
         this.element.classList.add("content-view");
 
         this._parentContainer = null;
+        this._isClosed = false;
     }
 
     // Static
@@ -338,6 +339,8 @@ WI.ContentView = class ContentView extends WI.View
 
     // Public
 
+    get isClosed() { return this._isClosed; }
+
     get representedObject()
     {
         return this._representedObject;
@@ -393,6 +396,7 @@ WI.ContentView = class ContentView extends WI.View
     closed()
     {
         // Implemented by subclasses.
+        this._isClosed = true;
     }
 
     saveToCookie(cookie)
