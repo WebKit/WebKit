@@ -1,5 +1,35 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282163. rdar://problem/83184019
+
+    fast/text/FontFaceSet-status-after-style-update.html is flaky.
+    https://bugs.webkit.org/show_bug.cgi?id=229975
+    
+    Unreviewed.
+    
+    internals.clearMemoryCache() only works for fonts if you put it before the @font-face block.
+    
+    * TestExpectations:
+    * fast/text/FontFaceSet-check-after-style-update.html:
+    * fast/text/FontFaceSet-status-after-style-update.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282163 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            fast/text/FontFaceSet-status-after-style-update.html is flaky.
+            https://bugs.webkit.org/show_bug.cgi?id=229975
+
+            Unreviewed.
+
+            internals.clearMemoryCache() only works for fonts if you put it before the @font-face block.
+
+            * TestExpectations:
+            * fast/text/FontFaceSet-check-after-style-update.html:
+            * fast/text/FontFaceSet-status-after-style-update.html:
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282071. rdar://problem/83184019
 
     [GTK][WPE] Gardening of two flaky tests and timeout.
