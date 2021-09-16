@@ -70,6 +70,7 @@ public:
     RenderObject* firstChild() const { return m_firstChild; }
     RenderObject* lastChild() const { return m_lastChild; }
 
+    // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     bool canContainFixedPositionObjects() const;
     bool canContainAbsolutelyPositionedObjects() const;
 
