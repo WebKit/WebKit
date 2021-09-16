@@ -697,7 +697,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
                 }
             }
         }
-        ASSERT(next || !pastEnd);
+        ASSERT(next || !pastEnd || n->containsIncludingShadowDOM(pastEnd));
 
         if (isBlock(n) && canHaveChildrenForEditing(*n) && next == pastEnd) {
             // Don't write out empty block containers that aren't fully selected.

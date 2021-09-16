@@ -1,3 +1,13 @@
+2021-06-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Nullptr crash in StyledMarkupAccumulator::traverseNodesForSerialization
+        https://bugs.webkit.org/show_bug.cgi?id=226821
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/setSelection-shadow-dom-crash-expected.txt: Added.
+        * editing/selection/setSelection-shadow-dom-crash.html: Added.
+
 2021-05-27  Mikhail R. Gadelha  <mikhail.ramalho@gmail.com>
 
         Increase NumberToStringBuffer to account for negative number
