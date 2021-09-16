@@ -256,7 +256,7 @@ PASS HTMLElement interface: attribute accessKey
 PASS HTMLElement interface: attribute accessKeyLabel
 PASS HTMLElement interface: attribute draggable
 PASS HTMLElement interface: attribute spellcheck
-FAIL HTMLElement interface: attribute autocapitalize assert_true: The prototype object must have a property "autocapitalize" expected true got false
+PASS HTMLElement interface: attribute autocapitalize
 PASS HTMLElement interface: attribute innerText
 PASS HTMLElement interface: attribute outerText
 FAIL HTMLElement interface: operation attachInternals() assert_own_property: interface prototype object missing non-static operation expected property "attachInternals" missing
@@ -351,7 +351,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "accessKeyLabel" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "draggable" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "spellcheck" with the proper type
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type assert_inherits: property "autocapitalize" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "autocapitalize" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "innerText" with the proper type
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "outerText" with the proper type
 FAIL HTMLElement interface: document.createElement("noscript") must inherit property "attachInternals()" with the proper type assert_inherits: property "attachInternals" not found in prototype chain
@@ -1425,13 +1425,9 @@ PASS AudioTrack interface: existence and properties of interface prototype objec
 PASS AudioTrack interface: existence and properties of interface prototype object's "constructor" property
 PASS AudioTrack interface: existence and properties of interface prototype object's @@unscopables property
 PASS AudioTrack interface: attribute id
-FAIL AudioTrack interface: attribute kind assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function kind() {
-    [native code]
-}"
+PASS AudioTrack interface: attribute kind
 PASS AudioTrack interface: attribute label
-FAIL AudioTrack interface: attribute language assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function language() {
-    [native code]
-}"
+PASS AudioTrack interface: attribute language
 PASS AudioTrack interface: attribute enabled
 PASS VideoTrackList interface: existence and properties of interface object
 PASS VideoTrackList interface object length
@@ -1452,13 +1448,9 @@ PASS VideoTrack interface: existence and properties of interface prototype objec
 PASS VideoTrack interface: existence and properties of interface prototype object's "constructor" property
 PASS VideoTrack interface: existence and properties of interface prototype object's @@unscopables property
 PASS VideoTrack interface: attribute id
-FAIL VideoTrack interface: attribute kind assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function kind() {
-    [native code]
-}"
+PASS VideoTrack interface: attribute kind
 PASS VideoTrack interface: attribute label
-FAIL VideoTrack interface: attribute language assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function language() {
-    [native code]
-}"
+PASS VideoTrack interface: attribute language
 PASS VideoTrack interface: attribute selected
 PASS TextTrackList interface: existence and properties of interface object
 PASS TextTrackList interface object length
@@ -1489,9 +1481,7 @@ FAIL TextTrack interface: attribute kind assert_equals: setter must be undefined
     [native code]
 }"
 PASS TextTrack interface: attribute label
-FAIL TextTrack interface: attribute language assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function language() {
-    [native code]
-}"
+PASS TextTrack interface: attribute language
 PASS TextTrack interface: attribute id
 PASS TextTrack interface: attribute inBandMetadataTrackDispatchType
 PASS TextTrack interface: attribute mode
@@ -5007,14 +4997,14 @@ PASS Worker interface: operation postMessage(any, optional PostMessageOptions)
 PASS Worker interface: attribute onmessage
 FAIL Worker interface: attribute onmessageerror assert_true: The prototype object must have a property "onmessageerror" expected true got false
 PASS Worker interface: attribute onerror
-FAIL SharedWorker interface: existence and properties of interface object assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface object length assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface object name assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: attribute port assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
-FAIL SharedWorker interface: attribute onerror assert_own_property: self does not have own property "SharedWorker" expected property "SharedWorker" missing
+PASS SharedWorker interface: existence and properties of interface object
+PASS SharedWorker interface object length
+PASS SharedWorker interface object name
+PASS SharedWorker interface: existence and properties of interface prototype object
+PASS SharedWorker interface: existence and properties of interface prototype object's "constructor" property
+PASS SharedWorker interface: existence and properties of interface prototype object's @@unscopables property
+PASS SharedWorker interface: attribute port
+PASS SharedWorker interface: attribute onerror
 PASS WorkerNavigator interface: existence and properties of interface object
 PASS WorkerLocation interface: existence and properties of interface object
 PASS WorkletGlobalScope interface: existence and properties of interface object
