@@ -339,15 +339,11 @@ bool AlternativeTextController::canEnableAutomaticSpellingCorrection() const
 {
 #if ENABLE(AUTOCORRECT)
     auto position = m_document.selection().selection().start();
-    if (auto editableRoot = position.rootEditableElement()) {
-        if (is<HTMLElement>(editableRoot) && !downcast<HTMLElement>(*editableRoot).shouldAutocorrect())
-            return false;
-    }
-
-    if (auto control = enclosingTextFormControl(position)) {
+    if (RefPtr control = enclosingTextFormControl(position)) {
         if (!control->shouldAutocorrect())
             return false;
-    }
+    } else if (RefPtr editableRoot = position.rootEditableElement(); is<HTMLElement>(editableRoot) && !downcast<HTMLElement>(*editableRoot).shouldAutocorrect())
+        return false;
 #endif
 
     return true;

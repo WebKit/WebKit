@@ -1,3 +1,85 @@
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282370. rdar://problem/83183884
+
+    [macOS] -toggleAutomaticSpellingCorrection: menu item validation shouldn't require post-layout editor state
+    https://bugs.webkit.org/show_bug.cgi?id=230205
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    See WebKit ChangeLog for more details.
+    
+    * editing/AlternativeTextController.cpp:
+    (WebCore::AlternativeTextController::canEnableAutomaticSpellingCorrection const):
+    
+    Slightly improve the performance of this method in the case where we're focusing a text field, by only
+    consulting the host form control element, rather than both the form control and the contenteditable shadow root
+    element.
+    
+    Source/WebKit:
+    
+    In preparation for https://webkit.org/b/230204, refactor code on macOS that determines whether or not the
+    "Correct Spelling Automatically" menu bar item should be enabled, such that it doesn't require post-layout
+    editor state data. This is requisite to avoiding post-layout editor state computation altogether on macOS, when
+    the touch bar is either unavailable, or hasn't ever been shown in the context of text editing. See below for
+    more details.
+    
+    We also take this opportunity to remove support for the unused _WKSelectionAttributeAtStartOfSentence SPI value
+    in _WKSelectionAttributes, which was originally intended for use in Mail compose in WebKit2 but seems to have
+    been obviated by the ability to swipe horizontally on the custom input accessory view in Mail compose to switch
+    between text candidates and the text formatting options.
+    
+    * Shared/EditorState.cpp:
+    (WebKit::EditorState::encode const):
+    (WebKit::EditorState::decode):
+    (WebKit::EditorState::PostLayoutData::encode const):
+    (WebKit::EditorState::PostLayoutData::decode):
+    (WebKit::operator<<):
+    
+    Remove the `atStartOfSentence` bit on EditorState's post-layout data that was only used to implement the
+    _WKSelectionAttributeAtStartOfSentence SPI flag value, and also move the `canEnableAutomaticSpellingCorrection`
+    bit out of post-layout data, and into the EditorState struct. Importantly, computing this bit does not require
+    or trigger layout, and this refactoring will allow us to completely forgo post-layout data on configurations
+    that do not require it (i.e. when the text touch bar is not active).
+    
+    * Shared/EditorState.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (selectionAttributes):
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    
+    Remove an unused value, _WKSelectionAttributeAtStartOfSentence, in the _WKSelectionAttributes SPI flag.
+    
+    * UIProcess/Cocoa/WebViewImpl.mm:
+    (WebKit::WebViewImpl::validateUserInterfaceItem):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::getPlatformEditorState const):
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    (WebKit::WebPage::getPlatformEditorState const):
+    
+    Tools:
+    
+    See WebKit ChangeLog for more details.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282370 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [macOS] -toggleAutomaticSpellingCorrection: menu item validation shouldn't require post-layout editor state
+            https://bugs.webkit.org/show_bug.cgi?id=230205
+
+            Reviewed by Darin Adler.
+
+            See WebKit ChangeLog for more details.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+            (TestWebKitAPI::TEST):
+
 2021-09-09  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282218. rdar://problem/82931375
