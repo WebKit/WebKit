@@ -89,6 +89,8 @@ public:
 
     void loadPendingFonts();
 
+    void updateStyleIfNeeded();
+
     // CSSFontFace::Client needs to be able to be held in a RefPtr.
     void ref() final { FontSelector::ref(); }
     void deref() final { FontSelector::deref(); }
@@ -104,7 +106,7 @@ private:
 
     // CSSFontFace::Client
     void fontLoaded(CSSFontFace&) final;
-    void fontStyleUpdateNeeded(CSSFontFace&) final;
+    void updateStyleIfNeeded(CSSFontFace&) final;
 
     void fontModified();
 

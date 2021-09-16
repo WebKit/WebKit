@@ -46,7 +46,7 @@ public:
     virtual ~FontFaceSet();
 
     bool has(FontFace&) const;
-    size_t size() const;
+    size_t size();
     FontFaceSet& add(FontFace&);
     bool remove(FontFace&);
     void clear();

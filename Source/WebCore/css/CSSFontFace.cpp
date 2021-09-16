@@ -699,7 +699,7 @@ bool CSSFontFace::purgeable() const
 void CSSFontFace::updateStyleIfNeeded()
 {
     iterateClients(m_clients, [&](Client& client) {
-        client.fontStyleUpdateNeeded(*this);
+        client.updateStyleIfNeeded(*this);
     });
 }
 

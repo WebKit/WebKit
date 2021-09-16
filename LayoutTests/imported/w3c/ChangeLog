@@ -1,5 +1,54 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281845. rdar://problem/83183887
+
+    document.fonts.size needs to update style so it doesn't return stale values
+    https://bugs.webkit.org/show_bug.cgi?id=229644
+    
+    Reviewed by Darin Adler.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-font-loading/fontfaceset-update-after-stylesheet-change-expected.txt:
+    
+    Source/WebCore:
+    
+    Currently, we only update style inside the document::fonts() call.
+    This isn't correct because content can save the results of document.fonts,
+    do some work, then ask for its size.
+    
+    Test: web-platform-tests/css/css-font-loading/fontfaceset-update-after-stylesheet-change.html
+    
+    * css/CSSFontFace.cpp:
+    (WebCore::CSSFontFace::updateStyleIfNeeded):
+    * css/CSSFontFace.h:
+    * css/CSSFontFaceSet.cpp:
+    (WebCore::CSSFontFaceSet::updateStyleIfNeeded):
+    * css/CSSFontFaceSet.h:
+    * css/CSSFontSelector.cpp:
+    (WebCore::CSSFontSelector::updateStyleIfNeeded):
+    (WebCore::CSSFontSelector::fontStyleUpdateNeeded): Deleted.
+    * css/CSSFontSelector.h:
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::size):
+    (WebCore::FontFaceSet::size const): Deleted.
+    * css/FontFaceSet.h:
+    * dom/Document.cpp:
+    (WebCore::Document::fonts):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281845 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            document.fonts.size needs to update style so it doesn't return stale values
+            https://bugs.webkit.org/show_bug.cgi?id=229644
+
+            Reviewed by Darin Adler.
+
+            * web-platform-tests/css/css-font-loading/fontfaceset-update-after-stylesheet-change-expected.txt:
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281842. rdar://problem/83183953
 
     CSSFontFaceSet.clear() should not clear CSS-connected members

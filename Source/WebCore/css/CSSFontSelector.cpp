@@ -269,10 +269,15 @@ void CSSFontSelector::fontModified()
         dispatchInvalidationCallbacks();
 }
 
-void CSSFontSelector::fontStyleUpdateNeeded(CSSFontFace&)
+void CSSFontSelector::updateStyleIfNeeded()
 {
     if (is<Document>(m_context.get()))
         downcast<Document>(*m_context).updateStyleIfNeeded();
+}
+
+void CSSFontSelector::updateStyleIfNeeded(CSSFontFace&)
+{
+    updateStyleIfNeeded();
 }
 
 void CSSFontSelector::fontCacheInvalidated()
