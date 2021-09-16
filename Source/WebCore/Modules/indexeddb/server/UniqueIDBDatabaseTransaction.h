@@ -58,7 +58,7 @@ public:
 
     ~UniqueIDBDatabaseTransaction();
 
-    UniqueIDBDatabaseConnection& databaseConnection() { return *m_databaseConnection; }
+    UniqueIDBDatabaseConnection& databaseConnection();
     const IDBTransactionInfo& info() const { return m_transactionInfo; }
     bool isVersionChange() const;
     bool isReadOnly() const;
@@ -94,7 +94,7 @@ public:
 private:
     UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
 
-    UniqueIDBDatabaseConnection* m_databaseConnection;
+    WeakPtr<UniqueIDBDatabaseConnection> m_databaseConnection;
     IDBTransactionInfo m_transactionInfo;
 
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;

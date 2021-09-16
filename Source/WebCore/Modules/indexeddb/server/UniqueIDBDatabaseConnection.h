@@ -46,7 +46,7 @@ class ServerOpenDBRequest;
 class UniqueIDBDatabase;
 class UniqueIDBDatabaseTransaction;
 
-class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnection>, public Identified<UniqueIDBDatabaseConnection> {
+class UniqueIDBDatabaseConnection : public RefCounted<UniqueIDBDatabaseConnection>, public Identified<UniqueIDBDatabaseConnection>, public CanMakeWeakPtr<UniqueIDBDatabaseConnection> {
 public:
     static Ref<UniqueIDBDatabaseConnection> create(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
