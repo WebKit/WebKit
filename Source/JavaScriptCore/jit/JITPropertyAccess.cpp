@@ -2891,7 +2891,7 @@ void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
     sub32(Address(regT2, JSPropertyNameEnumerator::cachedInlineCapacityOffset()), regT3);
     neg32(regT3);
     signExtend32ToPtr(regT3, regT3);
-    int32_t offsetOfFirstProperty = static_cast<int32_t>(offsetInButterfly(firstOutOfLineOffset)) * sizeof(EncodedJSValue);
+    constexpr intptr_t offsetOfFirstProperty = offsetInButterfly(firstOutOfLineOffset) * static_cast<intptr_t>(sizeof(EncodedJSValue));
     load64(BaseIndex(regT0, regT3, TimesEight, offsetOfFirstProperty), resultGPR);
     doneCases.append(jump());
 
