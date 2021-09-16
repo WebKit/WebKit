@@ -205,7 +205,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         return { };
     }
 
-    if (!element.rendererIsEverNeeded())
+    if (!element.rendererIsEverNeeded() && !element.hasDisplayContents())
         return { };
 
     Styleable styleable { element, PseudoId::None };
