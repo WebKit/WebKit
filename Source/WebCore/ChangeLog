@@ -1,5 +1,49 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281842. rdar://problem/83183953
+
+    CSSFontFaceSet.clear() should not clear CSS-connected members
+    https://bugs.webkit.org/show_bug.cgi?id=229643
+    
+    Reviewed by Darin Adler.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-font-loading/fontfaceset-clear-css-connected-expected.txt:
+    
+    Source/WebCore:
+    
+    The spec https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-clear says:
+    
+    > Remove all non-CSS-connected items
+    
+    * css/CSSFontFaceSet.h:
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::clear):
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281842 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            CSSFontFaceSet.clear() should not clear CSS-connected members
+            https://bugs.webkit.org/show_bug.cgi?id=229643
+
+            Reviewed by Darin Adler.
+
+            The spec https://drafts.csswg.org/css-font-loading-3/#dom-fontfaceset-clear says:
+
+            > Remove all non-CSS-connected items
+
+            * css/CSSFontFaceSet.h:
+            * css/FontFaceSet.cpp:
+            (WebCore::FontFaceSet::clear):
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282390. rdar://problem/83183334
 
     Don't schedule text rendering updates for a non-rendered Document
