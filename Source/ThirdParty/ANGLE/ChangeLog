@@ -1,3 +1,25 @@
+2021-05-31  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cherry-pick ANGLE: Add array bounds checks for WebGL shaders
+        https://bugs.webkit.org/show_bug.cgi?id=226397
+
+        Reviewed by Dean Jackson.
+
+        Cherry-pick ANGLE commit b0d39ba2aba218402ff2f32f6e16f18cf4975ff4
+        At the moment does not affect any WebKit client.
+        Makes the code consistent with OpenGL.
+        Makes it easier to understand same change in Metal backend.
+
+        Upstream description:
+        Add array bounds checks for WebGL shaders
+        WebGL shaders may contain OOB array accesses which in turn
+        cause undefined behavior, which may result in security
+        issues. This was detected as an UNKNOWN READ by UBSAN while
+        testing with SwANGLE.
+
+        * src/libANGLE/renderer/vulkan/ShaderVk.cpp:
+        (rx::ShaderVk::compile):
+
 2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Cherry-pick ANGLE: D3D11: Skip blits if there is no intersection of dest areas
