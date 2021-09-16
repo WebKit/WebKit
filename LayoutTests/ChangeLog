@@ -1,3 +1,12 @@
+2021-09-16  Eric Hutchison  <ehutchison@apple.com>
+
+        [BigSur+ wk2 Debug] webrtc/video-mute-vp8.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230359.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Mac Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html is a flaky failure
