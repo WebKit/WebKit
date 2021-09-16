@@ -1,5 +1,53 @@
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282016. rdar://problem/83183608
+
+    FontFaceSet.check() needs to react to style changes
+    https://bugs.webkit.org/show_bug.cgi?id=229844
+    
+    Reviewed by Sam Weinig.
+    
+    Source/WebCore:
+    
+    When content says "document.fonts.check(...)", the ".check(...)" part needs to
+    update style instead of the "document.fonts" part. This is because it's
+    totally legal for content to say:
+    
+    var f = document.fonts;
+    // Modify style here
+    ... f.check(...) ... <=== This needs to reflect the style changes.
+    
+    Test: fast/text/FontFaceSet-check-after-style-update.html
+    
+    * WebCore.xcodeproj/xcshareddata/xcschemes/WebCore.xcscheme:
+    * css/CSSFontFaceSet.cpp:
+    (WebCore::CSSFontFaceSet::check):
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::check):
+    
+    LayoutTests:
+    
+    This can't be a WPT test because it requires internals.invalidateFontCache().
+    
+    * fast/text/FontFaceSet-check-after-style-update-expected.txt: Added.
+    * fast/text/FontFaceSet-check-after-style-update.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282016 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            FontFaceSet.check() needs to react to style changes
+            https://bugs.webkit.org/show_bug.cgi?id=229844
+
+            Reviewed by Sam Weinig.
+
+            This can't be a WPT test because it requires internals.invalidateFontCache().
+
+            * fast/text/FontFaceSet-check-after-style-update-expected.txt: Added.
+            * fast/text/FontFaceSet-check-after-style-update.html: Added.
+
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282015. rdar://problem/83183864
 
     FontFaceSet.status needs to react to style changes
