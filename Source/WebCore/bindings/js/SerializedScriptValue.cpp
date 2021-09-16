@@ -237,7 +237,7 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 
 enum class PredefinedColorSpaceTag : uint8_t {
     SRGB = 0
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     , DisplayP3 = 1
 #endif
 };
@@ -1564,7 +1564,7 @@ private:
         case PredefinedColorSpace::SRGB:
             writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::SRGB));
             break;
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpace::DisplayP3:
             writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(PredefinedColorSpaceTag::DisplayP3));
             break;
@@ -2561,7 +2561,7 @@ private:
         case PredefinedColorSpaceTag::SRGB:
             result = PredefinedColorSpace::SRGB;
             return true;
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         case PredefinedColorSpaceTag::DisplayP3:
             result = PredefinedColorSpace::DisplayP3;
             return true;

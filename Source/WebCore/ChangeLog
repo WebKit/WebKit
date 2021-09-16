@@ -1,3 +1,20 @@
+2021-09-16  Cameron McCormack  <heycam@apple.com>
+
+        Disable display-p3 canvas and ImageData on platforms other than Monterey+ and iOS 15+
+        https://bugs.webkit.org/show_bug.cgi?id=230139
+        <rdar://81828819>
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::read):
+        * html/canvas/PredefinedColorSpace.cpp:
+        (WebCore::toDestinationColorSpace):
+        (WebCore::toPredefinedColorSpace):
+        * html/canvas/PredefinedColorSpace.h:
+        * html/canvas/PredefinedColorSpace.idl:
+
 2021-09-16  Youenn Fablet  <youenn@apple.com>
 
         Use libwebrtc OnStandardizedIceConnectionChange callback instead of OnIceConnectionChange

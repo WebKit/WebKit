@@ -35,7 +35,7 @@ DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace colorSpace)
     switch (colorSpace) {
     case PredefinedColorSpace::SRGB:
         return DestinationColorSpace::SRGB();
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     case PredefinedColorSpace::DisplayP3:
         return DestinationColorSpace::DisplayP3();
 #endif
@@ -49,7 +49,7 @@ std::optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColo
 {
     if (colorSpace == DestinationColorSpace::SRGB())
         return PredefinedColorSpace::SRGB;
-#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     if (colorSpace == DestinationColorSpace::DisplayP3())
         return PredefinedColorSpace::DisplayP3;
 #endif
