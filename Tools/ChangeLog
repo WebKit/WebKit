@@ -1,3 +1,17 @@
+2021-09-16  Youenn Fablet  <youenn@apple.com>
+
+        Add an option to disable linter in WPT test exporter
+        https://bugs.webkit.org/show_bug.cgi?id=230345
+
+        Reviewed by Jonathan Bedard.
+
+        Some existings WPT tests are failing the linter.
+        While we should probably try to restrict linter to test files actually modified, let's add an option to disable linter for now.
+
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter.do_export):
+        (parse_args):
+
 2021-09-16  Hoa Dinh  <dvh@apple.com>
 
         Allow use of --git-index and --git-commit at the same time when using with --only-files
