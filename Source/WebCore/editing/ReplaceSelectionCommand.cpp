@@ -828,11 +828,11 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    Node* lastLeafInserted = insertedNodes.lastLeafInserted();
+    auto lastLeafInserted = makeRefPtr(insertedNodes.lastLeafInserted());
     if (is<Text>(lastLeafInserted) && !hasRenderedText(downcast<Text>(*lastLeafInserted))
-        && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted), selectTag)
-        && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted), scriptTag)) {
-        insertedNodes.willRemoveNode(lastLeafInserted);
+        && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted.get()), selectTag)
+        && !enclosingElementWithTag(firstPositionInOrBeforeNode(lastLeafInserted.get()), scriptTag)) {
+        insertedNodes.willRemoveNode(lastLeafInserted.get());
         removeNode(*lastLeafInserted);
     }
 
@@ -840,9 +840,9 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
 
     // We don't have to make sure that firstNodeInserted isn't inside a select or script element
     // because it is a top level node in the fragment and the user can't insert into those elements.
-    Node* firstNodeInserted = insertedNodes.firstNodeInserted();
+    auto firstNodeInserted = makeRefPtr(insertedNodes.firstNodeInserted());
     if (is<Text>(firstNodeInserted) && !hasRenderedText(downcast<Text>(*firstNodeInserted))) {
-        insertedNodes.willRemoveNode(firstNodeInserted);
+        insertedNodes.willRemoveNode(firstNodeInserted.get());
         removeNode(*firstNodeInserted);
     }
 }
