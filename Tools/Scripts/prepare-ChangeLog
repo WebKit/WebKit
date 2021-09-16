@@ -189,7 +189,7 @@ sub main()
         system "$FindBin::Bin/check-webkit-style";
     }
 
-    die "--git-commit and --git-index are incompatible." if ($gitIndex && $gitCommit);
+    die "--git-commit and --git-index are incompatible when not used with --only-files." if ($gitIndex && $gitCommit && !$onlyFiles);
 
     isSVN() || isGit() || die "Couldn't determine your version control system.";
 
@@ -2068,6 +2068,7 @@ sub diffFromToString($$$)
 
     return "" if isSVN();
     return $gitCommit if $gitCommit =~ m/.+\.\..+/;
+    return "--cached \"$gitCommit^\"" if $gitCommit && $gitIndex;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
     return "--cached" if $gitIndex;
     return $mergeBase if $mergeBase;

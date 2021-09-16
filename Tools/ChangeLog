@@ -1,3 +1,17 @@
+2021-09-16  Hoa Dinh  <dvh@apple.com>
+
+        Allow use of --git-index and --git-commit at the same time when using with --only-files
+        https://bugs.webkit.org/show_bug.cgi?id=230328
+
+        Reviewed by Jonathan Bedard.
+
+        When specifying --git-index and --git-commit, it will compute the diff between the parent commit of the specified commit
+        and HEAD, including the current staged changes.
+
+        * Scripts/prepare-ChangeLog:
+        (main):
+        (diffFromToString):
+
 2021-09-16  Tyler Wilcock <twilco.o@protonmail.com> and Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-weight should always serialize as a number
