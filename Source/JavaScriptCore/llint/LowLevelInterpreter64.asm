@@ -3096,7 +3096,7 @@ end)
 llintOp(op_enumerator_next, OpEnumeratorNext, macro (size, get, dispatch)
     # Note: this will always call the slow path on at least the first/last execution of EnumeratorNext for any given loop.
     # The upside this is that we don't have to record any metadata or mode information here as the slow path will do it for us when transitioning from InitMode/IndexedMode to OwnStructureMode, or from OwnStructureMode to GenericMode.
-    get(m_mode, t0)
+    loadVariable(get, m_mode, t0)
     bbneq t0, constexpr JSPropertyNameEnumerator::OwnStructureMode, .nextSlowPath
 
     get(m_base, t1)
@@ -3108,7 +3108,7 @@ llintOp(op_enumerator_next, OpEnumeratorNext, macro (size, get, dispatch)
 
     loadVariable(get, m_index, t2)
     addq 1, t2
-    loadi JSPropertyNameEnumerator::m_endStructurePropertyIndex, t3
+    loadi JSPropertyNameEnumerator::m_endStructurePropertyIndex[t1], t3
     biaeq t2, t3, .nextSlowPath
 
     storeVariable(get, m_index, t2, t3)
