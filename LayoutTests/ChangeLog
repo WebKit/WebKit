@@ -1,3 +1,84 @@
+2021-09-16  Tyler Wilcock <twilco.o@protonmail.com> and Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-weight should always serialize as a number
+        https://bugs.webkit.org/show_bug.cgi?id=214230
+        <rdar://problem/65623540>
+
+        Reviewed by Antti Koivisto.
+
+        * css3/font-weight-expected.txt:
+        * css3/font-weight-multiple-selectors-expected.txt:
+        * css3/font-weight-multiple-selectors.html:
+        * css3/font-weight.html:
+        * editing/pasteboard/paste-and-sanitize-expected.txt:
+        * editing/pasteboard/paste-and-sanitize.html:
+        * editing/pasteboard/paste-text-with-style-4-expected.txt:
+        * fast/css/child-selector-implicit-tbody.html:
+        * fast/css/css-properties-case-insensitive.html:
+        * fast/css/font-shorthand-from-longhands-expected.txt:
+        * fast/css/font-shorthand-from-longhands.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/events/before-input-events-prevent-drag-and-drop-expected.txt:
+        * fast/html/article-element-expected.txt:
+        * fast/html/article-element.html:
+        * fast/html/aside-element-expected.txt:
+        * fast/html/aside-element.html:
+        * fast/html/figcaption-element-expected.txt:
+        * fast/html/figcaption-element.html:
+        * fast/html/figure-element-expected.txt:
+        * fast/html/figure-element.html:
+        * fast/html/footer-element-expected.txt:
+        * fast/html/footer-element.html:
+        * fast/html/header-element-expected.txt:
+        * fast/html/header-element.html:
+        * fast/html/hgroup-element-expected.txt:
+        * fast/html/hgroup-element.html:
+        * fast/html/main-element-expected.txt:
+        * fast/html/main-element.html:
+        * fast/html/mark-element-expected.txt:
+        * fast/html/mark-element.html:
+        * fast/html/section-element-expected.txt:
+        * fast/html/section-element.html:
+        * fast/text/accessibility-bold-system-font-expected.txt:
+        * fast/text/accessibility-bold-system-font.html:
+        * fast/text/font-weight-1-1000-expected.txt:
+        * fast/text/font-weight-parse-expected.txt:
+        * fast/text/font-weight-parse.html:
+        * fast/text/variations/out-of-bounds-selection-properties-expected.txt:
+        * fast/text/variations/out-of-bounds-selection-properties.html:
+        * mathml/presentation/mstyle-css-attributes-expected.html:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/gtk/editing/deleting/delete-first-list-item-expected.png:
+        * platform/gtk/editing/deleting/delete-first-list-item-expected.txt:
+        * platform/gtk/editing/inserting/insert-div-022-expected.txt:
+        * platform/gtk/editing/pasteboard/3976872-expected.png:
+        * platform/gtk/editing/pasteboard/3976872-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-match-style-001-expected.png:
+        * platform/gtk/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/gtk/fast/text/font-weight-parse-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/default-properties-on-the-math-root-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/ios/fast/text/font-weight-parse-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/mathml/relations/css-styling/default-properties-on-the-math-root-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/mathml/relations/css-styling/default-properties-on-the-math-root-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/fast/events/ondrop-text-html-expected.txt:
+        * platform/mac/fast/text/font-weight-parse-expected.txt:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/wpe/fast/text/font-weight-parse-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2021-09-16  Youenn Fablet  <youenn@apple.com>
 
         Enable RTCRtpScriptTransform by default

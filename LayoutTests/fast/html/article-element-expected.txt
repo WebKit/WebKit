@@ -10,8 +10,8 @@ PASS p1.parentNode.nodeName is "ARTICLE"
 <article> can be nested inside <article>:
 PASS article3.parentNode.id is "article2"
 Residual style:
-PASS getWeight("article4") is "bold"
-PASS getWeight("span1") is "bold"
+PASS getWeight("article4") is "700"
+PASS getWeight("span1") is "700"
 FormatBlock:
 PASS document.getElementById("span2").parentNode.nodeName is "ARTICLE"
 PASS successfullyParsed is true

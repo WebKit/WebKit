@@ -34,6 +34,6 @@ PASS Property font-variant-position has initial value normal
 PASS Property font-variant-position inherits
 PASS Property font-variation-settings has initial value normal
 PASS Property font-variation-settings inherits
-FAIL Property font-weight has initial value 400 assert_equals: expected "400" but got "normal"
+PASS Property font-weight has initial value 400
 PASS Property font-weight inherits
 

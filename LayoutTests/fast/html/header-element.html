@@ -33,8 +33,8 @@ testParent.innerHTML = '<b><header id="header4">This text should be bold.</heade
 function getWeight(id) {
     return document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue('font-weight');
 }
-shouldBe('getWeight("header4")', '"bold"');
-shouldBe('getWeight("span1")', '"bold"');
+shouldBe('getWeight("header4")', '"700"');
+shouldBe('getWeight("span1")', '"700"');
 document.body.removeChild(testParent);
 
 debug('FormatBlock:');

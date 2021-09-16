@@ -31,8 +31,8 @@ testParent.innerHTML = '<b><hgroup id="hgroup4"><h2>This text should be bold.</h
 function getWeight(id) {
     return document.defaultView.getComputedStyle(document.getElementById(id), null).getPropertyValue('font-weight');
 }
-shouldBe('getWeight("hgroup4")', '"bold"');
-shouldBe('getWeight("span1")', '"bold"');
+shouldBe('getWeight("hgroup4")', '"700"');
+shouldBe('getWeight("span1")', '"700"');
 document.body.removeChild(testParent);
 
 debug('FormatBlock:');

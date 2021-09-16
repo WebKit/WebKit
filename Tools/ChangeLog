@@ -1,3 +1,16 @@
+2021-09-16  Tyler Wilcock <twilco.o@protonmail.com> and Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-weight should always serialize as a number
+        https://bugs.webkit.org/show_bug.cgi?id=214230
+        <rdar://problem/65623540>
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+
 2021-09-15  Philip Chimento  <pchimento@igalia.com>
 
         Fixes for build-webkit --minimal

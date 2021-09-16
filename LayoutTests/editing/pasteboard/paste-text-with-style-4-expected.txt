@@ -10,6 +10,6 @@ After paste:
 | <b>
 |   style="border: solid 5px blue;padding: 5px;"
 |   <i>
-|     style="font-weight: normal;"
+|     style="font-weight: 400;"
 |     "hello<#selection-caret>"
 |   <br>

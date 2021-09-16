@@ -17,8 +17,8 @@ PASS p1.parentNode.nodeName is "FIGURE"
 PASS figure3.parentNode.id is "figure2"
 PASS figure5.parentNode.id is "footer1"
 Residual style:
-PASS getStyleValue("figure4","font-weight") is "bold"
-PASS getStyleValue("span1","font-weight") is "bold"
+PASS getStyleValue("figure4","font-weight") is "700"
+PASS getStyleValue("span1","font-weight") is "700"
 PASS successfullyParsed is true
 
 TEST COMPLETE

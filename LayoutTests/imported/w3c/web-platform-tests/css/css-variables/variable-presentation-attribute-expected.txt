@@ -23,7 +23,7 @@ PASS Testing 'font-size'.
 FAIL Testing 'font-size-adjust'. assert_equals: Default value. expected "none" but got ""
 PASS Testing 'font-stretch'.
 PASS Testing 'font-style'.
-FAIL Testing 'font-weight'. assert_equals: Default value. expected "400" but got "normal"
+PASS Testing 'font-weight'.
 FAIL Testing 'glyph-orientation-horizontal'. assert_equals: Value Test. expected "13deg" but got "0deg"
 FAIL Testing 'glyph-orientation-vertical'. assert_equals: Value Test. expected "19deg" but got "0deg"
 FAIL Testing 'kerning'. assert_equals: Default value. expected "auto" but got "0"

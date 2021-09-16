@@ -84,7 +84,7 @@ font-variant-east-asian: normal
 font-variant-ligatures: normal
 font-variant-numeric: normal
 font-variant-position: normal
-font-weight: normal
+font-weight: 400
 glyph-orientation-horizontal: 0deg
 glyph-orientation-vertical: auto
 grid-auto-columns: auto

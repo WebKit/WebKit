@@ -1,3 +1,30 @@
+2021-09-16  Tyler Wilcock <twilco.o@protonmail.com> and Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-weight should always serialize as a number
+        https://bugs.webkit.org/show_bug.cgi?id=214230
+        <rdar://problem/65623540>
+
+        Reviewed by Antti Koivisto.
+
+        Per spec (https://www.w3.org/TR/2018/REC-css-fonts-3-20180920/#propdef-font-weight),
+        the computed value of `font-weight` has been changed to always be a
+        number, rather than also sometimes being a keyword in the case of
+        weights 400 ('normal') and 700 ('bold').
+
+        Changes covered by existing tests which have been updated to
+        reflect this new behavior.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontNonKeywordWeightFromStyle):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        (WebCore::fontWeightFromStyle): Deleted.
+        * editing/EditingStyle.cpp:
+        (WebCore::identifierForStyleProperty):
+        (WebCore::fontWeightIsBold):
+        (WebCore::HTMLFontWeightEquivalent::HTMLFontWeightEquivalent):
+        (WebCore::HTMLFontWeightEquivalent::valueIsPresentInStyle const):
+        * editing/EditingStyle.h:
+
 2021-09-16  Antti Koivisto  <antti@apple.com>
 
         Use std::optional for truncation

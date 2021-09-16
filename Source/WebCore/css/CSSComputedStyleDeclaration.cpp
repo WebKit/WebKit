@@ -1846,16 +1846,16 @@ Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontNonKeywordWeightFromStyleValu
     return CSSValuePool::singleton().createValue(static_cast<float>(weight), CSSUnitType::CSS_NUMBER);
 }
 
+static Ref<CSSPrimitiveValue> fontNonKeywordWeightFromStyle(const RenderStyle& style)
+{
+    return ComputedStyleExtractor::fontNonKeywordWeightFromStyleValue(style.fontDescription().weight());
+}
+
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontWeightFromStyleValue(FontSelectionValue weight)
 {
     if (auto value = fontWeightKeyword(weight))
         return CSSValuePool::singleton().createIdentifierValue(value.value());
     return fontNonKeywordWeightFromStyleValue(weight);
-}
-
-static Ref<CSSPrimitiveValue> fontWeightFromStyle(const RenderStyle& style)
-{
-    return ComputedStyleExtractor::fontWeightFromStyleValue(style.fontDescription().weight());
 }
 
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontNonKeywordStretchFromStyleValue(FontSelectionValue stretch)
@@ -2943,7 +2943,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyFontVariant:
             return fontVariantFromStyle(style);
         case CSSPropertyFontWeight:
-            return fontWeightFromStyle(style);
+            return fontNonKeywordWeightFromStyle(style);
         case CSSPropertyFontSynthesis:
             return fontSynthesisFromStyle(style);
         case CSSPropertyFontFeatureSettings: {

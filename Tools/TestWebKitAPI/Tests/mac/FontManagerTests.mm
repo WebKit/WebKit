@@ -124,13 +124,13 @@ TEST(FontManagerTests, ToggleBoldAndItalicWithMenuItems)
     [webView selectWord:nil];
     [webView waitForNextPresentationUpdate];
     [fontManager addFontTrait:menuItemCellForFontAction(NSBoldFontMask).get()];
-    EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
-    EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
+    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
     EXPECT_WK_STREQ("Times-Bold", [fontManager selectedFont].fontName);
 
     [fontManager addFontTrait:menuItemCellForFontAction(NSUnboldFontMask).get()];
-    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-weight"]);
-    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
+    EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
     EXPECT_WK_STREQ("Times-Roman", [fontManager selectedFont].fontName);
 
     [fontManager addFontTrait:menuItemCellForFontAction(NSItalicFontMask).get()];
@@ -203,7 +203,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("foo", [webView selectedText]);
     EXPECT_WK_STREQ("Helvetica", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("20px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_EQ(largeHelveticaFont, fontManager.selectedFont);
 
     NSFont *smallBoldTimesFont = [fontManager fontWithFamily:@"Times New Roman" traits:NSBoldFontMask weight:NSFontWeightBold size:10];
@@ -213,7 +213,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("bar", [webView selectedText]);
     EXPECT_WK_STREQ("\"Times New Roman\"", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("10px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_EQ(smallBoldTimesFont, fontManager.selectedFont);
 
     NSFont *boldItalicArialFont = [fontManager fontWithFamily:@"Arial" traits:NSBoldFontMask | NSItalicFontMask weight:NSFontWeightBold size:14];
@@ -223,7 +223,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("baz", [webView selectedText]);
     EXPECT_WK_STREQ("Arial", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("14px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("700", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_EQ(boldItalicArialFont, fontManager.selectedFont);
 
     NSFont *largeItalicLightAvenirFont = [fontManager fontWithFamily:@"Avenir" traits:NSItalicFontMask weight:NSFontWeightLight size:24];
@@ -233,7 +233,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     EXPECT_WK_STREQ("foo bar baz", [webView selectedText]);
     EXPECT_WK_STREQ("Avenir-LightOblique", [webView stylePropertyAtSelectionStart:@"font-family"]);
     EXPECT_WK_STREQ("24px", [webView stylePropertyAtSelectionStart:@"font-size"]);
-    EXPECT_WK_STREQ("normal", [webView stylePropertyAtSelectionStart:@"font-weight"]);
+    EXPECT_WK_STREQ("400", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_EQ(largeItalicLightAvenirFont, fontManager.selectedFont);
 }
 

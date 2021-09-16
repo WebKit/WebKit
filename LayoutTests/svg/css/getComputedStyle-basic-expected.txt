@@ -166,7 +166,7 @@ rect: style.getPropertyValue(font-variant-numeric) : normal
 rect: style.getPropertyCSSValue(font-variant-numeric) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(font-variant-position) : normal
 rect: style.getPropertyCSSValue(font-variant-position) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(font-weight) : normal
+rect: style.getPropertyValue(font-weight) : 400
 rect: style.getPropertyCSSValue(font-weight) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 rect: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]
@@ -688,7 +688,7 @@ g: style.getPropertyValue(font-variant-numeric) : normal
 g: style.getPropertyCSSValue(font-variant-numeric) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(font-variant-position) : normal
 g: style.getPropertyCSSValue(font-variant-position) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(font-weight) : normal
+g: style.getPropertyValue(font-weight) : 400
 g: style.getPropertyCSSValue(font-weight) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 g: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]

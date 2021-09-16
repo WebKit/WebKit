@@ -62,7 +62,7 @@ shouldBe("checkFontStyleValue()", "true");
 style.fontWeight = "bold";
 shouldBe("style.font", "'italic small-caps bold 20px sans-serif'");
 shouldBe("computedStyle.font", "'italic small-caps bold normal 20px/normal sans-serif'");
-shouldBe("computedStyle.fontWeight", "'bold'");
+shouldBe("computedStyle.fontWeight", "'700'");
 shouldBe("checkFontStyleValue()", "true");
 
 style.lineHeight = "40px";
@@ -80,7 +80,7 @@ style.fontWeight = "bold";
 // It is normal to return null as the font-size is mandatory to build the shorthand.
 shouldBe("style.font", "''");
 shouldBe("computedStyle.font", "'normal normal bold normal 16px/normal foobar'");
-shouldBe("computedStyle.fontWeight", "'bold'");
+shouldBe("computedStyle.fontWeight", "'700'");
 shouldBe("checkFontStyleValue()", "true");
 
 style.fontSize = "40px";

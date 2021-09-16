@@ -1,3 +1,20 @@
+2021-09-16  Tyler Wilcock <twilco.o@protonmail.com> and Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-weight should always serialize as a number
+        https://bugs.webkit.org/show_bug.cgi?id=214230
+        <rdar://problem/65623540>
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-fonts/inheritance-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-weight-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-shorthand-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-weight-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-weight-lighter-bolder-expected.txt:
+        * web-platform-tests/css/css-variables/variable-presentation-attribute-expected.txt:
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2021-09-16  Youenn Fablet  <youenn@apple.com>
 
         Support RTCPeerConnection lastCreatedOffer/lastCreatedAnswer

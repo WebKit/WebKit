@@ -154,7 +154,10 @@ int identifierForStyleProperty(T& style, CSSPropertyID propertyID)
         return CSSValueItalic;
     if (!is<CSSPrimitiveValue>(value))
         return 0;
-    return downcast<CSSPrimitiveValue>(*value).valueID();
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    if (propertyID == CSSPropertyFontWeight && primitiveValue.isNumber() && primitiveValue.doubleValue(CSSUnitType::CSS_NUMBER) >= boldThreshold())
+        return CSSValueBold;
+    return primitiveValue.valueID();
 }
 
 template<typename T> Ref<MutableStyleProperties> getPropertiesNotIn(StyleProperties& styleWithRedundantProperties, T& baseStyle);
@@ -254,6 +257,40 @@ private:
     }
 
     bool m_isUnderline;
+};
+
+static bool fontWeightIsBold(CSSValue& fontWeight)
+{
+    if (!is<CSSPrimitiveValue>(fontWeight))
+        return false;
+
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
+    switch (primitiveValue.valueID()) {
+    case CSSValueNormal:
+        return false;
+    case CSSValueBold:
+        return true;
+    default:
+        break;
+    }
+
+    ASSERT(primitiveValue.isNumber());
+    return primitiveValue.floatValue() >= static_cast<float>(boldThreshold());
+}
+
+class HTMLFontWeightEquivalent : public HTMLElementEquivalent {
+public:
+    HTMLFontWeightEquivalent(const QualifiedName& tagName)
+        : HTMLElementEquivalent(CSSPropertyFontWeight, CSSValueBold, tagName)
+    {
+    }
+
+private:
+    bool valueIsPresentInStyle(Element& element, const EditingStyle& style) const
+    {
+        RefPtr<CSSValue> value = style.m_mutableStyle->getPropertyCSSValue(m_propertyID);
+        return matches(element) && value && fontWeightIsBold(*value);
+    }
 };
 
 class HTMLAttributeEquivalent : public HTMLElementEquivalent {
@@ -911,8 +948,9 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
 static const Vector<const HTMLElementEquivalent*>& htmlElementEquivalents()
 {
     static const auto equivalents = makeNeverDestroyed(Vector<const HTMLElementEquivalent*> {
-        new HTMLElementEquivalent(CSSPropertyFontWeight, CSSValueBold, HTMLNames::bTag),
-        new HTMLElementEquivalent(CSSPropertyFontWeight, CSSValueBold, HTMLNames::strongTag),
+        new HTMLFontWeightEquivalent(HTMLNames::bTag),
+        new HTMLFontWeightEquivalent(HTMLNames::strongTag),
+
         new HTMLElementEquivalent(CSSPropertyVerticalAlign, CSSValueSub, HTMLNames::subTag),
         new HTMLElementEquivalent(CSSPropertyVerticalAlign, CSSValueSuper, HTMLNames::supTag),
         new HTMLElementEquivalent(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::iTag),
@@ -1838,25 +1876,6 @@ static void diffTextDecorations(MutableStyleProperties& style, CSSPropertyID pro
         newTextDecoration->removeAll(&value.get());
 
     setTextDecorationProperty(style, newTextDecoration.get(), propertID);
-}
-
-static bool fontWeightIsBold(CSSValue& fontWeight)
-{
-    if (!is<CSSPrimitiveValue>(fontWeight))
-        return false;
-
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(fontWeight);
-    switch (primitiveValue.valueID()) {
-        case CSSValueNormal:
-            return false;
-        case CSSValueBold:
-            return true;
-        default:
-            break;
-    }
-
-    ASSERT(primitiveValue.isNumber());
-    return primitiveValue.floatValue() >= static_cast<float>(boldThreshold());
 }
 
 template<typename T>

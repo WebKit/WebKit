@@ -10,8 +10,8 @@ PASS p1.parentNode.nodeName is "ASIDE"
 <aside> can be nested inside <aside>:
 PASS aside3.parentNode.id is "aside2"
 Residual style:
-PASS getWeight("aside4") is "bold"
-PASS getWeight("span1") is "bold"
+PASS getWeight("aside4") is "700"
+PASS getWeight("span1") is "700"
 FormatBlock:
 PASS document.getElementById("span2").parentNode.nodeName is "ASIDE"
 PASS successfullyParsed is true

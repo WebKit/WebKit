@@ -39,8 +39,8 @@ shouldBe('figcaption5.parentNode.id', '"footer1"');
 
 debug('Residual style:');
 testParent.innerHTML = '<b><figcaption id="figcaption4">This text should be bold.</figcaption> <span id="span1">This is also bold.</span></b>';
-shouldBe('getStyleValue("figcaption4","font-weight")', '"bold"');
-shouldBe('getStyleValue("span1","font-weight")', '"bold"');
+shouldBe('getStyleValue("figcaption4","font-weight")', '"700"');
+shouldBe('getStyleValue("span1","font-weight")', '"700"');
 document.body.removeChild(testParent);
 
 </script>
