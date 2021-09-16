@@ -420,8 +420,11 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemB
     ASSERT(!RunLoop::isMain());
     MESSAGE_CHECK(!m_sharedDisplayListHandles.contains(identifier), "Duplicate shared display list handle");
 
-    if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite))
-        m_sharedDisplayListHandles.set(identifier, DisplayListReaderHandle::create(identifier, sharedMemory.releaseNonNull()));
+    if (auto sharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadWrite)) {
+        auto handle = DisplayListReaderHandle::create(identifier, sharedMemory.releaseNonNull());
+        MESSAGE_CHECK(handle, "There must be enough space to create the handle.");
+        m_sharedDisplayListHandles.set(identifier, handle);
+    }
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);

@@ -1,3 +1,25 @@
+2021-04-26  Tim Nguyen  <ntim@apple.com>
+
+        Add more eager OOB checks when creating DisplayListReaderHandle & DisplayListWriterHandle.
+        https://bugs.webkit.org/show_bug.cgi?id=225055
+        <rdar://71896663>
+
+        Reviewed by Wenson Hsieh.
+
+        There were already some OOB checks for both classes, this revision adds checks at creation-time.
+        Also add a comment on top of SharedDisplayListHandle.h to mention that only subclasses use it.
+
+        * GPUProcess/graphics/DisplayListReaderHandle.h:
+        (WebKit::DisplayListReaderHandle::create):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::didCreateSharedDisplayListHandle):
+        * Shared/SharedDisplayListHandle.h:
+        (WebKit::SharedDisplayListHandle::SharedDisplayListHandle):
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.h:
+        (WebKit::DisplayListWriterHandle::create):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+
 2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delay the end of printing while PrintContext is in use.
