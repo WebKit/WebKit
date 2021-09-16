@@ -1,3 +1,49 @@
+2021-09-16  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r282204. rdar://problem/83183703
+
+    FontFaceSet.has() needs to react to style changes
+    https://bugs.webkit.org/show_bug.cgi?id=229848
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    This test was landed upstream in https://github.com/web-platform-tests/wpt/pull/30322
+    
+    * web-platform-tests/css/css-font-loading/fontfaceset-has-expected.txt: Added.
+    * web-platform-tests/css/css-font-loading/fontfaceset-has.html: Added.
+    
+    Source/WebCore:
+    
+    When content says "document.fonts.has(...)", the ".has(...)" part needs to
+    update style instead of the "document.fonts" part. This is because it's
+    totally legal for content to say:
+    
+    var f = document.fonts;
+    // Modify style here
+    ... f.has(...) ... <=== This needs to reflect the style changes.
+    
+    Test: imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-has.html
+    
+    * css/FontFaceSet.cpp:
+    (WebCore::FontFaceSet::has const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282204 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            FontFaceSet.has() needs to react to style changes
+            https://bugs.webkit.org/show_bug.cgi?id=229848
+
+            Reviewed by Antti Koivisto.
+
+            This test was landed upstream in https://github.com/web-platform-tests/wpt/pull/30322
+
+            * web-platform-tests/css/css-font-loading/fontfaceset-has-expected.txt: Added.
+            * web-platform-tests/css/css-font-loading/fontfaceset-has.html: Added.
+
 2021-09-01  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281860. rdar://problem/82651913
