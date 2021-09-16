@@ -921,8 +921,12 @@ bool RenderBlock::simplifiedLayout()
     // relative positioned container. So if we can have fixed pos objects in our positioned objects list check if any of them
     // are statically positioned and thus need to move with their absolute ancestors.
     bool canContainFixedPosObjects = canContainFixedPositionObjects();
-    if (posChildNeedsLayout() || canContainFixedPosObjects)
+    if (posChildNeedsLayout() || canContainFixedPosObjects) {
+        // FIXME: Remove this early return once https://webkit.org/b/228125 is fixed.
+        if (!hasPositionedObjects())
+            return false;
         layoutPositionedObjects(false, !posChildNeedsLayout() && canContainFixedPosObjects);
+    }
 
     // Recompute our overflow information.
     // FIXME: We could do better here by computing a temporary overflow object from layoutPositionedObjects and only
