@@ -77,6 +77,8 @@ public:
 
     bool hasActiveFontFaces() { return status() == Status::Loading; }
 
+    size_t facesPartitionIndex() const { return m_facesPartitionIndex; }
+
     ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(const String& font, const String& text);
 
     // CSSFontFace::Client needs to be able to be held in a RefPtr.
