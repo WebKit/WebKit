@@ -1,3 +1,15 @@
+2021-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy smart pointers in EventHandler and UserInputBridge
+        https://bugs.webkit.org/show_bug.cgi?id=227481
+        <rdar://problem/79906757>
+
+        Reviewed by Wenson Hsieh and Chris Dumez.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::contextMenuAtPointInWindow):
+        (WebKit::handleContextMenuEvent):
+
 2021-06-24  Venky Dass  <yaranamavenkataramana@apple.com>
 
         Crash in WebFrameLoaderClient::dispatchDidStartProvisionalLoad after provisionalLoader is gone. 
