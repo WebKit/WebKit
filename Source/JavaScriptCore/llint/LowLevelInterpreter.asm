@@ -2554,3 +2554,5 @@ _wasm_trampoline_wasm_call_ref_no_tls_wide32:
     crash()
 
 end
+
+include? LowLevelInterpreterAdditions
