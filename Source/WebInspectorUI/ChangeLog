@@ -1,5 +1,41 @@
 2021-09-16  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Don't maintain a back-forward stack for `ContentBrowser`/`ContentViewContainer` when not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=230286
+
+        Reviewed by Devin Rousso.
+
+        We currently maintain a back/forward stack for all ContentViewContainers, even if other history entries won't be
+        used. Instead, subclasses of ContentBrowserTabContentView should be able to disable the history stack, which
+        helps us ensure that outdated content views are not kept around for these subclasses and their views.
+
+        This does not line up one-to-one with views that hide the back/forward buttons, as the back/forward stack is
+        used in some places to provide a memory of selection across different views, like in the Graphics tab.
+
+        * UserInterface/Views/AuditTabContentView.js:
+        (WI.AuditTabContentView):
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WI.ConsoleTabContentView):
+        * UserInterface/Views/ContentBrowser.js:
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        * UserInterface/Views/ContentViewContainer.js:
+        (WI.ContentViewContainer.prototype.showContentView):
+        (WI.ContentViewContainer.prototype.replaceContentView):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        * UserInterface/Views/GraphicsTabContentView.js:
+        (WI.GraphicsTabContentView):
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView):
+        * UserInterface/Views/NetworkDetailView.js:
+        (WI.NetworkDetailView.prototype.initialLayout):
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+
+2021-09-16  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: `FrameDOMTreeContentView` may update after it has `closed` called, causing hangs on some webpages on reload
         https://bugs.webkit.org/show_bug.cgi?id=230186
 

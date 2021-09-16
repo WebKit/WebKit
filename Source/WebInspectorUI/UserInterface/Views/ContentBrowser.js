@@ -25,7 +25,7 @@
 
 WI.ContentBrowser = class ContentBrowser extends WI.View
 {
-    constructor(element, delegate, disableBackForward, disableFindBanner, flexibleNavigationItem, contentViewNavigationItemGroup)
+    constructor(element, delegate, {hideBackForwardButtons, disableBackForwardNavigation, disableFindBanner, flexibleNavigationItem, contentViewNavigationItemGroup} = {})
     {
         super(element);
 
@@ -34,11 +34,11 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
         this._navigationBar = new WI.NavigationBar;
         this.addSubview(this._navigationBar);
 
-        this._contentViewContainer = new WI.ContentViewContainer;
+        this._contentViewContainer = new WI.ContentViewContainer({disableBackForwardNavigation});
         this._contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
         this.addSubview(this._contentViewContainer);
 
-        if (!disableBackForward) {
+        if (!hideBackForwardButtons) {
             let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
 
             let goBack = () => { this.goBack(); };

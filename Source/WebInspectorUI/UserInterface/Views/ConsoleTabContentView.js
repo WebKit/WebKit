@@ -27,7 +27,7 @@ WI.ConsoleTabContentView = class ConsoleTabContentView extends WI.ContentBrowser
 {
     constructor()
     {
-        super(ConsoleTabContentView.tabInfo(), {disableBackForward: true});
+        super(ConsoleTabContentView.tabInfo(), {hideBackForwardButtons: true, disableBackForwardNavigation: true});
 
         this._wasShowingSplitConsole = false;
     }

@@ -29,7 +29,7 @@ WI.AuditTabContentView = class AuditTabContentView extends WI.ContentBrowserTabC
     {
         super(AuditTabContentView.tabInfo(), {
             navigationSidebarPanelConstructor: WI.AuditNavigationSidebarPanel,
-            disableBackForward: true,
+            hideBackForwardButtons: true,
         });
 
         this._startStopShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));

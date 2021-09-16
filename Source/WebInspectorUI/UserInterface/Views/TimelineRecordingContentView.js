@@ -41,9 +41,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._timelineOverview.addEventListener(WI.TimelineOverview.Event.EditingInstrumentsDidChange, this._editingInstrumentsDidChange, this);
         this.addSubview(this._timelineOverview);
 
-        const disableBackForward = true;
-        const disableFindBanner = true;
-        this._timelineContentBrowser = new WI.ContentBrowser(null, this, disableBackForward, disableFindBanner);
+        this._timelineContentBrowser = new WI.ContentBrowser(null, this, {hideBackForwardButtons: true, disableFindBanner: true});
         this._timelineContentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
 
         this._entireRecordingPathComponent = this._createTimelineRangePathComponent(WI.UIString("Entire Recording"));

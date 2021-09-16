@@ -35,7 +35,7 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
                 WI.CanvasDetailsSidebarPanel,
                 WI.AnimationDetailsSidebarPanel,
             ],
-            disableBackForward: true,
+            hideBackForwardButtons: true,
         });
 
         this._canvasesTreeOutline = new WI.TreeOutline;
