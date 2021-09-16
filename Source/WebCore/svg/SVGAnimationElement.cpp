@@ -496,7 +496,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
         --index;
     from = m_values[index];
     to = m_values[index + 1];
-    ASSERT_WITH_SECURITY_IMPLICATION(toPercent > fromPercent);
+    ASSERT(toPercent > fromPercent);
     effectivePercent = (percent - fromPercent) / (toPercent - fromPercent);
 
     if (calcMode == CalcMode::Spline) {
