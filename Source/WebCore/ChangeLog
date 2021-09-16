@@ -1,3 +1,22 @@
+2021-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some WEBCORE_EXPORTS on FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=230330
+
+        Reviewed by Wenson Hsieh.
+
+        scrollToPositionWithAnimation() and effectiveFrameFlattening() do not need to be exported.
+
+        Instead of exporting traverseForPaintInvalidation() which is never referenced outside of
+        WebCore, make the two functions that wrap it non-inline, and export the one used by
+        Internals. traverseForPaintInvalidation() can be private.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToPositionWithAnimation):
+        (WebCore::FrameView::invalidateControlTints):
+        (WebCore::FrameView::invalidateImagesWithAsyncDecodes):
+        * page/FrameView.h:
+
 2021-09-16  Tyler Wilcock <twilco.o@protonmail.com> and Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-weight should always serialize as a number

@@ -663,11 +663,10 @@ public:
 
     void setSpeculativeTilingDelayDisabledForTesting(bool disabled) { m_speculativeTilingDelayDisabledForTesting = disabled; }
 
-    WEBCORE_EXPORT FrameFlattening effectiveFrameFlattening() const;
+    FrameFlattening effectiveFrameFlattening() const;
 
-    WEBCORE_EXPORT void traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons);
-    void invalidateControlTints() { traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingControlTints); }
-    void invalidateImagesWithAsyncDecodes() { traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes); }
+    WEBCORE_EXPORT void invalidateControlTints();
+    void invalidateImagesWithAsyncDecodes();
 
     void invalidateScrollbarsForAllScrollableAreas();
 
@@ -676,7 +675,7 @@ public:
 
     void renderLayerDidScroll(const RenderLayer&);
 
-    WEBCORE_EXPORT void scrollToPositionWithAnimation(const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
+    void scrollToPositionWithAnimation(const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
 
     bool inUpdateEmbeddedObjects() const { return m_inUpdateEmbeddedObjects; }
 
@@ -690,7 +689,8 @@ private:
 
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
-    
+
+    void traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons);
     void repaintSlowRepaintObjects();
 
     bool isVerticalDocument() const final;

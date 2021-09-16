@@ -3764,6 +3764,7 @@ void FrameView::scrollTo(const ScrollPosition& newPosition)
 
 void FrameView::scrollToPositionWithAnimation(const ScrollPosition& position, ScrollType scrollType, ScrollClamping)
 {
+    // FIXME: Why isn't all this in ScrollableArea?
     auto previousScrollType = currentScrollType();
     setCurrentScrollType(scrollType);
 
@@ -4183,6 +4184,16 @@ void FrameView::updateControlTints()
 
     if (page)
         page->setIsCountingRelevantRepaintedObjects(isCurrentlyCountingRelevantRepaintedObject);
+}
+
+void FrameView::invalidateControlTints()
+{
+    traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingControlTints);
+}
+
+void FrameView::invalidateImagesWithAsyncDecodes()
+{
+    traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes);
 }
 
 void FrameView::traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons paintInvalidationReasons)
