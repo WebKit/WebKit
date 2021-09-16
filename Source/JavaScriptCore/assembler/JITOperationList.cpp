@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,19 +36,18 @@
 
 namespace JSC {
 
+#if ENABLE(JIT_OPERATION_VALIDATION)
+
 LazyNeverDestroyed<JITOperationList> jitOperationList;
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
 extern const uintptr_t startOfJITOperationsInJSC __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const uintptr_t endOfJITOperationsInJSC __asm("section$end$__DATA_CONST$__jsc_ops");
-#endif
 
 void JITOperationList::initialize()
 {
     jitOperationList.construct();
 }
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
 static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, const uintptr_t* beginOperations, const uintptr_t* endOperations)
 {
 #if ENABLE(JIT_CAGE)
@@ -65,22 +64,18 @@ static SUPPRESS_ASAN ALWAYS_INLINE void addPointers(HashMap<void*, void*>& map, 
         }
     }
 }
-#endif
 
 void JITOperationList::populatePointersInJavaScriptCore()
 {
-#if ENABLE(JIT_OPERATION_VALIDATION)
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         if (Options::useJIT())
             addPointers(jitOperationList->m_validatedOperations, &startOfJITOperationsInJSC, &endOfJITOperationsInJSC);
     });
-#endif
 }
 
 void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
 {
-#if ENABLE(JIT_OPERATION_VALIDATION)
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
 
@@ -124,7 +119,6 @@ void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
             addPointers(jitOperationList->m_validatedOperations, operations, operations + WTF_ARRAY_LENGTH(operations));
 #undef LLINT_RETURN_LOCATION
     });
-#endif
 }
 
 
@@ -132,10 +126,10 @@ void JITOperationList::populatePointersInEmbedder(const uintptr_t* beginOperatio
 {
     UNUSED_PARAM(beginOperations);
     UNUSED_PARAM(endOperations);
-#if ENABLE(JIT_OPERATION_VALIDATION)
     if (Options::useJIT())
         addPointers(jitOperationList->m_validatedOperations, beginOperations, endOperations);
-#endif
 }
+
+#endif // ENABLE(JIT_OPERATION_VALIDATION)
 
 } // namespace JSC
