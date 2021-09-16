@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INTERSECTION_OBSERVER)
-
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
 #include <wtf/Forward.h>
@@ -47,5 +45,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INTERSECTION_OBSERVER)

@@ -26,7 +26,6 @@
 // https://wicg.github.io/IntersectionObserver/
 
 [
-    Conditional=INTERSECTION_OBSERVER,
     EnabledBySetting=IntersectionObserver,
     Exposed=Window,
     JSCustomMarkFunction,
@@ -46,7 +45,6 @@
 };
 
 [
-    Conditional=INTERSECTION_OBSERVER,
     EnabledBySetting=IntersectionObserver
 ]
 dictionary IntersectionObserverInit {

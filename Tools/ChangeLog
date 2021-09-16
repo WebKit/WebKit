@@ -5,6 +5,18 @@
 
         Reviewed by Fujii Hironori.
 
+        Remove ENABLE_INTERSECTION_OBSERVER build-time option. This option is
+        quite broken if you try to disable it.
+
+        * Scripts/webkitperl/FeatureList.pm: Remove intersection-observer option
+
+2021-09-15  Philip Chimento  <pchimento@igalia.com>
+
+        Fixes for build-webkit --minimal
+        https://bugs.webkit.org/show_bug.cgi?id=229780
+
+        Reviewed by Fujii Hironori.
+
         Remove the fast-jit-permissions, legacy-css-vendor-prefixes,
         webassembly-streaming-api, and webgpu options. These don't seem to exist
         anymore within the codebase and print an error if they are used.

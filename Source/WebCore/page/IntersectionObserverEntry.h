@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INTERSECTION_OBSERVER)
-
 #include "DOMRectReadOnly.h"
 #include "Element.h"
 #include <wtf/RefCounted.h>
@@ -79,5 +77,3 @@ private:
 
 
 } // namespace WebCore
-
-#endif // ENABLE(INTERSECTION_OBSERVER)

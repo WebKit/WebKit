@@ -2696,12 +2696,10 @@ bool Internals::isBaseAudioContextAlive(uint64_t contextID)
 }
 #endif // ENABLE(WEB_AUDIO)
 
-#if ENABLE(INTERSECTION_OBSERVER)
 unsigned Internals::numberOfIntersectionObservers(const Document& document) const
 {
     return document.numberOfIntersectionObservers();
 }
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
 unsigned Internals::numberOfResizeObservers(const Document& document) const

@@ -206,9 +206,7 @@ Element::~Element()
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
-#if ENABLE(INTERSECTION_OBSERVER)
     disconnectFromIntersectionObservers();
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
     disconnectFromResizeObservers();
@@ -2124,7 +2122,6 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
     if (UNLIKELY(isDefinedCustomElement()))
         CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(*this, oldDocument, newDocument);
 
-#if ENABLE(INTERSECTION_OBSERVER)
     if (auto* observerData = intersectionObserverDataIfExists()) {
         for (const auto& observer : observerData->observers) {
             if (observer->hasObservationTargets()) {
@@ -2133,7 +2130,6 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
             }
         }
     }
-#endif
 }
 
 bool Element::hasAttributes() const
@@ -3892,8 +3888,6 @@ void Element::requestPointerLock()
 
 #endif
 
-#if ENABLE(INTERSECTION_OBSERVER)
-
 void Element::disconnectFromIntersectionObservers()
 {
     auto* observerData = intersectionObserverDataIfExists();
@@ -3925,8 +3919,6 @@ IntersectionObserverData* Element::intersectionObserverDataIfExists()
 {
     return hasRareData() ? elementRareData()->intersectionObserverData() : nullptr;
 }
-
-#endif
 
 ElementAnimationRareData* Element::animationRareData(PseudoId pseudoId) const
 {

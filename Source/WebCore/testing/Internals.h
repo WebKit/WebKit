@@ -474,9 +474,7 @@ public:
     static bool isBaseAudioContextAlive(uint64_t contextID);
 #endif
 
-#if ENABLE(INTERSECTION_OBSERVER)
     unsigned numberOfIntersectionObservers(const Document&) const;
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
     unsigned numberOfResizeObservers(const Document&) const;

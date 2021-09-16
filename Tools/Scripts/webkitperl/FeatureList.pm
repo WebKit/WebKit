@@ -103,7 +103,6 @@ my (
     $inspectorAlternateDispatchersSupport,
     $inspectorTelemetrySupport,
     $intelligentTrackingPrevention,
-    $intersectionObserverSupport,
     $iosGestureEventsSupport,
     $iosTouchEventsSupport,
     $jitSupport,
@@ -342,9 +341,6 @@ my @features = (
 
     { option => "intelligent-tracking-prevention", desc => "Toggle intelligent tracking prevention support",
       define => "ENABLE_INTELLIGENT_TRACKING_PREVENTION", value => \$intelligentTrackingPrevention },
-
-    { option => "intersection-observer", desc => "Enable Intersection Observer support",
-      define => "ENABLE_INTERSECTION_OBSERVER", value => \$intersectionObserverSupport },
 
     { option => "ios-gesture-events", desc => "Toggle iOS gesture events support",
       define => "ENABLE_IOS_GESTURE_EVENTS", value => \$iosGestureEventsSupport },

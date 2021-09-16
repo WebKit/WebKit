@@ -387,9 +387,7 @@ public:
     Vector<GCReachableRef<ContainerNode>> targets;
 };
 
-#if ENABLE(INTERSECTION_OBSERVER)
 static const Seconds intersectionObserversInitialUpdateDelay { 2000_ms };
-#endif
 
 // DOM Level 2 says (letters added):
 //
@@ -630,9 +628,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
 #if ENABLE(FULLSCREEN_API)
     , m_fullscreenManager { makeUniqueRef<FullscreenManager>(*this) }
 #endif
-#if ENABLE(INTERSECTION_OBSERVER)
     , m_intersectionObserversInitialUpdateTimer(*this, &Document::intersectionObserversInitialUpdateTimerFired)
-#endif
     , m_loadEventDelayTimer(*this, &Document::loadEventDelayTimerFired)
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     , m_deviceMotionClient(makeUnique<DeviceMotionClientIOS>(page() ? page()->deviceOrientationUpdateProvider() : nullptr))
@@ -704,7 +700,6 @@ Document::~Document()
     if (m_logger)
         m_logger->removeObserver(*this);
 
-#if ENABLE(INTERSECTION_OBSERVER)
     if (m_intersectionObserverData) {
         for (const auto& observer : m_intersectionObserverData->observers) {
             if (observer)
@@ -714,7 +709,6 @@ Document::~Document()
         // Document cannot be a target.
         ASSERT(m_intersectionObserverData->registrations.isEmpty());
     }
-#endif
 
     removeFromDocumentsMap();
 
@@ -7824,26 +7818,20 @@ void Document::removeDynamicMediaQueryDependentImage(HTMLImageElement& element)
     m_dynamicMediaQueryDependentImages.remove(element);
 }
 
-#if ENABLE(INTERSECTION_OBSERVER)
 void Document::intersectionObserversInitialUpdateTimerFired()
 {
     scheduleRenderingUpdate(RenderingUpdateStep::IntersectionObservations);
 }
-#endif
 
 void Document::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
 {
-#if ENABLE(INTERSECTION_OBSERVER)
     if (m_intersectionObserversInitialUpdateTimer.isActive()) {
         m_intersectionObserversInitialUpdateTimer.stop();
         requestedSteps.add(RenderingUpdateStep::IntersectionObservations);
     }
-#endif
     if (auto page = this->page())
         page->scheduleRenderingUpdate(requestedSteps);
 }
-
-#if ENABLE(INTERSECTION_OBSERVER)
 
 void Document::addIntersectionObserver(IntersectionObserver& observer)
 {
@@ -8077,8 +8065,6 @@ IntersectionObserverData& Document::ensureIntersectionObserverData()
         m_intersectionObserverData = makeUnique<IntersectionObserverData>();
     return *m_intersectionObserverData;
 }
-
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
 

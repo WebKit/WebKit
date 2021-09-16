@@ -97,10 +97,8 @@ public:
     const SpaceSplitString& partNames() const { return m_partNames; }
     void setPartNames(SpaceSplitString&& partNames) { m_partNames = WTFMove(partNames); }
 
-#if ENABLE(INTERSECTION_OBSERVER)
     IntersectionObserverData* intersectionObserverData() { return m_intersectionObserverData.get(); }
     void setIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { m_intersectionObserverData = WTFMove(data); }
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
     ResizeObserverData* resizeObserverData() { return m_resizeObserverData.get(); }
@@ -166,9 +164,8 @@ private:
     RefPtr<ShadowRoot> m_shadowRoot;
     std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
     std::unique_ptr<NamedNodeMap> m_attributeMap;
-#if ENABLE(INTERSECTION_OBSERVER)
+
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;

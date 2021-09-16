@@ -1584,11 +1584,9 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
-#if ENABLE(INTERSECTION_OBSERVER)
     runProcessingStep(RenderingUpdateStep::IntersectionObservations, [] (Document& document) {
         document.updateIntersectionObservations();
     });
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
     runProcessingStep(RenderingUpdateStep::ResizeObservations, [&] (Document& document) {
@@ -3612,9 +3610,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::Animations: ts << "Animations"; break;
     case RenderingUpdateStep::Fullscreen: ts << "Fullscreen"; break;
     case RenderingUpdateStep::AnimationFrameCallbacks: ts << "AnimationFrameCallbacks"; break;
-#if ENABLE(INTERSECTION_OBSERVER)
     case RenderingUpdateStep::IntersectionObservations: ts << "IntersectionObservations"; break;
-#endif
 #if ENABLE(RESIZE_OBSERVER)
     case RenderingUpdateStep::ResizeObservations: ts << "ResizeObservations"; break;
 #endif

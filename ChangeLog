@@ -1,3 +1,17 @@
+2021-09-15  Philip Chimento  <pchimento@igalia.com>
+
+        Fixes for build-webkit --minimal
+        https://bugs.webkit.org/show_bug.cgi?id=229780
+
+        Reviewed by Fujii Hironori.
+
+        Remove ENABLE_INTERSECTION_OBSERVER build-time option. This option is
+        quite broken if you try to disable it.
+
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-09-14  John Wilander  <wilander@apple.com>
 
         Rename RESOURCE_LOAD_STATISTICS to INTELLIGENT_TRACKING_PREVENTION

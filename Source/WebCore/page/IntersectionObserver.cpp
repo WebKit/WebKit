@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(INTERSECTION_OBSERVER)
 #include "IntersectionObserver.h"
 
 #include "CSSParserTokenRange.h"
@@ -303,5 +302,3 @@ bool IntersectionObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& 
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INTERSECTION_OBSERVER)

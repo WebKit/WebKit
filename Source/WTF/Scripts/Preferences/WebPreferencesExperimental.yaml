@@ -587,7 +587,6 @@ IntersectionObserverEnabled:
   type: bool
   humanReadableName: "Intersection Observer"
   humanReadableDescription: "Enable Intersection Observer support"
-  condition: ENABLE(INTERSECTION_OBSERVER)
   defaultValue:
     WebKitLegacy:
       default: false

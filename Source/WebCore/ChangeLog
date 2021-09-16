@@ -1,3 +1,45 @@
+2021-09-15  Philip Chimento  <pchimento@igalia.com>
+
+        Fixes for build-webkit --minimal
+        https://bugs.webkit.org/show_bug.cgi?id=229780
+
+        Reviewed by Fujii Hironori.
+
+        Covered by existing tests.
+
+        Remove ENABLE_INTERSECTION_OBSERVER build-time option. This option is
+        quite broken if you try to disable it.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::intersectionObserversInitialUpdateTimerFired):
+        (WebCore::Document::scheduleRenderingUpdate):
+        * dom/Document.h:
+        (WebCore::Document::intersectionObserverDataIfExists):
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::didMoveToNewDocument):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::setIntersectionObserverData):
+        * page/IntersectionObserver.cpp:
+        * page/IntersectionObserver.h:
+        * page/IntersectionObserver.idl:
+        * page/IntersectionObserverCallback.h:
+        * page/IntersectionObserverCallback.idl:
+        * page/IntersectionObserverEntry.cpp:
+        * page/IntersectionObserverEntry.h:
+        * page/IntersectionObserverEntry.idl:
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        (WebCore::operator<<):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfIntersectionObservers const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-09-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix Xcode build

@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(INTERSECTION_OBSERVER)
 #include "IntersectionObserverEntry.h"
 
 #include "Element.h"
@@ -45,5 +44,3 @@ IntersectionObserverEntry::IntersectionObserverEntry(const Init& init)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INTERSECTION_OBSERVER)

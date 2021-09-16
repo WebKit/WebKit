@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INTERSECTION_OBSERVER)
-
 #include "GCReachableRef.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
@@ -126,5 +124,3 @@ private:
 
 
 } // namespace WebCore
-
-#endif // ENABLE(INTERSECTION_OBSERVER)

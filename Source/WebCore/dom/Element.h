@@ -69,13 +69,10 @@ enum class IsSyntheticClick : bool { No, Yes };
 enum class SelectionRestorationMode : uint8_t;
 
 struct GetAnimationsOptions;
+struct IntersectionObserverData;
 struct KeyframeAnimationOptions;
 struct ScrollIntoViewOptions;
 struct ScrollToOptions;
-
-#if ENABLE(INTERSECTION_OBSERVER)
-struct IntersectionObserverData;
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
 struct ResizeObserverData;
@@ -614,10 +611,8 @@ public:
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value);
 
-#if ENABLE(INTERSECTION_OBSERVER)
     IntersectionObserverData& ensureIntersectionObserverData();
     IntersectionObserverData* intersectionObserverDataIfExists();
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
     ResizeObserverData& ensureResizeObserverData();
@@ -707,9 +702,7 @@ private:
     LayoutRect absoluteEventBounds(bool& boundsIncludeAllDescendantElements, bool& includesFixedPositionElements);
     LayoutRect absoluteEventBoundsOfElementAndDescendants(bool& includesFixedPositionElements);
 
-#if ENABLE(INTERSECTION_OBSERVER)
     void disconnectFromIntersectionObservers();
-#endif
 
 #if ENABLE(RESIZE_OBSERVER)
     void disconnectFromResizeObservers();
