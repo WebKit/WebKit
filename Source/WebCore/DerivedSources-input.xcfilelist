@@ -1406,9 +1406,12 @@ $(PROJECT_DIR)/testing/WebXRTest.idl
 $(PROJECT_DIR)/testing/XRSimulateUserActivationFunction.idl
 $(PROJECT_DIR)/workers/AbstractWorker.idl
 $(PROJECT_DIR)/workers/DedicatedWorkerGlobalScope.idl
+$(PROJECT_DIR)/workers/SharedWorker.idl
+$(PROJECT_DIR)/workers/SharedWorkerGlobalScope.idl
 $(PROJECT_DIR)/workers/Worker.idl
 $(PROJECT_DIR)/workers/WorkerGlobalScope.idl
 $(PROJECT_DIR)/workers/WorkerLocation.idl
+$(PROJECT_DIR)/workers/WorkerOptions.idl
 $(PROJECT_DIR)/workers/WorkerType.idl
 $(PROJECT_DIR)/workers/service/ExtendableEvent.idl
 $(PROJECT_DIR)/workers/service/ExtendableEventInit.idl

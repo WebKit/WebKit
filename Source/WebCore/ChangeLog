@@ -1,3 +1,12 @@
+2021-09-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix Xcode build
+
+        Unreviewed.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
 2021-09-15  Alex Christensen  <achristensen@webkit.org>
 
         Add IDL skeleton for SharedWorker
