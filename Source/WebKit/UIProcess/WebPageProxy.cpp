@@ -6134,10 +6134,8 @@ void WebPageProxy::setColorPickerColor(const WebCore::Color& color)
 
 void WebPageProxy::endColorPicker()
 {
-    if (!m_colorPicker)
-        return;
-
-    m_colorPicker->endPicker();
+    if (auto colorPicker = std::exchange(m_colorPicker, nullptr))
+        colorPicker->endPicker();
 }
 
 void WebPageProxy::didChooseColor(const WebCore::Color& color)
@@ -6150,11 +6148,13 @@ void WebPageProxy::didChooseColor(const WebCore::Color& color)
 
 void WebPageProxy::didEndColorPicker()
 {
-    m_colorPicker = nullptr;
-    if (!hasRunningProcess())
-        return;
+    if (std::exchange(m_colorPicker, nullptr)) {
+        if (!hasRunningProcess())
+            return;
 
-    send(Messages::WebPage::DidEndColorPicker());
+        send(Messages::WebPage::DidEndColorPicker());
+    }
+
 }
 #endif
 
