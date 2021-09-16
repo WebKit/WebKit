@@ -1404,12 +1404,12 @@ void Page::setIsInWindowInternal(bool isInWindow)
 
 void Page::addActivityStateChangeObserver(ActivityStateChangeObserver& observer)
 {
-    m_activityStateChangeObservers.add(&observer);
+    m_activityStateChangeObservers.add(observer);
 }
 
 void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observer)
 {
-    m_activityStateChangeObservers.remove(&observer);
+    m_activityStateChangeObservers.remove(observer);
 }
 
 void Page::layoutIfNeeded()
@@ -2255,8 +2255,8 @@ void Page::setActivityState(OptionSet<ActivityState::Flag> activityState)
     if (changed.containsAny({ActivityState::IsVisible, ActivityState::IsVisuallyIdle, ActivityState::IsAudible, ActivityState::IsLoading, ActivityState::IsCapturingMedia }))
         updateTimerThrottlingState();
 
-    for (auto* observer : m_activityStateChangeObservers)
-        observer->activityStateDidChange(oldActivityState, m_activityState);
+    for (auto& observer : m_activityStateChangeObservers)
+        observer.activityStateDidChange(oldActivityState, m_activityState);
 
     if (wasVisibleAndActive != isVisibleAndActive())
         PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
