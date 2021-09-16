@@ -1195,6 +1195,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     m_webLoaderStrategy.networkProcessCrashed();
     WebSocketStream::networkProcessCrashed();
     m_webSocketChannelManager.networkProcessCrashed();
+    m_broadcastChannelRegistry->networkProcessCrashed();
 
     if (m_libWebRTCNetwork)
         m_libWebRTCNetwork->networkProcessCrashed();

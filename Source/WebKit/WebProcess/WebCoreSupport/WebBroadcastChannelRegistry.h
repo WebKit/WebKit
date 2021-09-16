@@ -52,6 +52,8 @@ public:
     void unregisterChannel(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
     void postMessage(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
 
+    void networkProcessCrashed();
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:

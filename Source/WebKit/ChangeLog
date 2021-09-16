@@ -1,3 +1,21 @@
+2021-09-15  Chris Dumez  <cdumez@apple.com>
+
+        Implement network process crash recovery for BroadcastChannel
+        https://bugs.webkit.org/show_bug.cgi?id=230236
+
+        Reviewed by Alex Christensen.
+
+        Have the WebBroadcastChannelRegistry register its BroadcastChannels with the network
+        process after a network process crash. This is useful so that cross-WebProcess
+        communication can keep happening via existing BroadcastChannel after a network process
+        crash.
+
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp:
+        (WebKit::WebBroadcastChannelRegistry::networkProcessCrashed):
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+
 2021-09-15  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] Clean up some WKA hooks

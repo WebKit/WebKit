@@ -106,4 +106,12 @@ void WebBroadcastChannelRegistry::postMessageToRemote(const WebCore::ClientOrigi
     postMessageLocally(origin, name, std::nullopt, *message.message, callbackAggregator.copyRef());
 }
 
+void WebBroadcastChannelRegistry::networkProcessCrashed()
+{
+    for (auto& [origin, channelsForOrigin] : m_channelsPerOrigin) {
+        for (auto& name : channelsForOrigin.keys())
+            networkProcessConnection().send(Messages::NetworkBroadcastChannelRegistry::RegisterChannel { origin, name }, 0);
+    }
+}
+
 } // namespace WebKit
