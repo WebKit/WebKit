@@ -1493,7 +1493,7 @@ webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-supp
 webkit.org/b/226783 [ arm64 ] http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
 webkit.org/b/226783 [ arm64 ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
 
-webkit.org/b/227273 [ Catalina Debug ] fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr ]
+webkit.org/b/227273 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Pass Timeout DumpJSConsoleLogInStdErr Failure ]
 
 webkit.org/b/227467 [ BigSur arm64 Release ] fast/css/sticky/sticky-left.html [ Pass ImageOnlyFailure ]
 

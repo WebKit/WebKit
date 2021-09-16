@@ -1,3 +1,12 @@
+2021-09-16  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html.
+        https://bugs.webkit.org/show_bug.cgi?id=227273.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-16  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ MacOS EWS ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html is flaky failing.
