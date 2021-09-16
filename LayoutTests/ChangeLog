@@ -1,3 +1,16 @@
+2021-09-16  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        Unreviewed, reverting r282592.
+
+        Rebaselined wrong on macOS
+
+        Reverted changeset:
+
+        "[ MacOS EWS ] imported/w3c/web-platform-
+        tests/html/dom/idlharness.https.html is flaky failing."
+        https://bugs.webkit.org/show_bug.cgi?id=229831
+        https://commits.webkit.org/r282592
+
 2021-09-16  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for js/dfg-uint8array.html.
