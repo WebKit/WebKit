@@ -65,7 +65,6 @@ typedef NS_OPTIONS(NSUInteger, _WKSelectionAttributes) {
     _WKSelectionAttributeNoSelection = 0,
     _WKSelectionAttributeIsCaret = 1 << 0,
     _WKSelectionAttributeIsRange = 1 << 1,
-    _WKSelectionAttributeAtStartOfSentence = 1 << 2,
 } WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
 typedef NS_ENUM(NSInteger, _WKShouldOpenExternalURLsPolicy) {
