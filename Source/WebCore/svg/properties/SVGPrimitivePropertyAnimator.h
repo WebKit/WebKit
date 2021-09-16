@@ -56,7 +56,7 @@ public:
 
     void start(SVGElement* targetElement) override
     {
-        String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
+        String baseValue = computeCSSPropertyValue(*targetElement, cssPropertyID(m_attributeName.localName()));
         m_property->setValue(SVGPropertyTraits<PropertyType>::fromString(baseValue));
     }
 

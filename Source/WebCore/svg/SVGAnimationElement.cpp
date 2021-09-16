@@ -590,37 +590,6 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
     calculateAnimatedValue(effectivePercent, repeatCount);
 }
 
-void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSPropertyID id, String& valueString)
-{
-    ASSERT(element);
-
-    // Don't include any properties resulting from CSS Transitions/Animations or SMIL animations, as we want to retrieve the "base value".
-    element->setUseOverrideComputedStyle(true);
-    RefPtr<CSSValue> value = ComputedStyleExtractor(element).propertyValue(id);
-    valueString = value ? value->cssText() : String();
-    element->setUseOverrideComputedStyle(false);
-}
-
-static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
-{
-    static MainThreadNeverDestroyed<const AtomString> inherit("inherit", AtomString::ConstructFromLiteral);
-    
-    if (value.isEmpty() || value != inherit)
-        return false;
-    return targetElement->isAnimatedStyleAttribute(attributeName);
-}
-
-void SVGAnimationElement::determinePropertyValueTypes(const String& from, const String& to)
-{
-    auto targetElement = makeRefPtr(this->targetElement());
-    ASSERT(targetElement);
-
-    const QualifiedName& attributeName = this->attributeName();
-    if (inheritsFromProperty(targetElement.get(), attributeName, from))
-        m_fromPropertyValueType = InheritValue;
-    if (inheritsFromProperty(targetElement.get(), attributeName, to))
-        m_toPropertyValueType = InheritValue;
-}
 void SVGAnimationElement::resetAnimation()
 {
     m_lastValuesAnimationFrom = String();
