@@ -1,3 +1,17 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        [IPC Hardening] Make sure IPC::Decoder constructors consistently call markInvalid() when decoding fails
+        https://bugs.webkit.org/show_bug.cgi?id=225110
+        <rdar://76547775>
+
+        Reviewed by Darin Adler.
+
+        One of the IPC::Decoder constructors was failing to call markInvalid() after failing to
+        decoder the message name.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::m_destinationID):
+
 2021-04-26  Tim Nguyen  <ntim@apple.com>
 
         Add more eager OOB checks when creating DisplayListReaderHandle & DisplayListWriterHandle.
