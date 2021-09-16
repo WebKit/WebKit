@@ -12,7 +12,7 @@ async function doTest(event)
 
 async function doFetch(event)
 {
-    if (event.request.destination === "document") {
+    if (event.request.destination === "document" || event.request.destination === "iframe") {
         const link = event.request.url.substring(event.request.url.indexOf('?') + 1);
         const style = 'font: 12px "ahem"';
         event.respondWith(new Response("<!DOCTYPE html><html><header><link href='" + link + "' rel='stylesheet' type='text/css'></header><body><div style='" + style + "'>test</div></body></html>",

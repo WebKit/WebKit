@@ -29,6 +29,8 @@ messages -> WebPage LegacyReceiver {
 
     AddConsoleMessage(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestID)
     SendCSPViolationReport(WebCore::FrameIdentifier frameID, URL reportURL, IPC::FormDataReference reportData)
+    SendCOEPPolicyInheritenceViolation(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData embedderOrigin, String endpoint, enum:bool WebCore::COEPDisposition disposition, String type, URL blockedURL)
+    SendCOEPCORPViolation(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData embedderOrigin, String endpoint, enum:bool WebCore::COEPDisposition disposition, enum:uint8_t WebCore::FetchOptions::Destination destination, URL blockedURL)
     EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, WebCore::SecurityPolicyViolationEvent::Init eventInit)
 
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply() -> (bool handled) Synchronous

@@ -1,3 +1,43 @@
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Add violations reporting support for Cross-Origin-Embedder-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230269
+
+        Reviewed by Youenn Fablet.
+
+        Add support for COEP inheritance violation reporting:
+        - https://html.spec.whatwg.org/multipage/origin.html#check-a-navigation-response's-adherence-to-its-embedder-policy
+        - https://html.spec.whatwg.org/multipage/origin.html#check-a-global-object's-embedder-policy
+        - https://html.spec.whatwg.org/multipage/origin.html#queue-a-cross-origin-embedder-policy-inheritance-violation
+
+        Add support for COEP CORP violation reporting:
+        - https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check
+        - https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
+
+        Add support for Fetch destination="iframe" because the COEP test relied on it:
+        - https://fetch.spec.whatwg.org/#concept-request-destination
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/fetch/FetchRequest.idl:
+        * loader/CrossOriginEmbedderPolicy.cpp:
+        (WebCore::contextURLForReport):
+        (WebCore::sendCOEPPolicyInheritenceViolation):
+        (WebCore::sendCOEPCORPViolation):
+        * loader/CrossOriginEmbedderPolicy.h:
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::sendViolationReportWhenNavigatingToCOOPResponse):
+        (WebCore::sendViolationReportWhenNavigatingAwayFromCOOPResponse):
+        * loader/FetchOptions.h:
+        (WebCore::isNonSubresourceRequest):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sanitizeURLForReport):
+        (WebCore::PingLoader::sendReportToEndpoint):
+        * loader/PingLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::destinationForType):
+        (WebCore::CachedResourceLoader::requestResource):
+
 2021-09-16  Antti Koivisto  <antti@apple.com>
 
         Move selection gap adjustment code form LegacyRootInlineBox to RenderBlockFlow

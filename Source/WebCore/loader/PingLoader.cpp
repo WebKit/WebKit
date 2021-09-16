@@ -49,6 +49,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ProgressTracker.h"
+#include "ReportingEndpointsCache.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadInfo.h"
@@ -243,4 +244,42 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
     frame.document()->cachedResourceLoader().requestPingResource(WTFMove(cachedResourceRequest));
 }
 
+// // https://html.spec.whatwg.org/multipage/origin.html#sanitize-url-report
+String PingLoader::sanitizeURLForReport(const URL& url)
+{
+    URL sanitizedURL = url;
+    sanitizedURL.removeCredentials();
+    sanitizedURL.removeFragmentIdentifier();
+    return sanitizedURL.string();
 }
+
+// https://www.w3.org/TR/reporting/#try-delivery
+void PingLoader::sendReportToEndpoint(Frame& frame, const SecurityOriginData& origin, const String& endpoint, const String& type, const URL& reportURL, const String& userAgent, const Function<void(JSON::Object&)>& populateReportBody)
+{
+    ASSERT(!endpoint.isEmpty());
+    auto reportingEndpointsCache = frame.page() ? frame.page()->reportingEndpointsCache() : nullptr;
+    if (!reportingEndpointsCache)
+        return;
+    auto endpointURL = reportingEndpointsCache->endpointURL(origin, endpoint);
+    if (!endpointURL.isValid())
+        return;
+
+    auto body = JSON::Object::create();
+    populateReportBody(body);
+
+    auto reportObject = JSON::Object::create();
+    reportObject->setString("type"_s, type);
+    if (reportURL.isValid())
+        reportObject->setString("url"_s, reportURL.string());
+    reportObject->setString("user_agent", userAgent);
+    reportObject->setInteger("age", 0); // We currently do not delay sending the reports.
+    reportObject->setObject("body"_s, WTFMove(body));
+
+    auto reportList = JSON::Array::create();
+    reportList->pushObject(reportObject);
+
+    auto report = FormData::create(reportList->toJSONString().utf8());
+    sendViolationReport(frame, endpointURL, WTFMove(report), ViolationReportType::StandardReportingAPIViolation);
+}
+
+} // namespace WebCore

@@ -1,5 +1,22 @@
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
+        Add violations reporting support for Cross-Origin-Embedder-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230269
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/fetch/api/request/destination/fetch-destination-iframe.https-expected.txt:
+        Rebaseline test that is passing now that we support Fetch destination="iframe".
+
+        * web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https-expected.txt:
+        Rebaseline test that is passing now that we support reporting for COEP violations.
+
+        * web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html.sub.headers:
+        Merge fix from https://github.com/web-platform-tests/wpt/pull/30785 so that the test can run within
+        the WebKit test infrastructure.
+
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
         [ iOS Mac Debug ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=230268
         <rdar://problem/83104971>

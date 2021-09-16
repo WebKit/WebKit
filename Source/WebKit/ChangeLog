@@ -1,3 +1,41 @@
+2021-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Add violations reporting support for Cross-Origin-Embedder-Policy
+        https://bugs.webkit.org/show_bug.cgi?id=230269
+
+        Reviewed by Youenn Fablet.
+
+        Add support for COEP inheritance violation reporting:
+        - https://html.spec.whatwg.org/multipage/origin.html#check-a-navigation-response's-adherence-to-its-embedder-policy
+        - https://html.spec.whatwg.org/multipage/origin.html#check-a-global-object's-embedder-policy
+        - https://html.spec.whatwg.org/multipage/origin.html#queue-a-cross-origin-embedder-policy-inheritance-violation
+
+        Add support for COEP CORP violation reporting:
+        - https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check
+        - https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
+
+        Add support for Fetch destination="iframe" because the COEP test relied on it:
+        - https://fetch.spec.whatwg.org/#concept-request-destination
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::performCORPCheck):
+        (WebKit::NetworkLoadChecker::validateResponse):
+        (WebKit::NetworkLoadChecker::isAllowedByContentSecurityPolicy):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::resourceLoadInfo):
+        (WebKit::NetworkResourceLoader::shouldInterruptNavigationForCrossOriginEmbedderPolicy):
+        (WebKit::NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolicy):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendCOEPPolicyInheritenceViolation):
+        (WebKit::WebPage::sendCOEPCORPViolation):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-09-16  Tim Horton  <timothy_horton@apple.com>
 
         Adjust ARKIT_INLINE_PREVIEW* compile time flags

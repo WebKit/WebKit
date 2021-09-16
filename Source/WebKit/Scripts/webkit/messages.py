@@ -688,6 +688,7 @@ def headers_for_type(type):
         'PAL::SessionID': ['<pal/SessionID.h>'],
         'WebCore::AutoplayEventFlags': ['<WebCore/AutoplayEvent.h>'],
         'WebCore::BrowsingContextGroupSwitchDecision': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::COEPDisposition': ['<WebCore/CrossOriginEmbedderPolicy.h>'],
         'WebCore::CreateNewGroupForHighlight': ['<WebCore/AppHighlight.h>'],
         'WebCore::DOMPasteAccessResponse': ['<WebCore/DOMPasteAccess.h>'],
         'WebCore::DestinationColorSpace': ['<WebCore/ColorSpace.h>'],

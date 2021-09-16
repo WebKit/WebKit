@@ -161,6 +161,7 @@
 #include <WebCore/CommonVM.h>
 #include <WebCore/ContactsRequestData.h>
 #include <WebCore/ContextMenuController.h>
+#include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DatabaseManager.h>
@@ -4333,6 +4334,18 @@ void WebPage::sendCSPViolationReport(FrameIdentifier frameID, const URL& reportU
         return;
     if (auto* frame = WebProcess::singleton().webFrame(frameID))
         PingLoader::sendViolationReport(*frame->coreFrame(), reportURL, report.releaseNonNull(), ViolationReportType::ContentSecurityPolicy);
+}
+
+void WebPage::sendCOEPPolicyInheritenceViolation(FrameIdentifier frameID, const SecurityOriginData& embedderOrigin, const String& endpoint, COEPDisposition disposition, const String& type, const URL& blockedURL)
+{
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+        WebCore::sendCOEPPolicyInheritenceViolation(*frame->coreFrame(), embedderOrigin, endpoint, disposition, type, blockedURL);
+}
+
+void WebPage::sendCOEPCORPViolation(FrameIdentifier frameID, const SecurityOriginData& embedderOrigin, const String& endpoint, COEPDisposition disposition, FetchOptions::Destination destination, const URL& blockedURL)
+{
+    if (auto* frame = WebProcess::singleton().webFrame(frameID); frame->coreFrame())
+        WebCore::sendCOEPCORPViolation(*frame->coreFrame(), embedderOrigin, endpoint, disposition, destination, blockedURL);
 }
 
 void WebPage::enqueueSecurityPolicyViolationEvent(FrameIdentifier frameID, SecurityPolicyViolationEvent::Init&& eventInit)
