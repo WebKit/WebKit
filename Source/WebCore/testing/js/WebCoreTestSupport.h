@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2015 Google Inc. All rights reserved.
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,6 +67,10 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier) TEST_SUPPO
     
 void setAdditionalSupportedImageTypesForTesting(const WTF::String&) TEST_SUPPORT_EXPORT;
 
+#if ENABLE(JIT_OPERATION_VALIDATION)
 void populateJITOperations() TEST_SUPPORT_EXPORT;
+#else
+inline void populateJITOperations() { }
+#endif
 
 } // namespace WebCoreTestSupport

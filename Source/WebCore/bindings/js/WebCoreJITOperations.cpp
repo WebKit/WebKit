@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,16 +33,14 @@ namespace WebCore {
 #if ENABLE(JIT_OPERATION_VALIDATION)
 extern const uintptr_t startOfJITOperationsInWebCore __asm("section$start$__DATA_CONST$__jsc_ops");
 extern const uintptr_t endOfJITOperationsInWebCore __asm("section$end$__DATA_CONST$__jsc_ops");
-#endif
 
 void populateJITOperations()
 {
-#if ENABLE(JIT_OPERATION_VALIDATION)
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         JSC::JITOperationList::populatePointersInEmbedder(&startOfJITOperationsInWebCore, &endOfJITOperationsInWebCore);
     });
-#endif
 }
+#endif // ENABLE(JIT_OPERATION_VALIDATION)
 
 }
