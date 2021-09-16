@@ -1,3 +1,12 @@
+2021-07-22  Frédéric Wang  <fwang@igalia.com>
+
+        nullptr crash in ApplyStyleCommand::applyRelativeFontStyleChange
+        https://bugs.webkit.org/show_bug.cgi?id=223974
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/DocumentOrder.cpp: Update FIXME.
+
 2021-05-28  Alex Christensen  <achristensen@webkit.org>
 
         Punycode encode U+0BE6 when not in context of other Tamil characters

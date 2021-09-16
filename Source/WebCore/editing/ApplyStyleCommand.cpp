@@ -172,7 +172,7 @@ ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* sty
 
 void ApplyStyleCommand::updateStartEnd(const Position& newStart, const Position& newEnd)
 {
-    ASSERT(!(newStart > newEnd));
+    ASSERT(!is_gt(treeOrder<ShadowIncludingTree>(newStart, newEnd)));
 
     if (!m_useEndingSelection && (newStart != m_start || newEnd != m_end))
         m_useEndingSelection = true;
@@ -1068,7 +1068,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     ASSERT(end.isNotNull());
     ASSERT(start.anchorNode()->isConnected());
     ASSERT(end.anchorNode()->isConnected());
-    ASSERT(start <= end);
+    ASSERT(is_lteq(treeOrder<ShadowIncludingTree>(start, end)));
     // FIXME: We should assert that start/end are not in the middle of a text node.
 
     Position pushDownStart = start.downstream();

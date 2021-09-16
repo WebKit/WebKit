@@ -2676,6 +2676,7 @@ template<TreeType treeType> Node* commonInclusiveAncestor(const Node& a, const N
 
 template Node* commonInclusiveAncestor<Tree>(const Node&, const Node&);
 template Node* commonInclusiveAncestor<ComposedTree>(const Node&, const Node&);
+template Node* commonInclusiveAncestor<ShadowIncludingTree>(const Node&, const Node&);
 
 static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
 {

@@ -219,6 +219,7 @@ private:
 bool operator==(const Position&, const Position&);
 bool operator!=(const Position&, const Position&);
 
+template<TreeType treeType> PartialOrdering treeOrder(const Position&, const Position&);
 WEBCORE_EXPORT PartialOrdering documentOrder(const Position&, const Position&);
 bool operator<(const Position&, const Position&);
 bool operator>(const Position&, const Position&);
