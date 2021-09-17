@@ -31,6 +31,7 @@
 #include "ExceptionHelpers.h"
 #include "FunctionCodeBlock.h"
 #include "JSImmutableButterfly.h"
+#include "JSPropertyNameEnumerator.h"
 #include "ScopedArguments.h"
 #include "SlowPathFunction.h"
 #include "StackAlignment.h"
@@ -89,6 +90,60 @@ ALWAYS_INLINE int arityCheckFor(VM& vm, CallFrame* callFrame, CodeSpecialization
     if (UNLIKELY(!vm.ensureStackCapacityFor(newStack)))
         return -1;
     return padding;
+}
+
+inline JSValue opEnumeratorGetByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue propertyNameValue, unsigned index, JSPropertyNameEnumerator::Mode mode, JSPropertyNameEnumerator* enumerator, ArrayProfile* arrayProfile = nullptr, uint8_t* enumeratorMetadata = nullptr)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    switch (mode) {
+    case JSPropertyNameEnumerator::IndexedMode: {
+        if (arrayProfile && LIKELY(baseValue.isCell()))
+            arrayProfile->observeStructureID(baseValue.asCell()->structureID());
+        RELEASE_AND_RETURN(scope, baseValue.get(globalObject, static_cast<unsigned>(index)));
+    }
+    case JSPropertyNameEnumerator::OwnStructureMode: {
+        if (LIKELY(baseValue.isCell()) && baseValue.asCell()->structureID() == enumerator->cachedStructureID()) {
+            // We'll only match the structure ID if the base is an object.
+            ASSERT(index < enumerator->endStructurePropertyIndex());
+            RELEASE_AND_RETURN(scope, baseValue.getObject()->getDirect(index < enumerator->cachedInlineCapacity() ? index : index - enumerator->cachedInlineCapacity() + firstOutOfLineOffset));
+        } else {
+            if (enumeratorMetadata)
+                *enumeratorMetadata |= static_cast<uint8_t>(JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch);
+        }
+        FALLTHROUGH;
+    }
+
+    case JSPropertyNameEnumerator::GenericMode: {
+        if (arrayProfile && baseValue.isCell() && mode != JSPropertyNameEnumerator::OwnStructureMode)
+            arrayProfile->observeStructureID(baseValue.asCell()->structureID());
+#if USE(JSVALUE32_64)
+        if (!propertyNameValue.isCell()) {
+            // This branch is only needed because we use this method
+            // both as a slow_path and as a DFG call op. We'll end up
+            // here if propertyName is not a cell then we are in
+            // index+named mode, so do what RecoverNameAndGetVal
+            // does. This can probably be removed if we re-enable the
+            // optimizations for enumeratorGetByVal in DFG, see bug
+            // #230189.
+            JSString* string = enumerator->propertyNameAtIndex(index);
+            auto propertyName = string->toIdentifier(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            RELEASE_AND_RETURN(scope, baseValue.get(globalObject, propertyName));
+        }
+#endif
+        JSString* string = asString(propertyNameValue);
+        auto propertyName = string->toIdentifier(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        RELEASE_AND_RETURN(scope, baseValue.get(globalObject, propertyName));
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    };
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline bool opInByVal(JSGlobalObject* globalObject, JSValue baseVal, JSValue propName, ArrayProfile* arrayProfile = nullptr)
