@@ -87,4 +87,5 @@ webkit.org/b/229566 imported/w3c/web-platform-tests/html/semantics/interactive-e
 
 webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 
+webkit.org/b/230419 platform/ipad/media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Pass Timeout Crash ]
 

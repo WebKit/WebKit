@@ -1,3 +1,12 @@
+2021-09-17  Eric Hutchison  <ehutchison@apple.com>
+
+        [iOS wk2 iPad] platform/ipad/media/modern-media-controls/media-documents/media-document-video-ios-sizing.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=230419.
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
 2021-09-17  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r282220): [GCC] Several flaky crashes on media/track/cue tests
