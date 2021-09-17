@@ -1,3 +1,15 @@
+2021-09-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Mac Catalyst] Fix build issue
+        https://bugs.webkit.org/show_bug.cgi?id=230373
+
+        Reviewed by Darin Adler.
+
+        There's an issue with the Mac Catalyst build where LSSessionID is being redefined. Address this by removing the second definition,
+        and moving the related function into the open source section.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2021-09-16  Tim Horton  <timothy_horton@apple.com>
 
         Adjust ARKIT_INLINE_PREVIEW* compile time flags
