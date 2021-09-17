@@ -1,3 +1,16 @@
+2021-08-16  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r275756): Accelerated animations freeze when invalidating layout with shadow dom
+        https://bugs.webkit.org/show_bug.cgi?id=228954
+        <rdar://problem/81750217>
+
+        Reviewed by Ryosuke Niwa.
+
+        Original test by Liam DeBeasi
+
+        * animations/shadow-host-child-change-expected.html: Added.
+        * animations/shadow-host-child-change.html: Added.
+
 2021-07-08  Antti Koivisto  <antti@apple.com>
 
         Shadow host stops rendering after removing a slot, updating style, then its assigned node

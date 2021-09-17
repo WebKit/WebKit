@@ -536,6 +536,16 @@ void RenderTreeUpdater::tearDownRenderers(Element& root)
     tearDownRenderers(root, TeardownType::Full, builder);
 }
 
+void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
+{
+    ASSERT(host.shadowRoot());
+    auto* view = host.document().renderView();
+    if (!view)
+        return;
+    RenderTreeBuilder builder(*view);
+    tearDownRenderers(host, TeardownType::FullAfterSlotChange, builder);
+}
+
 void RenderTreeUpdater::tearDownRenderer(Text& text)
 {
     auto* view = text.document().renderView();
@@ -561,29 +571,37 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
+            auto styleable = Styleable::fromElement(element);
 
             // Make sure we don't leave any renderers behind in nodes outside the composed tree.
             if (element.shadowRoot())
                 tearDownLeftoverShadowHostChildren(element, builder);
 
             switch (teardownType) {
+            case TeardownType::FullAfterSlotChange:
+                if (&element == &root) {
+                    // Keep animations going on the host.
+                    if (timeline)
+                        timeline->willChangeRendererForStyleable(styleable);
+                    break;
+                }
+                FALLTHROUGH;
             case TeardownType::Full:
-            case TeardownType::RendererUpdateCancelingAnimations:
                 if (timeline) {
                     if (document.renderTreeBeingDestroyed())
-                        timeline->cancelDeclarativeAnimationsForStyleable(Styleable::fromElement(element), WebAnimation::Silently::Yes);
-                    else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
-                        timeline->cancelDeclarativeAnimationsForStyleable(Styleable::fromElement(element), WebAnimation::Silently::No);
+                        timeline->cancelDeclarativeAnimationsForStyleable(styleable, WebAnimation::Silently::Yes);
                 }
+                element.clearHoverAndActiveStatusBeforeDetachingRenderer();
+                break;
+            case TeardownType::RendererUpdateCancelingAnimations:
+                if (timeline)
+                    timeline->cancelDeclarativeAnimationsForStyleable(styleable, WebAnimation::Silently::No);
                 break;
             case TeardownType::RendererUpdate:
                 if (timeline)
                     timeline->willChangeRendererForStyleable(Styleable::fromElement(element));
                 break;
             }
-
-            if (teardownType == TeardownType::Full)
-                element.clearHoverAndActiveStatusBeforeDetachingRenderer();
 
             GeneratedContent::removeBeforePseudoElement(element, builder);
             GeneratedContent::removeAfterPseudoElement(element, builder);
