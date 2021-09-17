@@ -134,6 +134,11 @@ public:
         return snappedSelectionRect(selectionRect, logicalRight, selectionTop, selectionHeight, isHorizontal());
     }
 
+    TextRun createTextRun() const
+    {
+        return createTextRun(HyphenMode::Include);
+    };
+
     const RenderObject& renderer() const
     {
         return m_inlineContent->rendererForLayoutBox(run().layoutBox());
@@ -197,11 +202,7 @@ public:
     bool operator==(const RunIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
 
     bool atEnd() const { return m_runIndex == runs().size(); }
-
-    LegacyInlineBox* legacyInlineBox() const
-    {
-        return nullptr;
-    }
+    const Layout::Run& run() const { return runs()[m_runIndex]; }
 
 private:
     friend class LineIteratorModernPath;
@@ -224,6 +225,11 @@ private:
         } while (!atEnd() && run().isInlineBox());
     }
 
+    void setAtEnd() { m_runIndex = runs().size(); }
+
+    const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
+    const Line& line() const { return m_inlineContent->lineForRun(run()); }
+
     enum class HyphenMode { Include, Ignore };
     TextRun createTextRun(HyphenMode hyphenMode) const
     {
@@ -243,12 +249,6 @@ private:
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         return textRun;
     };
-
-    void setAtEnd() { m_runIndex = runs().size(); }
-
-    const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
-    const Layout::Run& run() const { return runs()[m_runIndex]; }
-    const Line& line() const { return m_inlineContent->lineForRun(run()); }
 
     RefPtr<const InlineContent> m_inlineContent;
     size_t m_runIndex { 0 };

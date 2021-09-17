@@ -31,6 +31,10 @@ namespace WebCore {
 
 class RenderCombineText;
 
+namespace LayoutIntegration {
+class RunIteratorLegacyPath;
+}
+
 class LegacyInlineTextBox : public LegacyInlineBox {
     WTF_MAKE_ISO_ALLOCATED(LegacyInlineTextBox);
 public:
@@ -150,6 +154,7 @@ public:
     bool hasMarkers() const;
 
 private:
+    friend class LayoutIntegration::RunIteratorLegacyPath;
     friend class TextBoxPainter;
 
     FloatPoint textOriginFromBoxRect(const FloatRect&) const;

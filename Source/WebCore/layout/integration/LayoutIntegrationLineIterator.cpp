@@ -154,8 +154,7 @@ RunIterator PathLine::closestRunForPoint(const IntPoint& pointInContents, bool e
 
 RunIterator PathLine::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly) const
 {
-    auto isEditable = [&](auto run)
-    {
+    auto isEditable = [&](auto run) {
         return run && run->renderer().node() && run->renderer().node()->hasEditableStyle();
     };
 
@@ -195,6 +194,16 @@ int PathLine::blockDirectionPointInLine() const
     return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), selectionTop()) : std::min(bottom(), selectionBottom());
 }
 
+LayoutUnit PathLine::selectionTopAdjustedForPrecedingBlock() const
+{
+    return containingBlock().adjustSelectionTopForPrecedingBlock(selectionTop());
+}
+
+LayoutUnit PathLine::selectionHeightAdjustedForPrecedingBlock() const
+{
+    return std::max<LayoutUnit>(0, selectionBottom() - selectionTopAdjustedForPrecedingBlock());
+}
+
 RenderObject::HighlightState PathLine::selectionState() const
 {
     auto& block = containingBlock();
@@ -218,6 +227,24 @@ RenderObject::HighlightState PathLine::selectionState() const
             break;
     }
     return state;
+}
+
+RunIterator PathLine::firstSelectedBox() const
+{
+    for (auto box = firstRun(); box; box.traverseNextOnLine()) {
+        if (box->selectionState() != RenderObject::HighlightState::None)
+            return box;
+    }
+    return { };
+}
+
+RunIterator PathLine::lastSelectedBox() const
+{
+    for (auto box = lastRun(); box; box.traversePreviousOnLine()) {
+        if (box->selectionState() != RenderObject::HighlightState::None)
+            return box;
+    }
+    return { };
 }
 
 }

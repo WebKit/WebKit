@@ -57,6 +57,8 @@ public:
     LayoutUnit selectionTopForHitTesting() const;
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const;
+    LayoutUnit selectionTopAdjustedForPrecedingBlock() const;
+    LayoutUnit selectionHeightAdjustedForPrecedingBlock() const;
     LayoutUnit lineBoxTop() const;
     LayoutUnit lineBoxBottom() const;
 
@@ -66,6 +68,7 @@ public:
     float y() const;
     float contentLogicalLeft() const;
     float contentLogicalRight() const;
+    float contentLogicalWidth() const;
     float logicalHeight() const;
 
     int blockDirectionPointInLine() const;
@@ -92,6 +95,9 @@ public:
     RunIterator logicalEndRun() const;
     RunIterator logicalStartRunWithNode() const;
     RunIterator logicalEndRunWithNode() const;
+    
+    RunIterator firstSelectedBox() const;
+    RunIterator lastSelectedBox() const;
 
 private:
     friend class LineIterator;
@@ -215,6 +221,11 @@ inline float PathLine::contentLogicalRight() const
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalRight();
     });
+}
+
+inline float PathLine::contentLogicalWidth() const
+{
+    return contentLogicalRight() - contentLogicalLeft();
 }
 
 inline float PathLine::logicalHeight() const

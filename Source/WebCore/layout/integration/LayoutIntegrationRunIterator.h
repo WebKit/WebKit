@@ -86,8 +86,10 @@ public:
     const RenderStyle& style() const;
 
     // For intermediate porting steps only.
-    LegacyInlineBox* legacyInlineBox() const;
-
+    const LegacyInlineBox* legacyInlineBox() const;
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    const Layout::Run* inlineBox() const;
+#endif
     RunIterator nextOnLine() const;
     RunIterator previousOnLine() const;
     RunIterator nextOnLineIgnoringLineBreak() const;
@@ -125,8 +127,10 @@ public:
     TextBoxSelectableRange selectableRange() const;
     LayoutRect selectionRect(unsigned start, unsigned end) const;
 
+    TextRun createTextRun() const;
+
     const RenderText& renderer() const { return downcast<RenderText>(PathRun::renderer()); }
-    LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(PathRun::legacyInlineBox()); }
+    const LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(PathRun::legacyInlineBox()); }
 
     TextRunIterator nextTextRun() const;
     TextRunIterator nextTextRunInTextOrder() const;
@@ -285,12 +289,21 @@ inline const RenderObject& PathRun::renderer() const
     });
 }
 
-inline LegacyInlineBox* PathRun::legacyInlineBox() const
+inline const LegacyInlineBox* PathRun::legacyInlineBox() const
 {
-    return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.legacyInlineBox();
-    });
+    if (!WTF::holds_alternative<RunIteratorLegacyPath>(m_pathVariant))
+        return nullptr;
+    return WTF::get<RunIteratorLegacyPath>(m_pathVariant).legacyInlineBox();
 }
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+inline const Layout::Run* PathRun::inlineBox() const
+{
+    if (!WTF::holds_alternative<RunIteratorModernPath>(m_pathVariant))
+        return nullptr;
+    return &WTF::get<RunIteratorModernPath>(m_pathVariant).run();
+}
+#endif
 
 inline bool PathTextRun::hasHyphen() const
 {
@@ -357,6 +370,13 @@ inline LayoutRect PathTextRun::selectionRect(unsigned start, unsigned end) const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.selectionRect(start, end);
+    });
+}
+
+inline TextRun PathTextRun::createTextRun() const
+{
+    return WTF::switchOn(m_pathVariant, [&](auto& path) {
+        return path.createTextRun();
     });
 }
 

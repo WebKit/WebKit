@@ -1,5 +1,37 @@
 2021-09-17  Antti Koivisto  <antti@apple.com>
 
+        [LFC][Integration] Add some useful functions to iterators
+        https://bugs.webkit.org/show_bug.cgi?id=230398
+
+        Reviewed by Alan Bujtas.
+
+        For future use.
+
+        * layout/integration/LayoutIntegrationLineIterator.cpp:
+        (WebCore::LayoutIntegration::LineIterator::closestRunForLogicalLeftPosition):
+        (WebCore::LayoutIntegration::PathLine::selectionTopAdjustedForPrecedingBlock const):
+        (WebCore::LayoutIntegration::PathLine::selectionHeightAdjustedForPrecedingBlock const):
+        (WebCore::LayoutIntegration::PathLine::firstSelectedBox const):
+        (WebCore::LayoutIntegration::PathLine::lastSelectedBox const):
+        * layout/integration/LayoutIntegrationLineIterator.h:
+        (WebCore::LayoutIntegration::PathLine::contentLogicalWidth const):
+        * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathTextRun::legacyInlineBox const):
+        (WebCore::LayoutIntegration::PathRun::legacyInlineBox const):
+        (WebCore::LayoutIntegration::PathRun::inlineBox const):
+        (WebCore::LayoutIntegration::PathTextRun::createTextRun const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::createTextRun const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::createTextRun const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::run const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::runs const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::legacyInlineBox const): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+
+2021-09-17  Antti Koivisto  <antti@apple.com>
+
         [LFC][Integration] Move non-traversal functions from iterator to the dereferenced type
         https://bugs.webkit.org/show_bug.cgi?id=230396
 

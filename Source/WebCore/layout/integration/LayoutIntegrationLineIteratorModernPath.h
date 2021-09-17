@@ -60,6 +60,7 @@ public:
     // - the "before" value is already factored in to the line offset
     // - this logic negates the first line's natural offset (e.g. block has no border/padding but the first line has a computed offset).
     LayoutUnit selectionTopForHitTesting() const { return !m_lineIndex ? containingBlock().borderAndPaddingBefore() : selectionTop(); };
+    // FIXME: Implement or replace.
     LayoutUnit selectionBottom() const { return bottom(); }
 
     float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLeft(); }

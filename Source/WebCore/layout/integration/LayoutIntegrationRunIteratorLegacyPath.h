@@ -78,6 +78,8 @@ public:
     TextBoxSelectableRange selectableRange() const { return inlineTextBox()->selectableRange(); }
     LayoutRect selectionRect(unsigned start, unsigned end) const { return inlineTextBox()->localSelectionRect(start, end); }
 
+    TextRun createTextRun() const { return inlineTextBox()->createTextRun(); }
+
     const RenderObject& renderer() const
     {
         return m_inlineBox->renderer();
