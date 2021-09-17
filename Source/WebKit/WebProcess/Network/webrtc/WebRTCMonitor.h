@@ -68,8 +68,6 @@ public:
 private:
     void networksChanged(Vector<RTCNetwork>&&, RTCNetwork::IPAddress&&, RTCNetwork::IPAddress&&);
 
-    static void sendOnMainThread(Function<void(IPC::Connection&)>&&);
-
     unsigned m_clientCount { 0 };
     WeakHashSet<Observer> m_observers;
     bool m_enableEnumeratingAllNetworkInterfaces { false };
