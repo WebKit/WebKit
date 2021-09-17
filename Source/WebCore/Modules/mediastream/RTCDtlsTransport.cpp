@@ -34,6 +34,7 @@
 #include "NotImplemented.h"
 #include "RTCDtlsTransportBackend.h"
 #include "RTCIceTransport.h"
+#include "RTCPeerConnection.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -81,6 +82,8 @@ void RTCDtlsTransport::onStateChanged(RTCDtlsTransportState state, Vector<Ref<JS
 
         if (m_state != state) {
             m_state = state;
+            if (auto* connection = m_iceTransport->connection())
+                connection->updateConnectionState();
             dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
         }
     });

@@ -171,9 +171,9 @@ public:
     WEBCORE_EXPORT void emulatePlatformEvent(const String& action);
 
     // API used by PeerConnectionBackend and relatives
-    void setSignalingState(RTCSignalingState);
     void updateIceGatheringState(RTCIceGatheringState);
     void updateIceConnectionState(RTCIceConnectionState);
+    void updateConnectionState();
 
     void updateNegotiationNeededFlag(std::optional<uint32_t>);
 
@@ -227,7 +227,6 @@ private:
     void resume() final;
     bool virtualHasPendingActivity() const final;
 
-    void updateConnectionState();
     bool updateIceConnectionStateFromIceTransports();
     RTCIceConnectionState computeIceConnectionStateFromIceTransports();
     RTCPeerConnectionState computeConnectionState();
@@ -246,6 +245,8 @@ private:
     Ref<RTCIceTransport> getOrCreateIceTransport(UniqueRef<RTCIceTransportBackend>&&);
     RefPtr<RTCDtlsTransport> getOrCreateDtlsTransport(std::unique_ptr<RTCDtlsTransportBackend>&&);
     void updateTransceiverTransports();
+
+    void setSignalingState(RTCSignalingState);
 
     bool m_isStopped { false };
     RTCSignalingState m_signalingState { RTCSignalingState::Stable };

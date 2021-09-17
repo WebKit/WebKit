@@ -561,7 +561,6 @@ void RTCPeerConnection::close()
     if (!doClose())
         return;
 
-    updateConnectionState();
     ASSERT(isClosed());
     m_backend->close();
 }
@@ -675,21 +674,44 @@ void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState newState)
     });
 }
 
+// https://w3c.github.io/webrtc-pc/#rtcpeerconnectionstate-enum
 RTCPeerConnectionState RTCPeerConnection::computeConnectionState()
 {
-    if (m_iceConnectionState == RTCIceConnectionState::Closed)
+    if (isClosed())
         return RTCPeerConnectionState::Closed;
-    if (m_iceConnectionState == RTCIceConnectionState::Disconnected)
-        return RTCPeerConnectionState::Disconnected;
-    if (m_iceConnectionState == RTCIceConnectionState::Failed)
+
+    auto iceTransports = m_iceTransports;
+    iceTransports.removeAllMatching([&](auto& iceTransport) {
+        if (m_sctpTransport && &m_sctpTransport->transport().iceTransport() == iceTransport.ptr())
+            return false;
+        return allOf(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
+            return !isIceTransportUsedByTransceiver(iceTransport.get(), *transceiver);
+        });
+    });
+
+    auto dtlsTransports = m_dtlsTransports;
+    dtlsTransports.removeAllMatching([&](auto& dtlsTransport) {
+        if (m_sctpTransport && &m_sctpTransport->transport() == dtlsTransport.ptr())
+            return false;
+        return allOf(m_transceiverSet.list(), [&dtlsTransport](auto& transceiver) {
+            return transceiver->sender().transport() != dtlsTransport.ptr();
+        });
+    });
+
+    if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Failed; }) || anyOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::Failed; }))
         return RTCPeerConnectionState::Failed;
-    if (m_iceConnectionState == RTCIceConnectionState::New && m_iceGatheringState == RTCIceGatheringState::New)
+
+    if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Disconnected; }))
+        return RTCPeerConnectionState::Disconnected;
+
+    if (allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }) && allOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Closed; }))
         return RTCPeerConnectionState::New;
-    if (m_iceConnectionState == RTCIceConnectionState::Checking || m_iceGatheringState == RTCIceGatheringState::Gathering)
+
+    if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Checking; }) || anyOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Connecting; }))
         return RTCPeerConnectionState::Connecting;
-    if ((m_iceConnectionState == RTCIceConnectionState::Completed || m_iceConnectionState == RTCIceConnectionState::Connected) && m_iceGatheringState == RTCIceGatheringState::Complete)
-        return RTCPeerConnectionState::Connected;
-    return m_connectionState;
+
+    ASSERT(allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }) && allOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::Connected || transport->state() == RTCDtlsTransportState::Closed; }));
+    return RTCPeerConnectionState::Connected;
 }
 
 void RTCPeerConnection::updateConnectionState()
@@ -753,9 +775,9 @@ void RTCPeerConnection::processIceTransportStateChange(RTCIceTransport& iceTrans
     m_connectionState = newConnectionState;
 
     iceTransport.dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
-    if (iceConnectionStateChanged)
+    if (iceConnectionStateChanged && !isClosed())
         dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    if (connectionStateChanged)
+    if (connectionStateChanged && !isClosed())
         dispatchEvent(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

@@ -1,3 +1,26 @@
+2021-09-17  Youenn Fablet  <youenn@apple.com>
+
+        Compute RTCPeerConnection.connectionState as per https://w3c.github.io/webrtc-pc/#rtcpeerconnectionstate-enum
+        https://bugs.webkit.org/show_bug.cgi?id=230341
+
+        Reviewed by Eric Carlson.
+
+        We should compute connection states according ICE and DTLS transport state, as per spec.
+        Given we compute the state from ICE and DTLS states, we now make sure to update connection state whenever DTLS state changes.
+        Make also sure to not fire events in case peer connection is closed, as per spec.
+
+        Covered by existing and rebased tests.
+
+        * Modules/mediastream/RTCDtlsTransport.cpp:
+        (WebCore::RTCDtlsTransport::onStateChanged):
+        * Modules/mediastream/RTCIceTransport.h:
+        (WebCore::RTCIceTransport::connection const):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::close):
+        (WebCore::RTCPeerConnection::computeConnectionState):
+        (WebCore::RTCPeerConnection::processIceTransportStateChange):
+        * Modules/mediastream/RTCPeerConnection.h:
+
 2021-09-16  Cameron McCormack  <heycam@apple.com>
 
         Preserve canvas color space when producing JPEGs from toDataURL/toBlob

@@ -38,6 +38,7 @@
 #include "RTCIceGatheringState.h"
 #include "RTCIceTransportBackend.h"
 #include "RTCIceTransportState.h"
+#include "RTCPeerConnection.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -58,6 +59,7 @@ public:
     RTCIceGatheringState gatheringState() const { return m_gatheringState; }
 
     const RTCIceTransportBackend& backend() const { return m_backend.get(); }
+    RTCPeerConnection* connection() const { return m_connection.get(); }
 
     using RefCounted<RTCIceTransport>::ref;
     using RefCounted<RTCIceTransport>::deref;
