@@ -2185,8 +2185,6 @@ webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance/ogles/GL/any/any_001_to
 
 webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
 
-webkit.org/b/222748 [ Debug ] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html [ Pass Failure ]
-
 webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
 
 webkit.org/b/223973 [ Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html [ Pass Failure ]
