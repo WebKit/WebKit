@@ -2080,3 +2080,4 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-select
 
 webkit.org/b/230412 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html [ Pass Failure ]
 
+webkit.org/b/230434 http/tests/navigation/back-to-slow-frame.html [ Pass Crash ]
