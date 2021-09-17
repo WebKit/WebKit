@@ -1,3 +1,16 @@
+2021-09-16  Cameron McCormack  <heycam@apple.com>
+
+        Preserve canvas color space when producing JPEGs from toDataURL/toBlob
+        https://bugs.webkit.org/show_bug.cgi?id=230209
+        <rdar://82948457>
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-09-16  Alex Christensen  <achristensen@webkit.org>
 
         Regression (r282484): [ Catalina ] 2 imported/w3c/web-platform-tests/content-security-policy/ tests are failing

@@ -1,0 +1,6 @@
+2d.color.space.p3.toDataURL.jpeg.p3.canvas
+test if toDataURL('image/jpeg') returns p3 data from canvas with p3 color space
+Actual output:
+
+PASS test if toDataURL('image/jpeg') returns p3 data from canvas with p3 color space
+

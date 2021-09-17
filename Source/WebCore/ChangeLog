@@ -1,3 +1,20 @@
+2021-09-16  Cameron McCormack  <heycam@apple.com>
+
+        Preserve canvas color space when producing JPEGs from toDataURL/toBlob
+        https://bugs.webkit.org/show_bug.cgi?id=230209
+        <rdar://82948457>
+
+        Reviewed by Sam Weinig.
+
+        Test: imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html
+
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::colorSpaceForBitmap): Return an appropriate color space for
+        performing any graphics operations on ImageBuffers (such as scaling or
+        cropping, or compositing on top of solid colors) becore encoding.
+        (WebCore::createBitmapImageAfterScalingIfNeeded):
+        (WebCore::ImageBufferCGBackend::copyCGImageForEncoding const):
+
 2021-09-16  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed build fix for Ubuntu LTS/Debian after r282597

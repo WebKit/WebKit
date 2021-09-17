@@ -2359,6 +2359,7 @@ webkit.org/b/230116 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html [ Pass ]
+[ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.jpeg.p3.canvas.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html [ Pass ]
 [ Monterey+ ] storage/indexeddb/structured-clone-image-data-display-p3.html [ Pass ]
 
