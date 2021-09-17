@@ -1,3 +1,17 @@
+2021-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] test animations/steps-transform-rendering-updates.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=230307
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        ThreadedDisplayRefreshMonitor is not setting isScheduled back to false when it's fired. That causes
+        hasBeenRescheduled to be true and handleDisplayRefreshMonitorUpdate() is called with force repaint option, so we
+        end up flushing layers on every display refresh update.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::displayRefreshCallback):
+
 2021-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r274929): [CoordinatedGraphics] DrawingAreaCoordinatedGraphics::createDisplayRefreshMonitor is no longer used
