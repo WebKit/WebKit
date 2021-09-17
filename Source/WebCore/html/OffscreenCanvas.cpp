@@ -276,7 +276,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
             return { RefPtr<ImageBitmap> { nullptr } };
 
         if (!m_hasCreatedImageBuffer) {
-            auto buffer = ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated);
+            auto buffer = ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated, m_context->colorSpace());
             return { ImageBitmap::create(ImageBitmapBacking(WTFMove(buffer))) };
         }
 
@@ -298,7 +298,7 @@ ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
         // store from this canvas (or its context), but for now we'll just
         // create a new bitmap and paint into it.
 
-        auto imageBitmap = ImageBitmap::create(*canvasBaseScriptExecutionContext(), size());
+        auto imageBitmap = ImageBitmap::create(*canvasBaseScriptExecutionContext(), size(), DestinationColorSpace::SRGB());
         if (!imageBitmap->buffer())
             return { RefPtr<ImageBitmap> { nullptr } };
 
@@ -492,7 +492,8 @@ void OffscreenCanvas::createImageBuffer() const
     if (!width() || !height())
         return;
 
-    setImageBuffer(ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated));
+    auto colorSpace = m_context ? m_context->colorSpace() : DestinationColorSpace::SRGB();
+    setImageBuffer(ImageBitmap::createImageBuffer(*canvasBaseScriptExecutionContext(), size(), RenderingMode::Unaccelerated, colorSpace));
 }
 
 RefPtr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const

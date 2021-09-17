@@ -1,3 +1,16 @@
+2021-09-17  Cameron McCormack  <heycam@apple.com>
+
+        Preserve color space when creating ImageBuffers for ImageBitmaps
+        https://bugs.webkit.org/show_bug.cgi?id=229022
+        <rdar://problem/81828459>
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-09-17  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations for js/dfg-int32array-overflow-values.html.

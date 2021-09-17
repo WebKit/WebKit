@@ -136,6 +136,8 @@ public:
     SharedBuffer* data() { return m_encodedImageData.get(); }
     const SharedBuffer* data() const { return m_encodedImageData.get(); }
 
+    virtual DestinationColorSpace colorSpace();
+
     // Animation begins whenever someone draws the image, so startAnimation() is not normally called.
     // It will automatically pause once all observers no longer want to render the image anywhere.
     virtual void startAnimation() { }

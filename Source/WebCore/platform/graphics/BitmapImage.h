@@ -116,6 +116,8 @@ public:
     bool isLargeImageAsyncDecodingEnabledForTesting() const { return m_largeImageAsyncDecodingEnabledForTesting; }
     void stopAsyncDecodingQueue() { m_source->stopAsyncDecodingQueue(); }
 
+    DestinationColorSpace colorSpace() final;
+
     WEBCORE_EXPORT unsigned decodeCountForTesting() const;
 
     // Accessors for native image formats.
