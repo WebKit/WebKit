@@ -1,3 +1,15 @@
+2021-09-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Prefer python3 over python2
+        https://bugs.webkit.org/show_bug.cgi?id=229969
+
+        Reviewed by Michael Catanzaro.
+
+        Use the CMake module FindPython instead of FindPythonInterp.
+        FindPython looks preferably for version 3 of Python. If not found, then it looks for version 2.
+
+        * Source/cmake/WebKitCommon.cmake:
+
 2021-09-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.33.90 release
