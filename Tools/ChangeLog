@@ -1,3 +1,19 @@
+2021-09-17  Geza Lore  <gezalore@gmail.com>
+
+        Speed up run-jsc-stress-tests with parallel processing
+        https://bugs.webkit.org/show_bug.cgi?id=230251
+
+        Reviewed by Yusuke Suzuki.
+
+        Around 2/3 of the time spent in the initial serial processing phase of
+        run-jsc-stress-tests is simply writing out the many test runner
+        scripts to disk, which is trivially parallelizable. The change in this
+        patch forks sub-processes to emit the test runner scripts which makes
+        the serial startup phase overall about 2.5x faster on my test machine
+        (47 sec -> 19 sec).
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-09-17  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r275267) [GLIB] API test /webkit/WebKitWebsiteData/configuration is failing

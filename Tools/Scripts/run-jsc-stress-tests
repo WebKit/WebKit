@@ -1997,6 +1997,53 @@ def eachResultFile(startingDir, &block)
     end
 end
 
+def parallelEach(array, &block)
+    # Short of using 'require "parallel"' we use a simple statically
+    # partitioned multiprocess dispatch for processing fixed chunks of the
+    # given  array in parallel. We use Process rather than Thread to
+    # parallelise CPU load as well as IO (due to the GIL).
+
+    # Some platforms (notably Windows) do not support Process.fork, so work
+    # serially on these.
+    nWorkers = Process.respond_to?(:fork) ? $numChildProcesses : 1
+
+    # Chunk size is rounded up
+    chunkSize = (array.size + (nWorkers - 1)) / nWorkers
+
+    # If chunk size is too small, work serially
+    if chunkSize <= 1
+      nWorkers = 1
+      chunkSize = array.size
+    end
+
+    childPIDs = []
+
+    # Chunks 1 to nWorkers-1 run in the worker processes
+    for i in 1...nWorkers do
+      pid = Process.fork
+      if pid.nil?
+        # Worker process. Process chunk i.
+        array.slice(i*chunkSize, chunkSize).each(&block)
+        Process.exit!(true)
+      else
+        childPIDs << pid
+      end
+    end
+
+    # Main process. Process chunk 0.
+    array.slice(0, chunkSize).each(&block)
+
+    # Wait for workers
+    for pid in childPIDs do
+      _, status = Process.waitpid2(pid)
+      raise "Child process still running" unless status.exited?
+      if status.exitstatus != 0
+        STDERR.puts "Child process failed with status: #{status.exitstatus}"
+        exit(status.exitstatus)
+      end
+    end
+end
+
 def prepareTestRunner(remoteIndex=0)
     raise if $bundle
 
@@ -2019,10 +2066,12 @@ def prepareTestRunner(remoteIndex=0)
         File.unlink($runnerDir + filename)
     }
 
-    $runlist.each {
-        | plan |
+    # Write test scripts in parallel as this is both an expensive and a
+    # highly IO intensive operation, but each script is independent and
+    # the operation is pure other than writing the unique run script.
+    parallelEach($runlist) do | plan |
         plan.writeRunScript($runnerDir + "test_script_#{plan.index}")
-    }
+    end
 
     case $testRunnerType
     when :make
