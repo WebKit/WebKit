@@ -269,6 +269,7 @@ IsAccessibilityIsolatedTreeEnabled:
   type: bool
   defaultValue:
     WebCore:
+      USE(ATSPI): true
       default: false
 
 IsPerActivityStateCPUUsageMeasurementEnabled:

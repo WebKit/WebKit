@@ -1,3 +1,76 @@
+2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Add a build option to enable ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=230254
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add stubs for ATSPI implementation.
+
+        * PlatformGTK.cmake:
+        * SourcesGTK.txt:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        * accessibility/atk/WebKitAccessible.cpp:
+        * accessibility/atk/WebKitAccessible.h:
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        * accessibility/atk/WebKitAccessibleHyperlink.h:
+        * accessibility/atk/WebKitAccessibleInterfaceAction.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceAction.h:
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.h:
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.h:
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.h:
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.h:
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.h:
+        * accessibility/atk/WebKitAccessibleInterfaceImage.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceImage.h:
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.h:
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceTable.h:
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.h:
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceText.h:
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceValue.h:
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        * accessibility/atk/WebKitAccessibleUtil.h:
+        * accessibility/atspi/AXObjectCacheAtspi.cpp: Added.
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::AXObjectCache::platformPerformDeferredCacheUpdate):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+        (WebCore::AXObjectCache::platformHandleFocusedUIElementChanged):
+        (WebCore::AXObjectCache::handleScrolledToAnchor):
+        * accessibility/atspi/AccessibilityObjectAtspi.cpp: Added.
+        (WebCore::AccessibilityObjectAtspi::create):
+        (WebCore::AccessibilityObjectAtspi::AccessibilityObjectAtspi):
+        (WebCore::AccessibilityObject::detachPlatformWrapper):
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment const):
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject const):
+        * accessibility/atspi/AccessibilityObjectAtspi.h: Added.
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::children):
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/isolatedtree/atspi/AXIsolatedObjectAtspi.cpp: Added.
+        (WebCore::AXIsolatedObject::initializePlatformProperties):
+        (WebCore::AXIsolatedObject::attachPlatformWrapper):
+        (WebCore::AXIsolatedObject::detachPlatformWrapper):
+        * editing/FrameSelection.h:
+        * editing/atk/FrameSelectionAtk.cpp:
+        * editing/atspi/FrameSelectionAtspi.cpp: Added.
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * page/Settings.yaml:
+
 2021-09-17  Youenn Fablet  <youenn@apple.com>
 
         Make sure to use event queue when settling RTCPeerConnection.addIceCandidate promise

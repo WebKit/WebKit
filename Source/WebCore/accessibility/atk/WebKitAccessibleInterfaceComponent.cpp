@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceComponent.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityObject.h"
 #include "FrameView.h"
@@ -169,4 +169,4 @@ void webkitAccessibleComponentInterfaceInit(AtkComponentIface* iface)
 #endif
 }
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

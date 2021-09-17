@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2008 Nuanti Ltd.
- * Copyright (C) 2009 Jan Alonzo
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2021 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,10 +19,22 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include <wtf/Atomics.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
-#include <atk/atk.h>
+namespace WebCore {
+class AXCoreObject;
 
-void webkitAccessibleActionInterfaceInit(AtkActionIface*);
+class AccessibilityObjectAtspi: public ThreadSafeRefCounted<AccessibilityObjectAtspi> {
+public:
+    static Ref<AccessibilityObjectAtspi> create(AXCoreObject*);
+    ~AccessibilityObjectAtspi() = default;
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATK)
+private:
+    explicit AccessibilityObjectAtspi(AXCoreObject*);
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

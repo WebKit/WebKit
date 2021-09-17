@@ -23,6 +23,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atk"
+    "${WEBCORE_DIR}/accessibility/atspi"
     "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/gtk"
     "${WEBCORE_DIR}/platform/adwaita"
@@ -53,6 +54,8 @@ if (USE_WPE_RENDERER)
 endif ()
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    accessibility/atspi/AccessibilityObjectAtspi.h
+
     platform/adwaita/ScrollbarThemeAdwaita.h
 
     platform/glib/ApplicationGLib.h

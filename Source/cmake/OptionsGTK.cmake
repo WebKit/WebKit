@@ -30,7 +30,6 @@ find_package(OpenGLES2)
 
 include(GStreamerDefinitions)
 
-SET_AND_EXPOSE_TO_BUILD(USE_ATK TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_CAIRO TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_XDGMIME TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
@@ -76,6 +75,7 @@ WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC O
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_ANGLE_WEBGL "Whether to use ANGLE as WebGL backend." PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(USE_ATSPI "Whether to use the Atspi a11y implementation instead of ATK." PRIVATE OFF)
 
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
@@ -265,6 +265,12 @@ endif ()
 
 if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     set(BUILD_REVISION "tarball")
+endif ()
+
+if (USE_ATSPI)
+    SET_AND_EXPOSE_TO_BUILD(ENABLE_ACCESSIBILITY_ISOLATED_TREE TRUE)
+else ()
+    SET_AND_EXPOSE_TO_BUILD(USE_ATK TRUE)
 endif ()
 
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})

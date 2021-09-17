@@ -41,6 +41,11 @@
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePagePrivate.h>
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#import <pal/spi/mac/HIServicesSPI.h>
+#endif
+
 namespace WTR {
 
 bool AccessibilityController::addNotificationListener(JSValueRef functionCallback)
@@ -123,6 +128,16 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 {
     return WTR::createJSString("mac");
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void AccessibilityController::updateIsolatedTreeMode()
+{
+    // Override to set identifier to VoiceOver so that requests are handled in isolated mode.
+    _AXSetClientIdentificationOverride(m_accessibilityIsolatedTreeMode ? (AXClientType)kAXClientTypeWebKitTesting : kAXClientTypeNoActiveRequestFound);
+    _AXSSetIsolatedTreeMode(m_accessibilityIsolatedTreeMode ? AXSIsolatedTreeModeMainThread : AXSIsolatedTreeModeOff);
+    m_useMockAXThread = WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page());
+}
+#endif
 
 // AXThread implementation
 

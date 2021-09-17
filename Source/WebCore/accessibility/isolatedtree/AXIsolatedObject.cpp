@@ -508,6 +508,8 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
 #if USE(APPLE_INTERNAL_SDK)
     ASSERT(_AXSIsolatedTreeModeFunctionIsAvailable() && ((_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread && !isMainThread())
         || (_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeMainThread && isMainThread())));
+#elif USE(ATSPI)
+    ASSERT(!isMainThread());
 #endif
     updateBackingStore();
     m_children.clear();

@@ -39,7 +39,14 @@ accessibility/atk/WebKitAccessibleInterfaceText.cpp
 accessibility/atk/WebKitAccessibleInterfaceValue.cpp
 accessibility/atk/WebKitAccessibleUtil.cpp
 
+accessibility/atspi/AccessibilityObjectAtspi.cpp
+accessibility/atspi/AXObjectCacheAtspi.cpp
+
+accessibility/isolatedtree/atspi/AXIsolatedObjectAtspi.cpp
+
 editing/atk/FrameSelectionAtk.cpp
+
+editing/atspi/FrameSelectionAtspi.cpp
 
 editing/gtk/EditorGtk.cpp
 editing/gtk/WebContentReaderGtk.cpp

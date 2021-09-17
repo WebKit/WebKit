@@ -43,6 +43,10 @@
 #include "COMPtr.h"
 #endif
 
+#if USE(ATSPI)
+#include "AccessibilityObjectAtspi.h"
+#endif
+
 #if USE(ATK)
 #include <wtf/glib/GRefPtr.h>
 #endif
@@ -53,6 +57,8 @@ typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 typedef struct _NSRange NSRange;
 typedef const struct __AXTextMarker* AXTextMarkerRef;
 typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
+#elif USE(ATSPI)
+typedef WebCore::AccessibilityObjectAtspi AccessibilityObjectWrapper;
 #elif USE(ATK)
 typedef struct _WebKitAccessible WebKitAccessible;
 typedef struct _WebKitAccessible AccessibilityObjectWrapper;
@@ -1507,6 +1513,8 @@ private:
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
+#elif USE(ATSPI)
+    RefPtr<AccessibilityObjectAtspi> m_wrapper;
 #elif USE(ATK)
     GRefPtr<WebKitAccessible> m_wrapper;
 #endif

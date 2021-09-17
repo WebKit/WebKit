@@ -21,7 +21,7 @@
 #include "config.h"
 #include "WebKitAccessibleHyperlink.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
@@ -313,4 +313,4 @@ WebKitAccessibleHyperlink* webkitAccessibleHyperlinkGetOrCreate(AtkHyperlinkImpl
     return hyperlink;
 }
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

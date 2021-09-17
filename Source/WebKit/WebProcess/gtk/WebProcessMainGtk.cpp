@@ -71,6 +71,15 @@ public:
 
 int WebProcessMain(int argc, char** argv)
 {
+#if USE(ATSPI)
+    // Disable ATK/GTK accessibility support in the WebProcess.
+#if USE(GTK4)
+    g_setenv("GTK_A11Y", "none", TRUE);
+#else
+    g_setenv("NO_AT_BRIDGE", "1", TRUE);
+#endif
+#endif
+
     // Ignore the GTK_THEME environment variable, the theme is always set by the UI process now.
     // This call needs to happen before any threads begin execution
     unsetenv("GTK_THEME");

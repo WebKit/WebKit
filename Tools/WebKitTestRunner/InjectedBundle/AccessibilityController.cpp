@@ -32,10 +32,6 @@
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSAccessibilityController.h"
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-#include <pal/spi/cocoa/AccessibilitySupportSPI.h>
-#include <pal/spi/mac/HIServicesSPI.h>
-#endif
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
@@ -64,16 +60,6 @@ void AccessibilityController::setIsolatedTreeMode(bool flag)
     }
 #endif
 }
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-void AccessibilityController::updateIsolatedTreeMode()
-{
-    // Override to set identifier to VoiceOver so that requests are handled in isolated mode.
-    _AXSetClientIdentificationOverride(m_accessibilityIsolatedTreeMode ? (AXClientType)kAXClientTypeWebKitTesting : kAXClientTypeNoActiveRequestFound);
-    _AXSSetIsolatedTreeMode(m_accessibilityIsolatedTreeMode ? AXSIsolatedTreeModeMainThread : AXSIsolatedTreeModeOff);
-    m_useMockAXThread = WKAccessibilityCanUseSecondaryAXThread(InjectedBundle::singleton().page()->page());
-}
-#endif
 
 void AccessibilityController::makeWindowObject(JSContextRef context)
 {

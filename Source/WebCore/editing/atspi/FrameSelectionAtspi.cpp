@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2008 Nuanti Ltd.
- * Copyright (C) 2009 Jan Alonzo
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2021 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,12 +17,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#pragma once
+#include "config.h"
+#include "FrameSelection.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include <atk/atk.h>
+#include "AXObjectCache.h"
 
-void webkitAccessibleActionInterfaceInit(AtkActionIface*);
+namespace WebCore {
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATK)
+void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChangeIntent&)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

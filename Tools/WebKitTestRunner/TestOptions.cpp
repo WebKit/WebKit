@@ -88,6 +88,9 @@ const TestFeatures& TestOptions::defaults()
             { "InputTypeMonthEnabled", true },
             { "InputTypeTimeEnabled", true },
             { "InputTypeWeekEnabled", true },
+#if USE(ATSPI)
+            { "IsAccessibilityIsolatedTreeEnabled", true },
+#endif
             { "JavaScriptCanAccessClipboard", true },
             { "JavaScriptCanOpenWindowsAutomatically", true },
             { "LargeImageAsyncDecodingEnabled", false },

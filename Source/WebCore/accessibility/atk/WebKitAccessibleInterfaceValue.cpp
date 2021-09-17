@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceValue.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityObject.h"
 #include "HTMLNames.h"

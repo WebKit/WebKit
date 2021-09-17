@@ -21,6 +21,8 @@
 #include "config.h"
 #include "AccessibilityObject.h"
 
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
+
 #include "AXObjectCache.h"
 #include "HTMLSpanElement.h"
 #include "RenderBlock.h"
@@ -31,8 +33,6 @@
 #include "TextControlInnerElements.h"
 #include "WebKitAccessible.h"
 #include <glib-object.h>
-
-#if ENABLE(ACCESSIBILITY)
 
 namespace WebCore {
 
@@ -206,4 +206,4 @@ unsigned AccessibilityObject::getLengthForTextRange() const
 
 } // namespace WebCore
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

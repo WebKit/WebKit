@@ -40,6 +40,9 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp
     InjectedBundle/atk/AccessibilityUIElementAtk.cpp
 
+    InjectedBundle/atspi/AccessibilityControllerAtspi.cpp
+    InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp
+
     InjectedBundle/gtk/ActivateFontsGtk.cpp
     InjectedBundle/gtk/InjectedBundleGtk.cpp
     InjectedBundle/gtk/InjectedBundleUtilities.cpp

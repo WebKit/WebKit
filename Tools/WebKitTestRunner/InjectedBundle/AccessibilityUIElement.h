@@ -47,6 +47,11 @@ using PlatformUIElement = id;
 #include <atk/atk.h>
 #include <wtf/glib/GRefPtr.h>
 typedef GRefPtr<AtkObject> PlatformUIElement;
+#elif HAVE(ACCESSIBILITY) && USE(ATSPI)
+namespace WebCore {
+class AccessibilityObjectAtspi;
+}
+typedef WebCore::AccessibilityObjectAtspi* PlatformUIElement;
 #else
 typedef void* PlatformUIElement;
 #endif
@@ -71,6 +76,8 @@ public:
 
 #if PLATFORM(COCOA)
     id platformUIElement() { return m_element.get(); }
+#elif HAVE(ACCESSIBILITY) && USE(ATSPI)
+    PlatformUIElement platformUIElement() { return m_element.get(); }
 #else
     PlatformUIElement platformUIElement() { return m_element; }
 #endif
@@ -389,7 +396,7 @@ private:
     AccessibilityUIElement(PlatformUIElement);
     AccessibilityUIElement(const AccessibilityUIElement&);
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(ATSPI)
     PlatformUIElement m_element;
 #endif
 
@@ -413,6 +420,8 @@ private:
 
 #if USE(ATK)
     RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
+#elif USE(ATSPI)
+    RefPtr<WebCore::AccessibilityObjectAtspi> m_element;
 #endif
 #endif
 };

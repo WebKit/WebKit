@@ -28,7 +28,7 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
-#if HAVE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY) && USE(ATK)
 
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -2299,4 +2299,4 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::popupValue() const
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // HAVE(ACCESSIBILITY) && USE(ATK)

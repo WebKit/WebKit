@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Igalia S.L.
+ * Copyright (C) 2021 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,20 +18,36 @@
  */
 
 #include "config.h"
-#include "WebKitAccessibleInterfaceHyperlinkImpl.h"
+#include "AccessibilityObjectAtspi.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include "AccessibilityObjectInterface.h"
 
-#include "WebKitAccessibleHyperlink.h"
+namespace WebCore {
 
-static AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl* hyperlink)
+Ref<AccessibilityObjectAtspi> AccessibilityObjectAtspi::create(AXCoreObject* coreObject)
 {
-    return ATK_HYPERLINK(webkitAccessibleHyperlinkGetOrCreate(hyperlink));
+    return adoptRef(*new AccessibilityObjectAtspi(coreObject));
 }
 
-void webkitAccessibleHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
+AccessibilityObjectAtspi::AccessibilityObjectAtspi(AXCoreObject*)
 {
-    iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
 }
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATK)
+void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
+{
+}
+
+bool AccessibilityObject::accessibilityIgnoreAttachment() const
+{
+    return false;
+}
+
+AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const
+{
+    return AccessibilityObjectInclusion::DefaultBehavior;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

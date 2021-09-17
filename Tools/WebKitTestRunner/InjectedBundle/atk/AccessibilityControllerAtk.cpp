@@ -28,7 +28,7 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#if HAVE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
@@ -144,4 +144,4 @@ bool AccessibilityController::removeNotificationListener()
 
 } // namespace WTR
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // HAVE(ACCESSIBILITY) && USE(ATK)

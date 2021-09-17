@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2008 Nuanti Ltd.
- * Copyright (C) 2009 Jan Alonzo
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2021 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,12 +17,27 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#pragma once
+#include "config.h"
+#include "AXIsolatedObject.h"
 
-#if ENABLE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && USE(ATSPI)
+#include "AccessibilityObjectAtspi.h"
 
-#include <atk/atk.h>
+namespace WebCore {
 
-void webkitAccessibleActionInterfaceInit(AtkActionIface*);
+void AXIsolatedObject::initializePlatformProperties(const AXCoreObject&, bool)
+{
+}
 
-#endif // ENABLE(ACCESSIBILITY) && USE(ATK)
+void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper)
+{
+    setWrapper(wrapper);
+}
+
+void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
+{
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE) && USE(ATSPI)

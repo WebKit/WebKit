@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebKitAccessibleInterfaceEditableText.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include "AccessibilityObject.h"
 #include "Document.h"

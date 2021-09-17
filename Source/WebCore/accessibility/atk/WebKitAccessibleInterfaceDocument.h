@@ -21,10 +21,10 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY)
+#if ENABLE(ACCESSIBILITY) && USE(ATK)
 
 #include <atk/atk.h>
 
 void webkitAccessibleDocumentInterfaceInit(AtkDocumentIface*);
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATK)

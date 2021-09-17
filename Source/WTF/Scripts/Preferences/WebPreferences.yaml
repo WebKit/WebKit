@@ -1078,6 +1078,7 @@ IsAccessibilityIsolatedTreeEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "USE(ATSPI)": true
       default: false
     WebCore:
       default: false

@@ -343,7 +343,11 @@ public:
 
     struct NodeChange {
         Ref<AXIsolatedObject> isolatedObject;
+#if PLATFORM(COCOA)
         RetainPtr<AccessibilityObjectWrapper> wrapper;
+#elif USE(ATSPI)
+        RefPtr<AccessibilityObjectWrapper> wrapper;
+#endif
     };
 
     void generateSubtree(AXCoreObject&, AXCoreObject*, bool attachWrapper);
