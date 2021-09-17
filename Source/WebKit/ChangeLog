@@ -1,3 +1,16 @@
+2021-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r282011.
+
+        This causes GPUProcess main thread hangs on memory pressure
+
+        Reverted changeset:
+
+        "Fix race in
+        RemoteRenderingBackend::allowsExitUnderMemoryPressure()"
+        https://bugs.webkit.org/show_bug.cgi?id=229870
+        https://commits.webkit.org/r282011
+
 2021-09-17  Per Arne Vollan  <pvollan@apple.com>
 
         [GPUP] Update AX settings on preference updates
