@@ -1546,7 +1546,7 @@ webkit.org/b/227874 [ Release ] fullscreen/full-screen-remove-children.html [ Pa
 
 webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Failure Timeout ]
 
-webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure ]
+webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
 
 webkit.org/b/228248 fast/selectors/selection-window-inactive.html [ Pass ImageOnlyFailure ]
 

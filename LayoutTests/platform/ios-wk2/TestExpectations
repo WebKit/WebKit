@@ -1436,6 +1436,8 @@ webkit.org/b/228204 media/video-presentation-mode.html [ Pass Timeout ]
 
 webkit.org/b/217621 [ Release ] media/video-buffering-allowed.html [ Pass Timeout ]
 
+webkit.org/b/228087 [ Debug ] media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
+
 webkit.org/b/208656 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
 webkit.org/b/208662 http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star.html [ Pass Failure ]
