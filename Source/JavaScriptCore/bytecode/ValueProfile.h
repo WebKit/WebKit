@@ -31,13 +31,18 @@
 #include "ConcurrentJSLock.h"
 #include "SpeculatedType.h"
 #include "Structure.h"
+#include "VirtualRegister.h"
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {
 
+class UnlinkedValueProfile;
+
 template<unsigned numberOfBucketsArgument>
 struct ValueProfileBase {
+    friend class UnlinkedValueProfile;
+
     static constexpr unsigned numberOfBuckets = numberOfBucketsArgument;
     static constexpr unsigned numberOfSpecFailBuckets = 1;
     static constexpr unsigned bucketIndexMask = numberOfBuckets - 1;
@@ -211,6 +216,21 @@ private:
     }
 
     unsigned m_size;
+};
+
+class UnlinkedValueProfile {
+public:
+    UnlinkedValueProfile() = default;
+
+    void update(ValueProfile& profile)
+    {
+        SpeculatedType newType = profile.m_prediction | m_prediction;
+        profile.m_prediction = newType;
+        m_prediction = newType;
+    }
+
+private:
+    SpeculatedType m_prediction { SpecNone };
 };
 
 } // namespace JSC

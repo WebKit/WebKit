@@ -489,7 +489,6 @@ public:
     SpeculatedType valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
 
     template<typename Functor> void forEachValueProfile(const Functor&);
-    template<typename Functor> void forEachArrayProfile(const Functor&);
     template<typename Functor> void forEachArrayAllocationProfile(const Functor&);
     template<typename Functor> void forEachObjectAllocationProfile(const Functor&);
     template<typename Functor> void forEachLLIntCallLinkInfo(const Functor&);
@@ -787,6 +786,7 @@ public:
 
     bool shouldOptimizeNow();
     void updateAllValueProfilePredictions();
+    void updateAllArrayProfilePredictions(const ConcurrentJSLocker&);
     void updateAllArrayPredictions();
     void updateAllPredictions();
 
@@ -886,7 +886,8 @@ public:
     Metadata& metadata(OpcodeID opcodeID, unsigned metadataID)
     {
         ASSERT(m_metadata);
-        return bitwise_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
+        ASSERT_UNUSED(opcodeID, opcodeID == Metadata::opcodeID);
+        return m_metadata->get<Metadata>()[metadataID];
     }
 
     template<typename Metadata>

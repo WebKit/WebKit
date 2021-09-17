@@ -1,3 +1,71 @@
+2021-09-16  Saam Barati  <sbarati@apple.com>
+
+        Move some profiling to UnlinkedCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=230078
+        <rdar://problem/82947571>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds UnlinkedValueProfile and UnlinkedArrayProfile to
+        UnlinkedCodeBlock. These profiles serialize the data in ValueProfile
+        and ArrayProfile. Each time a CodeBlock updates value profiles,
+        it mixes in up to date information from the unlinked profiles, and
+        also writes back data to the unlinked profiles, so the data is shared
+        between CodeBlocks of the same UnlinkedCodeBlock.
+        
+        This patch also fixes a pre-existing bug where we would sometimes think
+        we had more metadata table entries than we really had in practice. This is
+        because MetadataTable::forEach used the next opcode's start pointer. That
+        pointer was aligned to that opcode's metadata alignment. So that might make
+        the previous opcode think it had an extra 1-7 entries (depending on size,
+        alignment, etc). This patch fixes that by having the next opcode's start
+        offset in the table always be the end offset of the previous opcode, and we
+        align the start pointer when using it.
+        
+        This was measured as a ~0.5% speedup on Speedometer2.
+
+        * bytecode/ArrayProfile.h:
+        (JSC::UnlinkedArrayProfile::update):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::updateAllValueProfilePredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllArrayProfilePredictions):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::metadata):
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachArrayProfile): Deleted.
+        * bytecode/MetadataTable.cpp:
+        (JSC::DeallocTable::withOpcodeType):
+        * bytecode/MetadataTable.h:
+        (JSC::MetadataTable::get):
+        (JSC::MetadataTable::forEach):
+        (JSC::MetadataTable::getWithoutAligning):
+        (JSC::MetadataTable::getImpl): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::allocateSharedProfiles):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::unlinkedValueProfile):
+        (JSC::UnlinkedCodeBlock::unlinkedArrayProfile):
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedMetadataTable.cpp:
+        (JSC::UnlinkedMetadataTable::finalize):
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::isFinalized):
+        (JSC::UnlinkedMetadataTable::hasMetadata):
+        * bytecode/UnlinkedMetadataTableInlines.h:
+        (JSC::UnlinkedMetadataTable::numEntries):
+        * bytecode/ValueProfile.h:
+        (JSC::UnlinkedValueProfile::update):
+        * bytecompiler/BytecodeGenerator.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::numValueProfiles const):
+        (JSC::CachedCodeBlock::numArrayProfiles const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+
 2021-09-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r282478.

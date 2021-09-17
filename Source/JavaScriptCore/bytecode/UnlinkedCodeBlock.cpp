@@ -316,4 +316,37 @@ int UnlinkedCodeBlock::outOfLineJumpOffset(InstructionStream::Offset bytecodeOff
     return m_outOfLineJumpTargets.get(bytecodeOffset);
 }
 
+void UnlinkedCodeBlock::allocateSharedProfiles()
+{
+    RELEASE_ASSERT(!m_metadata->isFinalized());
+
+    {
+        unsigned numberOfValueProfiles = numParameters();
+        if (m_metadata->hasMetadata()) {
+#define COUNT(__op) \
+            numberOfValueProfiles += m_metadata->numEntries<__op>();
+            FOR_EACH_OPCODE_WITH_VALUE_PROFILE(COUNT)
+#undef COUNT
+            numberOfValueProfiles += m_metadata->numEntries<OpIteratorOpen>() * 3;
+            numberOfValueProfiles += m_metadata->numEntries<OpIteratorNext>() * 3;
+        }
+
+        m_valueProfiles = FixedVector<UnlinkedValueProfile>(numberOfValueProfiles);
+    }
+
+    if (m_metadata->hasMetadata()) {
+        unsigned numberOfArrayProfiles = 0;
+
+#define COUNT(__op) \
+        numberOfArrayProfiles += m_metadata->numEntries<__op>();
+        FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(COUNT)
+        FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(COUNT)
+#undef COUNT
+        numberOfArrayProfiles += m_metadata->numEntries<OpIteratorNext>();
+        numberOfArrayProfiles += m_metadata->numEntries<OpGetById>();
+
+        m_arrayProfiles = FixedVector<UnlinkedArrayProfile>(numberOfArrayProfiles);
+    }
+}
+
 } // namespace JSC
