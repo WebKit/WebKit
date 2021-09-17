@@ -229,7 +229,7 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
     }
 
     m_dataComplete = true;
-    m_model = Model::create(*m_data);
+    m_model = Model::create(*m_data, resource.mimeType(), resource.url());
 
     invalidateResourceHandleAndUpdateRenderer();
 

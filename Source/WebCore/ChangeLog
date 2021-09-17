@@ -1,3 +1,24 @@
+2021-09-17  Sam Weinig  <weinig@apple.com>
+
+        Add MIME type and URL to WebCore::Model to allow processing different model types
+        https://bugs.webkit.org/show_bug.cgi?id=230384
+
+        Reviewed by Darin Adler.
+
+        Adds MIME type and URL to WebCore::Model to allow processing different model types.
+        This change does not take advantave of them (and we still only support one type)
+        but this will allow us to add additional types going forward.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        (WebCore::HTMLModelElement::notifyFinished):
+        * platform/graphics/Model.cpp:
+        (WebCore::Model::create):
+        (WebCore::Model::Model):
+        (WebCore::operator<<):
+        * platform/graphics/Model.h:
+        (WebCore::Model::encode const):
+        (WebCore::Model::decode):
+
 2021-09-17  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Start using InlineInvalidation to clean runs and lines
