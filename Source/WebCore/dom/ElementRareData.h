@@ -100,10 +100,8 @@ public:
     IntersectionObserverData* intersectionObserverData() { return m_intersectionObserverData.get(); }
     void setIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { m_intersectionObserverData = WTFMove(data); }
 
-#if ENABLE(RESIZE_OBSERVER)
     ResizeObserverData* resizeObserverData() { return m_resizeObserverData.get(); }
     void setResizeObserverData(std::unique_ptr<ResizeObserverData>&& data) { m_resizeObserverData = WTFMove(data); }
-#endif
 
 #if ENABLE(CSS_TYPED_OM)
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
@@ -134,10 +132,8 @@ public:
             result.add(UseType::AttributeMap);
         if (m_intersectionObserverData)
             result.add(UseType::InteractionObserver);
-#if ENABLE(RESIZE_OBSERVER)
         if (m_resizeObserverData)
             result.add(UseType::ResizeObserver);
-#endif
         if (!m_animationRareData.isEmpty())
             result.add(UseType::Animations);
         if (m_beforePseudoElement || m_afterPseudoElement)
@@ -167,9 +163,7 @@ private:
 
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 
-#if ENABLE(RESIZE_OBSERVER)
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;
-#endif
 
     Vector<std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 

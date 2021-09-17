@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
-
 namespace WebCore {
 
 enum class ResizeObserverBoxOptions : uint8_t {
@@ -38,5 +36,3 @@ enum class ResizeObserverBoxOptions : uint8_t {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

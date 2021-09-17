@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
-
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -58,5 +56,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

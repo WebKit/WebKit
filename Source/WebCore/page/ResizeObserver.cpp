@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(RESIZE_OBSERVER)
 #include "ResizeObserver.h"
 
 #include "Element.h"
@@ -189,5 +188,3 @@ bool ResizeObserver::removeObservation(const Element& target)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

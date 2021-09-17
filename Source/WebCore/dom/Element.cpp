@@ -208,9 +208,7 @@ Element::~Element()
 
     disconnectFromIntersectionObservers();
 
-#if ENABLE(RESIZE_OBSERVER)
     disconnectFromResizeObservers();
-#endif
 
     removeShadowRoot();
 
@@ -4019,8 +4017,6 @@ void Element::setLastStyleChangeEventStyle(PseudoId pseudoId, std::unique_ptr<co
         ensureAnimationRareData(pseudoId).setLastStyleChangeEventStyle(WTFMove(style));
 }
 
-#if ENABLE(RESIZE_OBSERVER)
-
 void Element::disconnectFromResizeObservers()
 {
     auto* observerData = resizeObserverData();
@@ -4044,8 +4040,6 @@ ResizeObserverData* Element::resizeObserverData()
 {
     return hasRareData() ? elementRareData()->resizeObserverData() : nullptr;
 }
-
-#endif
 
 bool Element::isSpellCheckingEnabled() const
 {

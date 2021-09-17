@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
-
 #include "DOMRectReadOnly.h"
 #include "Element.h"
 #include "FloatRect.h"
@@ -69,4 +67,3 @@ private:
 };
 
 } // namespace WebCore
-#endif // ENABLE(RESIZE_OBSERVER)

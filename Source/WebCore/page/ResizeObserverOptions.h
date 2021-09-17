@@ -28,8 +28,6 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
-
 #include "ResizeObserverBoxOptions.h"
 
 namespace WebCore {
@@ -39,5 +37,3 @@ struct ResizeObserverOptions {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

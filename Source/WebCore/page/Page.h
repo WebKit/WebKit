@@ -196,9 +196,7 @@ enum class RenderingUpdateStep : uint16_t {
     Fullscreen                      = 1 << 4,
     AnimationFrameCallbacks         = 1 << 5,
     IntersectionObservations        = 1 << 6,
-#if ENABLE(RESIZE_OBSERVER)
     ResizeObservations              = 1 << 7,
-#endif
     Images                          = 1 << 8,
     WheelEventMonitorCallbacks      = 1 << 9,
     CursorUpdate                    = 1 << 10,
@@ -217,9 +215,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::Fullscreen,
     RenderingUpdateStep::AnimationFrameCallbacks,
     RenderingUpdateStep::IntersectionObservations,
-#if ENABLE(RESIZE_OBSERVER)
     RenderingUpdateStep::ResizeObservations,
-#endif
     RenderingUpdateStep::Images,
     RenderingUpdateStep::WheelEventMonitorCallbacks,
     RenderingUpdateStep::CursorUpdate,

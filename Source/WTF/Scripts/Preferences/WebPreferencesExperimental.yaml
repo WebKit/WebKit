@@ -1039,7 +1039,6 @@ ResizeObserverEnabled:
   type: bool
   humanReadableName: "Resize Observer"
   humanReadableDescription: "Enable Resize Observer support"
-  condition: ENABLE(RESIZE_OBSERVER)
   defaultValue:
     WebKitLegacy:
       default: false

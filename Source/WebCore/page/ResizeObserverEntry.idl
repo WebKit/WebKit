@@ -25,7 +25,6 @@
 
 // https://drafts.csswg.org/resize-observer/#resize-observer-entry-interface
 [
-    Conditional=RESIZE_OBSERVER,
     ImplementationLacksVTable,
     EnabledBySetting=ResizeObserver,
     JSCustomMarkFunction,

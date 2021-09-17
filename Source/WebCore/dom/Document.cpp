@@ -8074,8 +8074,6 @@ IntersectionObserverData& Document::ensureIntersectionObserverData()
     return *m_intersectionObserverData;
 }
 
-#if ENABLE(RESIZE_OBSERVER)
-
 void Document::addResizeObserver(ResizeObserver& observer)
 {
     if (!m_resizeObservers.contains(&observer))
@@ -8155,8 +8153,6 @@ void Document::updateResizeObservations(Page& page)
         scheduleRenderingUpdate(RenderingUpdateStep::ResizeObservations);
     }
 }
-
-#endif
 
 const AtomString& Document::dir() const
 {

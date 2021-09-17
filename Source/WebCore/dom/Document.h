@@ -1436,7 +1436,6 @@ public:
     IntersectionObserverData& ensureIntersectionObserverData();
     IntersectionObserverData* intersectionObserverDataIfExists() { return m_intersectionObserverData.get(); }
 
-#if ENABLE(RESIZE_OBSERVER)
     void addResizeObserver(ResizeObserver&);
     void removeResizeObserver(ResizeObserver&);
     unsigned numberOfResizeObservers() const { return m_resizeObservers.size(); }
@@ -1447,7 +1446,6 @@ public:
     bool hasSkippedResizeObservations() const;
     void setHasSkippedResizeObservations(bool);
     void updateResizeObservations(Page&);
-#endif
 
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
@@ -1936,9 +1934,7 @@ private:
     // This is only non-null when this document is an explicit root.
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 
-#if ENABLE(RESIZE_OBSERVER)
     Vector<WeakPtr<ResizeObserver>> m_resizeObservers;
-#endif
 
     Timer m_loadEventDelayTimer;
 

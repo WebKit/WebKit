@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
-
 #include "FloatRect.h"
 #include "LayoutSize.h"
 #include "ResizeObserverBoxOptions.h"
@@ -75,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

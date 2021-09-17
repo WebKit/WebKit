@@ -571,7 +571,7 @@ enum AutoplayPolicy {
     unsigned long numberOfLiveDocuments();
     unsigned long referencingNodeCount(Document document);
     unsigned long numberOfIntersectionObservers(Document document);
-    [Conditional = RESIZE_OBSERVER] unsigned long numberOfResizeObservers(Document document);
+    unsigned long numberOfResizeObservers(Document document);
     WindowProxy? openDummyInspectorFrontend(DOMString url);
     undefined closeDummyInspectorFrontend();
     undefined setInspectorIsUnderTest(boolean isUnderTest);

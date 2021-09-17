@@ -2701,12 +2701,10 @@ unsigned Internals::numberOfIntersectionObservers(const Document& document) cons
     return document.numberOfIntersectionObservers();
 }
 
-#if ENABLE(RESIZE_OBSERVER)
 unsigned Internals::numberOfResizeObservers(const Document& document) const
 {
     return document.numberOfResizeObservers();
 }
-#endif
 
 uint64_t Internals::documentIdentifier(const Document& document) const
 {

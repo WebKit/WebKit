@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(RESIZE_OBSERVER)
-
 #include "GCReachableRef.h"
 #include "ResizeObservation.h"
 #include "ResizeObserverCallback.h"
@@ -90,5 +88,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

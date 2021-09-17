@@ -1,3 +1,42 @@
+2021-09-16  Philip Chimento  <pchimento@igalia.com>
+
+        Fixes for build-webkit --minimal
+        https://bugs.webkit.org/show_bug.cgi?id=229780
+
+        Reviewed by Fujii Hironori.
+
+        Covered by existing tests.
+
+        Remove ENABLE_RESIZE_OBSERVER build-time option. This option is quite
+        broken if you try to disable it.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::setResizeObserverData):
+        (WebCore::ElementRareData::useTypes const):
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        (WebCore::operator<<):
+        * page/Page.h:
+        * page/ResizeObservation.cpp:
+        * page/ResizeObservation.h:
+        * page/ResizeObserver.cpp:
+        * page/ResizeObserver.h:
+        * page/ResizeObserver.idl:
+        * page/ResizeObserverCallback.h:
+        * page/ResizeObserverCallback.idl:
+        * page/ResizeObserverEntry.h:
+        * page/ResizeObserverEntry.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfResizeObservers const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-09-16  Cameron McCormack  <heycam@apple.com>
 
         Support drawImage with a wide gamut image painting into a display-p3 canvas

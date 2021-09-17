@@ -26,7 +26,6 @@
 // https://wicg.github.io/ResizeObserver/
 
 [
-    Conditional=RESIZE_OBSERVER,
     EnabledBySetting=ResizeObserver,
     Exposed=Window,
     JSCustomMarkFunction,

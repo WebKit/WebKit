@@ -42,10 +42,7 @@ struct SameSizeAsElementRareData : NodeRareData {
 #if ENABLE(CSS_TYPED_OM)
     void* typedOMData;
 #endif
-#if ENABLE(RESIZE_OBSERVER)
     void* resizeObserverData;
-#endif
-
 };
 
 static_assert(sizeof(ElementRareData) == sizeof(SameSizeAsElementRareData), "ElementRareData should stay small");

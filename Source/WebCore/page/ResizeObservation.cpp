@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(RESIZE_OBSERVER)
-
 #include "ResizeObservation.h"
 
 #include "HTMLFrameOwnerElement.h"
@@ -133,5 +131,3 @@ size_t ResizeObservation::targetElementDepth() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(RESIZE_OBSERVER)

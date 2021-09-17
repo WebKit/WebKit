@@ -1588,11 +1588,9 @@ void Page::updateRendering()
         document.updateIntersectionObservations();
     });
 
-#if ENABLE(RESIZE_OBSERVER)
     runProcessingStep(RenderingUpdateStep::ResizeObservations, [&] (Document& document) {
         document.updateResizeObservations(*this);
     });
-#endif
 
     runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
         for (auto& image : document.cachedResourceLoader().allCachedSVGImages()) {
@@ -3611,9 +3609,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::Fullscreen: ts << "Fullscreen"; break;
     case RenderingUpdateStep::AnimationFrameCallbacks: ts << "AnimationFrameCallbacks"; break;
     case RenderingUpdateStep::IntersectionObservations: ts << "IntersectionObservations"; break;
-#if ENABLE(RESIZE_OBSERVER)
     case RenderingUpdateStep::ResizeObservations: ts << "ResizeObservations"; break;
-#endif
     case RenderingUpdateStep::Images: ts << "Images"; break;
     case RenderingUpdateStep::WheelEventMonitorCallbacks: ts << "WheelEventMonitorCallbacks"; break;
     case RenderingUpdateStep::CursorUpdate: ts << "CursorUpdate"; break;

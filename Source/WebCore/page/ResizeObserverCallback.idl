@@ -25,7 +25,6 @@
 
 // https://drafts.csswg.org/resize-observer/#resize-observer-callback
 [
-    Conditional=RESIZE_OBSERVER,
     CallbackThisObject=ResizeObserver,
     IsWeakCallback,
 ] callback ResizeObserverCallback = undefined (sequence<ResizeObserverEntry> entries, ResizeObserver observer);

@@ -71,12 +71,9 @@ enum class SelectionRestorationMode : uint8_t;
 struct GetAnimationsOptions;
 struct IntersectionObserverData;
 struct KeyframeAnimationOptions;
+struct ResizeObserverData;
 struct ScrollIntoViewOptions;
 struct ScrollToOptions;
-
-#if ENABLE(RESIZE_OBSERVER)
-struct ResizeObserverData;
-#endif
 
 namespace Style {
 struct ElementStyle;
@@ -614,10 +611,8 @@ public:
     IntersectionObserverData& ensureIntersectionObserverData();
     IntersectionObserverData* intersectionObserverDataIfExists();
 
-#if ENABLE(RESIZE_OBSERVER)
     ResizeObserverData& ensureResizeObserverData();
     ResizeObserverData* resizeObserverData();
-#endif
 
     Element* findAnchorElementForLink(String& outAnchorName);
 
@@ -704,9 +699,7 @@ private:
 
     void disconnectFromIntersectionObservers();
 
-#if ENABLE(RESIZE_OBSERVER)
     void disconnectFromResizeObservers();
-#endif
 
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;

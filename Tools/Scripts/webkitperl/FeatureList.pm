@@ -138,7 +138,6 @@ my (
     $publicSuffixListSupport,
     $quotaSupport,
     $remoteInspectorSupport,
-    $resizeObserverSupport,
     $resolutionMediaQuerySupport,
     $resourceUsageSupport,
     $rubberBandingSupport,
@@ -440,9 +439,6 @@ my @features = (
 
     { option => "remote-inspector", desc => "Toggle remote inspector support",
       define => "ENABLE_REMOTE_INSPECTOR", value => \$remoteInspectorSupport },
-
-    { option => "resize-observer", desc => "Toggle Resize Observer support",
-      define => "ENABLE_RESIZE_OBSERVER", value => \$resizeObserverSupport },
 
     { option => "resolution-media-query", desc => "Toggle resolution media query support",
       define => "ENABLE_RESOLUTION_MEDIA_QUERY", value => \$resolutionMediaQuerySupport },
