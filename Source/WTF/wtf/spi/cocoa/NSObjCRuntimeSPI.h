@@ -26,10 +26,8 @@
 #pragma once
 
 #if USE(APPLE_INTERNAL_SDK)
-
 #include <Foundation/NSObjCRuntime_Private.h>
-
-#else
+#endif
 
 #include <wtf/Platform.h>
 
@@ -49,6 +47,4 @@
 #else
 #define NS_DIRECT_MEMBERS
 #endif
-#endif
-
 #endif

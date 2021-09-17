@@ -1,3 +1,15 @@
+2021-09-17  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix: WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
+        <https://webkit.org/b/230227>
+        <rdar://problem/83067708>
+
+        * wtf/spi/cocoa/NSObjCRuntimeSPI.h:
+        - Fix internal Catalina builds by including
+          NSObjCRuntime_Private.h, but falling through to define
+          NS_DIRECT and NS_DIRECT_MEMBERS if they weren't defined in the
+          private header.
+
 2021-09-16  David Kilzer  <ddkilzer@apple.com>
 
         WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
