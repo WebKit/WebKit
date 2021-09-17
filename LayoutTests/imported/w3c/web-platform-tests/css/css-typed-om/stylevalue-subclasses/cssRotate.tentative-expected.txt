@@ -1,37 +1,29 @@
 
-FAIL Constructing a CSSRotate with a CSSUnitValue with type other than angle for the angle throws a TypeError assert_throws_js: function "() => new CSSRotate(angle)" threw object "ReferenceError: Can't find variable: CSSRotate" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSRotate with a CSSMathValue that doesn't match <angle> for the angle throws a TypeError assert_throws_js: function "() => new CSSRotate(angle)" threw object "ReferenceError: Can't find variable: CSSRotate" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSRotate with a CSSUnitValue with type other than number for the coordinates throws a TypeError assert_throws_js: function "() => new CSSRotate(coord, 0, 0, CSS.deg(0))" threw object "ReferenceError: Can't find variable: CSSRotate" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSRotate with a CSSMathValue that doesn't match <number> for the coordinates throws a TypeError assert_throws_js: function "() => new CSSRotate(coord, 0, 0, CSS.deg(0))" threw object "ReferenceError: Can't find variable: CSSRotate" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Updating CSSRotate.x to a CSSUnitValue with type other than number throws a TypeError Can't find variable: CSSRotate
-FAIL Updating CSSRotate.x to a CSSMathValue that doesn't match <number> throws a TypeError Can't find variable: CSSRotate
-FAIL Updating CSSRotate.y to a CSSUnitValue with type other than number throws a TypeError Can't find variable: CSSRotate
-FAIL Updating CSSRotate.y to a CSSMathValue that doesn't match <number> throws a TypeError Can't find variable: CSSRotate
-FAIL Updating CSSRotate.z to a CSSUnitValue with type other than number throws a TypeError Can't find variable: CSSRotate
-FAIL Updating CSSRotate.z to a CSSMathValue that doesn't match <number> throws a TypeError Can't find variable: CSSRotate
-FAIL Updating CSSRotate.angle to a CSSUnitValue with type other than angle throws a TypeError Can't find variable: CSSRotate
-FAIL Updating CSSRotate.angle to a CSSMathValue that doesn't match <angle> throws a TypeError Can't find variable: CSSRotate
-FAIL CSSRotate can be constructed from a single angle Can't find variable: CSSRotate
-FAIL CSSRotate can be constructed from numberish coordinates Can't find variable: CSSRotate
-FAIL CSSRotate can be constructed from CSSMathValues Can't find variable: CSSRotate
-FAIL CSSRotate.x can be updated to a double Can't find variable: CSSRotate
-FAIL CSSRotate.x can be updated to a number CSSUnitValue Can't find variable: CSSRotate
-FAIL CSSRotate.x can be updated to a CSSMathValue matching <number> Can't find variable: CSSRotate
-FAIL CSSRotate.y can be updated to a double Can't find variable: CSSRotate
-FAIL CSSRotate.y can be updated to a number CSSUnitValue Can't find variable: CSSRotate
-FAIL CSSRotate.y can be updated to a CSSMathValue matching <number> Can't find variable: CSSRotate
-FAIL CSSRotate.z can be updated to a double Can't find variable: CSSRotate
-FAIL CSSRotate.z can be updated to a number CSSUnitValue Can't find variable: CSSRotate
-FAIL CSSRotate.z can be updated to a CSSMathValue matching <number> Can't find variable: CSSRotate
-FAIL CSSRotate.angle can be updated to a degree CSSUnitValue Can't find variable: CSSRotate
-FAIL CSSRotate.angle can be updated to a CSSMathValue matching <angle> Can't find variable: CSSRotate
-FAIL Modifying CSSRotate.is2D can be updated to true or false Can't find variable: CSSRotate
+FAIL Constructing a CSSRotate with a CSSUnitValue with type other than angle for the angle throws a TypeError assert_throws_js: function "() => new CSSRotate(angle)" did not throw
+FAIL Constructing a CSSRotate with a CSSMathValue that doesn't match <angle> for the angle throws a TypeError assert_throws_js: function "() => new CSSRotate(angle)" did not throw
+FAIL Constructing a CSSRotate with a CSSUnitValue with type other than number for the coordinates throws a TypeError assert_throws_js: function "() => new CSSRotate(coord, 0, 0, CSS.deg(0))" did not throw
+FAIL Constructing a CSSRotate with a CSSMathValue that doesn't match <number> for the coordinates throws a TypeError assert_throws_js: function "() => new CSSRotate(coord, 0, 0, CSS.deg(0))" did not throw
+FAIL Updating CSSRotate.x to a CSSUnitValue with type other than number throws a TypeError assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL Updating CSSRotate.x to a CSSMathValue that doesn't match <number> throws a TypeError assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL Updating CSSRotate.y to a CSSUnitValue with type other than number throws a TypeError assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL Updating CSSRotate.y to a CSSMathValue that doesn't match <number> throws a TypeError assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL Updating CSSRotate.z to a CSSUnitValue with type other than number throws a TypeError assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL Updating CSSRotate.z to a CSSMathValue that doesn't match <number> throws a TypeError assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL Updating CSSRotate.angle to a CSSUnitValue with type other than angle throws a TypeError assert_throws_js: function "() => result.angle = angle" did not throw
+FAIL Updating CSSRotate.angle to a CSSMathValue that doesn't match <angle> throws a TypeError assert_throws_js: function "() => result.angle = angle" did not throw
+FAIL CSSRotate can be constructed from a single angle assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL CSSRotate can be constructed from numberish coordinates assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL CSSRotate can be constructed from CSSMathValues assert_equals: expected "CSSMathProduct" but got "CSSMathSum"
+FAIL CSSRotate.x can be updated to a double assert_equals: expected "CSSUnitValue" but got "Number"
+PASS CSSRotate.x can be updated to a number CSSUnitValue
+PASS CSSRotate.x can be updated to a CSSMathValue matching <number>
+FAIL CSSRotate.y can be updated to a double assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL CSSRotate.y can be updated to a number CSSUnitValue assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL CSSRotate.y can be updated to a CSSMathValue matching <number> assert_equals: expected "CSSMathSum" but got "Number"
+FAIL CSSRotate.z can be updated to a double assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL CSSRotate.z can be updated to a number CSSUnitValue assert_equals: expected "CSSUnitValue" but got "Number"
+FAIL CSSRotate.z can be updated to a CSSMathValue matching <number> assert_equals: expected "CSSMathSum" but got "Number"
+PASS CSSRotate.angle can be updated to a degree CSSUnitValue
+PASS CSSRotate.angle can be updated to a CSSMathValue matching <angle>
+PASS Modifying CSSRotate.is2D can be updated to true or false
 

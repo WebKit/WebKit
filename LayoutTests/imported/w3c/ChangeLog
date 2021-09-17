@@ -1,3 +1,28 @@
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Addition of CSSTransformValue, CSSTransformComponent & subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=230284
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/css/css-typed-om/idlharness-expected.txt:
+        * web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/transformvalue-normalization.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/crashtests/cssTransform-Internal-value-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssTransformValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssMatrixComponent.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssPerspective.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssRotate.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssScale.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkew.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkewX.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssSkewY.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformComponent-toMatrix-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformComponent-toMatrix-relative-units-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformValue-toMatrix-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTranslate.tentative-expected.txt:
+
 2021-09-17  Cameron McCormack  <heycam@apple.com>
 
         Preserve color space when creating ImageBuffers for ImageBitmaps

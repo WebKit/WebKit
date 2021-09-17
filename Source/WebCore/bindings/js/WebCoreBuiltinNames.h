@@ -87,11 +87,21 @@ namespace WebCore {
     macro(CSSMathProduct) \
     macro(CSSMathSum) \
     macro(CSSMathValue) \
+    macro(CSSMatrixComponent) \
     macro(CSSNumericArray) \
     macro(CSSNumericValue) \
     macro(CSSPaintSize) \
+    macro(CSSPerspective) \
+    macro(CSSRotate) \
+    macro(CSSScale) \
+    macro(CSSSkew) \
+    macro(CSSSkewX) \
+    macro(CSSSkewY) \
     macro(CSSStyleValue) \
+    macro(CSSTransformComponent) \
+    macro(CSSTransformValue) \
     macro(CSSTransition) \
+    macro(CSSTranslate) \
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \

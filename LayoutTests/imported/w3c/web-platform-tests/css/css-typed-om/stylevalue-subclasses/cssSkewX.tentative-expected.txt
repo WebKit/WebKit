@@ -1,35 +1,21 @@
 
-FAIL Constructing a CSSSkewX with a keyword throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" threw object "ReferenceError: Can't find variable: CSSSkewX" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSSkewX with a double throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" threw object "ReferenceError: Can't find variable: CSSSkewX" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSSkewX with a unitless zero throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" threw object "ReferenceError: Can't find variable: CSSSkewX" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSSkewX with a string angle throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" threw object "ReferenceError: Can't find variable: CSSSkewX" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSSkewX with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" threw object "ReferenceError: Can't find variable: CSSSkewX" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSSkewX with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" threw object "ReferenceError: Can't find variable: CSSSkewX" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Constructing a CSSSkewX with a CSSMathValue of length type throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" threw object "ReferenceError: Can't find variable: CSSSkewX" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Updating CSSSkewX.ax with a keyword throws a TypeError Can't find variable: CSSSkewX
-FAIL Updating CSSSkewX.ax with a double throws a TypeError Can't find variable: CSSSkewX
-FAIL Updating CSSSkewX.ax with a unitless zero throws a TypeError Can't find variable: CSSSkewX
-FAIL Updating CSSSkewX.ax with a string angle throws a TypeError Can't find variable: CSSSkewX
-FAIL Updating CSSSkewX.ax with a number CSSUnitValue throws a TypeError Can't find variable: CSSSkewX
-FAIL Updating CSSSkewX.ax with a time dimension CSSUnitValue throws a TypeError Can't find variable: CSSSkewX
-FAIL Updating CSSSkewX.ax with a CSSMathValue of length type throws a TypeError Can't find variable: CSSSkewX
-FAIL CSSSkewX can be constructed from an angle CSSUnitValue Can't find variable: CSSSkewX
-FAIL CSSSkewX can be constructed from a CSSMathValue of angle type Can't find variable: CSSSkewX
-FAIL CSSSkew.ax can be updated to an angle CSSUnitValue Can't find variable: CSSSkewX
-FAIL CSSSkew.ax can be updated to a CSSMathValue of angle type Can't find variable: CSSSkewX
-FAIL Modifying skewX.is2D is a no-op Can't find variable: CSSSkewX
+PASS Constructing a CSSSkewX with a keyword throws a TypeError
+PASS Constructing a CSSSkewX with a double throws a TypeError
+PASS Constructing a CSSSkewX with a unitless zero throws a TypeError
+PASS Constructing a CSSSkewX with a string angle throws a TypeError
+FAIL Constructing a CSSSkewX with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" did not throw
+FAIL Constructing a CSSSkewX with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" did not throw
+FAIL Constructing a CSSSkewX with a CSSMathValue of length type throws a TypeError assert_throws_js: function "() => new CSSSkewX(value)" did not throw
+PASS Updating CSSSkewX.ax with a keyword throws a TypeError
+PASS Updating CSSSkewX.ax with a double throws a TypeError
+PASS Updating CSSSkewX.ax with a unitless zero throws a TypeError
+PASS Updating CSSSkewX.ax with a string angle throws a TypeError
+FAIL Updating CSSSkewX.ax with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => skewX.ax = value" did not throw
+FAIL Updating CSSSkewX.ax with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => skewX.ax = value" did not throw
+FAIL Updating CSSSkewX.ax with a CSSMathValue of length type throws a TypeError assert_throws_js: function "() => skewX.ax = value" did not throw
+FAIL CSSSkewX can be constructed from an angle CSSUnitValue assert_true: expected true got false
+FAIL CSSSkewX can be constructed from a CSSMathValue of angle type assert_true: expected true got false
+PASS CSSSkew.ax can be updated to an angle CSSUnitValue
+PASS CSSSkew.ax can be updated to a CSSMathValue of angle type
+FAIL Modifying skewX.is2D is a no-op assert_true: expected true got false
 

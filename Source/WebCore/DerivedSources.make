@@ -637,6 +637,17 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/typedom/numeric/CSSNumericArray.idl \
     $(WebCore)/css/typedom/numeric/CSSNumericBaseType.idl \
     $(WebCore)/css/typedom/numeric/CSSNumericType.idl \
+	$(WebCore)/css/typedom/transform/CSSMatrixComponent.idl \
+	$(WebCore)/css/typedom/transform/CSSMatrixComponentOptions.idl \
+	$(WebCore)/css/typedom/transform/CSSPerspective.idl \
+	$(WebCore)/css/typedom/transform/CSSRotate.idl \
+	$(WebCore)/css/typedom/transform/CSSScale.idl \
+	$(WebCore)/css/typedom/transform/CSSSkew.idl \
+	$(WebCore)/css/typedom/transform/CSSSkewX.idl \
+	$(WebCore)/css/typedom/transform/CSSSkewY.idl \
+	$(WebCore)/css/typedom/transform/CSSTransformComponent.idl \
+	$(WebCore)/css/typedom/transform/CSSTransformValue.idl \
+	$(WebCore)/css/typedom/transform/CSSTranslate.idl \
     $(WebCore)/dom/AbortAlgorithm.idl \
     $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \

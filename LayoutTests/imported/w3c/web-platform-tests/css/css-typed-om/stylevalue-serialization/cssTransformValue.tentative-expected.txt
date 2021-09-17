@@ -1,5 +1,20 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSTranslate
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSTranslate
-
+FAIL CSSTranslate with 2 arguments serializes correctly assert_equals: expected "translate(1%, 1px)" but got ""
+FAIL CSSTranslate with 3 arguments serializes correctly assert_equals: expected "translate3d(1px, 2%, 3px)" but got ""
+FAIL CSSScale with 2 arguments serializes correctly assert_equals: expected "scale(2, 3)" but got ""
+FAIL CSSScale with 3 arguments serializes correctly assert_equals: expected "scale3d(1, 2, 3)" but got ""
+FAIL CSSRotate with 1 argument serializes correctly assert_equals: expected "rotate(90deg)" but got ""
+FAIL CSSRotate with 4 arguments serializes correctly assert_equals: expected "rotate3d(1, 2, 3, 90deg)" but got ""
+FAIL CSSSkew serializes correctly assert_equals: expected "skew(90deg, 45deg)" but got ""
+FAIL CSSSkew with Y which is 0 value serializes correctly assert_equals: expected "skew(90deg)" but got ""
+FAIL CSSSkewX serializes correctly assert_equals: expected "skewX(90deg)" but got ""
+FAIL CSSSkewY serializes correctly assert_equals: expected "skewY(90deg)" but got ""
+FAIL CSSPerspective serializes correctly assert_equals: expected "perspective(1px)" but got ""
+FAIL CSSPerspective with negative length serializes correctly assert_equals: expected "perspective(calc(-1px))" but got ""
+FAIL CSSTransformValue with a single transform serializes correctly assert_equals: expected "perspective(1px)" but got ""
+FAIL CSSTransformValue with multiple transforms serializes correctly assert_equals: expected "translate(1px, 0px) rotate(90deg) perspective(1px) skew(90deg, 45deg) scale3d(1, 2, 3)" but got ""
+FAIL CSSTransformValue containing CSSMathValues serializes correctly assert_equals: expected "translate(calc(1px + 1em), 0px) rotate(calc(90deg + 1turn)) perspective(calc(1px + 1em)) skew(calc(90deg * 2), calc(1turn * 2)) scale3d(calc(1 * 2), calc(1 + 1), calc(3))" but got ""
+FAIL CSSMatrixComponent with 6 elements serializes correctly assert_equals: expected "matrix(1, 2, 3, 4, 5, 6)" but got ""
+FAIL CSSMatrixComponent with 16 elements serializes correctly assert_equals: expected "matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)" but got ""
+FAIL CSSTransformValue with updated is2D serializes as 2D transforms assert_equals: expected "translate(1px, 2px) rotate(90deg) scale(1, 2)" but got ""
 

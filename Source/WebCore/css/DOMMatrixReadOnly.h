@@ -118,6 +118,8 @@ public:
     ExceptionOr<String> toString() const;
 
     const TransformationMatrix& transformationMatrix() const { return m_matrix; }
+    
+    Ref<DOMMatrix> cloneAsDOMMatrix() const;
 
 protected:
     DOMMatrixReadOnly() = default;
@@ -130,8 +132,6 @@ protected:
     };
 
     static ExceptionOr<AbstractMatrix> parseStringIntoAbstractMatrix(const String&);
-
-    Ref<DOMMatrix> cloneAsDOMMatrix() const;
 
     template <typename T>
     static ExceptionOr<Ref<T>> fromMatrixHelper(DOMMatrixInit&&);

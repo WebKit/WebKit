@@ -1,3 +1,129 @@
+2021-09-17  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Addition of CSSTransformValue, CSSTransformComponent & subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=230284
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/DOMMatrix.idl:
+        * css/DOMMatrixReadOnly.h:
+        * css/typedom/transform/CSSMatrixComponent.cpp: Added.
+        (WebCore::CSSMatrixComponent::create):
+        (WebCore::CSSMatrixComponent::CSSMatrixComponent):
+        (WebCore::CSSMatrixComponent::toString const):
+        (WebCore::CSSMatrixComponent::toMatrix):
+        * css/typedom/transform/CSSMatrixComponent.h: Added.
+        (WebCore::CSSMatrixComponent::create):
+        (WebCore::CSSMatrixComponent::matrix):
+        (WebCore::CSSMatrixComponent::setMatrix):
+        * css/typedom/transform/CSSMatrixComponent.idl: Added.
+        * css/typedom/transform/CSSMatrixComponentOptions.h: Added.
+        * css/typedom/transform/CSSMatrixComponentOptions.idl: Added.
+        * css/typedom/transform/CSSPerspective.cpp: Added.
+        (WebCore::CSSPerspective::create):
+        (WebCore::CSSPerspective::CSSPerspective):
+        (WebCore::CSSPerspective::toString const):
+        (WebCore::CSSPerspective::toMatrix):
+        * css/typedom/transform/CSSPerspective.h: Added.
+        (WebCore::CSSPerspective::length):
+        (WebCore::CSSPerspective::setLength):
+        * css/typedom/transform/CSSPerspective.idl: Added.
+        * css/typedom/transform/CSSRotate.cpp: Added.
+        (WebCore::CSSRotate::create):
+        (WebCore::CSSRotate::CSSRotate):
+        (WebCore::CSSRotate::toString const):
+        (WebCore::CSSRotate::toMatrix):
+        * css/typedom/transform/CSSRotate.h: Added.
+        (WebCore::CSSRotate::x):
+        (WebCore::CSSRotate::y):
+        (WebCore::CSSRotate::z):
+        (WebCore::CSSRotate::angle):
+        (WebCore::CSSRotate::setX):
+        (WebCore::CSSRotate::setY):
+        (WebCore::CSSRotate::setZ):
+        (WebCore::CSSRotate::setAngle):
+        * css/typedom/transform/CSSRotate.idl: Added.
+        * css/typedom/transform/CSSScale.cpp: Added.
+        (WebCore::CSSScale::create):
+        (WebCore::CSSScale::CSSScale):
+        (WebCore::CSSScale::toString const):
+        (WebCore::CSSScale::toMatrix):
+        * css/typedom/transform/CSSScale.h: Added.
+        (WebCore::CSSScale::x):
+        (WebCore::CSSScale::y):
+        (WebCore::CSSScale::z):
+        (WebCore::CSSScale::setX):
+        (WebCore::CSSScale::setY):
+        (WebCore::CSSScale::setZ):
+        * css/typedom/transform/CSSScale.idl: Added.
+        * css/typedom/transform/CSSSkew.cpp: Added.
+        (WebCore::CSSSkew::create):
+        (WebCore::CSSSkew::CSSSkew):
+        (WebCore::CSSSkew::toString const):
+        (WebCore::CSSSkew::toMatrix):
+        * css/typedom/transform/CSSSkew.h: Added.
+        (WebCore::CSSSkew::ax):
+        (WebCore::CSSSkew::ay):
+        (WebCore::CSSSkew::setAx):
+        (WebCore::CSSSkew::setAy):
+        * css/typedom/transform/CSSSkew.idl: Added.
+        * css/typedom/transform/CSSSkewX.cpp: Added.
+        (WebCore::CSSSkewX::create):
+        (WebCore::CSSSkewX::CSSSkewX):
+        (WebCore::CSSSkewX::toString const):
+        (WebCore::CSSSkewX::toMatrix):
+        * css/typedom/transform/CSSSkewX.h: Added.
+        (WebCore::CSSSkewX::ax):
+        (WebCore::CSSSkewX::setAx):
+        * css/typedom/transform/CSSSkewX.idl: Added.
+        * css/typedom/transform/CSSSkewY.cpp: Added.
+        (WebCore::CSSSkewY::create):
+        (WebCore::CSSSkewY::CSSSkewY):
+        (WebCore::CSSSkewY::toString const):
+        (WebCore::CSSSkewY::toMatrix):
+        * css/typedom/transform/CSSSkewY.h: Added.
+        (WebCore::CSSSkewY::ay):
+        (WebCore::CSSSkewY::setAy):
+        * css/typedom/transform/CSSSkewY.idl: Added.
+        * css/typedom/transform/CSSTransformComponent.cpp: Added.
+        (WebCore::CSSTransformComponent::toString const):
+        (WebCore::CSSTransformComponent::toMatrix):
+        * css/typedom/transform/CSSTransformComponent.h: Added.
+        (WebCore::CSSTransformComponent::is2D const):
+        (WebCore::CSSTransformComponent::setIs2D):
+        * css/typedom/transform/CSSTransformComponent.idl: Added.
+        * css/typedom/transform/CSSTransformValue.cpp: Added.
+        (WebCore::CSSTransformValue::create):
+        (WebCore::CSSTransformValue::item):
+        (WebCore::CSSTransformValue::setItem):
+        (WebCore::CSSTransformValue::is2D const):
+        (WebCore::CSSTransformValue::setIs2D):
+        (WebCore::CSSTransformValue::toMatrix):
+        (WebCore::CSSTransformValue::CSSTransformValue):
+        * css/typedom/transform/CSSTransformValue.h: Added.
+        (WebCore::CSSTransformValue::length const):
+        (isType):
+        * css/typedom/transform/CSSTransformValue.idl: Added.
+        * css/typedom/transform/CSSTranslate.cpp: Added.
+        (WebCore::CSSTranslate::create):
+        (WebCore::CSSTranslate::CSSTranslate):
+        (WebCore::CSSTranslate::toString const):
+        (WebCore::CSSTranslate::toMatrix):
+        * css/typedom/transform/CSSTranslate.h: Added.
+        (WebCore::CSSTranslate::x):
+        (WebCore::CSSTranslate::y):
+        (WebCore::CSSTranslate::z):
+        (WebCore::CSSTranslate::setX):
+        (WebCore::CSSTranslate::setY):
+        (WebCore::CSSTranslate::setZ):
+        * css/typedom/transform/CSSTranslate.idl: Added.
+
 2021-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Make ScrollAnimation a little more generic

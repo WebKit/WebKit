@@ -765,6 +765,17 @@ $(PROJECT_DIR)/css/typedom/numeric/CSSMathValue.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSNumericArray.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSNumericBaseType.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSNumericType.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSMatrixComponent.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSMatrixComponentOptions.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSPerspective.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSRotate.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSScale.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSSkew.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSSkewX.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSSkewY.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSTransformComponent.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSTransformValue.idl
+$(PROJECT_DIR)/css/typedom/transform/CSSTranslate.idl
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl

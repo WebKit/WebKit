@@ -93,7 +93,7 @@ DOMMatrixReadOnly::DOMMatrixReadOnly(TransformationMatrix&& matrix, Is2D is2D)
     ASSERT(!m_is2D || m_matrix.isAffine());
 }
 
-inline Ref<DOMMatrix> DOMMatrixReadOnly::cloneAsDOMMatrix() const
+Ref<DOMMatrix> DOMMatrixReadOnly::cloneAsDOMMatrix() const
 {
     return DOMMatrix::create(m_matrix, m_is2D ? Is2D::Yes : Is2D::No);
 }

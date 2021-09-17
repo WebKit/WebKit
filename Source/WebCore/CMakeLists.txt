@@ -85,6 +85,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/css/parser"
     "${WEBCORE_DIR}/css/typedom"
     "${WEBCORE_DIR}/css/typedom/numeric"
+    "${WEBCORE_DIR}/css/typedom/transform"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/display"
     "${WEBCORE_DIR}/display/compositing"
@@ -220,6 +221,7 @@ set(WebCore_IDL_INCLUDES
     css/typedom
 
     css/typedom/numeric
+    css/typedom/transform
 
     html/canvas
     html/shadow
@@ -767,6 +769,18 @@ set(WebCore_NON_SVG_IDL_FILES
     css/typedom/numeric/CSSNumericArray.idl
     css/typedom/numeric/CSSNumericBaseType.idl
     css/typedom/numeric/CSSNumericType.idl
+
+    css/typedom/transform/CSSMatrixComponent.idl
+    css/typedom/transform/CSSMatrixComponentOptions.idl
+    css/typedom/transform/CSSPerspective.idl
+    css/typedom/transform/CSSRotate.idl
+    css/typedom/transform/CSSScale.idl
+    css/typedom/transform/CSSSkew.idl
+    css/typedom/transform/CSSSkewX.idl
+    css/typedom/transform/CSSSkewY.idl
+    css/typedom/transform/CSSTransformComponent.idl
+    css/typedom/transform/CSSTransformValue.idl
+    css/typedom/transform/CSSTranslate.idl
 
     dom/AbortAlgorithm.idl
     dom/AbortController.idl

@@ -1,7 +1,29 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: CSSTranslate
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: CSSTranslate
-
-FAIL Normalizing a matrix() returns a CSSMatrixComponent Can't find variable: CSSTransformValue
-FAIL Normalizing a matrix3d() returns a CSSMatrixComponent Can't find variable: CSSTransformValue
+FAIL Normalizing a matrix() returns a CSSMatrixComponent matrix(1, 2, 3, 4, 5, 6) cannot be parsed as a transform
+FAIL Normalizing a matrix3d() returns a CSSMatrixComponent matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) cannot be parsed as a transform
+FAIL Normalizing a translate() with X returns a CSSTranslate translate(1px) cannot be parsed as a transform
+FAIL Normalizing a translate() with X and Y returns a CSSTranslate translate(1%, 1px) cannot be parsed as a transform
+FAIL Normalizing a translateX() returns a CSSTranslate translateX(1%) cannot be parsed as a transform
+FAIL Normalizing a translateY() returns a CSSTranslate translateY(1px) cannot be parsed as a transform
+FAIL Normalizing a translate3d() returns a CSSTranslate translate3d(1px, 2%, 3px) cannot be parsed as a transform
+FAIL Normalizing a translateZ() returns a CSSTranslate translateZ(1px) cannot be parsed as a transform
+FAIL Normalizing a scale() with one argument returns a CSSScale scale(2) cannot be parsed as a transform
+FAIL Normalizing a scale() with two arguments returns a CSSScale scale(2, 3) cannot be parsed as a transform
+FAIL Normalizing a scaleX() returns a CSSScale scaleX(2) cannot be parsed as a transform
+FAIL Normalizing a scaleY() returns a CSSScale scaleY(2) cannot be parsed as a transform
+FAIL Normalizing a scale3d() returns a CSSScale scale3d(1, 2, 3) cannot be parsed as a transform
+FAIL Normalizing a scaleZ() returns a CSSScale scaleZ(2) cannot be parsed as a transform
+FAIL Normalizing a rotate() returns a CSSRotate rotate(90deg) cannot be parsed as a transform
+FAIL Normalizing a rotate3d() returns a CSSRotate rotate3d(1, 2, 3, 90deg) cannot be parsed as a transform
+FAIL Normalizing a rotateX() returns a CSSRotate rotateX(90deg) cannot be parsed as a transform
+FAIL Normalizing a rotateY() returns a CSSRotate rotateY(90deg) cannot be parsed as a transform
+FAIL Normalizing a rotateZ() returns a CSSRotate rotateZ(90deg) cannot be parsed as a transform
+FAIL Normalizing a skew() with only X returns a CSSSkew skew(90deg) cannot be parsed as a transform
+FAIL Normalizing a skew() with X and Y which is 0 value returns a CSSSkew skew(90deg, 0deg) cannot be parsed as a transform
+FAIL Normalizing a skew() with X and Y returns a CSSSkew skew(90deg, 45deg) cannot be parsed as a transform
+FAIL Normalizing a skewX() returns a CSSSkewX skewX(90deg) cannot be parsed as a transform
+FAIL Normalizing a skewY() returns a CSSSkewY skewY(90deg) cannot be parsed as a transform
+FAIL Normalizing a perspective() returns a CSSPerspective perspective(1px) cannot be parsed as a transform
+FAIL Normalizing a <transform-list> returns a CSSTransformValue containing all the transforms translate(1px) rotateX(90deg) perspective(1px) skew(90deg) skewX(20deg) skewY(30deg) scale3d(1, 2, 3) cannot be parsed as a transform
+FAIL Normalizing transforms with calc values contains CSSMathValues translate(calc(1px + 1em)) perspective(calc(1px + 1em)) cannot be parsed as a transform
 
