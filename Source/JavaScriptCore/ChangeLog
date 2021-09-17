@@ -1,3 +1,21 @@
+2021-09-17  Justin Michaud  <justin_michaud@apple.com>
+
+        PutByVal and PutPrivateName ICs should emit a write barrier if a butterfly might be allocated
+        https://bugs.webkit.org/show_bug.cgi?id=230378
+
+        Reviewed by Yusuke Suzuki.
+
+        Right now, PutByVal and PutPrivateName check the value type to determine 
+        if a write barrier is needed. For example, putting a primitive is considered 
+        to not require a write barrier. This makes sense, except for the case when we 
+        might allocate or re-allocate a butterfly in the IC. This does not emit a write 
+        barrier, and so the GC might miss the new butterfly. That is somewhat undesirable. 
+        This is a temporary conservative fix. If we don't write to the butterfly pointer,
+        then we still don't need a write barrier; this work is captured by 
+        https://bugs.webkit.org/show_bug.cgi?id=230377
+
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+
 2021-09-16  Saam Barati  <sbarati@apple.com>
 
         Don't throw an exception in the middle of linking a CodeBlock
