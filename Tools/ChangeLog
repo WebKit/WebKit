@@ -1,3 +1,38 @@
+2021-09-17  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r275267) [GLIB] API test /webkit/WebKitWebsiteData/configuration is failing
+        https://bugs.webkit.org/show_bug.cgi?id=224175
+
+        Reviewed by Carlos Garcia Campos.
+
+        Some WebsiteData tests rely on checking whether some specific files
+        are created in the background. Currently, this is done through
+        waitUntilFileChanged(), which first g_file_query() whether the file
+        exists before entering a main loop which uses GFileMonitor. While this
+        worked most of the time, some tests were flaky due to likely the file
+        being created between the query call and the monitoring starting,
+        especially after revisions like r275267.
+
+        This commit replaces the waitUntilFileChanged calls with an explicit
+        check loop, like was done for the applicationCache file in the
+        configuration test.
+
+        Also, for the ITP test, there's no need to check for the file to be
+        deleted, as the ResourceLoadStatistics just clears the database and
+        recreates the schema, reusing the existing file.
+
+        Covered by existing tests.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataConfiguration):
+        (testWebsiteDataITP):
+        (testWebsiteDataDOMCache):
+        * TestWebKitAPI/glib/TestExpectations.json:
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::assertFileIsCreated):
+        (WebViewTest::assertJavaScriptBecomesTrue):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Add a build option to enable ATSPI

@@ -106,23 +106,6 @@
             },
             "/webkit/WebKitWebsiteData/storage": {
                 "expected": { "wpe": {"status": ["PASS", "FAIL"]}}
-            },
-            "/webkit/WebKitWebsiteData/dom-cache": {
-                "expected": {
-                    "gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"},
-                    "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"}
-                }
-            },
-            "/webkit/WebKitWebsiteData/itp": {
-                "expected": {
-                    "all_before_bug_229807": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/224175"},
-                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/229807"}
-                }
-            },
-            "/webkit/WebKitWebsiteData/configuration": {
-                "expected": {
-                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/224175"}
-                }
             }
         }
     },
