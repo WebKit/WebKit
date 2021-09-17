@@ -45,6 +45,7 @@
 #include "WasmContextInlines.h"
 #include "WasmInstance.h"
 #include "WasmMemory.h"
+#include "WasmModuleInformation.h"
 #include "WasmOMGForOSREntryPlan.h"
 #include "WasmOMGPlan.h"
 #include "WasmOSREntryData.h"

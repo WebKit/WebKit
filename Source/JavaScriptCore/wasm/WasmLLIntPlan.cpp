@@ -32,6 +32,7 @@
 #include "CCallHelpers.h"
 #include "CalleeBits.h"
 #include "JITCompilation.h"
+#include "JITOpaqueByproducts.h"
 #include "JSToWasm.h"
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"

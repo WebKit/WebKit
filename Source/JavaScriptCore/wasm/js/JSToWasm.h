@@ -33,11 +33,11 @@
 #include "WasmMemory.h"
 #include "WasmModuleInformation.h"
 #include "WasmSignature.h"
-#include <wtf/Vector.h>
-
-#include <memory>
+#include <wtf/Forward.h>
 
 namespace JSC {
+
+class CCallHelpers;
 
 namespace Wasm {
 
