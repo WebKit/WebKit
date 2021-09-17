@@ -642,7 +642,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Pass ]
+webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
@@ -2307,7 +2307,7 @@ webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass Cra
 
 webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.html [ Failure ]
 
-webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Timeout ]
+webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure ]
 
 webkit.org/b/145051 webkit.org/b/198830 [ Release ] media/video-rtl.html [ ImageOnlyFailure Pass Crash ]

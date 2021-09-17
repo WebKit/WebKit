@@ -2136,6 +2136,8 @@ webkit.org/b/228153 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/3dtransform-and-filter-no-perspective-001.html [ ImageOnlyFailure ]
 
+webkit.org/b/230414 editing/selection/doubleclick-beside-cr-span.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
