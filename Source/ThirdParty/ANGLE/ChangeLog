@@ -1,3 +1,17 @@
+2021-09-16  Kyle Piddington  <kpiddington@apple.com>
+
+        webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html fails on Intel+AMD Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229941
+
+        Zero-initialize compressed textures explicitly, as they aren't implicitly initalized in Metal.
+        Reviewed by Kenneth Russell <kbr@chromium.org>.
+
+        * src/libANGLE/renderer/metal/mtl_utils.h:
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::GetCompressedBufferForTextureWithFormat):
+        (rx::mtl::InitializeCompressedTextureContents):
+        (rx::mtl::InitializeTextureContents):
+
 2021-08-31  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         webgl/1.0.x/conformance/glsl/misc/fragcolor-fragdata-invariant.html fails

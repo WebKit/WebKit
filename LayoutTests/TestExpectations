@@ -3697,6 +3697,9 @@ webgl/2.0.y/conformance2/context/constants-and-properties-2.html [ Pass ]
 webgl/2.0.y/conformance2/vertex_arrays/vertex-array-object.html [ Pass ]
 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Pass ]
 
+# Explicitly turn on conformance test until all of webgl/2.0.y is enabled
+webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass ]
+
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.
 fast/canvas/webgl/invalid-passed-params.html [ Skip ]

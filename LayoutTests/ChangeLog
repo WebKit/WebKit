@@ -1,3 +1,13 @@
+2021-09-16  Kyle Piddington  <kpiddington@apple.com>
+
+        webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html fails on Intel+AMD Metal
+        https://bugs.webkit.org/show_bug.cgi?id=229941
+
+        Zero-initialize compressed textures explicitly, as they aren't implicitly initalized in Metal.
+        Reviewed by Kenneth Russell <kbr@chromium.org>.
+
+        * TestExpectations:
+
 2021-09-16  Cameron McCormack  <heycam@apple.com>
 
         Support drawImage with a wide gamut image painting into a display-p3 canvas
