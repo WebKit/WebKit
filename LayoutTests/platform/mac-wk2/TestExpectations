@@ -1486,8 +1486,6 @@ webkit.org/b/225669 imported/w3c/web-platform-tests/css/css-transitions/transiti
 # rdar://82047046 ([ Mac wk2 ] http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html is a flaky timeout)
 http/tests/webAPIStatistics/screen-functions-accessed-data-collection.html [ Pass Timeout ]
 
-webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Slow ]
-
 webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Failure ]
 
 webkit.org/b/226783 [ arm64 ] http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
