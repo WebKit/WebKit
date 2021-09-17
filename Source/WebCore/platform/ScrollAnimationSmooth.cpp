@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  * Copyright (c) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,29 +42,8 @@ static const Seconds tickTime = 1_s / frameRate;
 static const Seconds minimumTimerInterval { 1_ms };
 static const double smoothFactorForProgrammaticScroll = 1;
 
-ScrollAnimationSmooth::PerAxisData::PerAxisData(ScrollbarOrientation orientation, const FloatPoint& position, ScrollExtentsCallback& extentsCallback)
-{
-    auto extents = extentsCallback();
-    switch (orientation) {
-    case HorizontalScrollbar:
-        currentPosition = position.x();
-        visibleLength = extents.visibleSize.width();
-        break;
-    case VerticalScrollbar:
-        currentPosition = position.y();
-        visibleLength = extents.visibleSize.height();
-        break;
-    }
-
-    desiredPosition = currentPosition;
-}
-
-ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollExtentsCallback&& scrollExtentsFunction, const FloatPoint& position, NotifyPositionChangedCallback&& notifyPositionChangedFunction, NotifyAnimationStoppedCallback&& notifyAnimationStoppedFunction)
-    : m_scrollExtentsFunction(WTFMove(scrollExtentsFunction))
-    , m_notifyPositionChangedFunction(WTFMove(notifyPositionChangedFunction))
-    , m_notifyAnimationStoppedFunction(WTFMove(notifyAnimationStoppedFunction))
-    , m_horizontalData(HorizontalScrollbar, position, m_scrollExtentsFunction)
-    , m_verticalData(VerticalScrollbar, position, m_scrollExtentsFunction)
+ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)
+    : ScrollAnimation(client)
     , m_animationTimer(RunLoop::current(), this, &ScrollAnimationSmooth::animationTimerFired)
 {
 #if USE(GLIB_EVENT_LOOP)
@@ -72,11 +51,15 @@ ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollExtentsCallback&& scrollExten
 #endif
 }
 
-bool ScrollAnimationSmooth::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
+ScrollAnimationSmooth::~ScrollAnimationSmooth() = default;
+
+bool ScrollAnimationSmooth::startAnimatedScroll(ScrollbarOrientation orientation, ScrollGranularity granularity, const FloatPoint& fromPosition, float step, float multiplier)
 {
     float minScrollPosition;
     float maxScrollPosition;
-    auto extents = m_scrollExtentsFunction();
+    auto extents = m_client.scrollExtentsForAnimation(*this);
+    initializeAxesData(extents, fromPosition);
+
     if (orientation == HorizontalScrollbar) {
         minScrollPosition = extents.minimumScrollPosition.x();
         maxScrollPosition = extents.maximumScrollPosition.x();
@@ -93,40 +76,54 @@ bool ScrollAnimationSmooth::scroll(ScrollbarOrientation orientation, ScrollGranu
     return needToScroll;
 }
 
-void ScrollAnimationSmooth::scroll(const FloatPoint& position)
+bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& fromPosition, const FloatPoint& destinationPosition)
 {
-    ScrollGranularity granularity = ScrollByPage;
-    auto extents = m_scrollExtentsFunction();
-    bool needToScroll = updatePerAxisData(m_horizontalData, granularity, position.x(), extents.minimumScrollPosition.x(), extents.maximumScrollPosition.x(), smoothFactorForProgrammaticScroll);
+    auto extents = m_client.scrollExtentsForAnimation(*this);
+    initializeAxesData(extents, fromPosition);
+    
+    return startOrRetargetAnimation(extents, destinationPosition);
+}
+
+bool ScrollAnimationSmooth::retargetActiveAnimation(const FloatPoint& newDestination)
+{
+    if (!isActive())
+        return false;
+
+    auto extents = m_client.scrollExtentsForAnimation(*this);
+    return startOrRetargetAnimation(extents, newDestination);
+}
+
+bool ScrollAnimationSmooth::startOrRetargetAnimation(const ScrollExtents& extents, const FloatPoint& destinationPosition)
+{
+    auto granularity = ScrollByPage;
+    bool needToScroll = updatePerAxisData(m_horizontalData, granularity, destinationPosition.x(), extents.minimumScrollPosition.x(), extents.maximumScrollPosition.x(), smoothFactorForProgrammaticScroll);
     needToScroll |=
-        updatePerAxisData(m_verticalData, granularity, position.y(), extents.minimumScrollPosition.y(), extents.maximumScrollPosition.y(), smoothFactorForProgrammaticScroll);
+        updatePerAxisData(m_verticalData, granularity, destinationPosition.y(), extents.minimumScrollPosition.y(), extents.maximumScrollPosition.y(), smoothFactorForProgrammaticScroll);
     if (needToScroll && !isActive()) {
-        m_startTime = m_horizontalData.startTime;
+        m_startTime = m_verticalData.startTime;
         animationTimerFired();
     }
-};
+    return needToScroll;
+}
 
 void ScrollAnimationSmooth::stop()
 {
     m_animationTimer.stop();
-    m_notifyAnimationStoppedFunction();
+    m_client.scrollAnimationDidEnd(*this);
 }
 
-void ScrollAnimationSmooth::updateVisibleLengths()
+void ScrollAnimationSmooth::updateScrollExtents()
 {
-    auto extents = m_scrollExtentsFunction();
+    auto extents = m_client.scrollExtentsForAnimation(*this);
     m_horizontalData.visibleLength = extents.visibleSize.width();
     m_verticalData.visibleLength = extents.visibleSize.height();
 }
 
-void ScrollAnimationSmooth::setCurrentPosition(const FloatPoint& position)
+void ScrollAnimationSmooth::initializeAxesData(const ScrollExtents& extents, const FloatPoint& startPosition)
 {
-    stop();
-    m_horizontalData = PerAxisData(position.x(), m_horizontalData.visibleLength);
-    m_verticalData = PerAxisData(position.y(), m_verticalData.visibleLength);
+    m_horizontalData = PerAxisData(startPosition.x(), extents.visibleSize.width());
+    m_verticalData = PerAxisData(startPosition.y(), extents.visibleSize.height());
 }
-
-ScrollAnimationSmooth::~ScrollAnimationSmooth() = default;
 
 static inline double curveAt(ScrollAnimationSmooth::Curve curve, double t)
 {
@@ -248,38 +245,38 @@ static inline double releaseArea(ScrollAnimationSmooth::Curve curve, double star
     return endValue - startValue;
 }
 
-static inline void getAnimationParametersForGranularity(ScrollGranularity granularity, Seconds& animationTime, Seconds& repeatMinimumSustainTime, Seconds& attackTime, Seconds& releaseTime, ScrollAnimationSmooth::Curve& coastTimeCurve, Seconds& maximumCoastTime)
+static inline void getAnimationParametersForGranularity(ScrollGranularity granularity, Seconds& animationDuration, Seconds& repeatMinimumSustainTime, Seconds& attackDuration, Seconds& releaseDuration, ScrollAnimationSmooth::Curve& coastTimeCurve, Seconds& maximumCoastTime)
 {
     switch (granularity) {
     case ScrollByDocument:
-        animationTime = tickTime * 10;
+        animationDuration = tickTime * 10;
         repeatMinimumSustainTime = tickTime * 10;
-        attackTime = tickTime * 10;
-        releaseTime = tickTime * 10;
+        attackDuration = tickTime * 10;
+        releaseDuration = tickTime * 10;
         coastTimeCurve = ScrollAnimationSmooth::Curve::Linear;
         maximumCoastTime = 1_s;
         break;
     case ScrollByLine:
-        animationTime = tickTime * 10;
+        animationDuration = tickTime * 10;
         repeatMinimumSustainTime = tickTime * 7;
-        attackTime = tickTime * 3;
-        releaseTime = tickTime * 3;
+        attackDuration = tickTime * 3;
+        releaseDuration = tickTime * 3;
         coastTimeCurve = ScrollAnimationSmooth::Curve::Linear;
         maximumCoastTime = 1_s;
         break;
     case ScrollByPage:
-        animationTime = tickTime * 15;
+        animationDuration = tickTime * 15;
         repeatMinimumSustainTime = tickTime * 10;
-        attackTime = tickTime * 5;
-        releaseTime = tickTime * 5;
+        attackDuration = tickTime * 5;
+        releaseDuration = tickTime * 5;
         coastTimeCurve = ScrollAnimationSmooth::Curve::Linear;
         maximumCoastTime = 1_s;
         break;
     case ScrollByPixel:
-        animationTime = tickTime * 11;
+        animationDuration = tickTime * 11;
         repeatMinimumSustainTime = tickTime * 2;
-        attackTime = tickTime * 3;
-        releaseTime = tickTime * 3;
+        attackDuration = tickTime * 3;
+        releaseDuration = tickTime * 3;
         coastTimeCurve = ScrollAnimationSmooth::Curve::Quadratic;
         maximumCoastTime = 1250_ms;
         break;
@@ -299,27 +296,27 @@ bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranulari
     if (newPosition == data.desiredPosition)
         return false;
 
-    Seconds animationTime, repeatMinimumSustainTime, attackTime, releaseTime, maximumCoastTime;
+    Seconds animationDuration, repeatMinimumSustainTime, attackDuration, releaseDuration, maximumCoastTime;
     Curve coastTimeCurve;
-    getAnimationParametersForGranularity(granularity, animationTime, repeatMinimumSustainTime, attackTime, releaseTime, coastTimeCurve, maximumCoastTime);
+    getAnimationParametersForGranularity(granularity, animationDuration, repeatMinimumSustainTime, attackDuration, releaseDuration, coastTimeCurve, maximumCoastTime);
 
-    animationTime *= smoothFactor;
+    animationDuration *= smoothFactor;
     repeatMinimumSustainTime *= smoothFactor;
-    attackTime *= smoothFactor;
-    releaseTime *= smoothFactor;
+    attackDuration *= smoothFactor;
+    releaseDuration *= smoothFactor;
     maximumCoastTime *= smoothFactor;
 
     data.desiredPosition = newPosition;
     if (!data.startTime)
-        data.attackTime = attackTime;
-    data.animationTime = animationTime;
-    data.releaseTime = releaseTime;
+        data.attackDuration = attackDuration;
+    data.animationDuration = animationDuration;
+    data.releaseDuration = releaseDuration;
 
     // Prioritize our way out of over constraint.
-    if (data.attackTime + data.releaseTime > data.animationTime) {
-        if (data.releaseTime > data.animationTime)
-            data.releaseTime = data.animationTime;
-        data.attackTime = data.animationTime - data.releaseTime;
+    if (data.attackDuration + data.releaseDuration > data.animationDuration) {
+        if (data.releaseDuration > data.animationDuration)
+            data.releaseDuration = data.animationDuration;
+        data.attackDuration = data.animationDuration - data.releaseDuration;
     }
 
     if (!data.startTime) {
@@ -333,15 +330,15 @@ bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranulari
     double remainingDelta = data.desiredPosition - data.currentPosition;
     double attackAreaLeft = 0;
     Seconds deltaTime = data.lastAnimationTime - data.startTime;
-    Seconds attackTimeLeft = std::max(0_s, data.attackTime - deltaTime);
-    Seconds timeLeft = data.animationTime - deltaTime;
-    Seconds minTimeLeft = data.releaseTime + std::min(repeatMinimumSustainTime, data.animationTime - data.releaseTime - attackTimeLeft);
+    Seconds attackTimeLeft = std::max(0_s, data.attackDuration - deltaTime);
+    Seconds timeLeft = data.animationDuration - deltaTime;
+    Seconds minTimeLeft = data.releaseDuration + std::min(repeatMinimumSustainTime, data.animationDuration - data.releaseDuration - attackTimeLeft);
     if (timeLeft < minTimeLeft) {
-        data.animationTime = deltaTime + minTimeLeft;
+        data.animationDuration = deltaTime + minTimeLeft;
         timeLeft = minTimeLeft;
     }
 
-    if (maximumCoastTime > (repeatMinimumSustainTime + releaseTime)) {
+    if (maximumCoastTime > (repeatMinimumSustainTime + releaseDuration)) {
         double targetMaxCoastVelocity = data.visibleLength * .25 * frameRate;
         // This needs to be as minimal as possible while not being intrusive to page up/down.
         double minCoastDelta = data.visibleLength;
@@ -354,30 +351,30 @@ bool ScrollAnimationSmooth::updatePerAxisData(PerAxisData& data, ScrollGranulari
             Seconds coastMinTimeLeft = std::min(maximumCoastTime, minTimeLeft + (maximumCoastTime - minTimeLeft) * coastCurve(coastTimeCurve, coastFactor));
 
             if (Seconds additionalTime = std::max(0_s, coastMinTimeLeft - minTimeLeft)) {
-                Seconds additionalReleaseTime = std::min(additionalTime, additionalTime * (releaseTime / (releaseTime + repeatMinimumSustainTime)));
-                data.releaseTime = releaseTime + additionalReleaseTime;
-                data.animationTime = deltaTime + coastMinTimeLeft;
+                Seconds additionalReleaseTime = std::min(additionalTime, additionalTime * (releaseDuration / (releaseDuration + repeatMinimumSustainTime)));
+                data.releaseDuration = releaseDuration + additionalReleaseTime;
+                data.animationDuration = deltaTime + coastMinTimeLeft;
                 timeLeft = coastMinTimeLeft;
             }
         }
     }
 
-    Seconds releaseTimeLeft = std::min(timeLeft, data.releaseTime);
+    Seconds releaseTimeLeft = std::min(timeLeft, data.releaseDuration);
     Seconds sustainTimeLeft = std::max(0_s, timeLeft - releaseTimeLeft - attackTimeLeft);
     if (attackTimeLeft) {
-        double attackSpot = deltaTime / data.attackTime;
-        attackAreaLeft = attackArea(Curve::Cubic, attackSpot, 1) * data.attackTime.value();
+        double attackSpot = deltaTime / data.attackDuration;
+        attackAreaLeft = attackArea(Curve::Cubic, attackSpot, 1) * data.attackDuration.value();
     }
 
-    double releaseSpot = (data.releaseTime - releaseTimeLeft) / data.releaseTime;
-    double releaseAreaLeft = releaseArea(Curve::Cubic, releaseSpot, 1) * data.releaseTime.value();
+    double releaseSpot = (data.releaseDuration - releaseTimeLeft) / data.releaseDuration;
+    double releaseAreaLeft = releaseArea(Curve::Cubic, releaseSpot, 1) * data.releaseDuration.value();
 
     data.desiredVelocity = remainingDelta / (attackAreaLeft + sustainTimeLeft.value() + releaseAreaLeft);
     data.releasePosition = data.desiredPosition - data.desiredVelocity * releaseAreaLeft;
     if (attackAreaLeft)
         data.attackPosition = data.startPosition + data.desiredVelocity * attackAreaLeft;
     else
-        data.attackPosition = data.releasePosition - (data.animationTime - data.releaseTime - data.attackTime).value() * data.desiredVelocity;
+        data.attackPosition = data.releasePosition - (data.animationDuration - data.releaseDuration - data.attackDuration).value() * data.desiredVelocity;
 
     if (sustainTimeLeft) {
         double roundOff = data.releasePosition - ((attackAreaLeft ? data.attackPosition : data.currentPosition) + data.desiredVelocity * sustainTimeLeft.value());
@@ -401,18 +398,18 @@ bool ScrollAnimationSmooth::animateScroll(PerAxisData& data, MonotonicTime curre
     Seconds deltaTime = currentTime - data.startTime;
     double newPosition = data.currentPosition;
 
-    if (deltaTime > data.animationTime) {
+    if (deltaTime > data.animationDuration) {
         data = PerAxisData(data.desiredPosition, data.visibleLength);
         return false;
     }
-    if (deltaTime < data.attackTime)
-        newPosition = attackCurve(Curve::Cubic, deltaTime.value(), data.attackTime.value(), data.startPosition, data.attackPosition);
-    else if (deltaTime < (data.animationTime - data.releaseTime))
-        newPosition = data.attackPosition + (deltaTime - data.attackTime).value() * data.desiredVelocity;
+    if (deltaTime < data.attackDuration)
+        newPosition = attackCurve(Curve::Cubic, deltaTime.value(), data.attackDuration.value(), data.startPosition, data.attackPosition);
+    else if (deltaTime < (data.animationDuration - data.releaseDuration))
+        newPosition = data.attackPosition + (deltaTime - data.attackDuration).value() * data.desiredVelocity;
     else {
         // release is based on targeting the exact final position.
-        Seconds releaseDeltaT = deltaTime - (data.animationTime - data.releaseTime);
-        newPosition = releaseCurve(Curve::Cubic, releaseDeltaT.value(), data.releaseTime.value(), data.releasePosition, data.desiredPosition);
+        Seconds releaseDeltaT = deltaTime - (data.animationDuration - data.releaseDuration);
+        newPosition = releaseCurve(Curve::Cubic, releaseDeltaT.value(), data.releaseDuration.value(), data.releasePosition, data.desiredPosition);
     }
 
     // Normalize velocity to a per second amount. Could be used to check for jank.
@@ -437,10 +434,10 @@ void ScrollAnimationSmooth::animationTimerFired()
 
     if (continueAnimation)
         startNextTimer(std::max(minimumTimerInterval, deltaToNextFrame));
-    else
-        m_notifyAnimationStoppedFunction();
 
-    m_notifyPositionChangedFunction(FloatPoint(m_horizontalData.currentPosition, m_verticalData.currentPosition));
+    m_client.scrollAnimationDidUpdate(*this, { m_horizontalData.currentPosition, m_verticalData.currentPosition });
+    if (!continueAnimation)
+        m_client.scrollAnimationDidEnd(*this);
 }
 
 void ScrollAnimationSmooth::startNextTimer(Seconds delay)

@@ -61,7 +61,10 @@ private:
     void notifyContentAreaScrolled(const FloatSize& delta) override;
     void lockOverlayScrollbarStateToHidden(bool) override;
 
-    void updatePosition(FloatPoint&&);
+    // ScrollAnimationClient
+    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) override;
+
+    void updatePosition(const FloatPoint&);
 
     void overlayScrollbarAnimationTimerFired();
     void showOverlayScrollbars();

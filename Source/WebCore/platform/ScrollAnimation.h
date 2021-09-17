@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +24,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimation_h
-#define ScrollAnimation_h
+#pragma once
 
 #include "ScrollTypes.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
 class FloatPoint;
-class ScrollableArea;
-enum class ScrollClamping : bool;
+class ScrollAnimation;
 
 struct ScrollExtents {
     ScrollPosition minimumScrollPosition;
@@ -40,19 +40,33 @@ struct ScrollExtents {
     IntSize visibleSize;
 };
 
+class ScrollAnimationClient {
+public:
+    virtual ~ScrollAnimationClient() = default;
+
+    virtual void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) = 0;
+    virtual void scrollAnimationDidEnd(ScrollAnimation&) = 0;
+    virtual ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) = 0;
+};
+
 class ScrollAnimation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~ScrollAnimation() { };
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float /* step */, float /* multiplier */) { return true; };
-    virtual void scroll(const FloatPoint&) { };
+    ScrollAnimation(ScrollAnimationClient& client)
+        : m_client(client)
+    { }
+    virtual ~ScrollAnimation() = default;
+
+    virtual bool retargetActiveAnimation(const FloatPoint& newDestination) = 0;
     virtual void stop() = 0;
-    virtual void updateVisibleLengths() { };
-    virtual void setCurrentPosition(const FloatPoint&) { };
-    virtual void serviceAnimation() { };
     virtual bool isActive() const = 0;
+    virtual void updateScrollExtents() { };
+    
+    // FIXME: No-op. Need to use this instead of subclasses having timers.
+    virtual void serviceAnimation() { };
+
+protected:
+    ScrollAnimationClient& m_client;
 };
 
 } // namespace WebCore
-
-#endif // ScrollAnimation_h

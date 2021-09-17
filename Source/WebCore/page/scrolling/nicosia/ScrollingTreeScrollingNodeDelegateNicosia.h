@@ -31,6 +31,7 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "NicosiaPlatformLayer.h"
+#include "ScrollAnimation.h"
 #include "ScrollingStateOverflowScrollingNode.h"
 #include "ThreadedScrollingTree.h"
 
@@ -44,7 +45,7 @@
 
 namespace WebCore {
 
-class ScrollingTreeScrollingNodeDelegateNicosia : public ScrollingTreeScrollingNodeDelegate {
+class ScrollingTreeScrollingNodeDelegateNicosia : public ScrollingTreeScrollingNodeDelegate, public ScrollAnimationClient {
 public:
     explicit ScrollingTreeScrollingNodeDelegateNicosia(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
     virtual ~ScrollingTreeScrollingNodeDelegateNicosia();
@@ -66,11 +67,16 @@ private:
     void ensureScrollAnimationSmooth();
 #endif
 
+    // ScrollAnimationClient
+    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) final;
+    void scrollAnimationDidEnd(ScrollAnimation&) final;
+    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
+
 #if ENABLE(KINETIC_SCROLLING)
     std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
 #endif
 #if ENABLE(SMOOTH_SCROLLING)
-    std::unique_ptr<ScrollAnimation> m_smoothAnimation;
+    std::unique_ptr<ScrollAnimationSmooth> m_smoothAnimation;
 #endif
 };
 

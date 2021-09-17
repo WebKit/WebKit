@@ -54,20 +54,7 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
     : m_scrollableArea(scrollableArea)
     , m_scrollController(*this)
     , m_scrollControllerAnimationTimer(*this, &ScrollAnimator::scrollControllerAnimationTimerFired)
-    , m_scrollAnimation(makeUnique<ScrollAnimationSmooth>(
-        [this]() -> ScrollExtents {
-            return { m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition(), m_scrollableArea.visibleSize() };
-        },
-        m_currentPosition,
-        [this](FloatPoint&& position) {
-            FloatSize delta = position - m_currentPosition;
-            m_currentPosition = WTFMove(position);
-            notifyPositionChanged(delta);
-            updateActiveScrollSnapIndexForOffset();
-        },
-        [this] {
-            m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
-        }))
+    , m_scrollAnimation(makeUnique<ScrollAnimationSmooth>(*this))
     , m_keyboardScrollingAnimator(makeUnique<KeyboardScrollingAnimator>(*this, m_scrollController))
 {
 }
@@ -99,11 +86,8 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     }
 
 #if ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY)
-    if (m_scrollableArea.scrollAnimatorEnabled() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
-        if (!m_scrollAnimation->isActive())
-            m_scrollAnimation->setCurrentPosition(m_currentPosition);
-        return m_scrollAnimation->scroll(orientation, granularity, step, multiplier);
-    }
+    if (m_scrollableArea.scrollAnimatorEnabled() && !behavior.contains(ScrollBehavior::NeverAnimate))
+        return m_scrollAnimation->startAnimatedScroll(orientation, granularity, m_currentPosition, step, multiplier);
 #endif
 
     return scrollToPositionWithoutAnimation(currentPosition() + delta);
@@ -124,7 +108,7 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
     if (adjustedPosition == currentPosition && adjustedPosition == scrollableArea().scrollPosition() && !scrollableArea().scrollOriginChanged())
         return false;
 
-    m_scrollAnimation->setCurrentPosition(adjustedPosition);
+    m_scrollAnimation->stop();
     m_currentPosition = adjustedPosition;
     notifyPositionChanged(adjustedPosition - currentPosition);
     updateActiveScrollSnapIndexForOffset();
@@ -142,8 +126,7 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition
     if (!positionChanged && !scrollableArea().scrollOriginChanged())
         return false;
 
-    m_scrollAnimation->setCurrentPosition(m_currentPosition);
-    m_scrollAnimation->scroll(newPosition);
+    m_scrollAnimation->startAnimatedScrollToDestination(m_currentPosition, newPosition);
     scrollableArea().setScrollBehaviorStatus(ScrollBehaviorStatus::InNonNativeAnimation);
     return true;
 }
@@ -152,7 +135,7 @@ void ScrollAnimator::retargetRunningAnimation(const FloatPoint& newPosition)
 {
     ASSERT(scrollableArea().currentScrollBehaviorStatus() == ScrollBehaviorStatus::InNonNativeAnimation);
     ASSERT(m_scrollAnimation->isActive());
-    m_scrollAnimation->scroll(newPosition);
+    m_scrollAnimation->retargetActiveAnimation(newPosition);
 }
 
 FloatPoint ScrollAnimator::offsetFromPosition(const FloatPoint& position)
@@ -375,22 +358,22 @@ void ScrollAnimator::cancelAnimations()
 
 void ScrollAnimator::contentsResized() const
 {
-    m_scrollAnimation->updateVisibleLengths();
+    m_scrollAnimation->updateScrollExtents();
 }
 
 void ScrollAnimator::willEndLiveResize()
 {
-    m_scrollAnimation->updateVisibleLengths();
+    m_scrollAnimation->updateScrollExtents();
 }
 
 void ScrollAnimator::didAddVerticalScrollbar(Scrollbar*)
 {
-    m_scrollAnimation->updateVisibleLengths();
+    m_scrollAnimation->updateScrollExtents();
 }
 
 void ScrollAnimator::didAddHorizontalScrollbar(Scrollbar*)
 {
-    m_scrollAnimation->updateVisibleLengths();
+    m_scrollAnimation->updateScrollExtents();
 }
 
 FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod method)
@@ -420,6 +403,28 @@ float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis
     }
 
     return m_scrollController.adjustScrollDestination(axis, newOffset, velocityInScrollAxis, originalOffset);
+}
+
+void ScrollAnimator::scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& position)
+{
+    FloatSize delta = position - m_currentPosition;
+    m_currentPosition = position;
+    notifyPositionChanged(delta);
+    updateActiveScrollSnapIndexForOffset();
+}
+
+void ScrollAnimator::scrollAnimationDidEnd(ScrollAnimation&)
+{
+    m_scrollableArea.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
+}
+
+ScrollExtents ScrollAnimator::scrollExtentsForAnimation(ScrollAnimation&)
+{
+    return {
+        m_scrollableArea.minimumScrollPosition(),
+        m_scrollableArea.maximumScrollPosition(),
+        m_scrollableArea.visibleSize()
+    };
 }
 
 

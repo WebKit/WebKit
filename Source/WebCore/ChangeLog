@@ -1,3 +1,85 @@
+2021-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Make ScrollAnimation a little more generic
+        https://bugs.webkit.org/show_bug.cgi?id=230385
+
+        Reviewed by Tim Horton.
+
+        Prepare for new ScrollAnimation subclasses by making it a little more generic. Rather
+        than the function callbacks, use a virtual client class, implemented by ScrollAnimator
+        and ScrollingTreeScrollingNodeDelegateNicosia. Remove the generic 'scroll' methods
+        from the base class, since they only apply to ScrollAnimationSmooth (clients need
+        to keep derived class pointers, and most already do).
+        
+        Remove ambiguity around the currentPosition by requiring it for every 'start' call.
+        Remove ambiguity around setCurrentPosition() by removing it. Clients just call stop().
+        Remove ambiguity around retargeting by making it explicit.
+        
+        Do per-axis setup when starting animations, not when creating one, so the animation starts
+        out stateless.
+
+        * Sources.txt: Build platform/ScrollAnimationKinetic.cpp for macOS, mostly to catch
+        build errors (it's currently unused).
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp:
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::resetCurrentPosition):
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::ensureScrollAnimationKinetic):
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::ensureScrollAnimationSmooth):
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent):
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::scrollAnimationDidUpdate):
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::scrollAnimationDidEnd):
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::scrollExtentsForAnimation):
+        * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.h:
+        * platform/ScrollAnimation.h:
+        (WebCore::ScrollAnimation::ScrollAnimation):
+        (WebCore::ScrollAnimation::updateScrollExtents):
+        (WebCore::ScrollAnimation::serviceAnimation):
+        (WebCore::ScrollAnimation::~ScrollAnimation): Deleted.
+        (WebCore::ScrollAnimation::scroll): Deleted.
+        (WebCore::ScrollAnimation::updateVisibleLengths): Deleted.
+        (WebCore::ScrollAnimation::setCurrentPosition): Deleted.
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::ScrollAnimationKinetic):
+        (WebCore::ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity):
+        (WebCore::ScrollAnimationKinetic::animationTimerFired):
+        (WebCore::ScrollAnimationKinetic::start): Deleted.
+        * platform/ScrollAnimationKinetic.h:
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        (WebCore::ScrollAnimationSmooth::startAnimatedScroll):
+        (WebCore::ScrollAnimationSmooth::startAnimatedScrollToDestination):
+        (WebCore::ScrollAnimationSmooth::stop):
+        (WebCore::ScrollAnimationSmooth::updateScrollExtents):
+        (WebCore::ScrollAnimationSmooth::initializeAxesData):
+        (WebCore::ScrollAnimationSmooth::animationTimerFired):
+        (WebCore::ScrollAnimationSmooth::PerAxisData::PerAxisData): Deleted.
+        (WebCore::ScrollAnimationSmooth::scroll): Deleted.
+        (WebCore::ScrollAnimationSmooth::updateVisibleLengths): Deleted.
+        (WebCore::ScrollAnimationSmooth::setCurrentPosition): Deleted.
+        * platform/ScrollAnimationSmooth.h: Rename some "time" variables to "duration" for clarity
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::scrollToPositionWithoutAnimation):
+        (WebCore::ScrollAnimator::scrollToPositionWithAnimation):
+        (WebCore::ScrollAnimator::retargetRunningAnimation):
+        (WebCore::ScrollAnimator::contentsResized const):
+        (WebCore::ScrollAnimator::willEndLiveResize):
+        (WebCore::ScrollAnimator::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimator::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimator::scrollAnimationDidUpdate):
+        (WebCore::ScrollAnimator::scrollAnimationDidEnd):
+        (WebCore::ScrollAnimator::scrollExtentsForAnimation):
+        (): Deleted.
+        (WebCore::m_keyboardScrollingAnimator): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::ScrollAnimatorGeneric):
+        (WebCore::ScrollAnimatorGeneric::handleWheelEvent):
+        (WebCore::ScrollAnimatorGeneric::updatePosition):
+        (WebCore::ScrollAnimatorGeneric::scrollAnimationDidUpdate):
+        * platform/generic/ScrollAnimatorGeneric.h:
+
 2021-09-17  Cameron McCormack  <heycam@apple.com>
 
         Preserve color space when creating ImageBuffers for ImageBitmaps

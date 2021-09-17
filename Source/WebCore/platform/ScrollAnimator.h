@@ -33,6 +33,7 @@
 
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollAnimation.h"
 #include "ScrollingEffectsController.h"
 #include "Timer.h"
 #include "WheelEventTestMonitor.h"
@@ -44,14 +45,14 @@ namespace WebCore {
 class FloatPoint;
 class KeyboardScrollingAnimator;
 class PlatformTouchEvent;
-class ScrollAnimation;
+class ScrollAnimationSmooth;
 class ScrollableArea;
 class Scrollbar;
 class WheelEventTestMonitor;
 
 class ScrollingEffectsControllerTimer;
 
-class ScrollAnimator : private ScrollingEffectsControllerClient {
+class ScrollAnimator : private ScrollingEffectsControllerClient, public ScrollAnimationClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<ScrollAnimator> create(ScrollableArea&);
@@ -133,6 +134,11 @@ public:
     virtual String horizontalScrollbarStateForTesting() const { return emptyString(); }
     virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
 
+    // ScrollAnimationClient
+    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) override;
+    void scrollAnimationDidEnd(ScrollAnimation&) override;
+    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) override;
+
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
 
     FloatPoint adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod);
@@ -179,7 +185,7 @@ protected:
     Timer m_scrollControllerAnimationTimer;
     FloatPoint m_currentPosition;
 
-    std::unique_ptr<ScrollAnimation> m_scrollAnimation;
+    std::unique_ptr<ScrollAnimationSmooth> m_scrollAnimation;
     std::unique_ptr<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;
 };
 

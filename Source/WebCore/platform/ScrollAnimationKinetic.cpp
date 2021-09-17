@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,9 +113,8 @@ bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds timeDelta)
     return m_velocity;
 }
 
-ScrollAnimationKinetic::ScrollAnimationKinetic(ScrollExtentsCallback&& scrollExtentsFunction, NotifyPositionChangedCallback&& notifyPositionChangedFunction)
-    : m_scrollExtentsFunction(WTFMove(scrollExtentsFunction))
-    , m_notifyPositionChangedFunction(WTFMove(notifyPositionChangedFunction))
+ScrollAnimationKinetic::ScrollAnimationKinetic(ScrollAnimationClient& client)
+    : ScrollAnimation(client)
     , m_animationTimer(RunLoop::current(), this, &ScrollAnimationKinetic::animationTimerFired)
 {
 #if USE(GLIB_EVENT_LOOP)
@@ -163,12 +163,13 @@ FloatPoint ScrollAnimationKinetic::computeVelocity()
     for (const auto& scrollEvent : m_scrollHistory)
         accumDelta += FloatPoint(scrollEvent.deltaX(), scrollEvent.deltaY());
 
+    // FIXME: It's odd that computeVelocity() has the side effect of clearing history.
     m_scrollHistory.clear();
 
     return FloatPoint(accumDelta.x() * -1 / (last - first).value(), accumDelta.y() * -1 / (last - first).value());
 }
 
-void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll)
+bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll)
 {
     stop();
 
@@ -176,11 +177,11 @@ void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const Floa
         m_position = initialPosition;
         m_horizontalData = std::nullopt;
         m_verticalData = std::nullopt;
-        return;
+        return false;
     }
 
     auto delta = deltaToNextFrame();
-    auto extents = m_scrollExtentsFunction();
+    auto extents = m_client.scrollExtentsForAnimation(*this);
 
     auto accumulateVelocity = [&](double velocity, std::optional<PerAxisData> axisData) -> double {
         if (axisData && axisData.value().animateScroll(delta)) {
@@ -214,6 +215,16 @@ void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const Floa
     m_position = initialPosition;
     m_startTime = MonotonicTime::now() - tickTime / 2.;
     animationTimerFired();
+    return true;
+}
+
+bool ScrollAnimationKinetic::retargetActiveAnimation(const FloatPoint&)
+{
+    if (!isActive())
+        return false;
+    
+    // FIXME: Implement retargeting.
+    return false;
 }
 
 void ScrollAnimationKinetic::animationTimerFired()
@@ -233,7 +244,7 @@ void ScrollAnimationKinetic::animationTimerFired()
     double x = m_horizontalData ? m_horizontalData.value().position() : m_position.x();
     double y = m_verticalData ? m_verticalData.value().position() : m_position.y();
     m_position = FloatPoint(x, y);
-    m_notifyPositionChangedFunction(FloatPoint(m_position));
+    m_client.scrollAnimationDidUpdate(*this, FloatPoint(m_position));
 }
 
 Seconds ScrollAnimationKinetic::deltaToNextFrame()

@@ -48,16 +48,9 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 
 ScrollAnimatorGeneric::ScrollAnimatorGeneric(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
+    , m_kineticAnimation(makeUnique<ScrollAnimationKinetic>(*this))
     , m_overlayScrollbarAnimationTimer(*this, &ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired)
 {
-    m_kineticAnimation = makeUnique<ScrollAnimationKinetic>(
-        [this]() -> ScrollExtents {
-            return { m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition(), m_scrollableArea.visibleSize() };
-        },
-        [this](FloatPoint&& position) {
-            m_scrollAnimation->setCurrentPosition(position);
-            updatePosition(WTFMove(position));
-        });
 }
 
 ScrollAnimatorGeneric::~ScrollAnimatorGeneric() = default;
@@ -76,12 +69,12 @@ bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
     m_kineticAnimation->appendToScrollHistory(event);
 
     if (event.isEndOfNonMomentumScroll()) {
-        m_kineticAnimation->start(m_currentPosition, m_kineticAnimation->computeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
+        m_kineticAnimation->startAnimatedScrollWithInitialVelocity(m_currentPosition, m_kineticAnimation->computeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
         return true;
     }
     if (event.isTransitioningToMomentumScroll()) {
         m_kineticAnimation->clearScrollHistory();
-        m_kineticAnimation->start(m_currentPosition, event.swipeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
+        m_kineticAnimation->startAnimatedScrollWithInitialVelocity(m_currentPosition, event.swipeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
         return true;
     }
 #endif
@@ -89,10 +82,10 @@ bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
     return ScrollAnimator::handleWheelEvent(event);
 }
 
-void ScrollAnimatorGeneric::updatePosition(FloatPoint&& position)
+void ScrollAnimatorGeneric::updatePosition(const FloatPoint& position)
 {
     FloatSize delta = position - m_currentPosition;
-    m_currentPosition = WTFMove(position);
+    m_currentPosition = position;
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();
 }
@@ -286,6 +279,19 @@ void ScrollAnimatorGeneric::lockOverlayScrollbarStateToHidden(bool shouldLockSta
         else
             showOverlayScrollbars();
     }
+}
+
+// FIXME: Can we just use the base class implementation?
+void ScrollAnimatorGeneric::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& position)
+{
+    if (&animation == m_kineticAnimation.get()) {
+        // FIXME: Clarify how animations interact. There should never be more than one active at a time.
+        m_scrollAnimation->stop();
+        updatePosition(position);
+        return;
+    }
+
+    ScrollAnimator::scrollAnimationDidUpdate(animation, position);
 }
 
 } // namespace WebCore

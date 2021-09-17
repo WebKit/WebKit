@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +33,11 @@
 namespace WebCore {
 
 class FloatPoint;
-class ScrollableArea;
 enum class ScrollClamping : bool;
 
 class ScrollAnimationSmooth final: public ScrollAnimation {
 public:
-    using ScrollExtentsCallback = WTF::Function<ScrollExtents(void)>;
-    using NotifyPositionChangedCallback = WTF::Function<void(FloatPoint&&)>;
-    using NotifyAnimationStoppedCallback = WTF::Function<void(void)>;
-
-    ScrollAnimationSmooth(ScrollExtentsCallback&&, const FloatPoint& position, NotifyPositionChangedCallback&&, NotifyAnimationStoppedCallback&&);
+    ScrollAnimationSmooth(ScrollAnimationClient&);
     virtual ~ScrollAnimationSmooth();
 
     enum class Curve {
@@ -52,19 +48,17 @@ public:
         Bounce
     };
 
+    bool startAnimatedScroll(ScrollbarOrientation, ScrollGranularity, const FloatPoint& fromPosition, float step, float multiplier);
+    bool startAnimatedScrollToDestination(const FloatPoint& fromPosition, const FloatPoint& destinationPosition);
+
+    bool retargetActiveAnimation(const FloatPoint& newDestination) final;
+    void stop() final;
+    void updateScrollExtents() final;
+    bool isActive() const final;
+
 private:
-    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
-    void scroll(const FloatPoint&) override;
-    void stop() override;
-    void updateVisibleLengths() override;
-    void setCurrentPosition(const FloatPoint&) override;
-    bool isActive() const override;
-
     struct PerAxisData {
-        PerAxisData() = delete;
-
-        PerAxisData(ScrollbarOrientation, const FloatPoint& position, ScrollExtentsCallback&);
-
+        PerAxisData() = default;
         PerAxisData(float position, int length)
             : currentPosition(position)
             , desiredPosition(position)
@@ -82,35 +76,36 @@ private:
         MonotonicTime startTime;
         double startVelocity { 0 };
 
-        Seconds animationTime;
+        Seconds animationDuration;
         MonotonicTime lastAnimationTime;
 
         double attackPosition { 0 };
-        Seconds attackTime;
+        Seconds attackDuration;
         Curve attackCurve { Curve::Quadratic };
 
         double releasePosition { 0 };
-        Seconds releaseTime;
+        Seconds releaseDuration;
         Curve releaseCurve { Curve::Quadratic };
 
         int visibleLength { 0 };
     };
 
+    bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destination);
+
     bool updatePerAxisData(PerAxisData&, ScrollGranularity, float newPosition, float minScrollPosition, float maxScrollPosition, double smoothFactor = 1);
     bool animateScroll(PerAxisData&, MonotonicTime currentTime);
+    
+    void initializeAxesData(const ScrollExtents&, const FloatPoint& startPosition);
 
     void requestAnimationTimerFired();
     void startNextTimer(Seconds delay);
     void animationTimerFired();
 
-    ScrollExtentsCallback m_scrollExtentsFunction;
-    NotifyPositionChangedCallback m_notifyPositionChangedFunction;
-    NotifyAnimationStoppedCallback m_notifyAnimationStoppedFunction;
-
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;
 
     MonotonicTime m_startTime;
+    // FIXME: Should not have timer here, and instead use serviceAnimation().
     RunLoop::Timer<ScrollAnimationSmooth> m_animationTimer;
 };
 

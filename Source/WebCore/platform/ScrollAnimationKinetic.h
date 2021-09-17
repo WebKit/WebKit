@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,26 +58,23 @@ private:
     };
 
 public:
-    using ScrollExtentsCallback = WTF::Function<ScrollExtents(void)>;
-    using NotifyPositionChangedCallback = WTF::Function<void(FloatPoint&&)>;
-
-    ScrollAnimationKinetic(ScrollExtentsCallback&&, NotifyPositionChangedCallback&&);
+    ScrollAnimationKinetic(ScrollAnimationClient&);
     virtual ~ScrollAnimationKinetic();
+
+    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
+
+    bool retargetActiveAnimation(const FloatPoint& newDestination) final;
+    void stop() final;
+    bool isActive() const final;
 
     void appendToScrollHistory(const PlatformWheelEvent&);
     void clearScrollHistory();
-    FloatPoint computeVelocity();
 
-    void start(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
-    void stop() override;
-    bool isActive() const override;
+    FloatPoint computeVelocity();
 
 private:
     void animationTimerFired();
     Seconds deltaToNextFrame();
-
-    ScrollExtentsCallback m_scrollExtentsFunction;
-    NotifyPositionChangedCallback m_notifyPositionChangedFunction;
 
     std::optional<PerAxisData> m_horizontalData;
     std::optional<PerAxisData> m_verticalData;
