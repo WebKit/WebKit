@@ -1,5 +1,25 @@
 2021-09-16  Saam Barati  <sbarati@apple.com>
 
+        Don't throw an exception in the middle of linking a CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=230367
+
+        Reviewed by Yusuke Suzuki.
+
+        It's cleaner, and probably more correct, to wait until we're done linking
+        the instruction stream before throwing any exceptions from CodeBlock::finishCreation.
+        This guarantees, for example, that all metadata structs are initialized.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::initializeTemplateObjects):
+        * bytecode/CodeBlock.h:
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::abstractResolve):
+
+2021-09-16  Saam Barati  <sbarati@apple.com>
+
         Move some profiling to UnlinkedCodeBlock
         https://bugs.webkit.org/show_bug.cgi?id=230078
         <rdar://problem/82947571>

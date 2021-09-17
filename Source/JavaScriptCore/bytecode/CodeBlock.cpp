@@ -377,14 +377,18 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     Base::finishCreation(vm);
     finishCreationCommon(vm);
 
+    ASSERT(vm.heap.isDeferred());
+
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes() || m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes())
         vm.functionHasExecutedCache()->removeUnexecutedRange(ownerExecutable->sourceID(), ownerExecutable->typeProfilingStartOffset(vm), ownerExecutable->typeProfilingEndOffset(vm));
 
     ScriptExecutable* topLevelExecutable = ownerExecutable->topLevelExecutable();
-    setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation(), topLevelExecutable);
-    RETURN_IF_EXCEPTION(throwScope, false);
+    // We wait to initialize template objects until the end of finishCreation beecause it can
+    // throw. We rely on linking to put the CodeBlock into a coherent state, so we can't throw
+    // until we're all done linking.
+    Vector<unsigned> templateObjectIndices = setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
 
     // We already have the cloned symbol table for the module environment since we need to instantiate
     // the module environments before linking the code block. We replace the stored symbol table with the already cloned one.
@@ -435,7 +439,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // Bookkeep the strongly referenced module environments.
     HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
-    auto link_profile = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& /*metadata*/) {
+    auto link_profile = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& metadata) {
+        static_assert(std::is_same_v<ValueProfile, decltype(metadata.m_profile)>);
         m_numberOfNonArgumentValueProfiles++;
     };
 
@@ -499,9 +504,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpGetById, profile)
 
-        LINK(OpEnumeratorNext, profile)
-        LINK(OpEnumeratorInByVal, profile)
-        LINK(OpEnumeratorHasOwnProperty, profile)
+        LINK(OpEnumeratorNext)
+        LINK(OpEnumeratorInByVal)
+        LINK(OpEnumeratorHasOwnProperty)
         LINK(OpEnumeratorGetByVal, profile)
 
         LINK(OpCall, profile)
@@ -563,7 +568,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             RELEASE_ASSERT(bytecode.m_resolveType != ResolvedClosureVar);
 
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
-            RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_resolveType = op.type;
             metadata.m_localScopeDepth = op.depth;
@@ -598,7 +602,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
             const Identifier& ident = identifier(bytecode.m_var);
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
-            RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
             if (op.type == ModuleVar)
@@ -632,7 +635,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             const Identifier& ident = identifier(bytecode.m_var);
             metadata.m_watchpointSet = nullptr;
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_symbolTableOrScopeDepth.scopeDepth(), scope, ident, Put, bytecode.m_getPutInfo.resolveType(), bytecode.m_getPutInfo.initializationMode());
-            RETURN_IF_EXCEPTION(throwScope, false);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
@@ -665,7 +667,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 // Even though type profiling may be profiling either a Get or a Put, we can always claim a Get because
                 // we're abstractly "read"ing from a JSScope.
                 ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
-                RETURN_IF_EXCEPTION(throwScope, false);
 
                 if (op.type == ClosureVar || op.type == ModuleVar)
                     symbolTable = op.lexicalEnvironment->symbolTable();
@@ -781,6 +782,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (m_metadata)
         vm.heap.reportExtraMemoryAllocated(m_metadata->sizeInBytes());
 
+    initializeTemplateObjects(topLevelExecutable, templateObjectIndices);
+    RETURN_IF_EXCEPTION(throwScope, false);
+
     return true;
 }
 
@@ -869,11 +873,12 @@ CodeBlock::~CodeBlock()
 #endif // ENABLE(JIT)
 }
 
-void CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation, ScriptExecutable* topLevelExecutable)
+Vector<unsigned> CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
 {
     VM& vm = *m_vm;
-    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = m_globalObject.get();
+
+    Vector<unsigned> templateObjectIndices;
 
     ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
     size_t count = constants.size();
@@ -905,16 +910,26 @@ void CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& c
                             clone->setRareDataCodeBlock(this);
 
                         constant = clone;
-                    } else if (auto* descriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
-                        auto* templateObject = topLevelExecutable->createTemplateObject(globalObject, descriptor);
-                        RETURN_IF_EXCEPTION(scope, void());
-                        constant = templateObject;
-                    }
+                    } else if (jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell))
+                        templateObjectIndices.append(i);
                 }
             }
             break;
         }
         m_constantRegisters[i].set(vm, this, constant);
+    }
+
+    return templateObjectIndices;
+}
+
+void CodeBlock::initializeTemplateObjects(ScriptExecutable* topLevelExecutable, const Vector<unsigned>& templateObjectIndices)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm());
+    for (unsigned i : templateObjectIndices) {
+        auto* descriptor = jsCast<JSTemplateObjectDescriptor*>(m_constantRegisters[i].get());
+        auto* templateObject = topLevelExecutable->createTemplateObject(globalObject(), descriptor);
+        RETURN_IF_EXCEPTION(scope, void());
+        m_constantRegisters[i].set(vm(), this, templateObject);
     }
 }
 
