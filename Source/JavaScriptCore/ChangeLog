@@ -1,3 +1,16 @@
+2021-09-13  Xan López  <xan@igalia.com>
+
+        [JSC][32bit] in-by-val fails inside for-in loop after delete
+        https://bugs.webkit.org/show_bug.cgi?id=230150
+
+        Reviewed by Carlos Garcia Campos.
+
+        The order of payload and tag was reversed when constructing the
+        base value for compileEnumeratorHasProperty.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasProperty):
+
 2021-09-01  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r279256): Crash in JSC::FTL::saveAllRegisters
