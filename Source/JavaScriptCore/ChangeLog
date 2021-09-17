@@ -1,3 +1,17 @@
+2021-09-17  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Unbreak GCC_OFFLINEASM_SOURCE_MAP when LTO is in use
+        https://bugs.webkit.org/show_bug.cgi?id=230061
+        <rdar://problem/83166173>
+
+        Reviewed by Michael Catanzaro.
+
+        Our ASM postprocessing hack is incompatible with
+        LTO. Unconditionally disable LTO for LowLevelInterpreter.cxx when
+        GCC_OFFLINEASM_SOURCE_MAP is in use.
+
+        * CMakeLists.txt:
+
 2021-09-17  Justin Michaud  <justin_michaud@apple.com>
 
         Improve access case printing and show inline capacity for structures

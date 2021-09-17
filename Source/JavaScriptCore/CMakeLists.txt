@@ -1464,10 +1464,12 @@ if (CMAKE_COMPILER_IS_GNUCXX AND GCC_OFFLINEASM_SOURCE_MAP)
         PROPERTY RULE_LAUNCH_COMPILE "${LowLevelInterpreter_LAUNCHER}")
 
     # Pass in the filename as a magic preprocessor directive, so that
-    # the wrapper can accurately identify the source file.
+    # the wrapper can accurately identify the source file. This is incompatible
+    # with LTO.
     set_source_files_properties("llint/LowLevelInterpreter.cpp"
         PROPERTIES
-        COMPILE_DEFINITIONS "POSTPROCESS_ASM=llint/LowLevelInterpreter.cpp")
+        COMPILE_DEFINITIONS "POSTPROCESS_ASM=llint/LowLevelInterpreter.cpp"
+        COMPILE_OPTIONS "-fno-lto")
 endif ()
 
 # When building JavaScriptCore as an object library, we need to make sure the
