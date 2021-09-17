@@ -215,10 +215,10 @@ inline void Heap::decrementDeferralDepthAndGCIfNeeded()
     }
 }
 
-inline HashSet<MarkedArgumentBuffer*>& Heap::markListSet()
+inline HashSet<MarkedArgumentBufferBase*>& Heap::markListSet()
 {
     if (!m_markListSet)
-        m_markListSet = makeUnique<HashSet<MarkedArgumentBuffer*>>();
+        m_markListSet = makeUnique<HashSet<MarkedArgumentBufferBase*>>();
     return *m_markListSet;
 }
 

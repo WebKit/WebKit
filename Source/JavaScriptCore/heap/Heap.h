@@ -77,7 +77,7 @@ class MarkStackArray;
 class MarkStackMergingConstraint;
 class MarkedJSValueRefArray;
 class BlockDirectory;
-class MarkedArgumentBuffer;
+class MarkedArgumentBufferBase;
 class MarkingConstraint;
 class MarkingConstraintSet;
 class MutatorScheduler;
@@ -245,7 +245,7 @@ public:
     JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> protectedObjectTypeCounts();
     JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> objectTypeCounts();
 
-    HashSet<MarkedArgumentBuffer*>& markListSet();
+    HashSet<MarkedArgumentBufferBase*>& markListSet();
     void addMarkedJSValueRefArray(MarkedJSValueRefArray*);
     
     template<typename Functor> void forEachProtectedCell(const Functor&);
@@ -624,7 +624,7 @@ private:
     HashSet<const JSCell*> m_copyingRememberedSet;
 
     ProtectCountSet m_protectedValues;
-    std::unique_ptr<HashSet<MarkedArgumentBuffer*>> m_markListSet;
+    std::unique_ptr<HashSet<MarkedArgumentBufferBase*>> m_markListSet;
     SentinelLinkedList<MarkedJSValueRefArray, BasicRawSentinelNode<MarkedJSValueRefArray>> m_markedJSValueRefArrays;
 
     std::unique_ptr<MachineThreads> m_machineThreads;
