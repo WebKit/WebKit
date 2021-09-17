@@ -1536,6 +1536,8 @@ webkit.org/b/227805 [ Debug ] fast/canvas/canvas-composite-image.html [ Pass Cra
 webkit.org/b/230366 [ Release ] fast/canvas/canvas-blending-text.html [ Pass Failure Crash ]
 webkit.org/b/230366 [ Release ] fast/canvas/canvas-composite-text-alpha.html [ Pass Failure ]
 
+webkit.org/b/230413 fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failure ]
+
 webkit.org/b/226828 [ BigSur+ ] media/modern-media-controls/overflow-support/chapters.html [ Pass Failure Timeout ]
 
 webkit.org/b/227922 inspector/canvas/setShaderProgramDisabled.html [ Pass Failure Timeout ]

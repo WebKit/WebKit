@@ -1977,6 +1977,8 @@ webkit.org/b/230266 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-exp
 
 webkit.org/b/219438 [ Release ] fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/230413 [ Debug ] fast/canvas/canvas-drawImage-detached-leak.html [ Pass Failure ]
+
 webanimations/multiple-transform-properties-and-multiple-transform-properties-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.html [ Pass ]
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Pass ]
