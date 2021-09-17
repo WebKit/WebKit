@@ -123,16 +123,50 @@ Ref<AccessCase> AccessCase::create(VM& vm, JSCell* owner, AccessType type, Cache
 
 RefPtr<AccessCase> AccessCase::createTransition(
     VM& vm, JSCell* owner, CacheableIdentifier identifier, PropertyOffset offset, Structure* oldStructure, Structure* newStructure,
-    const ObjectPropertyConditionSet& conditionSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
+    const ObjectPropertyConditionSet& conditionSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain, const StructureStubInfo& stubInfo)
 {
     RELEASE_ASSERT(oldStructure == newStructure->previousID());
 
     // Skip optimizing the case where we need a realloc, if we don't have
     // enough registers to make it happen.
-    if (GPRInfo::numberOfRegisters < 6
-        && oldStructure->outOfLineCapacity() != newStructure->outOfLineCapacity()
-        && oldStructure->outOfLineCapacity()) {
-        return nullptr;
+    if (oldStructure->outOfLineCapacity() != newStructure->outOfLineCapacity()) {
+        // In 64 bits jsc uses 1 register for value, and it uses 2 registers in 32 bits
+        size_t requiredRegisters = 1; // stubInfo.valueRegs()
+#if USE(JSVALUE32_64)
+        ++requiredRegisters;
+#endif
+
+        // 1 register for the property in 64 bits
+        ++requiredRegisters;
+#if USE(JSVALUE32_64)
+        // In 32 bits, jsc uses may use one extra register, if it is not a Cell
+        if (stubInfo.propertyRegs().tagGPR() != InvalidGPRReg)
+            ++requiredRegisters;
+#endif
+
+        // 1 register for the base in 64 bits
+        ++requiredRegisters;
+#if USE(JSVALUE32_64)
+        // In 32 bits, jsc uses may use one extra register, if it is not a Cell
+        if (stubInfo.baseRegs().tagGPR() != InvalidGPRReg)
+            ++requiredRegisters;
+#endif
+
+        if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
+            ++requiredRegisters;
+        if (stubInfo.m_arrayProfileGPR != InvalidGPRReg)
+            ++requiredRegisters;
+
+        // One extra register for scratchGPR
+        ++requiredRegisters;
+
+        // Check if we have enough registers when reallocating
+        if (oldStructure->outOfLineCapacity() && GPRInfo::numberOfRegisters < requiredRegisters)
+            return nullptr;
+
+        // If we are (re)allocating inline, jsc needs two extra scratchGPRs
+        if (!oldStructure->couldHaveIndexingHeader() && GPRInfo::numberOfRegisters < (requiredRegisters + 2))
+            return nullptr;
     }
 
     return adoptRef(*new AccessCase(vm, owner, Transition, identifier, offset, newStructure, conditionSet, WTFMove(prototypeAccessChain)));
@@ -2250,7 +2284,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
     case Transition: {
         ASSERT(!viaProxy());
-        // AccessCase::transition() should have returned null if this wasn't true.
+        // AccessCase::createTransition() should have returned null if this wasn't true.
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !structure()->outOfLineCapacity() || structure()->outOfLineCapacity() == newStructure()->outOfLineCapacity());
 
         // NOTE: This logic is duplicated in AccessCase::doesCalls(). It's important that doesCalls() knows
