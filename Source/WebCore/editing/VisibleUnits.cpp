@@ -151,7 +151,7 @@ static LayoutIntegration::RunIterator nextTextOrLineBreakRun(LayoutIntegration::
 
 static LayoutIntegration::RunIterator startTextOrLineBreakRun(LayoutIntegration::LineIterator line)
 {
-    auto run = line.logicalStartRun();
+    auto run = line->logicalStartRun();
     if (isTextOrLineBreakRun(run))
         return run;
     return nextTextOrLineBreakRun(run);
@@ -159,7 +159,7 @@ static LayoutIntegration::RunIterator startTextOrLineBreakRun(LayoutIntegration:
 
 static LayoutIntegration::RunIterator endTextOrLineBreakRun(LayoutIntegration::LineIterator line)
 {
-    auto run = line.logicalEndRun();
+    auto run = line->logicalEndRun();
     if (isTextOrLineBreakRun(run))
         return run;
     return previousTextOrLineBreakRun(run);
@@ -170,7 +170,7 @@ static const LayoutIntegration::RunIterator logicallyPreviousRun(const VisiblePo
     if (auto previousRun = previousTextOrLineBreakRun(startRun))
         return previousRun;
 
-    if (auto previousLine = startRun.line().previous()) {
+    if (auto previousLine = startRun->line()->previous()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
         if (auto previousRun = endTextOrLineBreakRun(previousLine))
             return previousRun;
@@ -190,14 +190,14 @@ static const LayoutIntegration::RunIterator logicallyPreviousRun(const VisiblePo
         if (!previousLine)
             break;
 
-        if (previousLine != startRun.line()) {
+        if (previousLine != startRun->line()) {
             if (auto previousRun = endTextOrLineBreakRun(previousLine)) {
                 previousBoxInDifferentLine = true;
                 return previousRun;
             }
         }
 
-        startRun = previousLine.logicalStartRun();
+        startRun = previousLine->logicalStartRun();
     }
     return { };
 }
@@ -208,7 +208,7 @@ static const LayoutIntegration::RunIterator logicallyNextRun(const VisiblePositi
     if (auto nextRun = nextTextOrLineBreakRun(startRun))
         return nextRun;
 
-    if (auto nextLine = startRun.line().next()) {
+    if (auto nextLine = startRun->line()->next()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
         if (auto nextRun = startTextOrLineBreakRun(nextLine))
             return nextRun;
@@ -228,14 +228,14 @@ static const LayoutIntegration::RunIterator logicallyNextRun(const VisiblePositi
         if (!nextLine)
             break;
 
-        if (nextLine != startRun.line()) {
+        if (nextLine != startRun->line()) {
             if (auto nextRun = startTextOrLineBreakRun(nextLine)) {
                 nextBoxInDifferentLine = true;
                 return nextRun;
             }
         }
 
-        startRun = nextLine.logicalEndRun();
+        startRun = nextLine->logicalEndRun();
     }
     return { };
 }
@@ -746,8 +746,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         return VisiblePosition();
     }
 
-    Node* startNode;
-    LayoutIntegration::RunIterator startRun = mode == UseLogicalOrdering ? line.logicalStartRunWithNode() : line.firstRun();
+    Node* startNode = nullptr;
+    auto startRun = mode == UseLogicalOrdering ? line->logicalStartRunWithNode() : line->firstRun();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever follows instead.
     while (true) {
@@ -816,8 +816,8 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
         return VisiblePosition();
     }
 
-    Node* endNode;
-    LayoutIntegration::RunIterator endRun = mode == UseLogicalOrdering ? line.logicalEndRunWithNode() : line.lastRun();
+    Node* endNode = nullptr;
+    auto endRun = mode == UseLogicalOrdering ? line->logicalEndRunWithNode() : line->lastRun();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever precedes instead.
     while (true) {
@@ -963,10 +963,10 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
 
     LayoutIntegration::LineIterator line;
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
-        line = run.line().previous();
+        line = run->line()->previous();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->logicalHeight() || !line.firstRun())
+        if (!line || !line->logicalHeight() || !line->firstRun())
             line = { };
     }
 
@@ -983,7 +983,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     if (line) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
         auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto& renderer = line.closestRunForPoint(pointInLine, isEditablePosition(p))->renderer();
+        auto& renderer = line->closestRunForPoint(pointInLine, isEditablePosition(p))->renderer();
         Node* node = renderer.node();
         if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node);
@@ -1013,10 +1013,10 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
 
     LayoutIntegration::LineIterator line;
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
-        line = run.line().next();
+        line = run->line()->next();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->logicalHeight() || !line.firstRun())
+        if (!line || !line->logicalHeight() || !line->firstRun())
             line = { };
     }
 
@@ -1036,7 +1036,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     if (line) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
         auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto& renderer = line.closestRunForPoint(pointInLine, isEditablePosition(p))->renderer();
+        auto& renderer = line->closestRunForPoint(pointInLine, isEditablePosition(p))->renderer();
         Node* node = renderer.node();
         if (node && editingIgnoresContent(*node))
             return positionInParentBeforeNode(node);

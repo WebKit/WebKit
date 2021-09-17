@@ -77,10 +77,23 @@ public:
     const RenderBlockFlow& containingBlock() const;
     const LegacyRootInlineBox* legacyRootInlineBox() const;
 
-private:
+    bool isFirst() const;
+
     RunIterator firstRun() const;
     RunIterator lastRun() const;
 
+    LineIterator next() const;
+    LineIterator previous() const;
+
+    RunIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const;
+    RunIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false) const;
+
+    RunIterator logicalStartRun() const;
+    RunIterator logicalEndRun() const;
+    RunIterator logicalStartRunWithNode() const;
+    RunIterator logicalEndRunWithNode() const;
+
+private:
     friend class LineIterator;
 
     PathVariant m_pathVariant;
@@ -91,15 +104,11 @@ public:
     LineIterator() : m_line(LineIteratorLegacyPath { nullptr }) { };
     LineIterator(const LegacyRootInlineBox* rootInlineBox) : m_line(LineIteratorLegacyPath { rootInlineBox }) { };
     LineIterator(PathLine::PathVariant&&);
+    LineIterator(const PathLine&);
 
     LineIterator& operator++() { return traverseNext(); }
     LineIterator& traverseNext();
     LineIterator& traversePrevious();
-
-    LineIterator next() const;
-    LineIterator previous() const;
-
-    bool isFirst() const { return !previous(); }
 
     explicit operator bool() const { return !atEnd(); }
 
@@ -113,17 +122,6 @@ public:
     const PathLine* operator->() const { return &m_line; }
 
     bool atEnd() const;
-
-    RunIterator firstRun() const;
-    RunIterator lastRun() const;
-
-    RunIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly);
-    RunIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false);
-
-    RunIterator logicalStartRun() const;
-    RunIterator logicalEndRun() const;
-    RunIterator logicalStartRunWithNode() const;
-    RunIterator logicalEndRunWithNode() const;
 
 private:
     PathLine m_line;
@@ -252,6 +250,11 @@ inline const LegacyRootInlineBox* PathLine::legacyRootInlineBox() const
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.legacyRootInlineBox();
     });
+}
+
+inline bool PathLine::isFirst() const
+{
+    return !previous();
 }
 
 }

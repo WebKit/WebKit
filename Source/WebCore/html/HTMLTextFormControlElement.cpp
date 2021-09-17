@@ -707,7 +707,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 
     auto skipToNextSoftLineBreakPosition = [&] {
         for (; currentLine; currentLine.traverseNext()) {
-            auto lastRun = currentLine.lastRun();
+            auto lastRun = currentLine->lastRun();
             ASSERT(lastRun);
             auto& renderer = lastRun->renderer();
             auto lineEndsWithBR = is<RenderLineBreak>(renderer) && !downcast<RenderLineBreak>(renderer).isWBR();

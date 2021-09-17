@@ -51,7 +51,7 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
 
 static void minLogicalTopForTextDecorationLine(const LayoutIntegration::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
 {
-    for (auto run = line.firstRun(); run; run.traverseNextOnLine()) {
+    for (auto run = line->firstRun(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
@@ -68,7 +68,7 @@ static void minLogicalTopForTextDecorationLine(const LayoutIntegration::LineIter
 
 static void maxLogicalBottomForTextDecorationLine(const LayoutIntegration::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration)
 {
-    for (auto run = line.firstRun(); run; run.traverseNextOnLine()) {
+    for (auto run = line->firstRun(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
@@ -119,7 +119,7 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     auto resolvedUnderlinePosition = underlinePosition;
     if (resolvedUnderlinePosition == TextUnderlinePosition::Auto && underlineOffset.isAuto()) {
         if (textRun)
-            resolvedUnderlinePosition = textRun.line()->baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
+            resolvedUnderlinePosition = textRun->line()->baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
         else
             resolvedUnderlinePosition = TextUnderlinePosition::Auto;
     }
@@ -134,8 +134,8 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     case TextUnderlinePosition::Under: {
         ASSERT(textRun);
         // Position underline relative to the bottom edge of the lowest element's content box.
-        auto line = textRun.line();
-        auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecoration::Underline, line.isFirst());
+        auto line = textRun->line();
+        auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecoration::Underline, line->isFirst());
         
         float offset;
         if (textRun->renderer().style().isFlippedLinesWritingMode()) {

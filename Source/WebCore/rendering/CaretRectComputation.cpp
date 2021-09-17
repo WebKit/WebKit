@@ -172,7 +172,7 @@ static LayoutRect computeCaretRectForText(const InlineRunAndOffset& runAndOffset
         return { };
 
     auto& textRun = downcast<LayoutIntegration::TextRunIterator>(runAndOffset.run);
-    auto line = textRun.line();
+    auto line = textRun->line();
 
     float position = textRun->positionForOffset(runAndOffset.offset);
     return computeCaretRectForLinePosition(line, position, caretRectMode);
@@ -185,7 +185,7 @@ static LayoutRect computeCaretRectForLineBreak(const InlineRunAndOffset& runAndO
     if (!runAndOffset.run)
         return { };
 
-    auto line = runAndOffset.run.line();
+    auto line = runAndOffset.run->line();
     return computeCaretRectForLinePosition(line, line->contentLogicalLeft(), caretRectMode);
 }
 
@@ -227,7 +227,7 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
         rect.move(LayoutSize(renderer.width() - caretWidth, 0_lu));
 
     if (runAndOffset.run) {
-        auto line = runAndOffset.run.line();
+        auto line = runAndOffset.run->line();
         LayoutUnit top = line->top();
         rect.setY(top);
         rect.setHeight(line->bottom() - top);

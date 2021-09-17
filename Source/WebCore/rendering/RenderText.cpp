@@ -337,11 +337,11 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
                 continue;
         }
 
-        if (run.line()->legacyRootInlineBox() && run.line()->legacyRootInlineBox()->isFirstAfterPageBreak()) {
+        if (run->line()->legacyRootInlineBox() && run->line()->legacyRootInlineBox()->isFirstAfterPageBreak()) {
             if (run->isHorizontal())
-                rect.shiftYEdgeTo(run.line()->lineBoxTop());
+                rect.shiftYEdgeTo(run->line()->lineBoxTop());
             else
-                rect.shiftXEdgeTo(run.line()->lineBoxTop());
+                rect.shiftXEdgeTo(run->line()->lineBoxTop());
         }
 
         RenderBlock* containingBlock = this->containingBlock();
@@ -360,8 +360,8 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
         extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
         if (!run->isHorizontal())
             extentsRect = extentsRect.transposedRect();
-        bool isFirstOnLine = !run.previousOnLine();
-        bool isLastOnLine = !run.nextOnLine();
+        bool isFirstOnLine = !run->previousOnLine();
+        bool isLastOnLine = !run->nextOnLine();
         if (containingBlock->isRubyBase() || containingBlock->isRubyText())
             isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 
@@ -531,7 +531,7 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const LayoutInte
     // the affinity must be downstream so the position doesn't jump back to the previous line
     // except when box is the first box in the line
     if (pointLineDirection <= textRun->logicalLeft()) {
-        shouldAffinityBeDownstream = !textRun.previousOnLine() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
+        shouldAffinityBeDownstream = !textRun->previousOnLine() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
         return true;
     }
 
@@ -546,10 +546,10 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const LayoutInte
 
     // box is first on line
     // and the x coordinate is to the left of the first text box left edge
-    if (!textRun.previousOnLineIgnoringLineBreak() && pointLineDirection < textRun->logicalLeft())
+    if (!textRun->previousOnLineIgnoringLineBreak() && pointLineDirection < textRun->logicalLeft())
         return true;
 
-    if (!textRun.nextOnLineIgnoringLineBreak()) {
+    if (!textRun->nextOnLineIgnoringLineBreak()) {
         // box is last on line
         // and the x coordinate is to the right of the last text box right edge
         // generate VisiblePosition, use Affinity::Upstream affinity if possible
@@ -586,7 +586,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
     if (positionIsAtStartOfBox == run->isLeftToRightDirection()) {
         // offset is on the left edge
 
-        auto previousRun = run.previousOnLineIgnoringLineBreak();
+        auto previousRun = run->previousOnLineIgnoringLineBreak();
         if ((previousRun && previousRun->bidiLevel() == run->bidiLevel())
             || run->renderer().containingBlock()->style().direction() == run->direction()) // FIXME: left on 12CBA
             return createVisiblePositionForBox(run, run->leftmostCaretOffset(), shouldAffinityBeDownstream);
@@ -605,7 +605,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
         if (!previousRun || previousRun->bidiLevel() < run->bidiLevel()) {
             // e.g. left of D in aDC12BAb
             LayoutIntegration::RunIterator rightmostRun = run;
-            for (auto nextRun = run.nextOnLineIgnoringLineBreak(); nextRun; nextRun.traverseNextOnLineIgnoringLineBreak()) {
+            for (auto nextRun = run->nextOnLineIgnoringLineBreak(); nextRun; nextRun.traverseNextOnLineIgnoringLineBreak()) {
                 if (nextRun->bidiLevel() < run->bidiLevel())
                     break;
                 rightmostRun = nextRun;
@@ -617,7 +617,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
         return createVisiblePositionForBox(run, run->rightmostCaretOffset(), shouldAffinityBeDownstream);
     }
 
-    auto nextRun = run.nextOnLineIgnoringLineBreak();
+    auto nextRun = run->nextOnLineIgnoringLineBreak();
     if ((nextRun && nextRun->bidiLevel() == run->bidiLevel())
         || run->renderer().containingBlock()->style().direction() == run->direction())
         return createVisiblePositionForBox(run, run->rightmostCaretOffset(), shouldAffinityBeDownstream);
@@ -638,7 +638,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const La
     if (!nextRun || nextRun->bidiLevel() < run->bidiLevel()) {
         // e.g. right of A in aDC12BAb
         LayoutIntegration::RunIterator leftmostRun = run;
-        for (auto previousRun = run.previousOnLineIgnoringLineBreak(); previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
+        for (auto previousRun = run->previousOnLineIgnoringLineBreak(); previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
             if (previousRun->bidiLevel() < run->bidiLevel())
                 break;
             leftmostRun = previousRun;
@@ -665,14 +665,14 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
 
     LayoutIntegration::TextRunIterator lastRun;
     for (auto run = firstRun; run; run.traverseNextTextRun()) {
-        if (run->isLineBreak() && !run.previousOnLine() && run.nextOnLine() && !run.nextOnLine()->isLineBreak())
+        if (run->isLineBreak() && !run->previousOnLine() && run->nextOnLine() && !run->nextOnLine()->isLineBreak())
             run.traverseNextTextRun();
 
-        auto line = run.line();
+        auto line = run->line();
         LayoutUnit top = std::min(line->selectionTopForHitTesting(), line->top());
         if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
             LayoutUnit bottom = line->selectionBottom();
-            if (auto nextLine = line.next())
+            if (auto nextLine = line->next())
                 bottom = std::min(bottom, nextLine->top());
 
             if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {

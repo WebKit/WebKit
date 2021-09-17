@@ -50,7 +50,7 @@ public:
     bool isEquivalent(const RenderedPosition&) const;
 
     bool isNull() const { return !m_renderer; }
-    LayoutIntegration::LineIterator line() const { return m_run ? m_run.line() : LayoutIntegration::LineIterator(); }
+    LayoutIntegration::LineIterator line() const { return m_run ? m_run->line() : LayoutIntegration::LineIterator(); }
 
     unsigned char bidiLevelOnLeft() const;
     unsigned char bidiLevelOnRight() const;

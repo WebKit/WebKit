@@ -41,6 +41,11 @@ RunIterator::RunIterator(PathRun::PathVariant&& pathVariant)
 {
 }
 
+RunIterator::RunIterator(const PathRun& run)
+    : m_run(run)
+{
+}
+
 bool RunIterator::operator==(const RunIterator& other) const
 {
     return m_run.m_pathVariant == other.m_run.m_pathVariant;
@@ -53,29 +58,24 @@ bool RunIterator::atEnd() const
     });
 }
 
-RunIterator RunIterator::nextOnLine() const
+RunIterator PathRun::nextOnLine() const
 {
     return RunIterator(*this).traverseNextOnLine();
 }
 
-RunIterator RunIterator::previousOnLine() const
+RunIterator PathRun::previousOnLine() const
 {
     return RunIterator(*this).traversePreviousOnLine();
 }
 
-RunIterator RunIterator::nextOnLineIgnoringLineBreak() const
+RunIterator PathRun::nextOnLineIgnoringLineBreak() const
 {
     return RunIterator(*this).traverseNextOnLineIgnoringLineBreak();
 }
 
-RunIterator RunIterator::previousOnLineIgnoringLineBreak() const
+RunIterator PathRun::previousOnLineIgnoringLineBreak() const
 {
     return RunIterator(*this).traversePreviousOnLineIgnoringLineBreak();
-}
-
-LineIterator RunIterator::line() const
-{
-    return m_run.line();
 }
 
 LineIterator PathRun::line() const
@@ -93,7 +93,17 @@ LineIterator PathRun::line() const
 
 const RenderStyle& PathRun::style() const
 {
-    return line().isFirst() ? renderer().firstLineStyle() : renderer().style();
+    return line()->isFirst() ? renderer().firstLineStyle() : renderer().style();
+}
+
+TextRunIterator PathTextRun::nextTextRun() const
+{
+    return TextRunIterator(*this).traverseNextTextRun();
+}
+
+TextRunIterator PathTextRun::nextTextRunInTextOrder() const
+{
+    return TextRunIterator(*this).traverseNextTextRunInTextOrder();
 }
 
 RenderObject::HighlightState PathRun::selectionState() const
@@ -108,6 +118,11 @@ RenderObject::HighlightState PathRun::selectionState() const
 
 TextRunIterator::TextRunIterator(PathRun::PathVariant&& pathVariant)
     : RunIterator(WTFMove(pathVariant))
+{
+}
+
+TextRunIterator::TextRunIterator(const PathRun& run)
+    : RunIterator(run)
 {
 }
 

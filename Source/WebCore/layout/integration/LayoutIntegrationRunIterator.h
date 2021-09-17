@@ -40,6 +40,7 @@ class RenderText;
 namespace LayoutIntegration {
 
 class LineIterator;
+class RunIterator;
 class TextRunIterator;
 
 struct EndIterator { };
@@ -87,11 +88,16 @@ public:
     // For intermediate porting steps only.
     LegacyInlineBox* legacyInlineBox() const;
 
+    RunIterator nextOnLine() const;
+    RunIterator previousOnLine() const;
+    RunIterator nextOnLineIgnoringLineBreak() const;
+    RunIterator previousOnLineIgnoringLineBreak() const;
+
+    LineIterator line() const;
+
 protected:
     friend class RunIterator;
     friend class TextRunIterator;
-
-    LineIterator line() const;
 
     // To help with debugging.
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -121,12 +127,16 @@ public:
 
     const RenderText& renderer() const { return downcast<RenderText>(PathRun::renderer()); }
     LegacyInlineTextBox* legacyInlineBox() const { return downcast<LegacyInlineTextBox>(PathRun::legacyInlineBox()); }
+
+    TextRunIterator nextTextRun() const;
+    TextRunIterator nextTextRunInTextOrder() const;
 };
 
 class RunIterator {
 public:
     RunIterator() : m_run(RunIteratorLegacyPath { nullptr, { } }) { };
     RunIterator(PathRun::PathVariant&&);
+    RunIterator(const PathRun&);
 
     explicit operator bool() const { return !atEnd(); }
 
@@ -141,19 +151,12 @@ public:
 
     bool atEnd() const;
 
-    RunIterator nextOnLine() const;
-    RunIterator previousOnLine() const;
-    RunIterator nextOnLineIgnoringLineBreak() const;
-    RunIterator previousOnLineIgnoringLineBreak() const;
-
     RunIterator& traverseNextOnLine();
     RunIterator& traversePreviousOnLine();
     RunIterator& traverseNextOnLineIgnoringLineBreak();
     RunIterator& traversePreviousOnLineIgnoringLineBreak();
     RunIterator& traverseNextOnLineInLogicalOrder();
     RunIterator& traversePreviousOnLineInLogicalOrder();
-
-    LineIterator line() const;
 
 protected:
     PathRun m_run;
@@ -163,6 +166,7 @@ class TextRunIterator : public RunIterator {
 public:
     TextRunIterator() { }
     TextRunIterator(PathRun::PathVariant&&);
+    TextRunIterator(const PathRun&);
 
     TextRunIterator& operator++() { return traverseNextTextRun(); }
 
@@ -171,9 +175,6 @@ public:
 
     TextRunIterator& traverseNextTextRun();
     TextRunIterator& traverseNextTextRunInTextOrder();
-
-    TextRunIterator nextTextRun() const { return TextRunIterator(*this).traverseNextTextRun(); }
-    TextRunIterator nextTextRunInTextOrder() const { return TextRunIterator(*this).traverseNextTextRunInTextOrder(); }
 
 private:
     RunIterator& traverseNextOnLine() = delete;

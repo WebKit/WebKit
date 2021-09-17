@@ -184,7 +184,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
 
     if (!run)
         return;
-    auto line = run.line();
+    auto line = run->line();
 
     auto lineSelectionRect = line->selectionRect();
     LayoutRect rect = IntRect(run->logicalLeft(), lineSelectionRect.y(), 0, lineSelectionRect.height());
@@ -214,8 +214,8 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
     if (!run->isHorizontal())
         extentsRect = extentsRect.transposedRect();
-    bool isFirstOnLine = !run.previousOnLine();
-    bool isLastOnLine = !run.nextOnLine();
+    bool isFirstOnLine = !run->previousOnLine();
+    bool isLastOnLine = !run->nextOnLine();
     if (containingBlock->isRubyBase() || containingBlock->isRubyText())
         isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 

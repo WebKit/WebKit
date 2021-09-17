@@ -757,8 +757,8 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
                 if (textOffset > run->start() && textOffset <= run->end())
                     return currentPosition;
 
-                auto nextRun = run.nextTextRunInTextOrder();
-                if (textOffset == run->end() + 1 && nextRun && run.line() != nextRun.line())
+                auto nextRun = run->nextTextRunInTextOrder();
+                if (textOffset == run->end() + 1 && nextRun && run->line() != nextRun->line())
                     return currentPosition;
 
                 run = nextRun;
@@ -863,8 +863,8 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
                 if (textOffset >= run->start() && textOffset < run->end())
                     return currentPosition;
 
-                auto nextRun = run.nextTextRunInTextOrder();
-                if (textOffset == run->end() && nextRun && run.line() != nextRun.line())
+                auto nextRun = run->nextTextRunInTextOrder();
+                if (textOffset == run->end() && nextRun && run->line() != nextRun->line())
                     return currentPosition;
 
                 run = nextRun;
@@ -1095,7 +1095,7 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (!run1 || !run2)
         return false;
 
-    if (run1.line() != run2.line())
+    if (run1->line() != run2->line())
         return true;
 
     if (nextRenderedEditable(deprecatedNode()) == position.deprecatedNode()
@@ -1241,7 +1241,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
                 break;
 
             if (caretOffset == caretMaxOffset) {
-                auto nextOnLine = textRun.nextOnLine();
+                auto nextOnLine = textRun->nextOnLine();
                 if (nextOnLine && nextOnLine->isLineBreak())
                     break;
             }
@@ -1249,7 +1249,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             candidate = textRun;
         }
 
-        if (candidate && !candidate.nextTextRun() && affinity == Affinity::Downstream) {
+        if (candidate && !candidate->nextTextRun() && affinity == Affinity::Downstream) {
             textRun = searchAheadForBetterMatch(textRenderer);
             if (textRun)
                 caretOffset = textRun->minimumCaretOffset();
@@ -1285,13 +1285,13 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
 
     if (run->direction() == primaryDirection) {
         if (caretOffset == run->rightmostCaretOffset()) {
-            auto nextRun = run.nextOnLine();
+            auto nextRun = run->nextOnLine();
             if (!nextRun || nextRun->bidiLevel() >= level)
                 return { run, caretOffset };
 
             level = nextRun->bidiLevel();
 
-            auto previousRun = run.previousOnLine();
+            auto previousRun = run->previousOnLine();
             for (; previousRun; previousRun.traversePreviousOnLine()) {
                 if (previousRun->bidiLevel() <= level)
                     break;
@@ -1308,13 +1308,13 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             }
             caretOffset = run->rightmostCaretOffset();
         } else {
-            auto previousRun = run.previousOnLine();
+            auto previousRun = run->previousOnLine();
             if (!previousRun || previousRun->bidiLevel() >= level)
                 return { run, caretOffset };
 
             level = previousRun->bidiLevel();
 
-            auto nextRun = run.nextOnLine();
+            auto nextRun = run->nextOnLine();
             for (; nextRun; nextRun.traverseNextOnLine()) {
                 if (nextRun->bidiLevel() <= level)
                     break;
@@ -1335,10 +1335,10 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
     }
 
     if (caretOffset == run->leftmostCaretOffset()) {
-        auto previousRun = run.previousOnLineIgnoringLineBreak();
+        auto previousRun = run->previousOnLineIgnoringLineBreak();
         if (!previousRun || previousRun->bidiLevel() < level) {
             // Left edge of a secondary run. Set to the right edge of the entire run.
-            for (auto nextRun = run.nextOnLineIgnoringLineBreak(); nextRun; nextRun.traverseNextOnLineIgnoringLineBreak()) {
+            for (auto nextRun = run->nextOnLineIgnoringLineBreak(); nextRun; nextRun.traverseNextOnLineIgnoringLineBreak()) {
                 if (nextRun->bidiLevel() < level)
                     break;
                 run = nextRun;
@@ -1346,7 +1346,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             caretOffset = run->rightmostCaretOffset();
         } else if (previousRun->bidiLevel() > level) {
             // Right edge of a "tertiary" run. Set to the left edge of that run.
-            for (auto tertiaryRun = run.previousOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traversePreviousOnLineIgnoringLineBreak()) {
+            for (auto tertiaryRun = run->previousOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traversePreviousOnLineIgnoringLineBreak()) {
                 if (tertiaryRun->bidiLevel() <= level)
                     break;
                 run = tertiaryRun;
@@ -1354,10 +1354,10 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             caretOffset = run->leftmostCaretOffset();
         }
     } else {
-        auto nextRun = run.nextOnLineIgnoringLineBreak();
+        auto nextRun = run->nextOnLineIgnoringLineBreak();
         if (!nextRun || nextRun->bidiLevel() < level) {
             // Right edge of a secondary run. Set to the left edge of the entire run.
-            for (auto previousRun = run.previousOnLineIgnoringLineBreak(); previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
+            for (auto previousRun = run->previousOnLineIgnoringLineBreak(); previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
                 if (previousRun->bidiLevel() < level)
                     break;
                 run = previousRun;
@@ -1365,7 +1365,7 @@ InlineRunAndOffset Position::inlineRunAndOffset(Affinity affinity, TextDirection
             caretOffset = run->leftmostCaretOffset();
         } else if (nextRun->bidiLevel() > level) {
             // Left edge of a "tertiary" run. Set to the right edge of that run.
-            for (auto tertiaryRun = run.nextOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traverseNextOnLineIgnoringLineBreak()) {
+            for (auto tertiaryRun = run->nextOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traverseNextOnLineIgnoringLineBreak()) {
                 if (tertiaryRun->bidiLevel() <= level)
                     break;
                 run = tertiaryRun;

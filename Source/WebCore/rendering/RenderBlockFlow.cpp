@@ -3516,10 +3516,10 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
         if (localPoint.y() < currentBottom)
             return nullptr;
         
-        auto next = current.next();
+        auto next = current->next();
         float nextTop = next->y();
         if (localPoint.y() < nextTop) {
-            auto run = current.closestRunForLogicalLeftPosition(localPoint.x());
+            auto run = current->closestRunForLogicalLeftPosition(localPoint.x());
             if (run && is<RenderText>(run->renderer()))
                 return const_cast<RenderText*>(&downcast<RenderText>(run->renderer()));
         }
@@ -3547,7 +3547,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         if (fragment && line->legacyRootInlineBox() && line->legacyRootInlineBox()->containingFragment() != fragment)
             continue;
 
-        if (!line.firstRun())
+        if (!line->firstRun())
             continue;
         if (!firstLineWithChildren)
             firstLineWithChildren = line;
@@ -3561,15 +3561,15 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         // check if this root line box is located at this y coordinate
         if (pointInLogicalContents.y() < line->selectionBottom() || (blocksAreFlipped && pointInLogicalContents.y() == line->selectionBottom())) {
             if (linesAreFlipped) {
-                auto nextLineWithChildren = line.next();
-                while (nextLineWithChildren && !nextLineWithChildren.firstRun())
+                auto nextLineWithChildren = line->next();
+                while (nextLineWithChildren && !nextLineWithChildren->firstRun())
                     nextLineWithChildren.traverseNext();
 
                 if (nextLineWithChildren && nextLineWithChildren->legacyRootInlineBox() && nextLineWithChildren->legacyRootInlineBox()->isFirstAfterPageBreak()
                     && (pointInLogicalContents.y() > nextLineWithChildren->lineBoxTop() || (!blocksAreFlipped && pointInLogicalContents.y() == nextLineWithChildren->lineBoxTop())))
                     continue;
             }
-            closestRun = line.closestRunForLogicalLeftPosition(pointInLogicalContents.x());
+            closestRun = line->closestRunForLogicalLeftPosition(pointInLogicalContents.x());
             if (closestRun)
                 break;
         }
@@ -3579,7 +3579,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
     if (!moveCaretToBoundary && !closestRun && lastLineWithChildren) {
         // y coordinate is below last root line box, pretend we hit it
-        closestRun = lastLineWithChildren.closestRunForLogicalLeftPosition(pointInLogicalContents.x());
+        closestRun = lastLineWithChildren->closestRunForLogicalLeftPosition(pointInLogicalContents.x());
     }
 
     if (closestRun) {
@@ -3587,9 +3587,9 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
             LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->selectionTopForHitTesting(), LayoutUnit(firstLineWithChildren->top()));
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
-                auto run = firstLineWithChildren.firstRun();
+                auto run = firstLineWithChildren->firstRun();
                 if (run->isLineBreak()) {
-                    if (auto next = run.nextOnLineIgnoringLineBreak())
+                    if (auto next = run->nextOnLineIgnoringLineBreak())
                         run = next;
                 }
                 // y coordinate is above first root line box, so return the start of the first
@@ -3598,7 +3598,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         }
 
         // pass the box a top position that is inside it
-        LayoutPoint point(pointInLogicalContents.x(), closestRun.line()->blockDirectionPointInLine());
+        LayoutPoint point(pointInLogicalContents.x(), closestRun->line()->blockDirectionPointInLine());
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestRun->renderer().isReplaced())
@@ -3609,7 +3609,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     if (lastLineWithChildren) {
         // We hit this case for Mac behavior when the Y coordinate is below the last box.
         ASSERT(moveCaretToBoundary);
-        if (auto logicallyLastRun = lastLineWithChildren.logicalEndRunWithNode())
+        if (auto logicallyLastRun = lastLineWithChildren->logicalEndRunWithNode())
             return positionForRun(*this, logicallyLastRun, false);
     }
 

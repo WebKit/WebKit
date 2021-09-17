@@ -38,21 +38,16 @@ LineIterator::LineIterator(PathLine::PathVariant&& pathVariant)
 {
 }
 
+LineIterator::LineIterator(const PathLine& line)
+    : m_line(line)
+{
+}
+
 bool LineIterator::atEnd() const
 {
     return WTF::switchOn(m_line.m_pathVariant, [](auto& path) {
         return path.atEnd();
     });
-}
-
-LineIterator LineIterator::next() const
-{
-    return LineIterator(*this).traverseNext();
-}
-
-LineIterator LineIterator::previous() const
-{
-    return LineIterator(*this).traversePrevious();
 }
 
 LineIterator& LineIterator::traverseNext()
@@ -76,48 +71,6 @@ bool LineIterator::operator==(const LineIterator& other) const
     return m_line.m_pathVariant == other.m_line.m_pathVariant;
 }
 
-RunIterator LineIterator::firstRun() const
-{
-    return m_line.firstRun();
-}
-
-RunIterator LineIterator::lastRun() const
-{
-    return m_line.lastRun();
-}
-
-RunIterator LineIterator::logicalStartRun() const
-{
-    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.logicalStartRun() };
-    });
-}
-
-RunIterator LineIterator::logicalEndRun() const
-{
-    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.logicalEndRun() };
-    });
-}
-
-RunIterator LineIterator::logicalStartRunWithNode() const
-{
-    for (auto run = logicalStartRun(); run; run.traverseNextOnLineInLogicalOrder()) {
-        if (run->renderer().node())
-            return run;
-    }
-    return { };
-}
-
-RunIterator LineIterator::logicalEndRunWithNode() const
-{
-    for (auto run = logicalEndRun(); run; run.traversePreviousOnLineInLogicalOrder()) {
-        if (run->renderer().node())
-            return run;
-    }
-    return { };
-}
-
 LineIterator firstLineFor(const RenderBlockFlow& flow)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -138,14 +91,68 @@ LineIterator lastLineFor(const RenderBlockFlow& flow)
     return { LineIteratorLegacyPath { flow.lastRootBox() } };
 }
 
-RunIterator LineIterator::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly)
+LineIterator PathLine::next() const
 {
-    if (atEnd())
-        return { };
-    return closestRunForLogicalLeftPosition(m_line.isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
+    return LineIterator(*this).traverseNext();
 }
 
-RunIterator LineIterator::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly)
+LineIterator PathLine::previous() const
+{
+    return LineIterator(*this).traversePrevious();
+}
+
+RunIterator PathLine::firstRun() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.firstRun() };
+    });
+}
+
+RunIterator PathLine::lastRun() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.lastRun() };
+    });
+}
+
+RunIterator PathLine::logicalStartRun() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.logicalStartRun() };
+    });
+}
+
+RunIterator PathLine::logicalEndRun() const
+{
+    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
+        return { path.logicalEndRun() };
+    });
+}
+
+RunIterator PathLine::logicalStartRunWithNode() const
+{
+    for (auto run = logicalStartRun(); run; run.traverseNextOnLineInLogicalOrder()) {
+        if (run->renderer().node())
+            return run;
+    }
+    return { };
+}
+
+RunIterator PathLine::logicalEndRunWithNode() const
+{
+    for (auto run = logicalEndRun(); run; run.traversePreviousOnLineInLogicalOrder()) {
+        if (run->renderer().node())
+            return run;
+    }
+    return { };
+}
+
+RunIterator PathLine::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const
+{
+    return closestRunForLogicalLeftPosition(isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
+}
+
+RunIterator PathLine::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly) const
 {
     auto isEditable = [&](auto run)
     {
@@ -157,9 +164,9 @@ RunIterator LineIterator::closestRunForLogicalLeftPosition(int leftPosition, boo
 
     if (firstRun != lastRun) {
         if (firstRun->isLineBreak())
-            firstRun = firstRun.nextOnLineIgnoringLineBreak();
+            firstRun = firstRun->nextOnLineIgnoringLineBreak();
         else if (lastRun->isLineBreak())
-            lastRun = lastRun.previousOnLineIgnoringLineBreak();
+            lastRun = lastRun->previousOnLineIgnoringLineBreak();
     }
 
     if (firstRun == lastRun && (!editableOnly || isEditable(firstRun)))
@@ -181,20 +188,6 @@ RunIterator LineIterator::closestRunForLogicalLeftPosition(int leftPosition, boo
     }
 
     return closestRun;
-}
-
-RunIterator PathLine::firstRun() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.firstRun() };
-    });
-}
-
-RunIterator PathLine::lastRun() const
-{
-    return WTF::switchOn(m_pathVariant, [](auto& path) -> RunIterator {
-        return { path.lastRun() };
-    });
 }
 
 int PathLine::blockDirectionPointInLine() const

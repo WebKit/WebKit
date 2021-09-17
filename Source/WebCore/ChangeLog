@@ -1,3 +1,118 @@
+2021-09-17  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Move non-traversal functions from iterator to the dereferenced type
+        https://bugs.webkit.org/show_bug.cgi?id=230396
+
+        Reviewed by Alan Bujtas.
+
+        Improve the logic of the iterator interface so the code does not end up as a mixture of . and -> access.
+        This also makes the dereferenced box/line type  more useful in itself.
+
+        For example to get a new iterator pointing to the next line:
+
+            auto nextLine = line->next();
+
+        but to mutate the iterator so it points to the next line:
+
+            line.traverseNext();
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        (WebCore::Position::rendersInDifferentPosition const):
+        (WebCore::Position::inlineRunAndOffset const):
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::previousLeafOnLine const):
+        (WebCore::RenderedPosition::nextLeafOnLine const):
+        (WebCore::RenderedPosition::leftBoundaryOfBidiRun):
+        (WebCore::RenderedPosition::rightBoundaryOfBidiRun):
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::line const):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startTextOrLineBreakRun):
+        (WebCore::endTextOrLineBreakRun):
+        (WebCore::logicallyPreviousRun):
+        (WebCore::logicallyNextRun):
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::valueWithHardLineBreaks const):
+        * layout/integration/LayoutIntegrationLineIterator.cpp:
+        (WebCore::LayoutIntegration::LineIterator::LineIterator):
+        (WebCore::LayoutIntegration::firstLineFor):
+        (WebCore::LayoutIntegration::lastLineFor):
+        (WebCore::LayoutIntegration::PathLine::next const):
+        (WebCore::LayoutIntegration::PathLine::previous const):
+        (WebCore::LayoutIntegration::PathLine::firstRun const):
+        (WebCore::LayoutIntegration::PathLine::lastRun const):
+        (WebCore::LayoutIntegration::PathLine::logicalStartRun const):
+        (WebCore::LayoutIntegration::PathLine::logicalEndRun const):
+        (WebCore::LayoutIntegration::PathLine::logicalStartRunWithNode const):
+        (WebCore::LayoutIntegration::PathLine::logicalEndRunWithNode const):
+        (WebCore::LayoutIntegration::PathLine::closestRunForPoint const):
+        (WebCore::LayoutIntegration::PathLine::closestRunForLogicalLeftPosition const):
+        (WebCore::LayoutIntegration::LineIterator::next const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::previous const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::firstRun const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::lastRun const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::logicalStartRun const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::logicalEndRun const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::logicalStartRunWithNode const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::logicalEndRunWithNode const): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::closestRunForPoint): Deleted.
+        (WebCore::LayoutIntegration::LineIterator::closestRunForLogicalLeftPosition): Deleted.
+        * layout/integration/LayoutIntegrationLineIterator.h:
+        (WebCore::LayoutIntegration::PathLine::isFirst const):
+        (WebCore::LayoutIntegration::LineIterator::isFirst const): Deleted.
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::RunIterator):
+        (WebCore::LayoutIntegration::PathRun::nextOnLine const):
+        (WebCore::LayoutIntegration::PathRun::previousOnLine const):
+        (WebCore::LayoutIntegration::PathRun::nextOnLineIgnoringLineBreak const):
+        (WebCore::LayoutIntegration::PathRun::previousOnLineIgnoringLineBreak const):
+        (WebCore::LayoutIntegration::PathRun::style const):
+        (WebCore::LayoutIntegration::PathTextRun::nextTextRun const):
+        (WebCore::LayoutIntegration::PathTextRun::nextTextRunInTextOrder const):
+        (WebCore::LayoutIntegration::TextRunIterator::TextRunIterator):
+        (WebCore::LayoutIntegration::RunIterator::nextOnLine const): Deleted.
+        (WebCore::LayoutIntegration::RunIterator::previousOnLine const): Deleted.
+        (WebCore::LayoutIntegration::RunIterator::nextOnLineIgnoringLineBreak const): Deleted.
+        (WebCore::LayoutIntegration::RunIterator::previousOnLineIgnoringLineBreak const): Deleted.
+        (WebCore::LayoutIntegration::RunIterator::line const): Deleted.
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::TextRunIterator::nextTextRun const): Deleted.
+        (WebCore::LayoutIntegration::TextRunIterator::nextTextRunInTextOrder const): Deleted.
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForText):
+        (WebCore::computeCaretRectForLineBreak):
+        (WebCore::computeCaretRectForBox):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::findClosestTextAtAbsolutePoint):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getLeadingCorner const):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionGeometries):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionGeometries):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionGeometries):
+        (WebCore::lineDirectionPointFitsInBox):
+        (WebCore::createVisiblePositionAfterAdjustingOffsetForBiDi):
+        (WebCore::RenderText::positionForPoint):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::minLogicalTopForTextDecorationLine):
+        (WebCore::maxLogicalBottomForTextDecorationLine):
+        (WebCore::computeUnderlineOffset):
+
 2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Add a build option to enable ATSPI
