@@ -1034,6 +1034,8 @@ webkit.org/b/187103 js/error-should-not-strong-reference-global-object.html [ Pa
 webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ]
 webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
 
+webkit.org/b/230428 http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html [ Pass Failure ]
+
 webkit.org/b/154688 inspector/controller/runtime-controller.html [ Pass Timeout ]
 
 webkit.org/b/156351 storage/indexeddb/modern/autoincrement-abort-private.html [ Pass Timeout ]
