@@ -62,7 +62,7 @@ public:
         const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&, bool viaProxy = false,
         FunctionPtr<CustomAccessorPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
 
-    void dumpImpl(PrintStream&, CommaPrinter&) const final;
+    void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const final;
     Ref<AccessCase> clone() const final;
 
     ~GetterSetterAccessCase() final;

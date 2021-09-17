@@ -246,7 +246,7 @@ public:
     bool canReplace(const AccessCase& other) const;
 
     void dump(PrintStream& out) const;
-    virtual void dumpImpl(PrintStream&, CommaPrinter&) const { }
+    virtual void dumpImpl(PrintStream&, CommaPrinter&, Indenter&) const { }
 
     virtual ~AccessCase();
 

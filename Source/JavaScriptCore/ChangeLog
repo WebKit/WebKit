@@ -1,5 +1,34 @@
 2021-09-17  Justin Michaud  <justin_michaud@apple.com>
 
+        Improve access case printing and show inline capacity for structures
+        https://bugs.webkit.org/show_bug.cgi?id=230357
+
+        Reviewed by Saam Barati.
+
+        This just makes the printing of access cases slightly more readable.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::dump const):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::dumpImpl const):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::dumpImpl const):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/InstanceOfAccessCase.cpp:
+        (JSC::InstanceOfAccessCase::dumpImpl const):
+        * bytecode/InstanceOfAccessCase.h:
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::dumpImpl const):
+        * bytecode/ProxyableAccessCase.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure const):
+        * runtime/Structure.cpp:
+        (JSC::Structure::dump const):
+
+2021-09-17  Justin Michaud  <justin_michaud@apple.com>
+
         PutByVal and PutPrivateName ICs should emit a write barrier if a butterfly might be allocated
         https://bugs.webkit.org/show_bug.cgi?id=230378
 

@@ -112,9 +112,9 @@ JSObject* GetterSetterAccessCase::alternateBase() const
     return Base::alternateBase();
 }
 
-void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma) const
+void GetterSetterAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma, Indenter& indent) const
 {
-    Base::dumpImpl(out, comma);
+    Base::dumpImpl(out, comma, indent);
     out.print(comma, "customSlotBase = ", RawPointer(customSlotBase()));
     if (callLinkInfo())
         out.print(comma, "callLinkInfo = ", RawPointer(callLinkInfo()));

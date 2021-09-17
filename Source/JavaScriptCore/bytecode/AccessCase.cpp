@@ -853,8 +853,9 @@ bool AccessCase::canReplace(const AccessCase& other) const
 
 void AccessCase::dump(PrintStream& out) const
 {
-    out.print("\n", m_type, ":(");
+    out.print("\n", m_type, ": {");
 
+    Indenter indent;
     CommaPrinter comma;
 
     out.print(comma, m_state);
@@ -863,21 +864,25 @@ void AccessCase::dump(PrintStream& out) const
     if (isValidOffset(m_offset))
         out.print(comma, "offset = ", m_offset);
 
+    ++indent;
+
     if (m_polyProtoAccessChain) {
-        out.print(comma, "prototype access chain = ");
+        out.print("\n", indent, "prototype access chain = ");
         m_polyProtoAccessChain->dump(structure(), out);
     } else {
         if (m_type == Transition || m_type == Delete || m_type == SetPrivateBrand)
-            out.print(comma, "structure = ", pointerDump(structure()), " -> ", pointerDump(newStructure()));
+            out.print("\n", indent, "from structure = ", pointerDump(structure()),
+                "\n", indent, "to structure = ", pointerDump(newStructure()));
         else if (m_structure)
-            out.print(comma, "structure = ", pointerDump(m_structure.get()));
+            out.print("\n", indent, "structure = ", pointerDump(m_structure.get()));
     }
 
     if (!m_conditionSet.isEmpty())
-        out.print(comma, "conditions = ", m_conditionSet);
+        out.print("\n", indent, "conditions = ", m_conditionSet);
 
-    dumpImpl(out, comma);
-    out.print(")");
+    dumpImpl(out, comma, indent);
+
+    out.print("}");
 }
 
 bool AccessCase::visitWeak(VM& vm) const

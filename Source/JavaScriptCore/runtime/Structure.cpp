@@ -1322,8 +1322,12 @@ Ref<StructureShape> Structure::toStructureShape(JSValue value, bool& sawPolyProt
 
 void Structure::dump(PrintStream& out) const
 {
-    out.print(RawPointer(this), ":[", RawPointer(reinterpret_cast<void*>(id())), ", ", classInfo()->className, ", {");
-    
+    auto* structureID = reinterpret_cast<void*>(id());
+    out.print(RawPointer(this), ":[", RawPointer(structureID),
+        "/", (uint32_t)(reinterpret_cast<uintptr_t>(structureID)), ", ",
+        classInfo()->className, ", (", inlineSize(), "/", inlineCapacity(), ", ",
+        outOfLineSize(), "/", outOfLineCapacity(), "){");
+
     CommaPrinter comma;
     
     const_cast<Structure*>(this)->forEachPropertyConcurrently(
