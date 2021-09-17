@@ -80,7 +80,7 @@ static void ensureITPFileIsCreated()
     [dataStore _setResourceLoadStatisticsEnabled:NO];
 }
 
-TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
+TEST(ResourceLoadStatistics, GrandfatherCallback)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
@@ -136,7 +136,7 @@ TEST(ResourceLoadStatistics, GrandfatherCallbackDatabase)
     TestWebKitAPI::Util::run(&doneFlag);
 }
 
-TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
+TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartup)
 {
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];
 
@@ -157,7 +157,7 @@ TEST(ResourceLoadStatistics, ShouldNotGrandfatherOnStartupDatabase)
     TestWebKitAPI::Util::run(&callbackFlag);
 }
 
-TEST(ResourceLoadStatistics, ChildProcessesNotLaunchedDatabase)
+TEST(ResourceLoadStatistics, ChildProcessesNotLaunched)
 {
     // Ensure the shared process pool exists so the data store operations we're about to do work with it.
     WKProcessPool *sharedProcessPool = [WKProcessPool _sharedProcessPool];
@@ -657,209 +657,6 @@ TEST(ResourceLoadStatistics, FlushObserverWhenWebPageIsClosedByJavaScript)
 }
 
 TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
-{
-    auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration setProcessPool: sharedProcessPool];
-    configuration.get().websiteDataStore = dataStore;
-
-    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    [webView1 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    [webView1 _test_waitForDidFinishNavigation];
-    [webView2 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit2.org"]];
-    [webView2 _test_waitForDidFinishNavigation];
-    [webView3 loadHTMLString:@"WebKit Test" baseURL:[NSURL URLWithString:@"http://webkit3.org"]];
-    [webView3 _test_waitForDidFinishNavigation];
-
-    [dataStore _setResourceLoadStatisticsEnabled:YES];
-
-    __block bool doneFlag = false;
-    [dataStore _clearResourceLoadStatistics:^(void) {
-        doneFlag = true;
-    }];
-
-    static bool statisticsUpdated = false;
-    [dataStore _setResourceLoadStatisticsTestingCallback:^(WKWebsiteDataStore *, NSString *message) {
-        if (![message isEqualToString:@"Statistics Updated"])
-            return;
-        statisticsUpdated = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-    
-    doneFlag = false;
-    [dataStore _setThirdPartyCookieBlockingMode:true onlyOnSitesWithoutUserInteraction:false completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    // Set two third parties to be prevalent, leave evil1.com as non-prevalent to ensure
-    // this call returns all third parties.
-    doneFlag = false;
-    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil2.com"] completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-    doneFlag = false;
-    [dataStore _setPrevalentDomain:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(void) {
-        doneFlag = true;
-    }];
-
-    // Seed test data in the web process' observer.
-
-    // evil1
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // evil2
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil2.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // evil3
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [sharedProcessPool _seedResourceLoadStatisticsForTestingWithFirstParty:[NSURL URLWithString:@"http://webkit3.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] shouldScheduleNotification:NO completionHandler: ^() {
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-    statisticsUpdated = false;
-    [webView1 loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
-    [webView2 loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit2.org"]];
-    [webView3 loadHTMLString:@"<body><script>close();</script></body>" baseURL:[NSURL URLWithString:@"http://webkit3.org"]];
-
-    // Wait for the statistics to be updated in the network process.
-    TestWebKitAPI::Util::run(&statisticsUpdated);
-
-    // Check that the third-party evil1 is now registered as subresource.
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil1.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // Check that the third-party evil2 is now registered as subresource.
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil2.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // Check that the third-party evil3 is now registered as subresource.
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit2.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-    doneFlag = false;
-    [dataStore _isRegisteredAsSubresourceUnderFirstParty:[NSURL URLWithString:@"http://webkit3.org"] thirdParty:[NSURL URLWithString:@"http://evil3.com"] completionHandler: ^(BOOL isRegistered) {
-        EXPECT_TRUE(isRegistered);
-        doneFlag = true;
-    }];
-    TestWebKitAPI::Util::run(&doneFlag);
-
-
-    // Collect the ITP data summary which should include all third parties in the
-    // order: [evil3.com, evil1.com, evil2.com] sorted by number of first parties
-    // it appears under or redirects to
-    doneFlag = false;
-    [dataStore _getResourceLoadStatisticsDataSummary:^void(NSArray<_WKResourceLoadStatisticsThirdParty *> *thirdPartyData)
-    {
-        EXPECT_EQ(static_cast<int>([thirdPartyData count]), 3);
-        NSEnumerator *thirdPartyDomains = [thirdPartyData objectEnumerator];
-
-        // evil3
-        _WKResourceLoadStatisticsThirdParty *evil3ThirdParty = [thirdPartyDomains nextObject];
-        EXPECT_WK_STREQ(evil3ThirdParty.thirdPartyDomain, @"evil3.com");
-
-        NSEnumerator *evil3Enumerator = [evil3ThirdParty.underFirstParties objectEnumerator];
-        _WKResourceLoadStatisticsFirstParty *evil3FirstParty1 = [evil3Enumerator nextObject];
-        _WKResourceLoadStatisticsFirstParty *evil3FirstParty2 = [evil3Enumerator nextObject];
-        _WKResourceLoadStatisticsFirstParty *evil3FirstParty3 = [evil3Enumerator nextObject];
-
-        EXPECT_WK_STREQ(evil3FirstParty1.firstPartyDomain, @"webkit2.org");
-        EXPECT_WK_STREQ(evil3FirstParty2.firstPartyDomain, @"webkit3.org");
-        EXPECT_WK_STREQ(evil3FirstParty3.firstPartyDomain, @"webkit.org");
-
-        EXPECT_FALSE(evil3FirstParty1.thirdPartyStorageAccessGranted);
-        EXPECT_FALSE(evil3FirstParty2.thirdPartyStorageAccessGranted);
-        EXPECT_FALSE(evil3FirstParty3.thirdPartyStorageAccessGranted);
-
-        // evil1
-        _WKResourceLoadStatisticsThirdParty *evil1ThirdParty = [thirdPartyDomains nextObject];
-        EXPECT_WK_STREQ(evil1ThirdParty.thirdPartyDomain, @"evil1.com");
-
-        NSEnumerator *evil1Enumerator = [evil1ThirdParty.underFirstParties objectEnumerator];
-        _WKResourceLoadStatisticsFirstParty *evil1FirstParty1= [evil1Enumerator nextObject];
-        _WKResourceLoadStatisticsFirstParty *evil1FirstParty2 = [evil1Enumerator nextObject];
-
-        EXPECT_WK_STREQ(evil1FirstParty1.firstPartyDomain, @"webkit2.org");
-        EXPECT_WK_STREQ(evil1FirstParty2.firstPartyDomain, @"webkit.org");
-
-        EXPECT_FALSE(evil1FirstParty1.thirdPartyStorageAccessGranted);
-        EXPECT_FALSE(evil1FirstParty2.thirdPartyStorageAccessGranted);
-
-        // evil2
-        _WKResourceLoadStatisticsThirdParty *evil2ThirdParty = [thirdPartyDomains nextObject];
-        EXPECT_WK_STREQ(evil2ThirdParty.thirdPartyDomain, @"evil2.com");
-
-        NSEnumerator *evil2Enumerator = [evil2ThirdParty.underFirstParties objectEnumerator];
-        _WKResourceLoadStatisticsFirstParty *evil2FirstParty1 = [evil2Enumerator nextObject];
-
-        EXPECT_WK_STREQ(evil2FirstParty1.firstPartyDomain, @"webkit.org");
-        EXPECT_FALSE(evil2FirstParty1.thirdPartyStorageAccessGranted);
-        doneFlag = true;
-    }];
-
-    TestWebKitAPI::Util::run(&doneFlag);
-}
-
-TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummaryDatabase)
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
     auto *dataStore = [WKWebsiteDataStore defaultDataStore];

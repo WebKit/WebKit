@@ -34,7 +34,6 @@
 #include "PluginProcessProxy.h"
 #include "PrivateClickMeasurementManager.h"
 #include "PrivateClickMeasurementManagerProxy.h"
-#include "ResourceLoadStatisticsMemoryStore.h"
 #include "StorageAccessStatus.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
@@ -922,31 +921,6 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationships(const Resour
     insertDomainRelationshipList(subresourceUniqueRedirectsFromQuery, loadStatistics.subresourceUniqueRedirectsFrom, registrableDomainID.value());
     insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, loadStatistics.topFrameLinkDecorationsFrom, registrableDomainID.value());
     insertDomainRelationshipList(topFrameLoadedThirdPartyScriptsQuery, loadStatistics.topFrameLoadedThirdPartyScripts, registrableDomainID.value());
-}
-
-void ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore(const ResourceLoadStatisticsMemoryStore& memoryStore)
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (!isEmpty())
-        return;
-
-    auto transactionScope = beginTransactionIfNecessary();
-
-    auto& statisticsMap = memoryStore.data();
-    for (const auto& statistic : statisticsMap.values()) {
-        auto result = insertObservedDomain(statistic);
-        if (!result) {
-            ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore insertObservedDomain failed to complete, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
-            ASSERT_NOT_REACHED();
-            return;
-        }
-    }
-
-    // Make a separate pass for inter-domain relationships so we
-    // can refer to the ObservedDomain table entries
-    for (auto& statistic : statisticsMap.values())
-        insertDomainRelationships(statistic);
 }
 
 void ResourceLoadStatisticsDatabaseStore::merge(WebCore::SQLiteStatement* current, const ResourceLoadStatistics& other)

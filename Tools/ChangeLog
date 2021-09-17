@@ -1,3 +1,17 @@
+2021-09-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove unnecessary ITP memory store code
+        https://bugs.webkit.org/show_bug.cgi?id=229512
+        <rdar://problem/82644309>
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        Deleted an extra memory store test leftover from when we still had
+        a functioning memory store. Now it is just a duplicate of the database
+        test, so we can remove it.
+
 2021-09-17  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION: [ iOS ] 5 TestWebKitAPI.WebpagePreferences.* api tests are flaky timing out

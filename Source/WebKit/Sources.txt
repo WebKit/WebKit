@@ -83,7 +83,6 @@ NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
 
 NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp
-NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/WebCookieManager.cpp
