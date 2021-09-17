@@ -33,8 +33,10 @@
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InlineDamage.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingState.h"
+#include "InlineInvalidation.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationInlineContentBuilder.h"
@@ -197,8 +199,11 @@ void LineLayout::updateInlineBoxDimensions(const RenderInline& renderInline)
     boxGeometry.setVerticalMargin({ });
 }
 
-void LineLayout::updateStyle(const RenderBoxModelObject& renderer)
+void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
 {
+    auto invalidation = Layout::InlineInvalidation { ensureLineDamage() };
+    invalidation.styleChanged(m_boxTree.layoutBoxForRenderer(renderer), oldStyle);
+
     m_boxTree.updateStyle(renderer);
 }
 
@@ -211,15 +216,18 @@ void LineLayout::layout()
     prepareLayoutState();
     prepareFloatingState();
 
+    // FIXME: Do not clear the lines and runs here unconditionally, but consult with the damage object instead.
     m_inlineContent = nullptr;
     auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox);
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState };
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() };
 
     auto horizontalConstraints = Layout::HorizontalConstraints { rootGeometry.contentBoxLeft(), rootGeometry.contentBoxWidth() };
 
     inlineFormattingContext.lineLayoutForIntergration({ horizontalConstraints, rootGeometry.contentBoxTop() });
 
     constructContent();
+
+    m_lineDamage = { };
 }
 
 void LineLayout::constructContent()
@@ -247,6 +255,9 @@ void LineLayout::prepareLayoutState()
 {
     auto& flow = this->flow();
     m_layoutState.setViewportSize(flow.frame().view()->size());
+
+    // FIXME: Turn prepareLayoutState to a setter and call it when the flow size changes so that we can do proper invalidation and not "force-constructing" the line damage object here.
+    ensureLineDamage();
 
     auto& rootGeometry = m_layoutState.ensureGeometryForBox(rootLayoutBox());
     rootGeometry.setContentBoxWidth(flow.contentSize().width());
@@ -624,6 +635,13 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
         if (shouldRotate)
             paintInfo.context().concatCTM(rotation(boxRect, Counterclockwise));
     }
+}
+
+Layout::InlineDamage& LineLayout::ensureLineDamage()
+{
+    if (!m_lineDamage)
+        m_lineDamage = makeUnique<Layout::InlineDamage>();
+    return *m_lineDamage;
 }
 
 #if ENABLE(TREE_DEBUGGING)

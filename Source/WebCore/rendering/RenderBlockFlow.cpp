@@ -2146,7 +2146,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = modernLineLayout())
-        lineLayout->updateStyle(*this);
+        lineLayout->updateStyle(*this, *oldStyle);
 #endif
 
     if (multiColumnFlow())

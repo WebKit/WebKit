@@ -1,3 +1,33 @@
+2021-09-17  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Start using InlineInvalidation to clean runs and lines
+        https://bugs.webkit.org/show_bug.cgi?id=229294
+        <rdar://problem/82395169>
+
+        Reviewed by Antti Koivisto.
+
+        This patch is in preparation for supporting partial line layout.
+        No change in functionality yet.
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::InlineFormattingContext):
+        (WebCore::Layout::InlineFormattingContext::invalidateFormattingState):
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/inline/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::clearInlineItems):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::updateStyle):
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::prepareLayoutState):
+        (WebCore::LayoutIntegration::LineLayout::ensureLineDamage):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleDidChange): The initial styleDidChange (when oldStyle is nullptr) does not go through the integration codepath.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+
 2021-09-17  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Add some useful functions to iterators

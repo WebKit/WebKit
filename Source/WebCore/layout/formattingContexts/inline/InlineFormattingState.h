@@ -67,6 +67,7 @@ public:
     void setClearGapAfterLastLine(InlineLayoutUnit verticalGap);
     InlineLayoutUnit clearGapAfterLastLine() const { return m_clearGapAfterLastLine; }
 
+    void clearInlineItems() { m_inlineItems.clear(); }
     void clearLineAndRuns();
     void shrinkToFit();
 

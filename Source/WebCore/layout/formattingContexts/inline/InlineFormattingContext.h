@@ -37,6 +37,7 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineDamage;
 class InlineFormattingState;
 class LineBox;
 
@@ -45,7 +46,7 @@ class LineBox;
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&);
+    InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&, const InlineDamage* = nullptr);
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
@@ -74,6 +75,7 @@ private:
     InlineRect computeGeometryForLineContent(const LineBuilder::LineContent&);
     void invalidateFormattingState();
 
+    const InlineDamage* m_lineDamage { nullptr };
     const InlineFormattingGeometry m_inlineFormattingGeometry;
     const InlineFormattingQuirks m_inlineFormattingQuirks;
 };

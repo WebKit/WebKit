@@ -193,7 +193,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
                 container->invalidateLineLayoutPath();
         } else
-            lineLayout->updateStyle(*this);
+            lineLayout->updateStyle(*this, *oldStyle);
     }
 #endif
 }

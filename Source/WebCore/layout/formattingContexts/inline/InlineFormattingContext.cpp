@@ -30,6 +30,7 @@
 
 #include "FloatingContext.h"
 #include "FontCascade.h"
+#include "InlineDamage.h"
 #include "InlineDisplayContentBuilder.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
@@ -55,8 +56,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
-InlineFormattingContext::InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
+InlineFormattingContext::InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState, const InlineDamage* lineDamage)
     : FormattingContext(formattingContextRoot, formattingState)
+    , m_lineDamage(lineDamage)
     , m_inlineFormattingGeometry(*this)
     , m_inlineFormattingQuirks(*this)
 {
@@ -584,10 +586,26 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
 
 void InlineFormattingContext::invalidateFormattingState()
 {
-    // Find out what we need to invalidate. This is where we add some smarts to do partial line layout.
-    // For now let's just clear the runs.
-    formattingState().clearLineAndRuns();
-    // FIXME: This is also where we would delete inline items if their content changed.
+    if (!m_lineDamage) {
+        // Non-empty formatting state with no damage means we are trying to layout a clean tree.
+        // FIXME: Add ASSERT(formattingState().inlineItems().isEmpty()) when all the codepaths are covered.
+        formattingState().clearLineAndRuns();
+        return;
+    }
+    // FIXME: Lines and runs are moved out to under Integration::InlineContent in the integration codepath, so clearLineAndRuns is no-op.
+    switch (m_lineDamage->type()) {
+    case InlineDamage::Type::NeedsContentUpdateAndLineLayout:
+        formattingState().clearInlineItems();
+        FALLTHROUGH;
+    case InlineDamage::Type::NeedsLineLayout:
+        formattingState().clearLineAndRuns();
+        break;
+    case InlineDamage::Type::NeedsVerticalAdjustment:
+    case InlineDamage::Type::NeedsHorizontalAdjustment:
+    default:
+        ASSERT_NOT_IMPLEMENTED_YET();
+        break;
+    }
 }
 
 }

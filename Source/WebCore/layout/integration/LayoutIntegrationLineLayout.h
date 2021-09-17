@@ -49,6 +49,10 @@ class RenderInline;
 class RenderLineBreak;
 struct PaintInfo;
 
+namespace Layout {
+class InlineDamage;
+}
+
 namespace LayoutIntegration {
 
 struct InlineContent;
@@ -73,7 +77,7 @@ public:
     void updateInlineBlockDimensions(const RenderBlock&);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&);
-    void updateStyle(const RenderBoxModelObject&);
+    void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);
     void layout();
 
     LayoutUnit contentLogicalHeight() const;
@@ -120,6 +124,8 @@ private:
 
     void paintTextRunUsingPhysicalCoordinates(PaintInfo&, const LayoutPoint& paintOffset, const Line&, const Layout::Run&);
 
+    Layout::InlineDamage& ensureLineDamage();
+
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
     void releaseCaches();
@@ -127,6 +133,8 @@ private:
     BoxTree m_boxTree;
     Layout::LayoutState m_layoutState;
     Layout::InlineFormattingState& m_inlineFormattingState;
+    // FIXME: This should be part of LayoutState.
+    std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     RefPtr<InlineContent> m_inlineContent;
     std::optional<LayoutUnit> m_paginatedHeight;
 };
