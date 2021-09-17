@@ -1,4 +1,13 @@
 ================
+WebKitGTK 2.32.4
+================
+
+What's new in WebKitGTK 2.32.4?
+
+  - Do not append .asc extension to downloaded text/plain files.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.32.3
 ================
 

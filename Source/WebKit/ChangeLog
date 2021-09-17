@@ -1,3 +1,9 @@
+2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.32.4 release
+
+        * gtk/NEWS: Add release notes for 2.32.4
+
 2021-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy smart pointers in EventHandler and UserInputBridge
