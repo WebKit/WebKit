@@ -1,3 +1,13 @@
+2021-09-16  Youenn Fablet  <youenn@apple.com>
+
+        WPT webrtc RTCPeerConnection-setLocalDescription-offer.html and RTCPeerConnection-setLocalDescription-answer.html are flaky due to always changing failing assertion
+        https://bugs.webkit.org/show_bug.cgi?id=230302
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        Unflake tests.
+
 2021-09-16  Cameron McCormack  <heycam@apple.com>
 
         Preserve canvas color space when producing JPEGs from toDataURL/toBlob

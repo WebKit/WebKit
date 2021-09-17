@@ -1,7 +1,7 @@
 
 PASS setLocalDescription with valid offer should succeed
 PASS setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer
-FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "OperationError: Failed to set local offer sdp: Failed to apply the description for m= section with mid='0': Local fingerprint does not match identity. Expected: sha-256 2E:44:69:5B:86:09:8A:4E:50:8B:E8:D4:CF:C6:38:93:78:A2:D1:0E:91:37:A6:FA:41:6F:CD:9B:94:3D:22:FD Got: sha-256 62:F4:16:A1:2F:35:30:DA:D6:B8:94:CE:1E:5A:70:A0:36:7B:5B:80:05:B3:EE:6D:95:A3:8D:BD:42:38:41:79" that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_equals: expected "InvalidModificationError" but got "OperationError"
 FAIL Set created offer other than last offer should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS Creating and setting offer multiple times should succeed
 PASS Setting previously generated offer after a call to createAnswer should work
