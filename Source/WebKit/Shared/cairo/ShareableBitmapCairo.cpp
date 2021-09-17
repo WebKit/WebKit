@@ -39,6 +39,10 @@ using namespace WebCore;
 
 static const cairo_format_t cairoFormat = CAIRO_FORMAT_ARGB32;
 
+void ShareableBitmap::validateConfiguration(Configuration&)
+{
+}
+
 CheckedUint32 ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration&)
 {
     return cairo_format_stride_for_width(cairoFormat, size.width());

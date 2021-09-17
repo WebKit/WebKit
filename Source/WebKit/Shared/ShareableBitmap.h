@@ -84,6 +84,7 @@ public:
         Configuration m_configuration;
     };
 
+    static void validateConfiguration(Configuration&);
     static CheckedUint32 numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
     static CheckedUint32 calculateBytesPerRow(WebCore::IntSize, const Configuration&);
     static CheckedUint32 calculateBytesPerPixel(const Configuration&);

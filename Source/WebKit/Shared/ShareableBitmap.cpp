@@ -112,6 +112,7 @@ bool ShareableBitmap::Configuration::decode(IPC::Decoder& decoder, Configuration
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configuration configuration)
 {
+    validateConfiguration(configuration);
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
         return nullptr;
@@ -125,6 +126,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
 
 RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Configuration configuration)
 {
+    validateConfiguration(configuration);
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
         return nullptr;
@@ -140,6 +142,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
 {
     ASSERT(sharedMemory);
 
+    validateConfiguration(configuration);
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
         return nullptr;

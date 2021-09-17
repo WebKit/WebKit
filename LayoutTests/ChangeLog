@@ -1,3 +1,16 @@
+2021-09-16  Cameron McCormack  <heycam@apple.com>
+
+        Support drawImage with a wide gamut image painting into a display-p3 canvas
+        https://bugs.webkit.org/show_bug.cgi?id=229021
+        <rdar://problem/81828450>
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+        * platform/ios-14/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-09-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] mark webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html as failing

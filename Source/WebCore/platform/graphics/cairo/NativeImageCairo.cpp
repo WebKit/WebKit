@@ -30,6 +30,7 @@
 
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
+#include "NotImplemented.h"
 #include <cairo.h>
 
 namespace WebCore {
@@ -54,6 +55,12 @@ Color NativeImage::singlePixelSolidColor() const
 
     unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(m_platformImage.get()));
     return unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
+}
+
+DestinationColorSpace NativeImage::colorSpace() const
+{
+    notImplemented();
+    return DestinationColorSpace::SRGB();
 }
 
 void NativeImage::clearSubimages()

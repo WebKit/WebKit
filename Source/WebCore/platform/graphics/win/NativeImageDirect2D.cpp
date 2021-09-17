@@ -66,6 +66,12 @@ Color NativeImage::singlePixelSolidColor() const
     return Color();
 }
 
+DestinationColorSpace NativeImage::colorSpace() const
+{
+    notImplemented();
+    return DestinationColorSpace::SRGB();
+}
+
 void NativeImage::clearSubimages()
 {
     notImplemented();

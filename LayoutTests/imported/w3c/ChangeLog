@@ -1,3 +1,55 @@
+2021-09-16  Cameron McCormack  <heycam@apple.com>
+
+        Support drawImage with a wide gamut image painting into a display-p3 canvas
+        https://bugs.webkit.org/show_bug.cgi?id=229021
+        <rdar://problem/81828450>
+
+        Reviewed by Sam Weinig.
+
+        Adding a new WPT for drawImage() using images with various embedded
+        color profiles.
+
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-expected.txt: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.html: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings-expected.txt: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-settings.html: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3.js: Added.
+        (pixelsApproximatelyEqual):
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BB0000CC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BB0000FF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BBBC00000000CCCC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-BBBC00000000FFFF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FF0000CC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FF0000FF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FFFF00000000CCCC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Adobe-RGB-FFFF00000000FFFF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000CC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BB0000FF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BBBC00000000CCCC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-BBBC00000000FFFF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FF0000CC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FF0000FF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FFFF00000000CCCC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Display-P3-FFFF00000000FFFF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Generic-CMYK-BE000000.jpg: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Generic-CMYK-FF000000.jpg: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000CC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000FF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BBBC00000000CCCC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BBBC00000000FFFF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0000CC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0000FF.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FFFF00000000CCCC.png: Added.
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FFFF00000000FFFF.png: Added.
+
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt:
+        Results changing for an existing test. It's designed to test canvas
+        with a float16 backing store, which is (at the moment) non-standard,
+        and unsupported by us. The sub-tests changing from PASS to FAIL are
+        notable; they are drawing semi-transparent 16 bit wide gamut images
+        and comparing the results to drawing 8 bit equivalent images. Might
+        be accuracy issues due to pre-multiplied alpha?
+
 2021-09-16  Chris Dumez  <cdumez@apple.com>
 
         [ MacOS & iOS ] imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/htmlanchorelement_noopener.html is flaky failing
