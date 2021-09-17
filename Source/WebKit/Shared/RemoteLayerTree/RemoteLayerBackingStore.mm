@@ -294,7 +294,7 @@ bool RemoteLayerBackingStore::display()
         }
         if (needsMissingFlipWorkaround.value()) {
             workaroundStateSaver.save();
-            displayListContext.scale(WebCore::FloatSize(m_scale, -m_scale));
+            displayListContext.scale(WebCore::FloatSize(1, -1));
             displayListContext.translate(0, -m_size.height());
         }
 

@@ -47,11 +47,11 @@ size_t CGDisplayListImageBufferBackend::calculateMemoryCost(const Parameters& pa
 
 std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters)
 {
-    auto backendSize = calculateBackendSize(parameters);
-    if (backendSize.isEmpty())
+    auto logicalSize = parameters.logicalSize;
+    if (logicalSize.isEmpty())
         return nullptr;
 
-    auto cgContext = adoptCF(WKCGCommandsContextCreate(backendSize, nullptr));
+    auto cgContext = adoptCF(WKCGCommandsContextCreate(logicalSize, nullptr));
     if (!cgContext)
         return nullptr;
 

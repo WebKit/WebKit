@@ -1,3 +1,19 @@
+2021-09-17  Tim Horton  <timothy_horton@apple.com>
+
+        Replaying WKCGCommandsContext results in a doubly-scaled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=230386
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/RemoteLayerTree/CGDisplayListImageBufferBackend.cpp:
+        (WebKit::CGDisplayListImageBufferBackend::create):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::display):
+        WKCGCommandsContextCreate() expects the bounds in logical coordinates, so
+        we don't need to use calculateBackendSize().
+        This also means that the workaround no longer needs to work around the
+        missing scale; only the flip is missing.
+
 2021-09-16  Youenn Fablet  <youenn@apple.com>
 
         Make WebProcess use a RefPtr of LibWebRTCNetwork
