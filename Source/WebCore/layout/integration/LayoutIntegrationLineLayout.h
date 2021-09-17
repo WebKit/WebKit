@@ -117,6 +117,7 @@ public:
 
 private:
     void prepareLayoutState();
+    void updateFormattingRootGeometryAndInvalidate();
     void prepareFloatingState();
     void constructContent();
     InlineContent& ensureInlineContent();

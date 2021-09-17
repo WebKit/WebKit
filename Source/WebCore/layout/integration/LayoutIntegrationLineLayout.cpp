@@ -214,6 +214,7 @@ void LineLayout::layout()
         return;
 
     prepareLayoutState();
+    updateFormattingRootGeometryAndInvalidate();
     prepareFloatingState();
 
     // FIXME: Do not clear the lines and runs here unconditionally, but consult with the damage object instead.
@@ -251,20 +252,31 @@ void LineLayout::constructContent()
     m_inlineFormattingState.shrinkToFit();
 }
 
-void LineLayout::prepareLayoutState()
+void LineLayout::updateFormattingRootGeometryAndInvalidate()
 {
     auto& flow = this->flow();
-    m_layoutState.setViewportSize(flow.frame().view()->size());
 
-    // FIXME: Turn prepareLayoutState to a setter and call it when the flow size changes so that we can do proper invalidation and not "force-constructing" the line damage object here.
-    ensureLineDamage();
+    auto updateGeometry = [&](auto& root) {
+        root.setContentBoxWidth(flow.contentLogicalWidth());
+        root.setPadding(Layout::Edges { { flow.paddingStart(), flow.paddingEnd() }, { flow.paddingBefore(), flow.paddingAfter() } });
+        root.setBorder(Layout::Edges { { flow.borderStart(), flow.borderEnd() }, { flow.borderBefore(), flow.borderAfter() } });
+        root.setHorizontalMargin({ });
+        root.setVerticalMargin({ });
+    };
+    auto& rootLayoutBox = this->rootLayoutBox();
+    if (!m_layoutState.hasBoxGeometry(rootLayoutBox))
+        return updateGeometry(m_layoutState.ensureGeometryForBox(rootLayoutBox));
 
-    auto& rootGeometry = m_layoutState.ensureGeometryForBox(rootLayoutBox());
-    rootGeometry.setContentBoxWidth(flow.contentSize().width());
-    rootGeometry.setPadding(Layout::Edges { { flow.paddingStart(), flow.paddingEnd() }, { flow.paddingBefore(), flow.paddingAfter() } });
-    rootGeometry.setBorder(Layout::Edges { { flow.borderStart(), flow.borderEnd() }, { flow.borderBefore(), flow.borderAfter() } });
-    rootGeometry.setHorizontalMargin({ });
-    rootGeometry.setVerticalMargin({ });
+    auto& rootGeometry = m_layoutState.geometryForRootBox();
+    auto newLogicalWidth = flow.contentLogicalWidth();
+    if (newLogicalWidth != rootGeometry.contentBoxWidth())
+        Layout::InlineInvalidation(ensureLineDamage()).horizontalConstraintChanged();
+    updateGeometry(rootGeometry);
+}
+
+void LineLayout::prepareLayoutState()
+{
+    m_layoutState.setViewportSize(flow().frame().view()->size());
 }
 
 void LineLayout::prepareFloatingState()

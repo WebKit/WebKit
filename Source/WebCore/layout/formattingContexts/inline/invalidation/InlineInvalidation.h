@@ -51,6 +51,8 @@ public:
     void inlineLevelBoxInserted(const Box&);
     void inlineLevelBoxWillBeRemoved(const Box&);
 
+    void horizontalConstraintChanged();
+
 private:
     InlineDamage& m_inlineDamage;
 };

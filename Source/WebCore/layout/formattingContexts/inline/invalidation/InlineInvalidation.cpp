@@ -78,6 +78,11 @@ void InlineInvalidation::inlineLevelBoxWillBeRemoved(const Box& layoutBox)
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 }
 
+void InlineInvalidation::horizontalConstraintChanged()
+{
+    m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
+}
+
 }
 }
 #endif

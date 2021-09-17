@@ -1,3 +1,23 @@
+2021-09-17  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add InlineInvalidation::horizontalConstraintChanged
+        https://bugs.webkit.org/show_bug.cgi?id=230290
+
+        Reviewed by Antti Koivisto.
+
+        Add the "resize" invalidation codepath. It notifies formatting context about the available horizontal space change.
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::invalidateFormattingState):
+        * layout/formattingContexts/inline/invalidation/InlineInvalidation.cpp:
+        (WebCore::Layout::InlineInvalidation::horizontalConstraintChanged):
+        * layout/formattingContexts/inline/invalidation/InlineInvalidation.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::updateFormattingRootGeometry):
+        (WebCore::LayoutIntegration::LineLayout::prepareLayoutState):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+
 2021-09-17  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r282220): [GCC] Several flaky crashes on media/track/cue tests
