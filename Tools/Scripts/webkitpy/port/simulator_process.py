@@ -31,6 +31,7 @@ from webkitpy.port.server_process import ServerProcess
 
 
 class SimulatorProcess(ServerProcess):
+    RETRY = 3
 
     class Popen(object):
 
@@ -106,25 +107,35 @@ class SimulatorProcess(ServerProcess):
 
         # FIXME <rdar://problem/57032042>: This timeout should be 15 seconds
         with Timeout(30, handler=RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port())), patch=False):
-            stdin = None
-            stdout = None
-            stderr = None
-            try:
-                # This order matches the client side connections in Tools/TestRunnerShared/IOSLayoutTestCommunication.cpp setUpIOSLayoutTestCommunication()
-                stdin = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'wb')
-                stdout = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
-                stderr = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
-            except:
-                # We set self._proc as _reset() and _kill() depend on it.
-                self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
-                if self._proc.poll() is not None:
-                    self._reset()
-                    raise Exception('App {} with pid {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0]), self._pid))
-                self._kill()
-                self._reset()
-                raise
+            for _ in range(self.RETRY):
+                stdin = None
+                stdout = None
+                stderr = None
+                try:
+                    # This order matches the client side connections in Tools/TestRunnerShared/IOSLayoutTestCommunication.cpp setUpIOSLayoutTestCommunication()
+                    stdin = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'wb')
+                    stdout = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
+                    stderr = SimulatorProcess._accept_connection_create_file(self._target_host.listening_socket, 'rb')
 
-        self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
+                    self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
+                    return
+
+                except OSError:
+                    self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
+                    self._target_host.executive.kill_process(self._proc.pid)
+                    self._reset()
+
+                except:
+                    # We set self._proc as _reset() and _kill() depend on it.
+                    self._proc = SimulatorProcess.Popen(self._pid, stdin, stdout, stderr, self._target_host)
+                    if self._proc.poll() is not None:
+                        self._reset()
+                        raise Exception('App {} with pid {} crashed before stdin could be attached'.format(os.path.basename(self._cmd[0]), self._pid))
+                    self._kill()
+                    self._reset()
+                    raise
+
+        raise Exception('Failed to start app {} after {} retries'.format(self._cmd[0], self.RETRY))
 
     def stop(self, timeout_secs=3.0):
         # Only bother to check for leaks or stderr if the process is still running.

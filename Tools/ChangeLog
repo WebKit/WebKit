@@ -1,3 +1,15 @@
+2021-09-16  Jonathan Bedard  <jbedard@apple.com>
+
+        Exception in run-webkit-tests: Bad file descriptor (Part 4)
+        https://bugs.webkit.org/show_bug.cgi?id=229994
+        <rdar://problem/82826083>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess):
+        (SimulatorProcess._start): Retry app start if OSError is caught when constructing stdout/stdin/stderr.
+
 2021-09-16  Megan Gardner  <megan_gardner@apple.com>
 
         Fix TestWebKitAPI.WebKit.AppHighlightsInImageOverlays to work with changing menu states.
