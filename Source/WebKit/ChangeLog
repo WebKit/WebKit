@@ -1,3 +1,9 @@
+2021-09-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix.
+
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+
 2021-09-17  Cameron McCormack  <heycam@apple.com>
 
         Preserve color space when creating ImageBuffers for ImageBitmaps

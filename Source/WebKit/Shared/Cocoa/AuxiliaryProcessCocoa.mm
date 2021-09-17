@@ -34,6 +34,7 @@
 #import <mach/task.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SoftLinking.h>
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
 #import "AccessibilitySupportSPI.h"
