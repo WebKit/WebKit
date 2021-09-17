@@ -1,3 +1,12 @@
+2021-09-16  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] mark webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html as failing
+        https://bugs.webkit.org/show_bug.cgi?id=230379
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2021-09-16  Alex Christensen  <achristensen@webkit.org>
 
         Regression (r282484): [ iOS macOS ] imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https.html is failing

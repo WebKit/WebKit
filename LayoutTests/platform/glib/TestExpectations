@@ -1191,6 +1191,8 @@ webkit.org/b/229051 webgl/1.0.x/conformance/misc/invalid-passed-params.html [ Fa
 
 webkit.org/b/229052 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Failure ]
 
+webkit.org/b/96828 webgl/1.0.x/conformance/extensions/oes-vertex-array-object.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
