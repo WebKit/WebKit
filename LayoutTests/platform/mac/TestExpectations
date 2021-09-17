@@ -1916,6 +1916,8 @@ webkit.org/b/228094 imported/w3c/web-platform-tests/mathml/presentation-markup/o
 
 webkit.org/b/228189 http/tests/media/hls/hls-webvtt-seek-backwards.html [ Pass Timeout ]
 
+webkit.org/b/230411 http/tests/media/hls/video-controller-getStartDate.html [ Pass Failure ]
+
 # rdar://66660680 (REGRESSION (20A2327a-20A2348b): media/video-canvas-createPattern.html is failing)
 [ BigSur+ ] media/video-canvas-createPattern.html [ Failure ]
 
