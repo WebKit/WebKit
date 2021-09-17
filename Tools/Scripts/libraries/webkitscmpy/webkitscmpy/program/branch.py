@@ -25,7 +25,7 @@ import sys
 
 from .command import Command
 
-from webkitcorepy import run, Terminal
+from webkitcorepy import run, string_utils, Terminal
 from webkitscmpy import local, log
 
 
@@ -33,7 +33,7 @@ class Branch(Command):
     name = 'branch'
     help = 'Create a local development branch from the current checkout state'
 
-    PREFIX = 'eng'
+    PR_PREFIX = 'eng'
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -44,10 +44,30 @@ class Branch(Command):
         )
 
     @classmethod
-    def normalize_issue(cls, issue):
-        if not issue or issue.startswith(cls.PREFIX):
-            return issue
-        return '{}/{}'.format(cls.PREFIX, issue)
+    def normalize_branch_name(cls, name, repository=None):
+        if not name or (repository or local.Scm).DEV_BRANCHES.match(name):
+            return name
+        return '{}/{}'.format(cls.PR_PREFIX, name)
+
+    @classmethod
+    def editable(cls, branch, repository=None):
+        if (repository or local.Scm).DEV_BRANCHES.match(branch):
+            return True
+        return False
+
+    @classmethod
+    def branch_point(cls, repository):
+        cnt = 0
+        commit = None
+        while not commit or cls.editable(commit.branch, repository=repository):
+            cnt += 1
+            commit = repository.find(argument='HEAD~{}'.format(cnt), include_log=False, include_identifier=False)
+            if cnt > 1 or commit.branch != repository.branch:
+                log.warning('    Found {}...'.format(string_utils.pluralize(cnt, 'commit')))
+            else:
+                log.warning('    No commits on editable branch')
+
+        return commit
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -57,7 +77,7 @@ class Branch(Command):
 
         if not args.issue:
             args.issue = Terminal.input('Branch name: ')
-        args.issue = cls.normalize_issue(args.issue)
+        args.issue = cls.normalize_branch_name(args.issue)
 
         if run([repository.executable(), 'check-ref-format', args.issue], capture_output=True).returncode:
             sys.stderr.write("'{}' is an invalid branch name, cannot create it\n".format(args.issue))
