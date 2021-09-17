@@ -1669,4 +1669,3 @@ webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/target/pause-on-inline
 
 webkit.org/b/230359 [ BigSur+ Debug ] webrtc/video-mute-vp8.html [ Pass Failure ]
 
-webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]

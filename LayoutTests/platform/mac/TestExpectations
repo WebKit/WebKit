@@ -2400,3 +2400,6 @@ webkit.org/b/228176 [ Mojave Catalina BigSur Monterey ] fast/text/variable-syste
 # These tests open apparently unskippable prompts on Catalina.
 webkit.org/b/229391 [ Mojave Catalina ] fast/text/mobileasset-font.html [ Skip ]
 webkit.org/b/189448 [ Mojave Catalina ] fast/text/osaka-synthetic-bold.html [ Skip ]
+
+webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
+
