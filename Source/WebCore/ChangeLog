@@ -1,3 +1,13 @@
+2021-09-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix the Xcode build
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * DerivedSources-output.xcfilelist:
+
 2021-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add fast property enumeration mode for JSON.stringify
