@@ -1,4 +1,14 @@
 =================
+WebKitGTK 2.33.91
+=================
+
+What's new in WebKitGTK 2.33.91?
+
+  - Use the right display refresh monitor for animations in accelerated compositng mode.
+  - Fix several issues in JavaScriptCore on 32bit systems.
+  - Prefer python3 over python2 in CMake.
+
+=================
 WebKitGTK 2.33.90
 =================
 
