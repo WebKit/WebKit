@@ -1,3 +1,12 @@
+2021-09-17  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for js/dfg-int32array-overflow-values.html.
+        https://bugs.webkit.org/show_bug.cgi?id=229594.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-09-17  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur iOS14 ] http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html (layout-test) is a flaky timeout.
