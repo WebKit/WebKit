@@ -1,3 +1,16 @@
+2021-09-16  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
+        <https://webkit.org/b/230227>
+        <rdar://problem/83067708>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Add TypeCastsNS.mm to the project.
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsNS.mm: Add.
+        (TestWebKitAPI::TEST): Add tests for <wtf/TypeCastsNS.h>.
+
 2021-09-16  Philip Chimento  <pchimento@igalia.com>
 
         Fixes for build-webkit --minimal

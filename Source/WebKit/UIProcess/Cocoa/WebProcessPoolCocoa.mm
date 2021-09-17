@@ -65,12 +65,15 @@
 #import <WebCore/VersionChecks.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cf/CFNotificationCenterSPI.h>
 #import <sys/param.h>
 #import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/TypeCastsNS.h>
+#import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/TextStream.h>
@@ -130,6 +133,35 @@ SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
 #endif
 
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
+
+@interface WKProcessPoolWeakObserver : NSObject {
+    WeakPtr<WebKit::WebProcessPool> m_weakPtr;
+}
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithWeakPtr:(WeakPtr<WebKit::WebProcessPool>&&)weakPtr NS_DESIGNATED_INITIALIZER;
+@end
+
+NS_DIRECT_MEMBERS
+@interface WKProcessPoolWeakObserver (Direct)
+@property (nonatomic, readonly) RefPtr<WebKit::WebProcessPool> pool;
+@end
+
+@implementation WKProcessPoolWeakObserver
+- (instancetype)initWithWeakPtr:(WeakPtr<WebKit::WebProcessPool>&&)weakPtr
+{
+    if ((self = [super init]))
+        m_weakPtr = WTFMove(weakPtr);
+    return self;
+}
+@end
+
+NS_DIRECT_MEMBERS
+@implementation WKProcessPoolWeakObserver (Direct)
+- (RefPtr<WebKit::WebProcessPool>)pool
+{
+    return makeRefPtr(m_weakPtr.get());
+}
+@end
 
 namespace WebKit {
 using namespace WebCore;
@@ -603,29 +635,43 @@ bool WebProcessPool::processSuppressionEnabled() const
     return !m_userObservablePageCounter.value() && !m_processSuppressionDisabledForPageCounter.value();
 }
 
+static inline RefPtr<WebProcessPool> extractWebProcessPool(void* observer)
+{
+    RetainPtr strongObserver { dynamic_ns_cast<WKProcessPoolWeakObserver>(reinterpret_cast<id>(observer)) };
+    if (!strongObserver)
+        return nullptr;
+    return [strongObserver pool];
+}
+
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 float WebProcessPool::displayBrightness()
 {
     return BKSDisplayBrightnessGetCurrent();
 }
-    
-void WebProcessPool::backlightLevelDidChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+
+void WebProcessPool::backlightLevelDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    auto pool = extractWebProcessPool(observer);
+    if (!pool)
+        return;
     pool->sendToAllProcesses(Messages::WebProcess::BacklightLevelDidChange(BKSDisplayBrightnessGetCurrent()));
 }
 #endif
 
-void WebProcessPool::accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
+void WebProcessPool::accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    auto pool = extractWebProcessPool(observer);
+    if (!pool)
+        return;
     pool->sendToAllProcesses(Messages::WebProcess::AccessibilityPreferencesDidChange(accessibilityPreferences()));
 }
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-void WebProcessPool::mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
+void WebProcessPool::mediaAccessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    auto pool = extractWebProcessPool(observer);
+    if (!pool)
+        return;
     auto captionDisplayMode = WebCore::CaptionUserPreferencesMediaAF::platformCaptionDisplayMode();
     auto preferredLanguages = WebCore::CaptionUserPreferencesMediaAF::platformPreferredLanguages();
     pool->sendToAllProcesses(Messages::WebProcess::SetMediaAccessibilityPreferences(captionDisplayMode, preferredLanguages));
@@ -633,17 +679,21 @@ void WebProcessPool::mediaAccessibilityPreferencesChangedCallback(CFNotification
 #endif
 
 #if PLATFORM(MAC)
-void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    auto pool = extractWebProcessPool(observer);
+    if (!pool)
+        return;
     pool->sendToAllProcesses(Messages::WebProcess::ColorPreferencesDidChange());
 }
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
+void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
-    auto* pool = reinterpret_cast<WebProcessPool*>(observer);
+    auto pool = extractWebProcessPool(observer);
+    if (!pool)
+        return;
     for (auto& process : pool->m_processes)
         process->enableRemoteInspectorIfNeeded();
 }
@@ -661,6 +711,17 @@ void WebProcessPool::startObservingPreferenceChanges()
     });
 }
 #endif
+
+void WebProcessPool::addCFNotificationObserver(CFNotificationCallback callback, CFStringRef name, CFNotificationCenterRef center)
+{
+    auto coalesceBehavior = static_cast<CFNotificationSuspensionBehavior>(CFNotificationSuspensionBehaviorCoalesce | _CFNotificationObserverIsObjC);
+    CFNotificationCenterAddObserver(center, (__bridge const void*)m_weakObserver.get(), callback, name, nullptr, coalesceBehavior);
+}
+
+void WebProcessPool::removeCFNotificationObserver(CFStringRef name, CFNotificationCenterRef center)
+{
+    CFNotificationCenterRemoveObserver(center, (__bridge const void*)m_weakObserver.get(), name, nullptr);
+}
 
 void WebProcessPool::registerNotificationObservers()
 {
@@ -721,12 +782,14 @@ void WebProcessPool::registerNotificationObservers()
         setApplicationIsActive(false);
     }];
     
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), this, colorPreferencesDidChangeCallback, AppleColorPreferencesChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    m_weakObserver = adoptNS([[WKProcessPoolWeakObserver alloc] initWithWeakPtr:makeWeakPtr(*this)]);
+
+    addCFNotificationObserver(colorPreferencesDidChangeCallback, AppleColorPreferencesChangedNotification, CFNotificationCenterGetDistributedCenter());
 #elif !PLATFORM(MACCATALYST)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, backlightLevelDidChangeCallback, static_cast<CFStringRef>(UIBacklightLevelChangedNotification), nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    addCFNotificationObserver(backlightLevelDidChangeCallback, (__bridge CFStringRef)UIBacklightLevelChangedNotification);
 #if PLATFORM(IOS)
 #if ENABLE(REMOTE_INSPECTOR)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, remoteWebInspectorEnabledCallback, static_cast<CFStringRef>(CFSTR(WIRServiceEnabledNotification)), nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    addCFNotificationObserver(remoteWebInspectorEnabledCallback, CFSTR(WIRServiceEnabledNotification));
 #endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
@@ -762,14 +825,14 @@ void WebProcessPool::registerNotificationObservers()
     });
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSReduceMotionChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSIncreaseButtonLegibilityNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSEnhanceTextLegibilityChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSReduceMotionChangedNotification);
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSIncreaseButtonLegibilityNotification);
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSEnhanceTextLegibilityChangedNotification);
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification);
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification);
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification, nullptr, CFNotificationSuspensionBehaviorCoalesce);
+    addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
 }
 
@@ -786,12 +849,12 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSWorkspace.sharedWorkspace notificationCenter] removeObserver:m_accessibilityDisplayOptionsNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_scrollerStyleNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDistributedCenter(), this, AppleColorPreferencesChangedNotification, nullptr);
+    removeCFNotificationObserver(AppleColorPreferencesChangedNotification, CFNotificationCenterGetDistributedCenter());
 #elif !PLATFORM(MACCATALYST)
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, static_cast<CFStringRef>(UIBacklightLevelChangedNotification) , nullptr);
+    removeCFNotificationObserver((__bridge CFStringRef)UIBacklightLevelChangedNotification);
 #if PLATFORM(IOS)
 #if ENABLE(REMOTE_INSPECTOR)
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, CFSTR(WIRServiceEnabledNotification), nullptr);
+    removeCFNotificationObserver(CFSTR(WIRServiceEnabledNotification));
 #endif
 #endif // PLATFORM(IOS)
 #endif // !PLATFORM(IOS_FAMILY)
@@ -806,15 +869,17 @@ void WebProcessPool::unregisterNotificationObservers()
     m_powerSourceNotifier = nullptr;
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSReduceMotionChangedNotification, nullptr);
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSIncreaseButtonLegibilityNotification, nullptr);
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSEnhanceTextLegibilityChangedNotification, nullptr);
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSDarkenSystemColorsEnabledNotification, nullptr);
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kAXSInvertColorsEnabledNotification, nullptr);
+    removeCFNotificationObserver(kAXSReduceMotionChangedNotification);
+    removeCFNotificationObserver(kAXSIncreaseButtonLegibilityNotification);
+    removeCFNotificationObserver(kAXSEnhanceTextLegibilityChangedNotification);
+    removeCFNotificationObserver(kAXSDarkenSystemColorsEnabledNotification);
+    removeCFNotificationObserver(kAXSInvertColorsEnabledNotification);
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, nullptr);
+    removeCFNotificationObserver(kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
+
+    m_weakObserver = nil;
 }
 
 bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
