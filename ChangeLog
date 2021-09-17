@@ -1,3 +1,9 @@
+2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. [GTK] Bump version numbers
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-09-17  Martin Robinson  <mrobinson@webkit.org>
 
         Add Martin Robinson as a reviewer
