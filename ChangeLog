@@ -1,3 +1,12 @@
+2021-09-17  Martin Robinson  <mrobinson@webkit.org>
+
+        Add Martin Robinson as a reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=230392
+
+        Unreviewed.
+
+        * metadata/contributors.json: Add myself as a reviewer and update my specializations.
+
 2021-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Add a build option to enable ATSPI

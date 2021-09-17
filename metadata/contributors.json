@@ -4462,12 +4462,12 @@
          "mrobinson@igalia.com",
          "martin.james.robinson@gmail.com"
       ],
-      "expertise" : "The WebKitGTK Port, Cairo graphics backend, soup HTTP backend",
+      "expertise" : "The WebKitGTK port, scroll snap, position:sticky",
       "name" : "Martin Robinson",
       "nicks" : [
          "mrobinson"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
