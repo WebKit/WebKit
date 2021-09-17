@@ -75,8 +75,6 @@ public:
     bool isScrollCornerVisible() const final;
     void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
 
-    virtual void notifyPageThatContentAreaWillPaint() const;
-
     IntPoint locationOfContents() const;
 
     // NOTE: This should only be called by the overridden setScrollOffset from ScrollableArea.

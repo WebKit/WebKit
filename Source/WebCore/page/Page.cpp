@@ -1714,6 +1714,9 @@ void Page::doAfterUpdateRendering()
     }
 #endif
 
+    if (auto* view = mainFrame().view())
+        view->notifyAllFramesThatContentAreaWillPaint();
+
     if (!m_sampledPageTopColor) {
         m_sampledPageTopColor = PageColorSampler::sampleTop(*this);
         if (m_sampledPageTopColor)

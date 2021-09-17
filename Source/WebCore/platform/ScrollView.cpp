@@ -432,10 +432,6 @@ ScrollPosition ScrollView::documentScrollPositionRelativeToScrollableAreaOrigin(
     return scrollPosition() - IntSize(0, headerHeight());
 }
 
-void ScrollView::notifyPageThatContentAreaWillPaint() const
-{
-}
-
 void ScrollView::setScrollOffset(const ScrollOffset& offset)
 {
     LOG_WITH_STREAM(Scrolling, stream << "\nScrollView::setScrollOffset " << offset << " constrains " << constrainsScrollingToContentEdge());
@@ -1185,7 +1181,6 @@ void ScrollView::repaintContentRectangle(const IntRect& rect)
         return;
 
     if (platformWidget()) {
-        notifyPageThatContentAreaWillPaint();
         platformRepaintContentRectangle(paintRect);
         return;
     }
@@ -1281,8 +1276,6 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
 
     if (context.paintingDisabled() && !context.performingPaintInvalidation() && !eventRegionContext)
         return;
-
-    notifyPageThatContentAreaWillPaint();
 
     IntRect documentDirtyRect = rect;
     if (!paintsEntireContents()) {

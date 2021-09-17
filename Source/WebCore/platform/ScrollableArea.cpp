@@ -258,6 +258,7 @@ void ScrollableArea::willEndLiveResize()
 
 void ScrollableArea::contentAreaWillPaint() const
 {
+    // This is used to flash overlay scrollbars in some circumstances.
     if (ScrollAnimator* scrollAnimator = existingScrollAnimator())
         scrollAnimator->contentAreaWillPaint();
 }

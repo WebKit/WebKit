@@ -3967,7 +3967,17 @@ void FrameView::scrollbarStyleChanged(ScrollbarStyle newStyle, bool forceUpdate)
     ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
 }
 
-void FrameView::notifyPageThatContentAreaWillPaint() const
+void FrameView::notifyAllFramesThatContentAreaWillPaint() const
+{
+    notifyScrollableAreasThatContentAreaWillPaint();
+
+    for (auto* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {
+        if (auto* frameView = child->view())
+            frameView->notifyScrollableAreasThatContentAreaWillPaint();
+    }
+}
+
+void FrameView::notifyScrollableAreasThatContentAreaWillPaint() const
 {
     Page* page = frame().page();
     if (!page)
@@ -3978,8 +3988,11 @@ void FrameView::notifyPageThatContentAreaWillPaint() const
     if (!m_scrollableAreas)
         return;
 
-    for (auto& scrollableArea : *m_scrollableAreas)
-        scrollableArea->contentAreaWillPaint();
+    for (auto& scrollableArea : *m_scrollableAreas) {
+        // ScrollView ScrollableAreas will be handled via the Frame tree traversal above.
+        if (!is<ScrollView>(scrollableArea))
+            scrollableArea->contentAreaWillPaint();
+    }
 }
 
 bool FrameView::scrollAnimatorEnabled() const

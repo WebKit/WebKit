@@ -891,6 +891,8 @@ void ScrollAnimatorMac::notifyPositionChanged(const FloatSize& delta)
 
 void ScrollAnimatorMac::contentAreaWillPaint() const
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac for [" << scrollableArea() << "] contentAreaWillPaint (scrollers locked " << [m_scrollerImpPair overlayScrollerStateIsLocked] << ")");
+
     if ([m_scrollerImpPair overlayScrollerStateIsLocked])
         return;
 

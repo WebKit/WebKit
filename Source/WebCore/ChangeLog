@@ -1,3 +1,40 @@
+2021-09-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix some issues with the code paths that call into ScrollAnimator::contentAreaWillPaint()
+        https://bugs.webkit.org/show_bug.cgi?id=230372
+
+        Reviewed by Tim Horton.
+
+        ScrollAnimator::contentAreaWillPaint() is a hook used to flash overlay scrollbars in some
+        situations (e.g. a view becomes newly visible). AppKit wants `[m_scrollerImpPair contentAreaWillDraw]`
+        to be called at the equivalent of "viewWillDraw" time, which in WebCore terminology is
+        the end of the Page rendering update stage.
+
+        However, existing WebKitLegacy-only code called notifyPageThatContentAreaWillPaint()
+        from repaint code paths, including updateControlTints(), which was wrong, and caused
+        ordering issues in tests between the calls to setUsesMockScrollAnimator(true) and
+        accessing the scroll animator (see also webkit.org/b/230371).
+
+        Fix by calling FrameView::notifyAllFramesThatContentAreaWillPaint() near the end
+        of Page::doAfterUpdateRendering(), and having it do a correct Frame tree traversal.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::notifyAllFramesThatContentAreaWillPaint const):
+        (WebCore::FrameView::notifyScrollableAreasThatContentAreaWillPaint const):
+        (WebCore::FrameView::notifyPageThatContentAreaWillPaint const): Deleted.
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::repaintContentRectangle):
+        (WebCore::ScrollView::paint):
+        (WebCore::ScrollView::notifyPageThatContentAreaWillPaint const): Deleted.
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::contentAreaWillPaint const):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::contentAreaWillPaint const):
+
 2021-09-16  Philip Chimento  <pchimento@igalia.com>
 
         Fixes for build-webkit --minimal
