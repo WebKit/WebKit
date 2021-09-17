@@ -1,3 +1,46 @@
+2021-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert usesMockScrollAnimator from a DeprecatedGlobalSettings to a WebPreference
+        https://bugs.webkit.org/show_bug.cgi?id=230371
+
+        Reviewed by Tim Horton.
+
+        There were ordering problems that resulted from timing of a test calling
+        internals.setUsesMockScrollAnimator(true) and the first access of the scrollAnimator(),
+        which resulted in fast/scrolling/scroll-animator-select-list-events.html failing
+        when run twice in a row.
+
+        Fix by making usesMockScrollAnimator a WebPreference, which means that tests
+        can use <!-- webkit-test-runner --> options to enable it, which avoids the
+        ordering dependency.
+
+        * page/DeprecatedGlobalSettings.cpp:
+        (WebCore::DeprecatedGlobalSettings::setUsesMockScrollAnimator): Deleted.
+        (WebCore::DeprecatedGlobalSettings::usesMockScrollAnimator): Deleted.
+        * page/DeprecatedGlobalSettings.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::mockScrollAnimatorEnabled const):
+        (WebCore::FrameView::usesMockScrollAnimator const): Deleted.
+        * page/FrameView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollAnimator const):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::mockScrollAnimatorEnabled const):
+        (WebCore::ScrollableArea::usesMockScrollAnimator const): Deleted.
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::mockScrollAnimatorEnabled const):
+        (WebCore::RenderLayerScrollableArea::usesMockScrollAnimator const): Deleted.
+        * rendering/RenderLayerScrollableArea.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::mockScrollAnimatorEnabled const):
+        (WebCore::RenderListBox::usesMockScrollAnimator const): Deleted.
+        * rendering/RenderListBox.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setUsesMockScrollAnimator): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-09-17  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add InlineInvalidation::horizontalConstraintChanged

@@ -592,7 +592,6 @@ public:
     JSC::JSValue evaluateInWorldIgnoringException(const String& name, const String& source);
 
     void setUsesOverlayScrollbars(bool);
-    void setUsesMockScrollAnimator(bool);
 
     ExceptionOr<String> getCurrentCursorInfo();
 

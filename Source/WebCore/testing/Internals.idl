@@ -687,7 +687,6 @@ enum AutoplayPolicy {
     any evaluateInWorldIgnoringException(DOMString name, DOMString source);
 
     undefined setUsesOverlayScrollbars(boolean enabled);
-    undefined setUsesMockScrollAnimator(boolean enabled);
 
     undefined forceReload(boolean endToEnd);
     undefined reloadExpiredOnly();

@@ -190,7 +190,7 @@ public:
     bool isRubberBandInProgress() const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
     bool isScrollSnapInProgress() const final;
-    bool usesMockScrollAnimator() const final;
+    bool mockScrollAnimatorEnabled() const final;
     void logMockScrollAnimatorMessage(const String&) const final;
 
     String debugDescription() const final;

@@ -1,3 +1,18 @@
+2021-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert usesMockScrollAnimator from a DeprecatedGlobalSettings to a WebPreference
+        https://bugs.webkit.org/show_bug.cgi?id=230371
+
+        Reviewed by Tim Horton.
+
+        Add Windows preferences.
+
+        * WebPreferences.cpp:
+        (WebPreferences::mockScrollAnimatorEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2021-09-14  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()

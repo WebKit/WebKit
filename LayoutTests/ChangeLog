@@ -1,3 +1,17 @@
+2021-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert usesMockScrollAnimator from a DeprecatedGlobalSettings to a WebPreference
+        https://bugs.webkit.org/show_bug.cgi?id=230371
+
+        Reviewed by Tim Horton.
+        
+        Convert to use the  <!-- webkit-test-runner --> format for specifying MockScrollAnimatorEnabled.
+
+        * fast/scrolling/scroll-animator-basic-events.html:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html:
+        * fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html:
+        * fast/scrolling/scroll-animator-select-list-events.html:
+
 2021-09-17  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] http/wpt/webaudio/the-audio-api/the-audioworklet-interface/context-already-rendering.html is flaky.

@@ -1445,9 +1445,9 @@ bool FrameView::usesAsyncScrolling() const
     return false;
 }
 
-bool FrameView::usesMockScrollAnimator() const
+bool FrameView::mockScrollAnimatorEnabled() const
 {
-    return DeprecatedGlobalSettings::usesMockScrollAnimator();
+    return frame().settings().mockScrollAnimatorEnabled();
 }
 
 void FrameView::logMockScrollAnimatorMessage(const String& message) const

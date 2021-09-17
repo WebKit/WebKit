@@ -1521,6 +1521,16 @@ MockCaptureDevicesPromptEnabled:
     WebKit:
       default: true
 
+MockScrollAnimatorEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MockScrollbarsEnabled:
   type: bool
   webcoreBinding: DeprecatedGlobalSettings

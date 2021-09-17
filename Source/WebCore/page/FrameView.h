@@ -774,7 +774,7 @@ private:
 #endif
 
     bool usesCompositedScrolling() const final;
-    bool usesMockScrollAnimator() const final;
+    bool mockScrollAnimatorEnabled() const final;
     void logMockScrollAnimatorMessage(const String&) const final;
 
     bool styleHidesScrollbarWithOrientation(ScrollbarOrientation) const;

@@ -898,9 +898,9 @@ IntRect RenderListBox::scrollableAreaBoundingBox(bool*) const
     return absoluteBoundingBoxRect();
 }
 
-bool RenderListBox::usesMockScrollAnimator() const
+bool RenderListBox::mockScrollAnimatorEnabled() const
 {
-    return DeprecatedGlobalSettings::usesMockScrollAnimator();
+    return settings().mockScrollAnimatorEnabled();
 }
 
 void RenderListBox::logMockScrollAnimatorMessage(const String& message) const

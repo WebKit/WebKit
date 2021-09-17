@@ -1832,9 +1832,9 @@ void RenderLayerScrollableArea::updateLayerPositionsAfterOverflowScroll()
     m_layer.updateLayerPositionsAfterScroll(&geometryMap, RenderLayer::IsOverflowScroll);
 }
 
-bool RenderLayerScrollableArea::usesMockScrollAnimator() const
+bool RenderLayerScrollableArea::mockScrollAnimatorEnabled() const
 {
-    return DeprecatedGlobalSettings::usesMockScrollAnimator();
+    return m_layer.renderer().settings().mockScrollAnimatorEnabled();
 }
 
 void RenderLayerScrollableArea::logMockScrollAnimatorMessage(const String& message) const

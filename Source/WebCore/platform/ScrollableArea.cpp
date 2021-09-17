@@ -75,7 +75,7 @@ ScrollableArea::~ScrollableArea() = default;
 ScrollAnimator& ScrollableArea::scrollAnimator() const
 {
     if (!m_scrollAnimator) {
-        if (usesMockScrollAnimator()) {
+        if (mockScrollAnimatorEnabled()) {
             m_scrollAnimator = makeUnique<ScrollAnimatorMock>(const_cast<ScrollableArea&>(*this), [this](const String& message) {
                 logMockScrollAnimatorMessage(message);
             });

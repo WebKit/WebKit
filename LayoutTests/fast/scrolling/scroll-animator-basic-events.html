@@ -1,4 +1,4 @@
-<html>
+<html> <!-- webkit-test-runner [ MockScrollAnimatorEnabled=true ] -->
 <style>
     #scrollme {
         width: 100px;
@@ -12,8 +12,6 @@
 <script src="../../resources/js-test-pre.js"></script>
 <script>
     jsTestIsAsync = true;
-    if (window.internals)
-        window.internals.setUsesMockScrollAnimator(true);
 
     window.onload = function() {
         if (window.internals)

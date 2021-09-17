@@ -2637,3 +2637,8 @@ bool WebPreferences::canvasColorSpaceEnabled()
     return boolValueForKey("WebKitCanvasColorSpaceEnabled");
 }
 
+bool WebPreferences::mockScrollAnimatorEnabled()
+{
+    return boolValueForKey("WebKitMockScrollAnimatorEnabled");
+}
+
