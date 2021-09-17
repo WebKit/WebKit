@@ -98,7 +98,7 @@ public:
     void createAnswer(RTCAnswerOptions&&, CreateCallback&&);
     void setLocalDescription(const RTCSessionDescription*, Function<void(ExceptionOr<void>&&)>&&);
     void setRemoteDescription(const RTCSessionDescription&, Function<void(ExceptionOr<void>&&)>&&);
-    void addIceCandidate(RTCIceCandidate*, DOMPromiseDeferred<void>&&);
+    void addIceCandidate(RTCIceCandidate*, Function<void(ExceptionOr<void>&&)>&&);
 
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
 
@@ -229,7 +229,6 @@ private:
     virtual void doSetLocalDescription(const RTCSessionDescription*) = 0;
     virtual void doSetRemoteDescription(const RTCSessionDescription&) = 0;
     virtual void doAddIceCandidate(RTCIceCandidate&, AddIceCandidateCallback&&) = 0;
-    virtual void endOfIceCandidates(DOMPromiseDeferred<void>&&);
     virtual void doStop() = 0;
 
 protected:

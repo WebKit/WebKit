@@ -346,17 +346,27 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
         });
     }
 
+    ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", candidate ? candidate->candidate() : "null");
+
     if (exception) {
         promise->reject(*exception);
+        return;
+    }
+
+    if (candidate && candidate->sdpMid().isNull() && !candidate->sdpMLineIndex()) {
+        promise->reject(Exception { TypeError, "Trying to add a candidate that is missing both sdpMid and sdpMLineIndex"_s });
         return;
     }
 
     if (isClosed())
         return;
 
-    ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", candidate ? candidate->candidate() : "null");
     chainOperation(WTFMove(promise), [this, candidate = WTFMove(candidate)](auto&& promise) mutable {
-        m_backend->addIceCandidate(candidate.get(), WTFMove(promise));
+        m_backend->addIceCandidate(candidate.get(), [protectedThis = makeRef(*this), promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+            if (protectedThis->isClosed())
+                return;
+            promise.settle(WTFMove(result));
+        });
     });
 }
 

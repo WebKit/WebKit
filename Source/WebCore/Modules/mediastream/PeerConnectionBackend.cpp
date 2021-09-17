@@ -294,40 +294,39 @@ static inline bool shouldIgnoreIceCandidate(const RTCIceCandidate& iceCandidate)
     return false;
 }
 
-void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, DOMPromiseDeferred<void>&& promise)
+void PeerConnectionBackend::addIceCandidate(RTCIceCandidate* iceCandidate, Function<void(ExceptionOr<void>&&)>&& callback)
 {
     ASSERT(!m_peerConnection.isClosed());
 
     if (!iceCandidate) {
-        endOfIceCandidates(WTFMove(promise));
-        return;
-    }
-
-    // FIXME: As per https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-addicecandidate(), this check should be done before enqueuing the task.
-    if (iceCandidate->sdpMid().isNull() && !iceCandidate->sdpMLineIndex()) {
-        promise.reject(Exception { TypeError, "Trying to add a candidate that is missing both sdpMid and sdpMLineIndex"_s });
+        callback({ });
         return;
     }
 
     if (shouldIgnoreIceCandidate(*iceCandidate)) {
-        promise.resolve();
+        callback({ });
         return;
     }
 
-    doAddIceCandidate(*iceCandidate, [weakThis = makeWeakPtr(this), promise = WTFMove(promise)](auto&& result) mutable {
-        ASSERT(isMainThread());
-        if (!weakThis || weakThis->m_peerConnection.isClosed())
+    doAddIceCandidate(*iceCandidate, [weakThis = makeWeakPtr(this), callback = WTFMove(callback)](auto&& result) mutable {
+        if (!weakThis)
             return;
 
-        if (result.hasException()) {
-            RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate failed %d", result.exception().code());
-            promise.reject(result.releaseException());
-            return;
-        }
+        auto& peerConnection = weakThis->m_peerConnection;
+        peerConnection.queueTaskKeepingObjectAlive(peerConnection, TaskSource::Networking, [&peerConnection, callback = WTFMove(callback), result = WTFMove(result)]() mutable {
+            if (peerConnection.isClosed())
+                return;
 
-        if (auto descriptions = result.releaseReturnValue())
-            weakThis->m_peerConnection.updateDescriptions(WTFMove(*descriptions));
-        promise.resolve();
+            if (result.hasException()) {
+                RELEASE_LOG_ERROR(WebRTC, "Adding ice candidate failed %d", result.exception().code());
+                callback(result.releaseException());
+                return;
+            }
+
+            if (auto descriptions = result.releaseReturnValue())
+                peerConnection.updateDescriptions(WTFMove(*descriptions));
+            callback({ });
+        });
     });
 }
 
@@ -384,11 +383,6 @@ void PeerConnectionBackend::doneGatheringCandidates()
 
     m_peerConnection.scheduleEvent(RTCPeerConnectionIceEvent::create(Event::CanBubble::No, Event::IsCancelable::No, nullptr, { }));
     m_peerConnection.updateIceGatheringState(RTCIceGatheringState::Complete);
-}
-
-void PeerConnectionBackend::endOfIceCandidates(DOMPromiseDeferred<void>&& promise)
-{
-    promise.resolve();
 }
 
 void PeerConnectionBackend::stop()
