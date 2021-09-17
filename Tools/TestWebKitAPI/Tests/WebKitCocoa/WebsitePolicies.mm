@@ -255,7 +255,12 @@ TEST(WebpagePreferences, WebsitePoliciesContentBlockersEnabled)
 
 @end
 
+// FIXME: This test is timing out on iOS simulator. See https://bugs.webkit.org/show_bug.cgi?id=229094
+#if PLATFORM(MAC)
 TEST(WebpagePreferences, WebsitePoliciesAutoplayEnabled)
+#else
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesAutoplayEnabled)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -429,7 +434,12 @@ TEST(WebpagePreferences, WebsitePoliciesPlayAfterPreventedAutoplay)
 }
 #endif
 
+// FIXME: This test is timing out on iOS simulator. See https://bugs.webkit.org/show_bug.cgi?id=229094
+#if PLATFORM(MAC)
 TEST(WebpagePreferences, WebsitePoliciesPlayingWithUserGesture)
+#else
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesPlayingWithUserGesture)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(IOS_FAMILY)
@@ -485,7 +495,12 @@ TEST(WebpagePreferences, WebsitePoliciesPlayingWithUserGesture)
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsMediaIsMainContent);
 }
 
+// FIXME: This test is timing out on iOS simulator. See https://bugs.webkit.org/show_bug.cgi?id=229094
+#if PLATFORM(MAC)
 TEST(WebpagePreferences, WebsitePoliciesPlayingWithoutInterference)
+#else
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesPlayingWithoutInterference)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(IOS_FAMILY)
@@ -509,7 +524,12 @@ TEST(WebpagePreferences, WebsitePoliciesPlayingWithoutInterference)
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsHasAudio);
 }
 
+// FIXME: This test is timing out on iOS simulator. See https://bugs.webkit.org/show_bug.cgi?id=229094
+#if PLATFORM(MAC)
 TEST(WebpagePreferences, WebsitePoliciesUserInterferenceWithPlaying)
+#else
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesUserInterferenceWithPlaying)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(IOS_FAMILY)
@@ -729,7 +749,12 @@ TEST(WebpagePreferences, WebsitePoliciesDuringRedirect)
 }
 #endif // PLATFORM(MAC)
 
+// FIXME: This test is timing out on iOS simulator. See https://bugs.webkit.org/show_bug.cgi?id=229094
+#if PLATFORM(MAC)
 TEST(WebpagePreferences, WebsitePoliciesUpdates)
+#else
+TEST(WebpagePreferences, DISABLED_WebsitePoliciesUpdates)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(IOS_FAMILY)

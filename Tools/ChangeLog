@@ -1,3 +1,16 @@
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION: [ iOS ] 5 TestWebKitAPI.WebpagePreferences.* api tests are flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=229094
+
+        Reviewed by Chris Dumez.
+
+        Disable the tests on iOS until we can fix the problem.
+        This will help EWS be much faster and more reliable.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+
 2021-09-17  Geza Lore  <gezalore@gmail.com>
 
         Speed up run-jsc-stress-tests with parallel processing
