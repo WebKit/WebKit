@@ -536,6 +536,28 @@ HTMLMediaElement::~HTMLMediaElement()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     beginIgnoringTrackDisplayUpdateRequests();
+
+    if (m_textTracks) {
+        for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+            auto track = m_textTracks->item(i);
+            track->clearClient(*this);
+        }
+    }
+
+    if (m_audioTracks) {
+        for (unsigned i = 0; i < m_audioTracks->length(); ++i) {
+            auto track = m_audioTracks->item(i);
+            track->clearClient(*this);
+        }
+    }
+
+    if (m_videoTracks) {
+        for (unsigned i = 0; i < m_videoTracks->length(); ++i) {
+            auto track = m_videoTracks->item(i);
+            track->clearClient(*this);
+        }
+    }
+
     allMediaElements().remove(this);
 
     setShouldDelayLoadEvent(false);
