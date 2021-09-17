@@ -57,7 +57,8 @@ private:
 
     using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool>;
     std::optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
-    std::optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypesCache;
+    HashSet<String, ASCIICaseInsensitiveHash> m_supportedTypesCache;
+    bool m_hasPopulatedSupportedTypesCacheFromGPUProcess { false };
 };
 
 } // namespace WebKit

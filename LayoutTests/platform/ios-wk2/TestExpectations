@@ -1153,8 +1153,6 @@ webkit.org/b/165814 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/161359 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html [ Pass Failure ]
 webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Pass Failure ]
 
-webkit.org/b/230011 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/resource-popup.https.html [ Pass Crash ]
-
 # Newly imported WPT tests that are timing out on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-keyup-prevented.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
