@@ -308,6 +308,7 @@ void SlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& 
         return;
 
     RenderTreeUpdater::tearDownRenderers(*shadowRoot.host());
+    shadowRoot.host()->invalidateStyleAndRenderersForSubtree();
 
     slot->assignedNodes.clear();
     m_slotAssignmentsIsValid = false;
@@ -315,8 +316,6 @@ void SlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& 
     auto slotElement = makeRefPtr(findFirstSlotElement(*slot, shadowRoot));
     if (!slotElement)
         return;
-
-    shadowRoot.host()->invalidateStyleAndRenderersForSubtree();
 
     if (shadowRoot.shouldFireSlotchangeEvent())
         slotElement->enqueueSlotChangeEvent();

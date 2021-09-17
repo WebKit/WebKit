@@ -1,3 +1,13 @@
+2021-07-08  Antti Koivisto  <antti@apple.com>
+
+        Shadow host stops rendering after removing a slot, updating style, then its assigned node
+        https://bugs.webkit.org/show_bug.cgi?id=227652
+
+        Reviewed by Alan Bujtas.
+
+        * fast/shadow-dom/remove-slot-and-host-child-expected.html: Added.
+        * fast/shadow-dom/remove-slot-and-host-child.html: Added.
+
 2021-06-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Nullptr crash in StyledMarkupAccumulator::traverseNodesForSerialization
