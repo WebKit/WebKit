@@ -607,6 +607,11 @@ private:
     void setUseSystemAppearanceForScrollbars(bool);
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    void handlePreferenceChange(const String& domain, const String& key, id value) final;
+    void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
+#endif
+
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<WebCore::PageIdentifier, RefPtr<WebPage>> m_pageMap;

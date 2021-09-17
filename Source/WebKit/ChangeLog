@@ -1,3 +1,30 @@
+2021-09-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [GPUP] Update AX settings on preference updates
+        https://bugs.webkit.org/show_bug.cgi?id=230409
+
+        Reviewed by Chris Fleizach.
+
+        We should update AX settings in the GPUP process on preference updates, like we do in the WebContent process. To address this,
+        move associated code from the WebProcess class to the AuxiliaryProcess class.
+
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/cocoa/GPUProcessCocoa.mm:
+        (WebKit::GPUProcess::notifyPreferencesChanged):
+        (WebKit::GPUProcess::dispatchSimulatedNotificationsForPreferenceChange):
+        * Shared/AuxiliaryProcess.h:
+        (WebKit::AuxiliaryProcess::dispatchSimulatedNotificationsForPreferenceChange):
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::preferenceDidUpdate):
+        (WebKit::AuxiliaryProcess::handlePreferenceChange):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::dispatchSimulatedNotificationsForPreferenceChange):
+        (WebKit::WebProcess::handlePreferenceChange):
+        (WebKit::WebProcess::notifyPreferencesChanged):
+        (WebKit::dispatchSimulatedNotificationsForPreferenceChange): Deleted.
+        (WebKit::handlePreferenceChange): Deleted.
+
 2021-09-17  Chris Dumez  <cdumez@apple.com>
 
         Crash under RemoteMediaPlayerManager::getSupportedTypes()

@@ -138,6 +138,10 @@ protected:
 #if ENABLE(CFPREFS_DIRECT_MODE)
     static id decodePreferenceValue(const std::optional<String>& encodedValue);
     static void setPreferenceValue(const String& domain, const String& key, id value);
+    
+    virtual void preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue);
+    virtual void handlePreferenceChange(const String& domain, const String& key, id value);
+    virtual void dispatchSimulatedNotificationsForPreferenceChange(const String& key) { }
 #endif
 
 private:

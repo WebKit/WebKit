@@ -90,7 +90,6 @@
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
-#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -107,10 +106,6 @@
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
-
-#if ENABLE(CFPREFS_DIRECT_MODE)
-#import "AccessibilitySupportSPI.h"
-#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -184,11 +179,6 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, CMPhoto, CMPhotoIsTileDecoderAvai
 #if PLATFORM(MAC)
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
-#endif
-
-#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
-SOFT_LINK_LIBRARY(libAccessibility)
-SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
 #endif
 
 namespace WebKit {
@@ -1093,21 +1083,13 @@ static const WTF::String& invertColorsPreferenceKey()
 }
 #endif
 
-#if !(HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)) && PLATFORM(IOS_FAMILY)
-static const WTF::String& increaseContrastPreferenceKey()
-{
-    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));
-    return key;
-}
-#endif
-
 static const WTF::String& captionProfilePreferenceKey()
 {
     static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("MACaptionActiveProfile"));
     return key;
 }
 
-static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
+void WebProcess::dispatchSimulatedNotificationsForPreferenceChange(const String& key)
 {
 #if USE(APPKIT)
     // Ordinarily, other parts of the system ensure that this notification is posted after this default is changed.
@@ -1131,7 +1113,7 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
     }
 }
 
-static void handlePreferenceChange(const String& domain, const String& key, id value)
+void WebProcess::handlePreferenceChange(const String& domain, const String& key, id value)
 {
     if (key == "AppleLanguages") {
         // We need to set AppleLanguages for the volatile domain, similarly to what we do in XPCServiceMain.mm.
@@ -1143,39 +1125,18 @@ static void handlePreferenceChange(const String& domain, const String& key, id v
         WTF::languageDidChange();
     }
 
-    if (domain == String(kAXSAccessibilityPreferenceDomain)) {
-#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
-        if (_AXSUpdateWebAccessibilitySettingsPtr())
-            _AXSUpdateWebAccessibilitySettingsPtr()();
-#elif PLATFORM(IOS_FAMILY)
-        // If the update method is not available, to update the cache inside AccessibilitySupport,
-        // these methods need to be called directly.
-        if (CFEqual(key.createCFString().get(), kAXSReduceMotionPreference) && [value isKindOfClass:[NSNumber class]])
-            _AXSSetReduceMotionEnabled([(NSNumber *)value boolValue]);
-        else if (CFEqual(key.createCFString().get(), increaseContrastPreferenceKey()) && [value isKindOfClass:[NSNumber class]])
-            _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
-#endif
-    }
-    
 #if USE(APPKIT)
     auto cfKey = key.createCFString();
     if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey())
         [NSWorkspace _invalidateAccessibilityDisplayValues];
 #endif
 
-    dispatchSimulatedNotificationsForPreferenceChange(key);
+    AuxiliaryProcess::handlePreferenceChange(domain, key, value);
 }
 
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
-    id value = nil;
-    if (encodedValue) {
-        value = decodePreferenceValue(encodedValue);
-        if (!value)
-            return;
-    }
-    setPreferenceValue(domain, key, value);
-    handlePreferenceChange(domain, key, value);
+    preferenceDidUpdate(domain, key, encodedValue);
 }
 
 void WebProcess::unblockPreferenceService(Vector<SandboxExtension::Handle>&& handleArray)

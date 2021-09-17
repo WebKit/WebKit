@@ -35,6 +35,16 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+#import "AccessibilitySupportSPI.h"
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#endif
+
+#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
+SOFT_LINK_LIBRARY(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -160,6 +170,46 @@ void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& ke
     } else
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 }
+
+void AuxiliaryProcess::preferenceDidUpdate(const String& domain, const String& key, const std::optional<String>& encodedValue)
+{
+    id value = nil;
+    if (encodedValue) {
+        value = decodePreferenceValue(encodedValue);
+        if (!value)
+            return;
+    }
+    setPreferenceValue(domain, key, value);
+    handlePreferenceChange(domain, key, value);
+}
+
+#if !HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && PLATFORM(IOS_FAMILY)
+static const WTF::String& increaseContrastPreferenceKey()
+{
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));
+    return key;
+}
+#endif
+
+void AuxiliaryProcess::handlePreferenceChange(const String& domain, const String& key, id value)
+{
+    if (domain == String(kAXSAccessibilityPreferenceDomain)) {
+#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS)
+        if (_AXSUpdateWebAccessibilitySettingsPtr())
+            _AXSUpdateWebAccessibilitySettingsPtr()();
+#elif PLATFORM(IOS_FAMILY)
+        // If the update method is not available, to update the cache inside AccessibilitySupport,
+        // these methods need to be called directly.
+        if (CFEqual(key.createCFString().get(), kAXSReduceMotionPreference) && [value isKindOfClass:[NSNumber class]])
+            _AXSSetReduceMotionEnabled([(NSNumber *)value boolValue]);
+        else if (CFEqual(key.createCFString().get(), increaseContrastPreferenceKey()) && [value isKindOfClass:[NSNumber class]])
+            _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
+#endif
+    }
+
+    dispatchSimulatedNotificationsForPreferenceChange(key);
+}
+
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 
 } // namespace WebKit
