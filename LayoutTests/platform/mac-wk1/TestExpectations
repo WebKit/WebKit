@@ -1404,3 +1404,5 @@ webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pas
 webkit.org/b/230055 [ BigSur ] webrtc/datachannel/datachannel-page-cache-send.html [ Pass Timeout ]
 
 webkit.org/b/228211 css2.1/20110323/replaced-intrinsic-003.htm [ Pass Failure ]
+
+webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
