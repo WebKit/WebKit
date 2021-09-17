@@ -1,3 +1,9 @@
+2021-09-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed build fix for Ubuntu LTS/Debian after r282597
+
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+
 2021-09-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some issues with the code paths that call into ScrollAnimator::contentAreaWillPaint()

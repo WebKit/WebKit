@@ -31,6 +31,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
+#include "RenderView.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
