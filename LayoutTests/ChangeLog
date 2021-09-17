@@ -1,3 +1,9 @@
+2021-09-17  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed fix to remove stray conflict markers after r276759
+
+        * platform/glib/TestExpectations: Remove stray conflict markers.
+
 2021-08-16  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r275756): Accelerated animations freeze when invalidating layout with shadow dom

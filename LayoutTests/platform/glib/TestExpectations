@@ -550,11 +550,6 @@ webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeou
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
 webkit.org/b/217961 http/tests/images/mp4-partial-load.html [ Timeout Pass ]
-<<<<<<< HEAD
-=======
-
-webkit.org/b/224109 http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Failure Pass ]
->>>>>>> 6b6396355c8 (REGRESSION(r274358) [GStreamer] http/tests/images/mp4-partial-load.html is flaky crashing inside GStreamer)
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
