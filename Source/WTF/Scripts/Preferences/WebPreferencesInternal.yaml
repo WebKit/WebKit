@@ -772,7 +772,7 @@ UseCGDisplayListsForDOMRendering:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 UseGPUProcessForDOMRenderingEnabled:
   type: bool

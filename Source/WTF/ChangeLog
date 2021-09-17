@@ -1,3 +1,12 @@
+2021-09-17  Tim Horton  <timothy_horton@apple.com>
+
+        Enable UseCGDisplayListsForDOMRendering by default where it is available
+        https://bugs.webkit.org/show_bug.cgi?id=230387
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-09-17  Cameron McCormack  <heycam@apple.com>
 
         Preserve color space when creating ImageBuffers for ImageBitmaps
