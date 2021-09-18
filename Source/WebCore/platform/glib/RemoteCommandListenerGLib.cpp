@@ -19,7 +19,7 @@
 #include "config.h"
 #include "RemoteCommandListenerGLib.h"
 
-#if USE(GLIB)
+#if USE(GLIB) && ENABLE(MEDIA_SESSION)
 
 namespace WebCore {
 

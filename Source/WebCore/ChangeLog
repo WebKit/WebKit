@@ -1,3 +1,21 @@
+2021-09-18  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK] Disable MediaSessionManagerGLib when MEDIA_SESSION disabled
+        https://bugs.webkit.org/show_bug.cgi?id=230420
+
+        Reviewed by Philippe Normand.
+
+        Previously WebKit would try to own the MPRIS bus names even though
+        the feature was disabled.
+
+        * platform/RemoteCommandListener.cpp:
+        (WebCore::RemoteCommandListener::resetCreationFunction):
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        * platform/audio/glib/MediaSessionManagerGLib.cpp:
+        * platform/audio/glib/MediaSessionManagerGLib.h:
+        * platform/glib/RemoteCommandListenerGLib.cpp:
+        * platform/glib/RemoteCommandListenerGLib.h:
+
 2021-09-18  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Stretch the inline box with glyphs coming from fallback fonts.

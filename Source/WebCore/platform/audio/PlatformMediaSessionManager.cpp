@@ -74,12 +74,12 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
     return sharedPlatformMediaSessionManager().get();
 }
 
-#if !PLATFORM(COCOA) && !USE(GLIB)
+#if !PLATFORM(COCOA) && (!USE(GLIB) || !ENABLE(MEDIA_SESSION))
 std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create()
 {
     return std::unique_ptr<PlatformMediaSessionManager>(new PlatformMediaSessionManager);
 }
-#endif // !PLATFORM(COCOA) && !USE(GLIB)
+#endif // !PLATFORM(COCOA) && (!USE(GLIB) || !ENABLE(MEDIA_SESSION))
 
 void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 {

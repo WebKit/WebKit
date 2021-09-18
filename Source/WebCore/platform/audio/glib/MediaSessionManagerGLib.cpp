@@ -19,7 +19,7 @@
 #include "config.h"
 #include "MediaSessionManagerGLib.h"
 
-#if USE(GLIB)
+#if USE(GLIB) && ENABLE(MEDIA_SESSION)
 
 #include "ApplicationGLib.h"
 #include "AudioSession.h"

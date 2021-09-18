@@ -52,7 +52,7 @@ void RemoteCommandListener::resetCreationFunction()
     remoteCommandListenerCreationFunction() = [] (RemoteCommandListenerClient& client) {
 #if PLATFORM(COCOA)
         return RemoteCommandListenerCocoa::create(client);
-#elif USE(GLIB)
+#elif USE(GLIB) && ENABLE(MEDIA_SESSION)
         return RemoteCommandListenerGLib::create(client);
 #else
         UNUSED_PARAM(client);

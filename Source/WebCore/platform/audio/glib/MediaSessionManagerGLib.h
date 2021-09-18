@@ -18,7 +18,7 @@
 
 #pragma once
 
-#if USE(GLIB)
+#if USE(GLIB) && ENABLE(MEDIA_SESSION)
 
 #include "NowPlayingManager.h"
 #include "PlatformMediaSessionManager.h"
