@@ -1,5 +1,24 @@
 2021-09-18  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Add skeleton implementation for fallback font support
+        https://bugs.webkit.org/show_bug.cgi?id=230433
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting inline box stretching glyphs coming from fallback fonts.
+
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts const):
+        (WebCore::Layout::LineBoxBuilder::setInitialVerticalGeometryForInlineBox const):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        (WebCore::Layout::LineBoxBuilder::setVerticalGeometryForInlineBox const): Deleted.
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.h:
+        * layout/formattingContexts/inline/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::fallbackFontsForRun):
+        * layout/formattingContexts/inline/text/TextUtil.h:
+
+2021-09-18  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Enable surrogate pairs
         https://bugs.webkit.org/show_bug.cgi?id=229434
 

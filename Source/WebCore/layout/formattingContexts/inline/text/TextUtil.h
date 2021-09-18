@@ -27,7 +27,9 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "Font.h"
 #include "InlineItem.h"
+#include "InlineLine.h"
 #include "LayoutUnits.h"
 #include <wtf/text/TextBreakIterator.h>
 
@@ -45,6 +47,9 @@ public:
     static InlineLayoutUnit width(const InlineTextItem&, InlineLayoutUnit contentLogicalLeft);
     static InlineLayoutUnit width(const InlineTextItem&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
     static InlineLayoutUnit width(const InlineTextBox&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
+
+    using FallbackFontList = HashSet<const Font*>;
+    static FallbackFontList fallbackFontsForRun(const Line::Run&);
 
     struct MidWordBreak {
         size_t start { 0 };

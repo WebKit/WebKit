@@ -31,6 +31,7 @@
 #include "InlineLineBox.h"
 #include "InlineLineBuilder.h"
 #include "InlineLineGeometry.h"
+#include "TextUtil.h"
 
 namespace WebCore {
 namespace Layout {
@@ -50,7 +51,8 @@ public:
     LineBoxAndGeometry build(const LineBuilder::LineContent&);
 
 private:
-    void setVerticalGeometryForInlineBox(InlineLevelBox&) const;
+    void setInitialVerticalGeometryForInlineBox(InlineLevelBox&) const;
+    void adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox&, const Line::Run&, const TextUtil::FallbackFontList&) const;
     InlineLayoutUnit constructAndAlignInlineLevelBoxes(LineBox&, const Line::RunList&);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }

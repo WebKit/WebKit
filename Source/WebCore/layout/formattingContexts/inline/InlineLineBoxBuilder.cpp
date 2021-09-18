@@ -158,7 +158,14 @@ LineBoxBuilder::LineBoxAndGeometry LineBoxBuilder::build(const LineBuilder::Line
     return { lineBox, lineGeometry() };
 }
 
-void LineBoxBuilder::setVerticalGeometryForInlineBox(InlineLevelBox& inlineLevelBox) const
+void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox& parentInlineBox, const Line::Run& textRun, const TextUtil::FallbackFontList& fallbackFonts) const
+{
+    UNUSED_PARAM(parentInlineBox);
+    UNUSED_PARAM(textRun);
+    UNUSED_PARAM(fallbackFonts);
+}
+
+void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inlineLevelBox) const
 {
     ASSERT(inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox());
     auto& fontMetrics = inlineLevelBox.style().fontMetrics();
@@ -195,7 +202,7 @@ void LineBoxBuilder::setVerticalGeometryForInlineBox(InlineLevelBox& inlineLevel
 InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
-    setVerticalGeometryForInlineBox(rootInlineBox);
+    setInitialVerticalGeometryForInlineBox(rootInlineBox);
 
     // FIXME: Add fast path support for line-height content.
     // FIXME: We should always be able to exercise the fast path when the line has no content at all, even in non-standards mode or with line-height set.
@@ -236,7 +243,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
         // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
         for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
             auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth(), InlineLevelBox::LineSpanningInlineBox::Yes);
-            setVerticalGeometryForInlineBox(inlineBox);
+            setInitialVerticalGeometryForInlineBox(inlineBox);
             updateCanUseSimplifiedAlignment(inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
         }
@@ -303,7 +310,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             auto initialLogicalWidth = rootInlineBox.logicalWidth() - (run.logicalLeft() + marginStart);
             ASSERT(initialLogicalWidth >= 0);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, logicalLeft + marginStart, initialLogicalWidth);
-            setVerticalGeometryForInlineBox(inlineBox);
+            setInitialVerticalGeometryForInlineBox(inlineBox);
             updateCanUseSimplifiedAlignment(inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             continue;
@@ -324,14 +331,24 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             updateCanUseSimplifiedAlignment(inlineBox);
             continue;
         }
-        if (run.isText() || run.isSoftLineBreak()) {
-            // FIXME: Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
+        if (run.isText()) {
+            auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
+            parentInlineBox.setHasContent();
+            auto fallbackFonts = TextUtil::fallbackFontsForRun(run);
+            if (!fallbackFonts.isEmpty()) {
+                // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
+                adjustVerticalGeometryForInlineBoxWithFallbackFonts(parentInlineBox, run, fallbackFonts);
+                updateCanUseSimplifiedAlignment(parentInlineBox);
+            }
+            continue;
+        }
+        if (run.isSoftLineBreak()) {
             lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent()).setHasContent();
             continue;
         }
         if (run.isHardLineBreak()) {
             auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
-            setVerticalGeometryForInlineBox(lineBreakBox);
+            setInitialVerticalGeometryForInlineBox(lineBreakBox);
             updateCanUseSimplifiedAlignment(lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
             continue;
