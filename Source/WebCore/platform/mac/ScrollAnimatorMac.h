@@ -33,8 +33,6 @@
 #include "ScrollAnimator.h"
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS WebScrollAnimationHelperDelegate;
-
 namespace WebCore {
 
 class Scrollbar;
@@ -44,17 +42,15 @@ public:
     ScrollAnimatorMac(ScrollableArea&);
     virtual ~ScrollAnimatorMac();
 
-    void immediateScrollToPositionForScrollAnimation(const FloatPoint& newPosition);
-
 private:
     bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>) final;
-    bool scrollToPositionWithAnimation(const FloatPoint&) final;
-    bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped) final;
 
 #if ENABLE(RUBBER_BANDING)
     bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&) const;
     bool handleWheelEvent(const PlatformWheelEvent&) final;
 #endif
+
+    bool platformAllowsScrollAnimation() const;
 
     void handleWheelEventPhase(PlatformWheelEventPhase) final;
     
@@ -82,9 +78,6 @@ private:
     void immediateScrollBy(const FloatSize&) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
 #endif
-
-    RetainPtr<id> m_scrollAnimationHelper;
-    RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 };
 
 } // namespace WebCore

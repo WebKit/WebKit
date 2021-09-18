@@ -71,7 +71,7 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     if (behavior.contains(ScrollBehavior::DoDirectionalSnapping)) {
         behavior.remove(ScrollBehavior::DoDirectionalSnapping);
         if (!m_scrollController.usesScrollSnap())
-            return scroll(orientation, granularity, step, multiplier, behavior);
+            return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
 
         auto currentOffset = offsetFromPosition(currentPosition());
         auto newOffset = currentOffset + delta;
@@ -87,7 +87,7 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     }
 
 #if ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY)
-    if (m_scrollableArea.scrollAnimatorEnabled() && !behavior.contains(ScrollBehavior::NeverAnimate))
+    if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate))
         return m_scrollAnimation->startAnimatedScroll(orientation, granularity, m_currentPosition, step, multiplier);
 #endif
 
@@ -105,6 +105,7 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
         return false;
 
     m_scrollAnimation->stop();
+
     m_currentPosition = adjustedPosition;
     notifyPositionChanged(adjustedPosition - currentPosition);
     updateActiveScrollSnapIndexForOffset();
@@ -238,6 +239,8 @@ bool ScrollAnimator::handleTouchEvent(const PlatformTouchEvent&)
 
 void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 {
+    WTFLogAlways("setCurrentPosition to %.2f", position.y());
+
     m_currentPosition = position;
     updateActiveScrollSnapIndexForOffset();
 }
@@ -383,6 +386,7 @@ float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis
 void ScrollAnimator::scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& position)
 {
     FloatSize delta = position - m_currentPosition;
+    WTFLogAlways("scrollAnimationDidUpdate to %.2f", position.y());
     m_currentPosition = position;
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();

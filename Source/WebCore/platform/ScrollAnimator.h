@@ -141,6 +141,8 @@ public:
 
 protected:
     virtual void notifyPositionChanged(const FloatSize& delta);
+    virtual bool platformAllowsScrollAnimation() const { return true; }
+
     void updateActiveScrollSnapIndexForOffset();
 
     FloatPoint offsetFromPosition(const FloatPoint& position);

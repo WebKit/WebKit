@@ -35,120 +35,7 @@
 #import "ScrollView.h"
 #import "ScrollableArea.h"
 #import "ScrollbarsController.h"
-#import <wtf/BlockObjCExceptions.h>
-#import <wtf/NakedPtr.h>
 #import <wtf/text/TextStream.h>
-
-using WebCore::ScrollableArea;
-using WebCore::ScrollAnimatorMac;
-using WebCore::Scrollbar;
-using WebCore::GraphicsLayer;
-using WebCore::VerticalScrollbar;
-using WebCore::IntRect;
-
-@interface NSObject (ScrollAnimationHelperDetails)
-- (id)initWithDelegate:(id)delegate;
-- (void)_stopRun;
-- (BOOL)_isAnimating;
-- (NSPoint)targetOrigin;
-- (CGFloat)_progress;
-@end
-
-@interface WebScrollAnimationHelperDelegate : NSObject
-{
-    NakedPtr<WebCore::ScrollAnimatorMac> _animator;
-}
-- (id)initWithScrollAnimator:(NakedPtr<WebCore::ScrollAnimatorMac>)scrollAnimator;
-@end
-
-static NSSize abs(NSSize size)
-{
-    NSSize finalSize = size;
-    if (finalSize.width < 0)
-        finalSize.width = -finalSize.width;
-    if (finalSize.height < 0)
-        finalSize.height = -finalSize.height;
-    return finalSize;    
-}
-
-@implementation WebScrollAnimationHelperDelegate
-
-- (id)initWithScrollAnimator:(NakedPtr<WebCore::ScrollAnimatorMac>)scrollAnimator
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _animator = scrollAnimator;
-    return self;
-}
-
-- (void)invalidate
-{
-    _animator = nullptr;
-}
-
-- (NSRect)bounds
-{
-    if (!_animator)
-        return NSZeroRect;
-
-    WebCore::FloatPoint currentPosition = _animator->currentPosition();
-    return NSMakeRect(currentPosition.x(), currentPosition.y(), 0, 0);
-}
-
-- (void)_immediateScrollToPoint:(NSPoint)newPosition
-{
-    if (!_animator)
-        return;
-    _animator->immediateScrollToPositionForScrollAnimation(newPosition);
-}
-
-- (NSPoint)_pixelAlignProposedScrollPosition:(NSPoint)newOrigin
-{
-    return newOrigin;
-}
-
-- (NSSize)convertSizeToBase:(NSSize)size
-{
-    return abs(size);
-}
-
-- (NSSize)convertSizeFromBase:(NSSize)size
-{
-    return abs(size);
-}
-
-- (NSSize)convertSizeToBacking:(NSSize)size
-{
-    return abs(size);
-}
-
-- (NSSize)convertSizeFromBacking:(NSSize)size
-{
-    return abs(size);
-}
-
-- (id)superview
-{
-    return nil;
-}
-
-- (id)documentView
-{
-    return nil;
-}
-
-- (id)window
-{
-    return nil;
-}
-
-- (void)_recursiveRecomputeToolTips
-{
-}
-
-@end
 
 namespace WebCore {
 
@@ -160,17 +47,13 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
 {
-    m_scrollAnimationHelperDelegate = adoptNS([[WebScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
-    m_scrollAnimationHelper = adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
-
 }
 
 ScrollAnimatorMac::~ScrollAnimatorMac() = default;
 
-static bool scrollAnimationEnabledForSystem()
+bool ScrollAnimatorMac::platformAllowsScrollAnimation() const
 {
-    NSString* scrollAnimationDefaultsKey = @"NSScrollAnimationEnabled";
-    static bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:scrollAnimationDefaultsKey];
+    static bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
     return enabled;
 }
 
@@ -196,50 +79,7 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
 {
     m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
 
-    // This method doesn't do directional snapping, but our base class does. It will call into
-    // ScrollAnimatorMac::scroll again with the snapped positions and ScrollBehavior::Default.
-    if (behavior.contains(ScrollBehavior::DoDirectionalSnapping))
-        return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
-
-    bool shouldAnimate = scrollAnimationEnabledForSystem() && m_scrollableArea.scrollAnimatorEnabled() && granularity != ScrollByPixel
-        && !behavior.contains(ScrollBehavior::NeverAnimate);
-    FloatPoint newPosition = this->currentPosition() + deltaFromStep(orientation, step, multiplier);
-    newPosition = newPosition.constrainedBetween(scrollableArea().minimumScrollPosition(), scrollableArea().maximumScrollPosition());
-
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll from " << currentPosition() << " to " << newPosition);
-
-    if (!shouldAnimate)
-        return scrollToPositionWithoutAnimation(newPosition);
-
-    if ([m_scrollAnimationHelper _isAnimating]) {
-        NSPoint targetOrigin = [m_scrollAnimationHelper targetOrigin];
-        if (orientation == HorizontalScrollbar)
-            newPosition.setY(targetOrigin.y);
-        else
-            newPosition.setX(targetOrigin.x);
-    }
-
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll " << " from " << currentPosition() << " to " << newPosition);
-    [m_scrollAnimationHelper scrollToPoint:newPosition];
-    return true;
-}
-
-bool ScrollAnimatorMac::scrollToPositionWithAnimation(const FloatPoint& newPosition)
-{
-    bool positionChanged = newPosition != currentPosition();
-    if (!positionChanged && !scrollableArea().scrollOriginChanged())
-        return false;
-
-    // FIXME: This is used primarily by smooth scrolling. This should ideally use native scroll animations.
-    // See: https://bugs.webkit.org/show_bug.cgi?id=218857
-    [m_scrollAnimationHelper _stopRun];
-    return ScrollAnimator::scrollToPositionWithAnimation(newPosition);
-}
-
-bool ScrollAnimatorMac::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
-{
-    [m_scrollAnimationHelper _stopRun];
-    return ScrollAnimator::scrollToPositionWithoutAnimation(position, clamping);
+    return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
 }
 
 FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& position) const
@@ -279,12 +119,6 @@ bool ScrollAnimatorMac::isRubberBandInProgress() const
 bool ScrollAnimatorMac::isScrollSnapInProgress() const
 {
     return m_scrollController.isScrollSnapInProgress();
-}
-
-void ScrollAnimatorMac::immediateScrollToPositionForScrollAnimation(const FloatPoint& newPosition)
-{
-    ASSERT(m_scrollAnimationHelper);
-    ScrollAnimator::scrollToPositionWithoutAnimation(newPosition);
 }
 
 void ScrollAnimatorMac::notifyPositionChanged(const FloatSize& delta)

@@ -33,7 +33,6 @@
 
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS WebScrollAnimationHelperDelegate;
 OBJC_CLASS WebScrollerImpPairDelegate;
 OBJC_CLASS WebScrollerImpDelegate;
 

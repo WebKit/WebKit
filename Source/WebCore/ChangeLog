@@ -1,5 +1,51 @@
 2021-09-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove use of NSScrollAnimationHelper for animated scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=230445
+
+        Reviewed by Martin Robinson.
+
+        NSScrollAnimationHelper provided little utility. Under the hood it's ust an ease-in-out
+        animation with a duration based on distance, and that's exactly what ScrollAnimationSmooth
+        is now, so we can remove use of NSScrollAnimationHelper in ScrollAnimatorMac and just
+        use the ScrollAnimationSmooth from the base class.
+
+        This unifies the scroll animation used for keyboard scrolling and CSS smooth scrolling.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::scrollToPositionWithoutAnimation):
+        (WebCore::ScrollAnimator::setCurrentPosition):
+        (WebCore::ScrollAnimator::scrollAnimationDidUpdate):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::platformAllowsScrollAnimation const):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::scrollAnimationEnabledForSystem):
+        (WebCore::ScrollAnimatorMac::platformAllowsScrollAnimation const):
+        (WebCore::ScrollAnimatorMac::scroll):
+        (abs): Deleted.
+        (-[WebScrollAnimationHelperDelegate initWithScrollAnimator:]): Deleted.
+        (-[WebScrollAnimationHelperDelegate invalidate]): Deleted.
+        (-[WebScrollAnimationHelperDelegate bounds]): Deleted.
+        (-[WebScrollAnimationHelperDelegate _immediateScrollToPoint:]): Deleted.
+        (-[WebScrollAnimationHelperDelegate _pixelAlignProposedScrollPosition:]): Deleted.
+        (-[WebScrollAnimationHelperDelegate convertSizeToBase:]): Deleted.
+        (-[WebScrollAnimationHelperDelegate convertSizeFromBase:]): Deleted.
+        (-[WebScrollAnimationHelperDelegate convertSizeToBacking:]): Deleted.
+        (-[WebScrollAnimationHelperDelegate convertSizeFromBacking:]): Deleted.
+        (-[WebScrollAnimationHelperDelegate superview]): Deleted.
+        (-[WebScrollAnimationHelperDelegate documentView]): Deleted.
+        (-[WebScrollAnimationHelperDelegate window]): Deleted.
+        (-[WebScrollAnimationHelperDelegate _recursiveRecomputeToolTips]): Deleted.
+        (WebCore::ScrollAnimatorMac::scrollToPositionWithAnimation): Deleted.
+        (WebCore::ScrollAnimatorMac::scrollToPositionWithoutAnimation): Deleted.
+        (WebCore::ScrollAnimatorMac::immediateScrollToPositionForScrollAnimation): Deleted.
+        * platform/mac/ScrollbarsControllerMac.h:
+
+2021-09-18  Simon Fraser  <simon.fraser@apple.com>
+
         Rename haveScrolledSincePageLoad() and push the state to ScrollbarsController
         https://bugs.webkit.org/show_bug.cgi?id=230444
 
