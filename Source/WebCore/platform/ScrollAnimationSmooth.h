@@ -33,20 +33,12 @@
 namespace WebCore {
 
 class FloatPoint;
-enum class ScrollClamping : bool;
+class TimingFunction;
 
 class ScrollAnimationSmooth final: public ScrollAnimation {
 public:
     ScrollAnimationSmooth(ScrollAnimationClient&);
     virtual ~ScrollAnimationSmooth();
-
-    enum class Curve {
-        Linear,
-        Quadratic,
-        Cubic,
-        Quartic,
-        Bounce
-    };
 
     bool startAnimatedScroll(ScrollbarOrientation, ScrollGranularity, const FloatPoint& fromPosition, float step, float multiplier);
     bool startAnimatedScrollToDestination(const FloatPoint& fromPosition, const FloatPoint& destinationPosition);
@@ -56,57 +48,28 @@ public:
     void updateScrollExtents() final;
     bool isActive() const final;
 
+
 private:
-    struct PerAxisData {
-        PerAxisData() = default;
-        PerAxisData(float position, int length)
-            : currentPosition(position)
-            , desiredPosition(position)
-            , visibleLength(length)
-        {
-        }
-
-        float currentPosition { 0 };
-        double currentVelocity { 0 };
-
-        double desiredPosition { 0 };
-        double desiredVelocity { 0 };
-
-        double startPosition { 0 };
-        MonotonicTime startTime;
-        double startVelocity { 0 };
-
-        Seconds animationDuration;
-        MonotonicTime lastAnimationTime;
-
-        double attackPosition { 0 };
-        Seconds attackDuration;
-        Curve attackCurve { Curve::Quadratic };
-
-        double releasePosition { 0 };
-        Seconds releaseDuration;
-        Curve releaseCurve { Curve::Quadratic };
-
-        int visibleLength { 0 };
-    };
-
     bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destination);
-
-    bool updatePerAxisData(PerAxisData&, ScrollGranularity, float newPosition, float minScrollPosition, float maxScrollPosition, double smoothFactor = 1);
-    bool animateScroll(PerAxisData&, MonotonicTime currentTime);
-    
-    void initializeAxesData(const ScrollExtents&, const FloatPoint& startPosition);
 
     void requestAnimationTimerFired();
     void startNextTimer(Seconds delay);
     void animationTimerFired();
-
-    PerAxisData m_horizontalData;
-    PerAxisData m_verticalData;
+    
+    Seconds durationFromDistance(const FloatSize&) const;
+    
+    bool animateScroll(MonotonicTime);
 
     MonotonicTime m_startTime;
+    Seconds m_duration;
+
+    FloatPoint m_startPosition;
+    FloatPoint m_destinationPosition;
+    FloatPoint m_currentPosition;
+    
     // FIXME: Should not have timer here, and instead use serviceAnimation().
     RunLoop::Timer<ScrollAnimationSmooth> m_animationTimer;
+    RefPtr<TimingFunction> m_easeInOutTimingFunction;
 };
 
 } // namespace WebCore

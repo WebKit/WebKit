@@ -1,5 +1,39 @@
 2021-09-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Replace all the complex math in ScrollAnimationSmooth with a single call into a CubicBezierTimingFunction
+        https://bugs.webkit.org/show_bug.cgi?id=230436
+
+        Reviewed by Tim Horton.
+
+        ScrollAnimationSmooth had a lot of math that computed velocities for attack, drift and
+        release phases, but they resulted in odd-feeling animations for long scrolls. We can replace
+        it all, and get nice-feeling scrolls, by just using an ease-in-out timing function.
+
+        Duration is compusted from distance with a max of 200ms, matching macOS behavior.
+
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        (WebCore::ScrollAnimationSmooth::startAnimatedScroll):
+        (WebCore::ScrollAnimationSmooth::startAnimatedScrollToDestination):
+        (WebCore::ScrollAnimationSmooth::startOrRetargetAnimation):
+        (WebCore::ScrollAnimationSmooth::updateScrollExtents):
+        (WebCore::linearInterpolation):
+        (WebCore::ScrollAnimationSmooth::animateScroll):
+        (WebCore::ScrollAnimationSmooth::animationTimerFired):
+        (WebCore::ScrollAnimationSmooth::initializeAxesData): Deleted.
+        (WebCore::curveAt): Deleted.
+        (WebCore::attackCurve): Deleted.
+        (WebCore::releaseCurve): Deleted.
+        (WebCore::coastCurve): Deleted.
+        (WebCore::curveIntegralAt): Deleted.
+        (WebCore::attackArea): Deleted.
+        (WebCore::releaseArea): Deleted.
+        (WebCore::getAnimationParametersForGranularity): Deleted.
+        (WebCore::ScrollAnimationSmooth::updatePerAxisData): Deleted.
+        * platform/ScrollAnimationSmooth.h:
+
+2021-09-17  Simon Fraser  <simon.fraser@apple.com>
+
         Move scrollbar-related code out of ScrollAnimator and into ScrollbarsController
         https://bugs.webkit.org/show_bug.cgi?id=230295
 

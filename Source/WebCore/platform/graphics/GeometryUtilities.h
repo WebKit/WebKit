@@ -33,6 +33,7 @@ namespace WebCore {
 
 class FloatQuad;
 
+float euclidianDistance(const FloatSize&);
 float euclidianDistance(const FloatPoint&, const FloatPoint&);
 
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
