@@ -1,5 +1,24 @@
 2021-09-18  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Stretch the inline box with glyphs coming from fallback fonts.
+        https://bugs.webkit.org/show_bug.cgi?id=230439
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/css-inline-3/#inline-height  
+        "...
+        When the computed line-height is normal, the layout bounds of an inline box encloses all its glyphs, going from the highest A to the deepest D. 
+        (Note that glyphs in a single box can come from different fonts and thus might not all have the same A and D.)
+        ..."
+        (This is still no-op as TextUtil::fallbackFontsForRun returns an empty set)
+
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts const):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.h:
+
+2021-09-18  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add skeleton implementation for fallback font support
         https://bugs.webkit.org/show_bug.cgi?id=230433
 

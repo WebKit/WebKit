@@ -52,7 +52,7 @@ public:
 
 private:
     void setInitialVerticalGeometryForInlineBox(InlineLevelBox&) const;
-    void adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox&, const Line::Run&, const TextUtil::FallbackFontList&) const;
+    void adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList&) const;
     InlineLayoutUnit constructAndAlignInlineLevelBoxes(LineBox&, const Line::RunList&);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }

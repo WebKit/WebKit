@@ -158,11 +158,38 @@ LineBoxBuilder::LineBoxAndGeometry LineBoxBuilder::build(const LineBuilder::Line
     return { lineBox, lineGeometry() };
 }
 
-void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox& parentInlineBox, const Line::Run& textRun, const TextUtil::FallbackFontList& fallbackFonts) const
+void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent) const
 {
-    UNUSED_PARAM(parentInlineBox);
-    UNUSED_PARAM(textRun);
-    UNUSED_PARAM(fallbackFonts);
+    ASSERT(!fallbackFontsForContent.isEmpty());
+    ASSERT(inlineBox.isInlineBox());
+    auto& style = inlineBox.style();
+    if (!style.lineHeight().isNegative())
+        return;
+
+    // https://www.w3.org/TR/css-inline-3/#inline-height
+    // When the computed line-height is normal, the layout bounds of an inline box encloses all its glyphs, going from the highest A to the deepest D. 
+    auto maxAscent = InlineLayoutUnit { };
+    auto maxDescent = InlineLayoutUnit { };
+    // If line-height computes to normal and either text-edge is leading or this is the root inline box,
+    // the font's line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
+    auto shouldUseLineGapToAdjustAscentDescent = inlineBox.isRootInlineBox();
+    for (auto* font : fallbackFontsForContent) {
+        auto& fontMetrics = font->fontMetrics();
+        InlineLayoutUnit ascent = fontMetrics.ascent();
+        InlineLayoutUnit descent = fontMetrics.descent();
+        if (shouldUseLineGapToAdjustAscentDescent) {
+            auto logicalHeight = ascent + descent;
+            auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
+            ascent = ascent + halfLineGap;
+            descent = descent + halfLineGap;
+        }
+        maxAscent = std::max(maxAscent, ascent);
+        maxDescent = std::max(maxDescent, descent);
+    }
+
+    // We need floor/ceil to match legacy layout integral positioning.
+    auto layoutBounds = inlineBox.layoutBounds();
+    inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, floorf(maxDescent)) });
 }
 
 void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inlineLevelBox) const
@@ -337,7 +364,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             auto fallbackFonts = TextUtil::fallbackFontsForRun(run);
             if (!fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
-                adjustVerticalGeometryForInlineBoxWithFallbackFonts(parentInlineBox, run, fallbackFonts);
+                adjustVerticalGeometryForInlineBoxWithFallbackFonts(parentInlineBox, fallbackFonts);
                 updateCanUseSimplifiedAlignment(parentInlineBox);
             }
             continue;
