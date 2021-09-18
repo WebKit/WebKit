@@ -1,3 +1,18 @@
+2021-09-17  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Enable content with synthetic bold for IFC
+        https://bugs.webkit.org/show_bug.cgi?id=230383
+
+        Reviewed by Antti Koivisto.
+
+        Synthetic bold prevents us from using the fast text measuring codepath, but IFC does work
+        with the slow codepath too (FontCascade::widthForSimpleText vs FontCascade::width).
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForText):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computeCanUseSimplifiedTextMeasuring const):
+
 2021-09-17  Alex Christensen  <achristensen@webkit.org>
 
         Use ObjectIdentifier for ResourceLoader

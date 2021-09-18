@@ -1440,6 +1440,9 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
 
     auto& fontCascade = style().fontCascade();
     auto& primaryFont = fontCascade.primaryFont();
+    if (primaryFont.syntheticBoldOffset())
+        return false;
+
     auto whitespaceIsCollapsed = style().collapseWhiteSpace();
     for (unsigned i = 0; i < text().length(); ++i) {
         auto character = text()[i];

@@ -435,10 +435,6 @@ static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsig
     OptionSet<AvoidanceReason> reasons;
     auto& primaryFont = fontCascade.primaryFont();
 
-    // FIXME: Teach FontCascade::widthForSimpleText() how to deal with synthetic bold, so we can use LFC.
-    if (primaryFont.syntheticBoldOffset())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
-
     for (unsigned i = 0; i < length; ++i) {
         auto character = text[i];
         auto characterReasons = canUseForCharacter(character, includeReasons);

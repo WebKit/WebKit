@@ -20,8 +20,8 @@ layer at (0,0) size 785x4757
             RenderText {#text} at (0,84) size 753x62
               text run at (0,84) width 753: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C"
               text run at (0,105) width 753: "D E F G H I J K L M N O P Q R S T U V W X Y Z [ \\ ] ^ _ ` a b c d e f g"
-              text run at (0,126) width 488: "h i j k l m n o p q r s t u v w x y z { | } > "
-          RenderBR {BR} at (487,126) size 1x20
+              text run at (0,126) width 487: "h i j k l m n o p q r s t u v w x y z { | } > "
+          RenderBR {BR} at (486,126) size 1x20
           RenderInline {I} at (0,0) size 759x62
             RenderText {#text} at (0,147) size 759x62
               text run at (0,147) width 759: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G"
