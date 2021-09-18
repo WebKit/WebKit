@@ -239,8 +239,6 @@ bool ScrollAnimator::handleTouchEvent(const PlatformTouchEvent&)
 
 void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 {
-    WTFLogAlways("setCurrentPosition to %.2f", position.y());
-
     m_currentPosition = position;
     updateActiveScrollSnapIndexForOffset();
 }
@@ -386,7 +384,6 @@ float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis
 void ScrollAnimator::scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& position)
 {
     FloatSize delta = position - m_currentPosition;
-    WTFLogAlways("scrollAnimationDidUpdate to %.2f", position.y());
     m_currentPosition = position;
     notifyPositionChanged(delta);
     updateActiveScrollSnapIndexForOffset();

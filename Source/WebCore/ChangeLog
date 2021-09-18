@@ -1,5 +1,18 @@
 2021-09-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove some logging left in by mistake.
+
+        Unreviewed.
+
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::startAnimatedScroll):
+        (WebCore::ScrollAnimationSmooth::startAnimatedScrollToDestination):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::setCurrentPosition):
+        (WebCore::ScrollAnimator::scrollAnimationDidUpdate):
+
+2021-09-18  Simon Fraser  <simon.fraser@apple.com>
+
         Remove use of NSScrollAnimationHelper for animated scrolls
         https://bugs.webkit.org/show_bug.cgi?id=230445
 

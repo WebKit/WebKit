@@ -68,7 +68,6 @@ bool ScrollAnimationSmooth::startAnimatedScroll(ScrollbarOrientation orientation
     }
 
     m_duration = durationFromDistance(destinationPosition - m_startPosition);
-    WTFLogAlways("Animation duration: %.2fms", m_duration.milliseconds());
 
     auto extents = m_client.scrollExtentsForAnimation(*this);
     return startOrRetargetAnimation(extents, destinationPosition);
@@ -78,8 +77,6 @@ bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& f
 {
     m_startPosition = fromPosition;
     m_duration = durationFromDistance(destinationPosition - m_startPosition);
-
-    WTFLogAlways("Animation duration: %.2fms", m_duration.milliseconds());
 
     auto extents = m_client.scrollExtentsForAnimation(*this);
     return startOrRetargetAnimation(extents, destinationPosition);
