@@ -46,13 +46,18 @@ public:
     
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
+    bool scrollbarAnimationsUnsuspendedByUserInteraction() const { return m_scrollbarAnimationsUnsuspendedByUserInteraction; }
+    void setScrollbarAnimationsUnsuspendedByUserInteraction(bool unsuspended) { m_scrollbarAnimationsUnsuspendedByUserInteraction = unsuspended; }
+    
+    bool shouldSuspendScrollbarAnimations() const;
+
     virtual void notifyContentAreaScrolled(const FloatSize&) { }
 
-    virtual void cancelAnimations() { }
+    virtual void cancelAnimations();
 
-    virtual void didBeginScrollGesture() const { }
-    virtual void didEndScrollGesture() const { }
-    virtual void mayBeginScrollGesture() const { }
+    virtual void didBeginScrollGesture();
+    virtual void didEndScrollGesture();
+    virtual void mayBeginScrollGesture();
 
     virtual void contentAreaWillPaint() const { }
     virtual void mouseEnteredContentArea() { }
@@ -87,6 +92,7 @@ public:
 
 private:
     ScrollableArea& m_scrollableArea;
+    bool m_scrollbarAnimationsUnsuspendedByUserInteraction { true };
 };
 
 } // namespace WebCore

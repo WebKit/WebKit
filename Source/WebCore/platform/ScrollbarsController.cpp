@@ -42,4 +42,29 @@ ScrollbarsController::ScrollbarsController(ScrollableArea& scrollableArea)
 {
 }
 
+bool ScrollbarsController::shouldSuspendScrollbarAnimations() const
+{
+    return scrollableArea().shouldSuspendScrollAnimations();
+}
+
+void ScrollbarsController::cancelAnimations()
+{
+    setScrollbarAnimationsUnsuspendedByUserInteraction(false);
+}
+
+void ScrollbarsController::didBeginScrollGesture()
+{
+    setScrollbarAnimationsUnsuspendedByUserInteraction(true);
+}
+
+void ScrollbarsController::didEndScrollGesture()
+{
+    setScrollbarAnimationsUnsuspendedByUserInteraction(true);
+}
+
+void ScrollbarsController::mayBeginScrollGesture()
+{
+    setScrollbarAnimationsUnsuspendedByUserInteraction(true);
+}
+
 } // namespace WebCore

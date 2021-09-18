@@ -106,9 +106,6 @@ public:
     void setCurrentPosition(const FloatPoint&);
     const FloatPoint& currentPosition() const { return m_currentPosition; }
 
-    bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
-    void setHaveScrolledSincePageLoad(bool haveScrolled) { m_haveScrolledSincePageLoad = haveScrolled; }
-
     KeyboardScrollingAnimator *keyboardScrollingAnimator() const override { return m_keyboardScrollingAnimator.get(); }
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
@@ -155,7 +152,6 @@ protected:
     ScrollingEffectsController m_scrollController;
     Timer m_scrollControllerAnimationTimer;
     FloatPoint m_currentPosition;
-    bool m_haveScrolledSincePageLoad { false };
 
     std::unique_ptr<ScrollAnimationSmooth> m_scrollAnimation;
     std::unique_ptr<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;

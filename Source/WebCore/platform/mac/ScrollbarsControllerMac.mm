@@ -265,7 +265,7 @@ using WebCore::LogOverlayScrollbars;
     }
     ASSERT(_scrollbar);
 
-    LOG_WITH_STREAM(OverlayScrollbars, stream << "-[WebScrollbarPartAnimation " << self << "setCurrentProgress:" << progress <<"] for " << _featureToAnimate);
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "-[" << self << " setCurrentProgress: " << progress << "] for " << _featureToAnimate);
 
     CGFloat currentValue;
     if (_startValue > _endValue)
@@ -431,12 +431,14 @@ using WebCore::LogOverlayScrollbars;
 {
     // If the user has scrolled the page, then the scrollbars must be animated here.
     // This overrides the early returns.
-    bool mustAnimate = [self scrollbarsController]->haveScrolledSincePageLoad();
+    bool mustAnimate = ![self scrollbarsController]->scrollbarAnimationsUnsuspendedByUserInteraction();
+
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "WebScrollerImpDelegate for [" << _scrollbar->scrollableArea() << "] setUpAlphaAnimation: scrollbarAnimationsUnsuspendedByUserInteraction " << [self scrollbarsController]->scrollbarAnimationsUnsuspendedByUserInteraction() << " shouldSuspendScrollAnimations " << _scrollbar->scrollableArea().shouldSuspendScrollAnimations());
 
     if ([self scrollbarsController]->scrollbarPaintTimerIsActive() && !mustAnimate)
         return;
 
-    if (_scrollbar->scrollableArea().shouldSuspendScrollAnimations() && !mustAnimate) {
+    if ([self scrollbarsController]->shouldSuspendScrollbarAnimations() && !mustAnimate) {
         [self scrollbarsController]->startScrollbarPaintTimer();
         return;
     }
@@ -606,10 +608,13 @@ ScrollbarsControllerMac::~ScrollbarsControllerMac()
 
 void ScrollbarsControllerMac::cancelAnimations()
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollbarsControllerMac for [" << scrollableArea() << "] cancelAnimations");
     if (scrollbarPaintTimerIsActive())
         stopScrollbarPaintTimer();
     [m_horizontalScrollerImpDelegate cancelAnimations];
     [m_verticalScrollerImpDelegate cancelAnimations];
+
+    ScrollbarsController::cancelAnimations();
 }
 
 void ScrollbarsControllerMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
@@ -625,11 +630,6 @@ void ScrollbarsControllerMac::setVisibleScrollerThumbRect(const IntRect& scrolle
     m_visibleScrollerThumbRect = rectInViewCoordinates;
 }
 
-
-bool ScrollbarsControllerMac::haveScrolledSincePageLoad() const
-{
-    return scrollableArea().scrollAnimator().haveScrolledSincePageLoad();
-}
 
 void ScrollbarsControllerMac::contentAreaWillPaint() const
 {
@@ -750,7 +750,7 @@ void ScrollbarsControllerMac::contentAreaDidHide()
     [m_scrollerImpPair windowOrderedOut];
 }
 
-void ScrollbarsControllerMac::didBeginScrollGesture() const
+void ScrollbarsControllerMac::didBeginScrollGesture()
 {
     LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollbarsControllerMac for [" << scrollableArea() << "] didBeginScrollGesture");
 
@@ -761,9 +761,11 @@ void ScrollbarsControllerMac::didBeginScrollGesture() const
 
     if (auto* monitor = wheelEventTestMonitor())
         monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+
+    ScrollbarsController::didBeginScrollGesture();
 }
 
-void ScrollbarsControllerMac::didEndScrollGesture() const
+void ScrollbarsControllerMac::didEndScrollGesture()
 {
     LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollbarsControllerMac for [" << scrollableArea() << "] didEndScrollGesture");
 
@@ -774,9 +776,11 @@ void ScrollbarsControllerMac::didEndScrollGesture() const
 
     if (auto* monitor = wheelEventTestMonitor())
         monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+
+    ScrollbarsController::didEndScrollGesture();
 }
 
-void ScrollbarsControllerMac::mayBeginScrollGesture() const
+void ScrollbarsControllerMac::mayBeginScrollGesture()
 {
     LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollbarsControllerMac for [" << scrollableArea() << "] mayBeginScrollGesture");
 
@@ -785,6 +789,8 @@ void ScrollbarsControllerMac::mayBeginScrollGesture() const
 
     [m_scrollerImpPair beginScrollGesture];
     [m_scrollerImpPair contentAreaScrolled];
+
+    ScrollbarsController::mayBeginScrollGesture();
 }
 
 void ScrollbarsControllerMac::lockOverlayScrollbarStateToHidden(bool shouldLockState)
@@ -1006,6 +1012,8 @@ void ScrollbarsControllerMac::stopScrollbarPaintTimer()
 
 void ScrollbarsControllerMac::initialScrollbarPaintTimerFired()
 {
+    LOG_WITH_STREAM(OverlayScrollbars, stream << "WebScrollerImpDelegate for [" << scrollableArea() << "] initialScrollbarPaintTimerFired - flashing scrollers");
+
     // To force the scrollbars to flash, we have to call hide first. Otherwise, the ScrollerImpPair
     // might think that the scrollbars are already showing and bail early.
     [m_scrollerImpPair hideOverlayScrollers];

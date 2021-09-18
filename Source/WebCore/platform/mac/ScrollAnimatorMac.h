@@ -57,8 +57,6 @@ private:
 #endif
 
     void handleWheelEventPhase(PlatformWheelEventPhase) final;
-
-    void cancelAnimations() final;
     
     void notifyPositionChanged(const FloatSize& delta) final;
 

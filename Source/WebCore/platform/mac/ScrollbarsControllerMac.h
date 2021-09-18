@@ -54,9 +54,9 @@ public:
 
     void cancelAnimations() final;
 
-    void didBeginScrollGesture() const final;
-    void didEndScrollGesture() const final;
-    void mayBeginScrollGesture() const final;
+    void didBeginScrollGesture() final;
+    void didEndScrollGesture() final;
+    void mayBeginScrollGesture() final;
 
     void contentAreaWillPaint() const final;
     void mouseEnteredContentArea() final;
@@ -96,7 +96,6 @@ public:
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
     void setVisibleScrollerThumbRect(const IntRect&);
-    bool haveScrolledSincePageLoad() const;
 
 private:
 

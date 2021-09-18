@@ -1,5 +1,60 @@
 2021-09-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Rename haveScrolledSincePageLoad() and push the state to ScrollbarsController
+        https://bugs.webkit.org/show_bug.cgi?id=230444
+
+        Reviewed by Myles C. Maxfield.
+        
+        r81159 added logic to suppress scrollbar animations during page load (delayed using a 100ms
+        timer in ScrollbarsControllerMac), but to unsuppress the animations when receiving user
+        events or scrolling. This state using the confusingly named "haveScrolledSincePageLoad",
+        which is really "a wheel evnet or scroll requires that we stop suppressing scrollbar
+        animations". So name it scrollbarAnimationsUnsuspendedByUserInteraction", and have
+        ScrollbarsController maintain the state, rather than ScrollAnimator.
+
+        Add some OverlayScrollbars logging to show this working (although it reveals that the
+        100ms timer can fire multiple times).
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::cancelAnimations):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::haveScrolledSincePageLoad const): Deleted.
+        (WebCore::ScrollAnimator::setHaveScrolledSincePageLoad): Deleted.
+        * platform/ScrollbarsController.cpp:
+        (WebCore::ScrollbarsController::shouldSuspendScrollbarAnimations const):
+        (WebCore::ScrollbarsController::cancelAnimations):
+        (WebCore::ScrollbarsController::didBeginScrollGesture):
+        (WebCore::ScrollbarsController::didEndScrollGesture):
+        (WebCore::ScrollbarsController::mayBeginScrollGesture):
+        * platform/ScrollbarsController.h:
+        (WebCore::ScrollbarsController::scrollbarAnimationsUnsuspendedByUserInteraction const):
+        (WebCore::ScrollbarsController::setScrollbarAnimationsUnsuspendedByUserInteraction):
+        (WebCore::ScrollbarsController::cancelAnimations): Deleted.
+        (WebCore::ScrollbarsController::didBeginScrollGesture const): Deleted.
+        (WebCore::ScrollbarsController::didEndScrollGesture const): Deleted.
+        (WebCore::ScrollbarsController::mayBeginScrollGesture const): Deleted.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scroll):
+        (WebCore::ScrollAnimatorMac::handleWheelEventPhase):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::cancelAnimations): Deleted.
+        * platform/mac/ScrollbarsControllerMac.h:
+        * platform/mac/ScrollbarsControllerMac.mm:
+        (-[WebScrollbarPartAnimation setCurrentProgress:]):
+        (-[WebScrollerImpDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]):
+        (WebCore::ScrollbarsControllerMac::cancelAnimations):
+        (WebCore::ScrollbarsControllerMac::didBeginScrollGesture):
+        (WebCore::ScrollbarsControllerMac::didEndScrollGesture):
+        (WebCore::ScrollbarsControllerMac::mayBeginScrollGesture):
+        (WebCore::ScrollbarsControllerMac::initialScrollbarPaintTimerFired):
+        (WebCore::ScrollbarsControllerMac::haveScrolledSincePageLoad const): Deleted.
+        (WebCore::ScrollbarsControllerMac::didBeginScrollGesture const): Deleted.
+        (WebCore::ScrollbarsControllerMac::didEndScrollGesture const): Deleted.
+        (WebCore::ScrollbarsControllerMac::mayBeginScrollGesture const): Deleted.
+
+2021-09-18  Simon Fraser  <simon.fraser@apple.com>
+
         Clean up the ScrollAnimator interface a little
         https://bugs.webkit.org/show_bug.cgi?id=230324
 

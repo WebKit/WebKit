@@ -194,7 +194,7 @@ static bool rubberBandingEnabledForSystem()
 
 bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, OptionSet<ScrollBehavior> behavior)
 {
-    setHaveScrolledSincePageLoad(true);
+    m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
 
     // This method doesn't do directional snapping, but our base class does. It will call into
     // ScrollAnimatorMac::scroll again with the snapped positions and ScrollBehavior::Default.
@@ -293,20 +293,9 @@ void ScrollAnimatorMac::notifyPositionChanged(const FloatSize& delta)
     ScrollAnimator::notifyPositionChanged(delta);
 }
 
-void ScrollAnimatorMac::cancelAnimations()
-{
-    ScrollAnimator::cancelAnimations();
-    setHaveScrolledSincePageLoad(false);
-    m_scrollableArea.scrollbarsController().cancelAnimations();
-}
-
 void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
     LOG_WITH_STREAM(OverlayScrollbars, stream << "ScrollAnimatorMac " << this << " scrollableArea " << m_scrollableArea << " handleWheelEventPhase " << phase);
-
-    // This may not have been set to true yet if the wheel event was handled by the ScrollingTree,
-    // So set it to true here.
-    setHaveScrolledSincePageLoad(true);
 
     // FIXME: Need to ensure we get PlatformWheelEventPhase::Ended.
     if (phase == PlatformWheelEventPhase::Began)
@@ -329,7 +318,7 @@ bool ScrollAnimatorMac::shouldForwardWheelEventsToParent(const PlatformWheelEven
     
 bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    setHaveScrolledSincePageLoad(true);
+    m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
 
     if (!wheelEvent.hasPreciseScrollingDeltas() || !rubberBandingEnabledForSystem())
         return ScrollAnimator::handleWheelEvent(wheelEvent);

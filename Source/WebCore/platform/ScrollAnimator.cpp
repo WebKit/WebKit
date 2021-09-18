@@ -38,6 +38,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
+#include "ScrollbarsController.h"
 #include "ScrollingEffectsController.h"
 #include <algorithm>
 
@@ -341,9 +342,8 @@ void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventT
 
 void ScrollAnimator::cancelAnimations()
 {
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
     m_scrollAnimation->stop();
-#endif
+    m_scrollableArea.scrollbarsController().cancelAnimations();
 }
 
 void ScrollAnimator::contentsSizeChanged() const
