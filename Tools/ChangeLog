@@ -1,3 +1,18 @@
+2021-09-17  Kevin Neal  <kevin_neal@apple.com>
+
+        [results.webkit.org] Add ability to access Bugzilla and Radar links from commit messages
+        https://bugs.webkit.org/show_bug.cgi?id=229160
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/css/tooltip.css:
+        (.tooltip-content hr):
+        (@media (prefers-color-scheme: dark) .tooltip-content hr):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/commit.js:
+        (Commit):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (xAxisFromScale):
+
 2021-09-17  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Reset author time when editing commits (Follow-up fix)

@@ -142,6 +142,10 @@ class Commit {
         this.branch = json.branch;
         this.message = json.message;
 
+        //FIXME: Need to create a more general solution for tracking bugs  
+        this.bugUrls = json.message.match(/\b(https?):\/{2}[^\s<>&]+[^\.\s<>&,)]/gmi);
+        this.radarUrls = json.message.match(/\b(rdar):\/{2}[^\s<>&]+[^\.\s<>&,)]/gmi);
+
         this.timestamp = json.timestamp;
         this.order = json.order;
         this.uuid = this.timestamp * TIMESTAMP_TO_UUID_MULTIPLIER + this.order;
