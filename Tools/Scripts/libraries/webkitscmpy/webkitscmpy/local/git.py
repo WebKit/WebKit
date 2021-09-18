@@ -795,7 +795,7 @@ class Git(Scm):
                     ), 'HEAD...{}'.format('{}/{}'.format(remote, branch)),
                 ], cwd=self.root_path, env={'FILTER_BRANCH_SQUELCH_WARNING': '1'}).returncode
 
-        if not code and self.is_svn:
+        if not code and self.is_svn and commit.revision:
             return run([
                 self.executable(), 'svn', 'fetch', '--log-window-size=5000', '-r', '{}:HEAD'.format(commit.revision),
             ], cwd=self.root_path).returncode

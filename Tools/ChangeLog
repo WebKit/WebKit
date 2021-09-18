@@ -1,5 +1,16 @@
 2021-09-17  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Reset author time when editing commits (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=230224
+        <rdar://problem/83065417>
+
+        Unreviewed follow-up fix.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.pull): We can't update SVN if the HEAD commit does not have a revision.
+
+2021-09-17  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitscmpy] Refactor PR branch management
         https://bugs.webkit.org/show_bug.cgi?id=230432
         <rdar://problem/83258413>
