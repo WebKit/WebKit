@@ -93,11 +93,6 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     return scrollToPositionWithoutAnimation(currentPosition() + delta);
 }
 
-bool ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
-{
-    return scrollToPositionWithoutAnimation(ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(scrollableArea().scrollOrigin())), clamping);
-}
-
 bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
 {
     FloatPoint currentPosition = this->currentPosition();
@@ -113,11 +108,6 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
     notifyPositionChanged(adjustedPosition - currentPosition);
     updateActiveScrollSnapIndexForOffset();
     return true;
-}
-
-bool ScrollAnimator::scrollToOffsetWithAnimation(const FloatPoint& offset)
-{
-    return scrollToPositionWithAnimation(ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(scrollableArea().scrollOrigin())));
 }
 
 bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition)
@@ -286,7 +276,7 @@ void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
     else
         deltaSize.setHeight(delta);
 
-    scrollToOffsetWithoutAnimation(currentPosition() + deltaSize);
+    scrollToPositionWithoutAnimation(currentPosition() + deltaSize);
 }
 
 LayoutSize ScrollAnimator::scrollExtent() const

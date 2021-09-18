@@ -60,6 +60,8 @@ public:
     explicit ScrollAnimator(ScrollableArea&);
     virtual ~ScrollAnimator();
 
+    ScrollableArea& scrollableArea() const { return m_scrollableArea; }
+
     enum ScrollBehavior {
         DoDirectionalSnapping = 1 << 0,
         NeverAnimate = 1 << 1,
@@ -71,34 +73,22 @@ public:
     // The base class implementation always scrolls immediately, never animates.
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>);
 
-    bool scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
-    virtual bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped);
-    virtual void retargetRunningAnimation(const FloatPoint&);
-
-    bool scrollToOffsetWithAnimation(const FloatPoint&);
+    virtual bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     virtual bool scrollToPositionWithAnimation(const FloatPoint&);
 
-    ScrollableArea& scrollableArea() const { return m_scrollableArea; }
-
-    void contentsSizeChanged() const;
-
-    bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
-    void setHaveScrolledSincePageLoad(bool haveScrolled) { m_haveScrolledSincePageLoad = haveScrolled; }
+    virtual void retargetRunningAnimation(const FloatPoint&);
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
 
-    KeyboardScrollingAnimator *keyboardScrollingAnimator() const override { return m_keyboardScrollingAnimator.get(); }
-
-#if ENABLE(TOUCH_EVENTS)
-    virtual bool handleTouchEvent(const PlatformTouchEvent&);
-#endif
+    virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }
 
 #if PLATFORM(COCOA)
     virtual void handleWheelEventPhase(PlatformWheelEventPhase) { }
 #endif
 
-    void setCurrentPosition(const FloatPoint&);
-    const FloatPoint& currentPosition() const { return m_currentPosition; }
+#if ENABLE(TOUCH_EVENTS)
+    virtual bool handleTouchEvent(const PlatformTouchEvent&);
+#endif
 
     virtual void cancelAnimations();
 
@@ -110,6 +100,16 @@ public:
     void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) override;
     void scrollAnimationDidEnd(ScrollAnimation&) override;
     ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) override;
+
+    void contentsSizeChanged() const;
+
+    void setCurrentPosition(const FloatPoint&);
+    const FloatPoint& currentPosition() const { return m_currentPosition; }
+
+    bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
+    void setHaveScrolledSincePageLoad(bool haveScrolled) { m_haveScrolledSincePageLoad = haveScrolled; }
+
+    KeyboardScrollingAnimator *keyboardScrollingAnimator() const override { return m_keyboardScrollingAnimator.get(); }
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
     WheelEventTestMonitor* wheelEventTestMonitor() const { return m_wheelEventTestMonitor.get(); }
@@ -124,8 +124,6 @@ public:
 
     void scrollControllerAnimationTimerFired();
 
-    virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }
-    void updateScrollSnapState();
     bool activeScrollSnapIndexDidChange() const;
     std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned> index);

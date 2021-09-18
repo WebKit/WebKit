@@ -161,16 +161,18 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, S
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
-    scrollAnimator().scrollToOffsetWithoutAnimation(offset, clamping);
+
+    auto position = scrollPositionFromOffset(offset, toFloatSize(scrollOrigin()));
+    scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
 {
-    auto currentOffset = scrollOffsetFromPosition(IntPoint(scrollAnimator().currentPosition()));
+    auto currentPosition = scrollAnimator().currentPosition();
     if (orientation == HorizontalScrollbar)
-        scrollAnimator().scrollToOffsetWithoutAnimation(FloatPoint(offset, currentOffset.y()));
+        scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(offset, currentPosition.y()));
     else
-        scrollAnimator().scrollToOffsetWithoutAnimation(FloatPoint(currentOffset.x(), offset));
+        scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(currentPosition.x(), offset));
 }
 
 void ScrollableArea::notifyScrollPositionChanged(const ScrollPosition& position)
@@ -567,10 +569,12 @@ void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
         newOffset.setX(scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, currentOffset, ScrollSnapPointSelectionMethod::Closest));
     else
         newOffset.setY(scrollAnimator->adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, currentOffset, ScrollSnapPointSelectionMethod::Closest));
+
     if (newOffset == currentOffset)
         return;
 
-    scrollAnimator->scrollToOffsetWithAnimation(newOffset);
+    auto position = scrollPositionFromOffset(newOffset);
+    scrollAnimator->scrollToPositionWithAnimation(position);
 }
 
 bool ScrollableArea::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis axis) const
