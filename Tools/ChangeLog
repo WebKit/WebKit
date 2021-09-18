@@ -1,3 +1,29 @@
+2021-09-17  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS Release ] TestWebKitAPI.NetworkProcess.BroadcastChannelCrashRecovery is flaky timing out
+        https://bugs.webkit.org/show_bug.cgi?id=230430
+        <rdar://problem/83256307>
+
+        Reviewed by Alex Christensen.
+
+        I suspect that the flakiness is due to the BroadcastChannel.postMessage() sometimes failing right
+        after we kill the network process and relaunch it. I believe this could happen because the test
+        was only making sure that `[[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier]`
+        changed. This meant that the UIProcess was indeed notified that the network process crashed and
+        that a new one was relaunched. However, this doesn't necessarily indicate that the view's
+        WebProcesses were notified yet. As a result, when we evaluate JS to post a message on a
+        BroadcastChannel, the WebProcess could potentially still try to send the IPC via the
+        IPC::Connection for the old network process.
+
+        To try and address this race, I am adding code to wait until cookie synchronization is
+        working across both web views before I try posting the message. Because cookie synchronization
+        involves the network process and both WebProcesses, once this happens, we know that both
+        WebProcesses are properly connected to the new NetworkProcess.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (waitUntilNetworkProcessIsResponsive):
+        (TEST):
+
 2021-09-17  Kevin Neal  <kevin_neal@apple.com>
 
         [results.webkit.org] Add ability to access Bugzilla and Radar links from commit messages

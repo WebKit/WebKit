@@ -36,6 +36,7 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/UUID.h>
 #import <wtf/Vector.h>
 
 TEST(NetworkProcess, Entitlements)
@@ -210,6 +211,27 @@ static bool receivedMessage = false;
 }
 @end
 
+static void waitUntilNetworkProcessIsResponsive(WKWebView *webView1, WKWebView *webView2)
+{
+    // We've just terminated and relaunched the network process. However, there is no easy well to tell if the webviews'
+    // WebProcesses have been notified of the network process crash or not (we only know that the UIProcess was). Because
+    // we don't want the test to go on with the WebProcesses using stale NetworkProcessConnections, we use the following
+    // trick to wait until both WebProcesses are able to communicate with the new NetworkProcess:
+    // The first WebProcess tries setting a cookie until the second Webview is able to see it.
+    auto expectedCookieString = makeString("TEST=", createCanonicalUUIDString());
+    auto setTestCookieString = makeString("setInterval(() => { document.cookie='", expectedCookieString, "'; }, 100);");
+    [webView1 evaluateJavaScript:(NSString *)setTestCookieString completionHandler: [&] (id result, NSError *error) {
+        EXPECT_TRUE(!error);
+    }];
+
+    bool canSecondWebViewSeeNewCookie = false;
+    do {
+        TestWebKitAPI::Util::spinRunLoop(10);
+        String cookieString = (NSString *)[webView2 objectByEvaluatingJavaScript:@"document.cookie"];
+        canSecondWebViewSeeNewCookie = cookieString.contains(expectedCookieString);
+    } while (!canSecondWebViewSeeNewCookie);
+}
+
 TEST(NetworkProcess, BroadcastChannelCrashRecovery)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -278,6 +300,8 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     kill(networkPID, 9);
     while ([[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier] == networkPID)
         TestWebKitAPI::Util::spinRunLoop(10);
+
+    waitUntilNetworkProcessIsResponsive(webView1.get(), webView2.get());
 
     // Test that initial communication from webView1 to webView2 works.
     receivedMessage = false;
