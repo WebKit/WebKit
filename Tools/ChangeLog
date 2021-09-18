@@ -1,3 +1,27 @@
+2021-09-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Refactor PR branch management
+        https://bugs.webkit.org/show_bug.cgi?id=230432
+        <rdar://problem/83258413>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py:
+        (Branch): Specify that the 'eng' prefix is for pull-requests.
+        (Branch.normalize_branch_name): Normalized branch names should consider other developement prefixes.
+        (Branch.editable): Check if a branch is editable. Only includes development branches at the moment,
+        will include commit-queue in the near future.
+        (Branch.branch_point): Moved from pull_request.py.
+        (Branch.main):
+        (Branch.normalize_issue): Renamed normalize_branch_name.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull.py:
+        (Pull.main): branch_point is now owned Branch command.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): Match DEV_BRANCHES instead of PREFIX, branch_point is now owned Branch command.
+        (PullRequest.branch_point): Moved to branch.py.
+
 2021-09-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove unnecessary ITP memory store code
