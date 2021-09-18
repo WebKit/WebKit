@@ -411,9 +411,6 @@ template <typename CharacterType> OptionSet<AvoidanceReason> canUseForCharacter(
 template<> OptionSet<AvoidanceReason> canUseForCharacter(UChar character, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
-    if (U16_IS_SURROGATE(character))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasSurrogatePair, reasons, includeReasons);
-
     UCharDirection direction = u_charDirection(character);
     if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
         || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE

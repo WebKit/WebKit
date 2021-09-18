@@ -1,3 +1,16 @@
+2021-09-18  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable surrogate pairs
+        https://bugs.webkit.org/show_bug.cgi?id=229434
+
+        Reviewed by Antti Koivisto.
+
+        The "break the content at arbitrary position" feature is already surrogate pair aware, so
+        let's enable this for IFC.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForCharacter):
+
 2021-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS Family] Delete letterpress support
