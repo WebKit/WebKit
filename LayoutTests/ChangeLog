@@ -1,3 +1,23 @@
+2021-09-17  Chris Dumez  <cdumez@apple.com>
+
+        [ Catalina+ Win WK1 ] http/tests/misc/iframe-reparenting-id-collision.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=230423
+        <rdar://problem/83252545>
+
+        Reviewed by Geoffrey Garen.
+
+        The test opens 2 identical windows. Each of these windows has an iframe which starts an XHR and then
+        calls iframeXHRStarted() and end up outputing the following line:
+        "Started loading iframe XHR request."
+
+        When the test fails, we see this line logged a third time, even though there are 2 popup windows.
+        The reason for this is that iframeXHRStarted() transfers an iframe from one popup to another once
+        both XHRs have started. When transferring the iframe a new XHR starts. The test calls
+        testRunner.notifyDone() right away but in some cases, the XHR still has time to start and print
+        the extra line.
+
+        * http/tests/misc/iframe-reparenting-id-collision.html:
+
 2021-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         css/cssom-view/mouseEvent-offsetXY-svg.html passes now
