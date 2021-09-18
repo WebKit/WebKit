@@ -29,6 +29,7 @@
 #include "LoadSchedulingMode.h"
 #include "PageIdentifier.h"
 #include "ResourceLoadPriority.h"
+#include "ResourceLoaderIdentifier.h"
 #include "ResourceLoaderOptions.h"
 #include "StoredCredentialsPolicy.h"
 #include <wtf/Forward.h>
@@ -58,7 +59,7 @@ struct FetchOptions;
 class WEBCORE_EXPORT LoaderStrategy {
 public:
     virtual void loadResource(Frame&, CachedResource&, ResourceRequest&&, const ResourceLoaderOptions&, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&&) = 0;
-    virtual void loadResourceSynchronously(FrameLoader&, unsigned long identifier, const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, Vector<uint8_t>& data) = 0;
+    virtual void loadResourceSynchronously(FrameLoader&, ResourceLoaderIdentifier, const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, Vector<uint8_t>& data) = 0;
     virtual void pageLoadCompleted(Page&) = 0;
     virtual void browsingContextRemoved(Frame&) = 0;
 
@@ -88,14 +89,14 @@ public:
     virtual bool shouldPerformSecurityChecks() const { return false; }
     virtual bool havePerformedSecurityChecks(const ResourceResponse&) const { return false; }
 
-    virtual ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
-    virtual Vector<NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
-    virtual NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier);
+    virtual ResourceResponse responseFromResourceLoadIdentifier(ResourceLoaderIdentifier);
+    virtual Vector<NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(ResourceLoaderIdentifier);
+    virtual NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(ResourceLoaderIdentifier);
 
     virtual void isResourceLoadFinished(CachedResource&, CompletionHandler<void(bool)>&& callback) = 0;
 
     // Used for testing only.
-    virtual Vector<uint64_t> ongoingLoads() const { return { }; }
+    virtual Vector<ResourceLoaderIdentifier> ongoingLoads() const { return { }; }
 
 protected:
     virtual ~LoaderStrategy();

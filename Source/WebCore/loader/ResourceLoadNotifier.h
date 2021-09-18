@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "ResourceLoaderIdentifier.h"
 #include <optional>
 #include <wtf/Noncopyable.h>
 
@@ -50,7 +51,7 @@ public:
     explicit ResourceLoadNotifier(Frame&);
 
     void didReceiveAuthenticationChallenge(ResourceLoader*, const AuthenticationChallenge&);
-    void didReceiveAuthenticationChallenge(unsigned long identifier, DocumentLoader*, const AuthenticationChallenge&);
+    void didReceiveAuthenticationChallenge(ResourceLoaderIdentifier, DocumentLoader*, const AuthenticationChallenge&);
 
     void willSendRequest(ResourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoader*, const ResourceResponse&);
@@ -58,18 +59,18 @@ public:
     void didFinishLoad(ResourceLoader*, const NetworkLoadMetrics&);
     void didFailToLoad(ResourceLoader*, const ResourceError&);
 
-    void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-    void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
-    void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, ResourceLoader* = nullptr);
-    void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength);
-    void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, const NetworkLoadMetrics&, ResourceLoader*);
-    void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
+    void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&);
+    void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
+    void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, ResourceLoader* = nullptr);
+    void dispatchDidReceiveData(DocumentLoader*, ResourceLoaderIdentifier, const uint8_t* data, int dataLength, int encodedDataLength);
+    void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier, const NetworkLoadMetrics&, ResourceLoader*);
+    void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&);
 
-    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceRequest&, const ResourceResponse&, const uint8_t* data, int dataLength, int encodedDataLength, const ResourceError&);
+    void sendRemainingDelegateMessages(DocumentLoader*, ResourceLoaderIdentifier, const ResourceRequest&, const ResourceResponse&, const uint8_t* data, int dataLength, int encodedDataLength, const ResourceError&);
 
 private:
     Frame& m_frame;
-    std::optional<unsigned long> m_initialRequestIdentifier;
+    std::optional<ResourceLoaderIdentifier> m_initialRequestIdentifier;
 };
 
 } // namespace WebCore

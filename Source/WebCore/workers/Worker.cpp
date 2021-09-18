@@ -196,7 +196,7 @@ void Worker::notifyNetworkStateChange(bool isOnLine)
     m_contextProxy.notifyNetworkStateChange(isOnLine);
 }
 
-void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+void Worker::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     const URL& responseURL = response.url();
     if (!responseURL.protocolIsBlob() && !responseURL.protocolIs("file") && !SecurityOrigin::create(responseURL)->isUnique())

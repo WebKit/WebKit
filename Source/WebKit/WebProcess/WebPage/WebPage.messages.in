@@ -27,7 +27,7 @@ messages -> WebPage LegacyReceiver {
 
     SetBackgroundColor(std::optional<WebCore::Color> color)
 
-    AddConsoleMessage(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestID)
+    AddConsoleMessage(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, WebCore::ResourceLoaderIdentifier requestID)
     SendCSPViolationReport(WebCore::FrameIdentifier frameID, URL reportURL, IPC::FormDataReference reportData)
     SendCOEPPolicyInheritenceViolation(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData embedderOrigin, String endpoint, enum:bool WebCore::COEPDisposition disposition, String type, URL blockedURL)
     SendCOEPCORPViolation(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData embedderOrigin, String endpoint, enum:bool WebCore::COEPDisposition disposition, enum:uint8_t WebCore::FetchOptions::Destination destination, URL blockedURL)
@@ -553,11 +553,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     RegisterURLSchemeHandler(uint64_t identifier, String scheme)
 
-    URLSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (WebCore::ResourceRequest actualRequest) Async
-    URLSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest)
-    URLSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response)
-    URLSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, IPC::SharedBufferDataReference data)
-    URLSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)
+    URLSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (WebCore::ResourceRequest actualRequest) Async
+    URLSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest)
+    URLSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response)
+    URLSchemeTaskDidReceiveData(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, IPC::SharedBufferDataReference data)
+    URLSchemeTaskDidComplete(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceError error)
 
     SetIsSuspended(bool suspended)
 

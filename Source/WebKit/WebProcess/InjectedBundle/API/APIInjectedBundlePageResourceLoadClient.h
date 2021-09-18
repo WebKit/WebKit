@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <WebCore/ResourceLoaderIdentifier.h>
+
 namespace WebKit {
 class WebFrame;
 class WebPage;
@@ -45,14 +47,14 @@ class ResourceLoadClient {
 public:
     virtual ~ResourceLoadClient() = default;
 
-    virtual void didInitiateLoadForResource(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/, const WebCore::ResourceRequest&, bool /*pageIsProvisionallyLoading*/) { }
-    virtual void willSendRequestForFrame(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/, WebCore::ResourceRequest&, const WebCore::ResourceResponse&) { }
-    virtual void didReceiveResponseForResource(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/, const WebCore::ResourceResponse&) { }
-    virtual void didReceiveContentLengthForResource(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/, uint64_t contentLength) { }
-    virtual void didFinishLoadForResource(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/) { }
-    virtual void didFailLoadForResource(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/, const WebCore::ResourceError&) { }
-    virtual bool shouldCacheResponse(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/) { return true; }
-    virtual bool shouldUseCredentialStorage(WebKit::WebPage&, WebKit::WebFrame&, uint64_t /*identifier*/) { return true; }
+    virtual void didInitiateLoadForResource(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&, bool /*pageIsProvisionallyLoading*/) { }
+    virtual void willSendRequestForFrame(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse&) { }
+    virtual void didReceiveResponseForResource(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&) { }
+    virtual void didReceiveContentLengthForResource(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier, uint64_t contentLength) { }
+    virtual void didFinishLoadForResource(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier) { }
+    virtual void didFailLoadForResource(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceError&) { }
+    virtual bool shouldCacheResponse(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier) { return true; }
+    virtual bool shouldUseCredentialStorage(WebKit::WebPage&, WebKit::WebFrame&, WebCore::ResourceLoaderIdentifier) { return true; }
 };
 
 } // namespace InjectedBundle

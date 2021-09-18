@@ -1689,7 +1689,7 @@ bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
     ResourceRequest request(url);
     request.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(initiatorNode));
 
-    unsigned long identifier;
+    ResourceLoaderIdentifier identifier;
     ResourceError error;
     requestFromDelegate(request, identifier, error);
     notifier().sendRemainingDelegateMessages(m_documentLoader.get(), identifier, request, ResourceResponse(url, String(), -1, String()), 0, -1, -1, error);
@@ -2068,7 +2068,7 @@ void FrameLoader::commitProvisionalLoad()
         // Start request for the main resource and dispatch didReceiveResponse before the load is committed for
         // consistency with all other loads. See https://bugs.webkit.org/show_bug.cgi?id=150927.
         ResourceError mainResouceError;
-        unsigned long mainResourceIdentifier;
+        ResourceLoaderIdentifier mainResourceIdentifier;
         ResourceRequest mainResourceRequest(cachedPage->documentLoader()->request());
         requestFromDelegate(mainResourceRequest, mainResourceIdentifier, mainResouceError);
         notifier().dispatchDidReceiveResponse(cachedPage->documentLoader(), mainResourceIdentifier, cachedPage->documentLoader()->response());
@@ -2133,7 +2133,7 @@ void FrameLoader::commitProvisionalLoad()
             const auto& response = m_documentLoader->responses()[i];
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             ResourceError error;
-            unsigned long identifier;
+            ResourceLoaderIdentifier identifier;
             ResourceRequest request(response.url());
             requestFromDelegate(request, identifier, error);
             // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
@@ -3106,7 +3106,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     });
 }
 
-unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, ClientCredentialPolicy clientCredentialPolicy, const FetchOptions& options, const HTTPHeaderMap& originalRequestHeaders, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
+ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRequest& request, ClientCredentialPolicy clientCredentialPolicy, const FetchOptions& options, const HTTPHeaderMap& originalRequestHeaders, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
 {
     ASSERT(m_frame.document());
     String referrer = SecurityPolicy::generateReferrerHeader(m_frame.document()->referrerPolicy(), request.url(), outgoingReferrer());
@@ -3124,7 +3124,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 
     applyUserAgentIfNeeded(initialRequest);
 
-    unsigned long identifier = 0;    
+    ResourceLoaderIdentifier identifier;    
     ResourceRequest newRequest(initialRequest);
     requestFromDelegate(newRequest, identifier, error);
 
@@ -3587,15 +3587,12 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->loader().loadWithNavigationAction(request, WTFMove(newAction), FrameLoadType::Standard, formState, allowNavigationToInvalidURL);
 }
 
-void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& identifier, ResourceError& error)
+void FrameLoader::requestFromDelegate(ResourceRequest& request, ResourceLoaderIdentifier& identifier, ResourceError& error)
 {
     ASSERT(!request.isNull());
 
-    identifier = 0;
-    if (Page* page = m_frame.page()) {
-        identifier = page->progress().createUniqueIdentifier();
-        notifier().assignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
-    }
+    identifier = ResourceLoaderIdentifier::generate();
+    notifier().assignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
 
     ResourceRequest newRequest(request);
     notifier().dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse(), nullptr);
@@ -3634,7 +3631,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
         return;
     }
 
-    unsigned long identifier;
+    ResourceLoaderIdentifier identifier;
     requestFromDelegate(newRequest, identifier, error);
 
     ResourceResponse response = resource.response();
@@ -3651,7 +3648,7 @@ void FrameLoader::applyUserAgentIfNeeded(ResourceRequest& request)
     }
 }
 
-bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const URL& url, unsigned long requestIdentifier)
+bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const URL& url, ResourceLoaderIdentifier requestIdentifier)
 {
     Frame& topFrame = m_frame.tree().top();
     if (&m_frame == &topFrame)
@@ -3675,10 +3672,10 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     case XFrameOptionsDisposition::AllowAll:
         return false;
     case XFrameOptionsDisposition::Conflict:
-        m_frame.document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Multiple 'X-Frame-Options' headers with conflicting values ('" + content + "') encountered when loading '" + url.stringCenterEllipsizedToLength() + "'. Falling back to 'DENY'.", requestIdentifier);
+        m_frame.document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Multiple 'X-Frame-Options' headers with conflicting values ('" + content + "') encountered when loading '" + url.stringCenterEllipsizedToLength() + "'. Falling back to 'DENY'.", requestIdentifier.toUInt64());
         return true;
     case XFrameOptionsDisposition::Invalid:
-        m_frame.document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Invalid 'X-Frame-Options' header encountered when loading '" + url.stringCenterEllipsizedToLength() + "': '" + content + "' is not a recognized directive. The header will be ignored.", requestIdentifier);
+        m_frame.document()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Invalid 'X-Frame-Options' header encountered when loading '" + url.stringCenterEllipsizedToLength() + "': '" + content + "' is not a recognized directive. The header will be ignored.", requestIdentifier.toUInt64());
         return false;
     case XFrameOptionsDisposition::None:
         return false;

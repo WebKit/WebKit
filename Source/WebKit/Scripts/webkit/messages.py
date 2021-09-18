@@ -297,6 +297,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::RealtimeMediaSourceIdentifier',
         'WebCore::RenderingMode',
         'WebCore::RenderingResourceIdentifier',
+        'WebCore::ResourceLoaderIdentifier',
         'WebCore::SWServerConnectionIdentifier',
         'WebCore::ServiceWorkerIdentifier',
         'WebCore::ServiceWorkerJobIdentifier',

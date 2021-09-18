@@ -399,7 +399,7 @@ void DocumentThreadableLoader::responseReceived(CachedResource& resource, const 
         completionHandler();
 }
 
-void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     ASSERT(m_client);
     ASSERT(response.type() != ResourceResponse::Type::Error);
@@ -433,7 +433,7 @@ void DocumentThreadableLoader::dataReceived(CachedResource& resource, const uint
     didReceiveData(m_resource->identifier(), data, dataLength);
 }
 
-void DocumentThreadableLoader::didReceiveData(unsigned long, const uint8_t* data, int dataLength)
+void DocumentThreadableLoader::didReceiveData(ResourceLoaderIdentifier, const uint8_t* data, int dataLength)
 {
     ASSERT(m_client);
 
@@ -469,7 +469,7 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const Ne
         didFinishLoading(m_resource->identifier());
 }
 
-void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
+void DocumentThreadableLoader::didFinishLoading(ResourceLoaderIdentifier identifier)
 {
     ASSERT(m_client);
 
@@ -503,7 +503,7 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
     m_client->didFinishLoading(identifier);
 }
 
-void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error)
+void DocumentThreadableLoader::didFail(ResourceLoaderIdentifier, const ResourceError& error)
 {
     ASSERT(m_client);
 #if ENABLE(SERVICE_WORKER)
@@ -535,7 +535,7 @@ void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
     loadRequest(WTFMove(actualRequest), SecurityCheckPolicy::SkipSecurityCheck);
 }
 
-void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const ResourceError& error)
+void DocumentThreadableLoader::preflightFailure(ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     m_preflightChecker = std::nullopt;
 
@@ -598,7 +598,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     RefPtr<SharedBuffer> data;
     ResourceError error;
     ResourceResponse response;
-    unsigned long identifier = std::numeric_limits<unsigned long>::max();
+    auto identifier = makeObjectIdentifier<ResourceLoader>(std::numeric_limits<uint64_t>::max());
     if (auto* frame = m_document.frame()) {
         if (!MixedContentChecker::canRunInsecureContent(*frame, m_document.securityOrigin(), requestURL))
             return;

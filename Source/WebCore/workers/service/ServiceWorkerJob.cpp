@@ -140,7 +140,7 @@ ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorke
     return { };
 }
 
-void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void ServiceWorkerJob::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(!m_completed);

@@ -437,7 +437,7 @@ void ApplicationCacheGroup::update(Frame& frame, ApplicationCacheUpdateOption up
 
     auto request = createRequest(URL { m_manifestURL }, m_newestCache ? m_newestCache->manifestResource() : nullptr);
 
-    m_currentResourceIdentifier = m_frame->page()->progress().createUniqueIdentifier();
+    m_currentResourceIdentifier = ResourceLoaderIdentifier::generate();
     InspectorInstrumentation::willSendRequest(m_frame.get(), m_currentResourceIdentifier, m_frame->loader().documentLoader(), request, ResourceResponse { }, nullptr);
 
     m_manifestLoader = ApplicationCacheResourceLoader::create(ApplicationCacheResource::Type::Manifest, documentLoader.cachedResourceLoader(), WTFMove(request), [this] (auto&& resourceOrError) {
@@ -898,7 +898,7 @@ void ApplicationCacheGroup::startLoadingEntry()
 
     auto request = createRequest(URL { { }, firstPendingEntryURL }, m_newestCache ? m_newestCache->resourceForURL(firstPendingEntryURL) : nullptr);
 
-    m_currentResourceIdentifier = m_frame->page()->progress().createUniqueIdentifier();
+    m_currentResourceIdentifier = ResourceLoaderIdentifier::generate();
     InspectorInstrumentation::willSendRequest(m_frame.get(), m_currentResourceIdentifier, m_frame->loader().documentLoader(), request, ResourceResponse { }, nullptr);
 
     auto& documentLoader = *m_frame->loader().documentLoader();

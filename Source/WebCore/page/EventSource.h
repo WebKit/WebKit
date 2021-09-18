@@ -83,9 +83,9 @@ private:
     void doExplicitLoadCancellation();
 
     // ThreadableLoaderClient
-    void didReceiveResponse(unsigned long, const ResourceResponse&) final;
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
     void didReceiveData(const uint8_t*, int) final;
-    void didFinishLoading(unsigned long) final;
+    void didFinishLoading(ResourceLoaderIdentifier) final;
     void didFail(const ResourceError&) final;
 
     // ActiveDOMObject

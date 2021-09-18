@@ -437,7 +437,7 @@ public:
     WebFullScreenManager* fullScreenManager();
 #endif
 
-    void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
+    void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, WebCore::ResourceLoaderIdentifier = { });
     void sendCSPViolationReport(WebCore::FrameIdentifier, const URL& reportURL, IPC::FormDataReference&&);
     void sendCOEPPolicyInheritenceViolation(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& embedderOrigin, const String& endpoint, WebCore::COEPDisposition, const String& type, const URL& blockedURL);
     void sendCOEPCORPViolation(WebCore::FrameIdentifier, const WebCore::SecurityOriginData& embedderOrigin, const String& endpoint, WebCore::COEPDisposition, WebCore::FetchOptions::Destination, const URL& blockedURL);
@@ -1016,8 +1016,8 @@ public:
     void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const WebCore::ResourceError&)>&&);
 #endif
 
-    void addResourceRequest(unsigned long, const WebCore::ResourceRequest&);
-    void removeResourceRequest(unsigned long);
+    void addResourceRequest(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&);
+    void removeResourceRequest(WebCore::ResourceLoaderIdentifier);
 
     void setMediaVolume(float);
     void setMuted(WebCore::MediaProducer::MutedStateFlags, CompletionHandler<void()>&&);
@@ -1877,11 +1877,11 @@ private:
 
     void registerURLSchemeHandler(uint64_t identifier, const String& scheme);
 
-    void urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
-    void urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
-    void urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceResponse&);
-    void urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, const IPC::DataReference&);
-    void urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceError&);
+    void urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
+    void urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
+    void urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const WebCore::ResourceResponse&);
+    void urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const IPC::DataReference&);
+    void urlSchemeTaskDidComplete(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const WebCore::ResourceError&);
 
     void setIsTakingSnapshotsForApplicationSuspension(bool);
     void setNeedsDOMWindowResizeEvent();
@@ -2161,7 +2161,7 @@ private:
 
     unsigned m_cachedPageCount { 0 };
 
-    HashSet<unsigned long> m_trackedNetworkResourceRequestIdentifiers;
+    HashSet<WebCore::ResourceLoaderIdentifier> m_trackedNetworkResourceRequestIdentifiers;
 
     WebCore::IntSize m_minimumSizeForAutoLayout;
     WebCore::IntSize m_sizeToContentAutoSizeMaximumSize;

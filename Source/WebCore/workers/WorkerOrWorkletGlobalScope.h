@@ -54,8 +54,6 @@ public:
     JSC::VM& vm() final;
     WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
-    unsigned long createUniqueIdentifier() { return m_uniqueIdentifier++; }
-
     ScriptModuleLoader& moduleLoader() { return *m_moduleLoader; }
 
     // ScriptExecutionContext.
@@ -99,7 +97,6 @@ private:
     RefPtr<WorkerEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
     std::unique_ptr<WorkerInspectorController> m_inspectorController;
-    unsigned long m_uniqueIdentifier { 1 };
     bool m_isClosing { false };
 };
 

@@ -423,7 +423,7 @@ private:
     bool didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&);
     void createNetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, CompletionHandler<void(std::optional<IPC::Attachment>&&, WebCore::HTTPCookieAcceptPolicy)>&&);
-    void prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, uint64_t resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&&);
+    void prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, std::optional<WebCore::ResourceLoaderIdentifier> resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData&&)>&&);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);

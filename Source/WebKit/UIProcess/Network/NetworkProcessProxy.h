@@ -214,7 +214,7 @@ public:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, Messages::NetworkProcessProxy::TestProcessIncomingSyncMessagesWhenWaitingForSyncReplyDelayedReply&&);
     void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);
 
-    void prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, uint64_t resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&&);
+    void prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, std::optional<WebCore::ResourceLoaderIdentifier>, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();

@@ -39,20 +39,20 @@ InjectedBundlePageResourceLoadClient::InjectedBundlePageResourceLoadClient(const
     initialize(client);
 }
 
-void InjectedBundlePageResourceLoadClient::didInitiateLoadForResource(WebPage& page, WebFrame& frame, uint64_t identifier, const ResourceRequest& request, bool pageIsProvisionallyLoading)
+void InjectedBundlePageResourceLoadClient::didInitiateLoadForResource(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier, const ResourceRequest& request, bool pageIsProvisionallyLoading)
 {
     if (!m_client.didInitiateLoadForResource)
         return;
 
-    m_client.didInitiateLoadForResource(toAPI(&page), toAPI(&frame), identifier, toAPI(request), pageIsProvisionallyLoading, m_client.base.clientInfo);
+    m_client.didInitiateLoadForResource(toAPI(&page), toAPI(&frame), identifier.toUInt64(), toAPI(request), pageIsProvisionallyLoading, m_client.base.clientInfo);
 }
 
-void InjectedBundlePageResourceLoadClient::willSendRequestForFrame(WebPage& page, WebFrame& frame, uint64_t identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InjectedBundlePageResourceLoadClient::willSendRequestForFrame(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (!m_client.willSendRequestForFrame)
         return;
 
-    RefPtr<API::URLRequest> returnedRequest = adoptRef(toImpl(m_client.willSendRequestForFrame(toAPI(&page), toAPI(&frame), identifier, toAPI(request), toAPI(redirectResponse), m_client.base.clientInfo)));
+    RefPtr<API::URLRequest> returnedRequest = adoptRef(toImpl(m_client.willSendRequestForFrame(toAPI(&page), toAPI(&frame), identifier.toUInt64(), toAPI(request), toAPI(redirectResponse), m_client.base.clientInfo)));
     if (returnedRequest) {
         // If the client returned an HTTP body, we want to use that http body. This is needed to fix <rdar://problem/23763584>
         auto& returnedResourceRequest = returnedRequest->resourceRequest();
@@ -64,52 +64,52 @@ void InjectedBundlePageResourceLoadClient::willSendRequestForFrame(WebPage& page
         request = { };
 }
 
-void InjectedBundlePageResourceLoadClient::didReceiveResponseForResource(WebPage& page, WebFrame& frame, uint64_t identifier, const ResourceResponse& response)
+void InjectedBundlePageResourceLoadClient::didReceiveResponseForResource(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     if (!m_client.didReceiveResponseForResource)
         return;
 
-    m_client.didReceiveResponseForResource(toAPI(&page), toAPI(&frame), identifier, toAPI(response), m_client.base.clientInfo);
+    m_client.didReceiveResponseForResource(toAPI(&page), toAPI(&frame), identifier.toUInt64(), toAPI(response), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageResourceLoadClient::didReceiveContentLengthForResource(WebPage& page, WebFrame& frame, uint64_t identifier, uint64_t contentLength)
+void InjectedBundlePageResourceLoadClient::didReceiveContentLengthForResource(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier, uint64_t contentLength)
 {
     if (!m_client.didReceiveContentLengthForResource)
         return;
 
-    m_client.didReceiveContentLengthForResource(toAPI(&page), toAPI(&frame), identifier, contentLength, m_client.base.clientInfo);
+    m_client.didReceiveContentLengthForResource(toAPI(&page), toAPI(&frame), identifier.toUInt64(), contentLength, m_client.base.clientInfo);
 }
 
-void InjectedBundlePageResourceLoadClient::didFinishLoadForResource(WebPage& page, WebFrame& frame, uint64_t identifier)
+void InjectedBundlePageResourceLoadClient::didFinishLoadForResource(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier)
 {
     if (!m_client.didFinishLoadForResource)
         return;
 
-    m_client.didFinishLoadForResource(toAPI(&page), toAPI(&frame), identifier, m_client.base.clientInfo);
+    m_client.didFinishLoadForResource(toAPI(&page), toAPI(&frame), identifier.toUInt64(), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageResourceLoadClient::didFailLoadForResource(WebPage& page, WebFrame& frame, uint64_t identifier, const ResourceError& error)
+void InjectedBundlePageResourceLoadClient::didFailLoadForResource(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     if (!m_client.didFailLoadForResource)
         return;
 
-    m_client.didFailLoadForResource(toAPI(&page), toAPI(&frame), identifier, toAPI(error), m_client.base.clientInfo);
+    m_client.didFailLoadForResource(toAPI(&page), toAPI(&frame), identifier.toUInt64(), toAPI(error), m_client.base.clientInfo);
 }
 
-bool InjectedBundlePageResourceLoadClient::shouldCacheResponse(WebPage& page, WebFrame& frame, uint64_t identifier)
+bool InjectedBundlePageResourceLoadClient::shouldCacheResponse(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier)
 {
     if (!m_client.shouldCacheResponse)
         return true;
 
-    return m_client.shouldCacheResponse(toAPI(&page), toAPI(&frame), identifier, m_client.base.clientInfo);
+    return m_client.shouldCacheResponse(toAPI(&page), toAPI(&frame), identifier.toUInt64(), m_client.base.clientInfo);
 }
 
-bool InjectedBundlePageResourceLoadClient::shouldUseCredentialStorage(WebPage& page, WebFrame& frame, uint64_t identifier)
+bool InjectedBundlePageResourceLoadClient::shouldUseCredentialStorage(WebPage& page, WebFrame& frame, WebCore::ResourceLoaderIdentifier identifier)
 {
     if (!m_client.shouldUseCredentialStorage)
         return true;
 
-    return m_client.shouldUseCredentialStorage(toAPI(&page), toAPI(&frame), identifier, m_client.base.clientInfo);
+    return m_client.shouldUseCredentialStorage(toAPI(&page), toAPI(&frame), identifier.toUInt64(), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

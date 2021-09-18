@@ -188,7 +188,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     return true;
 }
 
-void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void EventSource::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     ASSERT(m_state == CONNECTING);
     ASSERT(m_requestInFlight);
@@ -220,7 +220,7 @@ void EventSource::didReceiveData(const uint8_t* data, int length)
     parseEventStream();
 }
 
-void EventSource::didFinishLoading(unsigned long)
+void EventSource::didFinishLoading(ResourceLoaderIdentifier)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);

@@ -52,7 +52,7 @@ std::optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Deco
     if (!handlerIdentifier)
         return std::nullopt;
     
-    std::optional<uint64_t> taskIdentifier;
+    std::optional<WebCore::ResourceLoaderIdentifier> taskIdentifier;
     decoder >> taskIdentifier;
     if (!taskIdentifier)
         return std::nullopt;

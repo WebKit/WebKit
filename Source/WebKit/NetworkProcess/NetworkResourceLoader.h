@@ -85,7 +85,7 @@ public:
     void start();
     void abort();
 
-    void transferToNewWebProcess(NetworkConnectionToWebProcess&, ResourceLoadIdentifier);
+    void transferToNewWebProcess(NetworkConnectionToWebProcess&, WebCore::ResourceLoaderIdentifier);
 
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
@@ -97,7 +97,7 @@ public:
 
     NetworkConnectionToWebProcess& connectionToWebProcess() const { return m_connection; }
     PAL::SessionID sessionID() const { return m_connection->sessionID(); }
-    ResourceLoadIdentifier coreIdentifier() const { return m_parameters.identifier; }
+    WebCore::ResourceLoaderIdentifier coreIdentifier() const { return m_parameters.identifier; }
     WebCore::FrameIdentifier frameID() const { return m_parameters.webFrameID; }
     WebCore::PageIdentifier pageID() const { return m_parameters.webPageID; }
     const NetworkResourceLoadParameters& parameters() const { return m_parameters; }
@@ -132,7 +132,7 @@ public:
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     static bool shouldLogCookieInformation(NetworkConnectionToWebProcess&, PAL::SessionID);
-    static void logCookieInformation(NetworkConnectionToWebProcess&, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<uint64_t> identifier);
+    static void logCookieInformation(NetworkConnectionToWebProcess&, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
 #endif
 
     void disableExtraNetworkLoadMetricsCapture() { m_shouldCaptureExtraNetworkLoadMetrics = false; }
@@ -153,7 +153,7 @@ private:
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
-    uint64_t messageSenderDestinationID() const override { return m_parameters.identifier; }
+    uint64_t messageSenderDestinationID() const override { return m_parameters.identifier.toUInt64(); }
 
     bool canUseCache(const WebCore::ResourceRequest&) const;
     bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;

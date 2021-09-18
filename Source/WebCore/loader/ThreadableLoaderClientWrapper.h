@@ -60,7 +60,7 @@ public:
             m_client->didSendData(bytesSent, totalBytesToBeSent);
     }
 
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+    void didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
     {
         if (m_client)
             m_client->didReceiveResponse(identifier, response);
@@ -72,7 +72,7 @@ public:
             m_client->didReceiveData(data, dataLength);
     }
 
-    void didFinishLoading(unsigned long identifier)
+    void didFinishLoading(ResourceLoaderIdentifier identifier)
     {
         m_done = true;
         if (m_client)
@@ -92,7 +92,7 @@ public:
             m_client->didFail(error);
     }
 
-    void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse& response)
+    void didReceiveAuthenticationCancellation(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
     {
         if (m_client)
             m_client->didReceiveResponse(identifier, response);

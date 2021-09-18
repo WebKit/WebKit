@@ -58,7 +58,7 @@ CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
         m_resource->removeClient(*this);
 }
 
-void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, unsigned long identifier, const ResourceResponse& response)
+void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     auto* frame = loader.document().frame();
     if (!frame) {
@@ -141,7 +141,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     ResourceResponse response;
     RefPtr<SharedBuffer> data;
 
-    unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions { }, { }, error, response, data);
+    auto identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions { }, { }, error, response, data);
 
     if (!error.isNull()) {
         // If the preflight was cancelled by underlying code, it probably means the request was blocked due to some access control policy.

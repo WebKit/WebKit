@@ -75,8 +75,8 @@
 #define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) UNUSED_VARIABLE(this)
 #define SUBRESOURCELOADER_RELEASE_LOG_ERROR(fmt, ...) UNUSED_VARIABLE(this)
 #else
-#define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%lu] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier(), ##__VA_ARGS__)
-#define SUBRESOURCELOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%lu] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier(), ##__VA_ARGS__)
+#define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier().toUInt64(), ##__VA_ARGS__)
+#define SUBRESOURCELOADER_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoading, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] SubresourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier().toUInt64(), ##__VA_ARGS__)
 #endif
 
 namespace WebCore {
@@ -172,7 +172,7 @@ void SubresourceLoader::init(ResourceRequest&& request, CompletionHandler<void(b
         }
         ASSERT(!reachedTerminalState());
         m_state = Initialized;
-        m_documentLoader->addSubresourceLoader(this);
+        m_documentLoader->addSubresourceLoader(*this);
         m_origin = m_resource->origin();
         completionHandler(true);
     });
@@ -210,7 +210,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         }
 
         ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
-            tracePoint(SubresourceLoadWillStart, identifier(), PAGE_ID, FRAME_ID);
+            tracePoint(SubresourceLoadWillStart, identifier().toUInt64(), PAGE_ID, FRAME_ID);
 
             if (reachedTerminalState()) {
                 SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: reached terminal state; calling completion handler");
@@ -491,7 +491,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             // Since a subresource loader does not load multipart sections progressively, data was delivered to the loader all at once.
             // After the first multipart section is complete, signal to delegates that this load is "finished"
             NetworkLoadMetrics emptyMetrics;
-            m_documentLoader->subresourceLoaderFinishedLoadingOnePart(this);
+            m_documentLoader->subresourceLoaderFinishedLoadingOnePart(*this);
             didFinishLoadingOnePart(emptyMetrics);
         }
 
@@ -745,7 +745,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     }
 
     if (m_resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd, identifier());
+        tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
 
     m_state = Finishing;
     m_resource->finishLoading(resourceData(), networkLoadMetrics);
@@ -791,7 +791,7 @@ void SubresourceLoader::didFail(const ResourceError& error)
     m_state = Finishing;
 
     if (m_resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd, identifier());
+        tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
 
     if (m_resource->resourceToRevalidate())
         MemoryCache::singleton().revalidationFailed(*m_resource);
@@ -844,7 +844,7 @@ void SubresourceLoader::didCancel(const ResourceError&)
     ASSERT(m_resource);
 
     if (m_resource->type() != CachedResource::Type::MainResource)
-        tracePoint(SubresourceLoadDidEnd, identifier());
+        tracePoint(SubresourceLoadDidEnd, identifier().toUInt64());
 
     m_resource->cancelLoad();
     notifyDone(LoadCompletionType::Cancel);

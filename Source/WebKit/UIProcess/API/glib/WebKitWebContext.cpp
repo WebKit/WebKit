@@ -60,6 +60,7 @@
 #include "WebsiteDataStore.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/RemoteInspector.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <glib/gi18n-lib.h>
 #include <libintl.h>
 #include <memory>
@@ -194,11 +195,10 @@ private:
     WebKitURISchemeRequestCallback m_callback { nullptr };
     void* m_userData { nullptr };
     GDestroyNotify m_destroyNotify { nullptr };
-    HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest>> m_requests;
+    HashMap<WebCore::ResourceLoaderIdentifier, GRefPtr<WebKitURISchemeRequest>> m_requests;
 };
 
 typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
-typedef HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest> > URISchemeRequestMap;
 
 class WebKitAutomationClient;
 

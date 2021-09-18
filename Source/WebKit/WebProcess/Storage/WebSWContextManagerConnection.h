@@ -135,7 +135,7 @@ private:
     std::optional<WebCore::PageIdentifier> pageID() const final { return m_pageID; }
     std::optional<WebCore::FrameIdentifier> frameID() const final { return m_frameID; }
 
-    bool shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long) final { return true; }
+    bool shouldUseCredentialStorage(WebCore::DocumentLoader*, WebCore::ResourceLoaderIdentifier) final { return true; }
     bool isServiceWorkerFrameLoaderClient() const final { return true; }
 
     String userAgent(const URL&) const final { return m_userAgent; }

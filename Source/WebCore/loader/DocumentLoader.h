@@ -42,6 +42,7 @@
 #include "LinkIcon.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
+#include "ResourceLoaderIdentifier.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -89,7 +90,7 @@ class SubstituteResource;
 
 enum class ShouldContinue;
 
-using ResourceLoaderMap = HashMap<unsigned long, RefPtr<ResourceLoader>>;
+using ResourceLoaderMap = HashMap<ResourceLoaderIdentifier, RefPtr<ResourceLoader>>;
 
 enum class AutoplayPolicy : uint8_t {
     Default, // Uses policies specified in document settings.
@@ -295,7 +296,7 @@ public:
 
     void stopLoadingPlugIns();
     void stopLoadingSubresources();
-    WEBCORE_EXPORT void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse&);
+    WEBCORE_EXPORT void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(ResourceLoaderIdentifier, const ResourceResponse&);
 
     bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
     void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
@@ -338,12 +339,12 @@ public:
     WEBCORE_EXPORT MouseEventPolicy mouseEventPolicy() const;
     void setMouseEventPolicy(MouseEventPolicy policy) { m_mouseEventPolicy = policy; }
 
-    void addSubresourceLoader(ResourceLoader*);
+    void addSubresourceLoader(ResourceLoader&);
     void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
     void addPlugInStreamLoader(ResourceLoader&);
     void removePlugInStreamLoader(ResourceLoader&);
 
-    void subresourceLoaderFinishedLoadingOnePart(ResourceLoader*);
+    void subresourceLoaderFinishedLoadingOnePart(ResourceLoader&);
 
     void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
     
@@ -610,7 +611,7 @@ private:
     bool m_loadingMainResource { false };
     DocumentLoadTiming m_loadTiming;
 
-    unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
+    ResourceLoaderIdentifier m_identifierForLoadWithoutResourceLoader;
 
     DataLoadToken m_dataLoadToken;
     bool m_waitingForContentPolicy { false };

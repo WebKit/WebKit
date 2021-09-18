@@ -575,13 +575,13 @@ void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instr
         pageAgent->applyEmulatedMedia(media);
 }
 
-void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
+void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->willSendRequest(identifier, loader, request, redirectResponse, cachedResource);
 }
 
-void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
+void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->willSendRequestOfType(identifier, loader, request, loadType);
@@ -596,7 +596,7 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingA
         networkAgent->didLoadResourceFromMemoryCache(loader, *cachedResource);
 }
 
-void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
+void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
@@ -607,25 +607,25 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgent
         consoleAgent->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
 }
 
-void InspectorInstrumentation::didReceiveThreadableLoaderResponseImpl(InstrumentingAgents& instrumentingAgents, DocumentThreadableLoader& documentThreadableLoader, unsigned long identifier)
+void InspectorInstrumentation::didReceiveThreadableLoaderResponseImpl(InstrumentingAgents& instrumentingAgents, DocumentThreadableLoader& documentThreadableLoader, ResourceLoaderIdentifier identifier)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveThreadableLoaderResponse(identifier, documentThreadableLoader);
 }
 
-void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength)
+void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, const uint8_t* data, int dataLength, int encodedDataLength)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveData(identifier, data, dataLength, encodedDataLength);
 }
 
-void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
+void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didFinishLoading(identifier, loader, networkLoadMetrics, resourceLoader);
 }
 
-void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
+void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceError& error)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
         return;
@@ -648,7 +648,7 @@ void InspectorInstrumentation::didLoadXHRSynchronouslyImpl(InstrumentingAgents& 
         networkAgent->didLoadXHRSynchronously();
 }
 
-void InspectorInstrumentation::scriptImportedImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const String& sourceString)
+void InspectorInstrumentation::scriptImportedImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, const String& sourceString)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->setInitialScriptContent(identifier, sourceString);
@@ -660,7 +660,7 @@ void InspectorInstrumentation::scriptExecutionBlockedByCSPImpl(InstrumentingAgen
         webDebuggerAgent->scriptExecutionBlockedByCSP(directiveText);
 }
 
-void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
+void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveScriptResponse(identifier);
@@ -850,7 +850,7 @@ void InspectorInstrumentation::interceptRequestImpl(InstrumentingAgents& instrum
         networkAgent->interceptRequest(loader, WTFMove(handler));
 }
 
-void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->interceptResponse(response, identifier, WTFMove(handler));

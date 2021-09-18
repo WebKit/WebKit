@@ -1,3 +1,208 @@
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use ObjectIdentifier for ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=230278
+
+        Reviewed by Michael Catanzaro.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::didReceiveResponse):
+        (WebCore::FetchLoader::didFinishLoading):
+        * Modules/fetch/FetchLoader.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WorkerModuleScriptLoader.h:
+        * dom/Document.cpp:
+        (WebCore::Document::processMetaHttpEquiv):
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::didReceiveResponse):
+        (WebCore::FileReaderLoader::didFinishLoading):
+        * fileapi/FileReaderLoader.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        (WebCore::InspectorInstrumentation::willSendRequestOfTypeImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveThreadableLoaderResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveDataImpl):
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::scriptImportedImpl):
+        (WebCore::InspectorInstrumentation::didReceiveScriptResponseImpl):
+        (WebCore::InspectorInstrumentation::interceptResponseImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willSendRequest):
+        (WebCore::InspectorInstrumentation::willSendRequestOfType):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::didReceiveThreadableLoaderResponse):
+        (WebCore::InspectorInstrumentation::didReceiveData):
+        (WebCore::InspectorInstrumentation::didFinishLoading):
+        (WebCore::InspectorInstrumentation::didFailLoading):
+        (WebCore::InspectorInstrumentation::continueAfterXFrameOptionsDenied):
+        (WebCore::InspectorInstrumentation::continueWithPolicyDownload):
+        (WebCore::InspectorInstrumentation::continueWithPolicyIgnore):
+        (WebCore::InspectorInstrumentation::scriptImported):
+        (WebCore::InspectorInstrumentation::didReceiveScriptResponse):
+        (WebCore::InspectorInstrumentation::interceptResponse):
+        * inspector/InspectorInstrumentationWebKit.cpp:
+        (WebCore::InspectorInstrumentationWebKit::interceptResponseInternal):
+        * inspector/InspectorInstrumentationWebKit.h:
+        (WebCore::InspectorInstrumentationWebKit::interceptResponse):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        (WebCore::InspectorNetworkAgent::willSendRequestOfType):
+        (WebCore::InspectorNetworkAgent::didReceiveResponse):
+        (WebCore::InspectorNetworkAgent::didReceiveData):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        (WebCore::InspectorNetworkAgent::didFailLoading):
+        (WebCore::InspectorNetworkAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorNetworkAgent::setInitialScriptContent):
+        (WebCore::InspectorNetworkAgent::didReceiveScriptResponse):
+        (WebCore::InspectorNetworkAgent::didReceiveThreadableLoaderResponse):
+        (WebCore::InspectorNetworkAgent::interceptRequest):
+        (WebCore::InspectorNetworkAgent::interceptResponse):
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::didReceiveResponse):
+        (WebCore::WebConsoleAgent::didFailLoading):
+        * inspector/agents/WebConsoleAgent.h:
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::validatePreflightResponse):
+        (WebCore::CrossOriginPreflightChecker::doPreflight):
+        * loader/CrossOriginPreflightChecker.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::tryLoadingSubstituteData):
+        (WebCore::DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::disallowDataRequest const):
+        (WebCore::DocumentLoader::addSubresourceLoader):
+        (WebCore::DocumentLoader::loadMainResource):
+        (WebCore::DocumentLoader::subresourceLoaderFinishedLoadingOnePart):
+        * loader/DocumentLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebCore::EmptyFrameLoaderClient::shouldUseCredentialStorage):
+        (WebCore::EmptyFrameLoaderClient::dispatchWillSendRequest):
+        (WebCore::EmptyFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::EmptyFrameLoaderClient::canAuthenticateAgainstProtectionSpace):
+        (WebCore::EmptyFrameLoaderClient::connectionProperties):
+        (WebCore::EmptyFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebCore::EmptyFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebCore::EmptyFrameLoaderClient::dispatchDidFinishLoading):
+        (WebCore::EmptyFrameLoaderClient::dispatchDidFailLoading):
+        (WebCore::EmptyFrameLoaderClient::willCacheResponse const):
+        (WebCore::EmptyFrameLoaderClient::shouldCacheResponse):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::willLoadMediaElementURL):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::requestFromDelegate):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/LoaderStrategy.cpp:
+        (WebCore::LoaderStrategy::responseFromResourceLoadIdentifier):
+        (WebCore::LoaderStrategy::networkMetricsFromResourceLoadIdentifier):
+        (WebCore::LoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier):
+        * loader/LoaderStrategy.h:
+        (WebCore::LoaderStrategy::ongoingLoads const):
+        (): Deleted.
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::startPingLoad):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress):
+        (WebCore::ProgressTracker::completeProgress):
+        (WebCore::ProgressTracker::createUniqueIdentifier):
+        * loader/ProgressTracker.h:
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoadNotifier::assignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveData):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        (WebCore::ResourceLoadNotifier::dispatchDidFailLoading):
+        (WebCore::ResourceLoadNotifier::sendRemainingDelegateMessages):
+        * loader/ResourceLoadNotifier.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::identifier const):
+        * loader/ResourceLoaderIdentifier.h: Copied from Source/WebKit/Shared/URLSchemeTaskParameters.h.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::init):
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::didCancel):
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didSendData):
+        (WebCore::ThreadableLoaderClient::didReceiveResponse):
+        (WebCore::ThreadableLoaderClient::didReceiveData):
+        (WebCore::ThreadableLoaderClient::didFinishLoading):
+        (WebCore::ThreadableLoaderClient::didFail):
+        (WebCore::ThreadableLoaderClient::didFinishTiming):
+        (WebCore::ThreadableLoaderClient::notifyIsDone):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveResponse):
+        (WebCore::ThreadableLoaderClientWrapper::didFinishLoading):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveAuthenticationCancellation):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+        (WebCore::WorkerThreadableLoader::done const):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::identifierForLoadWithoutResourceLoader const):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse):
+        (WebCore::EventSource::didFinishLoading):
+        * page/EventSource.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::didReceiveResponse):
+        * workers/Worker.h:
+        * workers/WorkerFontLoadRequest.cpp:
+        (WebCore::WorkerFontLoadRequest::didReceiveResponse):
+        (WebCore::WorkerFontLoadRequest::didFinishLoading):
+        * workers/WorkerFontLoadRequest.h:
+        * workers/WorkerOrWorkletGlobalScope.h:
+        (WebCore::WorkerOrWorkletGlobalScope::createUniqueIdentifier): Deleted.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        (WebCore::WorkerScriptLoader::didFinishLoading):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::WorkerScriptLoader::identifier const):
+        * workers/WorkerScriptLoaderClient.h:
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::didReceiveResponse):
+        * workers/service/ServiceWorkerJob.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        * xml/XMLHttpRequest.h:
+
 2021-09-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix the Xcode build

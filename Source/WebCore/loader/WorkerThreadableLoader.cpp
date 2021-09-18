@@ -113,7 +113,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     : m_workerClientWrapper(&workerClientWrapper)
     , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.isolatedCopy())
-    , m_workerRequestIdentifier(globalScope.createUniqueIdentifier())
+    , m_workerRequestIdentifier { ResourceLoaderIdentifier::generate() }
 {
     auto* securityOrigin = globalScope.securityOrigin();
     auto* contentSecurityPolicy = globalScope.contentSecurityPolicy();
@@ -220,7 +220,7 @@ void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long by
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), workerRequestIdentifier = m_workerRequestIdentifier, identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
@@ -242,7 +242,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const uint8_t* dat
     }, m_taskMode);
 }
 
-void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(unsigned long identifier)
+void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ResourceLoaderIdentifier identifier)
 {
     m_loadingFinished = true;
     m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), workerRequestIdentifier = m_workerRequestIdentifier, networkLoadMetrics = m_networkLoadMetrics.isolatedCopy(), identifier] (ScriptExecutionContext& context) mutable {

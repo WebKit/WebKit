@@ -178,7 +178,7 @@ ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse&
     return { };
 }
 
-void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     m_error = validateWorkerResponse(response, m_destination);
     if (!m_error.isNull()) {
@@ -221,7 +221,7 @@ void WorkerScriptLoader::didReceiveData(const uint8_t* data, int len)
     m_script.append(m_decoder->decode(data, len));
 }
 
-void WorkerScriptLoader::didFinishLoading(unsigned long identifier)
+void WorkerScriptLoader::didFinishLoading(ResourceLoaderIdentifier identifier)
 {
     if (m_failed) {
         notifyError();

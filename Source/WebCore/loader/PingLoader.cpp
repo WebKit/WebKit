@@ -200,7 +200,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
 
 void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeaderMap&& originalRequestHeaders, ShouldFollowRedirects shouldFollowRedirects, ContentSecurityPolicyImposition policyCheck, ReferrerPolicy referrerPolicy, std::optional<ViolationReportType> violationReportType)
 {
-    unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
+    auto identifier = ResourceLoaderIdentifier::generate();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
     // It seems like the PingLoader should be associated with the current
     // Document in the Frame, but the activeDocumentLoader will be associated

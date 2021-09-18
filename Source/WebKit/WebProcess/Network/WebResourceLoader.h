@@ -33,6 +33,7 @@
 #include "WebResourceInterceptController.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -50,15 +51,13 @@ class ResourceResponse;
 
 namespace WebKit {
 
-typedef uint64_t ResourceLoadIdentifier;
-
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::MessageSender {
 public:
     struct TrackingParameters {
         WebPageProxyIdentifier webPageProxyID;
         WebCore::PageIdentifier pageID;
         WebCore::FrameIdentifier frameID;
-        ResourceLoadIdentifier resourceID { 0 };
+        WebCore::ResourceLoaderIdentifier resourceID;
     };
 
     static Ref<WebResourceLoader> create(Ref<WebCore::ResourceLoader>&&, const TrackingParameters&);

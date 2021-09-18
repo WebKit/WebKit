@@ -87,7 +87,6 @@ class NetworkSocketStream;
 class ServiceWorkerFetchTask;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
-typedef uint64_t ResourceLoadIdentifier;
 
 namespace NetworkCache {
 struct DataKey;
@@ -125,34 +124,34 @@ public:
     void cleanupForSuspension(Function<void()>&&);
     void endSuspension();
 
-    void getNetworkLoadInformationResponse(ResourceLoadIdentifier identifier, CompletionHandler<void(const WebCore::ResourceResponse&)>&& completionHandler)
+    void getNetworkLoadInformationResponse(WebCore::ResourceLoaderIdentifier identifier, CompletionHandler<void(const WebCore::ResourceResponse&)>&& completionHandler)
     {
         if (auto* info = m_networkLoadInformationByID.get(identifier))
             return completionHandler(info->response);
         completionHandler({ });
     }
 
-    void getNetworkLoadIntermediateInformation(ResourceLoadIdentifier identifier, CompletionHandler<void(const Vector<WebCore::NetworkTransactionInformation>&)>&& completionHandler)
+    void getNetworkLoadIntermediateInformation(WebCore::ResourceLoaderIdentifier identifier, CompletionHandler<void(const Vector<WebCore::NetworkTransactionInformation>&)>&& completionHandler)
     {
         if (auto* info = m_networkLoadInformationByID.get(identifier))
             return completionHandler(info->transactions);
         completionHandler({ });
     }
 
-    void takeNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, CompletionHandler<void(const WebCore::NetworkLoadMetrics&)>&& completionHandler)
+    void takeNetworkLoadInformationMetrics(WebCore::ResourceLoaderIdentifier identifier, CompletionHandler<void(const WebCore::NetworkLoadMetrics&)>&& completionHandler)
     {
         if (auto info = m_networkLoadInformationByID.take(identifier))
             return completionHandler(info->metrics);
         completionHandler({ });
     }
 
-    void addNetworkLoadInformation(ResourceLoadIdentifier identifier, WebCore::NetworkLoadInformation&& information)
+    void addNetworkLoadInformation(WebCore::ResourceLoaderIdentifier identifier, WebCore::NetworkLoadInformation&& information)
     {
         ASSERT(!m_networkLoadInformationByID.contains(identifier));
         m_networkLoadInformationByID.add(identifier, makeUnique<WebCore::NetworkLoadInformation>(WTFMove(information)));
     }
 
-    void addNetworkLoadInformationMetrics(ResourceLoadIdentifier identifier, const WebCore::NetworkLoadMetrics& metrics)
+    void addNetworkLoadInformationMetrics(WebCore::ResourceLoaderIdentifier identifier, const WebCore::NetworkLoadMetrics& metrics)
     {
         ASSERT(m_networkLoadInformationByID.contains(identifier));
         m_networkLoadInformationByID.ensure(identifier, [] {
@@ -160,13 +159,13 @@ public:
         }).iterator->value->metrics = metrics;
     }
 
-    void removeNetworkLoadInformation(ResourceLoadIdentifier identifier)
+    void removeNetworkLoadInformation(WebCore::ResourceLoaderIdentifier identifier)
     {
         m_networkLoadInformationByID.remove(identifier);
     }
 
-    std::optional<NetworkActivityTracker> startTrackingResourceLoad(WebCore::PageIdentifier, ResourceLoadIdentifier resourceID, bool isTopResource);
-    void stopTrackingResourceLoad(ResourceLoadIdentifier resourceID, NetworkActivityTracker::CompletionCode);
+    std::optional<NetworkActivityTracker> startTrackingResourceLoad(WebCore::PageIdentifier, WebCore::ResourceLoaderIdentifier resourceID, bool isTopResource);
+    void stopTrackingResourceLoad(WebCore::ResourceLoaderIdentifier resourceID, NetworkActivityTracker::CompletionCode);
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> resolveBlobReferences(const NetworkResourceLoadParameters&);
 
@@ -187,12 +186,12 @@ public:
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 
     void broadcastConsoleMessage(JSC::MessageSource, JSC::MessageLevel, const String& message);
-    RefPtr<NetworkResourceLoader> takeNetworkResourceLoader(uint64_t resourceLoadIdentifier);
+    RefPtr<NetworkResourceLoader> takeNetworkResourceLoader(WebCore::ResourceLoaderIdentifier);
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Identifier);
 
-    void didFinishPreconnection(uint64_t preconnectionIdentifier, const WebCore::ResourceError&);
+    void didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, const WebCore::ResourceError&);
     WebCore::NetworkStorageSession* storageSession();
 
     // IPC::Connection::Client
@@ -211,15 +210,15 @@ private:
     void loadPing(NetworkResourceLoadParameters&&);
     void prefetchDNS(const String&);
     void sendH2Ping(NetworkResourceLoadParameters&&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
-    void preconnectTo(std::optional<uint64_t> preconnectionIdentifier, NetworkResourceLoadParameters&&);
-    void isResourceLoadFinished(uint64_t loadIdentifier, CompletionHandler<void(bool)>&&);
+    void preconnectTo(std::optional<WebCore::ResourceLoaderIdentifier> preconnectionIdentifier, NetworkResourceLoadParameters&&);
+    void isResourceLoadFinished(WebCore::ResourceLoaderIdentifier, CompletionHandler<void(bool)>&&);
 
-    void removeLoadIdentifier(ResourceLoadIdentifier);
+    void removeLoadIdentifier(WebCore::ResourceLoaderIdentifier);
     void pageLoadCompleted(WebCore::PageIdentifier);
     void browsingContextRemoved(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier);
-    void crossOriginRedirectReceived(ResourceLoadIdentifier, const URL& redirectURL);
+    void crossOriginRedirectReceived(WebCore::ResourceLoaderIdentifier, const URL& redirectURL);
     void startDownload(DownloadID, const WebCore::ResourceRequest&, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { });
-    void convertMainResourceLoadToDownload(uint64_t mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, std::optional<NavigatingToAppBoundDomain>);
+    void convertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, std::optional<NavigatingToAppBoundDomain>);
 
     void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
@@ -327,7 +326,7 @@ private:
         {
         }
 
-        ResourceNetworkActivityTracker(WebCore::PageIdentifier pageID, ResourceLoadIdentifier resourceID)
+        ResourceNetworkActivityTracker(WebCore::PageIdentifier pageID, WebCore::ResourceLoaderIdentifier resourceID)
             : pageID { pageID }
             , resourceID { resourceID }
             , networkActivity { NetworkActivityTracker::Label::LoadResource }
@@ -335,7 +334,7 @@ private:
         }
 
         WebCore::PageIdentifier pageID;
-        ResourceLoadIdentifier resourceID { 0 };
+        WebCore::ResourceLoaderIdentifier resourceID;
         bool isRootActivity { false };
         NetworkActivityTracker networkActivity;
     };
@@ -343,12 +342,12 @@ private:
     void stopAllNetworkActivityTracking();
     void stopAllNetworkActivityTrackingForPage(WebCore::PageIdentifier);
     size_t findRootNetworkActivity(WebCore::PageIdentifier);
-    size_t findNetworkActivityTracker(ResourceLoadIdentifier resourceID);
+    size_t findNetworkActivityTracker(WebCore::ResourceLoaderIdentifier resourceID);
 
     void hasUploadStateChanged(bool);
 
     void setResourceLoadSchedulingMode(WebCore::PageIdentifier, WebCore::LoadSchedulingMode);
-    void prioritizeResourceLoads(Vector<ResourceLoadIdentifier>);
+    void prioritizeResourceLoads(const Vector<WebCore::ResourceLoaderIdentifier>&);
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     WebPaymentCoordinatorProxy& paymentCoordinator();
@@ -375,7 +374,7 @@ private:
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
 
-    HashMap<ResourceLoadIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
+    HashMap<WebCore::ResourceLoaderIdentifier, std::unique_ptr<WebCore::NetworkLoadInformation>> m_networkLoadInformationByID;
 
 
 #if USE(LIBWEBRTC)

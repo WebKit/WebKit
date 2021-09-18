@@ -54,7 +54,7 @@
 #include <WebCore/SubresourceLoader.h>
 #include <wtf/CompletionHandler.h>
 
-#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::" fmt, this, m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID, ##__VA_ARGS__)
+#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::" fmt, this, m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.toUInt64(), m_trackingParameters.resourceID.toUInt64(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -83,7 +83,7 @@ uint64_t WebResourceLoader::messageSenderDestinationID() const
 {
     RELEASE_ASSERT(RunLoop::isMain());
     RELEASE_ASSERT(m_coreLoader->identifier());
-    return m_coreLoader->identifier();
+    return m_coreLoader->identifier().toUInt64();
 }
 
 void WebResourceLoader::detachFromCoreLoader()
@@ -153,7 +153,7 @@ void WebResourceLoader::didReceiveResponse(const ResourceResponse& response, boo
     }
 
     if (InspectorInstrumentationWebKit::shouldInterceptResponse(m_coreLoader->frame(), response)) {
-        unsigned long interceptedRequestIdentifier = m_coreLoader->identifier();
+        auto interceptedRequestIdentifier = m_coreLoader->identifier();
         m_interceptController.beginInterceptingResponse(interceptedRequestIdentifier);
         InspectorInstrumentationWebKit::interceptResponse(m_coreLoader->frame(), response, interceptedRequestIdentifier, [this, protectedThis = makeRef(*this), interceptedRequestIdentifier, policyDecisionCompletionHandler = WTFMove(policyDecisionCompletionHandler)](const ResourceResponse& inspectorResponse, RefPtr<SharedBuffer> overrideData) mutable {
             if (!m_coreLoader || !m_coreLoader->identifier()) {

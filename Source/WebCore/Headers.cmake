@@ -844,6 +844,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/ResourceLoadStatistics.h
     loader/ResourceLoadTiming.h
     loader/ResourceLoader.h
+    loader/ResourceLoaderIdentifier.h
     loader/ResourceLoaderOptions.h
     loader/ResourceLoaderTypes.h
     loader/ResourceTimingInformation.h

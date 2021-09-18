@@ -65,7 +65,7 @@ public:
 private:
     WorkerModuleScriptLoader(ModuleScriptLoaderClient&, DeferredPromise&, WorkerScriptFetcher&, RefPtr<ModuleFetchParameters>&&);
 
-    void didReceiveResponse(unsigned long, const ResourceResponse&) final { }
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final { }
     void notifyFinished() final;
 
     void notifyClientFinished();

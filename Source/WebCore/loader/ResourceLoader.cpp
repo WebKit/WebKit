@@ -67,7 +67,7 @@
 #undef RESOURCELOADER_RELEASE_LOG
 #define PAGE_ID ((frame() ? frame()->pageID().value_or(PageIdentifier()) : PageIdentifier()).toUInt64())
 #define FRAME_ID ((frame() ? frame()->frameID().value_or(FrameIdentifier()) : FrameIdentifier()).toUInt64())
-#define RESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%lu] ResourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier(), ##__VA_ARGS__)
+#define RESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", frameLoader=%p, resourceID=%" PRIu64 "] ResourceLoader::" fmt, this, PAGE_ID, FRAME_ID, frameLoader(), identifier().toUInt64(), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -116,7 +116,7 @@ void ResourceLoader::releaseResources()
 
     finishNetworkLoad();
 
-    m_identifier = 0;
+    m_identifier = { };
 
     m_resourceData = nullptr;
     m_deferredRequest = ResourceRequest();
@@ -373,7 +373,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).
     bool createdResourceIdentifier = false;
     if (!m_identifier) {
-        m_identifier = m_frame->page()->progress().createUniqueIdentifier();
+        m_identifier = ResourceLoaderIdentifier::generate();
         createdResourceIdentifier = true;
     }
 

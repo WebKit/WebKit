@@ -336,7 +336,7 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(WebCore::Docum
     return true;
 }
 
-void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader* loader, const WebCore::ResourceRequest& request)
+void WebFrameLoaderClient::assignIdentifierToInitialRequest(WebCore::ResourceLoaderIdentifier identifier, WebCore::DocumentLoader* loader, const WebCore::ResourceRequest& request)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -356,7 +356,7 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
     [webView _addObject:object.get() forIdentifier:identifier];
 }
 
-void WebFrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader, unsigned long identifier, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
+void WebFrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -386,7 +386,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* load
         request.updateFromDelegatePreservingOldProperties(WebCore::ResourceRequest(newURLRequest));
 }
 
-bool WebFrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader* loader, unsigned long identifier)
+bool WebFrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -399,7 +399,7 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader* l
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader* loader, unsigned long identifier, const WebCore::AuthenticationChallenge& challenge)
+void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, const WebCore::AuthenticationChallenge& challenge)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -420,7 +420,7 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Do
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader* loader, unsigned long identifier, const WebCore::ProtectionSpace& protectionSpace)
+bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, const WebCore::ProtectionSpace& protectionSpace)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -441,7 +441,7 @@ bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(WebCore::Docume
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(WebCore::DocumentLoader* loader, unsigned long identifier)
+RetainPtr<CFDictionaryRef> WebFrameLoaderClient::connectionProperties(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier)
 {
     WebView *webView = getWebView(m_webFrame.get());
     id resource = [webView _objectForIdentifier:identifier];
@@ -468,7 +468,7 @@ bool WebFrameLoaderClient::shouldPaintBrokenImage(const URL& imageURL) const
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* loader, unsigned long identifier, const WebCore::ResourceResponse& response)
+void WebFrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceResponse& response)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -486,7 +486,7 @@ void WebFrameLoaderClient::dispatchDidReceiveResponse(WebCore::DocumentLoader* l
     }
 }
 
-void WebFrameLoaderClient::willCacheResponse(WebCore::DocumentLoader* loader, unsigned long identifier, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
+void WebFrameLoaderClient::willCacheResponse(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -506,7 +506,7 @@ void WebFrameLoaderClient::willCacheResponse(WebCore::DocumentLoader* loader, un
     completionHandler(response);
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader* loader, unsigned long identifier, int dataLength)
+void WebFrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, int dataLength)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -528,7 +528,7 @@ void WebFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *)
 }
 #endif
 
-void WebFrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, unsigned long identifier)
+void WebFrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
@@ -550,7 +550,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(WebCore::DocumentLoader* loa
     static_cast<WebDocumentLoaderMac*>(loader)->decreaseLoadCount(identifier);
 }
 
-void WebFrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, unsigned long identifier, const WebCore::ResourceError& error)
+void WebFrameLoaderClient::dispatchDidFailLoading(WebCore::DocumentLoader* loader, WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceError& error)
 {
     WebView *webView = getWebView(m_webFrame.get());
     WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);

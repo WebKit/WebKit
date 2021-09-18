@@ -5630,12 +5630,12 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
 
 void WebPageProxy::decidePolicyForResponse(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier,
     uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute,
-    bool wasAllowedByInjectedBundle, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
+    bool wasAllowedByInjectedBundle, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
 {
     decidePolicyForResponseShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, response, request, canShowMIMEType, downloadAttribute, wasAllowedByInjectedBundle, browsingContextGroupSwitchDecision, mainResourceLoadIdentifier, listenerID, userData);
 }
 
-void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, uint64_t mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
+void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, uint64_t navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, bool wasAllowedByInjectedBundle, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, uint64_t listenerID, const UserData& userData)
 {
     PageClientProtector protector(pageClient());
 
@@ -10002,7 +10002,7 @@ void WebPageProxy::startURLSchemeTaskShared(Ref<WebProcessProxy>&& process, Page
     iterator->value->startTask(*this, process, webPageID, WTFMove(parameters), nullptr);
 }
 
-void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
+void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier)
 {
     MESSAGE_CHECK(m_process, decltype(m_urlSchemeHandlersByIdentifier)::isValidKey(handlerIdentifier));
     auto iterator = m_urlSchemeHandlersByIdentifier.find(handlerIdentifier);

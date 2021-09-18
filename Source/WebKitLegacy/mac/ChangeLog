@@ -1,3 +1,29 @@
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use ObjectIdentifier for ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=230278
+
+        Reviewed by Michael Catanzaro.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::shouldUseCredentialStorage):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace):
+        (WebFrameLoaderClient::connectionProperties):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::willCacheResponse const):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        * WebView/WebDocumentLoaderMac.h:
+        * WebView/WebDocumentLoaderMac.mm:
+        (WebDocumentLoaderMac::increaseLoadCount):
+        (WebDocumentLoaderMac::decreaseLoadCount):
+        * WebView/WebViewInternal.h:
+
 2021-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add fast property enumeration mode for JSON.stringify

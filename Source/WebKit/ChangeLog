@@ -1,3 +1,173 @@
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use ObjectIdentifier for ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=230278
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::resolveBlobReferences):
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        (WebKit::NetworkConnectionToWebProcess::isResourceLoadFinished):
+        (WebKit::NetworkConnectionToWebProcess::didFinishPreconnection):
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        (WebKit::NetworkConnectionToWebProcess::startTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::stopTrackingResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::findNetworkActivityTracker):
+        (WebKit::NetworkConnectionToWebProcess::prioritizeResourceLoads):
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkResourceLoader):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::getNetworkLoadInformationResponse):
+        (WebKit::NetworkConnectionToWebProcess::getNetworkLoadIntermediateInformation):
+        (WebKit::NetworkConnectionToWebProcess::takeNetworkLoadInformationMetrics):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformation):
+        (WebKit::NetworkConnectionToWebProcess::addNetworkLoadInformationMetrics):
+        (WebKit::NetworkConnectionToWebProcess::removeNetworkLoadInformation):
+        (WebKit::NetworkConnectionToWebProcess::ResourceNetworkActivityTracker::ResourceNetworkActivityTracker):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareLoadForWebProcessTransfer):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadMap.cpp:
+        (WebKit::NetworkResourceLoadMap::add):
+        (WebKit::NetworkResourceLoadMap::remove):
+        (WebKit::NetworkResourceLoadMap::take):
+        (WebKit::NetworkResourceLoadMap::get const):
+        * NetworkProcess/NetworkResourceLoadMap.h:
+        (WebKit::NetworkResourceLoadMap::contains const):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::transferToNewWebProcess):
+        (WebKit::escapeIDForJSON):
+        (WebKit::logBlockedCookieInformation):
+        (WebKit::logCookieInformationInternal):
+        (WebKit::NetworkResourceLoader::logCookieInformation):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Shared/URLSchemeTaskParameters.cpp:
+        (WebKit::URLSchemeTaskParameters::decode):
+        * Shared/URLSchemeTaskParameters.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::prepareLoadForWebProcessTransfer):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::decidePolicyForResponse):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::stopURLSchemeTask):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::startTask):
+        (WebKit::WebURLSchemeHandler::processForTaskIdentifier const):
+        (WebKit::WebURLSchemeHandler::stopAllTasksForPage):
+        (WebKit::WebURLSchemeHandler::stopTask):
+        (WebKit::WebURLSchemeHandler::removeTaskFromPageMap):
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::identifier const):
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageResourceLoadClient.h:
+        (API::InjectedBundle::ResourceLoadClient::didInitiateLoadForResource):
+        (API::InjectedBundle::ResourceLoadClient::willSendRequestForFrame):
+        (API::InjectedBundle::ResourceLoadClient::didReceiveResponseForResource):
+        (API::InjectedBundle::ResourceLoadClient::didReceiveContentLengthForResource):
+        (API::InjectedBundle::ResourceLoadClient::didFinishLoadForResource):
+        (API::InjectedBundle::ResourceLoadClient::didFailLoadForResource):
+        (API::InjectedBundle::ResourceLoadClient::shouldCacheResponse):
+        (API::InjectedBundle::ResourceLoadClient::shouldUseCredentialStorage):
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::didInitiateLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveResponseForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveContentLengthForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFinishLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFailLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldCacheResponse):
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldUseCredentialStorage):
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didFinishPingLoad):
+        (WebKit::NetworkProcessConnection::didFinishPreconnection):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        (WebKit::WebLoaderStrategy::remove):
+        (WebKit::WebLoaderStrategy::tryLoadingSynchronouslyUsingURLSchemeHandler):
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        (WebKit::WebLoaderStrategy::startPingLoad):
+        (WebKit::WebLoaderStrategy::didFinishPingLoad):
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        (WebKit::WebLoaderStrategy::didFinishPreconnection):
+        (WebKit::WebLoaderStrategy::responseFromResourceLoadIdentifier):
+        (WebKit::WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier):
+        (WebKit::WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier):
+        (WebKit::WebLoaderStrategy::prioritizeResourceLoads):
+        (WebKit::WebLoaderStrategy::generateLoadIdentifier): Deleted.
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Network/WebResourceInterceptController.cpp:
+        (WebKit::WebResourceInterceptController::isIntercepting const):
+        (WebKit::WebResourceInterceptController::beginInterceptingResponse):
+        (WebKit::WebResourceInterceptController::continueResponse):
+        (WebKit::WebResourceInterceptController::interceptedResponse):
+        (WebKit::WebResourceInterceptController::defer):
+        * WebProcess/Network/WebResourceInterceptController.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::messageSenderDestinationID const):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::WebFrameLoaderClient::shouldUseCredentialStorage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebKit::WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::willCacheResponse const):
+        (WebKit::WebFrameLoaderClient::sendH2Ping):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::convertMainResourceLoadToDownload):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addConsoleMessage):
+        (WebKit::WebPage::addResourceRequest):
+        (WebKit::WebPage::removeResourceRequest):
+        (WebKit::WebPage::urlSchemeTaskWillPerformRedirection):
+        (WebKit::WebPage::urlSchemeTaskDidPerformRedirection):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveResponse):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+        (WebKit::WebPage::urlSchemeTaskDidComplete):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::addConsoleMessage):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+        (WebKit::WebURLSchemeHandlerProxy::loadSynchronously):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidPerformRedirection):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidReceiveResponse):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidReceiveData):
+        (WebKit::WebURLSchemeHandlerProxy::taskDidComplete):
+        (WebKit::WebURLSchemeHandlerProxy::removeTask):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.h:
+        (WebKit::WebURLSchemeTaskProxy::identifier const):
+
 2021-09-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove unnecessary ITP memory store code

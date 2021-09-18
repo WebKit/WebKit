@@ -304,14 +304,12 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
     auto& webProcess = WebProcess::singleton();
-    // Use 0 to indicate that the resource load can't be converted and a new download must be started.
+    // Use std::nullopt to indicate that the resource load can't be converted and a new download must be started.
     // This can happen if there is no loader because the main resource is in the WebCore memory cache,
     // or because the conversion was attempted when not calling SubresourceLoader::didReceiveResponse().
-    uint64_t mainResourceLoadIdentifier;
+    std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier;
     if (mainResourceLoader)
         mainResourceLoadIdentifier = mainResourceLoader->identifier();
-    else
-        mainResourceLoadIdentifier = 0;
 
     std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     isAppBound = m_isNavigatingToAppBoundDomain;

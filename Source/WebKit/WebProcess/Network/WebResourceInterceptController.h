@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
@@ -33,21 +34,21 @@ namespace WebKit {
 
 class WebResourceInterceptController {
 public:
-    bool isIntercepting(unsigned long identifier) const;
+    bool isIntercepting(WebCore::ResourceLoaderIdentifier) const;
 
     // Start intercepting a response.
-    void beginInterceptingResponse(unsigned long identifier);
+    void beginInterceptingResponse(WebCore::ResourceLoaderIdentifier);
 
     // Stop intercepting a response. An intercept response was not supplied. Send deferred networking callbacks.
-    void continueResponse(unsigned long identifier);
+    void continueResponse(WebCore::ResourceLoaderIdentifier);
 
     // Stop intercepting a response. An intercept response was supplied. Send no deferred networking callbacks.
-    void interceptedResponse(unsigned long identifier);
+    void interceptedResponse(WebCore::ResourceLoaderIdentifier);
 
-    void defer(unsigned long identifier, Function<void()>&&);
+    void defer(WebCore::ResourceLoaderIdentifier, Function<void()>&&);
 
 private:
-    HashMap<unsigned long, Deque<Function<void()>>> m_interceptedResponseQueue;
+    HashMap<WebCore::ResourceLoaderIdentifier, Deque<Function<void()>>> m_interceptedResponseQueue;
 };
 
 } // namespace WebKit

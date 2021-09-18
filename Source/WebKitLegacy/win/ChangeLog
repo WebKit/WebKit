@@ -1,3 +1,22 @@
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use ObjectIdentifier for ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=230278
+
+        Reviewed by Michael Catanzaro.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebFrameLoaderClient::shouldUseCredentialStorage):
+        (WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        (WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebFrameLoaderClient::shouldCacheResponse):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2021-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Convert usesMockScrollAnimator from a DeprecatedGlobalSettings to a WebPreference

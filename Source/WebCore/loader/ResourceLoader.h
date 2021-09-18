@@ -30,6 +30,7 @@
 
 #include "ResourceHandleClient.h"
 #include "ResourceLoadTiming.h"
+#include "ResourceLoaderIdentifier.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceLoaderTypes.h"
 #include "ResourceRequest.h"
@@ -90,7 +91,7 @@ public:
     virtual void setDefersLoading(bool);
     bool defersLoading() const { return m_defersLoading; }
 
-    unsigned long identifier() const { return m_identifier; }
+    ResourceLoaderIdentifier identifier() const { return m_identifier; }
 
     bool wasAuthenticationChallengeBlocked() const { return m_wasAuthenticationChallengeBlocked; }
 
@@ -228,7 +229,7 @@ private:
     ResourceRequest m_originalRequest; // Before redirects.
     RefPtr<SharedBuffer> m_resourceData;
     
-    unsigned long m_identifier { 0 };
+    ResourceLoaderIdentifier m_identifier;
 
     bool m_reachedTerminalState { false };
     bool m_notifiedLoadComplete { false };

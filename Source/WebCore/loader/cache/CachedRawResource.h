@@ -39,7 +39,7 @@ public:
     void setDataBufferingPolicy(DataBufferingPolicy);
 
     // FIXME: This is exposed for the InspectorInstrumentation for preflights in DocumentThreadableLoader. It's also really lame.
-    unsigned long identifier() const { return m_identifier; }
+    ResourceLoaderIdentifier identifier() const { return m_identifier; }
 
     void clear();
 
@@ -73,7 +73,7 @@ private:
     void previewResponseReceived(const ResourceResponse&) final;
 #endif
 
-    unsigned long m_identifier;
+    ResourceLoaderIdentifier m_identifier;
     bool m_allowEncodedDataReplacement;
     bool m_inIncrementalDataNotify { false };
 

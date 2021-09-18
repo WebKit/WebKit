@@ -33,6 +33,7 @@
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {
@@ -42,8 +43,6 @@ class Encoder;
 
 namespace WebKit {
 
-typedef uint64_t ResourceLoadIdentifier;
-
 class NetworkResourceLoadParameters : public NetworkLoadParameters {
 public:
     void encode(IPC::Encoder&) const;
@@ -51,7 +50,7 @@ public:
 
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const;
 
-    mutable ResourceLoadIdentifier identifier { 0 };
+    mutable WebCore::ResourceLoaderIdentifier identifier;
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
     RefPtr<SandboxExtension> resourceSandboxExtension; // Created automatically for the sender.
     mutable Seconds maximumBufferingTime;

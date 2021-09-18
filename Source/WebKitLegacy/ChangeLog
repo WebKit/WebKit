@@ -1,3 +1,14 @@
+2021-09-17  Alex Christensen  <achristensen@webkit.org>
+
+        Use ObjectIdentifier for ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=230278
+
+        Reviewed by Michael Catanzaro.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::loadResourceSynchronously):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2021-09-07  Chris Dumez  <cdumez@apple.com>
 
         Implement origin partitioning (top-origin/frame-origin) for BroadcastChannel

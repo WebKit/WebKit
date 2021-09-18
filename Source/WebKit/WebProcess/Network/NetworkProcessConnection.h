@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkProcessConnection_h
-#define NetworkProcessConnection_h
+#pragma once
 
 #include "Connection.h"
 #include "ShareableResource.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/RTCDataChannelIdentifier.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -49,8 +49,6 @@ namespace WebKit {
 
 class WebIDBConnectionToServer;
 class WebSWClientConnection;
-
-typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
@@ -96,8 +94,8 @@ private:
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
 
-    void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
-    void didFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError&&);
+    void didFinishPingLoad(WebCore::ResourceLoaderIdentifier pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
+    void didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, WebCore::ResourceError&&);
     void setOnLineState(bool isOnLine);
     void cookieAcceptPolicyChanged(WebCore::HTTPCookieAcceptPolicy);
 
@@ -129,5 +127,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // NetworkProcessConnection_h

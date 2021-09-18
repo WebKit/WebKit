@@ -105,7 +105,7 @@ void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)
     }
 }
 
-void WorkerFontLoadRequest::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void WorkerFontLoadRequest::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode())
         m_errorOccurred = true;
@@ -122,7 +122,7 @@ void WorkerFontLoadRequest::didReceiveData(const uint8_t* data, int dataLength)
     m_data->append(data, dataLength);
 }
 
-void WorkerFontLoadRequest::didFinishLoading(unsigned long)
+void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier)
 {
     m_isLoading = false;
 

@@ -87,7 +87,7 @@ private:
 
     void notifyNetworkStateChange(bool isOnline);
 
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
     void notifyFinished() final;
 
     // ActiveDOMObject.

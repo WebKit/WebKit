@@ -4321,10 +4321,10 @@ WebFullScreenManager* WebPage::fullScreenManager()
 }
 #endif
 
-void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, uint64_t requestID)
+void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSource, MessageLevel messageLevel, const String& message, WebCore::ResourceLoaderIdentifier requestID)
 {
     if (auto* frame = WebProcess::singleton().webFrame(frameID))
-        frame->addConsoleMessage(messageSource, messageLevel, message, requestID);
+        frame->addConsoleMessage(messageSource, messageLevel, message, requestID.toUInt64());
 }
 
 void WebPage::sendCSPViolationReport(FrameIdentifier frameID, const URL& reportURL, IPC::FormDataReference&& reportData)
@@ -5528,7 +5528,7 @@ void WebPage::savePDFToTemporaryFolderAndOpenWithNativeApplication(const String&
 }
 #endif
 
-void WebPage::addResourceRequest(unsigned long identifier, const WebCore::ResourceRequest& request)
+void WebPage::addResourceRequest(WebCore::ResourceLoaderIdentifier identifier, const WebCore::ResourceRequest& request)
 {
     if (!request.url().protocolIsInHTTPFamily())
         return;
@@ -5543,7 +5543,7 @@ void WebPage::addResourceRequest(unsigned long identifier, const WebCore::Resour
         send(Messages::WebPageProxy::SetNetworkRequestsInProgress(true));
 }
 
-void WebPage::removeResourceRequest(unsigned long identifier)
+void WebPage::removeResourceRequest(WebCore::ResourceLoaderIdentifier identifier)
 {
     if (!m_trackedNetworkResourceRequestIdentifiers.remove(identifier))
         return;
@@ -6940,7 +6940,7 @@ void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String&
     m_identifierToURLSchemeHandlerProxyMap.add(handlerIdentifier, schemeResult.iterator->value.get());
 }
 
-void WebPage::urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, ResourceResponse&& response, ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void WebPage::urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, ResourceResponse&& response, ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
@@ -6949,7 +6949,7 @@ void WebPage::urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, ui
     handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request), WTFMove(completionHandler));
 }
 
-void WebPage::urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, ResourceResponse&& response, ResourceRequest&& request)
+void WebPage::urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, ResourceResponse&& response, ResourceRequest&& request)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
@@ -6957,7 +6957,7 @@ void WebPage::urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uin
     handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request), [] (ResourceRequest&&) {});
 }
     
-void WebPage::urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, const ResourceResponse& response)
+void WebPage::urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceResponse& response)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
@@ -6965,7 +6965,7 @@ void WebPage::urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64
     handler->taskDidReceiveResponse(taskIdentifier, response);
 }
 
-void WebPage::urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, const IPC::DataReference& data)
+void WebPage::urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const IPC::DataReference& data)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
@@ -6973,7 +6973,7 @@ void WebPage::urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t t
     handler->taskDidReceiveData(taskIdentifier, data.size(), data.data());
 }
 
-void WebPage::urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, const ResourceError& error)
+void WebPage::urlSchemeTaskDidComplete(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const ResourceError& error)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);

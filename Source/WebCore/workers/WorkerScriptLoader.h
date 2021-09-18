@@ -75,12 +75,12 @@ public:
     const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
     const String& responseMIMEType() const { return m_responseMIMEType; }
     bool failed() const { return m_failed; }
-    unsigned long identifier() const { return m_identifier; }
+    ResourceLoaderIdentifier identifier() const { return m_identifier; }
     const ResourceError& error() const { return m_error; }
 
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
     void didReceiveData(const uint8_t* data, int dataLength) override;
-    void didFinishLoading(unsigned long identifier) override;
+    void didFinishLoading(ResourceLoaderIdentifier) override;
     void didFail(const ResourceError&) override;
 
     void cancel();
@@ -110,7 +110,7 @@ private:
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     String m_referrerPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
-    unsigned long m_identifier { 0 };
+    ResourceLoaderIdentifier m_identifier;
     bool m_failed { false };
     bool m_finishing { false };
     bool m_isRedirected { false };

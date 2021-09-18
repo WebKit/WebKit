@@ -30,27 +30,29 @@
 
 #pragma once
 
+#include "ResourceLoaderIdentifier.h"
+
 namespace WebCore {
 
-    class ResourceError;
-    class ResourceResponse;
-    class ResourceTiming;
+class ResourceError;
+class ResourceResponse;
+class ResourceTiming;
 
-    class ThreadableLoaderClient {
-        WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
+class ThreadableLoaderClient {
+    WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED;
+public:
+    virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
-        virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) { }
-        virtual void didReceiveData(const uint8_t*, int /*dataLength*/) { }
-        virtual void didFinishLoading(unsigned long /*identifier*/) { }
-        virtual void didFail(const ResourceError&) { }
-        virtual void didFinishTiming(const ResourceTiming&) { }
-        virtual void notifyIsDone(bool) { ASSERT_NOT_REACHED(); }
+    virtual void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) { }
+    virtual void didReceiveData(const uint8_t*, int /*dataLength*/) { }
+    virtual void didFinishLoading(ResourceLoaderIdentifier) { }
+    virtual void didFail(const ResourceError&) { }
+    virtual void didFinishTiming(const ResourceTiming&) { }
+    virtual void notifyIsDone(bool) { ASSERT_NOT_REACHED(); }
 
-    protected:
-        ThreadableLoaderClient() = default;
-        virtual ~ThreadableLoaderClient() = default;
-    };
+protected:
+    ThreadableLoaderClient() = default;
+    virtual ~ThreadableLoaderClient() = default;
+};
 
 } // namespace WebCore

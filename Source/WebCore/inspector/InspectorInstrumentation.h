@@ -45,6 +45,7 @@
 #include "InspectorInstrumentationPublic.h"
 #include "Page.h"
 #include "ResourceLoader.h"
+#include "ResourceLoaderIdentifier.h"
 #include "StorageArea.h"
 #include "WebAnimation.h"
 #include "WorkerInspectorProxy.h"
@@ -184,34 +185,34 @@ public:
     static void applyUserAgentOverride(Frame&, String&);
     static void applyEmulatedMedia(Frame&, String&);
 
-    static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
+    static void willSendRequest(Frame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
     static void didLoadResourceFromMemoryCache(Page&, DocumentLoader*, CachedResource*);
-    static void didReceiveResourceResponse(Frame&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
-    static void didReceiveThreadableLoaderResponse(DocumentThreadableLoader&, unsigned long identifier);
-    static void didReceiveData(Frame*, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength);
-    static void didFinishLoading(Frame*, DocumentLoader*, unsigned long identifier, const NetworkLoadMetrics&, ResourceLoader*);
-    static void didFailLoading(Frame*, DocumentLoader*, unsigned long identifier, const ResourceError&);
+    static void didReceiveResourceResponse(Frame&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
+    static void didReceiveThreadableLoaderResponse(DocumentThreadableLoader&, ResourceLoaderIdentifier);
+    static void didReceiveData(Frame*, ResourceLoaderIdentifier, const uint8_t* data, int dataLength, int encodedDataLength);
+    static void didFinishLoading(Frame*, DocumentLoader*, ResourceLoaderIdentifier, const NetworkLoadMetrics&, ResourceLoader*);
+    static void didFailLoading(Frame*, DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&);
 
-    static void willSendRequest(WorkerOrWorkletGlobalScope&, unsigned long identifier, ResourceRequest&);
-    static void didReceiveResourceResponse(WorkerOrWorkletGlobalScope&, unsigned long identifier, const ResourceResponse&);
-    static void didReceiveData(WorkerOrWorkletGlobalScope&, unsigned long identifier, const uint8_t* data, int dataLength);
-    static void didFinishLoading(WorkerOrWorkletGlobalScope&, unsigned long identifier, const NetworkLoadMetrics&);
-    static void didFailLoading(WorkerOrWorkletGlobalScope&, unsigned long identifier, const ResourceError&);
+    static void willSendRequest(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, ResourceRequest&);
+    static void didReceiveResourceResponse(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const ResourceResponse&);
+    static void didReceiveData(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const uint8_t* data, int dataLength);
+    static void didFinishLoading(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const NetworkLoadMetrics&);
+    static void didFailLoading(WorkerOrWorkletGlobalScope&, ResourceLoaderIdentifier, const ResourceError&);
 
     // Some network requests do not go through the normal network loading path.
     // These network requests have to issue their own willSendRequest / didReceiveResponse / didFinishLoading / didFailLoading
     // instrumentation calls. Some of these loads are for resources that lack a CachedResource::Type.
     enum class LoadType { Ping, Beacon };
-    static void willSendRequestOfType(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, LoadType);
+    static void willSendRequestOfType(Frame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, LoadType);
 
-    static void continueAfterXFrameOptionsDenied(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
-    static void continueWithPolicyDownload(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
-    static void continueWithPolicyIgnore(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
+    static void continueAfterXFrameOptionsDenied(Frame&, ResourceLoaderIdentifier, DocumentLoader&, const ResourceResponse&);
+    static void continueWithPolicyDownload(Frame&, ResourceLoaderIdentifier, DocumentLoader&, const ResourceResponse&);
+    static void continueWithPolicyIgnore(Frame&, ResourceLoaderIdentifier, DocumentLoader&, const ResourceResponse&);
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
-    static void scriptImported(ScriptExecutionContext&, unsigned long identifier, const String& sourceString);
+    static void scriptImported(ScriptExecutionContext&, ResourceLoaderIdentifier, const String& sourceString);
     static void scriptExecutionBlockedByCSP(ScriptExecutionContext*, const String& directiveText);
-    static void didReceiveScriptResponse(ScriptExecutionContext*, unsigned long identifier);
+    static void didReceiveScriptResponse(ScriptExecutionContext*, ResourceLoaderIdentifier);
     static void domContentLoadedEventFired(Frame&);
     static void loadEventFired(Frame*);
     static void frameDetachedFromParent(Frame&);
@@ -231,7 +232,7 @@ public:
     static bool shouldInterceptRequest(const Frame&, const ResourceRequest&);
     static bool shouldInterceptResponse(const Frame&, const ResourceResponse&);
     static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
-    static void interceptResponse(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+    static void interceptResponse(const Frame&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
     static void addMessageToConsole(WorkerOrWorkletGlobalScope&, std::unique_ptr<Inspector::ConsoleMessage>);
@@ -403,20 +404,20 @@ private:
     static void applyUserAgentOverrideImpl(InstrumentingAgents&, String&);
     static void applyEmulatedMediaImpl(InstrumentingAgents&, String&);
 
-    static void willSendRequestImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
-    static void willSendRequestOfTypeImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, ResourceRequest&, LoadType);
-    static void markResourceAsCachedImpl(InstrumentingAgents&, unsigned long identifier);
+    static void willSendRequestImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
+    static void willSendRequestOfTypeImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, LoadType);
+    static void markResourceAsCachedImpl(InstrumentingAgents&, ResourceLoaderIdentifier);
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
-    static void didReceiveResourceResponseImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
-    static void didReceiveThreadableLoaderResponseImpl(InstrumentingAgents&, DocumentThreadableLoader&, unsigned long identifier);
-    static void didReceiveDataImpl(InstrumentingAgents&, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength);
-    static void didFinishLoadingImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);
-    static void didFailLoadingImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, const ResourceError&);
+    static void didReceiveResourceResponseImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
+    static void didReceiveThreadableLoaderResponseImpl(InstrumentingAgents&, DocumentThreadableLoader&, ResourceLoaderIdentifier);
+    static void didReceiveDataImpl(InstrumentingAgents&, ResourceLoaderIdentifier, const uint8_t* data, int dataLength, int encodedDataLength);
+    static void didFinishLoadingImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);
+    static void didFailLoadingImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&);
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents&);
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents&);
-    static void scriptImportedImpl(InstrumentingAgents&, unsigned long identifier, const String& sourceString);
+    static void scriptImportedImpl(InstrumentingAgents&, ResourceLoaderIdentifier, const String& sourceString);
     static void scriptExecutionBlockedByCSPImpl(InstrumentingAgents&, const String& directiveText);
-    static void didReceiveScriptResponseImpl(InstrumentingAgents&, unsigned long identifier);
+    static void didReceiveScriptResponseImpl(InstrumentingAgents&, ResourceLoaderIdentifier);
     static void domContentLoadedEventFiredImpl(InstrumentingAgents&, Frame&);
     static void loadEventFiredImpl(InstrumentingAgents&, Frame*);
     static void frameDetachedFromParentImpl(InstrumentingAgents&, Frame&);
@@ -436,7 +437,7 @@ private:
     static bool shouldInterceptRequestImpl(InstrumentingAgents&, const ResourceRequest&);
     static bool shouldInterceptResponseImpl(InstrumentingAgents&, const ResourceResponse&);
     static void interceptRequestImpl(InstrumentingAgents&, ResourceLoader&, Function<void(const ResourceRequest&)>&&);
-    static void interceptResponseImpl(InstrumentingAgents&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+    static void interceptResponseImpl(InstrumentingAgents&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
 
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
 
@@ -1033,20 +1034,20 @@ inline void InspectorInstrumentation::applyEmulatedMedia(Frame& frame, String& m
         applyEmulatedMediaImpl(*agents, media);
 }
 
-inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
+inline void InspectorInstrumentation::willSendRequest(Frame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
         willSendRequestImpl(*agents, identifier, loader, request, redirectResponse, cachedResource);
 }
 
-inline void InspectorInstrumentation::willSendRequest(WorkerOrWorkletGlobalScope& globalScope, unsigned long identifier, ResourceRequest& request)
+inline void InspectorInstrumentation::willSendRequest(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     willSendRequestImpl(instrumentingAgents(globalScope), identifier, nullptr, request, ResourceResponse { }, nullptr);
 }
 
-inline void InspectorInstrumentation::willSendRequestOfType(Frame* frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
+inline void InspectorInstrumentation::willSendRequestOfType(Frame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
@@ -1059,76 +1060,76 @@ inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page& page,
     didLoadResourceFromMemoryCacheImpl(instrumentingAgents(page), loader, resource);
 }
 
-inline void InspectorInstrumentation::didReceiveResourceResponse(Frame& frame, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
+inline void InspectorInstrumentation::didReceiveResourceResponse(Frame& frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (auto* agents = instrumentingAgents(frame))
         didReceiveResourceResponseImpl(*agents, identifier, loader, response, resourceLoader);
 }
 
-inline void InspectorInstrumentation::didReceiveResourceResponse(WorkerOrWorkletGlobalScope& globalScope, unsigned long identifier, const ResourceResponse& response)
+inline void InspectorInstrumentation::didReceiveResourceResponse(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     didReceiveResourceResponseImpl(instrumentingAgents(globalScope), identifier, nullptr, response, nullptr);
 }
 
-inline void InspectorInstrumentation::didReceiveThreadableLoaderResponse(DocumentThreadableLoader& documentThreadableLoader, unsigned long identifier)
+inline void InspectorInstrumentation::didReceiveThreadableLoaderResponse(DocumentThreadableLoader& documentThreadableLoader, ResourceLoaderIdentifier identifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(documentThreadableLoader.document()))
         didReceiveThreadableLoaderResponseImpl(*agents, documentThreadableLoader, identifier);
 }
     
-inline void InspectorInstrumentation::didReceiveData(Frame* frame, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength)
+inline void InspectorInstrumentation::didReceiveData(Frame* frame, ResourceLoaderIdentifier identifier, const uint8_t* data, int dataLength, int encodedDataLength)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
         didReceiveDataImpl(*agents, identifier, data, dataLength, encodedDataLength);
 }
 
-inline void InspectorInstrumentation::didReceiveData(WorkerOrWorkletGlobalScope& globalScope, unsigned long identifier, const uint8_t* data, int dataLength)
+inline void InspectorInstrumentation::didReceiveData(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const uint8_t* data, int dataLength)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didReceiveDataImpl(instrumentingAgents(globalScope), identifier, data, dataLength, dataLength);
 }
 
-inline void InspectorInstrumentation::didFinishLoading(Frame* frame, DocumentLoader* loader, unsigned long identifier, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
+inline void InspectorInstrumentation::didFinishLoading(Frame* frame, DocumentLoader* loader, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
         didFinishLoadingImpl(*agents, identifier, loader, networkLoadMetrics, resourceLoader);
 }
 
-inline void InspectorInstrumentation::didFinishLoading(WorkerOrWorkletGlobalScope& globalScope, unsigned long identifier, const NetworkLoadMetrics& networkLoadMetrics)
+inline void InspectorInstrumentation::didFinishLoading(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const NetworkLoadMetrics& networkLoadMetrics)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     didFinishLoadingImpl(instrumentingAgents(globalScope), identifier, nullptr, networkLoadMetrics, nullptr);
 }
 
-inline void InspectorInstrumentation::didFailLoading(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
+inline void InspectorInstrumentation::didFailLoading(Frame* frame, DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     if (auto* agents = instrumentingAgents(frame))
         didFailLoadingImpl(*agents, identifier, loader, error);
 }
 
-inline void InspectorInstrumentation::didFailLoading(WorkerOrWorkletGlobalScope& globalScope, unsigned long identifier, const ResourceError& error)
+inline void InspectorInstrumentation::didFailLoading(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     didFailLoadingImpl(instrumentingAgents(globalScope), identifier, nullptr, error);
 }
 
-inline void InspectorInstrumentation::continueAfterXFrameOptionsDenied(Frame& frame, unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response)
+inline void InspectorInstrumentation::continueAfterXFrameOptionsDenied(Frame& frame, ResourceLoaderIdentifier identifier, DocumentLoader& loader, const ResourceResponse& response)
 {
     // Treat the same as didReceiveResponse.
     if (auto* agents = instrumentingAgents(frame))
         didReceiveResourceResponseImpl(*agents, identifier, &loader, response, nullptr);
 }
 
-inline void InspectorInstrumentation::continueWithPolicyDownload(Frame& frame, unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response)
+inline void InspectorInstrumentation::continueWithPolicyDownload(Frame& frame, ResourceLoaderIdentifier identifier, DocumentLoader& loader, const ResourceResponse& response)
 {
     // Treat the same as didReceiveResponse.
     if (auto* agents = instrumentingAgents(frame))
         didReceiveResourceResponseImpl(*agents, identifier, &loader, response, nullptr);
 }
 
-inline void InspectorInstrumentation::continueWithPolicyIgnore(Frame& frame, unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response)
+inline void InspectorInstrumentation::continueWithPolicyIgnore(Frame& frame, ResourceLoaderIdentifier identifier, DocumentLoader& loader, const ResourceResponse& response)
 {
     // Treat the same as didReceiveResponse.
     if (auto* agents = instrumentingAgents(frame))
@@ -1149,7 +1150,7 @@ inline void InspectorInstrumentation::didLoadXHRSynchronously(ScriptExecutionCon
         didLoadXHRSynchronouslyImpl(*agents);
 }
 
-inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext& context, unsigned long identifier, const String& sourceString)
+inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext& context, ResourceLoaderIdentifier identifier, const String& sourceString)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
@@ -1163,7 +1164,7 @@ inline void InspectorInstrumentation::scriptExecutionBlockedByCSP(ScriptExecutio
         scriptExecutionBlockedByCSPImpl(*agents, directiveText);
 }
 
-inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionContext* context, unsigned long identifier)
+inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionContext* context, ResourceLoaderIdentifier identifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
@@ -1284,7 +1285,7 @@ inline void InspectorInstrumentation::interceptRequest(ResourceLoader& loader, F
         interceptRequestImpl(*agents, loader, WTFMove(handler));
 }
 
-inline void InspectorInstrumentation::interceptResponse(const Frame& frame, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+inline void InspectorInstrumentation::interceptResponse(const Frame& frame, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
 {
     ASSERT(InspectorInstrumentation::shouldInterceptResponse(frame, response));
     if (auto* agents = instrumentingAgents(frame))

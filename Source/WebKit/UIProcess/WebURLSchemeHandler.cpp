@@ -55,14 +55,14 @@ void WebURLSchemeHandler::startTask(WebPageProxy& page, WebProcessProxy& process
     auto result = m_tasks.add(taskIdentifier, WebURLSchemeTask::create(*this, page, process, webPageID, WTFMove(parameters), WTFMove(completionHandler)));
     ASSERT(result.isNewEntry);
 
-    auto pageEntry = m_tasksByPageIdentifier.add(page.identifier(), HashSet<uint64_t>());
+    auto pageEntry = m_tasksByPageIdentifier.add(page.identifier(), HashSet<WebCore::ResourceLoaderIdentifier>());
     ASSERT(!pageEntry.iterator->value.contains(taskIdentifier));
     pageEntry.iterator->value.add(taskIdentifier);
 
     platformStartTask(page, result.iterator->value);
 }
 
-WebProcessProxy* WebURLSchemeHandler::processForTaskIdentifier(uint64_t taskIdentifier) const
+WebProcessProxy* WebURLSchemeHandler::processForTaskIdentifier(WebCore::ResourceLoaderIdentifier taskIdentifier) const
 {
     if (!decltype(m_tasks)::isValidKey(taskIdentifier))
         return nullptr;
@@ -79,7 +79,7 @@ void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProx
         return;
 
     auto& tasksByPage = iterator->value;
-    Vector<uint64_t> taskIdentifiersToStop;
+    Vector<WebCore::ResourceLoaderIdentifier> taskIdentifiersToStop;
     taskIdentifiersToStop.reserveInitialCapacity(tasksByPage.size());
     for (auto taskIdentifier : tasksByPage) {
         if (!process || processForTaskIdentifier(taskIdentifier) == process)
@@ -91,7 +91,7 @@ void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProx
 
 }
 
-void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
+void WebURLSchemeHandler::stopTask(WebPageProxy& page, WebCore::ResourceLoaderIdentifier taskIdentifier)
 {
     if (!decltype(m_tasks)::isValidKey(taskIdentifier))
         return;
@@ -115,7 +115,7 @@ void WebURLSchemeHandler::taskCompleted(WebURLSchemeTask& task)
     platformTaskCompleted(task);
 }
 
-void WebURLSchemeHandler::removeTaskFromPageMap(WebPageProxyIdentifier pageID, uint64_t taskID)
+void WebURLSchemeHandler::removeTaskFromPageMap(WebPageProxyIdentifier pageID, WebCore::ResourceLoaderIdentifier taskID)
 {
     auto iterator = m_tasksByPageIdentifier.find(pageID);
     ASSERT(iterator != m_tasksByPageIdentifier.end());

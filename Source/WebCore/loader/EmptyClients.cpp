@@ -673,26 +673,26 @@ void EmptyFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader*, 
 {
 }
 
-void EmptyFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&)
+void EmptyFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&)
 {
 }
 
-bool EmptyFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned long)
+bool EmptyFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier)
 {
     return false;
 }
 
-void EmptyFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&)
+void EmptyFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)
+void EmptyFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&)
 {
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
-bool EmptyFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&)
+bool EmptyFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, ResourceLoaderIdentifier, const ProtectionSpace&)
 {
     return false;
 }
@@ -701,22 +701,22 @@ bool EmptyFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoade
 
 #if PLATFORM(IOS_FAMILY)
 
-RetainPtr<CFDictionaryRef> EmptyFrameLoaderClient::connectionProperties(DocumentLoader*, unsigned long)
+RetainPtr<CFDictionaryRef> EmptyFrameLoaderClient::connectionProperties(DocumentLoader*, ResourceLoaderIdentifier)
 {
     return nullptr;
 }
 
 #endif
 
-void EmptyFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&)
+void EmptyFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int)
+void EmptyFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long)
+void EmptyFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier)
 {
 }
 
@@ -728,7 +728,7 @@ void EmptyFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *)
 
 #endif
 
-void EmptyFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&)
+void EmptyFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&)
 {
 }
 
@@ -1067,7 +1067,7 @@ RemoteAXObjectRef EmptyFrameLoaderClient::accessibilityRemoteObject()
     return nullptr;
 }
 
-void EmptyFrameLoaderClient::willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse *response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
+void EmptyFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse *response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
 {
     completionHandler(response);
 }
@@ -1076,7 +1076,7 @@ void EmptyFrameLoaderClient::willCacheResponse(DocumentLoader*, unsigned long, N
 
 #if USE(CFURLCONNECTION)
 
-bool EmptyFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long)
+bool EmptyFrameLoaderClient::shouldCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, const unsigned char*, unsigned long long)
 {
     return true;
 }

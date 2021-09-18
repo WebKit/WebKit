@@ -108,7 +108,7 @@ public:
 
     ~InspectorThreadableLoaderClient() override = default;
 
-    void didReceiveResponse(unsigned long, const ResourceResponse& response) override
+    void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response) override
     {
         m_mimeType = response.mimeType();
         m_statusCode = response.httpStatusCode();
@@ -135,7 +135,7 @@ public:
         m_responseText.append(m_decoder->decode(data, dataLength));
     }
 
-    void didFinishLoading(unsigned long) override
+    void didFinishLoading(ResourceLoaderIdentifier) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
@@ -416,7 +416,7 @@ double InspectorNetworkAgent::timestamp()
     return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
-void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType type)
+void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType type)
 {
     if (request.hiddenFromInspector()) {
         m_hiddenRequestIdentifiers.add(identifier);
@@ -426,7 +426,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     double sendTimestamp = timestamp();
     WallTime walltime = WallTime::now();
 
-    auto requestId = IdentifiersFactory::requestId(identifier);
+    auto requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     auto frameId = frameIdentifier(loader);
     auto loaderId = loaderIdentifier(loader);
     String targetId = request.initiatorIdentifier();
@@ -486,24 +486,24 @@ static InspectorPageAgent::ResourceType resourceTypeForLoadType(InspectorInstrum
     return InspectorPageAgent::OtherResource;
 }
 
-void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
+void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
 {
     if (!cachedResource && loader)
         cachedResource = InspectorPageAgent::cachedResource(loader->frame(), request.url());
     willSendRequest(identifier, loader, request, redirectResponse, resourceTypeForCachedResource(cachedResource));
 }
 
-void InspectorNetworkAgent::willSendRequestOfType(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, InspectorInstrumentation::LoadType loadType)
+void InspectorNetworkAgent::willSendRequestOfType(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, InspectorInstrumentation::LoadType loadType)
 {
     willSendRequest(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType));
 }
 
-void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
+void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (m_hiddenRequestIdentifiers.contains(identifier))
         return;
 
-    String requestId = IdentifiersFactory::requestId(identifier);
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
 
     std::optional<ResourceResponse> realResponse;
     if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
@@ -575,12 +575,12 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
         didReceiveData(identifier, nullptr, cachedResource->encodedSize(), 0);
 }
 
-void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength)
+void InspectorNetworkAgent::didReceiveData(ResourceLoaderIdentifier identifier, const uint8_t* data, int dataLength, int encodedDataLength)
 {
     if (m_hiddenRequestIdentifiers.contains(identifier))
         return;
 
-    String requestId = IdentifiersFactory::requestId(identifier);
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
 
     if (data) {
         NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->maybeAddResourceData(requestId, data, dataLength);
@@ -595,7 +595,7 @@ void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const uint8
     m_frontendDispatcher->dataReceived(requestId, timestamp(), dataLength, encodedDataLength);
 }
 
-void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
+void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
 {
     if (m_hiddenRequestIdentifiers.remove(identifier))
         return;
@@ -606,7 +606,7 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
     else
         elapsedFinishTime = timestamp();
 
-    String requestId = IdentifiersFactory::requestId(identifier);
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     if (loader && m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource)
         m_resourcesData->addResourceSharedBuffer(requestId, loader->frameLoader()->documentLoader()->mainResourceData(), loader->frame()->document()->encoding());
 
@@ -628,12 +628,12 @@ void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentL
     m_frontendDispatcher->loadingFinished(requestId, elapsedFinishTime, sourceMappingURL, WTFMove(metrics));
 }
 
-void InspectorNetworkAgent::didFailLoading(unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
+void InspectorNetworkAgent::didFailLoading(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceError& error)
 {
     if (m_hiddenRequestIdentifiers.remove(identifier))
         return;
 
-    String requestId = IdentifiersFactory::requestId(identifier);
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
 
     if (loader && m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource) {
         Frame* frame = loader->frame();
@@ -653,8 +653,8 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader* loade
     if (!loader)
         return;
 
-    unsigned long identifier = loader->frame()->page()->progress().createUniqueIdentifier();
-    String requestId = IdentifiersFactory::requestId(identifier);
+    auto identifier = ResourceLoaderIdentifier::generate();
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     Protocol::Network::LoaderId loaderId = loaderIdentifier(loader);
     Protocol::Network::FrameId frameId = frameIdentifier(loader);
 
@@ -669,23 +669,23 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader* loade
     m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameId, loaderId, loader->url().string(), timestamp(), WTFMove(initiatorObject), buildObjectForCachedResource(&resource));
 }
 
-void InspectorNetworkAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)
+void InspectorNetworkAgent::setInitialScriptContent(ResourceLoaderIdentifier identifier, const String& sourceString)
 {
-    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
+    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier.toUInt64()), sourceString);
 }
 
-void InspectorNetworkAgent::didReceiveScriptResponse(unsigned long identifier)
+void InspectorNetworkAgent::didReceiveScriptResponse(ResourceLoaderIdentifier identifier)
 {
-    m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::ScriptResource);
+    m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier.toUInt64()), InspectorPageAgent::ScriptResource);
 }
 
-void InspectorNetworkAgent::didReceiveThreadableLoaderResponse(unsigned long identifier, DocumentThreadableLoader& documentThreadableLoader)
+void InspectorNetworkAgent::didReceiveThreadableLoaderResponse(ResourceLoaderIdentifier identifier, DocumentThreadableLoader& documentThreadableLoader)
 {
     String initiator = documentThreadableLoader.options().initiator;
     if (initiator == cachedResourceRequestInitiators().fetch)
-        m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::FetchResource);
+        m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier.toUInt64()), InspectorPageAgent::FetchResource);
     else if (initiator == cachedResourceRequestInitiators().xmlhttprequest)
-        m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::XHRResource);
+        m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier.toUInt64()), InspectorPageAgent::XHRResource);
 }
 
 void InspectorNetworkAgent::willLoadXHRSynchronously()
@@ -1129,7 +1129,7 @@ void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<vo
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);
 
-    String requestId = IdentifiersFactory::requestId(loader.identifier());
+    String requestId = IdentifiersFactory::requestId(loader.identifier().toUInt64());
     if (m_pendingInterceptRequests.contains(requestId)) {
         handler(loader.request());
         return;
@@ -1138,12 +1138,12 @@ void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<vo
     m_frontendDispatcher->requestIntercepted(requestId, buildObjectForResourceRequest(loader.request()));
 }
 
-void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
 {
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);
 
-    String requestId = IdentifiersFactory::requestId(identifier);
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     if (m_pendingInterceptResponses.contains(requestId)) {
         ASSERT_NOT_REACHED();
         handler(response, nullptr);

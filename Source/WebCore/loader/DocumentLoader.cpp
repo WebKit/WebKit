@@ -464,8 +464,8 @@ void DocumentLoader::finishedLoading()
         // before calling dispatchDidFinishLoading so that we don't later try to
         // cancel the already-finished substitute load.
         NetworkLoadMetrics emptyMetrics;
-        unsigned long identifier = m_identifierForLoadWithoutResourceLoader;
-        m_identifierForLoadWithoutResourceLoader = 0;
+        ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader;
+        m_identifierForLoadWithoutResourceLoader = { };
         frameLoader()->notifier().dispatchDidFinishLoading(this, identifier, emptyMetrics, nullptr);
     }
 
@@ -886,7 +886,7 @@ bool DocumentLoader::tryLoadingSubstituteData()
         return false;
 
     DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource: Returning substitute data");
-    m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
+    m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generate();
     frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, m_request);
     frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, m_request, ResourceResponse(), nullptr);
 
@@ -939,7 +939,7 @@ bool DocumentLoader::tryLoadingRedirectRequestFromApplicationCache(const Resourc
     return true;
 }
 
-void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse& response)
+void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     Ref<DocumentLoader> protectedThis { *this };
     InspectorInstrumentation::continueAfterXFrameOptionsDenied(*m_frame, identifier, *this, response);
@@ -1037,7 +1037,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     }
 
     ASSERT(m_identifierForLoadWithoutResourceLoader || m_mainResource);
-    unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
+    ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
     ASSERT(identifier);
 
     if (m_substituteData.isValid() || !platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)) {
@@ -1054,7 +1054,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
             if (!frameOptions.isNull()) {
                 if (frameLoader()->shouldInterruptLoadForXFrameOptions(frameOptions, url, identifier)) {
                     String message = "Refused to display '" + url.stringCenterEllipsizedToLength() + "' in a frame because it set 'X-Frame-Options' to '" + frameOptions + "'.";
-                    m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier);
+                    m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier.toUInt64());
                     stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(identifier, response);
                     return;
                 }
@@ -1180,10 +1180,10 @@ bool DocumentLoader::disallowDataRequest() const
         return false;
 
     if (auto* currentDocument = frame()->document()) {
-        unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
+        ResourceLoaderIdentifier identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : m_mainResource->identifier();
         ASSERT(identifier);
 
-        currentDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Not allowed to navigate top frame to data URL '", m_response.url().stringCenterEllipsizedToLength(), "'."), identifier);
+        currentDocument->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Not allowed to navigate top frame to data URL '", m_response.url().stringCenterEllipsizedToLength(), "'."), identifier.toUInt64());
     }
     DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: cannot show URL");
 
@@ -2016,7 +2016,7 @@ void DocumentLoader::stopLoadingSubresources()
     ASSERT(m_subresourceLoaders.isEmpty());
 }
 
-void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
+void DocumentLoader::addSubresourceLoader(ResourceLoader& loader)
 {
     // The main resource's underlying ResourceLoader will ask to be added here.
     // It is much simpler to handle special casing of main resource loads if we don't
@@ -2025,12 +2025,12 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
     // if we are just starting the main resource load.
     if (!m_gotFirstByte)
         return;
-    ASSERT(loader->identifier());
-    ASSERT(!m_subresourceLoaders.contains(loader->identifier()));
-    ASSERT(!mainResourceLoader() || mainResourceLoader() != loader);
+    ASSERT(loader.identifier());
+    ASSERT(!m_subresourceLoaders.contains(loader.identifier()));
+    ASSERT(!mainResourceLoader() || mainResourceLoader() != &loader);
 
     // Application Cache loaders are handled by their ApplicationCacheGroup directly.
-    if (loader->options().applicationCacheMode == ApplicationCacheMode::Bypass)
+    if (loader.options().applicationCacheMode == ApplicationCacheMode::Bypass)
         return;
 
 #if ASSERT_ENABLED
@@ -2040,7 +2040,7 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
             break;
         case Document::AboutToEnterBackForwardCache: {
             // A page about to enter the BackForwardCache should only be able to start ping loads.
-            auto* cachedResource = downcast<SubresourceLoader>(loader)->cachedResource();
+            auto* cachedResource = downcast<SubresourceLoader>(loader).cachedResource();
             ASSERT(cachedResource && (CachedResource::shouldUsePingLoad(cachedResource->type()) || cachedResource->options().keepAlive));
             break;
         }
@@ -2052,7 +2052,7 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
     }
 #endif
 
-    m_subresourceLoaders.add(loader->identifier(), loader);
+    m_subresourceLoaders.add(loader.identifier(), &loader);
 }
 
 void DocumentLoader::removeSubresourceLoader(LoadCompletionType type, ResourceLoader* loader)
@@ -2278,7 +2278,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 #endif
 
     if (!mainResourceLoader()) {
-        m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
+        m_identifierForLoadWithoutResourceLoader = ResourceLoaderIdentifier::generate();
         frameLoader()->notifier().assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, mainResourceRequest.resourceRequest());
         frameLoader()->notifier().dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, mainResourceRequest.resourceRequest(), ResourceResponse(), nullptr);
     }
@@ -2344,13 +2344,13 @@ void DocumentLoader::clearMainResource()
     unregisterTemporaryServiceWorkerClient();
 }
 
-void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)
+void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader& loader)
 {
-    unsigned long identifier = loader->identifier();
+    ResourceLoaderIdentifier identifier = loader.identifier();
     ASSERT(identifier);
 
-    if (!m_multipartSubresourceLoaders.add(identifier, loader).isNewEntry) {
-        ASSERT(m_multipartSubresourceLoaders.get(identifier) == loader);
+    if (!m_multipartSubresourceLoaders.add(identifier, &loader).isNewEntry) {
+        ASSERT(m_multipartSubresourceLoaders.get(identifier) == &loader);
         ASSERT(!m_subresourceLoaders.contains(identifier));
     } else {
         ASSERT(m_subresourceLoaders.contains(identifier));

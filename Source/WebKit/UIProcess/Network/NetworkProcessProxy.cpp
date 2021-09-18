@@ -476,9 +476,9 @@ void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::P
     }
 }
 
-void NetworkProcessProxy::prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, uint64_t resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&& completionHandler)
+void NetworkProcessProxy::prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, std::optional<WebCore::ResourceLoaderIdentifier> resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&& completionHandler)
 {
-    RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::prepareLoadForWebProcessTransfer: sourceProcessIdentifier: %" PRIu64 ", resourceLoadIdentifier: %" PRIu64, this, sourceProcessIdentifier.toUInt64(), resourceLoadIdentifier);
+    RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::prepareLoadForWebProcessTransfer: sourceProcessIdentifier: %" PRIu64 ", resourceLoadIdentifier: %" PRIu64, this, sourceProcessIdentifier.toUInt64(), resourceLoadIdentifier ? resourceLoadIdentifier->toUInt64() : 0);
     if (!resourceLoadIdentifier) {
         completionHandler({ });
         return;

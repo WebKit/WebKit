@@ -3833,12 +3833,12 @@ void Document::processMetaHttpEquiv(const String& equiv, const String& content, 
     case HTTPHeaderName::XFrameOptions:
         if (frame) {
             FrameLoader& frameLoader = frame->loader();
-            unsigned long requestIdentifier = 0;
+            ResourceLoaderIdentifier requestIdentifier;
             if (frameLoader.activeDocumentLoader() && frameLoader.activeDocumentLoader()->mainResourceLoader())
                 requestIdentifier = frameLoader.activeDocumentLoader()->mainResourceLoader()->identifier();
 
             String message = "The X-Frame-Option '" + content + "' supplied in a <meta> element was ignored. X-Frame-Options may only be provided by an HTTP header sent with the document.";
-            addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, requestIdentifier);
+            addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, requestIdentifier.toUInt64());
         }
         break;
 

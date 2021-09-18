@@ -926,7 +926,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
     networkError();
 }
 
-void XMLHttpRequest::didFinishLoading(unsigned long)
+void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier)
 {
     auto protectedThis = makeRef(*this);
 
@@ -970,7 +970,7 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
     }
 }
 
-void XMLHttpRequest::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     m_response = response;
 }

@@ -142,7 +142,7 @@ RefPtr<SharedBuffer> FetchLoader::startStreaming()
     return firstChunk;
 }
 
-void FetchLoader::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void FetchLoader::didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse& response)
 {
     m_client.didReceiveResponse(response);
 }
@@ -156,7 +156,7 @@ void FetchLoader::didReceiveData(const uint8_t* value, int size)
     m_consumer->append(value, size);
 }
 
-void FetchLoader::didFinishLoading(unsigned long)
+void FetchLoader::didFinishLoading(ResourceLoaderIdentifier)
 {
     m_client.didSucceed();
 }

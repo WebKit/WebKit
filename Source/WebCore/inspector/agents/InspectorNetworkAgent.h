@@ -98,17 +98,17 @@ public:
     // InspectorInstrumentation
     void willRecalculateStyle();
     void didRecalculateStyle();
-    void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
-    void willSendRequestOfType(unsigned long identifier, DocumentLoader*, ResourceRequest&, InspectorInstrumentation::LoadType);
-    void didReceiveResponse(unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
-    void didReceiveData(unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength);
-    void didFinishLoading(unsigned long identifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);
-    void didFailLoading(unsigned long identifier, DocumentLoader*, const ResourceError&);
+    void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
+    void willSendRequestOfType(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, InspectorInstrumentation::LoadType);
+    void didReceiveResponse(ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
+    void didReceiveData(ResourceLoaderIdentifier, const uint8_t* data, int dataLength, int encodedDataLength);
+    void didFinishLoading(ResourceLoaderIdentifier, DocumentLoader*, const NetworkLoadMetrics&, ResourceLoader*);
+    void didFailLoading(ResourceLoaderIdentifier, DocumentLoader*, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource&);
-    void didReceiveThreadableLoaderResponse(unsigned long identifier, DocumentThreadableLoader&);
+    void didReceiveThreadableLoaderResponse(ResourceLoaderIdentifier, DocumentThreadableLoader&);
     void willLoadXHRSynchronously();
     void didLoadXHRSynchronously();
-    void didReceiveScriptResponse(unsigned long identifier);
+    void didReceiveScriptResponse(ResourceLoaderIdentifier);
     void willDestroyCachedResource(CachedResource&);
     void didCreateWebSocket(unsigned long identifier, const URL& requestURL);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest&);
@@ -118,12 +118,12 @@ public:
     void didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
     void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
     void mainFrameNavigated(DocumentLoader&);
-    void setInitialScriptContent(unsigned long identifier, const String& sourceString);
+    void setInitialScriptContent(ResourceLoaderIdentifier, const String& sourceString);
     void didScheduleStyleRecalculation(Document&);
     bool willIntercept(const ResourceRequest&);
     bool shouldInterceptRequest(const ResourceRequest&);
     bool shouldInterceptResponse(const ResourceResponse&);
-    void interceptResponse(const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+    void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
     void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
 
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
@@ -140,7 +140,7 @@ protected:
     virtual bool shouldForceBufferingNetworkResourceData() const = 0;
 
 private:
-    void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType);
+    void willSendRequest(ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType);
 
     bool shouldIntercept(URL, Inspector::Protocol::Network::NetworkStage);
     void continuePendingRequests();
@@ -226,7 +226,7 @@ private:
     std::unique_ptr<NetworkResourcesData> m_resourcesData;
 
     HashMap<String, String> m_extraRequestHeaders;
-    HashSet<unsigned long> m_hiddenRequestIdentifiers;
+    HashSet<ResourceLoaderIdentifier> m_hiddenRequestIdentifiers;
 
     struct Intercept {
         String url;

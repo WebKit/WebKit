@@ -92,7 +92,7 @@ void WebDocumentLoaderMac::detachFromFrame()
     // frame is not attached?
 }
 
-void WebDocumentLoaderMac::increaseLoadCount(unsigned long identifier)
+void WebDocumentLoaderMac::increaseLoadCount(WebCore::ResourceLoaderIdentifier identifier)
 {
     ASSERT(m_dataSource);
 
@@ -103,9 +103,9 @@ void WebDocumentLoaderMac::increaseLoadCount(unsigned long identifier)
     retainDataSource();
 }
 
-void WebDocumentLoaderMac::decreaseLoadCount(unsigned long identifier)
+void WebDocumentLoaderMac::decreaseLoadCount(WebCore::ResourceLoaderIdentifier identifier)
 {
-    HashSet<unsigned long>::iterator it = m_loadingResources.find(identifier);
+    auto it = m_loadingResources.find(identifier);
     
     // It is valid for a load to be cancelled before it's started.
     if (it == m_loadingResources.end())

@@ -177,7 +177,7 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
     return false;
 }
 
-void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
+void WebFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
@@ -185,10 +185,10 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
         return;
 
     COMPtr<WebMutableURLRequest> webURLRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
-    resourceLoadDelegate->identifierForInitialRequest(webView, webURLRequest.get(), getWebDataSource(loader), identifier);
+    resourceLoadDelegate->identifierForInitialRequest(webView, webURLRequest.get(), getWebDataSource(loader), identifier.toUInt64());
 }
 
-bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader* loader, unsigned long identifier)
+bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader* loader, ResourceLoaderIdentifier identifier)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
@@ -200,13 +200,13 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader* loader, un
         return true;
 
     BOOL shouldUse;
-    if (SUCCEEDED(resourceLoadDelegatePrivate->shouldUseCredentialStorage(webView, identifier, getWebDataSource(loader), &shouldUse)))
+    if (SUCCEEDED(resourceLoadDelegatePrivate->shouldUseCredentialStorage(webView, identifier.toUInt64(), getWebDataSource(loader), &shouldUse)))
         return shouldUse;
 
     return true;
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, unsigned long identifier, const AuthenticationChallenge& challenge)
+void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const AuthenticationChallenge& challenge)
 {
     ASSERT(challenge.authenticationClient());
 
@@ -214,7 +214,7 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
     if (SUCCEEDED(webView->resourceLoadDelegate(&resourceLoadDelegate))) {
         COMPtr<WebURLAuthenticationChallenge> webChallenge(AdoptCOM, WebURLAuthenticationChallenge::createInstance(challenge));
-        if (SUCCEEDED(resourceLoadDelegate->didReceiveAuthenticationChallenge(webView, identifier, webChallenge.get(), getWebDataSource(loader))))
+        if (SUCCEEDED(resourceLoadDelegate->didReceiveAuthenticationChallenge(webView, identifier.toUInt64(), webChallenge.get(), getWebDataSource(loader))))
             return;
     }
 
@@ -223,7 +223,7 @@ void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoa
     challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
 }
 
-void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
@@ -234,7 +234,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     COMPtr<WebURLResponse> webURLRedirectResponse(AdoptCOM, WebURLResponse::createInstance(redirectResponse));
 
     COMPtr<IWebURLRequest> newWebURLRequest;
-    if (FAILED(resourceLoadDelegate->willSendRequest(webView, identifier, webURLRequest.get(), webURLRedirectResponse.get(), getWebDataSource(loader), &newWebURLRequest)))
+    if (FAILED(resourceLoadDelegate->willSendRequest(webView, identifier.toUInt64(), webURLRequest.get(), webURLRedirectResponse.get(), getWebDataSource(loader), &newWebURLRequest)))
         return;
 
     if (webURLRequest == newWebURLRequest)
@@ -252,7 +252,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     request = newWebURLRequestImpl->resourceRequest();
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response)
+void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
@@ -260,30 +260,30 @@ void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader* loader, un
         return;
 
     COMPtr<WebURLResponse> webURLResponse(AdoptCOM, WebURLResponse::createInstance(response));
-    resourceLoadDelegate->didReceiveResponse(webView, identifier, webURLResponse.get(), getWebDataSource(loader));
+    resourceLoadDelegate->didReceiveResponse(webView, identifier.toUInt64(), webURLResponse.get(), getWebDataSource(loader));
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int length)
+void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader* loader, ResourceLoaderIdentifier identifier, int length)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
     if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
         return;
 
-    resourceLoadDelegate->didReceiveContentLength(webView, identifier, length, getWebDataSource(loader));
+    resourceLoadDelegate->didReceiveContentLength(webView, identifier.toUInt64(), length, getWebDataSource(loader));
 }
 
-void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier)
+void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader* loader, ResourceLoaderIdentifier identifier)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
     if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
         return;
 
-    resourceLoadDelegate->didFinishLoadingFromDataSource(webView, identifier, getWebDataSource(loader));
+    resourceLoadDelegate->didFinishLoadingFromDataSource(webView, identifier.toUInt64(), getWebDataSource(loader));
 }
 
-void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
+void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
@@ -291,11 +291,11 @@ void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader* loader, unsign
         return;
 
     COMPtr<WebError> webError(AdoptCOM, WebError::createInstance(error));
-    resourceLoadDelegate->didFailLoadingWithError(webView, identifier, webError.get(), getWebDataSource(loader));
+    resourceLoadDelegate->didFailLoadingWithError(webView, identifier.toUInt64(), webError.get(), getWebDataSource(loader));
 }
 
 #if USE(CFURLCONNECTION)
-bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, const unsigned char* data, const unsigned long long length)
+bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceResponse& response, const unsigned char* data, const unsigned long long length)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
@@ -308,7 +308,7 @@ bool WebFrameLoaderClient::shouldCacheResponse(DocumentLoader* loader, unsigned 
 
     COMPtr<IWebURLResponse> urlResponse(AdoptCOM, WebURLResponse::createInstance(response));
     BOOL shouldCache;
-    if (SUCCEEDED(resourceLoadDelegatePrivate->shouldCacheResponse(webView, identifier, urlResponse.get(), data, length, getWebDataSource(loader), &shouldCache)))
+    if (SUCCEEDED(resourceLoadDelegatePrivate->shouldCacheResponse(webView, identifier.toUInt64(), urlResponse.get(), data, length, getWebDataSource(loader), &shouldCache)))
         return shouldCache;
 
     return true;

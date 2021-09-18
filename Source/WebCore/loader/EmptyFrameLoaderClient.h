@@ -53,25 +53,25 @@ private:
 
     void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) final;
 
-    void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) final;
-    bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) override;
-    void dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&) final;
-    void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) final;
+    void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) final;
+    bool shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) override;
+    void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse&) final;
+    void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&) final;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&) final;
+    bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, ResourceLoaderIdentifier, const ProtectionSpace&) final;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, unsigned long) final;
+    RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, ResourceLoaderIdentifier) final;
 #endif
 
-    void dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&) final;
-    void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int) final;
-    void dispatchDidFinishLoading(DocumentLoader*, unsigned long) final;
+    void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) final;
+    void dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int) final;
+    void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) final;
 #if ENABLE(DATA_DETECTION)
     void dispatchDidFinishDataDetection(NSArray *) final;
 #endif
-    void dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&) final;
+    void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) final;
     bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) final;
 
     void dispatchDidDispatchOnloadEvents() final;
@@ -182,11 +182,11 @@ private:
 
 #if PLATFORM(COCOA)
     RemoteAXObjectRef accessibilityRemoteObject() final;
-    void willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse *, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
+    void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse *, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 #endif
 
 #if USE(CFURLCONNECTION)
-    bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) final;
+    bool shouldCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, const unsigned char*, unsigned long long) final;
 #endif
 
     Ref<FrameNetworkingContext> createNetworkingContext() final;

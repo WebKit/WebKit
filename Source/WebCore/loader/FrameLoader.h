@@ -127,7 +127,7 @@ public:
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     WEBCORE_EXPORT void loadArchive(Ref<Archive>&&);
 #endif
-    unsigned long loadResourceSynchronously(const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
+    ResourceLoaderIdentifier loadResourceSynchronously(const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
     WEBCORE_EXPORT void changeLocation(const URL&, const String& target, Event*, const ReferrerPolicy&, ShouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> = std::nullopt, const AtomString& downloadAttribute = nullAtom(), const SystemPreviewInfo& = { }, std::optional<PrivateClickMeasurement>&& = std::nullopt);
     void changeLocation(FrameLoadRequest&&, Event* = nullptr, std::optional<PrivateClickMeasurement>&& = std::nullopt);
@@ -275,7 +275,7 @@ public:
 
     void applyUserAgentIfNeeded(ResourceRequest&);
 
-    bool shouldInterruptLoadForXFrameOptions(const String&, const URL&, unsigned long requestIdentifier);
+    bool shouldInterruptLoadForXFrameOptions(const String&, const URL&, ResourceLoaderIdentifier);
 
     void completed();
     bool allAncestorsAreComplete() const; // including this
@@ -386,7 +386,7 @@ private:
 
     bool shouldReload(const URL& currentURL, const URL& destinationURL);
 
-    void requestFromDelegate(ResourceRequest&, unsigned long& identifier, ResourceError&);
+    void requestFromDelegate(ResourceRequest&, ResourceLoaderIdentifier&, ResourceError&);
 
     WEBCORE_EXPORT void detachChildren();
     void closeAndRemoveChild(Frame&);

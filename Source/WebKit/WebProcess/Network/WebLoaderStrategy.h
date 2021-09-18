@@ -44,7 +44,6 @@ class NetworkProcessConnection;
 class WebFrame;
 class WebPage;
 class WebURLSchemeTaskProxy;
-typedef uint64_t ResourceLoadIdentifier;
 
 class WebLoaderStrategy final : public WebCore::LoaderStrategy {
     WTF_MAKE_NONCOPYABLE(WebLoaderStrategy); WTF_MAKE_FAST_ALLOCATED;
@@ -53,7 +52,7 @@ public:
     ~WebLoaderStrategy() final;
     
     void loadResource(WebCore::Frame&, WebCore::CachedResource&, WebCore::ResourceRequest&&, const WebCore::ResourceLoaderOptions&, CompletionHandler<void(RefPtr<WebCore::SubresourceLoader>&&)>&&) final;
-    void loadResourceSynchronously(WebCore::FrameLoader&, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::ClientCredentialPolicy, const WebCore::FetchOptions&, const WebCore::HTTPHeaderMap&, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<uint8_t>& data) final;
+    void loadResourceSynchronously(WebCore::FrameLoader&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&, WebCore::ClientCredentialPolicy, const WebCore::FetchOptions&, const WebCore::HTTPHeaderMap&, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<uint8_t>& data) final;
     void pageLoadCompleted(WebCore::Page&) final;
     void browsingContextRemoved(WebCore::Frame&) final;
 
@@ -68,15 +67,15 @@ public:
 
     bool usePingLoad() const final;
     void startPingLoad(WebCore::Frame&, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap& originalRequestHeaders, const WebCore::FetchOptions&, WebCore::ContentSecurityPolicyImposition, PingLoadCompletionHandler&&) final;
-    void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
+    void didFinishPingLoad(WebCore::ResourceLoaderIdentifier pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
 
     void preconnectTo(WebCore::ResourceRequest&&, WebPage&, WebFrame&, WebCore::StoredCredentialsPolicy, PreconnectCompletionHandler&& = nullptr);
     void preconnectTo(WebCore::FrameLoader&, const URL&, WebCore::StoredCredentialsPolicy, PreconnectCompletionHandler&&) final;
-    void didFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError&&);
+    void didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, WebCore::ResourceError&&);
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool) final;
 
-    WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
+    WebResourceLoader* webResourceLoaderForIdentifier(WebCore::ResourceLoaderIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
     void schedulePluginStreamLoad(WebCore::Frame&, WebCore::NetscapePlugInStreamLoaderClient&, WebCore::ResourceRequest&&, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&&);
 
     void networkProcessCrashed();
@@ -89,8 +88,6 @@ public:
     bool isOnLine() const final;
     void addOnlineStateChangeListener(Function<void(bool)>&&) final;
     void setOnLineState(bool);
-
-    static uint64_t generateLoadIdentifier();
 
     void setExistingNetworkResourceLoadIdentifierToResume(std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume) { m_existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume; }
 
@@ -108,12 +105,12 @@ private:
         WebCore::ResourceError error;
         Vector<uint8_t> data;
     };
-    std::optional<SyncLoadResult> tryLoadingSynchronouslyUsingURLSchemeHandler(WebCore::FrameLoader&, ResourceLoadIdentifier, const WebCore::ResourceRequest&);
+    std::optional<SyncLoadResult> tryLoadingSynchronouslyUsingURLSchemeHandler(WebCore::FrameLoader&, WebCore::ResourceLoaderIdentifier, const WebCore::ResourceRequest&);
     SyncLoadResult loadDataURLSynchronously(const WebCore::ResourceRequest&);
 
-    WebCore::ResourceResponse responseFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
-    Vector<WebCore::NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
-    WebCore::NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(uint64_t resourceLoadIdentifier) final;
+    WebCore::ResourceResponse responseFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier) final;
+    Vector<WebCore::NetworkTransactionInformation> intermediateLoadInformationFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier) final;
+    WebCore::NetworkLoadMetrics networkMetricsFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier) final;
 
     bool shouldPerformSecurityChecks() const final;
     bool havePerformedSecurityChecks(const WebCore::ResourceResponse&) const final;
@@ -123,9 +120,9 @@ private:
     void setResourceLoadSchedulingMode(WebCore::Page&, WebCore::LoadSchedulingMode) final;
     void prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>&) final;
 
-    Vector<uint64_t> ongoingLoads() const final
+    Vector<WebCore::ResourceLoaderIdentifier> ongoingLoads() const final
     {
-        return WTF::map(m_webResourceLoaders, [](auto&& keyValue) -> uint64_t {
+        return WTF::map(m_webResourceLoaders, [](auto&& keyValue) -> WebCore::ResourceLoaderIdentifier {
             return keyValue.key;
         });
     }
@@ -133,10 +130,10 @@ private:
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;
     
-    HashMap<unsigned long, RefPtr<WebResourceLoader>> m_webResourceLoaders;
-    HashMap<unsigned long, WebURLSchemeTaskProxy*> m_urlSchemeTasks;
-    HashMap<unsigned long, PingLoadCompletionHandler> m_pingLoadCompletionHandlers;
-    HashMap<unsigned long, PreconnectCompletionHandler> m_preconnectCompletionHandlers;
+    HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebResourceLoader>> m_webResourceLoaders;
+    HashMap<WebCore::ResourceLoaderIdentifier, WebURLSchemeTaskProxy*> m_urlSchemeTasks;
+    HashMap<WebCore::ResourceLoaderIdentifier, PingLoadCompletionHandler> m_pingLoadCompletionHandlers;
+    HashMap<WebCore::ResourceLoaderIdentifier, PreconnectCompletionHandler> m_preconnectCompletionHandlers;
     Vector<Function<void(bool)>> m_onlineStateChangeListeners;
     std::optional<NetworkResourceLoadIdentifier> m_existingNetworkResourceLoadIdentifierToResume;
     bool m_isOnLine { true };

@@ -35,6 +35,7 @@
 #include "LinkIcon.h"
 #include "PageIdentifier.h"
 #include "RegistrableDomain.h"
+#include "ResourceLoaderIdentifier.h"
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/WallTime.h>
@@ -138,23 +139,23 @@ public:
     virtual void detachedFromParent2() = 0;
     virtual void detachedFromParent3() = 0;
 
-    virtual void assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&) = 0;
+    virtual void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) = 0;
 
-    virtual void dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
-    virtual bool shouldUseCredentialStorage(DocumentLoader*, unsigned long identifier) = 0;
-    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long identifier, const AuthenticationChallenge&) = 0;
+    virtual void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
+    virtual bool shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) = 0;
+    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&) = 0;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long identifier, const ProtectionSpace&) = 0;
+    virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, ResourceLoaderIdentifier, const ProtectionSpace&) = 0;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    virtual RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, unsigned long identifier) = 0;
+    virtual RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, ResourceLoaderIdentifier) = 0;
 #endif
 
-    virtual void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&) = 0;
-    virtual void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int dataLength) = 0;
-    virtual void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier) = 0;
-    virtual void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&) = 0;
+    virtual void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) = 0;
+    virtual void dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int dataLength) = 0;
+    virtual void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) = 0;
+    virtual void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) = 0;
     virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) = 0;
 
     virtual void dispatchDidDispatchOnloadEvents() = 0;
@@ -298,13 +299,13 @@ public:
 #if PLATFORM(COCOA)
     // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
     virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
-    virtual void willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
+    virtual void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
     virtual NSDictionary *dataDetectionContext() { return nullptr; }
 #endif
 
 #if USE(CFURLCONNECTION)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
-    virtual bool shouldCacheResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const unsigned char* data, unsigned long long length) = 0;
+    virtual bool shouldCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, const unsigned char* data, unsigned long long length) = 0;
 #endif
 
     virtual bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const { return false; }

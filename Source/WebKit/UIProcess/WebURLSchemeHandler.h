@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebURLSchemeTask.h"
+#include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -51,7 +52,7 @@ public:
     uint64_t identifier() const { return m_identifier; }
 
     void startTask(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);
-    void stopTask(WebPageProxy&, uint64_t taskIdentifier);
+    void stopTask(WebPageProxy&, WebCore::ResourceLoaderIdentifier taskIdentifier);
     void stopAllTasksForPage(WebPageProxy&, WebProcessProxy*);
     void taskCompleted(WebURLSchemeTask&);
 
@@ -63,13 +64,13 @@ private:
     virtual void platformStopTask(WebPageProxy&, WebURLSchemeTask&) = 0;
     virtual void platformTaskCompleted(WebURLSchemeTask&) { };
 
-    void removeTaskFromPageMap(WebPageProxyIdentifier, uint64_t taskID);
-    WebProcessProxy* processForTaskIdentifier(uint64_t) const;
+    void removeTaskFromPageMap(WebPageProxyIdentifier, WebCore::ResourceLoaderIdentifier);
+    WebProcessProxy* processForTaskIdentifier(WebCore::ResourceLoaderIdentifier) const;
 
     uint64_t m_identifier;
 
-    HashMap<uint64_t, Ref<WebURLSchemeTask>> m_tasks;
-    HashMap<WebPageProxyIdentifier, HashSet<uint64_t>> m_tasksByPageIdentifier;
+    HashMap<WebCore::ResourceLoaderIdentifier, Ref<WebURLSchemeTask>> m_tasks;
+    HashMap<WebPageProxyIdentifier, HashSet<WebCore::ResourceLoaderIdentifier>> m_tasksByPageIdentifier;
     
     SyncLoadCompletionHandler m_syncLoadCompletionHandler;
 

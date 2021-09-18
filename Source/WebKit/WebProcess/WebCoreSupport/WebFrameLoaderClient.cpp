@@ -221,7 +221,7 @@ void WebFrameLoaderClient::detachedFromParent3()
     notImplemented();
 }
 
-void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
+void WebFrameLoaderClient::assignIdentifierToInitialRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -235,7 +235,7 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
     webPage->addResourceRequest(identifier, request);
 }
 
-void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -252,7 +252,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned lon
     }
 }
 
-bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned long identifier)
+bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier identifier)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -261,13 +261,13 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned 
     return webPage->injectedBundleResourceLoadClient().shouldUseCredentialStorage(*webPage, m_frame, identifier);
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)
+void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, WebCore::ResourceLoaderIdentifier, const AuthenticationChallenge&)
 {
     ASSERT_NOT_REACHED();
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace& protectionSpace)
+bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, WebCore::ResourceLoaderIdentifier, const ProtectionSpace& protectionSpace)
 {
     // The WebKit 2 Networking process asks the UIProcess directly, so the WebContent process should never receive this callback.
     ASSERT_NOT_REACHED();
@@ -275,7 +275,7 @@ bool WebFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*
 }
 #endif
 
-void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse& response)
+void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -284,7 +284,7 @@ void WebFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned 
     webPage->injectedBundleResourceLoadClient().didReceiveResponseForResource(*webPage, m_frame, identifier, response);
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long identifier, int dataLength)
+void WebFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier identifier, int dataLength)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -303,7 +303,7 @@ void WebFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *detectionResu
 }
 #endif
 
-void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier)
+void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier identifier)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -313,7 +313,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned lo
     webPage->removeResourceRequest(identifier);
 }
 
-void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError& error)
+void WebFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -849,8 +849,9 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     auto* coreFrame = m_frame->coreFrame();
     auto* policyDocumentLoader = coreFrame ? coreFrame->loader().provisionalDocumentLoader() : nullptr;
     auto navigationID = policyDocumentLoader ? static_cast<WebDocumentLoader&>(*policyDocumentLoader).navigationID() : 0;
-    // FIXME: We should be using a strongly-typed identifier for mainResourceLoadIdentifier.
-    auto mainResourceLoadIdentifier = policyDocumentLoader && policyDocumentLoader->mainResourceLoader() ? policyDocumentLoader->mainResourceLoader()->identifier() : 0;
+    std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier;
+    if (auto mainResourceLoader = policyDocumentLoader ? policyDocumentLoader->mainResourceLoader() : nullptr)
+        mainResourceLoadIdentifier = mainResourceLoader->identifier();
 
     bool wasAllowedByInjectedBundle = policy == WKBundlePagePolicyActionUse;
     auto protector = m_frame.copyRef();
@@ -1808,7 +1809,7 @@ RemoteAXObjectRef WebFrameLoaderClient::accessibilityRemoteObject()
     return webPage->accessibilityRemoteObject();
 }
     
-void WebFrameLoaderClient::willCacheResponse(DocumentLoader*, unsigned long identifier, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
+void WebFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier identifier, NSCachedURLResponse* response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -1889,7 +1890,7 @@ void WebFrameLoaderClient::sendH2Ping(const URL& url, CompletionHandler<void(Exp
 
     NetworkResourceLoadParameters parameters;
     parameters.request = ResourceRequest(url);
-    parameters.identifier = WebLoaderStrategy::generateLoadIdentifier();
+    parameters.identifier = WebCore::ResourceLoaderIdentifier::generate();
     parameters.webPageProxyID = webPage->webPageProxyIdentifier();
     parameters.webPageID = webPage->identifier();
     parameters.webFrameID = m_frame->frameID();
