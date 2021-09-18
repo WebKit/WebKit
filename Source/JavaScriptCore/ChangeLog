@@ -1,3 +1,22 @@
+2021-09-17  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Fix CellTag being set 32 bits even if the base is not a cell
+        https://bugs.webkit.org/show_bug.cgi?id=230364
+
+        Reviewed by Yusuke Suzuki.
+
+        Initial patch by Caio Lima.
+
+        In 32 bits the tag of the base was not being preserved before calling
+        the slow path and was instead being always being set to cellTag.
+
+        This patch slightly changes the code to instead of setting the cellTag,
+        it now calls the slow path using only the payload if the base is a cell,
+        otherwise it uses tag+payload.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorHasProperty):
+
 2021-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add fast property enumeration mode for JSON.stringify
