@@ -314,7 +314,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/cocoa/FloatRectCocoa.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
-    platform/graphics/cocoa/FontCascadeCocoa.mm
+    platform/graphics/cocoa/FontCascadeCocoa.cpp
     platform/graphics/cocoa/FontCocoa.cpp
     platform/graphics/cocoa/FontDescriptionCocoa.cpp
     platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp

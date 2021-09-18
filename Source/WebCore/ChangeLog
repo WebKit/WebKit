@@ -1,3 +1,42 @@
+2021-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS Family] Delete letterpress support
+        https://bugs.webkit.org/show_bug.cgi?id=230441
+
+        Reviewed by Tim Horton.
+
+        It isn't necessary anymore.
+
+        Tests deleted.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationFlagsToCSSValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator OptionSet<TextDecoration> const):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTextDecorationLine):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cocoa/FontCascadeCocoa.cpp: Added.
+        (WebCore::FontCascade::canReturnFallbackFontsForComplexText):
+        (WebCore::FontCascade::canExpandAroundIdeographsInComplexText):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm: Removed.
+        * platform/graphics/coretext/FontCascadeCoreText.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        (WebCore::shouldUseLetterpressEffect): Deleted.
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::TextPaintStyle::operator== const):
+        (WebCore::computeTextPaintStyle):
+        (WebCore::updateGraphicsContext):
+        * rendering/TextPaintStyle.h:
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+
 2021-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         Replace all the complex math in ScrollAnimationSmooth with a single call into a CubicBezierTimingFunction

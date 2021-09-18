@@ -2588,9 +2588,6 @@ webkit.org/b/160017 js/regress-139548.html [ Slow ]
 
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Failure ]
 
-# Only iOS has implemented lettepress.
-fast/text/letterpress-different.html [ ImageOnlyFailure ]
-
 # CSS Shapes tests
 webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-010.html [ Skip ]
 webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-024.html [ Skip ]

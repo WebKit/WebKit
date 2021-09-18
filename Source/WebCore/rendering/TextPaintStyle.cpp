@@ -50,9 +50,6 @@ bool TextPaintStyle::operator==(const TextPaintStyle& other) const
 {
     return fillColor == other.fillColor && strokeColor == other.strokeColor && emphasisMarkColor == other.emphasisMarkColor
         && strokeWidth == other.strokeWidth && paintOrder == other.paintOrder && lineJoin == other.lineJoin
-#if ENABLE(LETTERPRESS)
-        && useLetterpressEffect == other.useLetterpressEffect
-#endif
 #if HAVE(OS_DARK_MODE_SUPPORT)
         && useDarkAppearance == other.useDarkAppearance
 #endif
@@ -79,10 +76,6 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
 TextPaintStyle computeTextPaintStyle(const Frame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     TextPaintStyle paintStyle;
-
-#if ENABLE(LETTERPRESS)
-    paintStyle.useLetterpressEffect = lineStyle.textDecorationsInEffect().contains(TextDecoration::Letterpress);
-#endif
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
     paintStyle.useDarkAppearance = frame.document() ? frame.document()->useDarkAppearance(&lineStyle) : false;
@@ -180,12 +173,6 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
 {
     TextDrawingModeFlags mode = context.textDrawingMode();
     TextDrawingModeFlags newMode = mode;
-#if ENABLE(LETTERPRESS)
-    if (paintStyle.useLetterpressEffect)
-        newMode.add(TextDrawingMode::Letterpress);
-    else
-        newMode.remove(TextDrawingMode::Letterpress);
-#endif
     if (paintStyle.strokeWidth > 0 && paintStyle.strokeColor.isVisible())
         newMode.add(TextDrawingMode::Stroke);
     if (mode != newMode) {

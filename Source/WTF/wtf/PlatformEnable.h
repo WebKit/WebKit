@@ -348,10 +348,6 @@
 #define ENABLE_LAYOUT_FORMATTING_CONTEXT 0
 #endif
 
-#if !defined(ENABLE_LETTERPRESS)
-#define ENABLE_LETTERPRESS 0
-#endif
-
 #if !defined(ENABLE_MATHML)
 #define ENABLE_MATHML 1
 #endif

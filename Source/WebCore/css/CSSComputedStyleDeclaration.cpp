@@ -1590,10 +1590,6 @@ static Ref<CSSValue> renderTextDecorationFlagsToCSSValue(OptionSet<TextDecoratio
         list->append(cssValuePool.createIdentifierValue(CSSValueOverline));
     if (textDecoration & TextDecoration::LineThrough)
         list->append(cssValuePool.createIdentifierValue(CSSValueLineThrough));
-#if ENABLE(LETTERPRESS)
-    if (textDecoration & TextDecoration::Letterpress)
-        list->append(cssValuePool.createIdentifierValue(CSSValueWebkitLetterpress));
-#endif
 
     if (!list->length())
         return cssValuePool.createIdentifierValue(CSSValueNone);

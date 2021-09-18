@@ -1,3 +1,20 @@
+2021-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS Family] Delete letterpress support
+        https://bugs.webkit.org/show_bug.cgi?id=230441
+
+        Reviewed by Tim Horton.
+
+        * TestExpectations:
+        * fast/text/letterpress-different-expected-mismatch.html: Removed.
+        * fast/text/letterpress-different.html: Removed.
+        * fast/text/letterpress-paint-expected-mismatch.html: Removed.
+        * fast/text/letterpress-paint.html: Removed.
+        * platform/ios/TestExpectations:
+        * platform/ios/ios/getComputedStyle-text-decoration-letterpress-expected.txt: Removed.
+        * platform/ios/ios/getComputedStyle-text-decoration-letterpress.html: Removed.
+        * platform/ios/ios/resources/getComputedStyle-text-decoration-letterpress.js: Removed.
+
 2021-09-17  Chris Dumez  <cdumez@apple.com>
 
         [ Catalina+ Win WK1 ] http/tests/misc/iframe-reparenting-id-collision.html is a flaky text failure

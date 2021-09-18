@@ -1073,10 +1073,6 @@ no-limit
 manual
 // auto
 
-#if defined(ENABLE_LETTERPRESS) && ENABLE_LETTERPRESS
--webkit-letterpress
-#endif
-
 #if defined(ENABLE_OVERFLOW_SCROLLING_TOUCH) && ENABLE_OVERFLOW_SCROLLING_TOUCH
 // -webkit-overflow-scrolling
 // auto

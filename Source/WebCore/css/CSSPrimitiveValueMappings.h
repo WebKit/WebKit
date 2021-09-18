@@ -2420,10 +2420,6 @@ template<> inline CSSPrimitiveValue::operator OptionSet<TextDecoration>() const
         return TextDecoration::LineThrough;
     case CSSValueBlink:
         return TextDecoration::Blink;
-#if ENABLE(LETTERPRESS)
-    case CSSValueWebkitLetterpress:
-        return TextDecoration::Letterpress;
-#endif
     default:
         break;
     }

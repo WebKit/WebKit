@@ -739,20 +739,13 @@ enum class TextTransform : uint8_t {
     None
 };
 
-#if ENABLE(LETTERPRESS)
-static const size_t TextDecorationBits = 5;
-#else
 static const size_t TextDecorationBits = 4;
-#endif
 enum class TextDecoration : uint8_t {
     None          = 0,
     Underline     = 1 << 0,
     Overline      = 1 << 1,
     LineThrough   = 1 << 2,
     Blink         = 1 << 3,
-#if ENABLE(LETTERPRESS)
-    Letterpress   = 1 << 4,
-#endif
 };
 
 enum class TextDecorationStyle : uint8_t {

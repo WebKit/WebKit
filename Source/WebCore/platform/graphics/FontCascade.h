@@ -91,7 +91,6 @@ struct GlyphOverflow {
 };
 
 #if USE(CORE_TEXT)
-void showLetterpressedGlyphsWithAdvances(const FloatPoint&, const Font&, GraphicsContext&, const CGGlyph*, const CGSize* advances, unsigned count);
 void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef, const CGSize* advances, unsigned count, const FloatPoint&);
 AffineTransform computeOverallTextMatrix(const Font&);
 AffineTransform computeVerticalTextMatrix(const Font&, const AffineTransform& previousTextMatrix);

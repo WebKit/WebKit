@@ -104,9 +104,6 @@ class Recorder;
 enum class TextDrawingMode : uint8_t {
     Fill = 1 << 0,
     Stroke = 1 << 1,
-#if ENABLE(LETTERPRESS)
-    Letterpress = 1 << 2,
-#endif
 };
 using TextDrawingModeFlags = OptionSet<TextDrawingMode>;
 
@@ -759,9 +756,6 @@ template<> struct EnumTraits<WebCore::TextDrawingMode> {
         WebCore::TextDrawingMode,
         WebCore::TextDrawingMode::Fill,
         WebCore::TextDrawingMode::Stroke
-#if ENABLE(LETTERPRESS)
-        , WebCore::TextDrawingMode::Letterpress
-#endif
     >;
 };
 

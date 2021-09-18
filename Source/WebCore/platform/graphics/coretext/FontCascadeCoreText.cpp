@@ -150,16 +150,6 @@ static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions
     }
 }
 
-static inline bool shouldUseLetterpressEffect(const GraphicsContext& context)
-{
-#if ENABLE(LETTERPRESS)
-    return context.textDrawingMode().contains(TextDrawingMode::Letterpress);
-#else
-    UNUSED_PARAM(context);
-    return false;
-#endif
-}
-
 static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, unsigned count, const AffineTransform& textMatrix)
 {
     if (!count)
@@ -242,8 +232,6 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     if (shouldAntialias != originalShouldAntialias)
         CGContextSetShouldAntialias(cgContext, shouldAntialias);
 
-    bool useLetterpressEffect = shouldUseLetterpressEffect(context);
-    UNUSED_VARIABLE(useLetterpressEffect);
     FloatPoint point = anchorPoint;
 
     auto textMatrix = computeOverallTextMatrix(font);
@@ -284,14 +272,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         context.setFillColor(fillColor);
     }
 
-#if ENABLE(LETTERPRESS)
-    if (useLetterpressEffect)
-        showLetterpressedGlyphsWithAdvances(point, font, context, glyphs, advances, numGlyphs);
-    else
-#endif
-    {
-        showGlyphsWithAdvances(point, font, cgContext, glyphs, advances, numGlyphs, textMatrix);
-    }
+    showGlyphsWithAdvances(point, font, cgContext, glyphs, advances, numGlyphs, textMatrix);
 
     if (syntheticBoldOffset)
         showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), font, cgContext, glyphs, advances, numGlyphs, textMatrix);

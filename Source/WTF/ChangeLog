@@ -1,3 +1,13 @@
+2021-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS Family] Delete letterpress support
+        https://bugs.webkit.org/show_bug.cgi?id=230441
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+
 2021-09-17  David Kilzer  <ddkilzer@apple.com>
 
         Build fix: WebKit::WebProcessPool should use a weak observer with CFNotificationCenter

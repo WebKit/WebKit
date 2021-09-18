@@ -1063,9 +1063,6 @@ TextStream& operator<<(TextStream& ts, TextDecoration textDecoration)
     case TextDecoration::Overline: ts << "overline"; break;
     case TextDecoration::LineThrough: ts << "line-through"; break;
     case TextDecoration::Blink: ts << "blink"; break;
-#if ENABLE(LETTERPRESS)
-    case TextDecoration::Letterpress: ts << "letterpress"; break;
-#endif
     }
     return ts;
 }
