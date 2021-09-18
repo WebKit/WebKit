@@ -80,6 +80,11 @@ public:
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
+    void contentsSizeChanged() const;
+
+    bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
+    void setHaveScrolledSincePageLoad(bool haveScrolled) { m_haveScrolledSincePageLoad = haveScrolled; }
+
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
 
     KeyboardScrollingAnimator *keyboardScrollingAnimator() const override { return m_keyboardScrollingAnimator.get(); }
@@ -97,42 +102,9 @@ public:
 
     virtual void cancelAnimations();
 
-    virtual void contentAreaWillPaint() const { }
-    virtual void mouseEnteredContentArea() { }
-    virtual void mouseExitedContentArea() { }
-    virtual void mouseMovedInContentArea() { }
-    virtual void mouseEnteredScrollbar(Scrollbar*) const { }
-    virtual void mouseExitedScrollbar(Scrollbar*) const { }
-    virtual void mouseIsDownInScrollbar(Scrollbar*, bool) const { }
-    virtual void willStartLiveResize() { }
-    virtual void contentsResized() const;
-    virtual void willEndLiveResize();
-    virtual void contentAreaDidShow() { }
-    virtual void contentAreaDidHide() { }
-
-    virtual void lockOverlayScrollbarStateToHidden(bool) { }
-    virtual bool scrollbarsCanBeActive() const { return true; }
-
-    virtual void didAddVerticalScrollbar(Scrollbar*);
-    virtual void willRemoveVerticalScrollbar(Scrollbar*) { }
-    virtual void didAddHorizontalScrollbar(Scrollbar*);
-    virtual void willRemoveHorizontalScrollbar(Scrollbar*) { }
-
-    virtual void invalidateScrollbarPartLayers(Scrollbar*) { }
-
-    virtual void verticalScrollbarLayerDidChange() { }
-    virtual void horizontalScrollbarLayerDidChange() { }
-
-    virtual bool shouldScrollbarParticipateInHitTesting(Scrollbar*) { return true; }
-
-    virtual void notifyContentAreaScrolled(const FloatSize& delta) { UNUSED_PARAM(delta); }
-
     virtual bool isUserScrollInProgress() const { return false; }
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
-
-    virtual String horizontalScrollbarStateForTesting() const { return emptyString(); }
-    virtual String verticalScrollbarStateForTesting() const { return emptyString(); }
 
     // ScrollAnimationClient
     void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) override;
@@ -140,6 +112,7 @@ public:
     ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) override;
 
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
+    WheelEventTestMonitor* wheelEventTestMonitor() const { return m_wheelEventTestMonitor.get(); }
 
     FloatPoint adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod);
     float adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod);
@@ -184,6 +157,7 @@ protected:
     ScrollingEffectsController m_scrollController;
     Timer m_scrollControllerAnimationTimer;
     FloatPoint m_currentPosition;
+    bool m_haveScrolledSincePageLoad { false };
 
     std::unique_ptr<ScrollAnimationSmooth> m_scrollAnimation;
     std::unique_ptr<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;

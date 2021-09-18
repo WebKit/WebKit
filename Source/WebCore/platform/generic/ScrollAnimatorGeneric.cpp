@@ -38,9 +38,6 @@
 
 namespace WebCore {
 
-static const Seconds overflowScrollbarsAnimationDuration { 1_s };
-static const Seconds overflowScrollbarsAnimationHideDelay { 2_s };
-
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
     return makeUnique<ScrollAnimatorGeneric>(scrollableArea);
@@ -49,7 +46,6 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 ScrollAnimatorGeneric::ScrollAnimatorGeneric(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_kineticAnimation(makeUnique<ScrollAnimationKinetic>(*this))
-    , m_overlayScrollbarAnimationTimer(*this, &ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired)
 {
 }
 
@@ -90,197 +86,6 @@ void ScrollAnimatorGeneric::updatePosition(const FloatPoint& position)
     updateActiveScrollSnapIndexForOffset();
 }
 
-void ScrollAnimatorGeneric::didAddVerticalScrollbar(Scrollbar* scrollbar)
-{
-    ScrollAnimator::didAddVerticalScrollbar(scrollbar);
-
-    if (!scrollbar->isOverlayScrollbar())
-        return;
-    m_verticalOverlayScrollbar = scrollbar;
-    if (!m_horizontalOverlayScrollbar)
-        m_overlayScrollbarAnimationCurrent = 1;
-    m_verticalOverlayScrollbar->setOpacity(m_overlayScrollbarAnimationCurrent);
-    hideOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::didAddHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    ScrollAnimator::didAddHorizontalScrollbar(scrollbar);
-
-    if (!scrollbar->isOverlayScrollbar())
-        return;
-    m_horizontalOverlayScrollbar = scrollbar;
-    if (!m_verticalOverlayScrollbar)
-        m_overlayScrollbarAnimationCurrent = 1;
-    m_horizontalOverlayScrollbar->setOpacity(m_overlayScrollbarAnimationCurrent);
-    hideOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
-{
-    if (m_verticalOverlayScrollbar != scrollbar)
-        return;
-    m_verticalOverlayScrollbar = nullptr;
-    if (!m_horizontalOverlayScrollbar)
-        m_overlayScrollbarAnimationCurrent = 0;
-}
-
-void ScrollAnimatorGeneric::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    if (m_horizontalOverlayScrollbar != scrollbar)
-        return;
-    m_horizontalOverlayScrollbar = nullptr;
-    if (!m_verticalOverlayScrollbar)
-        m_overlayScrollbarAnimationCurrent = 0;
-}
-
-void ScrollAnimatorGeneric::updateOverlayScrollbarsOpacity()
-{
-    if (m_verticalOverlayScrollbar && m_overlayScrollbarAnimationCurrent != m_verticalOverlayScrollbar->opacity()) {
-        m_verticalOverlayScrollbar->setOpacity(m_overlayScrollbarAnimationCurrent);
-        if (m_verticalOverlayScrollbar->hoveredPart() == NoPart)
-            m_verticalOverlayScrollbar->invalidate();
-    }
-
-    if (m_horizontalOverlayScrollbar && m_overlayScrollbarAnimationCurrent != m_horizontalOverlayScrollbar->opacity()) {
-        m_horizontalOverlayScrollbar->setOpacity(m_overlayScrollbarAnimationCurrent);
-        if (m_horizontalOverlayScrollbar->hoveredPart() == NoPart)
-            m_horizontalOverlayScrollbar->invalidate();
-    }
-}
-
-static inline double easeOutCubic(double t)
-{
-    double p = t - 1;
-    return p * p * p + 1;
-}
-
-void ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired()
-{
-    if (!m_horizontalOverlayScrollbar && !m_verticalOverlayScrollbar)
-        return;
-    if (m_overlayScrollbarsLocked)
-        return;
-
-    MonotonicTime currentTime = MonotonicTime::now();
-    double progress = 1;
-    if (currentTime < m_overlayScrollbarAnimationEndTime)
-        progress = (currentTime - m_overlayScrollbarAnimationStartTime).value() / (m_overlayScrollbarAnimationEndTime - m_overlayScrollbarAnimationStartTime).value();
-    progress = m_overlayScrollbarAnimationSource + (easeOutCubic(progress) * (m_overlayScrollbarAnimationTarget - m_overlayScrollbarAnimationSource));
-    if (progress != m_overlayScrollbarAnimationCurrent) {
-        m_overlayScrollbarAnimationCurrent = progress;
-        updateOverlayScrollbarsOpacity();
-    }
-
-    if (m_overlayScrollbarAnimationCurrent != m_overlayScrollbarAnimationTarget) {
-        static const double frameRate = 60;
-        static const Seconds tickTime = 1_s / frameRate;
-        static const Seconds minimumTimerInterval = 1_ms;
-        Seconds deltaToNextFrame = std::max(tickTime - (MonotonicTime::now() - currentTime), minimumTimerInterval);
-        m_overlayScrollbarAnimationTimer.startOneShot(deltaToNextFrame);
-    } else
-        hideOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::showOverlayScrollbars()
-{
-    if (m_overlayScrollbarsLocked)
-        return;
-
-    if (m_overlayScrollbarAnimationTimer.isActive() && m_overlayScrollbarAnimationTarget == 1)
-        return;
-    m_overlayScrollbarAnimationTimer.stop();
-
-    if (!m_horizontalOverlayScrollbar && !m_verticalOverlayScrollbar)
-        return;
-
-    m_overlayScrollbarAnimationSource = m_overlayScrollbarAnimationCurrent;
-    m_overlayScrollbarAnimationTarget = 1;
-    if (m_overlayScrollbarAnimationTarget != m_overlayScrollbarAnimationCurrent) {
-        m_overlayScrollbarAnimationStartTime = MonotonicTime::now();
-        m_overlayScrollbarAnimationEndTime = m_overlayScrollbarAnimationStartTime + overflowScrollbarsAnimationDuration;
-        m_overlayScrollbarAnimationTimer.startOneShot(0_s);
-    } else
-        hideOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::hideOverlayScrollbars()
-{
-    if (m_overlayScrollbarAnimationTimer.isActive() && !m_overlayScrollbarAnimationTarget)
-        return;
-    m_overlayScrollbarAnimationTimer.stop();
-
-    if (!m_horizontalOverlayScrollbar && !m_verticalOverlayScrollbar)
-        return;
-
-    m_overlayScrollbarAnimationSource = m_overlayScrollbarAnimationCurrent;
-    m_overlayScrollbarAnimationTarget = 0;
-    if (m_overlayScrollbarAnimationTarget == m_overlayScrollbarAnimationCurrent)
-        return;
-    m_overlayScrollbarAnimationStartTime = MonotonicTime::now() + overflowScrollbarsAnimationHideDelay;
-    m_overlayScrollbarAnimationEndTime = m_overlayScrollbarAnimationStartTime + overflowScrollbarsAnimationDuration + overflowScrollbarsAnimationHideDelay;
-    m_overlayScrollbarAnimationTimer.startOneShot(overflowScrollbarsAnimationHideDelay);
-}
-
-void ScrollAnimatorGeneric::mouseEnteredContentArea()
-{
-    showOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::mouseExitedContentArea()
-{
-    hideOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::mouseMovedInContentArea()
-{
-    showOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::contentAreaDidShow()
-{
-    showOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::contentAreaDidHide()
-{
-    if (m_overlayScrollbarsLocked)
-        return;
-    m_overlayScrollbarAnimationTimer.stop();
-    if (m_overlayScrollbarAnimationCurrent) {
-        m_overlayScrollbarAnimationCurrent = 0;
-        updateOverlayScrollbarsOpacity();
-    }
-}
-
-void ScrollAnimatorGeneric::notifyContentAreaScrolled(const FloatSize&)
-{
-    showOverlayScrollbars();
-}
-
-void ScrollAnimatorGeneric::lockOverlayScrollbarStateToHidden(bool shouldLockState)
-{
-    if (m_overlayScrollbarsLocked == shouldLockState)
-        return;
-    m_overlayScrollbarsLocked = shouldLockState;
-
-    if (!m_horizontalOverlayScrollbar && !m_verticalOverlayScrollbar)
-        return;
-
-    if (m_overlayScrollbarsLocked) {
-        m_overlayScrollbarAnimationTimer.stop();
-        if (m_horizontalOverlayScrollbar)
-            m_horizontalOverlayScrollbar->setOpacity(0);
-        if (m_verticalOverlayScrollbar)
-            m_verticalOverlayScrollbar->setOpacity(0);
-    } else {
-        if (m_overlayScrollbarAnimationCurrent == 1)
-            updateOverlayScrollbarsOpacity();
-        else
-            showOverlayScrollbars();
-    }
-}
-
 // FIXME: Can we just use the base class implementation?
 void ScrollAnimatorGeneric::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& position)
 {
@@ -295,4 +100,3 @@ void ScrollAnimatorGeneric::scrollAnimationDidUpdate(ScrollAnimation& animation,
 }
 
 } // namespace WebCore
-

@@ -45,13 +45,6 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 
 ScrollAnimatorIOS::ScrollAnimatorIOS(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
-#if ENABLE(TOUCH_EVENTS)
-    , m_touchScrollAxisLatch(AxisLatchNotComputed)
-    , m_inTouchSequence(false)
-    , m_committedToScrollAxis(false)
-    , m_startedScroll(false)
-    , m_scrollableAreaForTouchSequence(0)
-#endif
 {
 }
 

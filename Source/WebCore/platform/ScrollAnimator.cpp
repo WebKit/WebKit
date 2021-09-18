@@ -356,22 +356,7 @@ void ScrollAnimator::cancelAnimations()
 #endif
 }
 
-void ScrollAnimator::contentsResized() const
-{
-    m_scrollAnimation->updateScrollExtents();
-}
-
-void ScrollAnimator::willEndLiveResize()
-{
-    m_scrollAnimation->updateScrollExtents();
-}
-
-void ScrollAnimator::didAddVerticalScrollbar(Scrollbar*)
-{
-    m_scrollAnimation->updateScrollExtents();
-}
-
-void ScrollAnimator::didAddHorizontalScrollbar(Scrollbar*)
+void ScrollAnimator::contentsSizeChanged() const
 {
     m_scrollAnimation->updateScrollExtents();
 }

@@ -1,3 +1,320 @@
+2021-09-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Move scrollbar-related code out of ScrollAnimator and into ScrollbarsController
+        https://bugs.webkit.org/show_bug.cgi?id=230295
+
+        Reviewed by Tim Horton.
+
+        As the first step to cleaning up ScrollAnimator/ScrollController, move scrollbar-related code out of
+        ScrollAnimator and into a new ScrollbarsController class, with platform-specific subclasses.
+        This makes it much easier to understand the responsibilities of ScrollAnimator.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::contentsSizeChanged const):
+        (WebCore::ScrollAnimator::contentsResized const): Deleted.
+        (WebCore::ScrollAnimator::willEndLiveResize): Deleted.
+        (WebCore::ScrollAnimator::didAddVerticalScrollbar): Deleted.
+        (WebCore::ScrollAnimator::didAddHorizontalScrollbar): Deleted.
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::haveScrolledSincePageLoad const):
+        (WebCore::ScrollAnimator::setHaveScrolledSincePageLoad):
+        (WebCore::ScrollAnimator::wheelEventTestMonitor const):
+        (WebCore::ScrollAnimator::contentAreaWillPaint const): Deleted.
+        (WebCore::ScrollAnimator::mouseEnteredContentArea): Deleted.
+        (WebCore::ScrollAnimator::mouseExitedContentArea): Deleted.
+        (WebCore::ScrollAnimator::mouseMovedInContentArea): Deleted.
+        (WebCore::ScrollAnimator::mouseEnteredScrollbar const): Deleted.
+        (WebCore::ScrollAnimator::mouseExitedScrollbar const): Deleted.
+        (WebCore::ScrollAnimator::mouseIsDownInScrollbar const): Deleted.
+        (WebCore::ScrollAnimator::willStartLiveResize): Deleted.
+        (WebCore::ScrollAnimator::contentAreaDidShow): Deleted.
+        (WebCore::ScrollAnimator::contentAreaDidHide): Deleted.
+        (WebCore::ScrollAnimator::lockOverlayScrollbarStateToHidden): Deleted.
+        (WebCore::ScrollAnimator::scrollbarsCanBeActive const): Deleted.
+        (WebCore::ScrollAnimator::willRemoveVerticalScrollbar): Deleted.
+        (WebCore::ScrollAnimator::willRemoveHorizontalScrollbar): Deleted.
+        (WebCore::ScrollAnimator::invalidateScrollbarPartLayers): Deleted.
+        (WebCore::ScrollAnimator::verticalScrollbarLayerDidChange): Deleted.
+        (WebCore::ScrollAnimator::horizontalScrollbarLayerDidChange): Deleted.
+        (WebCore::ScrollAnimator::shouldScrollbarParticipateInHitTesting): Deleted.
+        (WebCore::ScrollAnimator::notifyContentAreaScrolled): Deleted.
+        (WebCore::ScrollAnimator::horizontalScrollbarStateForTesting const): Deleted.
+        (WebCore::ScrollAnimator::verticalScrollbarStateForTesting const): Deleted.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollAnimator const):
+        (WebCore::ScrollableArea::scrollbarsController const):
+        (WebCore::ScrollableArea::scrollPositionChanged):
+        (WebCore::ScrollableArea::willStartLiveResize):
+        (WebCore::ScrollableArea::willEndLiveResize):
+        (WebCore::ScrollableArea::contentAreaWillPaint const):
+        (WebCore::ScrollableArea::mouseEnteredContentArea const):
+        (WebCore::ScrollableArea::mouseExitedContentArea const):
+        (WebCore::ScrollableArea::mouseMovedInContentArea const):
+        (WebCore::ScrollableArea::mouseEnteredScrollbar const):
+        (WebCore::ScrollableArea::mouseExitedScrollbar const):
+        (WebCore::ScrollableArea::mouseIsDownInScrollbar const):
+        (WebCore::ScrollableArea::contentAreaDidShow const):
+        (WebCore::ScrollableArea::contentAreaDidHide const):
+        (WebCore::ScrollableArea::lockOverlayScrollbarStateToHidden const):
+        (WebCore::ScrollableArea::scrollbarsCanBeActive const):
+        (WebCore::ScrollableArea::didAddScrollbar):
+        (WebCore::ScrollableArea::willRemoveScrollbar):
+        (WebCore::ScrollableArea::contentsResized):
+        (WebCore::ScrollableArea::availableContentSizeChanged):
+        (WebCore::ScrollableArea::invalidateScrollbars):
+        (WebCore::ScrollableArea::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollableArea::horizontalScrollbarLayerDidChange):
+        (WebCore::ScrollableArea::horizontalScrollbarStateForTesting const):
+        (WebCore::ScrollableArea::verticalScrollbarStateForTesting const):
+        (WebCore::ScrollableArea::resnapAfterLayout):
+        * platform/ScrollableArea.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::shouldParticipateInHitTesting):
+        * platform/ScrollbarsController.cpp: Copied from Source/WebCore/platform/ios/ScrollAnimatorIOS.h.
+        (WebCore::ScrollbarsController::create):
+        (WebCore::ScrollbarsController::ScrollbarsController):
+        * platform/ScrollbarsController.h: Added.
+        (WebCore::ScrollbarsController::scrollableArea const):
+        (WebCore::ScrollbarsController::notifyPositionChanged):
+        (WebCore::ScrollbarsController::cancelAnimations):
+        (WebCore::ScrollbarsController::didBeginScrollGesture const):
+        (WebCore::ScrollbarsController::didEndScrollGesture const):
+        (WebCore::ScrollbarsController::mayBeginScrollGesture const):
+        (WebCore::ScrollbarsController::contentAreaWillPaint const):
+        (WebCore::ScrollbarsController::mouseEnteredContentArea):
+        (WebCore::ScrollbarsController::mouseExitedContentArea):
+        (WebCore::ScrollbarsController::mouseMovedInContentArea):
+        (WebCore::ScrollbarsController::mouseEnteredScrollbar const):
+        (WebCore::ScrollbarsController::mouseExitedScrollbar const):
+        (WebCore::ScrollbarsController::mouseIsDownInScrollbar const):
+        (WebCore::ScrollbarsController::willStartLiveResize):
+        (WebCore::ScrollbarsController::contentsSizeChanged const):
+        (WebCore::ScrollbarsController::willEndLiveResize):
+        (WebCore::ScrollbarsController::contentAreaDidShow):
+        (WebCore::ScrollbarsController::contentAreaDidHide):
+        (WebCore::ScrollbarsController::lockOverlayScrollbarStateToHidden):
+        (WebCore::ScrollbarsController::scrollbarsCanBeActive const):
+        (WebCore::ScrollbarsController::didAddVerticalScrollbar):
+        (WebCore::ScrollbarsController::willRemoveVerticalScrollbar):
+        (WebCore::ScrollbarsController::didAddHorizontalScrollbar):
+        (WebCore::ScrollbarsController::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollbarsController::invalidateScrollbarPartLayers):
+        (WebCore::ScrollbarsController::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollbarsController::horizontalScrollbarLayerDidChange):
+        (WebCore::ScrollbarsController::shouldScrollbarParticipateInHitTesting):
+        (WebCore::ScrollbarsController::notifyContentAreaScrolled):
+        (WebCore::ScrollbarsController::horizontalScrollbarStateForTesting const):
+        (WebCore::ScrollbarsController::verticalScrollbarStateForTesting const):
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::ScrollAnimatorGeneric):
+        (WebCore::ScrollAnimatorGeneric::didAddVerticalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorGeneric::didAddHorizontalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorGeneric::willRemoveVerticalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorGeneric::willRemoveHorizontalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorGeneric::updateOverlayScrollbarsOpacity): Deleted.
+        (WebCore::easeOutCubic): Deleted.
+        (WebCore::ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired): Deleted.
+        (WebCore::ScrollAnimatorGeneric::showOverlayScrollbars): Deleted.
+        (WebCore::ScrollAnimatorGeneric::hideOverlayScrollbars): Deleted.
+        (WebCore::ScrollAnimatorGeneric::mouseEnteredContentArea): Deleted.
+        (WebCore::ScrollAnimatorGeneric::mouseExitedContentArea): Deleted.
+        (WebCore::ScrollAnimatorGeneric::mouseMovedInContentArea): Deleted.
+        (WebCore::ScrollAnimatorGeneric::contentAreaDidShow): Deleted.
+        (WebCore::ScrollAnimatorGeneric::contentAreaDidHide): Deleted.
+        (WebCore::ScrollAnimatorGeneric::notifyContentAreaScrolled): Deleted.
+        (WebCore::ScrollAnimatorGeneric::lockOverlayScrollbarStateToHidden): Deleted.
+        * platform/generic/ScrollAnimatorGeneric.h:
+        * platform/ios/ScrollAnimatorIOS.h:
+        * platform/ios/ScrollAnimatorIOS.mm:
+        (WebCore::ScrollAnimatorIOS::ScrollAnimatorIOS):
+        * platform/mac/ScrollAnimatorMac.h:
+        (WebCore::ScrollAnimatorMac::haveScrolledSincePageLoad const): Deleted.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::scroll):
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+        (WebCore::ScrollAnimatorMac::cancelAnimations):
+        (WebCore::ScrollAnimatorMac::handleWheelEventPhase):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::macScrollbarTheme): Deleted.
+        (WebCore::scrollerImpForScrollbar): Deleted.
+        (-[WebScrollerImpPairDelegate initWithScrollableArea:]): Deleted.
+        (-[WebScrollerImpPairDelegate invalidate]): Deleted.
+        (-[WebScrollerImpPairDelegate contentAreaRectForScrollerImpPair:]): Deleted.
+        (-[WebScrollerImpPairDelegate inLiveResizeForScrollerImpPair:]): Deleted.
+        (-[WebScrollerImpPairDelegate mouseLocationInContentAreaForScrollerImpPair:]): Deleted.
+        (-[WebScrollerImpPairDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]): Deleted.
+        (-[WebScrollerImpPairDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]): Deleted.
+        (-[WebScrollerImpPairDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]): Deleted.
+        (operator<<): Deleted.
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]): Deleted.
+        (-[WebScrollbarPartAnimation startAnimation]): Deleted.
+        (-[WebScrollbarPartAnimation setStartValue:]): Deleted.
+        (-[WebScrollbarPartAnimation setEndValue:]): Deleted.
+        (-[WebScrollbarPartAnimation setCurrentProgress:]): Deleted.
+        (-[WebScrollbarPartAnimation invalidate]): Deleted.
+        (-[WebScrollbarPartAnimation setDuration:]): Deleted.
+        (-[WebScrollbarPartAnimation stopAnimation]): Deleted.
+        (-[WebScrollerImpDelegate initWithScrollbar:]): Deleted.
+        (-[WebScrollerImpDelegate cancelAnimations]): Deleted.
+        (-[WebScrollerImpDelegate scrollAnimator]): Deleted.
+        (-[WebScrollerImpDelegate convertRectToBacking:]): Deleted.
+        (-[WebScrollerImpDelegate convertRectFromBacking:]): Deleted.
+        (-[WebScrollerImpDelegate layer]): Deleted.
+        (-[WebScrollerImpDelegate mouseLocationInScrollerForScrollerImp:]): Deleted.
+        (-[WebScrollerImpDelegate convertRectToLayer:]): Deleted.
+        (-[WebScrollerImpDelegate shouldUseLayerPerPartForScrollerImp:]): Deleted.
+        (-[WebScrollerImpDelegate effectiveAppearanceForScrollerImp:]): Deleted.
+        (-[WebScrollerImpDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]): Deleted.
+        (-[WebScrollerImpDelegate scrollerImp:animateKnobAlphaTo:duration:]): Deleted.
+        (-[WebScrollerImpDelegate scrollerImp:animateTrackAlphaTo:duration:]): Deleted.
+        (-[WebScrollerImpDelegate scrollerImp:animateUIStateTransitionWithDuration:]): Deleted.
+        (-[WebScrollerImpDelegate scrollerImp:animateExpansionTransitionWithDuration:]): Deleted.
+        (-[WebScrollerImpDelegate scrollerImp:overlayScrollerStateChangedTo:]): Deleted.
+        (-[WebScrollerImpDelegate invalidate]): Deleted.
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac): Deleted.
+        (WebCore::scrollbarState): Deleted.
+        (WebCore::ScrollAnimatorMac::horizontalScrollbarStateForTesting const): Deleted.
+        (WebCore::ScrollAnimatorMac::verticalScrollbarStateForTesting const): Deleted.
+        (WebCore::ScrollAnimatorMac::contentAreaWillPaint const): Deleted.
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea): Deleted.
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea): Deleted.
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea): Deleted.
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar const): Deleted.
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar const): Deleted.
+        (WebCore::ScrollAnimatorMac::mouseIsDownInScrollbar const): Deleted.
+        (WebCore::ScrollAnimatorMac::willStartLiveResize): Deleted.
+        (WebCore::ScrollAnimatorMac::contentsResized const): Deleted.
+        (WebCore::ScrollAnimatorMac::willEndLiveResize): Deleted.
+        (WebCore::ScrollAnimatorMac::contentAreaDidShow): Deleted.
+        (WebCore::ScrollAnimatorMac::contentAreaDidHide): Deleted.
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture const): Deleted.
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture const): Deleted.
+        (WebCore::ScrollAnimatorMac::mayBeginScrollGesture const): Deleted.
+        (WebCore::ScrollAnimatorMac::lockOverlayScrollbarStateToHidden): Deleted.
+        (WebCore::ScrollAnimatorMac::scrollbarsCanBeActive const): Deleted.
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar): Deleted.
+        (WebCore::ScrollAnimatorMac::invalidateScrollbarPartLayers): Deleted.
+        (WebCore::ScrollAnimatorMac::verticalScrollbarLayerDidChange): Deleted.
+        (WebCore::ScrollAnimatorMac::horizontalScrollbarLayerDidChange): Deleted.
+        (WebCore::ScrollAnimatorMac::shouldScrollbarParticipateInHitTesting): Deleted.
+        (WebCore::ScrollAnimatorMac::notifyContentAreaScrolled): Deleted.
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle): Deleted.
+        (WebCore::ScrollAnimatorMac::startScrollbarPaintTimer): Deleted.
+        (WebCore::ScrollAnimatorMac::scrollbarPaintTimerIsActive const): Deleted.
+        (WebCore::ScrollAnimatorMac::stopScrollbarPaintTimer): Deleted.
+        (WebCore::ScrollAnimatorMac::initialScrollbarPaintTimerFired): Deleted.
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolledSoon): Deleted.
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolled): Deleted.
+        (WebCore::ScrollAnimatorMac::sendContentAreaScrolledTimerFired): Deleted.
+        (WebCore::ScrollAnimatorMac::setVisibleScrollerThumbRect): Deleted.
+        * platform/mac/ScrollbarsControllerMac.h: Added.
+        * platform/mac/ScrollbarsControllerMac.mm: Copied from Source/WebCore/platform/mac/ScrollAnimatorMac.mm.
+        (WebCore::macScrollbarTheme):
+        (WebCore::scrollerImpForScrollbar):
+        (-[WebScrollerImpPairDelegate initWithScrollableArea:]):
+        (-[WebScrollerImpPairDelegate invalidate]):
+        (-[WebScrollerImpPairDelegate contentAreaRectForScrollerImpPair:]):
+        (-[WebScrollerImpPairDelegate inLiveResizeForScrollerImpPair:]):
+        (-[WebScrollerImpPairDelegate mouseLocationInContentAreaForScrollerImpPair:]):
+        (-[WebScrollerImpPairDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[WebScrollerImpPairDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]):
+        (-[WebScrollerImpPairDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (operator<<):
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]):
+        (-[WebScrollbarPartAnimation startAnimation]):
+        (-[WebScrollbarPartAnimation setStartValue:]):
+        (-[WebScrollbarPartAnimation setEndValue:]):
+        (-[WebScrollbarPartAnimation setCurrentProgress:]):
+        (-[WebScrollbarPartAnimation invalidate]):
+        (-[WebScrollbarPartAnimation setDuration:]):
+        (-[WebScrollbarPartAnimation stopAnimation]):
+        (-[WebScrollerImpDelegate initWithScrollbar:]):
+        (-[WebScrollerImpDelegate cancelAnimations]):
+        (-[WebScrollerImpDelegate scrollbarsController]):
+        (-[WebScrollerImpDelegate convertRectToBacking:]):
+        (-[WebScrollerImpDelegate convertRectFromBacking:]):
+        (-[WebScrollerImpDelegate layer]):
+        (-[WebScrollerImpDelegate mouseLocationInScrollerForScrollerImp:]):
+        (-[WebScrollerImpDelegate convertRectToLayer:]):
+        (-[WebScrollerImpDelegate shouldUseLayerPerPartForScrollerImp:]):
+        (-[WebScrollerImpDelegate effectiveAppearanceForScrollerImp:]):
+        (-[WebScrollerImpDelegate setUpAlphaAnimation:scrollerPainter:part:animateAlphaTo:duration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollerImpDelegate scrollerImp:animateExpansionTransitionWithDuration:]):
+        (-[WebScrollerImpDelegate scrollerImp:overlayScrollerStateChangedTo:]):
+        (-[WebScrollerImpDelegate invalidate]):
+        (WebCore::ScrollbarsController::create):
+        (WebCore::ScrollbarsControllerMac::ScrollbarsControllerMac):
+        (WebCore::ScrollbarsControllerMac::~ScrollbarsControllerMac):
+        (WebCore::ScrollbarsControllerMac::notifyPositionChanged):
+        (WebCore::ScrollbarsControllerMac::cancelAnimations):
+        (WebCore::ScrollbarsControllerMac::setVisibleScrollerThumbRect):
+        (WebCore::ScrollbarsControllerMac::haveScrolledSincePageLoad const):
+        (WebCore::ScrollbarsControllerMac::contentAreaWillPaint const):
+        (WebCore::ScrollbarsControllerMac::mouseEnteredContentArea):
+        (WebCore::ScrollbarsControllerMac::mouseExitedContentArea):
+        (WebCore::ScrollbarsControllerMac::mouseMovedInContentArea):
+        (WebCore::ScrollbarsControllerMac::mouseEnteredScrollbar const):
+        (WebCore::ScrollbarsControllerMac::mouseExitedScrollbar const):
+        (WebCore::ScrollbarsControllerMac::mouseIsDownInScrollbar const):
+        (WebCore::ScrollbarsControllerMac::willStartLiveResize):
+        (WebCore::ScrollbarsControllerMac::contentsSizeChanged const):
+        (WebCore::ScrollbarsControllerMac::willEndLiveResize):
+        (WebCore::ScrollbarsControllerMac::contentAreaDidShow):
+        (WebCore::ScrollbarsControllerMac::contentAreaDidHide):
+        (WebCore::ScrollbarsControllerMac::didBeginScrollGesture const):
+        (WebCore::ScrollbarsControllerMac::didEndScrollGesture const):
+        (WebCore::ScrollbarsControllerMac::mayBeginScrollGesture const):
+        (WebCore::ScrollbarsControllerMac::lockOverlayScrollbarStateToHidden):
+        (WebCore::ScrollbarsControllerMac::scrollbarsCanBeActive const):
+        (WebCore::ScrollbarsControllerMac::didAddVerticalScrollbar):
+        (WebCore::ScrollbarsControllerMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollbarsControllerMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollbarsControllerMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollbarsControllerMac::invalidateScrollbarPartLayers):
+        (WebCore::ScrollbarsControllerMac::verticalScrollbarLayerDidChange):
+        (WebCore::ScrollbarsControllerMac::horizontalScrollbarLayerDidChange):
+        (WebCore::ScrollbarsControllerMac::shouldScrollbarParticipateInHitTesting):
+        (WebCore::ScrollbarsControllerMac::notifyContentAreaScrolled):
+        (WebCore::ScrollbarsControllerMac::updateScrollerStyle):
+        (WebCore::ScrollbarsControllerMac::startScrollbarPaintTimer):
+        (WebCore::ScrollbarsControllerMac::scrollbarPaintTimerIsActive const):
+        (WebCore::ScrollbarsControllerMac::stopScrollbarPaintTimer):
+        (WebCore::ScrollbarsControllerMac::initialScrollbarPaintTimerFired):
+        (WebCore::ScrollbarsControllerMac::sendContentAreaScrolledTimerFired):
+        (WebCore::ScrollbarsControllerMac::sendContentAreaScrolledSoon):
+        (WebCore::ScrollbarsControllerMac::sendContentAreaScrolled):
+        (WebCore::scrollbarState):
+        (WebCore::ScrollbarsControllerMac::horizontalScrollbarStateForTesting const):
+        (WebCore::ScrollbarsControllerMac::verticalScrollbarStateForTesting const):
+        (WebCore::ScrollbarsControllerMac::wheelEventTestMonitor const):
+        * platform/mock/ScrollAnimatorMock.h: Removed.
+        * platform/mock/ScrollbarsControllerMock.cpp: Renamed from Source/WebCore/platform/mock/ScrollAnimatorMock.cpp.
+        (WebCore::ScrollbarsControllerMock::ScrollbarsControllerMock):
+        (WebCore::ScrollbarsControllerMock::didAddVerticalScrollbar):
+        (WebCore::ScrollbarsControllerMock::didAddHorizontalScrollbar):
+        (WebCore::ScrollbarsControllerMock::willRemoveVerticalScrollbar):
+        (WebCore::ScrollbarsControllerMock::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollbarsControllerMock::mouseEnteredContentArea):
+        (WebCore::ScrollbarsControllerMock::mouseMovedInContentArea):
+        (WebCore::ScrollbarsControllerMock::mouseExitedContentArea):
+        (WebCore::ScrollbarsControllerMock::scrollbarPrefix const):
+        (WebCore::ScrollbarsControllerMock::mouseEnteredScrollbar const):
+        (WebCore::ScrollbarsControllerMock::mouseExitedScrollbar const):
+        (WebCore::ScrollbarsControllerMock::mouseIsDownInScrollbar const):
+        * platform/mock/ScrollbarsControllerMock.h: Added.
+
 2021-09-17  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Enable content with synthetic bold for IFC

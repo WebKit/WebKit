@@ -28,119 +28,47 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
-#include "IntRect.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
 #include "ScrollAnimator.h"
-#include "Timer.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS WebScrollAnimationHelperDelegate;
-OBJC_CLASS WebScrollerImpPairDelegate;
-OBJC_CLASS WebScrollerImpDelegate;
-
-typedef id ScrollerImpPair;
 
 namespace WebCore {
 
 class Scrollbar;
 
-class ScrollAnimatorMac : public ScrollAnimator {
+class ScrollAnimatorMac final : public ScrollAnimator {
 public:
     ScrollAnimatorMac(ScrollableArea&);
     virtual ~ScrollAnimatorMac();
 
     void immediateScrollToPositionForScrollAnimation(const FloatPoint& newPosition);
-    bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
-
-    void updateScrollerStyle();
-
-    bool scrollbarPaintTimerIsActive() const;
-    void startScrollbarPaintTimer();
-    void stopScrollbarPaintTimer();
-
-    void setVisibleScrollerThumbRect(const IntRect&);
-
-    bool scrollbarsCanBeActive() const final;
 
 private:
-    RetainPtr<id> m_scrollAnimationHelper;
-    RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
-
-    RetainPtr<ScrollerImpPair> m_scrollerImpPair;
-    RetainPtr<WebScrollerImpPairDelegate> m_scrollerImpPairDelegate;
-    RetainPtr<WebScrollerImpDelegate> m_horizontalScrollerImpDelegate;
-    RetainPtr<WebScrollerImpDelegate> m_verticalScrollerImpDelegate;
-
-    void initialScrollbarPaintTimerFired();
-    Timer m_initialScrollbarPaintTimer;
-
-    void sendContentAreaScrolledTimerFired();
-    Timer m_sendContentAreaScrolledTimer;
-    FloatSize m_contentAreaScrolledTimerScrollDelta;
-
-    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>) override;
-    bool scrollToPositionWithAnimation(const FloatPoint&) override;
-    bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped) override;
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>) final;
+    bool scrollToPositionWithAnimation(const FloatPoint&) final;
+    bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped) final;
 
 #if ENABLE(RUBBER_BANDING)
     bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&) const;
-    bool handleWheelEvent(const PlatformWheelEvent&) override;
+    bool handleWheelEvent(const PlatformWheelEvent&) final;
 #endif
 
-    void handleWheelEventPhase(PlatformWheelEventPhase) override;
+    void handleWheelEventPhase(PlatformWheelEventPhase) final;
 
-    void cancelAnimations() override;
+    void cancelAnimations() final;
     
-    void notifyPositionChanged(const FloatSize& delta) override;
-    void contentAreaWillPaint() const override;
-    void mouseEnteredContentArea() override;
-    void mouseExitedContentArea() override;
-    void mouseMovedInContentArea() override;
-    void mouseEnteredScrollbar(Scrollbar*) const override;
-    void mouseExitedScrollbar(Scrollbar*) const override;
-    void mouseIsDownInScrollbar(Scrollbar*, bool) const override;
-    void willStartLiveResize() override;
-    void contentsResized() const override;
-    void willEndLiveResize() override;
-    void contentAreaDidShow() override;
-    void contentAreaDidHide() override;
-    void didBeginScrollGesture() const;
-    void didEndScrollGesture() const;
-    void mayBeginScrollGesture() const;
-
-    void lockOverlayScrollbarStateToHidden(bool shouldLockState) final;
-
-    void didAddVerticalScrollbar(Scrollbar*) override;
-    void willRemoveVerticalScrollbar(Scrollbar*) override;
-    void didAddHorizontalScrollbar(Scrollbar*) override;
-    void willRemoveHorizontalScrollbar(Scrollbar*) override;
-
-    void invalidateScrollbarPartLayers(Scrollbar*) override;
-
-    void verticalScrollbarLayerDidChange() override;
-    void horizontalScrollbarLayerDidChange() override;
-
-    bool shouldScrollbarParticipateInHitTesting(Scrollbar*) override;
-
-    void notifyContentAreaScrolled(const FloatSize& delta) override;
-
-    // sendContentAreaScrolledSoon() will do the same work that sendContentAreaScrolled() does except
-    // it does it after a zero-delay timer fires. This will prevent us from updating overlay scrollbar 
-    // information during layout.
-    void sendContentAreaScrolled(const FloatSize& scrollDelta);
-    void sendContentAreaScrolledSoon(const FloatSize& scrollDelta);
+    void notifyPositionChanged(const FloatSize& delta) final;
 
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
-    bool isUserScrollInProgress() const override;
-    bool isRubberBandInProgress() const override;
-    bool isScrollSnapInProgress() const override;
+    bool isUserScrollInProgress() const final;
+    bool isRubberBandInProgress() const final;
+    bool isScrollSnapInProgress() const final;
 
-    String horizontalScrollbarStateForTesting() const final;
-    String verticalScrollbarStateForTesting() const final;
-
-    bool processWheelEventForScrollSnap(const PlatformWheelEvent&) override;
+    bool processWheelEventForScrollSnap(const PlatformWheelEvent&) final;
 
     // ScrollingEffectsControllerClient.
 #if ENABLE(RUBBER_BANDING)
@@ -157,9 +85,8 @@ private:
     void adjustScrollPositionToBoundsIfNecessary() final;
 #endif
 
-    bool m_haveScrolledSincePageLoad;
-    bool m_needsScrollerStyleUpdate;
-    IntRect m_visibleScrollerThumbRect;
+    RetainPtr<id> m_scrollAnimationHelper;
+    RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 };
 
 } // namespace WebCore

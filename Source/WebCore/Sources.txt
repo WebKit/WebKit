@@ -1831,6 +1831,7 @@ platform/ScrollTypes.cpp
 platform/ScrollView.cpp
 platform/ScrollableArea.cpp
 platform/Scrollbar.cpp
+platform/ScrollbarsController.cpp
 platform/ScrollbarTheme.cpp
 platform/ScrollbarThemeComposite.cpp
 platform/SerializedPlatformDataCue.cpp
@@ -2099,7 +2100,7 @@ platform/mock/MockRealtimeVideoSource.cpp
 platform/mock/PlatformSpeechSynthesizerMock.cpp
 platform/mock/RTCDataChannelHandlerMock.cpp
 platform/mock/RTCNotifiersMock.cpp
-platform/mock/ScrollAnimatorMock.cpp
+platform/mock/ScrollbarsControllerMock.cpp
 platform/mock/ScrollbarThemeMock.cpp
 platform/mock/mediasource/MockBox.cpp
 platform/mock/mediasource/MockMediaPlayerMediaSource.cpp

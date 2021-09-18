@@ -44,25 +44,11 @@ public:
     virtual ~ScrollAnimatorGeneric();
 
 private:
-    bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping) override;
-
-    bool handleWheelEvent(const PlatformWheelEvent&) override;
-
-    void didAddVerticalScrollbar(Scrollbar*) override;
-    void didAddHorizontalScrollbar(Scrollbar*) override;
-    void willRemoveVerticalScrollbar(Scrollbar*) override;
-    void willRemoveHorizontalScrollbar(Scrollbar*) override;
-
-    void mouseEnteredContentArea() override;
-    void mouseExitedContentArea() override;
-    void mouseMovedInContentArea() override;
-    void contentAreaDidShow() override;
-    void contentAreaDidHide() override;
-    void notifyContentAreaScrolled(const FloatSize& delta) override;
-    void lockOverlayScrollbarStateToHidden(bool) override;
+    bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping) final;
+    bool handleWheelEvent(const PlatformWheelEvent&) final;
 
     // ScrollAnimationClient
-    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) override;
+    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) final;
 
     void updatePosition(const FloatPoint&);
 
@@ -72,15 +58,6 @@ private:
     void updateOverlayScrollbarsOpacity();
 
     std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
-    Scrollbar* m_horizontalOverlayScrollbar { nullptr };
-    Scrollbar* m_verticalOverlayScrollbar { nullptr };
-    bool m_overlayScrollbarsLocked { false };
-    Timer m_overlayScrollbarAnimationTimer;
-    double m_overlayScrollbarAnimationSource { 0 };
-    double m_overlayScrollbarAnimationTarget { 0 };
-    double m_overlayScrollbarAnimationCurrent { 0 };
-    MonotonicTime m_overlayScrollbarAnimationStartTime;
-    MonotonicTime m_overlayScrollbarAnimationEndTime;
 };
 
 } // namespace WebCore
