@@ -1,3 +1,23 @@
+2021-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Add "Shaping" log channel
+        https://bugs.webkit.org/show_bug.cgi?id=230440
+
+        Reviewed by Darin Adler.
+
+        This logging has been useful to me before, so I figure it might be useful to other people.
+
+        This new channel is off by default.
+
+        No new tests because there is no behavior change.
+
+        * platform/Logging.h:
+        * platform/graphics/coretext/FontCoreText.cpp:
+        (WebCore::Font::applyTransforms const):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
 2021-09-18  Simon Fraser  <simon.fraser@apple.com>
 
         Move ScrollingMomentumCalculator into the platform directory

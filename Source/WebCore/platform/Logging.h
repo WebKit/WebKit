@@ -107,6 +107,7 @@ namespace WebCore {
     M(Selection) \
     M(Services) \
     M(ServiceWorker) \
+    M(Shaping) \
     M(SpellingAndGrammar) \
     M(SQLDatabase) \
     M(Storage) \
