@@ -397,32 +397,37 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
 OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBehavior(const RenderStyle& style, bool hasWrapOpportunityAtPreviousPosition) const
 {
     // Disregard any prohibition against line breaks mandated by the word-break property.
-    // The different wrapping opportunities must not be prioritized. Hyphenation is not applied.
+    // The different wrapping opportunities must not be prioritized.
+    // Note hyphenation is not applied.
     if (style.lineBreak() == LineBreak::Anywhere)
         return { WordBreakRule::AtArbitraryPosition };
+
+    auto includeHyphenationIfAllowed = [&](std::optional<InlineContentBreaker::WordBreakRule> wordBreakRule) -> OptionSet<InlineContentBreaker::WordBreakRule> {
+        auto hyphenationIsAllowed = !n_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.computedLocale());
+        if (hyphenationIsAllowed) {
+            if (wordBreakRule)
+                return { *wordBreakRule, WordBreakRule::AtHyphenationOpportunities };
+            return { WordBreakRule::AtHyphenationOpportunities };
+        }
+        if (wordBreakRule)
+            return *wordBreakRule;
+        return { };
+    };
     // Breaking is allowed within “words”.
     if (style.wordBreak() == WordBreak::BreakAll)
-        return { WordBreakRule::AtArbitraryPosition };
+        return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
+    // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
+    // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
+    if (style.wordBreak() == WordBreak::BreakWord && !hasWrapOpportunityAtPreviousPosition)
+        return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
+    // OverflowWrap::BreakWord/Anywhere An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
+    // Note that this applies to content where CSS properties (e.g. WordBreak::KeepAll) make it unbreakable. 
+    if ((style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition)
+        return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
     // Breaking is forbidden within “words”.
     if (style.wordBreak() == WordBreak::KeepAll)
         return { };
-
-    auto breakRules = OptionSet<WordBreakRule> { };
-    auto hyphenationIsAllowed = !n_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(style.computedLocale());
-    if (hyphenationIsAllowed)
-        breakRules.add({ WordBreakRule::AtHyphenationOpportunities });
-    // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
-    // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
-    if (style.wordBreak() == WordBreak::BreakWord && !hasWrapOpportunityAtPreviousPosition) {
-        breakRules.add({ WordBreakRule::AtArbitraryPosition });
-        return breakRules;
-    }
-    // OverflowWrap::BreakWord/Anywhere An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
-    if ((style.overflowWrap() == OverflowWrap::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition) {
-        breakRules.add({ WordBreakRule::AtArbitraryPosition });
-        return breakRules;
-    }
-    return breakRules;
+    return includeHyphenationIfAllowed({ });
 }
 
 std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingTextRun(const ContinuousContent::Run& overflowingRun, InlineLayoutUnit logicalLeft, std::optional<InlineLayoutUnit> availableWidth, bool hasWrapOpportunityAtPreviousPosition) const

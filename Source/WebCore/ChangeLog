@@ -1,3 +1,20 @@
+2021-09-19  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] overflow-wrap: anywhere/break-word rules over word-break: keep-all
+        https://bugs.webkit.org/show_bug.cgi?id=230458
+
+        Reviewed by Antti Koivisto.
+
+        https://drafts.csswg.org/css-text/#overflow-wrap-property
+        "...An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are
+        no otherwise-acceptable break points in the line."
+
+        "word-break: keep all" makes the content "otherwise unbreakable sequence of characters". It simply means
+        that "overflow-wrap: anywhere/break-word" may break the content at an arbitrary position even when "keep-all" is set,  
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::wordBreakBehavior const):
+
 2021-09-19  Antti Koivisto  <antti@apple.com>
 
         [lFC][Integration] Enable some text painting features

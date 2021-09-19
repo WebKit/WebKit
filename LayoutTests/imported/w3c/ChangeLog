@@ -1,3 +1,12 @@
+2021-09-19  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] overflow-wrap: anywhere/break-word rules over word-break: keep-all
+        https://bugs.webkit.org/show_bug.cgi?id=230458
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001-expected.txt:
+
 2021-09-17  Simon Fraser  <simon.fraser@apple.com>
 
         css/cssom-view/mouseEvent-offsetXY-svg.html passes now
