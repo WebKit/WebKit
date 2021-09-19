@@ -433,20 +433,6 @@ bool LegacyInlineTextBox::hasMarkers() const
     return MarkedText::collectForDocumentMarkers(renderer(), selectableRange(), MarkedText::PaintPhase::Decoration).size();
 }
 
-FloatPoint LegacyInlineTextBox::textOriginFromBoxRect(const FloatRect& boxRect) const
-{
-    FloatPoint textOrigin { boxRect.x(), boxRect.y() + lineFont().fontMetrics().ascent() };
-    if (auto* combinedText = this->combinedText()) {
-        if (auto newOrigin = combinedText->computeTextOrigin(boxRect))
-            textOrigin = newOrigin.value();
-    }
-    if (isHorizontal())
-        textOrigin.setY(roundToDevicePixel(LayoutUnit { textOrigin.y() }, renderer().document().deviceScaleFactor()));
-    else
-        textOrigin.setX(roundToDevicePixel(LayoutUnit { textOrigin.x() }, renderer().document().deviceScaleFactor()));
-    return textOrigin;
-}
-
 int LegacyInlineTextBox::caretMinOffset() const
 {
     return m_start;
@@ -538,15 +524,6 @@ String LegacyInlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) con
 const RenderCombineText* LegacyInlineTextBox::combinedText() const
 {
     return lineStyle().hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
-}
-
-const ShadowData* LegacyInlineTextBox::debugTextShadow() const
-{
-    if (!renderer().settings().legacyLineLayoutVisualCoverageEnabled())
-        return nullptr;
-
-    static NeverDestroyed<ShadowData> debugTextShadow(IntPoint(0, 0), 10, 20, ShadowStyle::Normal, true, SRGBA<uint8_t> { 150, 0, 0, 190 });
-    return &debugTextShadow.get();
 }
 
 ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const

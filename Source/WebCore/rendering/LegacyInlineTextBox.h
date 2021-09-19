@@ -157,12 +157,8 @@ private:
     friend class LayoutIntegration::RunIteratorLegacyPath;
     friend class TextBoxPainter;
 
-    FloatPoint textOriginFromBoxRect(const FloatRect&) const;
-
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
-
-    const ShadowData* debugTextShadow() const;
 
     String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The effective text for the run.
     TextRun createTextRun(bool ignoreCombinedText = false, bool ignoreHyphen = false) const;

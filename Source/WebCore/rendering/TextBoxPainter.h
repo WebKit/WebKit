@@ -25,13 +25,20 @@
 #pragma once
 
 #include "FloatRect.h"
+#include "LayoutIntegrationRunIterator.h"
+#include "RenderObject.h"
+#include "TextBoxSelectableRange.h"
+#include "TextRun.h"
 
 namespace WebCore {
 
 class Color;
 class Document;
 class LegacyInlineTextBox;
+class RenderCombineText;
+class RenderStyle;
 class RenderText;
+class ShadowData;
 struct CompositionUnderline;
 struct MarkedText;
 struct PaintInfo;
@@ -40,6 +47,7 @@ struct StyledMarkedText;
 class TextBoxPainter {
 public:
     TextBoxPainter(const LegacyInlineTextBox&, PaintInfo&, const LayoutPoint& paintOffset);
+    TextBoxPainter(const LayoutIntegration::InlineContent&, const Layout::Run&, PaintInfo&, const LayoutPoint& paintOffset);
     ~TextBoxPainter();
 
     void paint();
@@ -47,6 +55,10 @@ public:
     static FloatRect calculateUnionOfAllDocumentMarkerBounds(const LegacyInlineTextBox&);
 
 private:
+    TextBoxPainter(LayoutIntegration::TextRunIterator&&, PaintInfo&, const LayoutPoint& paintOffset);
+
+    auto& textBox() const { return *m_textBox; }
+
     void paintBackground();
     void paintForegroundAndDecorations();
     void paintCompositionBackground();
@@ -61,18 +73,31 @@ private:
     void paintCompositionUnderline(const CompositionUnderline&);
     void paintPlatformDocumentMarker(const MarkedText&);
 
-    static FloatRect computePaintRect(const LegacyInlineTextBox&, const LayoutPoint& paintOffset);
-    static FloatRect calculateDocumentMarkerBounds(const LegacyInlineTextBox&, const MarkedText&);
+    static FloatRect calculateDocumentMarkerBounds(const LayoutIntegration::TextRunIterator&, const MarkedText&);
 
-    const LegacyInlineTextBox& m_textBox;
+    FloatRect computePaintRect(const LayoutPoint& paintOffset);
+    bool computeHaveSelection() const;
+    MarkedText createMarkedTextFromSelectionInBox();
+    const RenderCombineText* combinedText() const;
+    const FontCascade& fontCascade() const;
+    FloatPoint textOriginFromPaintRect(const FloatRect&) const;
+
+    const ShadowData* debugTextShadow() const;
+
+    const LayoutIntegration::TextRunIterator m_textBox;
     const RenderText& m_renderer;
     const Document& m_document;
+    const RenderStyle& m_style;
+    const TextRun m_paintTextRun;
     PaintInfo& m_paintInfo;
+    const TextBoxSelectableRange m_selectableRange;
     const FloatRect m_paintRect;
+    const bool m_isFirstLine;
     const bool m_isPrinting;
     const bool m_haveSelection;
     const bool m_containsComposition;
     const bool m_useCustomUnderlines;
+    std::optional<bool> m_emphasisMarkExistsAndIsAbove { };
 };
 
 }

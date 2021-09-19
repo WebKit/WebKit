@@ -53,8 +53,8 @@
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "TextBoxPainter.h"
 #include "TextDecorationPainter.h"
-#include "TextPainter.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
@@ -501,9 +501,11 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     for (auto& run : m_inlineContent->runsForRect(paintRect)) {
         if (run.isInlineBox())
             continue;
-        if (run.text())
-            paintTextRunUsingPhysicalCoordinates(paintInfo, paintOffset, m_inlineContent->lineForRun(run), run);
-        else if (auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox()); is<RenderBox>(renderer) && renderer.isReplaced()) {
+        if (run.text()) {
+            paintTextRunUsingPhysicalCoordinates(paintInfo, paintOffset, run);
+            continue;
+        }
+        if (auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox()); is<RenderBox>(renderer) && renderer.isReplaced()) {
             auto& renderBox = downcast<RenderBox>(renderer);
             if (!renderBox.hasSelfPaintingLayer() && paintInfo.shouldPaintWithinRoot(renderBox))
                 renderBox.paintAsInlineBlock(paintInfo, paintOffset);
@@ -570,7 +572,7 @@ void LineLayout::releaseCaches()
         m_inlineContent->releaseCaches();
 }
 
-void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const Line& line, const Layout::Run& run)
+void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const Layout::Run& run)
 {
     auto& style = run.style();
     if (run.style().visibility() != Visibility::Visible)
@@ -604,49 +606,8 @@ void LineLayout::paintTextRunUsingPhysicalCoordinates(PaintInfo& paintInfo, cons
     if (damagedRect.y() > visualOverflowRect.maxY() || damagedRect.maxY() < visualOverflowRect.y())
         return;
 
-    if (paintInfo.eventRegionContext) {
-        if (style.pointerEvents() != PointerEvents::None) {
-            visualOverflowRect.moveBy(physicalPaintOffset);
-            paintInfo.eventRegionContext->unite(enclosingIntRect(visualOverflowRect), style);
-        }
-        return;
-    }
-
-    auto& paintContext = paintInfo.context();
-    auto expansion = run.expansion();
-    // TextRun expects the xPos to be adjusted with the aligment offset (e.g. when the line is center aligned
-    // and the run starts at 100px, due to the horizontal aligment, the xpos is supposed to be at 0px).
-    auto& fontCascade = style.fontCascade();
-    auto xPos = run.logicalRect().left() - (line.lineBoxLeft() + line.contentLeft());
-    auto textRun = WebCore::TextRun { textContent.renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior };
-    textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-
-    auto textPainter = TextPainter { paintContext };
-    textPainter.setFont(fontCascade);
-    textPainter.setStyle(computeTextPaintStyle(formattingContextRoot.frame(), style, paintInfo));
-    textPainter.setGlyphDisplayListIfNeeded(run, paintInfo, fontCascade, paintContext, textRun);
-
-    // Painting uses only physical coordinates.
-    {
-        auto runRect = physicalRect(run.logicalRect());
-        auto boxRect = FloatRect { FloatPoint { physicalPaintOffset.x() + runRect.x(), physicalPaintOffset.y() + runRect.y() }, runRect.size() };
-        auto textOrigin = FloatPoint { boxRect.x(), roundToDevicePixel(boxRect.y() + fontCascade.fontMetrics().ascent(), formattingContextRoot.document().deviceScaleFactor()) };
-
-        auto shouldRotate = !blockIsHorizontalWriting;
-        if (shouldRotate)
-            paintContext.concatCTM(rotation(boxRect, Clockwise));
-        textPainter.paint(textRun, runRect, textOrigin);
-
-        if (!style.textDecorationsInEffect().isEmpty()) {
-            auto& textRenderer = downcast<RenderText>(m_boxTree.rendererForLayoutBox(run.layoutBox()));
-            auto decorationPainter = TextDecorationPainter { paintContext, style.textDecorationsInEffect(), textRenderer, false, fontCascade };
-            decorationPainter.setTextRunIterator(textRunFor(*m_inlineContent, run));
-            decorationPainter.setWidth(runRect.width());
-            decorationPainter.paintTextDecoration(textRun, textOrigin, runRect.location() + physicalPaintOffset);
-        }
-        if (shouldRotate)
-            paintInfo.context().concatCTM(rotation(boxRect, Counterclockwise));
-    }
+    TextBoxPainter painter(*m_inlineContent, run, paintInfo, paintOffset);
+    painter.paint();
 }
 
 Layout::InlineDamage& LineLayout::ensureLineDamage()

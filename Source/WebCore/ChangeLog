@@ -1,3 +1,52 @@
+2021-09-19  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Paint LFC text runs with TextBoxPainter
+        https://bugs.webkit.org/show_bug.cgi?id=230455
+
+        Reviewed by Alan Bujtas.
+
+        This will give LFC path all the same painting features (including selections, markers etc) that
+        the legacy path has. This patch does not enable any new features yet.
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::paintTextRunUsingPhysicalCoordinates):
+
+        Use TextBoxPainter.
+
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::textOriginFromBoxRect const): Deleted.
+        (WebCore::LegacyInlineTextBox::debugTextShadow const): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::TextBoxPainter):
+
+        TextBoxPainter now uses the inline iterator instead of directly accessing LegacyInlineTextBox.
+
+        (WebCore::TextBoxPainter::paint):
+        (WebCore::TextBoxPainter::createMarkedTextFromSelectionInBox):
+        (WebCore::TextBoxPainter::paintBackground):
+        (WebCore::TextBoxPainter::paintForegroundAndDecorations):
+        (WebCore::TextBoxPainter::paintCompositionBackground):
+        (WebCore::TextBoxPainter::paintForeground):
+        (WebCore::TextBoxPainter::paintDecoration):
+        (WebCore::TextBoxPainter::paintCompositionUnderlines):
+        (WebCore::textPosition):
+        (WebCore::TextBoxPainter::paintCompositionUnderline):
+        (WebCore::TextBoxPainter::paintPlatformDocumentMarkers):
+        (WebCore::TextBoxPainter::calculateUnionOfAllDocumentMarkerBounds):
+        (WebCore::TextBoxPainter::computePaintRect):
+        (WebCore::fontCascadeFor):
+        (WebCore::TextBoxPainter::calculateDocumentMarkerBounds):
+        (WebCore::TextBoxPainter::computeHaveSelection const):
+        (WebCore::TextBoxPainter::combinedText const):
+        (WebCore::TextBoxPainter::fontCascade const):
+        (WebCore::TextBoxPainter::textOriginFromPaintRect const):
+        (WebCore::TextBoxPainter::debugTextShadow const):
+        (WebCore::createMarkedTextFromSelectionInBox): Deleted.
+        * rendering/TextBoxPainter.h:
+
 2021-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Add "Shaping" log channel

@@ -123,7 +123,7 @@ private:
     InlineContent& ensureInlineContent();
     void updateLayoutBoxDimensions(const RenderBox&);
 
-    void paintTextRunUsingPhysicalCoordinates(PaintInfo&, const LayoutPoint& paintOffset, const Line&, const Layout::Run&);
+    void paintTextRunUsingPhysicalCoordinates(PaintInfo&, const LayoutPoint& paintOffset, const Layout::Run&);
 
     Layout::InlineDamage& ensureLineDamage();
 
