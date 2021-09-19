@@ -1754,7 +1754,6 @@ page/scrolling/ScrollSnapOffsetsInfo.cpp
 page/scrolling/ScrollLatchingController.cpp
 page/scrolling/ScrollingConstraints.cpp
 page/scrolling/ScrollingCoordinator.cpp
-page/scrolling/ScrollingMomentumCalculator.cpp
 page/scrolling/ScrollingStateFixedNode.cpp
 page/scrolling/ScrollingStateFrameHostingNode.cpp
 page/scrolling/ScrollingStateFrameScrollingNode.cpp
@@ -1834,6 +1833,7 @@ platform/Scrollbar.cpp
 platform/ScrollbarsController.cpp
 platform/ScrollbarTheme.cpp
 platform/ScrollbarThemeComposite.cpp
+platform/ScrollingMomentumCalculator.cpp
 platform/SerializedPlatformDataCue.cpp
 platform/SharedBuffer.cpp
 platform/SharedBufferChunkReader.cpp

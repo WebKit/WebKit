@@ -1,5 +1,26 @@
 2021-09-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Move ScrollingMomentumCalculator into the platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=230452
+
+        Reviewed by Wenson Hsieh.
+
+        ScrollingMomentumCalculator/ScrollingMomentumCalculatorMac have no non-platform dependencies.
+
+        Other changes are unified sources fallout.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ScrollingMomentumCalculator.cpp: Renamed from Source/WebCore/page/scrolling/ScrollingMomentumCalculator.cpp.
+        * platform/ScrollingMomentumCalculator.h: Renamed from Source/WebCore/page/scrolling/ScrollingMomentumCalculator.h.
+        * platform/gamepad/mac/HIDGamepadElement.cpp:
+        * platform/graphics/Model.cpp:
+        * platform/mac/ScrollingMomentumCalculatorMac.h: Renamed from Source/WebCore/page/scrolling/mac/ScrollingMomentumCalculatorMac.h.
+        * platform/mac/ScrollingMomentumCalculatorMac.mm: Renamed from Source/WebCore/page/scrolling/mac/ScrollingMomentumCalculatorMac.mm.
+
+2021-09-18  Simon Fraser  <simon.fraser@apple.com>
+
         Scroll offsets in ScrollingMomentumCalculator should be FloatPoint, not FloatSize
         https://bugs.webkit.org/show_bug.cgi?id=230451
 

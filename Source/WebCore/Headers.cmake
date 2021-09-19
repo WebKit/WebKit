@@ -1015,7 +1015,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/ScrollingConstraints.h
     page/scrolling/ScrollingCoordinator.h
     page/scrolling/ScrollingCoordinatorTypes.h
-    page/scrolling/ScrollingMomentumCalculator.h
     page/scrolling/ScrollingStateFixedNode.h
     page/scrolling/ScrollingStateFrameHostingNode.h
     page/scrolling/ScrollingStateFrameScrollingNode.h
@@ -1140,6 +1139,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/Scrollbar.h
     platform/ScrollbarTheme.h
     platform/ScrollbarThemeComposite.h
+    platform/ScrollingMomentumCalculator.h
     platform/SearchPopupMenu.h
     platform/SerializedPlatformDataCue.h
     platform/SerializedPlatformDataCueValue.h

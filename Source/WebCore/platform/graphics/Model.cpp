@@ -28,6 +28,8 @@
 
 #if ENABLE(MODEL_ELEMENT)
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 Ref<Model> Model::create(Ref<SharedBuffer> data, String mimeType, URL url)

@@ -209,7 +209,6 @@ page/scrolling/cocoa/ScrollingTreeOverflowScrollProxyNode.mm
 page/scrolling/cocoa/ScrollingTreePositionedNode.mm
 page/scrolling/cocoa/ScrollingTreeStickyNode.mm
 page/scrolling/mac/ScrollingCoordinatorMac.mm
-page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
 page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeMac.mm
@@ -493,6 +492,7 @@ platform/mac/ScrollingEffectsController.mm
 platform/mac/ScrollViewMac.mm
 platform/mac/ScrollbarsControllerMac.mm @no-unify
 platform/mac/ScrollbarThemeMac.mm @no-unify
+platform/mac/ScrollingMomentumCalculatorMac.mm
 platform/mac/SerializedPlatformDataCueMac.mm
 platform/mac/StringUtilities.mm
 platform/mac/SuddenTermination.mm
