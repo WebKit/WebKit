@@ -492,7 +492,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!m_inlineContent)
         return;
 
-    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::EventRegion)
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::EventRegion && paintInfo.phase != PaintPhase::TextClip)
         return;
 
     auto paintRect = paintInfo.rect;

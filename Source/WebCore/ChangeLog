@@ -1,5 +1,23 @@
 2021-09-19  Antti Koivisto  <antti@apple.com>
 
+        [lFC][Integration] Enable some text painting features
+        https://bugs.webkit.org/show_bug.cgi?id=230459
+
+        Reviewed by Sam Weinig.
+
+        Enable text-shadow and background-clip:text.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForStyle):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
+        Allow TextClip paint phase.
+
+2021-09-19  Antti Koivisto  <antti@apple.com>
+
         [LFC][Integration] Make block selection gap painting use iterator
         https://bugs.webkit.org/show_bug.cgi?id=230457
 

@@ -153,9 +153,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasTextCombine:
         stream << "text combine";
         break;
-    case AvoidanceReason::FlowHasTextFillBox:
-        stream << "background-color (text-fill)";
-        break;
     case AvoidanceReason::FlowHasBorderFitLines:
         stream << "-webkit-border-fit";
         break;
@@ -191,9 +188,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::FlowHasComplexFontCodePath:
         stream << "text with complex font codepath";
-        break;
-    case AvoidanceReason::FlowHasTextShadow:
-        stream << "text-shadow";
         break;
     case AvoidanceReason::FlowChildIsSelected:
         stream << "selected content";
@@ -509,16 +503,12 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasRTLOrdering, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
-    if (style.textShadow())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextShadow, reasons, includeReasons);
     if (style.hasPseudoStyle(PseudoId::FirstLine))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLine, reasons, includeReasons);
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLetter, reasons, includeReasons);
     if (style.hasTextCombine())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextCombine, reasons, includeReasons);
-    if (style.backgroundClip() == FillBox::Text)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextFillBox, reasons, includeReasons);
 
     // These are non-standard properties.
     if (style.lineBreak() == LineBreak::AfterWhiteSpace)
