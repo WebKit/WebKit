@@ -3274,8 +3274,6 @@ LayoutUnit RenderBlockFlow::adjustSelectionTopForPrecedingBlock(LayoutUnit top) 
 GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
     LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
 {
-    GapRects result;
-
     bool containsStart = selectionState() == HighlightState::Start || selectionState() == HighlightState::Both;
 
     if (!hasLines()) {
@@ -3285,70 +3283,94 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
             lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, logicalHeight(), cache);
             lastLogicalRight = logicalRightSelectionOffset(rootBlock, logicalHeight(), cache);
         }
-        return result;
+        return { };
     }
 
-    auto hasSelectedChildren = [&](const LegacyRootInlineBox& root) {
-        for (auto* box = root.firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
-            if (!is<LegacyInlineTextBox>(*box)) {
-                if (box->selectionState() != HighlightState::None)
-                    return true;
-                continue;
-            }
-
-            auto start = view().selection().startOffset();
-            auto end = view().selection().endOffset();
-
-            auto& textBox = downcast<LegacyInlineTextBox>(*box);
-            switch (textBox.renderer().selectionState()) {
-            case RenderObject::HighlightState::None:
-                continue;
-            case RenderObject::HighlightState::Inside:
-                return true;
-            case RenderObject::HighlightState::Start:
-                end = textBox.renderer().text().length();
-                // to handle selection from end of text to end of line
-                if (start && start == end)
-                    start = end - 1;
-                break;
-            case RenderObject::HighlightState::End:
-                start = 0;
-                break;
-            case RenderObject::HighlightState::Both:
-                break;
-            }
-            if (textBox.selectableRange().intersects(start, end))
-                return true;
-        }
-        return false;
+    auto hasSelectedChildren = [&](const LayoutIntegration::LineIterator& line) {
+        return line->selectionState() != RenderObject::HighlightState::None;
     };
 
-    LegacyRootInlineBox* lastSelectedLine = 0;
-    LegacyRootInlineBox* curr;
-    for (curr = firstRootBox(); curr && !hasSelectedChildren(*curr); curr = curr->nextRootBox()) { }
+    auto lineSelectionGap = [&](const LayoutIntegration::LineIterator& line, LayoutUnit selTop, LayoutUnit selHeight) -> GapRects {
+        RenderObject::HighlightState lineState = line->selectionState();
+
+        bool leftGap, rightGap;
+        getSelectionGapInfo(lineState, leftGap, rightGap);
+
+        GapRects result;
+
+        auto firstBox = line->firstSelectedBox();
+        auto lastBox = line->lastSelectedBox();
+
+        if (leftGap) {
+            result.uniteLeft(logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, firstBox->renderer().parent(), LayoutUnit(firstBox->logicalLeft()),
+                selTop, selHeight, cache, paintInfo));
+        }
+        if (rightGap) {
+            result.uniteRight(logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastBox->renderer().parent(), LayoutUnit(lastBox->logicalRight()),
+                selTop, selHeight, cache, paintInfo));
+        }
+
+        // When dealing with bidi text, a non-contiguous selection region is possible.
+        // e.g. The logical text aaaAAAbbb (capitals denote RTL text and non-capitals LTR) is layed out
+        // visually as 3 text runs |aaa|bbb|AAA| if we select 4 characters from the start of the text the
+        // selection will look like (underline denotes selection):
+        // |aaa|bbb|AAA|
+        //  ___       _
+        // We can see that the |bbb| run is not part of the selection while the runs around it are.
+        if (firstBox && firstBox != lastBox) {
+            // Now fill in any gaps on the line that occurred between two selected elements.
+            LayoutUnit lastLogicalLeft { firstBox->logicalRight() };
+            bool isPreviousBoxSelected = firstBox->selectionState() != RenderObject::HighlightState::None;
+            for (auto box = firstBox; box; box.traverseNextOnLine()) {
+                if (box->selectionState() != RenderObject::HighlightState::None) {
+                    LayoutRect logicalRect { lastLogicalLeft, selTop, LayoutUnit(box->logicalLeft() - lastLogicalLeft), selHeight };
+                    logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
+                    LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
+                    if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
+                        if (paintInfo && box->renderer().parent()->style().visibility() == Visibility::Visible)
+                            paintInfo->context().fillRect(gapRect, box->renderer().parent()->selectionBackgroundColor());
+                        // VisibleSelection may be non-contiguous, see comment above.
+                        result.uniteCenter(gapRect);
+                    }
+                    lastLogicalLeft = box->logicalRight();
+                }
+                if (box == lastBox)
+                    break;
+                isPreviousBoxSelected = box->selectionState() != RenderObject::HighlightState::None;
+            }
+        }
+
+        return result;
+    };
+
+    LayoutIntegration::LineIterator lastSelectedLine;
+    LayoutIntegration::LineIterator line = LayoutIntegration::firstLineFor(*this);
+    for (; line && !hasSelectedChildren(line); line.traverseNext()) { }
+
+    GapRects result;
 
     // Now paint the gaps for the lines.
-    for (; curr && hasSelectedChildren(*curr); curr = curr->nextRootBox()) {
-        LayoutUnit selTop =  curr->selectionTopAdjustedForPrecedingBlock();
-        LayoutUnit selHeight = curr->selectionHeightAdjustedForPrecedingBlock();
+    for (; line && hasSelectedChildren(line); line.traverseNext()) {
+        LayoutUnit selTop =  line->selectionTopAdjustedForPrecedingBlock();
+        LayoutUnit selHeight = line->selectionHeightAdjustedForPrecedingBlock();
 
         if (!containsStart && !lastSelectedLine &&
             selectionState() != HighlightState::Start && selectionState() != HighlightState::Both && !isRubyBase())
             result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, selTop, cache, paintInfo));
-        
-        LayoutRect logicalRect { LayoutUnit(curr->logicalLeft()), selTop, LayoutUnit(curr->logicalWidth()), selTop + selHeight };
+
+        LayoutRect logicalRect { LayoutUnit(line->contentLogicalLeft()), selTop, LayoutUnit(line->contentLogicalWidth()), selTop + selHeight };
         logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : offsetFromRootBlock.transposedSize());
         LayoutRect physicalRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
         if (!paintInfo || (isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.maxY() && physicalRect.maxY() > paintInfo->rect.y())
             || (!isHorizontalWritingMode() && physicalRect.x() < paintInfo->rect.maxX() && physicalRect.maxX() > paintInfo->rect.x()))
-            result.unite(curr->lineSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, selTop, selHeight, cache, paintInfo));
+            result.unite(lineSelectionGap(line, selTop, selHeight));
 
-        lastSelectedLine = curr;
+        lastSelectedLine = line;
     }
 
     if (containsStart && !lastSelectedLine)
         // VisibleSelection must start just after our last line.
-        lastSelectedLine = lastRootBox();
+        lastSelectedLine = LayoutIntegration::lastLineFor(*this);
 
     if (lastSelectedLine && selectionState() != HighlightState::End && selectionState() != HighlightState::Both) {
         // Update our lastY to be the bottom of the last selected line.

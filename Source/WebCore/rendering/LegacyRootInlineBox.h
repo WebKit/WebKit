@@ -130,9 +130,6 @@ public:
     const LegacyInlineBox* firstSelectedBox() const;
     const LegacyInlineBox* lastSelectedBox() const;
 
-    GapRects lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-        LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
-
     using CleanLineFloatList = Vector<WeakPtr<RenderBox>>;
     void appendFloat(RenderBox& floatingBox)
     {

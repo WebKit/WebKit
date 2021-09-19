@@ -428,60 +428,6 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
     return lineSnapAdjustment(newPageLogicalTop - (blockOffset + lineBoxTop()));
 }
 
-GapRects LegacyRootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
-    LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches& cache, const PaintInfo* paintInfo)
-{
-    RenderObject::HighlightState lineState = selectionState();
-
-    bool leftGap, rightGap;
-    blockFlow().getSelectionGapInfo(lineState, leftGap, rightGap);
-
-    GapRects result;
-
-    auto* firstBox = firstSelectedBox();
-    auto* lastBox = lastSelectedBox();
-    if (leftGap) {
-        result.uniteLeft(blockFlow().logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &firstBox->parent()->renderer(), LayoutUnit(firstBox->logicalLeft()),
-            selTop, selHeight, cache, paintInfo));
-    }
-    if (rightGap) {
-        result.uniteRight(blockFlow().logicalRightSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &lastBox->parent()->renderer(), LayoutUnit(lastBox->logicalRight()),
-            selTop, selHeight, cache, paintInfo));
-    }
-
-    // When dealing with bidi text, a non-contiguous selection region is possible.
-    // e.g. The logical text aaaAAAbbb (capitals denote RTL text and non-capitals LTR) is layed out
-    // visually as 3 text runs |aaa|bbb|AAA| if we select 4 characters from the start of the text the
-    // selection will look like (underline denotes selection):
-    // |aaa|bbb|AAA|
-    //  ___       _
-    // We can see that the |bbb| run is not part of the selection while the runs around it are.
-    if (firstBox && firstBox != lastBox) {
-        // Now fill in any gaps on the line that occurred between two selected elements.
-        LayoutUnit lastLogicalLeft { firstBox->logicalRight() };
-        bool isPreviousBoxSelected = firstBox->selectionState() != RenderObject::HighlightState::None;
-        for (auto* box = firstBox->nextLeafOnLine(); box; box = box->nextLeafOnLine()) {
-            if (box->selectionState() != RenderObject::HighlightState::None) {
-                LayoutRect logicalRect { lastLogicalLeft, selTop, LayoutUnit(box->logicalLeft() - lastLogicalLeft), selHeight };
-                logicalRect.move(renderer().isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
-                LayoutRect gapRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
-                if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
-                    if (paintInfo && box->parent()->renderer().style().visibility() == Visibility::Visible)
-                        paintInfo->context().fillRect(gapRect, box->parent()->renderer().selectionBackgroundColor());
-                    // VisibleSelection may be non-contiguous, see comment above.
-                    result.uniteCenter(gapRect);
-                }
-                lastLogicalLeft = box->logicalRight();
-            }
-            if (box == lastBox)
-                break;
-            isPreviousBoxSelected = box->selectionState() != RenderObject::HighlightState::None;
-        }
-    }
-
-    return result;
-}
-
 RenderObject::HighlightState LegacyRootInlineBox::selectionState() const
 {
     // Walk over all of the selected boxes.
