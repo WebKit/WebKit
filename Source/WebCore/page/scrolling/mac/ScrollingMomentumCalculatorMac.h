@@ -39,8 +39,9 @@ public:
 private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
     Seconds animationDuration() final;
-    FloatSize predictedDestinationOffset() final;
+    FloatPoint predictedDestinationOffset() final;
     void retargetedScrollOffsetDidChange() final;
+
     _NSScrollingMomentumCalculator *ensurePlatformMomentumCalculator();
     bool requiresMomentumScrolling();
 

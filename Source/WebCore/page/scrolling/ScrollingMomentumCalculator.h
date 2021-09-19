@@ -37,28 +37,30 @@ class FloatSize;
 class ScrollingMomentumCalculator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
-    static std::unique_ptr<ScrollingMomentumCalculator> create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
     WEBCORE_EXPORT static void setPlatformMomentumScrollingPredictionEnabled(bool);
+
+    static std::unique_ptr<ScrollingMomentumCalculator> create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+
+    ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
     virtual ~ScrollingMomentumCalculator() = default;
 
     virtual FloatPoint scrollOffsetAfterElapsedTime(Seconds) = 0;
     virtual Seconds animationDuration() = 0;
-    virtual FloatSize predictedDestinationOffset();
-    void setRetargetedScrollOffset(const FloatSize&);
+    virtual FloatPoint predictedDestinationOffset();
+    void setRetargetedScrollOffset(const FloatPoint&);
 
 protected:
-    const FloatSize& retargetedScrollOffset() const { return m_retargetedScrollOffset.value(); }
+    const FloatPoint& retargetedScrollOffset() const { return m_retargetedScrollOffset.value(); }
     virtual void retargetedScrollOffsetDidChange() { }
 
     FloatSize m_initialDelta;
     FloatSize m_initialVelocity;
-    FloatSize m_initialScrollOffset;
+    FloatPoint m_initialScrollOffset;
     FloatSize m_viewportSize;
     FloatSize m_contentSize;
 
 private:
-    std::optional<FloatSize> m_retargetedScrollOffset;
+    std::optional<FloatPoint> m_retargetedScrollOffset;
 };
 
 class BasicScrollingMomentumCalculator final : public ScrollingMomentumCalculator {
@@ -71,8 +73,8 @@ private:
     void initializeInterpolationCoefficientsIfNecessary();
     void initializeSnapProgressCurve();
     float animationProgressAfterElapsedTime(Seconds) const;
-    FloatSize linearlyInterpolatedOffsetAtProgress(float progress);
-    FloatSize cubicallyInterpolatedOffsetAtProgress(float progress) const;
+    FloatPoint linearlyInterpolatedOffsetAtProgress(float progress);
+    FloatPoint cubicallyInterpolatedOffsetAtProgress(float progress) const;
 
     float m_snapAnimationCurveMagnitude { 0 };
     float m_snapAnimationDecayFactor { 0 };

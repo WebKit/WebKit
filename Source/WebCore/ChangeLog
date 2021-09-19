@@ -1,5 +1,32 @@
 2021-09-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Scroll offsets in ScrollingMomentumCalculator should be FloatPoint, not FloatSize
+        https://bugs.webkit.org/show_bug.cgi?id=230451
+
+        Reviewed by Wenson Hsieh.
+
+        Scroll offsets are generally represented as IntPoint or FloatPoint. Have
+        ScrollingMomentumCalculator conform to this convention.
+
+        * page/scrolling/ScrollingMomentumCalculator.cpp:
+        (WebCore::ScrollingMomentumCalculator::ScrollingMomentumCalculator):
+        (WebCore::ScrollingMomentumCalculator::setRetargetedScrollOffset):
+        (WebCore::ScrollingMomentumCalculator::predictedDestinationOffset):
+        (WebCore::BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgress):
+        (WebCore::BasicScrollingMomentumCalculator::cubicallyInterpolatedOffsetAtProgress const):
+        (WebCore::BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime):
+        (WebCore::BasicScrollingMomentumCalculator::initializeInterpolationCoefficientsIfNecessary):
+        * page/scrolling/ScrollingMomentumCalculator.h:
+        (WebCore::ScrollingMomentumCalculator::retargetedScrollOffset const):
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.h:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm:
+        (WebCore::ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime):
+        (WebCore::ScrollingMomentumCalculatorMac::predictedDestinationOffset):
+        (WebCore::ScrollingMomentumCalculatorMac::retargetedScrollOffsetDidChange):
+        (WebCore::ScrollingMomentumCalculatorMac::ensurePlatformMomentumCalculator):
+
+2021-09-18  Simon Fraser  <simon.fraser@apple.com>
+
         Remove some logging left in by mistake.
 
         Unreviewed.

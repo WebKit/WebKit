@@ -52,12 +52,12 @@ ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac(const FloatSize& 
 FloatPoint ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime(Seconds elapsedTime)
 {
     if (!requiresMomentumScrolling())
-        return { retargetedScrollOffset().width(), retargetedScrollOffset().height() };
+        return retargetedScrollOffset();
 
     return [ensurePlatformMomentumCalculator() positionAfterDuration:elapsedTime.value()];
 }
 
-FloatSize ScrollingMomentumCalculatorMac::predictedDestinationOffset()
+FloatPoint ScrollingMomentumCalculatorMac::predictedDestinationOffset()
 {
     if (!gEnablePlatformMomentumScrollingPrediction)
         return ScrollingMomentumCalculator::predictedDestinationOffset();
@@ -69,7 +69,7 @@ FloatSize ScrollingMomentumCalculatorMac::predictedDestinationOffset()
 void ScrollingMomentumCalculatorMac::retargetedScrollOffsetDidChange()
 {
     _NSScrollingMomentumCalculator *calculator = ensurePlatformMomentumCalculator();
-    calculator.destinationOrigin = NSMakePoint(retargetedScrollOffset().width(), retargetedScrollOffset().height());
+    calculator.destinationOrigin = retargetedScrollOffset();
     [calculator calculateToReachDestination];
 }
 
@@ -93,7 +93,7 @@ _NSScrollingMomentumCalculator *ScrollingMomentumCalculatorMac::ensurePlatformMo
     if (m_platformMomentumCalculator)
         return m_platformMomentumCalculator.get();
 
-    NSPoint origin = NSMakePoint(m_initialScrollOffset.width(), m_initialScrollOffset.height());
+    NSPoint origin = m_initialScrollOffset;
     NSRect contentFrame = NSMakeRect(0, 0, m_contentSize.width(), m_contentSize.height());
     NSPoint velocity = NSMakePoint(m_initialVelocity.width(), m_initialVelocity.height());
     m_platformMomentumCalculator = adoptNS([[_NSScrollingMomentumCalculator alloc] initWithInitialOrigin:origin velocity:velocity documentFrame:contentFrame constrainedClippingOrigin:NSZeroPoint clippingSize:m_viewportSize tolerance:NSMakeSize(1, 1)]);

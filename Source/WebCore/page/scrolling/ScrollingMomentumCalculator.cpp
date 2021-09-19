@@ -45,13 +45,13 @@ static inline float projectedInertialScrollDistance(float initialWheelDelta)
 ScrollingMomentumCalculator::ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
     : m_initialDelta(initialDelta)
     , m_initialVelocity(initialVelocity)
-    , m_initialScrollOffset(initialOffset.x(), initialOffset.y())
+    , m_initialScrollOffset(initialOffset)
     , m_viewportSize(viewportSize)
     , m_contentSize(contentSize)
 {
 }
 
-void ScrollingMomentumCalculator::setRetargetedScrollOffset(const FloatSize& target)
+void ScrollingMomentumCalculator::setRetargetedScrollOffset(const FloatPoint& target)
 {
     if (m_retargetedScrollOffset && m_retargetedScrollOffset == target)
         return;
@@ -60,10 +60,10 @@ void ScrollingMomentumCalculator::setRetargetedScrollOffset(const FloatSize& tar
     retargetedScrollOffsetDidChange();
 }
 
-FloatSize ScrollingMomentumCalculator::predictedDestinationOffset()
+FloatPoint ScrollingMomentumCalculator::predictedDestinationOffset()
 {
-    float initialOffsetX = clampTo<float>(m_initialScrollOffset.width() + projectedInertialScrollDistance(m_initialDelta.width()), 0, m_contentSize.width() - m_viewportSize.width());
-    float initialOffsetY = clampTo<float>(m_initialScrollOffset.height() + projectedInertialScrollDistance(m_initialDelta.height()), 0, m_contentSize.height() - m_viewportSize.height());
+    float initialOffsetX = clampTo<float>(m_initialScrollOffset.x() + projectedInertialScrollDistance(m_initialDelta.width()), 0, m_contentSize.width() - m_viewportSize.width());
+    float initialOffsetY = clampTo<float>(m_initialScrollOffset.y() + projectedInertialScrollDistance(m_initialDelta.height()), 0, m_contentSize.height() - m_viewportSize.height());
     return { initialOffsetX, initialOffsetY };
 }
 
@@ -85,15 +85,15 @@ BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator(const FloatSi
 {
 }
 
-FloatSize BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgress(float progress)
+FloatPoint BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgress(float progress)
 {
     return m_initialScrollOffset + progress * (retargetedScrollOffset() - m_initialScrollOffset);
 }
 
-FloatSize BasicScrollingMomentumCalculator::cubicallyInterpolatedOffsetAtProgress(float progress) const
+FloatPoint BasicScrollingMomentumCalculator::cubicallyInterpolatedOffsetAtProgress(float progress) const
 {
     ASSERT(!m_forceLinearAnimationCurve);
-    FloatSize interpolatedPoint;
+    FloatPoint interpolatedPoint;
     for (int i = 0; i < 4; ++i)
         interpolatedPoint += std::pow(progress, i) * m_snapAnimationCurveCoefficients[i];
 
@@ -109,8 +109,7 @@ FloatPoint BasicScrollingMomentumCalculator::scrollOffsetAfterElapsedTime(Second
     }
 
     float progress = animationProgressAfterElapsedTime(elapsedTime);
-    auto offsetAsSize = m_forceLinearAnimationCurve ? linearlyInterpolatedOffsetAtProgress(progress) : cubicallyInterpolatedOffsetAtProgress(progress);
-    return FloatPoint(offsetAsSize.width(), offsetAsSize.height());
+    return m_forceLinearAnimationCurve ? linearlyInterpolatedOffsetAtProgress(progress) : cubicallyInterpolatedOffsetAtProgress(progress);
 }
 
 Seconds BasicScrollingMomentumCalculator::animationDuration()
@@ -163,12 +162,13 @@ void BasicScrollingMomentumCalculator::initializeInterpolationCoefficientsIfNece
     }
 
     float sideLength = startToEndDistance / (2.0f * cosTheta + 1.0f);
-    FloatSize controlVector1 = m_initialScrollOffset + sideLength * m_initialDelta / initialDeltaMagnitude;
+    auto initialOffsetAsSize = toFloatSize(m_initialScrollOffset);
+    FloatSize controlVector1 = initialOffsetAsSize + sideLength * m_initialDelta / initialDeltaMagnitude;
     FloatSize controlVector2 = controlVector1 + (sideLength * startToEndVector / startToEndDistance);
-    m_snapAnimationCurveCoefficients[0] = m_initialScrollOffset;
-    m_snapAnimationCurveCoefficients[1] = 3 * (controlVector1 - m_initialScrollOffset);
-    m_snapAnimationCurveCoefficients[2] = 3 * (m_initialScrollOffset - 2 * controlVector1 + controlVector2);
-    m_snapAnimationCurveCoefficients[3] = 3 * (controlVector1 - controlVector2) - m_initialScrollOffset + retargetedScrollOffset();
+    m_snapAnimationCurveCoefficients[0] = initialOffsetAsSize;
+    m_snapAnimationCurveCoefficients[1] = 3 * (controlVector1 - initialOffsetAsSize);
+    m_snapAnimationCurveCoefficients[2] = 3 * (initialOffsetAsSize - 2 * controlVector1 + controlVector2);
+    m_snapAnimationCurveCoefficients[3] = 3 * (controlVector1 - controlVector2) - initialOffsetAsSize + toFloatSize(retargetedScrollOffset());
     m_forceLinearAnimationCurve = false;
 }
 
