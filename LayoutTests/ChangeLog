@@ -1,3 +1,9 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Unskip COOP tests that were marked as flaky as they have no recent failures on the bots.
+
+        * platform/mac/TestExpectations:
+
 2021-09-20  Marcos Caceres  <marcos@marcosc.com>
 
         Web Share permission policy "web-share" and "self" as the allowlist
