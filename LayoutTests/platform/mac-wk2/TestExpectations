@@ -1127,7 +1127,9 @@ webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched
 
 webkit.org/b/214579 [ Release ] svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
-webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash ]
+webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash Failure ]
+
+webkit.org/b/230485 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Failure ]
 
 webkit.org/b/230266 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-explicit-rollback-iceGatheringState.html [ Pass Failure ]
 
