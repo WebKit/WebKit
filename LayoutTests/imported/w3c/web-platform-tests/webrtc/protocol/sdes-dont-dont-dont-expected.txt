@@ -1,0 +1,4 @@
+
+PASS does not create offers with SDES
+PASS rejects a remote offer that only includes SDES and no DTLS fingerprint
+

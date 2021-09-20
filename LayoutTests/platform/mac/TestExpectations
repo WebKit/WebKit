@@ -2051,7 +2051,7 @@ webkit.org/b/218346 [ Mojave ] fast/text/canvas-color-fonts [ Skip ]
 
 webkit.org/b/219403 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-candidate-in-sdp.https.html [ Pass Failure ]
 
-webkit.org/b/219460 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Skip ]
+webkit.org/b/219460 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html [ Pass Failure ]
 
 webkit.org/b/219555 inspector/animation/effectChanged.html [ Pass Timeout ]
 

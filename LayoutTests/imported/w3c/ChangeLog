@@ -1,3 +1,115 @@
+2021-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Resync WPT webrtc tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=229549
+        <rdar://problem/82670236>
+
+        Reviewed by Eric Carlson.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webrtc/RTCConfiguration-iceServers-expected.txt:
+        * web-platform-tests/webrtc/RTCConfiguration-iceServers.html:
+        * web-platform-tests/webrtc/RTCDataChannel-bufferedAmount-expected.txt:
+        * web-platform-tests/webrtc/RTCDataChannel-iceRestart-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCDataChannel-iceRestart.html: Added.
+        * web-platform-tests/webrtc/RTCDataChannel-send-expected.txt:
+        * web-platform-tests/webrtc/RTCDataChannel-send.html:
+        * web-platform-tests/webrtc/RTCDtlsTransport-state-expected.txt:
+        * web-platform-tests/webrtc/RTCDtlsTransport-state.html:
+        * web-platform-tests/webrtc/RTCIceConnectionState-candidate-pair.https-expected.txt:
+        * web-platform-tests/webrtc/RTCIceTransport-extension-helper.js: Removed.
+        * web-platform-tests/webrtc/RTCIceTransport-extension.https-expected.txt:
+        * web-platform-tests/webrtc/RTCIceTransport-extension.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-connectionSetup.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-addTrack.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-addTrack.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-capture-video.https.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-connectionState-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-connectionState.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-createOffer-offerToReceive-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-createOffer-offerToReceive.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-getDefaultIceServers-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-getDefaultIceServers.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-getIdentityAssertion.sub-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-getIdentityAssertion.sub.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-helper.js:
+        (doExchange):
+        (async listenForSSRCs):
+        * web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-mandatory-getStats.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-peerIdentity-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-peerIdentity.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-plan-b-is-not-supported-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-plan-b-is-not-supported.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html: Added.
+        * web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-restartIce.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-pranswer-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-pranswer.html:
+        * web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCRtpParameters-degradationPreference-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCRtpParameters-degradationPreference.html: Added.
+        * web-platform-tests/webrtc/RTCRtpTransceiver-setDirection-expected.txt: Added.
+        * web-platform-tests/webrtc/RTCRtpTransceiver-setDirection.html: Added.
+        * web-platform-tests/webrtc/RTCRtpTransceiver-stop-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver-stop.html:
+        * web-platform-tests/webrtc/RTCRtpTransceiver.https.html:
+        * web-platform-tests/webrtc/RTCStats-helper.js:
+        (validateCodecStats):
+        * web-platform-tests/webrtc/datachannel-emptystring-expected.txt: Removed.
+        * web-platform-tests/webrtc/datachannel-emptystring.html: Removed.
+        * web-platform-tests/webrtc/getstats.html:
+        * web-platform-tests/webrtc/identity-helper.sub.js: Added.
+        (parseAssertionResult):
+        (getIdpDomains):
+        (assert_rtcerror_rejection):
+        (set hostString):
+        * web-platform-tests/webrtc/no-media-call.html:
+        * web-platform-tests/webrtc/promises-call.html:
+        * web-platform-tests/webrtc/protocol/README.txt:
+        * web-platform-tests/webrtc/protocol/dtls-setup.https-expected.txt: Added.
+        * web-platform-tests/webrtc/protocol/dtls-setup.https.html: Added.
+        * web-platform-tests/webrtc/protocol/handover-datachannel-expected.txt: Added.
+        * web-platform-tests/webrtc/protocol/handover-datachannel.html: Added.
+        * web-platform-tests/webrtc/protocol/handover.html:
+        * web-platform-tests/webrtc/protocol/rtp-clockrate-expected.txt: Added.
+        * web-platform-tests/webrtc/protocol/rtp-clockrate.html: Added.
+        * web-platform-tests/webrtc/protocol/rtp-extension-support-expected.txt: Added.
+        * web-platform-tests/webrtc/protocol/rtp-extension-support.html: Added.
+        * web-platform-tests/webrtc/protocol/rtp-payloadtypes.html:
+        * web-platform-tests/webrtc/protocol/sdes-dont-dont-dont-expected.txt: Added.
+        * web-platform-tests/webrtc/protocol/sdes-dont-dont-dont.html: Added.
+        * web-platform-tests/webrtc/protocol/split.https.html:
+        * web-platform-tests/webrtc/protocol/vp8-fmtp-expected.txt: Added.
+        * web-platform-tests/webrtc/protocol/vp8-fmtp.html: Added.
+        * web-platform-tests/webrtc/protocol/w3c-import.log:
+        * web-platform-tests/webrtc/simplecall-no-ssrcs.https.html:
+        * web-platform-tests/webrtc/simplecall.https.html:
+        * web-platform-tests/webrtc/simulcast/basic.https-expected.txt:
+        * web-platform-tests/webrtc/simulcast/basic.https.html:
+        * web-platform-tests/webrtc/simulcast/getStats.https-expected.txt:
+        * web-platform-tests/webrtc/simulcast/h264.https-expected.txt:
+        * web-platform-tests/webrtc/simulcast/h264.https.html:
+        * web-platform-tests/webrtc/simulcast/setParameters-active.https-expected.txt:
+        * web-platform-tests/webrtc/simulcast/setParameters-active.https.html:
+        * web-platform-tests/webrtc/simulcast/vp8.https-expected.txt:
+        * web-platform-tests/webrtc/simulcast/vp8.https.html:
+        * web-platform-tests/webrtc/tools/package.json:
+        * web-platform-tests/webrtc/w3c-import.log:
+
 2021-09-19  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] overflow-wrap: anywhere/break-word rules over word-break: keep-all

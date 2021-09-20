@@ -1,0 +1,5 @@
+
+PASS PC should accept initial offer with setup=actpass
+FAIL PC should accept initial offer with setup=active assert_equals: expected "a=setup:passive" but got "a=setup:active"
+FAIL PC should accept initial offer with setup=passive promise_test: Unhandled rejection with value: object "OperationError: Failed to set local answer sdp: Failed to apply the description for m= section with mid='a1': Offerer must use actpass value or current negotiated role for setup attribute."
+

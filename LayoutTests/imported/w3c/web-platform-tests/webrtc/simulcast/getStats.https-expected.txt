@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Simulcast getStats results Test timed out
+PASS Simulcast getStats results
 

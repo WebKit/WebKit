@@ -1,0 +1,3 @@
+
+FAIL Handover with datachannel reinitiated from new callee completes promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+

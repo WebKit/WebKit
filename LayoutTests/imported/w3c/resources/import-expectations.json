@@ -466,5 +466,6 @@
     "web-platform-tests/worklets": "import", 
     "web-platform-tests/x-frame-options": "skip", 
     "web-platform-tests/xhr": "import", 
-    "web-platform/test/html/infrastructure": "import"
+    "web-platform/test/html/infrastructure": "import", 
+    "webrtc-platform-tests/webrtc": "import"
 }

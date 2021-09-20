@@ -1,3 +1,18 @@
+2021-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Resync WPT webrtc tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=229549
+        <rdar://problem/82670236>
+
+        Reviewed by Eric Carlson.
+
+        Unskipping some tests that are no longer flaky.
+        Marking some new tests as flaky.
+
+        * TestExpectations:
+        * platform/mac/TestExpectations:
+        * tests-options.json:
+
 2021-09-19  Alan Bujtas  <zalan@apple.com>
 
         Unreviewed gardening after r282738.

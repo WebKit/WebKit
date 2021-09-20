@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Connection fails if one side provides a wrong DTLS fingerprint Test timed out
+PASS Connection fails if one side provides a wrong DTLS fingerprint
 

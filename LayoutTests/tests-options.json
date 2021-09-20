@@ -4067,6 +4067,9 @@
     "imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webrtc/RTCDataChannel-iceRestart.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send.html": [
         "slow"
     ],
@@ -4074,6 +4077,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-SLD-SRD-timing.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-capture-video.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html": [
@@ -4095,6 +4101,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-plan-b-is-not-supported.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-relay-canvas.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html": [
@@ -4137,6 +4149,15 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/protocol/ice-ufragpwd.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/rtp-clockrate.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/sdes-dont-dont-dont.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/protocol/vp8-fmtp.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/simulcast/basic.https.html": [
