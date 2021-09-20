@@ -92,7 +92,7 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
     }
 
     auto itemPromise = m_itemPromises[matchIndex].value;
-    itemPromise->whenSettled([itemPromise, promise = makeRefPtr(promise.get()), type] () mutable {
+    itemPromise->whenSettled([itemPromise, promise = WTFMove(promise), type] () mutable {
         if (itemPromise->status() != DOMPromise::Status::Fulfilled) {
             promise->reject(AbortError);
             return;
@@ -139,7 +139,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
         });
 
         auto promise = typeAndItem.value;
-        promise->whenSettled([this, protectedItem = makeRefPtr(m_item), destination = m_writingDestination, promise, type, weakItemTypeLoader = makeWeakPtr(itemTypeLoader.ptr())] () mutable {
+        promise->whenSettled([this, protectedItem = Ref { m_item }, destination = m_writingDestination, promise, type, weakItemTypeLoader = makeWeakPtr(itemTypeLoader.ptr())] () mutable {
             if (!weakItemTypeLoader)
                 return;
 
@@ -152,7 +152,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
                 return;
             }
 
-            auto clipboard = makeRefPtr(destination.get());
+            RefPtr clipboard = destination.get();
             if (!clipboard) {
                 itemTypeLoader->didFailToResolve();
                 return;
@@ -175,7 +175,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
                 return;
             }
 
-            if (auto blob = makeRefPtr(JSBlob::toWrapped(result.getObject()->vm(), result.getObject())))
+            if (RefPtr blob = JSBlob::toWrapped(result.getObject()->vm(), result.getObject()))
                 itemTypeLoader->didResolveToBlob(*clipboard->scriptExecutionContext(), blob.releaseNonNull());
             else
                 itemTypeLoader->didFailToResolve();
@@ -197,7 +197,7 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
 
     auto completionHandler = std::exchange(m_completionHandler, { });
     auto itemTypeLoaders = std::exchange(m_itemTypeLoaders, { });
-    auto clipboard = makeRefPtr(m_writingDestination.get());
+    RefPtr clipboard = m_writingDestination.get();
     m_writingDestination = nullptr;
 
     auto document = documentFromClipboard(clipboard.get());

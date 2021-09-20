@@ -534,7 +534,7 @@ std::optional<PaymentShippingType> PaymentRequest::shippingType() const
 
 void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddress)
 {
-    whenDetailsSettled([this, protectedThis = Ref { *this }, shippingAddress = makeRefPtr(shippingAddress.get())]() mutable {
+    whenDetailsSettled([this, protectedThis = Ref { *this }, shippingAddress = WTFMove(shippingAddress)]() mutable {
         m_shippingAddress = WTFMove(shippingAddress);
         dispatchAndCheckUpdateEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent));
     });

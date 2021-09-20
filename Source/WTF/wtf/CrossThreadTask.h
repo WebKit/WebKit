@@ -90,7 +90,7 @@ void callMemberFunctionForCrossThreadTask(C* object, MF function, ArgsTuple&& ar
 template<typename T, typename std::enable_if<std::is_base_of<ThreadSafeRefCountedBase, T>::value, int>::type = 0, typename... Parameters, typename... Arguments>
 CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...), const Arguments&... arguments)
 {
-    return CrossThreadTask([callee = makeRefPtr(&callee), method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
+    return CrossThreadTask([callee = RefPtr { &callee }, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
         callMemberFunctionForCrossThreadTask(callee.get(), method, WTFMove(arguments));
     });
 }

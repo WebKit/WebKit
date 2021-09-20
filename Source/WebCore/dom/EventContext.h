@@ -112,14 +112,14 @@ inline EventContext::EventContext(Type type, Node* node, RefPtr<EventTarget>&& c
 }
 
 inline EventContext::EventContext(Type type, Node* node, EventTarget* currentTarget, EventTarget* origin, int closedShadowDepth)
-    : EventContext(type, node, makeRefPtr(currentTarget), origin, closedShadowDepth)
+    : EventContext(type, node, RefPtr { currentTarget }, origin, closedShadowDepth)
 {
     ASSERT(!is<Node>(currentTarget));
 }
 
 // This variant avoids calling EventTarget::ref() which is a virtual function call.
 inline EventContext::EventContext(Type type, Node& node, Node* currentTarget, EventTarget* origin, int closedShadowDepth)
-    : EventContext(type, &node, makeRefPtr(currentTarget), origin, closedShadowDepth, currentTarget && currentTarget->isInShadowTree())
+    : EventContext(type, &node, RefPtr { currentTarget }, origin, closedShadowDepth, currentTarget && currentTarget->isInShadowTree())
 {
     m_contextNodeIsFormElement = is<HTMLFormElement>(node);
 }

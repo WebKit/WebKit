@@ -99,7 +99,7 @@ void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
     }
     ASSERT(m_privateCoordinator, "We must be in Waiting state if no private coordinator is set");
 
-    m_privateCoordinator->join([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->join([protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -156,7 +156,7 @@ void MediaSessionCoordinator::seekTo(double time, DOMPromiseDeferred<void>&& pro
         return;
     }
 
-    m_privateCoordinator->seekTo(time, [protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->seekTo(time, [protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -189,7 +189,7 @@ void MediaSessionCoordinator::play(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    m_privateCoordinator->play([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->play([protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -222,7 +222,7 @@ void MediaSessionCoordinator::pause(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    m_privateCoordinator->pause([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->pause([protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;
@@ -255,7 +255,7 @@ void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<v
         return;
     }
 
-    m_privateCoordinator->setTrack(track, [protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
+    m_privateCoordinator->setTrack(track, [protectedThis = Ref { *this }, identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { InvalidStateError });
             return;

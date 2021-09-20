@@ -732,7 +732,7 @@ bool TextIterator::handleReplacedElement()
     }
 
     if (m_behaviors.contains(TextIteratorBehavior::EntersImageOverlays) && is<HTMLElement>(m_node) && downcast<HTMLElement>(*m_node).hasImageOverlay()) {
-        if (auto shadowRoot = makeRefPtr(m_node->shadowRoot())) {
+        if (RefPtr shadowRoot = m_node->shadowRoot()) {
             m_node = shadowRoot.get();
             pushFullyClippedState(m_fullyClippedStack, *m_node);
             m_offset = 0;

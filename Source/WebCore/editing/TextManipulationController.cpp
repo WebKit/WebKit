@@ -123,7 +123,7 @@ TextManipulationController::TextManipulationController(Document& document)
 
 void TextManipulationController::startObservingParagraphs(ManipulationItemCallback&& callback, Vector<ExclusionRule>&& exclusionRules)
 {
-    auto document = makeRefPtr(m_document.get());
+    RefPtr document { m_document.get() };
     if (!document)
         return;
 
@@ -295,11 +295,11 @@ static std::optional<TextManipulationController::ManipulationTokenInfo> tokenInf
 
     TextManipulationController::ManipulationTokenInfo result;
     result.documentURL = node->document().url();
-    if (auto element = is<Element>(node) ? makeRefPtr(downcast<Element>(*node)) : makeRefPtr(node->parentElement())) {
+    if (RefPtr element = is<Element>(node) ? downcast<Element>(node) : node->parentElement()) {
         result.tagName = element->tagName();
         if (element->hasAttributeWithoutSynchronization(HTMLNames::roleAttr))
             result.roleAttribute = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
-        if (auto frame = makeRefPtr(node->document().frame()); frame && frame->view() && element->renderer()) {
+        if (RefPtr frame = node->document().frame(); frame && frame->view() && element->renderer()) {
             // FIXME: This doesn't account for overflow clip.
             auto elementRect = element->renderer()->absoluteAnchorRect();
             auto visibleContentRect = frame->view()->visibleContentRect();
@@ -327,7 +327,7 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
         if (displayType == DisplayType::Block || displayType == DisplayType::InlineBlock)
             return true;
 
-        for (auto parent = makeRefPtr(element.parentElement()); parent; parent = parent->parentElement()) {
+        for (RefPtr parent = element.parentElement(); parent; parent = parent->parentElement()) {
             if (parent->hasTagName(HTMLNames::navTag) || role(*parent) == AccessibilityRole::LandmarkNavigation)
                 return true;
         }
@@ -456,7 +456,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
     if (start.isNull() || end.isNull() || start.isOrphan() || end.isOrphan())
         return;
 
-    auto document = makeRefPtr(start.document());
+    RefPtr document { start.document() };
     ASSERT(document);
     // TextIterator's constructor may have updated the layout and executed arbitrary scripts.
     if (document != start.document() || document != end.document())
@@ -606,7 +606,7 @@ void TextManipulationController::scheduleObservationUpdate()
             if (!node->isConnected())
                 continue;
 
-            if (auto host = makeRefPtr(node->shadowHost()); is<HTMLInputElement>(host.get()) && downcast<HTMLInputElement>(*host).lastChangeWasUserEdit())
+            if (RefPtr host = node->shadowHost(); is<HTMLInputElement>(host.get()) && downcast<HTMLInputElement>(*host).lastChangeWasUserEdit())
                 continue;
 
             if (!commonAncestor)
@@ -761,7 +761,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 
     if (item.start.isNull() || item.end.isNull()) {
         RELEASE_ASSERT(item.tokens.size() == 1);
-        auto element = makeRefPtr(item.element.get());
+        RefPtr element = { item.element.get() };
         if (!element)
             return ManipulationFailureType::ContentChanged;
         if (replacementTokens.size() > 1 && !canPerformTextManipulationByReplacingEntireTextContent(*element) && item.attributeName == nullQName())

@@ -390,7 +390,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
 ExceptionOr<Ref<IDBRequest>> IDBObjectStore::deleteFunction(JSGlobalObject& execState, IDBKeyRange* keyRange)
 {
     return doDelete(execState, [keyRange]() {
-        return makeRefPtr(keyRange);
+        return RefPtr { keyRange };
     });
 }
 

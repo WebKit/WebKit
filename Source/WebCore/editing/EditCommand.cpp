@@ -201,7 +201,7 @@ void EditCommand::postTextStateChangeNotification(AXTextEditType type, const Str
     auto* cache = document().existingAXObjectCache();
     if (!cache)
         return;
-    auto node = makeRefPtr(highestEditableRoot(position.deepEquivalent(), HasEditableAXRole));
+    RefPtr node { highestEditableRoot(position.deepEquivalent(), HasEditableAXRole) };
     cache->postTextStateChangeNotification(node.get(), type, text, position);
 }
 

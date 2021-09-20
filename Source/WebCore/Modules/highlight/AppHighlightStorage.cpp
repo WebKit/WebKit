@@ -71,7 +71,7 @@ static std::pair<RefPtr<Node>, size_t> findNodeStartingAtPathComponentIndex(cons
     if (initialIndexToFollow >= path.size())
         return { nullptr, initialIndexToFollow };
 
-    auto currentNode = makeRefPtr(initialNode);
+    RefPtr currentNode = &initialNode;
     size_t currentPathIndex = initialIndexToFollow;
     for (; currentPathIndex < path.size(); ++currentPathIndex) {
         auto& component = path[currentPathIndex];
@@ -101,7 +101,7 @@ static RefPtr<Node> findNode(const AppHighlightRangeData::NodePath& path, Docume
         if (component.identifier.isEmpty())
             continue;
 
-        auto elementWithIdentifier = makeRefPtr(document.getElementById(component.identifier));
+        RefPtr elementWithIdentifier = document.getElementById(component.identifier);
         if (!elementWithIdentifier || elementWithIdentifier->nodeName() != component.nodeName)
             continue;
 
@@ -257,7 +257,7 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     if (!m_document)
         return false;
     
-    auto strongDocument = makeRefPtr(m_document.get());
+    RefPtr strongDocument = m_document.get();
     
     auto range = findRange(highlight, *strongDocument);
     

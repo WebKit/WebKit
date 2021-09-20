@@ -692,7 +692,7 @@ bool DataDetection::isDataDetectorElement(const Element& element)
 Ref<HTMLDivElement> DataDetection::createElementForImageOverlay(Document& document, const TextRecognitionDataDetector& info)
 {
     auto container = HTMLDivElement::create(document);
-    if (auto frame = makeRefPtr(document.frame())) {
+    if (RefPtr frame = document.frame()) {
         auto resultIdentifier = frame->dataDetectionResults().addImageOverlayDataDetectionResult(info.result.get());
         container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, String::number(resultIdentifier.toUInt64()));
     }

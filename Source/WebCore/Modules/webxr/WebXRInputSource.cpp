@@ -67,7 +67,7 @@ WebXRSession* WebXRInputSource::session()
 
 void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
 {
-    auto session = makeRefPtr(m_session.get());
+    RefPtr session = m_session.get();
     if (!session)
         return;
 
@@ -106,14 +106,14 @@ void WebXRInputSource::disconnect()
 
 void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
 {
-    auto session = makeRefPtr(m_session.get());
+    RefPtr session = m_session.get();
     if (!session)
         return;
 
     auto createEvent = [this, session](const AtomString& name) -> Ref<XRInputSourceEvent> {
         XRInputSourceEvent::Init init;
         init.frame = WebXRFrame::create(*session, WebXRFrame::IsAnimationFrame::No);
-        init.inputSource = makeRefPtr(*this);
+        init.inputSource = RefPtr { this };
 
         return XRInputSourceEvent::create(name, init);
     };

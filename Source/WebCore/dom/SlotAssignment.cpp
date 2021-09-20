@@ -149,7 +149,7 @@ void SlotAssignment::removeSlotElementByName(const AtomString& name, HTMLSlotEle
     ASSERT(m_slotElementCount > 0);
     m_slotElementCount--;
 
-    if (auto host = makeRefPtr(shadowRoot.host())) {
+    if (RefPtr host = shadowRoot.host()) {
         // FIXME: We should be able to do a targeted reconstruction.
         host->invalidateStyleAndRenderersForSubtree();
         if (!m_slotElementCount)
@@ -282,7 +282,7 @@ void SlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& 
     slot->assignedNodes.clear();
     m_slotAssignmentsIsValid = false;
 
-    auto slotElement = makeRefPtr(findFirstSlotElement(*slot));
+    RefPtr slotElement { findFirstSlotElement(*slot) };
     if (!slotElement)
         return;
 

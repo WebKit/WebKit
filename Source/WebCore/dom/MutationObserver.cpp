@@ -122,7 +122,7 @@ void MutationObserver::disconnect()
     m_records.clear();
     WeakHashSet registrations { m_registrations };
     for (auto& registration : registrations) {
-        auto nodeRef = makeRefPtr(registration.node());
+        Ref nodeRef { registration.node() };
         nodeRef->unregisterMutationObserver(registration);
     }
 }

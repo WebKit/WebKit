@@ -66,7 +66,7 @@ Ref<MediaStream> MediaStream::create(Document& document, Ref<MediaStreamPrivate>
 static inline MediaStreamTrackPrivateVector createTrackPrivateVector(const MediaStreamTrackVector& tracks)
 {
     return map(tracks, [](auto& track) {
-        return makeRefPtr(&track->privateTrack());
+        return RefPtr { &track->privateTrack() };
     });
 }
 

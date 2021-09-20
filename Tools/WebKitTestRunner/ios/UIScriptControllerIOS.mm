@@ -290,7 +290,7 @@ void UIScriptControllerIOS::twoFingerSingleTapAtPoint(long x, long y, JSValueRef
 void UIScriptControllerIOS::singleTapAtPointWithModifiers(long x, long y, JSValueRef modifierArray, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    singleTapAtPointWithModifiers(WebCore::FloatPoint(x, y), parseModifierArray(m_context->jsContext(), modifierArray), makeBlockPtr([this, protectedThis = makeRefPtr(*this), callbackID] {
+    singleTapAtPointWithModifiers(WebCore::FloatPoint(x, y), parseModifierArray(m_context->jsContext(), modifierArray), makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -442,7 +442,7 @@ void UIScriptControllerIOS::sendEventStream(JSStringRef eventsJSON, JSValueRef c
         return;
     }
 
-    auto completion = makeBlockPtr([this, protectedThis = makeRefPtr(*this), callbackID] {
+    auto completion = makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -494,7 +494,7 @@ void UIScriptControllerIOS::dragFromPointToPoint(long startX, long startY, long 
         ],
     };
 
-    auto completion = makeBlockPtr([this, protectedThis = makeRefPtr(*this), callbackID] {
+    auto completion = makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

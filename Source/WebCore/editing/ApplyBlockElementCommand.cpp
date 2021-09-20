@@ -289,7 +289,7 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
     // If endOfNextParagraph was pointing at this same text node, endOfNextParagraph will be shifted by one paragraph.
     // Avoid this by splitting "\n"
     splitTextNode(*text, 1);
-    auto previousSiblingOfText = makeRefPtr(text->previousSibling());
+    auto previousSiblingOfText = RefPtr { text->previousSibling() };
 
     if (text == start.containerNode() && previousSiblingOfText && is<Text>(previousSiblingOfText)) {
         ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());

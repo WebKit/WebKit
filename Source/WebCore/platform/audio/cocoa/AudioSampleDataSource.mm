@@ -85,7 +85,7 @@ OSStatus AudioSampleDataSource::setupConverter()
 
     OSStatus err = PAL::AudioConverterNew(&m_inputDescription->streamDescription(), &m_outputDescription->streamDescription(), &m_converter);
     if (err) {
-        RunLoop::main().dispatch([this, protectedThis = makeRefPtr(*this), err] {
+        RunLoop::main().dispatch([this, protectedThis = Ref { *this }, err] {
             ERROR_LOG("AudioConverterNew returned error ", err);
         });
     }
@@ -173,7 +173,7 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
     if (m_isInNeedOfMoreData) {
         m_isInNeedOfMoreData = false;
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, sampleCount, this, protectedThis = makeRefPtr(*this)] {
+        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, sampleCount, this, protectedThis = Ref { *this }] {
             ALWAYS_LOG(logIdentifier, "needed more data, pushing ", sampleCount, " samples");
         });
     }
@@ -265,7 +265,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
         if (!m_isInNeedOfMoreData) {
             m_isInNeedOfMoreData = true;
             DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = Ref { *this }] {
                 ERROR_LOG(logIdentifier, "need more data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
             });
         }

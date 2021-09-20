@@ -152,7 +152,7 @@ String AccessibilityUndoReplacedText::textDeletedByReapply()
 static void postTextStateChangeNotification(AXObjectCache* cache, const VisiblePosition& position, const String& deletedText, const String& insertedText)
 {
     ASSERT(cache);
-    auto node = makeRefPtr(highestEditableRoot(position.deepEquivalent(), HasEditableAXRole));
+    RefPtr node { highestEditableRoot(position.deepEquivalent(), HasEditableAXRole) };
     if (!node)
         return;
     if (insertedText.length() && deletedText.length())
@@ -553,7 +553,7 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
 
 void CompositeEditCommand::insertNodeBefore(Ref<Node>&& insertChild, Node& refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
-    auto parent = makeRefPtr(refChild.parentNode());
+    RefPtr parent { refChild.parentNode() };
     if (!parent || (!parent->hasEditableStyle() && parent->renderer()))
         return;
     applyCommandToComposite(InsertNodeBeforeCommand::create(WTFMove(insertChild), refChild, shouldAssumeContentIsAlwaysEditable, editingAction()));
@@ -561,7 +561,7 @@ void CompositeEditCommand::insertNodeBefore(Ref<Node>&& insertChild, Node& refCh
 
 void CompositeEditCommand::insertNodeAfter(Ref<Node>&& insertChild, Node& refChild)
 {
-    auto parent = makeRefPtr(refChild.parentNode());
+    RefPtr parent { refChild.parentNode() };
     if (!parent)
         return;
 
@@ -580,11 +580,11 @@ void CompositeEditCommand::insertNodeAt(Ref<Node>&& insertChild, const Position&
     // For editing positions like [table, 0], insert before the table,
     // likewise for replaced elements, brs, etc.
     Position p = editingPosition.parentAnchoredEquivalent();
-    auto refChild = makeRefPtr(p.deprecatedNode());
+    RefPtr refChild { p.deprecatedNode() };
     int offset = p.deprecatedEditingOffset();
     
     if (canHaveChildrenForEditing(*refChild)) {
-        auto child = makeRefPtr(refChild->firstChild());
+        RefPtr child { refChild->firstChild() };
         for (int i = 0; child && i < offset; i++)
             child = child->nextSibling();
         if (child)
@@ -613,7 +613,7 @@ void CompositeEditCommand::appendNode(Ref<Node>&& node, Ref<ContainerNode>&& par
 void CompositeEditCommand::removeChildrenInRange(Node& node, unsigned from, unsigned to)
 {
     Vector<Ref<Node>> children;
-    auto child = makeRefPtr(node.traverseToChildAt(from));
+    RefPtr child { node.traverseToChildAt(from) };
     for (unsigned i = from; child && i < to; i++, child = child->nextSibling())
         children.append(*child);
 
@@ -635,7 +635,7 @@ void CompositeEditCommand::removeNodePreservingChildren(Node& node, ShouldAssume
 
 void CompositeEditCommand::removeNodeAndPruneAncestors(Node& node)
 {
-    auto parent = makeRefPtr(node.parentNode());
+    RefPtr parent { node.parentNode() };
     removeNode(node);
     prune(parent.get());
 }
@@ -678,7 +678,7 @@ HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAt
 
 void CompositeEditCommand::prune(Node* node)
 {
-    if (auto highestNodeToRemove = makeRefPtr(highestNodeToRemoveInPruning(node)))
+    if (RefPtr highestNodeToRemove = highestNodeToRemoveInPruning(node))
         removeNode(*highestNodeToRemove);
 }
 
@@ -823,7 +823,7 @@ Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
         return positionInParentAfterNode(position.anchorNode());
     }
 
-    auto tabSpan = makeRefPtr(tabSpanNode(position.containerNode()));
+    RefPtr tabSpan { tabSpanNode(position.containerNode()) };
 
     if (position.offsetInContainerNode() <= caretMinOffset(*position.containerNode()))
         return positionInParentBeforeNode(tabSpan.get());
@@ -889,7 +889,7 @@ bool CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor(const String& tex
 
 RefPtr<Text> CompositeEditCommand::textNodeForRebalance(const Position& position) const
 {
-    auto node = makeRefPtr(position.containerNode());
+    RefPtr node { position.containerNode() };
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !is<Text>(node))
         return nullptr;
 
@@ -960,7 +960,7 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
 
 void CompositeEditCommand::prepareWhitespaceAtPositionForSplit(Position& position)
 {
-    auto node = makeRefPtr(position.deprecatedNode());
+    RefPtr node { position.deprecatedNode() };
     if (!is<Text>(node))
         return;
     Text& textNode = downcast<Text>(*node);
@@ -1336,7 +1336,7 @@ void CompositeEditCommand::cleanupAfterDeletion(VisiblePosition destination)
     if (!caretAfterDelete.equals(destination) && isStartOfParagraph(caretAfterDelete) && isEndOfParagraph(caretAfterDelete)) {
         // Note: We want the rightmost candidate.
         Position position = caretAfterDelete.deepEquivalent().downstream();
-        auto node = makeRefPtr(position.deprecatedNode());
+        RefPtr node { position.deprecatedNode() };
         ASSERT(node);
         // Normally deletion will leave a br as a placeholder.
         if (is<HTMLBRElement>(*node))
@@ -1574,7 +1574,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     style->mergeTypingStyle(document());
 
     RefPtr<Element> newBlock;
-    if (auto blockEnclosingList = makeRefPtr(listNode->parentNode())) {
+    if (RefPtr blockEnclosingList = listNode->parentNode()) {
         if (is<HTMLLIElement>(*blockEnclosingList)) { // listNode is inside another list item
             if (visiblePositionAfterNode(*blockEnclosingList) == visiblePositionAfterNode(*listNode)) {
                 // If listNode appears at the end of the outer list item, then move listNode outside of this list item
@@ -1629,7 +1629,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
         return false;
         
     VisiblePosition caret(endingSelection().visibleStart());
-    auto highestBlockquote = makeRefPtr(highestEnclosingNodeOfType(caret.deepEquivalent(), &isMailBlockquote));
+    RefPtr highestBlockquote { highestEnclosingNodeOfType(caret.deepEquivalent(), &isMailBlockquote) };
     if (!highestBlockquote)
         return false;
 
@@ -1665,7 +1665,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     else if (is<Text>(*caretPos.deprecatedNode())) {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
         Text& textNode = downcast<Text>(*caretPos.deprecatedNode());
-        auto parentNode = makeRefPtr(textNode.parentNode());
+        RefPtr parentNode { textNode.parentNode() };
         // The preserved newline must be the first thing in the node, since otherwise the previous
         // paragraph would be quoted, and we verified that it wasn't above.
         deleteTextFromNode(textNode, 0, 1);
@@ -1685,7 +1685,7 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
         return original;
         
     VisiblePosition visiblePos(original);
-    auto enclosingAnchor = makeRefPtr(enclosingAnchorElement(original));
+    RefPtr enclosingAnchor { enclosingAnchorElement(original) };
     Position result = original;
 
     if (!enclosingAnchor)

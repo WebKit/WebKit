@@ -100,7 +100,7 @@ ScriptExecutionContext* Clipboard::scriptExecutionContext() const
 
 void Clipboard::readText(Ref<DeferredPromise>&& promise)
 {
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame) {
         promise->reject(NotAllowedError);
         return;
@@ -137,8 +137,8 @@ void Clipboard::readText(Ref<DeferredPromise>&& promise)
 
 void Clipboard::writeText(const String& data, Ref<DeferredPromise>&& promise)
 {
-    auto frame = makeRefPtr(this->frame());
-    auto document = makeRefPtr(frame ? frame->document() : nullptr);
+    RefPtr frame = this->frame();
+    RefPtr document = frame ? frame->document() : nullptr;
     if (!document || !shouldProceedWithClipboardWrite(*frame)) {
         promise->reject(NotAllowedError);
         return;
@@ -158,7 +158,7 @@ void Clipboard::read(Ref<DeferredPromise>&& promise)
         promise->reject(NotAllowedError);
     };
 
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame) {
         rejectPromiseAndClearActiveSession();
         return;
@@ -196,7 +196,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame) {
         m_activeSession = std::nullopt;
         promise->reject(NotAllowedError);
@@ -271,7 +271,7 @@ Clipboard::SessionIsValid Clipboard::updateSessionValidity()
 
 void Clipboard::write(const Vector<RefPtr<ClipboardItem>>& items, Ref<DeferredPromise>&& promise)
 {
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (!frame || !shouldProceedWithClipboardWrite(*frame)) {
         promise->reject(NotAllowedError);
         return;

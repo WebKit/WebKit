@@ -909,7 +909,7 @@ void WebAnimation::finishNotificationSteps()
     enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), m_timeline ? m_timeline->currentTime() : std::nullopt);
 
     if (is<KeyframeEffect>(m_effect)) {
-        if (auto target = makeRefPtr(downcast<KeyframeEffect>(*m_effect).target())) {
+        if (RefPtr target = downcast<KeyframeEffect>(*m_effect).target()) {
             if (auto* page = target->document().page())
                 page->chrome().client().animationDidFinishForElement(*target);
         }

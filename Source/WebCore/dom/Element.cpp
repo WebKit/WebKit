@@ -1012,7 +1012,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
         // If the element is the scrolling element and is not potentially scrollable,
         // invoke scroll() on window with options as the only argument, and terminate these steps.
         // FIXME: Scrolling an independently scrollable body is broken: webkit.org/b/161612.
-        auto window = makeRefPtr(document().domWindow());
+        RefPtr window = document().domWindow();
         if (!window)
             return;
 
@@ -1138,7 +1138,7 @@ int Element::offsetLeftForBindings()
 {
     auto offset = offsetLeft();
 
-    auto parent = makeRefPtr(offsetParent());
+    RefPtr parent = offsetParent();
     if (!parent || !parent->isInShadowTree())
         return offset;
 
@@ -1167,7 +1167,7 @@ int Element::offsetTopForBindings()
 {
     auto offset = offsetTop();
 
-    auto parent = makeRefPtr(offsetParent());
+    RefPtr parent = offsetParent();
     if (!parent || !parent->isInShadowTree())
         return offset;
 
@@ -3081,7 +3081,7 @@ void Element::focus(const FocusOptions& options)
         return;
 
     if (auto root = shadowRootWithDelegatesFocus(*this)) {
-        auto currentlyFocusedElement = makeRefPtr(document->focusedElement());
+        RefPtr currentlyFocusedElement = document->focusedElement();
         if (root->containsIncludingShadowDOM(currentlyFocusedElement.get())) {
             if (document->page())
                 document->page()->chrome().client().elementDidRefocus(*currentlyFocusedElement);

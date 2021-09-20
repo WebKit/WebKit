@@ -1734,7 +1734,7 @@ void Document::updateTitle(const StringWithDirection& title)
     if (!m_updateTitleTaskScheduled) {
         eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }, this]() mutable {
             m_updateTitleTaskScheduled = false;
-            if (auto documentLoader = makeRefPtr(loader()))
+            if (RefPtr documentLoader = loader())
                 documentLoader->setTitle(m_title);
         });
         m_updateTitleTaskScheduled = true;
@@ -3217,7 +3217,7 @@ void Document::implicitClose()
 
     m_processingLoadEvent = false;
 
-    if (auto fontFaceSet = makeRefPtr(fontSelector().fontFaceSetIfExists()))
+    if (RefPtr fontFaceSet = fontSelector().fontFaceSetIfExists())
         fontFaceSet->documentDidFinishLoading();
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK)
@@ -3739,7 +3739,7 @@ void Document::didRemoveAllPendingStylesheet()
     if (m_gotoAnchorNeededAfterStylesheetsLoad) {
         // https://html.spec.whatwg.org/multipage/browsing-the-web.html#try-to-scroll-to-the-fragment
         eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, this] {
-            auto frameView = makeRefPtr(view());
+            RefPtr frameView = view();
             if (!frameView)
                 return;
             if (!haveStylesheetsLoaded()) {
@@ -4082,7 +4082,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
 
     auto captureElementChanged = CaptureChange::No;
     if (!request.readOnly()) {
-        auto targetElement = makeRefPtr(result.targetElement());
+        RefPtr targetElement = result.targetElement();
         if (auto* page = this->page()) {
             // Before we dispatch a new mouse event, we must run the Process Pending Capture Element steps as defined
             // in https://w3c.github.io/pointerevents/#process-pending-pointer-capture.
@@ -5797,7 +5797,7 @@ static Editor::Command command(Document* document, const String& commandName, bo
 
     document->updateStyleIfNeeded();
 
-    auto frame = makeRefPtr(document->frame());
+    RefPtr frame = document->frame();
 
     if (!frame || frame->document() != document)
         return Editor::Command();

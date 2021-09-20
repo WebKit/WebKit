@@ -67,7 +67,7 @@ static bool isTableRowEmpty(Node* row)
     if (!isTableRow(row))
         return false;
 
-    for (auto child = makeRefPtr(row->firstChild()); child; child = child->nextSibling()) {
+    for (RefPtr child = row->firstChild(); child; child = child->nextSibling()) {
         if (isTableCell(child.get()) && !isTableCellEmpty(child.get()))
             return false;
     }
@@ -103,8 +103,8 @@ static bool isSpecialHTMLElement(const Node& node)
 
 static RefPtr<HTMLElement> firstInSpecialElement(const Position& position)
 {
-    auto rootEditableElement = makeRefPtr(position.rootEditableElement());
-    for (auto node = makeRefPtr(position.deprecatedNode()); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
+    RefPtr rootEditableElement { position.rootEditableElement() };
+    for (RefPtr node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
         if (!isSpecialHTMLElement(*node))
             continue;
         VisiblePosition visiblePosition = position;
@@ -119,8 +119,8 @@ static RefPtr<HTMLElement> firstInSpecialElement(const Position& position)
 
 static RefPtr<HTMLElement> lastInSpecialElement(const Position& position)
 {
-    auto rootEditableElement = makeRefPtr(position.rootEditableElement());
-    for (auto node = makeRefPtr(position.deprecatedNode()); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
+    RefPtr rootEditableElement { position.rootEditableElement() };
+    for (RefPtr node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
         if (!isSpecialHTMLElement(*node))
             continue;
         VisiblePosition visiblePosition = position;
@@ -321,8 +321,8 @@ bool DeleteSelectionCommand::initializePositionData()
     // Don't move content out of a table cell.
     // If the cell is non-editable, enclosingNodeOfType won't return it by default, so
     // tell that function that we don't care if it returns non-editable nodes.
-    auto startCell = makeRefPtr(enclosingNodeOfType(m_upstreamStart, &isTableCell, CanCrossEditingBoundary));
-    auto endCell = makeRefPtr(enclosingNodeOfType(m_downstreamEnd, &isTableCell, CanCrossEditingBoundary));
+    RefPtr startCell { enclosingNodeOfType(m_upstreamStart, &isTableCell, CanCrossEditingBoundary) };
+    RefPtr endCell { enclosingNodeOfType(m_downstreamEnd, &isTableCell, CanCrossEditingBoundary) };
     // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
     if (endCell && endCell != startCell)
         m_mergeBlocksAfterDelete = false;
@@ -434,10 +434,10 @@ void DeleteSelectionCommand::saveTypingStyleState()
 
 bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 {
-    auto nodeAfterUpstreamStart = makeRefPtr(m_upstreamStart.computeNodeAfterPosition());
-    auto nodeAfterDownstreamStart = makeRefPtr(m_downstreamStart.computeNodeAfterPosition());
+    RefPtr nodeAfterUpstreamStart { m_upstreamStart.computeNodeAfterPosition() };
+    RefPtr nodeAfterDownstreamStart { m_downstreamStart.computeNodeAfterPosition() };
     // Upstream end will appear before BR due to canonicalization
-    auto nodeAfterUpstreamEnd = makeRefPtr(m_upstreamEnd.computeNodeAfterPosition());
+    RefPtr nodeAfterUpstreamEnd { m_upstreamEnd.computeNodeAfterPosition() };
 
     if (!nodeAfterUpstreamStart || !nodeAfterDownstreamStart)
         return false;
@@ -469,7 +469,7 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 static Position firstEditablePositionInNode(Node* node)
 {
     ASSERT(node);
-    auto next = makeRefPtr(node);
+    RefPtr next { node };
     while (next && !next->hasEditableStyle())
         next = NodeTraversal::next(*next, node);
     return next ? firstPositionInOrBeforeNode(next.get()) : Position();
@@ -527,9 +527,9 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
             if (!node.firstChild())
                 return;
             // Search this non-editable region for editable regions to empty.
-            auto child = makeRefPtr(node.firstChild());
+            RefPtr child { node.firstChild() };
             while (child) {
-                auto nextChild = makeRefPtr(child->nextSibling());
+                RefPtr nextChild { child->nextSibling() };
                 removeNode(*child, shouldAssumeContentIsAlwaysEditable);
                 // Bail if nextChild is no longer node's child.
                 if (nextChild && nextChild->parentNode() != &node)
@@ -545,13 +545,13 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
     if (shouldRemoveContentOnly(node)) {
         // Do not remove an element of table structure; remove its contents.
         // Likewise for the root editable element.
-        auto child = makeRefPtr(NodeTraversal::next(node, &node));
+        RefPtr child { NodeTraversal::next(node, &node) };
         while (child) {
             if (shouldRemoveContentOnly(*child)) {
                 child = NodeTraversal::next(*child, &node);
                 continue;
             }
-            auto nextChild = makeRefPtr(NodeTraversal::nextSkippingChildren(*child, &node));
+            RefPtr nextChild { NodeTraversal::nextSkippingChildren(*child, &node) };
             removeNodeUpdatingStates(*child, shouldAssumeContentIsAlwaysEditable);
             child = WTFMove(nextChild);
         }
@@ -560,9 +560,9 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
         auto& element = downcast<Element>(node);
         document().updateLayoutIgnorePendingStylesheets();
         // Check if we need to insert a placeholder for descendant table cells.
-        auto descendant = makeRefPtr(ElementTraversal::next(element, &element));
+        RefPtr descendant { ElementTraversal::next(element, &element) };
         while (descendant) {
-            auto nextDescendant = makeRefPtr(ElementTraversal::next(*descendant, &element));
+            RefPtr nextDescendant { ElementTraversal::next(*descendant, &element) };
             insertBlockPlaceholderForTableCellIfNeeded(*descendant);
             descendant = WTFMove(nextDescendant);
         }
@@ -608,7 +608,7 @@ void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPr
             nodes.advance();
         else {
             nodes.advanceSkippingChildren();
-            if (auto rootEditableElement = makeRefPtr(node->rootEditableElement())) {
+            if (RefPtr rootEditableElement = node->rootEditableElement()) {
                 removeNode(node.get());
                 appendNode(node.get(), *rootEditableElement);
             }
@@ -622,7 +622,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         return;
 
     int startOffset = m_upstreamStart.deprecatedEditingOffset();
-    auto startNode = makeRefPtr(m_upstreamStart.deprecatedNode());
+    RefPtr startNode { m_upstreamStart.deprecatedNode() };
 
     makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
 
@@ -698,7 +698,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 removeNode(*node);
                 node = nextNode.get();
             } else {
-                auto lastDescendant = makeRefPtr(node->lastDescendant());
+                RefPtr lastDescendant { node->lastDescendant() };
                 if (m_downstreamEnd.deprecatedNode() == lastDescendant && m_downstreamEnd.deprecatedEditingOffset() >= caretMaxOffset(*lastDescendant)) {
                     removeNode(*node);
                     node = nullptr;
@@ -728,7 +728,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 } else if (!(startNodeWasDescendantOfEndNode && !m_upstreamStart.anchorNode()->isConnected())) {
                     unsigned offset = 0;
                     if (m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode())) {
-                        auto n = makeRefPtr(m_upstreamStart.deprecatedNode());
+                        RefPtr n { m_upstreamStart.deprecatedNode() };
                         while (n && n->parentNode() != m_downstreamEnd.deprecatedNode())
                             n = n->parentNode();
                         if (n)
@@ -788,7 +788,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     // m_downstreamEnd's block has been emptied out by deletion.  There is no content inside of it to
     // move, so just remove it.
-    auto endBlock = makeRefPtr(enclosingBlock(m_downstreamEnd.deprecatedNode()));
+    RefPtr endBlock { enclosingBlock(m_downstreamEnd.deprecatedNode()) };
     if (!endBlock)
         return;
 
@@ -815,7 +815,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     // FIXME: Consider RTL.
     if (!m_startsAtEmptyLine && isStartOfParagraph(mergeDestination) && startOfParagraphToMove.absoluteCaretBounds().x() > mergeDestination.absoluteCaretBounds().x()) {
         if (mergeDestination.deepEquivalent().downstream().deprecatedNode()->hasTagName(brTag)) {
-            auto nodeToRemove = makeRefPtr(mergeDestination.deepEquivalent().downstream().deprecatedNode());
+            RefPtr nodeToRemove { mergeDestination.deepEquivalent().downstream().deprecatedNode() };
             removeNodeAndPruneAncestors(*nodeToRemove);
             m_endingPosition = startOfParagraphToMove.deepEquivalent();
             return;
@@ -857,9 +857,9 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
     // DeleteSelectionCommand::removeNode does not remove rows but only empties them in preparation for this function.
     // Instead, DeleteSelectionCommand::removeNodeUpdatingStates is used below, which calls a raw CompositeEditCommand::removeNode and adjusts selection.
     if (m_endTableRow && m_endTableRow->isConnected() && m_endTableRow != m_startTableRow) {
-        auto row = makeRefPtr(m_endTableRow->previousSibling());
+        RefPtr row { m_endTableRow->previousSibling() };
         while (row && row != m_startTableRow) {
-            auto previousRow = makeRefPtr(row->previousSibling());
+            RefPtr previousRow { row->previousSibling() };
             if (isTableRowEmpty(row.get()))
                 removeNodeUpdatingStates(*row, DoNotAssumeContentIsAlwaysEditable);
             row = WTFMove(previousRow);
@@ -868,9 +868,9 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
     
     // Remove empty rows after the start row.
     if (m_startTableRow && m_startTableRow->isConnected() && m_startTableRow != m_endTableRow) {
-        auto row = makeRefPtr(m_startTableRow->nextSibling());
+        RefPtr row { m_startTableRow->nextSibling() };
         while (row && row != m_endTableRow) {
-            auto nextRow = makeRefPtr(row->nextSibling());
+            RefPtr nextRow { row->nextSibling() };
             if (isTableRowEmpty(row.get()))
                 removeNodeUpdatingStates(*row, DoNotAssumeContentIsAlwaysEditable);
             row = WTFMove(nextRow);
@@ -953,10 +953,10 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
 // This method removes div elements with no attributes that have only one child or no children at all.
 void DeleteSelectionCommand::removeRedundantBlocks()
 {
-    auto node = makeRefPtr(m_endingPosition.containerNode());
+    RefPtr node { m_endingPosition.containerNode() };
     if (!node)
         return;
-    auto rootNode = makeRefPtr(node->rootEditableElement());
+    RefPtr rootNode { node->rootEditableElement() };
    
     while (node && node != rootNode) {
         if (isRemovableBlock(node.get())) {
@@ -984,7 +984,7 @@ void DeleteSelectionCommand::doApply()
 
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
-        if (auto textControl = makeRefPtr(enclosingTextFormControl(m_selectionToDelete.start())); textControl && textControl->focused())
+        if (RefPtr textControl = enclosingTextFormControl(m_selectionToDelete.start()); textControl && textControl->focused())
             document().editor().textWillBeDeletedInTextField(textControl.get());
     }
 
@@ -999,7 +999,7 @@ void DeleteSelectionCommand::doApply()
         // Don't need a placeholder when deleting a selection that starts just before a table
         // and ends inside it (we do need placeholders to hold open empty cells, but that's
         // handled elsewhere).
-        if (auto table = makeRefPtr(isLastPositionBeforeTable(m_selectionToDelete.visibleStart()))) {
+        if (RefPtr table = isLastPositionBeforeTable(m_selectionToDelete.visibleStart())) {
             if (m_selectionToDelete.end().deprecatedNode()->isDescendantOf(*table))
                 m_needPlaceholder = false;
         }
@@ -1048,7 +1048,7 @@ void DeleteSelectionCommand::doApply()
 
     bool shouldRebalaceWhiteSpace = true;
     if (!document().editor().behavior().shouldRebalanceWhiteSpacesInSecureField()) {
-        if (auto endNode = makeRefPtr(m_endingPosition.deprecatedNode()); is<Text>(endNode)) {
+        if (RefPtr endNode = m_endingPosition.deprecatedNode(); is<Text>(endNode)) {
             auto& textNode = downcast<Text>(*endNode);
             ScriptDisallowedScope scriptDisallowedScope;
             if (textNode.length() && textNode.renderer())

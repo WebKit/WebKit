@@ -261,7 +261,7 @@ Position Position::parentAnchoredEquivalent() const
 
 RefPtr<Node> Position::firstNode() const
 {
-    auto container = makeRefPtr(containerNode());
+    RefPtr container { containerNode() };
     if (!container)
         return nullptr;
     if (is<CharacterData>(*container))
@@ -1610,7 +1610,7 @@ Position makeDeprecatedLegacyPosition(const BoundaryPoint& point)
 
 std::optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
 {
-    auto container = makeRefPtr(position.containerNode());
+    RefPtr container { position.containerNode() };
     if (!container)
         return std::nullopt;
     return BoundaryPoint { container.releaseNonNull(), static_cast<unsigned>(position.computeOffsetInContainerNode()) };

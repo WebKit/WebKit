@@ -149,7 +149,7 @@ void VisualViewport::update()
     double height = 0;
     double scale = 1;
 
-    auto frame = makeRefPtr(this->frame());
+    RefPtr frame = this->frame();
     if (frame) {
         if (auto* view = frame->view()) {
             auto visualViewportRect = view->visualViewportRect();

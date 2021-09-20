@@ -147,8 +147,8 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     
     LOG_WITH_STREAM(Events, stream << "EventDispatcher::dispatchEvent " << event << " on node " << node);
 
-    auto protectedNode = makeRef(node);
-    auto protectedView = makeRefPtr(node.document().view());
+    Ref protectedNode { node };
+    RefPtr protectedView { node.document().view() };
 
     EventPath eventPath { node, event };
 

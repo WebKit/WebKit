@@ -600,7 +600,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
                             continue;
 
                         auto& vttCue = downcast<VTTCue>(*cue);
-                        chapterMenuItems.append(createMenuItem(makeRefPtr(vttCue), vttCue.text()));
+                        chapterMenuItems.append(createMenuItem(RefPtr { &vttCue }, vttCue.text()));
                     }
                 }
 

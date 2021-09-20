@@ -168,7 +168,7 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
 
     LOG(Media, "WebCoreDecompressionSession::enqueueSample(%p) - framesBeingDecoded(%d)", this, m_framesBeingDecoded);
 
-    m_decompressionQueue->dispatch([protectedThis = makeRefPtr(*this), strongBuffer = retainPtr(sampleBuffer), displaying] {
+    m_decompressionQueue->dispatch([protectedThis = Ref { *this }, strongBuffer = retainPtr(sampleBuffer), displaying] {
         protectedThis->decodeSample(strongBuffer.get(), displaying);
     });
 }

@@ -236,7 +236,7 @@ void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newC
     }
     // We extent the associated Document's lifecycle until the VM became idle since the DocumentTimelinesController
     // is owned by the Document.
-    m_document.vm().whenIdle([this, protectedDocument = makeRefPtr(m_document)]() {
+    m_document.vm().whenIdle([this, protectedDocument = Ref { m_document }]() {
         m_waitingOnVMIdle = false;
         maybeClearCachedCurrentTime();
     });

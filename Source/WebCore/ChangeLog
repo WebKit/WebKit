@@ -1,3 +1,241 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of makeRefPtr() and use RefPtr { } directly
+        https://bugs.webkit.org/show_bug.cgi?id=230503
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::readText):
+        (WebCore::Clipboard::writeText):
+        (WebCore::Clipboard::read):
+        (WebCore::Clipboard::getType):
+        (WebCore::Clipboard::write):
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::getType):
+        (WebCore::ClipboardItemBindingsDataSource::collectDataForWriting):
+        (WebCore::ClipboardItemBindingsDataSource::invokeCompletionHandler):
+        * Modules/async-clipboard/ClipboardItemPasteboardDataSource.cpp:
+        (WebCore::ClipboardItemPasteboardDataSource::getType):
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::findNodeStartingAtPathComponentIndex):
+        (WebCore::findNode):
+        (WebCore::AppHighlightStorage::attemptToRestoreHighlightAndScroll):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::deleteFunction):
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::showMediaControlsContextMenu):
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession):
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::join):
+        (WebCore::MediaSessionCoordinator::seekTo):
+        (WebCore::MediaSessionCoordinator::play):
+        (WebCore::MediaSessionCoordinator::pause):
+        (WebCore::MediaSessionCoordinator::setTrack):
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.cpp:
+        (WebCore::MediaSessionCoordinatorPrivate::setLogger):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::createTrackPrivateVector):
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::shippingAddressChanged):
+        * Modules/speech/SpeechRecognition.cpp:
+        (WebCore::SpeechRecognition::SpeechRecognition):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::scheduleTransactionCallback):
+        * Modules/webxr/WebXRInputSource.cpp:
+        (WebCore::WebXRInputSource::update):
+        (WebCore::WebXRInputSource::pollEvents):
+        * Modules/webxr/WebXRInputSourceArray.cpp:
+        (WebCore::WebXRInputSourceArray::update):
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::didCompleteShutdown):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAriaExpandedChange):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::treeForPageID):
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::cacheCurrentTime):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::setTarget):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::finishNotificationSteps):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::JSC_DEFINE_HOST_FUNCTION):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeSelfOrChildNodesForInsertion):
+        * dom/Document.cpp:
+        (WebCore::Document::updateTitle):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+        (WebCore::Document::prepareMouseEvent):
+        (WebCore::command):
+        * dom/Element.cpp:
+        (WebCore::Element::scrollTo):
+        (WebCore::Element::offsetLeftForBindings):
+        (WebCore::Element::offsetTopForBindings):
+        (WebCore::Element::focus):
+        * dom/EventContext.h:
+        (WebCore::EventContext::EventContext):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::requestFullscreenForElement):
+        (WebCore::FullscreenManager::exitFullscreen):
+        * dom/IdleDeadline.cpp:
+        (WebCore::IdleDeadline::timeRemaining const):
+        (WebCore::IdleDeadline::didTimeout const):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::disconnect):
+        * dom/Position.cpp:
+        (WebCore::Position::firstNode const):
+        (WebCore::makeBoundaryPoint):
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::removeSlotElementByName):
+        (WebCore::SlotAssignment::didChangeSlot):
+        * dom/messageports/WorkerMessagePortChannelProvider.cpp:
+        (WebCore::WorkerMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebCore::WorkerMessagePortChannelProvider::checkRemotePortForActivity):
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIfNeeded):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::highestEmbeddingAncestor):
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle):
+        (WebCore::containsNonEditableRegion):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::shouldApplyInlineStyleToRun):
+        (WebCore::ApplyStyleCommand::highestAncestorWithConflictingInlineStyle):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        (WebCore::ApplyStyleCommand::joinChildTextNodes):
+        * editing/ChangeListTypeCommand.cpp:
+        (WebCore::ChangeListTypeCommand::listConversionType):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::postTextStateChangeNotification):
+        (WebCore::CompositeEditCommand::insertNodeBefore):
+        (WebCore::CompositeEditCommand::insertNodeAfter):
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::removeChildrenInRange):
+        (WebCore::CompositeEditCommand::removeNodeAndPruneAncestors):
+        (WebCore::CompositeEditCommand::prune):
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        (WebCore::CompositeEditCommand::textNodeForRebalance const):
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit):
+        (WebCore::CompositeEditCommand::cleanupAfterDeletion):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::isTableRowEmpty):
+        (WebCore::firstInSpecialElement):
+        (WebCore::lastInSpecialElement):
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        (WebCore::firstEditablePositionInNode):
+        (WebCore::DeleteSelectionCommand::removeNode):
+        (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows):
+        (WebCore::DeleteSelectionCommand::removeRedundantBlocks):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::postTextStateChangeNotification):
+        * editing/Editing.cpp:
+        (WebCore::highestNodeToRemoveInPruning):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand):
+        (WebCore::Editor::shouldInsertFragment):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::respondToChangedContents):
+        (WebCore::Editor::hasBidiSelection const):
+        (WebCore::Editor::selectionUnorderedListState const):
+        (WebCore::Editor::selectionOrderedListState const):
+        (WebCore::Editor::findEventTargetFrom const):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::notifyTextFromControls):
+        (WebCore::Editor::willApplyEditing):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::copyImage):
+        (WebCore::Editor::renderLayerDidScroll):
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::baseWritingDirectionForSelectionStart const):
+        (WebCore::Editor::confirmOrCancelCompositionAndNotifyClient):
+        (WebCore::Editor::setComposition):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::isSpellCheckingEnabledFor const):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::removeTextPlaceholder):
+        (WebCore::Editor::applyEditingStyleToBodyElement const):
+        (WebCore::findFirstMarkable):
+        (WebCore::Editor::resolveTextCheckingTypeMask):
+        (WebCore::editableTextListsAtPositionInDescendingOrder):
+        (WebCore::Editor::fontAttributesAtSelectionStart):
+        (WebCore::Editor::styleForSelectionStart):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::selectFrameElementInParentIfFullySelected):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::fixOrphanedListChild):
+        (WebCore::InsertListCommand::unlistifyParagraph):
+        * editing/InsertNestedListCommand.cpp:
+        (WebCore::InsertNestedListCommand::doApply):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::positionAvoidingPrecedingNodes):
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplacementFragment::removeUnrenderedNodes):
+        (WebCore::ReplacementFragment::removeInterchangeNodes):
+        (WebCore::ReplaceSelectionCommand::shouldMerge):
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+        (WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor):
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent const):
+        (WebCore::handleStyleSpansBeforeInsertion):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::enclosingInline):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::shouldPerformSmartReplace const):
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+        (WebCore::singleChildList):
+        (WebCore::deepestSingleChildList):
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleReplacedElement):
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::startObservingParagraphs):
+        (WebCore::tokenInfo):
+        (WebCore::isEnclosingItemBoundaryElement):
+        (WebCore::TextManipulationController::observeParagraphs):
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+        (WebCore::TextManipulationController::replace):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::document const):
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::createElementForImageOverlay):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::WebContentReader::readDataBuffer):
+        * editing/markup.cpp:
+        (WebCore::serializePreservingVisualAppearanceInternal):
+        (WebCore::sanitizedMarkupForFragmentInDocument):
+        * page/VisualViewport.cpp:
+        (WebCore::VisualViewport::update):
+        * platform/audio/cocoa/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::setupConverter):
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::enqueueSample):
+
 2021-09-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] canUseForText should take surrogate pairs into account when checking for directional characters

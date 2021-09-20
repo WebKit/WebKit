@@ -152,7 +152,7 @@ void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRe
     [table selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
     // Send the action after a short delay to simulate normal user interaction.
-    WorkQueue::main().dispatchAfter(50_ms, [this, protectedThis = makeRefPtr(*this), callbackID, table] {
+    WorkQueue::main().dispatchAfter(50_ms, [this, protectedThis = Ref { *this }, callbackID, table] {
         if ([table window])
             [table sendAction:[table action] to:[table target]];
 

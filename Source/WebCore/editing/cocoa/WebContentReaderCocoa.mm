@@ -354,7 +354,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
 
     for (auto& info : attachmentInsertionInfo) {
         auto originalElement = WTFMove(info.originalElement);
-        auto parent = makeRefPtr(originalElement->parentNode());
+        RefPtr parent { originalElement->parentNode() };
         if (!parent)
             continue;
 
@@ -840,7 +840,7 @@ bool WebContentReader::readDataBuffer(SharedBuffer& buffer, const String& type, 
     if (!shouldReplaceRichContentWithAttachments())
         return false;
 
-    auto document = makeRefPtr(frame.document());
+    RefPtr document { frame.document() };
     if (!document)
         return false;
 

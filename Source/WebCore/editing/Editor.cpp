@@ -283,7 +283,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
         return selection;
     // If the target is a text control, and the current selection is outside of its shadow tree,
     // then use the saved selection for that text control.
-    if (auto target = makeRefPtr(event->target()); is<HTMLTextFormControlElement>(target) && downcast<Element>(*target).isTextField()) {
+    if (RefPtr target = event->target(); is<HTMLTextFormControlElement>(target) && downcast<Element>(*target).isTextField()) {
         auto start = selection.start();
         if (start.isNull() || target != enclosingTextFormControl(start)) {
             if (auto range = downcast<HTMLTextFormControlElement>(*target).selection())
@@ -669,7 +669,7 @@ bool Editor::shouldInsertFragment(DocumentFragment& fragment, const std::optiona
     if (!client())
         return false;
     
-    auto child = makeRefPtr(fragment.firstChild());
+    RefPtr child { fragment.firstChild() };
     if (is<CharacterData>(child) && fragment.lastChild() == child)
         return client()->shouldInsertText(downcast<CharacterData>(*child).data(), replacingDOMRange, givenAction);
 
@@ -725,7 +725,7 @@ void Editor::replaceSelectionWithFragment(DocumentFragment& fragment, SelectRepl
     if (!isContinuousSpellCheckingEnabled())
         return;
 
-    auto nodeToCheck = makeRefPtr(selection.rootEditableElement());
+    RefPtr nodeToCheck { selection.rootEditableElement() };
     if (!nodeToCheck)
         return;
 
@@ -780,7 +780,7 @@ bool Editor::shouldInsertText(const String& text, const std::optional<SimpleRang
 void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
-        auto node = makeRefPtr(endingSelection.start().deprecatedNode());
+        RefPtr node { endingSelection.start().deprecatedNode() };
         if (AXObjectCache* cache = document().existingAXObjectCache())
             cache->postNotification(node.get(), AXObjectCache::AXValueChanged, PostTarget::ObservableParent);
     }
@@ -799,7 +799,7 @@ bool Editor::hasBidiSelection() const
     RefPtr<Node> startNode;
     if (m_document.selection().isRange()) {
         startNode = m_document.selection().selection().start().downstream().deprecatedNode();
-        auto endNode = makeRefPtr(m_document.selection().selection().end().upstream().deprecatedNode());
+        RefPtr endNode { m_document.selection().selection().end().upstream().deprecatedNode() };
         if (enclosingBlock(startNode.get()) != enclosingBlock(endNode.get()))
             return false;
     } else
@@ -829,8 +829,8 @@ TriState Editor::selectionUnorderedListState() const
         if (enclosingElementWithTag(m_document.selection().selection().start(), ulTag))
             return TriState::True;
     } else if (m_document.selection().isRange()) {
-        auto startNode = makeRefPtr(enclosingElementWithTag(m_document.selection().selection().start(), ulTag));
-        auto endNode = makeRefPtr(enclosingElementWithTag(m_document.selection().selection().end(), ulTag));
+        RefPtr startNode { enclosingElementWithTag(m_document.selection().selection().start(), ulTag) };
+        RefPtr endNode { enclosingElementWithTag(m_document.selection().selection().end(), ulTag) };
         if (startNode && endNode && startNode == endNode)
             return TriState::True;
     }
@@ -844,8 +844,8 @@ TriState Editor::selectionOrderedListState() const
         if (enclosingElementWithTag(m_document.selection().selection().start(), olTag))
             return TriState::True;
     } else if (m_document.selection().isRange()) {
-        auto startNode = makeRefPtr(enclosingElementWithTag(m_document.selection().selection().start(), olTag));
-        auto endNode = makeRefPtr(enclosingElementWithTag(m_document.selection().selection().end(), olTag));
+        RefPtr startNode { enclosingElementWithTag(m_document.selection().selection().start(), olTag) };
+        RefPtr endNode { enclosingElementWithTag(m_document.selection().selection().end(), olTag) };
         if (startNode && endNode && startNode == endNode)
             return TriState::True;
     }
@@ -934,7 +934,7 @@ void Editor::clearLastEditCommand()
 
 RefPtr<Element> Editor::findEventTargetFrom(const VisibleSelection& selection) const
 {
-    auto target = makeRefPtr(selection.start().element());
+    RefPtr target { selection.start().element() };
     if (!target)
         target = document().bodyOrFrameset();
     if (!target)
@@ -964,7 +964,7 @@ void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction, 
 
     String inputTypeName = inputTypeNameForEditingAction(editingAction);
     String inputEventData = inputEventDataForEditingStyleAndAction(*style, editingAction);
-    auto element = makeRefPtr(m_document.selection().selection().rootEditableElement());
+    RefPtr element { m_document.selection().selection().rootEditableElement() };
 
     if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
         return;
@@ -999,7 +999,7 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
 
     String inputTypeName = inputTypeNameForEditingAction(editingAction);
     String inputEventData = inputEventDataForEditingStyleAndAction(style, editingAction);
-    auto element = makeRefPtr(m_document.selection().selection().rootEditableElement());
+    RefPtr element { m_document.selection().selection().rootEditableElement() };
     if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
         return;
     if (m_document.selection().isNone())
@@ -1079,8 +1079,8 @@ void Editor::outdent()
 
 static void notifyTextFromControls(Element* startRoot, Element* endRoot)
 {
-    auto startingTextControl =  makeRefPtr(enclosingTextFormControl(firstPositionInOrBeforeNode(startRoot)));
-    auto endingTextControl = makeRefPtr(enclosingTextFormControl(firstPositionInOrBeforeNode(endRoot)));
+    RefPtr startingTextControl { enclosingTextFormControl(firstPositionInOrBeforeNode(startRoot)) };
+    RefPtr endingTextControl { enclosingTextFormControl(firstPositionInOrBeforeNode(endRoot)) };
     if (startingTextControl)
         startingTextControl->didEditInnerTextValue();
     if (endingTextControl && startingTextControl != endingTextControl)
@@ -1112,7 +1112,7 @@ bool Editor::willApplyEditing(CompositeEditCommand& command, Vector<RefPtr<Stati
     if (!command.shouldDispatchInputEvents())
         return true;
 
-    auto composition = makeRefPtr(command.composition());
+    RefPtr composition { command.composition() };
     if (!composition)
         return true;
 
@@ -1303,7 +1303,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
     // that is contained in the event target.
     selection = selectionForCommand(triggeringEvent);
     if (selection.isContentEditable()) {
-        if (auto selectionStart = makeRefPtr(selection.start().deprecatedNode())) {
+        if (RefPtr selectionStart = selection.start().deprecatedNode()) {
             Ref<Document> document(selectionStart->document());
 
             // Insert the text
@@ -1604,7 +1604,7 @@ PasteboardWriterData::URLData Editor::pasteboardWriterURL(const URL& url, const 
 
 void Editor::copyImage(const HitTestResult& result)
 {
-    auto element = makeRefPtr(result.innerNonSharedElement());
+    RefPtr element { result.innerNonSharedElement() };
     if (!element)
         return;
 
@@ -1643,7 +1643,7 @@ void Editor::renderLayerDidScroll(const RenderLayer& layer)
     if (m_imageElementsToLoadBeforeRevealingSelection.isEmpty())
         return;
 
-    auto startContainer = makeRefPtr(m_document.selection().selection().start().containerNode());
+    RefPtr startContainer { m_document.selection().selection().start().containerNode() };
     if (!startContainer)
         return;
 
@@ -1887,7 +1887,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
         return;
 #endif
 
-    auto focusedElement = makeRefPtr(document().focusedElement());
+    RefPtr focusedElement { document().focusedElement() };
     if (focusedElement && focusedElement->isTextField()) {
         if (direction == WritingDirection::Natural)
             return;
@@ -1914,7 +1914,7 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
     auto result = WritingDirection::LeftToRight;
 
     Position pos = m_document.selection().selection().visibleStart().deepEquivalent();
-    auto node = makeRefPtr(pos.deprecatedNode());
+    RefPtr node { pos.deprecatedNode() };
     if (!node)
         return result;
 
@@ -1965,7 +1965,7 @@ void Editor::confirmOrCancelCompositionAndNotifyClient()
     if (!hasComposition())
         return;
 
-    auto frame = makeRefPtr(m_document.frame());
+    RefPtr frame { m_document.frame() };
     if (!frame)
         return;
 
@@ -2087,7 +2087,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     client()->startDelayingAndCoalescingContentChangeNotifications();
 #endif
 
-    auto target = makeRefPtr(document().focusedElement());
+    RefPtr target { document().focusedElement() };
     if (target) {
         // Dispatch an appropriate composition event to the focused node.
         // We check the composition status and choose an appropriate composition event since this
@@ -2137,9 +2137,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
         // Find out what node has the composition now.
         Position base = m_document.selection().selection().base().downstream();
         Position extent = m_document.selection().selection().extent();
-        auto baseNode = makeRefPtr(base.deprecatedNode());
+        RefPtr baseNode { base.deprecatedNode() };
         unsigned baseOffset = base.deprecatedEditingOffset();
-        auto extentNode = makeRefPtr(extent.deprecatedNode());
+        RefPtr extentNode { extent.deprecatedNode() };
         unsigned extentOffset = extent.deprecatedEditingOffset();
 
         if (is<Text>(baseNode) && baseNode == extentNode && baseOffset + text.length() == extentOffset) {
@@ -2251,7 +2251,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     }
 
     // topNode defines the whole range we want to operate on 
-    auto topNode = makeRefPtr(highestEditableRoot(position));
+    RefPtr topNode { highestEditableRoot(position) };
     if (topNode)
         spellingSearchRange.end = makeBoundaryPointAfterNodeContents(*topNode);
 
@@ -2563,7 +2563,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
             if (nextPosition.isNull() || nextPosition == spellCheckingEnd)
                 break;
 
-            if (auto containerElement = makeRefPtr(nextPosition.deepEquivalent().upstream().containerOrParentElement())) {
+            if (RefPtr containerElement = nextPosition.deepEquivalent().upstream().containerOrParentElement()) {
                 if (!containerElement->isSpellCheckingEnabled())
                     break;
             }
@@ -2672,11 +2672,11 @@ bool Editor::isSpellCheckingEnabledFor(Node* node) const
 {
     if (!node)
         return false;
-    auto element = makeRefPtr(is<Element>(*node) ? downcast<Element>(node) : node->parentElement());
+    RefPtr element = is<Element>(*node) ? downcast<Element>(node) : node->parentElement();
     if (!element)
         return false;
     if (element->isInUserAgentShadowTree()) {
-        if (auto textControl = makeRefPtr(enclosingTextFormControl(firstPositionInOrBeforeNode(element.get()))))
+        if (RefPtr textControl = enclosingTextFormControl(firstPositionInOrBeforeNode(element.get())))
             return textControl->isSpellCheckingEnabled();
     }
     return element->isSpellCheckingEnabled();
@@ -2911,7 +2911,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
                 correctSpellcheckingPreservingTextCheckingParagraph(paragraph, rangeToReplace, replacement, { resultLocation, resultLength });
 
                 if (AXObjectCache* cache = document().existingAXObjectCache()) {
-                    if (auto root = makeRefPtr(m_document.selection().selection().rootEditableElement()))
+                    if (RefPtr root = m_document.selection().selection().rootEditableElement())
                         cache->postNotification(root.get(), AXObjectCache::AXAutocorrectionOccured);
                 }
 
@@ -3338,7 +3338,7 @@ void Editor::removeTextPlaceholder(TextPlaceholderElement& placeholder)
     Ref<Document> document { this->document() };
 
     // Save off state so that we can set the text insertion position to just before the placeholder element after removal.
-    auto savedRootEditableElement = makeRefPtr(placeholder.rootEditableElement());
+    RefPtr savedRootEditableElement { placeholder.rootEditableElement() };
     auto savedPositionBeforePlaceholder = positionBeforeNode(&placeholder).parentAnchoredEquivalent();
 
     // FIXME: Save the current selection if it has changed since the placeholder was inserted
@@ -3460,7 +3460,7 @@ void Editor::textDidChangeInTextArea(Element* e)
 
 void Editor::applyEditingStyleToBodyElement() const
 {
-    auto body = makeRefPtr(document().body());
+    RefPtr body { document().body() };
     if (!body)
         return;
     body->setInlineStyleProperty(CSSPropertyWordWrap, CSSValueBreakWord);
@@ -3838,7 +3838,7 @@ void Editor::editorUIUpdateTimerFired()
 
 static RefPtr<Node> findFirstMarkable(Node* startingNode)
 {
-    auto node = makeRefPtr(startingNode);
+    RefPtr node { startingNode };
     while (node) {
         {
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -3879,7 +3879,7 @@ OptionSet<TextCheckingType> Editor::resolveTextCheckingTypeMask(const Node& root
 {
 #if USE(AUTOMATIC_TEXT_REPLACEMENT) && !PLATFORM(IOS_FAMILY)
     bool onlyAllowsTextReplacement = false;
-    if (auto host = makeRefPtr(rootEditableElement.shadowHost()))
+    if (RefPtr host = rootEditableElement.shadowHost())
         onlyAllowsTextReplacement = is<HTMLInputElement>(host) && downcast<HTMLInputElement>(*host).isSpellcheckDisabledExceptTextReplacement();
     if (onlyAllowsTextReplacement)
         textCheckingOptions = textCheckingOptions & TextCheckingType::Replacement;
@@ -3983,7 +3983,7 @@ String Editor::platformContentTypeForBlobType(const String& type) const
 
 static Vector<TextList> editableTextListsAtPositionInDescendingOrder(const Position& position)
 {
-    auto startContainer = makeRefPtr(position.containerNode());
+    RefPtr startContainer { position.containerNode() };
     if (!startContainer)
         return { };
 
@@ -4093,7 +4093,7 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         break;
     }
 
-    auto typingStyle = makeRefPtr(m_document.selection().typingStyle());
+    RefPtr typingStyle { m_document.selection().typingStyle() };
     if (typingStyle && typingStyle->style()) {
         auto value = typingStyle->style()->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (value && value->isValueList()) {
@@ -4288,7 +4288,7 @@ const RenderStyle* Editor::styleForSelectionStart(RefPtr<Node>& nodeToRemove)
     if (!position.isCandidate() || position.isNull())
         return nullptr;
 
-    auto typingStyle = makeRefPtr(document().selection().typingStyle());
+    RefPtr typingStyle { document().selection().typingStyle() };
     if (!typingStyle || !typingStyle->style())
         return &position.deprecatedNode()->renderer()->style();
 
@@ -4301,7 +4301,7 @@ const RenderStyle* Editor::styleForSelectionStart(RefPtr<Node>& nodeToRemove)
 
     auto positionNode = position.deprecatedNode();
     ASSERT(positionNode);
-    auto parent = makeRefPtr(positionNode->parentNode());
+    RefPtr parent { positionNode->parentNode() };
     if (!parent || parent->appendChild(styleElement.get()).hasException())
         return nullptr;
 

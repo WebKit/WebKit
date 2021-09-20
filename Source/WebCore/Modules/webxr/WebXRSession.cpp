@@ -381,7 +381,7 @@ void WebXRSession::didCompleteShutdown()
 
     // From https://immersive-web.github.io/webxr/#shut-down-the-session
     // 7. Queue a task that fires an XRSessionEvent named end on session.
-    auto event = XRSessionEvent::create(eventNames().endEvent, { makeRefPtr(*this) });
+    auto event = XRSessionEvent::create(eventNames().endEvent, { RefPtr { this } });
     queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
 }
 

@@ -146,7 +146,7 @@ bool VisibleSelection::isOrphan() const
 
 RefPtr<Document> VisibleSelection::document() const
 {
-    auto baseDocument = makeRefPtr(m_base.document());
+    RefPtr baseDocument { m_base.document() };
     if (!baseDocument)
         return nullptr;
 

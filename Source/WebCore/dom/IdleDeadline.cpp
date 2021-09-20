@@ -35,7 +35,7 @@ namespace WebCore {
 
 DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
 {
-    auto window = makeRefPtr(document.domWindow());
+    RefPtr window { document.domWindow() };
     if (!window)
         return 0;
     return window->performance().relativeTimeFromTimeOriginInReducedResolution(m_deadline);
@@ -43,7 +43,7 @@ DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
 
 bool IdleDeadline::didTimeout(Document& document) const
 {
-    auto window = makeRefPtr(document.domWindow());
+    RefPtr window { document.domWindow() };
     if (!window)
         return true;
 

@@ -115,7 +115,7 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
 
     m_pendingFullscreenElement = element;
 
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), element = makeRefPtr(element), checkType, hasKeyboardAccess, failedPreflights, identifier = LOGIDENTIFIER] () mutable {
+    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), element = RefPtr { element }, checkType, hasKeyboardAccess, failedPreflights, identifier = LOGIDENTIFIER] () mutable {
         if (!weakThis)
             return;
 
@@ -334,7 +334,7 @@ void FullscreenManager::exitFullscreen()
 
     // 6. Return, and run the remaining steps asynchronously.
     // 7. Optionally, perform some animation.
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), newTop = makeRefPtr(newTop), fullscreenElement = m_fullscreenElement, identifier = LOGIDENTIFIER] {
+    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), newTop = RefPtr { newTop }, fullscreenElement = m_fullscreenElement, identifier = LOGIDENTIFIER] {
         if (!weakThis)
             return;
 

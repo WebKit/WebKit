@@ -428,7 +428,7 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
 {
     LOG_WITH_STREAM(Selection, stream << "FrameSelection::setSelection " << selection);
 
-    auto protectedDocument = makeRefPtr(m_document.get());
+    RefPtr protectedDocument { m_document.get() };
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;
 
@@ -1936,13 +1936,13 @@ bool FrameSelection::contains(const LayoutPoint& point) const
 void FrameSelection::selectFrameElementInParentIfFullySelected()
 {
     // Find the parent frame; if there is none, then we have nothing to do.
-    auto document = makeRefPtr(m_document.get());
+    RefPtr document { m_document.get() };
     if (!document)
         return;
-    auto frame = makeRefPtr(document->frame());
+    RefPtr frame { document->frame() };
     if (!frame)
         return;
-    auto parent = makeRefPtr(frame->tree().parent());
+    RefPtr parent { frame->tree().parent() };
     if (!parent)
         return;
     Page* page = m_document->page();
@@ -1958,10 +1958,10 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
         return;
 
     // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
-    auto ownerElement = makeRefPtr(m_document->ownerElement());
+    RefPtr ownerElement { m_document->ownerElement() };
     if (!ownerElement)
         return;
-    auto ownerElementParent = makeRefPtr(ownerElement->parentNode());
+    RefPtr ownerElementParent { ownerElement->parentNode() };
     if (!ownerElementParent)
         return;
         
