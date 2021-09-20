@@ -1,3 +1,13 @@
+2021-09-20  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for http/tests/misc/iframe-reparenting-id-collision.html.
+        https://bugs.webkit.org/show_bug.cgi?id=230427.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-09-20  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk2 arm64 ] imported/w3c/web-platform-tests/infrastructure/reftest-wait.html is a flaky image failure.

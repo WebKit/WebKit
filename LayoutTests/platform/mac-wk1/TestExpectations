@@ -1407,8 +1407,6 @@ webkit.org/b/230055 [ BigSur ] webrtc/datachannel/datachannel-page-cache-send.ht
 
 webkit.org/b/228211 css2.1/20110323/replaced-intrinsic-003.htm [ Pass Failure ]
 
-webkit.org/b/230427 http/tests/misc/iframe-reparenting-id-collision.html [ Pass Failure ]
-
 webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
 
 # webkit.org/b/214448 Web Share API is not implemented for mac-wk1

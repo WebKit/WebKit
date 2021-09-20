@@ -4691,7 +4691,5 @@ webkit.org/b/215318 fast/text/zwj-ligature.html [ ImageOnlyFailure ]
 webkit.org/b/229594 js/dfg-int16array.html [ Pass Crash ]
 webkit.org/b/229594 js/dfg-int32array-overflow-values.html [ Pass Crash ]
 
-webkit.org/b/230427 http/tests/misc/iframe-reparenting-id-collision.html [ Pass Failure ]
-
 # webkit.org/b/214448 Web Share API is not implemented in the Windows port
 http/tests/webshare/ [ Skip ]
