@@ -217,13 +217,24 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 // 2. Keep the first glyph on the empty line (or keep the whole run if it has only one glyph/completely empty).
                 if (lineStatus.hasContent)
                     return Result { Result::Action::Wrap, IsEndOfLine::Yes };
+
                 auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
                 auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
-                if (inlineTextItem.length() <= 1)
+                auto firstCodePointLength = [&]() -> size_t {
+                    auto textContent = inlineTextItem.inlineTextBox().content();
+                    if (textContent.is8Bit())
+                        return 1;
+                    UChar32 character;
+                    size_t endOfCodePoint = 0;
+                    U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
+                    return endOfCodePoint;
+                }();
+
+                if (inlineTextItem.length() <= firstCodePointLength)
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
-                auto firstCharacterWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + 1, lineStatus.contentLogicalRight);
-                auto firstCharacterRun = PartialRun { 1, firstCharacterWidth };
-                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, firstCharacterRun } };
+
+                auto firstCodePointWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + firstCodePointLength, lineStatus.contentLogicalRight);
+                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, PartialRun { firstCodePointLength, firstCodePointWidth } } };
             }
             if (trailingContent->overflows && lineStatus.hasContent) {
                 // We managed to break a run with overflow but the line already has content. Let's wrap it to the next line.

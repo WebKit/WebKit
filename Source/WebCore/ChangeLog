@@ -1,3 +1,16 @@
+2021-09-20  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Incorrect surrogate handling when dealing with short lines
+        https://bugs.webkit.org/show_bug.cgi?id=230487
+
+        Reviewed by Antti Koivisto.
+
+        Do not use 1 as the content length when dealing with text where even the first glyph does not fit the line.
+        (This functionality is mostly disabled by the missing font fallback feature. see webkit.org/b/228685 and imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-014.html)
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContent const): this matches InlineIterator::incrementByCodePointInTextNode
+
 2021-09-20  Youenn Fablet  <youenn@apple.com>
 
         Make sure RTCRtpSender.setParameters returns an exception with a valid type
