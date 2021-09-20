@@ -1,3 +1,26 @@
+2021-09-20  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Move toolchains to UserFlatpak and improve SDK upgrades
+        https://bugs.webkit.org/show_bug.cgi?id=230201
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        As toolchain archives depend on the SDK runtime, it makes sense to move them in the
+        corresponding UserFlatpak folder, so that when SDK is upgraded, stale toolchains are
+        removed. The SDK upgrade is also now handling cached SSCache authentication tokens and
+        propagating those in the newly installed SDK. Finally, SDK upgrades will now also clear
+        CMake cache files on WebKit builds, so that hopefully, existing build directories no longer
+        need to be manually removed.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.__init__):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.setup_gstbuild):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.acquire_sccache_auth_token_from_config_file):
+        (WebkitFlatpak.save_config):
+
 2021-09-17  Chris Dumez  <cdumez@apple.com>
 
         [ macOS Release ] TestWebKitAPI.NetworkProcess.BroadcastChannelCrashRecovery is flaky timing out
