@@ -1,3 +1,16 @@
+2021-09-20  Marcos Caceres  <marcos@marcosc.com>
+
+        Web Share tests are out of date
+        https://bugs.webkit.org/show_bug.cgi?id=229489
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/web-share/canShare.https.html:
+        * web-platform-tests/web-share/share-consume-activation.https.html:
+        * web-platform-tests/web-share/share-empty.https.html:
+        * web-platform-tests/web-share/share-securecontext.http.html:
+        * web-platform-tests/web-share/share-simple-manual.https.html:
+
 2021-09-20  Youenn Fablet  <youenn@apple.com>
 
         Resync WPT webrtc tests from upstream
