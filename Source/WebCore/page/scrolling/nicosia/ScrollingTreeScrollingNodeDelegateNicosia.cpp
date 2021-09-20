@@ -215,9 +215,8 @@ void ScrollingTreeScrollingNodeDelegateNicosia::scrollAnimationDidEnd(ScrollAnim
 ScrollExtents ScrollingTreeScrollingNodeDelegateNicosia::scrollExtentsForAnimation(ScrollAnimation&)
 {
     return {
-        IntPoint(minimumScrollPosition()),
-        IntPoint(maximumScrollPosition()),
-        IntSize(scrollableAreaSize())
+        scrollingNode().totalContentsSize(),
+        scrollingNode().scrollableAreaSize()
     };
 }
 

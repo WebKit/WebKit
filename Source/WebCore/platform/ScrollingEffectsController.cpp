@@ -158,7 +158,7 @@ void ScrollingEffectsController::setNearestScrollSnapIndexForAxisAndOffset(Scrol
     ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
 
     auto snapOffsets = snapState.snapOffsetsForAxis(axis);
-    LayoutSize viewportSize(m_client.viewportSize().width(), m_client.viewportSize().height());
+    LayoutSize viewportSize(m_client.scrollExtents().viewportSize);
     std::optional<unsigned> activeIndex;
     if (snapOffsets.size())
         activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutScrollOffset, 0).second;
@@ -184,12 +184,11 @@ float ScrollingEffectsController::adjustScrollDestination(ScrollEventAxis axis, 
     std::optional<LayoutUnit> originalOffsetInLayoutUnits;
     if (originalOffset)
         originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / scaleFactor);
-    LayoutSize viewportSize(m_client.viewportSize().width(), m_client.viewportSize().height());
+    LayoutSize viewportSize(m_client.scrollExtents().viewportSize);
     LayoutPoint layoutDestinationOffset(destinationOffset.x() / scaleFactor, destinationOffset.y() / scaleFactor);
     LayoutUnit offset = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits).first;
     return offset * scaleFactor;
 }
-
 
 void ScrollingEffectsController::updateActiveScrollSnapIndexForClientOffset()
 {

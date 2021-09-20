@@ -288,14 +288,12 @@ void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
     scrollToPositionWithoutAnimation(currentPosition() + deltaSize);
 }
 
-LayoutSize ScrollAnimator::scrollExtent() const
+ScrollExtents ScrollAnimator::scrollExtents() const
 {
-    return m_scrollableArea.contentsSize();
-}
-
-FloatSize ScrollAnimator::viewportSize() const
-{
-    return m_scrollableArea.visibleSize();
+    return {
+        m_scrollableArea.totalContentsSize(),
+        m_scrollableArea.visibleSize()
+    };
 }
 
 float ScrollAnimator::pageScaleFactor() const
@@ -400,11 +398,7 @@ void ScrollAnimator::scrollAnimationDidEnd(ScrollAnimation&)
 
 ScrollExtents ScrollAnimator::scrollExtentsForAnimation(ScrollAnimation&)
 {
-    return {
-        m_scrollableArea.minimumScrollOffset(),
-        m_scrollableArea.maximumScrollOffset(),
-        m_scrollableArea.visibleSize()
-    };
+    return scrollExtents();
 }
 
 

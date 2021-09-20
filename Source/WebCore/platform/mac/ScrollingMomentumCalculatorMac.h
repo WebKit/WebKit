@@ -34,7 +34,7 @@ namespace WebCore {
 
 class ScrollingMomentumCalculatorMac final : public ScrollingMomentumCalculator {
 public:
-    ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+    ScrollingMomentumCalculatorMac(const ScrollExtents&, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
 
 private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;

@@ -39,9 +39,9 @@ class ScrollingMomentumCalculator {
 public:
     WEBCORE_EXPORT static void setPlatformMomentumScrollingPredictionEnabled(bool);
 
-    static std::unique_ptr<ScrollingMomentumCalculator> create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+    static std::unique_ptr<ScrollingMomentumCalculator> create(const ScrollExtents&, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
 
-    ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+    ScrollingMomentumCalculator(const ScrollExtents&, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
     virtual ~ScrollingMomentumCalculator() = default;
 
     virtual FloatPoint scrollOffsetAfterElapsedTime(Seconds) = 0;
@@ -56,8 +56,7 @@ protected:
     FloatSize m_initialDelta;
     FloatSize m_initialVelocity;
     FloatPoint m_initialScrollOffset;
-    FloatSize m_viewportSize;
-    FloatSize m_contentSize;
+    ScrollExtents m_scrollExtents;
 
 private:
     std::optional<FloatPoint> m_retargetedScrollOffset;
@@ -65,7 +64,7 @@ private:
 
 class BasicScrollingMomentumCalculator final : public ScrollingMomentumCalculator {
 public:
-    BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+    BasicScrollingMomentumCalculator(const ScrollExtents&, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
 
 private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;

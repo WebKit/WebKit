@@ -199,15 +199,15 @@ bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatP
     };
 
     if (mayHScroll) {
-        m_horizontalData = PerAxisData(extents.minimumScrollOffset.x(),
-            extents.maximumScrollOffset.x(),
+        m_horizontalData = PerAxisData(extents.minimumScrollOffset().x(),
+            extents.maximumScrollOffset().x(),
             initialOffset.x(), accumulateVelocity(velocity.x(), m_horizontalData));
     } else
         m_horizontalData = std::nullopt;
 
     if (mayVScroll) {
-        m_verticalData = PerAxisData(extents.minimumScrollOffset.y(),
-            extents.maximumScrollOffset.y(),
+        m_verticalData = PerAxisData(extents.minimumScrollOffset().y(),
+            extents.maximumScrollOffset().y(),
             initialOffset.y(), accumulateVelocity(velocity.y(), m_verticalData));
     } else
         m_verticalData = std::nullopt;

@@ -92,13 +92,12 @@ private:
     bool scrollPositionIsNotRubberbandingEdge(const FloatPoint&) const;
     void scrollControllerAnimationTimerFired();
 
-    FloatPoint scrollOffset() const override;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
-    float pageScaleFactor() const override;
+    FloatPoint scrollOffset() const final;
+    void immediateScrollOnAxis(ScrollEventAxis, float delta) final;
+    float pageScaleFactor() const final;
     void willStartScrollSnapAnimation() final;
     void didStopScrollSnapAnimation() final;
-    LayoutSize scrollExtent() const override;
-    FloatSize viewportSize() const override;
+    ScrollExtents scrollExtents() const final;
 
     void releaseReferencesToScrollerImpsOnTheMainThread();
 

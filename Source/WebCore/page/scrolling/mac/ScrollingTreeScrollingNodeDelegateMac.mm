@@ -415,14 +415,12 @@ void ScrollingTreeScrollingNodeDelegateMac::didStopScrollSnapAnimation()
     scrollingNode().setScrollSnapInProgress(false);
 }
     
-LayoutSize ScrollingTreeScrollingNodeDelegateMac::scrollExtent() const
+ScrollExtents ScrollingTreeScrollingNodeDelegateMac::scrollExtents() const
 {
-    return LayoutSize(totalContentsSize());
-}
-
-FloatSize ScrollingTreeScrollingNodeDelegateMac::viewportSize() const
-{
-    return scrollableAreaSize();
+    return {
+        scrollingNode().totalContentsSize(),
+        scrollingNode().scrollableAreaSize()
+    };
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason) const

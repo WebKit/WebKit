@@ -1,3 +1,60 @@
+2021-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Have ScrollingMomentumCalculator work in terms of ScrollExtents
+        https://bugs.webkit.org/show_bug.cgi?id=230465
+
+        Reviewed by Wenson Hsieh.
+
+        ScrollAnimator gets min/max scroll offsets and the viewport size via a ScrollExtents
+        class. To ease a future transition of ScrollingMomentumCalculator to be a ScrollAnimator,
+        move ScrollingMomentumCalculator to use the same struct, which is modified to satisfy
+        the need to provide ScrollingMomentumCalculatorMac with the contents size.
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollExtents const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollExtent const): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::viewportSize const): Deleted.
+        * platform/ScrollAnimation.h:
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity):
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::startOrRetargetAnimation):
+        (WebCore::ScrollAnimationSmooth::updateScrollExtents):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scrollExtents const):
+        (WebCore::ScrollAnimator::scrollExtentsForAnimation):
+        (WebCore::ScrollAnimator::scrollExtent const): Deleted.
+        (WebCore::ScrollAnimator::viewportSize const): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::transitionToSnapAnimationState):
+        (WebCore::ScrollSnapAnimatorState::transitionToGlideAnimationState):
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset const):
+        * platform/ScrollSnapAnimatorState.h:
+        * platform/ScrollTypes.h:
+        (WebCore::ScrollExtents::minimumScrollOffset const):
+        (WebCore::ScrollExtents::maximumScrollOffset const):
+        * platform/ScrollingEffectsController.cpp:
+        (WebCore::ScrollingEffectsController::setNearestScrollSnapIndexForAxisAndOffset):
+        (WebCore::ScrollingEffectsController::adjustScrollDestination):
+        * platform/ScrollingEffectsController.h:
+        * platform/ScrollingMomentumCalculator.cpp:
+        (WebCore::ScrollingMomentumCalculator::ScrollingMomentumCalculator):
+        (WebCore::ScrollingMomentumCalculator::predictedDestinationOffset):
+        (WebCore::ScrollingMomentumCalculator::create):
+        (WebCore::BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator):
+        * platform/ScrollingMomentumCalculator.h:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::statelessSnapTransitionTimerFired):
+        (WebCore::ScrollingEffectsController::processWheelEventForScrollSnap):
+        * platform/mac/ScrollingMomentumCalculatorMac.h:
+        * platform/mac/ScrollingMomentumCalculatorMac.mm:
+        (WebCore::ScrollingMomentumCalculator::create):
+        (WebCore::ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac):
+        (WebCore::ScrollingMomentumCalculatorMac::ensurePlatformMomentumCalculator):
+
 2021-09-20  Marcos Caceres  <marcos@marcosc.com>
 
         Web Share permission policy "web-share" and "self" as the allowlist

@@ -268,6 +268,14 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
 
+struct ScrollExtents {
+    FloatSize contentsSize;
+    FloatSize viewportSize;
+
+    FloatPoint minimumScrollOffset() const { return { }; }
+    FloatPoint maximumScrollOffset() const { return toFloatPoint(contentsSize - viewportSize).expandedTo({ 0, 0 }); }
+};
+
 struct ScrollPositionChangeOptions {
     ScrollType type;
     ScrollClamping clamping = ScrollClamping::Clamped;

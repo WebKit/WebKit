@@ -135,8 +135,7 @@ public:
     FloatPoint scrollOffset() const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     float pageScaleFactor() const override;
-    LayoutSize scrollExtent() const override;
-    FloatSize viewportSize() const override;
+    ScrollExtents scrollExtents() const override;
 #if PLATFORM(MAC)
     void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;

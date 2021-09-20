@@ -34,12 +34,6 @@ namespace WebCore {
 class FloatPoint;
 class ScrollAnimation;
 
-struct ScrollExtents {
-    ScrollOffset minimumScrollOffset;
-    ScrollOffset maximumScrollOffset;
-    IntSize visibleSize;
-};
-
 class ScrollAnimationClient {
 public:
     virtual ~ScrollAnimationClient() = default;

@@ -93,7 +93,7 @@ bool ScrollAnimationSmooth::retargetActiveAnimation(const FloatPoint& newOffset)
 
 bool ScrollAnimationSmooth::startOrRetargetAnimation(const ScrollExtents& extents, const FloatPoint& destinationOffset)
 {
-    m_destinationOffset = destinationOffset.constrainedBetween(extents.minimumScrollOffset, extents.maximumScrollOffset);
+    m_destinationOffset = destinationOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
     bool needToScroll = m_startOffset != m_destinationOffset;
 
     if (needToScroll && !isActive()) {
@@ -113,7 +113,7 @@ void ScrollAnimationSmooth::updateScrollExtents()
 {
     auto extents = m_client.scrollExtentsForAnimation(*this);
     // FIXME: Ideally fix up m_startOffset so m_currentOffset doesn't go backwards.
-    m_destinationOffset = m_destinationOffset.constrainedBetween(extents.minimumScrollOffset, extents.maximumScrollOffset);
+    m_destinationOffset = m_destinationOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
 }
 
 Seconds ScrollAnimationSmooth::durationFromDistance(const FloatSize& delta) const

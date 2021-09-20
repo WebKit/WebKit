@@ -42,12 +42,11 @@ static inline float projectedInertialScrollDistance(float initialWheelDelta)
     return inertialScrollPredictionFactor * initialWheelDelta;
 }
 
-ScrollingMomentumCalculator::ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+ScrollingMomentumCalculator::ScrollingMomentumCalculator(const ScrollExtents& scrollExtents, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
     : m_initialDelta(initialDelta)
     , m_initialVelocity(initialVelocity)
     , m_initialScrollOffset(initialOffset)
-    , m_viewportSize(viewportSize)
-    , m_contentSize(contentSize)
+    , m_scrollExtents(scrollExtents)
 {
 }
 
@@ -62,16 +61,19 @@ void ScrollingMomentumCalculator::setRetargetedScrollOffset(const FloatPoint& ta
 
 FloatPoint ScrollingMomentumCalculator::predictedDestinationOffset()
 {
-    float initialOffsetX = clampTo<float>(m_initialScrollOffset.x() + projectedInertialScrollDistance(m_initialDelta.width()), 0, m_contentSize.width() - m_viewportSize.width());
-    float initialOffsetY = clampTo<float>(m_initialScrollOffset.y() + projectedInertialScrollDistance(m_initialDelta.height()), 0, m_contentSize.height() - m_viewportSize.height());
+    auto minScrollOffset = m_scrollExtents.minimumScrollOffset();
+    auto maxScrollOffset = m_scrollExtents.maximumScrollOffset();
+
+    float initialOffsetX = clampTo<float>(m_initialScrollOffset.x() + projectedInertialScrollDistance(m_initialDelta.width()), minScrollOffset.x(), maxScrollOffset.x());
+    float initialOffsetY = clampTo<float>(m_initialScrollOffset.y() + projectedInertialScrollDistance(m_initialDelta.height()), minScrollOffset.y(), maxScrollOffset.y());
     return { initialOffsetX, initialOffsetY };
 }
 
 #if !PLATFORM(MAC)
 
-std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const ScrollExtents& scrollExtents, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
 {
-    return makeUnique<BasicScrollingMomentumCalculator>(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
+    return makeUnique<BasicScrollingMomentumCalculator>(scrollExtents, initialOffset, initialDelta, initialVelocity);
 }
 
 void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(bool)
@@ -80,8 +82,8 @@ void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(
 
 #endif
 
-BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
-    : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity)
+BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator(const ScrollExtents& scrollExtents, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+    : ScrollingMomentumCalculator(scrollExtents, initialOffset, initialDelta, initialVelocity)
 {
 }
 

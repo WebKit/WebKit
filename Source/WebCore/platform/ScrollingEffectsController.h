@@ -111,8 +111,7 @@ public:
     virtual void willStartScrollSnapAnimation() { }
     virtual void didStopScrollSnapAnimation() { }
     virtual float pageScaleFactor() const = 0;
-    virtual LayoutSize scrollExtent() const = 0;
-    virtual FloatSize viewportSize() const = 0;
+    virtual ScrollExtents scrollExtents() const = 0;
 };
 
 class ScrollingEffectsController {

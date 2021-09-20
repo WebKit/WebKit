@@ -47,6 +47,8 @@ enum class ScrollSnapState {
     UserInteraction
 };
 
+struct ScrollExtents;
+
 class ScrollSnapAnimatorState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -76,15 +78,15 @@ public:
     FloatPoint currentAnimatedScrollOffset(MonotonicTime, bool& isAnimationComplete) const;
 
     // State transition helpers.
-    void transitionToSnapAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset);
-    void transitionToGlideAnimationState(const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
+    void transitionToSnapAnimationState(const ScrollExtents&, float pageScale, const FloatPoint& initialOffset);
+    void transitionToGlideAnimationState(const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
     void transitionToUserInteractionState();
     void transitionToDestinationReachedState();
 
 private:
-    std::pair<float, std::optional<unsigned>> targetOffsetForStartOffset(ScrollEventAxis, const FloatSize& viewportSize, float maxScrollOffset, float startOffset, FloatPoint predictedOffset, float pageScale, float initialDelta) const;
+    std::pair<float, std::optional<unsigned>> targetOffsetForStartOffset(ScrollEventAxis, const ScrollExtents&, float startOffset, FloatPoint predictedOffset, float pageScale, float initialDelta) const;
     void teardownAnimationForState(ScrollSnapState);
-    void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
+    void setupAnimationForState(ScrollSnapState, const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
 
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 

@@ -34,9 +34,9 @@ namespace WebCore {
 
 static bool gEnablePlatformMomentumScrollingPrediction = true;
 
-std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const ScrollExtents& scrollExtents, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
 {
-    return makeUnique<ScrollingMomentumCalculatorMac>(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
+    return makeUnique<ScrollingMomentumCalculatorMac>(scrollExtents, initialOffset, initialDelta, initialVelocity);
 }
 
 void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
@@ -44,8 +44,8 @@ void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(
     gEnablePlatformMomentumScrollingPrediction = enabled;
 }
 
-ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
-    : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity)
+ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac(const ScrollExtents& scrollExtents, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+    : ScrollingMomentumCalculator(scrollExtents, initialOffset, initialDelta, initialVelocity)
 {
 }
 
@@ -94,9 +94,9 @@ _NSScrollingMomentumCalculator *ScrollingMomentumCalculatorMac::ensurePlatformMo
         return m_platformMomentumCalculator.get();
 
     NSPoint origin = m_initialScrollOffset;
-    NSRect contentFrame = NSMakeRect(0, 0, m_contentSize.width(), m_contentSize.height());
+    NSRect contentFrame = NSMakeRect(0, 0, m_scrollExtents.contentsSize.width(), m_scrollExtents.contentsSize.height());
     NSPoint velocity = NSMakePoint(m_initialVelocity.width(), m_initialVelocity.height());
-    m_platformMomentumCalculator = adoptNS([[_NSScrollingMomentumCalculator alloc] initWithInitialOrigin:origin velocity:velocity documentFrame:contentFrame constrainedClippingOrigin:NSZeroPoint clippingSize:m_viewportSize tolerance:NSMakeSize(1, 1)]);
+    m_platformMomentumCalculator = adoptNS([[_NSScrollingMomentumCalculator alloc] initWithInitialOrigin:origin velocity:velocity documentFrame:contentFrame constrainedClippingOrigin:NSZeroPoint clippingSize:m_scrollExtents.viewportSize tolerance:NSMakeSize(1, 1)]);
     m_initialDestinationOrigin = [m_platformMomentumCalculator destinationOrigin];
     return m_platformMomentumCalculator.get();
 }
