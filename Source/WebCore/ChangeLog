@@ -1,3 +1,10 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS debug build fix after r282755.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+
 2021-09-20  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Add support for CSSUnparsedValue parsing through CSSStyleValue.parse()

@@ -1243,7 +1243,7 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletion
     }
 
     prepareForPictureInPictureStop([protectedThis = Ref { *this }, strongCompletionHandler = adoptNS([completionHandler copy])](bool restored)  {
-        LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler lambda(%p) - restored(%s)", protectedThis.get(), boolString(restored));
+        LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler lambda(%p) - restored(%s)", protectedThis.ptr(), boolString(restored));
         ((void (^)(BOOL))strongCompletionHandler.get())(restored);
     });
 }
