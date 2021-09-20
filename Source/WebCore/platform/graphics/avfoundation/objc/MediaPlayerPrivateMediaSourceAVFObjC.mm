@@ -658,7 +658,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
 #if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     if (m_videoOutput) {
         CMTime outputTime;
-        if (auto pixelBuffer = adoptCF([m_videoOutput copyPixelBufferForSourceTime:toCMTime(currentMediaTime()) sourceTimeForDisplay:&outputTime])) {
+        if (auto pixelBuffer = adoptCF([m_videoOutput copyPixelBufferForSourceTime:PAL::toCMTime(currentMediaTime()) sourceTimeForDisplay:&outputTime])) {
             INFO_LOG(LOGIDENTIFIER, "new pixelbuffer found for time ", PAL::toMediaTime(outputTime));
             m_lastPixelBuffer = WTFMove(pixelBuffer);
             return true;
@@ -917,7 +917,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
 bool MediaPlayerPrivateMediaSourceAVFObjC::isVideoOutputAvailable() const
 {
 #if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    return PAL::getAVSampleBufferVideoOutputClass;
+    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && PAL::getAVSampleBufferVideoOutputClass();
 #else
     return false;
 #endif

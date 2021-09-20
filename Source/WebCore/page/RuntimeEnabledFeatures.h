@@ -255,6 +255,11 @@ public:
     bool webAuthenticationModernEnabled() const { return m_areWebAuthenticationModernEnabled; }
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    void setMediaSourceInlinePaintingEnabled(bool);
+    bool mediaSourceInlinePaintingEnabled() const { return m_mediaSourceInlinePaintingEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -388,6 +393,10 @@ private:
 
 #if ENABLE(WEB_AUTHN)
     bool m_areWebAuthenticationModernEnabled { false };
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

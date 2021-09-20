@@ -801,6 +801,19 @@ MediaSessionPlaylistEnabled:
     WebCore:
       default: false
 
+MediaSourceInlinePaintingEnabled:
+  type: bool
+  humanReadableName: "Experimental MediaSource Inline Painting"
+  humanReadableDescription: "Experimental MediaSource Inline Painting"
+  condition: ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ModelElementEnabled:
   type: bool
   humanReadableName: "HTML <model> element"

@@ -64,6 +64,11 @@ public:
 
     static void ensureCodecsRegistered();
 
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    static WEBCORE_EXPORT void setMediaSourceInlinePaintingEnabled(bool);
+    static WEBCORE_EXPORT bool mediaSourceInlinePaintingEnabled();
+#endif
+
 protected:
     void scheduleSessionStatusUpdate() final;
     void updateNowPlayingInfo();

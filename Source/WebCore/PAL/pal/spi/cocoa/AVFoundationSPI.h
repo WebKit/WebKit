@@ -432,11 +432,5 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, nullable) AVSampleBufferVideoOutput *output;
 @end
 
-#if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
-@interface AVPlayerItem (AVPlayerInterstitialSupport)
-@property (nonatomic) BOOL automaticallyHandlesInterstitialEvents;
-@end
-#endif
-
 #endif // USE(APPLE_INTERNAL_SDK)
 #endif // HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
