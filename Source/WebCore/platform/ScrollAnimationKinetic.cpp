@@ -77,36 +77,36 @@ static constexpr Seconds scrollCaptureThreshold { 150_ms };
 
 namespace WebCore {
 
-ScrollAnimationKinetic::PerAxisData::PerAxisData(double lower, double upper, double initialPosition, double initialVelocity)
+ScrollAnimationKinetic::PerAxisData::PerAxisData(double lower, double upper, double initialOffset, double initialVelocity)
     : m_lower(lower)
     , m_upper(upper)
-    , m_coef1(initialVelocity / decelFriction + initialPosition)
+    , m_coef1(initialVelocity / decelFriction + initialOffset)
     , m_coef2(-initialVelocity / decelFriction)
-    , m_position(clampTo(initialPosition, lower, upper))
-    , m_velocity(initialPosition < lower || initialPosition > upper ? 0 : initialVelocity)
+    , m_offset(clampTo(initialOffset, lower, upper))
+    , m_velocity(initialOffset < lower || initialOffset > upper ? 0 : initialVelocity)
 {
 }
 
 bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds timeDelta)
 {
-    auto lastPosition = m_position;
+    auto lastOffset = m_offset;
     auto lastTime = m_elapsedTime;
     m_elapsedTime += timeDelta;
 
     double exponentialPart = exp(-decelFriction * m_elapsedTime.value());
-    m_position = m_coef1 + m_coef2 * exponentialPart;
+    m_offset = m_coef1 + m_coef2 * exponentialPart;
     m_velocity = -decelFriction * m_coef2 * exponentialPart;
 
-    if (m_position < m_lower) {
-        m_velocity = m_lower - m_position;
-        m_position = m_lower;
-    } else if (m_position > m_upper) {
-        m_velocity = m_upper - m_position;
-        m_position = m_upper;
+    if (m_offset < m_lower) {
+        m_velocity = m_lower - m_offset;
+        m_offset = m_lower;
+    } else if (m_offset > m_upper) {
+        m_velocity = m_upper - m_offset;
+        m_offset = m_upper;
     }
 
-    if (fabs(m_velocity) < 1 || (lastTime && fabs(m_position - lastPosition) < 1)) {
-        m_position = round(m_position);
+    if (fabs(m_velocity) < 1 || (lastTime && fabs(m_offset - lastOffset) < 1)) {
+        m_offset = round(m_offset);
         m_velocity = 0;
     }
 
@@ -169,12 +169,12 @@ FloatPoint ScrollAnimationKinetic::computeVelocity()
     return FloatPoint(accumDelta.x() * -1 / (last - first).value(), accumDelta.y() * -1 / (last - first).value());
 }
 
-bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll)
+bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll)
 {
     stop();
 
     if (!velocity.x() && !velocity.y()) {
-        m_position = initialPosition;
+        m_offset = initialOffset;
         m_horizontalData = std::nullopt;
         m_verticalData = std::nullopt;
         return false;
@@ -199,20 +199,20 @@ bool ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity(const FloatP
     };
 
     if (mayHScroll) {
-        m_horizontalData = PerAxisData(extents.minimumScrollPosition.x(),
-            extents.maximumScrollPosition.x(),
-            initialPosition.x(), accumulateVelocity(velocity.x(), m_horizontalData));
+        m_horizontalData = PerAxisData(extents.minimumScrollOffset.x(),
+            extents.maximumScrollOffset.x(),
+            initialOffset.x(), accumulateVelocity(velocity.x(), m_horizontalData));
     } else
         m_horizontalData = std::nullopt;
 
     if (mayVScroll) {
-        m_verticalData = PerAxisData(extents.minimumScrollPosition.y(),
-            extents.maximumScrollPosition.y(),
-            initialPosition.y(), accumulateVelocity(velocity.y(), m_verticalData));
+        m_verticalData = PerAxisData(extents.minimumScrollOffset.y(),
+            extents.maximumScrollOffset.y(),
+            initialOffset.y(), accumulateVelocity(velocity.y(), m_verticalData));
     } else
         m_verticalData = std::nullopt;
 
-    m_position = initialPosition;
+    m_offset = initialOffset;
     m_startTime = MonotonicTime::now() - tickTime / 2.;
     animationTimerFired();
     return true;
@@ -241,10 +241,10 @@ void ScrollAnimationKinetic::animationTimerFired()
     if (m_horizontalData || m_verticalData)
         m_animationTimer.startOneShot(std::max(minimumTimerInterval, delta));
 
-    double x = m_horizontalData ? m_horizontalData.value().position() : m_position.x();
-    double y = m_verticalData ? m_verticalData.value().position() : m_position.y();
-    m_position = FloatPoint(x, y);
-    m_client.scrollAnimationDidUpdate(*this, FloatPoint(m_position));
+    double x = m_horizontalData ? m_horizontalData.value().offset() : m_offset.x();
+    double y = m_verticalData ? m_verticalData.value().offset() : m_offset.y();
+    m_offset = FloatPoint(x, y);
+    m_client.scrollAnimationDidUpdate(*this, m_offset);
 }
 
 Seconds ScrollAnimationKinetic::deltaToNextFrame()

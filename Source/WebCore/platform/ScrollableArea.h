@@ -227,6 +227,7 @@ public:
 
     WEBCORE_EXPORT ScrollOffset scrollOffset() const;
 
+    ScrollOffset minimumScrollOffset() const { return { }; }
     ScrollOffset maximumScrollOffset() const;
 
     WEBCORE_EXPORT ScrollPosition scrollPositionFromOffset(ScrollOffset) const;

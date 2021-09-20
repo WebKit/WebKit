@@ -286,10 +286,7 @@ void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
     if (newPosition == currentPosition)
         return;
 
-    FloatSize adjustedDelta = newPosition - currentPosition;
-    m_currentPosition = newPosition;
-    notifyPositionChanged(adjustedDelta);
-    updateActiveScrollSnapIndexForOffset();
+    setCurrentPosition(newPosition, NotifyScrollableArea::Yes);
 }
 #endif
 

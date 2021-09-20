@@ -40,17 +40,17 @@ public:
     ScrollAnimationSmooth(ScrollAnimationClient&);
     virtual ~ScrollAnimationSmooth();
 
-    bool startAnimatedScroll(ScrollbarOrientation, ScrollGranularity, const FloatPoint& fromPosition, float step, float multiplier);
-    bool startAnimatedScrollToDestination(const FloatPoint& fromPosition, const FloatPoint& destinationPosition);
+    bool startAnimatedScroll(ScrollbarOrientation, ScrollGranularity, const FloatPoint& fromOffset, float step, float multiplier);
+    bool startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset);
 
-    bool retargetActiveAnimation(const FloatPoint& newDestination) final;
+    bool retargetActiveAnimation(const FloatPoint& newOffset) final;
     void stop() final;
     void updateScrollExtents() final;
     bool isActive() const final;
 
 
 private:
-    bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destination);
+    bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destinationOffset);
 
     void requestAnimationTimerFired();
     void startNextTimer(Seconds delay);
@@ -63,9 +63,9 @@ private:
     MonotonicTime m_startTime;
     Seconds m_duration;
 
-    FloatPoint m_startPosition;
-    FloatPoint m_destinationPosition;
-    FloatPoint m_currentPosition;
+    FloatPoint m_startOffset;
+    FloatPoint m_destinationOffset;
+    FloatPoint m_currentOffset;
     
     // FIXME: Should not have timer here, and instead use serviceAnimation().
     RunLoop::Timer<ScrollAnimationSmooth> m_animationTimer;

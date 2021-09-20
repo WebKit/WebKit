@@ -240,7 +240,7 @@ void RenderLayerScrollableArea::setScrollPosition(const ScrollPosition& position
 
 ScrollOffset RenderLayerScrollableArea::clampScrollOffset(const ScrollOffset& scrollOffset) const
 {
-    return scrollOffset.constrainedBetween(IntPoint(), maximumScrollOffset());
+    return scrollOffset.constrainedBetween(minimumScrollOffset(), maximumScrollOffset());
 }
 
 bool RenderLayerScrollableArea::requestScrollPositionUpdate(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping)

@@ -240,6 +240,7 @@ void ScrollableArea::setScrollOffsetFromInternals(const ScrollOffset& offset)
 
 void ScrollableArea::setScrollPositionFromAnimation(const ScrollPosition& position)
 {
+    // An early return here if the position hasn't changed breaks an iOS RTL scrolling test: webkit.org/b/230450.
     auto scrollType = currentScrollType();
     auto clamping = scrollType == ScrollType::User ? ScrollClamping::Unclamped : ScrollClamping::Clamped;
     if (requestScrollPositionUpdate(position, scrollType, clamping))

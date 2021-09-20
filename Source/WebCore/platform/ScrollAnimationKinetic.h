@@ -38,9 +38,9 @@ class ScrollAnimationKinetic final : public ScrollAnimation {
 private:
     class PerAxisData {
     public:
-        PerAxisData(double lower, double upper, double initialPosition, double initialVelocity);
+        PerAxisData(double lower, double upper, double initialOffset, double initialVelocity);
 
-        double position() { return m_position; }
+        double offset() { return m_offset; }
         double velocity() { return m_velocity; }
 
         bool animateScroll(Seconds timeDelta);
@@ -53,7 +53,7 @@ private:
         double m_coef2 { 0 };
 
         Seconds m_elapsedTime;
-        double m_position { 0 };
+        double m_offset { 0 };
         double m_velocity { 0 };
     };
 
@@ -61,9 +61,9 @@ public:
     ScrollAnimationKinetic(ScrollAnimationClient&);
     virtual ~ScrollAnimationKinetic();
 
-    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialPosition, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
+    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
 
-    bool retargetActiveAnimation(const FloatPoint& newDestination) final;
+    bool retargetActiveAnimation(const FloatPoint& newOffset) final;
     void stop() final;
     bool isActive() const final;
 
@@ -81,7 +81,7 @@ private:
 
     MonotonicTime m_startTime;
     RunLoop::Timer<ScrollAnimationKinetic> m_animationTimer;
-    FloatPoint m_position;
+    FloatPoint m_offset;
     Vector<PlatformWheelEvent> m_scrollHistory;
 };
 

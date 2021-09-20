@@ -438,7 +438,7 @@ void ScrollView::setScrollOffset(const ScrollOffset& offset)
 
     IntPoint constrainedOffset = offset;
     if (constrainsScrollingToContentEdge())
-        constrainedOffset = constrainedOffset.constrainedBetween(IntPoint(), maximumScrollOffset());
+        constrainedOffset = constrainedOffset.constrainedBetween(minimumScrollOffset(), maximumScrollOffset());
 
     scrollTo(scrollPositionFromOffset(constrainedOffset));
 }

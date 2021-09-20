@@ -97,13 +97,16 @@ public:
     virtual bool isScrollSnapInProgress() const { return false; }
 
     // ScrollAnimationClient
-    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) override;
+    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset) override;
     void scrollAnimationDidEnd(ScrollAnimation&) override;
     ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) override;
 
     void contentsSizeChanged() const;
 
-    void setCurrentPosition(const FloatPoint&);
+    enum NotifyScrollableArea : bool {
+        No, Yes
+    };
+    void setCurrentPosition(const FloatPoint&, NotifyScrollableArea = NotifyScrollableArea::No);
     const FloatPoint& currentPosition() const { return m_currentPosition; }
 
     KeyboardScrollingAnimator *keyboardScrollingAnimator() const override { return m_keyboardScrollingAnimator.get(); }
@@ -145,9 +148,10 @@ protected:
 
     void updateActiveScrollSnapIndexForOffset();
 
-    FloatPoint offsetFromPosition(const FloatPoint& position);
-    FloatPoint positionFromOffset(const FloatPoint& offset);
-    FloatSize deltaFromStep(ScrollbarOrientation, float step, float multiplier);
+    FloatPoint offsetFromPosition(const FloatPoint& position) const;
+    FloatPoint positionFromOffset(const FloatPoint& offset) const;
+
+    static FloatSize deltaFromStep(ScrollbarOrientation, float step, float multiplier);
 
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;

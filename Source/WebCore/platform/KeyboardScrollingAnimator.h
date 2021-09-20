@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "KeyboardEvent.h"
-#include "KeyboardScroll.h"
+#include "KeyboardEvent.h" // FIXME: This is a layering violation.
+#include "KeyboardScroll.h" // FIXME: This is a layering violation.
 #include "RectEdges.h"
 #include "ScrollAnimator.h"
 
@@ -44,7 +44,7 @@ public:
 
 private:
     void stopKeyboardScrollAnimation();
-    RectEdges<bool> scrollableDirectionsFromOffset(FloatPoint) const;
+    RectEdges<bool> scrollableDirectionsFromPosition(FloatPoint) const;
     std::optional<KeyboardScroll> keyboardScrollForKeyboardEvent(KeyboardEvent&) const;
     float scrollDistance(ScrollDirection, ScrollGranularity) const;
 

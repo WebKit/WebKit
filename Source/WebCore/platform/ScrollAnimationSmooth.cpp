@@ -54,47 +54,47 @@ ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)
 
 ScrollAnimationSmooth::~ScrollAnimationSmooth() = default;
 
-bool ScrollAnimationSmooth::startAnimatedScroll(ScrollbarOrientation orientation, ScrollGranularity, const FloatPoint& fromPosition, float step, float multiplier)
+bool ScrollAnimationSmooth::startAnimatedScroll(ScrollbarOrientation orientation, ScrollGranularity, const FloatPoint& fromOffset, float step, float multiplier)
 {
-    m_startPosition = fromPosition;
-    auto destinationPosition = fromPosition;
+    m_startOffset = fromOffset;
+    auto destinationOffset = fromOffset;
     switch (orientation) {
     case HorizontalScrollbar:
-        destinationPosition.setX(destinationPosition.x() + step * multiplier);
+        destinationOffset.setX(destinationOffset.x() + step * multiplier);
         break;
     case VerticalScrollbar:
-        destinationPosition.setY(destinationPosition.y() + step * multiplier);
+        destinationOffset.setY(destinationOffset.y() + step * multiplier);
         break;
     }
 
-    m_duration = durationFromDistance(destinationPosition - m_startPosition);
+    m_duration = durationFromDistance(destinationOffset - m_startOffset);
 
     auto extents = m_client.scrollExtentsForAnimation(*this);
-    return startOrRetargetAnimation(extents, destinationPosition);
+    return startOrRetargetAnimation(extents, destinationOffset);
 }
 
-bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& fromPosition, const FloatPoint& destinationPosition)
+bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset)
 {
-    m_startPosition = fromPosition;
-    m_duration = durationFromDistance(destinationPosition - m_startPosition);
+    m_startOffset = fromOffset;
+    m_duration = durationFromDistance(destinationOffset - m_startOffset);
 
     auto extents = m_client.scrollExtentsForAnimation(*this);
-    return startOrRetargetAnimation(extents, destinationPosition);
+    return startOrRetargetAnimation(extents, destinationOffset);
 }
 
-bool ScrollAnimationSmooth::retargetActiveAnimation(const FloatPoint& newDestination)
+bool ScrollAnimationSmooth::retargetActiveAnimation(const FloatPoint& newOffset)
 {
     if (!isActive())
         return false;
 
     auto extents = m_client.scrollExtentsForAnimation(*this);
-    return startOrRetargetAnimation(extents, newDestination);
+    return startOrRetargetAnimation(extents, newOffset);
 }
 
-bool ScrollAnimationSmooth::startOrRetargetAnimation(const ScrollExtents& extents, const FloatPoint& destinationPosition)
+bool ScrollAnimationSmooth::startOrRetargetAnimation(const ScrollExtents& extents, const FloatPoint& destinationOffset)
 {
-    m_destinationPosition = destinationPosition.constrainedBetween(extents.minimumScrollPosition, extents.maximumScrollPosition);
-    bool needToScroll = m_startPosition != m_destinationPosition;
+    m_destinationOffset = destinationOffset.constrainedBetween(extents.minimumScrollOffset, extents.maximumScrollOffset);
+    bool needToScroll = m_startOffset != m_destinationOffset;
 
     if (needToScroll && !isActive()) {
         m_startTime = MonotonicTime::now();
@@ -112,8 +112,8 @@ void ScrollAnimationSmooth::stop()
 void ScrollAnimationSmooth::updateScrollExtents()
 {
     auto extents = m_client.scrollExtentsForAnimation(*this);
-    // FIXME: Ideally fix up m_startPosition so m_currentPosition doesn't go backwards.
-    m_destinationPosition = m_destinationPosition.constrainedBetween(extents.minimumScrollPosition, extents.maximumScrollPosition);
+    // FIXME: Ideally fix up m_startOffset so m_currentOffset doesn't go backwards.
+    m_destinationOffset = m_destinationOffset.constrainedBetween(extents.minimumScrollOffset, extents.maximumScrollOffset);
 }
 
 Seconds ScrollAnimationSmooth::durationFromDistance(const FloatSize& delta) const
@@ -135,9 +135,9 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
     double fractionComplete = (currentTime - m_startTime) / m_duration;
     double progress = m_easeInOutTimingFunction->transformTime(fractionComplete, m_duration.value());
 
-    m_currentPosition = {
-        linearInterpolation(progress, m_startPosition.x(), m_destinationPosition.x()),
-        linearInterpolation(progress, m_startPosition.y(), m_destinationPosition.y()),
+    m_currentOffset = {
+        linearInterpolation(progress, m_startOffset.x(), m_destinationOffset.x()),
+        linearInterpolation(progress, m_startOffset.y(), m_destinationOffset.y()),
     };
 
     return currentTime < endTime;
@@ -153,7 +153,7 @@ void ScrollAnimationSmooth::animationTimerFired()
     if (continueAnimation)
         startNextTimer(std::max(minimumTimerInterval, deltaToNextFrame));
 
-    m_client.scrollAnimationDidUpdate(*this, m_currentPosition);
+    m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
     if (!continueAnimation)
         m_client.scrollAnimationDidEnd(*this);
 }

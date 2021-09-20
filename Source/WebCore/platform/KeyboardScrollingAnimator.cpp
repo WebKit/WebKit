@@ -39,17 +39,17 @@ KeyboardScrollingAnimator::KeyboardScrollingAnimator(ScrollAnimator& scrollAnima
 {
 }
 
-RectEdges<bool> KeyboardScrollingAnimator::scrollableDirectionsFromOffset(FloatPoint offset) const
+RectEdges<bool> KeyboardScrollingAnimator::scrollableDirectionsFromPosition(FloatPoint position) const
 {
     auto minimumScrollPosition = m_scrollAnimator.scrollableArea().minimumScrollPosition();
     auto maximumScrollPosition = m_scrollAnimator.scrollableArea().maximumScrollPosition();
 
     RectEdges<bool> edges;
 
-    edges.setTop(offset.y() > minimumScrollPosition.y());
-    edges.setBottom(offset.y() < maximumScrollPosition.y());
-    edges.setLeft(offset.x() > minimumScrollPosition.x());
-    edges.setRight(offset.x() < maximumScrollPosition.x());
+    edges.setTop(position.y() > minimumScrollPosition.y());
+    edges.setBottom(position.y() < maximumScrollPosition.y());
+    edges.setLeft(position.x() > minimumScrollPosition.x());
+    edges.setRight(position.x() < maximumScrollPosition.x());
 
     return edges;
 }
@@ -91,7 +91,7 @@ void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime curre
     KeyboardScrollParameters params = KeyboardScrollParameters::parameters();
 
     if (m_currentKeyboardScroll) {
-        auto scrollableDirections = scrollableDirectionsFromOffset(m_scrollAnimator.currentPosition());
+        auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollAnimator.currentPosition());
         auto direction = m_currentKeyboardScroll->direction;
 
         if (scrollableDirections.at(boxSideForDirection(direction))) {

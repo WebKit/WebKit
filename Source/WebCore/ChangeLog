@@ -1,3 +1,64 @@
+2021-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Have ScrollAnimation work in terms of offsets, not positions
+        https://bugs.webkit.org/show_bug.cgi?id=230450
+
+        Reviewed by Antti Koivisto.
+        
+        Scroll positions can have negative values in RTL content. It's simpler for ScrollAnimation
+        to work on zero-based scroll offsets. ScrollAnimator handles the mapping from these to
+        ScrollPositions.
+
+        Also share a bit of setCurrentPosition() code. This required adding an early return in
+        ScrollableArea::setScrollPositionFromAnimation() to avoid re-entrant calls during scrolling
+        tree commit, which would cause deadlocks on the scrolling tree lock, which happened when a
+        ScrollAnimation set a fractional offset.
+
+        * platform/KeyboardScrollingAnimator.cpp:
+        (WebCore::KeyboardScrollingAnimator::scrollableDirectionsFromPosition const): Clarify offset vs. position.
+        (WebCore::KeyboardScrollingAnimator::updateKeyboardScrollPosition):
+        (WebCore::KeyboardScrollingAnimator::scrollableDirectionsFromOffset const): Deleted.
+        * platform/KeyboardScrollingAnimator.h:
+        * platform/ScrollAnimation.h:
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::PerAxisData::PerAxisData):
+        (WebCore::ScrollAnimationKinetic::PerAxisData::animateScroll):
+        (WebCore::ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity):
+        (WebCore::ScrollAnimationKinetic::animationTimerFired):
+        * platform/ScrollAnimationKinetic.h:
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::startAnimatedScroll):
+        (WebCore::ScrollAnimationSmooth::startAnimatedScrollToDestination):
+        (WebCore::ScrollAnimationSmooth::retargetActiveAnimation):
+        (WebCore::ScrollAnimationSmooth::startOrRetargetAnimation):
+        (WebCore::ScrollAnimationSmooth::updateScrollExtents):
+        (WebCore::ScrollAnimationSmooth::animateScroll):
+        (WebCore::ScrollAnimationSmooth::animationTimerFired):
+        * platform/ScrollAnimationSmooth.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::scrollToPositionWithoutAnimation):
+        (WebCore::ScrollAnimator::scrollToPositionWithAnimation):
+        (WebCore::ScrollAnimator::offsetFromPosition const):
+        (WebCore::ScrollAnimator::positionFromOffset const):
+        (WebCore::ScrollAnimator::setCurrentPosition):
+        (WebCore::ScrollAnimator::notifyPositionChanged):
+        (WebCore::ScrollAnimator::scrollAnimationDidUpdate):
+        (WebCore::ScrollAnimator::scrollExtentsForAnimation):
+        (WebCore::ScrollAnimator::offsetFromPosition): Deleted.
+        (WebCore::ScrollAnimator::positionFromOffset): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollOffset):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setScrollPositionFromAnimation):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::minimumScrollOffset const): minimumScrollOffset is always 0,0 but add this function for symmetry.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::immediateScrollBy):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::clampScrollOffset const):
+
 2021-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Teach `WebKit::createShareableBitmap` to snapshot video elements

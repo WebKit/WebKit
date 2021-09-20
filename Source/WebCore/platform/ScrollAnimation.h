@@ -35,8 +35,8 @@ class FloatPoint;
 class ScrollAnimation;
 
 struct ScrollExtents {
-    ScrollPosition minimumScrollPosition;
-    ScrollPosition maximumScrollPosition;
+    ScrollOffset minimumScrollOffset;
+    ScrollOffset maximumScrollOffset;
     IntSize visibleSize;
 };
 
@@ -44,7 +44,7 @@ class ScrollAnimationClient {
 public:
     virtual ~ScrollAnimationClient() = default;
 
-    virtual void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) = 0;
+    virtual void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset) = 0;
     virtual void scrollAnimationDidEnd(ScrollAnimation&) = 0;
     virtual ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) = 0;
 };
@@ -57,7 +57,7 @@ public:
     { }
     virtual ~ScrollAnimation() = default;
 
-    virtual bool retargetActiveAnimation(const FloatPoint& newDestination) = 0;
+    virtual bool retargetActiveAnimation(const FloatPoint& newDestinationOffset) = 0;
     virtual void stop() = 0;
     virtual bool isActive() const = 0;
     virtual void updateScrollExtents() { };
