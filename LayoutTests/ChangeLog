@@ -1,5 +1,14 @@
 2021-09-20  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Catalina wk2 Release EWS ] imported/w3c/web-platform-tests/subresource-integrity/subresource-integrity.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230518.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-09-20  Eric Hutchison  <ehutchison@apple.com>
+
         [ BigSur Catalina iOS14 wk2 Release ] imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html is a flaky crash.
         https://bugs.webkit.org/show_bug.cgi?id=230514.
 

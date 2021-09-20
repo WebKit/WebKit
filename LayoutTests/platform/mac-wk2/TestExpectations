@@ -1674,3 +1674,5 @@ webkit.org/b/230504 [ Catalina BigSur Release ] css3/masking/reference-clip-path
 
 webkit.org/b/230514 [ Catalina BigSur Release ] imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html [ Pass Crash ]
 
+webkit.org/b/230518 [ Catalina Release ]  accessibility/mac/button-shouldnot-have-axvalue.html [ Pass Crash ]
+
