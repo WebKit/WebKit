@@ -18,3 +18,6 @@ webkit.org/b/230070 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230099 fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html [ Pass Crash ]
 
 webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pass Crash ]
+
+webkit.org/b/230509 fast/events/ios/dom-update-on-keydown-quirk.html [ Pass Failure ]
+
