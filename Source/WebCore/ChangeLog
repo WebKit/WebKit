@@ -1,3 +1,58 @@
+2021-09-20  Antoine Quint  <graouts@webkit.org>
+
+        box-shadow and text-shadow do not yield float values while interpolating
+        https://bugs.webkit.org/show_bug.cgi?id=230347
+
+        Reviewed by Simon Fraser.
+
+        ShadowData members used integer values rather than floats and thus could not represent
+        float values while interpolating. We now use float values.
+
+        Test: imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-calc.html
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::shadowForBlending):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+        * display/css/DisplayBoxDecorationPainter.cpp:
+        (WebCore::Display::BoxDecorationPainter::paintBoxShadow const):
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontAttributesAtSelectionStart):
+        * platform/LengthPoint.h:
+        (WebCore::LengthPoint::isZero const):
+        * rendering/LegacyEllipsisBox.cpp:
+        (WebCore::LegacyEllipsisBox::paint):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::applyBoxShadowForBackground):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::debugTextShadow const):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/TextPainter.cpp:
+        (WebCore::ShadowApplier::shadowIsCompletelyCoveredByText):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setTextShadow):
+        (WebCore::RenderStyle::shadowExtent):
+        (WebCore::RenderStyle::shadowInsetExtent):
+        (WebCore::RenderStyle::getShadowHorizontalExtent):
+        (WebCore::RenderStyle::getShadowVerticalExtent):
+        * rendering/style/ShadowData.cpp:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::calculateShadowExtent):
+        * rendering/style/ShadowData.h:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::x const):
+        (WebCore::ShadowData::y const):
+        (WebCore::ShadowData::location const):
+        (WebCore::ShadowData::radius const):
+        (WebCore::ShadowData::paintingExtent const):
+        (WebCore::ShadowData::spread const):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyTextOrBoxShadowValue):
+
 2021-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Adopt WeakHashMap for caching per-element text recognition results

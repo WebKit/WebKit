@@ -27,6 +27,8 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "LayoutRect.h"
+#include "Length.h"
+#include "LengthPoint.h"
 
 namespace WebCore {
 
@@ -39,8 +41,8 @@ class ShadowData {
 public:
     ShadowData() = default;
 
-    ShadowData(const LayoutPoint& location, int radius, LayoutUnit spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
-        : m_location(location)
+    ShadowData(const LengthPoint& location, Length radius, Length spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
+        : m_location(location.x(), location.y())
         , m_spread(spread)
         , m_radius(radius)
         , m_color(color)
@@ -60,19 +62,19 @@ public:
         return !(*this == o);
     }
     
-    LayoutUnit x() const { return m_location.x(); }
-    LayoutUnit y() const { return m_location.y(); }
-    LayoutPoint location() const { return m_location; }
-    int radius() const { return m_radius; }
+    const Length& x() const { return m_location.x(); }
+    const Length& y() const { return m_location.y(); }
+    const LengthPoint& location() const { return m_location; }
+    const Length& radius() const { return m_radius; }
     LayoutUnit paintingExtent() const
     {
         // Blurring uses a Gaussian function whose std. deviation is m_radius/2, and which in theory
         // extends to infinity. In 8-bit contexts, however, rounding causes the effect to become
         // undetectable at around 1.4x the radius.
         const float radiusExtentMultiplier = 1.4;
-        return LayoutUnit(ceilf(m_radius * radiusExtentMultiplier));
+        return LayoutUnit(ceilf(m_radius.value() * radiusExtentMultiplier));
     }
-    LayoutUnit spread() const { return m_spread; }
+    const Length& spread() const { return m_spread; }
     ShadowStyle style() const { return m_style; }
 
     void setColor(const Color& color) { m_color = color; }
@@ -87,9 +89,9 @@ public:
     void adjustRectForShadow(FloatRect&, int additionalOutlineSize = 0) const;
 
 private:
-    LayoutPoint m_location;
-    LayoutUnit m_spread;
-    int m_radius { 0 }; // This is the "blur radius", or twice the standard deviation of the Gaussian blur.
+    LengthPoint m_location;
+    Length m_spread;
+    Length m_radius; // This is the "blur radius", or twice the standard deviation of the Gaussian blur.
     Color m_color;
     ShadowStyle m_style { ShadowStyle::Normal };
     bool m_isWebkitBoxShadow { false };
