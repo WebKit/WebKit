@@ -67,7 +67,7 @@ struct Run {
         GenericInlineLevelBox
     };
     struct Expansion;
-    Run(size_t lineIndex, Type, const Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isLineSpanning = false);
+    Run(size_t lineIndex, Type, const Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true);
 
     bool isText() const { return m_type == Type::Text; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
@@ -83,7 +83,6 @@ struct Run {
     Type type() const { return m_type; }
 
     bool hasContent() const { return m_hasContent; }
-    bool isLineSpanning() const { return m_isLineSpanning; }
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
     const InlineRect& inkOverflow() const { return m_inkOverflow; }
@@ -120,20 +119,17 @@ private:
     InlineRect m_logicalRect;
     InlineRect m_inkOverflow;
     bool m_hasContent { true };
-    // FIXME: This is temporary until after iterators can skip over line spanning/root inline boxes.
-    bool m_isLineSpanning { false };
     Expansion m_expansion;
     std::optional<Text> m_text;
 };
 
-inline Run::Run(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, bool isLineSpanning)
+inline Run::Run(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(logicalRect)
     , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)
-    , m_isLineSpanning(isLineSpanning)
     , m_expansion(expansion)
     , m_text(text)
 {

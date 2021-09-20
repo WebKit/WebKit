@@ -197,7 +197,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInli
         inlineBoxBorderBox.moveBy(lineBoxLogicalTopLeft);
 
         m_inlineBoxRunIndexMap.add(&layoutBox, runs.size());
-        runs.append({ lineIndex, Run::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent(), true });
+        runs.append({ lineIndex, Run::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent() });
 
         auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
         auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };

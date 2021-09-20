@@ -1,3 +1,19 @@
+2021-09-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Remove redundant Run::m_isLineSpanning
+        https://bugs.webkit.org/show_bug.cgi?id=230470
+
+        Reviewed by Antti Koivisto.
+
+        FIXME got implemented. Run iterators do skip line spanning inline boxes. We don't need this anymore.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/formattingContexts/inline/InlineLineRun.h:
+        (WebCore::Layout::Run::hasContent const):
+        (WebCore::Layout::Run::Run):
+        (WebCore::Layout::Run::isLineSpanning const): Deleted.
+
 2021-09-19  Simon Fraser  <simon.fraser@apple.com>
 
         Have ScrollAnimation work in terms of offsets, not positions
