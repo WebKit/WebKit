@@ -121,35 +121,35 @@ PASS CSSUnitValue interface: existence and properties of interface prototype obj
 PASS CSSUnitValue interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSUnitValue interface: attribute value
 PASS CSSUnitValue interface: attribute unit
-FAIL CSSUnitValue must be primary interface of unitValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL Stringification of unitValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSUnitValue interface: unitValue must inherit property "value" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSUnitValue interface: unitValue must inherit property "unit" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "add(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling add(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "sub(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling sub(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "mul(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling mul(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "div(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling div(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "min(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling min(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "max(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling max(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "equals(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling equals(CSSNumberish...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "to(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling to(USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "toSum(USVString...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling toSum(USVString...) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "type()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: unitValue must inherit property "parse(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSNumericValue interface: calling parse(USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSStyleValue interface: unitValue must inherit property "parse(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSStyleValue interface: calling parse(USVString, USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSStyleValue interface: unitValue must inherit property "parseAll(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
-FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on unitValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: unitValue"
+PASS CSSUnitValue must be primary interface of unitValue
+PASS Stringification of unitValue
+PASS CSSUnitValue interface: unitValue must inherit property "value" with the proper type
+PASS CSSUnitValue interface: unitValue must inherit property "unit" with the proper type
+PASS CSSNumericValue interface: unitValue must inherit property "add(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling add(CSSNumberish...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "sub(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling sub(CSSNumberish...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "mul(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling mul(CSSNumberish...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "div(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling div(CSSNumberish...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "min(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling min(CSSNumberish...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "max(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling max(CSSNumberish...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "equals(CSSNumberish...)" with the proper type
+PASS CSSNumericValue interface: calling equals(CSSNumberish...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "to(USVString)" with the proper type
+PASS CSSNumericValue interface: calling to(USVString) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "toSum(USVString...)" with the proper type
+PASS CSSNumericValue interface: calling toSum(USVString...) on unitValue with too few arguments must throw TypeError
+PASS CSSNumericValue interface: unitValue must inherit property "type()" with the proper type
+PASS CSSNumericValue interface: unitValue must inherit property "parse(USVString)" with the proper type
+FAIL CSSNumericValue interface: calling parse(USVString) on unitValue with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parse" missing
+PASS CSSStyleValue interface: unitValue must inherit property "parse(USVString, USVString)" with the proper type
+FAIL CSSStyleValue interface: calling parse(USVString, USVString) on unitValue with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parse" missing
+PASS CSSStyleValue interface: unitValue must inherit property "parseAll(USVString, USVString)" with the proper type
+FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on unitValue with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseAll" missing
 PASS CSSMathValue interface: existence and properties of interface object
 PASS CSSMathValue interface object length
 PASS CSSMathValue interface object name
@@ -164,35 +164,35 @@ PASS CSSMathSum interface: existence and properties of interface prototype objec
 PASS CSSMathSum interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSMathSum interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSMathSum interface: attribute values
-FAIL CSSMathSum must be primary interface of mathSum assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL Stringification of mathSum assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSMathSum interface: mathSum must inherit property "values" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSMathValue interface: mathSum must inherit property "operator" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "add(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling add(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "sub(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling sub(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "mul(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling mul(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "div(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling div(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "min(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling min(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "max(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling max(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "equals(CSSNumberish...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling equals(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "to(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling to(USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "toSum(USVString...)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling toSum(USVString...) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "type()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: mathSum must inherit property "parse(USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSNumericValue interface: calling parse(USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSStyleValue interface: mathSum must inherit property "parse(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSStyleValue interface: calling parse(USVString, USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSStyleValue interface: mathSum must inherit property "parseAll(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
-FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on mathSum with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: mathSum"
+FAIL CSSMathSum must be primary interface of mathSum assert_equals: mathSum's prototype is not CSSMathSum.prototype expected [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object] but got [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object]
+FAIL Stringification of mathSum assert_class_string: class string of mathSum expected "[object CSSMathSum]" but got "[object CSSStyleValue]"
+FAIL CSSMathSum interface: mathSum must inherit property "values" with the proper type assert_inherits: property "values" not found in prototype chain
+FAIL CSSMathValue interface: mathSum must inherit property "operator" with the proper type assert_inherits: property "operator" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "add(CSSNumberish...)" with the proper type assert_inherits: property "add" not found in prototype chain
+FAIL CSSNumericValue interface: calling add(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "add" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "sub(CSSNumberish...)" with the proper type assert_inherits: property "sub" not found in prototype chain
+FAIL CSSNumericValue interface: calling sub(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "sub" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "mul(CSSNumberish...)" with the proper type assert_inherits: property "mul" not found in prototype chain
+FAIL CSSNumericValue interface: calling mul(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "mul" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "div(CSSNumberish...)" with the proper type assert_inherits: property "div" not found in prototype chain
+FAIL CSSNumericValue interface: calling div(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "div" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "min(CSSNumberish...)" with the proper type assert_inherits: property "min" not found in prototype chain
+FAIL CSSNumericValue interface: calling min(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "min" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "max(CSSNumberish...)" with the proper type assert_inherits: property "max" not found in prototype chain
+FAIL CSSNumericValue interface: calling max(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "max" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "equals(CSSNumberish...)" with the proper type assert_inherits: property "equals" not found in prototype chain
+FAIL CSSNumericValue interface: calling equals(CSSNumberish...) on mathSum with too few arguments must throw TypeError assert_inherits: property "equals" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "to(USVString)" with the proper type assert_inherits: property "to" not found in prototype chain
+FAIL CSSNumericValue interface: calling to(USVString) on mathSum with too few arguments must throw TypeError assert_inherits: property "to" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "toSum(USVString...)" with the proper type assert_inherits: property "toSum" not found in prototype chain
+FAIL CSSNumericValue interface: calling toSum(USVString...) on mathSum with too few arguments must throw TypeError assert_inherits: property "toSum" not found in prototype chain
+FAIL CSSNumericValue interface: mathSum must inherit property "type()" with the proper type assert_inherits: property "type" not found in prototype chain
+PASS CSSNumericValue interface: mathSum must inherit property "parse(USVString)" with the proper type
+PASS CSSNumericValue interface: calling parse(USVString) on mathSum with too few arguments must throw TypeError
+PASS CSSStyleValue interface: mathSum must inherit property "parse(USVString, USVString)" with the proper type
+PASS CSSStyleValue interface: calling parse(USVString, USVString) on mathSum with too few arguments must throw TypeError
+PASS CSSStyleValue interface: mathSum must inherit property "parseAll(USVString, USVString)" with the proper type
+PASS CSSStyleValue interface: calling parseAll(USVString, USVString) on mathSum with too few arguments must throw TypeError
 PASS CSSMathProduct interface: existence and properties of interface object
 PASS CSSMathProduct interface object length
 PASS CSSMathProduct interface object name
@@ -255,15 +255,15 @@ PASS CSSTransformValue interface: iterable<CSSTransformComponent>
 PASS CSSTransformValue interface: attribute length
 PASS CSSTransformValue interface: attribute is2D
 PASS CSSTransformValue interface: operation toMatrix()
-FAIL CSSTransformValue must be primary interface of transformValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL Stringification of transformValue assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTransformValue interface: transformValue must inherit property "length" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTransformValue interface: transformValue must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTransformValue interface: transformValue must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSStyleValue interface: transformValue must inherit property "parse(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSStyleValue interface: calling parse(USVString, USVString) on transformValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSStyleValue interface: transformValue must inherit property "parseAll(USVString, USVString)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on transformValue with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTransformValue must be primary interface of transformValue assert_equals: transformValue's prototype is not CSSTransformValue.prototype expected [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object] but got [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object]
+FAIL Stringification of transformValue assert_class_string: class string of transformValue expected "[object CSSTransformValue]" but got "[object CSSStyleValue]"
+FAIL CSSTransformValue interface: transformValue must inherit property "length" with the proper type assert_inherits: property "length" not found in prototype chain
+FAIL CSSTransformValue interface: transformValue must inherit property "is2D" with the proper type assert_inherits: property "is2D" not found in prototype chain
+FAIL CSSTransformValue interface: transformValue must inherit property "toMatrix()" with the proper type assert_inherits: property "toMatrix" not found in prototype chain
+PASS CSSStyleValue interface: transformValue must inherit property "parse(USVString, USVString)" with the proper type
+PASS CSSStyleValue interface: calling parse(USVString, USVString) on transformValue with too few arguments must throw TypeError
+PASS CSSStyleValue interface: transformValue must inherit property "parseAll(USVString, USVString)" with the proper type
+PASS CSSStyleValue interface: calling parseAll(USVString, USVString) on transformValue with too few arguments must throw TypeError
 PASS CSSTransformComponent interface: existence and properties of interface object
 PASS CSSTransformComponent interface object length
 PASS CSSTransformComponent interface object name
@@ -282,13 +282,13 @@ PASS CSSTranslate interface: existence and properties of interface prototype obj
 PASS CSSTranslate interface: attribute x
 PASS CSSTranslate interface: attribute y
 PASS CSSTranslate interface: attribute z
-FAIL CSSTranslate must be primary interface of transformValue[0] assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL Stringification of transformValue[0] assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTranslate interface: transformValue[0] must inherit property "x" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTranslate interface: transformValue[0] must inherit property "y" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTranslate interface: transformValue[0] must inherit property "z" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTransformComponent interface: transformValue[0] must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
-FAIL CSSTransformComponent interface: transformValue[0] must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: transformValue"
+FAIL CSSTranslate must be primary interface of transformValue[0] assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of transformValue[0] assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTranslate interface: transformValue[0] must inherit property "x" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTranslate interface: transformValue[0] must inherit property "y" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTranslate interface: transformValue[0] must inherit property "z" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: transformValue[0] must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: transformValue[0] must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSRotate interface: existence and properties of interface object
 PASS CSSRotate interface object length
 PASS CSSRotate interface object name
@@ -299,14 +299,14 @@ PASS CSSRotate interface: attribute x
 PASS CSSRotate interface: attribute y
 PASS CSSRotate interface: attribute z
 PASS CSSRotate interface: attribute angle
-FAIL CSSRotate must be primary interface of rotate assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
-FAIL Stringification of rotate assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
-FAIL CSSRotate interface: rotate must inherit property "x" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
-FAIL CSSRotate interface: rotate must inherit property "y" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
-FAIL CSSRotate interface: rotate must inherit property "z" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
-FAIL CSSRotate interface: rotate must inherit property "angle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
-FAIL CSSTransformComponent interface: rotate must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
-FAIL CSSTransformComponent interface: rotate must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: rotate"
+FAIL CSSRotate must be primary interface of rotate assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of rotate assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSRotate interface: rotate must inherit property "x" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSRotate interface: rotate must inherit property "y" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSRotate interface: rotate must inherit property "z" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSRotate interface: rotate must inherit property "angle" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: rotate must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: rotate must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSScale interface: existence and properties of interface object
 PASS CSSScale interface object length
 PASS CSSScale interface object name
@@ -316,13 +316,13 @@ PASS CSSScale interface: existence and properties of interface prototype object'
 PASS CSSScale interface: attribute x
 PASS CSSScale interface: attribute y
 PASS CSSScale interface: attribute z
-FAIL CSSScale must be primary interface of scale assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
-FAIL Stringification of scale assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
-FAIL CSSScale interface: scale must inherit property "x" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
-FAIL CSSScale interface: scale must inherit property "y" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
-FAIL CSSScale interface: scale must inherit property "z" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
-FAIL CSSTransformComponent interface: scale must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
-FAIL CSSTransformComponent interface: scale must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: scale"
+FAIL CSSScale must be primary interface of scale assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of scale assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSScale interface: scale must inherit property "x" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSScale interface: scale must inherit property "y" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSScale interface: scale must inherit property "z" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: scale must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: scale must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSSkew interface: existence and properties of interface object
 PASS CSSSkew interface object length
 PASS CSSSkew interface object name
@@ -331,12 +331,12 @@ PASS CSSSkew interface: existence and properties of interface prototype object's
 PASS CSSSkew interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSSkew interface: attribute ax
 PASS CSSSkew interface: attribute ay
-FAIL CSSSkew must be primary interface of skew assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
-FAIL Stringification of skew assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
-FAIL CSSSkew interface: skew must inherit property "ax" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
-FAIL CSSSkew interface: skew must inherit property "ay" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
-FAIL CSSTransformComponent interface: skew must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
-FAIL CSSTransformComponent interface: skew must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skew"
+FAIL CSSSkew must be primary interface of skew assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of skew assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSSkew interface: skew must inherit property "ax" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSSkew interface: skew must inherit property "ay" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: skew must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: skew must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSSkewX interface: existence and properties of interface object
 PASS CSSSkewX interface object length
 PASS CSSSkewX interface object name
@@ -344,11 +344,11 @@ PASS CSSSkewX interface: existence and properties of interface prototype object
 PASS CSSSkewX interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSSkewX interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSSkewX interface: attribute ax
-FAIL CSSSkewX must be primary interface of skewX assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
-FAIL Stringification of skewX assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
-FAIL CSSSkewX interface: skewX must inherit property "ax" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
-FAIL CSSTransformComponent interface: skewX must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
-FAIL CSSTransformComponent interface: skewX must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewX"
+FAIL CSSSkewX must be primary interface of skewX assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of skewX assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSSkewX interface: skewX must inherit property "ax" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: skewX must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: skewX must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSSkewY interface: existence and properties of interface object
 PASS CSSSkewY interface object length
 PASS CSSSkewY interface object name
@@ -356,11 +356,11 @@ PASS CSSSkewY interface: existence and properties of interface prototype object
 PASS CSSSkewY interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSSkewY interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSSkewY interface: attribute ay
-FAIL CSSSkewY must be primary interface of skewY assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
-FAIL Stringification of skewY assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
-FAIL CSSSkewY interface: skewY must inherit property "ay" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
-FAIL CSSTransformComponent interface: skewY must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
-FAIL CSSTransformComponent interface: skewY must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: skewY"
+FAIL CSSSkewY must be primary interface of skewY assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of skewY assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSSkewY interface: skewY must inherit property "ay" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: skewY must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: skewY must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSPerspective interface: existence and properties of interface object
 PASS CSSPerspective interface object length
 PASS CSSPerspective interface object name
@@ -368,11 +368,11 @@ PASS CSSPerspective interface: existence and properties of interface prototype o
 PASS CSSPerspective interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSPerspective interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSPerspective interface: attribute length
-FAIL CSSPerspective must be primary interface of perspective assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
-FAIL Stringification of perspective assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
-FAIL CSSPerspective interface: perspective must inherit property "length" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
-FAIL CSSTransformComponent interface: perspective must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
-FAIL CSSTransformComponent interface: perspective must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: perspective"
+FAIL CSSPerspective must be primary interface of perspective assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of perspective assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSPerspective interface: perspective must inherit property "length" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: perspective must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: perspective must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSMatrixComponent interface: existence and properties of interface object
 PASS CSSMatrixComponent interface object length
 PASS CSSMatrixComponent interface object name
@@ -380,11 +380,11 @@ PASS CSSMatrixComponent interface: existence and properties of interface prototy
 PASS CSSMatrixComponent interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSMatrixComponent interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSMatrixComponent interface: attribute matrix
-FAIL CSSMatrixComponent must be primary interface of matrix assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
-FAIL Stringification of matrix assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
-FAIL CSSMatrixComponent interface: matrix must inherit property "matrix" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
-FAIL CSSTransformComponent interface: matrix must inherit property "is2D" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
-FAIL CSSTransformComponent interface: matrix must inherit property "toMatrix()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: matrix"
+FAIL CSSMatrixComponent must be primary interface of matrix assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of matrix assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSMatrixComponent interface: matrix must inherit property "matrix" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: matrix must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL CSSTransformComponent interface: matrix must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
 PASS CSSImageValue interface: existence and properties of interface object
 PASS CSSImageValue interface object length
 PASS CSSImageValue interface object name

@@ -786,6 +786,7 @@ css/typedom/CSSStyleImageValue.cpp
 css/typedom/CSSNumericFactory.cpp
 css/typedom/CSSNumericValue.cpp
 css/typedom/CSSStyleValue.cpp
+css/typedom/CSSStyleValueFactory.cpp
 css/typedom/CSSUnitValue.cpp
 css/typedom/CSSUnparsedValue.cpp
 css/typedom/CSSOMVariableReferenceValue.cpp

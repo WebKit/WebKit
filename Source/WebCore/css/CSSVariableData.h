@@ -47,7 +47,7 @@ public:
         return adoptRef(*new CSSVariableData(range));
     }
 
-    CSSParserTokenRange tokenRange() { return m_tokens; }
+    CSSParserTokenRange tokenRange() const { return m_tokens; }
 
     const Vector<CSSParserToken>& tokens() const { return m_tokens; }
 

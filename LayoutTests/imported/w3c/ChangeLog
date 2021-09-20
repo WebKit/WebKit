@@ -1,3 +1,31 @@
+2021-09-20  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Add support for CSSUnparsedValue parsing through CSSStyleValue.parse()
+        https://bugs.webkit.org/show_bug.cgi?id=229702
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/css/css-typed-om/idlharness-expected.txt:
+        * web-platform-tests/css/css-typed-om/resources/testhelper.js:
+        (remove_leading_spaces):
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-ident.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-image-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-numeric.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-tokens.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-normalization/normalize-tokens.tentative.html:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parse-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parse-invalid-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parseAll-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-objects/parseAll-invalid-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssKeywordValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssPositionValue-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssStyleValue-cssom-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssStyleValue-string-expected.txt:
+        * web-platform-tests/css/css-typed-om/stylevalue-serialization/cssUnitValue.tentative-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get-shorthand-expected.txt:
+        * web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get.html:
+
 2021-09-20  Aditya Keerthi  <akeerthi@apple.com>
 
         Implement input-security

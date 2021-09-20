@@ -52,6 +52,11 @@ Ref<CSSVariableReferenceValue> CSSVariableReferenceValue::create(const CSSParser
     return adoptRef(*new CSSVariableReferenceValue(CSSVariableData::create(range), context));
 }
 
+Ref<CSSVariableReferenceValue> CSSVariableReferenceValue::create(Ref<CSSVariableData>&& data, const CSSParserContext& context)
+{
+    return adoptRef(*new CSSVariableReferenceValue(WTFMove(data), context));
+}
+
 bool CSSVariableReferenceValue::equals(const CSSVariableReferenceValue& other) const
 {
     return m_data.get() == other.m_data.get();

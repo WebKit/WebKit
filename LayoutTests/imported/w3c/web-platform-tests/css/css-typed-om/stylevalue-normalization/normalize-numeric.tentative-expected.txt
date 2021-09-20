@@ -4,5 +4,5 @@ FAIL Normalizing a <percentage> returns a percent CSSUnitValue Not implemented E
 FAIL Normalizing a <dimension> returns a CSSUnitValue with the correct unit Not implemented Error
 FAIL Normalizing a <number> with a unitless zero returns 0 Not implemented Error
 FAIL Normalizing a <calc> returns simplified expression Not implemented Error
-FAIL Normalizing a <dimension> with a unitless zero returns 0px 0px cannot be parsed as a width
+PASS Normalizing a <dimension> with a unitless zero returns 0px
 

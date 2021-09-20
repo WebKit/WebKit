@@ -1,3 +1,55 @@
+2021-09-20  Johnson Zhou  <qiaosong_zhou@apple.com>
+
+        Add support for CSSUnparsedValue parsing through CSSStyleValue.parse()
+        https://bugs.webkit.org/show_bug.cgi?id=229702
+
+        Reviewed by Alex Christensen.
+
+        Test: css-typedom/css-style-value-parse.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::operator== const):
+        * css/CSSVariableData.h:
+        (WebCore::CSSVariableData::tokenRange const):
+        (WebCore::CSSVariableData::tokenRange): Deleted.
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::CSSVariableReferenceValue::create):
+        * css/CSSVariableReferenceValue.h:
+        (WebCore::CSSVariableReferenceValue::data const):
+        * css/typedom/CSSNumericFactory.idl: Removed.
+        * css/typedom/CSSOMVariableReferenceValue.cpp:
+        (WebCore::CSSOMVariableReferenceValue::toString const):
+        (WebCore::CSSOMVariableReferenceValue::serialize const):
+        * css/typedom/CSSOMVariableReferenceValue.h:
+        * css/typedom/CSSStyleImageValue.cpp:
+        (WebCore::CSSStyleImageValue::CSSStyleImageValue):
+        * css/typedom/CSSStyleImageValue.h:
+        * css/typedom/CSSStyleValue.cpp:
+        (WebCore::CSSStyleValue::parse):
+        (WebCore::CSSStyleValue::parseAll):
+        (WebCore::CSSStyleValue::parseStyleValue): Deleted.
+        (WebCore::CSSStyleValue::reifyValue): Deleted.
+        * css/typedom/CSSStyleValue.h:
+        * css/typedom/CSSStyleValueFactory.cpp: Added.
+        (WebCore::CSSStyleValueFactory::extractCSSValues):
+        (WebCore::CSSStyleValueFactory::extractShorthandCSSValues):
+        (WebCore::CSSStyleValueFactory::extractCustomCSSValues):
+        (WebCore::CSSStyleValueFactory::parseStyleValue):
+        (WebCore::CSSStyleValueFactory::reifyValue):
+        * css/typedom/CSSStyleValueFactory.h: Copied from Source/WebCore/css/typedom/CSSOMVariableReferenceValue.h.
+        * css/typedom/CSSUnparsedValue.cpp:
+        (WebCore::CSSUnparsedValue::create):
+        (WebCore::CSSUnparsedValue::serialize const):
+        * css/typedom/CSSUnparsedValue.h:
+        * css/typedom/StylePropertyMapReadOnly.cpp:
+        (WebCore::StylePropertyMapReadOnly::reifyValue):
+        (WebCore::StylePropertyMapReadOnly::customPropertyValueOrDefault):
+        * dom/Document.cpp:
+        (WebCore::Document::registerCSSProperty):
+        * dom/StyledElement.cpp:
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Stop using makeRef(*this) / makeRefPtr(this)

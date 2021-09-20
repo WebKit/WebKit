@@ -41,7 +41,7 @@ class Document;
 class CSSStyleImageValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSStyleImageValue);
 public:
-    static Ref<CSSStyleImageValue> create(Ref<CSSImageValue>&& cssValue, Document& document)
+    static Ref<CSSStyleImageValue> create(Ref<CSSImageValue>&& cssValue, Document* document)
     {
         return adoptRef(*new CSSStyleImageValue(WTFMove(cssValue), document));
     }
@@ -54,7 +54,7 @@ public:
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSStyleImageValue; }
     
 private:
-    CSSStyleImageValue(Ref<CSSImageValue>&&, Document&);
+    CSSStyleImageValue(Ref<CSSImageValue>&&, Document*);
 
     Ref<CSSImageValue> m_cssValue;
     WeakPtr<Document> m_document;

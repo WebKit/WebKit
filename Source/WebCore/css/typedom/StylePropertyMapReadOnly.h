@@ -27,6 +27,7 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSStyleValue.h"
 #include "CSSValue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
@@ -36,7 +37,6 @@ namespace WebCore {
 class Document;
 class Element;
 class StyledElement;
-class CSSStyleValue;
 
 class StylePropertyMapReadOnly : public RefCounted<StylePropertyMapReadOnly> {
 public:

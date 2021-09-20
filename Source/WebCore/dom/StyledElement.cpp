@@ -45,6 +45,7 @@
 #include "ScriptableDocumentParser.h"
 #include "StyleProperties.h"
 #include "StylePropertyMap.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/IsoMallocInlines.h>
@@ -113,6 +114,13 @@ private:
         }
 
         CSSPropertyID propertyID = cssPropertyID(name);
+
+        auto shorthand = shorthandForProperty(propertyID);
+        for (auto longhand : shorthand) {
+            if (auto cssValue = element.inlineStyle()->getPropertyCSSValue(longhand))
+                return StylePropertyMapReadOnly::reifyValue(cssValue.get(), element.document(), &element);
+        }
+        
         if (!propertyID)
             return nullptr;
 

@@ -35,6 +35,7 @@
 #include "CSSUnparsedValue.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -59,7 +60,21 @@ ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
 
 String CSSOMVariableReferenceValue::toString() const
 {
-    return makeString("var(", m_variable, (m_fallback ? ", "_s : ""_s), (m_fallback ? m_fallback->toString() : emptyString()), ")");
+    StringBuilder builder;
+    serialize(builder);
+    
+    return builder.toString();
+}
+
+void CSSOMVariableReferenceValue::serialize(StringBuilder& builder) const
+{
+    builder.append("var(");
+    builder.append(m_variable);
+    if (m_fallback) {
+        builder.append(", ");
+        m_fallback->serialize(builder);
+    }
+    builder.append(')');
 }
 
 } // namespace WebCore

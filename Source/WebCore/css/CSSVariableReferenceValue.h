@@ -44,6 +44,7 @@ class BuilderState;
 class CSSVariableReferenceValue : public CSSValue {
 public:
     static Ref<CSSVariableReferenceValue> create(const CSSParserTokenRange&, const CSSParserContext&);
+    static Ref<CSSVariableReferenceValue> create(Ref<CSSVariableData>&&, const CSSParserContext& = strictCSSParserContext());
 
     bool equals(const CSSVariableReferenceValue&) const;
     String customCSSText() const;
@@ -54,6 +55,8 @@ public:
     // The maximum number of tokens that may be produced by a var() reference or var() fallback value.
     // https://drafts.csswg.org/css-variables/#long-variables
     static constexpr size_t maxSubstitutionTokens = 65536;
+    
+    const CSSVariableData& data() const { return m_data.get(); }
 
 private:
     explicit CSSVariableReferenceValue(Ref<CSSVariableData>&&, const CSSParserContext&);
