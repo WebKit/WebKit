@@ -1668,3 +1668,5 @@ webkit.org/b/230117 [ BigSur Debug ] http/tests/inspector/target/pause-on-inline
 
 webkit.org/b/230359 [ BigSur+ Debug ] webrtc/video-mute-vp8.html [ Pass Failure ]
 
+webkit.org/b/230502 [ Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
+
