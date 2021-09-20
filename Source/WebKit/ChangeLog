@@ -1,3 +1,45 @@
+2021-09-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Use ObjectIdentifier for WebURLSchemeHandler
+        https://bugs.webkit.org/show_bug.cgi?id=230462
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Shared/URLSchemeTaskParameters.cpp:
+        (WebKit::URLSchemeTaskParameters::decode):
+        * Shared/URLSchemeTaskParameters.h:
+        (): Deleted.
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebURLSchemeHandlerIdentifier.h: Copied from Source/WebKit/Shared/URLSchemeTaskParameters.h.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::stopURLSchemeTask):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::WebURLSchemeHandler):
+        (WebKit::generateWebURLSchemeHandlerIdentifier): Deleted.
+        * UIProcess/WebURLSchemeHandler.h:
+        (WebKit::WebURLSchemeHandler::identifier const):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::registerURLSchemeHandler):
+        (WebKit::WebPage::urlSchemeTaskWillPerformRedirection):
+        (WebKit::WebPage::urlSchemeTaskDidPerformRedirection):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveResponse):
+        (WebKit::WebPage::urlSchemeTaskDidReceiveData):
+        (WebKit::WebPage::urlSchemeTaskDidComplete):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+        (WebKit::WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+        (WebKit::WebURLSchemeHandlerProxy::create):
+        (WebKit::WebURLSchemeHandlerProxy::identifier const):
+        (): Deleted.
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Stop using makeRef(*this) / makeRefPtr(this)

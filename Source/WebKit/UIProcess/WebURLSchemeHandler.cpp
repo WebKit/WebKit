@@ -33,14 +33,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint64_t generateWebURLSchemeHandlerIdentifier()
-{
-    static uint64_t nextIdentifier = 1;
-    return nextIdentifier++;
-}
-
 WebURLSchemeHandler::WebURLSchemeHandler()
-    : m_identifier(generateWebURLSchemeHandlerIdentifier())
+    : m_identifier(WebURLSchemeHandlerIdentifier::generate())
 {
 }
 

@@ -43,7 +43,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy(WebPage& page, uint64_t identifier)
+WebURLSchemeHandlerProxy::WebURLSchemeHandlerProxy(WebPage& page, WebURLSchemeHandlerIdentifier identifier)
     : m_webPage(page)
     , m_identifier(identifier)
 {

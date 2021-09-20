@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebURLSchemeHandlerIdentifier.h"
 #include "WebURLSchemeTaskProxy.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -42,7 +43,7 @@ class WebPage;
 
 class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy> {
 public:
-    static Ref<WebURLSchemeHandlerProxy> create(WebPage& page, uint64_t identifier)
+    static Ref<WebURLSchemeHandlerProxy> create(WebPage& page, WebURLSchemeHandlerIdentifier identifier)
     {
         return adoptRef(*new WebURLSchemeHandlerProxy(page, identifier));
     }
@@ -53,7 +54,7 @@ public:
 
     void loadSynchronously(WebCore::ResourceLoaderIdentifier, WebFrame&, const WebCore::ResourceRequest&, WebCore::ResourceResponse&, WebCore::ResourceError&, Vector<uint8_t>&);
 
-    uint64_t identifier() const { return m_identifier; }
+    WebURLSchemeHandlerIdentifier identifier() const { return m_identifier; }
     WebPage& page() { return m_webPage; }
 
     void taskDidPerformRedirection(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
@@ -63,13 +64,12 @@ public:
     void taskDidStopLoading(WebURLSchemeTaskProxy&);
 
 private:
-    WebURLSchemeHandlerProxy(WebPage&, uint64_t identifier);
+    WebURLSchemeHandlerProxy(WebPage&, WebURLSchemeHandlerIdentifier);
 
     RefPtr<WebURLSchemeTaskProxy> removeTask(WebCore::ResourceLoaderIdentifier);
 
     WebPage& m_webPage;
-    // FIXME: This should be a strongly typed identifier.
-    uint64_t m_identifier { 0 };
+    WebURLSchemeHandlerIdentifier m_identifier;
 
     HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebURLSchemeTaskProxy>> m_tasks;
 }; // class WebURLSchemeHandlerProxy

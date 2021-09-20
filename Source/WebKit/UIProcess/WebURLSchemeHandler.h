@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebURLSchemeHandlerIdentifier.h"
 #include "WebURLSchemeTask.h"
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/HashMap.h>
@@ -49,7 +50,7 @@ class WebURLSchemeHandler : public RefCounted<WebURLSchemeHandler> {
 public:
     virtual ~WebURLSchemeHandler();
 
-    uint64_t identifier() const { return m_identifier; }
+    WebURLSchemeHandlerIdentifier identifier() const { return m_identifier; }
 
     void startTask(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);
     void stopTask(WebPageProxy&, WebCore::ResourceLoaderIdentifier taskIdentifier);
@@ -67,7 +68,7 @@ private:
     void removeTaskFromPageMap(WebPageProxyIdentifier, WebCore::ResourceLoaderIdentifier);
     WebProcessProxy* processForTaskIdentifier(WebCore::ResourceLoaderIdentifier) const;
 
-    uint64_t m_identifier;
+    WebURLSchemeHandlerIdentifier m_identifier;
 
     HashMap<WebCore::ResourceLoaderIdentifier, Ref<WebURLSchemeTask>> m_tasks;
     HashMap<WebPageProxyIdentifier, HashSet<WebCore::ResourceLoaderIdentifier>> m_tasksByPageIdentifier;

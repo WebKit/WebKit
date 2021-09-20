@@ -34,6 +34,7 @@
 #include "WebPageGroupData.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"
+#include "WebURLSchemeHandlerIdentifier.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/Color.h>
 #include <WebCore/DestinationColorSpace.h>
@@ -201,7 +202,7 @@ struct WebPageCreationParameters {
     String overrideContentSecurityPolicy;
     std::optional<double> cpuLimit;
 
-    HashMap<String, uint64_t> urlSchemeHandlers;
+    HashMap<String, WebURLSchemeHandlerIdentifier> urlSchemeHandlers;
     Vector<String> urlSchemesWithLegacyCustomProtocolHandlers;
 
 #if ENABLE(APPLICATION_MANIFEST)

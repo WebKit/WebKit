@@ -47,7 +47,7 @@ void URLSchemeTaskParameters::encode(IPC::Encoder& encoder) const
 
 std::optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
 {
-    std::optional<uint64_t> handlerIdentifier;
+    std::optional<WebURLSchemeHandlerIdentifier> handlerIdentifier;
     decoder >> handlerIdentifier;
     if (!handlerIdentifier)
         return std::nullopt;

@@ -77,6 +77,7 @@
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebPopupMenuProxy.h"
 #include "WebPreferences.h"
+#include "WebURLSchemeHandlerIdentifier.h"
 #include "WebUndoStepID.h"
 #include "WebsitePoliciesData.h"
 #include "WindowKind.h"
@@ -2427,7 +2428,7 @@ private:
 #endif
 
     void startURLSchemeTask(URLSchemeTaskParameters&&);
-    void stopURLSchemeTask(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier);
+    void stopURLSchemeTask(WebURLSchemeHandlerIdentifier, WebCore::ResourceLoaderIdentifier);
     void loadSynchronousURLSchemeTask(URLSchemeTaskParameters&&, Messages::WebPageProxy::LoadSynchronousURLSchemeTaskDelayedReply&&);
 
     bool checkURLReceivedFromCurrentOrPreviousWebProcess(WebProcessProxy&, const String&);
@@ -2981,7 +2982,7 @@ private:
     bool m_preferFasterClickOverDoubleTap { false };
 
     HashMap<String, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByScheme;
-    HashMap<uint64_t, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;
+    HashMap<WebURLSchemeHandlerIdentifier, Ref<WebURLSchemeHandler>> m_urlSchemeHandlersByIdentifier;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     using IdentifierToAttachmentMap = HashMap<String, Ref<API::Attachment>>;

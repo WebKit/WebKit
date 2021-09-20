@@ -521,7 +521,7 @@ messages -> WebPageProxy {
     SetIsUsingHighPerformanceWebGL(bool isUsingHighPerformanceWebGL)
 
     StartURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters)
-    StopURLSchemeTask(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier)
+    StopURLSchemeTask(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier)
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, Vector<uint8_t> data) Synchronous
 
 #if ENABLE(DEVICE_ORIENTATION)

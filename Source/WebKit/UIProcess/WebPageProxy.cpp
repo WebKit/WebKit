@@ -10002,7 +10002,7 @@ void WebPageProxy::startURLSchemeTaskShared(Ref<WebProcessProxy>&& process, Page
     iterator->value->startTask(*this, process, webPageID, WTFMove(parameters), nullptr);
 }
 
-void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier)
+void WebPageProxy::stopURLSchemeTask(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier)
 {
     MESSAGE_CHECK(m_process, decltype(m_urlSchemeHandlersByIdentifier)::isValidKey(handlerIdentifier));
     auto iterator = m_urlSchemeHandlersByIdentifier.find(handlerIdentifier);

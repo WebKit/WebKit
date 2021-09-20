@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Red Hat Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,12 @@
 
 #pragma once
 
-#include "FrameInfoData.h"
-#include "WebURLSchemeHandlerIdentifier.h"
-#include <WebCore/ResourceLoaderIdentifier.h>
-#include <WebCore/ResourceRequest.h>
-
-namespace IPC {
-class Encoder;
-class Decoder;
-}
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-struct URLSchemeTaskParameters {
-    WebURLSchemeHandlerIdentifier handlerIdentifier;
-    WebCore::ResourceLoaderIdentifier taskIdentifier;
-    WebCore::ResourceRequest request;
-    FrameInfoData frameInfo;
-    
-    void encode(IPC::Encoder&) const;
-    static std::optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
-};
+class WebURLSchemeHandler;
 
-} // namespace WebKit
+using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandler>;
+
+}
