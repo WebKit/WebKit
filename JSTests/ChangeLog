@@ -1,3 +1,15 @@
+2021-09-20  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Skip stress/json-stringify-stack-overflow.js only on memory limited systems
+        https://bugs.webkit.org/show_bug.cgi?id=230489
+
+        Unreviewed gardening.
+
+        It's currently only failing on systems with low memory, regardless of
+        the arch.
+
+        * stress/json-stringify-stack-overflow.js:
+
 2021-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add fast property enumeration mode for JSON.stringify
