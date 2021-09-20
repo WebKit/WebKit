@@ -73,7 +73,7 @@ void CGDisplayStreamCaptureSource::stop()
 
 DisplayCaptureSourceMac::DisplayFrameType CGDisplayStreamCaptureSource::generateFrame()
 {
-    return DisplayCaptureSourceMac::DisplayFrameType { RetainPtr<IOSurfaceRef> { m_currentFrame.ioSurface() } };
+    return RetainPtr { m_currentFrame.ioSurface() };
 }
 
 bool CGDisplayStreamCaptureSource::startDisplayStream()

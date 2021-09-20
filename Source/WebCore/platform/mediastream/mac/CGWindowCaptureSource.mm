@@ -153,7 +153,7 @@ RetainPtr<CGImageRef> CGWindowCaptureSource::windowImage()
 
 DisplayCaptureSourceMac::DisplayFrameType CGWindowCaptureSource::generateFrame()
 {
-    return DisplayCaptureSourceMac::DisplayFrameType { RetainPtr<CGImageRef> { windowImage() } };
+    return NativeImage::create(windowImage());
 }
 
 std::optional<CaptureDevice> CGWindowCaptureSource::windowCaptureDeviceWithPersistentID(const String& idString)

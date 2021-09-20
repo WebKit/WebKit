@@ -1,3 +1,17 @@
+2021-09-20  Darin Adler  <darin@apple.com>
+
+        Clean up overrides of DisplayCaptureSourceMac::Capturer::generateFrame()
+        <https://webkit.org/b/230491>
+        <rdar://problem/83315212>
+
+        Reviewed by David Kilzer.
+
+        * platform/mediastream/mac/CGDisplayStreamCaptureSource.cpp:
+        (WebCore::CGDisplayStreamCaptureSource::generateFrame):
+        * platform/mediastream/mac/CGWindowCaptureSource.mm:
+        (WebCore::CGWindowCaptureSource::generateFrame):
+        - Simplify return value expression.
+
 2021-09-20  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Videos appear black but audio plays normally
