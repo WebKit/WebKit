@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unfocusable.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-non-html.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-slots.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-retargeting.tentative.html

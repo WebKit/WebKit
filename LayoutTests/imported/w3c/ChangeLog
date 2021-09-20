@@ -1,3 +1,14 @@
+2021-09-20  Tim Nguyen  <ntim@apple.com>
+
+        Import inert/inert-on-non-html.tentative.html from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=230474
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/inert/inert-on-non-html.tentative.html: Added.
+        * web-platform-tests/inert/inert-on-non-html.tentative-expected.txt: Added.
+        * web-platform-tests/inert/w3c-import.log:
+
 2021-09-20  Marcos Caceres  <marcos@marcosc.com>
 
         Web Share tests are out of date
