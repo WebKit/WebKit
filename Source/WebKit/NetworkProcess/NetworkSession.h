@@ -32,6 +32,7 @@
 #include "PrivateClickMeasurementManagerInterface.h"
 #include "SandboxExtension.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/BlobRegistryImpl.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -42,6 +43,7 @@
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

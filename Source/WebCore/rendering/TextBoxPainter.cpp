@@ -49,10 +49,12 @@ TextBoxPainter::TextBoxPainter(const LegacyInlineTextBox& textBox, PaintInfo& pa
     m_emphasisMarkExistsAndIsAbove = textBox.emphasisMarkExistsAndIsAbove(m_style);
 }
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const Layout::Run& run, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : TextBoxPainter(LayoutIntegration::textRunFor(inlineContent, run), paintInfo, paintOffset)
 {
 }
+#endif
 
 TextBoxPainter::TextBoxPainter(LayoutIntegration::TextRunIterator&& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     : m_textBox(WTFMove(textBox))
@@ -323,8 +325,10 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
 
     if (auto* legacyInlineBox = textBox().legacyInlineBox())
         textPainter.setGlyphDisplayListIfNeeded(*legacyInlineBox, m_paintInfo, font, context, m_paintTextRun);
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     else
         textPainter.setGlyphDisplayListIfNeeded(*textBox().inlineBox(), m_paintInfo, font, context, m_paintTextRun);
+#endif
 
     GraphicsContextStateSaver stateSaver { context, false };
     if (markedText.type == MarkedText::DraggedContent) {

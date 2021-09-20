@@ -47,7 +47,9 @@ struct StyledMarkedText;
 class TextBoxPainter {
 public:
     TextBoxPainter(const LegacyInlineTextBox&, PaintInfo&, const LayoutPoint& paintOffset);
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     TextBoxPainter(const LayoutIntegration::InlineContent&, const Layout::Run&, PaintInfo&, const LayoutPoint& paintOffset);
+#endif
     ~TextBoxPainter();
 
     void paint();

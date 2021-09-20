@@ -1,3 +1,11 @@
+2021-09-20  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed build fix for WinCairo with ENABLE_EXPERIMENTAL_FEATURES off.
+
+        * NetworkProcess/NetworkSession.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage):
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline webkitpy test after r282755.
