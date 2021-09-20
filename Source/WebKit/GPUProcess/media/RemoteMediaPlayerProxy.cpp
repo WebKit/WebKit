@@ -84,6 +84,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 #endif
 {
     m_typesRequiringHardwareSupport = m_configuration.mediaContentTypesRequiringHardwareSupport;
+    m_renderingCanBeAccelerated = m_configuration.renderingCanBeAccelerated;
     m_player = MediaPlayer::create(*this, m_engineIdentifier);
 }
 
@@ -172,6 +173,7 @@ void RemoteMediaPlayerProxy::cancelLoad()
 
 void RemoteMediaPlayerProxy::prepareToPlay()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_player->prepareToPlay();
 }
 
@@ -233,11 +235,13 @@ void RemoteMediaPlayerProxy::setPitchCorrectionAlgorithm(WebCore::MediaPlayer::P
 
 void RemoteMediaPlayerProxy::prepareForRendering()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_player->prepareForRendering();
 }
 
 void RemoteMediaPlayerProxy::setPageIsVisible(bool visible)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, visible);
     m_player->setPageIsVisible(visible);
 }
 
@@ -255,6 +259,7 @@ void RemoteMediaPlayerProxy::setVideoFullscreenGravity(WebCore::MediaPlayerEnums
 
 void RemoteMediaPlayerProxy::acceleratedRenderingStateChanged(bool renderingCanBeAccelerated)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, renderingCanBeAccelerated);
     m_renderingCanBeAccelerated = renderingCanBeAccelerated;
     m_player->acceleratedRenderingStateChanged();
 }
@@ -348,9 +353,11 @@ void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
+    auto newReadyState = m_player->readyState();
+    ALWAYS_LOG(LOGIDENTIFIER, newReadyState);
     updateCachedVideoMetrics();
     updateCachedState(true);
-    m_cachedState.readyState = m_player->readyState();
+    m_cachedState.readyState = newReadyState;
     m_cachedState.networkState = m_player->networkState();
     m_cachedState.duration = m_player->duration();
 

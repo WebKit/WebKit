@@ -150,6 +150,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     proxyConfiguration.networkInterfaceName = player->mediaPlayerNetworkInterfaceName();
 #endif
     proxyConfiguration.mediaContentTypesRequiringHardwareSupport = player->mediaContentTypesRequiringHardwareSupport();
+    proxyConfiguration.renderingCanBeAccelerated = player->renderingCanBeAccelerated();
     proxyConfiguration.preferredAudioCharacteristics = player->preferredAudioCharacteristics();
 #if !RELEASE_LOG_DISABLED
     proxyConfiguration.logIdentifier = reinterpret_cast<uint64_t>(player->mediaPlayerLogIdentifier());

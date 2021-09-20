@@ -1,3 +1,45 @@
+2021-09-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Videos sometimes don't render when loaded in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=230495
+        rdar://83205407
+
+        Reviewed by Jer Noble.
+
+        The media players choose what type of video output to create based on whether
+        or not the renderer can support accelerated rendering. We were only pushing
+        this state to the GPU process when the renderer changed to require backing, but
+        that state was lost if that transition happened before the AVFoundation-backed
+        media player was created. Change this to push the current state from the web process
+        when a remote media player is created, and again whenever its readyState changes.
+
+        We haven't figured out how to reliably reproduce this, so https://webkit.org/b/230500
+        tracks figuring that out and creating a test.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy): Set m_renderingCanBeAccelerated
+        from the configuration.
+        (WebKit::RemoteMediaPlayerProxy::prepareToPlay): Add logging.
+        (WebKit::RemoteMediaPlayerProxy::prepareForRendering): Ditto.
+        (WebKit::RemoteMediaPlayerProxy::setPageIsVisible): Ditto.
+        (WebKit::RemoteMediaPlayerProxy::acceleratedRenderingStateChanged): Ditto.
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged): Ditto.
+
+        * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h: Add renderingCanBeAccelerated.
+        (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerProxyConfiguration::decode): Decode it.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::readyStateChanged): Call acceleratedRenderingStateChanged
+        if the state has changed.
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged): Remember
+        the state.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer): Pass the accelerated 
+        rendering state with the configuration.
+
 2021-09-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed build fix for WinCairo with ENABLE_EXPERIMENTAL_FEATURES off.
