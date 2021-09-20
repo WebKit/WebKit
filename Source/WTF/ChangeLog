@@ -1,3 +1,15 @@
+2021-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor some code that controls Live Text selection behavior
+        https://bugs.webkit.org/show_bug.cgi?id=230482
+        rdar://83173597
+
+        Reviewed by Megan Gardner.
+
+        Add an (off-by-default) internal feature to enable certain enhancements to Live Text.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2021-09-20  Brent Fulgham  <bfulgham@apple.com>
 
         Remove XSS Auditor: Part 1 (Turn off by default)

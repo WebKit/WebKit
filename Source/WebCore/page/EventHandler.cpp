@@ -143,6 +143,10 @@
 #include "PointerLockController.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/EventHandlerAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2516,18 +2520,28 @@ static bool hierarchyHasCapturingEventListeners(Element* element, const AtomStri
 
 RefPtr<Element> EventHandler::textRecognitionCandidateElement() const
 {
-    RefPtr shadowHost = m_elementUnderMouse ? m_elementUnderMouse->shadowHost() : nullptr;
-    if (!shadowHost)
+    RefPtr candidateElement = m_elementUnderMouse;
+    if (candidateElement) {
+        if (auto shadowHost = candidateElement->shadowHost())
+            candidateElement = shadowHost;
+    }
+
+    if (!candidateElement)
         return nullptr;
 
-    auto renderer = shadowHost->renderer();
+    auto renderer = candidateElement->renderer();
     if (!is<RenderImage>(renderer))
         return nullptr;
 
-    if (is<HTMLVideoElement>(*shadowHost))
+#if USE(APPLE_INTERNAL_SDK)
+    if (isAdditionalTextRecognitionCandidateElement(*candidateElement))
+        return candidateElement;
+#endif
+
+    if (is<HTMLVideoElement>(*candidateElement))
         return nullptr;
 
-    return shadowHost;
+    return candidateElement;
 }
 
 void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node* targetNode, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)

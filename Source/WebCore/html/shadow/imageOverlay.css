@@ -24,6 +24,7 @@
 
 div#image-overlay {
     display: inline-block;
+    pointer-events: none;
     position: relative;
     overflow: hidden;
     color: transparent;
@@ -40,6 +41,10 @@ div.image-overlay-line, .image-overlay-text {
     overflow: hidden;
 }
 
+div.image-overlay-line {
+    pointer-events: auto;
+}
+
 .image-overlay-text::selection {
     color: transparent;
     background-color: highlight;
@@ -48,5 +53,4 @@ div.image-overlay-line, .image-overlay-text {
 div.image-overlay-data-detector-result {
     position: absolute;
     -webkit-user-select: none;
-    pointer-events: none;
 }
