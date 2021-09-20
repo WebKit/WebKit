@@ -1,3 +1,23 @@
+2021-09-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        WebKit might load custom URI scheme request content multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=229116
+
+        Reviewed by Brady Eidson.
+
+        Let's load the same URL 50 times and make sure all loads complete with the same content.
+        Without the fix, the test hangs forever spinning its main loop, because only a few of the
+        requests actually complete, so the test gets stuck waiting.
+
+        Note I picked 50 because when running the test 100 times, wpebackend-fdo dies to an
+        unrelated problem: its internal Wayland registry stops registering new global objects, and
+        each new web process starts crashing. That's weird, but not the problem we're trying to
+        solve today.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (createTestWebViewWithWebContext):
+        (testWebContextURIScheme):
+
 2021-09-20  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Move FileLock from webkitpy

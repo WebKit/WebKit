@@ -434,7 +434,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _resourceLoadDelegate = makeUnique<WebKit::ResourceLoadDelegate>(self);
 
     for (auto& pair : pageConfiguration->urlSchemeHandlers())
-        _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(static_cast<WebKit::WebURLSchemeHandlerCocoa&>(pair.value.get()).apiHandler()), pair.key);
+        _page->setURLSchemeHandlerForScheme(pair.value.get(), pair.key);
 
     _page->setCocoaView(self);
 

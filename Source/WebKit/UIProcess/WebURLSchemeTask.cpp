@@ -226,7 +226,7 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     }
 
     m_process->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_identifier, error), m_webPageID);
-    m_urlSchemeHandler->taskCompleted(*this);
+    m_urlSchemeHandler->taskCompleted(pageProxyID(), *this);
 
     return ExceptionType::None;
 }

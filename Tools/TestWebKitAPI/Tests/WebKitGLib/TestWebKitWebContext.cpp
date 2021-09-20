@@ -113,7 +113,8 @@ public:
         test->m_uriSchemeRequest = request;
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
 
-        g_assert_true(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
+        if (test->m_uriSchemeRequestCallbackUsesTestWebView)
+            g_assert_true(webkit_uri_scheme_request_get_web_view(request) == test->m_webView);
 
         const char* scheme = webkit_uri_scheme_request_get_scheme(request);
         g_assert_nonnull(scheme);
@@ -164,6 +165,8 @@ public:
 
     GRefPtr<WebKitURISchemeRequest> m_uriSchemeRequest;
     HashMap<String, URISchemeHandler> m_handlersMap;
+    bool m_uriSchemeRequestCallbackUsesTestWebView { true };
+    int m_loadCounter { 0 };
 };
 
 String generateHTMLContent(unsigned contentLength)
@@ -191,6 +194,21 @@ String generateHTMLContent(unsigned contentLength)
     builder.append("</body></html>");
 
     return builder.toString();
+}
+
+static GRefPtr<WebKitWebView> createTestWebViewWithWebContext(WebKitWebContext* context)
+{
+    WebKitWebView* view = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+        "backend", Test::createWebViewBackend(),
+#endif
+        "web-context", context,
+        nullptr));
+
+#if PLATFORM(GTK)
+    g_object_ref_sink(view);
+#endif
+    return adoptGRef(view);
 }
 
 static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
@@ -278,6 +296,41 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_true(test->m_loadEvents.contains(LoadTrackingTest::ProvisionalLoadFailed));
     g_assert_true(test->m_loadFailed);
     g_assert_error(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CLOSED);
+
+    // Torture test time: make sure it still works if we issue a bunch of different requests all at
+    // once. Each request should finish and return exactly the same data.
+    int numIterations = 50;
+    GRefPtr<WebKitWebView> views[numIterations];
+    test->m_uriSchemeRequestCallbackUsesTestWebView = false;
+    for (int i = 0; i < numIterations; i++) {
+        views[i] = createTestWebViewWithWebContext(test->m_webContext.get());
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(views[i].get()));
+        webkit_web_view_load_uri(views[i].get(), "foo:blank");
+        g_signal_connect(views[i].get(), "load-changed", G_CALLBACK(+[] (WebKitWebView* webView, WebKitLoadEvent loadEvent, gpointer userData) {
+            auto* test = static_cast<URISchemeTest*>(userData);
+            if (loadEvent != WEBKIT_LOAD_FINISHED)
+                return;
+            test->m_loadCounter--;
+            if (!test->m_loadCounter)
+                g_main_loop_quit(test->m_mainLoop);
+        }), test);
+    }
+    test->m_loadCounter = numIterations;
+    g_main_loop_run(test->m_mainLoop);
+
+    for (int i = 0; i < numIterations; i++) {
+        WebKitWebResource* resource = webkit_web_view_get_main_resource(views[i].get());
+        g_assert_nonnull(resource);
+        webkit_web_resource_get_data(resource, nullptr, +[] (GObject* object, GAsyncResult* result, gpointer userData) {
+            auto* test = static_cast<URISchemeTest*>(userData);
+            gsize dataSize;
+            unsigned char* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(object), result, &dataSize, nullptr);
+            g_assert_cmpint(strncmp(reinterpret_cast<char*>(data), kBarHTML, dataSize), ==, 0);
+            g_main_loop_quit(test->m_mainLoop);
+        }, test);
+        g_main_loop_run(test->m_mainLoop);
+    }
+    test->m_uriSchemeRequestCallbackUsesTestWebView = true;
 }
 
 #if PLATFORM(GTK)

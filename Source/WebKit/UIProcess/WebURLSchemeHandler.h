@@ -55,7 +55,7 @@ public:
     void startTask(WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);
     void stopTask(WebPageProxy&, WebCore::ResourceLoaderIdentifier taskIdentifier);
     void stopAllTasksForPage(WebPageProxy&, WebProcessProxy*);
-    void taskCompleted(WebURLSchemeTask&);
+    void taskCompleted(WebPageProxyIdentifier, WebURLSchemeTask&);
 
 protected:
     WebURLSchemeHandler();
@@ -66,11 +66,11 @@ private:
     virtual void platformTaskCompleted(WebURLSchemeTask&) { };
 
     void removeTaskFromPageMap(WebPageProxyIdentifier, WebCore::ResourceLoaderIdentifier);
-    WebProcessProxy* processForTaskIdentifier(WebCore::ResourceLoaderIdentifier) const;
+    WebProcessProxy* processForTaskIdentifier(WebPageProxy&, WebCore::ResourceLoaderIdentifier) const;
 
     WebURLSchemeHandlerIdentifier m_identifier;
 
-    HashMap<WebCore::ResourceLoaderIdentifier, Ref<WebURLSchemeTask>> m_tasks;
+    HashMap<std::pair<WebCore::ResourceLoaderIdentifier, WebPageProxyIdentifier>, Ref<WebURLSchemeTask>> m_tasks;
     HashMap<WebPageProxyIdentifier, HashSet<WebCore::ResourceLoaderIdentifier>> m_tasksByPageIdentifier;
     
     SyncLoadCompletionHandler m_syncLoadCompletionHandler;
