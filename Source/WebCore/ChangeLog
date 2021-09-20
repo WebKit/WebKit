@@ -1,3 +1,16 @@
+2021-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Make sure RTCRtpSender.setParameters returns an exception with a valid type
+        https://bugs.webkit.org/show_bug.cgi?id=230476
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::setParameters):
+        Make sure to convert correctly the error.
+
 2021-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         ScrollSnapAnimatorState should be explicit about when it starts animations

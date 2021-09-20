@@ -1,3 +1,13 @@
+2021-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Make sure RTCRtpSender.setParameters returns an exception with a valid type
+        https://bugs.webkit.org/show_bug.cgi?id=230476
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/webrtc/RTCRtpParameters-encodings-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpParameters-transactionId-expected.txt:
+
 2021-09-20  Antoine Quint  <graouts@webkit.org>
 
         box-shadow and text-shadow do not yield float values while interpolating

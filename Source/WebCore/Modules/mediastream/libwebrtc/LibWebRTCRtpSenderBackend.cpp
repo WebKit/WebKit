@@ -150,7 +150,7 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
 
     auto error = m_rtcSender->SetParameters(rtcParameters);
     if (!error.ok()) {
-        promise.reject(Exception { InvalidStateError, error.message() });
+        promise.reject(toException(error));
         return;
     }
     promise.resolve();

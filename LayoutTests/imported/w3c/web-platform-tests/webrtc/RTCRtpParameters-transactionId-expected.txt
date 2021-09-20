@@ -1,7 +1,7 @@
 
 PASS sender.getParameters() should return different transaction IDs for each call
-FAIL sender.setParameters() with transaction ID different from last getParameters() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "InvalidStateError: Failed to set parameters since the transaction_id doesn't match the last value returned from getParameters()" that is not a DOMException InvalidModificationError: property "code" is equal to 11, expected 13
+PASS sender.setParameters() with transaction ID different from last getParameters() should reject with InvalidModificationError
 PASS sender.setParameters() with transaction ID unset should reject with TypeError
 PASS setParameters() twice with the same parameters should reject with InvalidStateError
-FAIL setParameters() with parameters older than last getParameters() should reject with InvalidModificationError promise_rejects_dom: function "function () { throw e }" threw object "InvalidStateError: Failed to set parameters since the transaction_id doesn't match the last value returned from getParameters()" that is not a DOMException InvalidModificationError: property "code" is equal to 11, expected 13
+PASS setParameters() with parameters older than last getParameters() should reject with InvalidModificationError
 
