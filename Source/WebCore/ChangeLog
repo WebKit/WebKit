@@ -1,5 +1,19 @@
 2021-09-20  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] canUseForText should take surrogate pairs into account when checking for directional characters
+        https://bugs.webkit.org/show_bug.cgi?id=230498
+
+        Reviewed by Antti Koivisto.
+
+        In this patch we start using U16_NEXT to properly loop through the characters to find their directions (RTL vs LTR).
+        (Note that this is temporary and will be removed when bidi handling is enabled for IFC)
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForText):
+        (WebCore::LayoutIntegration::canUseForCharacter): Deleted. These functions have shrunk so much, we don't need to template them anymore. 
+
+2021-09-20  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Incorrect surrogate handling when dealing with short lines
         https://bugs.webkit.org/show_bug.cgi?id=230487
 

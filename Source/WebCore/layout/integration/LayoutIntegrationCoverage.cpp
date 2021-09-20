@@ -397,50 +397,43 @@ static void printModernLineLayoutCoverage(void)
 }
 #endif
 
-template <typename CharacterType> OptionSet<AvoidanceReason> canUseForCharacter(CharacterType, IncludeReasons);
-
-template<> OptionSet<AvoidanceReason> canUseForCharacter(UChar character, IncludeReasons includeReasons)
-{
-    OptionSet<AvoidanceReason> reasons;
-    UCharDirection direction = u_charDirection(character);
-    if (direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
-        || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
-        || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
-        || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
-
-    return reasons;
-}
-
-template<> OptionSet<AvoidanceReason> canUseForCharacter(LChar, IncludeReasons)
-{
-    return { };
-}
-
-template <typename CharacterType>
-static OptionSet<AvoidanceReason> canUseForText(const CharacterType* text, unsigned length, const FontCascade& fontCascade, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCascade& fontCascade, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
     auto& primaryFont = fontCascade.primaryFont();
+    auto length = text.length();
 
-    for (unsigned i = 0; i < length; ++i) {
-        auto character = text[i];
-        auto characterReasons = canUseForCharacter(character, includeReasons);
-        if (characterReasons)
-            ADD_REASONS_AND_RETURN_IF_NEEDED(characterReasons, reasons, includeReasons);
-
+    auto glpyhIsInPrimaryFont = [&](auto character) {
         auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-        if (!glyphData.isValid() || glyphData.font != &primaryFont)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
-    }
-    return reasons;
-}
+        return glyphData.isValid() && glyphData.font == &primaryFont;
+    };
 
-static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCascade& fontCascade, IncludeReasons includeReasons)
-{
-    if (text.is8Bit())
-        return canUseForText(text.characters8(), text.length(), fontCascade, includeReasons);
-    return canUseForText(text.characters16(), text.length(), fontCascade, includeReasons);
+    if (text.is8Bit()) {
+        for (size_t i = 0; i < length; ++i) {
+            if (!glpyhIsInPrimaryFont(text[i]))
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
+        }
+    } else {
+        size_t position = 0;
+        while (position < length) {
+            UChar32 character;
+            U16_NEXT(text.characters16(), position, length, character);
+
+            if (!glpyhIsInPrimaryFont(character))
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
+
+            auto isRTLDirectional = [&](auto character) {
+                auto direction = u_charDirection(character);
+                return direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
+                    || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
+                    || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
+                    || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL;
+            };
+            if (isRTLDirectional(character))
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
+        }
+    }
+    return { };
 }
 
 static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObject& container, IncludeReasons includeReasons)
