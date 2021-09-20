@@ -1,3 +1,26 @@
+2021-09-20  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Videos appear black but audio plays normally
+        https://bugs.webkit.org/show_bug.cgi?id=230471
+        <rdar://82121369>
+
+        Reviewed by Youenn Fablet.
+
+        For some videos, the media player (MediaPlayerPrivateAVFoundation) starts
+        with the "MediaRenderingToContext" mode, and it switches to the "MediaRenderingToLayer"
+        mode later. When the mode switch happens, we have to destroy the context
+        video renderer before creating the video layer. Otherwise, we won't receive
+        the notification regarding "readyForDisplay" key path, which drives the
+        `firstVideoFrameAvailable` callback.
+
+        `destroyContextVideoRenderer()` destroys the `m_videoOutput`, but it will
+        be recreated by `createVideoLayer()`.
+
+        Manually tested.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+
 2021-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor some code that controls Live Text selection behavior
