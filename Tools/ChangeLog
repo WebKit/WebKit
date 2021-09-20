@@ -1,3 +1,14 @@
+2021-09-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove XSS Auditor: Part 1 (Turn off by default)
+        https://bugs.webkit.org/show_bug.cgi?id=230483
+        <rdar://problem/83310922>
+
+        Reviewed by Yusuke Suzuki.
+
+        * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+        (TestWebKitAPI::TEST): Switch expectation for XSS Auditor.
+
 2021-09-20  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable selections

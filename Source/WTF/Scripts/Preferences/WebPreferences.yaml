@@ -2564,8 +2564,8 @@ XSSAuditorEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
