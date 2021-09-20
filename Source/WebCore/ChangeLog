@@ -1,3 +1,20 @@
+2021-09-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Adopt WeakHashMap for caching per-element text recognition results
+        https://bugs.webkit.org/show_bug.cgi?id=230461
+
+        Reviewed by Megan Gardner.
+
+        Simplify this logic by replacing the WeakHashSet and WeakPtr/TextRecognitionResult pair with just a WeakHashMap.
+        No change in behavior.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateElementsWithTextRecognitionResults):
+        (WebCore::Page::hasCachedTextRecognitionResult const):
+        (WebCore::Page::cacheTextRecognitionResult):
+        (WebCore::Page::resetTextRecognitionResults):
+        * page/Page.h:
+
 2021-09-20  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable selections

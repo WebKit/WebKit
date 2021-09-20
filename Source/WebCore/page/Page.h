@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
+#include "IntRectHash.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
 #include "LengthBox.h"
@@ -55,6 +56,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -1199,9 +1201,8 @@ private:
     UniqueRef<StorageProvider> m_storageProvider;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    // FIXME: These should be refactored to use a weak hash map of HTMLElement to std::pair<TextRecognitionResult, IntSize>.
-    Vector<std::pair<WeakPtr<HTMLElement>, std::pair<TextRecognitionResult, IntRect>>> m_textRecognitionResultsByElement;
-    WeakHashSet<HTMLElement> m_elementsWithTextRecognitionResults;
+    using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;
+    WeakHashMap<HTMLElement, CachedTextRecognitionResult> m_textRecognitionResults;
 #endif
 };
 

@@ -3629,24 +3629,22 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 
 void Page::updateElementsWithTextRecognitionResults()
 {
-    if (m_textRecognitionResultsByElement.isEmpty())
+    if (m_textRecognitionResults.isEmptyIgnoringNullReferences())
         return;
 
-    m_textRecognitionResultsByElement.removeAllMatching([](auto& elementAndResult) {
-        return !elementAndResult.first;
-    });
+    m_textRecognitionResults.removeNullReferences();
 
     Vector<std::pair<Ref<HTMLElement>, TextRecognitionResult>> elementsToUpdate;
-    for (auto& [element, resultAndRect] : m_textRecognitionResultsByElement) {
-        if (!element->isConnected())
+    for (auto entry : m_textRecognitionResults) {
+        Ref protectedElement = entry.key;
+        if (!protectedElement->isConnected())
             continue;
 
-        auto& [result, containerRect] = resultAndRect;
-        auto protectedElement = makeRef(*element);
         auto renderer = protectedElement->renderer();
         if (!is<RenderImage>(renderer))
             continue;
 
+        auto& [result, containerRect] = entry.value;
         auto newContainerRect = protectedElement->containerRectForTextRecognition();
         if (containerRect == newContainerRect)
             continue;
@@ -3668,31 +3666,17 @@ void Page::updateElementsWithTextRecognitionResults()
 
 bool Page::hasCachedTextRecognitionResult(const HTMLElement& element) const
 {
-    return m_elementsWithTextRecognitionResults.contains(element);
+    return m_textRecognitionResults.contains(element);
 }
 
 void Page::cacheTextRecognitionResult(const HTMLElement& element, const IntRect& containerRect, const TextRecognitionResult& result)
 {
-    m_elementsWithTextRecognitionResults.add(element);
-
-    auto index = m_textRecognitionResultsByElement.findMatching([&](auto& elementAndResult) {
-        return elementAndResult.first == &element;
-    });
-
-    if (index == notFound)
-        m_textRecognitionResultsByElement.append({ makeWeakPtr(element), { result, containerRect } });
-    else
-        m_textRecognitionResultsByElement[index].second = { result, containerRect };
-
-    m_textRecognitionResultsByElement.removeAllMatching([](auto& elementAndResult) {
-        return !elementAndResult.first;
-    });
+    m_textRecognitionResults.set(element, CachedTextRecognitionResult { result, containerRect });
 }
 
 void Page::resetTextRecognitionResults()
 {
-    m_textRecognitionResultsByElement.clear();
-    m_elementsWithTextRecognitionResults.clear();
+    m_textRecognitionResults.clear();
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
