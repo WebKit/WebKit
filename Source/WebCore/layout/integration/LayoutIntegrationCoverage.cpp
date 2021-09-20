@@ -189,9 +189,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasComplexFontCodePath:
         stream << "text with complex font codepath";
         break;
-    case AvoidanceReason::FlowChildIsSelected:
-        stream << "selected content";
-        break;
     case AvoidanceReason::FlowHasLineBoxContainGlyphs:
         stream << "-webkit-line-box-contain: glyphs";
         break;
@@ -527,8 +524,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
 static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
-    if (child.selectionState() != RenderObject::HighlightState::None)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowChildIsSelected, reasons, includeReasons);
     if (is<RenderCounter>(child))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
     if (is<RenderText>(child)) {

@@ -76,7 +76,6 @@ public:
     float positionForOffset(unsigned offset) const { return inlineTextBox()->positionForOffset(offset); }
 
     TextBoxSelectableRange selectableRange() const { return inlineTextBox()->selectableRange(); }
-    LayoutRect selectionRect(unsigned start, unsigned end) const { return inlineTextBox()->localSelectionRect(start, end); }
 
     TextRun createTextRun() const { return inlineTextBox()->createTextRun(); }
 

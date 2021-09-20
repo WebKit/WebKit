@@ -127,6 +127,9 @@ public:
     TextBoxSelectableRange selectableRange() const;
     LayoutRect selectionRect(unsigned start, unsigned end) const;
 
+    bool isCombinedText() const;
+    const FontCascade& fontCascade() const;
+
     TextRun createTextRun() const;
 
     const RenderText& renderer() const { return downcast<RenderText>(PathRun::renderer()); }
@@ -363,13 +366,6 @@ inline TextBoxSelectableRange PathTextRun::selectableRange() const
 {
     return WTF::switchOn(m_pathVariant, [&](auto& path) {
         return path.selectableRange();
-    });
-}
-
-inline LayoutRect PathTextRun::selectionRect(unsigned start, unsigned end) const
-{
-    return WTF::switchOn(m_pathVariant, [&](auto& path) {
-        return path.selectionRect(start, end);
     });
 }
 

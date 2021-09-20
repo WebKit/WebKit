@@ -3207,13 +3207,6 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
     return LayoutUnit { style().overflowY() == Overflow::Visible ? lastBaseline : std::min(boxHeight, lastBaseline) };
 }
 
-void RenderBlockFlow::setSelectionState(HighlightState state)
-{
-    if (state != HighlightState::None)
-        ensureLineBoxes();
-    RenderBoxModelObject::setSelectionState(state);
-}
-
 LayoutUnit RenderBlockFlow::adjustSelectionTopForPrecedingBlock(LayoutUnit top) const
 {
     if (selectionState() != RenderObject::HighlightState::Inside && selectionState() != RenderObject::HighlightState::End)

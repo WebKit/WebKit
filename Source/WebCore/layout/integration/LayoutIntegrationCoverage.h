@@ -80,7 +80,7 @@ enum class AvoidanceReason : uint64_t {
     FlowHasComplexFontCodePath                   = 1LLU  << 40,
     FeatureIsDisabled                            = 1LLU  << 41,
     FlowDoesNotEstablishInlineFormattingContext  = 1LLU  << 42,
-    FlowChildIsSelected                          = 1LLU  << 43,
+    // Unused                                    = 1LLU  << 43,
     FlowHasHangingPunctuation                    = 1LLU  << 44,
     FlowHasLineBoxContainGlyphs                  = 1LLU  << 45,
     FlowTextHasSurrogatePair                     = 1LLU  << 46,

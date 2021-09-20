@@ -1,3 +1,13 @@
+2021-09-20  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable selections
+        https://bugs.webkit.org/show_bug.cgi?id=230463
+
+        Reviewed by Alan Bujtas.
+
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Stop using makeRef(*this) / makeRefPtr(this)

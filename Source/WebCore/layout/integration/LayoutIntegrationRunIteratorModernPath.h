@@ -110,30 +110,6 @@ public:
         };
     }
 
-    LayoutRect selectionRect(unsigned rangeStart, unsigned rangeEnd) const
-    {
-        auto [clampedStart, clampedEnd] = selectableRange().clamp(rangeStart, rangeEnd);
-
-        if (clampedStart >= clampedEnd && !(rangeStart == rangeEnd && rangeStart >= start() && rangeStart <= end()))
-            return { };
-
-        auto logicalLeft = LayoutUnit(isHorizontal() ? rect().x() : rect().y());
-        auto logicalRight = LayoutUnit(isHorizontal() ? rect().maxX() : rect().maxY());
-        auto logicalWidth = logicalRight - logicalLeft;
-
-        // FIXME: These should share implementation with the line iterator.
-        auto selectionTop = LayoutUnit::fromFloatRound(line().enclosingContentTop());
-        auto selectionHeight = LayoutUnit::fromFloatRound(line().enclosingContentBottom() - line().enclosingContentTop());
-
-        LayoutRect selectionRect { logicalLeft, selectionTop, logicalWidth, selectionHeight };
-
-        TextRun textRun = createTextRun(HyphenMode::Include);
-        if (clampedStart || clampedEnd != textRun.length())
-            run().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
-
-        return snappedSelectionRect(selectionRect, logicalRight, selectionTop, selectionHeight, isHorizontal());
-    }
-
     TextRun createTextRun() const
     {
         return createTextRun(HyphenMode::Include);

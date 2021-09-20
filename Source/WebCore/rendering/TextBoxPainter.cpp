@@ -87,7 +87,7 @@ void TextBoxPainter::paint()
         return;
     }
 
-    bool shouldRotate = !textBox().isHorizontal() && !combinedText();
+    bool shouldRotate = !textBox().isHorizontal() && !textBox().isCombinedText();
     if (shouldRotate)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Clockwise));
 
@@ -317,7 +317,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
         if (m_style.hasAppleColorFilter())
             textPainter.setShadowColorFilter(&m_style.appleColorFilter());
     }
-    textPainter.setEmphasisMark(emphasisMark, emphasisMarkOffset, combinedText());
+    textPainter.setEmphasisMark(emphasisMark, emphasisMarkOffset, textBox().isCombinedText() ? &downcast<RenderCombineText>(m_renderer) : nullptr);
     if (auto* debugShadow = debugTextShadow())
         textPainter.setShadow(debugShadow);
 
@@ -348,7 +348,7 @@ void TextBoxPainter::paintDecoration(const StyledMarkedText& markedText, const F
 
     updateGraphicsContext(context, markedText.style.textStyles);
 
-    bool isCombinedText = combinedText();
+    bool isCombinedText = textBox().isCombinedText();
     if (isCombinedText)
         context.concatCTM(rotation(m_paintRect, Clockwise));
 
@@ -566,17 +566,9 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
     return { boxOrigin, FloatSize(textBox().logicalWidth(), textBox().logicalHeight()) };
 }
 
-static const FontCascade& fontCascadeFor(const RenderText& renderer, const RenderStyle& textBoxStyle)
-{
-    if (is<RenderCombineText>(renderer))
-        return downcast<RenderCombineText>(renderer).textCombineFont();
-
-    return textBoxStyle.fontCascade();
-}
-
 FloatRect TextBoxPainter::calculateDocumentMarkerBounds(const LayoutIntegration::TextRunIterator& textBox, const MarkedText& markedText)
 {
-    auto& font = fontCascadeFor(textBox->renderer(), textBox->style());
+    auto& font = textBox->fontCascade();
     auto ascent = font.fontMetrics().ascent();
     auto fontSize = std::min(std::max(font.size(), 10.0f), 40.0f);
     auto y = ascent + 0.11035 * fontSize;
@@ -601,21 +593,16 @@ bool TextBoxPainter::computeHaveSelection() const
     return m_renderer.view().selection().highlightStateForTextBox(m_renderer, m_selectableRange) != RenderObject::HighlightState::None;
 }
 
-const RenderCombineText* TextBoxPainter::combinedText() const
-{
-    return is<RenderCombineText>(m_renderer) ? &downcast<RenderCombineText>(m_renderer) : nullptr;
-}
-
 const FontCascade& TextBoxPainter::fontCascade() const
 {
-    return fontCascadeFor(m_renderer, m_style);
+    return m_textBox->fontCascade();
 }
 
 FloatPoint TextBoxPainter::textOriginFromPaintRect(const FloatRect& paintRect) const
 {
     FloatPoint textOrigin { paintRect.x(), paintRect.y() + fontCascade().fontMetrics().ascent() };
-    if (auto* combinedText = this->combinedText()) {
-        if (auto newOrigin = combinedText->computeTextOrigin(paintRect))
+    if (textBox().isCombinedText()) {
+        if (auto newOrigin = downcast<RenderCombineText>(m_renderer).computeTextOrigin(paintRect))
             textOrigin = newOrigin.value();
     }
     if (textBox().isHorizontal())

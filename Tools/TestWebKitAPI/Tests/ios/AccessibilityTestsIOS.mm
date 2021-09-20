@@ -77,11 +77,11 @@ TEST(AccessibilityTests, RectsForSpeakingSelectionBasic)
 #if PLATFORM(MACCATALYST)
     checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 25, 19), 0);
     checkCGRectValueAtIndex([webView rectsAtSelectionOffset:6 withText:@"second"], CGRectMake(36, 8, 46, 19), 0);
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 28, 31, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 27, 31, 20), 0);
 #else
     checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 8, 26, 19), 0);
     checkCGRectValueAtIndex([webView rectsAtSelectionOffset:6 withText:@"second"], CGRectMake(37, 8, 46, 19), 0);
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 28, 31, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:13 withText:@"third"], CGRectMake(8, 27, 31, 20), 0);
 #endif
 }
 
@@ -146,9 +146,9 @@ TEST(AccessibilityTests, StoreSelection)
     // Clear the stored selection, we should use the current selection to retrieve rects
     [webView _accessibilityClearSelection];
 #if PLATFORM(MACCATALYST)
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 28, 25, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 27, 25, 20), 0);
 #else
-    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 28, 26, 19), 0);
+    checkCGRectValueAtIndex([webView rectsAtSelectionOffset:0 withText:@"first"], CGRectMake(8, 27, 26, 20), 0);
 #endif
 }
 

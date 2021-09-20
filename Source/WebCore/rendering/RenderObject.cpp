@@ -1800,13 +1800,6 @@ OptionSet<StyleColor::Options> RenderObject::styleColorOptions() const
 
 void RenderObject::setSelectionState(HighlightState state)
 {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (state != HighlightState::None) {
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-            lineLayout->flow().ensureLineBoxes();
-    }
-#endif
-
     m_bitfields.setSelectionState(state);
 }
 

@@ -1,3 +1,74 @@
+2021-09-20  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable selections
+        https://bugs.webkit.org/show_bug.cgi?id=230463
+
+        Reviewed by Alan Bujtas.
+
+        Don't switch to legacy inline boxes on selection.
+
+        Test: fast/repaint/selection-paint-invalidation.html
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForChild):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::PathTextRun::selectionRect const):
+
+        Move this to path independent code and fix it to compute selectionTop/Bottom correctly.
+
+        (WebCore::LayoutIntegration::PathTextRun::isCombinedText const):
+        (WebCore::LayoutIntegration::PathTextRun::fontCascade const):
+
+        Add some helpful functions.
+
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathTextRun::selectionRect const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::selectableRange const):
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::selectionRect const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectionRect const): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::setSelectionState): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setSelectionState):
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForChild):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::PathTextRun::selectionRect const):
+        (WebCore::LayoutIntegration::PathTextRun::fontCascade const):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathTextRun::selectionRect const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::selectableRange const):
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::selectionRect const): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectionRect const): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::setSelectionState): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setSelectionState):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paint):
+        (WebCore::TextBoxPainter::paintForeground):
+        (WebCore::TextBoxPainter::paintDecoration):
+        (WebCore::TextBoxPainter::calculateDocumentMarkerBounds):
+        (WebCore::TextBoxPainter::fontCascade const):
+
+        Use iterator functions.
+
+        (WebCore::TextBoxPainter::textOriginFromPaintRect const):
+        (WebCore::fontCascadeFor): Deleted.
+        (WebCore::TextBoxPainter::combinedText const): Deleted.
+        * rendering/TextBoxPainter.h:
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS debug build fix after r282755.

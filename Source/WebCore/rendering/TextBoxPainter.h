@@ -78,7 +78,6 @@ private:
     FloatRect computePaintRect(const LayoutPoint& paintOffset);
     bool computeHaveSelection() const;
     MarkedText createMarkedTextFromSelectionInBox();
-    const RenderCombineText* combinedText() const;
     const FontCascade& fontCascade() const;
     FloatPoint textOriginFromPaintRect(const FloatRect&) const;
 

@@ -30,6 +30,7 @@
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
+#include "RenderCombineText.h"
 #include "RenderLineBreak.h"
 #include "RenderView.h"
 
@@ -104,6 +105,39 @@ TextRunIterator PathTextRun::nextTextRun() const
 TextRunIterator PathTextRun::nextTextRunInTextOrder() const
 {
     return TextRunIterator(*this).traverseNextTextRunInTextOrder();
+}
+
+LayoutRect PathTextRun::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
+{
+    auto [clampedStart, clampedEnd] = selectableRange().clamp(rangeStart, rangeEnd);
+
+    if (clampedStart >= clampedEnd && !(rangeStart == rangeEnd && rangeStart >= start() && rangeStart <= end()))
+        return { };
+
+    auto selectionTop = line()->selectionTop();
+    auto selectionHeight = line()->selectionHeight();
+
+    LayoutRect selectionRect { logicalLeft(), selectionTop, logicalWidth(), selectionHeight };
+
+    TextRun textRun = createTextRun();
+    if (clampedStart || clampedEnd != textRun.length())
+        fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
+
+    return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());
+}
+
+bool PathTextRun::isCombinedText() const
+{
+    auto& renderer = this->renderer();
+    return is<RenderCombineText>(renderer) && downcast<RenderCombineText>(renderer).isCombined();
+}
+
+const FontCascade& PathTextRun::fontCascade() const
+{
+    if (isCombinedText())
+        return downcast<RenderCombineText>(renderer()).textCombineFont();
+
+    return style().fontCascade();
 }
 
 RenderObject::HighlightState PathRun::selectionState() const
