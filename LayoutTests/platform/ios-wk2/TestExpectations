@@ -1300,6 +1300,8 @@ webkit.org/b/176030 http/tests/websocket/tests/hybi/send-object-tostring-check.h
 
 webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html [ Failure ]
 
+webkit.org/b/230513 fast/viewport/scroll-delegates-switch-on-page-with-no-composition-mode-asserts.html [ Pass Crash ]
+
 webkit.org/b/199071 [ Release ] imported/blink/fast/css/user-select-none.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/190882 [ Debug ] animations/change-one-anim.html [ Pass Failure ]
