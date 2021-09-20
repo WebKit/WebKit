@@ -1,3 +1,12 @@
+2021-09-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur wk2 arm64 ] imported/w3c/web-platform-tests/infrastructure/reftest-wait.html is a flaky image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230488
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-20  Johnson Zhou  <qiaosong_zhou@apple.com>
 
         Add support for CSSUnparsedValue parsing through CSSStyleValue.parse()
