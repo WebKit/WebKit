@@ -1,0 +1,10 @@
+
+FAIL CSSTranslate.toMatrix() returns correct matrix assert_array_approx_equals: property 12, expected 1 +/- 1e-8, expected 1 but got 0
+FAIL CSSRotate.toMatrix() returns correct matrix assert_array_approx_equals: property 0, expected 0.07142857142857148 +/- 0.000001, expected 0.07142857142857148 but got 1
+FAIL CSSScale.toMatrix() returns correct matrix assert_array_approx_equals: property 5, expected 2 +/- 0.000001, expected 2 but got 1
+FAIL CSSSkew.toMatrix() returns correct matrix assert_array_approx_equals: property 1, expected 2.237160944224742 +/- 0.000001, expected 2.237160944224742 but got 0
+FAIL CSSSkewX.toMatrix() returns correct matrix assert_array_approx_equals: property 4, expected 0.17632698070846498 +/- 0.000001, expected 0.17632698070846498 but got 0
+FAIL CSSSkewY.toMatrix() returns correct matrix assert_array_approx_equals: property 1, expected 0.17632698070846498 +/- 0.000001, expected 0.17632698070846498 but got 0
+FAIL CSSPerspective.toMatrix() returns correct matrix assert_array_approx_equals: property 11, expected -0.1 +/- 0.000001, expected -0.1 but got 0
+FAIL CSSMatrixComponent.toMatrix() returns correct matrix assert_array_approx_equals: property 1, expected 2 +/- 0.000001, expected 2 but got 0
+

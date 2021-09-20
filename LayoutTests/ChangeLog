@@ -1,3 +1,13 @@
+2021-09-20  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test baselines and expectation. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=230501
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-typed-om/stylevalue-subclasses/cssTransformComponent-toMatrix-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-typed-om/rotate-by-added-angle-expected.txt:
+
 2021-09-20  Eric Hutchison  <ehutchison@apple.com>
 
         [ Win EWS] js/dfg-int16array.html is a flaky crash under WebCore::LayoutIntegration::LineLayout::constructContent.
