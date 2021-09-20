@@ -261,7 +261,7 @@ using WebCore::LogOverlayScrollbars;
         NSTimeInterval t = 1;
         if (_duration)
             t = elapsed / _duration;
-        progress = _timingFunction->transformTime(t, _duration);
+        progress = _timingFunction->transformProgress(t, _duration);
     }
     ASSERT(_scrollbar);
 

@@ -326,7 +326,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(std::optional<Seconds> s
 
             // 3. Return the result of evaluating the animation effect’s timing function passing directed progress as the
             //    input progress value and before flag as the before flag.
-            return m_timingFunction->transformTime(*directedProgress, iterationDuration, before);
+            return m_timingFunction->transformProgress(*directedProgress, iterationDuration, before);
         }
 
         return *directedProgress;

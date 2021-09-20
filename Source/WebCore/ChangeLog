@@ -1,3 +1,28 @@
+2021-09-20  Antoine Quint  <graouts@webkit.org>
+
+        TimingFunction::transformTime() is poorly-named
+        https://bugs.webkit.org/show_bug.cgi?id=230478
+
+        Reviewed by Simon Fraser.
+
+        This function transforms an input _progress_ not a time, so we rename it to transformProgress()
+        and name its first parameter accordingly.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getComputedTiming const):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle):
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::animateScroll):
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::transformProgress const):
+        (WebCore::TimingFunction::transformTime const): Deleted.
+        * platform/animation/TimingFunction.h:
+        * platform/graphics/nicosia/NicosiaAnimation.cpp:
+        (Nicosia::Animation::apply):
+        * platform/mac/ScrollbarsControllerMac.mm:
+        (-[WebScrollbarPartAnimation setCurrentProgress:]):
+
 2021-09-20  Aditya Keerthi  <akeerthi@apple.com>
 
         Implement input-security

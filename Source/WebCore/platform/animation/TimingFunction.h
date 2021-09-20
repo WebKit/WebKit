@@ -55,7 +55,7 @@ public:
 
     static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
     static RefPtr<TimingFunction> createFromCSSValue(const CSSValue&);
-    double transformTime(double, double, bool before = false) const;
+    double transformProgress(double progress, double duration, bool before = false) const;
     String cssText() const;
 
 protected:

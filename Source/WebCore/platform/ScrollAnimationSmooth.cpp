@@ -133,7 +133,7 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
     currentTime = std::min(currentTime, endTime);
 
     double fractionComplete = (currentTime - m_startTime) / m_duration;
-    double progress = m_easeInOutTimingFunction->transformTime(fractionComplete, m_duration.value());
+    double progress = m_easeInOutTimingFunction->transformProgress(fractionComplete, m_duration.value());
 
     m_currentOffset = {
         linearInterpolation(progress, m_startOffset.x(), m_destinationOffset.x()),
