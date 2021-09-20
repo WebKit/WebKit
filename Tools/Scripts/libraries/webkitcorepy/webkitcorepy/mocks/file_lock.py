@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,45 +20,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
 
+class FileLock(object):
+    def __init__(self, path, timeout=20):
+        self.path = path
+        self.timeout = timeout
+        self._acquired = False
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+    @property
+    def acquired(self):
+        return self._acquired
 
+    def acquire(self):
+        self._acquired = True
+        return True
 
-setup(
-    name='webkitcorepy',
-    version='0.11.0',
-    description='Library containing various Python support classes and functions.',
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: Other/Proprietary License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    keywords='python unicode',
-    url='https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/libraries/webkitcorepy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitcorepy',
-        'webkitcorepy.mocks',
-        'webkitcorepy.tests',
-        'webkitcorepy.tests.mocks',
-    ],
-    install_requires=[
-        'mock',
-        'requests',
-        'six',
-        'whichcraft',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-)
+    def release(self):
+        self._acquired = False
+
+    def __enter__(self):
+        self.acquire()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        self.release()

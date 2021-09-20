@@ -154,10 +154,11 @@ class RebaselineTest(AbstractRebaseliningCommand):
         # concurrently as well.
         # FIXME: We should rework the code to not need this; maybe just download
         # the files in parallel and rebaseline local files serially?
-        try:
-            path = port.path_to_test_expectations_file()
-            lock = self._tool.make_file_lock(path + '.lock')
-            lock.acquire_lock()
+        path = port.path_to_test_expectations_file()
+        with self._tool.make_file_lock(path + '.lock') as lock:
+            if not lock.acquired:
+                raise OSError('Failed to aquire rebaseline lock for {}'.format(path))
+
             expectations = TestExpectations(port, include_generic=False, include_overrides=False)
             expectations.parse_all_expectations()
             for test_configuration in port.all_test_configurations():
@@ -165,8 +166,6 @@ class RebaselineTest(AbstractRebaseliningCommand):
                     expectationsString = expectations.remove_configuration_from_test(test_name, test_configuration)
 
             self._tool.filesystem.write_text_file(path, expectationsString)
-        finally:
-            lock.release_lock()
 
     def _test_root(self, test_name):
         return self._tool.filesystem.splitext(test_name)[0]

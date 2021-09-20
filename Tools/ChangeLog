@@ -1,3 +1,45 @@
+2021-09-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Move FileLock from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=230320
+        <rdar://problem/83168826>
+
+        Reviewed by Dewei Zhu.
+
+        Move FileLock from webkitpy into webkitcorepy, implement FileLock as a more
+        modern Python API.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/file_lock.py: Added.
+        (FileLock):
+        (FileLock.__init__):
+        (FileLock.acquired): Check if the current process has acquired the lock.
+        (FileLock.acquire): Attempt to acquire lockfile.
+        (FileLock.release): Release lockfile, if this process owns the lock.
+        (FileLock.__enter__): Invoke acquire.
+        (FileLock.__exit__): Invoke release.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/file_lock.py: Copied from Tools/Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py.
+        (FileLock): Single-thread stub implementation of FileLock for testing without a filesystem.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/file_lock_unittest.py: Added.
+        (FileLockTestCase):
+        (FileLockTestCase.__init__):
+        (FileLockTestCase.setUp):
+        (FileLockTestCase.tearDown):
+        (FileLockTestCase.test_basic):
+        (FileLockTestCase.test_locked):
+        (FileLockTestCase.test_locked_timeout):
+        (FileLockTestCase.test_double):
+        * Scripts/webkitpy/common/system/file_lock.py: Removed.
+        * Scripts/webkitpy/common/system/file_lock_integrationtest.py: Removed.
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost.make_file_lock): Use webkitcorepy's FileLock.
+        * Scripts/webkitpy/common/system/systemhost_mock.py:
+        (MockSystemHost.make_file_lock): Use webkitcorepy's mocks.FileLock.
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._update_expectations_file): Use webkitcorepy's FileLock.
+
 2021-09-20  Brent Fulgham  <bfulgham@apple.com>
 
         Remove XSS Auditor: Part 1 (Turn off by default)

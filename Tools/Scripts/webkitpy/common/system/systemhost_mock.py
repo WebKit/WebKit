@@ -1,5 +1,5 @@
 # Copyright (c) 2011 Google Inc. All rights reserved.
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,10 +30,11 @@
 from webkitpy.common.system.environment import Environment
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.file_lock_mock import MockFileLock
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system.user_mock import MockUser
 from webkitpy.common.system.workspace_mock import MockWorkspace
+
+from webkitcorepy import mocks
 
 
 class MockSystemHost(object):
@@ -54,7 +55,7 @@ class MockSystemHost(object):
         return Environment({"MOCK_ENVIRON_COPY": '1'})
 
     def make_file_lock(self, path):
-        return MockFileLock(path)
+        return mocks.FileLock(path)
 
     def symbolicate_crash_log_if_needed(self, path):
         return self.filesystem.read_text_file(path)

@@ -26,3 +26,4 @@ from webkitcorepy.mocks.subprocess import ProcessCompletion, Subprocess
 
 from webkitcorepy.mocks.requests_ import Response, Requests
 from webkitcorepy.mocks.terminal import Terminal
+from webkitcorepy.mocks.file_lock import FileLock

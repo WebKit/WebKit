@@ -31,7 +31,8 @@ import os
 import platform
 import sys
 
-from webkitpy.common.system import environment, executive, file_lock, filesystem, platforminfo, user, workspace
+from webkitpy.common.system import environment, executive, filesystem, platforminfo, user, workspace
+from webkitcorepy import FileLock
 
 
 class SystemHost(object):
@@ -46,7 +47,7 @@ class SystemHost(object):
         return environment.Environment(os.environ.copy())
 
     def make_file_lock(self, path):
-        return file_lock.FileLock(path)
+        return FileLock(path)
 
     def symbolicate_crash_log_if_needed(self, path):
         return self.filesystem.read_text_file(path)
