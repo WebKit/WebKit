@@ -77,7 +77,7 @@ public:
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
-    RefPtr<NativeImage> nativeImageForCurrentTime();
+    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForCurrentTime();
 
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
 

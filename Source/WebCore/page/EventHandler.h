@@ -363,6 +363,8 @@ private:
     static const Seconds TextDragDelay;
 #endif
 
+    RefPtr<Element> textRecognitionCandidateElement() const;
+
     bool eventActivatedView(const PlatformMouseEvent&) const;
     bool updateSelectionForMouseDownDispatchingSelectStart(Node*, const VisibleSelection&, TextGranularity);
     void selectClosestWordFromHitTestResult(const HitTestResult&, AppendTrailingWhitespace);

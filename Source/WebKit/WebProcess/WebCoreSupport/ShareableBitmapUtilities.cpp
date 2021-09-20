@@ -36,6 +36,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RenderImage.h>
+#include <WebCore/RenderVideo.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -67,6 +68,29 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
             return { };
 
         context->drawImage(*snapshotImage, { FloatPoint::zero(), snapshotRect.size() });
+        return bitmap;
+    }
+
+    if (is<RenderVideo>(renderImage)) {
+        auto& renderVideo = downcast<RenderVideo>(renderImage);
+        Ref video = renderVideo.videoElement();
+        auto image = video->nativeImageForCurrentTime();
+        if (!image)
+            return { };
+
+        auto imageSize = image->size();
+        if (imageSize.isEmpty() || imageSize.width() <= 1 || imageSize.height() <= 1)
+            return { };
+
+        auto bitmap = ShareableBitmap::createShareable(imageSize, { WTFMove(colorSpaceForBitmap) });
+        if (!bitmap)
+            return { };
+
+        auto context = bitmap->createGraphicsContext();
+        if (!context)
+            return { };
+
+        context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
         return bitmap;
     }
 

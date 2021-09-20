@@ -1,3 +1,27 @@
+2021-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Teach `WebKit::createShareableBitmap` to snapshot video elements
+        https://bugs.webkit.org/show_bug.cgi?id=230468
+
+        Reviewed by Tim Horton.
+
+        Now that `createShareableBitmap` may return images for video elements, we need to ensure that we explicitly
+        avoid allowing Live Text in video elements, since doing so will (1) break built-in platform media controls,
+        which also share the same shadow root, and (2) lead to confusing results when playing or seeking in videos,
+        since the recognized text falls out of sync with the video frame.
+
+        * html/HTMLVideoElement.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::textRecognitionCandidateElement const):
+
+        For the above reasons, we refactor logic to check if the currently hovered node is a candidate for text
+        recognition, such that the video element check is consolidated all in one place.
+
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::textRecognitionHoverTimerFired):
+        * page/EventHandler.h:
+        * rendering/RenderVideo.h:
+
 2021-09-19  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] overflow-wrap: anywhere/break-word rules over word-break: keep-all

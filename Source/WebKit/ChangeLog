@@ -1,3 +1,17 @@
+2021-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Teach `WebKit::createShareableBitmap` to snapshot video elements
+        https://bugs.webkit.org/show_bug.cgi?id=230468
+
+        Reviewed by Tim Horton.
+
+        `createShareableBitmap` currently only returns a non-null image bitmap for image renderers that have cached
+        images; notably, this omits video elements. For use in future patches, we should allow this helper function to
+        handle video elements by snapshotting the current frame of the video.
+
+        * WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp:
+        (WebKit::createShareableBitmap):
+
 2021-09-17  Alex Christensen  <achristensen@webkit.org>
 
         Use ObjectIdentifier for ResourceLoader

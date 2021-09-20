@@ -63,6 +63,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLVideoElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
@@ -83,6 +84,7 @@
 #include "PluginDocument.h"
 #include "Range.h"
 #include "RenderFrameSet.h"
+#include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
@@ -2512,6 +2514,22 @@ static bool hierarchyHasCapturingEventListeners(Element* element, const AtomStri
     return false;
 }
 
+RefPtr<Element> EventHandler::textRecognitionCandidateElement() const
+{
+    RefPtr shadowHost = m_elementUnderMouse ? m_elementUnderMouse->shadowHost() : nullptr;
+    if (!shadowHost)
+        return nullptr;
+
+    auto renderer = shadowHost->renderer();
+    if (!is<RenderImage>(renderer))
+        return nullptr;
+
+    if (is<HTMLVideoElement>(*shadowHost))
+        return nullptr;
+
+    return shadowHost;
+}
+
 void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node* targetNode, const PlatformMouseEvent& platformMouseEvent, FireMouseOverOut fireMouseOverOut)
 {
     Ref<Frame> protectedFrame(m_frame);
@@ -2531,7 +2549,7 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
 
 #if ENABLE(IMAGE_ANALYSIS)
     if (m_frame.settings().preferInlineTextSelectionInImages()) {
-        if (!m_elementUnderMouse || !is<RenderImage>(m_elementUnderMouse->renderer()))
+        if (!textRecognitionCandidateElement())
             m_textRecognitionHoverTimer.stop();
         else if (!platformMouseEvent.movementDelta().isZero())
             m_textRecognitionHoverTimer.restart();
@@ -3410,11 +3428,12 @@ void EventHandler::hoverTimerFired()
 
 void EventHandler::textRecognitionHoverTimerFired()
 {
-    if (!m_elementUnderMouse || !is<RenderImage>(m_elementUnderMouse->renderer()))
+    auto element = this->textRecognitionCandidateElement();
+    if (!element)
         return;
 
     if (auto* page = m_frame.page())
-        page->chrome().client().requestTextRecognition(*m_elementUnderMouse);
+        page->chrome().client().requestTextRecognition(*element);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
