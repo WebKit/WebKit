@@ -1,3 +1,12 @@
+2021-09-20  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        REGRESSION (r281102?): [ Mac ] media/track/track-in-band.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=229478
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-20  Aditya Keerthi  <akeerthi@apple.com>
 
         Implement input-security

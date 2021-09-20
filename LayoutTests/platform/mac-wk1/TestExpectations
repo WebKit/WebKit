@@ -655,6 +655,8 @@ media/track/track-cues-cuechange.html [ Pass Crash Timeout ]
 
 webkit.org/b/229765 [ Catalina Debug ] media/track/track-disabled-addcue.html [ Pass Crash ]
 
+webkit.org/b/229478 [ Release ] media/track/track-in-band.html [ Pass Timeout ]
+
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 
 webkit.org/b/167857 pageoverlay/overlay-remove-reinsert-view.html [ Skip ]
