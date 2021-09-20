@@ -1670,3 +1670,5 @@ webkit.org/b/230359 [ BigSur+ Debug ] webrtc/video-mute-vp8.html [ Pass Failure 
 
 webkit.org/b/230502 [ Debug ] storage/indexeddb/request-with-null-open-db-request.html [ Pass Crash ]
 
+webkit.org/b/230504 [ Catalina BigSur Release ] css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
+

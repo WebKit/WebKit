@@ -1,3 +1,12 @@
+2021-09-20  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Catalina, BigSur wk2 Release ] css3/masking/reference-clip-path-animate-transform-repaint.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230504.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-20  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test baselines and expectation. Unreviewed test gardening.
