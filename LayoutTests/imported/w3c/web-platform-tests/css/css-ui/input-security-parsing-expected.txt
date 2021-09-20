@@ -1,0 +1,12 @@
+
+PASS e.style['input-security'] = "initial" should set the property value
+PASS e.style['input-security'] = "inherit" should set the property value
+PASS e.style['input-security'] = "unset" should set the property value
+PASS e.style['input-security'] = "revert" should set the property value
+PASS e.style['input-security'] = "auto" should set the property value
+PASS e.style['input-security'] = "none" should set the property value
+PASS e.style['input-security'] = "auto auto" should not set the property value
+PASS e.style['input-security'] = "disc" should not set the property value
+PASS e.style['input-security'] = "circle" should not set the property value
+PASS e.style['input-security'] = "square" should not set the property value
+

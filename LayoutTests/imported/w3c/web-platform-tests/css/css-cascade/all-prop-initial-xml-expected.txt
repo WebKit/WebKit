@@ -149,6 +149,7 @@ PASS height
 PASS image-orientation
 PASS image-rendering
 PASS inline-size
+PASS input-security
 PASS inset-block-end
 PASS inset-block-start
 PASS inset-inline-end

@@ -225,6 +225,8 @@ public:
     unsigned breakInside : 3; // BreakInside
     unsigned resize : 2; // Resize
 
+    unsigned inputSecurity : 1; // InputSecurity
+
     unsigned hasAttrContent : 1;
 
     unsigned isNotFinal : 1;

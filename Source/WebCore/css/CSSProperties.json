@@ -2856,6 +2856,16 @@
                 "url": "https://www.w3.org/TR/css-logical/#dimension-properties"
             }
         },
+        "input-security": {
+            "values": [
+                "auto",
+                "none"
+            ],
+            "specification": {
+                "category": "css-ui",
+                "url": "https://drafts.csswg.org/css-ui-4/#input-security"
+            }
+        },
         "inset": {
             "codegen-properties": {
                 "longhands": [

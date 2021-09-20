@@ -781,6 +781,7 @@ public:
 #endif
 
     TextSecurity textSecurity() const { return static_cast<TextSecurity>(m_rareInheritedData->textSecurity); }
+    InputSecurity inputSecurity() const { return static_cast<InputSecurity>(m_rareNonInheritedData->inputSecurity); }
 
     WritingMode writingMode() const { return static_cast<WritingMode>(m_inheritedFlags.writingMode); }
     bool isHorizontalWritingMode() const { return WebCore::isHorizontalWritingMode(writingMode()); }
@@ -1337,6 +1338,7 @@ public:
 #endif
 
     void setTextSecurity(TextSecurity security) { SET_VAR(m_rareInheritedData, textSecurity, static_cast<unsigned>(security)); }
+    void setInputSecurity(InputSecurity security) { SET_VAR(m_rareNonInheritedData, inputSecurity, static_cast<unsigned>(security)); }
 
 #if ENABLE(CSS_TRAILING_WORD)
     void setTrailingWord(TrailingWord) { }
@@ -1773,6 +1775,7 @@ public:
     static IntSize initialInitialLetter() { return IntSize(); }
     static LineClampValue initialLineClamp() { return LineClampValue(); }
     static TextSecurity initialTextSecurity() { return TextSecurity::None; }
+    static InputSecurity initialInputSecurity() { return InputSecurity::Auto; };
 
 #if PLATFORM(IOS_FAMILY)
     static bool initialTouchCalloutEnabled() { return true; }

@@ -4207,6 +4207,37 @@ template<> inline CSSPrimitiveValue::operator ImageRendering() const
     return ImageRendering::Auto;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(InputSecurity e)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (e) {
+    case InputSecurity::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case InputSecurity::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator InputSecurity() const
+{
+    ASSERT(isValueID());
+
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return InputSecurity::Auto;
+    case CSSValueNone:
+        return InputSecurity::None;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return InputSecurity::Auto;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TransformStyle3D e)
     : CSSValue(PrimitiveClass)
 {

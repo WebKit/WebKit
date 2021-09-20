@@ -767,10 +767,6 @@ input::placeholder {
     line-height: initial;
 }
 
-input[type="password"] {
-    -webkit-text-security: disc !important;
-}
-
 input:is([type="hidden"], [type="image"], [type="file"]) {
     -webkit-appearance: initial;
     padding: initial;
@@ -789,7 +785,7 @@ input:-webkit-autofill-strong-password {
 }
 
 input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {
-    -webkit-text-security: none !important;
+    input-security: none !important;
     cursor: default !important;
     font-family: monospace;
 }

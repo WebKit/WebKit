@@ -1,3 +1,27 @@
+2021-09-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        Implement input-security
+        https://bugs.webkit.org/show_bug.cgi?id=184510
+        rdar://79979992
+
+        Reviewed by Antti Koivisto.
+
+        Add web platform tests for input-security.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-ui/input-security-auto-sensitive-text-input-expected.html: Added.
+        * web-platform-tests/css/css-ui/input-security-auto-sensitive-text-input.html: Added.
+        * web-platform-tests/css/css-ui/input-security-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/input-security-computed.html: Added.
+        * web-platform-tests/css/css-ui/input-security-non-sensitive-elements-expected.html: Added.
+        * web-platform-tests/css/css-ui/input-security-non-sensitive-elements.html: Added.
+        * web-platform-tests/css/css-ui/input-security-none-sensitive-text-input-expected.html: Added.
+        * web-platform-tests/css/css-ui/input-security-none-sensitive-text-input.html: Added.
+        * web-platform-tests/css/css-ui/input-security-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-ui/input-security-parsing.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-09-20  Tim Nguyen  <ntim@apple.com>
 
         Import inert/inert-on-non-html.tentative.html from WPT

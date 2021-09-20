@@ -1,3 +1,92 @@
+2021-09-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        Implement input-security
+        https://bugs.webkit.org/show_bug.cgi?id=184510
+        rdar://79979992
+
+        Reviewed by Antti Koivisto.
+
+        Implement the input-security property as specified in
+        https://drafts.csswg.org/css-ui-4/#input-security.
+
+        The property provides authors a way to enable/disable obscuring of text
+        in sensitive text inputs, such as <input type=password>. While the
+        property is similar to the non-standard -webkit-text-security property
+        at a surface level, there are several differences that make input-security
+        more than a simple alias/synonym.
+
+        1. -webkit-text-security is an inherited property, input-security is not.
+
+        2. input-security only applies to sensitive text inputs, whereas
+           -webkit-text-security applies to everything but sensitive text inputs.
+           The latter is due to the presence of an !important rule in the UA
+           stylesheet that prevented authors from disabling/controlling obscuring.
+
+        3. -webkit-text-security supports additional values that control the
+           appearance of obscured characters. input-security is a simple toggle.
+
+        However, while an alias is not possible, the implementation can still
+        leverage the existing text security logic under the hood.
+
+        Tests: fast/css/computed-text-security-for-input-security.html
+               imported/w3c/web-platform-tests/css/css-ui/input-security-auto-sensitive-text-input.html
+               imported/w3c/web-platform-tests/css/css-ui/input-security-computed.html
+               imported/w3c/web-platform-tests/css/css-ui/input-security-non-sensitive-elements.html
+               imported/w3c/web-platform-tests/css/css-ui/input-security-none-sensitive-text-input.html
+               imported/w3c/web-platform-tests/css/css-ui/input-security-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator InputSecurity const):
+        * css/CSSProperties.json:
+        * css/html.css:
+        (input[type="password"]):
+
+        Remove the -webkit-text-security rule, as password inputs are obscured
+        by default (input-security: auto), and to support disabling of
+        obscuring.
+
+        (input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable):
+
+        Use input-security to make the characters viewable, as
+        -webkit-text-security no longer has an effect on password inputs in
+        the UA stylesheet. Note that the property already had no effect in
+        author stylesheets.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::inputSecurity const):
+        (WebCore::RenderStyle::setInputSecurity):
+        (WebCore::RenderStyle::initialInputSecurity):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+
+        Control the obscuring of text in password inputs by setting appropriate
+        TextSecurity value in RenderStyle, corresponding to the InputSecurity
+        value. This implementation was chosen for two reasons:
+
+        1. Leverage the existing logic which obscures characters based on the
+           style's TextSecurity value. Note that it is already not possible to
+           specify other TextSecurity value's for password inputs, so there is
+           no risk in forcing a TextSecurity value for a given InputSecurity.
+
+        2. Ensure the computed value for -webkit-text-security is not "none"
+           (the default) when input-security is "auto". This behavior is
+           necessary as there are known existing scripts that check the
+           computed value for -webkit-text-security to determine whether text
+           in an input is obscured.
+
 2021-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Have ScrollingMomentumCalculator work in terms of ScrollExtents

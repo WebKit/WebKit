@@ -504,6 +504,11 @@ enum class TextSecurity : uint8_t {
     Square
 };
 
+enum class InputSecurity : uint8_t {
+    Auto,
+    None
+};
+
 // CSS3 User Modify Properties
 
 enum class UserModify : uint8_t {

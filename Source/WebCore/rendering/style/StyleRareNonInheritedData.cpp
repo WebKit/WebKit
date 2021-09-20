@@ -109,6 +109,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , breakAfter(static_cast<unsigned>(RenderStyle::initialBreakBetween()))
     , breakInside(static_cast<unsigned>(RenderStyle::initialBreakInside()))
     , resize(static_cast<unsigned>(RenderStyle::initialResize()))
+    , inputSecurity(static_cast<unsigned>(RenderStyle::initialInputSecurity()))
     , hasAttrContent(false)
     , isNotFinal(false)
     , columnGap(RenderStyle::initialColumnGap())
@@ -208,6 +209,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , breakAfter(o.breakAfter)
     , breakInside(o.breakInside)
     , resize(o.resize)
+    , inputSecurity(o.inputSecurity)
     , hasAttrContent(o.hasAttrContent)
     , isNotFinal(o.isNotFinal)
     , columnGap(o.columnGap)
@@ -315,6 +317,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && breakBefore == o.breakBefore
         && breakInside == o.breakInside
         && resize == o.resize
+        && inputSecurity == o.inputSecurity
         && hasAttrContent == o.hasAttrContent
         && isNotFinal == o.isNotFinal
         && columnGap == o.columnGap

@@ -1,3 +1,24 @@
+2021-09-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        Implement input-security
+        https://bugs.webkit.org/show_bug.cgi?id=184510
+        rdar://79979992
+
+        Reviewed by Antti Koivisto.
+
+        Add a test to verify the interaction between the new input-security
+        property, and the existing -webkit-text-security property. See the
+        WebCore ChangeLog for more details.
+
+        Rebaselined existing tests to account for the existence of a new CSS
+        property.
+
+        * fast/css/computed-text-security-for-input-security-expected.txt: Added.
+        * fast/css/computed-text-security-for-input-security.html: Added.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Unskip COOP tests that were marked as flaky as they have no recent failures on the bots.

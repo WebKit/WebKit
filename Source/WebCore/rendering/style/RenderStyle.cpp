@@ -743,6 +743,9 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
         return true;
     }
 
+    if (first.inputSecurity != second.inputSecurity)
+        return true;
+
     return false;
 }
 

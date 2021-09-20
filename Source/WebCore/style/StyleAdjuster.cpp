@@ -392,6 +392,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setOverflowY(style.overflowY() == Overflow::Visible ? Overflow::Auto : style.overflowY());
         }
 
+        if (is<HTMLInputElement>(*m_element) && downcast<HTMLInputElement>(*m_element).isPasswordField())
+            style.setTextSecurity(style.inputSecurity() == InputSecurity::Auto ? TextSecurity::Disc : TextSecurity::None);
+
         // Disallow -webkit-user-modify on :pseudo and ::pseudo elements.
         if (!m_element->shadowPseudoId().isNull())
             style.setUserModify(UserModify::ReadOnly);
