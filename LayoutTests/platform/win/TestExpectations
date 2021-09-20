@@ -147,7 +147,7 @@ http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.py [ Sk
 http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.py [ Skip ] 
 http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
 http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
-http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ] 
+http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ] 
 http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ] 
 http/tests/referrer-policy-img/no-referrer-when-downgrade/ [ Skip ] 
@@ -4692,3 +4692,6 @@ webkit.org/b/229594 js/dfg-int16array.html [ Pass Crash ]
 webkit.org/b/229594 js/dfg-int32array-overflow-values.html [ Pass Crash ]
 
 webkit.org/b/230427 http/tests/misc/iframe-reparenting-id-collision.html [ Pass Failure ]
+
+# webkit.org/b/214448 Web Share API is not implemented in the Windows port
+http/tests/webshare/ [ Skip ]

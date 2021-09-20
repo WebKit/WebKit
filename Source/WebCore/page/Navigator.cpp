@@ -30,6 +30,7 @@
 #include "DOMPlugin.h"
 #include "DOMPluginArray.h"
 #include "Document.h"
+#include "FeaturePolicy.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -129,6 +130,9 @@ bool Navigator::canShare(Document& document, const ShareData& data)
     if (!document.isFullyActive())
         return false;
 
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes))
+        return false;
+
     bool hasShareableTitleOrText = !data.title.isNull() || !data.text.isNull();
     bool hasShareableURL = !!shareableURLForShareData(document, data);
 #if ENABLE(FILE_SHARE)
@@ -144,6 +148,11 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
 {
     if (!document.isFullyActive()) {
         promise->reject(InvalidStateError);
+        return;
+    }
+
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes)) {
+        promise->reject(NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_s);
         return;
     }
 
@@ -173,7 +182,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
     if (document.settings().webShareFileAPIEnabled() && !data.files.isEmpty()) {
         if (m_loader)
             m_loader->cancel();
-        
+
         m_loader = ShareDataReader::create([this, promise = WTFMove(promise)] (ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
             showShareData(readData, WTFMove(promise));
         });

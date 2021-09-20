@@ -1,3 +1,22 @@
+2021-09-20  Marcos Caceres  <marcos@marcosc.com>
+
+        Web Share permission policy "web-share" and "self" as the allowlist
+        https://bugs.webkit.org/show_bug.cgi?id=214448
+
+        Reviewed by Youenn Fablet.
+
+        Tests: http/tests/webshare/webshare-allow-attribute-canShare.https.html
+               http/tests/webshare/webshare-allow-attribute-share.https.html
+
+        * html/FeaturePolicy.cpp:
+        (WebCore::policyTypeName):
+        (WebCore::FeaturePolicy::parse):
+        (WebCore::FeaturePolicy::allows const):
+        * html/FeaturePolicy.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::canShare):
+        (WebCore::Navigator::share):
+
 2021-09-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Remove redundant Run::m_isLineSpanning
