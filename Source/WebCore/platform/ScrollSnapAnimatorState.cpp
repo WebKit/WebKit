@@ -31,21 +31,21 @@
 
 namespace WebCore {
 
-void ScrollSnapAnimatorState::transitionToSnapAnimationState(const ScrollExtents& scrollExtents, float pageScale, const FloatPoint& initialOffset)
+bool ScrollSnapAnimatorState::transitionToSnapAnimationState(const ScrollExtents& scrollExtents, float pageScale, const FloatPoint& initialOffset)
 {
-    setupAnimationForState(ScrollSnapState::Snapping, scrollExtents, pageScale, initialOffset, { }, { });
+    return setupAnimationForState(ScrollSnapState::Snapping, scrollExtents, pageScale, initialOffset, { }, { });
 }
 
-void ScrollSnapAnimatorState::transitionToGlideAnimationState(const ScrollExtents& scrollExtents, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta)
+bool ScrollSnapAnimatorState::transitionToGlideAnimationState(const ScrollExtents& scrollExtents, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta)
 {
-    setupAnimationForState(ScrollSnapState::Gliding, scrollExtents, pageScale, initialOffset, initialVelocity, initialDelta);
+    return setupAnimationForState(ScrollSnapState::Gliding, scrollExtents, pageScale, initialOffset, initialVelocity, initialDelta);
 }
 
-void ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, const ScrollExtents& scrollExtents, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta)
+bool ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, const ScrollExtents& scrollExtents, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta)
 {
     ASSERT(state == ScrollSnapState::Snapping || state == ScrollSnapState::Gliding);
     if (m_currentState == state)
-        return;
+        return false;
 
     m_momentumCalculator = ScrollingMomentumCalculator::create(scrollExtents, initialOffset, initialDelta, initialVelocity);
     FloatPoint predictedScrollTarget { m_momentumCalculator->predictedDestinationOffset() };
@@ -53,9 +53,15 @@ void ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, cons
     float targetOffsetX, targetOffsetY;
     std::tie(targetOffsetX, m_activeSnapIndexX) = targetOffsetForStartOffset(ScrollEventAxis::Horizontal, scrollExtents, initialOffset.x(), predictedScrollTarget, pageScale, initialDelta.width());
     std::tie(targetOffsetY, m_activeSnapIndexY) = targetOffsetForStartOffset(ScrollEventAxis::Vertical, scrollExtents, initialOffset.y(), predictedScrollTarget, pageScale, initialDelta.height());
-    m_momentumCalculator->setRetargetedScrollOffset({ targetOffsetX, targetOffsetY });
+    auto targetOffset = FloatPoint { targetOffsetX, targetOffsetY };
+    m_momentumCalculator->setRetargetedScrollOffset(targetOffset);
+
+    if (targetOffset == initialOffset)
+        return false;
+
     m_startTime = MonotonicTime::now();
     m_currentState = state;
+    return true;
 }
 
 void ScrollSnapAnimatorState::transitionToUserInteractionState()

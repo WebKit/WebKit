@@ -1,3 +1,25 @@
+2021-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        ScrollSnapAnimatorState should be explicit about when it starts animations
+        https://bugs.webkit.org/show_bug.cgi?id=230497
+
+        Reviewed by Wenson Hsieh.
+
+        ScrollSnapAnimatorState::transitionTo* functions may not actually trigger an animation
+        if the target offset ends up as the initial offset. This currently happens to work
+        because ScrollingMomentumCalculator reports a duration of zero in this case, but
+        it's better to just make it clear that no animation was started.
+
+        Exercised by tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html
+
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::transitionToSnapAnimationState):
+        (WebCore::ScrollSnapAnimatorState::transitionToGlideAnimationState):
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        * platform/ScrollSnapAnimatorState.h:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::processWheelEventForScrollSnap):
+
 2021-09-20  Darin Adler  <darin@apple.com>
 
         Clean up overrides of DisplayCaptureSourceMac::Capturer::generateFrame()

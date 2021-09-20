@@ -78,15 +78,17 @@ public:
     FloatPoint currentAnimatedScrollOffset(MonotonicTime, bool& isAnimationComplete) const;
 
     // State transition helpers.
-    void transitionToSnapAnimationState(const ScrollExtents&, float pageScale, const FloatPoint& initialOffset);
-    void transitionToGlideAnimationState(const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
+    // These return true if they start a new animation.
+    bool transitionToSnapAnimationState(const ScrollExtents&, float pageScale, const FloatPoint& initialOffset);
+    bool transitionToGlideAnimationState(const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
+
     void transitionToUserInteractionState();
     void transitionToDestinationReachedState();
 
 private:
     std::pair<float, std::optional<unsigned>> targetOffsetForStartOffset(ScrollEventAxis, const ScrollExtents&, float startOffset, FloatPoint predictedOffset, float pageScale, float initialDelta) const;
+    bool setupAnimationForState(ScrollSnapState, const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
     void teardownAnimationForState(ScrollSnapState);
-    void setupAnimationForState(ScrollSnapState, const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
 
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
