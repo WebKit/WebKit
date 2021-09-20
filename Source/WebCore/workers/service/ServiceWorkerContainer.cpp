@@ -105,7 +105,7 @@ auto ServiceWorkerContainer::ready() -> ReadyPromise&
             return *m_readyPromise;
 
         auto& context = *scriptExecutionContext();
-        ensureSWClientConnection().whenRegistrationReady(context.topOrigin().data(), context.url(), [this, protectedThis = makeRef(*this)](auto&& registrationData) mutable {
+        ensureSWClientConnection().whenRegistrationReady(context.topOrigin().data(), context.url(), [this, protectedThis = Ref { *this }](auto&& registrationData) mutable {
             queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, registrationData = WTFMove(registrationData)]() mutable {
                 auto* context = scriptExecutionContext();
                 if (!context || !m_readyPromise)
@@ -258,7 +258,7 @@ void ServiceWorkerContainer::getRegistration(const String& clientURL, Ref<Deferr
         return;
     }
 
-    ensureSWClientConnection().matchRegistration(SecurityOriginData { context.topOrigin().data() }, parsedURL, [this, protectedThis = makeRef(*this), promise = WTFMove(promise)](auto&& result) mutable {
+    ensureSWClientConnection().matchRegistration(SecurityOriginData { context.topOrigin().data() }, parsedURL, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             if (!result) {
                 promise->resolve();
@@ -303,7 +303,7 @@ void ServiceWorkerContainer::getRegistrations(Ref<DeferredPromise>&& promise)
     }
 
     auto& context = *scriptExecutionContext();
-    ensureSWClientConnection().getRegistrations(SecurityOriginData { context.topOrigin().data() }, context.url(), [this, protectedThis = makeRef(*this), promise = WTFMove(promise)] (auto&& registrationDatas) mutable {
+    ensureSWClientConnection().getRegistrations(SecurityOriginData { context.topOrigin().data() }, context.url(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise)] (auto&& registrationDatas) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, promise = WTFMove(promise), registrationDatas = WTFMove(registrationDatas)]() mutable {
             auto registrations = WTF::map(WTFMove(registrationDatas), [&](auto&& registrationData) {
                 return ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(registrationData));
@@ -365,7 +365,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
         destroyJob(job);
     });
 
-    auto notifyIfExitEarly = WTF::makeScopeExit([this, protectedThis = makeRef(*this), key = data.key, shouldNotifyWhenResolved] {
+    auto notifyIfExitEarly = WTF::makeScopeExit([this, protectedThis = Ref { *this }, key = data.key, shouldNotifyWhenResolved] {
         if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
             notifyRegistrationIsSettled(key);
     });
@@ -377,7 +377,7 @@ void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, 
     if (!promise)
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, protectedThis = makeRef(*this), promise = WTFMove(promise), jobIdentifier = job.identifier(), data = WTFMove(data), shouldNotifyWhenResolved, notifyIfExitEarly = WTFMove(notifyIfExitEarly)]() mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }, promise = WTFMove(promise), jobIdentifier = job.identifier(), data = WTFMove(data), shouldNotifyWhenResolved, notifyIfExitEarly = WTFMove(notifyIfExitEarly)]() mutable {
         notifyIfExitEarly.release();
 
         auto registration = ServiceWorkerRegistration::getOrCreate(*scriptExecutionContext(), *this, WTFMove(data));

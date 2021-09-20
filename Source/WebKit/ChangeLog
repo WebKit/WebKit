@@ -1,5 +1,374 @@
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
+        Stop using makeRef(*this) / makeRefPtr(this)
+        https://bugs.webkit.org/show_bug.cgi?id=230464
+
+        Reviewed by Alex Christensen.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::initialize):
+        (WebKit::RemoteGraphicsContextGL::displayWasReconfigured):
+        * GPUProcess/media/RemoteAudioSourceProviderProxy.cpp:
+        (WebKit::RemoteAudioSourceProviderProxy::createRingBuffer):
+        * GPUProcess/media/RemoteMediaResource.cpp:
+        (WebKit::RemoteMediaResource::responseReceived):
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::removeCodedFrames):
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::close):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::close):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::createLayer):
+        (WebKit::RemoteSampleBufferDisplayLayerManager::releaseLayer):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::postTask):
+        (WebKit::WebResourceLoadStatisticsStore::destroyResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccessEphemeral):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::WebIDBServer):
+        (WebKit::WebIDBServer::getOrigins):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::renameOrigin):
+        (WebKit::WebIDBServer::addConnection):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::registerTemporaryBlobFilePaths):
+        (WebKit::WebIDBServer::close):
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB):
+        (WebKit::NetworkConnectionToWebProcess::takeAllMessagesForPort):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::resume):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        (WebKit::NetworkProcess::createWebIDBServer):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+        (WebKit::NetworkResourceLoader::tryStoreAsCacheEntry):
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::sendData):
+        (WebKit::NetworkSocketStream::sendHandshake):
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::add):
+        (WebKit::StorageManagerSet::remove):
+        (WebKit::StorageManagerSet::removeConnection):
+        (WebKit::StorageManagerSet::handleLowMemoryWarning):
+        (WebKit::StorageManagerSet::suspend):
+        (WebKit::StorageManagerSet::getSessionStorageOrigins):
+        (WebKit::StorageManagerSet::deleteSessionStorage):
+        (WebKit::StorageManagerSet::deleteSessionStorageForOrigins):
+        (WebKit::StorageManagerSet::getLocalStorageOrigins):
+        (WebKit::StorageManagerSet::deleteLocalStorageModifiedSince):
+        (WebKit::StorageManagerSet::deleteLocalStorageForOrigins):
+        (WebKit::StorageManagerSet::getLocalStorageOriginDetails):
+        (WebKit::StorageManagerSet::renameOrigin):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::readCache):
+        (WebKit::CacheStorage::Engine::fetchDirectoryEntries):
+        (WebKit::CacheStorage::CompletionHandler<void):
+        (WebKit::CacheStorage::Engine::clearCachesForOriginFromDirectories):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::storeOrigin):
+        (WebKit::CacheStorage::Caches::initializeSize):
+        (WebKit::CacheStorage::Caches::clear):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        (WebKit::CacheStorage::Caches::writeCachesToDisk):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::traverse):
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::write):
+        * NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp:
+        (WebKit::NetworkCache::IOChannel::readSyncInThread):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::remove):
+        (WebKit::NetworkCache::Storage::finishReadOperation):
+        (WebKit::NetworkCache::Storage::finishWriteOperation):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::clear):
+        (WebKit::NetworkCache::Storage::shrink):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::resume):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::curlDidSendData):
+        (WebKit::NetworkDataTaskCurl::curlDidReceiveResponse):
+        (WebKit::NetworkDataTaskCurl::curlDidReceiveBuffer):
+        (WebKit::NetworkDataTaskCurl::invokeDidReceiveResponse):
+        (WebKit::NetworkDataTaskCurl::willPerformHTTPRedirection):
+        (WebKit::NetworkDataTaskCurl::tryHttpAuthentication):
+        (WebKit::NetworkDataTaskCurl::tryProxyAuthentication):
+        (WebKit::NetworkDataTaskCurl::tryServerTrustEvaluation):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+        (WebKit::NetworkDataTaskSoup::authenticate):
+        (WebKit::NetworkDataTaskSoup::continueAuthenticate):
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        (WebKit::NetworkRTCProvider::createResolver):
+        (WebKit::NetworkRTCProvider::stopResolver):
+        (WebKit::NetworkRTCProvider::closeListeningSockets):
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp:
+        (WebKit::RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess):
+        (WebKit::RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::invalidate):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::postConnectionDidCloseOnConnectionWorkQueue):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::dispatchDidReceiveInvalidMessage):
+        (IPC::Connection::enqueueIncomingMessage):
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::open):
+        (IPC::Connection::initializeSendSource):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::sendOutputMessage):
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::invokeReadEventHandler):
+        (IPC::Connection::invokeWriteEventHandler):
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+        * Scripts/webkit/tests/TestWithIfMessageMessageReceiver.cpp:
+        (WebKit::TestWithIfMessage::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp:
+        (WebKit::TestWithImageData::didReceiveMessage):
+        (WebKit::TestWithImageData::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (WebKit::TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage):
+        (WebKit::TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage):
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+        (WebKit::TestWithSemaphore::didReceiveMessage):
+        (WebKit::TestWithSemaphore::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithStreamBufferMessageReceiver.cpp:
+        (WebKit::TestWithStreamBuffer::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithSuperclassMessageReceiver.cpp:
+        (WebKit::TestWithSuperclass::didReceiveMessage):
+        (WebKit::TestWithSuperclass::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (WebKit::TestWithoutAttributes::didReceiveMessage):
+        (WebKit::TestWithoutAttributes::didReceiveSyncMessage):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::m_displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::invalidate):
+        (WebKit::ThreadedCompositor::suspend):
+        (WebKit::ThreadedCompositor::resume):
+        (WebKit::ThreadedCompositor::forceRepaint):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::startOnMainThread):
+        (WebKit::MediaFormatReader::parseByteSource):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::lookupContentRuleList):
+        (API::ContentRuleListStore::getAvailableContentRuleListIdentifiers):
+        (API::ContentRuleListStore::compileContentRuleList):
+        (API::ContentRuleListStore::removeContentRuleList):
+        (API::ContentRuleListStore::getContentRuleListSource):
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::cookiesForURL):
+        (API::HTTPCookieStore::setCookies):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::checkIconURLAndSetPageURLIfNeeded):
+        (WebKit::IconDatabase::loadIconForPageURL):
+        (WebKit::IconDatabase::setIconForPageURL):
+        (WebKit::IconDatabase::clear):
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionToNextKeyFrame):
+        (WebKit::SimulatedInputDispatcher::transitionToNextInputSourceState):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getBrowsingContexts):
+        (WebKit::WebAutomationSession::getBrowsingContext):
+        (WebKit::WebAutomationSession::createBrowsingContext):
+        (WebKit::WebAutomationSession::setWindowFrameOfBrowsingContext):
+        (WebKit::WebAutomationSession::maximizeWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::hideWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::exitFullscreenWindowForPage):
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog):
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::simulateMouseInteraction):
+        (WebKit::WebAutomationSession::simulateTouchInteraction):
+        (WebKit::WebAutomationSession::simulateWheelInteraction):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        (WebKit::WebAutomationSession::cancelInteractionSequence):
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::dismissViewController):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::DeviceIdHashSaltStorage):
+        (WebKit::DeviceIdHashSaltStorage::loadStorageFromDisk):
+        (WebKit::DeviceIdHashSaltStorage::storeHashSaltToDisk):
+        (WebKit::DeviceIdHashSaltStorage::deleteHashSaltFromDisk):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::cancel):
+        (WebKit::DownloadProxy::willSendRequest):
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::gpuProcessExited):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::join):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinateSeekTo):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatePlay):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatePause):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinateSetTrack):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessDidTerminate):
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::prompt):
+        * UIProcess/WebContextMenuProxy.cpp:
+        (WebKit::WebContextMenuProxy::useContextMenuItems):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::setUpPolicyListenerProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestFontAttributesAtSelectionStart):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::getWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrameWithCallback):
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallengeProxy):
+        (WebKit::WebPageProxy::requestStorageSpace):
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+        (WebKit::WebPageProxy::dispatchActivityStateUpdateForTesting):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::terminateServiceWorkers):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        (WebKit::WebProcessProxy::requestTermination):
+        (WebKit::WebProcessProxy::didExceedCPULimit):
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::willPerformRedirection):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::ensureAppBoundDomains const):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::getResourceLoadStatisticsDataSummary):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::acquireAsync):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getShareMenuItem):
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        (WebKit::WebContextMenuProxyMac::useContextMenuItems):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        (WebKit::WebPageProxy::pdfSaveToPDF):
+        (WebKit::WebPageProxy::pdfOpenWithPreview):
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::didClose):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::startRendering):
+        (WebKit::RemoteAudioDestinationProxy::stopRendering):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::addProvider):
+        (WebKit::RemoteAudioSourceProviderManager::removeProvider):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::removeCodedFrames):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::sendMessage):
+        (WebKit::WebSocketChannel::close):
+        (WebKit::WebSocketChannel::fail):
+        (WebKit::WebSocketChannel::didClose):
+        (WebKit::WebSocketChannel::resume):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pluginThreadAsyncCall):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+        (WebKit::PDFPlugin::pdfLog):
+        (WebKit::PDFPlugin::receivedNonLinearizedPDFSentinel):
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+        (WebKit::PDFPlugin::tryRunScriptsInPDFDocument):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::start):
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::removeUserScriptMessageHandlerInternal):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::gestureEvent):
+        (WebKit::EventDispatcher::touchEvent):
+        (WebKit::EventDispatcher::dispatchWheelEventViaMainThread):
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::suspendForProcessSwap):
+        (WebKit::WebPage::runJavaScriptInFrameInScriptWorld):
+        (WebKit::WebPage::drawPagesForPrinting):
+        (WebKit::WebPage::elementDidBlur):
+        (WebKit::WebPage::requestStorageAccess):
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::WebURLSchemeTaskProxy::didPerformRedirection):
+        (WebKit::WebURLSchemeTaskProxy::didReceiveResponse):
+        (WebKit::WebURLSchemeTaskProxy::didReceiveData):
+        (WebKit::WebURLSchemeTaskProxy::didComplete):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::didFinishContentChangeObserving):
+        (WebKit::WebPage::didFinishLoadingImageForElement):
+        (WebKit::WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::addSource):
+        (WebKit::RemoteCaptureSampleManager::removeSource):
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::createRemoteMediaSource):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::createRemoteMediaSource):
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        (WebKit::VideoFullscreenManager::requestVideoContentLayer):
+        (WebKit::VideoFullscreenManager::returnVideoContentLayer):
+        (WebKit::VideoFullscreenManager::didSetupFullscreen):
+        (WebKit::VideoFullscreenManager::willExitFullscreen):
+        (WebKit::VideoFullscreenManager::didEnterFullscreen):
+        (WebKit::VideoFullscreenManager::didExitFullscreen):
+        (WebKit::VideoFullscreenManager::didCleanupFullscreen):
+
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
         Fix race in RemoteRenderingBackend::allowsExitUnderMemoryPressure()
         https://bugs.webkit.org/show_bug.cgi?id=229870
         <rdar://82459484>

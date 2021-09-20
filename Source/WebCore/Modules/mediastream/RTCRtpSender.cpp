@@ -136,7 +136,7 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         if (!context)
             return;
 
-        context->postTask([this, protectedThis = makeRef(*this), withTrack = WTFMove(withTrack), promise = WTFMove(promise)](auto&) mutable {
+        context->postTask([this, protectedThis = Ref { *this }, withTrack = WTFMove(withTrack), promise = WTFMove(promise)](auto&) mutable {
             if (!m_connection || m_connection->isClosed())
                 return;
 

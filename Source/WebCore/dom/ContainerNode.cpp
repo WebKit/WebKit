@@ -1013,7 +1013,7 @@ ExceptionOr<void> ContainerNode::replaceChildren(Vector<NodeOrString>&& vector)
     }
 
     // step 3
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     ChildListMutationScope mutation(*this);
     removeAllChildrenWithScriptAssertion(ChildChange::Source::API, DeferChildrenChanged::No);
 

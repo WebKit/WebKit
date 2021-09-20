@@ -108,7 +108,7 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
         m_callbackMap.add(callbackId, WTFMove(callback));
 
         // 8. Fulfill promise with the callbackId and run the following steps in parallel:
-        promise->whenSettled([this, protectedThis = makeRefPtr(this), callbackId] {
+        promise->whenSettled([this, protectedThis = Ref { *this }, callbackId] {
             // 8.1 Queue a task to invoke the callback with the current availability for the media element.
             queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, callbackId, available = m_available] {
                 if (isContextStopped())

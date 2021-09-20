@@ -220,7 +220,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
     auto deferrer = WheelEventTestMonitorCompletionDeferrer { wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded };
-    RunLoop::main().dispatch([strongThis = makeRef(*this), deferrer = WTFMove(deferrer)] {
+    RunLoop::main().dispatch([strongThis = Ref { *this }, deferrer = WTFMove(deferrer)] {
         if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
             scrollingCoordinator->scrollingThreadAddedPendingUpdate();
     });
@@ -285,7 +285,7 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
 
     // Wait for the scrolling thread to acquire m_treeLock. This ensures that any pending wheel events are processed.
     BinarySemaphore semaphore;
-    ScrollingThread::dispatch([protectedThis = makeRef(*this), &semaphore]() {
+    ScrollingThread::dispatch([protectedThis = Ref { *this }, &semaphore]() {
         Locker treeLocker { protectedThis->m_treeLock };
         semaphore.signal();
         protectedThis->waitForRenderingUpdateCompletionOrTimeout();
@@ -410,7 +410,7 @@ void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
         return;
 #endif
 
-    ScrollingThread::dispatch([protectedThis = makeRef(*this)]() {
+    ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
         protectedThis->displayDidRefreshOnScrollingThread();
     });
 }

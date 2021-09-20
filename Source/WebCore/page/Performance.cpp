@@ -438,7 +438,7 @@ void Performance::scheduleTaskIfNeeded()
         return;
 
     m_hasScheduledTimingBufferDeliveryTask = true;
-    context->eventLoop().queueTask(TaskSource::PerformanceTimeline, [protectedThis = makeRef(*this), this] {
+    context->eventLoop().queueTask(TaskSource::PerformanceTimeline, [protectedThis = Ref { *this }, this] {
         auto* context = scriptExecutionContext();
         if (!context)
             return;

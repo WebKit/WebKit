@@ -92,7 +92,7 @@ void WorkerOrWorkletThread::runEventLoop()
 
 void WorkerOrWorkletThread::workerOrWorkletThread()
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     // Propagate the mainThread's fenv to workers.
 #if PLATFORM(IOS_FAMILY)

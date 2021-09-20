@@ -484,7 +484,7 @@ void IconDatabase::checkIconURLAndSetPageURLIfNeeded(const String& iconURL, cons
 {
     ASSERT(isMainRunLoop());
 
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), iconURL = iconURL.isolatedCopy(), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, iconURL = iconURL.isolatedCopy(), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, completionHandler = WTFMove(completionHandler)]() mutable {
         bool result = false;
         bool changed = false;
         if (m_db.isOpen()) {
@@ -537,7 +537,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
 {
     ASSERT(isMainRunLoop());
 
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTFMove(completionHandler)]() mutable {
         std::optional<int64_t> iconID;
         Vector<uint8_t> iconData;
         String iconURL;
@@ -560,7 +560,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 updateIconTimestamp(iconID.value(), timestamp.secondsAs<int64_t>());
         }
         startPruneTimer();
-        RunLoop::main().dispatch([this, protectedThis = makeRef(*this), iconURL = WTFMove(iconURL), iconData = WTFMove(iconData), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([this, protectedThis = Ref { *this }, iconURL = WTFMove(iconURL), iconData = WTFMove(iconData), completionHandler = WTFMove(completionHandler)]() mutable {
             if (iconURL.isEmpty()) {
                 completionHandler(nullptr);
                 return;
@@ -626,7 +626,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconD
             }
         }
         startClearLoadedIconsTimer();
-        m_workQueue->dispatch([this, protectedThis = makeRef(*this), result, iconURL = iconURL.isolatedCopy(), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        m_workQueue->dispatch([this, protectedThis = Ref { *this }, result, iconURL = iconURL.isolatedCopy(), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             {
                 Locker locker { m_pageURLToIconURLMapLock };
                 m_pageURLToIconURLMap.set(pageURL, iconURL);
@@ -639,7 +639,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconD
     }
 
     Vector<uint8_t> data { iconData, iconDataSize };
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), iconURL = iconURL.isolatedCopy(), iconData = WTFMove(data), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, iconURL = iconURL.isolatedCopy(), iconData = WTFMove(data), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         bool result = false;
         if (m_db.isOpen()) {
             SQLiteTransaction transaction(m_db);
@@ -675,7 +675,7 @@ void IconDatabase::clear(CompletionHandler<void()>&& completionHandler)
         Locker locker { m_loadedIconsLock };
         m_loadedIcons.clear();
     }
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         {
             Locker locker { m_pageURLToIconURLMapLock };
             m_pageURLToIconURLMap.clear();

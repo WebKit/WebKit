@@ -431,7 +431,7 @@ void H2::Connection::receive(CompletionHandler<void(Frame&&)>&& completionHandle
         // https://http2.github.io/http2-spec/#rfc.section.3.5
         constexpr size_t clientConnectionPrefaceLength = 24;
         if (m_receiveBuffer.size() < clientConnectionPrefaceLength) {
-            m_tlsConnection.receiveBytes([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
+            m_tlsConnection.receiveBytes([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
                 m_receiveBuffer.appendVector(bytes);
                 receive(WTFMove(completionHandler));
             });
@@ -463,7 +463,7 @@ void H2::Connection::receive(CompletionHandler<void(Frame&&)>&& completionHandle
         }
     }
     
-    m_tlsConnection.receiveBytes([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
+    m_tlsConnection.receiveBytes([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
         m_receiveBuffer.appendVector(bytes);
         receive(WTFMove(completionHandler));
     });

@@ -167,7 +167,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
     }
     FrameLoader::addSameSiteInfoToRequestIfNeeded(clientRequest, m_frame->document());
 
-    willSendRequestInternal(WTFMove(clientRequest), ResourceResponse(), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](ResourceRequest&& request) mutable {
+    willSendRequestInternal(WTFMove(clientRequest), ResourceResponse(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](ResourceRequest&& request) mutable {
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of willSendRequest, bail out.
@@ -191,7 +191,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
 
 void ResourceLoader::deliverResponseAndData(const ResourceResponse& response, RefPtr<SharedBuffer>&& buffer)
 {
-    didReceiveResponse(response, [this, protectedThis = makeRef(*this), buffer = WTFMove(buffer)]() mutable {
+    didReceiveResponse(response, [this, protectedThis = Ref { *this }, buffer = WTFMove(buffer)]() mutable {
         if (reachedTerminalState())
             return;
 
@@ -285,7 +285,7 @@ void ResourceLoader::loadDataURL()
     auto mode = DataURLDecoder::Mode::Legacy;
     if (m_request.requester() == ResourceRequest::Requester::Fetch)
         mode = DataURLDecoder::Mode::ForgivingBase64;
-    DataURLDecoder::decode(url, scheduleContext, mode, [this, protectedThis = makeRef(*this), url](auto decodeResult) mutable {
+    DataURLDecoder::decode(url, scheduleContext, mode, [this, protectedThis = Ref { *this }, url](auto decodeResult) mutable {
         if (this->reachedTerminalState())
             return;
         if (!decodeResult) {

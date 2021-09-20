@@ -65,7 +65,7 @@ ApplicationCacheResourceLoader::~ApplicationCacheResourceLoader()
 
 void ApplicationCacheResourceLoader::cancel(Error error)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (auto callback = WTFMove(m_callback))
         callback(makeUnexpected(error));
@@ -119,7 +119,7 @@ void ApplicationCacheResourceLoader::redirectReceived(CachedResource&, ResourceR
 
 void ApplicationCacheResourceLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     ASSERT_UNUSED(resource, &resource == m_resource);
 

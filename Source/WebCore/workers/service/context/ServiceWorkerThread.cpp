@@ -230,7 +230,7 @@ void ServiceWorkerThread::startHeartBeatTimer()
         return;
 
     m_ongoingHeartBeatCheck = true;
-    runLoop().postTask([this, protectedThis = makeRef(*this)](auto&) mutable {
+    runLoop().postTask([this, protectedThis = Ref { *this }](auto&) mutable {
         callOnMainThread([this, protectedThis = WTFMove(protectedThis)]() {
             m_ongoingHeartBeatCheck = false;
         });

@@ -82,7 +82,7 @@ namespace WebKit {
 
 void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::LoadURL::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::LoadURL>(connection, decoder, this, &TestWithLegacyReceiver::loadURL);
 #if ENABLE(TOUCH_EVENTS)
@@ -140,7 +140,7 @@ void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connec
 
 bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::CreatePlugin::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::CreatePlugin>(connection, decoder, *replyEncoder, this, &TestWithLegacyReceiver::createPlugin);
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name())

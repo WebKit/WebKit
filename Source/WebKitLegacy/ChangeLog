@@ -1,3 +1,63 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Stop using makeRef(*this) / makeRefPtr(this)
+        https://bugs.webkit.org/show_bug.cgi?id=230464
+
+        Reviewed by Alex Christensen.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::InProcessIDBServer):
+        (InProcessIDBServer::deleteDatabase):
+        (InProcessIDBServer::didDeleteDatabase):
+        (InProcessIDBServer::openDatabase):
+        (InProcessIDBServer::didOpenDatabase):
+        (InProcessIDBServer::didAbortTransaction):
+        (InProcessIDBServer::didCommitTransaction):
+        (InProcessIDBServer::didCreateObjectStore):
+        (InProcessIDBServer::didDeleteObjectStore):
+        (InProcessIDBServer::didRenameObjectStore):
+        (InProcessIDBServer::didClearObjectStore):
+        (InProcessIDBServer::didCreateIndex):
+        (InProcessIDBServer::didDeleteIndex):
+        (InProcessIDBServer::didRenameIndex):
+        (InProcessIDBServer::didPutOrAdd):
+        (InProcessIDBServer::didGetRecord):
+        (InProcessIDBServer::didGetAllRecords):
+        (InProcessIDBServer::didGetCount):
+        (InProcessIDBServer::didDeleteRecord):
+        (InProcessIDBServer::didOpenCursor):
+        (InProcessIDBServer::didIterateCursor):
+        (InProcessIDBServer::abortTransaction):
+        (InProcessIDBServer::commitTransaction):
+        (InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        (InProcessIDBServer::createObjectStore):
+        (InProcessIDBServer::deleteObjectStore):
+        (InProcessIDBServer::renameObjectStore):
+        (InProcessIDBServer::clearObjectStore):
+        (InProcessIDBServer::createIndex):
+        (InProcessIDBServer::deleteIndex):
+        (InProcessIDBServer::renameIndex):
+        (InProcessIDBServer::putOrAdd):
+        (InProcessIDBServer::getRecord):
+        (InProcessIDBServer::getAllRecords):
+        (InProcessIDBServer::getCount):
+        (InProcessIDBServer::deleteRecord):
+        (InProcessIDBServer::openCursor):
+        (InProcessIDBServer::iterateCursor):
+        (InProcessIDBServer::establishTransaction):
+        (InProcessIDBServer::fireVersionChangeEvent):
+        (InProcessIDBServer::didStartTransaction):
+        (InProcessIDBServer::didCloseFromServer):
+        (InProcessIDBServer::notifyOpenDBRequestBlocked):
+        (InProcessIDBServer::databaseConnectionPendingClose):
+        (InProcessIDBServer::databaseConnectionClosed):
+        (InProcessIDBServer::abortOpenAndUpgradeNeeded):
+        (InProcessIDBServer::didFireVersionChangeEvent):
+        (InProcessIDBServer::openDBRequestCancelled):
+        (InProcessIDBServer::getAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::didGetAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::closeAndDeleteDatabasesModifiedSince):
+
 2021-09-17  Alex Christensen  <achristensen@webkit.org>
 
         Use ObjectIdentifier for ResourceLoader

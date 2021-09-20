@@ -42,7 +42,7 @@ static Vector<Ref<FileSystemEntry>> copyVector(const Vector<Ref<FileSystemEntry>
 
 void FileSystemEntriesCallback::scheduleCallback(ScriptExecutionContext& context, const Vector<Ref<FileSystemEntry>>& entries)
 {
-    context.postTask([protectedThis = makeRef(*this), entries = copyVector(entries)] (ScriptExecutionContext&) {
+    context.postTask([protectedThis = Ref { *this }, entries = copyVector(entries)] (ScriptExecutionContext&) {
         protectedThis->handleEvent(entries);
     });
 }

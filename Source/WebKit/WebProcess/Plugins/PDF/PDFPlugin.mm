@@ -686,7 +686,7 @@ inline PDFPlugin::PDFPlugin(WebFrame& frame, HTMLPlugInElement* pluginElement)
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     if (m_incrementalPDFLoadingEnabled) {
-        m_pdfThread = Thread::create("PDF document thread", [protectedThis = makeRef(*this), this] () mutable {
+        m_pdfThread = Thread::create("PDF document thread", [protectedThis = Ref { *this }, this] () mutable {
             threadEntry(WTFMove(protectedThis));
         });
     }
@@ -706,7 +706,7 @@ PDFPlugin::~PDFPlugin()
 void PDFPlugin::pdfLog(const String& message)
 {
     if (!isMainRunLoop()) {
-        callOnMainRunLoop([this, protectedThis = makeRef(*this), message = message.isolatedCopy()] {
+        callOnMainRunLoop([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] {
             pdfLog(message);
         });
         return;
@@ -771,7 +771,7 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
 #if !LOG_DISABLED
         pdfLog("Disabling incremental PDF loading on background thread");
 #endif
-        callOnMainRunLoop([this, protectedThis = makeRef(*this)] {
+        callOnMainRunLoop([this, protectedThis = Ref { *this }] {
             receivedNonLinearizedPDFSentinel();
         });
         return;
@@ -1027,7 +1027,7 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
     pdfLog(makeString("Scheduling a stream loader for request ", identifier, " (", count, " bytes at ", position, ")"));
 #endif
 
-    WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, m_streamLoaderClient, WTFMove(resourceRequest), [this, protectedThis = makeRef(*this), identifier] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
+    WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, m_streamLoaderClient, WTFMove(resourceRequest), [this, protectedThis = Ref { *this }, identifier] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
         if (!loader)
             return;
         auto iterator = m_outstandingByteRangeRequests.find(identifier);
@@ -1815,7 +1815,7 @@ void PDFPlugin::tryRunScriptsInPDFDocument()
     if (!m_pdfDocument || !m_documentFinishedLoading)
         return;
 
-    auto completionHandler = [this, protectedThis = makeRef(*this)] (Vector<RetainPtr<CFStringRef>>&& scripts) mutable {
+    auto completionHandler = [this, protectedThis = Ref { *this }] (Vector<RetainPtr<CFStringRef>>&& scripts) mutable {
         if (scripts.isEmpty())
             return;
 

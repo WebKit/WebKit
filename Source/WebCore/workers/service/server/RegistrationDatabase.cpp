@@ -189,7 +189,7 @@ void RegistrationDatabase::postTaskToWorkQueue(Function<void()>&& task)
     ASSERT(isMainThread());
 
     ++m_pushCounter;
-    m_workQueue->dispatch([protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
+    m_workQueue->dispatch([protectedThis = Ref { *this }, task = WTFMove(task)]() mutable {
         task();
     });
 }
@@ -259,14 +259,14 @@ void RegistrationDatabase::importRecordsIfNecessary()
 
     if (FileSystem::fileExists(m_databaseFilePath)) {
         if (!openSQLiteDatabase(m_databaseFilePath)) {
-            callOnMainThread([this, protectedThis = makeRef(*this)] {
+            callOnMainThread([this, protectedThis = Ref { *this }] {
                 databaseFailedToOpen();
             });
             return;
         }
     }
 
-    callOnMainThread([this, protectedThis = makeRef(*this)] {
+    callOnMainThread([this, protectedThis = Ref { *this }] {
         databaseOpenedAndRecordsImported();
     });
 }
@@ -371,7 +371,7 @@ void RegistrationDatabase::pushChanges(const HashMap<ServiceWorkerRegistrationKe
 void RegistrationDatabase::schedulePushChanges(Vector<ServiceWorkerContextData>&& updatedRegistrations, Vector<ServiceWorkerRegistrationKey>&& removedRegistrations, ShouldRetry shouldRetry, CompletionHandler<void()>&& completionHandler)
 {
     auto pushCounter = shouldRetry == ShouldRetry::Yes ? m_pushCounter : 0;
-    postTaskToWorkQueue([this, protectedThis = makeRef(*this), pushCounter, updatedRegistrations = WTFMove(updatedRegistrations), removedRegistrations = WTFMove(removedRegistrations), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTaskToWorkQueue([this, protectedThis = Ref { *this }, pushCounter, updatedRegistrations = WTFMove(updatedRegistrations), removedRegistrations = WTFMove(removedRegistrations), completionHandler = WTFMove(completionHandler)]() mutable {
         bool success = doPushChanges(updatedRegistrations, removedRegistrations);
         if (success) {
             updatedRegistrations.clear();
@@ -485,7 +485,7 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
             if (importedScript)
                 importedScripts.add(crossThreadCopy(pair.key), crossThreadCopy(importedScript));
         }
-        callOnMainThread([this, protectedThis = makeRef(*this), serviceWorkerIdentifier = data.serviceWorkerIdentifier, mainScript = crossThreadCopy(mainScript), importedScripts = WTFMove(importedScripts)]() mutable {
+        callOnMainThread([this, protectedThis = Ref { *this }, serviceWorkerIdentifier = data.serviceWorkerIdentifier, mainScript = crossThreadCopy(mainScript), importedScripts = WTFMove(importedScripts)]() mutable {
             if (m_store)
                 m_store->didSaveWorkerScriptsToDisk(serviceWorkerIdentifier, WTFMove(mainScript), WTFMove(importedScripts));
         });
@@ -587,7 +587,7 @@ String RegistrationDatabase::importRecords()
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
         auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(*coep), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppInitiated::Yes, WTFMove(scriptResourceMap) };
 
-        callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
+        callOnMainThread([protectedThis = Ref { *this }, contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));
         });
     }

@@ -99,7 +99,7 @@ void WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData()
 
     LOG(Media, "WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData(%p) - isReadyForMoreMediaData(%d), hasCallback(%d)", this, isReadyForMoreMediaData(), !!m_notificationCallback);
 
-    ensureOnMainThread([protectedThis = makeRef(*this)] {
+    ensureOnMainThread([protectedThis = Ref { *this }] {
         if (protectedThis->m_notificationCallback)
             protectedThis->m_notificationCallback();
     });
@@ -314,7 +314,7 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
         return;
     }
 
-    m_enqueingQueue->dispatch([protectedThis = makeRefPtr(this), imageSampleBuffer = adoptCF(rawImageSampleBuffer), displaying] {
+    m_enqueingQueue->dispatch([protectedThis = Ref { *this }, imageSampleBuffer = adoptCF(rawImageSampleBuffer), displaying] {
         protectedThis->enqueueDecodedSample(imageSampleBuffer.get(), displaying);
     });
 }
@@ -422,7 +422,7 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample,
     if (!shouldNotify)
         return;
 
-    RunLoop::main().dispatch([protectedThis = makeRefPtr(this), callback = WTFMove(m_hasAvailableFrameCallback)] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, callback = WTFMove(m_hasAvailableFrameCallback)] {
         callback();
     });
 }
@@ -522,7 +522,7 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
 
 void WebCoreDecompressionSession::flush()
 {
-    m_decompressionQueue->dispatchSync([this, protectedThis = makeRef(*this)]() mutable {
+    m_decompressionQueue->dispatchSync([this, protectedThis = Ref { *this }]() mutable {
         PAL::CMBufferQueueReset(protectedThis->m_producerQueue.get());
         m_enqueingQueue->dispatchSync([protectedThis = WTFMove(protectedThis)] {
             PAL::CMBufferQueueReset(protectedThis->m_consumerQueue.get());

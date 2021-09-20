@@ -468,7 +468,7 @@ void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
     if (!m_hasScheduledCommit) {
         auto& scriptContext = *scriptExecutionContext();
         m_hasScheduledCommit = true;
-        scriptContext.postTask([protectedThis = makeRef(*this), this] (ScriptExecutionContext&) {
+        scriptContext.postTask([protectedThis = Ref { *this }, this] (ScriptExecutionContext&) {
             m_hasScheduledCommit = false;
             commitToPlaceholderCanvas();
         });

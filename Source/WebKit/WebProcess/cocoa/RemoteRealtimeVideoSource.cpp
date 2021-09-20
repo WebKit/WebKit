@@ -67,7 +67,7 @@ RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifi
 
 void RemoteRealtimeVideoSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = makeRef(*this)](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&& presets, auto size, auto frameRate) mutable {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&& presets, auto size, auto frameRate) mutable {
         if (!succeeded) {
             m_proxy.didFail(WTFMove(errorMessage));
             return;

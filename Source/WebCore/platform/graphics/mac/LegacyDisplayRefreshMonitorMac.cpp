@@ -73,7 +73,7 @@ void LegacyDisplayRefreshMonitorMac::displayLinkCallbackFired()
 
 void LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
-    RunLoop::main().dispatch([this, displayUpdate, protectedThis = makeRef(*this)] {
+    RunLoop::main().dispatch([this, displayUpdate, protectedThis = Ref { *this }] {
         if (m_displayLink)
             displayDidRefresh(displayUpdate);
     });

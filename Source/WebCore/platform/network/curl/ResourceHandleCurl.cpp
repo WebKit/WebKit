@@ -255,7 +255,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     d->m_currentWebChallenge = challenge;
 
     if (client()) {
-        auto protectedThis = makeRef(*this);
+        Ref protectedThis { *this };
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
     }
 }
@@ -295,7 +295,7 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
 
     clearAuthentication();
 
-    didReceiveResponse(ResourceResponse(delegate()->response()), [this, protectedThis = makeRef(*this)] {
+    didReceiveResponse(ResourceResponse(delegate()->response()), [this, protectedThis = Ref { *this }] {
         continueAfterDidReceiveResponse();
     });
 }
@@ -308,7 +308,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         return;
 
     if (client()) {
-        auto protectedThis = makeRef(*this);
+        Ref protectedThis { *this };
         client()->receivedCancellation(this, challenge);
     }
 }
@@ -483,7 +483,7 @@ void ResourceHandle::willSendRequest()
     }
 
     ResourceResponse responseCopy = delegate()->response();
-    client()->willSendRequestAsync(this, WTFMove(newRequest), WTFMove(responseCopy), [this, protectedThis = makeRef(*this)] (ResourceRequest&& request) {
+    client()->willSendRequestAsync(this, WTFMove(newRequest), WTFMove(responseCopy), [this, protectedThis = Ref { *this }] (ResourceRequest&& request) {
         continueAfterWillSendRequest(WTFMove(request));
     });
 }
@@ -550,7 +550,7 @@ void ResourceHandle::handleDataURL()
 
     if (base64) {
         data = decodeURLEscapeSequences(data);
-        didReceiveResponse(WTFMove(response), [this, protectedThis = makeRef(*this)] {
+        didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }] {
             continueAfterDidReceiveResponse();
         });
 
@@ -563,7 +563,7 @@ void ResourceHandle::handleDataURL()
     } else {
         TextEncoding encoding(charset);
         data = decodeURLEscapeSequences(data, encoding);
-        didReceiveResponse(WTFMove(response), [this, protectedThis = makeRef(*this)] {
+        didReceiveResponse(WTFMove(response), [this, protectedThis = Ref { *this }] {
             continueAfterDidReceiveResponse();
         });
 

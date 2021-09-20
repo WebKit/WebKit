@@ -164,7 +164,7 @@ void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue& queue, F
 {
     ASSERT(!RunLoop::isMain());
 
-    Thread::create("IOChannel::readSync", [this, protectedThis = makeRef(*this), size, queue = makeRef(queue), completionHandler = WTFMove(completionHandler)] () mutable {
+    Thread::create("IOChannel::readSync", [this, protectedThis = Ref { *this }, size, queue = makeRef(queue), completionHandler = WTFMove(completionHandler)] () mutable {
         size_t bufferSize = std::min(size, gDefaultReadBufferSize);
         uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
         GRefPtr<GBytes> readBuffer = adoptGRef(g_bytes_new_with_free_func(bufferData, bufferSize, fastFree, bufferData));

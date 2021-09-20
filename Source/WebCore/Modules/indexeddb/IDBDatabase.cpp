@@ -473,7 +473,7 @@ void IDBDatabase::dispatchEvent(Event& event)
     LOG(IndexedDB, "IDBDatabase::dispatchEvent (%" PRIu64 ") (%p)", m_databaseConnectionIdentifier, this);
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     EventTargetWithInlineData::dispatchEvent(event);
 

@@ -88,7 +88,7 @@ private:
 
 void ExtendableEvent::addExtendLifetimePromise(Ref<DOMPromise>&& promise)
 {
-    promise->whenSettled([this, protectedThis = makeRefPtr(this), settledPromise = promise.ptr()] () mutable {
+    promise->whenSettled([this, protectedThis = Ref { *this }, settledPromise = promise.ptr()] () mutable {
         auto& globalObject = *settledPromise->globalObject();
         globalObject.queueMicrotask(FunctionMicrotask::create([this, protectedThis = WTFMove(protectedThis), settledPromise = WTFMove(settledPromise)] () mutable {
             --m_pendingPromiseCount;

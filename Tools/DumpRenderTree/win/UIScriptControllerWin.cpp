@@ -42,7 +42,7 @@ void UIScriptControllerWin::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    callOnMainThread([this, protectedThis = makeRef(*this), callbackID ] {
+    callOnMainThread([this, protectedThis = Ref { *this }, callbackID ] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

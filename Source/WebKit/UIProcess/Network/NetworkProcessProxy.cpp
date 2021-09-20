@@ -316,7 +316,7 @@ void NetworkProcessProxy::renameOriginInWebsiteData(PAL::SessionID sessionID, co
 
 void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (m_downloadProxyMap)
         m_downloadProxyMap->invalidate();

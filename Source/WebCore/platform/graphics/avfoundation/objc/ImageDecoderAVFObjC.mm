@@ -312,7 +312,7 @@ ImageDecoderAVFObjC::ImageDecoderAVFObjC(SharedBuffer& data, const String& mimeT
     [m_loader updateData:data.createNSData().get() complete:NO];
 
     [m_asset.get().resourceLoader setDelegate:m_loader.get() queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
-    [m_asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:[protectedThis = makeRefPtr(this)] () mutable {
+    [m_asset loadValuesAsynchronouslyForKeys:@[@"tracks"] completionHandler:[protectedThis = Ref { *this }] () mutable {
         callOnMainThread([protectedThis = WTFMove(protectedThis)] {
             protectedThis->setTrack(protectedThis->firstEnabledTrack());
         });
@@ -442,7 +442,7 @@ void ImageDecoderAVFObjC::setTrack(AVAssetTrack *track)
     m_cursor = m_sampleData.decodeOrder().end();
     m_imageRotationSession = nullptr;
 
-    [track loadValuesAsynchronouslyForKeys:@[@"naturalSize", @"preferredTransform"] completionHandler:[protectedThis = makeRefPtr(this)] () mutable {
+    [track loadValuesAsynchronouslyForKeys:@[@"naturalSize", @"preferredTransform"] completionHandler:[protectedThis = Ref { *this }] () mutable {
         callOnMainThread([protectedThis = WTFMove(protectedThis)] {
             protectedThis->readTrackMetadata();
             protectedThis->readSamples();

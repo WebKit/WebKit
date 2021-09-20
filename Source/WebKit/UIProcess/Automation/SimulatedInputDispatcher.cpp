@@ -150,7 +150,7 @@ void SimulatedInputDispatcher::transitionToNextKeyFrame()
         return;
     }
 
-    transitionBetweenKeyFrames(m_keyframes[m_keyframeIndex - 1], m_keyframes[m_keyframeIndex], [this, protectedThis = makeRef(*this)](std::optional<AutomationCommandError> error) {
+    transitionBetweenKeyFrames(m_keyframes[m_keyframeIndex - 1], m_keyframes[m_keyframeIndex], [this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
         if (error) {
             finishDispatching(error);
             return;
@@ -176,7 +176,7 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
     auto& postStateEntry = nextKeyFrame.states[m_inputSourceStateIndex];
     SimulatedInputSource& inputSource = postStateEntry.first;
 
-    transitionInputSourceToState(inputSource, postStateEntry.second, [this, protectedThis = makeRef(*this)](std::optional<AutomationCommandError> error) {
+    transitionInputSourceToState(inputSource, postStateEntry.second, [this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
         if (error) {
             auto finish = std::exchange(m_keyFrameTransitionCompletionHandler, nullptr);
             finish(error);

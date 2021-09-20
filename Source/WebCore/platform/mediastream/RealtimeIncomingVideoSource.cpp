@@ -68,7 +68,7 @@ void RealtimeIncomingVideoSource::stopProducingData()
 
 void RealtimeIncomingVideoSource::OnChanged()
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = Ref { *this }] {
         if (protectedThis->m_videoTrack->state() == webrtc::MediaStreamTrackInterface::kEnded)
             protectedThis->end();
     });

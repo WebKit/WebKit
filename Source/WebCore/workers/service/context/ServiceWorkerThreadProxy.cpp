@@ -146,14 +146,14 @@ bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(Scrip
 
 void ServiceWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
-    callOnMainThread([task = WTFMove(task), this, protectedThis = makeRef(*this)] () mutable {
+    callOnMainThread([task = WTFMove(task), this, protectedThis = Ref { *this }] () mutable {
         task.performTask(m_document.get());
     });
 }
 
 void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
 {
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), message = message.isolatedCopy()] {
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] {
         // FIXME: Handle terminated case.
         m_inspectorProxy.sendMessageFromWorkerToFrontend(message);
     });
@@ -161,7 +161,7 @@ void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
 
 void ServiceWorkerThreadProxy::setResourceCachingDisabledByWebInspector(bool disabled)
 {
-    postTaskToLoader([this, protectedThis = makeRef(*this), disabled] (ScriptExecutionContext&) {
+    postTaskToLoader([this, protectedThis = Ref { *this }, disabled] (ScriptExecutionContext&) {
         ASSERT(isMainThread());
         m_page->setResourceCachingDisabledByWebInspector(disabled);
     });   
@@ -221,7 +221,7 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
 
     ASSERT(!m_ongoingFetchTasks.contains(key));
     m_ongoingFetchTasks.add(key, client.copyRef());
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = makeRef(*this), client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy()](auto&) mutable {
+    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy()](auto&) mutable {
         thread().queueTaskToFireFetchEvent(WTFMove(client), WTFMove(clientId), WTFMove(request), WTFMove(referrer), WTFMove(options));
     }, WorkerRunLoop::defaultMode());
 }
@@ -266,7 +266,7 @@ void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connecti
 void ServiceWorkerThreadProxy::postMessageToServiceWorker(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
     thread().willPostTaskToFireMessageEvent();
-    thread().runLoop().postTask([this, protectedThis = makeRef(*this), message = WTFMove(message), sourceData = WTFMove(sourceData)](auto&) mutable {
+    thread().runLoop().postTask([this, protectedThis = Ref { *this }, message = WTFMove(message), sourceData = WTFMove(sourceData)](auto&) mutable {
         thread().queueTaskToPostMessage(WTFMove(message), WTFMove(sourceData));
     });
 }
@@ -274,7 +274,7 @@ void ServiceWorkerThreadProxy::postMessageToServiceWorker(MessageWithMessagePort
 void ServiceWorkerThreadProxy::fireInstallEvent()
 {
     thread().willPostTaskToFireInstallEvent();
-    thread().runLoop().postTask([this, protectedThis = makeRef(*this)](auto&) mutable {
+    thread().runLoop().postTask([this, protectedThis = Ref { *this }](auto&) mutable {
         thread().queueTaskToFireInstallEvent();
     });
 }
@@ -282,7 +282,7 @@ void ServiceWorkerThreadProxy::fireInstallEvent()
 void ServiceWorkerThreadProxy::fireActivateEvent()
 {
     thread().willPostTaskToFireActivateEvent();
-    thread().runLoop().postTask([this, protectedThis = makeRef(*this)](auto&) mutable {
+    thread().runLoop().postTask([this, protectedThis = Ref { *this }](auto&) mutable {
         thread().queueTaskToFireActivateEvent();
     });
 }

@@ -52,7 +52,7 @@ RealtimeVideoSource::~RealtimeVideoSource()
 
 void RealtimeVideoSource::whenReady(CompletionHandler<void(String)>&& callback)
 {
-    m_source->whenReady([this, protectedThis = makeRef(*this), callback = WTFMove(callback)](auto message) mutable {
+    m_source->whenReady([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto message) mutable {
         setName(String { m_source->name() });
         m_currentSettings = m_source->settings();
         setSize(m_source->size());

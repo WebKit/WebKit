@@ -338,7 +338,7 @@ void Storage::synchronize()
 
     LOG(NetworkCacheStorage, "(NetworkProcess) synchronizing cache");
 
-    backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
+    backgroundIOQueue().dispatch([this, protectedThis = Ref { *this }] () mutable {
         auto recordFilter = makeUnique<ContentsFilter>();
         auto blobFilter = makeUnique<ContentsFilter>();
 
@@ -666,7 +666,7 @@ void Storage::remove(const Key& key)
     if (!mayContain(key))
         return;
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     // We can't remove the key from the Bloom filter (but some false positives are expected anyway).
     // For simplicity we also don't reduce m_approximateSize on removals.
@@ -693,7 +693,7 @@ void Storage::remove(const Vector<Key>& keys, CompletionHandler<void()>&& comple
         keysToRemove.uncheckedAppend(key);
     }
 
-    serialBackgroundIOQueue().dispatch([this, protectedThis = makeRef(*this), keysToRemove = WTFMove(keysToRemove), completionHandler = WTFMove(completionHandler)] () mutable {
+    serialBackgroundIOQueue().dispatch([this, protectedThis = Ref { *this }, keysToRemove = WTFMove(keysToRemove), completionHandler = WTFMove(completionHandler)] () mutable {
         for (auto& key : keysToRemove)
             deleteFiles(key);
 
@@ -784,7 +784,7 @@ void Storage::finishReadOperation(ReadOperation& readOperation)
         else if (!readOperation.isCanceled)
             remove(readOperation.key);
 
-        auto protectedThis = makeRef(*this);
+        Ref protectedThis { *this };
 
         ASSERT(m_activeReadOperations.contains(&readOperation));
         m_activeReadOperations.remove(&readOperation);
@@ -907,7 +907,7 @@ void Storage::finishWriteOperation(WriteOperation& writeOperation, int error)
     if (--writeOperation.activeCount)
         return;
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (writeOperation.completionHandler)
         writeOperation.completionHandler(error);
@@ -974,7 +974,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
     ASSERT(traverseHandler);
     // Avoid non-thread safe Function copies.
 
-    auto traverseOperationPtr = makeUnique<TraverseOperation>(makeRef(*this), type, flags, WTFMove(traverseHandler));
+    auto traverseOperationPtr = makeUnique<TraverseOperation>(Ref { *this }, type, flags, WTFMove(traverseHandler));
     auto& traverseOperation = *traverseOperationPtr;
     m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
 
@@ -1039,7 +1039,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
         RunLoop::main().dispatch([this, &traverseOperation] {
             traverseOperation.handler(nullptr, { });
 
-            auto protectedThis = makeRef(*this);
+            Ref protectedThis { *this };
 
             m_activeTraverseOperations.remove(&traverseOperation);
         });
@@ -1077,7 +1077,7 @@ void Storage::clear(const String& type, WallTime modifiedSinceTime, CompletionHa
         m_blobFilter->clear();
     m_approximateRecordsSize = 0;
 
-    ioQueue().dispatch([this, protectedThis = makeRef(*this), modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = type.isolatedCopy()] () mutable {
+    ioQueue().dispatch([this, protectedThis = Ref { *this }, modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = type.isolatedCopy()] () mutable {
         auto recordsPath = this->recordsPathIsolatedCopy();
         traverseRecordsFiles(recordsPath, type, [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);
@@ -1153,7 +1153,7 @@ void Storage::shrink()
 
     LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache approximateSize=%zu capacity=%zu", approximateSize(), m_capacity);
 
-    backgroundIOQueue().dispatch([this, protectedThis = makeRef(*this)] () mutable {
+    backgroundIOQueue().dispatch([this, protectedThis = Ref { *this }] () mutable {
         auto recordsPath = this->recordsPathIsolatedCopy();
         String anyType;
         traverseRecordsFiles(recordsPath, anyType, [this](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {

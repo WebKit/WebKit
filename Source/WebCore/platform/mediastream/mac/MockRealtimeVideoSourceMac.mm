@@ -99,7 +99,7 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     if (!sampleBuffer)
         return;
 
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, sampleBuffer = WTFMove(sampleBuffer)]() mutable {
         dispatchMediaSampleToObservers(*sampleBuffer);
     });
 }

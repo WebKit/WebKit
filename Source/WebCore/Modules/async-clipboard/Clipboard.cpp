@@ -320,7 +320,7 @@ void Clipboard::ItemWriter::write(const Vector<RefPtr<ClipboardItem>>& items)
     m_dataToWrite.fill(std::nullopt, items.size());
     m_pendingItemCount = items.size();
     for (size_t index = 0; index < items.size(); ++index) {
-        items[index]->collectDataForWriting(*m_clipboard, [this, protectedThis = makeRef(*this), index] (auto data) {
+        items[index]->collectDataForWriting(*m_clipboard, [this, protectedThis = Ref { *this }, index] (auto data) {
             protectedThis->setData(WTFMove(data), index);
             if (!--m_pendingItemCount)
                 didSetAllData();

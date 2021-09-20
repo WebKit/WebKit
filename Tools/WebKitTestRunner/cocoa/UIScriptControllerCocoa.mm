@@ -176,7 +176,7 @@ NSUndoManager *UIScriptControllerCocoa::platformUndoManager() const
 void UIScriptControllerCocoa::setDidShowContextMenuCallback(JSValueRef callback)
 {
     UIScriptController::setDidShowContextMenuCallback(callback);
-    webView().didShowContextMenuCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didShowContextMenuCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidShowContextMenu);
@@ -186,7 +186,7 @@ void UIScriptControllerCocoa::setDidShowContextMenuCallback(JSValueRef callback)
 void UIScriptControllerCocoa::setDidDismissContextMenuCallback(JSValueRef callback)
 {
     UIScriptController::setDidDismissContextMenuCallback(callback);
-    webView().didDismissContextMenuCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didDismissContextMenuCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidDismissContextMenu);

@@ -295,7 +295,7 @@ void IDBRequest::dispatchEvent(Event& event)
     ASSERT(m_hasPendingActivity);
     ASSERT(!isContextStopped());
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_eventBeingDispatched = &event;
 
     if (event.type() != eventNames().blockedEvent)

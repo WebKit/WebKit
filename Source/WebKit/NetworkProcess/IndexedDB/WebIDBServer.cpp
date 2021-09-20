@@ -43,7 +43,7 @@ WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, We
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), sessionID, directory = directory.isolatedCopy(), spaceRequester = WTFMove(spaceRequester)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, sessionID, directory = directory.isolatedCopy(), spaceRequester = WTFMove(spaceRequester)] () mutable {
         ASSERT(!RunLoop::isMain());
 
         Locker locker { m_serverLock };
@@ -61,7 +61,7 @@ void WebIDBServer::getOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOr
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
 
         Locker locker { m_serverLock };
@@ -75,7 +75,7 @@ void WebIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTim
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), modificationTime, callback = WTFMove(callback)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, modificationTime, callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
 
         Locker locker { m_serverLock };
@@ -90,7 +90,7 @@ void WebIDBServer::closeAndDeleteDatabasesForOrigins(const Vector<WebCore::Secur
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), originDatas = originDatas.isolatedCopy(), callback = WTFMove(callback)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, originDatas = originDatas.isolatedCopy(), callback = WTFMove(callback)] () mutable {
         ASSERT(!RunLoop::isMain());
 
         Locker locker { m_serverLock };
@@ -105,7 +105,7 @@ void WebIDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, co
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), oldOrigin = oldOrigin.isolatedCopy(), newOrigin = newOrigin.isolatedCopy(), callback = WTFMove(callback)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, oldOrigin = oldOrigin.isolatedCopy(), newOrigin = newOrigin.isolatedCopy(), callback = WTFMove(callback)] () mutable {
         ASSERT(!RunLoop::isMain());
 
         Locker locker { m_serverLock };
@@ -399,7 +399,7 @@ void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessId
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), protectedConnection = makeRefPtr(connection), processIdentifier] {
+    postTask([this, protectedThis = Ref { *this }, protectedConnection = makeRefPtr(connection), processIdentifier] {
         auto[iter, isNewEntry] = m_connectionMap.ensure(protectedConnection->uniqueID(), [&] {
             return makeUnique<WebIDBConnectionToClient>(*protectedConnection, processIdentifier);
         });
@@ -421,7 +421,7 @@ void WebIDBServer::removeConnection(IPC::Connection& connection)
         return;
 
     connection.removeWorkQueueMessageReceiver(Messages::WebIDBServer::messageReceiverName());
-    postTask([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID()] {
+    postTask([this, protectedThis = Ref { *this }, connectionID = connection.uniqueID()] {
         m_temporaryBlobPathsPerConnection.remove(connectionID);
         auto connection = m_connectionMap.take(connectionID);
 
@@ -436,7 +436,7 @@ void WebIDBServer::registerTemporaryBlobFilePaths(IPC::Connection& connection, c
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID(), filePaths = crossThreadCopy(filePaths)] {
+    postTask([this, protectedThis = Ref { *this }, connectionID = connection.uniqueID(), filePaths = crossThreadCopy(filePaths)] {
         if (!m_connectionMap.contains(connectionID))
             return;
 
@@ -468,7 +468,7 @@ void WebIDBServer::close(CompletionHandler<void()>&& completionHandler)
         connection.removeWorkQueueMessageReceiver(Messages::WebIDBServer::messageReceiverName());
 
     // Dispatch last task to clean up.
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_connectionMap.clear();
 
         {

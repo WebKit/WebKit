@@ -147,7 +147,7 @@ void FileReader::abort()
     stop();
     m_error = DOMException::create(Exception { AbortError });
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     fireEvent(eventNames().abortEvent);
     fireEvent(eventNames().loadendEvent);
 }

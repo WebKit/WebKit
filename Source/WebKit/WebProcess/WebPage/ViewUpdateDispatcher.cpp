@@ -69,7 +69,7 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
             iterator->value.get().visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
     }
     if (updateListWasEmpty) {
-        RunLoop::main().dispatch([protectedThis = makeRef(*this)]() mutable {
+        RunLoop::main().dispatch([protectedThis = Ref { *this }]() mutable {
             protectedThis->dispatchVisibleContentRectUpdate();
         });
     }

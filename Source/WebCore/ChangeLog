@@ -1,3 +1,484 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Stop using makeRef(*this) / makeRefPtr(this)
+        https://bugs.webkit.org/show_bug.cgi?id=230464
+
+        Reviewed by Alex Christensen.
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::ItemWriter::write):
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::match):
+        (WebCore::DOMCache::addAll):
+        (WebCore::DOMCache::putWithResponseData):
+        (WebCore::DOMCache::put):
+        (WebCore::DOMCache::remove):
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::setServerCertificate):
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::listDirectory):
+        (WebCore::DOMFileSystem::getParent):
+        (WebCore::DOMFileSystem::getEntry):
+        * Modules/entriesapi/ErrorCallback.cpp:
+        (WebCore::ErrorCallback::scheduleCallback):
+        * Modules/entriesapi/FileSystemEntriesCallback.cpp:
+        (WebCore::FileSystemEntriesCallback::scheduleCallback):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::dispatchEvent):
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::abortInternal):
+        (WebCore::IDBTransaction::dispatchEvent):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::renameObjectStore):
+        (WebCore::IDBTransaction::createIndex):
+        (WebCore::IDBTransaction::renameIndex):
+        (WebCore::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::requestGetAllObjectStoreRecords):
+        (WebCore::IDBTransaction::requestGetAllIndexRecords):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::requestCount):
+        (WebCore::IDBTransaction::requestDeleteRecord):
+        (WebCore::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::deleteIndex):
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::callResultFunctionWithErrorLater):
+        (WebCore::IDBClient::IDBConnectionToServer::commitTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::abortTransaction):
+        (WebCore::IDBClient::IDBConnectionToServer::getAllDatabaseNamesAndVersions):
+        * Modules/indexeddb/client/TransactionOperation.h:
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::forEachObserver):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeTimerFired):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::applyConstraints):
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        (WebCore::RTCDTMFSender::insertDTMF):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        (WebCore::RTCPeerConnection::setLocalDescription):
+        (WebCore::RTCPeerConnection::setRemoteDescription):
+        (WebCore::RTCPeerConnection::addIceCandidate):
+        * Modules/mediastream/RTCRtpScriptTransform.cpp:
+        (WebCore::RTCRtpScriptTransform::setTransformer):
+        * Modules/mediastream/RTCRtpScriptTransformer.cpp:
+        (WebCore::RTCRtpScriptTransformer::writable):
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createStatsCollector):
+        (WebCore::LibWebRTCMediaEndpoint::OnTrack):
+        (WebCore::LibWebRTCMediaEndpoint::OnRemoveTrack):
+        (WebCore::LibWebRTCMediaEndpoint::OnDataChannel):
+        (WebCore::LibWebRTCMediaEndpoint::OnNegotiationNeededEvent):
+        (WebCore::LibWebRTCMediaEndpoint::OnStandardizedIceConnectionChange):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceGatheringChange):
+        (WebCore::LibWebRTCMediaEndpoint::OnIceCandidate):
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::setLocalSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionSucceeded):
+        (WebCore::LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed):
+        (WebCore::LibWebRTCMediaEndpoint::OnStatsDelivered):
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::shippingAddressChanged):
+        (WebCore::PaymentRequest::shippingOptionChanged):
+        (WebCore::PaymentRequest::paymentMethodChanged):
+        (WebCore::PaymentRequest::updateWith):
+        (WebCore::PaymentRequest::completeMerchantValidation):
+        (WebCore::PaymentRequest::whenDetailsSettled):
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::watchAvailability):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::startRendering):
+        (WebCore::AudioContext::mayResumePlayback):
+        (WebCore::AudioContext::suspendPlayback):
+        (WebCore::AudioContext::isPlayingAudioDidChange):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/AudioWorkletMessagingProxy.cpp:
+        (WebCore::AudioWorkletMessagingProxy::postTaskToAudioWorklet):
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::fireProcessorErrorOnMainThread):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::clear):
+        (WebCore::BaseAudioContext::stop):
+        (WebCore::BaseAudioContext::updateTailProcessingNodes):
+        (WebCore::BaseAudioContext::scheduleNodeDeletion):
+        (WebCore::BaseAudioContext::deleteMarkedNodes):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::process):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::scheduleTransactionCallback):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didUpgradeURL):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::failAsynchronously):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpenSocketStream):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        * Modules/webxr/WebXRFrame.cpp:
+        (WebCore::WebXRFrame::getViewerPose):
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::requestReferenceSpace):
+        (WebCore::WebXRSession::shutdown):
+        (WebCore::WebXRSession::end):
+        (WebCore::WebXRSession::requestFrame):
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::ensureImmersiveXRDeviceIsSelected):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::remove):
+        (WebCore::WebAnimation::setEffect):
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::updateFinishedState):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::DeferredPromise::whenSettled):
+        * bindings/js/JSMicrotaskCallback.h:
+        (WebCore::JSMicrotaskCallback::call):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        * bindings/js/WorkerModuleScriptLoader.cpp:
+        (WebCore::WorkerModuleScriptLoader::notifyClientFinished):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::valueWithStylesResolved):
+        * dom/AbortSignal.cpp:
+        (WebCore::AbortSignal::signalAbort):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceChildren):
+        * dom/Document.cpp:
+        (WebCore::Document::updateTitle):
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+        (WebCore::Document::queueTaskToDispatchEvent):
+        (WebCore::Document::queueTaskToDispatchEventOnWindow):
+        * dom/WindowEventLoop.cpp:
+        (WebCore::WindowEventLoop::didReachTimeToRun):
+        (WebCore::WindowEventLoop::queueMutationObserverCompoundMicrotask):
+        (WebCore::WindowEventLoop::backupElementQueue):
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::closePort):
+        (WebCore::MessagePortChannel::checkRemotePortForActivity):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::ensureComposition):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::setStartingSelection):
+        (WebCore::EditCommand::setEndingSelection):
+        * fileapi/BlobCallback.cpp:
+        (WebCore::BlobCallback::scheduleCallback):
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::abort):
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::fireInputAndChangeEvents):
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::DirectoryFileListCreator::start):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::didCreateFileList):
+        (WebCore::FileInputType::receiveDroppedFilesWithImageTranscoding):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::focusAndShowValidationMessage):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submitIfPossible):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::resumeFromDocumentSuspension):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didAttachRenderers):
+        (WebCore::HTMLInputElement::resumeFromDocumentSuspension):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setAudioOutputDevice):
+        (WebCore::HTMLMediaElement::layoutSizeChanged):
+        (WebCore::HTMLMediaElement::setVideoFullscreenStandby):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution):
+        * html/InputType.cpp:
+        (WebCore::InputType::applyStep):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::scheduleCommitToPlaceholderCanvas):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::makeXRCompatible):
+        * html/canvas/WebGLSync.cpp:
+        (WebCore::WebGLSync::scheduleAllowCacheUpdate):
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::wrapper):
+        * inspector/InspectorFrontendAPIDispatcher.cpp:
+        (WebCore::InspectorFrontendAPIDispatcher::suspend):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorBackendDispatchTask::scheduleOneShot):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::handleSubstituteDataLoadNow):
+        (WebCore::DocumentLoader::redirectReceived):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::responseReceived):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::responseReceived):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::init):
+        (WebCore::NetscapePlugInStreamLoader::willSendRequest):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        (WebCore::ResourceLoader::deliverResponseAndData):
+        (WebCore::ResourceLoader::loadDataURL):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::startLoading):
+        (WebCore::SubresourceLoader::init):
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * loader/appcache/ApplicationCacheResourceLoader.cpp:
+        (WebCore::ApplicationCacheResourceLoader::cancel):
+        (WebCore::ApplicationCacheResourceLoader::notifyFinished):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        (WebCore::DOMWindow::close):
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        (WebCore::DOMWindow::dispatchEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFocusedElementTimerFired):
+        * page/Performance.cpp:
+        (WebCore::Performance::scheduleTaskIfNeeded):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        (WebCore::ThreadedScrollingTree::willStartRenderingUpdate):
+        (WebCore::ThreadedScrollingTree::displayDidRefresh):
+        * platform/PreviewConverter.cpp:
+        (WebCore::PreviewConverter::updateMainResource):
+        (WebCore::PreviewConverter::iterateClients):
+        (WebCore::PreviewConverter::didAddClient):
+        (WebCore::PreviewConverter::replayToClient):
+        (WebCore::PreviewConverter::delegateDidReceiveData):
+        (WebCore::PreviewConverter::delegateDidFailWithError):
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::render):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::startAsyncDecodingQueue):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::invalidate):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::ImageDecoderAVFObjC):
+        (WebCore::ImageDecoderAVFObjC::setTrack):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::EffectiveRateChangedListener::effectiveRateChanged):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::divideIntoHomogeneousSamples):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        (WebCore::SourceBufferParserAVFObjC::didParseStreamDataAsAsset):
+        (WebCore::SourceBufferParserAVFObjC::didFailToParseStreamDataWithError):
+        (WebCore::SourceBufferParserAVFObjC::didProvideMediaDataForTrackID):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::invalidate):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::appendData):
+        (WebCore::SourceBufferParserWebM::OnElementEnd):
+        (WebCore::SourceBufferParserWebM::OnBlockGroupEnd):
+        (WebCore::SourceBufferParserWebM::provideMediaData):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData):
+        (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+        (WebCore::WebCoreDecompressionSession::enqueueDecodedSample):
+        (WebCore::WebCoreDecompressionSession::flush):
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples):
+        * platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp:
+        (WebCore::LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh):
+        * platform/graphics/nicosia/NicosiaSceneIntegration.cpp:
+        (Nicosia::SceneIntegration::createUpdateScope):
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::setVideoFullscreenModel):
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+        (VideoFullscreenInterfaceAVKit::finalizeSetup):
+        (VideoFullscreenInterfaceAVKit::doEnterFullscreen):
+        (VideoFullscreenInterfaceAVKit::doExitFullscreen):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::requestUpdateInlineRect):
+        (VideoFullscreenControllerContext::requestVideoContentLayer):
+        (VideoFullscreenControllerContext::returnVideoContentLayer):
+        (VideoFullscreenControllerContext::didSetupFullscreen):
+        (VideoFullscreenControllerContext::willExitFullscreen):
+        (VideoFullscreenControllerContext::didExitFullscreen):
+        (VideoFullscreenControllerContext::didCleanupFullscreen):
+        (VideoFullscreenControllerContext::fullscreenMayReturnToInline):
+        (VideoFullscreenControllerContext::durationChanged):
+        (VideoFullscreenControllerContext::currentTimeChanged):
+        (VideoFullscreenControllerContext::bufferedTimeChanged):
+        (VideoFullscreenControllerContext::rateChanged):
+        (VideoFullscreenControllerContext::hasVideoChanged):
+        (VideoFullscreenControllerContext::videoDimensionsChanged):
+        (VideoFullscreenControllerContext::seekableRangesChanged):
+        (VideoFullscreenControllerContext::canPlayFastReverseChanged):
+        (VideoFullscreenControllerContext::audioMediaSelectionOptionsChanged):
+        (VideoFullscreenControllerContext::legibleMediaSelectionOptionsChanged):
+        (VideoFullscreenControllerContext::externalPlaybackChanged):
+        (VideoFullscreenControllerContext::wirelessVideoPlaybackDisabledChanged):
+        (VideoFullscreenControllerContext::mutedChanged):
+        (VideoFullscreenControllerContext::volumeChanged):
+        (VideoFullscreenControllerContext::requestFullscreenMode):
+        (VideoFullscreenControllerContext::setVideoLayerFrame):
+        (VideoFullscreenControllerContext::setVideoLayerGravity):
+        (VideoFullscreenControllerContext::fullscreenModeChanged):
+        (VideoFullscreenControllerContext::play):
+        (VideoFullscreenControllerContext::pause):
+        (VideoFullscreenControllerContext::togglePlayState):
+        (VideoFullscreenControllerContext::toggleMuted):
+        (VideoFullscreenControllerContext::setMuted):
+        (VideoFullscreenControllerContext::setVolume):
+        (VideoFullscreenControllerContext::setPlayingOnSecondScreen):
+        (VideoFullscreenControllerContext::beginScrubbing):
+        (VideoFullscreenControllerContext::endScrubbing):
+        (VideoFullscreenControllerContext::seekToTime):
+        (VideoFullscreenControllerContext::fastSeek):
+        (VideoFullscreenControllerContext::beginScanningForward):
+        (VideoFullscreenControllerContext::beginScanningBackward):
+        (VideoFullscreenControllerContext::endScanning):
+        (VideoFullscreenControllerContext::setDefaultPlaybackRate):
+        (VideoFullscreenControllerContext::setPlaybackRate):
+        (VideoFullscreenControllerContext::selectAudioMediaOption):
+        (VideoFullscreenControllerContext::selectLegibleMediaOption):
+        (VideoFullscreenControllerContext::setUpFullscreen):
+        (VideoFullscreenControllerContext::exitFullscreen):
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (WebCore::VideoFullscreenInterfaceMac::setupFullscreen):
+        * platform/mediastream/AudioTrackPrivateMediaStream.cpp:
+        (WebCore::AudioTrackPrivateMediaStream::startRenderer):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::forEachObserver):
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::forEachObserver):
+        * platform/mediastream/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::OnChanged):
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::OnChanged):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::forEachObserver):
+        (WebCore::RealtimeMediaSource::updateHasStartedProducingData):
+        (WebCore::RealtimeMediaSource::end):
+        (WebCore::RealtimeMediaSource::scheduleDeferredTask):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::triggerDevicesChangedObservers):
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::applyRotation):
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::whenReady):
+        * platform/mediastream/gstreamer/GStreamerCapturer.cpp:
+        (WebCore::GStreamerCapturer::forEachObserver):
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::updateSampleBuffer):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceCocoa::audioSamplesAvailable):
+        * platform/mediastream/mac/WebAudioSourceProviderCocoa.mm:
+        (WebCore::WebAudioSourceProviderCocoa::prepare):
+        * platform/mock/MockAudioDestinationCocoa.cpp:
+        (WebCore::MockAudioDestinationCocoa::tick):
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::tick):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::start):
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+        (WebCore::BlobResourceHandle::notifyResponseOnError):
+        (WebCore::BlobResourceHandle::notifyFinish):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willCacheResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveChallenge):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::SocketStreamHandleImpl):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (WebCore::WebCoreNSURLSessionDataTaskClient::responseReceived):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::cancel):
+        (WebCore::CurlRequest::callClient):
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile):
+        (WebCore::CurlRequest::completeDidReceiveResponse):
+        (WebCore::CurlRequest::invokeCancel):
+        (WebCore::CurlRequest::pausedStatusChanged):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::handleDataURL):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest):
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::OpenXRDevice::initialize):
+        (PlatformXR::OpenXRDevice::initializeTrackingAndRendering):
+        (PlatformXR::OpenXRDevice::shutDownTrackingAndRendering):
+        (PlatformXR::OpenXRDevice::requestFrame):
+        (PlatformXR::OpenXRDevice::submitFrame):
+        (PlatformXR::OpenXRDevice::waitUntilStopping):
+        * storage/StorageQuotaManager.cpp:
+        (WebCore::StorageQuotaManager::requestSpaceOnMainThread):
+        (WebCore::StorageQuotaManager::requestSpaceOnBackgroundThread):
+        * testing/WebXRTest.cpp:
+        (WebCore::WebXRTest::simulateDeviceConnection):
+        * workers/WorkerEventLoop.cpp:
+        (WebCore::WorkerEventLoop::scheduleToRun):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToDebugger):
+        * workers/WorkerOrWorkletThread.cpp:
+        (WebCore::WorkerOrWorkletThread::workerOrWorkletThread):
+        * workers/service/ExtendableEvent.cpp:
+        (WebCore::ExtendableEvent::addExtendLifetimePromise):
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::respondWith):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::startHeartBeatTimer):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::postTaskToLoader):
+        (WebCore::ServiceWorkerThreadProxy::postMessageToDebugger):
+        (WebCore::ServiceWorkerThreadProxy::setResourceCachingDisabledByWebInspector):
+        (WebCore::ServiceWorkerThreadProxy::startFetch):
+        (WebCore::ServiceWorkerThreadProxy::postMessageToServiceWorker):
+        (WebCore::ServiceWorkerThreadProxy::fireInstallEvent):
+        (WebCore::ServiceWorkerThreadProxy::fireActivateEvent):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::postTaskToWorkQueue):
+        (WebCore::RegistrationDatabase::importRecordsIfNecessary):
+        (WebCore::RegistrationDatabase::schedulePushChanges):
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::didFail):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2021-09-20  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make AVSampleBufferVideoOutput support an Experimental Feature

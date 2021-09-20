@@ -121,7 +121,7 @@ void WorkerModuleScriptLoader::notifyFinished()
 
 void WorkerModuleScriptLoader::notifyClientFinished()
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (m_client)
         m_client->notifyFinished(*this, WTFMove(m_sourceURL), m_promise.releaseNonNull());

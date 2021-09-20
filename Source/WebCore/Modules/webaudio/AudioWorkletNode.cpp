@@ -287,7 +287,7 @@ void AudioWorkletNode::fireProcessorErrorOnMainThread(ProcessorError error)
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    callOnMainThread([this, protectedThis = makeRef(*this), error]() mutable {
+    callOnMainThread([this, protectedThis = Ref { *this }, error]() mutable {
         String errorMessage;
         switch (error) {
         case ProcessorError::ConstructorError:

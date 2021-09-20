@@ -37,7 +37,7 @@ namespace WebKit {
 
 void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name())
         return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, decoder, this, &TestWithImageData::sendImageData);
     UNUSED_PARAM(connection);
@@ -51,7 +51,7 @@ void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 
 bool TestWithImageData::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name())
         return IPC::handleMessage<Messages::TestWithImageData::ReceiveImageData>(connection, decoder, *replyEncoder, this, &TestWithImageData::receiveImageData);
     UNUSED_PARAM(connection);

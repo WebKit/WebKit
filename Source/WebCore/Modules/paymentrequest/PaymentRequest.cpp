@@ -534,7 +534,7 @@ std::optional<PaymentShippingType> PaymentRequest::shippingType() const
 
 void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddress)
 {
-    whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingAddress = makeRefPtr(shippingAddress.get())]() mutable {
+    whenDetailsSettled([this, protectedThis = Ref { *this }, shippingAddress = makeRefPtr(shippingAddress.get())]() mutable {
         m_shippingAddress = WTFMove(shippingAddress);
         dispatchAndCheckUpdateEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent));
     });
@@ -542,7 +542,7 @@ void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddres
 
 void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 {
-    whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingOption]() mutable {
+    whenDetailsSettled([this, protectedThis = Ref { *this }, shippingOption]() mutable {
         m_shippingOption = shippingOption;
         dispatchAndCheckUpdateEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent));
     });
@@ -550,7 +550,7 @@ void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 
 void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMethodChangeEvent::MethodDetailsFunction&& methodDetailsFunction)
 {
-    whenDetailsSettled([this, protectedThis = makeRefPtr(this), methodName, methodDetailsFunction = WTFMove(methodDetailsFunction)]() mutable {
+    whenDetailsSettled([this, protectedThis = Ref { *this }, methodName, methodDetailsFunction = WTFMove(methodDetailsFunction)]() mutable {
         auto& eventName = eventNames().paymentmethodchangeEvent;
         if (hasEventListeners(eventName))
             dispatchAndCheckUpdateEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
@@ -571,7 +571,7 @@ ExceptionOr<void> PaymentRequest::updateWith(UpdateReason reason, Ref<DOMPromise
 
     ASSERT(!m_detailsPromise);
     m_detailsPromise = WTFMove(promise);
-    m_detailsPromise->whenSettled([this, protectedThis = makeRefPtr(this), reason]() {
+    m_detailsPromise->whenSettled([this, protectedThis = Ref { *this }, reason]() {
         settleDetailsPromise(reason);
     });
 
@@ -587,7 +587,7 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
     event.stopImmediatePropagation();
 
     m_merchantSessionPromise = WTFMove(merchantSessionPromise);
-    m_merchantSessionPromise->whenSettled([this, protectedThis = makeRefPtr(this)]() {
+    m_merchantSessionPromise->whenSettled([this, protectedThis = Ref { *this }]() {
         if (m_state != State::Interactive)
             return;
 
@@ -691,7 +691,7 @@ void PaymentRequest::whenDetailsSettled(std::function<void()>&& callback)
         return;
     }
 
-    m_detailsPromise->whenSettled([this, protectedThis = makeRefPtr(this), whenSettledFunction = WTFMove(whenSettledFunction)] {
+    m_detailsPromise->whenSettled([this, protectedThis = Ref { *this }, whenSettledFunction = WTFMove(whenSettledFunction)] {
         if (m_state == State::Interactive)
             whenSettledFunction();
     });

@@ -107,7 +107,7 @@ private:
 
         // The frontend can be closed and destroy the owning frontend client before or in the
         // process of dispatching the task, so keep a protector reference here.
-        RunLoop::current().dispatch([this, protectedThis = makeRef(*this)] {
+        RunLoop::current().dispatch([this, protectedThis = Ref { *this }] {
             m_hasScheduledTask = false;
             dispatchOneMessage();
         });

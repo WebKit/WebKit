@@ -148,7 +148,7 @@ void CurlRequest::cancel()
     auto& scheduler = CurlContext::singleton().scheduler();
 
     if (needToInvokeDidCancelTransfer()) {
-        runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
+        runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
             didCancelTransfer();
         });
     } else if (m_startState == StartState::DidStart)
@@ -207,7 +207,7 @@ void CurlRequest::resume()
 /* `this` is protected inside this method. */
 void CurlRequest::callClient(Function<void(CurlRequest&, CurlRequestClient&)>&& task)
 {
-    runOnMainThread([this, protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
+    runOnMainThread([this, protectedThis = Ref { *this }, task = WTFMove(task)]() mutable {
         if (m_client)
             task(*this, makeRef(*m_client));
     });
@@ -618,7 +618,7 @@ void CurlRequest::invokeDidReceiveResponseForFile(const URL& url)
     auto mimeType = MIMETypeRegistry::mimeTypeForPath(url.path().toString());
 
     // DidReceiveResponse must not be called immediately
-    runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this), url = crossThreadCopy(url), mimeType = crossThreadCopy(WTFMove(mimeType))]() mutable {
+    runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }, url = crossThreadCopy(url), mimeType = crossThreadCopy(WTFMove(mimeType))]() mutable {
         CurlResponse response;
         response.url = WTFMove(url);
         response.statusCode = 200;
@@ -659,7 +659,7 @@ void CurlRequest::completeDidReceiveResponse()
         // Start transfer for file scheme
         startWithJobManager();
     } else if (m_actionAfterInvoke == Action::FinishTransfer) {
-        runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
+        runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }, finishedResultCode = m_finishedResultCode]() {
             didCompleteTransfer(finishedResultCode);
         });
     }
@@ -701,7 +701,7 @@ void CurlRequest::invokeCancel()
     // There's no need to extract this method. This is a workaround for MSVC's bug
     // which happens when using lambda inside other lambda. The compiler loses context
     // of `this` which prevent makeRef.
-    runOnMainThread([this, protectedThis = makeRef(*this)]() {
+    runOnMainThread([this, protectedThis = Ref { *this }]() {
         cancel();
     });
 }
@@ -711,7 +711,7 @@ void CurlRequest::pausedStatusChanged()
     if (isCompletedOrCancelled())
         return;
 
-    runOnWorkerThreadIfRequired([this, protectedThis = makeRef(*this)]() {
+    runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
         if (isCompletedOrCancelled() || !m_curlHandle)
             return;
 

@@ -82,7 +82,7 @@ void PreviewConverter::updateMainResource()
         return;
     }
 
-    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = makeRef(*this)](auto buffer) {
+    provider->provideMainResourceForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto buffer) {
         if (buffer)
             appendFromBuffer(*buffer);
         else
@@ -165,7 +165,7 @@ void PreviewConverter::iterateClients(T&& callback)
 {
     SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
     auto clientsCopy { m_clients };
-    auto protectedThis { makeRef(*this) };
+    auto protectedThis { Ref { *this } };
 
     for (auto& client : clientsCopy) {
         if (client && hasClient(*client))
@@ -175,7 +175,7 @@ void PreviewConverter::iterateClients(T&& callback)
 
 void PreviewConverter::didAddClient(PreviewConverterClient& client)
 {
-    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), weakClient = makeWeakPtr(client)]() {
+    RunLoop::current().dispatch([this, protectedThis = Ref { *this }, weakClient = makeWeakPtr(client)]() {
         if (auto client = weakClient.get())
             replayToClient(*client);
     });
@@ -206,7 +206,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
         return;
 
     SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
-    auto protectedThis { makeRef(*this) };
+    auto protectedThis { Ref { *this } };
 
     client.previewConverterDidStartUpdating(*this);
 
@@ -241,7 +241,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
 
 void PreviewConverter::delegateDidReceiveData(const SharedBuffer& data)
 {
-    auto protectedThis { makeRef(*this) };
+    auto protectedThis { Ref { *this } };
 
     if (m_state == State::Updating) {
         m_provider = nullptr;
@@ -287,7 +287,7 @@ void PreviewConverter::delegateDidFailWithError(const ResourceError& error)
         return;
     }
 
-    provider->providePasswordForPreviewConverter(*this, [this, protectedThis = makeRef(*this)](auto& password) mutable {
+    provider->providePasswordForPreviewConverter(*this, [this, protectedThis = Ref { *this }](auto& password) mutable {
         if (m_state != State::Updating)
             return;
 

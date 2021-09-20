@@ -848,7 +848,7 @@ void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel
 
     if (m_videoFullscreenModel) {
         m_videoFullscreenModel->addClient(*this);
-        m_videoFullscreenModel->requestRouteSharingPolicyAndContextUID([this, protectedThis = makeRefPtr(this)] (RouteSharingPolicy policy, String contextUID) {
+        m_videoFullscreenModel->requestRouteSharingPolicyAndContextUID([this, protectedThis = Ref { *this }] (RouteSharingPolicy policy, String contextUID) {
             m_routeSharingPolicy = policy;
             m_routingContextUID = contextUID;
 
@@ -1129,7 +1129,7 @@ void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
     if (m_currentMode.hasFullscreen()) {
         m_shouldReturnToFullscreenWhenStoppingPictureInPicture = true;
         [[m_playerViewController view] layoutIfNeeded];
-        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError *error) {
+        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = Ref { *this }, this] (BOOL success, NSError *error) {
             exitFullscreenHandler(success, error);
         }];
     } else {
@@ -1242,7 +1242,7 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletion
         return;
     }
 
-    prepareForPictureInPictureStop([protectedThis = makeRefPtr(this), strongCompletionHandler = adoptNS([completionHandler copy])](bool restored)  {
+    prepareForPictureInPictureStop([protectedThis = Ref { *this }, strongCompletionHandler = adoptNS([completionHandler copy])](bool restored)  {
         LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler lambda(%p) - restored(%s)", protectedThis.get(), boolString(restored));
         ((void (^)(BOOL))strongCompletionHandler.get())(restored);
     });
@@ -1419,7 +1419,7 @@ void VideoFullscreenInterfaceAVKit::preparedToReturnToStandby()
 
 void VideoFullscreenInterfaceAVKit::finalizeSetup()
 {
-    RunLoop::main().dispatch([protectedThis = makeRefPtr(this), this] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
         if (m_fullscreenChangeObserver) {
             if (!m_hasVideoContentLayer && m_targetMode.hasVideo()) {
                 m_finalizeSetupNeedsVideoContentLayer = true;
@@ -1445,7 +1445,7 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
     [[m_playerViewController view] layoutIfNeeded];
     if (m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen()) {
         [m_window setHidden:NO];
-        [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, protectedThis = makeRefPtr(this)] (BOOL success, NSError *error) {
+        [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, protectedThis = Ref { *this }] (BOOL success, NSError *error) {
             enterFullscreenHandler(success, error, NextAction::NeedsEnterFullScreen);
         }];
         return;
@@ -1467,7 +1467,7 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
     m_enterFullscreenNeedsEnterPictureInPicture = false;
 
     if (!m_targetMode.hasFullscreen() && m_currentMode.hasFullscreen()) {
-        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError *error) {
+        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = Ref { *this }, this] (BOOL success, NSError *error) {
             exitFullscreenHandler(success, error, NextAction::NeedsEnterFullScreen);
         }];
         return;
@@ -1509,7 +1509,7 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
     m_exitFullscreenNeedInlineRect = false;
 
     if (m_currentMode.hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError *error) {
+        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = Ref { *this }, this] (BOOL success, NSError *error) {
             exitFullscreenHandler(success, error, NextAction::NeedsExitFullScreen);
         }];
         return;
@@ -1533,7 +1533,7 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
 
     m_standby = false;
 
-    RunLoop::main().dispatch([protectedThis = makeRefPtr(this), this] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didExitFullscreen();
         m_changingStandbyOnly = false;

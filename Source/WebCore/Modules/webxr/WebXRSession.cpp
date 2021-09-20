@@ -235,9 +235,9 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
             // https://immersive-web.github.io/webxr/#create-a-reference-space
             RefPtr<WebXRReferenceSpace> referenceSpace;
             if (type == XRReferenceSpaceType::BoundedFloor)
-                referenceSpace = WebXRBoundedReferenceSpace::create(document, makeRef(*this), type);
+                referenceSpace = WebXRBoundedReferenceSpace::create(document, Ref { *this }, type);
             else
-                referenceSpace = WebXRReferenceSpace::create(document, makeRef(*this), type);
+                referenceSpace = WebXRReferenceSpace::create(document, Ref { *this }, type);
 
             // 2.5. Resolve promise with referenceSpace.
             promise.resolve(referenceSpace.releaseNonNull());
@@ -323,7 +323,7 @@ bool WebXRSession::isPositionEmulated() const
 // https://immersive-web.github.io/webxr/#shut-down-the-session
 void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (m_ended) {
         // This method was called earlier with initiatedBySystem=No when the
@@ -390,7 +390,7 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
 {
     // The shutdown() call below might remove the sole reference to session
     // that could exist (the XRSystem owns the sessions) so let's protect this.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (m_ended)
         return Exception { InvalidStateError, "Cannot end a session more than once"_s };
@@ -505,7 +505,7 @@ bool WebXRSession::frameShouldBeRendered() const
 
 void WebXRSession::requestFrame()
 {
-    m_device->requestFrame([this, protectedThis = makeRef(*this)](auto&& frameData) {
+    m_device->requestFrame([this, protectedThis = Ref { *this }](auto&& frameData) {
         onFrame(WTFMove(frameData));
     });
 }

@@ -157,7 +157,7 @@ bool EditCommand::isEditingTextAreaOrTextInput() const
 
 void EditCommand::setStartingSelection(const VisibleSelection& selection)
 {
-    for (auto command = makeRefPtr(this); ; command = command->m_parent.get()) {
+    for (RefPtr command = this; ; command = command->m_parent.get()) {
         if (auto composition = compositionIfPossible(*command))
             composition->setStartingSelection(selection);
         command->m_startingSelection = selection;
@@ -168,7 +168,7 @@ void EditCommand::setStartingSelection(const VisibleSelection& selection)
 
 void EditCommand::setEndingSelection(const VisibleSelection& selection)
 {
-    for (auto command = makeRefPtr(this); command; command = command->m_parent.get()) {
+    for (RefPtr command = this; command; command = command->m_parent.get()) {
         if (auto composition = compositionIfPossible(*command))
             composition->setEndingSelection(selection);
         command->m_endingSelection = selection;

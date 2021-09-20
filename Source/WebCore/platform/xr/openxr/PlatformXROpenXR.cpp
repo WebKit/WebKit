@@ -56,7 +56,7 @@ OpenXRDevice::OpenXRDevice(XrInstance instance, XrSystemId system, Ref<WorkQueue
 void OpenXRDevice::initialize(CompletionHandler<void()>&& callback)
 {
     ASSERT(isMainThread());
-    m_queue.dispatch([this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() mutable {
+    m_queue.dispatch([this, protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
         auto systemProperties = createStructure<XrSystemProperties, XR_TYPE_SYSTEM_PROPERTIES>();
         auto result = xrGetSystemProperties(m_instance, m_systemId, &systemProperties);
         if (XR_SUCCEEDED(result))
@@ -85,7 +85,7 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
 
 void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
 {
-    m_queue.dispatch([this, protectedThis = makeRef(*this), mode]() {
+    m_queue.dispatch([this, protectedThis = Ref { *this }, mode]() {
         ASSERT(m_instance != XR_NULL_HANDLE);
         ASSERT(m_session == XR_NULL_HANDLE);
         ASSERT(m_extensions.methods().xrGetOpenGLGraphicsRequirementsKHR);
@@ -144,7 +144,7 @@ void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
 
 void OpenXRDevice::shutDownTrackingAndRendering()
 {
-    m_queue.dispatch([this, protectedThis = makeRef(*this)]() {
+    m_queue.dispatch([this, protectedThis = Ref { *this }]() {
         if (m_session == XR_NULL_HANDLE)
             return;
 
@@ -170,7 +170,7 @@ void OpenXRDevice::initializeReferenceSpace(PlatformXR::ReferenceSpaceType space
 
 void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
 {
-    m_queue.dispatch([this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() mutable {
+    m_queue.dispatch([this, protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
         pollEvents();
         if (!isSessionReady(m_sessionState)) {
             callOnMainThread([callback = WTFMove(callback)]() mutable {
@@ -260,7 +260,7 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
 
 void OpenXRDevice::submitFrame(Vector<Device::Layer>&& layers)
 {   
-    m_queue.dispatch([this, protectedThis = makeRef(*this), layers = WTFMove(layers)]() mutable {
+    m_queue.dispatch([this, protectedThis = Ref { *this }, layers = WTFMove(layers)]() mutable {
         ASSERT(m_frameState.shouldRender);
         Vector<const XrCompositionLayerBaseHeader*> frameEndLayers;
         if (m_frameState.shouldRender) {
@@ -544,7 +544,7 @@ void OpenXRDevice::waitUntilStopping()
     pollEvents();
     if (m_sessionState >= XR_SESSION_STATE_STOPPING)
         return;
-    m_queue.dispatch([this, protectedThis = makeRef(*this)]() {
+    m_queue.dispatch([this, protectedThis = Ref { *this }]() {
         waitUntilStopping();
     });
 }

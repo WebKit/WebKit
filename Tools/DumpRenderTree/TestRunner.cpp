@@ -2297,14 +2297,14 @@ void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 {
     JSRetainPtr<JSStringRef> protectedResult(result);
 #if !PLATFORM(IOS_FAMILY)
-    RunLoop::main().dispatch([protectedThis = makeRef(*this), callbackID, protectedResult]() mutable {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, callbackID, protectedResult]() mutable {
         JSContextRef context = protectedThis->mainFrameJSContext();
         JSValueRef resultValue = JSValueMakeString(context, protectedResult.get());
         protectedThis->callTestRunnerCallback(callbackID, 1, &resultValue);
     });
 #else
     WebThreadRun(
-        makeBlockPtr([protectedThis = makeRef(*this), callbackID, protectedResult] {
+        makeBlockPtr([protectedThis = Ref { *this }, callbackID, protectedResult] {
             JSContextRef context = protectedThis->mainFrameJSContext();
             JSValueRef resultValue = JSValueMakeString(context, protectedResult.get());
             protectedThis->callTestRunnerCallback(callbackID, 1, &resultValue);

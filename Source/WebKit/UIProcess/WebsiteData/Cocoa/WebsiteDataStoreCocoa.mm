@@ -513,7 +513,7 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
 
     // Hopping to the background thread then back to the main thread
     // ensures that initializeAppBoundDomains() has finished.
-    appBoundDomainQueue().dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    appBoundDomainQueue().dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedAppBoundDomains);
             if (m_configuration->enableInAppBrowserPrivacyForTesting())

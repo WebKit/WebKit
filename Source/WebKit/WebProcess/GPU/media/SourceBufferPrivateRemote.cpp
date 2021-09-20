@@ -192,7 +192,7 @@ void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const 
         return;
 
     m_gpuProcessConnection->connection().sendWithAsyncReply(
-        Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime, isEnded), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](auto&& buffered, uint64_t totalTrackBufferSizeInBytes) mutable {
+        Messages::RemoteSourceBufferProxy::RemoveCodedFrames(start, end, currentMediaTime, isEnded), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& buffered, uint64_t totalTrackBufferSizeInBytes) mutable {
             setBufferedRanges(buffered);
             m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
             completionHandler();

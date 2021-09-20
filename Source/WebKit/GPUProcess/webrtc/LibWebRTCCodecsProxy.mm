@@ -62,7 +62,7 @@ void LibWebRTCCodecsProxy::close()
 {
     m_gpuConnectionToWebProcess.connection().removeThreadMessageReceiver(Messages::LibWebRTCCodecsProxy::messageReceiverName());
 
-    dispatchToThread([this, protectedThis = makeRef(*this)] {
+    dispatchToThread([this, protectedThis = Ref { *this }] {
         Locker locker { m_lock };
         auto decoders = WTFMove(m_decoders);
         for (auto decoder : decoders.values())

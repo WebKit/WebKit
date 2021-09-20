@@ -217,7 +217,7 @@ void WebSocket::failAsynchronously()
     // constructor, we have to wait until the constructor has completed before firing the
     // event; otherwise, users can't connect to the event.
 
-    scriptExecutionContext()->postTask([this, protectedThis = makeRef(*this)](auto&) {
+    scriptExecutionContext()->postTask([this, protectedThis = Ref { *this }](auto&) {
         this->dispatchOrQueueErrorEvent();
         this->stop();
     });

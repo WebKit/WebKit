@@ -202,7 +202,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
             return TransformationMatrix::fromProjection(fov, aspect, near, far).toColumnMajorFloatArray();
         });
 
-        auto xrView = WebXRView::create(makeRef(*this), view.eye, WTFMove(transform), Float32Array::create(projection.data(), projection.size()));
+        auto xrView = WebXRView::create(Ref { *this }, view.eye, WTFMove(transform), Float32Array::create(projection.data(), projection.size()));
         xrView->setViewportModifiable(m_session->supportsViewportScaling());
 
         //  8.8. Append xrview to xrviews

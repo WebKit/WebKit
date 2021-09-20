@@ -657,7 +657,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
     }
 
     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "status.code(", m_status.code, ")");
-    m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), code = m_status.code] {
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, code = m_status.code] {
         if (m_didEncounterErrorDuringParsingCallback)
             m_didEncounterErrorDuringParsingCallback(code);
     });
@@ -782,7 +782,7 @@ Status SourceBufferParserWebM::OnElementEnd(const ElementMetadata& metadata)
         }
 
         if (m_initializationSegmentEncountered) {
-            m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
+            m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, initializationSegment = WTFMove(*m_initializationSegment)]() mutable {
                 if (m_didParseInitializationDataCallback)
                     m_didParseInitializationDataCallback(WTFMove(initializationSegment));
             });
@@ -1035,7 +1035,7 @@ webm::Status SourceBufferParserWebM::OnBlockGroupEnd(const webm::ElementMetadata
             return Status(Status::kOkCompleted);
         }
         if (trackData->track().track_uid.is_present() && blockGroup.discard_padding.value() > 0) {
-            m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), trackID = trackData->track().track_uid.value(), padding = MediaTime(blockGroup.discard_padding.value(), k_us_in_seconds)]() {
+            m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, trackID = trackData->track().track_uid.value(), padding = MediaTime(blockGroup.discard_padding.value(), k_us_in_seconds)]() {
                 if (m_didParseTrimmingDataCallback)
                     m_didParseTrimmingDataCallback(trackID, padding);
             });
@@ -1086,7 +1086,7 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
 
 void SourceBufferParserWebM::provideMediaData(RetainPtr<CMSampleBufferRef> sampleBuffer, uint64_t trackID, std::optional<size_t> byteRangeOffset)
 {
-    m_callOnClientThreadCallback([this, protectedThis = makeRef(*this), sampleBuffer = WTFMove(sampleBuffer), trackID, byteRangeOffset] () mutable {
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, sampleBuffer = WTFMove(sampleBuffer), trackID, byteRangeOffset] () mutable {
         if (!m_didProvideMediaDataCallback)
             return;
 

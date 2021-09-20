@@ -118,7 +118,7 @@ void UIScriptControllerIOS::waitForOutstandingCallbacks()
 void UIScriptControllerIOS::doAfterPresentationUpdate(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView() _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -128,7 +128,7 @@ void UIScriptControllerIOS::doAfterPresentationUpdate(JSValueRef callback)
 void UIScriptControllerIOS::doAfterNextStablePresentationUpdate(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _doAfterNextStablePresentationUpdate:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView() _doAfterNextStablePresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -138,7 +138,7 @@ void UIScriptControllerIOS::doAfterNextStablePresentationUpdate(JSValueRef callb
 void UIScriptControllerIOS::ensurePositionInformationIsUpToDateAt(long x, long y, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _requestActivatedElementAtPosition:CGPointMake(x, y) completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] (_WKActivatedElementInfo *) {
+    [webView() _requestActivatedElementAtPosition:CGPointMake(x, y) completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] (_WKActivatedElementInfo *) {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -148,7 +148,7 @@ void UIScriptControllerIOS::ensurePositionInformationIsUpToDateAt(long x, long y
 void UIScriptControllerIOS::doAfterVisibleContentRectUpdate(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _doAfterNextVisibleContentRectUpdate:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView() _doAfterNextVisibleContentRectUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -159,7 +159,7 @@ void UIScriptControllerIOS::zoomToScale(double scale, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    [webView() zoomToScale:scale animated:YES completionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView() zoomToScale:scale animated:YES completionHandler:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -170,7 +170,7 @@ void UIScriptControllerIOS::retrieveSpeakSelectionContent(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
-    [webView() accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView() accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -190,7 +190,7 @@ void UIScriptControllerIOS::simulateAccessibilitySettingsChangeNotification(JSVa
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center postNotificationName:UIAccessibilityInvertColorsStatusDidChangeNotification object:webView];
 
-    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -216,7 +216,7 @@ void UIScriptControllerIOS::touchDownAtPoint(long x, long y, long touchCount, JS
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] touchDown:location touchCount:touchCount completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] touchDown:location touchCount:touchCount completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -228,7 +228,7 @@ void UIScriptControllerIOS::liftUpAtPoint(long x, long y, long touchCount, JSVal
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] liftUp:location touchCount:touchCount completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] liftUp:location touchCount:touchCount completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -280,7 +280,7 @@ void UIScriptControllerIOS::twoFingerSingleTapAtPoint(long x, long y, JSValueRef
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] twoFingerTap:location completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] twoFingerTap:location completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -310,7 +310,7 @@ void UIScriptControllerIOS::singleTapAtPointWithModifiers(WebCore::FloatPoint lo
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
-    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[this, protectedThis = makeRef(*this), modifierFlags = WTFMove(modifierFlags), block = WTFMove(block)] () mutable {
+    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[this, protectedThis = Ref { *this }, modifierFlags = WTFMove(modifierFlags), block = WTFMove(block)] () mutable {
         if (!m_context)
             return;
 
@@ -326,7 +326,7 @@ void UIScriptControllerIOS::doubleTapAtPoint(long x, long y, float delay, JSValu
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    [[HIDEventGenerator sharedHIDEventGenerator] doubleTap:globalToContentCoordinates(webView(), x, y) delay:delay completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] doubleTap:globalToContentCoordinates(webView(), x, y) delay:delay completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -338,7 +338,7 @@ void UIScriptControllerIOS::stylusDownAtPoint(long x, long y, float azimuthAngle
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusDownAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -350,7 +350,7 @@ void UIScriptControllerIOS::stylusMoveToPoint(long x, long y, float azimuthAngle
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] stylusMoveToPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusMoveToPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -362,7 +362,7 @@ void UIScriptControllerIOS::stylusUpAtPoint(long x, long y, JSValueRef callback)
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] stylusUpAtPoint:location completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusUpAtPoint:location completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -385,14 +385,14 @@ void UIScriptControllerIOS::stylusTapAtPointWithModifiers(long x, long y, float 
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
     auto location = globalToContentCoordinates(webView(), x, y);
-    [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID, modifierFlags = WTFMove(modifierFlags)] {
+    [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID, modifierFlags = WTFMove(modifierFlags)] {
         if (!m_context)
             return;
         for (size_t i = modifierFlags.size(); i; ) {
             --i;
             [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i]];
         }
-        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
             if (!m_context)
                 return;
             m_context->asyncTaskComplete(callbackID);
@@ -507,7 +507,7 @@ void UIScriptControllerIOS::longPressAtPoint(long x, long y, JSValueRef callback
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
-    [[HIDEventGenerator sharedHIDEventGenerator] longPress:globalToContentCoordinates(webView(), x, y) completionBlock:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] longPress:globalToContentCoordinates(webView(), x, y) completionBlock:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -525,7 +525,7 @@ void UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard(JSStringRef chara
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     // Assumes that the keyboard is already shown.
-    [[HIDEventGenerator sharedHIDEventGenerator] keyPress:toWTFString(character) completionBlock:makeBlockPtr([strongThis = makeRef(*this), callbackID] {
+    [[HIDEventGenerator sharedHIDEventGenerator] keyPress:toWTFString(character) completionBlock:makeBlockPtr([strongThis = Ref { *this }, callbackID] {
         if (strongThis->m_context)
             strongThis->m_context->asyncTaskComplete(callbackID);
     }).get()];
@@ -595,7 +595,7 @@ void UIScriptControllerIOS::dismissFilePicker(JSValueRef callback)
 
     // Round-trip with the WebProcess to make sure it has been notified of the dismissal.
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView evaluateJavaScript:@"" completionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] (id result, NSError *error) {
+    [webView evaluateJavaScript:@"" completionHandler:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] (id result, NSError *error) {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -750,8 +750,8 @@ void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringR
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     TestRunnerWKWebView *webView = this->webView();
-    [webView applyAutocorrection:toWTFString(newString) toString:toWTFString(oldString) withCompletionHandler:makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
-        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    [webView applyAutocorrection:toWTFString(newString) toString:toWTFString(oldString) withCompletionHandler:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
+        dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
             // applyAutocorrection can call its completion handler synchronously,
             // which makes UIScriptController unhappy (see bug 172884).
             if (!m_context)
@@ -918,7 +918,7 @@ void UIScriptControllerIOS::simulateRotation(DeviceOrientation* orientation, JSV
     
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
-    webView.rotationDidEndCallback = makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    webView.rotationDidEndCallback = makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -934,7 +934,7 @@ void UIScriptControllerIOS::simulateRotationLikeSafari(DeviceOrientation* orient
     
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
     
-    webView.rotationDidEndCallback = makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    webView.rotationDidEndCallback = makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -946,7 +946,7 @@ void UIScriptControllerIOS::simulateRotationLikeSafari(DeviceOrientation* orient
 void UIScriptControllerIOS::setDidStartFormControlInteractionCallback(JSValueRef callback)
 {
     UIScriptController::setDidStartFormControlInteractionCallback(callback);
-    webView().didStartFormControlInteractionCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didStartFormControlInteractionCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidStartFormControlInteraction);
@@ -956,7 +956,7 @@ void UIScriptControllerIOS::setDidStartFormControlInteractionCallback(JSValueRef
 void UIScriptControllerIOS::setDidEndFormControlInteractionCallback(JSValueRef callback)
 {
     UIScriptController::setDidEndFormControlInteractionCallback(callback);
-    webView().didEndFormControlInteractionCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didEndFormControlInteractionCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
@@ -966,7 +966,7 @@ void UIScriptControllerIOS::setDidEndFormControlInteractionCallback(JSValueRef c
 void UIScriptControllerIOS::setWillBeginZoomingCallback(JSValueRef callback)
 {
     UIScriptController::setWillBeginZoomingCallback(callback);
-    webView().willBeginZoomingCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().willBeginZoomingCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeWillBeginZooming);
@@ -976,7 +976,7 @@ void UIScriptControllerIOS::setWillBeginZoomingCallback(JSValueRef callback)
 void UIScriptControllerIOS::setDidEndZoomingCallback(JSValueRef callback)
 {
     UIScriptController::setDidEndZoomingCallback(callback);
-    webView().didEndZoomingCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didEndZoomingCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndZooming);
@@ -986,7 +986,7 @@ void UIScriptControllerIOS::setDidEndZoomingCallback(JSValueRef callback)
 void UIScriptControllerIOS::setDidShowKeyboardCallback(JSValueRef callback)
 {
     UIScriptController::setDidShowKeyboardCallback(callback);
-    webView().didShowKeyboardCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didShowKeyboardCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidShowKeyboard);
@@ -996,7 +996,7 @@ void UIScriptControllerIOS::setDidShowKeyboardCallback(JSValueRef callback)
 void UIScriptControllerIOS::setDidHideKeyboardCallback(JSValueRef callback)
 {
     UIScriptController::setDidHideKeyboardCallback(callback);
-    webView().didHideKeyboardCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didHideKeyboardCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidHideKeyboard);
@@ -1006,7 +1006,7 @@ void UIScriptControllerIOS::setDidHideKeyboardCallback(JSValueRef callback)
 void UIScriptControllerIOS::setWillStartInputSessionCallback(JSValueRef callback)
 {
     UIScriptController::setWillStartInputSessionCallback(callback);
-    webView().willStartInputSessionCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().willStartInputSessionCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeWillStartInputSession);
@@ -1021,7 +1021,7 @@ void UIScriptControllerIOS::chooseMenuAction(JSStringRef jsAction, JSValueRef ca
         return;
 
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    singleTapAtPointWithModifiers(rect.center(), { }, makeBlockPtr([this, protectedThis = makeRef(*this), callbackID] {
+    singleTapAtPointWithModifiers(rect.center(), { }, makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (m_context)
             m_context->asyncTaskComplete(callbackID);
     }));
@@ -1035,7 +1035,7 @@ bool UIScriptControllerIOS::isShowingPopover() const
 void UIScriptControllerIOS::setWillPresentPopoverCallback(JSValueRef callback)
 {
     UIScriptController::setWillPresentPopoverCallback(callback);
-    webView().willPresentPopoverCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().willPresentPopoverCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeWillPresentPopover);
@@ -1045,7 +1045,7 @@ void UIScriptControllerIOS::setWillPresentPopoverCallback(JSValueRef callback)
 void UIScriptControllerIOS::setDidDismissPopoverCallback(JSValueRef callback)
 {
     UIScriptController::setDidDismissPopoverCallback(callback);
-    webView().didDismissPopoverCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didDismissPopoverCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidDismissPopover);
@@ -1116,7 +1116,7 @@ bool UIScriptControllerIOS::isDismissingMenu() const
 void UIScriptControllerIOS::setDidEndScrollingCallback(JSValueRef callback)
 {
     UIScriptController::setDidEndScrollingCallback(callback);
-    webView().didEndScrollingCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().didEndScrollingCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidEndScrolling);
@@ -1149,7 +1149,7 @@ void UIScriptControllerIOS::activateDataListSuggestion(unsigned index, JSValueRe
     [webView() _selectDataListOption:index];
 
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -1293,7 +1293,7 @@ void UIScriptControllerIOS::doAfterDoubleTapDelay(JSValueRef callback)
         maximumIntervalBetweenSuccessiveTaps += additionalDelayBetweenSuccessiveTaps;
     }
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(maximumIntervalBetweenSuccessiveTaps * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, strongThis = makeRef(*this), callbackID] {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(maximumIntervalBetweenSuccessiveTaps * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -1308,7 +1308,7 @@ void UIScriptControllerIOS::copyText(JSStringRef text)
 void UIScriptControllerIOS::installTapGestureOnWindow(JSValueRef callback)
 {
     m_context->registerCallback(callback, CallbackTypeWindowTapRecognized);
-    webView().windowTapRecognizedCallback = makeBlockPtr([this, strongThis = makeRef(*this)] {
+    webView().windowTapRecognizedCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeWindowTapRecognized);

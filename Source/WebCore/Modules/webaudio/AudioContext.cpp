@@ -306,7 +306,7 @@ void AudioContext::startRendering()
         return;
 
     lazyInitialize();
-    destination().startRendering([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().startRendering([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         if (!exception)
             setState(State::Running);
     });
@@ -379,7 +379,7 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
     lazyInitialize();
 
-    destination().resume([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().resume([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         setState(exception ? State::Suspended : State::Running);
     });
 }
@@ -465,7 +465,7 @@ void AudioContext::suspendPlayback()
 
     lazyInitialize();
 
-    destination().suspend([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().suspend([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         if (exception)
             return;
 
@@ -511,7 +511,7 @@ void AudioContext::isPlayingAudioDidChange()
 
     // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
     // we could be on the audio I/O thread here and the call into WebCore could block.
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = Ref { *this }] {
         if (auto* document = protectedThis->document())
             document->updateIsPlayingMedia();
     });

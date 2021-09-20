@@ -51,12 +51,12 @@ template<typename T> static void dispatchWorkItem(void* dispatchContext)
 
 void WorkQueue::dispatch(Function<void()>&& function)
 {
-    dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { makeRef(*this), WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
+    dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { Ref { *this }, WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueue::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
-    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { makeRef(*this),  WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
+    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { Ref { *this },  WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueue::dispatchSync(Function<void()>&& function)

@@ -188,7 +188,7 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
 
 void RealtimeMediaSourceCenter::triggerDevicesChangedObservers()
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_observers.forEach([](auto& observer) {
         observer.devicesChanged();
     });

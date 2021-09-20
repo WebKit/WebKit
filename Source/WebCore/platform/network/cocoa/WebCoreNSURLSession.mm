@@ -614,7 +614,7 @@ void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource
 
 void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     Locker locker { m_taskLock };
     if (!m_task)
         return completionHandler(ShouldContinuePolicyCheck::No);

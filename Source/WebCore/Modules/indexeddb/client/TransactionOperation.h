@@ -157,12 +157,12 @@ private:
         : TransactionOperation(transaction)
     {
         ASSERT(performMethod);
-        m_performFunction = [protectedThis = makeRef(*this), performMethod = WTFMove(performMethod)] {
+        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTFMove(performMethod)] {
             performMethod(protectedThis.get());
         };
 
         if (completeMethod) {
-            m_completeFunction = [protectedThis = makeRef(*this), completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
+            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
                 completeMethod(resultData);
             };
         }
@@ -172,12 +172,12 @@ private:
         : TransactionOperation(transaction, request)
     {
         ASSERT(performMethod);
-        m_performFunction = [protectedThis = makeRef(*this), performMethod = WTFMove(performMethod)] {
+        m_performFunction = [protectedThis = Ref { *this }, performMethod = WTFMove(performMethod)] {
             performMethod(protectedThis.get());
         };
 
         if (completeMethod) {
-            m_completeFunction = [protectedThis = makeRef(*this), completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
+            m_completeFunction = [protectedThis = Ref { *this }, completeMethod = WTFMove(completeMethod)] (const IDBResultData& resultData) {
                 completeMethod(resultData);
             };
         }

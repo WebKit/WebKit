@@ -1732,7 +1732,7 @@ void Document::updateTitle(const StringWithDirection& title)
     m_title.direction = title.direction;
 
     if (!m_updateTitleTaskScheduled) {
-        eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = makeRef(*this), this]() mutable {
+        eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }, this]() mutable {
             m_updateTitleTaskScheduled = false;
             if (auto documentLoader = makeRefPtr(loader()))
                 documentLoader->setTitle(m_title);
@@ -3738,7 +3738,7 @@ void Document::didRemoveAllPendingStylesheet()
 
     if (m_gotoAnchorNeededAfterStylesheetsLoad) {
         // https://html.spec.whatwg.org/multipage/browsing-the-web.html#try-to-scroll-to-the-fragment
-        eventLoop().queueTask(TaskSource::Networking, [protectedThis = makeRef(*this), this] {
+        eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, this] {
             auto frameView = makeRefPtr(view());
             if (!frameView)
                 return;
@@ -5075,14 +5075,14 @@ void Document::dispatchWindowLoadEvent()
 
 void Document::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
 {
-    eventLoop().queueTask(source, [document = makeRef(*this), event = WTFMove(event)] {
+    eventLoop().queueTask(source, [document = Ref { *this }, event = WTFMove(event)] {
         document->dispatchEvent(event);
     });
 }
 
 void Document::queueTaskToDispatchEventOnWindow(TaskSource source, Ref<Event>&& event)
 {
-    eventLoop().queueTask(source, [this, protectedThis = makeRef(*this), event = WTFMove(event)] {
+    eventLoop().queueTask(source, [this, protectedThis = Ref { *this }, event = WTFMove(event)] {
         if (!m_domWindow)
             return;
         m_domWindow->dispatchEvent(event);

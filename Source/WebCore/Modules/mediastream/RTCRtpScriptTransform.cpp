@@ -89,7 +89,7 @@ void RTCRtpScriptTransform::setTransformer(RTCRtpScriptTransformer& transformer)
         m_transformer = makeWeakPtr(transformer);
     }
     transformer.startPendingActivity();
-    callOnMainThread([this, protectedThis = makeRef(*this)]() mutable {
+    callOnMainThread([this, protectedThis = Ref { *this }]() mutable {
         if (m_backend)
             setupTransformer(m_backend.releaseNonNull());
     });

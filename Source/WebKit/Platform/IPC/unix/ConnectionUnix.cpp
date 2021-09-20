@@ -550,11 +550,11 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
 #if USE(GLIB)
             m_pendingOutputMessage = makeUnique<UnixMessage>(WTFMove(outputMessage));
-            m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), [this, protectedThis = makeRef(*this)] (GIOCondition condition) -> gboolean {
+            m_writeSocketMonitor.start(m_socket.get(), G_IO_OUT, m_connectionQueue->runLoop(), [this, protectedThis = Ref { *this }] (GIOCondition condition) -> gboolean {
                 if (condition & G_IO_OUT) {
                     ASSERT(m_pendingOutputMessage);
                     // We can't stop the monitor from this lambda, because stop destroys the lambda.
-                    m_connectionQueue->dispatch([this, protectedThis = makeRef(*this)] {
+                    m_connectionQueue->dispatch([this, protectedThis = Ref { *this }] {
                         m_writeSocketMonitor.stop();
                         auto message = WTFMove(m_pendingOutputMessage);
                         if (m_isConnected) {

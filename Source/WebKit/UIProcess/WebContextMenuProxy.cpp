@@ -69,7 +69,7 @@ void WebContextMenuProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& 
     page->process().stopResponsivenessTimer();
 
     // Protect |this| from being deallocated if WebPageProxy code is re-entered from the menu runloop or delegates.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     showContextMenuWithItems(WTFMove(items));
 
     // No matter the result of showContextMenuWithItems, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.

@@ -89,7 +89,7 @@ void NetscapePlugInStreamLoader::releaseResources()
 
 void NetscapePlugInStreamLoader::init(ResourceRequest&& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ResourceLoader::init(WTFMove(request), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
+    ResourceLoader::init(WTFMove(request), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
         if (!success)
             return completionHandler(false);
         ASSERT(!reachedTerminalState());
@@ -104,7 +104,7 @@ void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, cons
     if (!m_client)
         return;
 
-    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = makeRef(*this), redirectResponse, callback = WTFMove(callback)] (ResourceRequest&& request) mutable {
+    m_client->willSendRequest(this, WTFMove(request), redirectResponse, [protectedThis = Ref { *this }, redirectResponse, callback = WTFMove(callback)] (ResourceRequest&& request) mutable {
         if (!request.isNull())
             protectedThis->willSendRequestInternal(WTFMove(request), redirectResponse, WTFMove(callback));
         else

@@ -48,7 +48,7 @@ WorkerEventLoop::~WorkerEventLoop()
 void WorkerEventLoop::scheduleToRun()
 {
     ASSERT(scriptExecutionContext());
-    scriptExecutionContext()->postTask([eventLoop = makeRef(*this)] (ScriptExecutionContext&) {
+    scriptExecutionContext()->postTask([eventLoop = Ref { *this }] (ScriptExecutionContext&) {
         eventLoop->run();
     });
 }

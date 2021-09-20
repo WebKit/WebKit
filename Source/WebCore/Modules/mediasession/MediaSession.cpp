@@ -362,7 +362,7 @@ void MediaSession::removeObserver(Observer& observer)
 void MediaSession::forEachObserver(const Function<void(Observer&)>& apply)
 {
     ASSERT(isMainThread());
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_observers.forEach(apply);
 }
 

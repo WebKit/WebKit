@@ -170,7 +170,7 @@ void MockRealtimeAudioSource::tick()
     Seconds delta = now - m_lastRenderTime;
     m_lastRenderTime = now;
 
-    m_workQueue->dispatch([this, delta, protectedThis = makeRef(*this)] {
+    m_workQueue->dispatch([this, delta, protectedThis = Ref { *this }] {
         render(delta);
     });
 }

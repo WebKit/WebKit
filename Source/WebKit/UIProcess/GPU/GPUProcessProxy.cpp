@@ -361,7 +361,7 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
 
 void GPUProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     switch (reason) {
     case GPUProcessTerminationReason::Crash:

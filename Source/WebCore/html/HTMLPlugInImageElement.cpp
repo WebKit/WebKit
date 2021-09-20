@@ -195,7 +195,7 @@ void HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution()
 
     m_hasUpdateScheduledForAfterStyleResolution = true;
 
-    Style::queuePostResolutionCallback([protectedThis = makeRef(*this)] {
+    Style::queuePostResolutionCallback([protectedThis = Ref { *this }] {
         protectedThis->updateAfterStyleResolution();
     });
 }

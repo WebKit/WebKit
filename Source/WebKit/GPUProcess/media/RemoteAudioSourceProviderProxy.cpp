@@ -57,7 +57,7 @@ RemoteAudioSourceProviderProxy::~RemoteAudioSourceProviderProxy() = default;
 
 UniqueRef<CARingBuffer> RemoteAudioSourceProviderProxy::createRingBuffer()
 {
-    return makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>([protectedThis = makeRef(*this)](SharedMemory* memory, const CAAudioStreamDescription& format, size_t frameCount) mutable {
+    return makeUniqueRef<CARingBuffer>(makeUniqueRef<SharedRingBufferStorage>([protectedThis = Ref { *this }](SharedMemory* memory, const CAAudioStreamDescription& format, size_t frameCount) mutable {
         protectedThis->storageChanged(memory, format, frameCount);
     }));
 }

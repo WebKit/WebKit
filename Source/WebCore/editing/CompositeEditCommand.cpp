@@ -442,7 +442,7 @@ EditCommandComposition* CompositeEditCommand::composition() const
 
 EditCommandComposition& CompositeEditCommand::ensureComposition()
 {
-    auto command = makeRefPtr(this);
+    RefPtr command { this };
     while (auto* parent = command->parent())
         command = parent;
     if (!command->m_composition)

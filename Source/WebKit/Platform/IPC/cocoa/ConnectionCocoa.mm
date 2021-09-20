@@ -227,12 +227,12 @@ bool Connection::open()
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
     m_receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, m_connectionQueue->dispatchQueue()));
-    dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = Ref { *this }] {
         receiveSourceEventHandler();
     });
-    dispatch_source_set_cancel_handler(m_receiveSource.get(), [protectedThis = makeRefPtr(this), receivePort = m_receivePort] {
+    dispatch_source_set_cancel_handler(m_receiveSource.get(), [protectedThis = Ref { *this }, receivePort = m_receivePort] {
 #if !PLATFORM(WATCHOS)
-        mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(protectedThis.get()));
+        mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(protectedThis.ptr()));
 #endif
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
@@ -370,13 +370,13 @@ void Connection::initializeSendSource()
     m_sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_DEAD | DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue()));
     m_isInitializingSendSource = true;
 
-    dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;
         m_isInitializingSendSource = false;
         resumeSendSource();
     });
-    dispatch_source_set_event_handler(m_sendSource.get(), [this, protectedThis = makeRefPtr(this)] {
+    dispatch_source_set_event_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;
 

@@ -139,7 +139,7 @@ void RealtimeMediaSource::setInterruptedForTesting(bool interrupted)
 void RealtimeMediaSource::forEachObserver(const Function<void(Observer&)>& apply)
 {
     ASSERT(isMainThread());
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_observers.forEach(apply);
 }
 
@@ -178,7 +178,7 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    callOnMainThread([protectedThis = makeRef(*this)] {
+    callOnMainThread([protectedThis = Ref { *this }] {
         if (protectedThis->m_hasStartedProducingData)
             return;
         protectedThis->m_hasStartedProducingData = true;
@@ -272,7 +272,7 @@ void RealtimeMediaSource::end(Observer* callingObserver)
 
     ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     stop();
     m_isEnded = true;
@@ -1092,7 +1092,7 @@ void RealtimeMediaSource::setEchoCancellation(bool echoCancellation)
 void RealtimeMediaSource::scheduleDeferredTask(Function<void()>&& function)
 {
     ASSERT(function);
-    callOnMainThread([protectedThis = makeRef(*this), function = WTFMove(function)] {
+    callOnMainThread([protectedThis = Ref { *this }, function = WTFMove(function)] {
         function();
     });
 }

@@ -143,7 +143,7 @@ void SubresourceLoader::startLoading()
 {
     // FIXME: this should probably be removed.
     ASSERT(!IOSApplication::isWebProcess());
-    init(ResourceRequest(m_iOSOriginalRequest), [this, protectedThis = makeRef(*this)] (bool success) {
+    init(ResourceRequest(m_iOSOriginalRequest), [this, protectedThis = Ref { *this }] (bool success) {
         if (!success)
             return;
         m_iOSOriginalRequest = ResourceRequest();
@@ -162,7 +162,7 @@ void SubresourceLoader::cancelIfNotFinishing()
 
 void SubresourceLoader::init(ResourceRequest&& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-    ResourceLoader::init(WTFMove(request), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
+    ResourceLoader::init(WTFMove(request), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (bool initialized) mutable {
         if (!initialized)
             return completionHandler(false);
         if (!m_documentLoader) {
@@ -200,7 +200,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             (isScriptLikeDestination(options().destination) ? ResourceLoadObserver::FetchDestinationIsScriptLike::Yes : ResourceLoadObserver::FetchDestinationIsScriptLike::No));
     }
 
-    auto continueWillSendRequest = [this, protectedThis = makeRef(*this), redirectResponse] (CompletionHandler<void(ResourceRequest&&)>&& completionHandler, ResourceRequest&& newRequest) mutable {
+    auto continueWillSendRequest = [this, protectedThis = Ref { *this }, redirectResponse] (CompletionHandler<void(ResourceRequest&&)>&& completionHandler, ResourceRequest&& newRequest) mutable {
         if (newRequest.isNull() || reachedTerminalState()) {
             if (newRequest.isNull())
                 SUBRESOURCELOADER_RELEASE_LOG("willSendRequestInternal: resource load canceled because new request is NULL (1)");

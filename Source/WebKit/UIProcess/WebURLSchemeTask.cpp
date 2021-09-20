@@ -100,7 +100,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
 
     m_waitingForRedirectCompletionHandlerCallback = true;
 
-    Function<void(ResourceRequest&&)> innerCompletionHandler = [protectedThis = makeRef(*this), this, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+    Function<void(ResourceRequest&&)> innerCompletionHandler = [protectedThis = Ref { *this }, this, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
         m_waitingForRedirectCompletionHandlerCallback = false;
         if (!m_stopped && !m_completed)
             completionHandler(WTFMove(request));

@@ -40,7 +40,7 @@ RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy()
 
 void RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    m_queue->dispatch([this, protectedThis = makeRef(*this), identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()]() mutable {
         ASSERT(!m_webProcessConnections.contains(identifier));
         m_webProcessConnections.add(identifier, connectionID);
     });
@@ -49,7 +49,7 @@ void RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess(NetworkCon
 
 void RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    m_queue->dispatch([this, protectedThis = makeRef(*this), identifier = connectionToWebProcess.webProcessIdentifier()] {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier()] {
         ASSERT(m_webProcessConnections.contains(identifier));
         m_webProcessConnections.remove(identifier);
     });

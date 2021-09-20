@@ -124,7 +124,7 @@ GPUProcessConnection::~GPUProcessConnection()
 
 void GPUProcessConnection::didClose(IPC::Connection&)
 {
-    auto protector = makeRef(*this);
+    auto protector = Ref { *this };
     WebProcess::singleton().gpuProcessConnectionClosed(*this);
 
 #if ENABLE(ROUTING_ARBITRATION)

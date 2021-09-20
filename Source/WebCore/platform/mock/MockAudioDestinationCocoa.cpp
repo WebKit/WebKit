@@ -66,7 +66,7 @@ void MockAudioDestinationCocoa::stopRendering(CompletionHandler<void(bool)>&& co
 
 void MockAudioDestinationCocoa::tick()
 {
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), sampleRate = sampleRate(), numberOfFramesToProcess = m_numberOfFramesToProcess] {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, sampleRate = sampleRate(), numberOfFramesToProcess = m_numberOfFramesToProcess] {
         AudioStreamBasicDescription streamFormat;
         getAudioStreamBasicDescription(streamFormat);
 

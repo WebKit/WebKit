@@ -63,7 +63,7 @@ void AbortSignal::signalAbort()
     // 2. Set signal’s aborted flag.
     m_aborted = true;
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     auto algorithms = std::exchange(m_algorithms, { });
     for (auto& algorithm : algorithms)
         algorithm();

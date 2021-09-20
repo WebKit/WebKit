@@ -83,7 +83,7 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeAudioSource>&& sour
     ASSERT(WTF::isMainRunLoop());
     setConnection(source->connection());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), source = WTFMove(source)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
         auto identifier = source->identifier();
 
         ASSERT(!m_audioSources.contains(identifier));
@@ -96,7 +96,7 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeVideoSource>&& sour
     ASSERT(WTF::isMainRunLoop());
     setConnection(source->connection());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), source = WTFMove(source)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
         auto identifier = source->identifier();
 
         ASSERT(!m_videoSources.contains(identifier));
@@ -107,7 +107,7 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeVideoSource>&& sour
 void RemoteCaptureSampleManager::removeSource(WebCore::RealtimeMediaSourceIdentifier identifier)
 {
     ASSERT(WTF::isMainRunLoop());
-    m_queue->dispatch([this, protectedThis = makeRef(*this), identifier] {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier] {
         ASSERT(m_audioSources.contains(identifier) || m_videoSources.contains(identifier));
         if (!m_audioSources.remove(identifier))
             m_videoSources.remove(identifier);

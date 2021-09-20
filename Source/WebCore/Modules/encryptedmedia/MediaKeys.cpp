@@ -135,7 +135,7 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     // 5. Run the following steps in parallel:
 
     // 5.1. Use this object's cdm instance to process certificate.
-    m_instance->setServerCertificate(WTFMove(certificate), [this, protectedThis = makeRef(*this), promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto success) {
+    m_instance->setServerCertificate(WTFMove(certificate), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto success) {
         // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
         // 5.1. [Else,] Resolve promise with true.
         if (success == CDMInstance::Failed) {

@@ -91,7 +91,7 @@ void RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSo
 
 void RealtimeOutgoingVideoSource::applyRotation()
 {
-    ensureOnMainThread([this, protectedThis = makeRef(*this)] {
+    ensureOnMainThread([this, protectedThis = Ref { *this }] {
         if (m_areSinksAskingToApplyRotation)
             return;
 

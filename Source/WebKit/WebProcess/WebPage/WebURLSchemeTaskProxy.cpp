@@ -102,14 +102,14 @@ void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& re
 
     if (m_waitingForCompletionHandler) {
         WEBURLSCHEMETASKPROXY_RELEASE_LOG("didPerformRedirection: Received redirect during previous redirect processing, queuing it.");
-        queueTask([this, protectedThis = makeRef(*this), redirectResponse = WTFMove(redirectResponse), request = WTFMove(request), completionHandler = WTFMove(completionHandler)]() mutable {
+        queueTask([this, protectedThis = Ref { *this }, redirectResponse = WTFMove(redirectResponse), request = WTFMove(request), completionHandler = WTFMove(completionHandler)]() mutable {
             didPerformRedirection(WTFMove(redirectResponse), WTFMove(request), WTFMove(completionHandler));
         });
         return;
     }
     m_waitingForCompletionHandler = true;
 
-    auto innerCompletionHandler = [this, protectedThis = makeRef(*this), originalRequest = request, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+    auto innerCompletionHandler = [this, protectedThis = Ref { *this }, originalRequest = request, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
         m_waitingForCompletionHandler = false;
 
         completionHandler(WTFMove(request));
@@ -124,7 +124,7 @@ void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
 {
     if (m_waitingForCompletionHandler) {
         WEBURLSCHEMETASKPROXY_RELEASE_LOG("didReceiveResponse: Received response during redirect processing, queuing it.");
-        queueTask([this, protectedThis = makeRef(*this), response] {
+        queueTask([this, protectedThis = Ref { *this }, response] {
             didReceiveResponse(response);
         });
         return;
@@ -134,7 +134,7 @@ void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
         return;
 
     m_waitingForCompletionHandler = true;
-    m_coreLoader->didReceiveResponse(response, [this, protectedThis = makeRef(*this)] {
+    m_coreLoader->didReceiveResponse(response, [this, protectedThis = Ref { *this }] {
         m_waitingForCompletionHandler = false;
         processNextPendingTask();
     });
@@ -147,13 +147,13 @@ void WebURLSchemeTaskProxy::didReceiveData(size_t size, const uint8_t* data)
 
     if (m_waitingForCompletionHandler) {
         WEBURLSCHEMETASKPROXY_RELEASE_LOG("didReceiveData: Received data during response processing, queuing it.");
-        queueTask([this, protectedThis = makeRef(*this), dataVector = Vector { data, size }] {
+        queueTask([this, protectedThis = Ref { *this }, dataVector = Vector { data, size }] {
             didReceiveData(dataVector.size(), dataVector.data());
         });
         return;
     }
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     m_coreLoader->didReceiveData(data, size, 0, DataPayloadType::DataPayloadBytes);
     processNextPendingTask();
 }
@@ -165,7 +165,7 @@ void WebURLSchemeTaskProxy::didComplete(const ResourceError& error)
         return;
 
     if (m_waitingForCompletionHandler) {
-        queueTask([this, protectedThis = makeRef(*this), error] {
+        queueTask([this, protectedThis = Ref { *this }, error] {
             didComplete(error);
         });
         return;

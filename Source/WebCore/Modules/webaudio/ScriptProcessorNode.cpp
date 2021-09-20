@@ -209,11 +209,11 @@ void ScriptProcessorNode::process(size_t framesToProcess)
         // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
         // We only wait for script code execution when the context is an offline one for performance reasons.
         if (context().isOfflineContext()) {
-            callOnMainThreadAndWait([this, bufferIndex, protector = makeRef(*this)] {
+            callOnMainThreadAndWait([this, bufferIndex, protector = Ref { *this }] {
                 fireProcessEvent(bufferIndex);
             });
         } else {
-            callOnMainThread([this, bufferIndex, protector = makeRef(*this)] {
+            callOnMainThread([this, bufferIndex, protector = Ref { *this }] {
                 Locker locker { m_bufferLocks[bufferIndex] };
                 fireProcessEvent(bufferIndex);
             });

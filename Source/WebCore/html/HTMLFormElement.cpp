@@ -289,7 +289,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
     auto formState = FormState::create(*this, textFieldValues(), document(), NotSubmittedByJavaScript);
     targetFrame->loader().client().dispatchWillSendSubmitEvent(WTFMove(formState));
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     auto submitEvent = SubmitEvent::create(submitter);
     dispatchEvent(submitEvent);
@@ -395,7 +395,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
-    auto protectedThis = makeRef(*this); // Form submission can execute arbitary JavaScript.
+    Ref protectedThis { *this }; // Form submission can execute arbitary JavaScript.
 
     auto shouldLockHistory = processingUserGesture ? LockHistory::No : LockHistory::Yes;
     auto formSubmission = FormSubmission::create(*this, submitter, m_attributes, event, shouldLockHistory, trigger);
@@ -895,7 +895,7 @@ void HTMLFormElement::resumeFromDocumentSuspension()
 {
     ASSERT(!shouldAutocomplete());
 
-    document().postTask([formElement = makeRef(*this)] (ScriptExecutionContext&) {
+    document().postTask([formElement = Ref { *this }] (ScriptExecutionContext&) {
         formElement->resetAssociatedFormControlElements();
     });
 }

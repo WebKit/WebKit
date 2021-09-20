@@ -158,7 +158,7 @@ void AudioTrackPrivateMediaStream::startRenderer()
         return;
 
     m_isPlaying = true;
-    m_renderer->start([protectedThis = makeRef(*this)] {
+    m_renderer->start([protectedThis = Ref { *this }] {
         if (protectedThis->m_isPlaying)
             protectedThis->m_audioSource->addAudioSampleObserver(protectedThis.get());
     });

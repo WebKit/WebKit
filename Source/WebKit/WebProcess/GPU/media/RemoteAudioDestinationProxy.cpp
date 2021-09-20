@@ -147,7 +147,7 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
     if (!connection)
         return completionHandler(false);
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(m_destinationID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         setIsPlaying(isPlaying);
         completionHandler(isPlaying);
     });
@@ -159,7 +159,7 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
     if (!connection)
         return completionHandler(false);
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StopAudioDestination(m_destinationID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
         setIsPlaying(isPlaying);
         completionHandler(!isPlaying);
     });

@@ -353,7 +353,7 @@ void ImageSource::startAsyncDecodingQueue()
     ASSERT(isMainThread());
 
     // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
-    decodingQueue().dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = makeRef(decodingQueue()), protectedFrameRequestQueue = makeRef(frameRequestQueue()), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] () mutable {
+    decodingQueue().dispatch([protectedThis = Ref { *this }, protectedDecodingQueue = makeRef(decodingQueue()), protectedFrameRequestQueue = makeRef(frameRequestQueue()), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] () mutable {
         ImageFrameRequest frameRequest;
         Seconds minDecodingDuration = protectedThis->frameDecodingDurationForTesting();
 

@@ -417,11 +417,11 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
 
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(m_sample.get(), true);
     if (!attachmentsArray)
-        return SampleVector::from(makeRef(*this));
+        return SampleVector::from(Ref { *this });
 
     auto count = CFArrayGetCount(attachmentsArray);
     if (count <= 1)
-        return SampleVector::from(makeRef(*this));
+        return SampleVector::from(Ref { *this });
 
     CFDictionaryRef firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, 0));
     bool isSync = isCMSampleBufferAttachmentRandomAccess(firstAttachment);
@@ -442,7 +442,7 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
     ranges.append(CFRangeMake(currentRangeStart, currentRangeLength));
 
     if (ranges.size() == 1)
-        return SampleVector::from(makeRef(*this));
+        return SampleVector::from(Ref { *this });
 
     SampleVector samples;
     samples.reserveInitialCapacity(ranges.size());

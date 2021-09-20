@@ -82,7 +82,7 @@ namespace WebKit {
 
 void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithoutAttributes::LoadURL::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::LoadURL>(connection, decoder, this, &TestWithoutAttributes::loadURL);
 #if ENABLE(TOUCH_EVENTS)
@@ -140,7 +140,7 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
 
 bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithoutAttributes::CreatePlugin::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::CreatePlugin>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::createPlugin);
     if (decoder.messageName() == Messages::TestWithoutAttributes::RunJavaScriptAlert::name())

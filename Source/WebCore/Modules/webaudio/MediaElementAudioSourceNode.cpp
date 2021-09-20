@@ -82,7 +82,7 @@ MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
 
 void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     // Synchronize with process().
     Locker locker { m_processLock };

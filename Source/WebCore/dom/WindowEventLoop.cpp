@@ -116,7 +116,7 @@ MicrotaskQueue& WindowEventLoop::microtaskQueue()
 
 void WindowEventLoop::didReachTimeToRun()
 {
-    auto protectedThis = makeRef(*this); // Executing tasks may remove the last reference to this WindowEventLoop.
+    Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
     run();
 }
 
@@ -127,7 +127,7 @@ void WindowEventLoop::queueMutationObserverCompoundMicrotask()
     m_mutationObserverCompoundMicrotaskQueuedFlag = true;
     m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([this] {
         // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
-        auto protectedThis = makeRef(*this);
+        Ref protectedThis { *this };
         m_mutationObserverCompoundMicrotaskQueuedFlag = false;
 
         // FIXME: This check doesn't exist in the spec.
@@ -145,7 +145,7 @@ CustomElementQueue& WindowEventLoop::backupElementQueue()
         m_processingBackupElementQueue = true;
         m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([this] {
             // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
-            auto protectedThis = makeRef(*this);
+            Ref protectedThis { *this };
             m_processingBackupElementQueue = false;
             ASSERT(m_customElementQueue);
             CustomElementReactionQueue::processBackupQueue(*m_customElementQueue);

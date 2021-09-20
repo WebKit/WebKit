@@ -185,7 +185,7 @@ void BlobResourceHandle::start()
     }
 
     // Finish this async call quickly and return.
-    callOnMainThread([protectedThis = makeRef(*this)]() mutable {
+    callOnMainThread([protectedThis = Ref { *this }]() mutable {
         protectedThis->doStart();
     });
 }
@@ -585,7 +585,7 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
     // Notably, this will affect a name suggested in "File Save As".
 
-    client()->didReceiveResponseAsync(this, WTFMove(response), [this, protectedThis = makeRef(*this)] {
+    client()->didReceiveResponseAsync(this, WTFMove(response), [this, protectedThis = Ref { *this }] {
         m_buffer.resize(bufferSize);
         readAsync();
     });
@@ -611,7 +611,7 @@ void BlobResourceHandle::notifyResponseOnError()
         break;
     }
 
-    client()->didReceiveResponseAsync(this, WTFMove(response), [this, protectedThis = makeRef(*this)] {
+    client()->didReceiveResponseAsync(this, WTFMove(response), [this, protectedThis = Ref { *this }] {
         m_buffer.resize(bufferSize);
         readAsync();
     });
@@ -649,7 +649,7 @@ void BlobResourceHandle::notifyFinish()
 
     // Schedule to notify the client from a standalone function because the client might dispose the handle immediately from the callback function
     // while we still have BlobResourceHandle calls in the stack.
-    callOnMainThread([protectedThis = makeRef(*this)]() mutable {
+    callOnMainThread([protectedThis = Ref { *this }]() mutable {
         doNotifyFinish(protectedThis);
     });
 

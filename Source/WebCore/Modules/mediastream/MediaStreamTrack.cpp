@@ -378,7 +378,7 @@ void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraint
 {
     m_promise = WTF::makeUnique<DOMPromiseDeferred<void>>(WTFMove(promise));
 
-    auto completionHandler = [this, protectedThis = makeRef(*this), constraints](auto&& error) mutable {
+    auto completionHandler = [this, protectedThis = Ref { *this }, constraints](auto&& error) mutable {
         if (!m_promise)
             return;
         if (error) {

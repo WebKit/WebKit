@@ -93,7 +93,7 @@ public:
 
     void effectiveRateChanged()
     {
-        callOnMainThread([this, protectedThis = makeRef(*this)] {
+        callOnMainThread([this, protectedThis = Ref { *this }] {
             if (m_client)
                 m_client->effectiveRateChanged();
         });

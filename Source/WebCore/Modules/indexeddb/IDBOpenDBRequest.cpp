@@ -121,7 +121,7 @@ void IDBOpenDBRequest::dispatchEvent(Event& event)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     IDBRequest::dispatchEvent(event);
 

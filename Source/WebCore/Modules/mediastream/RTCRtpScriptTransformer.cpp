@@ -87,7 +87,7 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
             return Exception { InvalidStateError };
 
         auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context->globalObject());
-        auto writableOrException = WritableStream::create(globalObject, SimpleWritableStreamSink::create([transformer = makeRef(*this)](auto& context, auto value) -> ExceptionOr<void> {
+        auto writableOrException = WritableStream::create(globalObject, SimpleWritableStreamSink::create([transformer = Ref { *this }](auto& context, auto value) -> ExceptionOr<void> {
             if (!transformer->m_backend)
                 return Exception { InvalidStateError };
 

@@ -39,7 +39,7 @@ namespace WebKit {
 
 void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
         return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);

@@ -1501,7 +1501,7 @@ void WebProcessPool::terminateAllWebContentProcesses()
 void WebProcessPool::terminateServiceWorkers()
 {
 #if ENABLE(SERVICE_WORKER)
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     while (serviceWorkerProcesses().computeSize())
         serviceWorkerProcesses().begin()->disableServiceWorkers();
 #endif
@@ -1833,7 +1833,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     auto& targetURL = navigation.currentRequest().url();
     auto targetRegistrableDomain = WebCore::RegistrableDomain { targetURL };
 
-    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetRegistrableDomain, dataStore] () -> Ref<WebProcessProxy> {
+    auto createNewProcess = [this, protectedThis = Ref { *this }, page = makeRef(page), targetRegistrableDomain, dataStore] () -> Ref<WebProcessProxy> {
         return processForRegistrableDomain(dataStore, page.ptr(), targetRegistrableDomain);
     };
 

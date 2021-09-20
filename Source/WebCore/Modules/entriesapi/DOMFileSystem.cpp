@@ -254,7 +254,7 @@ void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDir
         return;
     }
 
-    m_workQueue->dispatch([protectedThis = makeRef(*this), context = makeRef(context), completionHandler = WTFMove(completionHandler), fullPath = crossThreadCopy(fullPath), directoryVirtualPath = crossThreadCopy(directoryVirtualPath)]() mutable {
+    m_workQueue->dispatch([protectedThis = Ref { *this }, context = makeRef(context), completionHandler = WTFMove(completionHandler), fullPath = crossThreadCopy(fullPath), directoryVirtualPath = crossThreadCopy(directoryVirtualPath)]() mutable {
         auto listedChildren = listDirectoryWithMetadata(fullPath);
         callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(listedChildren), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
             completionHandler(toFileSystemEntries(context, protectedThis, WTFMove(listedChildren), directoryVirtualPath));
@@ -269,7 +269,7 @@ void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& 
     auto virtualPath = resolveRelativeVirtualPath(entry.virtualPath(), "..");
     ASSERT(virtualPath[0] == '/');
     auto fullPath = evaluatePath(virtualPath);
-    m_workQueue->dispatch([protectedThis = makeRef(*this), context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+    m_workQueue->dispatch([protectedThis = Ref { *this }, context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
         auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileSystem::FileType::Directory);
         callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
             if (validatedVirtualPath.hasException())
@@ -310,7 +310,7 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
         return;
     }
 
-    m_workQueue->dispatch([protectedThis = makeRef(*this), context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+    m_workQueue->dispatch([protectedThis = Ref { *this }, context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
         auto entryType = fileTypeIgnoringHiddenFiles(fullPath);
         callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
             if (!entryType) {

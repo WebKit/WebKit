@@ -115,7 +115,7 @@ MediaFormatReader::MediaFormatReader(Allocator&& allocator)
 
 void MediaFormatReader::startOnMainThread(MTPluginByteSourceRef byteSource)
 {
-    ensureOnMainRunLoop([this, protectedThis = makeRef(*this), byteSource = retainPtr(byteSource)]() mutable {
+    ensureOnMainRunLoop([this, protectedThis = Ref { *this }, byteSource = retainPtr(byteSource)]() mutable {
         parseByteSource(WTFMove(byteSource));
     });
 }
@@ -153,15 +153,15 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
         MediaTrackReader::storageQueue().dispatch(WTFMove(function));
     });
 
-    parser->setDidParseInitializationDataCallback([this, protectedThis = makeRef(*this)](SourceBufferParser::InitializationSegment&& initializationSegment) {
+    parser->setDidParseInitializationDataCallback([this, protectedThis = Ref { *this }](SourceBufferParser::InitializationSegment&& initializationSegment) {
         didParseTracks(WTFMove(initializationSegment), noErr);
     });
 
-    parser->setDidEncounterErrorDuringParsingCallback([this, protectedThis = makeRef(*this)](uint64_t errorCode) {
+    parser->setDidEncounterErrorDuringParsingCallback([this, protectedThis = Ref { *this }](uint64_t errorCode) {
         didParseTracks({ }, errorCode);
     });
 
-    parser->setDidProvideMediaDataCallback([this, protectedThis = makeRef(*this)](Ref<MediaSample>&& mediaSample, uint64_t trackID, const String& mediaType) {
+    parser->setDidProvideMediaDataCallback([this, protectedThis = Ref { *this }](Ref<MediaSample>&& mediaSample, uint64_t trackID, const String& mediaType) {
         didProvideMediaData(WTFMove(mediaSample), trackID, mediaType);
     });
 
@@ -171,9 +171,9 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
     m_duration = MediaTime::invalidTime();
     m_trackReaders.clear();
 
-    readerQueue().dispatch([this, protectedThis = makeRef(*this), byteSource = m_byteSource, parser = parser.releaseNonNull()]() mutable {
+    readerQueue().dispatch([this, protectedThis = Ref { *this }, byteSource = m_byteSource, parser = parser.releaseNonNull()]() mutable {
         parser->appendData(WTFMove(byteSource));
-        MediaTrackReader::storageQueue().dispatch([this, protectedThis = makeRef(*this), parser = WTFMove(parser)]() mutable {
+        MediaTrackReader::storageQueue().dispatch([this, protectedThis = Ref { *this }, parser = WTFMove(parser)]() mutable {
             finishParsing(WTFMove(parser));
         });
     });

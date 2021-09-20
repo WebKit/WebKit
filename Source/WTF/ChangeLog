@@ -1,3 +1,17 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Stop using makeRef(*this) / makeRefPtr(this)
+        https://bugs.webkit.org/show_bug.cgi?id=230464
+
+        Reviewed by Alex Christensen.
+
+        * wtf/cocoa/WorkQueueCocoa.cpp:
+        (WTF::WorkQueue::dispatch):
+        (WTF::WorkQueue::dispatchAfter):
+        * wtf/glib/SocketConnection.cpp:
+        (WTF::SocketConnection::SocketConnection):
+        (WTF::SocketConnection::waitForSocketWritability):
+
 2021-09-20  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make AVSampleBufferVideoOutput support an Experimental Feature

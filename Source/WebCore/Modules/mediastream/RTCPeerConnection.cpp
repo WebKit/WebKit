@@ -213,7 +213,7 @@ void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromi
             promise->reject(InvalidStateError);
             return;
         }
-        m_backend->createOffer(WTFMove(options), [this, protectedThis = makeRef(*this), promise = PeerConnection::SessionDescriptionPromise(WTFMove(promise))](auto&& result) mutable {
+        m_backend->createOffer(WTFMove(options), [this, protectedThis = Ref { *this }, promise = PeerConnection::SessionDescriptionPromise(WTFMove(promise))](auto&& result) mutable {
             if (isClosed())
                 return;
             if (result.hasException()) {
@@ -240,7 +240,7 @@ void RTCPeerConnection::createAnswer(RTCAnswerOptions&& options, Ref<DeferredPro
             promise->reject(InvalidStateError);
             return;
         }
-        m_backend->createAnswer(WTFMove(options), [this, protectedThis = makeRef(*this), promise = PeerConnection::SessionDescriptionPromise(WTFMove(promise))](auto&& result) mutable {
+        m_backend->createAnswer(WTFMove(options), [this, protectedThis = Ref { *this }, promise = PeerConnection::SessionDescriptionPromise(WTFMove(promise))](auto&& result) mutable {
             if (isClosed())
                 return;
             if (result.hasException()) {
@@ -289,7 +289,7 @@ void RTCPeerConnection::setLocalDescription(std::optional<RTCLocalSessionDescrip
         RefPtr<RTCSessionDescription> description;
         if (!sdp.isEmpty() || (type != RTCSdpType::Offer && type != RTCSdpType::Answer))
             description = RTCSessionDescription::create(type, WTFMove(sdp));
-        m_backend->setLocalDescription(description.get(), [protectedThis = makeRef(*this), promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+        m_backend->setLocalDescription(description.get(), [protectedThis = Ref { *this }, promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
             if (protectedThis->isClosed())
                 return;
             promise.settle(WTFMove(result));
@@ -309,10 +309,10 @@ void RTCPeerConnection::setRemoteDescription(RTCSessionDescriptionInit&& remoteD
         auto description = RTCSessionDescription::create(WTFMove(remoteDescription));
         if (description->type() == RTCSdpType::Offer && m_signalingState != RTCSignalingState::Stable && m_signalingState != RTCSignalingState::HaveRemoteOffer) {
             auto rollbackDescription = RTCSessionDescription::create(RTCSdpType::Rollback, String { emptyString() });
-            m_backend->setLocalDescription(rollbackDescription.ptr(), [this, protectedThis = makeRef(*this), description = WTFMove(description), promise = WTFMove(promise)](auto&&) mutable {
+            m_backend->setLocalDescription(rollbackDescription.ptr(), [this, protectedThis = Ref { *this }, description = WTFMove(description), promise = WTFMove(promise)](auto&&) mutable {
                 if (isClosed())
                     return;
-                m_backend->setRemoteDescription(description.get(), [protectedThis = makeRef(*this), promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+                m_backend->setRemoteDescription(description.get(), [protectedThis = Ref { *this }, promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
                     if (protectedThis->isClosed())
                         return;
                     promise.settle(WTFMove(result));
@@ -362,7 +362,7 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
         return;
 
     chainOperation(WTFMove(promise), [this, candidate = WTFMove(candidate)](auto&& promise) mutable {
-        m_backend->addIceCandidate(candidate.get(), [protectedThis = makeRef(*this), promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
+        m_backend->addIceCandidate(candidate.get(), [protectedThis = Ref { *this }, promise = DOMPromiseDeferred<void>(WTFMove(promise))](auto&& result) mutable {
             if (protectedThis->isClosed())
                 return;
             promise.settle(WTFMove(result));

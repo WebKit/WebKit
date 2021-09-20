@@ -117,7 +117,7 @@ void WebAnimation::contextDestroyed()
 void WebAnimation::remove()
 {
     // This object could be deleted after either clearing the effect or timeline relationship.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     setEffectInternal(nullptr);
     setTimeline(nullptr);
 }
@@ -188,7 +188,7 @@ void WebAnimation::setEffect(RefPtr<AnimationEffect>&& newEffect)
     invalidateEffect();
 
     // This object could be deleted after clearing the effect relationship.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     setEffectInternal(WTFMove(newEffect), isDeclarativeAnimation());
 
     // 7. Run the procedure to update an animation's finished state for animation with the did seek flag set to false,
@@ -250,7 +250,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
     }
 
     // This object could be deleted after clearing the timeline relationship.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     setTimelineInternal(WTFMove(timeline));
 
     setSuspended(is<DocumentTimeline>(m_timeline) && downcast<DocumentTimeline>(*m_timeline).animationsAreSuspended());
@@ -866,7 +866,7 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
             // is already a microtask queued to run those steps for animation.
             m_finishNotificationStepsMicrotaskPending = true;
             if (auto* context = scriptExecutionContext()) {
-                context->eventLoop().queueMicrotask([this, protectedThis = makeRef(*this)] {
+                context->eventLoop().queueMicrotask([this, protectedThis = Ref { *this }] {
                     if (m_finishNotificationStepsMicrotaskPending) {
                         m_finishNotificationStepsMicrotaskPending = false;
                         finishNotificationSteps();

@@ -301,7 +301,7 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
         }
     }
 
-    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+    client()->willSendRequestAsync(this, WTFMove(request), WTFMove(redirectResponse), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
         if (!request.isNull())
             request.setStorageSession(d->m_storageSession.get());
         completionHandler(WTFMove(request));

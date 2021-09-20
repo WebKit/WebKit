@@ -919,7 +919,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
     RefPtr<WindowProxy> incumbentWindowProxy = incumbentWindow.frame() ? &incumbentWindow.frame()->windowProxy() : nullptr;
     auto userGestureToForward = UserGestureIndicator::currentUserGesture();
 
-    document()->eventLoop().queueTask(TaskSource::PostedMessageQueue, [this, protectedThis = makeRef(*this), message = WTFMove(message), incumbentWindowProxy = WTFMove(incumbentWindowProxy), sourceOrigin = WTFMove(sourceOrigin), userGestureToForward = WTFMove(userGestureToForward), postMessageIdentifier, stackTrace = WTFMove(stackTrace), targetOrigin = WTFMove(target)]() mutable {
+    document()->eventLoop().queueTask(TaskSource::PostedMessageQueue, [this, protectedThis = Ref { *this }, message = WTFMove(message), incumbentWindowProxy = WTFMove(incumbentWindowProxy), sourceOrigin = WTFMove(sourceOrigin), userGestureToForward = WTFMove(userGestureToForward), postMessageIdentifier, stackTrace = WTFMove(stackTrace), targetOrigin = WTFMove(target)]() mutable {
         if (!isCurrentlyDisplayedInFrame())
             return;
 
@@ -1057,7 +1057,7 @@ void DOMWindow::close()
 
     page->setIsClosing();
 
-    document()->eventLoop().queueTask(TaskSource::DOMManipulation, [this, protectedThis = makeRef(*this)] {
+    document()->eventLoop().queueTask(TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }] {
         if (auto* page = this->page())
             page->chrome().closeWindow();
     });
@@ -2245,7 +2245,7 @@ void DOMWindow::dispatchLoadEvent()
 {
     // If we did not protect it, the document loader and its timing subobject might get destroyed
     // as a side effect of what event handling code does.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     auto protectedLoader = makeRefPtr(frame() ? frame()->loader().documentLoader() : nullptr);
     bool shouldMarkLoadEventTimes = protectedLoader && !protectedLoader->timing().loadEventStart();
 
@@ -2281,7 +2281,7 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     // called with a target of null. Most callers pass the document as the target, though.
     // Fixing this could allow us to remove the special case in DocumentEventQueue::dispatchEvent.
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     // Pausing a page may trigger pagehide and pageshow events. WebCore also implicitly fires these
     // events when closing a WebView. Here we keep track of the state of the page to prevent duplicate,

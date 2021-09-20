@@ -641,7 +641,7 @@ void NetworkDataTaskCocoa::resume()
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(*m_session);
     if (cocoaSession.deviceManagementRestrictionsEnabled() && m_isForMainResourceNavigationForAnyFrame) {
-        auto didDetermineDeviceRestrictionPolicyForURL = makeBlockPtr([this, protectedThis = makeRef(*this)](BOOL isBlocked) mutable {
+        auto didDetermineDeviceRestrictionPolicyForURL = makeBlockPtr([this, protectedThis = Ref { *this }](BOOL isBlocked) mutable {
             callOnMainRunLoop([this, protectedThis = WTFMove(protectedThis), isBlocked] {
                 if (isBlocked) {
                     scheduleFailure(RestrictedURLFailure);

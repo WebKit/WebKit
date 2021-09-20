@@ -789,7 +789,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         return;
     }
     contentChangeObserver.stopContentObservation();
-    callOnMainRunLoop([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId] {
+    callOnMainRunLoop([protectedThis = Ref { *this }, targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, pointerId] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
 
@@ -810,7 +810,7 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishContentChangeObserving: pending target node(" << m_pendingSyntheticClickNode << ")");
     if (!m_pendingSyntheticClickNode)
         return;
-    callOnMainRunLoop([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(*m_pendingSyntheticClickNode), originalDocument = makeWeakPtr(m_pendingSyntheticClickNode->document()), observedContentChange, location = m_pendingSyntheticClickLocation, modifiers = m_pendingSyntheticClickModifiers, pointerId = m_pendingSyntheticClickPointerId] {
+    callOnMainRunLoop([protectedThis = Ref { *this }, targetNode = Ref<Node>(*m_pendingSyntheticClickNode), originalDocument = makeWeakPtr(m_pendingSyntheticClickNode->document()), observedContentChange, location = m_pendingSyntheticClickLocation, modifiers = m_pendingSyntheticClickModifiers, pointerId = m_pendingSyntheticClickPointerId] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
         if (!originalDocument || &targetNode->document() != originalDocument)
@@ -1017,7 +1017,7 @@ void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement& element
         return;
 
     bool shouldSendSnapshot = m_pendingImageElementsForDropSnapshot.isEmpty();
-    m_page->dragController().finalizeDroppedImagePlaceholder(element, [protectedThis = makeRefPtr(this), shouldSendSnapshot] {
+    m_page->dragController().finalizeDroppedImagePlaceholder(element, [protectedThis = Ref { *this }, shouldSendSnapshot] {
         if (shouldSendSnapshot)
             protectedThis->computeAndSendEditDragSnapshot();
     });
@@ -1234,7 +1234,7 @@ void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Elemen
         return;
 
     m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = true;
-    callOnMainRunLoop([this, protectedThis = makeRefPtr(this)] {
+    callOnMainRunLoop([this, protectedThis = Ref { *this }] {
         if (m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement)
             send(Messages::WebPageProxy::UpdateInputContextAfterBlurringAndRefocusingElement());
         m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;

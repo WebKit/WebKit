@@ -463,7 +463,7 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
 
 void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& icon)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     ASSERT(!allowsDirectories() || m_directoryFileListCreator);
     m_directoryFileListCreator = nullptr;
@@ -507,7 +507,7 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
     auto transcodingUTI = WebCore::UTIFromMIMEType(transcodingMIMEType);
     auto transcodingExtension = WebCore::MIMETypeRegistry::preferredExtensionForMIMEType(transcodingMIMEType);
 
-    auto callFilesChosen = [protectedThis = makeRef(*this), paths](const Vector<String>& replacementPaths) {
+    auto callFilesChosen = [protectedThis = Ref { *this }, paths](const Vector<String>& replacementPaths) {
         protectedThis->filesChosen(paths, replacementPaths);
     };
 

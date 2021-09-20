@@ -205,7 +205,7 @@ inline void WebResourceLoadStatisticsStore::postTask(WTF::Function<void()>&& tas
     RELEASE_ASSERT(!isEphemeral());
 
     ASSERT(RunLoop::isMain());
-    m_statisticsQueue->dispatch([protectedThis = makeRef(*this), task = WTFMove(task)] {
+    m_statisticsQueue->dispatch([protectedThis = Ref { *this }, task = WTFMove(task)] {
         task();
     });
 }
@@ -225,7 +225,7 @@ void WebResourceLoadStatisticsStore::destroyResourceLoadStatisticsStore(Completi
         return;
     }
 
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_statisticsStore = nullptr;
         postTaskReply(WTFMove(completionHandler));
     });
@@ -235,7 +235,7 @@ void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandl
 {
     ASSERT(RunLoop::isMain());
     
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore && is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
             auto& databaseStore = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore);
             if (databaseStore.isNewResourceLoadStatisticsDatabaseFile()) {
@@ -325,7 +325,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
     // It is safe to move the origins to the background queue without isolated copy here because this is an r-value
     // coming from IPC. ResourceLoadStatistics only contains strings which are safe to move to other threads as long
     // as nobody on this thread holds a reference to those strings.
-    postTask([this, protectedThis = makeRef(*this), statistics = WTFMove(statistics), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, statistics = WTFMove(statistics), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply(WTFMove(completionHandler));
             return;
@@ -422,7 +422,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(const RegistrableDomai
     if (isEphemeral())
         return requestStorageAccessEphemeral(subFrameDomain, topFrameDomain, frameID, webPageID, webPageProxyID, scope, WTFMove(completionHandler));
 
-    auto statusHandler = [this, protectedThis = makeRef(*this), subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, webPageID, webPageProxyID, scope, completionHandler = WTFMove(completionHandler)](StorageAccessStatus status) mutable {
+    auto statusHandler = [this, protectedThis = Ref { *this }, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, webPageID, webPageProxyID, scope, completionHandler = WTFMove(completionHandler)](StorageAccessStatus status) mutable {
         switch (status) {
         case StorageAccessStatus::CannotRequestAccess:
             completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
@@ -470,7 +470,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessEphemeral(const Registr
     if (!m_networkSession || (!m_domainsWithEphemeralUserInteraction.contains(subFrameDomain) && !NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain)))
         return completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
 
-    CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = makeRef(*this), subFrameDomain, topFrameDomain, frameID, webPageID, scope, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
+    CompletionHandler<void(bool)> requestConfirmationCompletionHandler = [this, protectedThis = Ref { *this }, subFrameDomain, topFrameDomain, frameID, webPageID, scope, completionHandler = WTFMove(completionHandler)] (bool userDidGrantAccess) mutable {
         if (userDidGrantAccess)
             grantStorageAccessEphemeral(subFrameDomain, topFrameDomain, frameID, webPageID, StorageAccessPromptWasShown::Yes, scope, WTFMove(completionHandler));
         else
@@ -1113,7 +1113,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
         return clearInMemoryEphemeral(WTFMove(completionHandler));
 
     ASSERT(RunLoop::isMain());
-    postTask([this, protectedThis = makeRef(*this), shouldGrandfather, completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, shouldGrandfather, completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             if (shouldGrandfather == ShouldGrandfatherStatistics::Yes)
                 RELEASE_LOG(ResourceLoadStatistics, "WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent Before being cleared, m_statisticsStore is null when trying to grandfather data.");

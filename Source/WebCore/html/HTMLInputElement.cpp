@@ -893,7 +893,7 @@ void HTMLInputElement::didAttachRenderers()
     m_inputType->attach();
 
     if (document().focusedElement() == this) {
-        document().view()->queuePostLayoutCallback([protectedThis = makeRef(*this)] {
+        document().view()->queuePostLayoutCallback([protectedThis = Ref { *this }] {
             protectedThis->updateFocusAppearance(SelectionRestorationMode::RestoreOrSelectAll, SelectionRevealMode::Reveal);
         });
     }
@@ -1542,7 +1542,7 @@ void HTMLInputElement::resumeFromDocumentSuspension()
     if (isColorControl())
         return;
 #endif // ENABLE(INPUT_TYPE_COLOR)
-    document().postTask([inputElement = makeRef(*this)] (ScriptExecutionContext&) {
+    document().postTask([inputElement = Ref { *this }] (ScriptExecutionContext&) {
         inputElement->reset();
     });
 }

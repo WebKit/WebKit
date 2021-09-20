@@ -143,10 +143,10 @@ void CodeBlock::compileAsync(Context* context, AsyncCompilationCallback&& task)
         // a RefPtr on the Plan until the plan finishes notifying all of its callbacks.
         RefPtr<CodeBlock> protectedThis = this;
         plan->addCompletionTask(context, createSharedTask<Plan::CallbackType>([this, task = WTFMove(task), protectedThis = WTFMove(protectedThis)] (Plan&) {
-            task->run(makeRef(*this));
+            task->run(Ref { *this });
         }));
     } else
-        task->run(makeRef(*this));
+        task->run(Ref { *this });
 }
 
 bool CodeBlock::isSafeToRun(MemoryMode memoryMode)

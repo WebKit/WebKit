@@ -75,7 +75,7 @@ void RemoteMediaResource::responseReceived(const ResourceResponse& response, boo
         return;
 
     m_didPassAccessControlCheck = didPassAccessControlCheck;
-    m_client->responseReceived(*this, response, [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
+    m_client->responseReceived(*this, response, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto shouldContinue) mutable {
         ASSERT(isMainRunLoop());
         if (shouldContinue == ShouldContinuePolicyCheck::No)
             protectedThis->stop();

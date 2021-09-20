@@ -1,3 +1,25 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Stop using makeRef(*this) / makeRefPtr(this)
+        https://bugs.webkit.org/show_bug.cgi?id=230464
+
+        Reviewed by Alex Christensen.
+
+        * inspector/InjectedScriptHost.cpp:
+        (Inspector::InjectedScriptHost::wrapper):
+        * inspector/remote/RemoteConnectionToTarget.cpp:
+        (Inspector::RemoteConnectionToTarget::close):
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+        (Inspector::RemoteConnectionToTarget::setup):
+        (Inspector::RemoteConnectionToTarget::close):
+        (Inspector::RemoteConnectionToTarget::sendMessageToTarget):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::compileAsync):
+        * wasm/WasmNameSection.h:
+        (JSC::Wasm::NameSection::get):
+        * wasm/WasmStreamingCompiler.cpp:
+        (JSC::Wasm::StreamingCompiler::didReceiveFunctionData):
+
 2021-09-17  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Fix CellTag being set 32 bits even if the base is not a cell

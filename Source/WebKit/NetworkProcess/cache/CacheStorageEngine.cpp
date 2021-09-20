@@ -421,7 +421,7 @@ void Engine::readCache(uint64_t cacheIdentifier, CacheCallback&& callback)
         return;
     }
     if (!cache->isOpened()) {
-        cache->open([this, protectedThis = makeRef(*this), cacheIdentifier, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+        cache->open([this, protectedThis = Ref { *this }, cacheIdentifier, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
             if (error) {
                 callback(makeUnexpected(error.value()));
                 return;
@@ -644,7 +644,7 @@ void Engine::fetchDirectoryEntries(bool shouldComputeSize, const Vector<String>&
 {
     auto taskCounter = ReadOriginsTaskCounter::create(WTFMove(completionHandler));
     for (auto& folderPath : folderPaths) {
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = makeRef(*this), shouldComputeSize, taskCounter] (auto&& origin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [protectedThis = Ref { *this }, shouldComputeSize, taskCounter] (auto&& origin) mutable {
             ASSERT(RunLoop::isMain());
             if (!origin)
                 return;
@@ -668,7 +668,7 @@ void Engine::fetchDirectoryEntries(bool shouldComputeSize, const Vector<String>&
 CompletionHandler<void()> Engine::createClearTask(CompletionHandler<void()>&& completionHandler)
 {
     ++m_clearTaskCounter;
-    return [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    return [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
         if (!--m_clearTaskCounter) {
             auto callbacks = WTFMove(m_pendingClearCallbacks);
@@ -741,7 +741,7 @@ void Engine::clearCachesForOriginFromDirectories(const Vector<String>& folderPat
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     for (auto& folderPath : folderPaths) {
-        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = makeRef(*this), origin, callbackAggregator, folderPath] (std::optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
+        Caches::retrieveOriginFromDirectory(folderPath, *m_ioQueue, [this, protectedThis = Ref { *this }, origin, callbackAggregator, folderPath] (std::optional<WebCore::ClientOrigin>&& folderOrigin) mutable {
             if (!folderOrigin)
                 return;
             if (folderOrigin->topOrigin != origin && folderOrigin->clientOrigin != origin)

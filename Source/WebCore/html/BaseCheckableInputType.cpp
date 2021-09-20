@@ -122,7 +122,7 @@ void BaseCheckableInputType::fireInputAndChangeEvents()
     if (!shouldSendChangeEventAfterCheckedChanged())
         return;
 
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
     element()->setTextAsOfLastFormControlChangeEvent(String());
     element()->dispatchInputEvent();
     if (auto* element = this->element())

@@ -3050,7 +3050,7 @@ void HTMLMediaElement::setAudioOutputDevice(String&& deviceId, DOMPromiseDeferre
     if (m_player)
         m_player->audioOutputDeviceChanged();
 
-    scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [this, protectedThis = makeRef(*this), deviceId = WTFMove(deviceId), promise = WTFMove(promise)]() mutable {
+    scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [this, protectedThis = Ref { *this }, deviceId = WTFMove(deviceId), promise = WTFMove(promise)]() mutable {
         m_audioOutputHashedDeviceId = WTFMove(deviceId);
         promise.resolve();
     });
@@ -4623,7 +4623,7 @@ void HTMLMediaElement::updateCaptionContainer()
 void HTMLMediaElement::layoutSizeChanged()
 {
     if (auto frameView = makeRefPtr(document().view())) {
-        auto task = [this, protectedThis = makeRef(*this)] {
+        auto task = [this, protectedThis = Ref { *this }] {
             if (auto root = userAgentShadowRoot())
                 root->dispatchEvent(Event::create("resize", Event::CanBubble::No, Event::IsCancelable::No));
         };
@@ -6417,7 +6417,7 @@ WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)
     if (m_videoFullscreenStandby)
         document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), VideoFullscreenModeNone, m_videoFullscreenStandby);
     else
-        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), [this, protectedThis = makeRef(*this)](auto success) mutable {
+        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), [this, protectedThis = Ref { *this }](auto success) mutable {
             m_videoFullscreenStandby = !success;
         });
 }

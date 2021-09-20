@@ -223,7 +223,7 @@ void HostedNetscapePluginStream::start()
     ASSERT(!m_frameLoader);
     ASSERT(!m_loader);
 
-    webResourceLoadScheduler().schedulePluginStreamLoad(*core([m_instance->pluginView() webFrame]), *this, m_request.get(), [this, protectedThis = makeRef(*this)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
+    webResourceLoadScheduler().schedulePluginStreamLoad(*core([m_instance->pluginView() webFrame]), *this, m_request.get(), [this, protectedThis = Ref { *this }] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
         m_loader = WTFMove(loader);
     });
 }

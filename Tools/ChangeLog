@@ -1,3 +1,82 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Stop using makeRef(*this) / makeRefPtr(this)
+        https://bugs.webkit.org/show_bug.cgi?id=230464
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::callUIScriptCallback):
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::doAsyncTask):
+        (WTR::UIScriptControllerIOS::zoomToScale):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::doAsyncTask):
+        (WTR::UIScriptControllerMac::activateDataListSuggestion):
+        (WTR::UIScriptControllerMac::removeViewFromWindow):
+        (WTR::UIScriptControllerMac::addViewToWindow):
+        * DumpRenderTree/win/UIScriptControllerWin.cpp:
+        (WTR::UIScriptControllerWin::doAsyncTask):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::H2::Connection::receive const):
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::setDidShowContextMenuCallback):
+        (WTR::UIScriptControllerCocoa::setDidDismissContextMenuCallback):
+        * WebKitTestRunner/gtk/UIScriptControllerGtk.cpp:
+        (WTR::UIScriptControllerGtk::doAsyncTask):
+        (WTR::UIScriptControllerGtk::activateAtPoint):
+        (WTR::UIScriptControllerGtk::removeViewFromWindow):
+        (WTR::UIScriptControllerGtk::addViewToWindow):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::doAfterPresentationUpdate):
+        (WTR::UIScriptControllerIOS::doAfterNextStablePresentationUpdate):
+        (WTR::UIScriptControllerIOS::ensurePositionInformationIsUpToDateAt):
+        (WTR::UIScriptControllerIOS::doAfterVisibleContentRectUpdate):
+        (WTR::UIScriptControllerIOS::zoomToScale):
+        (WTR::UIScriptControllerIOS::retrieveSpeakSelectionContent):
+        (WTR::UIScriptControllerIOS::simulateAccessibilitySettingsChangeNotification):
+        (WTR::UIScriptControllerIOS::touchDownAtPoint):
+        (WTR::UIScriptControllerIOS::liftUpAtPoint):
+        (WTR::UIScriptControllerIOS::twoFingerSingleTapAtPoint):
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+        (WTR::UIScriptControllerIOS::doubleTapAtPoint):
+        (WTR::UIScriptControllerIOS::stylusDownAtPoint):
+        (WTR::UIScriptControllerIOS::stylusMoveToPoint):
+        (WTR::UIScriptControllerIOS::stylusUpAtPoint):
+        (WTR::UIScriptControllerIOS::stylusTapAtPointWithModifiers):
+        (WTR::UIScriptControllerIOS::longPressAtPoint):
+        (WTR::UIScriptControllerIOS::typeCharacterUsingHardwareKeyboard):
+        (WTR::UIScriptControllerIOS::dismissFilePicker):
+        (WTR::UIScriptControllerIOS::applyAutocorrection):
+        (WTR::UIScriptControllerIOS::simulateRotation):
+        (WTR::UIScriptControllerIOS::simulateRotationLikeSafari):
+        (WTR::UIScriptControllerIOS::setDidStartFormControlInteractionCallback):
+        (WTR::UIScriptControllerIOS::setDidEndFormControlInteractionCallback):
+        (WTR::UIScriptControllerIOS::setWillBeginZoomingCallback):
+        (WTR::UIScriptControllerIOS::setDidEndZoomingCallback):
+        (WTR::UIScriptControllerIOS::setDidShowKeyboardCallback):
+        (WTR::UIScriptControllerIOS::setDidHideKeyboardCallback):
+        (WTR::UIScriptControllerIOS::setWillStartInputSessionCallback):
+        (WTR::UIScriptControllerIOS::chooseMenuAction):
+        (WTR::UIScriptControllerIOS::setWillPresentPopoverCallback):
+        (WTR::UIScriptControllerIOS::setDidDismissPopoverCallback):
+        (WTR::UIScriptControllerIOS::setDidEndScrollingCallback):
+        (WTR::UIScriptControllerIOS::activateDataListSuggestion):
+        (WTR::UIScriptControllerIOS::doAfterDoubleTapDelay):
+        (WTR::UIScriptControllerIOS::installTapGestureOnWindow):
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::zoomToScale):
+        (WTR::UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification):
+        (WTR::UIScriptControllerMac::chooseMenuAction):
+        (WTR::UIScriptControllerMac::activateAtPoint):
+        * WebKitTestRunner/win/UIScriptControllerWin.cpp:
+        (WTR::UIScriptControllerWin::doAsyncTask):
+        * WebKitTestRunner/wpe/UIScriptControllerWPE.cpp:
+        (WTR::UIScriptControllerWPE::doAsyncTask):
+        (WTR::UIScriptControllerWPE::activateAtPoint):
+        (WTR::UIScriptControllerWPE::removeViewFromWindow):
+        (WTR::UIScriptControllerWPE::addViewToWindow):
+
 2021-09-20  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Move toolchains to UserFlatpak and improve SDK upgrades

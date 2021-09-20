@@ -295,7 +295,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
     if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentFetchServerRegistrations())
         return;
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [protectedThis = makeRef(*this)] () mutable {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [protectedThis = Ref { *this }] () mutable {
         CFDataRef registrations { nullptr };
 
         WebCore::registerOpusDecoderIfNeeded();

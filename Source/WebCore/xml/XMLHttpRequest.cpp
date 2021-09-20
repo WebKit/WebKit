@@ -658,7 +658,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         // FIXME: Maybe we need to be able to send XMLHttpRequests from onunload, <http://bugs.webkit.org/show_bug.cgi?id=10904>.
         auto loader = ThreadableLoader::create(*scriptExecutionContext(), *this, WTFMove(request), options);
         if (loader)
-            m_loadingActivity = LoadingActivity { makeRef(*this), loader.releaseNonNull() };
+            m_loadingActivity = LoadingActivity { Ref { *this }, loader.releaseNonNull() };
 
         // Either loader is null or some error was synchronously sent to us.
         ASSERT(m_loadingActivity || !m_sendFlag);
@@ -894,7 +894,7 @@ String XMLHttpRequest::statusText() const
 
 void XMLHttpRequest::didFail(const ResourceError& error)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
@@ -928,7 +928,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
 
 void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     if (m_error)
         return;

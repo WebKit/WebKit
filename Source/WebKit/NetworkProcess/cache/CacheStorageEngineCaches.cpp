@@ -105,7 +105,7 @@ void Caches::storeOrigin(CompletionCallback&& completionHandler)
     encoder << m_origin.clientOrigin.protocol;
     encoder << m_origin.clientOrigin.host;
     encoder << m_origin.clientOrigin.port;
-    m_engine->writeFile(cachesOriginFilename(m_rootPath), Data { encoder.buffer(), encoder.bufferSize() }, [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (std::optional<Error>&& error) mutable {
+    m_engine->writeFile(cachesOriginFilename(m_rootPath), Data { encoder.buffer(), encoder.bufferSize() }, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (std::optional<Error>&& error) mutable {
         completionHandler(WTFMove(error));
     });
 }
@@ -213,7 +213,7 @@ void Caches::initializeSize()
     }
 
     uint64_t size = 0;
-    m_storage->traverse({ }, { }, [protectedThis = makeRef(*this), this, protectedStorage = makeRef(*m_storage), size](const auto* storage, const auto& information) mutable {
+    m_storage->traverse({ }, { }, [protectedThis = Ref { *this }, this, protectedStorage = makeRef(*m_storage), size](const auto* storage, const auto& information) mutable {
         if (!storage) {
             if (m_pendingInitializationCallbacks.isEmpty()) {
                 // Caches was cleared so let's not get initialized.
@@ -258,7 +258,7 @@ void Caches::clear(CompletionHandler<void()>&& completionHandler)
     if (m_engine)
         m_engine->removeFile(cachesListFilename(m_rootPath));
     if (m_storage) {
-        m_storage->clear(String { }, -WallTime::infinity(), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+        m_storage->clear(String { }, -WallTime::infinity(), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
             ASSERT(RunLoop::isMain());
             protectedThis->clearMemoryRepresentation();
             completionHandler();
@@ -451,7 +451,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
         return;
     }
 
-    m_engine->readFile(filename, [protectedThis = makeRef(*this), this, callback = WTFMove(callback)](const Data& data, int error) mutable {
+    m_engine->readFile(filename, [protectedThis = Ref { *this }, this, callback = WTFMove(callback)](const Data& data, int error) mutable {
         if (!m_engine) {
             callback(Vector<Cache> { });
             return;
@@ -493,7 +493,7 @@ void Caches::writeCachesToDisk(CompletionCallback&& callback)
     }
 
     m_isWritingCachesToDisk = true;
-    m_engine->writeFile(cachesListFilename(m_rootPath), encodeCacheNames(m_caches), [this, protectedThis = makeRef(*this), callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+    m_engine->writeFile(cachesListFilename(m_rootPath), encodeCacheNames(m_caches), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
         m_isWritingCachesToDisk = false;
         if (error)
             RELEASE_LOG_ERROR(CacheStorage, "Caches::writeCachesToDisk failed writing caches to disk with error %d", static_cast<int>(*error));
@@ -552,7 +552,7 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
     if (!m_storage)
         return callback(std::nullopt);
 
-    m_storage->store(Cache::encode(recordInformation, record), { }, [this, protectedThis = makeRef(*this), protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](int error) mutable {
+    m_storage->store(Cache::encode(recordInformation, record), { }, [this, protectedThis = Ref { *this }, protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](int error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(CacheStorage, "Caches::writeRecord failed with error %d", error);
             callback(Error::WriteDisk);

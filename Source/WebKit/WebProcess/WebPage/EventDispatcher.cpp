@@ -143,7 +143,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 
         scrollingTree->willProcessWheelEvent();
 
-        ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, processingSteps, pageID, protectedThis = makeRef(*this)] {
+        ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, processingSteps, pageID, protectedThis = Ref { *this }] {
             if (processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling)) {
                 scrollingTree->willSendEventToMainThread(platformWheelEvent);
                 protectedThis->dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);
@@ -177,7 +177,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 #if ENABLE(MAC_GESTURE_EVENTS)
 void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestureEvent& gestureEvent)
 {
-    RunLoop::main().dispatch([protectedThis = makeRef(*this), pageID, gestureEvent]() mutable {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, pageID, gestureEvent]() mutable {
         protectedThis->dispatchGestureEvent(pageID, gestureEvent);
     });
 }
@@ -217,7 +217,7 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, const WebTouchEvent& tou
     }
 
     if (updateListWasEmpty) {
-        RunLoop::main().dispatch([protectedThis = makeRef(*this)]() mutable {
+        RunLoop::main().dispatch([protectedThis = Ref { *this }]() mutable {
             protectedThis->dispatchTouchEvents();
         });
     }
@@ -243,7 +243,7 @@ void EventDispatcher::dispatchTouchEvents()
 void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::main().dispatch([protectedThis = makeRef(*this), pageID, wheelEvent, steps = processingSteps - WheelEventProcessingSteps::ScrollingThread]() mutable {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, pageID, wheelEvent, steps = processingSteps - WheelEventProcessingSteps::ScrollingThread]() mutable {
         protectedThis->dispatchWheelEvent(pageID, wheelEvent, steps);
     });
 }

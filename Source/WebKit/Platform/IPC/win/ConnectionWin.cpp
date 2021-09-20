@@ -233,14 +233,14 @@ void Connection::writeEventHandler()
 
 void Connection::invokeReadEventHandler()
 {
-    m_connectionQueue->dispatch([this, protectedThis = makeRef(*this)] {
+    m_connectionQueue->dispatch([this, protectedThis = Ref { *this }] {
         readEventHandler();
     });
 }
 
 void Connection::invokeWriteEventHandler()
 {
-    m_connectionQueue->dispatch([this, protectedThis = makeRef(*this)] {
+    m_connectionQueue->dispatch([this, protectedThis = Ref { *this }] {
         writeEventHandler();
     });
 }

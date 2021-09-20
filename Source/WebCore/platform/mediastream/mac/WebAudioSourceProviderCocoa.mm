@@ -130,7 +130,7 @@ void WebAudioSourceProviderCocoa::prepare(const AudioStreamBasicDescription& for
     m_dataSource->setInputFormat(m_inputDescription.value());
     m_dataSource->setOutputFormat(m_outputDescription.value());
 
-    callOnMainThread([protectedThis = makeRef(*this), numberOfChannels, sampleRate] {
+    callOnMainThread([protectedThis = Ref { *this }, numberOfChannels, sampleRate] {
         if (protectedThis->m_client)
             protectedThis->m_client->setFormat(numberOfChannels, sampleRate);
     });

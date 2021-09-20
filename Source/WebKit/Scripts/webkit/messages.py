@@ -987,7 +987,7 @@ def generate_message_handler(receiver):
         result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name, receive_variant))
         result.append('{\n')
         if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
-            result.append('    auto protectedThis = makeRef(*this);\n')
+            result.append('    Ref protectedThis { *this };\n')
 
         result += [async_message_statement(receiver, message) for message in async_messages]
 
@@ -1011,7 +1011,7 @@ def generate_message_handler(receiver):
         result.append('bool %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
-            result.append('    auto protectedThis = makeRef(*this);\n')
+            result.append('    Ref protectedThis { *this };\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
             result.append('    if (dispatchSyncMessage(connection, decoder, replyEncoder))\n')

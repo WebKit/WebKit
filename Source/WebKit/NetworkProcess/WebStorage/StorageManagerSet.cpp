@@ -64,7 +64,7 @@ void StorageManagerSet::add(PAL::SessionID sessionID, const String& localStorage
         if (!sessionID.isEphemeral())
             SandboxExtension::consumePermanently(localStorageDirectoryHandle);
 
-        m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, localStorageDirectory = localStorageDirectory.isolatedCopy()]() mutable {
+        m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, localStorageDirectory = localStorageDirectory.isolatedCopy()]() mutable {
             m_storageManagers.ensure(sessionID, [&]() mutable {
                 return makeUnique<StorageManager>(WTFMove(localStorageDirectory));
             });
@@ -77,7 +77,7 @@ void StorageManagerSet::remove(PAL::SessionID sessionID)
     ASSERT(RunLoop::isMain());
 
     if (m_storageManagerPaths.remove(sessionID)) {
-        m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID]() {
+        m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID]() {
             if (auto storageManager = m_storageManagers.get(sessionID)) {
                 for (auto storageAreaID : storageManager->allStorageAreaIdentifiers())
                     m_storageAreas.remove(storageAreaID);
@@ -114,7 +114,7 @@ void StorageManagerSet::removeConnection(IPC::Connection& connection)
     m_connections.remove(connectionID);
     connection.removeWorkQueueMessageReceiver(Messages::StorageManagerSet::messageReceiverName());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), connectionID]() {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, connectionID]() {
         Vector<StorageAreaIdentifier> identifiersToRemove;
         for (auto& [identifier, storageArea] : m_storageAreas) {
             if (storageArea)
@@ -132,7 +132,7 @@ void StorageManagerSet::removeConnection(IPC::Connection& connection)
 void StorageManagerSet::handleLowMemoryWarning()
 {
     ASSERT(RunLoop::isMain());
-    m_queue->dispatch([this, protectedThis = makeRef(*this)] {
+    m_queue->dispatch([this, protectedThis = Ref { *this }] {
         for (auto& storageArea : m_storageAreas.values())
             storageArea->handleLowMemoryWarning();
     });
@@ -177,7 +177,7 @@ void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->suspend([protectedThis = makeRef(*this)] {
+    m_queue->suspend([protectedThis = Ref { *this }] {
         protectedThis->flushLocalStorage();
     }, WTFMove(completionHandler));
 }
@@ -193,7 +193,7 @@ void StorageManagerSet::getSessionStorageOrigins(PAL::SessionID sessionID, GetOr
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -208,7 +208,7 @@ void StorageManagerSet::deleteSessionStorage(PAL::SessionID sessionID, DeleteCal
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -221,7 +221,7 @@ void StorageManagerSet::deleteSessionStorageForOrigins(PAL::SessionID sessionID,
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, copiedOriginDatas = crossThreadCopy(originDatas), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, copiedOriginDatas = crossThreadCopy(originDatas), completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -234,7 +234,7 @@ void StorageManagerSet::getLocalStorageOrigins(PAL::SessionID sessionID, GetOrig
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -249,7 +249,7 @@ void StorageManagerSet::deleteLocalStorageModifiedSince(PAL::SessionID sessionID
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, time, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, time, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -262,7 +262,7 @@ void StorageManagerSet::deleteLocalStorageForOrigins(PAL::SessionID sessionID, c
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, copiedOriginDatas = crossThreadCopy(originDatas), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, copiedOriginDatas = crossThreadCopy(originDatas), completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -275,7 +275,7 @@ void StorageManagerSet::getLocalStorageOriginDetails(PAL::SessionID sessionID, G
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -290,7 +290,7 @@ void StorageManagerSet::renameOrigin(PAL::SessionID sessionID, const URL& oldNam
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, oldName = oldName.isolatedCopy(), newName = newName.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, oldName = oldName.isolatedCopy(), newName = newName.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
         storageManager->renameOrigin(oldName, newName);

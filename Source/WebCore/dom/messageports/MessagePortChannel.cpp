@@ -120,7 +120,7 @@ void MessagePortChannel::closePort(const MessagePortIdentifier& port)
 
     // This set of steps is to guarantee that the lock is unlocked before the
     // last ref to this object is released.
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 
     m_pendingMessages[i].clear();
     m_pendingMessagePortTransfers[i].clear();
@@ -207,7 +207,7 @@ void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier&
         return;
     }
 
-    CompletionHandler<void(MessagePortChannelProvider::HasActivity)> outerCallback = [this, protectedThis = makeRef(*this), callback = WTFMove(callback)](auto hasActivity) mutable {
+    CompletionHandler<void(MessagePortChannelProvider::HasActivity)> outerCallback = [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto hasActivity) mutable {
         if (hasActivity == MessagePortChannelProvider::HasActivity::Yes) {
             callback(hasActivity);
             return;

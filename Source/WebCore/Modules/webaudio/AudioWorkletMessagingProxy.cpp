@@ -107,7 +107,7 @@ bool AudioWorkletMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope(Scr
 
 void AudioWorkletMessagingProxy::postTaskToAudioWorklet(Function<void(AudioWorklet&)>&& task)
 {
-    m_document->postTask([this, protectedThis = makeRef(*this), task = WTFMove(task)](ScriptExecutionContext&) {
+    m_document->postTask([this, protectedThis = Ref { *this }, task = WTFMove(task)](ScriptExecutionContext&) {
         if (m_worklet)
             task(*m_worklet);
     });

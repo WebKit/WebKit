@@ -103,7 +103,7 @@ void WebGLSync::scheduleAllowCacheUpdate(WebGLRenderingContextBase& context)
     if (!canvas)
         return;
 
-    context.queueTaskKeepingObjectAlive(*canvas, TaskSource::WebGL, [protectedThis = makeRef(*this)]() {
+    context.queueTaskKeepingObjectAlive(*canvas, TaskSource::WebGL, [protectedThis = Ref { *this }]() {
         protectedThis->m_allowCacheUpdate = true;
     });
 }

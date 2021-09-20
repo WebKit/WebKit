@@ -176,7 +176,7 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const Ato
 {
     ASSERT(isMainThread());
     MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
-    track->notifyWhenReadyForMoreSamples([protector = makeRef(*this), this, trackId]() mutable {
+    track->notifyWhenReadyForMoreSamples([protector = Ref { *this }, this, trackId]() mutable {
         RunLoop::main().dispatch([protector = WTFMove(protector), this, trackId]() {
             if (!m_hasBeenRemovedFromMediaSource)
                 provideMediaData(trackId);
