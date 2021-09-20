@@ -21,3 +21,5 @@ webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pas
 
 webkit.org/b/230509 fast/events/ios/dom-update-on-keydown-quirk.html [ Pass Failure ]
 
+webkit.org/b/230514 imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html [ Pass Crash ]
+
