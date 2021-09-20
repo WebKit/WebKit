@@ -1,3 +1,11 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline webkitpy test after r282755.
+
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessageReceiver.cpp:
+        (WebKit::TestWithCVPixelBuffer::didReceiveMessage):
+        (WebKit::TestWithCVPixelBuffer::didReceiveSyncMessage):
+
 2021-09-20  Alex Christensen  <achristensen@webkit.org>
 
         WebKit might load custom URI scheme request content multiple times

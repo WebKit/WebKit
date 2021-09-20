@@ -39,7 +39,7 @@ namespace WebKit {
 
 void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
         return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
@@ -55,7 +55,7 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
 
 bool TestWithCVPixelBuffer::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-    auto protectedThis = makeRef(*this);
+    Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
         return IPC::handleMessage<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, *replyEncoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
