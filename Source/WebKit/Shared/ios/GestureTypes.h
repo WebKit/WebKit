@@ -42,7 +42,6 @@ enum class GestureType : uint8_t {
     OneFingerTripleTap,
     TwoFingerSingleTap,
     TwoFingerRangedSelectGesture,
-    TapOnLinkWithGesture,
     PhraseBoundary
 };
 
@@ -110,7 +109,6 @@ template<> struct EnumTraits<WebKit::GestureType> {
         WebKit::GestureType::OneFingerTripleTap,
         WebKit::GestureType::TwoFingerSingleTap,
         WebKit::GestureType::TwoFingerRangedSelectGesture,
-        WebKit::GestureType::TapOnLinkWithGesture,
         WebKit::GestureType::PhraseBoundary
     >;
 };
