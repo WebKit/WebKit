@@ -31,10 +31,20 @@
 namespace WebKit {
 using namespace WebCore;
 
+RemoteResourceCache::RemoteResourceCache(RemoteResourceCache&& other)
+    : m_imageBuffers(WTFMove(other.m_imageBuffers))
+    , m_nativeImages(WTFMove(other.m_nativeImages))
+    , m_fonts(WTFMove(other.m_fonts))
+    , m_resourceUseCounters(WTFMove(other.m_resourceUseCounters))
+{
+    updateHasActiveDrawables();
+}
+
 void RemoteResourceCache::cacheImageBuffer(Ref<ImageBuffer>&& imageBuffer)
 {
     auto renderingResourceIdentifier = imageBuffer->renderingResourceIdentifier();
     m_imageBuffers.add(renderingResourceIdentifier, WTFMove(imageBuffer));
+    updateHasActiveDrawables();
 
     ensureResourceUseCounter(renderingResourceIdentifier);
 }
@@ -48,6 +58,7 @@ void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image)
 {
     auto renderingResourceIdentifier = image->renderingResourceIdentifier();
     m_nativeImages.add(renderingResourceIdentifier, WTFMove(image));
+    updateHasActiveDrawables();
 
     ensureResourceUseCounter(renderingResourceIdentifier);
 }
@@ -117,10 +128,10 @@ bool RemoteResourceCache::maybeRemoveResource(RenderingResourceIdentifier render
 
     m_resourceUseCounters.remove(iterator);
 
-    if (m_imageBuffers.remove(renderingResourceIdentifier))
+    if (m_imageBuffers.remove(renderingResourceIdentifier) || m_nativeImages.remove(renderingResourceIdentifier)) {
+        updateHasActiveDrawables();
         return true;
-    if (m_nativeImages.remove(renderingResourceIdentifier))
-        return true;
+    }
     if (m_fonts.remove(renderingResourceIdentifier))
         return true;
 
@@ -149,6 +160,11 @@ bool RemoteResourceCache::releaseRemoteResource(RenderingResourceIdentifier rend
     useCounter.state = ResourceState::ToBeDeleted;
     useCounter.useOrPendingCount -= useCount;
     return maybeRemoveResource(renderingResourceIdentifier, iterator);
+}
+
+void RemoteResourceCache::updateHasActiveDrawables()
+{
+    m_hasActiveDrawables = !m_imageBuffers.isEmpty() || !m_nativeImages.isEmpty();
 }
 
 } // namespace WebKit
