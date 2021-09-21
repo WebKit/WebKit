@@ -1,3 +1,19 @@
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection perfect negotiation tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=230344
+
+        Reviewed by Alex Christensen.
+
+        Helper function checks that adding candidates only fails for candidates related to ignored descriptions.
+        But the flag that sets whther descriptions are ignored is set synchronously while it should be set once the description is applied.
+        Otherwise, errors related to the candidates that are in the operation queue related to the previously ignored description will not be ignored.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-helper.js:
+        (try.async try):
+        (string_appeared_here.peer):
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation.https-expected.txt:
+
 2021-09-21  Chris Dumez  <cdumez@apple.com>
 
         Resync web-platform-tests/tools from upstream
