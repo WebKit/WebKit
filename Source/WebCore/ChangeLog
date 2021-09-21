@@ -1,3 +1,17 @@
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Disable default system gesture on extended gamepad
+        https://bugs.webkit.org/show_bug.cgi?id=230297
+        <rdar://65610651>
+
+        Reviewed by Brady Eidson.
+
+        Prevent default system behavior for some game pad gestures.
+        Not testable on bots.
+
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        (WebCore::GameControllerGamepad::setupAsExtendedGamepad):
+
 2021-09-21  Eric Carlson  <eric.carlson@apple.com>
 
         Remove unused CGWindowCaptureSource
