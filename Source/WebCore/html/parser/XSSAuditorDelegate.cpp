@@ -67,7 +67,7 @@ Ref<FormData> XSSAuditorDelegate::generateViolationReport(const XSSInfo& xssInfo
     auto& frameLoader = m_document.frame()->loader();
     String httpBody;
     if (frameLoader.documentLoader()) {
-        if (auto formData = makeRefPtr(frameLoader.documentLoader()->originalRequest().httpBody()))
+        if (RefPtr formData = frameLoader.documentLoader()->originalRequest().httpBody())
             httpBody = formData->flattenToString();
     }
 

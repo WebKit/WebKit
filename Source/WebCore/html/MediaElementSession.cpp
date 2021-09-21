@@ -1009,7 +1009,7 @@ static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
     if (!element.renderer())
         return false;
 
-    auto documentFrame = makeRefPtr(element.document().frame());
+    RefPtr documentFrame = element.document().frame();
     if (!documentFrame)
         return false;
 
@@ -1035,7 +1035,7 @@ static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
     if (!renderer)
         return false;
 
-    auto documentFrame = makeRefPtr(element.document().frame());
+    RefPtr documentFrame = element.document().frame();
     if (!documentFrame)
         return false;
 

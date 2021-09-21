@@ -81,7 +81,7 @@ bool HTMLPlugInImageElement::isImageType()
     if (m_serviceType.isEmpty() && protocolIs(m_url, "data"))
         m_serviceType = mimeTypeFromDataURL(m_url);
 
-    if (auto frame = makeRefPtr(document().frame()))
+    if (RefPtr frame = document().frame())
         return frame->loader().client().objectContentType(document().completeURL(m_url), m_serviceType) == ObjectContentType::Image;
 
     return Image::supportsType(m_serviceType);
@@ -179,7 +179,7 @@ void HTMLPlugInImageElement::didAttachRenderers()
 
 void HTMLPlugInImageElement::willDetachRenderers()
 {
-    auto widget = makeRefPtr(pluginWidget(PluginLoadingPolicy::DoNotLoad));
+    RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
     if (is<PluginViewBase>(widget))
         downcast<PluginViewBase>(*widget).willDetachRenderer();
 

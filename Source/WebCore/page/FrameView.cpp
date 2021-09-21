@@ -2231,7 +2231,7 @@ bool FrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
     auto& document = *frame().document();
     RELEASE_ASSERT(document.haveStylesheetsLoaded());
 
-    auto anchorElement = makeRefPtr(document.findAnchor(fragmentIdentifier));
+    RefPtr anchorElement = document.findAnchor(fragmentIdentifier);
 
     LOG(Scrolling, " anchorElement is %p", anchorElement.get());
 
@@ -2379,7 +2379,7 @@ void FrameView::scrollToFocusedElementTimerFired()
 void FrameView::scrollToFocusedElementInternal()
 {
     RELEASE_ASSERT(m_shouldScrollToFocusedElement);
-    auto document = makeRefPtr(frame().document());
+    RefPtr document = frame().document();
     if (!document)
         return;
 
@@ -2388,7 +2388,7 @@ void FrameView::scrollToFocusedElementInternal()
         return; // Updating the layout may have ran scripts.
     m_shouldScrollToFocusedElement = false;
 
-    auto focusedElement = makeRefPtr(document->focusedElement());
+    RefPtr focusedElement = document->focusedElement();
     if (!focusedElement)
         return;
     auto updateTarget = focusedElement->focusAppearanceUpdateTarget();

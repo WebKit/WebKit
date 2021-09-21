@@ -447,7 +447,7 @@ static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
     if (HTMLElement::isInsideImageOverlay(targetNode))
         return nullptr;
 
-    if (auto rootUserSelectAll = makeRefPtr(Position::rootUserSelectAllForNode(&targetNode)))
+    if (RefPtr rootUserSelectAll = Position::rootUserSelectAllForNode(&targetNode))
         return rootUserSelectAll.get();
 
     if (targetNode.shouldSelectOnMouseDown())
@@ -458,7 +458,7 @@ static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 
 static VisibleSelection expandSelectionToRespectSelectOnMouseDown(Node& targetNode, const VisibleSelection& selection)
 {
-    auto nodeToSelect = makeRefPtr(nodeToSelectOnMouseDownForNode(targetNode));
+    RefPtr nodeToSelect = nodeToSelectOnMouseDownForNode(targetNode);
     if (!nodeToSelect)
         return selection;
 
@@ -705,7 +705,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
 
 bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& event)
 {
-    auto node = makeRefPtr(event.targetNode());
+    RefPtr node = event.targetNode();
 
     if (Page* page = m_frame.page()) {
         if (!page->chrome().client().shouldUseMouseEventForSelection(event.event()))
@@ -1193,7 +1193,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, Optio
     if (!request.readOnly())
         m_frame.document()->updateHoverActiveState(request, result.targetElement());
 
-    auto innerNode = makeRefPtr(result.innerNode());
+    RefPtr innerNode = result.innerNode();
     if (request.disallowsUserAgentShadowContent()
         || (request.disallowsUserAgentShadowContentExceptForImageOverlays() && innerNode && !HTMLElement::isInsideImageOverlay(*innerNode)))
         result.setToNonUserAgentShadowAncestor();
@@ -4393,7 +4393,7 @@ void EventHandler::scheduleScrollEvent()
     setFrameWasScrolledByUser();
     if (!m_frame.view())
         return;
-    auto document = makeRefPtr(m_frame.document());
+    RefPtr document = m_frame.document();
     if (!document)
         return;
     document->addPendingScrollEventTarget(*document);

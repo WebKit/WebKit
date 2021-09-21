@@ -263,7 +263,7 @@ private:
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final
     {
         ASSERT(isMainThread());
-        auto generator = makeRefPtr(m_generator.get());
+        RefPtr generator { m_generator.get() };
         if (!generator)
             return;
         auto* data = generator->m_map.get(m_urlString);

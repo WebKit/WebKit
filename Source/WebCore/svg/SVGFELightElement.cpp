@@ -125,7 +125,7 @@ void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomStri
 void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
-        auto parent = makeRefPtr(parentElement());
+        RefPtr parent = parentElement();
         if (!parent)
             return;
 
@@ -153,7 +153,7 @@ void SVGFELightElement::childrenChanged(const ChildChange& change)
 
     if (change.source == ChildChange::Source::Parser)
         return;
-    auto parent = makeRefPtr(parentNode());
+    RefPtr parent = parentNode();
     if (!parent)
         return;
     RenderElement* renderer = parent->renderer();

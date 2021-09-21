@@ -167,7 +167,7 @@ RefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* filte
     if (!input1)
         return nullptr;
 
-    auto lightElement = makeRefPtr(SVGFELightElement::findLightElement(this));
+    RefPtr lightElement = SVGFELightElement::findLightElement(this);
     if (!lightElement)
         return nullptr;
     

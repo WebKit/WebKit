@@ -139,7 +139,7 @@ void SVGImage::setContainerSize(const FloatSize& size)
     if (!renderer)
         return;
 
-    auto view = makeRefPtr(frameView());
+    RefPtr view = frameView();
     view->resize(this->containerSize());
 
     renderer->setContainerSize(IntSize(size));
@@ -286,7 +286,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
         return drawAsNativeImage(context, dstRect, srcRect, options);
     }
 
-    auto view = makeRefPtr(frameView());
+    RefPtr view = frameView();
     ASSERT(view);
 
     GraphicsContextStateSaver stateSaver(context);
@@ -451,7 +451,7 @@ bool SVGImage::isAnimating() const
 
 void SVGImage::reportApproximateMemoryCost() const
 {
-    auto document = makeRefPtr(m_page->mainFrame().document());
+    RefPtr document = m_page->mainFrame().document();
     size_t decodedImageMemoryCost = 0;
 
     for (RefPtr<Node> node = document; node; node = NodeTraversal::next(*node))

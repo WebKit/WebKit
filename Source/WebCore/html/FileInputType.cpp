@@ -160,7 +160,7 @@ void FileInputType::restoreFormControlState(const FormControlState& state)
 bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
 {
     ASSERT(element());
-    auto fileList = makeRefPtr(element()->files());
+    RefPtr fileList = element()->files();
     ASSERT(fileList);
 
     auto name = element()->name();
@@ -291,7 +291,7 @@ void FileInputType::disabledStateChanged()
     if (!root)
         return;
     
-    if (auto button = makeRefPtr(childrenOfType<UploadButtonElement>(*root).first()))
+    if (RefPtr button = childrenOfType<UploadButtonElement>(*root).first())
         button->setBooleanAttribute(disabledAttr, element()->isDisabledFormControl());
 }
 
@@ -301,7 +301,7 @@ void FileInputType::attributeChanged(const QualifiedName& name)
         if (auto* element = this->element()) {
             ASSERT(element->shadowRoot());
             if (auto root = element->userAgentShadowRoot()) {
-                if (auto button = makeRefPtr(childrenOfType<UploadButtonElement>(*root).first()))
+                if (RefPtr button = childrenOfType<UploadButtonElement>(*root).first())
                     button->setValue(element->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
             }
         }
@@ -436,7 +436,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
         return;
     }
 
-    m_directoryFileListCreator = DirectoryFileListCreator::create([this, weakThis = makeWeakPtr(*this), icon = makeRefPtr(icon)](Ref<FileList>&& fileList) mutable {
+    m_directoryFileListCreator = DirectoryFileListCreator::create([this, weakThis = makeWeakPtr(*this), icon = RefPtr { icon }](Ref<FileList>&& fileList) mutable {
         ASSERT(isMainThread());
         if (!weakThis)
             return;

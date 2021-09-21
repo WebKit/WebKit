@@ -102,12 +102,12 @@ CanvasStyle::CanvasStyle(const SRGBA<float>& colorComponents)
 }
 
 CanvasStyle::CanvasStyle(CanvasGradient& gradient)
-    : m_style(makeRefPtr(gradient))
+    : m_style(&gradient)
 {
 }
 
 CanvasStyle::CanvasStyle(CanvasPattern& pattern)
-    : m_style(makeRefPtr(pattern))
+    : m_style(&pattern)
 {
 }
 

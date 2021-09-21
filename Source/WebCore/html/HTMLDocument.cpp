@@ -133,7 +133,7 @@ std::optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollectio
 
     auto& element = *documentNamedItem(*name.impl());
     if (UNLIKELY(is<HTMLIFrameElement>(element))) {
-        if (auto domWindow = makeRefPtr(downcast<HTMLIFrameElement>(element).contentWindow()))
+        if (RefPtr domWindow = downcast<HTMLIFrameElement>(element).contentWindow())
             return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(domWindow) };
     }
 

@@ -3167,7 +3167,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::DITHER:
         return getBooleanParameter(pname);
     case GraphicsContextGL::ELEMENT_ARRAY_BUFFER_BINDING:
-        return makeRefPtr(m_boundVertexArrayObject->getElementArrayBuffer());
+        return RefPtr { m_boundVertexArrayObject->getElementArrayBuffer() };
     case GraphicsContextGL::FRAMEBUFFER_BINDING:
         return m_framebufferBinding;
     case GraphicsContextGL::FRONT_FACE:
@@ -3332,7 +3332,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
         if (m_oesVertexArrayObject) {
             if (m_boundVertexArrayObject->isDefaultObject())
                 return nullptr;
-            return makeRefPtr(static_cast<WebGLVertexArrayObjectOES&>(*m_boundVertexArrayObject));
+            return static_pointer_cast<WebGLVertexArrayObjectOES>(m_boundVertexArrayObject);
         }
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getParameter", "invalid parameter name, OES_vertex_array_object not enabled");
         return nullptr;

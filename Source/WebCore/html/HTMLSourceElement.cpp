@@ -180,7 +180,7 @@ void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomStri
     if (name == srcsetAttr || name == sizesAttr || name == mediaAttr || name == typeAttr) {
         if (name == mediaAttr)
             m_cachedParsedMediaAttribute = std::nullopt;
-        auto parent = makeRefPtr(parentNode());
+        RefPtr parent = parentNode();
         if (m_shouldCallSourcesChanged)
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
     }

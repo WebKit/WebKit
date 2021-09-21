@@ -758,19 +758,19 @@ Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(int trackIndex)
     case StreamType::Audio: {
         auto specificTrack = AudioTrackPrivateGStreamer::create(makeWeakPtr(m_playerPrivate), trackIndex, WTFMove(pad), false);
         gstreamerTrack = specificTrack.ptr();
-        track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
+        track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
     }
     case StreamType::Video: {
         auto specificTrack = VideoTrackPrivateGStreamer::create(makeWeakPtr(m_playerPrivate), trackIndex, WTFMove(pad), false);
         gstreamerTrack = specificTrack.ptr();
-        track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
+        track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
     }
     case StreamType::Text: {
         auto specificTrack = InbandTextTrackPrivateGStreamer::create(trackIndex, WTFMove(pad), false);
         gstreamerTrack = specificTrack.ptr();
-        track = makeRefPtr(static_cast<TrackPrivateBase*>(specificTrack.ptr()));
+        track = static_cast<TrackPrivateBase*>(specificTrack.ptr());
         break;
     }
     default:

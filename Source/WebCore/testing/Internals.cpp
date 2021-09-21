@@ -2559,13 +2559,13 @@ void Internals::handleAcceptedCandidate(const String& candidate, unsigned locati
 
 void Internals::changeSelectionListType()
 {
-    if (auto frame = makeRefPtr(this->frame()))
+    if (RefPtr frame = this->frame())
         frame->editor().changeSelectionListType();
 }
 
 void Internals::changeBackToReplacedString(const String& replacedString)
 {
-    if (auto frame = makeRefPtr(this->frame()))
+    if (RefPtr frame = this->frame())
         frame->editor().changeBackToReplacedString(replacedString);
 }
 

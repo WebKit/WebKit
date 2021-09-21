@@ -452,7 +452,7 @@ Node::Editability HTMLElement::editabilityFromContentEditableAttr(const Node& no
         }
     }
 
-    auto containingShadowRoot = makeRefPtr(node.containingShadowRoot());
+    RefPtr containingShadowRoot { node.containingShadowRoot() };
     if (containingShadowRoot && containingShadowRoot->mode() == ShadowRootMode::UserAgent)
         return Editability::ReadOnly;
 
@@ -1275,7 +1275,7 @@ static RefPtr<HTMLElement> imageOverlayHost(const Node& node)
     if (!is<HTMLElement>(host))
         return nullptr;
 
-    auto element = makeRefPtr(downcast<HTMLElement>(*host));
+    RefPtr element { &downcast<HTMLElement>(*host) };
     return element->hasImageOverlay() ? element : nullptr;
 }
 
@@ -1286,7 +1286,7 @@ bool HTMLElement::isImageOverlayDataDetectorResult() const
 
 bool HTMLElement::isInsideImageOverlay(const SimpleRange& range)
 {
-    auto commonAncestor = makeRefPtr(commonInclusiveAncestor<ComposedTree>(range));
+    RefPtr commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
     if (!commonAncestor)
         return false;
 
@@ -1586,7 +1586,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
     }
 #endif // ENABLE(DATA_DETECTION)
 
-    if (auto frame = makeRefPtr(document().frame()))
+    if (RefPtr frame = document().frame())
         frame->eventHandler().scheduleCursorUpdate();
 
     if (cacheTextRecognitionResults == CacheTextRecognitionResults::Yes) {

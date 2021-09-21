@@ -170,7 +170,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 {
     auto copiedAttributes = attributes;
 
-    auto submitter = makeRefPtr(overrideSubmitter ? overrideSubmitter : form.findSubmitter(event));
+    RefPtr submitter = overrideSubmitter ? overrideSubmitter : form.findSubmitter(event);
     if (submitter) {
         AtomString attributeValue;
         if (!(attributeValue = submitter->attributeWithoutSynchronization(formactionAttr)).isNull())

@@ -225,7 +225,7 @@ void HTMLFrameSetElement::removedFromAncestor(RemovalType removalType, Container
 
 WindowProxy* HTMLFrameSetElement::namedItem(const AtomString& name)
 {
-    auto frameElement = makeRefPtr(children()->namedItem(name));
+    RefPtr frameElement = children()->namedItem(name);
     if (!is<HTMLFrameElement>(frameElement))
         return nullptr;
 

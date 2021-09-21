@@ -44,14 +44,14 @@ ExceptionOr<RefPtr<SVGTransform>> SVGTransformList::consolidate()
         return nullptr;
 
     if (m_items.size() == 1)
-        return makeRefPtr(at(0).get());
+        return RefPtr { at(0).ptr() };
 
     auto newItem = SVGTransform::create(concatenate());
     clearItems();
 
     auto item = append(WTFMove(newItem));
     commitChange();
-    return makeRefPtr(item.get());
+    return RefPtr { item.ptr() };
 }
 
 AffineTransform SVGTransformList::concatenate() const

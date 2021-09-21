@@ -1976,7 +1976,7 @@ void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQuery", "query object of target is already active");
         return;
     }
-    m_activeQueries[*activeQueryKey] = makeRefPtr(&query);
+    m_activeQueries[*activeQueryKey] = &query;
     m_context->beginQuery(target, query.object());
     query.setTarget(target);
 }
@@ -2522,7 +2522,7 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getIndexedParameter", "index out of range");
             return nullptr;
         }
-        return makeRefPtr(buffer);
+        return RefPtr { buffer };
     }
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_SIZE:
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_START:
@@ -2867,14 +2867,14 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
 
     RefPtr<WebGLSharedObject> attachmentObject;
     if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT) {
-        attachmentObject = makeRefPtr(targetFramebuffer->getAttachmentObject(GraphicsContextGL::DEPTH_ATTACHMENT));
-        auto stencilAttachment = makeRefPtr(targetFramebuffer->getAttachmentObject(GraphicsContextGL::STENCIL_ATTACHMENT));
+        attachmentObject = targetFramebuffer->getAttachmentObject(GraphicsContextGL::DEPTH_ATTACHMENT);
+        RefPtr stencilAttachment = targetFramebuffer->getAttachmentObject(GraphicsContextGL::STENCIL_ATTACHMENT);
         if (attachmentObject != stencilAttachment) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "different objects bound to DEPTH_ATTACHMENT and STENCIL_ATTACHMENT");
             return nullptr;
         }
     } else
-        attachmentObject = makeRefPtr(targetFramebuffer->getAttachmentObject(attachment));
+        attachmentObject = targetFramebuffer->getAttachmentObject(attachment);
 
     if (!attachmentObject) {
         if (pname == GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
@@ -2892,8 +2892,8 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
         if (attachmentObject->isTexture())
-            return makeRefPtr(reinterpret_cast<WebGLTexture&>(*attachmentObject));
-        return makeRefPtr(reinterpret_cast<WebGLRenderbuffer&>(*attachmentObject));
+            return static_pointer_cast<WebGLTexture>(attachmentObject);
+        return static_pointer_cast<WebGLRenderbuffer>(attachmentObject);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
@@ -3389,7 +3389,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::VERTEX_ARRAY_BINDING:
         if (m_boundVertexArrayObject->isDefaultObject())
             return nullptr;
-        return makeRefPtr(static_cast<WebGLVertexArrayObject&>(*m_boundVertexArrayObject));
+        return static_pointer_cast<WebGLVertexArrayObject>(m_boundVertexArrayObject);
     default:
         return WebGLRenderingContextBase::getParameter(pname);
     }

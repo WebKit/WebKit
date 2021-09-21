@@ -309,7 +309,7 @@ void HTMLTrackElement::textTrackModeChanged(TextTrack&)
 
 RefPtr<HTMLMediaElement> HTMLTrackElement::mediaElement() const
 {
-    auto parent = makeRefPtr(parentElement());
+    RefPtr parent = parentElement();
     if (!is<HTMLMediaElement>(parent))
         return nullptr;
     return downcast<HTMLMediaElement>(parent.get());

@@ -706,7 +706,7 @@ void SourceBufferParserWebM::invalidate()
 
 void SourceBufferParserWebM::setLogger(const Logger& logger, const void* logIdentifier)
 {
-    m_logger = makeRefPtr(logger);
+    m_logger = &logger;
     m_logIdentifier = logIdentifier;
 }
 

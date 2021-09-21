@@ -170,7 +170,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event& event)
         // cause events to be sent to the TextControlInnerTextElement. To
         // prevent an infinite loop, we must check for this case before sending
         // the event up the chain.
-        if (auto host = makeRefPtr(shadowHost()))
+        if (RefPtr host = shadowHost())
             host->defaultEventHandler(event);
     }
     if (!event.defaultHandled())
@@ -241,7 +241,7 @@ Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Doc
 
 std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
 {
-    auto input = makeRefPtr(downcast<HTMLInputElement>(shadowHost()));
+    RefPtr input = downcast<HTMLInputElement>(shadowHost());
     if (input && input->maxResults() >= 0)
         return std::nullopt;
 
@@ -256,7 +256,7 @@ std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCusto
 void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 {
     // On mousedown, bring up a menu, if needed
-    auto input = makeRefPtr(downcast<HTMLInputElement>(shadowHost()));
+    RefPtr input = downcast<HTMLInputElement>(shadowHost());
     if (input && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == LeftButton) {
         input->focus();
         input->select();

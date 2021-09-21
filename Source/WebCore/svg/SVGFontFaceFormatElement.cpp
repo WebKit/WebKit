@@ -48,7 +48,7 @@ void SVGFontFaceFormatElement::childrenChanged(const ChildChange& change)
     if (!parentNode() || !parentNode()->hasTagName(font_face_uriTag))
         return;
     
-    auto ancestor = makeRefPtr(parentNode()->parentNode());
+    RefPtr ancestor = parentNode()->parentNode();
     if (!ancestor || !ancestor->hasTagName(font_face_srcTag))
         return;
     

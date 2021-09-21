@@ -333,7 +333,7 @@ void SVGElement::removeElementReference()
 {
     if (!m_svgRareData)
         return;
-    if (auto destination = makeRefPtr(m_svgRareData->referenceTarget()))
+    if (RefPtr destination = m_svgRareData->referenceTarget())
         destination->removeReferencingElement(*this);
 }
 
@@ -377,7 +377,7 @@ RefPtr<SVGUseElement> SVGElement::correspondingUseElement() const
 void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
 {
     if (m_svgRareData) {
-        if (auto oldCorrespondingElement = makeRefPtr(m_svgRareData->correspondingElement()))
+        if (RefPtr oldCorrespondingElement = m_svgRareData->correspondingElement())
             oldCorrespondingElement->m_svgRareData->removeInstance(*this);
     }
     if (m_svgRareData || correspondingElement)
@@ -643,7 +643,7 @@ void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
 std::optional<Style::ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)
 {
     // If the element is in a <use> tree we get the style from the definition tree.
-    if (auto styleElement = makeRefPtr(this->correspondingElement())) {
+    if (RefPtr styleElement = this->correspondingElement()) {
         auto style = styleElement->resolveStyle(&parentStyle);
         Style::Adjuster::adjustSVGElementStyle(*style.renderStyle, *this);
         return style;
@@ -676,7 +676,7 @@ const RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
         return Element::computedStyle(pseudoElementSpecifier);
 
     const RenderStyle* parentStyle = nullptr;
-    if (auto parent = makeRefPtr(parentOrShadowHostElement())) {
+    if (RefPtr parent = parentOrShadowHostElement()) {
         if (auto renderer = parent->renderer())
             parentStyle = &renderer->style();
     }
@@ -979,7 +979,7 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
     }
 
     if (is<SVGGraphicsElement>(element)) {
-        if (auto parent = makeRefPtr(parentNode()); is<SVGElement>(parent))
+        if (RefPtr parent = parentNode(); is<SVGElement>(parent))
             downcast<SVGElement>(*parent).updateRelativeLengthsInformation(hasRelativeLengths, *this);
     }
 }

@@ -1473,7 +1473,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (auto documentLoader = makeRefPtr(frame->loader().documentLoader())) {
+    if (RefPtr documentLoader = frame->loader().documentLoader()) {
         if (page->userContentProvider().processContentRuleListsForLoad(*page, url, ContentExtensions::ResourceType::Media, *documentLoader).summary.blockedLoad) {
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
             return;
@@ -1836,7 +1836,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         // simple event named cuechange at the track element as well.
         if (is<LoadableTextTrack>(*affectedTrack)) {
             auto event = Event::create(eventNames().cuechangeEvent, Event::CanBubble::No, Event::IsCancelable::No);
-            auto trackElement = makeRefPtr(downcast<LoadableTextTrack>(*affectedTrack).trackElement());
+            RefPtr trackElement = downcast<LoadableTextTrack>(*affectedTrack).trackElement();
             ASSERT(trackElement);
             scheduleEventOn(*trackElement, WTFMove(event));
         }
@@ -4260,7 +4260,7 @@ void HTMLMediaElement::removeTextTrack(Ref<TextTrack>&& track, bool scheduleEven
         return;
 
     TrackDisplayUpdateScope scope { *this };
-    if (auto cues = makeRefPtr(track->cues()))
+    if (RefPtr cues = track->cues())
         textTrackRemoveCues(track, *cues);
     track->clearClient(*this);
     if (m_textTracks)
@@ -4622,7 +4622,7 @@ void HTMLMediaElement::updateCaptionContainer()
 
 void HTMLMediaElement::layoutSizeChanged()
 {
-    if (auto frameView = makeRefPtr(document().view())) {
+    if (RefPtr frameView = document().view()) {
         auto task = [this, protectedThis = Ref { *this }] {
             if (auto root = userAgentShadowRoot())
                 root->dispatchEvent(Event::create("resize", Event::CanBubble::No, Event::IsCancelable::No));
@@ -6881,7 +6881,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     mediaSession().setActive(true);
 
 #if ENABLE(WEB_AUDIO)
-    auto protectedAudioSourceNode = makeRefPtr(m_audioSourceNode);
+    RefPtr protectedAudioSourceNode = m_audioSourceNode;
     std::optional<Locker<Lock>> audioSourceNodeLocker;
     if (m_audioSourceNode)
         audioSourceNodeLocker.emplace(m_audioSourceNode->processLock());

@@ -75,7 +75,7 @@ static int compareIcons(const LinkIcon& a, const LinkIcon& b)
 
 auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vector<LinkIcon>
 {
-    auto head = makeRefPtr(m_document.head());
+    RefPtr head = m_document.head();
     if (!head)
         return { };
 

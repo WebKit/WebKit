@@ -252,7 +252,7 @@ void HTMLFormControlElement::didAttachRenderers()
         setAutofocused();
 
         RefPtr<HTMLFormControlElement> element = this;
-        auto frameView = makeRefPtr(document().view());
+        RefPtr frameView = document().view();
         if (frameView && frameView->layoutContext().isInLayout()) {
             frameView->queuePostLayoutCallback([element] {
                 element->focus({ SelectionRestorationMode::PlaceCaretAtStart });

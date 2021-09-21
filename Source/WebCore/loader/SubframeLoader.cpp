@@ -245,7 +245,7 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
     URL upgradedRequestURL = requestURL;
     initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    RefPtr<Frame> frame = makeRefPtr(ownerElement.contentFrame());
+    RefPtr frame = ownerElement.contentFrame();
     if (frame)
         frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
     else

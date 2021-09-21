@@ -139,7 +139,7 @@ void InbandGenericTextTrack::addGenericCue(InbandGenericCue& inbandCue)
 
 void InbandGenericTextTrack::updateGenericCue(InbandGenericCue& inbandCue)
 {
-    auto cue = makeRefPtr(m_cueMap.find(inbandCue.uniqueId()));
+    RefPtr cue = m_cueMap.find(inbandCue.uniqueId());
     if (!cue)
         return;
 
@@ -151,7 +151,7 @@ void InbandGenericTextTrack::updateGenericCue(InbandGenericCue& inbandCue)
 
 void InbandGenericTextTrack::removeGenericCue(InbandGenericCue& inbandCue)
 {
-    auto cue = makeRefPtr(m_cueMap.find(inbandCue.uniqueId()));
+    RefPtr cue = m_cueMap.find(inbandCue.uniqueId());
     if (cue) {
         INFO_LOG(LOGIDENTIFIER, *cue);
         removeCue(*cue);

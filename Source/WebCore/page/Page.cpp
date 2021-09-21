@@ -887,11 +887,11 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
         if (firstNode == secondNode)
             return false;
 
-        auto firstFrame = makeRefPtr(firstNode->document().frame());
+        RefPtr firstFrame = firstNode->document().frame();
         if (!firstFrame)
             return true;
 
-        auto secondFrame = makeRefPtr(secondNode->document().frame());
+        RefPtr secondFrame = secondNode->document().frame();
         if (!secondFrame)
             return false;
 
@@ -904,7 +904,7 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
     });
 
     for (auto& container : containerNodesInOrderOfReplacement) {
-        auto frame = makeRefPtr(container->document().frame());
+        RefPtr frame = container->document().frame();
         if (!frame)
             continue;
 
@@ -929,7 +929,7 @@ uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace,
     replacementRanges.reserveInitialCapacity(rangesToReplace.size());
 
     for (auto& range : rangesToReplace) {
-        auto highestRoot = makeRefPtr(highestEditableRoot(makeDeprecatedLegacyPosition(range.start)));
+        RefPtr highestRoot = highestEditableRoot(makeDeprecatedLegacyPosition(range.start));
         if (!highestRoot || highestRoot != highestEditableRoot(makeDeprecatedLegacyPosition(range.end)) || !highestRoot->document().frame())
             continue;
         auto scope = makeRangeSelectingNodeContents(*highestRoot);
@@ -966,7 +966,7 @@ void Page::setEditableRegionEnabled(bool enabled)
     if (m_isEditableRegionEnabled == enabled)
         return;
     m_isEditableRegionEnabled = enabled;
-    auto frameView = makeRefPtr(mainFrame().view());
+    RefPtr frameView = mainFrame().view();
     if (!frameView)
         return;
     if (auto* renderView = frameView->renderView())
@@ -986,11 +986,11 @@ bool Page::shouldBuildEditableRegion() const
 
 Vector<Ref<Element>> Page::editableElementsInRect(const FloatRect& searchRectInRootViewCoordinates) const
 {
-    auto frameView = makeRefPtr(mainFrame().view());
+    RefPtr frameView = mainFrame().view();
     if (!frameView)
         return { };
 
-    auto document = makeRefPtr(mainFrame().document());
+    RefPtr document = mainFrame().document();
     if (!document)
         return { };
 
@@ -1666,7 +1666,7 @@ void Page::doAfterUpdateRendering()
         if (appHighlightStorage->hasUnrestoredHighlights() && MonotonicTime::now() - appHighlightStorage->lastRangeSearchTime() > 1_s) {
             appHighlightStorage->resetLastRangeSearchTime();
             document.eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakDocument = makeWeakPtr(document)] {
-                auto document = makeRefPtr(weakDocument.get());
+                RefPtr document { weakDocument.get() };
                 if (!document)
                     return;
 
@@ -2620,7 +2620,7 @@ void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorO
     scheduleRenderingUpdate({ });
 
 #if ENABLE(RUBBER_BANDING)
-    if (auto frameView = makeRefPtr(mainFrame().view())) {
+    if (RefPtr frameView = mainFrame().view()) {
         if (auto* renderView = frameView->renderView()) {
             if (renderView->usesCompositing())
                 renderView->compositor().updateLayerForOverhangAreasBackgroundColor();
@@ -3497,7 +3497,7 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
 void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
 {
     element.document().eventLoop().queueTask(TaskSource::Networking, [element = makeRef(element)]() {
-        auto frame = makeRefPtr(element->document().frame());
+        RefPtr frame = element->document().frame();
         if (!frame)
             return;
 
@@ -3655,7 +3655,7 @@ void Page::updateElementsWithTextRecognitionResults()
 
     for (auto& [element, result] : elementsToUpdate) {
         element->document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [result = TextRecognitionResult { result }, weakElement = makeWeakPtr(element.get())] {
-            auto element = makeRefPtr(weakElement.get());
+            RefPtr element { weakElement.get() };
             if (!element)
                 return;
 

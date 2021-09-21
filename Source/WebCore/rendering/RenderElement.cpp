@@ -1573,9 +1573,9 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
         return selectionStyle;
     }
 
-    if (auto root = makeRefPtr(element()->containingShadowRoot())) {
+    if (RefPtr root = element()->containingShadowRoot()) {
         if (root->mode() == ShadowRootMode::UserAgent) {
-            auto currentElement = makeRefPtr(element()->shadowHost());
+            RefPtr currentElement = element()->shadowHost();
             // When an element has display: contents, this element doesn't have a renderer
             // and its children will render as children of the parent element.
             while (currentElement && currentElement->hasDisplayContents())

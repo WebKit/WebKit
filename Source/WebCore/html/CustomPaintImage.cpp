@@ -109,7 +109,7 @@ private:
 
     void clearElement() override { }
 
-    RefPtr<CSSStyleValue> get(const String& property) const final { return makeRefPtr(m_map.get(property)); }
+    RefPtr<CSSStyleValue> get(const String& property) const final { return m_map.get(property); }
 
     HashMap<String, RefPtr<CSSStyleValue>> m_map;
 };

@@ -135,7 +135,7 @@ void FrameLoader::HistoryController::restoreScrollPositionAndViewState()
     if (!m_currentItem)
         return;
 
-    auto view = makeRefPtr(m_frame.view());
+    RefPtr view = m_frame.view();
 
     // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
     // back/forward cache and similar work that needs to occur when it comes out. This is where we do the work

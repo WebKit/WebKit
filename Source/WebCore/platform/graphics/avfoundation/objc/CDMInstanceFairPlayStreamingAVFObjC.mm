@@ -234,7 +234,7 @@ CDMInstanceFairPlayStreamingAVFObjC::CDMInstanceFairPlayStreamingAVFObjC() = def
 #if !RELEASE_LOG_DISABLED
 void CDMInstanceFairPlayStreamingAVFObjC::setLogger(Logger& logger, const void* logIdentifier)
 {
-    m_logger = makeRefPtr(logger);
+    m_logger = &logger;
     m_logIdentifier = logIdentifier;
 }
 #endif
@@ -633,7 +633,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC::~CDMInstanceSessionFairPlayStreaming
 #if !RELEASE_LOG_DISABLED
 void CDMInstanceSessionFairPlayStreamingAVFObjC::setLogger(Logger& logger, const void* logIdentifier)
 {
-    m_logger = makeRefPtr(logger);
+    m_logger = &logger;
     m_logIdentifier = logIdentifier;
 }
 #endif

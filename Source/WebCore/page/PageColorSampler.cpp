@@ -169,11 +169,11 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return Color();
     }
 
-    auto mainDocument = makeRefPtr(page.mainFrame().document());
+    RefPtr mainDocument = page.mainFrame().document();
     if (!mainDocument)
         return std::nullopt;
 
-    auto frameView = makeRefPtr(page.mainFrame().view());
+    RefPtr frameView = page.mainFrame().view();
     if (!frameView)
         return std::nullopt;
 

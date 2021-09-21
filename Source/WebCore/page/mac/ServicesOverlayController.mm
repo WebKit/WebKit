@@ -400,7 +400,7 @@ void ServicesOverlayController::buildSelectionHighlight()
         if (!mainFrameView)
             return;
 
-        auto viewForRange = makeRefPtr(selectionRange->start.document().view());
+        RefPtr viewForRange = selectionRange->start.document().view();
         if (!viewForRange)
             return;
 

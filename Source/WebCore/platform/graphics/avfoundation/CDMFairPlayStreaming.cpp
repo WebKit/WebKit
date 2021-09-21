@@ -260,7 +260,7 @@ CDMPrivateFairPlayStreaming::~CDMPrivateFairPlayStreaming() = default;
 #if !RELEASE_LOG_DISABLED
 void CDMPrivateFairPlayStreaming::setLogger(Logger& logger, const void* logIdentifier)
 {
-    m_logger = makeRefPtr(logger);
+    m_logger = &logger;
     m_logIdentifier = logIdentifier;
 }
 #endif

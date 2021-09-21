@@ -88,7 +88,7 @@ int HTMLTableRowElement::rowIndex() const
 
 static inline RefPtr<HTMLCollection> findRows(const HTMLTableRowElement& row)
 {
-    auto parent = makeRefPtr(row.parentNode());
+    RefPtr parent = row.parentNode();
     if (is<HTMLTableSectionElement>(parent))
         return downcast<HTMLTableSectionElement>(*parent).rows();
     if (is<HTMLTableElement>(parent))

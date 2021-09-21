@@ -423,8 +423,8 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
         return;
 #endif
 
-    if (auto document = makeRefPtr(this->document())) {
-        if (auto domWindow = makeRefPtr(document->domWindow())) {
+    if (RefPtr document = this->document()) {
+        if (RefPtr domWindow = document->domWindow()) {
             if (document->settings().performanceNavigationTimingAPIEnabled())
                 domWindow->performance().navigationFinished(metrics);
         }
@@ -924,7 +924,7 @@ bool DocumentLoader::tryLoadingRedirectRequestFromApplicationCache(const Resourc
     // If the ResourceLoader is indeed cancelled, it would normally send resource load callbacks.
     // Therefore, sever our relationship with the network load but prevent the ResourceLoader from sending ResourceLoadNotifier callbacks.
 
-    auto resourceLoader = makeRefPtr(mainResourceLoader());
+    RefPtr resourceLoader = mainResourceLoader();
     if (resourceLoader) {
         ASSERT(resourceLoader->shouldSendResourceLoadCallbacks());
         resourceLoader->setSendCallbackPolicy(SendCallbackPolicy::DoNotSendCallbacks);

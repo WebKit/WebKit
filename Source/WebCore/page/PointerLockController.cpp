@@ -213,7 +213,7 @@ void PointerLockController::enqueueEvent(const AtomString& type, Element* elemen
 void PointerLockController::enqueueEvent(const AtomString& type, Document* document)
 {
     // FIXME: Spec doesn't specify which task source use.
-    if (auto protectedDocument = makeRefPtr(document))
+    if (RefPtr protectedDocument = document)
         protectedDocument->queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(type, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 

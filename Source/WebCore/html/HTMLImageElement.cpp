@@ -182,7 +182,7 @@ void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidat
 
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 {
-    auto picture = makeRefPtr(pictureElement());
+    RefPtr picture = pictureElement();
     if (!picture)
         return { };
 
@@ -206,7 +206,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
                 continue;
         }
 
-        auto documentElement = makeRefPtr(document().documentElement());
+        RefPtr documentElement = document().documentElement();
         MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
@@ -230,7 +230,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
-    auto documentElement = makeRefPtr(document().documentElement());
+    RefPtr documentElement = document().documentElement();
     MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
 
     if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))

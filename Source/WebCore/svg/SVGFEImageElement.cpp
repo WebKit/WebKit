@@ -162,7 +162,7 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     if (!isConnected())
         return;
 
-    auto parent = makeRefPtr(parentElement());
+    RefPtr parent = parentElement();
 
     if (!parent || !parent->hasTagName(SVGNames::filterTag))
         return;

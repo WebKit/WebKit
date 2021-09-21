@@ -69,11 +69,11 @@ Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
 
 RefPtr<TextIndicator> TextIndicator::createWithRange(const SimpleRange& range, OptionSet<TextIndicatorOption> options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)
 {
-    auto frame = makeRefPtr(range.startContainer().document().frame());
+    RefPtr frame = range.startContainer().document().frame();
     if (!frame)
         return nullptr;
 
-    auto document = makeRefPtr(frame->document());
+    RefPtr document = frame->document();
     if (!document)
         return nullptr;
 

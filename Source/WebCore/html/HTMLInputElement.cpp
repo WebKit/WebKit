@@ -1247,7 +1247,7 @@ void HTMLInputElement::defaultEventHandler(Event& event)
             dispatchFormControlChangeEvent();
 
         // Form may never have been present, or may have been destroyed by code responding to the change event.
-        if (auto formElement = makeRefPtr(form()))
+        if (RefPtr formElement = form())
             formElement->submitImplicitly(event, canTriggerImplicitSubmission());
 
         event.setDefaultHandled();

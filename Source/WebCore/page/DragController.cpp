@@ -1386,8 +1386,8 @@ bool DragController::tryToUpdateDroppedImagePlaceholders(const DragData& dragDat
     ASSERT(!m_droppedImagePlaceholders.isEmpty());
     ASSERT(m_droppedImagePlaceholderRange);
 
-    auto document = makeRef(m_droppedImagePlaceholders[0]->document());
-    auto frame = makeRefPtr(document->frame());
+    Ref document = m_droppedImagePlaceholders[0]->document();
+    RefPtr frame = document->frame();
     if (!frame)
         return false;
 
@@ -1429,11 +1429,11 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
     if (dropCaret.isNull())
         return;
 
-    auto document = makeRefPtr(dropCaret.deepEquivalent().document());
+    RefPtr document = dropCaret.deepEquivalent().document();
     if (!document)
         return;
 
-    auto frame = makeRefPtr(document->frame());
+    RefPtr frame = document->frame();
     if (!frame)
         return;
 
@@ -1498,7 +1498,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
 
 void DragController::finalizeDroppedImagePlaceholder(HTMLImageElement& placeholder, CompletionHandler<void()>&& completion)
 {
-    placeholder.document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [completion = WTFMove(completion), placeholder = makeRefPtr(placeholder)] () mutable {
+    placeholder.document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [completion = WTFMove(completion), placeholder = Ref { placeholder }] () mutable {
         if (placeholder->isDroppedImagePlaceholder()) {
             placeholder->removeAttribute(HTMLNames::heightAttr);
             placeholder->removeInlineStyleProperty(CSSPropertyBackgroundColor);

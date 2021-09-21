@@ -93,7 +93,7 @@ HTMLFormElement::~HTMLFormElement()
 
     m_defaultButton = nullptr;
     for (auto& weakElement : m_associatedElements) {
-        auto element = makeRefPtr(weakElement.get());
+        RefPtr element { weakElement.get() };
         ASSERT(element);
         auto* associatedElement = element->asFormAssociatedElement();
         ASSERT(associatedElement);
@@ -159,7 +159,7 @@ unsigned HTMLFormElement::length() const
 {
     unsigned length = 0;
     for (auto& weakElement : m_associatedElements) {
-        auto element = makeRefPtr(weakElement.get());
+        RefPtr element { weakElement.get() };
         ASSERT(element);
         auto* associatedElement = element->asFormAssociatedElement();
         ASSERT(associatedElement);
@@ -272,7 +272,7 @@ void HTMLFormElement::submitIfPossible(Event* event, HTMLFormControlElement* sub
 
     bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
     if (shouldValidate) {
-        auto submitElement = makeRefPtr(submitter ? submitter : findSubmitter(event));
+        RefPtr submitElement = submitter ? submitter : findSubmitter(event);
         if (submitElement && submitElement->formNoValidate())
             shouldValidate = false;
     }
@@ -341,7 +341,7 @@ StringPairVector HTMLFormElement::textFieldValues() const
     StringPairVector result;
     result.reserveInitialCapacity(m_associatedElements.size());
     for (auto& weakElement : m_associatedElements) {
-        auto element = makeRefPtr(weakElement.get());
+        RefPtr element { weakElement.get() };
         if (!is<HTMLInputElement>(element))
             continue;
         auto& input = downcast<HTMLInputElement>(*element);
@@ -716,7 +716,7 @@ String HTMLFormElement::target() const
 
 String HTMLFormElement::effectiveTarget(const Event* event, HTMLFormControlElement* overrideSubmitter) const
 {
-    if (auto submitter = makeRefPtr(overrideSubmitter ? overrideSubmitter : findSubmitter(event))) {
+    if (RefPtr submitter = overrideSubmitter ? overrideSubmitter : findSubmitter(event)) {
         auto targetValue = submitter->attributeWithoutSynchronization(formtargetAttr);
         if (!targetValue.isNull())
             return targetValue;
@@ -838,7 +838,7 @@ RefPtr<HTMLElement> HTMLFormElement::elementFromPastNamesMap(const AtomString& p
     auto weakElement = m_pastNamesMap.get(pastName);
     if (!weakElement)
         return nullptr;
-    auto element = makeRefPtr(weakElement.get());
+    RefPtr element { weakElement.get() };
 #if ASSERT_ENABLED
     assertItemCanBeInPastNamesMap(element->asFormNamedItem());
 #endif
@@ -930,7 +930,7 @@ const Vector<WeakPtr<HTMLElement>>& HTMLFormElement::unsafeAssociatedElements() 
 Vector<Ref<FormAssociatedElement>> HTMLFormElement::copyAssociatedElementsVector() const
 {
     return WTF::map(m_associatedElements, [] (auto& weakElement) {
-        auto element = makeRefPtr(weakElement.get());
+        RefPtr element { weakElement.get() };
         ASSERT(element);
         auto* formAssociatedElement = element->asFormAssociatedElement();
         ASSERT(formAssociatedElement);

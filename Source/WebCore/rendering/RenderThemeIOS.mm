@@ -2300,7 +2300,7 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
         return true;
 
     auto& renderMeter = downcast<RenderMeter>(renderer);
-    auto element = makeRefPtr(renderMeter.meterElement());
+    RefPtr element = renderMeter.meterElement();
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);

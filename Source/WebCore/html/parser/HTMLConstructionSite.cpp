@@ -131,7 +131,7 @@ static inline void executeReparentTask(HTMLConstructionSiteTask& task)
     ASSERT(task.operation == HTMLConstructionSiteTask::Reparent);
     ASSERT(!task.nextChild);
 
-    if (auto parent = makeRefPtr(task.child->parentNode()))
+    if (RefPtr parent = task.child->parentNode())
         parent->parserRemoveChild(*task.child);
 
     if (task.child->parentNode())
@@ -161,7 +161,7 @@ static inline void executeTakeAllChildrenAndReparentTask(HTMLConstructionSiteTas
     ASSERT(task.operation == HTMLConstructionSiteTask::TakeAllChildrenAndReparent);
     ASSERT(!task.nextChild);
 
-    auto furthestBlock = makeRefPtr(task.oldParent());
+    RefPtr furthestBlock = task.oldParent();
     task.parent->takeAllChildrenFrom(furthestBlock.get());
 
     RELEASE_ASSERT(!task.parent->parentNode());
@@ -271,7 +271,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
     if (m_isParsingFragment)
         return;
 
-    if (auto frame = makeRefPtr(m_document.frame()))
+    if (RefPtr frame = m_document.frame())
         frame->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 }
 
@@ -779,7 +779,7 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
 
     if (auto* lastTableElementRecord = m_openElements.topmost(tableTag->localName())) {
         auto& lastTableElement = lastTableElementRecord->element();
-        auto parent = makeRefPtr(lastTableElement.parentNode());
+        RefPtr parent = lastTableElement.parentNode();
         // When parsing HTML fragments, we skip step 4.2 ("Let root be a new html element with no attributes") for efficiency,
         // and instead use the DocumentFragment as a root node. So we must treat the root node (DocumentFragment) as if it is a html element here.
         bool parentCanBeFosterParent = parent && (parent->isElementNode() || (m_isParsingFragment && parent == &m_openElements.rootNode()));

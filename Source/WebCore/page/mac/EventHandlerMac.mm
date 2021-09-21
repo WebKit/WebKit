@@ -178,7 +178,7 @@ void EventHandler::focusDocumentView()
     if (!page)
         return;
 
-    if (auto frameView = makeRefPtr(m_frame.view())) {
+    if (RefPtr frameView = m_frame.view()) {
         if (NSView *documentView = frameView->documentView()) {
             page->chrome().focusNSView(documentView);
             // Check page() again because focusNSView can cause reentrancy.

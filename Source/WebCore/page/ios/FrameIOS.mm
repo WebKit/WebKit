@@ -397,7 +397,7 @@ static bool nodeIsMouseFocusable(Node& node)
     if (element.isMouseFocusable())
         return true;
 
-    if (auto shadowRoot = makeRefPtr(element.shadowRoot())) {
+    if (RefPtr shadowRoot = element.shadowRoot()) {
         if (shadowRoot->delegatesFocus()) {
             for (auto& node : composedTreeDescendants(element)) {
                 if (is<Element>(node) && downcast<Element>(node).isMouseFocusable())

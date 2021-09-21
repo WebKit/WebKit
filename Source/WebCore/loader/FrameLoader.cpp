@@ -1344,7 +1344,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     bool isFormSubmission = formState;
 
     // The search for a target frame is done earlier in the case of form submission.
-    auto targetFrame = isFormSubmission ? nullptr : makeRefPtr(findFrameForNavigation(effectiveFrameName));
+    auto targetFrame = isFormSubmission ? nullptr : RefPtr { findFrameForNavigation(effectiveFrameName) };
     if (targetFrame && targetFrame != &m_frame) {
         frameLoadRequest.setFrameName("_self");
         targetFrame->loader().loadURL(WTFMove(frameLoadRequest), referrer, newLoadType, event, WTFMove(formState), WTFMove(privateClickMeasurement), completionHandlerCaller.release());
@@ -2020,7 +2020,7 @@ void FrameLoader::commitProvisionalLoad()
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
         pdl ? pdl->url().stringCenterEllipsizedToLength().utf8().data() : "<no provisional DocumentLoader>", cachedPage.get());
 
-    if (auto document = makeRefPtr(m_frame.document())) {
+    if (RefPtr document = m_frame.document()) {
         // In the case where we're restoring from a cached page, our document will not
         // be connected to its frame yet, so the following call with be a no-op. We will
         // attempt to confirm any active composition once again in this scenario after we
@@ -2105,7 +2105,7 @@ void FrameLoader::commitProvisionalLoad()
     } else
         didOpenURL();
 
-    if (auto document = makeRefPtr(m_frame.document()))
+    if (RefPtr document = m_frame.document())
         document->editor().confirmOrCancelCompositionAndNotifyClient();
 
     LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame.tree().uniqueName().string().utf8().data(),
@@ -2586,7 +2586,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
         }
 
-        if (auto domWindow = makeRefPtr(m_frame.document() ? m_frame.document()->domWindow() : nullptr))
+        if (RefPtr domWindow = m_frame.document() ? m_frame.document()->domWindow() : nullptr)
             domWindow->performance().scheduleNavigationObservationTaskIfNeeded();
 
         const ResourceError& error = m_documentLoader->mainDocumentError();
@@ -3255,8 +3255,8 @@ static bool isSameDocumentReload(bool isNewNavigation, FrameLoadType loadType)
 
 void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url, bool isNewNavigation)
 {
-    auto view = makeRefPtr(m_frame.view());
-    auto document = makeRefPtr(m_frame.document());
+    RefPtr view = m_frame.view();
+    RefPtr document = m_frame.document();
     if (!view || !document)
         return;
 

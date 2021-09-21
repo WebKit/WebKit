@@ -93,14 +93,14 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomStri
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
     if (isInShadowTree() && name == nameAttr) {
-        if (auto shadowRoot = makeRefPtr(containingShadowRoot()))
+        if (RefPtr shadowRoot = containingShadowRoot())
             shadowRoot->renameSlotElement(*this, oldValue, newValue);
     }
 }
 
 const Vector<WeakPtr<Node>>* HTMLSlotElement::assignedNodes() const
 {
-    auto shadowRoot = makeRefPtr(containingShadowRoot());
+    RefPtr shadowRoot = containingShadowRoot();
     if (!shadowRoot)
         return nullptr;
 

@@ -111,7 +111,7 @@ bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
     // Note that we currently do not support foreignObject instantiation via <use>, hence it is safe
     // to use parentElement() here. If that changes, this method should be updated to use
     // parentOrShadowHostElement() instead.
-    auto ancestor = makeRefPtr(parentElement());
+    RefPtr ancestor = parentElement();
     while (ancestor && ancestor->isSVGElement()) {
         if (ancestor->renderer() && ancestor->renderer()->isSVGHiddenContainer())
             return false;

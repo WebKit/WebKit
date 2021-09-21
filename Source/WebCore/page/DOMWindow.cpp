@@ -1289,7 +1289,7 @@ int DOMWindow::innerWidth() const
         return 0;
 
     // Force enough layout in the parent document to ensure that the FrameView has been resized.
-    if (auto ownerElement = makeRefPtr(frameElement()))
+    if (RefPtr ownerElement = frameElement())
         ownerElement->document().updateLayoutIfDimensionsOutOfDate(*ownerElement, WidthDimensionsCheck);
 
     RefPtr frame = this->frame();
@@ -1869,7 +1869,7 @@ void DOMWindow::cancelAnimationFrame(int id)
 
 int DOMWindow::requestIdleCallback(Ref<IdleRequestCallback>&& callback, const IdleRequestOptions& options)
 {
-    auto document = makeRefPtr(this->document());
+    RefPtr document = this->document();
     if (!document)
         return 0;
     return document->requestIdleCallback(WTFMove(callback), Seconds::fromMilliseconds(options.timeout));
@@ -1877,7 +1877,7 @@ int DOMWindow::requestIdleCallback(Ref<IdleRequestCallback>&& callback, const Id
 
 void DOMWindow::cancelIdleCallback(int id)
 {
-    auto document = makeRefPtr(this->document());
+    RefPtr document = this->document();
     if (!document)
         return;
     return document->cancelIdleCallback(id);
@@ -2237,7 +2237,7 @@ bool DOMWindow::removeEventListener(const AtomString& eventType, EventListener& 
 void DOMWindow::languagesChanged()
 {
     // https://html.spec.whatwg.org/multipage/system-state.html#dom-navigator-languages
-    if (auto document = makeRefPtr(this->document()))
+    if (RefPtr document = this->document())
         document->queueTaskToDispatchEventOnWindow(TaskSource::DOMManipulation, Event::create(eventNames().languagechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
@@ -2246,7 +2246,7 @@ void DOMWindow::dispatchLoadEvent()
     // If we did not protect it, the document loader and its timing subobject might get destroyed
     // as a side effect of what event handling code does.
     Ref protectedThis { *this };
-    auto protectedLoader = makeRefPtr(frame() ? frame()->loader().documentLoader() : nullptr);
+    RefPtr protectedLoader = frame() ? frame()->loader().documentLoader() : nullptr;
     bool shouldMarkLoadEventTimes = protectedLoader && !protectedLoader->timing().loadEventStart();
 
     if (shouldMarkLoadEventTimes) {

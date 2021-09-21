@@ -74,7 +74,7 @@ void SubmitInputType::handleDOMActivateEvent(Event& event)
     protectedElement->document().updateLayoutIgnorePendingStylesheets();
 
     protectedElement->setActivatedSubmit(true);
-    if (auto currentForm = makeRefPtr(protectedElement->form()))
+    if (RefPtr currentForm = protectedElement->form())
         currentForm->submitIfPossible(&event, element()); // Event handlers can run.
     protectedElement->setActivatedSubmit(false);
     event.setDefaultHandled();

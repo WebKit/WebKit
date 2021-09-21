@@ -43,7 +43,7 @@ using namespace HTMLNames;
 
 static LabelableElement* firstElementWithIdIfLabelable(TreeScope& treeScope, const AtomString& id)
 {
-    auto element = makeRefPtr(treeScope.getElementById(id));
+    RefPtr element = treeScope.getElementById(id);
     if (!is<LabelableElement>(element))
         return nullptr;
 

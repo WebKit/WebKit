@@ -288,7 +288,7 @@ void SVGFontFaceElement::rebuildFontFace()
 
         unsigned srcLength = srcList ? srcList->length() : 0;
         for (unsigned i = 0; i < srcLength; ++i) {
-            if (auto item = makeRefPtr(downcast<CSSFontFaceSrcValue>(srcList->itemWithoutBoundsCheck(i))))
+            if (RefPtr item = downcast<CSSFontFaceSrcValue>(srcList->itemWithoutBoundsCheck(i)))
                 item->setSVGFontFaceElement(this);
         }
     }

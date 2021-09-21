@@ -209,7 +209,7 @@ RefPtr<SharedBuffer> PasteboardCustomData::readBuffer(const String& type) const
             continue;
 
         if (WTF::holds_alternative<Ref<SharedBuffer>>(entry.platformData))
-            return makeRefPtr(WTF::get<Ref<SharedBuffer>>(entry.platformData).get());
+            return WTF::get<Ref<SharedBuffer>>(entry.platformData).copyRef();
 
         return nullptr;
     }

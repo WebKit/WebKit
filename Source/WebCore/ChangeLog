@@ -1,3 +1,303 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop remaining uses of makeRefPtr() in WebCore/
+        https://bugs.webkit.org/show_bug.cgi?id=230527
+
+        Reviewed by Alex Christensen.
+
+        * html/CustomPaintImage.cpp:
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::DirectoryFileListCreator::start):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::appendFormData const):
+        (WebCore::FileInputType::disabledStateChanged):
+        (WebCore::FileInputType::attributeChanged):
+        (WebCore::FileInputType::filesChosen):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::isActiveSummary const):
+        (WebCore::HTMLDetailsElement::parseAttribute):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::namedItem):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::editabilityFromContentEditableAttr):
+        (WebCore::imageOverlayHost):
+        (WebCore::HTMLElement::isInsideImageOverlay):
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didAttachRenderers):
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::findFormAssociatedElement):
+        (WebCore::HTMLFormControlsCollection::customElementAfter const):
+        (WebCore::HTMLFormControlsCollection::updateNamedElementCache const):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        (WebCore::HTMLFormElement::length const):
+        (WebCore::HTMLFormElement::submitIfPossible):
+        (WebCore::HTMLFormElement::textFieldValues const):
+        (WebCore::HTMLFormElement::effectiveTarget const):
+        (WebCore::HTMLFormElement::elementFromPastNamesMap const):
+        (WebCore::HTMLFormElement::copyAssociatedElementsVector const):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::namedItem):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedByParser):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        (WebCore::HTMLImageElement::evaluateDynamicMediaQueryDependencies):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::firstElementWithIdIfLabelable):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::form const):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        (WebCore::HTMLLinkElement::addSubresourceAttributeURLs const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::removeTextTrack):
+        (WebCore::HTMLMediaElement::layoutSizeChanged):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::shouldBeExposed):
+        (WebCore::HTMLObjectElement::appendFormData):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::recalcSelectOptions):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::bindingsInstance):
+        (WebCore::HTMLPlugInElement::isReplacementObscured):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::isImageType):
+        (WebCore::HTMLPlugInImageElement::willDetachRenderers):
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::attributeChanged):
+        (WebCore::HTMLSlotElement::assignedNodes const):
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::parseAttribute):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::addSubresourceAttributeURLs const):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::findRows):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::mediaElement const):
+        * html/LinkIconCollector.cpp:
+        (WebCore::LinkIconCollector::iconsOfTypes):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        (WebCore::MediaDocument::defaultEventHandler):
+        (WebCore::MediaDocument::replaceMediaElementTimerFired):
+        * html/MediaElementSession.cpp:
+        (WebCore::isElementRectMostlyInMainFrame):
+        (WebCore::isElementLargeRelativeToMainFrame):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        (WebCore::PluginDocumentParser::appendBytes):
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::handleDOMActivateEvent):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::beginQuery):
+        (WebCore::WebGL2RenderingContext::getIndexedParameter):
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGL2RenderingContext::getParameter):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getParameter):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeReparentTask):
+        (WebCore::executeTakeAllChildrenAndReparentTask):
+        (WebCore::HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::generateViolationReport):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+        (WebCore::SearchFieldResultsButtonElement::resolveCustomStyle):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        * html/shadow/TextPlaceholderElement.cpp:
+        (WebCore::TextPlaceholderElement::insertedIntoAncestor):
+        (WebCore::TextPlaceholderElement::removedFromAncestor):
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::updateGenericCue):
+        (WebCore::InbandGenericTextTrack::removeGenericCue):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue):
+        (WebCore::TextTrack::addRegion):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setEmulatedMedia):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::notifyFinished):
+        (WebCore::DocumentLoader::tryLoadingRedirectRequestFromApplicationCache):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::scrollToFragmentWithParentBoundary):
+        * loader/HistoryController.cpp:
+        (WebCore::FrameLoader::HistoryController::restoreScrollPositionAndViewState):
+        * loader/NavigationScheduler.cpp:
+        * loader/SubframeLoader.cpp:
+        (WebCore::FrameLoader::SubframeLoader::loadOrRedirectSubframe):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createCustomFontData):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerWidth const):
+        (WebCore::DOMWindow::requestIdleCallback):
+        (WebCore::DOMWindow::cancelIdleCallback):
+        (WebCore::DOMWindow::languagesChanged):
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/DragController.cpp:
+        (WebCore::DragController::tryToUpdateDroppedImagePlaceholders):
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret):
+        (WebCore::DragController::finalizeDroppedImagePlaceholder):
+        * page/EventHandler.cpp:
+        (WebCore::nodeToSelectOnMouseDownForNode):
+        (WebCore::expandSelectionToRespectSelectOnMouseDown):
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        (WebCore::EventHandler::hitTestResultAtPoint const):
+        (WebCore::EventHandler::scheduleScrollEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragmentInternal):
+        (WebCore::FrameView::scrollToFocusedElementInternal):
+        * page/ImageOverlayController.cpp:
+        (WebCore::ImageOverlayController::selectionQuadsDidChange):
+        * page/Page.cpp:
+        (WebCore::replaceRanges):
+        (WebCore::Page::replaceRangesWithText):
+        (WebCore::Page::setEditableRegionEnabled):
+        (WebCore::Page::editableElementsInRect const):
+        (WebCore::Page::doAfterUpdateRendering):
+        (WebCore::Page::setUnderPageBackgroundColorOverride):
+        (WebCore::Page::didFinishLoadingImageForElement):
+        (WebCore::Page::updateElementsWithTextRecognitionResults):
+        * page/PageColorSampler.cpp:
+        (WebCore::PageColorSampler::sampleTop):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::enqueueEvent):
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange):
+        * page/UndoManager.cpp:
+        (WebCore::UndoManager::addItem):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::focusDocumentView):
+        * page/ios/FrameIOS.mm:
+        (WebCore::nodeIsMouseFocusable):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::focusDocumentView):
+        * page/mac/ImageOverlayControllerMac.mm:
+        (WebCore::ImageOverlayController::updateDataDetectorHighlights):
+        (WebCore::ImageOverlayController::platformHandleMouseEvent):
+        (WebCore::ImageOverlayController::handleDataDetectorAction):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        * platform/PasteboardCustomData.cpp:
+        (WebCore::PasteboardCustomData::readBuffer const):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::setLogger):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setLogger):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::setLogger):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        (WebCore::SourceBufferParserAVFObjC::setLogger):
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoSurfaceBackend::copyNativeImage const):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::setLogger):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::makeWebKitTrack):
+        * platform/network/cocoa/RangeResponseGenerator.mm:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionPseudoStyle const):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintMeter):
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames):
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::makeResolverSharingKey):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::startAnimation):
+        (WebCore::SVGAnimateElementBase::calculateAnimatedValue):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType const):
+        (WebCore::SVGAnimateMotionElement::startAnimation):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::takeElementFromPendingResourcesForRemovalMap):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::removeElementReference):
+        (WebCore::SVGElement::setCorrespondingElement):
+        (WebCore::SVGElement::resolveCustomStyle):
+        (WebCore::SVGElement::computedStyle):
+        (WebCore::SVGElement::updateRelativeLengthsInformation):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build const):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::notifyFinished):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        (WebCore::SVGFELightElement::childrenChanged):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build const):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::invalidateFilterPrimitiveParent):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::childrenChanged):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::childrenChanged):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::rendererIsNeeded):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::determineViewport const):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::frameForCurrentScale const):
+        (WebCore::SVGSVGElement::deselectAll):
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform const):
+        (WebCore::SVGSVGElement::getElementById):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::setDisabled):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::detachTarget):
+        * svg/SVGTransformList.cpp:
+        (WebCore::SVGTransformList::consolidate):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferSizeAttributesToTargetClone const):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::buildPendingResource):
+        (WebCore::SVGSMILElement::insertedIntoAncestor):
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::setContainerSize):
+        (WebCore::SVGImage::draw):
+        (WebCore::SVGImage::reportApproximateMemoryCost const):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::platformApplySoftware):
+        * svg/properties/SVGPropertyAnimator.h:
+        (WebCore::SVGPropertyAnimator::computeCSSPropertyValue const):
+        (WebCore::SVGPropertyAnimator::computeInheritedCSSPropertyValue const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::changeSelectionListType):
+        (WebCore::Internals::changeBackToReplacedString):
+
 2021-09-20  Simon Fraser  <simon.fraser@apple.com>
 
         Wrap ScrollingMomentumCalculator in a ScrollAnimationMomentum when used for scroll snap

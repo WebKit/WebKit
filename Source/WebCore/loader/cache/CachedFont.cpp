@@ -104,7 +104,7 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 
 std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
 {
-    auto buffer = makeRefPtr(bytes);
+    RefPtr buffer { &bytes };
     wrapping = !convertWOFFToSfntIfNecessary(buffer);
     return buffer ? createFontCustomPlatformData(*buffer, itemInCollection) : nullptr;
 }

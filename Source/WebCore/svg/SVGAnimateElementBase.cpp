@@ -151,7 +151,7 @@ void SVGAnimateElementBase::startAnimation()
     if (!targetElement())
         return;
 
-    if (auto protectedAnimator = makeRefPtr(this->animator()))
+    if (RefPtr protectedAnimator = this->animator())
         protectedAnimator->start(*targetElement());
 }
 
@@ -167,7 +167,7 @@ void SVGAnimateElementBase::calculateAnimatedValue(float progress, unsigned repe
     if (calcMode() == CalcMode::Discrete)
         progress = progress < 0.5 ? 0 : 1;
 
-    if (auto protectedAnimator = makeRefPtr(this->animator()))
+    if (RefPtr protectedAnimator = this->animator())
         protectedAnimator->animate(*targetElement(), progress, repeatCount);
 }
 

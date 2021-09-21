@@ -1017,7 +1017,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(const String&
     // FIXME: Schedule a rendering update instead of synchronously updating the layout.
     m_inspectedPage.updateStyleAfterChangeInEnvironment();
 
-    auto document = makeRefPtr(m_inspectedPage.mainFrame().document());
+    RefPtr document = m_inspectedPage.mainFrame().document();
     if (!document)
         return { };
 

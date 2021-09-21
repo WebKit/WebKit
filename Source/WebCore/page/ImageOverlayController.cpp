@@ -74,8 +74,8 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
         if (!HTMLElement::isInsideImageOverlay(*selectedRange))
             return nullptr;
 
-        if (auto host = makeRefPtr(selectedRange->startContainer().shadowHost()); is<HTMLElement>(host))
-            return makeRefPtr(downcast<HTMLElement>(*host));
+        if (RefPtr host = selectedRange->startContainer().shadowHost(); is<HTMLElement>(host))
+            return static_pointer_cast<HTMLElement>(host);
 
         return nullptr;
     })();

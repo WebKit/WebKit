@@ -107,7 +107,7 @@ RefPtr<Frame> SVGSVGElement::frameForCurrentScale() const
     // If the document is embedded, the scaling is handled by the host renderer.
     if (!isConnected() || !isOutermostSVGSVGElement())
         return nullptr;
-    auto frame = makeRefPtr(document().frame());
+    RefPtr frame = document().frame();
     return frame && frame->isMainFrame() ? frame : nullptr;
 }
 
@@ -273,7 +273,7 @@ bool SVGSVGElement::checkEnclosure(Ref<SVGElement>&& element, SVGRect& rect)
 
 void SVGSVGElement::deselectAll()
 {
-    if (auto frame = makeRefPtr(document().frame()))
+    if (RefPtr frame = document().frame())
         frame->selection().clear();
 }
 
@@ -366,7 +366,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
             transform.translate(location.x() - viewBoxTransform.e(), location.y() - viewBoxTransform.f());
 
             // Respect scroll offset.
-            if (auto view = makeRefPtr(document().view())) {
+            if (RefPtr view = document().view()) {
                 LayoutPoint scrollPosition = view->scrollPosition();
                 scrollPosition.scale(zoomFactor);
                 transform.translate(-scrollPosition);
@@ -689,7 +689,7 @@ Element* SVGSVGElement::getElementById(const AtomString& id)
     if (id.isNull())
         return nullptr;
 
-    auto element = makeRefPtr(treeScope().getElementById(id));
+    RefPtr element = treeScope().getElementById(id);
     if (element && element->isDescendantOf(*this))
         return element.get();
     if (treeScope().containsMultipleElementsWithId(id)) {

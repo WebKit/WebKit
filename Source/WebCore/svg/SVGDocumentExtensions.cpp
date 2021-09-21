@@ -258,7 +258,7 @@ RefPtr<Element> SVGDocumentExtensions::takeElementFromPendingResourcesForRemoval
         return nullptr;
 
     auto& resourceSet = it->value;
-    auto firstElement = makeRefPtr(resourceSet.begin().get());
+    RefPtr firstElement = resourceSet.begin().get();
     if (!firstElement)
         return nullptr;
 

@@ -404,7 +404,7 @@ static inline bool shouldBeExposed(const HTMLObjectElement& element)
     // with no children other than param elements, unknown elements and whitespace can be found
     // by name in a document, and other object elements cannot".
 
-    for (auto child = makeRefPtr(element.firstChild()); child; child = child->nextSibling()) {
+    for (RefPtr child = element.firstChild(); child; child = child->nextSibling()) {
         if (preventsParentObjectFromExposure(*child))
             return false;
     }
@@ -480,7 +480,7 @@ bool HTMLObjectElement::appendFormData(DOMFormData& formData, bool)
 
     // Use PluginLoadingPolicy::DoNotLoad here or it would fire JS events synchronously
     // which would not be safe here.
-    auto widget = makeRefPtr(pluginWidget(PluginLoadingPolicy::DoNotLoad));
+    RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
     if (!is<PluginViewBase>(widget))
         return false;
     String value;

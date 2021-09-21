@@ -49,7 +49,7 @@ ExceptionOr<void> UndoManager::addItem(Ref<UndoItem>&& item)
     if (item->undoManager())
         return Exception { InvalidModificationError, "This item has already been added to an UndoManager"_s };
 
-    auto frame = makeRefPtr(m_document.frame());
+    RefPtr frame = m_document.frame();
     if (!frame)
         return Exception { SecurityError, "A browsing context is required to add an UndoItem"_s };
 

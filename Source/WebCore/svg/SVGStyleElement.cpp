@@ -58,7 +58,7 @@ bool SVGStyleElement::disabled() const
 
 void SVGStyleElement::setDisabled(bool setDisabled)
 {
-    if (auto styleSheet = makeRefPtr(sheet()))
+    if (RefPtr styleSheet = sheet())
         styleSheet->setDisabled(setDisabled);
 }
 

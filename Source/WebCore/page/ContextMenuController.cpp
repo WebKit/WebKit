@@ -527,7 +527,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     case ContextMenuItemTagTranslate:
 #if HAVE(TRANSLATION_UI_SERVICES)
-        if (auto view = makeRefPtr(frame->view())) {
+        if (RefPtr view = frame->view()) {
             m_client.handleTranslation({
                 m_context.hitTestResult().selectedText(),
                 view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds())),
@@ -844,7 +844,7 @@ void ContextMenuController::populate()
     if (!m_context.hitTestResult().isContentEditable() && is<HTMLFormControlElement>(*node))
         return;
 #endif
-    auto frame = makeRefPtr(node->document().frame());
+    RefPtr frame = node->document().frame();
     if (!frame)
         return;
 
