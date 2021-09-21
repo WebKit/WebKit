@@ -1,3 +1,16 @@
+2021-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Avoid doing a second server pre-connect after a process-swap
+        https://bugs.webkit.org/show_bug.cgi?id=230517
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid doing a second server pre-connect after a process-swap. It is unnecessary as we've already
+        asked the network process to do so before process-swapping.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigationShared):
+
 2021-09-20  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unused gesture code.

@@ -1409,7 +1409,8 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 
     addPlatformLoadParameters(process, loadParameters);
 
-    preconnectTo(url);
+    if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
+        preconnectTo(url);
 
     navigation.setIsLoadedWithNavigationShared(true);
 
