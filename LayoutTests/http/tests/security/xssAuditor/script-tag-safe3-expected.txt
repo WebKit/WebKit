@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: /This is a safe script./
-

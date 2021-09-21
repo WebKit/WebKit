@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: The Set-Cookie meta tag is obsolete and was ignored. Use the HTTP header Set-Cookie or document.cookie instead.
-CONSOLE MESSAGE: PASS
-

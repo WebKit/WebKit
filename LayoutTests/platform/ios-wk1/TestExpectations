@@ -1105,7 +1105,6 @@ http/tests/security/popup-allowed-by-sandbox-is-sandboxed.html [ Failure ]
 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
 http/tests/security/video-cross-origin-accessfailure.html [ Failure ]
 http/tests/security/video-cross-origin-readback.html [ Failure ]
-http/tests/security/xssAuditor/link-opens-new-window.html [ Failure ]
 
 http/tests/plugins/nounsupported-plugin.html [ Skip ]
 http/tests/plugins/supported-plugin-all-origin-visibility.html [ Skip ]

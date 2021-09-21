@@ -1484,9 +1484,6 @@ Bug(GTK) editing/selection/context-menu-text-selection-lookup.html [ Failure ]
 
 Bug(GTK) http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin.html [ Failure ]
 
-Bug(GTK) http/tests/security/xssAuditor/xss-filter-bypass-big5.html [ Failure ]
-Bug(GTK) http/tests/security/xssAuditor/xss-filter-bypass-sjis.html [ Failure ]
-
 Bug(GTK) fast/backgrounds/background-position-parsing.html [ Failure ]
 
 Bug(GTK) fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]

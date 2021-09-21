@@ -1361,8 +1361,6 @@ html/parser/HTMLSrcsetParser.cpp
 html/parser/HTMLTokenizer.cpp
 html/parser/HTMLTreeBuilder.cpp
 html/parser/TextDocumentParser.cpp
-html/parser/XSSAuditor.cpp
-html/parser/XSSAuditorDelegate.cpp
 html/shadow/AutoFillButtonElement.cpp
 html/shadow/DataListButtonElement.cpp
 html/shadow/DetailsMarkerControl.cpp

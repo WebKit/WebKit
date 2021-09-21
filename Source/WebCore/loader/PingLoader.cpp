@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2015 Roopesh Chander (roop@roopc.net)
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -171,9 +171,6 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     switch (reportType) {
     case ViolationReportType::ContentSecurityPolicy:
         request.setHTTPContentType("application/csp-report"_s);
-        break;
-    case ViolationReportType::XSSAuditor:
-        request.setHTTPContentType("application/json"_s);
         break;
     case ViolationReportType::StandardReportingAPIViolation:
         request.setHTTPContentType("application/reports+json"_s);

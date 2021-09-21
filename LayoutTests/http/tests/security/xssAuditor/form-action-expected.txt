@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/form-action.html&q=%3Cform%20action=http://127.0.0.1:8000/%20method=x%3E%3Cinput%20type=submit%3E%3Cinput%20name=x%20value=%27Please%20type%20your%20PIN.%27%3E&notifyDone=1&showAction=1' because its source code was found within the request. The auditor was enabled because the server did not send an 'X-XSS-Protection' header.
-CONSOLE MESSAGE: Form action set to about:blank
-

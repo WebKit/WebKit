@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,6 @@
 #include "HTMLTokenizer.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
-#include "XSSAuditor.h"
-#include "XSSAuditorDelegate.h"
 
 namespace WebCore {
 
@@ -136,8 +134,6 @@ private:
     std::unique_ptr<HTMLParserScheduler> m_parserScheduler;
     HTMLSourceTracker m_sourceTracker;
     TextPosition m_textPosition;
-    XSSAuditor m_xssAuditor;
-    XSSAuditorDelegate m_xssAuditorDelegate;
 
     std::unique_ptr<HTMLResourcePreloader> m_preloader;
 

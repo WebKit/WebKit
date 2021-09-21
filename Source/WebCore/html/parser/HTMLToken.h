@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google, Inc. All Rights Reserved.
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,8 +117,6 @@ public:
     void setAttributeBaseOffset(unsigned attributeBaseOffset) { m_attributeBaseOffset = attributeBaseOffset; }
 
 public:
-    // Used by the XSSAuditor to nuke XSS-laden attributes.
-    void eraseValueOfAttribute(unsigned index);
     void appendToAttributeValue(unsigned index, StringView value);
 
     // Character.
@@ -359,14 +357,6 @@ inline const HTMLToken::AttributeList& HTMLToken::attributes() const
 {
     ASSERT(m_type == StartTag || m_type == EndTag);
     return m_attributes;
-}
-
-// Used by the XSSAuditor to nuke XSS-laden attributes.
-inline void HTMLToken::eraseValueOfAttribute(unsigned i)
-{
-    ASSERT(m_type == StartTag || m_type == EndTag);
-    ASSERT(i < m_attributes.size());
-    m_attributes[i].value.clear();
 }
 
 inline const HTMLToken::DataVector& HTMLToken::characters() const

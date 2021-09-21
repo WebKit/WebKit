@@ -1,3 +1,32 @@
+2021-09-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove XSS Auditor: Part 2 (Remove engine support)
+        https://bugs.webkit.org/show_bug.cgi?id=230499
+        <rdar://problem/83318883>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch removes the implementation of the XSS Auditor from the engine, but leave the API in place so that
+        client software doesn't see any change in interface.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::pumpTokenizerLoop):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::attributes const):
+        (WebCore::HTMLToken::eraseValueOfAttribute): Deleted.
+        * html/parser/XSSAuditor.cpp: Removed.
+        * html/parser/XSSAuditor.h: Removed.
+        * html/parser/XSSAuditorDelegate.cpp: Removed.
+        * html/parser/XSSAuditorDelegate.h: Removed.
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/PingLoader.h:
+
 2021-09-21  David Kilzer  <ddkilzer@apple.com>
 
         Rename {checked,dynamic}_ns_cast<> to {checked,dynamic}_objc_cast<>
