@@ -66,12 +66,10 @@ WebSocketChannel::WebSocketChannel(Document& document, WebSocketChannelClient& c
     , m_client(makeWeakPtr(client))
     , m_resumeTimer(*this, &WebSocketChannel::resumeTimerFired)
     , m_closingTimer(*this, &WebSocketChannel::closingTimerFired)
+    , m_progressIdentifier(WebSocketChannelIdentifier::generateThreadSafe())
     , m_socketProvider(provider)
 {
-    if (Page* page = document.page())
-        m_progressIdentifier = page->progress().createUniqueIdentifier();
-
-    LOG(Network, "WebSocketChannel %p ctor, progress identifier %u", this, m_progressIdentifier);
+    LOG(Network, "WebSocketChannel %p ctor, progress identifier %" PRIu64, this, m_progressIdentifier.toUInt64());
 }
 
 WebSocketChannel::~WebSocketChannel()

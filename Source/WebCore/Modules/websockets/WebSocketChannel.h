@@ -40,6 +40,7 @@
 #include "WebSocketHandshake.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
@@ -56,6 +57,8 @@ class SocketProvider;
 class SocketStreamHandle;
 class SocketStreamError;
 class WebSocketChannelClient;
+class WebSocketChannel;
+using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel>;
 
 class WebSocketChannel final : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel, public FileReaderLoaderClient
 {
@@ -114,7 +117,7 @@ public:
     void didFinishLoading() override;
     void didFail(ExceptionCode errorCode) override;
 
-    unsigned long progressIdentifier() const final { return m_progressIdentifier; }
+    WebSocketChannelIdentifier progressIdentifier() const final { return m_progressIdentifier; }
     bool hasCreatedHandshake() const final { return !!m_handshake; }
     bool isConnected() const final { return m_handshake->mode() == WebSocketHandshake::Mode::Connected; }
     ResourceRequest clientHandshakeRequest(const CookieGetter&) const final;
@@ -209,7 +212,7 @@ private:
     bool m_shouldDiscardReceivedData { false };
     unsigned m_unhandledBufferedAmount { 0 };
 
-    unsigned m_progressIdentifier { 0 }; // m_progressIdentifier == 0 means that we could not obtain a progress identifier.
+    WebSocketChannelIdentifier m_progressIdentifier;
 
     // Private members only for hybi-10 protocol.
     bool m_hasContinuousFrame { false };

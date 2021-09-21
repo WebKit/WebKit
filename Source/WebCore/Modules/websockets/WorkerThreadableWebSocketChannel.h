@@ -160,7 +160,7 @@ private:
 
     class WorkerGlobalScopeDidInitializeTask;
     
-    unsigned long progressIdentifier() const final { return 0; }
+    WebSocketChannelIdentifier progressIdentifier() const final { return m_progressIdentifier; }
     // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
     // Dummy implementation of inspector related APIs.
     bool hasCreatedHandshake() const final { return false; }
@@ -174,6 +174,7 @@ private:
     Ref<SocketProvider> m_socketProvider;
     ResourceRequest m_handshakeRequest;
     ResourceResponse m_handshakeResponse;
+    WebSocketChannelIdentifier m_progressIdentifier;
 };
 
 } // namespace WebCore

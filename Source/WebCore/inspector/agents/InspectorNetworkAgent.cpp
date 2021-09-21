@@ -779,46 +779,46 @@ Ref<Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Do
         .release();
 }
 
-void InspectorNetworkAgent::didCreateWebSocket(unsigned long identifier, const URL& requestURL)
+void InspectorNetworkAgent::didCreateWebSocket(WebSocketChannelIdentifier identifier, const URL& requestURL)
 {
-    m_frontendDispatcher->webSocketCreated(IdentifiersFactory::requestId(identifier), requestURL.string());
+    m_frontendDispatcher->webSocketCreated(IdentifiersFactory::requestId(identifier.toUInt64()), requestURL.string());
 }
 
-void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest& request)
+void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
     auto requestObject = Protocol::Network::WebSocketRequest::create()
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
-    m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier), timestamp(), WallTime::now().secondsSinceEpoch().seconds(), WTFMove(requestObject));
+    m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), WallTime::now().secondsSinceEpoch().seconds(), WTFMove(requestObject));
 }
 
-void InspectorNetworkAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const ResourceResponse& response)
+void InspectorNetworkAgent::didReceiveWebSocketHandshakeResponse(WebSocketChannelIdentifier identifier, const ResourceResponse& response)
 {
     auto responseObject = Protocol::Network::WebSocketResponse::create()
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
         .setHeaders(buildObjectForHeaders(response.httpHeaderFields()))
         .release();
-    m_frontendDispatcher->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier), timestamp(), WTFMove(responseObject));
+    m_frontendDispatcher->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), WTFMove(responseObject));
 }
 
-void InspectorNetworkAgent::didCloseWebSocket(unsigned long identifier)
+void InspectorNetworkAgent::didCloseWebSocket(WebSocketChannelIdentifier identifier)
 {
-    m_frontendDispatcher->webSocketClosed(IdentifiersFactory::requestId(identifier), timestamp());
+    m_frontendDispatcher->webSocketClosed(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp());
 }
 
-void InspectorNetworkAgent::didReceiveWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
+void InspectorNetworkAgent::didReceiveWebSocketFrame(WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
-    m_frontendDispatcher->webSocketFrameReceived(IdentifiersFactory::requestId(identifier), timestamp(), buildWebSocketMessage(frame));
+    m_frontendDispatcher->webSocketFrameReceived(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), buildWebSocketMessage(frame));
 }
-void InspectorNetworkAgent::didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame& frame)
+void InspectorNetworkAgent::didSendWebSocketFrame(WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
-    m_frontendDispatcher->webSocketFrameSent(IdentifiersFactory::requestId(identifier), timestamp(), buildWebSocketMessage(frame));
+    m_frontendDispatcher->webSocketFrameSent(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), buildWebSocketMessage(frame));
 }
 
-void InspectorNetworkAgent::didReceiveWebSocketFrameError(unsigned long identifier, const String& errorMessage)
+void InspectorNetworkAgent::didReceiveWebSocketFrameError(WebSocketChannelIdentifier identifier, const String& errorMessage)
 {
-    m_frontendDispatcher->webSocketFrameError(IdentifiersFactory::requestId(identifier), timestamp(), errorMessage);
+    m_frontendDispatcher->webSocketFrameError(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), errorMessage);
 }
 
 Protocol::ErrorStringOr<void> InspectorNetworkAgent::enable()
@@ -1013,7 +1013,7 @@ WebSocket* InspectorNetworkAgent::webSocketForRequestId(const Protocol::Network:
     Locker locker { WebSocket::allActiveWebSocketsLock() };
 
     for (auto* webSocket : activeWebSockets()) {
-        if (IdentifiersFactory::requestId(webSocket->channel()->progressIdentifier()) == requestId)
+        if (IdentifiersFactory::requestId(webSocket->channel()->progressIdentifier().toUInt64()) == requestId)
             return webSocket;
     }
 

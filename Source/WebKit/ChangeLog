@@ -1,3 +1,12 @@
+2021-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Use typed identifier for WebSocketChannel identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=230486
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/Network/WebSocketChannel.h:
+
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
         Ensure that capture attribution works even for URLS without hostnames

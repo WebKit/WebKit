@@ -54,6 +54,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(WEBGL)
@@ -94,12 +95,14 @@ class ShadowRoot;
 class SharedBuffer;
 class TimerBase;
 class WebKitNamedFlow;
+class WebSocketChannel;
 class WorkerOrWorkletGlobalScope;
 
 #if ENABLE(WEBGL)
 class WebGLProgram;
 #endif
 
+using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel>;
 enum class StorageType : uint8_t;
 
 struct ComputedEffectTiming;
@@ -271,13 +274,13 @@ public:
     static void workerStarted(WorkerInspectorProxy&);
     static void workerTerminated(WorkerInspectorProxy&);
 
-    static void didCreateWebSocket(Document*, unsigned long identifier, const URL& requestURL);
-    static void willSendWebSocketHandshakeRequest(Document*, unsigned long identifier, const ResourceRequest&);
-    static void didReceiveWebSocketHandshakeResponse(Document*, unsigned long identifier, const ResourceResponse&);
-    static void didCloseWebSocket(Document*, unsigned long identifier);
-    static void didReceiveWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
-    static void didSendWebSocketFrame(Document*, unsigned long identifier, const WebSocketFrame&);
-    static void didReceiveWebSocketFrameError(Document*, unsigned long identifier, const String& errorMessage);
+    static void didCreateWebSocket(Document*, WebSocketChannelIdentifier, const URL& requestURL);
+    static void willSendWebSocketHandshakeRequest(Document*, WebSocketChannelIdentifier, const ResourceRequest&);
+    static void didReceiveWebSocketHandshakeResponse(Document*, WebSocketChannelIdentifier, const ResourceResponse&);
+    static void didCloseWebSocket(Document*, WebSocketChannelIdentifier);
+    static void didReceiveWebSocketFrame(Document*, WebSocketChannelIdentifier, const WebSocketFrame&);
+    static void didSendWebSocketFrame(Document*, WebSocketChannelIdentifier, const WebSocketFrame&);
+    static void didReceiveWebSocketFrameError(Document*, WebSocketChannelIdentifier, const String& errorMessage);
 
 #if ENABLE(RESOURCE_USAGE)
     static void didHandleMemoryPressure(Page&, Critical);
@@ -471,13 +474,13 @@ private:
     static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
     static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy&);
 
-    static void didCreateWebSocketImpl(InstrumentingAgents&, unsigned long identifier, const URL& requestURL);
-    static void willSendWebSocketHandshakeRequestImpl(InstrumentingAgents&, unsigned long identifier, const ResourceRequest&);
-    static void didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents&, unsigned long identifier, const ResourceResponse&);
-    static void didCloseWebSocketImpl(InstrumentingAgents&, unsigned long identifier);
-    static void didReceiveWebSocketFrameImpl(InstrumentingAgents&, unsigned long identifier, const WebSocketFrame&);
-    static void didSendWebSocketFrameImpl(InstrumentingAgents&, unsigned long identifier, const WebSocketFrame&);
-    static void didReceiveWebSocketFrameErrorImpl(InstrumentingAgents&, unsigned long identifier, const String&);
+    static void didCreateWebSocketImpl(InstrumentingAgents&, WebSocketChannelIdentifier, const URL& requestURL);
+    static void willSendWebSocketHandshakeRequestImpl(InstrumentingAgents&, WebSocketChannelIdentifier, const ResourceRequest&);
+    static void didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents&, WebSocketChannelIdentifier, const ResourceResponse&);
+    static void didCloseWebSocketImpl(InstrumentingAgents&, WebSocketChannelIdentifier);
+    static void didReceiveWebSocketFrameImpl(InstrumentingAgents&, WebSocketChannelIdentifier, const WebSocketFrame&);
+    static void didSendWebSocketFrameImpl(InstrumentingAgents&, WebSocketChannelIdentifier, const WebSocketFrame&);
+    static void didReceiveWebSocketFrameErrorImpl(InstrumentingAgents&, WebSocketChannelIdentifier, const String&);
 
 #if ENABLE(RESOURCE_USAGE)
     static void didHandleMemoryPressureImpl(InstrumentingAgents&, Critical);
@@ -1327,49 +1330,49 @@ inline void InspectorInstrumentation::workerTerminated(WorkerInspectorProxy& pro
         workerTerminatedImpl(*agents, proxy);
 }
 
-inline void InspectorInstrumentation::didCreateWebSocket(Document* document, unsigned long identifier, const URL& requestURL)
+inline void InspectorInstrumentation::didCreateWebSocket(Document* document, WebSocketChannelIdentifier identifier, const URL& requestURL)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
         didCreateWebSocketImpl(*agents, identifier, requestURL);
 }
 
-inline void InspectorInstrumentation::willSendWebSocketHandshakeRequest(Document* document, unsigned long identifier, const ResourceRequest& request)
+inline void InspectorInstrumentation::willSendWebSocketHandshakeRequest(Document* document, WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
         willSendWebSocketHandshakeRequestImpl(*agents, identifier, request);
 }
 
-inline void InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(Document* document, unsigned long identifier, const ResourceResponse& response)
+inline void InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(Document* document, WebSocketChannelIdentifier identifier, const ResourceResponse& response)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
         didReceiveWebSocketHandshakeResponseImpl(*agents, identifier, response);
 }
 
-inline void InspectorInstrumentation::didCloseWebSocket(Document* document, unsigned long identifier)
+inline void InspectorInstrumentation::didCloseWebSocket(Document* document, WebSocketChannelIdentifier identifier)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
         didCloseWebSocketImpl(*agents, identifier);
 }
 
-inline void InspectorInstrumentation::didReceiveWebSocketFrame(Document* document, unsigned long identifier, const WebSocketFrame& frame)
+inline void InspectorInstrumentation::didReceiveWebSocketFrame(Document* document, WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
         didReceiveWebSocketFrameImpl(*agents, identifier, frame);
 }
 
-inline void InspectorInstrumentation::didReceiveWebSocketFrameError(Document* document, unsigned long identifier, const String& errorMessage)
+inline void InspectorInstrumentation::didReceiveWebSocketFrameError(Document* document, WebSocketChannelIdentifier identifier, const String& errorMessage)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
         didReceiveWebSocketFrameErrorImpl(*agents, identifier, errorMessage);
 }
 
-inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, unsigned long identifier, const WebSocketFrame& frame)
+inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, WebSocketChannelIdentifier identifier, const WebSocketFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))

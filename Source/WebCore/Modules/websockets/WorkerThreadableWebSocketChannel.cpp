@@ -55,6 +55,7 @@ WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerGlobalS
     , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(context, client))
     , m_bridge(Bridge::create(m_workerClientWrapper.copyRef(), m_workerGlobalScope.copyRef(), taskMode, provider))
     , m_socketProvider(provider)
+    , m_progressIdentifier(WebSocketChannelIdentifier::generateThreadSafe())
 {
     m_bridge->initialize();
 }

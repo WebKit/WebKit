@@ -75,8 +75,6 @@ public:
     long long estimatedLength;
 };
 
-unsigned long ProgressTracker::s_uniqueIdentifier = 0;
-
 ProgressTracker::ProgressTracker(UniqueRef<ProgressTrackerClient>&& client)
     : m_client(WTFMove(client))
     , m_progressHeartbeatTimer(*this, &ProgressTracker::progressHeartbeatTimerFired)
@@ -281,12 +279,6 @@ void ProgressTracker::completeProgress(ResourceLoaderIdentifier identifier)
     m_totalPageAndResourceBytesToLoad += delta;
 
     m_progressItems.remove(it);
-}
-
-unsigned long ProgressTracker::createUniqueIdentifier()
-{
-    // FIXME: Use a strongly typed identifier for websockets and remove this.
-    return ++s_uniqueIdentifier;
 }
 
 bool ProgressTracker::isMainLoadProgressing() const

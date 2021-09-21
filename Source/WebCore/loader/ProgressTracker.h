@@ -49,8 +49,6 @@ public:
 
     ProgressTrackerClient& client() { return m_client.get(); }
 
-    static unsigned long createUniqueIdentifier();
-
     WEBCORE_EXPORT double estimatedProgress() const;
 
     void progressStarted(Frame&);
@@ -70,8 +68,6 @@ private:
     void finalProgressComplete();
 
     void progressHeartbeatTimerFired();
-
-    static unsigned long s_uniqueIdentifier;
 
     UniqueRef<ProgressTrackerClient> m_client;
     RefPtr<Frame> m_originatingProgressFrame;
