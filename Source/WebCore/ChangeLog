@@ -1,3 +1,19 @@
+2021-09-21  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Implement fallbackFontsForRun for IFC
+        https://bugs.webkit.org/show_bug.cgi?id=230561
+
+        Reviewed by Antti Koivisto.
+
+        fallbackFontsForRun collects all the non-primary fonts used by a text run. It also takes soft hyphens into account but only when they are actually
+        part of the rendered content.
+        This function is called while we construct the final runs for a line and parent inline boxes (parent of the text runs)
+        need to know their enclosing layout bounds (glyphs from fallback font may stretch the parent inline box).
+
+        * layout/formattingContexts/inline/text/TextUtil.cpp:
+        (WebCore::Layout::fallbackFontsForRunWithIterator):
+        (WebCore::Layout::TextUtil::fallbackFontsForRun):
+
 2021-09-21  Joonghun Park  <pjh0718@gmail.com>
 
         Fix the behavior that 3d translation's second value is serialized to 0px regardless of its specified unit if it is zero value.

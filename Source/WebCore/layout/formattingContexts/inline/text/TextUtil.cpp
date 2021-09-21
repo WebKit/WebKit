@@ -31,9 +31,11 @@
 #include "BreakLines.h"
 #include "FontCascade.h"
 #include "InlineTextItem.h"
+#include "Latin1TextIterator.h"
 #include "LayoutInlineTextBox.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
+#include "SurrogatePairAwareTextIterator.h"
 
 namespace WebCore {
 namespace Layout {
@@ -84,11 +86,57 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned fr
     return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
 }
 
+template <typename TextIterator>
+static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts, const FontCascade& fontCascade, const TextRun& run, TextIterator& textIterator)
+{
+    auto isRTL = run.rtl();
+    auto isSmallCaps = fontCascade.isSmallCaps();
+    auto& primaryFont = fontCascade.primaryFont();
+
+    UChar32 currentCharacter = 0;
+    unsigned clusterLength = 0;
+    while (textIterator.consume(currentCharacter, clusterLength)) {
+
+        auto addFallbackFontForCharacterIfApplicable = [&](auto character) {
+            if (isSmallCaps && character != u_toupper(character))
+                character = u_toupper(character);
+
+            auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
+            if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont)
+                fallbackFonts.add(glyphData.font);
+        };
+        addFallbackFontForCharacterIfApplicable(currentCharacter);
+        textIterator.advance(clusterLength);
+    }
+}
+
 TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run)
 {
-    UNUSED_PARAM(run);
+    ASSERT(run.isText());
+    auto& inlineTextBox = downcast<InlineTextBox>(run.layoutBox());
+    if (inlineTextBox.canUseSimplifiedContentMeasuring()) {
+        // Simplified text measuring works with primary font only.
+        return { };
+    }
 
-    return { };
+    auto& style = run.style();
+    TextUtil::FallbackFontList fallbackFonts;
+
+    auto collectFallbackFonts = [&](const auto& textRun) {
+        if (textRun.is8Bit()) {
+            auto textIterator = Latin1TextIterator { textRun.data8(0), 0, textRun.length(), textRun.length() };
+            fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
+            return;
+        }
+        auto textIterator = SurrogatePairAwareTextIterator { textRun.data16(0), 0, textRun.length(), textRun.length() };
+        fallbackFontsForRunWithIterator(fallbackFonts, style.fontCascade(), textRun, textIterator);
+    };
+
+    auto text = *run.textContent();
+    if (text.needsHyphen)
+        collectFallbackFonts(TextRun { StringView(style.hyphenString().string()), { }, { }, DefaultExpansion, style.direction() });
+    collectFallbackFonts(TextRun { StringView(inlineTextBox.content()).substring(text.start, text.length), { }, { }, DefaultExpansion, style.direction() });
+    return fallbackFonts;
 }
 
 TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
