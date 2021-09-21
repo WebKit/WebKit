@@ -62,6 +62,8 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << wtfLoggingChannels;
     encoder << webCoreLoggingChannels;
     encoder << webKitLoggingChannels;
+
+    encoder << applicationVisibleName;
 }
 
 bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreationParameters& result)
@@ -115,6 +117,9 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
     if (!decoder.decode(result.webCoreLoggingChannels))
         return false;
     if (!decoder.decode(result.webKitLoggingChannels))
+        return false;
+
+    if (!decoder.decode(result.applicationVisibleName))
         return false;
 
     return true;
