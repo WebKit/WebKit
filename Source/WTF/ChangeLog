@@ -1,3 +1,60 @@
+2021-09-21  Philip Chimento  <philip.chimento@gmail.com>
+
+        Add LLVM/FLang's int128_t implementation to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=230437
+
+        Added int128_t implementation from LLVM, and its dependency
+        LeadingZeroBitCount.h. Both reformatted according to WebKit style.
+
+        Reviewed by Yusuke Suzuki.
+
+        * LICENSE-LLVM.txt: Added.
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Int128.h: Added.
+        (WTF::Int128Impl::Int128Impl):
+        (WTF::Int128Impl::operator+ const):
+        (WTF::Int128Impl::operator~ const):
+        (WTF::Int128Impl::operator- const):
+        (WTF::Int128Impl::operator! const):
+        (WTF::Int128Impl::operator bool const):
+        (WTF::Int128Impl::operator std::uint64_t const):
+        (WTF::Int128Impl::operator std::int64_t const):
+        (WTF::Int128Impl::operator int const):
+        (WTF::Int128Impl::high const):
+        (WTF::Int128Impl::low const):
+        (WTF::Int128Impl::operator++):
+        (WTF::Int128Impl::operator--):
+        (WTF::Int128Impl::operator& const):
+        (WTF::Int128Impl::operator |  const):
+        (WTF::Int128Impl::operator^ const):
+        (WTF::Int128Impl::operator<< const):
+        (WTF::Int128Impl::operator>> const):
+        (WTF::Int128Impl::operator* const):
+        (WTF::Int128Impl::operator/ const):
+        (WTF::Int128Impl::operator% const):
+        (WTF::Int128Impl::operator< const):
+        (WTF::Int128Impl::operator<= const):
+        (WTF::Int128Impl::operator== const):
+        (WTF::Int128Impl::operator!= const):
+        (WTF::Int128Impl::operator>= const):
+        (WTF::Int128Impl::operator> const):
+        (WTF::Int128Impl::operator&=):
+        (WTF::Int128Impl::operator|=):
+        (WTF::Int128Impl::operator^=):
+        (WTF::Int128Impl::operator<<=):
+        (WTF::Int128Impl::operator>>=):
+        (WTF::Int128Impl::operator+=):
+        (WTF::Int128Impl::operator-=):
+        (WTF::Int128Impl::operator*=):
+        (WTF::Int128Impl::operator/=):
+        (WTF::Int128Impl::operator%=):
+        (WTF::Int128Impl::leadingZeroes const):
+        * wtf/LeadingZeroBitCount.cpp: Added.
+        * wtf/LeadingZeroBitCount.h: Added.
+        (WTF::leadingZeroBitCount):
+        (WTF::bitsNeededFor):
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of makeRefPtr() and use RefPtr { } directly

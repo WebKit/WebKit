@@ -49,10 +49,12 @@ set(TestWTF_SOURCES
     Tests/WTF/Hasher.cpp
     Tests/WTF/HexNumber.cpp
     Tests/WTF/IndexSparseSet.cpp
+    Tests/WTF/Int128.cpp
     Tests/WTF/IntegerToStringConversion.cpp
     Tests/WTF/IteratorRange.cpp
     Tests/WTF/JSONValue.cpp
     Tests/WTF/LEBDecoder.cpp
+    Tests/WTF/LeadingZeroBitCount.cpp
     Tests/WTF/LifecycleLogger.cpp
     Tests/WTF/LineEnding.cpp
     Tests/WTF/ListHashSet.cpp

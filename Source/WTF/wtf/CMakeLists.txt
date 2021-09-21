@@ -103,6 +103,7 @@ set(WTF_PUBLIC_HEADERS
     InlineASM.h
     Insertion.h
     InstanceCounted.h
+    Int128.h
     InterferenceGraph.h
     IsoMalloc.h
     IsoMallocInlines.h
@@ -113,6 +114,7 @@ set(WTF_PUBLIC_HEADERS
     KeyValuePair.h
     LEBDecoder.h
     Language.h
+    LeadingZeroBitCount.h
     LikelyDenseUnsignedIntegerSet.h
     ListDump.h
     ListHashSet.h
@@ -423,6 +425,7 @@ set(WTF_SOURCES
     JSONValues.cpp
     JSValueMalloc.cpp
     Language.cpp
+    LeadingZeroBitCount.cpp
     LikelyDenseUnsignedIntegerSet.cpp
     Lock.cpp
     LockedPrintStream.cpp
