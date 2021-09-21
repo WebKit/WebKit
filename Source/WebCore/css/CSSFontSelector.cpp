@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *           (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -135,6 +135,8 @@ void CSSFontSelector::buildStarted()
         if (face.cssConnection())
             m_cssConnectionsPossiblyToRemove.add(&face);
     }
+
+    m_paletteFamilyMap.clear();
 }
 
 void CSSFontSelector::buildCompleted()
@@ -229,6 +231,15 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     ++m_version;
 }
 
+void CSSFontSelector::addFontPaletteValuesRule(StyleRuleFontPaletteValues& fontPaletteValuesRule)
+{
+    m_paletteFamilyMap.ensure(std::make_pair(fontPaletteValuesRule.fontFamily(), fontPaletteValuesRule.name()), [&] () {
+        return fontPaletteValuesRule.fontPaletteValues();
+    });
+
+    ++m_version;
+}
+
 void CSSFontSelector::registerForInvalidationCallbacks(FontSelectorClient& client)
 {
     m_clients.add(&client);
@@ -319,6 +330,8 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
         if (auto genericFamilyOptional = resolveGenericFamily(fontDescription, familyName))
             familyForLookup = *genericFamilyOptional;
     };
+
+    // FIXME https://bugs.webkit.org/show_bug.cgi?id=230449: Query for font palette data and pass it into the font creation routines.
 
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
