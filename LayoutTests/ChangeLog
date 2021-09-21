@@ -1,3 +1,12 @@
+2021-09-21  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ Monterey GuardMalloc ] accessibility/* tests are timing out.
+        <rdar://82147955>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Removed expectations
+
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
         [BigSur E Wk2 Release] imported/w3c/web-platform-tests/webrtc/RTCRtpSender-encode-same-track-twice.https.html in flaky failure
