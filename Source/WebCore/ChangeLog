@@ -1,3 +1,25 @@
+2021-09-21  Chris Lord  <clord@igalia.com>
+
+        imported/w3c/web-platform-tests/css/css-font-loading/fontfaceset-load-var.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=229727
+        <rdar://problem/82834470>
+
+        Reviewed by Darin Adler.
+
+        Don't use CalcParser in raw CSS parsing functions that don't accept
+        a CSSValuePool parameter.
+
+        No new tests, covered by existing tests.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeCalcRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerTypeRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumePercentRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthOrPercentRaw):
+
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Push font-palette-values data into CSSFontSelector
