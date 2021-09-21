@@ -105,6 +105,10 @@ bool defaultVP9SWDecoderEnabledOnBattery();
 bool defaultWebMParserEnabled();
 #endif
 
+#if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
+bool defaultMediaSourceEnabled();
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled();
 #endif

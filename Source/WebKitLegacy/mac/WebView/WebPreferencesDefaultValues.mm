@@ -275,13 +275,25 @@ bool defaultWheelEventGesturesBecomeNonBlocking()
 
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
+bool defaultMediaSourceEnabled()
+{
+#if PLATFORM(MACCATALYST)
+    return true;
+#elif PLATFORM(IOS)
+    return WebCore::deviceClass() != MGDeviceClassiPhone
+        && WebCore::deviceClass() != MGDeviceClassiPod;
+#else
+    return false;
+#endif
+}
+#endif
 
+#if ENABLE(MEDIA_SOURCE)
 bool defaultWebMParserEnabled()
 {
     return isFeatureFlagEnabled("webm_parser", true);
 }
-
 #endif // ENABLE(MEDIA_SOURCE)
 
 #if ENABLE(VP9)

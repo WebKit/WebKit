@@ -1435,15 +1435,16 @@ MediaSourceEnabled:
   type: bool
   defaultValue:
     WebKitLegacy:
-      default: true
+      "ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)": WebKit::defaultMediaSourceEnabled()
+      "ENABLE(MEDIA_SOURCE) && !PLATFORM(IOS_FAMILY)": true
+      default: false
     WebKit:
-      "PLATFORM(COCOA) && PLATFORM(MAC)": true
-      "PLATFORM(COCOA) && !PLATFORM(MAC)": false
-      default: true
+      "ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)": WebKit::defaultMediaSourceEnabled()
+      "ENABLE(MEDIA_SOURCE) && !PLATFORM(IOS_FAMILY)": true
+      default: false
     WebCore:
-      "PLATFORM(COCOA) && PLATFORM(MAC)": true
-      "PLATFORM(COCOA) && !PLATFORM(MAC)": false
-      default: true
+      "ENABLE(MEDIA_SOURCE)": true
+      default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 # FIXME: Seems to be unused. Remove once verified.

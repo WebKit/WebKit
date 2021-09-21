@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UserInterfaceIdiom.h"
+#import <WebCore/Device.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 
@@ -60,6 +61,20 @@ bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload()
 void setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(bool allowsRequest)
 {
     cachedAllowsRequest() = allowsRequest;
+}
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+bool defaultMediaSourceEnabled()
+{
+#if PLATFORM(MACCATALYST)
+    return true;
+#elif PLATFORM(IOS)
+    return WebCore::deviceClass() != MGDeviceClassiPhone
+        && WebCore::deviceClass() != MGDeviceClassiPod;
+#else
+    return false;
+#endif
 }
 #endif
 

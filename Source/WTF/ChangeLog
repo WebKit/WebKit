@@ -1,3 +1,14 @@
+2021-09-21  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Enable MSE in WKWebViews by default on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=230426
+
+        Reviewed by Tim Horton.
+
+        Give a default value getter for the MediaSourceEnabled preference.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
 2021-09-21  Philip Chimento  <philip.chimento@gmail.com>
 
         Add LLVM/FLang's int128_t implementation to WTF

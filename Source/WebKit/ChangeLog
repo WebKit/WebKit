@@ -1,3 +1,18 @@
+2021-09-21  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Enable MSE in WKWebViews by default on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=230426
+
+        Reviewed by Tim Horton.
+
+        Add a default value getter for the MediaSourceEnabled preference.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultMediaSourceEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/ios/WebPreferencesDefaultValuesIOS.mm:
+        (WebKit::defaultMediaSourceEnabled):
+
 2021-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Use typed identifier for WebSocketChannel identifiers
