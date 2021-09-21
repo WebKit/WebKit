@@ -88,6 +88,9 @@ bool LayerTreeHost::flushPendingLayerChanges()
 
 void LayerTreeHost::layerFlushTimerFired()
 {
+    if (m_isSuspended)
+        return;
+
     if (m_notifyAfterScheduledLayerFlush) {
         m_webPage.drawingArea()->layerHostDidFlushLayers();
         m_notifyAfterScheduledLayerFlush = false;
@@ -238,10 +241,12 @@ void LayerTreeHost::sizeDidChange(const WebCore::IntSize& newSize)
 
 void LayerTreeHost::pauseRendering()
 {
+    m_isSuspended = true;
 }
 
 void LayerTreeHost::resumeRendering()
 {
+    m_isSuspended = false;
 }
 
 WebCore::GraphicsLayerFactory* LayerTreeHost::graphicsLayerFactory()

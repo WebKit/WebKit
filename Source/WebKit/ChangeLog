@@ -1,3 +1,19 @@
+2021-09-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] jquery/offset.html is randomly failing an assertion in DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers
+        https://bugs.webkit.org/show_bug.cgi?id=230531
+
+        Reviewed by Don Olmstead.
+
+        DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers shouldn't
+        be called while LayerTreeHost is paused by pauseRendering().
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.cpp:
+        (WebKit::LayerTreeHost::layerFlushTimerFired):
+        (WebKit::LayerTreeHost::pauseRendering):
+        (WebKit::LayerTreeHost::resumeRendering):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHostTextureMapper.h: Added m_isSuspended.
+
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
         NetworkRTCUDPSocketCocoaConnections should handle NAT64 IP addresses correctly

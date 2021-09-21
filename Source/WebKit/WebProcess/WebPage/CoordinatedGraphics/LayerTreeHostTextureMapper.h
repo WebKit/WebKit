@@ -106,6 +106,7 @@ private:
     WebCore::TextureMapperFPSCounter m_fpsCounter;
     WebCore::Timer m_layerFlushTimer;
     bool m_notifyAfterScheduledLayerFlush { false };
+    bool m_isSuspended { false };
 };
 
 } // namespace WebKit
