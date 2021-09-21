@@ -1,3 +1,16 @@
+2021-09-21  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up: WebKit::WebProcessPool should use a weak observer with CFNotificationCenter
+        <https://webkit.org/b/230227>
+        <rdar://problem/83067708>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        - Set m_weakObserver for all platforms at the beginning of the
+          method.  Previously it was only set for macOS.
+
 2021-09-21  Chris Dumez  <cdumez@apple.com>
 
         Drop makeRefPtr() and use RefPtr { } directly instead

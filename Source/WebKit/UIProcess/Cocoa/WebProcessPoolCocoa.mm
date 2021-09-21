@@ -725,6 +725,8 @@ void WebProcessPool::removeCFNotificationObserver(CFStringRef name, CFNotificati
 
 void WebProcessPool::registerNotificationObservers()
 {
+    m_weakObserver = adoptNS([[WKProcessPoolWeakObserver alloc] initWithWeakPtr:makeWeakPtr(*this)]);
+
 #if !PLATFORM(IOS_FAMILY)
     m_powerObserver = makeUnique<WebCore::PowerObserver>([weakThis = makeWeakPtr(this)] {
         if (weakThis)
@@ -782,8 +784,6 @@ void WebProcessPool::registerNotificationObservers()
         setApplicationIsActive(false);
     }];
     
-    m_weakObserver = adoptNS([[WKProcessPoolWeakObserver alloc] initWithWeakPtr:makeWeakPtr(*this)]);
-
     addCFNotificationObserver(colorPreferencesDidChangeCallback, AppleColorPreferencesChangedNotification, CFNotificationCenterGetDistributedCenter());
 #elif !PLATFORM(MACCATALYST)
     addCFNotificationObserver(backlightLevelDidChangeCallback, (__bridge CFStringRef)UIBacklightLevelChangedNotification);
