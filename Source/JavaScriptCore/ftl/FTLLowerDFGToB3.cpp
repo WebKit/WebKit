@@ -13182,8 +13182,12 @@ private:
     LValue compileHasIndexedPropertyImpl(LValue index, S_JITOperation_GCZ slowPathOperation)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue base = lowCell(m_graph.varArgChild(m_node, 0));
         ArrayMode mode = m_node->arrayMode();
+
+        auto baseEdge = m_graph.varArgChild(m_node, 0);
+        LValue base = lowCell(baseEdge);
+        if (baseEdge.useKind() == ObjectUse)
+            speculateObject(baseEdge, base);
 
         switch (m_node->arrayMode().type()) {
         case Array::Int32:

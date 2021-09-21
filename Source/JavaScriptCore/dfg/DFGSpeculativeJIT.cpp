@@ -15183,11 +15183,15 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
 
 void SpeculativeJIT::compileHasIndexedProperty(Node* node, S_JITOperation_GCZ slowPathOperation, const ScopedLambda<std::tuple<GPRReg, GPRReg>()>& prefix)
 {
-    SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+    auto baseEdge = m_graph.varArgChild(node, 0);
+    SpeculateCellOperand base(this, baseEdge);
 
     GPRReg baseGPR = base.gpr();
     GPRReg indexGPR = InvalidGPRReg;
     GPRReg resultGPR = InvalidGPRReg;
+
+    if (baseEdge.useKind() == ObjectUse)
+        speculateObject(baseEdge, baseGPR);
 
     MacroAssembler::JumpList slowCases;
     ArrayMode mode = node->arrayMode();

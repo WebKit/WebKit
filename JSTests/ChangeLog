@@ -1,3 +1,16 @@
+2021-09-21  Justin Michaud  <justin_michaud@apple.com>
+
+        Differential testing: live statement don't execute
+        https://bugs.webkit.org/show_bug.cgi?id=229939
+
+        Reviewed by Saam Barati.
+
+        * stress/in-by-val-should-throw.js: Added.
+        (doesThrow):
+        (noInline.doesThrow.noFTL.doesThrow.blackbox):
+        (noInline.blackbox.doesNotThrow):
+        (noInline.doesNotThrow.noFTL.doesNotThrow.main):
+
 2021-09-20  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Skip stress/json-stringify-stack-overflow.js only on memory limited systems

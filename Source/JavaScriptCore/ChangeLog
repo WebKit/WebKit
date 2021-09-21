@@ -1,3 +1,23 @@
+2021-09-21  Justin Michaud  <justin_michaud@apple.com>
+
+        Differential testing: live statement don't execute
+        https://bugs.webkit.org/show_bug.cgi?id=229939
+
+        Reviewed by Saam Barati.
+
+        In statements are supposed to throw if they are applied to a non-object. We incorrectly converted
+        InByVals into HasIndexedProperty any time they were a cell, so we silently converted non-objects. Before converting
+        an InByVal, we first speculate that the base is an object now.
+
+        We do not always require an object edge for HasIndexedProperty because enumerator next() does not
+        throw if it encounters a cell that requires conversion during the call to toObject (for example, a
+        string literal). That is, we should silently convert the string during enumeration, but not for an
+        In statement, and so HasIndexedProperty is prepared to handle both cases.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+
 2021-09-21  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Prevent test from accessing FP registers if they are not available (e.g., arm softFP)
