@@ -501,6 +501,9 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         ASSERT(!autoTrackSize.minTrackBreadth().isFlex());
         bool hasDefiniteMaxTrackSizingFunction = autoTrackSize.maxTrackBreadth().isLength() && !autoTrackSize.maxTrackBreadth().isContentSized();
         auto trackLength = hasDefiniteMaxTrackSizingFunction ? autoTrackSize.maxTrackBreadth().length() : autoTrackSize.minTrackBreadth().length();
+        bool hasDefiniteMinTrackSizingFunction = autoTrackSize.minTrackBreadth().isLength() && !autoTrackSize.minTrackBreadth().isContentSized();
+        if (hasDefiniteMinTrackSizingFunction && (trackLength.value() < autoTrackSize.minTrackBreadth().length().value()))
+            trackLength = autoTrackSize.minTrackBreadth().length();
         autoRepeatTracksSize += valueForLength(trackLength, availableSize.value());
     }
     // For the purpose of finding the number of auto-repeated tracks, the UA must floor the track size to a UA-specified

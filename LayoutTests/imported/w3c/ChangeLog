@@ -1,3 +1,17 @@
+2021-09-21  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] When the max is less than the min in minmax(), the max will be floored by the min
+        https://bugs.webkit.org/show_bug.cgi?id=230481
+
+        Reviewed by Sergio Villar Senin.
+
+        Updated test expectation files as all the tests are passing.
+
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-columns-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fill-rows-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-columns-001-expected.txt:
+        * web-platform-tests/css/css-grid/grid-definition/grid-auto-fit-rows-001-expected.txt:
+
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
         Update list of WebRTC senders and receivers when updating local or remote descriptions

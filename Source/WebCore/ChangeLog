@@ -1,3 +1,20 @@
+2021-09-21  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] When the max is less than the min in minmax(), the max will be floored by the min
+        https://bugs.webkit.org/show_bug.cgi?id=230481
+
+        Reviewed by Sergio Villar Senin.
+
+        As per discussions in https://github.com/w3c/csswg-drafts/issues/4043, when the max is less than
+        the min in minmax()we need to floor the max track sizing function by the min track sizing function
+        when calculating the number of "auto-fit" or "auto-fill" repetitions. This change handles the
+        situations such as
+          -  If both the min and max track sizing functions are definite, use the maximum of them
+          -  If only one track sizing function is definite, use that one
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount const):
+
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
         Update list of WebRTC senders and receivers when updating local or remote descriptions
