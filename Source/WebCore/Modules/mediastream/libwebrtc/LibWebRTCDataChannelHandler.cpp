@@ -30,7 +30,6 @@
 #include "EventNames.h"
 #include "LibWebRTCUtils.h"
 #include "RTCDataChannel.h"
-#include "RTCDataChannelEvent.h"
 #include "RTCError.h"
 #include <wtf/MainThread.h>
 
@@ -54,30 +53,11 @@ webrtc::DataChannelInit LibWebRTCDataChannelHandler::fromRTCDataChannelInit(cons
     return init;
 }
 
-Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(Document& document, rtc::scoped_refptr<webrtc::DataChannelInterface>&& dataChannel)
-{
-    auto protocol = dataChannel->protocol();
-    auto label = dataChannel->label();
-
-    RTCDataChannelInit init;
-    init.ordered = dataChannel->ordered();
-    init.maxPacketLifeTime = dataChannel->maxRetransmitTime();
-    init.maxRetransmits = dataChannel->maxRetransmits();
-    init.protocol = fromStdString(protocol);
-    init.negotiated = dataChannel->negotiated();
-    init.id = dataChannel->id();
-    init.priority = toRTCPriorityType(dataChannel->priority());
-
-    auto handler =  makeUnique<LibWebRTCDataChannelHandler>(WTFMove(dataChannel));
-    auto channel = RTCDataChannel::create(document, WTFMove(handler), fromStdString(label), WTFMove(init));
-
-    return RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(channel));
-}
-
 LibWebRTCDataChannelHandler::LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&& channel)
     : m_channel(WTFMove(channel))
 {
     ASSERT(m_channel);
+    checkState();
     m_channel->RegisterObserver(this);
 }
 
@@ -86,26 +66,48 @@ LibWebRTCDataChannelHandler::~LibWebRTCDataChannelHandler()
     m_channel->UnregisterObserver();
 }
 
+RTCDataChannelInit LibWebRTCDataChannelHandler::dataChannelInit() const
+{
+    auto protocol = m_channel->protocol();
+    auto label = m_channel->label();
+
+    RTCDataChannelInit init;
+    init.ordered = m_channel->ordered();
+    init.maxPacketLifeTime = m_channel->maxRetransmitTime();
+    init.maxRetransmits = m_channel->maxRetransmits();
+    init.protocol = fromStdString(protocol);
+    init.negotiated = m_channel->negotiated();
+    init.id = m_channel->id();
+    init.priority = toRTCPriorityType(m_channel->priority());
+    return init;
+}
+
+String LibWebRTCDataChannelHandler::label() const
+{
+    return fromStdString(m_channel->label());
+}
+
 void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client, ScriptExecutionContextIdentifier contextIdentifier)
 {
-    {
-        Locker locker { m_clientLock };
-        ASSERT(!m_client);
-        m_client = &client;
-        m_contextIdentifier = contextIdentifier;
+    Locker locker { m_clientLock };
+    ASSERT(!m_client);
+    m_client = &client;
+    m_contextIdentifier = contextIdentifier;
 
-        for (auto& message : m_bufferedMessages) {
-            switchOn(message, [&](Ref<SharedBuffer>& data) {
-                client.didReceiveRawData(data->data(), data->size());
-            }, [&](String& text) {
-                client.didReceiveStringData(text);
-            }, [&](RTCDataChannelState state) {
-                client.didChangeReadyState(state);
-            });
-        }
-        m_bufferedMessages.clear();
+    for (auto& message : m_bufferedMessages) {
+        switchOn(message, [&](Ref<SharedBuffer>& data) {
+            client.didReceiveRawData(data->data(), data->size());
+        }, [&](String& text) {
+            client.didReceiveStringData(text);
+        }, [&](StateChange stateChange) {
+            if (stateChange.error) {
+                if (auto rtcError = toRTCError(*stateChange.error))
+                    client.didDetectError(rtcError.releaseNonNull());
+            }
+            client.didChangeReadyState(stateChange.state);
+        });
     }
-    checkState();
+    m_bufferedMessages.clear();
 }
 
 bool LibWebRTCDataChannelHandler::sendStringData(const CString& utf8Text)
@@ -150,13 +152,15 @@ void LibWebRTCDataChannelHandler::checkState()
 
     Locker locker { m_clientLock };
     if (!m_client) {
-        m_bufferedMessages.append(state);
+        m_bufferedMessages.append(StateChange { state, WTFMove(error) });
         return;
     }
     postTask([protectedClient = makeRef(*m_client), state, error = WTFMove(error)] {
         if (error && !error->ok()) {
-            if (auto rtcError = toRTCError(*error))
-                protectedClient->didDetectError(rtcError.releaseNonNull());
+            auto rtcError = toRTCError(*error);
+            if (!rtcError)
+                rtcError = RTCError::create(RTCError::Init { RTCErrorDetailType::DataChannelFailure, { }, { }, { }, { } }, String { });
+            protectedClient->didDetectError(rtcError.releaseNonNull());
         }
         protectedClient->didChangeReadyState(state);
     });

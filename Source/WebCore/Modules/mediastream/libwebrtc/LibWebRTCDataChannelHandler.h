@@ -56,8 +56,10 @@ public:
     explicit LibWebRTCDataChannelHandler(rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
     ~LibWebRTCDataChannelHandler();
 
+    RTCDataChannelInit dataChannelInit() const;
+    String label() const;
+
     static webrtc::DataChannelInit fromRTCDataChannelInit(const RTCDataChannelInit&);
-    static Ref<RTCDataChannelEvent> channelEvent(Document&, rtc::scoped_refptr<webrtc::DataChannelInterface>&&);
 
 private:
     // RTCDataChannelHandler API
@@ -73,7 +75,11 @@ private:
 
     void checkState();
 
-    using Message = Variant<RTCDataChannelState, String, Ref<SharedBuffer>>;
+    struct StateChange {
+        RTCDataChannelState state;
+        std::optional<webrtc::RTCError> error;
+    };
+    using Message = Variant<StateChange, String, Ref<SharedBuffer>>;
     using PendingMessages = Vector<Message>;
     void storeMessage(PendingMessages&, const webrtc::DataBuffer&);
     void processMessage(const webrtc::DataBuffer&);
@@ -85,7 +91,7 @@ private:
     Lock m_clientLock;
     RTCDataChannelHandlerClient* m_client WTF_GUARDED_BY_LOCK(m_clientLock) { nullptr };
     ScriptExecutionContextIdentifier m_contextIdentifier;
-    PendingMessages m_bufferedMessages;
+    PendingMessages m_bufferedMessages WTF_GUARDED_BY_LOCK(m_clientLock);
 };
 
 } // namespace WebCore

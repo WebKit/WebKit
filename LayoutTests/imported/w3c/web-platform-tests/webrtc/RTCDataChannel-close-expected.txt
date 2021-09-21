@@ -3,8 +3,10 @@ PASS Close datachannel causes onclosing and onclose to be called
 PASS Close datachannel causes closing and close event to be called
 PASS Close peerconnection causes close event and error to be called on datachannel
 PASS Close peerconnection after datachannel close causes no events
+PASS Close peerconnection causes close event and error on many channels, datachannel
 PASS Close negotiated datachannel causes onclosing and onclose to be called
 PASS Close negotiated datachannel causes closing and close event to be called
 PASS Close peerconnection causes close event and error to be called on negotiated datachannel
 PASS Close peerconnection after negotiated datachannel close causes no events
+PASS Close peerconnection causes close event and error on many channels, negotiated datachannel
 

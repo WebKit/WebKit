@@ -194,29 +194,31 @@ bool RTCDataChannel::virtualHasPendingActivity() const
 
 void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)
 {
-    if (m_stopped || m_readyState == RTCDataChannelState::Closed || m_readyState == newState)
-        return;
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, newState] {
+        if (m_stopped || m_readyState == RTCDataChannelState::Closed || m_readyState == newState)
+            return;
 
-    if (m_readyState == RTCDataChannelState::Closing && newState == RTCDataChannelState::Open)
-        return;
+        if (m_readyState == RTCDataChannelState::Closing && newState == RTCDataChannelState::Open)
+            return;
 
-    m_readyState = newState;
+        m_readyState = newState;
 
-    switch (m_readyState) {
-    case RTCDataChannelState::Connecting:
-        ASSERT_NOT_REACHED();
-        break;
-    case RTCDataChannelState::Open:
-        scheduleDispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        break;
-    case RTCDataChannelState::Closing:
-        scheduleDispatchEvent(Event::create(eventNames().closingEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        break;
-    case RTCDataChannelState::Closed:
-        scheduleDispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        m_stopped = true;
-        break;
-    }
+        switch (m_readyState) {
+        case RTCDataChannelState::Connecting:
+            ASSERT_NOT_REACHED();
+            break;
+        case RTCDataChannelState::Open:
+            dispatchEvent(Event::create(eventNames().openEvent, Event::CanBubble::No, Event::IsCancelable::No));
+            break;
+        case RTCDataChannelState::Closing:
+            dispatchEvent(Event::create(eventNames().closingEvent, Event::CanBubble::No, Event::IsCancelable::No));
+            break;
+        case RTCDataChannelState::Closed:
+            dispatchEvent(Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+            m_stopped = true;
+            break;
+        }
+    });
 }
 
 void RTCDataChannel::didReceiveStringData(const String& text)
@@ -244,10 +246,12 @@ void RTCDataChannel::didDetectError(Ref<RTCError>&& error)
 
 void RTCDataChannel::bufferedAmountIsDecreasing(size_t amount)
 {
-    auto previousBufferedAmount = m_bufferedAmount;
-    m_bufferedAmount -= amount;
-    if (previousBufferedAmount > m_bufferedAmountLowThreshold && m_bufferedAmount <= m_bufferedAmountLowThreshold)
-        scheduleDispatchEvent(Event::create(eventNames().bufferedamountlowEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, amount] {
+        auto previousBufferedAmount = m_bufferedAmount;
+        m_bufferedAmount -= amount;
+        if (previousBufferedAmount > m_bufferedAmountLowThreshold && m_bufferedAmount <= m_bufferedAmountLowThreshold)
+            dispatchEvent(Event::create(eventNames().bufferedamountlowEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
 }
 
 void RTCDataChannel::stop()

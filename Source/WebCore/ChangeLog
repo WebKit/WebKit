@@ -1,3 +1,38 @@
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=230399
+
+        Reviewed by Eric Carlson.
+
+        We fix a number of flaky issues:
+        - RTCDataChannel::didChangeReadyState should queue a task and inside the task update the state + dispatch event.
+          Previously, we were updating the state, then queueing a task to dispatch the event.
+        - We were creating the data channel at the time we were creating the data channel handler.
+          In that case, we might have missed some state changes.
+          We now create the data channel handler as soon as possible, then queue a task where we create the data channel and fire the channel event.
+        - We check the backend data channel state as soon as creating the data channel handler, instead of when creating the data channel for the same reason.
+        - When we buffer states, we need to store whether an error occurs to properly fire the error event as needed.
+        - Similarly to readyState, we need to queue a task to update bufferedAmount and, if needed, synchronously fire the bufferedAmountLow event.
+
+        Covered by updated RTCDataChannel-close.html.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::newDataChannel):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didChangeReadyState):
+        (WebCore::RTCDataChannel::bufferedAmountIsDecreasing):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::LibWebRTCDataChannelHandler):
+        (WebCore::LibWebRTCDataChannelHandler::dataChannelInit const):
+        (WebCore::LibWebRTCDataChannelHandler::label const):
+        (WebCore::LibWebRTCDataChannelHandler::setClient):
+        (WebCore::LibWebRTCDataChannelHandler::checkState):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnDataChannel):
+
 2021-09-21  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Ceil the descent value when adjusting the layout bounds for an inline box

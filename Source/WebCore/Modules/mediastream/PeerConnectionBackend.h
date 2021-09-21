@@ -137,6 +137,8 @@ public:
     };
 
     void newICECandidate(String&& sdp, String&& mid, unsigned short sdpMLineIndex, String&& serverURL, std::optional<DescriptionStates>&&);
+    void newDataChannel(UniqueRef<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
+
     virtual void disableICECandidateFiltering();
     void enableICECandidateFiltering();
 

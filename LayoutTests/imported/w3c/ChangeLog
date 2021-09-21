@@ -1,5 +1,15 @@
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
+        imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=230399
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCDataChannel-close-expected.txt:
+        * web-platform-tests/webrtc/RTCDataChannel-close.html:
+
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
         RTCPeerConnection perfect negotiation tests are flaky
         https://bugs.webkit.org/show_bug.cgi?id=230344
 
