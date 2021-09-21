@@ -287,6 +287,9 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.html
 
+# GLIB PASS since r281724
+imported/mozilla/svg/as-image/border-image-simple-1.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1230,7 +1233,7 @@ webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
 
 webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache-long.html [ Failure Pass Timeout ]
 
-webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ]
+webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
 
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
@@ -2008,7 +2011,6 @@ webkit.org/b/161589 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailu
 webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageOnlyFailure ]
 webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
-webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
 webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
 
 # Skip tests requiring UIScriptController::zoomToScale.
