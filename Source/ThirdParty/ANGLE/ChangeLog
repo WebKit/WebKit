@@ -1,3 +1,18 @@
+2021-09-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal: single-component swizzles do not compile
+        https://bugs.webkit.org/show_bug.cgi?id=230472
+        <rdar://problem/83310780>
+
+        Reviewed by Dean Jackson.
+
+        Fix metal compiler compile errors when using 
+        single value swizles (glslvariable.r) in position where lvalues would
+        be needed. Use the variable instead of single element array 
+        (copy-paste typo).
+
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+
 2021-09-16  Kyle Piddington  <kpiddington@apple.com>
 
         webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html fails on Intel+AMD Metal
