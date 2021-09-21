@@ -13627,7 +13627,7 @@ template<typename SlowPathFunctionType>
 void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionType slowPathFunction)
 {
     Edge baseEdge = m_graph.varArgChild(node, 0);
-    auto generate = [&] (auto base, GPRReg baseCellGPR) {
+    auto generate = [&] (JSValueRegs baseRegs) {
         JSValueOperand propertyName(this, m_graph.varArgChild(node, 1));
         SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 2));
         SpeculateStrictInt32Operand mode(this, m_graph.varArgChild(node, 3));
@@ -13646,12 +13646,12 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
         MacroAssembler::JumpList operationCases;
 
         if (m_state.forNode(baseEdge).m_type & ~SpecCell)
-            operationCases.append(m_jit.branchIfNotCell(base));
+            operationCases.append(m_jit.branchIfNotCell(baseRegs));
 
         // FIXME: We shouldn't generate this code if we know base is not a cell.
         operationCases.append(m_jit.branchTest32(MacroAssembler::Zero, modeGPR, TrustedImm32(JSPropertyNameEnumerator::OwnStructureMode)));
 
-        m_jit.load32(MacroAssembler::Address(baseCellGPR, JSCell::structureIDOffset()), resultRegs.payloadGPR());
+        m_jit.load32(MacroAssembler::Address(baseRegs.payloadGPR(), JSCell::structureIDOffset()), resultRegs.payloadGPR());
         operationCases.append(m_jit.branch32(MacroAssembler::NotEqual, resultRegs.payloadGPR(), MacroAssembler::Address(enumeratorGPR, JSPropertyNameEnumerator::cachedStructureIDOffset())));
 
         moveTrueTo(resultRegs.payloadGPR());
@@ -13659,13 +13659,10 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
 
         operationCases.link(&m_jit);
 
-#if USE(JSVALUE32_64)
-        m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
-        auto baseRegs = JSValueRegs(resultRegs.tagGPR(), baseCellGPR);
-#else
-        auto baseRegs = base;
-#endif
-        callOperation(slowPathFunction, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyNameRegs, indexGPR, modeGPR);
+        if (baseRegs.tagGPR() == InvalidGPRReg)
+            callOperation(slowPathFunction, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), CCallHelpers::CellValue(baseRegs.payloadGPR()), propertyNameRegs, indexGPR, modeGPR);
+        else
+            callOperation(slowPathFunction, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseRegs, propertyNameRegs, indexGPR, modeGPR);
         m_jit.exceptionCheck();
 
         done.link(&m_jit);
@@ -13675,10 +13672,10 @@ void SpeculativeJIT::compileEnumeratorHasProperty(Node* node, SlowPathFunctionTy
 
     if (isCell(baseEdge.useKind())) {
         SpeculateCellOperand base(this, baseEdge);
-        generate(base.gpr(), base.gpr());
+        generate(JSValueRegs::payloadOnly(base.gpr()));
     } else {
         JSValueOperand base(this, baseEdge);
-        generate(base.regs(), base.regs().payloadGPR());
+        generate(base.regs());
     }
 }
 
