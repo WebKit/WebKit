@@ -38,6 +38,7 @@
 #import <wtf/HashSet.h>
 #import <wtf/cf/CFURLExtras.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if USE(APPKIT)
 #import <WebCore/ColorMac.h>

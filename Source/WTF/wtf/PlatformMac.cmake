@@ -20,7 +20,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
     cocoa/SpanCocoa.h
-    cocoa/TypeCastsNS.h
+    cocoa/TypeCastsCocoa.h
     cocoa/VectorCocoa.h
 
     darwin/WeakLinking.h

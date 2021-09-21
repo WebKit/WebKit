@@ -392,7 +392,7 @@
 		4427C5A921F6D6C300A612A4 /* ASCIICType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASCIICType.cpp; sourceTree = "<group>"; };
 		44309D4026EFC14A00402A67 /* NSObjCRuntimeSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSObjCRuntimeSPI.h; sourceTree = "<group>"; };
 		4468567225094FE8008CCA05 /* ThreadSanitizerSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSanitizerSupport.h; sourceTree = "<group>"; };
-		44CDE4D226EE6CDA009F6ACB /* TypeCastsNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastsNS.h; sourceTree = "<group>"; };
+		44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastsCocoa.h; sourceTree = "<group>"; };
 		46209A27266D543A007F8F4A /* CancellableTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CancellableTask.h; sourceTree = "<group>"; };
 		46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandler.h; sourceTree = "<group>"; };
 		46BEB6E922FFDDD500269867 /* RefCounted.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RefCounted.cpp; sourceTree = "<group>"; };
@@ -1625,7 +1625,7 @@
 				A30D412C1F0DE0BA00B71954 /* SoftLinking.h */,
 				BC3FEB5E267FCD460054006A /* SpanCocoa.h */,
 				EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */,
-				44CDE4D226EE6CDA009F6ACB /* TypeCastsNS.h */,
+				44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */,
 				5CC0EE862162BC2200A1A842 /* URLCocoa.mm */,
 				93241657243BC2E50032FAAE /* VectorCocoa.h */,
 				E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */,

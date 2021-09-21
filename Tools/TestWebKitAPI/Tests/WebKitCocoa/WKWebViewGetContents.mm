@@ -30,7 +30,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WebKit.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 TEST(WKWebView, GetContentsShouldReturnString)
 {

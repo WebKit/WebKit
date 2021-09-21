@@ -83,8 +83,8 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
-#import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"

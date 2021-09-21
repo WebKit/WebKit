@@ -376,12 +376,13 @@ inline CFHashCode safeCFHash(CFTypeRef a)
 }
 
 #ifdef __OBJC__
+// FIXME: Move to TypeCastsCocoa.h once all clients include that header.
 template<typename T> T* dynamic_objc_cast(id object)
 {
-    if ([object isKindOfClass:[T class]])
-        return (T *)object;
+    if (![object isKindOfClass:[T class]])
+        return nullptr;
 
-    return nil;
+    return reinterpret_cast<T*>(object);
 }
 #endif
 

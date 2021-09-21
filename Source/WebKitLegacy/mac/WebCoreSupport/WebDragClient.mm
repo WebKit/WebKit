@@ -59,6 +59,7 @@
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardWriter.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 using namespace WebCore;
 

@@ -49,6 +49,7 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIPhysicalKeyboardEvent)

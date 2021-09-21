@@ -44,6 +44,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 

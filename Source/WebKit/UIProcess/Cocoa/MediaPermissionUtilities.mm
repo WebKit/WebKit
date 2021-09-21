@@ -27,18 +27,20 @@
 #import "MediaPermissionUtilities.h"
 
 #import "SandboxUtilities.h"
-#import "TCCSoftLink.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SecurityOriginData.h>
 #import <mutex>
-#import <pal/cocoa/AVFoundationSoftLink.h>
-#import <pal/cocoa/SpeechSoftLink.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URLHelpers.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
+
+#import "TCCSoftLink.h"
+#import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/SpeechSoftLink.h>
 
 namespace WebKit {
 

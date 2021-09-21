@@ -30,9 +30,9 @@
 
 namespace WTF {
 
-// Use checked_ns_cast<> instead of dynamic_ns_cast<> when a specific NS type is required.
+// Use checked_objc_cast<> instead of dynamic_objc_cast<> when a specific NS type is required.
 
-template<typename T> T* checked_ns_cast(id object)
+template<typename T> T* checked_objc_cast(id object)
 {
     using ValueType = std::remove_pointer_t<T>;
     using PtrType = ValueType*;
@@ -45,21 +45,12 @@ template<typename T> T* checked_ns_cast(id object)
     return reinterpret_cast<PtrType>(object);
 }
 
-// Use dynamic_ns_cast<> instead of checked_ns_cast<> when actively checking NS types,
+// Use dynamic_objc_cast<> instead of checked_objc_cast<> when actively checking NS types,
 // similar to dynamic_cast<> in C++. Be sure to include a nil check.
 
-template<typename T> T* dynamic_ns_cast(id object)
-{
-    using ValueType = std::remove_pointer_t<T>;
-    using PtrType = ValueType*;
+// See RetainPtr.h for: template<typename T> T* dynamic_objc_cast(id object).
 
-    if (![object isKindOfClass:[ValueType class]])
-        return nullptr;
-
-    return reinterpret_cast<PtrType>(object);
-}
-
-template<typename T, typename U> RetainPtr<T> dynamic_ns_cast(RetainPtr<U>&& object)
+template<typename T, typename U> RetainPtr<T> dynamic_objc_cast(RetainPtr<U>&& object)
 {
     if (![object isKindOfClass:[T class]])
         return nullptr;
@@ -69,5 +60,4 @@ template<typename T, typename U> RetainPtr<T> dynamic_ns_cast(RetainPtr<U>&& obj
 
 } // namespace WTF
 
-using WTF::checked_ns_cast;
-using WTF::dynamic_ns_cast;
+using WTF::checked_objc_cast;

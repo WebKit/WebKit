@@ -152,6 +152,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if PLATFORM(MAC)

@@ -38,7 +38,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Deque.h>
 #import <wtf/MemoryPressureHandler.h>
-#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKitSPI.h>

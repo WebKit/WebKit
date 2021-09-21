@@ -72,7 +72,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-#import <wtf/cocoa/TypeCastsNS.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
@@ -637,7 +637,7 @@ bool WebProcessPool::processSuppressionEnabled() const
 
 static inline RefPtr<WebProcessPool> extractWebProcessPool(void* observer)
 {
-    RetainPtr strongObserver { dynamic_ns_cast<WKProcessPoolWeakObserver>(reinterpret_cast<id>(observer)) };
+    RetainPtr strongObserver { dynamic_objc_cast<WKProcessPoolWeakObserver>(reinterpret_cast<id>(observer)) };
     if (!strongObserver)
         return nullptr;
     return [strongObserver pool];

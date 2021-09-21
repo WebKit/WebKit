@@ -1,3 +1,22 @@
+2021-09-21  David Kilzer  <ddkilzer@apple.com>
+
+        Rename {checked,dynamic}_ns_cast<> to {checked,dynamic}_objc_cast<>
+        <https://webkit.org/b/230508>
+        <rdar://problem/83323145>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Update for rename of TypeCastsNS.h to TypeCastsCocoa.h.
+        * TestWebKitAPI/Tests/WTF/cocoa/TypeCastsCocoa.mm: Rename from TypeCastsNS.mm.
+        (TestWebKitAPI::TEST):
+        - Update for rename.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewGetContents.mm:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        - Import <wtf/cocoa/TypeCastsCocoa.h> for future move of
+          WTF::dynamic_objc_cast<> from RetainPtr.h to that header.
+
 2021-09-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [PlayStation][MiniBrowser] Remove WebKit private header include

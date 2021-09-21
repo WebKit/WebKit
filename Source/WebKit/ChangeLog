@@ -1,3 +1,26 @@
+2021-09-21  David Kilzer  <ddkilzer@apple.com>
+
+        Rename {checked,dynamic}_ns_cast<> to {checked,dynamic}_objc_cast<>
+        <https://webkit.org/b/230508>
+        <rdar://problem/83323145>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::extractWebProcessPool):
+        - Update for rename.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        * Shared/mac/ObjCObjectGraph.mm:
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        - Also fix *SoftLink.h header order.
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        - Import <wtf/cocoa/TypeCastsCocoa.h> for future move of
+          WTF::dynamic_objc_cast<> from RetainPtr.h to that header.
+
 2021-09-21  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(241918@main): [WPE][GTK] New test is timing out on bots

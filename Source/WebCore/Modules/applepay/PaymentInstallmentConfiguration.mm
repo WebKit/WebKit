@@ -32,6 +32,7 @@
 #import "ApplePayInstallmentItemType.h"
 #import "ApplePayInstallmentRetailChannel.h"
 #import "ExceptionOr.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
