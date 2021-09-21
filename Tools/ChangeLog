@@ -1,3 +1,15 @@
+2021-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [webkitcorepy] Fail to parse python required version when there's a space between operator and version
+        https://bugs.webkit.org/show_bug.cgi?id=230549
+
+        Reviewed by Jonathan Bedard.
+
+        Add optional space between operator and version expression in regular expression.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/version.py:
+        (Version):
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of makeRefPtr() and use RefPtr { } directly
