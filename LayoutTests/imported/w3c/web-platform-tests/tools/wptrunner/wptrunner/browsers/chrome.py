@@ -24,6 +24,7 @@ __wptrunner__ = {"product": "chrome",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
                  "env_options": "env_options",
+                 "update_properties": "update_properties",
                  "timeout_multiplier": "get_timeout_multiplier",}
 
 def check_args(**kwargs):
@@ -129,6 +130,8 @@ def env_extras(**kwargs):
 def env_options():
     return {"server_host": "127.0.0.1"}
 
+def update_properties():
+    return (["debug", "os", "processor"], {"os": ["version"], "processor": ["bits"]})
 
 class ChromeBrowser(Browser):
     """Chrome is backed by chromedriver, which is supplied through

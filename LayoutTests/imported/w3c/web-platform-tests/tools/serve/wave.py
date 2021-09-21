@@ -16,6 +16,14 @@ except ImportError:
 from tools.wpt import wpt
 
 
+class WaveHandler:
+    def __init__(self, server):
+        self.server = server
+
+    def __call__(self, request, response):
+        self.server.handle_request(request, response)
+
+
 def get_route_builder_func(report):
     def get_route_builder(logger, aliases, config):
         wave_cfg = None
@@ -31,17 +39,13 @@ def get_route_builder_func(report):
             reports_enabled=report,
             tests=data["items"])
 
-        class WaveHandler(object):
-            def __call__(self, request, response):
-                wave_server.handle_request(request, response)
-
         web_root = "wave"
         if wave_cfg is not None and "web_root" in wave_cfg:
             web_root = wave_cfg["web_root"]
         if not web_root.startswith("/"):
             web_root = "/" + web_root
 
-        wave_handler = WaveHandler()
+        wave_handler = WaveHandler(wave_server)
         builder.add_handler("*", web_root + "*", wave_handler)
         # serving wave specifc testharnessreport.js
         file_path = os.path.join(wpt.localpaths.repo_root, "tools/wave/resources/testharnessreport.js")
@@ -53,6 +57,7 @@ def get_route_builder_func(report):
 
         return builder
     return get_route_builder
+
 
 class ConfigBuilder(serve.ConfigBuilder):
     _default = serve.ConfigBuilder._default
@@ -69,6 +74,7 @@ class ConfigBuilder(serve.ConfigBuilder):
             "api_titles": []
         }
     })
+
 
 def get_parser():
     parser = serve.get_parser()

@@ -1,3 +1,14 @@
+2021-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/tools from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=230512
+
+        Reviewed by Youenn Fablet.
+
+        Resync web-platform-tests/tools from upstream 1b3385871f3621acc91c76b806.
+
+        * web-platform-tests/tools/*: Updated.
+
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for font-palette-values

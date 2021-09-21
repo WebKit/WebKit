@@ -37,7 +37,7 @@ job_path_map = {
                      "html/",
                      "infrastructure/",
                      "mimesniff/",
-                     "WebIDL"],
+                     "webidl"],
     "wpt_integration": ["tools/"],
     "wptrunner_infrastructure": ["infrastructure/",
                                  "tools/",
