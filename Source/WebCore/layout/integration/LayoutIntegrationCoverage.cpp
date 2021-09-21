@@ -190,9 +190,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasLineBoxContainGlyphs:
         stream << "-webkit-line-box-contain: glyphs";
         break;
-    case AvoidanceReason::FlowTextHasSurrogatePair:
-        stream << "surrogate pair";
-        break;
     case AvoidanceReason::MultiColumnFlowIsNotTopLevel:
         stream << "non top level column";
         break;

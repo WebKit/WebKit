@@ -1,3 +1,14 @@
+2021-09-21  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Removed unused AvoidanceReason::FlowTextHasSurrogatePair
+        https://bugs.webkit.org/show_bug.cgi?id=230559
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        * layout/integration/LayoutIntegrationCoverage.h:
+
 2021-09-21  Eric Hutchison  <ehutchison@apple.com>
 
         Unreviewed, reverting r282768.

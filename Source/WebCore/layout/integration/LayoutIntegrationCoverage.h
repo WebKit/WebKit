@@ -83,7 +83,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 43,
     FlowHasHangingPunctuation                    = 1LLU  << 44,
     FlowHasLineBoxContainGlyphs                  = 1LLU  << 45,
-    FlowTextHasSurrogatePair                     = 1LLU  << 46,
+    // Unused                                    = 1LLU  << 46,
     MultiColumnFlowIsNotTopLevel                 = 1LLU  << 47,
     MultiColumnFlowHasColumnSpanner              = 1LLU  << 48,
     MultiColumnFlowVerticalAlign                 = 1LLU  << 49,
