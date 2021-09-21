@@ -265,7 +265,7 @@ bool GridTrackSizingAlgorithm::spanningItemCrossesFlexibleSizedTracks(const Grid
     const Vector<GridTrack>& trackList = tracks(m_direction);
     for (auto trackPosition : itemSpan) {
         const auto& trackSize = trackList[trackPosition].cachedTrackSize();
-        if (trackSize.minTrackBreadth().isFlex() || trackSize.maxTrackBreadth().isFlex())
+        if (trackSize.maxTrackBreadth().isFlex())
             return true;
     }
 
