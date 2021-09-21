@@ -290,8 +290,8 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     AtomString targetName = name;
     for (auto& weakElement : formElement->unsafeAssociatedElements()) {
-        auto element = makeRefPtr(weakElement.get());
-        if (element->asFormAssociatedElement()->name() == targetName)
+        RefPtr element { weakElement.get() };
+        if (element && element->asFormAssociatedElement()->name() == targetName)
             return kit(element.get());
     }
     return nil;
@@ -337,8 +337,8 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     auto result = createNSArray(formElement->unsafeAssociatedElements(), [] (auto& weakElement) -> DOMElement * {
-        auto coreElement = makeRefPtr(weakElement.get());
-        if (!coreElement->asFormAssociatedElement()->isEnumeratable()) // Skip option elements, other duds
+        RefPtr coreElement { weakElement.get() };
+        if (!coreElement || !coreElement->asFormAssociatedElement()->isEnumeratable()) // Skip option elements, other duds
             return nil;
         return kit(coreElement.get());
     });

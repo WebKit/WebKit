@@ -61,7 +61,7 @@ void WebContextMenuProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& 
 {
     m_contextMenuListener = nullptr;
 
-    auto page = makeRefPtr(this->page());
+    RefPtr page = this->page();
     if (!page)
         return;
 

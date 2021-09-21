@@ -546,7 +546,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
 
         [menu setItemArray:[sparseMenuItems allObjects]];
 
-        auto page = makeRefPtr(weakPage.get());
+        RefPtr page { weakPage.get() };
         if (page && imageBitmap) {
 #if ENABLE(IMAGE_ANALYSIS)
             protectedThis->insertOrUpdateQuickLookImageItem(imageURL, imageBitmap.releaseNonNull(), WTFMove(quickLookItemToInsertIfNeeded), shouldUpdateQuickLookItemTitle);
@@ -575,7 +575,7 @@ void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageUR
     auto page = makeRef(*this->page());
     if (quickLookItemToInsertIfNeeded) {
         page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = makeWeakPtr(*this), quickLookItemToInsertIfNeeded = WTFMove(*quickLookItemToInsertIfNeeded)] (bool hasVisualSearchResults) mutable {
-            if (auto protectedThis = makeRefPtr(weakThis.get()); protectedThis && hasVisualSearchResults) {
+            if (RefPtr protectedThis = weakThis.get(); protectedThis && hasVisualSearchResults) {
                 protectedThis->m_quickLookPreviewActivity = QuickLookPreviewActivity::VisualSearch;
                 [protectedThis->m_menu addItem:NSMenuItem.separatorItem];
                 [protectedThis->m_menu addItem:createMenuActionItem(quickLookItemToInsertIfNeeded).get()];
@@ -586,11 +586,11 @@ void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageUR
 
     if (shouldUpdateQuickLookItemTitle) {
         page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = makeWeakPtr(*this), weakPage = makeWeakPtr(page.get()), imageURL, imageBitmap = WTFMove(imageBitmap)] (bool hasVisualSearchResults) mutable {
-            auto protectedThis = makeRefPtr(weakThis.get());
+            RefPtr protectedThis { weakThis.get() };
             if (!protectedThis)
                 return;
 
-            auto page = makeRefPtr(weakPage.get());
+            RefPtr page { weakPage.get() };
             if (!page)
                 return;
 
@@ -601,11 +601,11 @@ void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageUR
             }
 
             page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::Text, [weakThis = WTFMove(weakThis), weakPage] (bool hasText) mutable {
-                auto protectedThis = makeRefPtr(weakThis.get());
+                RefPtr protectedThis { weakThis.get() };
                 if (!protectedThis)
                     return;
 
-                if (auto page = makeRefPtr(weakPage.get()); page && hasText)
+                if (RefPtr page = weakPage.get(); page && hasText)
                     protectedThis->updateQuickLookContextMenuItemTitle(contextMenuItemTagQuickLookImageForTextSelection());
             });
         });

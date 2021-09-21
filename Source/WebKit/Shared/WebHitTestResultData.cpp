@@ -93,7 +93,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
         }
     }
 
-    if (auto target = makeRefPtr(hitTestResult.innerNonSharedNode()); target && is<RenderImage>(target->renderer()))
+    if (auto target = RefPtr { hitTestResult.innerNonSharedNode() }; target && is<RenderImage>(target->renderer()))
         imageBitmap = createShareableBitmap(*downcast<RenderImage>(target->renderer()));
 }
 

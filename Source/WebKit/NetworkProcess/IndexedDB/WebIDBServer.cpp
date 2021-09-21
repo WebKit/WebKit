@@ -399,9 +399,9 @@ void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessId
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = Ref { *this }, protectedConnection = makeRefPtr(connection), processIdentifier] {
+    postTask([this, protectedThis = Ref { *this }, protectedConnection = Ref { connection }, processIdentifier] {
         auto[iter, isNewEntry] = m_connectionMap.ensure(protectedConnection->uniqueID(), [&] {
-            return makeUnique<WebIDBConnectionToClient>(*protectedConnection, processIdentifier);
+            return makeUnique<WebIDBConnectionToClient>(protectedConnection.get(), processIdentifier);
         });
 
         ASSERT_UNUSED(isNewEntry, isNewEntry);

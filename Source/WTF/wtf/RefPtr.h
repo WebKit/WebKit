@@ -253,16 +253,6 @@ inline RefPtr<T, U, V> adoptRef(T* p)
     return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
 }
 
-template<typename T> inline RefPtr<T> makeRefPtr(T* pointer)
-{
-    return pointer;
-}
-
-template<typename T> inline RefPtr<T> makeRefPtr(T& reference)
-{
-    return &reference;
-}
-
 template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>
 inline bool is(RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 {
@@ -279,5 +269,4 @@ inline bool is(const RefPtr<ArgType, PtrTraits, RefDerefTraits>& source)
 
 using WTF::RefPtr;
 using WTF::adoptRef;
-using WTF::makeRefPtr;
 using WTF::static_pointer_cast;

@@ -139,7 +139,7 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
     }
 
     if (!m_logger) {
-        m_logger = makeRefPtr(Document::sharedLogger());
+        m_logger = &Document::sharedLogger();
         m_logIdentifier = nextLogIdentifier();
     }
 

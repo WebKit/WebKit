@@ -1135,7 +1135,7 @@ void Connection::MessagesThrottler::scheduleMessagesDispatch()
         m_dispatchMessagesTimer.startOneShot(0_s);
         return;
     }
-    RunLoop::main().dispatch([this, protectedConnection = makeRefPtr(&m_connection)]() mutable {
+    RunLoop::main().dispatch([this, protectedConnection = RefPtr { &m_connection }]() mutable {
         (protectedConnection.get()->*m_dispatchMessages)();
     });
 }

@@ -1,3 +1,13 @@
+2021-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop makeRefPtr() and use RefPtr { } directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=230564
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WTF/RunLoop.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-09-21  David Kilzer  <ddkilzer@apple.com>
 
         Rename {checked,dynamic}_ns_cast<> to {checked,dynamic}_objc_cast<>

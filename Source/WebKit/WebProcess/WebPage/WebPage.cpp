@@ -3758,7 +3758,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, std::optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&)>&& completionHandler)
 {
     WEBPAGE_RELEASE_LOG(Process, "runJavaScriptInFrameInScriptWorld: frameID=%" PRIu64, frameID.value_or(WebCore::FrameIdentifier { }).toUInt64());
-    auto webFrame = makeRefPtr(frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame());
+    RefPtr webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame();
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
         auto& coreWorld = newWorld->coreWorld();
@@ -3783,7 +3783,7 @@ void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChil
         break;
     case ContentAsStringIncludesChildFrames::Yes:
         StringBuilder builder;
-        for (auto frame = makeRefPtr(m_mainFrame->coreFrame()); frame; frame = frame->tree().traverseNextRendered()) {
+        for (RefPtr frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
             if (auto webFrame = WebFrame::fromCoreFrame(*frame))
                 builder.append(builder.isEmpty() ? "" : "\n\n", webFrame->contentsAsString());
         }
@@ -4070,8 +4070,8 @@ void WebPage::setDataDetectionResults(NSArray *detectionResults)
 
 void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
-    for (auto frame = makeRefPtr(&m_page->mainFrame()); frame; frame = frame->tree().traverseNext()) {
-        auto document = makeRefPtr(frame->document());
+    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr document = frame->document();
         if (!document)
             continue;
 
@@ -4089,8 +4089,8 @@ void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetection
 void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDetectorTypes, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
     DataDetectionResult mainFrameResult;
-    for (auto frame = makeRefPtr(&m_page->mainFrame()); frame; frame = frame->tree().traverseNext()) {
-        auto document = makeRefPtr(frame->document());
+    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr document = frame->document();
         if (!document)
             continue;
         auto results = retainPtr(DataDetection::detectContentInRange(makeRangeSelectingNodeContents(*document), dataDetectorTypes, m_dataDetectionContext.get()));
@@ -7297,7 +7297,7 @@ void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController:
     if (!m_page)
         return;
 
-    auto mainDocument = makeRefPtr(m_page->mainFrame().document());
+    RefPtr mainDocument = m_page->mainFrame().document();
     if (!mainDocument)
         return;
 
@@ -7327,7 +7327,7 @@ void WebPage::completeTextManipulation(const Vector<WebCore::TextManipulationCon
         return;
     }
 
-    auto mainDocument = makeRefPtr(m_page->mainFrame().document());
+    RefPtr mainDocument = m_page->mainFrame().document();
     if (!mainDocument) {
         completionHandler(true, { });
         return;
@@ -7470,7 +7470,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
         if (completion) {
             RefPtr<Element> imageOverlayHost;
             if (htmlElement->hasImageOverlay())
-                imageOverlayHost = makeRefPtr(element);
+                imageOverlayHost = &element;
             completion(WTFMove(imageOverlayHost));
         }
         return;
@@ -7517,7 +7517,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
     auto cachedImage = renderImage.cachedImage();
     auto imageURL = cachedImage ? element.document().completeURL(cachedImage->url().string()) : URL { };
     sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
-        auto protectedPage = makeRefPtr(webPage.get());
+        RefPtr protectedPage { webPage.get() };
         if (!protectedPage)
             return;
 
@@ -7531,7 +7531,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
             return true;
         });
 
-        auto protectedElement = makeRefPtr(weakElement.get());
+        RefPtr protectedElement { weakElement.get() };
         if (!protectedElement)
             return;
 
@@ -7545,7 +7545,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
         if (matchIndex == notFound)
             return;
 
-        auto imageOverlayHost = htmlElement.hasImageOverlay() ? makeRefPtr(htmlElement) : nullptr;
+        RefPtr imageOverlayHost = htmlElement.hasImageOverlay() ? &htmlElement : nullptr;
         for (auto& completionHandler : protectedPage->m_elementsPendingTextRecognition[matchIndex].second)
             completionHandler(imageOverlayHost.copyRef());
 
@@ -7568,7 +7568,7 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
         HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
     });
 
-    auto nodeAtLocation = makeRefPtr(hitTestResult.innerNonSharedNode());
+    RefPtr nodeAtLocation = hitTestResult.innerNonSharedNode();
     auto updateResult = ([&] {
         if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate || !HTMLElement::isInsideImageOverlay(*nodeAtLocation))
             return TextRecognitionUpdateResult::NoText;
@@ -7657,7 +7657,7 @@ bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
 
     RefPtr document = CheckedRef(m_page->focusController())->focusedOrMainFrame().document();
 
-    auto frame = makeRefPtr(document->frame());
+    RefPtr frame = document->frame();
     if (!frame)
         return false;
 
@@ -7690,7 +7690,7 @@ void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlig
 {
     m_appHighlightsVisible = appHighlightVisibility;
     for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
-        if (auto document = makeRefPtr(frame->document()))
+        if (RefPtr document = frame->document())
             document->appHighlightRegister().setHighlightVisibility(appHighlightVisibility);
     }
 }

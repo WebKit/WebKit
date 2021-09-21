@@ -1,3 +1,155 @@
+2021-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop makeRefPtr() and use RefPtr { } directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=230564
+
+        Reviewed by Alex Christensen.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::addConnection):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::MessagesThrottler::scheduleMessagesDispatch):
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::parseByteSource):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewCreateNewPage):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setWindowFrameOfBrowsingContext):
+        (WebKit::WebAutomationSession::maximizeWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::hideWindowOfBrowsingContext):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::runOpenPanel):
+        (WebKit::UIDelegate::UIClient::requestPointerLock):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::scheduleActivityStateUpdate):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (-[WKProcessPoolWeakObserver pool]):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses):
+        * UIProcess/WebContextMenuProxy.cpp:
+        (WebKit::WebContextMenuProxy::useContextMenuItems):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::runModalJavaScriptDialog):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        (WebKit::WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidFlush):
+        (WebKit::RemoteRenderingBackendProxy::findReusableDisplayListHandle):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::networkStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::setReadyState):
+        (WebKit::MediaPlayerPrivateRemote::readyStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::volumeChanged):
+        (WebKit::MediaPlayerPrivateRemote::muteChanged):
+        (WebKit::MediaPlayerPrivateRemote::timeChanged):
+        (WebKit::MediaPlayerPrivateRemote::durationChanged):
+        (WebKit::MediaPlayerPrivateRemote::rateChanged):
+        (WebKit::MediaPlayerPrivateRemote::playbackStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::engineFailedToLoad):
+        (WebKit::MediaPlayerPrivateRemote::characteristicChanged):
+        (WebKit::MediaPlayerPrivateRemote::sizeChanged):
+        (WebKit::MediaPlayerPrivateRemote::firstVideoFrameAvailable):
+        (WebKit::MediaPlayerPrivateRemote::renderingModeChanged):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::currentPlaybackTargetIsWirelessChanged):
+        (WebKit::MediaPlayerPrivateRemote::mediaPlayerKeyNeeded):
+        (WebKit::MediaPlayerPrivateRemote::waitingForKeyChanged):
+        (WebKit::MediaPlayerPrivateRemote::initializationDataEncountered):
+        (WebKit::MediaPlayerPrivateRemote::resourceNotSupported):
+        (WebKit::MediaPlayerPrivateRemote::activeSourceBuffersChanged):
+        (WebKit::MediaPlayerPrivateRemote::getRawCookies const):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::startRecording):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::didDestroyNotification):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findStringMatches):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::signal):
+        (WebKit::IPCTestingAPI::JSIPCSemaphore::waitFor):
+        (WebKit::IPCTestingAPI::JSSharedMemory::readBytes):
+        (WebKit::IPCTestingAPI::JSSharedMemory::writeBytes):
+        (WebKit::IPCTestingAPI::JSIPC::addMessageListener):
+        (WebKit::IPCTestingAPI::encodeRemoteRenderingBackendCreationParameters):
+        (WebKit::IPCTestingAPI::encodeSharedMemory):
+        (WebKit::IPCTestingAPI::encodeSemaphore):
+        (WebKit::IPCTestingAPI::encodeArgument):
+        (WebKit::IPCTestingAPI::JSIPC::sendMessage):
+        (WebKit::IPCTestingAPI::JSIPC::sendSyncMessage):
+        (WebKit::IPCTestingAPI::JSIPC::vmPageSize):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::addCommitHandlers):
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::computeTextLegibilityScales):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInFrameInScriptWorld):
+        (WebKit::WebPage::getContentsAsString):
+        (WebKit::WebPage::removeDataDetectedLinks):
+        (WebKit::WebPage::detectDataInAllFrames):
+        (WebKit::WebPage::startTextManipulations):
+        (WebKit::WebPage::completeTextManipulation):
+        (WebKit::WebPage::requestTextRecognition):
+        (WebKit::WebPage::updateWithTextRecognitionResult):
+        (WebKit::WebPage::createAppHighlightInSelectedRange):
+        (WebKit::WebPage::setAppHighlightsVisibility):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+        (WebKit::insideImageOverlay):
+        (WebKit::expandForImageOverlay):
+        (WebKit::rangeForPointInRootViewCoordinates):
+        (WebKit::WebPage::rootViewBounds):
+        (WebKit::WebPage::absoluteInteractionBounds):
+        (WebKit::WebPage::rootViewInteractionBounds):
+        (WebKit::WebPage::requestEvasionRectsAboveSelection):
+        (WebKit::dataDetectorImageOverlayPositionInformation):
+        (WebKit::selectionPositionInformation):
+        (WebKit::populateCaretContext):
+        (WebKit::WebPage::positionInformation):
+        (WebKit::WebPage::performActionOnElement):
+        (WebKit::WebPage::shrinkToFitContent):
+        (WebKit::WebPage::updateVisibleContentRects):
+        (WebKit::WebPage::updateSelectionWithDelta):
+        (WebKit::WebPage::requestDocumentEditingContext):
+        (WebKit::WebPage::animationDidFinishForElement):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::addCommitHandlers):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performImmediateActionHitTestAtLocation):
+
 2021-09-21  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unused selection parameter.

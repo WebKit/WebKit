@@ -584,7 +584,7 @@ id <DOMEventTarget> kit(EventTarget* target)
 #endif
 {
     auto range = makeSimpleRange(*core(self));
-    auto frame = makeRefPtr(range.start.document().frame());
+    RefPtr frame = range.start.document().frame();
     if (!frame)
         return nil;
 

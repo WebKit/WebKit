@@ -285,7 +285,7 @@ JSValueRef JSIPCSemaphore::signal(JSContextRef context, JSObjectRef, JSObjectRef
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
-    auto jsIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsIPCSemaphore = toWrapped(context, thisObject);
     if (!jsIPCSemaphore) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
@@ -300,7 +300,7 @@ JSValueRef JSIPCSemaphore::waitFor(JSContextRef context, JSObjectRef, JSObjectRe
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
-    auto jsIPCSemaphore = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsIPCSemaphore = toWrapped(context, thisObject);
     if (!jsIPCSemaphore) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
@@ -396,7 +396,7 @@ const JSStaticFunction* JSSharedMemory::staticFunctions()
 
 JSValueRef JSSharedMemory::readBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    auto jsSharedMemory = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsSharedMemory = toWrapped(context, thisObject);
     if (!jsSharedMemory) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
@@ -474,7 +474,7 @@ static ArrayBufferData arrayBufferDataFromValueRef(JSContextRef context, JSTyped
 
 JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    auto jsSharedMemory = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsSharedMemory = toWrapped(context, thisObject);
     if (!jsSharedMemory) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
@@ -622,7 +622,7 @@ void JSIPC::addMessageListener(JSMessageListener::Type type, JSContextRef contex
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
-    auto jsIPC = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
         *exception = createTypeError(context, "Wrong type"_s);
         return;
@@ -764,7 +764,7 @@ static bool encodeRemoteRenderingBackendCreationParameters(IPC::Encoder& encoder
     auto jsSemaphore = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "semaphore"_s));
     if (scope.exception())
         return false;
-    auto semaphoreObject = makeRefPtr(JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsSemaphore)));
+    RefPtr semaphoreObject = JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsSemaphore));
     if (!semaphoreObject)
         return false;
 
@@ -789,7 +789,7 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
     auto jsSharedMemoryValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), "value"_s));
     if (scope.exception())
         return false;
-    auto jsSharedMemory = makeRefPtr(JSSharedMemory::toWrapped(toRef(globalObject), toRef(jsSharedMemoryValue)));
+    RefPtr jsSharedMemory = JSSharedMemory::toWrapped(toRef(globalObject), toRef(jsSharedMemoryValue));
     if (!jsSharedMemory)
         return false;
 
@@ -823,7 +823,7 @@ static bool encodeSharedMemory(IPC::Encoder& encoder, JSC::JSGlobalObject* globa
 
 static bool encodeSemaphore(IPC::Encoder& encoder, JSC::JSGlobalObject* globalObject, JSC::JSValue jsValue, JSC::CatchScope& scope)
 {
-    auto jsIPCSemaphore = makeRefPtr(JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsValue)));
+    RefPtr jsIPCSemaphore = JSIPCSemaphore::toWrapped(toRef(globalObject), toRef(jsValue));
     if (!jsIPCSemaphore)
         return false;
 
@@ -962,7 +962,7 @@ static bool encodeArgument(IPC::Encoder& encoder, JSIPC& jsIPC, JSContextRef con
     }
 
     if (type == "FrameInfoData") {
-        auto webFrame = makeRefPtr(jsIPC.webFrame());
+        RefPtr webFrame = jsIPC.webFrame();
         if (!webFrame) {
             *exception = createTypeError(context, "Failed to get the frame"_s);
             return false;
@@ -1114,7 +1114,7 @@ JSValueRef JSIPC::sendMessage(JSContextRef context, JSObjectRef, JSObjectRef thi
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
-    auto jsIPC = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
@@ -1196,7 +1196,7 @@ JSValueRef JSIPC::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef
 {
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
-    auto jsIPC = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
@@ -1281,7 +1281,7 @@ JSValueRef JSIPC::createSharedMemory(JSContextRef context, JSObjectRef, JSObject
 
 JSValueRef JSIPC::vmPageSize(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
-    auto jsIPC = makeRefPtr(toWrapped(context, thisObject));
+    RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);

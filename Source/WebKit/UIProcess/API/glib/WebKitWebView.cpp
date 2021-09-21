@@ -2473,7 +2473,7 @@ RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, const Wi
 
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), windowFeatures);
 
-    return makeRefPtr(getPage(newWebView));
+    return &getPage(newWebView);
 }
 
 void webkitWebViewReadyToShowPage(WebKitWebView* webView)

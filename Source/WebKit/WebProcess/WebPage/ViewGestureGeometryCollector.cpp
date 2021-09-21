@@ -150,7 +150,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     if (m_cachedTextLegibilityScales)
         return m_cachedTextLegibilityScales;
 
-    auto document = makeRefPtr(m_webPage.mainFrame()->document());
+    RefPtr document = m_webPage.mainFrame()->document();
     if (!document)
         return std::nullopt;
 

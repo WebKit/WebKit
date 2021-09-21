@@ -891,7 +891,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     };
 
     URL absoluteLinkURL = hitTestResult.absoluteLinkURL();
-    if (auto urlElement = makeRefPtr(hitTestResult.URLElement()); !absoluteLinkURL.isEmpty() && urlElement) {
+    if (auto urlElement = RefPtr { hitTestResult.URLElement() }; !absoluteLinkURL.isEmpty() && urlElement) {
         auto elementRange = makeRangeSelectingNodeContents(*urlElement);
         immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(elementRange, indicatorOptions(elementRange), TextIndicatorPresentationTransition::FadeIn);
     }

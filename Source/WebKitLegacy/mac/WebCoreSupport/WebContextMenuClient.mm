@@ -198,11 +198,11 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     if (!page)
         return nil;
 
-    auto node = makeRefPtr(page->contextMenuController().context().hitTestResult().innerNode());
+    RefPtr node = page->contextMenuController().context().hitTestResult().innerNode();
     if (!node)
         return nil;
 
-    auto frameView = makeRefPtr(node->document().view());
+    RefPtr frameView = node->document().view();
     if (!frameView) {
         // This method shouldn't be called in cases where the controlled node isn't in a rendered view.
         ASSERT_NOT_REACHED();

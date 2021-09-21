@@ -236,8 +236,8 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
 
 RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists(ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle& handle, GPUProcessWakeupReason reason)
 {
-    auto destination = makeRefPtr(initialDestination);
-    auto handleProtector = makeRef(handle);
+    RefPtr destination { &initialDestination };
+    Ref handleProtector { handle };
 
     auto offset = initialOffset;
     size_t sizeToRead = 0;
@@ -269,7 +269,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         MESSAGE_CHECK_WITH_RETURN_VALUE(offset <= handle.sharedMemory().size(), nullptr, "Out-of-bounds offset into shared display list handle");
 
         if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer) {
-            destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
+            destination = m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer);
             if (!destination) {
                 ASSERT(!m_pendingWakeupInfo);
                 m_pendingWakeupInfo = {{
@@ -311,7 +311,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             auto newDestinationIdentifier = makeObjectIdentifier<RenderingResourceIdentifierType>(resumeReadingInfo->destination);
             MESSAGE_CHECK_WITH_RETURN_VALUE(newDestinationIdentifier.isValid(), nullptr, "Invalid image buffer destination when resuming display list processing");
 
-            destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(newDestinationIdentifier));
+            destination = m_remoteResourceCache.cachedImageBuffer(newDestinationIdentifier);
             MESSAGE_CHECK_WITH_RETURN_VALUE(destination, nullptr, "Missing image buffer destination when resuming display list processing");
 
             offset = resumeReadingInfo->offset;
@@ -329,7 +329,7 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
 
     updateLastKnownState(RemoteRenderingBackendState::BeganReplayingDisplayList);
 
-    auto destinationImageBuffer = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier));
+    RefPtr destinationImageBuffer = m_remoteResourceCache.cachedImageBuffer(arguments.destinationImageBufferIdentifier);
     MESSAGE_CHECK(destinationImageBuffer, "Missing destination image buffer");
 
     auto initialHandle = m_sharedDisplayListHandles.get(arguments.itemBufferIdentifier);

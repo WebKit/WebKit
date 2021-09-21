@@ -119,7 +119,7 @@ uint64_t RemoteRenderingBackendProxy::messageSenderDestinationID() const
 
 RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
 {
-    auto connection = makeRefPtr(messageSenderConnection());
+    RefPtr connection = messageSenderConnection();
     if (!connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives))
         return DidReceiveBackendCreationResult::TimeoutOrIPCFailure;
     return DidReceiveBackendCreationResult::ReceivedAnyResponse;
@@ -127,7 +127,7 @@ RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBack
 
 bool RemoteRenderingBackendProxy::waitForDidFlush()
 {
-    auto connection = makeRefPtr(messageSenderConnection());
+    RefPtr connection = messageSenderConnection();
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
@@ -397,7 +397,7 @@ RefPtr<DisplayListWriterHandle> RemoteRenderingBackendProxy::findReusableDisplay
 
     auto leastRecentlyUsedIdentifier = m_identifiersOfReusableHandles.first();
     if (leastRecentlyUsedIdentifier != mostRecentlyUsedHandle->identifier()) {
-        auto handle = makeRefPtr(m_sharedDisplayListHandles.get(leastRecentlyUsedIdentifier));
+        RefPtr handle = m_sharedDisplayListHandles.get(leastRecentlyUsedIdentifier);
         if (handle->moveWritableOffsetToStartIfPossible() && handle->availableCapacity() >= capacity)
             return handle;
     }

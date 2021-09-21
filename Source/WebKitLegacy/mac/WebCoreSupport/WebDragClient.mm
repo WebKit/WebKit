@@ -271,7 +271,7 @@ void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&
 
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
 {
-    if (auto frame = makeRefPtr(element.document().frame()))
+    if (RefPtr frame = element.document().frame())
         frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(PagePasteboardContext::create(frame->pageID())), element, url, label);
 }
 

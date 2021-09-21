@@ -288,14 +288,14 @@ void RemoteLayerTreeDrawingArea::addCommitHandlers()
     if (m_webPage.firstFlushAfterCommit())
         return;
 
-    [CATransaction addCommitHandler:[retainedPage = makeRefPtr(&m_webPage)] {
+    [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
         if (Page* corePage = retainedPage->corePage()) {
             if (Frame* coreFrame = retainedPage->mainFrame())
                 corePage->inspectorController().willComposite(*coreFrame);
         }
     } forPhase:kCATransactionPhasePreCommit];
     
-    [CATransaction addCommitHandler:[retainedPage = makeRefPtr(&m_webPage)] {
+    [CATransaction addCommitHandler:[retainedPage = Ref { m_webPage }] {
         if (Page* corePage = retainedPage->corePage()) {
             if (Frame* coreFrame = retainedPage->mainFrame())
                 corePage->inspectorController().didComposite(*coreFrame);

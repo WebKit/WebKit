@@ -203,7 +203,7 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
 void WebNotificationManager::didDestroyNotification(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS)
-    auto protectedNotification = makeRefPtr(notification);
+    RefPtr protectedNotification { notification };
 
     uint64_t notificationID = m_notificationMap.take(notification);
     if (!notificationID)

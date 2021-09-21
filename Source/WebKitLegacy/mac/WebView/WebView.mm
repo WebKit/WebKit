@@ -9510,7 +9510,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 
                 [_private->_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromRenderStyle(style)];
 
-                auto enclosingListElement = makeRefPtr(enclosingList(selection.start().deprecatedNode()));
+                RefPtr enclosingListElement = enclosingList(selection.start().deprecatedNode());
                 if (enclosingListElement) {
                     if (is<HTMLUListElement>(*enclosingListElement))
                         [[_private->_textTouchBarItemController webTextListTouchBarViewController] setCurrentListType:WebListType::Unordered];

@@ -159,7 +159,7 @@ NS_DIRECT_MEMBERS
 @implementation WKProcessPoolWeakObserver (Direct)
 - (RefPtr<WebKit::WebProcessPool>)pool
 {
-    return makeRefPtr(m_weakPtr.get());
+    return m_weakPtr.get();
 }
 @end
 

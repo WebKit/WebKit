@@ -140,7 +140,7 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
 {
-    auto player = makeRefPtr(m_player.get());
+    RefPtr player = m_player.get();
     if (!player)
         return;
 
@@ -154,7 +154,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
         if (!inlineLayerHostingContextId)
             return;
 
-        auto player = makeRefPtr(m_player.get());
+        RefPtr player = m_player.get();
         if (!player)
             return;
 
@@ -192,7 +192,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         if (!createExtension()) {
             WTFLogAlways("Unable to create sandbox extension handle for GPUProcess url.\n");
             m_cachedState.networkState = MediaPlayer::NetworkState::FormatError;
-            if (auto player = makeRefPtr(m_player.get()))
+            if (RefPtr player = m_player.get())
                 player->networkStateChanged();
             return;
         }
@@ -204,7 +204,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         if (!weakThis)
             return;
 
-        auto player = makeRefPtr(m_player.get());
+        RefPtr player = m_player.get();
         if (!player)
             return;
 
@@ -337,21 +337,21 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateRemote::movieLoadType() const
 void MediaPlayerPrivateRemote::networkStateChanged(RemoteMediaPlayerState&& state)
 {
     updateCachedState(WTFMove(state));
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->networkStateChanged();
 }
 
 void MediaPlayerPrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
 {
     m_cachedState.readyState = readyState;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->readyStateChanged();
 }
 
 void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
 {
     updateCachedState(WTFMove(state));
-    if (auto player = makeRefPtr(m_player.get())) {
+    if (RefPtr player = m_player.get()) {
         player->readyStateChanged();
         bool renderingCanBeAccelerated = player->renderingCanBeAccelerated();
         if (m_renderingCanBeAccelerated != renderingCanBeAccelerated)
@@ -362,14 +362,14 @@ void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
 void MediaPlayerPrivateRemote::volumeChanged(double volume)
 {
     m_volume = volume;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->volumeChanged(volume);
 }
 
 void MediaPlayerPrivateRemote::muteChanged(bool muted)
 {
     m_muted = muted;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->muteChanged(muted);
 }
 
@@ -377,21 +377,21 @@ void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state)
 {
     m_seeking = false;
     updateCachedState(WTFMove(state));
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->timeChanged();
 }
 
 void MediaPlayerPrivateRemote::durationChanged(RemoteMediaPlayerState&& state)
 {
     updateCachedState(WTFMove(state));
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->durationChanged();
 }
 
 void MediaPlayerPrivateRemote::rateChanged(double rate)
 {
     m_rate = rate;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->rateChanged();
 }
 
@@ -400,28 +400,28 @@ void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& med
     m_cachedState.paused = paused;
     m_cachedMediaTime = mediaTime;
     m_cachedMediaTimeQueryTime = wallTime;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->playbackStateChanged();
 }
 
 void MediaPlayerPrivateRemote::engineFailedToLoad(long platformErrorCode)
 {
     m_platformErrorCode = platformErrorCode;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->remoteEngineFailedToLoad();
 }
 
 void MediaPlayerPrivateRemote::characteristicChanged(RemoteMediaPlayerState&& state)
 {
     updateCachedState(WTFMove(state));
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->characteristicChanged();
 }
 
 void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 {
     m_cachedState.naturalSize = naturalSize;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->sizeChanged();
 }
 
@@ -435,14 +435,14 @@ void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, co
 void MediaPlayerPrivateRemote::firstVideoFrameAvailable()
 {
     INFO_LOG(LOGIDENTIFIER);
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->firstVideoFrameAvailable();
 }
 
 void MediaPlayerPrivateRemote::renderingModeChanged()
 {
     INFO_LOG(LOGIDENTIFIER);
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->renderingModeChanged();
 }
 
@@ -473,7 +473,7 @@ bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
 
 void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 {
-    if (auto player = makeRefPtr(m_player.get())) {
+    if (RefPtr player = m_player.get()) {
         m_renderingCanBeAccelerated = player->renderingCanBeAccelerated();
         connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_renderingCanBeAccelerated), m_id);
     }
@@ -573,7 +573,7 @@ void MediaPlayerPrivateRemote::addRemoteAudioTrack(TrackPrivateRemoteIdentifier 
         return;
 #endif
 
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         m_player->addAudioTrack(addResult.iterator->value);
 }
 
@@ -582,7 +582,7 @@ void MediaPlayerPrivateRemote::removeRemoteAudioTrack(TrackPrivateRemoteIdentifi
     ASSERT(m_audioTracks.contains(identifier));
 
     if (auto* track = m_audioTracks.get(identifier)) {
-        if (auto player = makeRefPtr(m_player.get()))
+        if (RefPtr player = m_player.get())
             player->removeAudioTrack(*track);
         m_audioTracks.remove(identifier);
     }
@@ -611,7 +611,7 @@ void MediaPlayerPrivateRemote::addRemoteTextTrack(TrackPrivateRemoteIdentifier i
         return;
 #endif
 
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->addTextTrack(addResult.iterator->value);
 }
 
@@ -620,7 +620,7 @@ void MediaPlayerPrivateRemote::removeRemoteTextTrack(TrackPrivateRemoteIdentifie
     ASSERT(m_textTracks.contains(identifier));
 
     if (auto* track = m_textTracks.get(identifier)) {
-        if (auto player = makeRefPtr(m_player.get()))
+        if (RefPtr player = m_player.get())
             player->removeTextTrack(*track);
         m_textTracks.remove(identifier);
     }
@@ -731,7 +731,7 @@ void MediaPlayerPrivateRemote::addRemoteVideoTrack(TrackPrivateRemoteIdentifier 
         return;
 #endif
 
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->addVideoTrack(addResult.iterator->value);
 }
 
@@ -740,7 +740,7 @@ void MediaPlayerPrivateRemote::removeRemoteVideoTrack(TrackPrivateRemoteIdentifi
     ASSERT(m_videoTracks.contains(identifier));
 
     if (auto* track = m_videoTracks.get(identifier)) {
-        if (auto player = makeRefPtr(m_player.get()))
+        if (RefPtr player = m_player.get())
             player->removeVideoTrack(*track);
         m_videoTracks.remove(identifier);
     }
@@ -763,7 +763,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
             if (!weakThis)
                 return;
 
-            auto player = makeRefPtr(m_player.get());
+            RefPtr player = m_player.get();
             if (!player)
                 return;
 
@@ -779,7 +779,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         if (!weakThis)
             return;
 
-        auto player = makeRefPtr(m_player.get());
+        RefPtr player = m_player.get();
         if (!player)
             return;
 
@@ -796,7 +796,7 @@ void MediaPlayerPrivateRemote::load(MediaStreamPrivate&)
         if (!weakThis)
             return;
 
-        auto player = makeRefPtr(m_player.get());
+        RefPtr player = m_player.get();
         if (!player)
             return;
 
@@ -1022,7 +1022,7 @@ void MediaPlayerPrivateRemote::setWirelessVideoPlaybackDisabled(bool disabled)
 void MediaPlayerPrivateRemote::currentPlaybackTargetIsWirelessChanged(bool isCurrentPlaybackTargetWireless)
 {
     m_isCurrentPlaybackTargetWireless = isCurrentPlaybackTargetWireless;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->currentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless);
 }
 
@@ -1156,7 +1156,7 @@ void MediaPlayerPrivateRemote::keyAdded()
 
 void MediaPlayerPrivateRemote::mediaPlayerKeyNeeded(IPC::DataReference&& message)
 {
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->keyNeeded(Uint8Array::create(message.data(), message.size()).ptr());
 }
 #endif
@@ -1183,14 +1183,14 @@ void MediaPlayerPrivateRemote::attemptToDecryptWithInstance(CDMInstance& instanc
 void MediaPlayerPrivateRemote::waitingForKeyChanged(bool waitingForKey)
 {
     m_waitingForKey = waitingForKey;
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->waitingForKeyChanged();
 }
 
 void MediaPlayerPrivateRemote::initializationDataEncountered(const String& initDataType, IPC::DataReference&& initData)
 {
     auto initDataBuffer = ArrayBuffer::create(initData.data(), initData.size());
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->initializationDataEncountered(initDataType, WTFMove(initDataBuffer));
 }
 
@@ -1381,20 +1381,20 @@ void MediaPlayerPrivateRemote::removeResource(RemoteMediaResourceIdentifier remo
 
 void MediaPlayerPrivateRemote::resourceNotSupported()
 {
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->resourceNotSupported();
 }
 
 void MediaPlayerPrivateRemote::activeSourceBuffersChanged()
 {
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->activeSourceBuffersChanged();
 }
 
 #if PLATFORM(IOS_FAMILY)
 void MediaPlayerPrivateRemote::getRawCookies(const URL& url, WebCore::MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
 {
-    if (auto player = makeRefPtr(m_player.get()))
+    if (RefPtr player = m_player.get())
         player->getRawCookies(url, WTFMove(completionHandler));
 }
 #endif
