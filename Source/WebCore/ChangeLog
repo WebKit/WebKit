@@ -1,3 +1,26 @@
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Push font-palette-values data into CSSFontSelector
+        https://bugs.webkit.org/show_bug.cgi?id=230447
+
+        Reviewed by Antti Koivisto.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=230337 I added parsing support for font-palette-values.
+        This patch pushes the parsed data down into CSSFontSelector, so it can be passed into the font
+        creation routines. The data is retained, so it's always possible to query the CSSFontSelector for
+        the state of the world regarding font palettes.
+
+        No new tests because there is no behavior change. This querying functionality will be hooked up
+        in https://bugs.webkit.org/show_bug.cgi?id=230449.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::buildStarted):
+        (WebCore::CSSFontSelector::addFontPaletteValuesRule):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        * css/CSSFontSelector.h:
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::Builder::addChildRules):
+
 2021-09-21  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Implement fallbackFontsForRun for IFC
