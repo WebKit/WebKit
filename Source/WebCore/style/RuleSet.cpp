@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -353,14 +353,6 @@ void RuleSet::Builder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             // Add this font face to our set.
             if (resolver) {
                 resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), false);
-                resolver->invalidateMatchedDeclarationsCache();
-            }
-            mediaQueryCollector.didMutateResolver();
-            continue;
-        }
-        if (is<StyleRuleFontPaletteValues>(*rule)) {
-            if (resolver) {
-                resolver->document().fontSelector().addFontPaletteValuesRule(downcast<StyleRuleFontPaletteValues>(*rule.get()));
                 resolver->invalidateMatchedDeclarationsCache();
             }
             mediaQueryCollector.didMutateResolver();
