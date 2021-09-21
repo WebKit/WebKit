@@ -74,7 +74,7 @@ void InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent(cons
                 auto initialContaingBlockSize = RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()
                     ? formattingState.layoutState().viewportSize()
                     : formattingState.layoutState().geometryForBox(layoutBox.initialContainingBlock()).contentBox().size();
-                auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
+                auto strokeOverflow = ceilf(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
                 auto inkOverflow = textRunRect;
                 inkOverflow.inflate(strokeOverflow);
                 auto letterSpacing = style.fontCascade().letterSpacing();

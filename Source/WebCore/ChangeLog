@@ -1,3 +1,18 @@
+2021-09-21  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Ceil the descent value when adjusting the layout bounds for an inline box
+        https://bugs.webkit.org/show_bug.cgi?id=230557
+
+        Reviewed by Antti Koivisto.
+
+        Use ceil instead of floor to match legacy line layout positioning.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp: use ceilf everywhere
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts const):
+        (WebCore::Layout::LineBoxBuilder::setInitialVerticalGeometryForInlineBox const):
+
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Disable default system gesture on extended gamepad

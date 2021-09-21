@@ -189,7 +189,7 @@ void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineL
 
     // We need floor/ceil to match legacy layout integral positioning.
     auto layoutBounds = inlineBox.layoutBounds();
-    inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, floorf(maxDescent)) });
+    inlineBox.setLayoutBounds({ std::max(layoutBounds.ascent, floorf(maxAscent)), std::max(layoutBounds.descent, ceilf(maxDescent)) });
 }
 
 void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inlineLevelBox) const
@@ -201,7 +201,7 @@ void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inli
     auto logicalHeight = ascent + descent;
     // We need floor/ceil to match legacy layout integral positioning.
     inlineLevelBox.setBaseline(floorf(ascent));
-    inlineLevelBox.setDescent(ceil(descent));
+    inlineLevelBox.setDescent(ceilf(descent));
     inlineLevelBox.setLogicalHeight(logicalHeight);
 
     // FIXME: Adjust layout bounds with fallback font when applicable.
@@ -223,7 +223,7 @@ void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inli
         descent += halfLeading;
     }
     // We need floor/ceil to match legacy layout integral positioning.
-    inlineLevelBox.setLayoutBounds(InlineLevelBox::LayoutBounds { floorf(ascent), ceil(descent) });
+    inlineLevelBox.setLayoutBounds(InlineLevelBox::LayoutBounds { floorf(ascent), ceilf(descent) });
 }
 
 InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const Line::RunList& runs)
