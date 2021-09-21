@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
 #include "MainWindow.h"
 #include <WebKit/WKRunLoop.h>
 #include <dlfcn.h>
 #include <toolkitten/Application.h>
-#include <wtf/Platform.h>
 
 using toolkitten::Widget;
 using toolkitten::Application;
@@ -55,7 +56,7 @@ static void initialize()
     loadLibraryOrExit("libcairo");
     loadLibraryOrExit("libToolKitten");    
     loadLibraryOrExit("libSceNKWebKitRequirements");
-#if !ENABLE(STATIC_JSC)
+#if !(defined(ENABLE_STATIC_JSC) && ENABLE_STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
 #endif
     loadLibraryOrExit("libWebKit");

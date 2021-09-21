@@ -1,3 +1,16 @@
+2021-09-21  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [PlayStation][MiniBrowser] Remove WebKit private header include
+        https://bugs.webkit.org/show_bug.cgi?id=230183
+
+        Reviewed by Ross Kirsling.
+
+        * MiniBrowser/playstation/main.cpp:
+        Remove config.h and wtf/Platform.h include directive.
+        PlayStation MiniBrowser is expected to be independent of WebKit
+        private headers (i.e. it should depend only on WK API.) in order to
+        ensure that we can make a WebBrowser without those headers.
+
 2021-09-21  Philip Chimento  <pchimento@igalia.com>
 
         Add LLVM/FLang's int128_t implementation to WTF
