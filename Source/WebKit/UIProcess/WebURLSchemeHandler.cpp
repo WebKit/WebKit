@@ -104,9 +104,9 @@ void WebURLSchemeHandler::stopTask(WebPageProxy& page, WebCore::ResourceLoaderId
 
 void WebURLSchemeHandler::taskCompleted(WebPageProxyIdentifier pageID, WebURLSchemeTask& task)
 {
-    auto takenTask = m_tasks.take({ task.identifier(), pageID });
+    auto takenTask = m_tasks.take({ task.resourceLoaderID(), pageID });
     ASSERT_UNUSED(takenTask, takenTask == &task);
-    removeTaskFromPageMap(task.pageProxyID(), task.identifier());
+    removeTaskFromPageMap(task.pageProxyID(), task.resourceLoaderID());
 
     platformTaskCompleted(task);
 }

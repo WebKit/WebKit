@@ -61,7 +61,7 @@ public:
 
     ~WebURLSchemeTask();
 
-    WebCore::ResourceLoaderIdentifier identifier() const { ASSERT(RunLoop::isMain()); return m_identifier; }
+    WebCore::ResourceLoaderIdentifier resourceLoaderID() const { ASSERT(RunLoop::isMain()); return m_resourceLoaderID; }
     WebPageProxyIdentifier pageProxyID() const { ASSERT(RunLoop::isMain()); return m_pageProxyID; }
     WebCore::PageIdentifier webPageID() const { ASSERT(RunLoop::isMain()); return m_webPageID; }
     WebProcessProxy* process() { ASSERT(RunLoop::isMain()); return m_process.get(); }
@@ -101,7 +101,7 @@ private:
 
     Ref<WebURLSchemeHandler> m_urlSchemeHandler;
     RefPtr<WebProcessProxy> m_process;
-    WebCore::ResourceLoaderIdentifier m_identifier;
+    WebCore::ResourceLoaderIdentifier m_resourceLoaderID;
     WebPageProxyIdentifier m_pageProxyID;
     WebCore::PageIdentifier m_webPageID;
     WebCore::ResourceRequest m_request WTF_GUARDED_BY_LOCK(m_requestLock);

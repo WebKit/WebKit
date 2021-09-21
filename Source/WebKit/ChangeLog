@@ -1,3 +1,33 @@
+2021-09-21  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(241918@main): [WPE][GTK] New test is timing out on bots
+        https://bugs.webkit.org/show_bug.cgi?id=230556
+
+        Reviewed by Alex Christensen.
+
+        Switch WebKitWebContext to use both ResourceLoaderIdentifier and WebPageProxyIdentifier as
+        the key for tracking outstanding tasks, since the ResourceLoaderIdentifier is not unique.
+
+        Rename WebURLSchemeTask::identifier to WebURLSchemeTask::resourceLoaderID because this is
+        really only one component of the ID for the WebURLSchemeTask, and cannot be used on its own
+        to identify the WebURLSchemeTask. It must always be paired with the WebPageProxyIdentifier.
+
+        This fixes WPE/GTK TestWebKitWebContext /webkit/WebKitWebContext/uri-scheme
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::taskCompleted):
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        (WebKit::WebURLSchemeTask::willPerformRedirection):
+        (WebKit::WebURLSchemeTask::didPerformRedirection):
+        (WebKit::WebURLSchemeTask::didReceiveResponse):
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::resourceLoaderID const):
+        (WebKit::WebURLSchemeTask::identifier const): Deleted.
+
 2021-09-21  Per Arne  <pvollan@apple.com>
 
         Remove preference write access to AX media domain
