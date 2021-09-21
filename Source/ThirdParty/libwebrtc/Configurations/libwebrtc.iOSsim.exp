@@ -326,3 +326,4 @@ __ZNK3rtc13SocketAddresseqERKS0_
 __ZNK3rtc9IPAddress5IsNilEv
 __ZN3rtc12SSLCertChainD1Ev
 __ZN6webrtc24SctpTransportInformationD1Ev
+__ZNK3rtc9IPAddressneERKS0_

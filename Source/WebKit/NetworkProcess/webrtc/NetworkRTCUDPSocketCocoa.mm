@@ -31,9 +31,11 @@
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
-#include "NWParametersSPI.h"
+#include "NWSPI.h"
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>
+#include <ifaddrs.h>
+#include <net/if.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -140,6 +142,41 @@ static rtc::SocketAddress socketAddressFromIncomingConnection(nw_connection_t co
     return rtc::SocketAddress { nw_endpoint_get_hostname(endpoint.get()), nw_endpoint_get_port(endpoint.get()) };
 }
 
+static inline bool isNat64IPAddress(const rtc::IPAddress& ip)
+{
+    if (ip.family() != AF_INET)
+        return false;
+
+    struct ifaddrs* interfaces;
+    if (auto error = getifaddrs(&interfaces))
+        return true;
+    std::unique_ptr<struct ifaddrs> toBeFreed(interfaces);
+
+    for (auto* interface = interfaces; interface; interface = interface->ifa_next) {
+        if (interface->ifa_addr->sa_family != AF_INET)
+            continue;
+
+        rtc::IPAddress interfaceAddress { reinterpret_cast<sockaddr_in*>(interface->ifa_addr)->sin_addr };
+        if (ip != interfaceAddress)
+            continue;
+
+        return nw_nat64_does_interface_index_support_nat64(if_nametoindex(interface->ifa_name));
+    }
+
+    return false;
+}
+
+static std::string computeHostAddress(const rtc::SocketAddress& address)
+{
+    if (address.ipaddr().IsNil())
+        return address.hostname();
+
+    if (!isNat64IPAddress(address.ipaddr()))
+        return address.ipaddr().ToString();
+
+    return "0.0.0.0";
+}
+
 NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore::LibWebRTCSocketIdentifier identifier, NetworkRTCProvider& rtcProvider, const rtc::SocketAddress& address, Ref<IPC::Connection>&& connection, String&& attributedBundleIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain& domain)
     : m_identifier(identifier)
     , m_connection(WTFMove(connection))
@@ -152,9 +189,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
 {
     auto parameters = adoptNS(nw_parameters_create_secure_udp(NW_PARAMETERS_DISABLE_PROTOCOL, NW_PARAMETERS_DEFAULT_CONFIGURATION));
     {
-        auto hostAddress = address.ipaddr().ToString();
-        if (address.ipaddr().IsNil())
-            hostAddress = address.hostname();
+        auto hostAddress = computeHostAddress(address);
         auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), 0));
         m_address = { nw_endpoint_get_hostname(localEndpoint.get()), nw_endpoint_get_port(localEndpoint.get()) };
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());

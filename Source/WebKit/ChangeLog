@@ -1,3 +1,25 @@
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+        NetworkRTCUDPSocketCocoaConnections should handle NAT64 IP addresses correctly
+        https://bugs.webkit.org/show_bug.cgi?id=230552
+        <rdar://83297256>
+
+        Reviewed by Alex Christensen.
+
+        When opening a UDP socket, check whether it is a NAT64 IPv4 address.
+        In that case, we cannot bind it like we used to do with the sockets API.
+        Instead use "0.0.0.0".
+        Manually tested.
+
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::isNat64IPAddress):
+        (WebKit::computeHostAddress):
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        * NetworkProcess/webrtc/NetworkRTCUtilitiesCocoa.h:
+        * Platform/spi/Cocoa/NWSPI.h: Renamed from Source/WebKit/Platform/spi/Cocoa/NWParametersSPI.h.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-09-21  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Enable MSE in WKWebViews by default on iPad

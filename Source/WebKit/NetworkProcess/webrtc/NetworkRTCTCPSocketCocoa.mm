@@ -31,7 +31,7 @@
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
-#include "NWParametersSPI.h"
+#include "NWSPI.h"
 #include "NetworkRTCUtilitiesCocoa.h"
 #include <WebCore/STUNMessageParsing.h>
 #include <dispatch/dispatch.h>

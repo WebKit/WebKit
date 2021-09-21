@@ -27,7 +27,7 @@
 
 #if USE(LIBWEBRTC)
 
-#include "NWParametersSPI.h"
+#include "NWSPI.h"
 #include <optional>
 #include <wtf/Forward.h>
 
