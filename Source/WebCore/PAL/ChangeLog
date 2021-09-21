@@ -4,6 +4,18 @@
         https://bugs.webkit.org/show_bug.cgi?id=230567
         <rdar://83314629>
 
+        Unreviewed follow-up fix after <https://commits.webkit.org/241966@main>.
+
+        Fix an incorrect define check.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
+2021-09-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [Mac Catalyst] Fix build issue
+        https://bugs.webkit.org/show_bug.cgi?id=230567
+        <rdar://83314629>
+
         Reviewed by Brent Fulgham.
 
         The identifier kLSDefaultSessionID is undeclared. Declare it for the internal build on Catalyst.

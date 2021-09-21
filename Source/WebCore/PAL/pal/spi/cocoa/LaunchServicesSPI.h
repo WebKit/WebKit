@@ -39,15 +39,16 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 
 #if USE(APPLE_INTERNAL_SDK)
 // FIXME: remove the following section when <rdar://83360464> is fixed.
-#if PLATFORM(MACCATALYST) && !defined(__LAUNCHSERVICESPRIV__)
+#if PLATFORM(MACCATALYST)
+#if !defined(__LSAPPLICATIONSERVICESPRIV__)
 enum LSSessionID {
     kLSDefaultSessionID = -2,
 };
-
+#endif // !defined(__LSAPPLICATIONSERVICESPRIV__)
 WTF_EXTERN_C_BEGIN
 CFDictionaryRef _LSApplicationCheckIn(LSSessionID, CFDictionaryRef applicationInfo);
 WTF_EXTERN_C_END
-#endif
+#endif // PLATFORM(MACCATALYST)
 #else // USE(APPLE_INTERNAL_SDK)
 @interface LSResourceProxy : NSObject <NSCopying, NSSecureCoding>
 @property (nonatomic, copy, readonly) NSString *localizedName;
