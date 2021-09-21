@@ -1,3 +1,16 @@
+2021-09-21  Per Arne  <pvollan@apple.com>
+
+        Remove preference write access to AX media domain
+        https://bugs.webkit.org/show_bug.cgi?id=230574
+        <rdar://58899152>
+
+        Reviewed by Brent Fulgham.
+
+        This has been brokered to the UI process, so there should no longer be any need to write to the AX media domain in WebKit processes.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-09-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] jquery/offset.html is randomly failing an assertion in DrawingAreaCoordinatedGraphics::layerHostDidFlushLayers

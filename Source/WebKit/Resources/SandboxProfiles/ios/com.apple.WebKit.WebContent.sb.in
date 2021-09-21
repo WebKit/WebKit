@@ -82,10 +82,6 @@
     (allow-preferences-common)
     (allow user-preference-read (apply preference-domain domains)))
 
-(define-once (mobile-preferences-read-write . domains)
-    (allow-preferences-common)
-    (allow user-preference-read user-preference-write (apply preference-domain domains)))
-
 (define-once (framebuffer-access)
     (allow iokit-open
         (require-all
@@ -205,7 +201,7 @@
 (define-once (media-accessibility-support)
     ;; <rdar://problem/12250145>
     (mobile-preferences-read "com.apple.mediaaccessibility")
-    (mobile-preferences-read-write "com.apple.mediaaccessibility.public")
+    (mobile-preferences-read "com.apple.mediaaccessibility.public")
 )
 
 (define-once (url-translation)
