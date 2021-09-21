@@ -1,3 +1,24 @@
+2021-09-21  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r282129): Double clicking margin of a block inside a <span> may select a wrong block
+        https://bugs.webkit.org/show_bug.cgi?id=230535
+
+        Reviewed by Alan Bujtas.
+
+        If the blocks are inside a <span> we fail to search through continuation chain
+        and end up always selecting the first block inside it.
+
+        Test: editing/selection/hit-test-continuation-margin.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::positionForPoint):
+
+        The firstLineBox() test was really an "are inlines culled" test which stopped making sense
+        after inline culling was removed. Continuations need special handling but we would only
+        get to that code path if inlines were culled. After r282129 we would never get there.
+
+        Fix by removing the hasInlineBox test.
+
 2021-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         ScrollAnimationSmooth should only have one way to start an animation

@@ -425,34 +425,21 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
 
 VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
-    // FIXME: Does not deal with relative or sticky positioned inlines (should it?)
-    RenderBlock& containingBlock = *this->containingBlock();
+    auto& containingBlock = *this->containingBlock();
 
-    auto hasInlineBox = [&] {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (LayoutIntegration::LineLayout::containing(*this))
-            return true;
-#endif
-        return !!firstLineBox();
-    };
-
-    if (hasInlineBox()) {
-        // This inline actually has an inline box. We must have clicked in the border/padding of one of these boxes. We
-        // should try to find a result by asking our containing block.
-        return containingBlock.positionForPoint(point, fragment);
+    if (auto* continuation = this->continuation()) {
+        // Translate the coords from the pre-anonymous block to the post-anonymous block.
+        LayoutPoint parentBlockPoint = containingBlock.location() + point;
+        while (continuation) {
+            RenderBlock* currentBlock = continuation->isInline() ? continuation->containingBlock() : downcast<RenderBlock>(continuation);
+            if (continuation->isInline() || continuation->firstChild())
+                return continuation->positionForPoint(parentBlockPoint - currentBlock->locationOffset(), fragment);
+            continuation = continuation->inlineContinuation();
+        }
+        return RenderBoxModelObject::positionForPoint(point, fragment);
     }
 
-    // Translate the coords from the pre-anonymous block to the post-anonymous block.
-    LayoutPoint parentBlockPoint = containingBlock.location() + point;
-    RenderBoxModelObject* continuation = this->continuation();
-    while (continuation) {
-        RenderBlock* currentBlock = continuation->isInline() ? continuation->containingBlock() : downcast<RenderBlock>(continuation);
-        if (continuation->isInline() || continuation->firstChild())
-            return continuation->positionForPoint(parentBlockPoint - currentBlock->locationOffset(), fragment);
-        continuation = continuation->inlineContinuation();
-    }
-    
-    return RenderBoxModelObject::positionForPoint(point, fragment);
+    return containingBlock.positionForPoint(point, fragment);
 }
 
 class LinesBoundingBoxGeneratorContext {
