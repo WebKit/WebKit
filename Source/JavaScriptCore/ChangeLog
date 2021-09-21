@@ -1,3 +1,18 @@
+2021-09-21  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Prevent test from accessing FP registers if they are not available (e.g., arm softFP)
+        https://bugs.webkit.org/show_bug.cgi?id=230493
+
+        Unreviewed gardening.
+
+        The patch from https://bugs.webkit.org/show_bug.cgi?id=228543 introduced
+        explicity calls to FP registers, however, they are not available in archs
+        that emulate FPs. This patch adds an #ifdef to only enable the test if
+        the arch has FP registers.
+
+        * assembler/testmasm.cpp:
+        (JSC::testStoreBaseIndex):
+
 2021-09-20  Chris Dumez  <cdumez@apple.com>
 
         Stop using makeRef(*this) / makeRefPtr(this)
