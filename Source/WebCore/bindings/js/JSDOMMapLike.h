@@ -145,11 +145,13 @@ template<typename WrapperClass, typename KeyType, typename ValueType> JSC::JSVal
 
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardDeleteToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&& item)
 {
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto& backingMap = getAndInitializeBackingMap(lexicalGlobalObject, mapLike);
+
     auto isDeleted = mapLike.wrapped().remove(std::forward<ItemType>(item));
     UNUSED_PARAM(isDeleted);
 
-    auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto result = forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->deleteKeyword);
+    auto result = forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, backingMap, vm.propertyNames->deleteKeyword);
 
     ASSERT_UNUSED(result, result.asBoolean() == isDeleted);
     return result;

@@ -9,6 +9,9 @@
 test(() => {
     assert_true(!!window.internals);
     const maplike = internals.createInternalsMapLike();
+    maplike.delete("init");
+    maplike.set("init", 0);
+
     assert_array_equals(maplike.inspectKeys(), ["init"], "init keys");
     assert_array_equals(maplike.inspectValues(), [0], "init values");
     assert_true(maplike.has("init"));

@@ -1,3 +1,20 @@
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Maplike infrastructure ASSERT()s if the first operation is a delete of a existing values
+        https://bugs.webkit.org/show_bug.cgi?id=230530
+
+        Reviewed by Youenn Fablet.
+
+        The infrastructure deletes the value from the backing map before the JS map is initialized.
+        Then, when the infrastructure goes to delete it from the JS map, it isn't present. The
+        ASSERT() checks to see that it was deleted from the JS map iff it was deleted from the backing
+        map.
+
+        Test: js/dom/maplike.html
+
+        * bindings/js/JSDOMMapLike.h:
+        (WebCore::forwardDeleteToMapLike):
+
 2021-09-21  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] When the max is less than the min in minmax(), the max will be floored by the min
