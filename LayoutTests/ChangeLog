@@ -1,3 +1,12 @@
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+        Update list of WebRTC senders and receivers when updating local or remote descriptions
+        https://bugs.webkit.org/show_bug.cgi?id=230403
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal: single-component swizzles do not compile

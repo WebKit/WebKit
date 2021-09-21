@@ -1,3 +1,13 @@
+2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+        Update list of WebRTC senders and receivers when updating local or remote descriptions
+        https://bugs.webkit.org/show_bug.cgi?id=230403
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/no-media-call.html:
+        Check that transport is not null after setting the local description.
+
 2021-09-20  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement exp,log functions calc functions

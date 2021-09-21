@@ -889,19 +889,16 @@ void RTCPeerConnection::generateCertificate(JSC::JSGlobalObject& lexicalGlobalOb
 
 Vector<std::reference_wrapper<RTCRtpSender>> RTCPeerConnection::getSenders() const
 {
-    m_backend->collectTransceivers();
     return m_transceiverSet.senders();
 }
 
 Vector<std::reference_wrapper<RTCRtpReceiver>> RTCPeerConnection::getReceivers() const
 {
-    m_backend->collectTransceivers();
     return m_transceiverSet.receivers();
 }
 
 const Vector<RefPtr<RTCRtpTransceiver>>& RTCPeerConnection::getTransceivers() const
 {
-    m_backend->collectTransceivers();
     return m_transceiverSet.list();
 }
 
@@ -1020,12 +1017,14 @@ void RTCPeerConnection::updateTransceiverTransports()
 // https://w3c.github.io/webrtc-pc/#set-description step 4.9.1
 void RTCPeerConnection::updateTransceiversAfterSuccessfulLocalDescription()
 {
+    m_backend->collectTransceivers();
     updateTransceiverTransports();
 }
 
 // https://w3c.github.io/webrtc-pc/#set-description step 4.9.2
 void RTCPeerConnection::updateTransceiversAfterSuccessfulRemoteDescription()
 {
+    m_backend->collectTransceivers();
     updateTransceiverTransports();
 }
 
