@@ -40,7 +40,6 @@ public:
     ScrollAnimationSmooth(ScrollAnimationClient&);
     virtual ~ScrollAnimationSmooth();
 
-    bool startAnimatedScroll(ScrollbarOrientation, ScrollGranularity, const FloatPoint& fromOffset, float step, float multiplier);
     bool startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset);
 
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;

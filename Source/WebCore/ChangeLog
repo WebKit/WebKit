@@ -1,3 +1,21 @@
+2021-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        ScrollAnimationSmooth should only have one way to start an animation
+        https://bugs.webkit.org/show_bug.cgi?id=230529
+
+        Reviewed by Martin Robinson.
+
+        Remove the ScrollbarOrientation/ScrollGranularity/step/multiplier entry point on
+        ScrollAnimationSmooth; the caller can do the math to compute the end point.
+
+        * page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp:
+        (WebCore::ScrollingTreeScrollingNodeDelegateNicosia::handleWheelEvent):
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::startAnimatedScroll): Deleted.
+        * platform/ScrollAnimationSmooth.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+
 2021-09-21  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Enable markers and highlights

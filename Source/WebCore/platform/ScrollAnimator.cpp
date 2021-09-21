@@ -87,8 +87,12 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     }
 
 #if ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY)
-    if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate))
-        return m_scrollAnimation->startAnimatedScroll(orientation, granularity, offsetFromPosition(m_currentPosition), step, multiplier);
+    if (m_scrollableArea.scrollAnimatorEnabled() && platformAllowsScrollAnimation() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
+        auto startOffset = offsetFromPosition(m_currentPosition);
+        auto extents = scrollExtents();
+        auto destinationOffset = (startOffset + delta).constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
+        return m_scrollAnimation->startAnimatedScrollToDestination(startOffset, destinationOffset);
+    }
 #endif
 
     return scrollToPositionWithoutAnimation(currentPosition() + delta);

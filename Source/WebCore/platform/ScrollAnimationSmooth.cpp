@@ -56,25 +56,6 @@ ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)
 
 ScrollAnimationSmooth::~ScrollAnimationSmooth() = default;
 
-bool ScrollAnimationSmooth::startAnimatedScroll(ScrollbarOrientation orientation, ScrollGranularity, const FloatPoint& fromOffset, float step, float multiplier)
-{
-    m_startOffset = fromOffset;
-    auto destinationOffset = fromOffset;
-    switch (orientation) {
-    case HorizontalScrollbar:
-        destinationOffset.setX(destinationOffset.x() + step * multiplier);
-        break;
-    case VerticalScrollbar:
-        destinationOffset.setY(destinationOffset.y() + step * multiplier);
-        break;
-    }
-
-    m_duration = durationFromDistance(destinationOffset - m_startOffset);
-
-    auto extents = m_client.scrollExtentsForAnimation(*this);
-    return startOrRetargetAnimation(extents, destinationOffset);
-}
-
 bool ScrollAnimationSmooth::startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset)
 {
     m_startOffset = fromOffset;

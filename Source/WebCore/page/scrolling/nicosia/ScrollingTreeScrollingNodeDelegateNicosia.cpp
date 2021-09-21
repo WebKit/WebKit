@@ -162,8 +162,9 @@ WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelE
 #if ENABLE(SMOOTH_SCROLLING)
     if (m_scrollAnimatorEnabled && !wheelEvent.hasPreciseScrollingDeltas()) {
         ensureScrollAnimationSmooth();
-        m_smoothAnimation->startAnimatedScroll(HorizontalScrollbar, ScrollByPixel, currentScrollPosition(), 1, deltaX);
-        m_smoothAnimation->startAnimatedScroll(VerticalScrollbar, ScrollByPixel, currentScrollPosition(), 1, deltaY);
+        auto currentOffset = scrollingNode().currentScrollOffset();
+        auto destinationOffset = currentOffset + FloatSize { deltaX, deltaY };
+        m_smoothAnimation->startAnimatedScrollToDestination(currentOffset, destinationOffset);
         return WheelEventHandlingResult::handled();
     }
 #endif
