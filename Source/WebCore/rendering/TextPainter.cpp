@@ -50,10 +50,10 @@ ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow,
         return;
     }
 
-    float shadowX = orientation == FontOrientation::Horizontal ? shadow->x().value() : shadow->y().value();
-    float shadowY = orientation == FontOrientation::Horizontal ? shadow->y().value() : -shadow->x().value();
+    int shadowX = orientation == FontOrientation::Horizontal ? shadow->x() : shadow->y();
+    int shadowY = orientation == FontOrientation::Horizontal ? shadow->y() : -shadow->x();
     FloatSize shadowOffset(shadowX, shadowY);
-    auto shadowRadius = shadow->radius();
+    int shadowRadius = shadow->radius();
     Color shadowColor = shadow->color();
     if (colorFilter)
         colorFilter->transformColor(shadowColor);
@@ -69,12 +69,12 @@ ShadowApplier::ShadowApplier(GraphicsContext& context, const ShadowData* shadow,
         context.clip(shadowRect);
 
         m_didSaveContext = true;
-        m_extraOffset = FloatSize(0, 2 * shadowRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius.value());
+        m_extraOffset = FloatSize(0, 2 * shadowRect.height() + std::max(0.0f, shadowOffset.height()) + shadowRadius);
         shadowOffset -= m_extraOffset;
     }
 
     if (!m_avoidDrawingShadow)
-        context.setShadow(shadowOffset, shadowRadius.value(), shadowColor);
+        context.setShadow(shadowOffset, shadowRadius, shadowColor);
 }
 
 inline bool ShadowApplier::isLastShadowIteration()
@@ -84,7 +84,7 @@ inline bool ShadowApplier::isLastShadowIteration()
 
 inline bool ShadowApplier::shadowIsCompletelyCoveredByText(bool textIsOpaque)
 {
-    return textIsOpaque && m_shadow && m_shadow->location().isZero() && m_shadow->radius().isZero();
+    return textIsOpaque && m_shadow && m_shadow->location().isZero() && !m_shadow->radius();
 }
 
 ShadowApplier::~ShadowApplier()

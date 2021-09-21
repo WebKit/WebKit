@@ -1,3 +1,16 @@
+2021-09-21  Eric Hutchison  <ehutchison@apple.com>
+
+        Unreviewed, reverting r282768.
+
+        Slowdown on Mac EWS builders as a constant failure.
+
+        Reverted changeset:
+
+        "box-shadow and text-shadow do not yield float values while
+        interpolating"
+        https://bugs.webkit.org/show_bug.cgi?id=230347
+        https://commits.webkit.org/r282768
+
 2021-09-21  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html is flaky

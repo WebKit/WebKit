@@ -246,7 +246,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         && (!m_decorations.contains(TextDecoration::Overline) || m_styles.overlineColor.isOpaque())
         && (!m_decorations.contains(TextDecoration::LineThrough) || m_styles.linethroughColor.isOpaque());
 
-    float extraOffset = 0;
+    int extraOffset = 0;
     bool clipping = !areLinesOpaque && m_shadow && m_shadow->next();
     if (clipping) {
         FloatRect clipRect(localOrigin, FloatSize(m_width, fontMetrics.ascent() + 2));
@@ -254,11 +254,11 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
             int shadowExtent = shadow->paintingExtent();
             FloatRect shadowRect(localOrigin, FloatSize(m_width, fontMetrics.ascent() + 2));
             shadowRect.inflate(shadowExtent);
-            float shadowX = LayoutUnit(m_isHorizontal ? shadow->x().value() : shadow->y().value());
-            float shadowY = LayoutUnit(m_isHorizontal ? shadow->y().value() : -shadow->x().value());
+            int shadowX = m_isHorizontal ? shadow->x() : shadow->y();
+            int shadowY = m_isHorizontal ? shadow->y() : -shadow->x();
             shadowRect.move(shadowX, shadowY);
             clipRect.unite(shadowRect);
-            extraOffset = std::max(extraOffset, std::max(0.f, shadowY) + shadowExtent);
+            extraOffset = std::max(extraOffset, std::max(0, shadowY) + shadowExtent);
         }
         m_context.save();
         m_context.clip(clipRect);
@@ -274,13 +274,13 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
                 localOrigin.move(0, -extraOffset);
                 extraOffset = 0;
             }
-            float shadowX = LayoutUnit(m_isHorizontal ? shadow->x().value() : shadow->y().value());
-            float shadowY = LayoutUnit(m_isHorizontal ? shadow->y().value() : -shadow->x().value());
+            int shadowX = m_isHorizontal ? shadow->x() : shadow->y();
+            int shadowY = m_isHorizontal ? shadow->y() : -shadow->x();
             
             Color shadowColor = shadow->color();
             if (m_shadowColorFilter)
                 m_shadowColorFilter->transformColor(shadowColor);
-            m_context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius().value(), shadowColor);
+            m_context.setShadow(FloatSize(shadowX, shadowY - extraOffset), shadow->radius(), shadowColor);
             shadow = shadow->next();
         }
 
