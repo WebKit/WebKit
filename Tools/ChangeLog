@@ -1,3 +1,24 @@
+2021-09-21  Phillip Mates  <pmates@igalia.com>
+
+        Fix JSC test runner warnings and errors on linux
+        https://bugs.webkit.org/show_bug.cgi?id=230218
+
+        Reviewed by Jonathan Bedard.
+
+        Fixed the following warning that arises in many scripts when they are
+        run on Linux:
+        `Can't exec "xcodebuild": No such file or directory at
+        /home/mates/igalia/WebKit/Tools/Scripts/webkitdirs.pm line 634.`
+
+        Fixed `run-javascriptcore-tests` on Linux, which was failing to invoke
+        builds before running the test suite with the error:
+        `Unrecognized option `--64-bit'`
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions):
+        (determineIsWin64):
+        (determineIsWin64FromArchitecture): Deleted.
+
 2021-09-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [webkitcorepy] Fail to parse python required version when there's a space between operator and version

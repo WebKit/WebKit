@@ -1008,7 +1008,9 @@ sub XcodeOptions
     determineForceOptimizationLevel();
     determineCoverageIsEnabled();
     determineLTOMode();
-    determineXcodeSDK();
+    if (isAppleCocoaWebKit()) {
+      determineXcodeSDK();
+    }
 
     my @options;
     push @options, "-UseSanitizedBuildSystemEnvironment=YES";
@@ -1480,14 +1482,7 @@ sub isWin64()
 sub determineIsWin64()
 {
     return if defined($isWin64);
-    $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit") || ((isAnyWindows() || isJSCOnly()) && !shouldBuild32Bit());
-}
-
-sub determineIsWin64FromArchitecture($)
-{
-    my $arch = shift;
-    $isWin64 = ($arch eq "x86_64");
-    return $isWin64;
+    $isWin64 = checkForArgumentAndRemoveFromARGV("--64-bit") || (isAnyWindows() && !shouldBuild32Bit());
 }
 
 sub isCygwin()
