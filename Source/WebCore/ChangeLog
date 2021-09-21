@@ -1,3 +1,27 @@
+2021-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Modernize ENABLE_IOSURFACE_POOL_STATISTICS logging
+        https://bugs.webkit.org/show_bug.cgi?id=230570
+
+        Reviewed by Tim Horton.
+
+        Fix thread safety warnings when ENABLE_IOSURFACE_POOL_STATISTICS is defined.
+        Use TextStream for logging.
+        
+        This could be a log channel.
+
+        * platform/graphics/cg/IOSurfacePool.cpp:
+        (WebCore::IOSurfacePool::takeSurface):
+        (WebCore::IOSurfacePool::addSurface):
+        (WebCore::IOSurfacePool::evict):
+        (WebCore::IOSurfacePool::collectionTimerFired):
+        (WebCore::IOSurfacePool::poolStatistics const):
+        (WebCore::IOSurfacePool::showPoolStatistics): Deleted.
+        * platform/graphics/cg/IOSurfacePool.h:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::operator<<):
+
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Push font-palette-values data into CSSFontSelector

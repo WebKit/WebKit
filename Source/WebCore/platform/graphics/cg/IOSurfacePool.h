@@ -101,7 +101,7 @@ private:
 
     void discardAllSurfacesInternal() WTF_REQUIRES_LOCK(m_lock);
 
-    void showPoolStatistics(const char*);
+    String poolStatistics() const WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     RunLoop::Timer<IOSurfacePool> m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);

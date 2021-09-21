@@ -186,6 +186,7 @@ private:
     static std::optional<IntSize> s_maximumSize;
 };
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::IOSurface::Format);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSurface&);
 
 } // namespace WebCore

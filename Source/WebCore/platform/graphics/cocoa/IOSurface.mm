@@ -525,7 +525,7 @@ IOSurface::Format IOSurface::formatForPixelFormat(PixelFormat format)
     return IOSurface::Format::BGRA;
 }
 
-static TextStream& operator<<(TextStream& ts, IOSurface::Format format)
+TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 {
     switch (format) {
     case IOSurface::Format::BGRA:
