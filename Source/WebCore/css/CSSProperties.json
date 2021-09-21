@@ -4085,6 +4085,26 @@
                 "url": "https://www.w3.org/TR/css-fonts-3/#src-desc"
             }
         },
+        "base-palette": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "descriptor-only": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-4/#base-palette-desc"
+            }
+        },
+        "override-color": {
+            "codegen-properties": {
+                "skip-builder": true,
+                "descriptor-only": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-4/#override-color"
+            }
+        },
         "stop-color": {
             "codegen-properties": {
                 "converter": "SVGColor",

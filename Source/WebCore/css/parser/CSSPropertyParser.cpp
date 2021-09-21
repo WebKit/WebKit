@@ -38,6 +38,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontPaletteValuesOverrideColorValue.h"
 #if ENABLE(VARIATION_FONTS)
 #include "CSSFontVariationValue.h"
 #endif
@@ -233,6 +234,8 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
 
     if (ruleType == StyleRuleType::FontFace)
         parseSuccess = parser.parseFontFaceDescriptor(propertyID);
+    else if (ruleType == StyleRuleType::FontPaletteValues)
+        parseSuccess = parser.parseFontPaletteValuesDescriptor(propertyID);
     else if (ruleType == StyleRuleType::CounterStyle)
         parseSuccess = parser.parseCounterStyleDescriptor(propertyID, context);
     else
@@ -4822,6 +4825,63 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         return consumeFontVariantShorthand(false);
     case CSSPropertyFontFeatureSettings:
         parsedValue = consumeFontFeatureSettings(m_range, CSSValuePool::singleton());
+        break;
+    default:
+        break;
+    }
+
+    if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(propId, CSSPropertyInvalid, *parsedValue, false);
+    return true;
+}
+
+static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRange& range)
+{
+    if (range.peek().type() == StringToken)
+        return consumeString(range);
+    return consumeInteger(range);
+}
+
+static RefPtr<CSSValueList> consumeOverrideColorDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    do {
+        RefPtr<CSSPrimitiveValue> key;
+        if (range.peek().type() == StringToken)
+            key = consumeString(range);
+        else
+            key = consumeInteger(range);
+        if (!key)
+            return nullptr;
+
+        auto color = consumeColor(range, context);
+        if (!color)
+            return nullptr;
+
+        RefPtr<CSSValue> value = CSSFontPaletteValuesOverrideColorValue::create(key.releaseNonNull(), color.releaseNonNull());
+        list->append(value.releaseNonNull());
+    } while (consumeCommaIncludingWhitespace(range));
+    
+    if (!range.atEnd() || !list->length())
+        return nullptr;
+
+    return list;
+}
+
+bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID propId)
+{
+    RefPtr<CSSValue> parsedValue;
+    switch (propId) {
+    case CSSPropertyFontFamily:
+        parsedValue = consumeFamilyName(m_range);
+        break;
+    case CSSPropertyBasePalette:
+        parsedValue = consumeBasePaletteDescriptor(m_range);
+        break;
+    case CSSPropertyOverrideColor:
+        parsedValue = consumeOverrideColorDescriptor(m_range, m_context);
         break;
     default:
         break;

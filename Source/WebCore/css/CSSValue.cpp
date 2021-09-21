@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +40,7 @@
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontPaletteValuesOverrideColorValue.h"
 #include "CSSFontStyleRangeValue.h"
 #include "CSSFontStyleValue.h"
 #include "CSSFontValue.h"
@@ -164,6 +166,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSFontValue>(*this, other);
         case FontFaceSrcClass:
             return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
+        case FontPaletteValuesOverrideColorClass:
+            return compareCSSValues<CSSFontPaletteValuesOverrideColorValue>(*this, other);
         case FontFeatureClass:
             return compareCSSValues<CSSFontFeatureValue>(*this, other);
         case FontVariationClass:
@@ -264,6 +268,8 @@ String CSSValue::cssText() const
         return downcast<CSSFontValue>(*this).customCSSText();
     case FontFaceSrcClass:
         return downcast<CSSFontFaceSrcValue>(*this).customCSSText();
+    case FontPaletteValuesOverrideColorClass:
+        return downcast<CSSFontPaletteValuesOverrideColorValue>(*this).customCSSText();
     case FontFeatureClass:
         return downcast<CSSFontFeatureValue>(*this).customCSSText();
     case FontVariationClass:
@@ -376,6 +382,9 @@ void CSSValue::destroy()
         return;
     case FontFaceSrcClass:
         delete downcast<CSSFontFaceSrcValue>(this);
+        return;
+    case FontPaletteValuesOverrideColorClass:
+        delete downcast<CSSFontPaletteValuesOverrideColorValue>(this);
         return;
     case FontFeatureClass:
         delete downcast<CSSFontFeatureValue>(this);

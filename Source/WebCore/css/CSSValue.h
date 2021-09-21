@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -97,6 +97,7 @@ public:
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
     bool isFontVariationValue() const { return m_classType == FontVariationClass; }
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
+    bool isFontPaletteValuesOverrideColorValue() const { return m_classType == FontPaletteValuesOverrideColorClass; }
     bool isFontValue() const { return m_classType == FontClass; }
     bool isFontStyleValue() const { return m_classType == FontStyleClass; }
     bool isFontStyleRangeValue() const { return m_classType == FontStyleRangeClass; }
@@ -187,6 +188,7 @@ protected:
         FontStyleClass,
         FontStyleRangeClass,
         FontFaceSrcClass,
+        FontPaletteValuesOverrideColorClass,
         FunctionClass,
 
         InheritedClass,

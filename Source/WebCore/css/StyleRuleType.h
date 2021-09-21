@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,19 +28,21 @@
 namespace WebCore {
 
 enum class StyleRuleType : uint8_t {
-    Unknown, // Not used.
-    Style,
-    Charset, // Not used. These are internally strings owned by the style sheet.
-    Import,
-    Media,
-    FontFace,
-    Page,
-    Keyframes,
-    Keyframe, // Not used. These are internally non-rule StyleRuleKeyframe objects.
+    Unknown = 0, // Not used.
+    Style = 1,
+    Charset = 2, // Not used. These are internally strings owned by the style sheet.
+    Import = 3,
+    Media = 4,
+    FontFace = 5,
+    Page = 6,
+    Keyframes = 7,
+    Keyframe = 8, // Not used. These are internally non-rule StyleRuleKeyframe objects.
+    // Margin = 9, FIXME: Why is this missing?
     Namespace = 10,
     CounterStyle = 11,
     Supports = 12,
-    Layer = 13,
+    FontPaletteValues = 19, // https://github.com/w3c/csswg-drafts/issues/6623
+    Layer = 20
 };
 
 } // namespace WebCore

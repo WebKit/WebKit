@@ -1,0 +1,86 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "Color.h"
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/text/AtomString.h>
+
+namespace WebCore {
+
+class FontPaletteValues {
+public:
+    using PaletteIndex = Variant<int64_t, AtomString>;
+    using PaletteColorIndex = Variant<AtomString, int64_t>;
+    using OverriddenColor = std::pair<PaletteColorIndex, Color>;
+
+    FontPaletteValues() = default;
+
+    FontPaletteValues(const PaletteIndex& basePalette, Vector<OverriddenColor>&& overrideColor)
+        : m_basePalette(basePalette)
+        , m_overrideColor(WTFMove(overrideColor))
+    {
+    }
+
+    const PaletteIndex& basePalette() const
+    {
+        return m_basePalette;
+    }
+
+    void setBasePalette(const PaletteIndex& basePalette)
+    {
+        m_basePalette = basePalette;
+    }
+
+    const Vector<OverriddenColor>& overrideColor() const
+    {
+        return m_overrideColor;
+    }
+
+    void appendOverrideColor(OverriddenColor&& overriddenColor)
+    {
+        m_overrideColor.append(overriddenColor);
+    }
+
+    void clearOverrideColor()
+    {
+        m_overrideColor.clear();
+    }
+
+    bool remove(unsigned key)
+    {
+        return m_overrideColor.removeAllMatching([key](const OverriddenColor& overriddenColor) -> bool {
+            return WTF::holds_alternative<int64_t>(overriddenColor.first) && WTF::get<int64_t>(overriddenColor.first) == key;
+        });
+    }
+
+private:
+    PaletteIndex m_basePalette;
+    Vector<OverriddenColor> m_overrideColor;
+};
+
+}

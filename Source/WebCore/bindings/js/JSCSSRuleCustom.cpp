@@ -28,6 +28,7 @@
 
 #include "CSSCounterStyleRule.h"
 #include "CSSFontFaceRule.h"
+#include "CSSFontPaletteValuesRule.h"
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
@@ -38,6 +39,7 @@
 #include "CSSSupportsRule.h"
 #include "JSCSSCounterStyleRule.h"
 #include "JSCSSFontFaceRule.h"
+#include "JSCSSFontPaletteValuesRule.h"
 #include "JSCSSImportRule.h"
 #include "JSCSSKeyframeRule.h"
 #include "JSCSSKeyframesRule.h"
@@ -70,6 +72,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSMediaRule>(globalObject, WTFMove(rule));
     case CSSRule::FONT_FACE_RULE:
         return createWrapper<CSSFontFaceRule>(globalObject, WTFMove(rule));
+    case CSSRule::FONT_PALETTE_VALUES_RULE:
+        return createWrapper<CSSFontPaletteValuesRule>(globalObject, WTFMove(rule));
     case CSSRule::PAGE_RULE:
         return createWrapper<CSSPageRule>(globalObject, WTFMove(rule));
     case CSSRule::IMPORT_RULE:

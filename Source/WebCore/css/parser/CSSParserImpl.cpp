@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -34,6 +34,7 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSDeferredParser.h"
+#include "CSSFontPaletteValuesOverrideColorValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSParserObserver.h"
@@ -47,6 +48,7 @@
 #include "CSSVariableParser.h"
 #include "Document.h"
 #include "Element.h"
+#include "FontPaletteValues.h"
 #include "MediaList.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
@@ -445,6 +447,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumeSupportsRule(prelude, block);
     case CSSAtRuleFontFace:
         return consumeFontFaceRule(prelude, block);
+    case CSSAtRuleFontPaletteValues:
+        return consumeFontPaletteValuesRule(prelude, block);
     case CSSAtRuleWebkitKeyframes:
         return consumeKeyframesRule(true, prelude, block);
     case CSSAtRuleKeyframes:
@@ -650,6 +654,55 @@ RefPtr<StyleRuleFontFace> CSSParserImpl::consumeFontFaceRule(CSSParserTokenRange
 
     consumeDeclarationList(block, StyleRuleType::FontFace);
     return StyleRuleFontFace::create(createStyleProperties(m_parsedProperties, m_context.mode));
+}
+
+RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+{
+    auto name = CSSPropertyParserHelpers::consumeCustomIdent(prelude);
+    if (!name || !prelude.atEnd())
+        return nullptr; // Parse error; expected custom ident in @font-palette-values header
+
+    if (m_observerWrapper) {
+        unsigned endOffset = m_observerWrapper->endOffset(prelude);
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::FontPaletteValues, m_observerWrapper->startOffset(prelude));
+        m_observerWrapper->observer().endRuleHeader(endOffset);
+        m_observerWrapper->observer().startRuleBody(endOffset);
+        m_observerWrapper->observer().endRuleBody(endOffset);
+    }
+
+    consumeDeclarationList(block, StyleRuleType::FontPaletteValues);
+    auto properties = createStyleProperties(m_parsedProperties, m_context.mode);
+
+    AtomString fontFamily;
+    if (auto fontFamilyValue = properties->getPropertyCSSValue(CSSPropertyFontFamily))
+        fontFamily = downcast<CSSPrimitiveValue>(*fontFamilyValue).fontFamily().familyName;
+
+    FontPaletteValues::PaletteIndex basePalette(nullAtom());
+    if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {
+        const auto& primitiveValue = downcast<CSSPrimitiveValue>(*basePaletteValue);
+        if (primitiveValue.isString())
+            basePalette = primitiveValue.stringValue();
+        else if (primitiveValue.isNumber())
+            basePalette = primitiveValue.value<int64_t>();
+    }
+
+    Vector<FontPaletteValues::OverriddenColor> overrideColor;
+    if (auto overrideColorValue = properties->getPropertyCSSValue(CSSPropertyOverrideColor)) {
+        const auto& list = downcast<CSSValueList>(*overrideColorValue);
+        for (const auto& item : list) {
+            FontPaletteValues::PaletteColorIndex key(nullAtom());
+            const auto& pair = downcast<CSSFontPaletteValuesOverrideColorValue>(item.get());
+            if (pair.key().isString())
+                key = pair.key().stringValue();
+            else if (pair.key().isNumber())
+                key = pair.key().value<int64_t>();
+            else
+                continue;
+            overrideColor.append(std::make_pair(key, pair.color().color()));
+        }
+    }
+
+    return StyleRuleFontPaletteValues::create(name->stringValue(), fontFamily, basePalette, WTFMove(overrideColor));
 }
 
 RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefixed, CSSParserTokenRange prelude, CSSParserTokenRange block)
@@ -961,7 +1014,7 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
         consumeCustomPropertyValue(range.makeSubRange(&range.peek(), declarationValueEnd), variableName, important);
     }
 
-    if (important && (ruleType == StyleRuleType::FontFace || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::CounterStyle))
+    if (important && (ruleType == StyleRuleType::FontFace || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::CounterStyle || ruleType == StyleRuleType::FontPaletteValues))
         return;
 
     if (propertyID != CSSPropertyInvalid)

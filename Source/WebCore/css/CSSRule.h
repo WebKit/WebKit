@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -38,19 +38,20 @@ public:
 
     // WebIDL enum
     enum Type {
-        UNKNOWN_RULE,
-        STYLE_RULE,
-        CHARSET_RULE,
-        IMPORT_RULE,
-        MEDIA_RULE,
-        FONT_FACE_RULE,
-        PAGE_RULE,
-        KEYFRAMES_RULE,
-        KEYFRAME_RULE,
-        MARGIN_RULE,
-        NAMESPACE_RULE,
-        COUNTER_STYLE_RULE,
-        SUPPORTS_RULE
+        UNKNOWN_RULE = 0,
+        STYLE_RULE = 1,
+        CHARSET_RULE = 2,
+        IMPORT_RULE = 3,
+        MEDIA_RULE = 4,
+        FONT_FACE_RULE = 5,
+        PAGE_RULE = 6,
+        KEYFRAMES_RULE = 7,
+        KEYFRAME_RULE = 8,
+        MARGIN_RULE = 9,
+        NAMESPACE_RULE = 10,
+        COUNTER_STYLE_RULE = 11,
+        SUPPORTS_RULE = 12,
+        FONT_PALETTE_VALUES_RULE = 19 // https://github.com/w3c/csswg-drafts/issues/6623
     };
 
     enum DeprecatedType {

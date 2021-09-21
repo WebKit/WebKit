@@ -1,5 +1,109 @@
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Parsing support for font-palette-values
+        https://bugs.webkit.org/show_bug.cgi?id=230337
+
+        Reviewed by Antti Koivisto.
+
+        There's nothing particularly interesting here - it's just support for another at-rule.
+        I've implemented what's in the spec right now:
+        https://drafts.csswg.org/css-fonts-4/#font-palette-values
+
+        There are 2 new descriptors: base-palette and override-color. I've added a new CSSValue subclass
+        for each of the items in the override-color list - these items are just tuples of two
+        CSSPrimitiveValues. I could have done this with a CSSValueList which always just happens to have
+        a length of 2, but I thought that was less elegant (and has an extra pointer indirection) than
+        making a class to hold the two CSSPrimitiveValues.
+
+        The only difference with what's in the spec is that I've given a different value to
+        FONT_PALETTE_VALUES_RULE, because its current value conflicts with VIEWPORT_RULE. This is being
+        tracked at https://github.com/w3c/csswg-drafts/issues/6623.
+
+        I created a new datatype and file in platform/graphics/FontPaletteValues.h because this data will
+        eventually be passed to preparePlatformFont(), which is in platform/, so this data needs to be
+        accessible from platform/ too.
+
+        Tests: imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html
+               imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSFontPaletteValuesOverrideColorValue.cpp: Copied from Source/WebCore/css/StyleRuleType.h.
+        (WebCore::CSSFontPaletteValuesOverrideColorValue::customCSSText const):
+        (WebCore::CSSFontPaletteValuesOverrideColorValue::equals const):
+        * css/CSSFontPaletteValuesOverrideColorValue.h: Copied from Source/WebCore/css/StyleRuleType.h.
+        * css/CSSFontPaletteValuesRule.cpp: Added.
+        (WebCore::CSSFontPaletteValuesRule::CSSFontPaletteValuesRule):
+        (WebCore::CSSFontPaletteValuesRule::~CSSFontPaletteValuesRule):
+        (WebCore::parseString):
+        (WebCore::CSSFontPaletteValuesRule::fontFamily const):
+        (WebCore::CSSFontPaletteValuesRule::basePalette const):
+        (WebCore::CSSFontPaletteValuesRule::setFontFamily):
+        (WebCore::CSSFontPaletteValuesRule::setBasePalette):
+        (WebCore::CSSFontPaletteValuesRule::initializeMapLike):
+        (WebCore::CSSFontPaletteValuesRule::setFromMapLike):
+        (WebCore::CSSFontPaletteValuesRule::clear):
+        (WebCore::CSSFontPaletteValuesRule::remove):
+        (WebCore::CSSFontPaletteValuesRule::cssText const):
+        (WebCore::CSSFontPaletteValuesRule::reattach):
+        * css/CSSFontPaletteValuesRule.h: Copied from Source/WebCore/css/StyleRuleType.h.
+        * css/CSSFontPaletteValuesRule.idl: Added.
+        * css/CSSProperties.json:
+        * css/CSSRule.cpp:
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals const):
+        (WebCore::CSSValue::cssText const):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontPaletteValuesOverrideColorValue const):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy const):
+        (WebCore::StyleRuleBase::createCSSOMWrapper const):
+        (WebCore::StyleRuleFontPaletteValues::StyleRuleFontPaletteValues):
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::isFontPaletteValuesRule const):
+        (isType):
+        * css/StyleRuleType.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::traverseRulesInVector):
+        (WebCore::StyleSheetContents::traverseSubresources const):
+        * css/parser/CSSAtRuleID.cpp:
+        (WebCore::cssAtRuleID):
+        * css/parser/CSSAtRuleID.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeAtRule):
+        (WebCore::CSSParserImpl::consumeFontPaletteValuesRule):
+        (WebCore::CSSParserImpl::consumeDeclaration):
+        * css/parser/CSSParserImpl.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseValue):
+        (WebCore::consumeBasePaletteDescriptor):
+        (WebCore::consumeOverrideColorDescriptor):
+        (WebCore::CSSPropertyParser::parseFontPaletteValuesDescriptor):
+        * css/parser/CSSPropertyParser.h:
+        * platform/graphics/FontPaletteValues.h: Added.
+        (WebCore::FontPaletteValues::FontPaletteValues):
+        (WebCore::FontPaletteValues::basePalette const):
+        (WebCore::FontPaletteValues::setBasePalette):
+        (WebCore::FontPaletteValues::overrideColor const):
+        (WebCore::FontPaletteValues::appendOverrideColor):
+        (WebCore::FontPaletteValues::clearOverrideColor):
+        (WebCore::FontPaletteValues::remove):
+
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Maplike infrastructure ASSERT()s if the first operation is a delete of a existing values
         https://bugs.webkit.org/show_bug.cgi?id=230530
 

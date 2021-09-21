@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -436,6 +436,7 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
             break;
         case StyleRuleType::Style:
         case StyleRuleType::FontFace:
+        case StyleRuleType::FontPaletteValues:
         case StyleRuleType::Page:
         case StyleRuleType::Keyframes:
         case StyleRuleType::Namespace:
@@ -486,6 +487,7 @@ bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const Ca
         case StyleRuleType::Keyframe:
         case StyleRuleType::Supports:
         case StyleRuleType::Layer:
+        case StyleRuleType::FontPaletteValues:
             return false;
         };
         ASSERT_NOT_REACHED();

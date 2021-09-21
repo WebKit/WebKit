@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2007, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2002-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,6 +48,7 @@ COMPILE_ASSERT(StyleRuleType::Keyframe == static_cast<StyleRuleType>(CSSRule::Ty
 COMPILE_ASSERT(StyleRuleType::Namespace == static_cast<StyleRuleType>(CSSRule::Type::NAMESPACE_RULE), enums_should_match);
 COMPILE_ASSERT(StyleRuleType::CounterStyle == static_cast<StyleRuleType>(CSSRule::Type::COUNTER_STYLE_RULE), enums_should_match);
 COMPILE_ASSERT(StyleRuleType::Supports == static_cast<StyleRuleType>(CSSRule::Type::SUPPORTS_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::FontPaletteValues == static_cast<StyleRuleType>(CSSRule::Type::FONT_PALETTE_VALUES_RULE), enums_should_match);
 
 ExceptionOr<void> CSSRule::setCssText(const String&)
 {

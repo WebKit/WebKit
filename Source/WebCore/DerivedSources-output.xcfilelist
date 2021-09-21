@@ -300,6 +300,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSCounterStyleRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSCounterStyleRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontPaletteValuesRule.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontPaletteValuesRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSGroupingRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSGroupingRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSImportRule.cpp

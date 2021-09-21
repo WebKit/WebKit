@@ -705,6 +705,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSConditionRule.idl
     css/CSSCounterStyleRule.idl
     css/CSSFontFaceRule.idl
+    css/CSSFontPaletteValuesRule.idl
     css/CSSGroupingRule.idl
     css/CSSImportRule.idl
     css/CSSKeyframeRule.idl
