@@ -34,7 +34,6 @@
 
 #if PLATFORM(MAC)
 #include "CGDisplayStreamScreenCaptureSource.h"
-#include "CGWindowCaptureSource.h"
 #include <CoreGraphics/CGDirectDisplay.h>
 #endif
 
@@ -67,9 +66,6 @@ void DisplayCaptureManagerCocoa::updateDisplayCaptureDevices()
 
 void DisplayCaptureManagerCocoa::updateWindowCaptureDevices()
 {
-#if PLATFORM(MAC)
-    CGWindowCaptureSource::windowCaptureDevices(m_devices);
-#endif
 }
 
 std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
@@ -84,12 +80,8 @@ std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWith
 
 std::optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID(const String& deviceID)
 {
-#if PLATFORM(MAC)
-    return CGWindowCaptureSource::windowCaptureDeviceWithPersistentID(deviceID);
-#else
     UNUSED_PARAM(deviceID);
     return std::nullopt;
-#endif
 }
 
 std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)

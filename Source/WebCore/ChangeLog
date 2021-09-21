@@ -1,3 +1,25 @@
+2021-09-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Remove unused CGWindowCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=230520
+        <rdar://problem/83329399>
+
+        Reviewed by David Kilzer.
+
+        Remove CGWindowCaptureSource as it can't be used.
+
+        No new tests, no functional change.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/CGWindowCaptureSource.h: Removed.
+        * platform/mediastream/mac/CGWindowCaptureSource.mm: Removed.
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::DisplayCaptureManagerCocoa::updateWindowCaptureDevices):
+        (WebCore::DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersistentID):
+        * platform/mediastream/mac/DisplayCaptureSourceMac.cpp:
+        (WebCore::DisplayCaptureSourceMac::create):
+
 2021-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Use typed identifier for WebSocketChannel identifiers

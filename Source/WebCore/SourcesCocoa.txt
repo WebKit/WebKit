@@ -528,7 +528,6 @@ platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
 platform/mediastream/mac/BaseAudioSharedUnit.cpp
 platform/mediastream/mac/CGDisplayStreamCaptureSource.cpp
 platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.mm
-platform/mediastream/mac/CGWindowCaptureSource.mm
 platform/mediastream/mac/CoreAudioCaptureDevice.cpp
 platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp
 platform/mediastream/mac/CoreAudioCaptureSource.cpp

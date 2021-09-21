@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(MAC)
 
 #include "CGDisplayStreamScreenCaptureSource.h"
-#include "CGWindowCaptureSource.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include "PixelBufferConformerCV.h"
@@ -60,7 +59,6 @@ CaptureSourceOrError DisplayCaptureSourceMac::create(const CaptureDevice& device
     case CaptureDevice::DeviceType::Screen:
         return create(CGDisplayStreamScreenCaptureSource::create(device.persistentId()), device, constraints);
     case CaptureDevice::DeviceType::Window:
-        return create(CGWindowCaptureSource::create(device.persistentId()), device, constraints);
     case CaptureDevice::DeviceType::Microphone:
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Camera:
