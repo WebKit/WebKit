@@ -129,6 +129,11 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
         minArgumentCount = 3;
         maxArgumentCount = 3;
         break;
+
+    case CSSValueLog:
+        maxArgumentCount = 2;
+        break;
+    case CSSValueExp:
     case CSSValueSin:
     case CSSValueCos:
     case CSSValueTan:
@@ -186,6 +191,12 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     case CSSValueWebkitCalc:
     case CSSValueCalc:
         result = CSSCalcOperationNode::createSum(WTFMove(nodes));
+        break;
+    case CSSValueLog:
+        result = CSSCalcOperationNode::createLog(WTFMove(nodes));
+        break;
+    case CSSValueExp:
+        result = CSSCalcOperationNode::createExp(WTFMove(nodes));
         break;
     // TODO: clamp, sin, cos, tan, asin, acos, atan, atan2, pow, sqrt, hypot
     default:

@@ -1,3 +1,14 @@
+2021-09-20  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement exp,log functions calc functions
+        https://bugs.webkit.org/show_bug.cgi?id=229897
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/exp-log-compute.html: Added.
+        * web-platform-tests/css/css-values/exp-log-invalid.html: Added.
+        * web-platform-tests/css/css-values/exp-log-serialize.html: Added.
+
 2021-09-20  Youenn Fablet  <youenn@apple.com>
 
         Make sure RTCRtpSender.setParameters returns an exception with a valid type

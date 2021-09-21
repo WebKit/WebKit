@@ -43,6 +43,8 @@ TextStream& operator<<(TextStream& ts, CalcOperator op)
     case CalcOperator::Sin: ts << "sin"; break;
     case CalcOperator::Cos: ts << "cos"; break;
     case CalcOperator::Tan: ts << "tan"; break;
+    case CalcOperator::Exp: ts << "exp"; break;
+    case CalcOperator::Log: ts << "log"; break;
     }
     return ts;
 }

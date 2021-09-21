@@ -180,6 +180,18 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
                 return nullptr;
             return CSSCalcOperationNode::createMinOrMaxOrClamp(op, WTFMove(children), operationNode.destinationCategory());
         }
+        case CalcOperator::Log: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1 && children.size() != 2)
+                return nullptr;
+            return CSSCalcOperationNode::createLog(WTFMove(children));
+        }
+        case CalcOperator::Exp: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createExp(WTFMove(children));
+        }
         }
         return nullptr;
     }
@@ -294,6 +306,8 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueSin:
     case CSSValueCos:
     case CSSValueTan:
+    case CSSValueExp:
+    case CSSValueLog:
         return true;
     default:
         return false;

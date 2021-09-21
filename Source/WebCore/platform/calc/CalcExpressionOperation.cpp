@@ -102,6 +102,18 @@ float CalcExpressionOperation::evaluate(float maxValue) const
             return std::numeric_limits<double>::quiet_NaN();
         return std::tan(m_children[0]->evaluate(maxValue));
     }
+    case CalcOperator::Log: {
+        if (m_children.size() != 1 && m_children.size() != 2)
+            return std::numeric_limits<float>::quiet_NaN();
+        if (m_children.size() == 1)
+            return std::log(m_children[0]->evaluate(maxValue));
+        return std::log(m_children[0]->evaluate(maxValue)) / std::log(m_children[1]->evaluate(maxValue));
+    }
+    case CalcOperator::Exp: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return std::exp(m_children[0]->evaluate(maxValue));
+    }
     }
     ASSERT_NOT_REACHED();
     return std::numeric_limits<float>::quiet_NaN();

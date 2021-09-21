@@ -1,3 +1,40 @@
+2021-09-20  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement exp,log functions calc functions
+        https://bugs.webkit.org/show_bug.cgi?id=229897
+
+        Reviewed by Simon Fraser.
+
+        Added support for calc functions exp and log. Involved adding exp and log CSS keywords and handling
+        for parsing these functions and their arguments as well as computing the result based on the arguments.
+        Spec for these functions: https://drafts.csswg.org/css-values-4/#exponent-funcs. 
+
+        Tests: imported/w3c/web-platform-tests/css/css-values/exp-log-compute.html
+               imported/w3c/web-platform-tests/css/css-values/exp-log-invalid.html
+               imported/w3c/web-platform-tests/css/css-values/exp-log-serialize.html
+
+        * css/CSSValueKeywords.in:
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        (WebCore::functionFromOperator):
+        (WebCore::CSSCalcOperationNode::createLog):
+        (WebCore::CSSCalcOperationNode::createExp):
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        (WebCore::functionPrefixForOperator):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        * css/calc/CSSCalcOperationNode.h:
+        * css/calc/CSSCalcValue.cpp:
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        * platform/calc/CalcExpressionOperation.cpp:
+        (WebCore::CalcExpressionOperation::evaluate const):
+        * platform/calc/CalcOperator.cpp:
+        (WebCore::operator<<):
+        * platform/calc/CalcOperator.h:
+
 2021-09-20  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed build fix for WinCairo with ENABLE_EXPERIMENTAL_FEATURES off.

@@ -79,6 +79,8 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
     case CalcOperator::Min:
     case CalcOperator::Max:
     case CalcOperator::Clamp:
+    case CalcOperator::Log:
+    case CalcOperator::Exp:
         ASSERT_NOT_REACHED();
         return CalculationCategory::Other;
     }
@@ -150,6 +152,8 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
         case CalcOperator::Min:
         case CalcOperator::Max:
         case CalcOperator::Clamp:
+        case CalcOperator::Log:
+        case CalcOperator::Exp:
             // The type of a min(), max(), or clamp() expression is the result of adding the types of its comma-separated calculations
             return CalculationCategory::Other;
         }
@@ -267,6 +271,10 @@ static CSSValueID functionFromOperator(CalcOperator op)
         return CSSValueCos;
     case CalcOperator::Tan:
         return CSSValueTan;
+    case CalcOperator::Exp:
+        return CSSValueExp;
+    case CalcOperator::Log:
+        return CSSValueLog;
     }
     return CSSValueCalc;
 }
@@ -317,6 +325,40 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createProduct(Vector<Ref<CSSC
     }
 
     return adoptRef(new CSSCalcOperationNode(newCategory, CalcOperator::Multiply, WTFMove(values)));
+}
+
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createLog(Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 1 && values.size() != 2)
+        return nullptr;
+    for (auto& value : values) {
+        // TODO: Support infinity
+        if (value->category() != CalculationCategory::Number || !value->doubleValue(value->primitiveType())) {
+            LOG_WITH_STREAM(Calc, stream << "Failed to create log node because unable to determine category from " << prettyPrintNodes(values));
+            return nullptr;
+        }
+    }
+    
+    // TODO: Support infinity
+    if ((values.size() == 2 && values[1]->doubleValue(values[1]->primitiveType()) == 1)) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create log node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+
+    return adoptRef(new CSSCalcOperationNode(CalculationCategory::Number, CalcOperator::Log, WTFMove(values)));
+}
+
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createExp(Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 1)
+        return nullptr;
+
+    if (values[0]->category() != CalculationCategory::Number) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create exp node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+
+    return adoptRef(new CSSCalcOperationNode(CalculationCategory::Number, CalcOperator::Exp, WTFMove(values)));
 }
 
 RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory)
@@ -433,6 +475,13 @@ void CSSCalcOperationNode::combineChildren()
 {
     if (m_children.size() < 2) {
         if (m_children.size() == 1 && isTrigNode()) {
+            double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
+            m_children.clear();
+            m_children.append(WTFMove(newChild));
+        }
+        
+        if (isExpNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
             auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
 
@@ -630,7 +679,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
     if (is<CSSCalcOperationNode>(rootNode)) {
         auto& calcOperationNode = downcast<CSSCalcOperationNode>(rootNode.get());
         // Simplify operations with only one child node (other than root and operations that only need one node).
-        if (calcOperationNode.children().size() == 1 && depth && !calcOperationNode.isTrigNode())
+        if (calcOperationNode.children().size() == 1 && depth && !calcOperationNode.isTrigNode() && !calcOperationNode.isExpNode())
             return WTFMove(calcOperationNode.children()[0]);
         
         if (calcOperationNode.isCalcSumNode()) {
@@ -647,6 +696,9 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             calcOperationNode.combineChildren();
         
         if (calcOperationNode.isTrigNode() && depth)
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isExpNode() && depth)
             calcOperationNode.combineChildren();
         
         // If only one child remains, return the child (except at the root).
@@ -840,6 +892,8 @@ static const char* functionPrefixForOperator(CalcOperator op)
     case CalcOperator::Min: return "min(";
     case CalcOperator::Max: return "max(";
     case CalcOperator::Clamp: return "clamp(";
+    case CalcOperator::Exp: return "exp(";
+    case CalcOperator::Log: return "log(";
     }
     
     return "";
@@ -1055,6 +1109,18 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children.size() != 1)
             return std::numeric_limits<double>::quiet_NaN();
         return std::tan(children[0]);
+    }
+    case CalcOperator::Log: {
+        if (children.size() != 1 && children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        if (children.size() == 1)
+            return std::log(children[0]);
+        return std::log(children[0]) / std::log(children[1]);
+    }
+    case CalcOperator::Exp: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::exp(children[0]);
     }
     }
     ASSERT_NOT_REACHED();
