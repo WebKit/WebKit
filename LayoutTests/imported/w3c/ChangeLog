@@ -1,3 +1,15 @@
+2021-09-21  Joonghun Park  <pjh0718@gmail.com>
+
+        Fix the behavior that 3d translation's second value is serialized to 0px regardless of its specified unit if it is zero value.
+        https://bugs.webkit.org/show_bug.cgi?id=230534
+
+        Reviewed by Simon Fraser.
+
+        When being serialized, the css value's unit should be preserved.
+
+        * web-platform-tests/css/css-transforms/parsing/translate-parsing-valid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/translate-parsing-valid.html: updated from wpt repository.
+
 2021-09-21  Eric Hutchison  <ehutchison@apple.com>
 
         Unreviewed, reverting r282768.

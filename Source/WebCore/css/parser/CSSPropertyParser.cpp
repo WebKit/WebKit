@@ -1985,7 +1985,7 @@ static RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSSParserMo
             return list;
         // Add the zero value for y if we did not already add a y value.
         if (list->length() == 1)
-            list->append(CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX));
+            list->append(*y);
         list->append(*z);
     }
 
