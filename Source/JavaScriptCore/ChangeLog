@@ -1,3 +1,13 @@
+2021-09-21  Mark Lam  <mark.lam@apple.com>
+
+        Replace a few ASSERTs with static_asserts in the ARM64 MacroAssemblers.
+        https://bugs.webkit.org/show_bug.cgi?id=230569
+
+        Reviewed by Yusuke Suzuki.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARM64EAssembler.h:
+
 2021-09-21  Justin Michaud  <justin_michaud@apple.com>
 
         Differential testing: live statement don't execute

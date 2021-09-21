@@ -41,8 +41,8 @@
 #include <zircon/syscalls.h>
 #endif
 
-#define CHECK_DATASIZE_OF(datasize) ASSERT(datasize == 32 || datasize == 64)
-#define CHECK_MEMOPSIZE_OF(size) ASSERT(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
+#define CHECK_DATASIZE_OF(datasize) static_assert(datasize == 32 || datasize == 64)
+#define CHECK_MEMOPSIZE_OF(size) static_assert(size == 8 || size == 16 || size == 32 || size == 64 || size == 128);
 #define DATASIZE_OF(datasize) ((datasize == 64) ? Datasize_64 : Datasize_32)
 #define MEMOPSIZE_OF(datasize) ((datasize == 8 || datasize == 128) ? MemOpSize_8_or_128 : (datasize == 16) ? MemOpSize_16 : (datasize == 32) ? MemOpSize_32 : MemOpSize_64)
 #define CHECK_DATASIZE() CHECK_DATASIZE_OF(datasize)
@@ -3862,6 +3862,7 @@ public:
 } // namespace JSC
 
 #undef CHECK_DATASIZE_OF
+#undef CHECK_MEMOPSIZE_OF
 #undef DATASIZE_OF
 #undef MEMOPSIZE_OF
 #undef CHECK_DATASIZE
