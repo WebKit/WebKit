@@ -37,10 +37,6 @@
 #include "StyleProperties.h"
 #include <wtf/Ref.h>
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-#include "LayoutIntegrationLineLayout.h"
-#endif
-
 namespace WebCore {
 
 Highlight::Highlight(Ref<StaticRange>&& range)
@@ -67,13 +63,8 @@ static void repaintRange(const SimpleRange& range)
     if (is_gt(treeOrder<ComposedTree>(range.start, range.end)))
         std::swap(sortedRange.start, sortedRange.end);
     for (auto& node : intersectingNodes(sortedRange)) {
-        if (auto renderer = node.renderer()) {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-            if (auto lineLayout = LayoutIntegration::LineLayout::containing(*renderer))
-                lineLayout->flow().ensureLineBoxes();
-#endif
+        if (auto renderer = node.renderer())
             renderer->repaint();
-        }
     }
 }
 

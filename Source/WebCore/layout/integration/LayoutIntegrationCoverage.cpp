@@ -26,9 +26,7 @@
 #include "config.h"
 #include "LayoutIntegrationCoverage.h"
 
-#include "DocumentMarkerController.h"
 #include "HTMLTextFormControlElement.h"
-#include "HighlightRegister.h"
 #include "InlineIterator.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
@@ -206,12 +204,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::MultiColumnFlowIsFloating:
         stream << "column with floating objects";
-        break;
-    case AvoidanceReason::FlowIncludesDocumentMarkers:
-        stream << "text includes document markers";
-        break;
-    case AvoidanceReason::FlowIncludesHighlights:
-        stream << "text includes highlights";
         break;
     case AvoidanceReason::FlowHasJustifiedNonBreakingSpace:
         stream << "justified text has non-breaking-space character";
@@ -517,15 +509,14 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
 static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
-    if (is<RenderCounter>(child))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
+
     if (is<RenderText>(child)) {
-        const auto& renderText = downcast<RenderText>(child);
-        if (renderText.textNode() && !renderText.document().markers().markersFor(*renderText.textNode()).isEmpty())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesDocumentMarkers, reasons, includeReasons);
+        if (is<RenderCounter>(child))
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
+
         return reasons;
     }
-    
+
     if (flow.containsFloats()) {
         // Non-text content may stretch the line and we don't yet have support for dynamic float avoiding (as the line grows).
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
@@ -688,12 +679,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // Printing does pagination without a flow thread.
     if (flow.document().paginated())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
-    if (flow.document().highlightRegisterIfExists() && !flow.document().highlightRegisterIfExists()->map().isEmpty())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesHighlights, reasons, includeReasons);
-#if ENABLE(APP_HIGHLIGHTS)
-    if (flow.document().appHighlightRegisterIfExists() && !flow.document().appHighlightRegisterIfExists()->map().isEmpty())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesHighlights, reasons, includeReasons);
-#endif
     if (flow.firstLineBlock())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasPseudoFirstLine, reasons, includeReasons);
     if (flow.isAnonymousBlock() && flow.parent()->style().textOverflow() == TextOverflow::Ellipsis)

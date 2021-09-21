@@ -133,10 +133,6 @@
 #include "PromisedAttachmentInfo.h"
 #endif
 
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-#include "LayoutIntegrationLineLayout.h"
-#endif
-
 namespace WebCore {
 
 static bool dispatchBeforeInputEvent(Element& element, const AtomString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
@@ -2157,13 +2153,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
                 highlight.endOffset += baseOffset;
             }
 
-            if (auto renderer = baseNode->renderer()) {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-                if (auto lineLayout = LayoutIntegration::LineLayout::containing(*renderer))
-                    lineLayout->flow().ensureLineBoxes();
-#endif
+            if (auto renderer = baseNode->renderer())
                 renderer->repaint();
-            }
 
             unsigned start = std::min(baseOffset + selectionStart, extentOffset);
             unsigned end = std::min(std::max(start, baseOffset + selectionEnd), extentOffset);

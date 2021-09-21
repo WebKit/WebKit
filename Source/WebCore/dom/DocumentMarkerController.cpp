@@ -30,7 +30,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Frame.h"
-#include "LayoutIntegrationLineLayout.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderBlockFlow.h"
@@ -252,14 +251,6 @@ void DocumentMarkerController::addMarker(Node& node, DocumentMarker&& newMarker)
     ASSERT(newMarker.endOffset() >= newMarker.startOffset());
     if (newMarker.endOffset() == newMarker.startOffset())
         return;
-
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* renderer = node.renderer()) {
-        // FIXME: Factor the marker painting code out of LegacyInlineTextBox and teach simple line layout to use it.
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*renderer))
-            lineLayout->flow().ensureLineBoxes();
-    }
-#endif
 
     m_possiblyExistingMarkerTypes.add(newMarker.type());
 

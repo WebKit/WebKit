@@ -1,3 +1,26 @@
+2021-09-21  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Enable markers and highlights
+        https://bugs.webkit.org/show_bug.cgi?id=230542
+
+        Reviewed by Alan Bujtas.
+
+        Layout and paint highlights and markers without switching to legacy line layout.
+
+        * Modules/highlight/Highlight.cpp:
+        (WebCore::repaintRange):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setComposition):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForChild):
+        (WebCore::LayoutIntegration::canUseForLineLayoutWithReason):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+
 2021-09-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r282807.
