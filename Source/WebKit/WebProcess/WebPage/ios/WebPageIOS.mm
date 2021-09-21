@@ -1574,7 +1574,7 @@ static std::optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& fram
     return range;
 }
 
-static std::optional<SimpleRange> rangeAtWordBoundaryForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart, SelectionDirection direction)
+static std::optional<SimpleRange> rangeAtWordBoundaryForPosition(Frame* frame, const VisiblePosition& position, bool baseIsStart)
 {
     SelectionDirection sameDirection = baseIsStart ? SelectionDirection::Forward : SelectionDirection::Backward;
     SelectionDirection oppositeDirection = baseIsStart ? SelectionDirection::Backward : SelectionDirection::Forward;
@@ -1757,11 +1757,8 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         break;
 
     case SelectionTouch::EndedMovingForward:
-        range = rangeAtWordBoundaryForPosition(frame.ptr(), position, baseIsStart, SelectionDirection::Forward);
-        break;
-
     case SelectionTouch::EndedMovingBackward:
-        range = rangeAtWordBoundaryForPosition(frame.ptr(), position, baseIsStart, SelectionDirection::Backward);
+        range = rangeAtWordBoundaryForPosition(frame.ptr(), position, baseIsStart);
         break;
 
     case SelectionTouch::Moved:

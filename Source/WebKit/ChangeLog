@@ -1,3 +1,17 @@
+2021-09-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Remove unused selection parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=230519
+
+        Reviewed by Wenson Hsieh.
+
+        The direction of movement of the selection is not actually used to determine which direction to extend to a
+        word boundary, so do not pass it in. In preparation of being able to condense these enums into one.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeAtWordBoundaryForPosition):
+        (WebKit::WebPage::updateSelectionWithTouches):
+
 2021-09-21  David Kilzer  <ddkilzer@apple.com>
 
         Rename {checked,dynamic}_ns_cast<> to {checked,dynamic}_objc_cast<>
