@@ -1,3 +1,50 @@
+2021-09-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Wrap ScrollingMomentumCalculator in a ScrollAnimationMomentum when used for scroll snap
+        https://bugs.webkit.org/show_bug.cgi?id=230506
+
+        Reviewed by Wenson Hsieh.
+
+        The long-term goal is to have all scroll animations run via ScrollAnimation subclasses,
+        and for there to be a class (ScrollAnimator or ScrollingEffectsController) that has
+        a member variable for the single active scroll animation, for there can be only one
+        at a time.
+
+        As a step towards that goal, make ScrollAnimationMomentum and have it wrap the 
+        ScrollingMomentumCalculator. ScrollSnapAnimatorState then owns a ScrollAnimationMomentum.
+
+        Other ScrollAnimations are running their own timers (which should go away in future),
+        but for now ScrollAnimationMomentum is driven "manually" by ScrollSnapAnimatorState.
+        Facilitate this by having ScrollAnimation::serviceAnimation() return the current offset.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ScrollAnimation.h:
+        (WebCore::ScrollAnimationClient::scrollAnimationDidUpdate):
+        (WebCore::ScrollAnimationClient::scrollAnimationDidEnd):
+        (WebCore::ScrollAnimation::serviceAnimation):
+        * platform/ScrollAnimationMomentum.cpp: Added.
+        (WebCore::ScrollAnimationMomentum::ScrollAnimationMomentum):
+        (WebCore::ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity):
+        (WebCore::ScrollAnimationMomentum::retargetActiveAnimation):
+        (WebCore::ScrollAnimationMomentum::stop):
+        (WebCore::ScrollAnimationMomentum::isActive const):
+        (WebCore::ScrollAnimationMomentum::serviceAnimation):
+        (WebCore::ScrollAnimationMomentum::updateScrollExtents):
+        * platform/ScrollAnimationMomentum.h: Added.
+        * platform/ScrollAnimationSmooth.cpp:
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::teardownAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::currentAnimatedScrollOffset const):
+        (WebCore::ScrollSnapAnimatorState::scrollExtentsForAnimation):
+        * platform/ScrollSnapAnimatorState.h:
+        * platform/ScrollingEffectsController.cpp:
+        * platform/ScrollingEffectsController.h:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::statelessSnapTransitionTimerFired):
+
 2021-09-20  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement exp,log functions calc functions

@@ -29,9 +29,9 @@
 #include "FloatSize.h"
 #include "LayoutPoint.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollAnimationMomentum.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
-#include "ScrollingMomentumCalculator.h"
 #include <wtf/MonotonicTime.h>
 
 namespace WTF {
@@ -47,11 +47,11 @@ enum class ScrollSnapState {
     UserInteraction
 };
 
-struct ScrollExtents;
-
-class ScrollSnapAnimatorState {
+class ScrollSnapAnimatorState : public ScrollAnimationClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    virtual ~ScrollSnapAnimatorState();
+
     const Vector<SnapOffset<LayoutUnit>>& snapOffsetsForAxis(ScrollEventAxis axis) const
     {
         return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsets : m_snapOffsetsInfo.verticalSnapOffsets;
@@ -90,15 +90,20 @@ private:
     bool setupAnimationForState(ScrollSnapState, const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
     void teardownAnimationForState(ScrollSnapState);
 
+    // ScrollAnimationClient.
+    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
+
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
     LayoutScrollSnapOffsetsInfo m_snapOffsetsInfo;
+    
+    ScrollExtents m_scrollExtents;
 
     std::optional<unsigned> m_activeSnapIndexX;
     std::optional<unsigned> m_activeSnapIndexY;
 
     MonotonicTime m_startTime;
-    std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;
+    std::unique_ptr<ScrollAnimationMomentum> m_momentumScrollAnimation;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);

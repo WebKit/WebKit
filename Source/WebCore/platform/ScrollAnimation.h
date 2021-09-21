@@ -28,6 +28,7 @@
 
 #include "ScrollTypes.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
@@ -38,8 +39,8 @@ class ScrollAnimationClient {
 public:
     virtual ~ScrollAnimationClient() = default;
 
-    virtual void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset) = 0;
-    virtual void scrollAnimationDidEnd(ScrollAnimation&) = 0;
+    virtual void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& /* currentOffset */) { }
+    virtual void scrollAnimationDidEnd(ScrollAnimation&) { }
     virtual ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) = 0;
 };
 
@@ -56,8 +57,8 @@ public:
     virtual bool isActive() const = 0;
     virtual void updateScrollExtents() { };
     
-    // FIXME: No-op. Need to use this instead of subclasses having timers.
-    virtual void serviceAnimation() { };
+    // Returns current offset.
+    virtual FloatPoint serviceAnimation(MonotonicTime) { return { }; };
 
 protected:
     ScrollAnimationClient& m_client;

@@ -41,6 +41,7 @@ namespace WebCore {
 class KeyboardScrollingAnimator;
 class LayoutSize;
 class PlatformWheelEvent;
+class ScrollSnapAnimatorState;
 class ScrollingEffectsController;
 class ScrollableArea;
 class WheelEventTestMonitor;

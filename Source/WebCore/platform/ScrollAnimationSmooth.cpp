@@ -39,7 +39,9 @@
 
 namespace WebCore {
 
+static const double frameRate = 60;
 static const float animationSpeed { 1000.0f };
+static constexpr Seconds minimumTimerInterval { 1_ms };
 static const Seconds maxAnimationDuration { 200_ms };
 
 ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)

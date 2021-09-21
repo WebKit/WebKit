@@ -1823,6 +1823,7 @@ platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
 platform/ScrollAnimationKinetic.cpp
+platform/ScrollAnimationMomentum.cpp
 platform/ScrollAnimationSmooth.cpp
 platform/ScrollAnimator.cpp
 platform/ScrollingEffectsController.cpp

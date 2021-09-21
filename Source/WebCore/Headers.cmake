@@ -1132,6 +1132,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/SSLKeyGenerator.h
     platform/ScreenProperties.h
     platform/ScriptExecutionContextIdentifier.h
+    platform/ScrollAnimationMomentum.h
     platform/ScrollAnimator.h
     platform/ScrollTypes.h
     platform/ScrollView.h
@@ -1139,7 +1140,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/Scrollbar.h
     platform/ScrollbarTheme.h
     platform/ScrollbarThemeComposite.h
-    platform/ScrollingMomentumCalculator.h
     platform/SearchPopupMenu.h
     platform/SerializedPlatformDataCue.h
     platform/SerializedPlatformDataCueValue.h
