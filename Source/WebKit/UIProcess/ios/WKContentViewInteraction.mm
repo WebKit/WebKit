@@ -4166,9 +4166,10 @@ static inline WebKit::GestureType toGestureType(UIWKGestureType gestureType)
         return WebKit::GestureType::TwoFingerSingleTap;
     case UIWKGesturePhraseBoundary:
         return WebKit::GestureType::PhraseBoundary;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebKit::GestureType::Loupe;
     }
-    ASSERT_NOT_REACHED();
-    return WebKit::GestureType::Loupe;
 }
 
 static inline UIWKGestureType toUIWKGestureType(WebKit::GestureType gestureType)

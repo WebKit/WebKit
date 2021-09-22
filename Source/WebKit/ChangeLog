@@ -1,3 +1,13 @@
+2021-09-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Build fix for 230521
+        https://bugs.webkit.org/show_bug.cgi?id=230629
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toGestureType):
+
 2021-09-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Switch runtime to 21.08 SDK
