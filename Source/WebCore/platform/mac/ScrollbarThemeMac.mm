@@ -34,7 +34,6 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "NSScrollerImpDetails.h"
 #import "PlatformMouseEvent.h"
-#import "ScrollAnimatorMac.h"
 #import "ScrollView.h"
 #import <Carbon/Carbon.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>

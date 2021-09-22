@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ScrollAnimatorMac.h"
 
-#if ENABLE(SMOOTH_SCROLLING)
+#if PLATFORM(MAC)
 
 #import "Gradient.h"
 #import "GraphicsLayer.h"
@@ -288,4 +288,4 @@ bool ScrollAnimatorMac::processWheelEventForScrollSnap(const PlatformWheelEvent&
 
 } // namespace WebCore
 
-#endif // ENABLE(SMOOTH_SCROLLING)
+#endif // PLATFORM(MAC)

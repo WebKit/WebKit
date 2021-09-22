@@ -1889,14 +1889,16 @@ SansSerifFontFamily:
 
 ScrollAnimatorEnabled:
   type: bool
-  condition: ENABLE(SMOOTH_SCROLLING)
   defaultValue:
     WebKitLegacy:
-      default: true
+      "PLATFORM(MAC)": true
+      default: false
     WebKit:
-      default: true
+      "PLATFORM(MAC)": true
+      default: false
     WebCore:
-      default: true
+      "PLATFORM(MAC)": true
+      default: false
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SelectTrailingWhitespaceEnabled:

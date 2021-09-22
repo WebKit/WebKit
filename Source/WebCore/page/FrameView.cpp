@@ -3997,10 +3997,8 @@ void FrameView::notifyScrollableAreasThatContentAreaWillPaint() const
 
 bool FrameView::scrollAnimatorEnabled() const
 {
-#if ENABLE(SMOOTH_SCROLLING)
-    if (Page* page = frame().page())
+    if (auto* page = frame().page())
         return page->settings().scrollAnimatorEnabled();
-#endif
 
     return false;
 }

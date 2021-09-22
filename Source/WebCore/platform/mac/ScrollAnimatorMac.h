@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(SMOOTH_SCROLLING)
+#if PLATFORM(MAC)
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
@@ -78,5 +78,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SMOOTH_SCROLLING)
-
+#endif // PLATFORM(MAC)

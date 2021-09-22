@@ -46,9 +46,7 @@ namespace WebCore {
 
 ThreadedScrollingTree::ThreadedScrollingTree(AsyncScrollingCoordinator& scrollingCoordinator)
     : m_scrollingCoordinator(&scrollingCoordinator)
-#if ENABLE(SMOOTH_SCROLLING)
     , m_scrollAnimatorEnabled(scrollingCoordinator.scrollAnimatorEnabled())
-#endif
 {
 }
 

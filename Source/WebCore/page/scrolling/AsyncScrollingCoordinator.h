@@ -69,9 +69,7 @@ public:
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea);
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<SynchronousScrollingReason>);
 
-#if ENABLE(SMOOTH_SCROLLING)
     bool scrollAnimatorEnabled() const;
-#endif
 
 protected:
     WEBCORE_EXPORT AsyncScrollingCoordinator(Page*);
