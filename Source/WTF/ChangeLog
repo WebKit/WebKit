@@ -1,3 +1,17 @@
+2021-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Use Int128 in MediaTime
+        https://bugs.webkit.org/show_bug.cgi?id=230575
+
+        Reviewed by Eric Carlson.
+
+        Previously, __int128_t exists only in 64bit clang and GCC environments. But now
+        we always have Int128. Int128 is __int128_t in 64bit clang and GCC, and Int128 library
+        implementation in the other environments. So we always use Int128 code in MediaTime.
+
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::setTimeScale):
+
 2021-09-21  Chris Dumez  <cdumez@apple.com>
 
         Drop makeRefPtr() and use RefPtr { } directly instead
