@@ -1127,6 +1127,8 @@ webkit.org/b/230485 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCSctpTr
 
 webkit.org/b/230266 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-explicit-rollback-iceGatheringState.html [ Pass Failure ]
 
+webkit.org/b/230653 [ Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html [ Pass Failure ]
+
 webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
 
 webkit.org/b/214683 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
