@@ -4691,6 +4691,7 @@ webkit.org/b/229594 js/dfg-int16array.html [ Pass Crash ]
 webkit.org/b/229594 js/dfg-int32array-overflow-values.html [ Pass Crash ]
 webkit.org/b/229594 js/dfg-int8array.html [ Pass Crash ]
 webkit.org/b/229594 js/dfg-uint32array-overflow-values.html [ Pass Crash ]
+webkit.org/b/229595 js/dfg-uint8clampedarray.html [ Pass Crash ]
 
 # webkit.org/b/214448 Web Share API is not implemented in the Windows port
 http/tests/webshare/ [ Skip ]

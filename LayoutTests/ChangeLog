@@ -1,3 +1,12 @@
+2021-09-22  Eric Hutchison  <ehutchison@apple.com>
+
+        Update test expectations for js/dfg-uint8clampedarray.html.
+        https://bugs.webkit.org/show_bug.cgi?id=229594.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-09-22  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk2 ] http/tests/cache/disk-cache/shattered-deduplication.html is flaky image failure.
