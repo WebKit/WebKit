@@ -9,10 +9,15 @@ esid: sec-date.prototype.tolocaletimestring
 description: Checking DontDelete attribute
 ---*/
 
-if (delete Date.prototype.toLocaleTimeString.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.toLocaleTimeString.length property does not have the attributes DontDelete');
-}
+assert.sameValue(
+  delete Date.prototype.toLocaleTimeString.length,
+  true,
+  'The value of `delete Date.prototype.toLocaleTimeString.length` is expected to be true'
+);
 
-if (Date.prototype.toLocaleTimeString.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.toLocaleTimeString.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.toLocaleTimeString.hasOwnProperty('length'),
+  'The value of !Date.prototype.toLocaleTimeString.hasOwnProperty(\'length\') is expected to be true'
+);
+
+// TODO: Convert to verifyProperty() format.

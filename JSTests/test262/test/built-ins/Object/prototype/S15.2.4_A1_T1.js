@@ -6,8 +6,8 @@ info: Object prototype object has not prototype
 es5id: 15.2.4_A1_T1
 description: Checking if obtaining Object.prototype.prototype fails
 ---*/
-
-// CHECK#1
-if (Object.prototype.prototype !== undefined) {
-  throw new Test262Error('#1: Object prototype has not prototype');
-}
+assert.sameValue(
+  Object.prototype.prototype,
+  undefined,
+  'The value of Object.prototype.prototype is expected to equal undefined'
+);

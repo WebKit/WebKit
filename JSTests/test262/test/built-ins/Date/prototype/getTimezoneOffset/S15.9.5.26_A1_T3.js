@@ -8,13 +8,13 @@ info: |
 esid: sec-date.prototype.gettimezoneoffset
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.propertyIsEnumerable('getTimezoneOffset')) {
-  throw new Test262Error('#1: The Date.prototype.getTimezoneOffset property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.propertyIsEnumerable('getTimezoneOffset'),
+  'The value of !Date.prototype.propertyIsEnumerable(\'getTimezoneOffset\') is expected to be true'
+);
 
 for (var x in Date.prototype) {
-  if (x === "getTimezoneOffset") {
-    throw new Test262Error('#2: The Date.prototype.getTimezoneOffset has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "getTimezoneOffset", 'The value of x is not "getTimezoneOffset"');
 }
+
+// TODO: Convert to verifyProperty() format.

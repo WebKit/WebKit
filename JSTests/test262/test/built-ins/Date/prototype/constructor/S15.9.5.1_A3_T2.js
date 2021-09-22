@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.constructor
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.constructor.length,
+  true,
+  'The value of `delete Date.prototype.constructor.length` is expected to be true'
+);
 
-if (delete Date.prototype.constructor.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.constructor.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.constructor.hasOwnProperty('length'),
+  'The value of !Date.prototype.constructor.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.constructor.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.constructor.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

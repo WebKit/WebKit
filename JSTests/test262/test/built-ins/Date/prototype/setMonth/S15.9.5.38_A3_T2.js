@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.setmonth
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.setMonth.length,
+  true,
+  'The value of `delete Date.prototype.setMonth.length` is expected to be true'
+);
 
-if (delete Date.prototype.setMonth.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.setMonth.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.setMonth.hasOwnProperty('length'),
+  'The value of !Date.prototype.setMonth.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.setMonth.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.setMonth.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

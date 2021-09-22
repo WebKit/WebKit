@@ -11,7 +11,4 @@ description: Execute /\s+java\s+/.test("java\n\nobject") and check results
 
 var __executed = /\s+java\s+/.test("java\n\nobject");
 
-//CHECK#1
-if (__executed) {
-	throw new Test262Error('#1: /\\s+java\\s+/.test("java\\n\\nobject") === false');
-}
+assert(!__executed, 'The value of !__executed is expected to be true');

@@ -10,9 +10,5 @@ es5id: 15.10.2.13_A1_T1
 description: Execute /[]a/.test("\0a\0a") and check results
 ---*/
 
-var __executed = /[]a/.test("\0a\0a");;
-
-//CHECK#1
- if (__executed) {
-	throw new Test262Error('#1: /[]a/.test("\\0a\\0a") === false');
-}
+var __executed = /[]a/.test("\0a\0a");
+assert(!__executed, 'The value of !__executed is expected to be true');

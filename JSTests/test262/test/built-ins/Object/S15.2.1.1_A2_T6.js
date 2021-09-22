@@ -11,24 +11,11 @@ description: Calling Object function with Infinity argument value
 
 var num = Infinity;
 
-// CHECK#1
-if (typeof num !== 'number') {
-  throw new Test262Error('#1: num = Infinity should be a Number primitive');
-}
+assert.sameValue(typeof num, 'number', 'The value of `typeof num` is expected to be "number"');
 
 var obj = Object(num);
 
-//CHECK#2
-if (obj.constructor !== Number) {
-  throw new Test262Error('#2: Object(Infinity) returns ToObject(Infinity)');
-}
-
-//CHECK#3
-if (typeof obj !== "object") {
-  throw new Test262Error('#3: Object(Infinity) returns ToObject(Infinity)');
-}
-
-//CHECK#4
-if ((obj != Infinity) || (obj === Infinity)) {
-  throw new Test262Error('#4: Object(Infinity) returns ToObject(Infinity)');
-}
+assert.sameValue(obj.constructor, Number, 'The value of obj.constructor is expected to equal the value of Number');
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
+assert(obj == Infinity, 'The result of evaluating (obj == Infinity) is expected to be true');
+assert.notSameValue(obj, Infinity, 'The value of obj is expected to not equal ``Infinity``');

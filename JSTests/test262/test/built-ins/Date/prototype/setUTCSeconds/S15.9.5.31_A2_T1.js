@@ -6,11 +6,14 @@ info: The "length" property of the "setUTCSeconds" is 2
 esid: sec-date.prototype.setutcseconds
 description: The "length" property of the "setUTCSeconds" is 2
 ---*/
+assert.sameValue(
+  Date.prototype.setUTCSeconds.hasOwnProperty("length"),
+  true,
+  'Date.prototype.setUTCSeconds.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.setUTCSeconds.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The setUTCSeconds has a "length" property');
-}
-
-if (Date.prototype.setUTCSeconds.length !== 2) {
-  throw new Test262Error('#2: The "length" property of the setUTCSeconds is 2');
-}
+assert.sameValue(
+  Date.prototype.setUTCSeconds.length,
+  2,
+  'The value of Date.prototype.setUTCSeconds.length is expected to be 2'
+);

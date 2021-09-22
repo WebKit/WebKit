@@ -19,8 +19,6 @@ var resolveP1, rejectP2,
 rejectP2(new Error("Promise.race should not see this if P1 already resolved"));
 resolveP1(1);
 
-Promise.race([p1, p2]).then(function(arg) {
-  if (arg !== 1) {
-    throw new Test262Error("Expected fulfillment with 1, got " + arg);
-  }
+Promise.race([p1, p2]).then(function(result) {
+  assert.sameValue(result, 1, 'The value of result is expected to be 1');
 }).then($DONE, $DONE);

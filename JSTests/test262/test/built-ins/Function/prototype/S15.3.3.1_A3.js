@@ -10,17 +10,17 @@ includes: [propertyHelper.js]
 
 verifyNotConfigurable(Function, "prototype");
 
-//CHECK#1
 try {
-  if ((delete Function.prototype) !== false) {
-    throw new Test262Error('#1: Function.prototype has the attribute DontDelete');
-  }
+  assert.sameValue(delete Function.prototype, false);
 } catch (e) {
-  if (e instanceof Test262Error) throw e;
+  if (e instanceof Test262Error) {
+    throw e;
+  }
   assert(e instanceof TypeError);
 }
 
-//CHECK#2
 if (!(Function.hasOwnProperty('prototype'))) {
   throw new Test262Error('#2: the Function.prototype property has the attributes DontDelete.');
 }
+
+// TODO: Convert to verifyProperty() format.

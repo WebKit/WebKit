@@ -9,9 +9,6 @@ description: RegExp is /[a-f]d/ and tested string is x, where x is undefined
 
 var __re = /[a-f]d/;
 
-//CHECK#0
-if (__re.test(x) !== (__re.exec(x) !== null)) {
-	throw new Test262Error('#0: __re = /[a-f]d/; __re.test(x) === (__re.exec(x) !== null); var x;');
-}
+assert.sameValue(__re.test(x), __re.exec(x) !== null, '__re.test() must return __re.exec(x) !== null');
 
 var x;

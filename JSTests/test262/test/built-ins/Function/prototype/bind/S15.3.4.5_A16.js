@@ -19,8 +19,6 @@ if (typeof re === 'function') {
     throw new Test262Error('#1: If IsCallable(func) is false, ' +
       'then (bind should) throw a TypeError exception');
   } catch (e) {
-    if (!(e instanceof TypeError)) {
-      throw new Test262Error('#1: TypeError expected. Actual: ' + e);
-    }
+    assert(e instanceof TypeError, 'The result of evaluating (e instanceof TypeError) is expected to be true');
   }
 }

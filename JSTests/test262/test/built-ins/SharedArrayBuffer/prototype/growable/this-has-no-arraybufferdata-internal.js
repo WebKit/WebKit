@@ -11,7 +11,7 @@ info: |
   1. Let O be the this value.
   2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
   [...]
-features: [DataView, Int8Array, resizable-arraybuffer]
+features: [DataView, SharedArrayBuffer, TypedArray, resizable-arraybuffer]
 ---*/
 
 var getter = Object.getOwnPropertyDescriptor(

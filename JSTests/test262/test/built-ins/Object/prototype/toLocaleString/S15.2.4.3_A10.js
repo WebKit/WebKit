@@ -11,11 +11,10 @@ description: >
     property fails
 includes: [propertyHelper.js]
 ---*/
-
-//CHECK#1
-if (!(Object.prototype.toLocaleString.hasOwnProperty('length'))) {
-  throw new Test262Error('#1: the Object.prototype.toLocaleString has length property.');
-}
+assert(
+  !!Object.prototype.toLocaleString.hasOwnProperty('length'),
+  'The value of !!Object.prototype.toLocaleString.hasOwnProperty("length") is expected to be true'
+);
 
 var obj = Object.prototype.toLocaleString.length;
 
@@ -23,7 +22,10 @@ verifyNotWritable(Object.prototype.toLocaleString, "length", null, function() {
   return "shifted";
 });
 
-//CHECK#2
-if (Object.prototype.toLocaleString.length !== obj) {
-  throw new Test262Error('#2: the Object.prototype.toLocaleString length property has the attributes ReadOnly.');
-}
+assert.sameValue(
+  Object.prototype.toLocaleString.length,
+  obj,
+  'The value of Object.prototype.toLocaleString.length is expected to equal the value of obj'
+);
+
+// TODO: Convert to verifyProperty() format.

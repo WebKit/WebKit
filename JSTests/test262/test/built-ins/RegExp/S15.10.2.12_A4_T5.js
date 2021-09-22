@@ -9,7 +9,6 @@ es5id: 15.10.2.12_A4_T5
 description: non-w
 ---*/
 
-//CHECK#1
 var non_w = "\f\n\r\t\v~`!@#$%^&*()-+={[}]|\\:;'<,>./? " + '"';
 var regexp_W = /\W/g;
 var k = 0;
@@ -17,12 +16,12 @@ while (regexp_W.exec(non_w) !== null) {
    k++;
 }
 
-if (non_w.length !== k) {
-   throw new Test262Error('#1: non-w');
-}
+assert.sameValue(non_w.length, k, 'The value of non_w.length is expected to equal the value of k');
 
-//CHECK#2
 var non_W = "_0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-if (/\W/.exec(non_W) !== null) {
-   throw new Test262Error('#2: non-W');
-}
+
+assert.sameValue(
+  /\W/.exec(non_W),
+  null,
+  '/W/.exec(""_0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"") must return null'
+);

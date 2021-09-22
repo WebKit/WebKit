@@ -3,7 +3,9 @@
 
 /*---
 esid: sec-temporal.calendar.prototype.month
-description: Temporal.Calendar.prototype.month will take PlainYearMonth and return the value of the month.
+description: >
+  Temporal.Calendar.prototype.month will take PlainYearMonth and return
+  the value of the month.
 info: |
   6. Return ! ISOMonth(temporalDateLike).
 features: [Temporal]

@@ -19,23 +19,13 @@ function MyObject(val) {
 var x = new MyObject(1);
 var y = Object(x);
 
-// CHECK#1
-if (y.valueOf() !== x.valueOf()) {
-  throw new Test262Error('#1: Object(obj).valueOf() === obj.valueOf(). Actual: ' + (Object(obj).valueOf()));
-}
+assert.sameValue(y.valueOf(), x.valueOf(), 'y.valueOf() must return the same value returned by x.valueOf()');
+assert.sameValue(typeof y, typeof x, 'The value of `typeof y` is expected to be typeof x');
 
-// CHECK#2
-if (typeof y !== typeof x) {
-  throw new Test262Error('#2: typeof Object(obj) === typeof obj. Actual: ' + (typeof Object(obj)));
-}
+assert.sameValue(
+  y.constructor.prototype,
+  x.constructor.prototype,
+  'The value of y.constructor.prototype is expected to equal the value of x.constructor.prototype'
+);
 
-// CHECK#3
-if (y.constructor.prototype !== x.constructor.prototype) {
-  throw new Test262Error('#3: Object(obj).constructor.prototype === obj.constructor.prototype. Actual: ' + (Object(obj).constructor.prototype));
-}
-
-
-// CHECK#4
-if (y !== x) {
-  throw new Test262Error('#4: Object(obj) === obj');
-}
+assert.sameValue(y, x, 'The value of y is expected to equal the value of x');

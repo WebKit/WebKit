@@ -16,28 +16,19 @@ description: Creating new Object() and checking its properties
 
 var obj = new Object();
 
-// CHECK#0
-if (obj === undefined) {
-  throw new Test262Error('#0: new Object() return the newly created native object.');
-}
+assert.notSameValue(obj, undefined, 'The value of obj is expected to not equal ``undefined``');
+assert.sameValue(obj.constructor, Object, 'The value of obj.constructor is expected to equal the value of Object');
 
-// CHECK#1
-if (obj.constructor !== Object) {
-  throw new Test262Error('#1: new Object() create a new native ECMAScript object');
-}
+assert(
+  !!Object.prototype.isPrototypeOf(obj),
+  'The value of !!Object.prototype.isPrototypeOf(obj) is expected to be true'
+);
 
-// CHECK#2
-if (!(Object.prototype.isPrototypeOf(obj))) {
-  throw new Test262Error('#2: when new Object() calls the [[Prototype]] property of the newly constructed object is set to the Object prototype object.');
-}
-
-// CHECK#3
 var to_string_result = '[object ' + 'Object' + ']';
-if (obj.toString() !== to_string_result) {
-  throw new Test262Error('#3: when new Object() calls the [[Class]] property of the newly constructed object is set to "Object".');
-}
+assert.sameValue(obj.toString(), to_string_result, 'obj.toString() returns to_string_result');
 
-// CHECK#4
-if (obj.valueOf().toString() !== to_string_result.toString()) {
-  throw new Test262Error('#4: when new Object() calls the newly constructed object has no [[Value]] property.');
-}
+assert.sameValue(
+  obj.valueOf().toString(),
+  to_string_result.toString(),
+  'obj.valueOf().toString() must return the same value returned by to_string_result.toString()'
+);

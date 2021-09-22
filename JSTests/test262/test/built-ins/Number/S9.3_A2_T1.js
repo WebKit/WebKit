@@ -6,12 +6,4 @@ info: Result of number conversion from null value is +0
 es5id: 9.3_A2_T1
 description: null convert to Number by explicit transformation
 ---*/
-
-// CHECK #1
-if (Number(null) !== 0) {
-  throw new Test262Error('#1.1: Number(null) === 0. Actual: ' + (Number(null)));
-} else {
-  if (1 / Number(null) !== Number.POSITIVE_INFINITY) {
-    throw new Test262Error('#1.2: Number(null) === +0. Actual: -0');
-  }
-}
+assert.sameValue(Number(null), 0, 'Number(null) must return 0');

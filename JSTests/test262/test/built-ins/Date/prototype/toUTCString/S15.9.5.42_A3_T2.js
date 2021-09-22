@@ -9,10 +9,15 @@ esid: sec-date.prototype.toutcstring
 description: Checking DontDelete attribute
 ---*/
 
-if (delete Date.prototype.toUTCString.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.toUTCString.length property does not have the attributes DontDelete');
-}
+assert.sameValue(
+  delete Date.prototype.toUTCString.length,
+  true,
+  'The value of `delete Date.prototype.toUTCString.length` is expected to be true'
+);
 
-if (Date.prototype.toUTCString.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.toUTCString.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.toUTCString.hasOwnProperty('length'),
+  'The value of !Date.prototype.toUTCString.hasOwnProperty(\'length\') is expected to be true'
+);
+
+// TODO: Convert to verifyProperty() format.

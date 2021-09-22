@@ -11,17 +11,8 @@ description: Checking if deleting the ignoreCase property succeeds
 
 var __re = RegExp.prototype;
 
-//CHECK#0
-if (__re.hasOwnProperty('ignoreCase') !== true) {
-  throw new Test262Error('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'ignoreCase\') === true');
-}
+assert.sameValue(__re.hasOwnProperty('ignoreCase'), true, '__re.hasOwnProperty(\'ignoreCase\') must return true');
+assert.sameValue(delete __re.ignoreCase, true, 'The value of `delete __re.ignoreCase` is expected to be true');
+assert.sameValue(__re.hasOwnProperty('ignoreCase'), false, '__re.hasOwnProperty(\'ignoreCase\') must return false');
 
-//CHECK#1
-if ((delete __re.ignoreCase) !== true) {
-  throw new Test262Error('#1: __re = RegExp.prototype; (delete __re.ignoreCase) === true');
-}
-
-//CHECK#2
-if (__re.hasOwnProperty('ignoreCase') !== false) {
-  throw new Test262Error('#2: __re = RegExp.prototype;delete __re.ignoreCase === true; __re.hasOwnProperty(\'ignoreCase\') === false');
-}
+// TODO: Convert to verifyProperty() format.

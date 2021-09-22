@@ -9,13 +9,13 @@ info: |
 es5id: 15.9.4.3_A3_T3
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.UTC.propertyIsEnumerable('length')) {
-  throw new Test262Error('#1: The Date.UTC.length property has the attribute DontEnum');
-}
+assert(
+  !Date.UTC.propertyIsEnumerable('length'),
+  'The value of !Date.UTC.propertyIsEnumerable(\'length\') is expected to be true'
+);
 
 for (var x in Date.UTC) {
-  if (x === "length") {
-    throw new Test262Error('#2: The Date.UTC.length has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "length", 'The value of x is not "length"');
 }
+
+// TODO: Convert to verifyProperty() format.

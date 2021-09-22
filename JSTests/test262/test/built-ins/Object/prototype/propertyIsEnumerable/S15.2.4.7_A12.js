@@ -10,4 +10,4 @@ description: >
 
 assert.throws(TypeError, function() {
   Object.prototype.propertyIsEnumerable.call(undefined, 'foo');
-});
+}, 'Object.prototype.propertyIsEnumerable.call(undefined, "foo") throws a TypeError exception');

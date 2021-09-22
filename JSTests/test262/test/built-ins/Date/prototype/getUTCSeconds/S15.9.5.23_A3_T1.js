@@ -12,6 +12,11 @@ includes: [propertyHelper.js]
 
 var x = Date.prototype.getUTCSeconds.length;
 verifyNotWritable(Date.prototype.getUTCSeconds, "length", null, 1);
-if (Date.prototype.getUTCSeconds.length !== x) {
-  throw new Test262Error('#1: The Date.prototype.getUTCSeconds.length has the attribute ReadOnly');
-}
+
+assert.sameValue(
+  Date.prototype.getUTCSeconds.length,
+  x,
+  'The value of Date.prototype.getUTCSeconds.length is expected to equal the value of x'
+);
+
+// TODO: Convert to verifyProperty() format.

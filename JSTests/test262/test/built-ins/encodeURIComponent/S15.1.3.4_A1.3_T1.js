@@ -22,7 +22,6 @@ for (var index = 0xD800; index <= 0xDBFF; index++) {
   count++;
   var res = true;
   for (var indexC = 0; indexC < chars.length; indexC++) {
-    var hex = decimalToHexString(index);
     try {
       encodeURIComponent(String.fromCharCode(index, chars[indexC]));
     } catch (e) {

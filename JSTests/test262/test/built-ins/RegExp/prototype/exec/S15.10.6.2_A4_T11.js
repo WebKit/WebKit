@@ -19,37 +19,40 @@ var __expected = ["cd2"];
 __expected.index = 2;
 __expected.input = "aacd2233ab12nm444ab42";
 
-//CHECK#1
-if (__executed.length !== __expected.length) {
-	throw new Test262Error('#1: __re = /(?:ab|cd)\\d?/g; __executed = __re.exec("aacd2233ab12nm444ab42"); __executed.length === ' + __expected.length + '. Actual: ' + __executed.length);
-}
+assert.sameValue(
+  __executed.length,
+  __expected.length,
+  'The value of __executed.length is expected to equal the value of __expected.length'
+);
 
-//CHECK#2
-if (__executed.index !== __expected.index) {
-	throw new Test262Error('#2: __re = /(?:ab|cd)\\d?/g; __executed = __re.exec("aacd2233ab12nm444ab42"); __executed.index === ' + __expected.index + '. Actual: ' + __executed.index);
-}
+assert.sameValue(
+  __executed.index,
+  __expected.index,
+  'The value of __executed.index is expected to equal the value of __expected.index'
+);
 
-//CHECK#3
-if (__executed.input !== __expected.input) {
-	throw new Test262Error('#3: __re = /(?:ab|cd)\\d?/g; __executed = __re.exec("aacd2233ab12nm444ab42"); __executed.input === ' + __expected.input + '. Actual: ' + __executed.input);
-}
+assert.sameValue(
+  __executed.input,
+  __expected.input,
+  'The value of __executed.input is expected to equal the value of __expected.input'
+);
 
-//CHECK#4
 for(var index=0; index<__expected.length; index++) {
-	if (__executed[index] !== __expected[index]) {
-		throw new Test262Error('#4: __re = /(?:ab|cd)\\d?/g; __executed = __re.exec("aacd2233ab12nm444ab42"); __executed[' + index + '] === ' + __expected[index] + '. Actual: ' + __executed[index]);
-	}
+  assert.sameValue(
+    __executed[index],
+    __expected[index],
+    'The value of __executed[index] is expected to equal the value of __expected[index]'
+  );
 }
 
 var __obj = {valueOf:function(){throw "intoint";}};
 
 __re.lastIndex = __obj;
 
-//CHECK#5
 try {
   throw new Test262Error('#5.1: __obj = {valueOf:function(){throw "intoint";}}; __re.lastIndex = __obj; __executed = __re.exec("aacd2233ab12nm444ab42") throw "intoint". Actual: ' + (__re.exec("aacd2233ab12nm444ab42")));
 } catch (e) {
-	if (e !== "intoint") {
-		throw new Test262Error('#5.2: __obj = {valueOf:function(){throw "intoint";}}; __re.lastIndex = __obj; __executed = __re.exec("aacd2233ab12nm444ab42")  throw "intoint". Actual: ' + (e));
-	}
+  assert.sameValue(e, "intoint", 'The value of e is expected to be "intoint"');
 }
+
+// TODO: Convert to assert.throws() format.

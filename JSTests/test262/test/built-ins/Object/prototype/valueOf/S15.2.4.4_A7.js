@@ -7,8 +7,6 @@ es5id: 15.2.4.4_A7
 description: Checking if creating "new Object.prototype.valueOf" fails
 ---*/
 
-var FACTORY = Object.prototype.valueOf;
-
 assert.throws(TypeError, function() {
-  new FACTORY;
-});
+  new Object.prototype.valueOf();
+}, '`new Object.prototype.valueOf()` throws a TypeError exception');

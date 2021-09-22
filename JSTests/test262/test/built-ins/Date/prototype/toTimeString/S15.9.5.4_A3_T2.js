@@ -8,11 +8,15 @@ info: |
 esid: sec-date.prototype.totimestring
 description: Checking DontDelete attribute
 ---*/
+assert.sameValue(
+  delete Date.prototype.toTimeString.length,
+  true,
+  'The value of `delete Date.prototype.toTimeString.length` is expected to be true'
+);
 
-if (delete Date.prototype.toTimeString.length !== true) {
-  throw new Test262Error('#1: The Date.prototype.toTimeString.length property does not have the attributes DontDelete');
-}
+assert(
+  !Date.prototype.toTimeString.hasOwnProperty('length'),
+  'The value of !Date.prototype.toTimeString.hasOwnProperty(\'length\') is expected to be true'
+);
 
-if (Date.prototype.toTimeString.hasOwnProperty('length')) {
-  throw new Test262Error('#2: The Date.prototype.toTimeString.length property does not have the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

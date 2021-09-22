@@ -9,7 +9,7 @@ description: Use for-in statement
 
 // CHECK#1
 for (var prop in this) {
-  if (prop === "Infinity") {
-    throw new Test262Error('#1: The Infinity is DontEnum');
-  }
+  assert.notSameValue(prop, "Infinity", 'The value of prop is not "Infinity"');
 }
+
+// TODO: Convert to verifyProperty() format.

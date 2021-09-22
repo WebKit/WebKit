@@ -9,17 +9,6 @@ description: Use undefined properties of object as flags of RegExp
 
 var __re = new RegExp({}.p, {}.q);
 
-//CHECK#2
-if (__re.multiline !== false) {
-  throw new Test262Error('#2: __re = new RegExp({}.p, {}.q); __re.multiline === false. Actual: ' + (__re.multiline));
-}
-
-//CHECK#3
-if (__re.global !== false) {
-  throw new Test262Error('#3: __re = new RegExp({}.p, {}.q); __re.global === false. Actual: ' + (__re.global));
-}
-
-//CHECK#4
-if (__re.ignoreCase !== false) {
-  throw new Test262Error('#4: __re = new RegExp({}.p, {}.q); __re.ignoreCase === false. Actual: ' + (__re.ignoreCase));
-}
+assert.sameValue(__re.multiline, false, 'The value of __re.multiline is expected to be false');
+assert.sameValue(__re.global, false, 'The value of __re.global is expected to be false');
+assert.sameValue(__re.ignoreCase, false, 'The value of __re.ignoreCase is expected to be false');

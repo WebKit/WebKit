@@ -13,7 +13,4 @@ var __re = RegExp();
 var __instance = RegExp(__re, void 0);
 __re.indicator = 1;
 
-//CHECK#1
-if (__instance.indicator !== 1) {
-	throw new Test262Error('#1: __re = RegExp(); __instance = RegExp(__re, void 0); __re.indicator = 1; __instance.indicator === 1. Actual: ' + (__instance.indicator));
-}
+assert.sameValue(__instance.indicator, 1, 'The value of __instance.indicator is expected to be 1');

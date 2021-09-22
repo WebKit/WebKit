@@ -6,8 +6,4 @@ info: The isFinite property has not prototype property
 esid: sec-isfinite-number
 description: Checking isFinite.prototype
 ---*/
-
-//CHECK#1
-if (isFinite.prototype !== undefined) {
-  throw new Test262Error('#1: isFinite.prototype === undefined. Actual: ' + (isFinite.prototype));
-}
+assert.sameValue(isFinite.prototype, undefined, 'The value of isFinite.prototype is expected to equal undefined');

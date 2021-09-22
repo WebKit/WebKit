@@ -6,45 +6,26 @@ info: Number.prototype.valueOf() returns this number value
 es5id: 15.7.4.4_A1_T01
 description: Call without argument
 ---*/
+assert.sameValue(Number.prototype.valueOf(), 0, 'Number.prototype.valueOf() must return 0');
+assert.sameValue((new Number()).valueOf(), 0, '(new Number()).valueOf() must return 0');
+assert.sameValue((new Number(0)).valueOf(), 0, '(new Number(0)).valueOf() must return 0');
+assert.sameValue((new Number(-1)).valueOf(), -1, '(new Number(-1)).valueOf() must return -1');
+assert.sameValue((new Number(1)).valueOf(), 1, '(new Number(1)).valueOf() must return 1');
 
-//CHECK#1
-if (Number.prototype.valueOf() !== 0) {
-  throw new Test262Error('#1: Number.prototype.valueOf() === 0');
-}
-
-//CHECK#2
-if ((new Number()).valueOf() !== 0) {
-  throw new Test262Error('#2: (new Number()).valueOf() === 0');
-}
-
-//CHECK#3
-if ((new Number(0)).valueOf() !== 0) {
-  throw new Test262Error('#3: (new Number(0)).valueOf() === 0');
-}
-
-//CHECK#4
-if ((new Number(-1)).valueOf() !== -1) {
-  throw new Test262Error('#4: (new Number(-1)).valueOf() === -1');
-}
-
-//CHECK#5
-if ((new Number(1)).valueOf() !== 1) {
-  throw new Test262Error('#5: (new Number(1)).valueOf() === 1');
-}
-
-//CHECK#6
 assert.sameValue(
   new Number(NaN).valueOf(),
   NaN,
-  "NaN"
+  'new Number(NaN).valueOf() returns NaN'
 );
 
-//CHECK#7
-if ((new Number(Number.POSITIVE_INFINITY)).valueOf() !== Number.POSITIVE_INFINITY) {
-  throw new Test262Error('#7: (new Number(Number.POSITIVE_INFINITY)).valueOf() === Infinity');
-}
+assert.sameValue(
+  (new Number(Number.POSITIVE_INFINITY)).valueOf(),
+  Number.POSITIVE_INFINITY,
+  '(new Number(Number.POSITIVE_INFINITY)).valueOf() returns Number.POSITIVE_INFINITY'
+);
 
-//CHECK#8
-if ((new Number(Number.NEGATIVE_INFINITY)).valueOf() !== Number.NEGATIVE_INFINITY) {
-  throw new Test262Error('#8: (new Number(Number.NEGATIVE_INFINITY)).valueOf() === -Infinity');
-}
+assert.sameValue(
+  (new Number(Number.NEGATIVE_INFINITY)).valueOf(),
+  Number.NEGATIVE_INFINITY,
+  '(new Number(Number.NEGATIVE_INFINITY)).valueOf() returns Number.NEGATIVE_INFINITY'
+);

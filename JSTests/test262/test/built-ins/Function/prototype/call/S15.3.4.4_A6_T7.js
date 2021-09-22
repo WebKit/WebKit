@@ -15,7 +15,4 @@ description: >
   Function("a1,a2,a3", "this.shifted=a1.length+a2+a3;").call(null, arguments, "", 2);
 })("", 1, 2, true);
 
-//CHECK#1
-if (this["shifted"] !== "42") {
-  throw new Test262Error('#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
-}
+assert.sameValue(this["shifted"], "42", 'The value of this["shifted"] is expected to be "42"');

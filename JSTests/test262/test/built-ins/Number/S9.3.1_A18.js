@@ -6,18 +6,6 @@ info: "The MV of DecimalDigit ::: 2 or of HexDigit ::: 2 is 2"
 es5id: 9.3.1_A18
 description: Compare Number('0x2') and Number('0X2') with 2
 ---*/
-
-// CHECK#1
-if (+("2") !== 2) {
-  throw new Test262Error('#1: +("2") === 2. Actual: ' + (+("2")));
-}
-
-// CHECK#2
-if (Number("0x2") !== 2) {
-  throw new Test262Error('#2: Number("0x2") === 2. Actual: ' + (Number("0x2")));
-}
-
-// CHECK#3
-if (Number("0X2") !== 2) {
-  throw new Test262Error('#3: Number("0X2") === 2. Actual: ' + (Number("0X2")));
-}
+assert.sameValue(+("2"), 2, 'The value of `+("2")` is expected to be 2');
+assert.sameValue(Number("0x2"), 2, 'Number("0x2") must return 2');
+assert.sameValue(Number("0X2"), 2, 'Number("0X2") must return 2');

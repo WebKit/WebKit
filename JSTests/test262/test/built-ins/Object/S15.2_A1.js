@@ -11,6 +11,4 @@ var obj = Object;
 
 var thisobj = this.Object;
 
-if (obj !== thisobj) {
-  throw new Test262Error('Object is the property of global');
-}
+assert.sameValue(obj, thisobj, 'The value of obj is expected to equal the value of thisobj');

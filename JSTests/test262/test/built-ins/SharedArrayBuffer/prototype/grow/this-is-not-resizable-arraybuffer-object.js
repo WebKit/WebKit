@@ -10,7 +10,7 @@ info: |
   1. Let O be the this value.
   2. Perform ? RequireInternalSlot(O, [[ArrayBufferMaxByteLength]]).
   [...]
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 var ab;

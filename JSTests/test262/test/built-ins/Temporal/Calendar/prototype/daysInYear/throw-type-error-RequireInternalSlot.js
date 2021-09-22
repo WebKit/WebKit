@@ -2,7 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-temporal.calendar.prototype.daysInYear
-description: Temporal.Calendar.prototype.daysInYear throws TypeError when the internal lot is not presented.
+description: >
+  Temporal.Calendar.prototype.daysInYear throws TypeError
+  when the internal lot is not presented.
 info: |
   2. Perform ? RequireInternalSlot(calendar, [[InitializedTemporalCalendar]]).
 features: [Temporal, arrow-function]

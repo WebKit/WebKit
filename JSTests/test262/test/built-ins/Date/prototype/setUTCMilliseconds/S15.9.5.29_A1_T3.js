@@ -8,13 +8,13 @@ info: |
 esid: sec-date.prototype.setutcmilliseconds
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.propertyIsEnumerable('setUTCMilliseconds')) {
-  throw new Test262Error('#1: The Date.prototype.setUTCMilliseconds property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.propertyIsEnumerable('setUTCMilliseconds'),
+  'The value of !Date.prototype.propertyIsEnumerable(\'setUTCMilliseconds\') is expected to be true'
+);
 
 for (var x in Date.prototype) {
-  if (x === "setUTCMilliseconds") {
-    throw new Test262Error('#2: The Date.prototype.setUTCMilliseconds has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "setUTCMilliseconds", 'The value of x is not "setUTCMilliseconds"');
 }
+
+// TODO: Convert to verifyProperty() format.

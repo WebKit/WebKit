@@ -30,12 +30,9 @@ var body = {
   }
 };
 
-//CHECK#1
 try {
   var f = new Function(p, body);
   throw new Test262Error('#1: test failed');
 } catch (e) {
-  if (e !== 1) {
-    throw new Test262Error('#1.1: i) Let Result(i) be the first argument; ii) Let P be ToString(Result(i))');
-  }
+  assert.sameValue(e, 1, 'The value of e is expected to be 1');
 }

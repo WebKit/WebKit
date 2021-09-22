@@ -13,11 +13,14 @@ var __instance = ".";
 
 Object.prototype.test = RegExp.prototype.test;
 
-//CHECK#1
 try {
   throw new Test262Error('#1.1: __instance = "."; Object.prototype.test = RegExp.prototype.test; __instance.test("message to investigate"). Actual: ' + (__instance.test("message to investigate")));
 } catch (e) {
-  if ((e instanceof TypeError) !== true) {
-    throw new Test262Error('#1.2: __instance = "."; Object.prototype.test = RegExp.prototype.test; __instance.test("message to investigate"). Actual: ' + (e));
-  }
+  assert.sameValue(
+    e instanceof TypeError,
+    true,
+    'The result of evaluating (e instanceof TypeError) is expected to be true'
+  );
 }
+
+// TODO: Convert to assert.throws() format.

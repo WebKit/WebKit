@@ -6,11 +6,10 @@ info: The "length" property of the "getMonth" is 0
 esid: sec-date.prototype.getmonth
 description: The "length" property of the "getMonth" is 0
 ---*/
+assert.sameValue(
+  Date.prototype.getMonth.hasOwnProperty("length"),
+  true,
+  'Date.prototype.getMonth.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.getMonth.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The getMonth has a "length" property');
-}
-
-if (Date.prototype.getMonth.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the getMonth is 0');
-}
+assert.sameValue(Date.prototype.getMonth.length, 0, 'The value of Date.prototype.getMonth.length is expected to be 0');

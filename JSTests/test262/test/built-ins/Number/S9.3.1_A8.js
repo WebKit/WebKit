@@ -10,13 +10,5 @@ description: >
     Compare Number('1234e5') and Number('1234.e5') with
     Number('1234')*1e5
 ---*/
-
-// CHECK#1
-if (Number("1234e5") !== Number("1234") * 1e5) {
-  throw new Test262Error('#1: Number("1234e5") === Number("1234")*1e5');
-}
-
-// CHECK#2
-if (Number("1234.e5") !== +("1234") * 1e5) {
-  throw new Test262Error('#2: Number("1234.e5") === +("1234")*1e5');
-}
+assert.sameValue(Number("1234e5"), 123400000, 'Number("1234e5") must return 123400000');
+assert.sameValue(Number("1234.e5"), 123400000, 'Number("1234.e5") must return 123400000');

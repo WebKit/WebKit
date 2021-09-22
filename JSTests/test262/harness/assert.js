@@ -66,6 +66,7 @@ assert.notSameValue = function (actual, unexpected, message) {
 };
 
 assert.throws = function (expectedErrorConstructor, func, message) {
+  var expectedName, actualName;
   if (typeof func !== "function") {
     throw new Test262Error('assert.throws requires two arguments: the error constructor ' +
       'and a function to run');
@@ -84,7 +85,13 @@ assert.throws = function (expectedErrorConstructor, func, message) {
       message += 'Thrown value was not an object!';
       throw new Test262Error(message);
     } else if (thrown.constructor !== expectedErrorConstructor) {
-      message += 'Expected a ' + expectedErrorConstructor.name + ' but got a ' + thrown.constructor.name;
+      expectedName = expectedErrorConstructor.name;
+      actualName = thrown.constructor.name;
+      if (expectedName === actualName) {
+        message += 'Expected a ' + expectedName + ' but got a different error constructor with the same name';
+      } else {
+        message += 'Expected a ' + expectedName + ' but got a ' + actualName;
+      }
       throw new Test262Error(message);
     }
     return;

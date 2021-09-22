@@ -6,13 +6,5 @@ info: Date constructor has length property whose value is 7
 esid: sec-date-constructor
 description: Checking Date.length property
 ---*/
-
-//CHECK#1
-if (!Date.hasOwnProperty("length")) {
-  throw new Test262Error('#1: Date constructor has length property');
-}
-
-//CHECK#2
-if (Date.length !== 7) {
-  throw new Test262Error('#2: Date constructor length property value should be 7');
-}
+assert(Date.hasOwnProperty("length"), 'Date.hasOwnProperty("length") must return true');
+assert.sameValue(Date.length, 7, 'The value of Date.length is expected to be 7');

@@ -9,43 +9,21 @@ info: |
 es5id: 15.7.4.2_A1_T01
 description: undefined radix
 ---*/
+assert.sameValue(Number.prototype.toString(), "0", 'Number.prototype.toString() must return "0"');
+assert.sameValue((new Number()).toString(), "0", '(new Number()).toString() must return "0"');
+assert.sameValue((new Number(0)).toString(), "0", '(new Number(0)).toString() must return "0"');
+assert.sameValue((new Number(-1)).toString(), "-1", '(new Number(-1)).toString() must return "-1"');
+assert.sameValue((new Number(1)).toString(), "1", '(new Number(1)).toString() must return "1"');
+assert.sameValue((new Number(Number.NaN)).toString(), "NaN", '(new Number(Number.NaN)).toString() must return "NaN"');
 
-//CHECK#1
-if (Number.prototype.toString() !== "0") {
-  throw new Test262Error('#1: Number.prototype.toString() === "0"');
-}
+assert.sameValue(
+  (new Number(Number.POSITIVE_INFINITY)).toString(),
+  "Infinity",
+  '(new Number(Number.POSITIVE_INFINITY)).toString() must return "Infinity"'
+);
 
-//CHECK#2
-if ((new Number()).toString() !== "0") {
-  throw new Test262Error('#2: (new Number()).toString() === "0"');
-}
-
-//CHECK#3
-if ((new Number(0)).toString() !== "0") {
-  throw new Test262Error('#3: (new Number(0)).toString() === "0"');
-}
-
-//CHECK#4
-if ((new Number(-1)).toString() !== "-1") {
-  throw new Test262Error('#4: (new Number(-1)).toString() === "-1"');
-}
-
-//CHECK#5
-if ((new Number(1)).toString() !== "1") {
-  throw new Test262Error('#5: (new Number(1)).toString() === "1"');
-}
-
-//CHECK#6
-if ((new Number(Number.NaN)).toString() !== "NaN") {
-  throw new Test262Error('#6: (new Number(Number.NaN)).toString() === "NaN"');
-}
-
-//CHECK#7
-if ((new Number(Number.POSITIVE_INFINITY)).toString() !== "Infinity") {
-  throw new Test262Error('#7: (new Number(Number.POSITIVE_INFINITY)).toString() === "Infinity"');
-}
-
-//CHECK#8
-if ((new Number(Number.NEGATIVE_INFINITY)).toString() !== "-Infinity") {
-  throw new Test262Error('#8: (new Number(Number.NEGATIVE_INFINITY)).toString() === "-Infinity"');
-}
+assert.sameValue(
+  (new Number(Number.NEGATIVE_INFINITY)).toString(),
+  "-Infinity",
+  '(new Number(Number.NEGATIVE_INFINITY)).toString() must return "-Infinity"'
+);

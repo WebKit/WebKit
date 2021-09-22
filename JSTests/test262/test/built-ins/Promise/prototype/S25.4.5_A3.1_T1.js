@@ -8,7 +8,8 @@ es6id: S25.4.5_A3.1_T1
 author: Sam Mikes
 description: Promise.prototype.constructor is the Promise constructor
 ---*/
-
-if (Promise.prototype.constructor !== Promise) {
-  throw new Test262Error("Expected Promise.prototype.constructor to be Promise");
-}
+assert.sameValue(
+  Promise.prototype.constructor,
+  Promise,
+  'The value of Promise.prototype.constructor is expected to equal the value of Promise'
+);

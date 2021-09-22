@@ -25,12 +25,10 @@ new Function(p, p, p, "this.shifted=a3;").apply(obj, (function() {
   return arguments;
 })("a", "b", "c"));
 
-//CHECK#1
-if (obj["shifted"] !== "c") {
-  throw new Test262Error('#1: If argArray is either an array or an arguments object, the function is passed the...');
-}
+assert.sameValue(obj["shifted"], "c", 'The value of obj["shifted"] is expected to be "c"');
 
-//CHECK#2
-if (typeof this["shifted"] !== "undefined") {
-  throw new Test262Error('#2: If argArray is either an array or an arguments object, the function is passed the...');
-}
+assert.sameValue(
+  typeof this["shifted"],
+  "undefined",
+  'The value of `typeof this["shifted"]` is expected to be "undefined"'
+);

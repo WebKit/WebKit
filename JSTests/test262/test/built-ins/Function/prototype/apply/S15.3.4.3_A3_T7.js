@@ -16,7 +16,4 @@ description: >
 })();
 
 
-//CHECK#1
-if (this["feat"] !== "in da haus") {
-  throw new Test262Error('#1: If thisArg is null or undefined, the called function is passed the global object as the this value');
-}
+assert.sameValue(this["feat"], "in da haus", 'The value of this["feat"] is expected to be "in da haus"');

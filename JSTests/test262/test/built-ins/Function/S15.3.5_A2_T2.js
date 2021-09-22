@@ -8,18 +8,11 @@ description: >
     For testing call (new Function("arg1,arg2","var x =arg1;
     this.y=arg2;return arg1+arg2;"))("1",2)
 ---*/
+assert.sameValue(
+  (new Function("arg1,arg2", "var x =arg1; this.y=arg2;return arg1+arg2;"))("1", 2),
+  "12",
+  'new Function("arg1,arg2", "var x =arg1; this.y=arg2;return arg1+arg2;")(1, 2) must return "12"'
+);
 
-//CHECK#1
-if ((new Function("arg1,arg2", "var x =arg1; this.y=arg2;return arg1+arg2;"))("1", 2) !== "12") {
-  throw new Test262Error('#1: Every function instance has a [[Call]] property');
-}
-
-//CHECK#2
-if (typeof x !== "undefined") {
-  throw new Test262Error('#2: Every function instance has a [[Call]] property');
-}
-
-//CHECK#3
-if (y !== 2) {
-  throw new Test262Error('#3: Every function instance has a [[Call]] property');
-}
+assert.sameValue(typeof x, "undefined", 'The value of `typeof x` is expected to be "undefined"');
+assert.sameValue(y, 2, 'The value of y is expected to be 2');

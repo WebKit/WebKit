@@ -17,7 +17,7 @@ info: |
   2. Let maxByteLength be ? Get(options, "maxByteLength").
   3. If maxByteLength is undefined, return empty.
   4. Return ? ToIndex(maxByteLength).
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 assert.throws(RangeError, function() {

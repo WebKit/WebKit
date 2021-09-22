@@ -7,11 +7,10 @@ info: The "length" property of the "getHours" is 0
 es5id: 15.9.5.18_A2_T1
 description: The "length" property of the "getHours" is 0
 ---*/
+assert.sameValue(
+  Date.prototype.getHours.hasOwnProperty("length"),
+  true,
+  'Date.prototype.getHours.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.getHours.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The getHours has a "length" property');
-}
-
-if (Date.prototype.getHours.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the getHours is 0');
-}
+assert.sameValue(Date.prototype.getHours.length, 0, 'The value of Date.prototype.getHours.length is expected to be 0');

@@ -14,7 +14,7 @@ info: |
   4. If requestedMaxByteLength is empty, then
      a. [...]
   5. If byteLength > requestedMaxByteLength, throw a RangeError exception.
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 assert.throws(RangeError, function() {

@@ -6,11 +6,15 @@ info: The Date.prototype property "setUTCDate" has { DontEnum } attributes
 esid: sec-date.prototype.setutcdate
 description: Checking absence of DontDelete attribute
 ---*/
+assert.notSameValue(
+  delete Date.prototype.setUTCDate,
+  false,
+  'The value of delete Date.prototype.setUTCDate is not false'
+);
 
-if (delete Date.prototype.setUTCDate === false) {
-  throw new Test262Error('#1: The Date.prototype.setUTCDate property has not the attributes DontDelete');
-}
+assert(
+  !Date.prototype.hasOwnProperty('setUTCDate'),
+  'The value of !Date.prototype.hasOwnProperty(\'setUTCDate\') is expected to be true'
+);
 
-if (Date.prototype.hasOwnProperty('setUTCDate')) {
-  throw new Test262Error('#2: The Date.prototype.setUTCDate property has not the attributes DontDelete');
-}
+// TODO: Convert to verifyProperty() format.

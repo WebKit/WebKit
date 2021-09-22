@@ -8,8 +8,8 @@ info: |
 es5id: 15.2.4.1_A1_T1
 description: Checking the Object.prototype.constructor
 ---*/
-
-//CHECK#1
-if (Object.prototype.constructor !== Object) {
-  throw new Test262Error('#1: The initial value of Object.prototype.constructor is the built-in Object constructor');
-}
+assert.sameValue(
+  Object.prototype.constructor,
+  Object,
+  'The value of Object.prototype.constructor is expected to equal the value of Object'
+);

@@ -10,4 +10,4 @@ description: >
 
 assert.throws(TypeError, function() {
   Function.prototype.toString.call({});
-});
+}, 'Function.prototype.toString.call({}) throws a TypeError exception');

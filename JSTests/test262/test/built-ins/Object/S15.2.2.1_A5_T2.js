@@ -11,19 +11,9 @@ description: Argument value is NaN
 
 var num = NaN;
 
-//CHECK#1
-if (typeof num !== 'number') {
-  throw new Test262Error('#1: NaN is NOT a number');
-}
+assert.sameValue(typeof num, 'number', 'The value of `typeof num` is expected to be "number"');
 
 var n_obj = new Object(num);
 
-//CHECK#2
-if (n_obj.constructor !== Number) {
-  throw new Test262Error('#2: When the Object constructor is called with Number argument return ToObject(number)');
-}
-
-//CHECK#3
-if (typeof n_obj !== 'object') {
-  throw new Test262Error('#3: When the Object constructor is called with Number argument return ToObject(number)');
-}
+assert.sameValue(n_obj.constructor, Number, 'The value of n_obj.constructor is expected to equal the value of Number');
+assert.sameValue(typeof n_obj, 'object', 'The value of `typeof n_obj` is expected to be "object"');

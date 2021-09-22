@@ -73,14 +73,15 @@ var __html=""+
 '</html>';
 
 //////////////////////////////////////////////////////////////////////////////
-//CHECK#1
 try {
     for(var index=0; index<__patterns.length; index++) {
-    	var __re = new RegExp(__patterns[index]);
-    	__re.test(__html);
+        var __re = new RegExp(__patterns[index]);
+        __re.test(__html);
     }
 } catch (e) {
-	throw new Test262Error('#'+index+": XML Shallow Parsing with Regular Expression: "+__patterns[index]);
+    throw new Test262Error('#'+index+": XML Shallow Parsing with Regular Expression: "+__patterns[index]);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
+
+// TODO: Convert to assert.throws() format.

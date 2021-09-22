@@ -10,7 +10,6 @@ es5id: 15.7.4.2_A4_T02
 description: transferring to the Boolean objects
 ---*/
 
-//CHECK#1
 try {
   var s1 = new Boolean();
   s1.toString = Number.prototype.toString;
@@ -18,12 +17,9 @@ try {
   throw new Test262Error('#1: Number.prototype.toString on not a Number object should throw TypeError');
 }
 catch (e) {
-  if (!(e instanceof TypeError)) {
-    throw new Test262Error('#1: Number.prototype.toString on not a Number object should throw TypeError, not ' + e);
-  }
+  assert(e instanceof TypeError, 'The result of evaluating (e instanceof TypeError) is expected to be true');
 }
 
-//CHECK#2
 try {
   var s2 = new Boolean();
   s2.myToString = Number.prototype.toString;
@@ -31,7 +27,5 @@ try {
   throw new Test262Error('#2: Number.prototype.toString on not a Number object should throw TypeError');
 }
 catch (e) {
-  if (!(e instanceof TypeError)) {
-    throw new Test262Error('#2: Number.prototype.toString on not a Number object should throw TypeError, not ' + e);
-  }
+  assert(e instanceof TypeError, 'The result of evaluating (e instanceof TypeError) is expected to be true');
 }

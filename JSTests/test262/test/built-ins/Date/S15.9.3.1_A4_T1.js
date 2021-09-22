@@ -16,34 +16,18 @@ esid: sec-date-year-month-date-hours-minutes-seconds-ms
 description: 2 arguments, (year, month)
 ---*/
 
-var myObj = function(val) {
+function PoisonedValueOf(val) {
   this.value = val;
   this.valueOf = function() {
-    throw "valueOf-" + this.value;
+    throw new Test262Error();
   };
-  this.toString = function() {
-    throw "toString-" + this.value;
-  };
-};
-
-//CHECK#1
-try {
-  var x1 = new Date(new myObj(1), new myObj(2));
-  throw new Test262Error("#1: The 1st step is calling ToNumber(year)");
-}
-catch (e) {
-  if (e !== "valueOf-1") {
-    throw new Test262Error("#1: The 1st step is calling ToNumber(year)");
-  }
+  this.toString = function() {};
 }
 
-//CHECK#2
-try {
-  var x2 = new Date(1, new myObj(2));
-  throw new Test262Error("#2: The 2nd step is calling ToNumber(month)");
-}
-catch (e) {
-  if (e !== "valueOf-2") {
-    throw new Test262Error("#2: The 2nd step is calling ToNumber(month)");
-  }
-}
+assert.throws(Test262Error, () => {
+  new Date(new PoisonedValueOf(1), new PoisonedValueOf(2));
+}, '`new Date(new PoisonedValueOf(1), new PoisonedValueOf(2))` throws a Test262Error exception');
+
+assert.throws(Test262Error, () => {
+  new Date(1, new PoisonedValueOf(2));
+}, '`new Date(1, new PoisonedValueOf(2))` throws a Test262Error exception');

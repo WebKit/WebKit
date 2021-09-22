@@ -10,19 +10,13 @@ description: >
     Calling Object function with function argument value. The function
     is declared
 ---*/
-
-//CHECK#1
-if (typeof func !== 'function') {
-  throw new Test262Error('#1: func = function(){return 1;} is NOT an function');
+function func() {
+  return 1;
 }
+
+assert.sameValue(typeof func, 'function', 'The value of `typeof func` is expected to be "function"');
 
 var n_obj = Object(func);
 
-//CHECK#2
-if ((n_obj !== func) || (n_obj() !== 1)) {
-  throw new Test262Error('#2: Object(function) returns function');
-}
-
-function func() {
-  return 1;
-};
+assert.sameValue(n_obj, func, 'The value of n_obj is expected to equal the value of func');
+assert.sameValue(n_obj(), 1, 'n_obj() must return 1');

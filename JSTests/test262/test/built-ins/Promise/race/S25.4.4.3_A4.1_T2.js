@@ -29,7 +29,5 @@ Object.defineProperty(iterThrows, Symbol.iterator, {
 Promise.race(iterThrows).then(function() {
   throw new Test262Error('Promise unexpectedly fulfilled: Promise.race(iterThrows) should throw TypeError');
 }, function(err) {
-  if (!(err instanceof TypeError)) {
-    throw new Test262Error('Expected TypeError, got ' + err);
-  }
+  assert(!!(err instanceof TypeError), 'The value of !!(err instanceof TypeError) is expected to be true');
 }).then($DONE, $DONE);

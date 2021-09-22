@@ -11,17 +11,8 @@ description: Checking if deleting the global property succeeds
 
 var __re = RegExp.prototype;
 
-//CHECK#0
-if (__re.hasOwnProperty('global') !== true) {
-  throw new Test262Error('#0: __re = RegExp.prototype; __re.hasOwnProperty(\'global\') === true');
-}
+assert.sameValue(__re.hasOwnProperty('global'), true, '__re.hasOwnProperty(\'global\') must return true');
+assert.sameValue(delete __re.global, true, 'The value of `delete __re.global` is expected to be true');
+assert.sameValue(__re.hasOwnProperty('global'), false, '__re.hasOwnProperty(\'global\') must return false');
 
-//CHECK#1
-if ((delete __re.global) !== true) {
-  throw new Test262Error('#1: __re = RegExp.prototype; (delete __re.global) === true');
-}
-
-//CHECK#2
-if (__re.hasOwnProperty('global') !== false) {
-  throw new Test262Error('#2: __re = RegExp.prototype;delete __re.global === true; __re.hasOwnProperty(\'global\') === false');
-}
+// TODO: Convert to verifyProperty() format.

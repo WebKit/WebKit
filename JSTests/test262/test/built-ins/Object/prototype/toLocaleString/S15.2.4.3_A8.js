@@ -10,21 +10,19 @@ description: >
     Checking if enumerating the Object.prototype.toLocaleString.length
     property fails
 ---*/
+assert(
+  !!Object.prototype.toLocaleString.hasOwnProperty('length'),
+  'The value of !!Object.prototype.toLocaleString.hasOwnProperty("length") is expected to be true'
+);
 
-//CHECK#0
-if (!(Object.prototype.toLocaleString.hasOwnProperty('length'))) {
-  throw new Test262Error('#0: the Object.prototype.toLocaleString has length property.');
-}
+assert(
+  !Object.prototype.toLocaleString.propertyIsEnumerable('length'),
+  'The value of !Object.prototype.toLocaleString.propertyIsEnumerable("length") is expected to be true'
+);
 
-
-// CHECK#1
-if (Object.prototype.toLocaleString.propertyIsEnumerable('length')) {
-  throw new Test262Error('#1: the Object.prototype.toLocaleString.length property has the attributes DontEnum');
-}
-
-// CHECK#2
 for (var p in Object.prototype.toLocaleString) {
-  if (p === "length")
-    throw new Test262Error('#2: the Object.prototype.toLocaleString.length property has the attributes DontEnum');
+  assert.notSameValue(p, "length", 'The value of p is not "length"');
 }
 //
+
+// TODO: Convert to verifyProperty() format.

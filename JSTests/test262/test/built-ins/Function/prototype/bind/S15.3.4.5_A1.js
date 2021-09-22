@@ -18,4 +18,4 @@ function baz() {
 
 assert.throws(TypeError, function() {
   baz();
-});
+}, 'baz() throws a TypeError exception');

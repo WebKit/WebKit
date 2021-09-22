@@ -23,17 +23,12 @@ var obj = {};
 
 Function(p, "a2,a3", "this.shifted=a1;").call(obj, new Array("nine", "inch", "nails"));
 
-//CHECK#1
-if (obj["shifted"].length !== 3) {
-  throw new Test262Error('#1: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
-}
+assert.sameValue(obj["shifted"].length, 3);
 
-//CHECK#2
 if ((obj["shifted"][0] !== "nine") || (obj["shifted"][1] !== "inch") || (obj["shifted"][2] !== "nails")) {
   throw new Test262Error('#2: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
 }
 
-//CHECK#3
 if (typeof this["shifted"] !== "undefined") {
   throw new Test262Error('#3: The call method takes one or more arguments, thisArg and (optionally) arg1, arg2 etc, and performs a function call using the [[Call]] property of the object');
 }

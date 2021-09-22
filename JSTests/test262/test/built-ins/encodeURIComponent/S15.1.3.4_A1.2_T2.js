@@ -17,7 +17,6 @@ var indexO = 0;
 
 for (var index = 0xD800; index <= 0xDBFF; index++) {
   count++;
-  var hex = decimalToHexString(index);
   try {
     encodeURIComponent(String.fromCharCode(0x0041, index));
   } catch (e) {

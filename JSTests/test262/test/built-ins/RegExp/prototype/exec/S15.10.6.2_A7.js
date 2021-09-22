@@ -13,7 +13,11 @@ try {
   var __instance = new __FACTORY;
   throw new Test262Error('#1.1: __FACTORY = RegExp.prototype.exec throw TypeError. Actual: ' + (__instance));
 } catch (e) {
-  if ((e instanceof TypeError) !== true) {
-    throw new Test262Error('#1.2: __FACTORY = RegExp.prototype.exec throw TypeError. Actual: ' + (e));
-  }
+  assert.sameValue(
+    e instanceof TypeError,
+    true,
+    'The result of evaluating (e instanceof TypeError) is expected to be true'
+  );
 }
+
+// TODO: Convert to assert.throws() format.

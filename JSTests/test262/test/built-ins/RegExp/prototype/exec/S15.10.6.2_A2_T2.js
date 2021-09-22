@@ -13,12 +13,15 @@ var __instance = Math;
 
 __instance.exec = RegExp.prototype.exec;
 
-//CHECK#1
 try {
   __instance.exec("message to investigate");
-	throw new Test262Error('#1.1: __instance = Math; __instance.exec = RegExp.prototype.exec;  __instance.exec("message to investigate")');
+    throw new Test262Error('#1.1: __instance = Math; __instance.exec = RegExp.prototype.exec;  __instance.exec("message to investigate")');
 } catch (e) {
-	if ((e instanceof TypeError) !== true) {
-		throw new Test262Error('#1.2: __instance = Math; __instance.exec = RegExp.prototype.exec;  __instance.exec("message to investigate"). Actual: ' + (e));
-	}
+  assert.sameValue(
+    e instanceof TypeError,
+    true,
+    'The result of evaluating (e instanceof TypeError) is expected to be true'
+  );
 }
+
+// TODO: Convert to assert.throws() format.

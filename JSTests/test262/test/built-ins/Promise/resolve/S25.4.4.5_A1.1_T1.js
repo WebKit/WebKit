@@ -8,7 +8,8 @@ es6id: S25.4.4.5_A1.1_T1
 author: Sam Mikes
 description: Promise.resolve is a function
 ---*/
-
-if ((typeof Promise.resolve) !== "function") {
-  throw new Test262Error("Expected Promise.resolve to be a function");
-}
+assert.sameValue(
+  typeof Promise.resolve,
+  "function",
+  'The value of `typeof Promise.resolve` is expected to be "function"'
+);

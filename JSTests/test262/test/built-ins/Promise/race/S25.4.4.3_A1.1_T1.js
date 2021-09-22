@@ -7,7 +7,4 @@ es6id: S25.4.4.3_A1.1_T1
 author: Sam Mikes
 description: Promise.race is callable
 ---*/
-
-if (typeof Promise.race !== "function") {
-  throw new Test262Error("Expected Promise.race to be a function, actually " + typeof Promise.race);
-}
+assert.sameValue(typeof Promise.race, "function", 'The value of `typeof Promise.race` is expected to be "function"');

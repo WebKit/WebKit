@@ -6,13 +6,13 @@ info: The Date.prototype property "setSeconds" has { DontEnum } attributes
 esid: sec-date.prototype.setseconds
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.propertyIsEnumerable('setSeconds')) {
-  throw new Test262Error('#1: The Date.prototype.setSeconds property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.propertyIsEnumerable('setSeconds'),
+  'The value of !Date.prototype.propertyIsEnumerable(\'setSeconds\') is expected to be true'
+);
 
 for (var x in Date.prototype) {
-  if (x === "setSeconds") {
-    throw new Test262Error('#2: The Date.prototype.setSeconds has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "setSeconds", 'The value of x is not "setSeconds"');
 }
+
+// TODO: Convert to verifyProperty() format.

@@ -17,5 +17,5 @@ info: |
 ---*/
 
 assert.throws(SyntaxError, function() {
-	new Function("'use strict'; with ({}) {}");
-});
+  new Function("'use strict'; with ({}) {}");
+}, '`new Function("\'use strict\'; with ({}) {}")` throws a SyntaxError exception');

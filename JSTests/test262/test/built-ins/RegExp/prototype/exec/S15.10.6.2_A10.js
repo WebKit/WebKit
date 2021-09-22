@@ -7,17 +7,20 @@ es5id: 15.10.6.2_A10
 description: Checking if varying the RegExp.prototype.exec.length property fails
 includes: [propertyHelper.js]
 ---*/
-
-//CHECK#1
-if (RegExp.prototype.exec.hasOwnProperty('length') !== true) {
-  throw new Test262Error('#1: RegExp.prototype.exec.hasOwnProperty(\'length\') === true');
-}
+assert.sameValue(
+  RegExp.prototype.exec.hasOwnProperty('length'),
+  true,
+  'RegExp.prototype.exec.hasOwnProperty(\'length\') must return true'
+);
 
 var __obj = RegExp.prototype.exec.length;
 
 verifyNotWritable(RegExp.prototype.exec, "length", null, function(){return "shifted";});
 
-//CHECK#2
-if (RegExp.prototype.exec.length !== __obj) {
-  throw new Test262Error('#2: __obj = RegExp.prototype.exec.length; RegExp.prototype.exec.length = function(){return "shifted";}; RegExp.prototype.exec.length === __obj. Actual: ' + (RegExp.prototype.exec.length));
-}
+assert.sameValue(
+  RegExp.prototype.exec.length,
+  __obj,
+  'The value of RegExp.prototype.exec.length is expected to equal the value of __obj'
+);
+
+// TODO: Convert to verifyProperty() format.

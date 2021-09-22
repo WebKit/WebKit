@@ -14,7 +14,7 @@ info: |
   5. If newByteLength < 0 or newByteLength > O.[[ArrayBufferMaxByteLength]],
      throw a RangeError exception.
   [...]
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 var ab = new SharedArrayBuffer(4, {maxByteLength: 4});

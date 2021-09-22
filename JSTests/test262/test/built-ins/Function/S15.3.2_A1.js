@@ -13,12 +13,5 @@ description: >
 
 var f = new Function;
 
-//CHECK#1
-if (f.constructor !== Function) {
-  throw new Test262Error('#1: When Function is called as part of a new expression, it is a constructor: it initialises the newly created object');
-}
-
-//CHECK#2
-if (f === undefined) {
-  throw new Test262Error('#2: When Function is called as part of a new expression, it is a constructor: it initialises the newly created object');
-}
+assert.sameValue(f.constructor, Function, 'The value of f.constructor is expected to equal the value of Function');
+assert.notSameValue(f, undefined, 'The value of f is expected to not equal ``undefined``');

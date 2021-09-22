@@ -9,11 +9,10 @@ description: >
     fails
 includes: [propertyHelper.js]
 ---*/
-
-//CHECK#1
-if (!(Function.prototype.call.hasOwnProperty('length'))) {
-  throw new Test262Error('#1: the Function.prototype.call has length property.');
-}
+assert(
+  Function.prototype.call.hasOwnProperty('length'),
+  'Function.prototype.call.hasOwnProperty(\'length\') must return true'
+);
 
 var obj = Function.prototype.call.length;
 
@@ -21,7 +20,10 @@ verifyNotWritable(Function.prototype.call, "length", null, function() {
   return "shifted";
 });
 
-//CHECK#2
-if (Function.prototype.call.length !== obj) {
-  throw new Test262Error('#2: the Function.prototype.call length property has the attributes ReadOnly.');
-}
+assert.sameValue(
+  Function.prototype.call.length,
+  obj,
+  'The value of Function.prototype.call.length is expected to equal the value of obj'
+);
+
+// TODO: Convert to verifyProperty() format.

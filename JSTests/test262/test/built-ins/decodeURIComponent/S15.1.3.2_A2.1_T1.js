@@ -10,14 +10,14 @@ includes: [decimalToHexString.js]
 
 for (var indexI = 0; indexI <= 65535; indexI++) {
   if (indexI !== 0x25) {
-    var hex = decimalToHexString(indexI);
     try {
       var str = String.fromCharCode(indexI);
-      if (decodeURIComponent(str) !== str) {
-        throw new Test262Error('#' + hex + ' ');
-      }
+      var differs = decodeURIComponent(str) !== str;
     } catch (e) {
-      throw new Test262Error('#' + hex + ' ');
+      throw new Test262Error('#' + decimalToHexString(indexI) + ' throws');
+    }
+    if (differs) {
+      throw new Test262Error('#' + decimalToHexString(indexI) + ' differs');
     }
   }
 }

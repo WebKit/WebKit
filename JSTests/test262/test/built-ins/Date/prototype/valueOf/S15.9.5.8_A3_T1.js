@@ -12,6 +12,11 @@ includes: [propertyHelper.js]
 
 var x = Date.prototype.valueOf.length;
 verifyNotWritable(Date.prototype.valueOf, "length", null, 1);
-if (Date.prototype.valueOf.length !== x) {
-  throw new Test262Error('#1: The Date.prototype.valueOf.length has the attribute ReadOnly');
-}
+
+assert.sameValue(
+  Date.prototype.valueOf.length,
+  x,
+  'The value of Date.prototype.valueOf.length is expected to equal the value of x'
+);
+
+// TODO: Convert to verifyProperty() format.

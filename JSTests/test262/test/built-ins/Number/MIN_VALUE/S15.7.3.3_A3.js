@@ -10,12 +10,13 @@ includes: [propertyHelper.js]
 
 verifyNotConfigurable(Number, "MIN_VALUE");
 
-//CHECK#1
 try {
-  if (delete Number.MIN_VALUE !== false) {
-    throw new Test262Error('#1: delete Number.MIN_VALUE === false');
-  }
+  assert.sameValue(delete Number.MIN_VALUE, false);
 } catch (e) {
-  if (e instanceof Test262Error) throw e;
+  if (e instanceof Test262Error) {
+    throw e;
+  }
   assert(e instanceof TypeError);
 }
+
+// TODO: Convert to verifyProperty() format.

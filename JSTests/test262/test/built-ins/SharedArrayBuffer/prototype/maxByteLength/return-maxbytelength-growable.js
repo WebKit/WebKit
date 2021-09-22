@@ -14,7 +14,7 @@ info: |
   5. Else,
      [...]
   6. Return 𝔽(length).
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 var ab1 = new SharedArrayBuffer(0, { maxByteLength: 0 });

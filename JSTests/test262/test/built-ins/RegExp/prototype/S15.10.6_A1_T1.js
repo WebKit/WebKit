@@ -8,8 +8,8 @@ info: |
 es5id: 15.10.6_A1_T1
 description: Checking Object.prototype.isPrototypeOf(RegExp.prototype)
 ---*/
-
-//CHECK#1
-if (Object.prototype.isPrototypeOf(RegExp.prototype) !== true) {
-	throw new Test262Error('#1: Object.prototype.isPrototypeOf(RegExp.prototype) === true');
-}
+assert.sameValue(
+  Object.prototype.isPrototypeOf(RegExp.prototype),
+  true,
+  'Object.prototype.isPrototypeOf(RegExp.prototype) must return true'
+);

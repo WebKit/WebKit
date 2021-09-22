@@ -11,7 +11,4 @@ description: Argument at apply function is null
 
 Function("this.field=\"green\"").apply(null);
 
-//CHECK#1
-if (this["field"] !== "green") {
-  throw new Test262Error('#1: If thisArg is null or undefined, the called function is passed the global object as the this value');
-}
+assert.sameValue(this["field"], "green", 'The value of this["field"] is expected to be "green"');

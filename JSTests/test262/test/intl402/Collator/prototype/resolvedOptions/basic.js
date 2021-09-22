@@ -15,29 +15,7 @@ var actual = new Intl.Collator().resolvedOptions();
 var actual2 = new Intl.Collator().resolvedOptions();
 assert.notSameValue(actual2, actual, "resolvedOptions returned the same object twice.");
 
-// source: CLDR file common/bcp47/collation.xml; version CLDR 32.
-var collations = [
-    "default", // added
-    "big5han",
-    "compat",
-    "dict",
-    "direct",
-    "ducet",
-    "emoji",
-    "eor",
-    "gb2312",
-    "phonebk",
-    "phonetic",
-    "pinyin",
-    "reformed",
-    // "search", // excluded
-    "searchjl",
-    // "standard", // excluded
-    "stroke",
-    "trad",
-    "unihan",
-    "zhuyin",
-];
+var collations = ["default", ...allCollations()];
 
 // this assumes the default values where the specification provides them
 assert(isCanonicalizedStructurallyValidLanguageTag(actual.locale),
@@ -45,6 +23,8 @@ assert(isCanonicalizedStructurallyValidLanguageTag(actual.locale),
 assert.sameValue(actual.usage, "sort");
 assert.sameValue(actual.sensitivity, "variant");
 assert.sameValue(actual.ignorePunctuation, false);
+assert.notSameValue(actual.collation, "search");
+assert.notSameValue(actual.collation, "standard");
 assert.notSameValue(collations.indexOf(actual.collation), -1,
                     "Invalid collation: " + actual.collation);
 

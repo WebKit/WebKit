@@ -7,13 +7,13 @@ es5id: 15.7.3.3_A4
 description: Checking if enumerating Number.MIN_VALUE fails
 ---*/
 
-//CHECK#1
 for (var x in Number) {
-  if (x === "MIN_VALUE") {
-    throw new Test262Error('#1: Number.MIN_VALUE has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "MIN_VALUE", 'The value of x is not "MIN_VALUE"');
 }
 
-if (Number.propertyIsEnumerable('MIN_VALUE')) {
-  throw new Test262Error('#2: Number.MIN_VALUE has the attribute DontEnum');
-}
+assert(
+  !Number.propertyIsEnumerable('MIN_VALUE'),
+  'The value of !Number.propertyIsEnumerable(\'MIN_VALUE\') is expected to be true'
+);
+
+// TODO: Convert to verifyProperty() format.

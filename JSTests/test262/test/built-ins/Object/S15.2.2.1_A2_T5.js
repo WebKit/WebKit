@@ -13,12 +13,6 @@ var obj = new Date(1978, 3);
 
 var n_obj = new Object(obj);
 
-//CHECK#1
-if (n_obj !== obj) {
-  throw new Test262Error('#1: When the Object constructor is called and if the value is an Object simply value returns.');
-}
-
-//CHECK#2
-if ((n_obj.getFullYear() !== 1978) || (n_obj.getMonth() !== 3)) {
-  throw new Test262Error('#2: When the Object constructor is called and if the value is an Object simply value returns.');
-}
+assert.sameValue(n_obj, obj, 'The value of n_obj is expected to equal the value of obj');
+assert.sameValue(n_obj.getFullYear(), 1978, 'n_obj.getFullYear() must return 1978');
+assert.sameValue(n_obj.getMonth(), 3, 'n_obj.getMonth() must return 3');

@@ -20,6 +20,7 @@ skip:
     - json-modules
     - class-static-block
     - callable-boundary-realms
+    - ShadowRealm
   paths:
     - test/built-ins/Temporal/Calendar
     - test/built-ins/Temporal/Instant

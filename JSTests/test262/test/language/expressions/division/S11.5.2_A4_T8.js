@@ -33,8 +33,8 @@ if (-0 / -1 !== +0) {
 if (+0 / 1 !== +0) {
   throw new Test262Error('#3.1: +0 / 1 === 0. Actual: ' + (+0 / 1));
 } else {
-  if (1 / (+0 / -1) !== Number.NEGATIVE_INFINITY) {
-    throw new Test262Error('#3.2: +0 / -1 === + 0. Actual: -0');
+  if (1 / (+0 / 1) !== Number.POSITIVE_INFINITY) {
+    throw new Test262Error('#3.2: +0 / 1 === + 0. Actual: -0');
   }
 }
 

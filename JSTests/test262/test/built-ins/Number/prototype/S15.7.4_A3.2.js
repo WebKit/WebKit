@@ -6,8 +6,8 @@ info: The Number prototype object has the property toString
 es5id: 15.7.4_A3.2
 description: The test uses hasOwnProperty() method
 ---*/
-
-//CHECK#1
-if (Number.prototype.hasOwnProperty("toString") !== true) {
-  throw new Test262Error('#1: The Number prototype object has the property toString');
-}
+assert.sameValue(
+  Number.prototype.hasOwnProperty("toString"),
+  true,
+  'Number.prototype.hasOwnProperty("toString") must return true'
+);

@@ -6,23 +6,21 @@ info: The RegExp.prototype property has the attribute DontEnum
 es5id: 15.10.5.1_A2
 description: Checking if enumerating the RegExp.prototype property fails
 ---*/
+assert.sameValue(RegExp.hasOwnProperty('prototype'), true, 'RegExp.hasOwnProperty(\'prototype\') must return true');
 
-//CHECK#0
-if (RegExp.hasOwnProperty('prototype') !== true) {
-	throw new Test262Error('#0: RegExp.hasOwnProperty(\'prototype\') === true');
-}
+assert.sameValue(
+  RegExp.propertyIsEnumerable('prototype'),
+  false,
+  'RegExp.propertyIsEnumerable(\'prototype\') must return false'
+);
 
- //CHECK#1
-if (RegExp.propertyIsEnumerable('prototype') !== false) {
-	throw new Test262Error('#1: RegExp.propertyIsEnumerable(\'prototype\') === false');
-}
-
- //CHECK#2
 var count=0;
 for (var p in RegExp){
-	if (p==="prototype") count++;
+    if (p==="prototype") {
+      count++;
+    }
 }
 
-if (count !== 0) {
-	throw new Test262Error('#2: count=0; for (p in RegExp){ if (p==="prototype") count++; } count === 0. Actual: ' + (count));
-}
+assert.sameValue(count, 0, 'The value of count is expected to be 0');
+
+// TODO: Convert to verifyProperty() format.

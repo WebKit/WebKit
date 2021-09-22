@@ -15,31 +15,36 @@ var __expected = ["ed"];
 __expected.index=7;
 __expected.input="undefined";
 
-//CHECK#0
-if ((__executed instanceof Array) !== true) {
-	throw new Test262Error('#0: __executed = /[a-f]d/.exec(x); var x; (__executed instanceof Array) === true');
-}
+assert.sameValue(
+  __executed instanceof Array,
+  true,
+  'The result of evaluating (__executed instanceof Array) is expected to be true'
+);
 
-//CHECK#1
-if (__executed.length !== __expected.length) {
-  throw new Test262Error('#1: __executed = /[a-f]d/.exec(x); var x; __executed.length === ' + __expected.length + '. Actual: ' + __executed.length);
-}
+assert.sameValue(
+  __executed.length,
+  __expected.length,
+  'The value of __executed.length is expected to equal the value of __expected.length'
+);
 
-//CHECK#2
-if (__executed.index !== __expected.index) {
-  throw new Test262Error('#2: __executed = /[a-f]d/.exec(x); var x; __executed.index === ' + __expected.index + '. Actual: ' + __executed.index);
-}
+assert.sameValue(
+  __executed.index,
+  __expected.index,
+  'The value of __executed.index is expected to equal the value of __expected.index'
+);
 
-//CHECK#3
-if (__executed.input !== __expected.input) {
-  throw new Test262Error('#3: __executed = /[a-f]d/.exec(x); var x; __executed.input === ' + __expected.input + '. Actual: ' + __executed.input);
-}
+assert.sameValue(
+  __executed.input,
+  __expected.input,
+  'The value of __executed.input is expected to equal the value of __expected.input'
+);
 
-//CHECK#4
 for(var index=0; index<__expected.length; index++) {
-  if (__executed[index] !== __expected[index]) {
-    throw new Test262Error('#4: __executed = /[a-f]d/.exec(x); var x; __executed[' + index + '] === ' + __expected[index] + '. Actual: ' + __executed[index]);
-  }
+  assert.sameValue(
+    __executed[index],
+    __expected[index],
+    'The value of __executed[index] is expected to equal the value of __expected[index]'
+  );
 }
 
 var x;

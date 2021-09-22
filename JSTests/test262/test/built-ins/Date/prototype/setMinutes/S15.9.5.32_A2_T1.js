@@ -6,11 +6,14 @@ info: The "length" property of the "setMinutes" is 3
 esid: sec-date.prototype.setminutes
 description: The "length" property of the "setMinutes" is 3
 ---*/
+assert.sameValue(
+  Date.prototype.setMinutes.hasOwnProperty("length"),
+  true,
+  'Date.prototype.setMinutes.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.setMinutes.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The setMinutes has a "length" property');
-}
-
-if (Date.prototype.setMinutes.length !== 3) {
-  throw new Test262Error('#2: The "length" property of the setMinutes is 3');
-}
+assert.sameValue(
+  Date.prototype.setMinutes.length,
+  3,
+  'The value of Date.prototype.setMinutes.length is expected to be 3'
+);

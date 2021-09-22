@@ -12,6 +12,11 @@ includes: [propertyHelper.js]
 
 var x = Date.prototype.setFullYear.length;
 verifyNotWritable(Date.prototype.setFullYear, "length", null, 1);
-if (Date.prototype.setFullYear.length !== x) {
-  throw new Test262Error('#1: The Date.prototype.setFullYear.length has the attribute ReadOnly');
-}
+
+assert.sameValue(
+  Date.prototype.setFullYear.length,
+  x,
+  'The value of Date.prototype.setFullYear.length is expected to equal the value of x'
+);
+
+// TODO: Convert to verifyProperty() format.

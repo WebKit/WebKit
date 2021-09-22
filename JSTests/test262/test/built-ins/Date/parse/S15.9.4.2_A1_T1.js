@@ -8,10 +8,11 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.parse;
-if (x === 1)
+if (x === 1) {
   Date.parse = 2;
-else
+} else {
   Date.parse = 1;
-if (Date.parse === x) {
-  throw new Test262Error('#1: The Date.parse has not the attribute ReadOnly');
 }
+assert.notSameValue(Date.parse, x, 'The value of Date.parse is expected to not equal the value of `x`');
+
+// TODO: Convert to verifyProperty() format.

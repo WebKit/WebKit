@@ -11,7 +11,4 @@ description: Add new property to Function.prototype and check it
 
 Function.prototype.indicator = 1;
 
-//CHECK#
-if (Function.indicator != 1) {
-  throw new Test262Error('#1: the value of the internal [[Prototype]] property of the Function constructor is the Function prototype object.');
-}
+assert.sameValue(Function.indicator, 1, 'The value of Function.indicator is expected to be 1');

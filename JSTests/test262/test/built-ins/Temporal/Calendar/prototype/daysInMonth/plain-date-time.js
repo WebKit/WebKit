@@ -2,7 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-temporal.calendar.prototype.daysinmonth
-description: Temporal.Calendar.prototype.daysInMonth will take Temporal.PlainDateTime object and return the number of days in that month.
+description: >
+  Temporal.Calendar.prototype.daysInMonth will take Temporal.PlainDateTime object
+  and return the number of days in that month.
 info: |
   4. If Type(temporalDateLike) is not Object or temporalDateLike does not have an [[InitializedTemporalDate]] or [[InitializedTemporalYearMonth]] internal slots, then
     a. Set temporalDateLike to ? ToTemporalDate(temporalDateLike).

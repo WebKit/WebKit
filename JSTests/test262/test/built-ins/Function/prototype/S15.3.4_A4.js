@@ -9,18 +9,20 @@ info: |
 es5id: 15.3.4_A4
 description: Checking valueOf property at Function.prototype
 ---*/
+assert.sameValue(
+  Function.prototype.hasOwnProperty("valueOf"),
+  false,
+  'Function.prototype.hasOwnProperty("valueOf") must return false'
+);
 
-//CHECK#1
-if (Function.prototype.hasOwnProperty("valueOf") !== false) {
-  throw new Test262Error('#1: The Function prototype object does not have a valueOf property of its own');
-}
+assert.notSameValue(
+  typeof Function.prototype.valueOf,
+  "undefined",
+  'The value of typeof Function.prototype.valueOf is not "undefined"'
+);
 
-//CHECK#2
-if (typeof Function.prototype.valueOf === "undefined") {
-  throw new Test262Error('#2: however, it inherits the valueOf property from the Object prototype Object');
-}
-
-//CHECK#3
-if (Function.prototype.valueOf !== Object.prototype.valueOf) {
-  throw new Test262Error('#3: however, it inherits the valueOf property from the Object prototype Object');
-}
+assert.sameValue(
+  Function.prototype.valueOf,
+  Object.prototype.valueOf,
+  'The value of Function.prototype.valueOf is expected to equal the value of Object.prototype.valueOf'
+);

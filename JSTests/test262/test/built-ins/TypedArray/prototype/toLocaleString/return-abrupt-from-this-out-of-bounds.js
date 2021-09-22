@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.tolocalestring
 description: Return abrupt when "this" value fails buffer boundary checks
 includes: [testTypedArray.js]
-features: [TypedArray, resizable-arraybuffer]
+features: [ArrayBuffer, TypedArray, arrow-function, resizable-arraybuffer]
 ---*/
 
 assert.sameValue(

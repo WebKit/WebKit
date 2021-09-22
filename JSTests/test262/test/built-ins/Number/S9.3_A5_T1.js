@@ -11,62 +11,24 @@ description: >
     Number(null),  new Number(void 0) and others convert to Number by
     explicit transformation
 ---*/
-
-// CHECK#1
-if (Number(new Number()) !== 0) {
-  throw new Test262Error('#1: Number(new Number()) === 0. Actual: ' + (Number(new Number())));
-}
-
-// CHECK#2
-if (Number(new Number(0)) !== 0) {
-  throw new Test262Error('#2: Number(new Number(0)) === 0. Actual: ' + (Number(new Number(0))));
-}
+assert.sameValue(Number(new Number()), 0, 'Number(new Number()) must return 0');
+assert.sameValue(Number(new Number(0)), 0, 'Number(new Number(0)) must return 0');
 
 // CHECK#3
-assert.sameValue(Number(new Number(NaN)), NaN, "Number(new Number(NaN)");
+assert.sameValue(Number(new Number(NaN)), NaN, 'Number(new Number(NaN)) returns NaN');
 
-// CHECK#4
-if (Number(new Number(null)) !== 0) {
-  throw new Test262Error('#4.1: Number(new Number(null)) === 0. Actual: ' + (Number(new Number(null))));
-} else {
-  if (1 / Number(new Number(null)) !== Number.POSITIVE_INFINITY) {
-    throw new Test262Error('#4.2: Number(new Number(null)) === +0. Actual: -0');
-  }
-}
+assert.sameValue(Number(new Number(null)), 0, 'Number(new Number(null)) must return 0');
 
 // CHECK#5
-assert.sameValue(Number(new Number(void 0)), NaN, "Number(new Number(void 0)");
+assert.sameValue(Number(new Number(void 0)), NaN, 'Number(new Number(void 0)) returns NaN');
 
-// CHECK#6
-if (Number(new Number(true)) !== 1) {
-  throw new Test262Error('#6: Number(new Number(true)) === 1. Actual: ' + (Number(new Number(true))));
-}
-
-// CHECK#7
-if (Number(new Number(false)) !== +0) {
-  throw new Test262Error('#7.1: Number(new Number(false)) === 0. Actual: ' + (Number(new Number(false))));
-} else {
-  if (1 / Number(new Number(false)) !== Number.POSITIVE_INFINITY) {
-    throw new Test262Error('#7.2: Number(new Number(false)) === +0. Actual: -0');
-  }
-}
-
-// CHECK#8
-if (Number(new Boolean(true)) !== 1) {
-  throw new Test262Error('#8: Number(new Boolean(true)) === 1. Actual: ' + (Number(new Boolean(true))));
-}
-
-// CHECK#9
-if (Number(new Boolean(false)) !== +0) {
-  throw new Test262Error('#9.1: Number(new Boolean(false)) === 0. Actual: ' + (Number(new Boolean(false))));
-} else {
-  if (1 / Number(new Boolean(false)) !== Number.POSITIVE_INFINITY) {
-    throw new Test262Error('#9.2: Number(new Boolean(false)) === +0. Actual: -0');
-  }
-}
+assert.sameValue(Number(new Number(true)), 1, 'Number(new Number(true)) must return 1');
+assert.sameValue(Number(new Number(false)), +0, 'Number(new Number(false)) must return +0');
+assert.sameValue(Number(new Boolean(true)), 1, 'Number(new Boolean(true)) must return 1');
+assert.sameValue(Number(new Boolean(false)), +0, 'Number(new Boolean(false)) must return +0');
 
 // CHECK#10
-assert.sameValue(Number(new Array(2, 4, 8, 16, 32)), NaN, "Number(new Array(2,4,8,16,32))");
+assert.sameValue(Number(new Array(2, 4, 8, 16, 32)), NaN, 'Number(new Array(2, 4, 8, 16, 32)) returns NaN');
 
 // CHECK#11
 var myobj1 = {
@@ -81,7 +43,7 @@ var myobj1 = {
   }
 };
 
-assert.sameValue(Number(myobj1), NaN, "Number(myobj1)");
+assert.sameValue(Number(myobj1), NaN, 'Number("{ToNumber: function() {return 12345;}, toString: function() {return "67890";}, valueOf: function() {return "[object MyObj]";}}) returns NaN');
 
 // CHECK#12
 var myobj2 = {
@@ -96,9 +58,11 @@ var myobj2 = {
   }
 };
 
-if (Number(myobj2) !== 9876543210) {
-  throw new Test262Error("#12: Number(myobj2) calls ToPrimitive with hint Number. Exptected: 9876543210. Actual: " + (Number(myobj2)));
-}
+assert.sameValue(
+  Number(myobj2),
+  9876543210,
+  'Number("{ToNumber: function() {return 12345;}, toString: function() {return "67890";}, valueOf: function() {return "9876543210";}}) must return 9876543210'
+);
 
 
 // CHECK#13
@@ -111,7 +75,7 @@ var myobj3 = {
   }
 };
 
-assert.sameValue(Number(myobj3), NaN, "Number(myobj3)");
+assert.sameValue(Number(myobj3), NaN, 'Number("{ToNumber: function() {return 12345;}, toString: function() {return "[object MyObj]";}}) returns NaN');
 
 // CHECK#14
 var myobj4 = {
@@ -123,9 +87,11 @@ var myobj4 = {
   }
 };
 
-if (Number(myobj4) !== 67890) {
-  throw new Test262Error("#14: Number(myobj4) calls ToPrimitive with hint Number. Exptected: 67890.  Actual: " + (Number(myobj4)));
-}
+assert.sameValue(
+  Number(myobj4),
+  67890,
+  'Number("{ToNumber: function() {return 12345;}, toString: function() {return "67890";}}) must return 67890'
+);
 
 // CHECK#15
 var myobj5 = {
@@ -134,4 +100,4 @@ var myobj5 = {
   }
 };
 
-assert.sameValue(Number(myobj5), NaN, "Number(myobj5)");
+assert.sameValue(Number(myobj5), NaN, 'Number({ToNumber: function() {return 12345;}}) returns NaN');

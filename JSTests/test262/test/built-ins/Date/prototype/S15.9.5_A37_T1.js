@@ -6,7 +6,8 @@ info: The Date.prototype has the property "setUTCDate"
 esid: sec-properties-of-the-date-prototype-object
 description: The Date.prototype has the property "setUTCDate"
 ---*/
-
-if (Date.prototype.hasOwnProperty("setUTCDate") !== true) {
-  throw new Test262Error('#1: The Date.prototype has the property "setUTCDate"');
-}
+assert.sameValue(
+  Date.prototype.hasOwnProperty("setUTCDate"),
+  true,
+  'Date.prototype.hasOwnProperty("setUTCDate") must return true'
+);

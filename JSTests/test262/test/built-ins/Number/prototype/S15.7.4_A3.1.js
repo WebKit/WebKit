@@ -6,8 +6,8 @@ info: The Number prototype object has the property constructor
 es5id: 15.7.4_A3.1
 description: The test uses hasOwnProperty() method
 ---*/
-
-//CHECK#1
-if (Number.prototype.hasOwnProperty("constructor") !== true) {
-  throw new Test262Error('#1: The Number prototype object has the property constructor');
-}
+assert.sameValue(
+  Number.prototype.hasOwnProperty("constructor"),
+  true,
+  'Number.prototype.hasOwnProperty("constructor") must return true'
+);

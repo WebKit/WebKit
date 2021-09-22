@@ -12,6 +12,6 @@ includes: [propertyHelper.js]
 
 var x = Date.parse.length;
 verifyNotWritable(Date.parse, "length", null, 1);
-if (Date.parse.length !== x) {
-  throw new Test262Error('#1: The Date.parse.length has the attribute ReadOnly');
-}
+assert.sameValue(Date.parse.length, x, 'The value of Date.parse.length is expected to equal the value of x');
+
+// TODO: Convert to verifyProperty() format.

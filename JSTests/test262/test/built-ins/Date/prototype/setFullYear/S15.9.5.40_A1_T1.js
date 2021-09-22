@@ -8,10 +8,16 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.setFullYear;
-if (x === 1)
+if (x === 1) {
   Date.prototype.setFullYear = 2;
-else
+} else {
   Date.prototype.setFullYear = 1;
-if (Date.prototype.setFullYear === x) {
-  throw new Test262Error('#1: The Date.prototype.setFullYear has not the attribute ReadOnly');
 }
+
+assert.notSameValue(
+  Date.prototype.setFullYear,
+  x,
+  'The value of Date.prototype.setFullYear is expected to not equal the value of `x`'
+);
+
+// TODO: Convert to verifyProperty() format.

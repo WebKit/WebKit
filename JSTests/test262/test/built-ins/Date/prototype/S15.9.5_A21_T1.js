@@ -6,7 +6,8 @@ info: The Date.prototype has the property "getUTCMinutes"
 esid: sec-properties-of-the-date-prototype-object
 description: The Date.prototype has the property "getUTCMinutes"
 ---*/
-
-if (Date.prototype.hasOwnProperty("getUTCMinutes") !== true) {
-  throw new Test262Error('#1: The Date.prototype has the property "getUTCMinutes"');
-}
+assert.sameValue(
+  Date.prototype.hasOwnProperty("getUTCMinutes"),
+  true,
+  'Date.prototype.hasOwnProperty("getUTCMinutes") must return true'
+);

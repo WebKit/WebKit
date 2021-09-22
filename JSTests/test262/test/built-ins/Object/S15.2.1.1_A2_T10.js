@@ -11,16 +11,11 @@ description: Calling Object function with array of numbers as argument value
 
 var arr = [1, 2, 3];
 
-//CHECK#1
-if (typeof arr !== 'object') {
-  throw new Test262Error('#1: arr = [1,2,3] is NOT an object');
-}
+assert.sameValue(typeof arr, 'object', 'The value of `typeof arr` is expected to be "object"');
 
 var n_obj = Object(arr);
 
 arr.push(4);
 
-//CHECK#2
-if ((n_obj !== arr) || (n_obj[3] !== 4)) {
-  throw new Test262Error('#2: Object([1,2,3]) returns ToObject([1,2,3])');
-}
+assert.sameValue(n_obj, arr, 'The value of n_obj is expected to equal the value of arr');
+assert.sameValue(n_obj[3], 4, 'The value of n_obj[3] is expected to be 4');

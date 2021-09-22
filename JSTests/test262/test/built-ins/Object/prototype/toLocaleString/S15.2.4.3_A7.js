@@ -7,8 +7,6 @@ es5id: 15.2.4.3_A7
 description: Checking if creating "new Object.prototype.toLocaleString" fails
 ---*/
 
-var FACTORY = Object.prototype.toLocaleString;
-
 assert.throws(TypeError, function() {
-  new FACTORY;
-});
+  new Object.prototype.toLocaleString();
+}, '`new Object.prototype.toLocaleString()` throws a TypeError exception');

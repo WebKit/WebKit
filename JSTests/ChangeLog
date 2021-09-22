@@ -1,3 +1,16 @@
+2021-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Upgrade test262
+        https://bugs.webkit.org/show_bug.cgi?id=230641
+
+        Reviewed by Ross Kirsling.
+
+        Upgrade test262 to the latest one.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/test262-Revision.txt:
+
 2021-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] CompareStrictEq is omitting String check incorrectly

@@ -8,43 +8,26 @@ info: |
 es5id: 15.7.4.2_A2_T07
 description: radix is 8
 ---*/
+assert.sameValue(Number.prototype.toString(8), "0", 'Number.prototype.toString(8) must return "0"');
+assert.sameValue((new Number()).toString(8), "0", '(new Number()).toString(8) must return "0"');
+assert.sameValue((new Number(0)).toString(8), "0", '(new Number(0)).toString(8) must return "0"');
+assert.sameValue((new Number(-1)).toString(8), "-1", '(new Number(-1)).toString(8) must return "-1"');
+assert.sameValue((new Number(1)).toString(8), "1", '(new Number(1)).toString(8) must return "1"');
 
-//CHECK#1
-if (Number.prototype.toString(8) !== "0") {
-  throw new Test262Error('#1: Number.prototype.toString(8) === "0"');
-}
+assert.sameValue(
+  (new Number(Number.NaN)).toString(8),
+  "NaN",
+  '(new Number(Number.NaN)).toString(8) must return "NaN"'
+);
 
-//CHECK#2
-if ((new Number()).toString(8) !== "0") {
-  throw new Test262Error('#2: (new Number()).toString(8) === "0"');
-}
+assert.sameValue(
+  (new Number(Number.POSITIVE_INFINITY)).toString(8),
+  "Infinity",
+  '(new Number(Number.POSITIVE_INFINITY)).toString(8) must return "Infinity"'
+);
 
-//CHECK#3
-if ((new Number(0)).toString(8) !== "0") {
-  throw new Test262Error('#3: (new Number(0)).toString(8) === "0"');
-}
-
-//CHECK#4
-if ((new Number(-1)).toString(8) !== "-1") {
-  throw new Test262Error('#4: (new Number(-1)).toString(8) === "-1"');
-}
-
-//CHECK#5
-if ((new Number(1)).toString(8) !== "1") {
-  throw new Test262Error('#5: (new Number(1)).toString(8) === "1"');
-}
-
-//CHECK#6
-if ((new Number(Number.NaN)).toString(8) !== "NaN") {
-  throw new Test262Error('#6: (new Number(Number.NaN)).toString(8) === "NaN"');
-}
-
-//CHECK#7
-if ((new Number(Number.POSITIVE_INFINITY)).toString(8) !== "Infinity") {
-  throw new Test262Error('#7: (new Number(Number.POSITIVE_INFINITY)).toString(8) === "Infinity"');
-}
-
-//CHECK#8
-if ((new Number(Number.NEGATIVE_INFINITY)).toString(8) !== "-Infinity") {
-  throw new Test262Error('#8: (new Number(Number.NEGATIVE_INFINITY)).toString(8) === "-Infinity"');
-}
+assert.sameValue(
+  (new Number(Number.NEGATIVE_INFINITY)).toString(8),
+  "-Infinity",
+  '(new Number(Number.NEGATIVE_INFINITY)).toString(8) must return "-Infinity"'
+);

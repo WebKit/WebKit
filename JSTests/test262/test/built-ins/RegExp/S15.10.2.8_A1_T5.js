@@ -14,7 +14,4 @@ description: >
 
 var __executed = /[Jj]ava([Ss]cript)?(?=\:)/.test("rhino is JavaScript engine");
 
-//CHECK#1
-if (__executed) {
-	throw new Test262Error('#1: /[Jj]ava([Ss]cript)?(?=\\:)/.test("rhino is JavaScript engine") === false');
-}
+assert(!__executed, 'The value of !__executed is expected to be true');

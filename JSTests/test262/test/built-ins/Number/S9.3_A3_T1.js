@@ -8,17 +8,5 @@ info: |
 es5id: 9.3_A3_T1
 description: False and true convert to Number by explicit transformation
 ---*/
-
-// CHECK#1
-if (Number(false) !== +0) {
-  throw new Test262Error('#1.1: Number(false) === 0. Actual: ' + (Number(false)));
-} else {
-  if (1 / Number(false) !== Number.POSITIVE_INFINITY) {
-    throw new Test262Error('#1.2: Number(false) === +0. Actual: -0');
-  }
-}
-
-// CHECK#2
-if (Number(true) !== 1) {
-  throw new Test262Error('#2: Number(true) === 1. Actual: ' + (Number(true)));
-}
+assert.sameValue(Number(false), +0, 'Number(false) must return +0');
+assert.sameValue(Number(true), 1, 'Number(true) must return 1');

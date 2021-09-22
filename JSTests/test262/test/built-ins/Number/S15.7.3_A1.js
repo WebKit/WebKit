@@ -6,7 +6,4 @@ info: The Number constructor has the property "prototype"
 es5id: 15.7.3_A1
 description: Checking existence of the property "prototype"
 ---*/
-
-if (!Number.hasOwnProperty("prototype")) {
-  throw new Test262Error('#1: The Number constructor has the property "prototype"');
-}
+assert(Number.hasOwnProperty("prototype"), 'Number.hasOwnProperty("prototype") must return true');

@@ -10,7 +10,8 @@ description: RegExp is /t[a-b|q-s]/ and tested string is true
 var __string = true;
 var __re = /t[a-b|q-s]/;
 
-//CHECK#0
-if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	throw new Test262Error('#0: var __string = true;__re = /t[a-b|q-s]/; __re.test(__string) === (__re.exec(__string) !== null)');
-}
+assert.sameValue(
+  __re.test(__string),
+  __re.exec(__string) !== null,
+  '__re.test(true) must return __re.exec(__string) !== null'
+);

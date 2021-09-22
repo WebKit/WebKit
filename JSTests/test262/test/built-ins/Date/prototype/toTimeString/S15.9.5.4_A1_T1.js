@@ -8,10 +8,16 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.toTimeString;
-if (x === 1)
+if (x === 1) {
   Date.prototype.toTimeString = 2;
-else
+} else {
   Date.prototype.toTimeString = 1;
-if (Date.prototype.toTimeString === x) {
-  throw new Test262Error('#1: The Date.prototype.toTimeString has not the attribute ReadOnly');
 }
+
+assert.notSameValue(
+  Date.prototype.toTimeString,
+  x,
+  'The value of Date.prototype.toTimeString is expected to not equal the value of `x`'
+);
+
+// TODO: Convert to verifyProperty() format.

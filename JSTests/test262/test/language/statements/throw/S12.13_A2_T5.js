@@ -71,5 +71,5 @@ try{
   throw -0;
 }
 catch(e){
-  if (e!==-0) throw new Test262Error('#8: Exception ===-0. Actual:  Exception ==='+ e );
+  assert.sameValue(e, -0);
 }

@@ -10,7 +10,7 @@ info: |
   2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
   3. If IsSharedArrayBuffer(O) is false, throw a TypeError exception.
   [...]
-features: [SharedArrayBuffer, resizable-arraybuffer]
+features: [ArrayBuffer, SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 var growable = Object.getOwnPropertyDescriptor(

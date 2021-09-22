@@ -11,25 +11,12 @@ description: Calling Object function with number argument value
 
 var num = 1.1;
 
-// CHECK#1
-if (typeof num !== 'number') {
-  throw new Test262Error('#1: num = 1.1 should be Number primitive');
-}
+assert.sameValue(typeof num, 'number', 'The value of `typeof num` is expected to be "number"');
 
 var obj = Object(num);
 
-//CHECK#2
-if (typeof obj !== "object") {
-  throw new Test262Error('#2: Object(1.1) returns ToObject(1.1)');
-}
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
+assert.sameValue(obj.constructor, Number, 'The value of obj.constructor is expected to equal the value of Number');
 
-//CHECK#3
-if (obj.constructor !== Number) {
-  throw new Test262Error('#3: Object(1.1) returns ToObject(1.1)');
-}
-
-//CHECK#4
-if ((obj != 1.1) || (obj === 1.1)) {
-  throw new Test262Error('#4: Object(1.1) returns ToObject(1.1)');
-}
-//
+assert(obj == 1.1, 'The result of evaluating (obj == 1.1) is expected to be true');
+assert.notSameValue(obj, 1.1, 'The value of obj is not 1.1');

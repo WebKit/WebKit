@@ -6,28 +6,11 @@ esid: sec-initializedatetimeformat
 description: >
   Checks the DateTimeFormat choose different patterns based
   on calendar.
+includes: [testIntl.js]
 locale: [en]
 ---*/
 
-let calendars = [
-  "buddhist",
-  "chinese",
-  "coptic",
-  "dangi",
-  "ethiopic",
-  "ethioaa",
-  "gregory",
-  "hebrew",
-  "indian",
-  "islamic",
-  "islamic-civil",
-  "islamic-rgsa",
-  "islamic-tbla",
-  "islamic-umalqura",
-  "japanese",
-  "persian",
-  "roc"
-];
+let calendars = allCalendars();
 let date = new Date();
 
 // serialize parts to a string by considering only the type and literal.

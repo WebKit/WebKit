@@ -8,13 +8,14 @@ info: |
 es5id: 15.7.5_A1_T02
 description: Checking property toString
 ---*/
+assert.sameValue(
+  (new Number()).hasOwnProperty("toString"),
+  false,
+  '(new Number()).hasOwnProperty("toString") must return false'
+);
 
-//CHECK#1
-if ((new Number()).hasOwnProperty("toString") !== false) {
-  throw new Test262Error('#1: Number instance must have no special property "toString"');
-}
-
-//CHECK#2
-if ((new Number()).toString !== Number.prototype.toString) {
-  throw new Test262Error('#2: Number instance property "toString" must be inherited from Number prototype object');
-}
+assert.sameValue(
+  (new Number()).toString,
+  Number.prototype.toString,
+  'The value of (new Number()).toString is expected to equal the value of Number.prototype.toString'
+);

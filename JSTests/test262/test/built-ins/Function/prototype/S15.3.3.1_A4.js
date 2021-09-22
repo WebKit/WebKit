@@ -18,7 +18,9 @@ function foo() {}
 Object.defineProperty(foo, 'prototype', {
   value: {}
 });
-if (foo.prototype !==
-  Object.getOwnPropertyDescriptor(foo, 'prototype').value) {
-  throw new Test262Error("A function.prototype's descriptor lies");
-}
+
+assert.sameValue(
+  foo.prototype,
+  Object.getOwnPropertyDescriptor(foo, 'prototype').value,
+  'The value of foo.prototype is expected to equal the value of Object.getOwnPropertyDescriptor(foo, \'prototype\').value'
+);

@@ -12,6 +12,6 @@ includes: [propertyHelper.js]
 
 var x = Date.prototype;
 verifyNotWritable(Date, "prototype", null, 1);
-if (Date.prototype !== x) {
-  throw new Test262Error('#1: The Date.prototype has the attribute ReadOnly');
-}
+assert.sameValue(Date.prototype, x, 'The value of Date.prototype is expected to equal the value of x');
+
+// TODO: Convert to verifyProperty() format.

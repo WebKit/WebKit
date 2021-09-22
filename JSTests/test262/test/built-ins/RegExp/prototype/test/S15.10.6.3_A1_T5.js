@@ -13,7 +13,8 @@ description: >
 var __string = {toString:function(){return {};}, valueOf:function(){return "aabaac";}};
 var __re = /(aa|aabaac|ba|b|c)*/;
 
-//CHECK#0
-if (__re.test(__string) !== (__re.exec(__string) !== null)) {
-	throw new Test262Error('#0: var __string = {toString:function(){return {};}, valueOf:function(){return "aabaac";}}; __re = /(aa|aabaac|ba|b|c)*/; __re.test(__string) === (__re.exec(__string) !== null)');
-}
+assert.sameValue(
+  __re.test(__string),
+  __re.exec(__string) !== null,
+  '__re.test("{toString:function(){return {};}, valueOf:function(){return "aabaac";}}) must return __re.exec(__string) !== null'
+);

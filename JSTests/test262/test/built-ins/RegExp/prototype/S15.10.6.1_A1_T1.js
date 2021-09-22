@@ -8,8 +8,8 @@ info: |
 es5id: 15.10.6.1_A1_T1
 description: Compare RegExp.prototype.constructor with RegExp
 ---*/
-
-//CHECK#1
-if (RegExp.prototype.constructor !== RegExp) {
-	throw new Test262Error('#1: RegExp.prototype.constructor === RegExp. Actual: ' + (RegExp.prototype.constructor));
-}
+assert.sameValue(
+  RegExp.prototype.constructor,
+  RegExp,
+  'The value of RegExp.prototype.constructor is expected to equal the value of RegExp'
+);

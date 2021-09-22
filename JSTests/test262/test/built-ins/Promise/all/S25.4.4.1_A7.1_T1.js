@@ -16,16 +16,8 @@ var p1 = Promise.resolve(3);
 var pAll = Promise.all([p1]);
 
 pAll.then(function(result) {
-  if (!(pAll instanceof Promise)) {
-    throw new Test262Error("Expected Promise.all() to be promise, actually " + pAll);
-  }
-  if (!(result instanceof Array)) {
-    throw new Test262Error("Expected Promise.all() to be promise for an Array, actually " + result);
-  }
-  if (result.length !== 1) {
-    throw new Test262Error("Expected Promise.all([p1]) to be a promise for one-element Array, actually " + result);
-  }
-  if (result[0] !== 3) {
-    throw new Test262Error("Expected result[0] to be 3, actually " + result[0]);
-  }
+  assert(!!(pAll instanceof Promise), 'The value of !!(pAll instanceof Promise) is expected to be true');
+  assert(!!(result instanceof Array), 'The value of !!(result instanceof Array) is expected to be true');
+  assert.sameValue(result.length, 1, 'The value of result.length is expected to be 1');
+  assert.sameValue(result[0], 3, 'The value of result[0] is expected to be 3');
 }).then($DONE, $DONE);

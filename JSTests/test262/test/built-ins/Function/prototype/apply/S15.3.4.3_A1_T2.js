@@ -12,23 +12,17 @@ description: >
     property.  Prototype of the object is Function.prototype
 ---*/
 
-function FACTORY() {};
+function FACTORY() {}
 
 FACTORY.prototype = Function.prototype;
 
 var obj = new FACTORY;
 
-//CHECK#1
-if (typeof obj.apply !== "function") {
-  throw new Test262Error('#1: apply method accessed');
-}
+assert.sameValue(typeof obj.apply, "function", 'The value of `typeof obj.apply` is expected to be "function"');
 
-//CHECK#2
 try {
   obj.apply();
   throw new Test262Error('#2: If the object does not have a [[Call]] property, a TypeError exception is thrown');
 } catch (e) {
-  if (!(e instanceof TypeError)) {
-    throw new Test262Error('#2.1: If the object does not have a [[Call]] property, a TypeError exception is thrown');
-  }
+  assert(e instanceof TypeError, 'The result of evaluating (e instanceof TypeError) is expected to be true');
 }

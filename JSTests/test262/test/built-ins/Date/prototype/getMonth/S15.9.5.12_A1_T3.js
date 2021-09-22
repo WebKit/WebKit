@@ -6,13 +6,13 @@ info: The Date.prototype property "getMonth" has { DontEnum } attributes
 esid: sec-date.prototype.getmonth
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.propertyIsEnumerable('getMonth')) {
-  throw new Test262Error('#1: The Date.prototype.getMonth property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.propertyIsEnumerable('getMonth'),
+  'The value of !Date.prototype.propertyIsEnumerable(\'getMonth\') is expected to be true'
+);
 
 for (var x in Date.prototype) {
-  if (x === "getMonth") {
-    throw new Test262Error('#2: The Date.prototype.getMonth has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "getMonth", 'The value of x is not "getMonth"');
 }
+
+// TODO: Convert to verifyProperty() format.

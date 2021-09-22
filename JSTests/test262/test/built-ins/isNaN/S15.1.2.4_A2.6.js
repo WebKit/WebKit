@@ -6,8 +6,4 @@ info: The isNaN property has not prototype property
 esid: sec-isnan-number
 description: Checking isNaN.prototype
 ---*/
-
-//CHECK#1
-if (isNaN.prototype !== undefined) {
-  throw new Test262Error('#1: isNaN.prototype === undefined. Actual: ' + (isNaN.prototype));
-}
+assert.sameValue(isNaN.prototype, undefined, 'The value of isNaN.prototype is expected to equal undefined');

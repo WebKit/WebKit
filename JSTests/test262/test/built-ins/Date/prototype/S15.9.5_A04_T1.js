@@ -6,7 +6,8 @@ info: The Date.prototype has the property "toTimeString"
 esid: sec-properties-of-the-date-prototype-object
 description: The Date.prototype has the property "toTimeString"
 ---*/
-
-if (Date.prototype.hasOwnProperty("toTimeString") !== true) {
-  throw new Test262Error('#1: The Date.prototype has the property "toTimeString"');
-}
+assert.sameValue(
+  Date.prototype.hasOwnProperty("toTimeString"),
+  true,
+  'Date.prototype.hasOwnProperty("toTimeString") must return true'
+);

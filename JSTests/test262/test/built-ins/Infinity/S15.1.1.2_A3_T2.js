@@ -7,8 +7,6 @@ es5id: 15.1.1.2_A3_T2
 description: Use delete
 flags: [noStrict]
 ---*/
+assert.sameValue(delete Infinity, false, 'The value of `delete Infinity` is expected to be false');
 
-// CHECK#1
-if (delete Infinity !== false) {
-  throw new Test262Error('#1: delete Infinity === false. Actual: ' + (delete Infinity));
-}
+// TODO: Convert to verifyProperty() format.

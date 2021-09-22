@@ -18,10 +18,8 @@ var resolveP1, rejectP2,
 
 Promise.race([p1, p2]).then(function() {
   throw new Test262Error("Should not be fulfilled: expected rejection.");
-}, function(arg) {
-  if (arg !== 2) {
-    throw new Test262Error("Expected rejection reason to be 2, got " + arg);
-  }
+}, function(result) {
+  assert.sameValue(result, 2, 'The value of result is expected to be 2');
 }).then($DONE, $DONE);
 
 rejectP2(2);

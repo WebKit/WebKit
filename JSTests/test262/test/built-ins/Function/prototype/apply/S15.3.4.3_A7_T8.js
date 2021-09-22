@@ -15,7 +15,4 @@ description: >
   Function("a1,a2,a3", "this.shifted=a1+a2+a3;").apply(this, arguments);
 })("", 4, 2);
 
-//CHECK#2
-if (this["shifted"] !== "42") {
-  throw new Test262Error('#2: If argArray is either an array or an arguments object, the function is passed the...');
-}
+assert.sameValue(this["shifted"], "42", 'The value of this["shifted"] is expected to be "42"');

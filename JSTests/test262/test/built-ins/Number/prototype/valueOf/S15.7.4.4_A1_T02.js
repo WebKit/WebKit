@@ -6,45 +6,26 @@ info: Number.prototype.valueOf() returns this number value
 es5id: 15.7.4.4_A1_T02
 description: calling with argument
 ---*/
+assert.sameValue(Number.prototype.valueOf("argument"), 0, 'Number.prototype.valueOf("argument") must return 0');
+assert.sameValue((new Number()).valueOf("argument"), 0, '(new Number()).valueOf("argument") must return 0');
+assert.sameValue((new Number(0)).valueOf("argument"), 0, '(new Number(0)).valueOf("argument") must return 0');
+assert.sameValue((new Number(-1)).valueOf("argument"), -1, '(new Number(-1)).valueOf("argument") must return -1');
+assert.sameValue((new Number(1)).valueOf("argument"), 1, '(new Number(1)).valueOf("argument") must return 1');
 
-//CHECK#1
-if (Number.prototype.valueOf("argument") !== 0) {
-  throw new Test262Error('#1: Number.prototype.valueOf("argument") === 0');
-}
-
-//CHECK#2
-if ((new Number()).valueOf("argument") !== 0) {
-  throw new Test262Error('#2: (new Number()).valueOf("argument") === 0');
-}
-
-//CHECK#3
-if ((new Number(0)).valueOf("argument") !== 0) {
-  throw new Test262Error('#3: (new Number(0)).valueOf("argument") === 0');
-}
-
-//CHECK#4
-if ((new Number(-1)).valueOf("argument") !== -1) {
-  throw new Test262Error('#4: (new Number(-1)).valueOf("argument") === -1');
-}
-
-//CHECK#5
-if ((new Number(1)).valueOf("argument") !== 1) {
-  throw new Test262Error('#5: (new Number(1)).valueOf("argument") === 1');
-}
-
-//CHECK#6
 assert.sameValue(
   new Number(NaN).valueOf("argument"),
   NaN,
-  "NaN"
+  'new Number(NaN).valueOf("argument") returns NaN'
 );
 
-//CHECK#7
-if ((new Number(Number.POSITIVE_INFINITY)).valueOf("argument") !== Number.POSITIVE_INFINITY) {
-  throw new Test262Error('#7: (new Number(Number.POSITIVE_INFINITY)).valueOf("argument") === Infinity');
-}
+assert.sameValue(
+  (new Number(Number.POSITIVE_INFINITY)).valueOf("argument"),
+  Number.POSITIVE_INFINITY,
+  '(new Number(Number.POSITIVE_INFINITY)).valueOf("argument") returns Number.POSITIVE_INFINITY'
+);
 
-//CHECK#8
-if ((new Number(Number.NEGATIVE_INFINITY)).valueOf("argument") !== Number.NEGATIVE_INFINITY) {
-  throw new Test262Error('#8: (new Number(Number.NEGATIVE_INFINITY)).valueOf("argument") === -Infinity');
-}
+assert.sameValue(
+  (new Number(Number.NEGATIVE_INFINITY)).valueOf("argument"),
+  Number.NEGATIVE_INFINITY,
+  '(new Number(Number.NEGATIVE_INFINITY)).valueOf("argument") returns Number.NEGATIVE_INFINITY'
+);

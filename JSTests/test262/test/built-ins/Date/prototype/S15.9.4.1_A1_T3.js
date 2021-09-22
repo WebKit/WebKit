@@ -8,13 +8,13 @@ info: |
 esid: sec-date.prototype
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.propertyIsEnumerable('prototype')) {
-  throw new Test262Error('#1: The Date.prototype property has the attribute DontEnum');
-}
+assert(
+  !Date.propertyIsEnumerable('prototype'),
+  'The value of !Date.propertyIsEnumerable(\'prototype\') is expected to be true'
+);
 
 for (var x in Date) {
-  if (x === "prototype") {
-    throw new Test262Error('#2: The Date.prototype has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "prototype", 'The value of x is not "prototype"');
 }
+
+// TODO: Convert to verifyProperty() format.

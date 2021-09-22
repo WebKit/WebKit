@@ -11,17 +11,9 @@ description: Creating an object with "Object((null,2,3),1,2)"
 
 var obj = Object((null, 2, 3), 1, 2);
 
-//CHECK#1
-if (obj.constructor !== Number) {
-  throw new Test262Error('#1: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
-}
+assert.sameValue(obj.constructor, Number, 'The value of obj.constructor is expected to equal the value of Number');
+assert.sameValue(typeof obj, "object", 'The value of `typeof obj` is expected to be "object"');
 
-//CHECK#2
-if (typeof obj !== "object") {
-  throw new Test262Error('#2: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
-}
+assert(obj == 3, 'The result of evaluating (obj == 3) is expected to be true');
+assert.notSameValue(obj, 3, 'The value of obj is not 3');
 
-//CHECK#3
-if ((obj != 3) || (obj === 3)) {
-  throw new Test262Error('3#: Since Object as a function calling is the same as function calling list of arguments can appears in braces;');
-}

@@ -7,8 +7,6 @@ es5id: 15.2.4.5_A7
 description: Checking if creating "new Object.prototype.hasOwnProperty" fails
 ---*/
 
-var FACTORY = Object.prototype.hasOwnProperty;
-
 assert.throws(TypeError, function() {
-  new FACTORY;
-});
+  new Object.prototype.hasOwnProperty();
+}, '`new Object.prototype.hasOwnProperty()` throws a TypeError exception');

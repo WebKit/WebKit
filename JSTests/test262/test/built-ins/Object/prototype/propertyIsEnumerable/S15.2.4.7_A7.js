@@ -9,8 +9,6 @@ description: >
     fails
 ---*/
 
-var FACTORY = Object.prototype.propertyIsEnumerable;
-
 assert.throws(TypeError, function() {
-  new FACTORY;
-});
+  new Object.prototype.propertyIsEnumerable();
+}, '`new Object.prototype.propertyIsEnumerable()` throws a TypeError exception');

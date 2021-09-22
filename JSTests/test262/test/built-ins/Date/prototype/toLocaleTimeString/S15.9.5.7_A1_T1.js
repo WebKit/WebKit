@@ -10,10 +10,16 @@ description: Checking absence of ReadOnly attribute
 ---*/
 
 var x = Date.prototype.toLocaleTimeString;
-if (x === 1)
+if (x === 1) {
   Date.prototype.toLocaleTimeString = 2;
-else
+} else {
   Date.prototype.toLocaleTimeString = 1;
-if (Date.prototype.toLocaleTimeString === x) {
-  throw new Test262Error('#1: The Date.prototype.toLocaleTimeString has not the attribute ReadOnly');
 }
+
+assert.notSameValue(
+  Date.prototype.toLocaleTimeString,
+  x,
+  'The value of Date.prototype.toLocaleTimeString is expected to not equal the value of `x`'
+);
+
+// TODO: Convert to verifyProperty() format.

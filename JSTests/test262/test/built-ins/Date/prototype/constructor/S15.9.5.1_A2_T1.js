@@ -6,11 +6,14 @@ info: The "length" property of the "constructor" is 7
 esid: sec-date.prototype.constructor
 description: The "length" property of the "constructor" is 7
 ---*/
+assert.sameValue(
+  Date.prototype.constructor.hasOwnProperty("length"),
+  true,
+  'Date.prototype.constructor.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.constructor.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The constructor has a "length" property');
-}
-
-if (Date.prototype.constructor.length !== 7) {
-  throw new Test262Error('#2: The "length" property of the constructor is 7');
-}
+assert.sameValue(
+  Date.prototype.constructor.length,
+  7,
+  'The value of Date.prototype.constructor.length is expected to be 7'
+);

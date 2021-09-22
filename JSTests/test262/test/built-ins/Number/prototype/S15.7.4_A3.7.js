@@ -6,8 +6,8 @@ info: The Number prototype object has the property toPrecision
 es5id: 15.7.4_A3.7
 description: The test uses hasOwnProperty() method
 ---*/
-
-//CHECK#1
-if (Number.prototype.hasOwnProperty("toPrecision") !== true) {
-  throw new Test262Error('#1: The Number prototype object has the property toPrecision');
-}
+assert.sameValue(
+  Number.prototype.hasOwnProperty("toPrecision"),
+  true,
+  'Number.prototype.hasOwnProperty("toPrecision") must return true'
+);

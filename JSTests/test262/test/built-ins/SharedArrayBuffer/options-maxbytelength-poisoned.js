@@ -15,7 +15,7 @@ info: |
 
   1. If Type(options) is not Object, return empty.
   2. Let maxByteLength be ? Get(options, "maxByteLength").
-features: [resizable-arraybuffer]
+features: [SharedArrayBuffer, resizable-arraybuffer]
 ---*/
 
 var options = {

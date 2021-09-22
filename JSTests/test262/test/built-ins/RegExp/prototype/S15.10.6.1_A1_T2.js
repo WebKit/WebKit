@@ -15,12 +15,14 @@ var __FACTORY = RegExp.prototype.constructor;
 
 var __instance = new __FACTORY;
 
-//CHECK#1
-if ((__instance instanceof RegExp) !== true) {
-	throw new Test262Error('#1: __FACTORY = RegExp.prototype.constructor; __instance = new __FACTORY; (__instance instanceof RegExp) === true');
-}
+assert.sameValue(
+  __instance instanceof RegExp,
+  true,
+  'The result of evaluating (__instance instanceof RegExp) is expected to be true'
+);
 
-//CHECK#2
-if (__instance.constructor !== RegExp) {
-	throw new Test262Error('#2: __FACTORY = RegExp.prototype.constructor; __instance = new __FACTORY; __instance.constructor === RegExp. Actual: ' + (__instance.constructor));
-}
+assert.sameValue(
+  __instance.constructor,
+  RegExp,
+  'The value of __instance.constructor is expected to equal the value of RegExp'
+);

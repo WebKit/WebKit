@@ -16,11 +16,14 @@ description: >
     throwing the correct exception
 ---*/
 
-//CHECK#1
 try {
   throw new Test262Error('#1.1: /[d-G\\c0001]/.exec("1") throw SyntaxError. Actual: ' + (new RegExp("[d-G\\c0001]").exec("1")));
 } catch (e) {
-  if((e instanceof SyntaxError) !== true){
-    throw new Test262Error('#1.2: /[d-G\\c0001]/.exec("1") throw SyntaxError. Actual: ' + (e));
-  }
+  assert.sameValue(
+    e instanceof SyntaxError,
+    true,
+    'The result of evaluating (e instanceof SyntaxError) is expected to be true'
+  );
 }
+
+// TODO: Convert to assert.throws() format.

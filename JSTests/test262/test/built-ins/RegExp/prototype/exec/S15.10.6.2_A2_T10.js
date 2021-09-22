@@ -11,11 +11,14 @@ description: The tested object is undefined
 
 var exec = RegExp.prototype.exec;
 
-//CHECK#1
 try {
-	throw new Test262Error('#1.1: exec = RegExp.prototype.exec; exec("message to investigate"). Actual: ' + (exec("message to investigate")));
+    throw new Test262Error('#1.1: exec = RegExp.prototype.exec; exec("message to investigate"). Actual: ' + (exec("message to investigate")));
 } catch (e) {
-	if ((e instanceof TypeError) !== true) {
-		throw new Test262Error('#1.2: exec = RegExp.prototype.exec; exec("message to investigate"). Actual: ' + (e));
-	}
+  assert.sameValue(
+    e instanceof TypeError,
+    true,
+    'The result of evaluating (e instanceof TypeError) is expected to be true'
+  );
 }
+
+// TODO: Convert to assert.throws() format.

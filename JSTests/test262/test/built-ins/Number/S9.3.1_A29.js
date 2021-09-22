@@ -8,23 +8,7 @@ description: >
     Compare Number('0xD'), Number('0XD'), Number('0xd') and
     Number('0Xd') with 13
 ---*/
-
-// CHECK#1
-if (+("0xd") !== 13) {
-  throw new Test262Error('#1: +("0xd") === 13. Actual: ' + (+("0xd")));
-}
-
-// CHECK#2
-if (Number("0xD") !== 13) {
-  throw new Test262Error('#2: Number("0xD") === 13. Actual: ' + (Number("0xD")));
-}
-
-// CHECK#3
-if (Number("0Xd") !== 13) {
-  throw new Test262Error('#3: Number("0Xd") === 13. Actual: ' + (Number("0Xd")));
-}
-
-// CHECK#4
-if (Number("0XD") !== 13) {
-  throw new Test262Error('#4: Number("0XD") === 13. Actual: ' + (Number("0XD")));
-}
+assert.sameValue(+("0xd"), 13, 'The value of `+("0xd")` is expected to be 13');
+assert.sameValue(Number("0xD"), 13, 'Number("0xD") must return 13');
+assert.sameValue(Number("0Xd"), 13, 'Number("0Xd") must return 13');
+assert.sameValue(Number("0XD"), 13, 'Number("0XD") must return 13');

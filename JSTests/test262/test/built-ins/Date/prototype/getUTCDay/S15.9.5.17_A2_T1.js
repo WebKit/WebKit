@@ -6,11 +6,14 @@ info: The "length" property of the "getUTCDay" is 0
 esid: sec-date.prototype.getutcdaty
 description: The "length" property of the "getUTCDay" is 0
 ---*/
+assert.sameValue(
+  Date.prototype.getUTCDay.hasOwnProperty("length"),
+  true,
+  'Date.prototype.getUTCDay.hasOwnProperty("length") must return true'
+);
 
-if (Date.prototype.getUTCDay.hasOwnProperty("length") !== true) {
-  throw new Test262Error('#1: The getUTCDay has a "length" property');
-}
-
-if (Date.prototype.getUTCDay.length !== 0) {
-  throw new Test262Error('#2: The "length" property of the getUTCDay is 0');
-}
+assert.sameValue(
+  Date.prototype.getUTCDay.length,
+  0,
+  'The value of Date.prototype.getUTCDay.length is expected to be 0'
+);

@@ -11,17 +11,11 @@ description: >
 
 var __re = /[^a]*/;
 
-//CHECK#1
-if (typeof __re !== "object") {
-	throw new Test262Error('#1: __re = /[^a]*/; typeof __re === "object". Actual: ' + (typeof __re));
-}
+assert.sameValue(typeof __re, "object", 'The value of `typeof __re` is expected to be "object"');
+assert.sameValue(__re.constructor, RegExp, 'The value of __re.constructor is expected to equal the value of RegExp');
 
-//CHECK#1
-if (__re.constructor !== RegExp) {
-	throw new Test262Error('#2: __re = /[^a]*/; __re.constructor === RegExp. Actual: ' + (__re.constructor));
-}
-
-//CHECK#3
-if ((__re instanceof RegExp) !== true) {
-	throw new Test262Error('#3: __re = /[^a]*/; (__re instanceof RegExp) === true');
-}
+assert.sameValue(
+  __re instanceof RegExp,
+  true,
+  'The result of evaluating (__re instanceof RegExp) is expected to be true'
+);

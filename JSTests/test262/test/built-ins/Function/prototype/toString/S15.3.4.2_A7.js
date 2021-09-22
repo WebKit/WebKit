@@ -11,4 +11,4 @@ var FACTORY = Function.prototype.toString;
 
 assert.throws(TypeError, function() {
   new FACTORY;
-});
+}, '`new FACTORY` throws a TypeError exception');

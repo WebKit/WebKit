@@ -10,4 +10,4 @@ description: >
 
 assert.throws(TypeError, function() {
   Object.prototype.hasOwnProperty.call(undefined, 'foo');
-});
+}, 'Object.prototype.hasOwnProperty.call(undefined, "foo") throws a TypeError exception');

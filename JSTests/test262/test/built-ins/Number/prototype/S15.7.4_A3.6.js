@@ -6,8 +6,8 @@ info: The Number prototype object has the property toExponential
 es5id: 15.7.4_A3.6
 description: The test uses hasOwnProperty() method
 ---*/
-
-//CHECK#1
-if (Number.prototype.hasOwnProperty("toExponential") !== true) {
-  throw new Test262Error('#1: The Number prototype object has the property toExponential');
-}
+assert.sameValue(
+  Number.prototype.hasOwnProperty("toExponential"),
+  true,
+  'Number.prototype.hasOwnProperty("toExponential") must return true'
+);

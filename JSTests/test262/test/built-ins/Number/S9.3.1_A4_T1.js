@@ -8,43 +8,34 @@ info: |
 es5id: 9.3.1_A4_T1
 description: Compare Number('+any_number') with Number('any_number')
 ---*/
+assert.sameValue(Number("+0"), Number("0"), 'Number("+0") must return the same value returned by Number("0")');
 
-// CHECK#1
-if (Number("+0") !== Number("0")) {
-  throw new Test262Error('#1.1: Number("+0") === Number("0")');
-} else {
-  // CHECK#2
-  if (1 / Number("+0") !== 1 / Number("0")) {
-    throw new Test262Error('#2.2: 1/Number("+0") === 1/Number("0")');
-  }
-}
+assert.sameValue(
+  Number("+Infinity"),
+  Infinity
+);
 
-// CHECK#3
-if (Number("+Infinity") !== Number("Infinity")) {
-  throw new Test262Error('#3: Number("+Infinity") === Number("Infinity")');
-}
+assert.sameValue(
+  Number("+1234.5678"),
+  1234.5678
+);
 
-// CHECK#4
-if (Number("+1234.5678") !== Number("1234.5678")) {
-  throw new Test262Error('#4: Number("+1234.5678") === Number("1234.5678")');
-}
+assert.sameValue(
+  Number("+1234.5678e90"),
+  1234.5678e90
+);
 
-// CHECK#5
-if (Number("+1234.5678e90") !== Number("1234.5678e90")) {
-  throw new Test262Error('#5: Number("+1234.5678e90") === Number("1234.5678e90")');
-}
+assert.sameValue(
+  Number("+1234.5678E90"),
+  1234.5678E90
+);
 
-// CHECK#6
-if (Number("+1234.5678E90") !== Number("1234.5678E90")) {
-  throw new Test262Error('#6: Number("+1234.5678E90") === Number("1234.5678E90")');
-}
+assert.sameValue(
+  Number("+1234.5678e-90"),
+  1234.5678e-90
+);
 
-// CHECK#7
-if (Number("+1234.5678e-90") !== Number("1234.5678e-90")) {
-  throw new Test262Error('#7: Number("+1234.5678e-90") === Number("1234.5678e-90")');
-}
-
-// CHECK#8
-if (Number("+1234.5678E-90") !== Number("1234.5678E-90")) {
-  throw new Test262Error('#8: Number("+1234.5678E-90") === Number("1234.5678E-90")');
-}
+assert.sameValue(
+  Number("+1234.5678E-90"),
+  1234.5678E-90
+);

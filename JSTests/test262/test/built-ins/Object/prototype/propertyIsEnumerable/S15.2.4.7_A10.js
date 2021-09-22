@@ -11,11 +11,10 @@ description: >
     Object.prototype.propertyIsEnumerable.length property fails
 includes: [propertyHelper.js]
 ---*/
-
-//CHECK#1
-if (!(Object.prototype.propertyIsEnumerable.hasOwnProperty('length'))) {
-  throw new Test262Error('#1: the Object.prototype.propertyIsEnumerable has length property');
-}
+assert(
+  !!Object.prototype.propertyIsEnumerable.hasOwnProperty('length'),
+  'The value of !!Object.prototype.propertyIsEnumerable.hasOwnProperty("length") is expected to be true'
+);
 
 var obj = Object.prototype.propertyIsEnumerable.length;
 
@@ -23,7 +22,10 @@ verifyNotWritable(Object.prototype.propertyIsEnumerable, "length", null, functio
   return "shifted";
 });
 
-//CHECK#2
-if (Object.prototype.propertyIsEnumerable.length !== obj) {
-  throw new Test262Error('#2: the Object.prototype.propertyIsEnumerable length property has the attributes ReadOnly');
-}
+assert.sameValue(
+  Object.prototype.propertyIsEnumerable.length,
+  obj,
+  'The value of Object.prototype.propertyIsEnumerable.length is expected to equal the value of obj'
+);
+
+// TODO: Convert to verifyProperty() format.

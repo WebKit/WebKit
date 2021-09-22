@@ -15,7 +15,4 @@ description: >
 var __re = new RegExp;
 RegExp.prototype.indicator = 1;
 
-//CHECK#1
-if (__re.indicator !== 1) {
-	throw new Test262Error('#1: __re = new RegExp; RegExp.prototype.indicator = 1; __re.indicator === 1. Actual: ' + (__re.indicator));
-}
+assert.sameValue(__re.indicator, 1, 'The value of __re.indicator is expected to be 1');

@@ -8,13 +8,13 @@ info: |
 esid: sec-date.prototype.setdate
 description: Checking DontEnum attribute
 ---*/
-
-if (Date.prototype.setDate.propertyIsEnumerable('length')) {
-  throw new Test262Error('#1: The Date.prototype.setDate.length property has the attribute DontEnum');
-}
+assert(
+  !Date.prototype.setDate.propertyIsEnumerable('length'),
+  'The value of !Date.prototype.setDate.propertyIsEnumerable(\'length\') is expected to be true'
+);
 
 for (var x in Date.prototype.setDate) {
-  if (x === "length") {
-    throw new Test262Error('#2: The Date.prototype.setDate.length has the attribute DontEnum');
-  }
+  assert.notSameValue(x, "length", 'The value of x is not "length"');
 }
+
+// TODO: Convert to verifyProperty() format.
