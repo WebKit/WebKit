@@ -33,6 +33,7 @@
 #import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
 #import "SharedBufferDataReference.h"
+#import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"

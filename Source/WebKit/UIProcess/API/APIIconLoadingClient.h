@@ -25,19 +25,20 @@
 
 #pragma once
 
-#include "GenericCallback.h"
 #include <WebCore/LinkIcon.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 
 namespace API {
 
+class Data;
+
 class IconLoadingClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~IconLoadingClient() { }
 
-    virtual void getLoadDecisionForIcon(const WebCore::LinkIcon&, CompletionHandler<void(CompletionHandler<void(API::Data*)>&&)>&& completionHandler)
+    virtual void getLoadDecisionForIcon(const WebCore::LinkIcon&, CompletionHandler<void(CompletionHandler<void(Data*)>&&)>&& completionHandler)
     {
         completionHandler(nullptr);
     }

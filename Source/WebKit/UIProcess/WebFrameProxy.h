@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 #include "FrameLoadState.h"
-#include "GenericCallback.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
@@ -41,6 +40,7 @@
 
 namespace API {
 class Navigation;
+class URL;
 }
 
 namespace IPC {

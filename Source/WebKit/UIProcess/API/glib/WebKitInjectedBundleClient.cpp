@@ -20,7 +20,12 @@
 #include "config.h"
 #include "WebKitInjectedBundleClient.h"
 
+#include "APIError.h"
 #include "APIInjectedBundleClient.h"
+#include "APINumber.h"
+#include "APIString.h"
+#include "APIURLRequest.h"
+#include "APIURLResponse.h"
 #include "WebImage.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"

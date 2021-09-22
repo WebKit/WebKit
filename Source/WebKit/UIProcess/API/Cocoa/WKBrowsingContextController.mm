@@ -32,6 +32,7 @@
 #import "PageLoadStateObserver.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
+#import "WKAPICast.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextGroupInternal.h"

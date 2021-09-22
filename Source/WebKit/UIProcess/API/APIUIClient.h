@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIInspectorConfiguration.h"
+#include "APISecurityOrigin.h"
 #include "WKPage.h"
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"

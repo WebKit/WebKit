@@ -371,9 +371,9 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
             return;
         }
 
-        drawingArea->dispatchAfterEnsuringDrawing([pageID, gestureID] (CallbackBase::Error error) {
+        drawingArea->dispatchAfterEnsuringDrawing([pageID, gestureID] {
             if (auto gestureController = controllerForGesture(pageID, gestureID))
-                gestureController->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
+                gestureController->willCommitPostSwipeTransitionLayerTree(true);
         });
         drawingArea->hideContentUntilPendingUpdate();
     };

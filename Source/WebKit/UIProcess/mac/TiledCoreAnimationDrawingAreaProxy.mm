@@ -50,7 +50,6 @@ TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPagePr
 
 TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 {
-    m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
@@ -203,21 +202,23 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
     send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
 }
 
-void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callback)
+void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(Function<void()>&& callback)
 {
     if (!m_webPageProxy.hasRunningProcess()) {
-        callback(CallbackBase::Error::OwnerWasInvalidated);
+        callback();
         return;
     }
 
-    send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callback), nullptr)));
+    auto callbackID = CallbackID::generateID();
+    m_callbacks.set(callbackID, WTFMove(callback));
+    send(Messages::DrawingArea::AddTransactionCallbackID(callbackID));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>& callbackIDs)
 {
     for (auto& callbackID : callbackIDs) {
-        if (auto callback = m_callbacks.take<VoidCallback>(callbackID))
-            callback->performCallback();
+        if (auto callback = m_callbacks.take(callbackID))
+            callback();
     }
 }
 

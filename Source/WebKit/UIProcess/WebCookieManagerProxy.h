@@ -26,9 +26,9 @@
 #pragma once
 
 #include "APIObject.h"
-#include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "WebContextSupplement.h"
+#include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

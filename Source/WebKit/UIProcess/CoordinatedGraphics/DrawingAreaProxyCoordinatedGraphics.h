@@ -88,7 +88,7 @@ private:
     void discardBackingStore();
 #endif
 
-    void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
+    void dispatchAfterEnsuringDrawing(Function<void()>&&) override;
 
     class DrawingMonitor {
         WTF_MAKE_NONCOPYABLE(DrawingMonitor); WTF_MAKE_FAST_ALLOCATED;
@@ -96,7 +96,7 @@ private:
         DrawingMonitor(WebPageProxy&);
         ~DrawingMonitor();
 
-        void start(WTF::Function<void(CallbackBase::Error)>&&);
+        void start(Function<void()>&&);
 
     private:
         static int webViewDrawCallback(DrawingMonitor*);
@@ -105,7 +105,7 @@ private:
         void didDraw();
 
         MonotonicTime m_startTime;
-        WTF::Function<void(CallbackBase::Error)> m_callback;
+        Function<void()> m_callback;
         RunLoop::Timer<DrawingMonitor> m_timer;
 #if PLATFORM(GTK)
         WebPageProxy& m_webPage;

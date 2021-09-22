@@ -127,7 +127,6 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& w
 
 RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
-    m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
     process().removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier);
 
 #if PLATFORM(IOS_FAMILY)
@@ -269,8 +268,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         m_webPageProxy.didReachLayoutMilestone(milestones);
 
     for (auto& callbackID : layerTreeTransaction.callbackIDs()) {
-        if (auto callback = m_callbacks.take<VoidCallback>(callbackID))
-            callback->performCallback();
+        if (auto callback = m_callbacks.take(callbackID).first)
+            callback();
     }
 }
 
@@ -471,14 +470,16 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callbackFunction)
+void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(Function<void()>&& callbackFunction)
 {
     if (!m_webPageProxy.hasRunningProcess()) {
-        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
+        callbackFunction();
         return;
     }
 
-    send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callbackFunction), process().throttler().backgroundActivity("RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing"_s))));
+    auto callbackID = CallbackID::generateID();
+    m_callbacks.set(callbackID, std::make_pair(WTFMove(callbackFunction), process().throttler().backgroundActivity("RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing"_s).moveToUniquePtr()));
+    send(Messages::DrawingArea::AddTransactionCallbackID(callbackID));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()

@@ -1,3 +1,72 @@
+2021-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Remove GenericCallback
+        https://bugs.webkit.org/show_bug.cgi?id=229366
+
+        Reviewed by Chris Dumez.
+
+        It has been replaced by sendWithAsyncReply.
+
+        This last use can't really be replaced by sendWithAsyncReply because the CallbackIDs are sent, then further encoded
+        in RemoteLayerTreeTransaction::encode/decode which you can't really do with a CompletionHandler.  But we can replace
+        GenericCallback with WTF::Function.
+
+        * Shared/CallbackID.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * UIProcess/API/APIAttachment.h:
+        * UIProcess/API/APIIconLoadingClient.h:
+        * UIProcess/API/APIInspectorExtension.cpp:
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCallAfterNextPresentationUpdate):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        * UIProcess/API/Cocoa/WKErrorInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        (-[WKWebView _internalDoAfterNextPresentationUpdate:withoutWaitingForPainting:withoutWaitingForAnimatedResize:]):
+        * UIProcess/API/Cocoa/_WKInspectorExtension.mm:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _doAfterNextPresentationUpdate:]):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::takeScreenshot):
+        * UIProcess/Automation/mac/WebAutomationSessionMac.mm:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        * UIProcess/GenericCallback.h: Removed.
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        * UIProcess/WebContextClient.cpp:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::callAfterNextPresentationUpdate):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willFinishIgnoringCalloutBarFadeAfterPerformingAction]):
+        (-[WKContentView dragInteraction:item:willAnimateCancelWithAnimator:]):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing):
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers):
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm:
+
 2021-09-21  Chris Dumez  <cdumez@apple.com>
 
         Launch the new process a bit earlier when doing a COOP process-swap

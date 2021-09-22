@@ -417,7 +417,7 @@ int DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::webViewDrawCallback(Dra
     return false;
 }
 
-void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start(WTF::Function<void(CallbackBase::Error)>&& callback)
+void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start(Function<void()>&& callback)
 {
     m_startTime = MonotonicTime::now();
     m_callback = WTFMove(callback);
@@ -441,10 +441,8 @@ void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::stop()
     g_signal_handlers_disconnect_by_func(m_webPage.viewWidget(), reinterpret_cast<gpointer>(webViewDrawCallback), this);
 #endif
     m_startTime = MonotonicTime();
-    if (m_callback) {
-        m_callback(CallbackBase::Error::None);
-        m_callback = nullptr;
-    }
+    if (auto callback = std::exchange(m_callback, nullptr))
+        callback();
 }
 
 void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw()
@@ -458,12 +456,10 @@ void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw()
         m_timer.startOneShot(16_ms);
 }
 
-void DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
+void DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing(Function<void()>&& callbackFunction)
 {
-    if (!m_webPageProxy.hasRunningProcess()) {
-        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
-        return;
-    }
+    if (!m_webPageProxy.hasRunningProcess())
+        return callbackFunction();
 
     if (!m_drawingMonitor)
         m_drawingMonitor = makeUnique<DrawingAreaProxyCoordinatedGraphics::DrawingMonitor>(m_webPageProxy);

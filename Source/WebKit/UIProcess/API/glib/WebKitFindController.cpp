@@ -21,6 +21,7 @@
 #include "WebKitFindController.h"
 
 #include "APIFindClient.h"
+#include "WebFindOptions.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitWebViewPrivate.h"
 #include <glib/gi18n-lib.h>
