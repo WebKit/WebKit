@@ -22,6 +22,15 @@
         * http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt:
         * http/tests/privateClickMeasurement/store-private-click-measurement-expected.txt:
 
+2021-09-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        fast/canvas/canvas-color-space-display-p3-ImageData.html should be marked as a text failure.
+
+        * TestExpectations:
+        * platform/ios-14/TestExpectations:
+
 2021-09-22  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         RenderListMarker::imageChanged RenderBox image handling

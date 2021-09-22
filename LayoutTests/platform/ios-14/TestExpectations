@@ -66,7 +66,7 @@ imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitma
 http/tests/app-privacy-report/ [ Skip ]
 
 # display-p3 canvas and ImageData are iOS 15+.
-fast/canvas/canvas-color-space-display-p3-ImageData.html [ ImageOnlyFailure ]
+fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html [ Failure ]
