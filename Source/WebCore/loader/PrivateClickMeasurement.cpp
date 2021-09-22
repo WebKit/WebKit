@@ -101,6 +101,7 @@ PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const
     copy.m_ephemeralSourceNonce = crossThreadCopy(m_ephemeralSourceNonce);
     copy.m_sourceUnlinkableToken = m_sourceUnlinkableToken.isolatedCopy();
     copy.m_sourceSecretToken = crossThreadCopy(m_sourceSecretToken);
+    copy.m_sourceApplicationBundleID = m_sourceApplicationBundleID.isolatedCopy();
     return copy;
 }
 

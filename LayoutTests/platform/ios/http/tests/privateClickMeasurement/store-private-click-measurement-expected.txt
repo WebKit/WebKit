@@ -1,4 +1,4 @@
-Tests that triggering of private click measurement attributions through cross-site redirects do not work.
+Tests storage of private click measurement.
 
 
 Unattributed Private Click Measurements:
@@ -7,4 +7,4 @@ Source site: 127.0.0.1
 Attribute on site: localhost
 Source ID: 3
 No attribution trigger data.
-Application bundle identifier: com.apple.WebKit.WebKitTestRunner
+Application bundle identifier: org.webkit.WebKitTestRunnerApp

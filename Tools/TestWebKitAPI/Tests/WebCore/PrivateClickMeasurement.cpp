@@ -44,7 +44,7 @@ const URL emptyURL { };
 
 TEST(PrivateClickMeasurement, WellKnownURLs)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(min6BitValue, PrivateClickMeasurement::Priority(min6BitValue)));
 
     auto attributionSourceURL = attribution.attributionReportSourceURL();
@@ -55,7 +55,7 @@ TEST(PrivateClickMeasurement, WellKnownURLs)
 
 TEST(PrivateClickMeasurement, ValidMinValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(min6BitValue, PrivateClickMeasurement::Priority(min6BitValue)));
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":0,\"attributed_on_site\":\"example.com\",\"trigger_data\":0,\"version\":2}");
@@ -63,7 +63,7 @@ TEST(PrivateClickMeasurement, ValidMinValues)
 
 TEST(PrivateClickMeasurement, ValidMidValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData((uint32_t)9, PrivateClickMeasurement::Priority((uint32_t)22)));
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":192,\"attributed_on_site\":\"example.com\",\"trigger_data\":9,\"version\":2}");
@@ -71,7 +71,7 @@ TEST(PrivateClickMeasurement, ValidMidValues)
 
 TEST(PrivateClickMeasurement, ValidMaxValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)));
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":255,\"attributed_on_site\":\"example.com\",\"trigger_data\":15,\"version\":2}");
@@ -79,7 +79,7 @@ TEST(PrivateClickMeasurement, ValidMaxValues)
 
 TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     auto now = WallTime::now();
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)));
     auto earliestTimeToSend = attribution.timesToSend();
@@ -134,7 +134,7 @@ TEST(PrivateClickMeasurement, ValidSourceNonce)
 
 TEST(PrivateClickMeasurement, InvalidSourceID)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy + 1), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy + 1), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)));
 
     ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
@@ -143,7 +143,7 @@ TEST(PrivateClickMeasurement, InvalidSourceID)
 
 TEST(PrivateClickMeasurement, InvalidSourceHost)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { emptyURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { emptyURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)));
 
     ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
@@ -152,7 +152,7 @@ TEST(PrivateClickMeasurement, InvalidSourceHost)
 
 TEST(PrivateClickMeasurement, InvalidDestinationHost)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy + 1), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { emptyURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy + 1), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { emptyURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)));
 
     ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
@@ -161,7 +161,7 @@ TEST(PrivateClickMeasurement, InvalidDestinationHost)
 
 TEST(PrivateClickMeasurement, AttributionTriggerData)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData((PrivateClickMeasurement::AttributionTriggerData::MaxEntropy + 1), PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)));
 
     ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
@@ -170,7 +170,7 @@ TEST(PrivateClickMeasurement, AttributionTriggerData)
 
 TEST(PrivateClickMeasurement, InvalidPriority)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
     attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy + 1)));
 
     ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
@@ -179,7 +179,7 @@ TEST(PrivateClickMeasurement, InvalidPriority)
 
 TEST(PrivateClickMeasurement, InvalidMissingConversion)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL } };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier" };
 
     ASSERT_TRUE(attribution.attributionReportSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportAttributeOnURL().isEmpty());

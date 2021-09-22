@@ -1,3 +1,27 @@
+2021-09-22  Alex Christensen  <achristensen@webkit.org>
+
+        PCM should include the bundle ID of the app from which it originated
+        https://bugs.webkit.org/show_bug.cgi?id=230576
+        <rdar://83065221>
+
+        Reviewed by Kate Cheney.
+
+        * http/tests/contentextensions/block-private-click-measurement-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority-expected.txt:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority-expected.txt:
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session-expected.txt:
+        * http/tests/privateClickMeasurement/private-click-measurement-with-source-nonce-null-content-expected.txt:
+        * http/tests/privateClickMeasurement/private-click-measurement-with-source-nonce-wrong-content-type-expected.txt:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority-expected.txt:
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-expected.txt:
+
 2021-09-22  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         RenderListMarker::imageChanged RenderBox image handling

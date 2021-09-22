@@ -1,5 +1,35 @@
 2021-09-22  Alex Christensen  <achristensen@webkit.org>
 
+        PCM should include the bundle ID of the app from which it originated
+        https://bugs.webkit.org/show_bug.cgi?id=230576
+        <rdar://83065221>
+
+        Reviewed by Kate Cheney.
+
+        * NetworkProcess/DatabaseUtilities.cpp:
+        (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase const):
+        (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase): Deleted.
+        * NetworkProcess/DatabaseUtilities.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::Database):
+        (WebKit::PCM::Database::insertPrivateClickMeasurement):
+        (WebKit::PCM::Database::privateClickMeasurementToStringForTesting const):
+        (WebKit::PCM::Database::attributionToStringForTesting const):
+        (WebKit::PCM::Database::addBundleIDColumnIfNecessary):
+        (WebKit::PCM::Database::columnsForTable):
+        (WebKit::PCM::Database::addMissingColumnToTable):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:applicationBundleID:]):
+        (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:]): Deleted.
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setEphemeralUIEventAttribution:]):
+        (-[WKWebView _setEphemeralUIEventAttribution:forApplicationWithBundleID:]):
+
+2021-09-22  Alex Christensen  <achristensen@webkit.org>
+
         Move PCMDaemon to WebKit.framework and rename it to AdAttributionDaemon
         https://bugs.webkit.org/show_bug.cgi?id=230516
 

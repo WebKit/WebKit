@@ -40,9 +40,9 @@ namespace PCM {
 
 constexpr auto setUnattributedPrivateClickMeasurementAsExpiredQuery = "UPDATE UnattributedPrivateClickMeasurement SET timeOfAdClick = -1.0"_s;
 constexpr auto insertUnattributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
-    "sourceID, timeOfAdClick, token, signature, keyID) VALUES (?, ?, ?, ?, ?, ?, ?)"_s;
+    "sourceID, timeOfAdClick, token, signature, keyID, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto insertAttributedPrivateClickMeasurementQuery = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
-    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
+    "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
 constexpr auto findUnattributedQuery = "SELECT * FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
 constexpr auto findAttributedQuery = "SELECT * FROM AttributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
 constexpr auto removeUnattributedQuery = "DELETE FROM UnattributedPrivateClickMeasurement WHERE sourceSiteDomainID = ? AND destinationSiteDomainID = ?"_s;
@@ -59,13 +59,13 @@ constexpr auto domainIDFromStringQuery = "SELECT domainID FROM PCMObservedDomain
 constexpr auto domainStringFromDomainIDQuery = "SELECT registrableDomain FROM PCMObservedDomains WHERE domainID = ?"_s;
 constexpr auto createUnattributedPrivateClickMeasurement = "CREATE TABLE UnattributedPrivateClickMeasurement ("
     "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
-    "timeOfAdClick REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, FOREIGN KEY(sourceSiteDomainID) "
+    "timeOfAdClick REAL NOT NULL, token TEXT, signature TEXT, keyID TEXT, sourceApplicationBundleID TEXT, FOREIGN KEY(sourceSiteDomainID) "
     "REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
     "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
 constexpr auto createAttributedPrivateClickMeasurement = "CREATE TABLE AttributedPrivateClickMeasurement ("
     "sourceSiteDomainID INTEGER NOT NULL, destinationSiteDomainID INTEGER NOT NULL, sourceID INTEGER NOT NULL, "
     "attributionTriggerData INTEGER NOT NULL, priority INTEGER NOT NULL, timeOfAdClick REAL NOT NULL, "
-    "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, "
+    "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, sourceApplicationBundleID TEXT, "
     "FOREIGN KEY(sourceSiteDomainID) REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
     "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
 constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID )"_s;
@@ -88,6 +88,7 @@ Database::Database(const String& storageDirectory)
     ASSERT(!RunLoop::isMain());
     openDatabaseAndCreateSchemaIfNecessary();
     enableForeignKeys();
+    addBundleIDColumnIfNecessary();
     allDatabases().add(this);
 }
 
@@ -166,6 +167,7 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
             || statement->bindText(9, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
             || statement->bindText(10, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
             || statement->bindDouble(11, destinationEarliestTimeToSend) != SQLITE_OK
+            || statement->bindText(12, attribution.sourceApplicationBundleID()) != SQLITE_OK
             || statement->step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::insertPrivateClickMeasurement insertAttributedPrivateClickMeasurementQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -184,6 +186,7 @@ void Database::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& 
         || statement->bindText(5, sourceUnlinkableToken ? sourceUnlinkableToken->tokenBase64URL : emptyString()) != SQLITE_OK
         || statement->bindText(6, sourceUnlinkableToken ? sourceUnlinkableToken->signatureBase64URL : emptyString()) != SQLITE_OK
         || statement->bindText(7, sourceUnlinkableToken ? sourceUnlinkableToken->keyIDBase64URL : emptyString()) != SQLITE_OK
+        || statement->bindText(8, attribution.sourceApplicationBundleID()) != SQLITE_OK
         || statement->step() != SQLITE_DONE) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::insertPrivateClickMeasurement insertUnattributedPrivateClickMeasurementQuery, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
@@ -364,7 +367,7 @@ String Database::privateClickMeasurementToStringForTesting() const
     while (unattributedScopedStatement->step() == SQLITE_ROW) {
         const char* prefix = unattributedNumber ? "" : "Unattributed Private Click Measurements:";
         builder.append(prefix, "\nWebCore::PrivateClickMeasurement ", ++unattributedNumber, '\n',
-            attributionToStringForTesting(*unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed));
+            attributionToStringForTesting(buildPrivateClickMeasurementFromDatabase(*unattributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Unattributed)));
     }
 
     auto attributedScopedStatement = this->scopedStatement(m_allAttributedPrivateClickMeasurementStatement, allAttributedPrivateClickMeasurementQuery, "privateClickMeasurementToStringForTesting"_s);
@@ -380,39 +383,36 @@ String Database::privateClickMeasurementToStringForTesting() const
         if (!attributedNumber)
             builder.append(unattributedNumber ? "\n" : "", "Attributed Private Click Measurements:");
         builder.append("\nWebCore::PrivateClickMeasurement ", ++attributedNumber + unattributedNumber, '\n',
-            attributionToStringForTesting(*attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed));
+            attributionToStringForTesting(buildPrivateClickMeasurementFromDatabase(*attributedScopedStatement.get(), PrivateClickMeasurementAttributionType::Attributed)));
     }
     return builder.toString();
 }
 
-String Database::attributionToStringForTesting(WebCore::SQLiteStatement& statement, PrivateClickMeasurementAttributionType attributionType) const
+String Database::attributionToStringForTesting(const WebCore::PrivateClickMeasurement& pcm) const
 {
     ASSERT(!RunLoop::isMain());
-    auto sourceSiteDomain = getDomainStringFromDomainID(statement.columnInt(0));
-    auto destinationSiteDomain = getDomainStringFromDomainID(statement.columnInt(1));
-    auto sourceID = statement.columnInt(2);
+    auto sourceSiteDomain = pcm.sourceSite().registrableDomain;
+    auto destinationSiteDomain = pcm.destinationSite().registrableDomain;
+    auto sourceID = pcm.sourceID().id;
 
     StringBuilder builder;
     builder.append("Source site: ", sourceSiteDomain, "\nAttribute on site: ", destinationSiteDomain, "\nSource ID: ", sourceID);
 
-    if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
-        auto attributionTriggerData = statement.columnInt(3);
-        auto priority = statement.columnInt(4);
-        auto earliestTimeToSend = statement.columnInt(6);
+    if (auto& triggerData = pcm.attributionTriggerData()) {
+        auto attributionTriggerData = triggerData->data;
+        auto priority = triggerData->priority;
+        auto earliestTimeToSend = pcm.timesToSend().sourceEarliestTimeToSend;
 
-        if (attributionTriggerData != -1) {
-            builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
-            if (earliestTimeToSend == -1)
-                builder.append("Not set");
-            else {
-                auto secondsUntilSend = WallTime::fromRawSeconds(earliestTimeToSend) - WallTime::now();
-                builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
-            }
-        } else
-            builder.append("\nNo attribution trigger data.");
+        builder.append("\nAttribution trigger data: ", attributionTriggerData, "\nAttribution priority: ", priority, "\nAttribution earliest time to send: ");
+        if (!earliestTimeToSend)
+            builder.append("Not set");
+        else {
+            auto secondsUntilSend = *earliestTimeToSend - WallTime::now();
+            builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
+        }
     } else
         builder.append("\nNo attribution trigger data.");
-    builder.append('\n');
+    builder.append("\nApplication bundle identifier: ", pcm.sourceApplicationBundleID(), '\n');
 
     return builder.toString();
 }
@@ -658,6 +658,54 @@ void Database::destroyStatements()
     m_domainIDFromStringStatement = nullptr;
     m_domainStringFromDomainIDStatement = nullptr;
     m_insertObservedDomainStatement = nullptr;
+}
+
+void Database::addBundleIDColumnIfNecessary()
+{
+    // FIXME: Remove this at the end of 2021. No public release was made with the schema missing sourceApplicationBundleID, so this is only needed to migrate internal users who updated in September 2021.
+    String attributedTableName("AttributedPrivateClickMeasurement");
+    String unattributedTableName("UnattributedPrivateClickMeasurement"_s);
+    String sourceApplicationBundleIDColumnName("sourceApplicationBundleID"_s);
+    auto checkColumns = [&] (const String& tableName) {
+        auto columns = columnsForTable(tableName);
+        if (!columns.size() || columns.last() != sourceApplicationBundleIDColumnName)
+            addMissingColumnToTable(tableName, sourceApplicationBundleIDColumnName);
+    };
+    checkColumns(attributedTableName);
+    checkColumns(unattributedTableName);
+}
+
+Vector<String> Database::columnsForTable(const String& tableName)
+{
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
+
+    if (!statement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::columnsForTable Unable to prepare statement to fetch schema for table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    Vector<String> columns;
+    while (statement->step() == SQLITE_ROW) {
+        auto name = statement->columnText(1);
+        columns.append(name);
+    }
+
+    return columns;
+}
+
+void Database::addMissingColumnToTable(const String& tableName, const String& columnName)
+{
+    auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", columnName));
+    if (!statement) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable Unable to prepare statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (statement->step() != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - Database::addMissingColumnToTable error executing statement to add missing columns to table, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+    }
 }
 
 } // namespace PCM

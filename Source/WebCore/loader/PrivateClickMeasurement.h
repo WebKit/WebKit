@@ -312,7 +312,7 @@ public:
     };
 
     PrivateClickMeasurement() = default;
-    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now(), PrivateClickMeasurementAttributionEphemeral isEphemeral = PrivateClickMeasurementAttributionEphemeral::No)
+    PrivateClickMeasurement(SourceID sourceID, const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, const String& sourceApplicationBundleID, String&& sourceDescription = { }, String&& purchaser = { }, WallTime timeOfAdClick = WallTime::now(), PrivateClickMeasurementAttributionEphemeral isEphemeral = PrivateClickMeasurementAttributionEphemeral::No)
         : m_sourceID { sourceID }
         , m_sourceSite { sourceSite }
         , m_destinationSite { destinationSite }
@@ -320,6 +320,7 @@ public:
         , m_purchaser { WTFMove(purchaser) }
         , m_timeOfAdClick { timeOfAdClick }
         , m_isEphemeral { isEphemeral }
+        , m_sourceApplicationBundleID { sourceApplicationBundleID }
     {
     }
 
@@ -337,8 +338,9 @@ public:
     AttributionTimeToSendData timesToSend() const { return m_timesToSend; };
     void setTimesToSend(AttributionTimeToSendData data) { m_timesToSend = data; }
     const SourceID& sourceID() const { return m_sourceID; }
-    std::optional<AttributionTriggerData> attributionTriggerData() { return m_attributionTriggerData; }
+    const std::optional<AttributionTriggerData>& attributionTriggerData() const { return m_attributionTriggerData; }
     void setAttribution(AttributionTriggerData&& attributionTriggerData) { m_attributionTriggerData = WTFMove(attributionTriggerData); }
+    const String& sourceApplicationBundleID() const { return m_sourceApplicationBundleID; }
 
     const String& sourceDescription() const { return m_sourceDescription; }
     const String& purchaser() const { return m_purchaser; }
@@ -417,6 +419,7 @@ private:
     std::optional<EphemeralSourceNonce> m_ephemeralSourceNonce;
     SourceUnlinkableToken m_sourceUnlinkableToken;
     std::optional<SourceSecretToken> m_sourceSecretToken;
+    String m_sourceApplicationBundleID;
 };
 
 template<class Encoder>
@@ -431,6 +434,7 @@ void PrivateClickMeasurement::encode(Encoder& encoder) const
         << m_ephemeralSourceNonce
         << m_isEphemeral
         << m_attributionTriggerData
+        << m_sourceApplicationBundleID
         << m_timesToSend;
 }
 
@@ -481,7 +485,12 @@ std::optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& 
     decoder >> attributionTriggerData;
     if (!attributionTriggerData)
         return std::nullopt;
-    
+
+    std::optional<String> sourceApplicationBundleID;
+    decoder >> sourceApplicationBundleID;
+    if (!sourceApplicationBundleID)
+        return std::nullopt;
+
     std::optional<AttributionTimeToSendData> timesToSend;
     decoder >> timesToSend;
     if (!timesToSend)
@@ -491,6 +500,7 @@ std::optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& 
         SourceID { WTFMove(*sourceID) },
         SourceSite { WTFMove(*sourceRegistrableDomain) },
         AttributionDestinationSite { WTFMove(*destinationRegistrableDomain) },
+        WTFMove(*sourceApplicationBundleID),
         WTFMove(*sourceDescription),
         WTFMove(*purchaser),
         WTFMove(*timeOfAdClick),

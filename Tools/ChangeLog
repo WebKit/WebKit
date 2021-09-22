@@ -1,5 +1,20 @@
 2021-09-22  Alex Christensen  <achristensen@webkit.org>
 
+        PCM should include the bundle ID of the app from which it originated
+        https://bugs.webkit.org/show_bug.cgi?id=230576
+        <rdar://83065221>
+
+        Reviewed by Kate Cheney.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (pollUntilPCMIsMigrated):
+
+2021-09-22  Alex Christensen  <achristensen@webkit.org>
+
         Move PCMDaemon to WebKit.framework and rename it to AdAttributionDaemon
         https://bugs.webkit.org/show_bug.cgi?id=230516
 

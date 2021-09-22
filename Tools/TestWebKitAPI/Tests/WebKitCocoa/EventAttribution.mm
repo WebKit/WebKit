@@ -297,7 +297,7 @@ TEST(EventAttribution, FraudPrevention)
 
     auto webView = adoptNS([WKWebView new]);
     webView.get().navigationDelegate = delegateAllowingAllTLS();
-    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789"];
+    [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:serverURL optionalNonce:@"ABCDEFabcdef0123456789" applicationBundleID:@"test.bundle.id"];
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
 
@@ -318,7 +318,7 @@ TEST(EventAttribution, FraudPrevention)
 TEST(EventAttribution, Basic)
 {
     runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
-        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
     });
 }
 
@@ -340,7 +340,7 @@ TEST(EventAttribution, DatabaseLocation)
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
         viewConfiguration.get().websiteDataStore = dataStore.get();
         runBasicEventAttributionTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
-            [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
+            [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
         });
         originalNetworkProcessPid = [dataStore _networkProcessIdentifier];
         EXPECT_GT(originalNetworkProcessPid, 0);
@@ -472,7 +472,7 @@ TEST(EventAttribution, Daemon)
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     viewConfiguration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]).get();
     runBasicEventAttributionTest(viewConfiguration.get(), [](WKWebView *webView, const HTTPServer& server) {
-        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil];
+        [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
     });
 
     system("killall TestPCMDaemon -9");

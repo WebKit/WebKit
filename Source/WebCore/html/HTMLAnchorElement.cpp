@@ -47,6 +47,7 @@
 #include "RegistrableDomain.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGImage.h"
 #include "ScriptController.h"
@@ -449,7 +450,12 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
         return std::nullopt;
     }
 
-    auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(WTFMove(documentRegistrableDomain)), AttributionDestinationSite(destinationURL) };
+#if PLATFORM(COCOA)
+    auto bundleID = applicationBundleIdentifier();
+#else
+    String bundleID;
+#endif
+    auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(WTFMove(documentRegistrableDomain)), AttributionDestinationSite(destinationURL), bundleID };
 
     auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
     if (!attributionSourceNonceAttr.isEmpty()) {

@@ -55,7 +55,7 @@ protected:
     virtual void destroyStatements() = 0;
     virtual String getDomainStringFromDomainID(unsigned) const = 0;
 
-    WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType);
+    WebCore::PrivateClickMeasurement buildPrivateClickMeasurementFromDatabase(WebCore::SQLiteStatement&, PrivateClickMeasurementAttributionType) const;
 
     const String m_storageFilePath;
     mutable WebCore::SQLiteDatabase m_database;
