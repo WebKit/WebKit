@@ -1,3 +1,13 @@
+2021-09-22  Cameron McCormack  <heycam@apple.com>
+
+        Tweak canvas test failure expectations to be more accurate
+        https://bugs.webkit.org/show_bug.cgi?id=230590
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-14/TestExpectations:
+
 2021-09-21  Eric Hutchison  <ehutchison@apple.com>
 
         [ BigSur wk2 Debug] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-iframe-fixed.html.
