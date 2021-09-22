@@ -263,21 +263,22 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
 
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
-    if (networkLoadMetrics.priority != NetworkLoadPriority::Unknown)
-        metrics->setPriority(toProtocol(networkLoadMetrics.priority));
-    if (!networkLoadMetrics.remoteAddress.isNull())
-        metrics->setRemoteAddress(networkLoadMetrics.remoteAddress);
-    if (!networkLoadMetrics.connectionIdentifier.isNull())
-        metrics->setConnectionIdentifier(networkLoadMetrics.connectionIdentifier);
-    if (!networkLoadMetrics.requestHeaders.isEmpty())
-        metrics->setRequestHeaders(buildObjectForHeaders(networkLoadMetrics.requestHeaders));
-
-    if (networkLoadMetrics.requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
-        metrics->setRequestHeaderBytesSent(networkLoadMetrics.requestHeaderBytesSent);
-    if (networkLoadMetrics.requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
-        metrics->setRequestBodyBytesSent(networkLoadMetrics.requestBodyBytesSent);
-    if (networkLoadMetrics.responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
-        metrics->setResponseHeaderBytesReceived(networkLoadMetrics.responseHeaderBytesReceived);
+    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+        if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
+            metrics->setPriority(toProtocol(additionalMetrics->priority));
+        if (!additionalMetrics->remoteAddress.isNull())
+            metrics->setRemoteAddress(additionalMetrics->remoteAddress);
+        if (!additionalMetrics->connectionIdentifier.isNull())
+            metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
+        if (!additionalMetrics->requestHeaders.isEmpty())
+            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
+        if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
+        if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
+        if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
+            metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
+    }
     if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
         metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
     if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
@@ -286,11 +287,12 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
     auto connectionPayload = Protocol::Security::Connection::create()
         .release();
 
-    if (!networkLoadMetrics.tlsProtocol.isEmpty())
-        connectionPayload->setProtocol(networkLoadMetrics.tlsProtocol);
-
-    if (!networkLoadMetrics.tlsCipher.isEmpty())
-        connectionPayload->setCipher(networkLoadMetrics.tlsCipher);
+    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+        if (!additionalMetrics->tlsProtocol.isEmpty())
+            connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
+        if (!additionalMetrics->tlsCipher.isEmpty())
+            connectionPayload->setCipher(additionalMetrics->tlsCipher);
+    }
 
     metrics->setSecurityConnection(WTFMove(connectionPayload));
 
@@ -353,7 +355,7 @@ RefPtr<Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourc
 
     if (resourceLoader) {
         auto* metrics = response.deprecatedNetworkLoadMetricsOrNull();
-        responseObject->setTiming(buildObjectForTiming(metrics ? *metrics : NetworkLoadMetrics { }, *resourceLoader));
+        responseObject->setTiming(buildObjectForTiming(metrics ? *metrics : NetworkLoadMetrics::emptyMetrics(), *resourceLoader));
     }
 
     if (auto& certificateInfo = response.certificateInfo()) {

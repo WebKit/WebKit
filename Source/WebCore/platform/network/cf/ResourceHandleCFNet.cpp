@@ -413,7 +413,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
     LOG(Network, "CFNet - receivedCredential()");
     ASSERT(!challenge.isNull());
     ASSERT(challenge.cfURLAuthChallengeRef());
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     // FIXME: Support empty credentials. Currently, an empty credential cannot be stored in WebCore credential storage, as that's empty value for its map.
@@ -450,7 +450,7 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
     LOG(Network, "CFNet - receivedRequestToContinueWithoutCredential()");
     ASSERT(!challenge.isNull());
     ASSERT(challenge.cfURLAuthChallengeRef());
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     if (d->m_connection)
@@ -462,7 +462,7 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
 void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challenge)
 {
     LOG(Network, "CFNet - receivedCancellation()");
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     if (client())
@@ -474,7 +474,7 @@ void ResourceHandle::receivedRequestToPerformDefaultHandling(const Authenticatio
     LOG(Network, "CFNet - receivedRequestToPerformDefaultHandling()");
     ASSERT(!challenge.isNull());
     ASSERT(challenge.cfURLAuthChallengeRef());
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     if (d->m_connection)
@@ -488,7 +488,7 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& c
     LOG(Network, "CFNet - receivedChallengeRejection()");
     ASSERT(!challenge.isNull());
     ASSERT(challenge.cfURLAuthChallengeRef());
-    if (challenge != d->m_currentWebChallenge)
+    if (!AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison(challenge, d->m_currentWebChallenge))
         return;
 
     if (d->m_connection)

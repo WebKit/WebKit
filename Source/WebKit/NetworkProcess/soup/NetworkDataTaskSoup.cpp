@@ -1210,6 +1210,13 @@ static String tlsProtocolVersionToString(GTlsProtocolVersion version)
 }
 #endif
 
+WebCore::AdditionalNetworkLoadMetricsForWebInspector& NetworkDataTaskSoup::additionalNetworkLoadMetricsForWebInspector()
+{
+    if (!m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector)
+        m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
+    return *m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector;
+}
+
 void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
@@ -1233,6 +1240,8 @@ void NetworkDataTaskSoup::didGetHeaders()
     // is the first one we receive after starting, so we use it also to get information about the
     // request headers.
     if (shouldCaptureExtraNetworkLoadMetrics()) {
+        auto& additionalMetrics = additionalNetworkLoadMetricsForWebInspector();
+
         HTTPHeaderMap requestHeaders;
         SoupMessageHeadersIter headersIter;
         soup_message_headers_iter_init(&headersIter, soup_message_get_request_headers(m_soupMessage.get()));
@@ -1240,19 +1249,19 @@ void NetworkDataTaskSoup::didGetHeaders()
         const char* headerValue;
         while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
             requestHeaders.set(String(headerName), String(headerValue));
-        m_networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
+        additionalMetrics.requestHeaders = WTFMove(requestHeaders);
 
-        m_networkLoadMetrics.priority = toNetworkLoadPriority(soup_message_get_priority(m_soupMessage.get()));
+        additionalMetrics.priority = toNetworkLoadPriority(soup_message_get_priority(m_soupMessage.get()));
 #if !USE(SOUP2)
-        m_networkLoadMetrics.connectionIdentifier = String::number(soup_message_get_connection_id(m_soupMessage.get()));
+        additionalMetrics.connectionIdentifier = String::number(soup_message_get_connection_id(m_soupMessage.get()));
         auto* address = soup_message_get_remote_address(m_soupMessage.get());
         if (G_IS_INET_SOCKET_ADDRESS(address)) {
             GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
-            m_networkLoadMetrics.remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address)));
+            additionalMetrics.remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address)));
         }
-        m_networkLoadMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
-        m_networkLoadMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));
-        m_networkLoadMetrics.responseHeaderBytesReceived = soup_message_metrics_get_response_header_bytes_received(metrics);
+        additionalMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
+        additionalMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));
+        additionalMetrics.responseHeaderBytesReceived = soup_message_metrics_get_response_header_bytes_received(metrics);
 #endif
     }
 
@@ -1268,7 +1277,7 @@ void NetworkDataTaskSoup::wroteHeadersCallback(SoupMessage* soupMessage, Network
     }
     ASSERT(task->m_soupMessage.get() == soupMessage);
     auto* metrics = soup_message_get_metrics(soupMessage);
-    task->m_networkLoadMetrics.requestHeaderBytesSent = soup_message_metrics_get_request_header_bytes_sent(metrics);
+    task->additionalNetworkLoadMetricsForWebInspector().requestHeaderBytesSent = soup_message_metrics_get_request_header_bytes_sent(metrics);
 }
 
 void NetworkDataTaskSoup::wroteBodyCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
@@ -1279,7 +1288,7 @@ void NetworkDataTaskSoup::wroteBodyCallback(SoupMessage* soupMessage, NetworkDat
     }
     ASSERT(task->m_soupMessage.get() == soupMessage);
     auto* metrics = soup_message_get_metrics(soupMessage);
-    task->m_networkLoadMetrics.requestBodyBytesSent = soup_message_metrics_get_request_body_bytes_sent(metrics);
+    task->additionalNetworkLoadMetricsForWebInspector().requestBodyBytesSent = soup_message_metrics_get_request_body_bytes_sent(metrics);
 }
 
 void NetworkDataTaskSoup::gotBodyCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
@@ -1515,7 +1524,7 @@ void NetworkDataTaskSoup::networkEvent(GSocketClientEvent event, GIOStream* stre
             GRefPtr<GSocketAddress> address = adoptGRef(g_socket_connection_get_remote_address(G_SOCKET_CONNECTION(stream), nullptr));
             if (G_IS_INET_SOCKET_ADDRESS(address.get())) {
                 GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address.get()))));
-                m_networkLoadMetrics.remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get())));
+                additionalNetworkLoadMetricsForWebInspector().remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get())));
             }
         }
         // Web Timing considers that connection time involves dns, proxy & TLS negotiation...
@@ -1634,7 +1643,7 @@ void NetworkDataTaskSoup::restartedCallback(SoupMessage* soupMessage, NetworkDat
 
 void NetworkDataTaskSoup::didRestart()
 {
-    m_networkLoadMetrics = { };
+    m_networkLoadMetrics = NetworkLoadMetrics::emptyMetrics();
 #if USE(SOUP2)
     m_networkLoadMetrics.fetchStart = MonotonicTime::now();
 #else

@@ -878,28 +878,29 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
-            networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);
+            auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
+            additionalMetrics->priority = toNetworkLoadPriority(task.priority);
 
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
             if (auto port = [m.remotePort unsignedIntValue])
-                networkLoadMetrics.remoteAddress = makeString(String(m.remoteAddress), ':', port);
+                additionalMetrics->remoteAddress = makeString(String(m.remoteAddress), ':', port);
             else
-                networkLoadMetrics.remoteAddress = m.remoteAddress;
+                additionalMetrics->remoteAddress = m.remoteAddress;
 #else
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            networkLoadMetrics.remoteAddress = String(m._remoteAddressAndPort);
+            additionalMetrics->remoteAddress = String(m._remoteAddressAndPort);
             ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
-            networkLoadMetrics.connectionIdentifier = String([m._connectionIdentifier UUIDString]);
+            additionalMetrics->connectionIdentifier = String([m._connectionIdentifier UUIDString]);
 
 #if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
-            networkLoadMetrics.tlsProtocol = stringForTLSProtocolVersion((tls_protocol_version_t)[m.negotiatedTLSProtocolVersion unsignedShortValue]);
-            networkLoadMetrics.tlsCipher = stringForTLSCipherSuite((tls_ciphersuite_t)[m.negotiatedTLSCipherSuite unsignedShortValue]);
+            additionalMetrics->tlsProtocol = stringForTLSProtocolVersion((tls_protocol_version_t)[m.negotiatedTLSProtocolVersion unsignedShortValue]);
+            additionalMetrics->tlsCipher = stringForTLSCipherSuite((tls_ciphersuite_t)[m.negotiatedTLSCipherSuite unsignedShortValue]);
 #else
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            networkLoadMetrics.tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
-            networkLoadMetrics.tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
+            additionalMetrics->tlsProtocol = stringForSSLProtocol(m._negotiatedTLSProtocol);
+            additionalMetrics->tlsCipher = stringForSSLCipher(m._negotiatedTLSCipher);
             ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #endif
@@ -908,7 +909,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [m.request.allHTTPHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSString *value, BOOL *) {
                 requestHeaders.set(String(name), String(value));
             }];
-            networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
+            additionalMetrics->requestHeaders = WTFMove(requestHeaders);
 
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
@@ -925,9 +926,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             }
 
-            networkLoadMetrics.requestHeaderBytesSent = requestHeaderBytesSent;
-            networkLoadMetrics.requestBodyBytesSent = task.countOfBytesSent;
-            networkLoadMetrics.responseHeaderBytesReceived = responseHeaderBytesReceived;
+            additionalMetrics->requestHeaderBytesSent = requestHeaderBytesSent;
+            additionalMetrics->requestBodyBytesSent = task.countOfBytesSent;
+            additionalMetrics->responseHeaderBytesReceived = responseHeaderBytesReceived;
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
         }
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
         networkLoadMetrics.responseBodyBytesReceived = m.countOfResponseBodyBytesReceived;

@@ -2127,6 +2127,7 @@ platform/network/HTTPHeaderMap.cpp
 platform/network/HTTPHeaderValues.cpp
 platform/network/HTTPParsers.cpp
 platform/network/MIMEHeader.cpp
+platform/network/NetworkLoadMetrics.cpp
 platform/network/NetworkStateNotifier.cpp
 platform/network/NetworkStorageSession.cpp
 platform/network/ParsedContentRange.cpp

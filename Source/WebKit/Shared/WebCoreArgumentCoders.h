@@ -905,16 +905,6 @@ template<> struct EnumTraits<WebCore::InputMode> {
     >;
 };
 
-template<> struct EnumTraits<WebCore::NetworkLoadPriority> {
-    using values = EnumValues<
-        WebCore::NetworkLoadPriority,
-        WebCore::NetworkLoadPriority::Low,
-        WebCore::NetworkLoadPriority::Medium,
-        WebCore::NetworkLoadPriority::High,
-        WebCore::NetworkLoadPriority::Unknown
-    >;
-};
-
 template<> struct EnumTraits<WebCore::NotificationDirection> {
     using values = EnumValues<
         WebCore::NotificationDirection,

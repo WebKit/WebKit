@@ -498,7 +498,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
         if (responseHasHTTPStatusCodeError()) {
             m_loadTiming.markEndTime();
             auto* metrics = this->response().deprecatedNetworkLoadMetricsOrNull();
-            reportResourceTiming(metrics ? *metrics : NetworkLoadMetrics { });
+            reportResourceTiming(metrics ? *metrics : NetworkLoadMetrics::emptyMetrics());
 
             m_state = Finishing;
             m_resource->error(CachedResource::LoadError);
@@ -741,7 +741,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         // complete load metrics in didFinishLoad. In those cases, fall back to the possibility
         // that they populated partial load timing information on the ResourceResponse.
         const auto* timing = m_resource->response().deprecatedNetworkLoadMetricsOrNull();
-        reportResourceTiming(timing ? *timing : NetworkLoadMetrics { });
+        reportResourceTiming(timing ? *timing : NetworkLoadMetrics::emptyMetrics());
     }
 
     if (m_resource->type() != CachedResource::Type::MainResource)

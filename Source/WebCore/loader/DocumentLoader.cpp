@@ -1393,7 +1393,7 @@ void DocumentLoader::commitData(const uint8_t* bytes, size_t length)
 
             if (document.settings().performanceNavigationTimingAPIEnabled() && m_mainResource) {
                 auto* metrics = m_response.deprecatedNetworkLoadMetricsOrNull();
-                window->performance().addNavigationTiming(*this, document, *m_mainResource, timing(), metrics ? *metrics : NetworkLoadMetrics { });
+                window->performance().addNavigationTiming(*this, document, *m_mainResource, timing(), metrics ? *metrics : NetworkLoadMetrics::emptyMetrics());
             }
         }
 

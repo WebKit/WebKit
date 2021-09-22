@@ -1,3 +1,73 @@
+2021-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce sizeof(NetworkLoadMetrics)
+        https://bugs.webkit.org/show_bug.cgi?id=226982
+
+        Reviewed by Chris Dumez.
+
+        No change in behavior.  Just greatly reducing the size of a common structure.
+
+        We take all the members that aren't used without the inspector and move them to a new struct,
+        AdditionalNetworkLoadMetricsForWebInspector.  We also remove some equality comparison that
+        was unnecessary because it was only used for AuthenticationChallenge equality comparisons in
+        ResourceHandleMac.  We also use emptyMetrics() to remove a few unnecessary and hard to see
+        copy constructor calls.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForMetrics):
+        (WebCore::InspectorNetworkAgent::buildObjectForResourceResponse):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * platform/network/AuthenticationChallengeBase.cpp:
+        (WebCore::AuthenticationChallengeBase::equalForWebKitLegacyChallengeComparison):
+        (WebCore::AuthenticationChallengeBase::compare): Deleted.
+        * platform/network/AuthenticationChallengeBase.h:
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+        * platform/network/NetworkLoadMetrics.cpp: Added.
+        (WebCore::NetworkLoadMetrics::NetworkLoadMetrics):
+        (WebCore::NetworkLoadMetrics::emptyMetrics):
+        (WebCore::AdditionalNetworkLoadMetricsForWebInspector::isolatedCopy):
+        (WebCore::NetworkLoadMetrics::isolatedCopy const):
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::NetworkLoadMetrics::encode const):
+        (WebCore::NetworkLoadMetrics::decode):
+        (WebCore::AdditionalNetworkLoadMetricsForWebInspector::encode const):
+        (WebCore::AdditionalNetworkLoadMetricsForWebInspector::decode):
+        (WebCore::NetworkLoadMetricsWithoutNonTimingData::isComplete const): Deleted.
+        (WebCore::NetworkLoadMetricsWithoutNonTimingData::markComplete): Deleted.
+        (WebCore::NetworkLoadMetrics::NetworkLoadMetrics): Deleted.
+        (WebCore::NetworkLoadMetrics::isolatedCopy const): Deleted.
+        (WebCore::NetworkLoadMetrics::operator== const): Deleted.
+        (WebCore::NetworkLoadMetrics::operator!= const): Deleted.
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::equalForWebKitLegacyChallengeComparison):
+        (WebCore::ResourceResponseBase::compare): Deleted.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::addExtraNetworkLoadMetrics):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::networkLoadMetrics):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        (WebCore::ResourceHandle::receivedRequestToPerformDefaultHandling):
+        (WebCore::ResourceHandle::receivedChallengeRejection):
+
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for font-palette

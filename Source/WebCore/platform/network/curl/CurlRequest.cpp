@@ -757,7 +757,8 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
 
     if (m_captureExtraMetrics) {
         m_curlHandle->addExtraNetworkLoadMetrics(*networkLoadMetrics);
-        networkLoadMetrics->requestHeaders = m_requestHeaders;
+        if (auto* additionalMetrics = networkLoadMetrics->additionalNetworkLoadMetricsForWebInspector.get())
+            additionalMetrics->requestHeaders = m_requestHeaders;
         networkLoadMetrics->responseBodyDecodedSize = m_totalReceivedSize;
     }
 

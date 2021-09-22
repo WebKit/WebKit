@@ -862,16 +862,20 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     if (errorCode != CURLE_OK)
         return;
 
-    networkLoadMetrics.requestHeaderBytesSent = requestHeaderSize;
-    networkLoadMetrics.requestBodyBytesSent = requestBodySize;
-    networkLoadMetrics.responseHeaderBytesReceived = responseHeaderSize;
     networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
 
+    auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
+    additionalMetrics->requestHeaderBytesSent = requestHeaderSize;
+    additionalMetrics->requestBodyBytesSent = requestBodySize;
+    additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
+
     if (ip) {
-        networkLoadMetrics.remoteAddress = String(ip);
+        additionalMetrics->remoteAddress = String(ip);
         if (port)
-            networkLoadMetrics.remoteAddress.append(":" + String::number(port));
+            additionalMetrics->remoteAddress.append(":" + String::number(port));
     }
+
+    networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
 }
 
 std::optional<CertificateInfo> CurlHandle::certificateInfo() const

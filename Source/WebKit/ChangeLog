@@ -1,3 +1,23 @@
+2021-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce sizeof(NetworkLoadMetrics)
+        https://bugs.webkit.org/show_bug.cgi?id=226982
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::additionalNetworkLoadMetricsForWebInspector):
+        (WebKit::NetworkDataTaskSoup::didGetHeaders):
+        (WebKit::NetworkDataTaskSoup::wroteHeadersCallback):
+        (WebKit::NetworkDataTaskSoup::wroteBodyCallback):
+        (WebKit::NetworkDataTaskSoup::networkEvent):
+        (WebKit::NetworkDataTaskSoup::didRestart):
+        * Shared/WebCoreArgumentCoders.h:
+
 2021-09-21  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: WebKit::WebProcessPool should use a weak observer with CFNotificationCenter

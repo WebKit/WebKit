@@ -802,7 +802,7 @@ void ResourceResponseBase::lazyInit(InitLevel initLevel) const
     const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit(initLevel);
 }
 
-bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResponse& b)
+bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const ResourceResponse& a, const ResourceResponse& b)
 {
     if (a.isNull() != b.isNull())
         return false;  
@@ -822,16 +822,6 @@ bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResp
         return false;
     if (a.httpHeaderFields() != b.httpHeaderFields())
         return false;
-    if (a.m_networkLoadMetrics.get() != b.m_networkLoadMetrics.get()) {
-        if (!a.m_networkLoadMetrics) {
-            if (NetworkLoadMetrics() != *b.m_networkLoadMetrics.get())
-                return false;
-        } else if (!b.m_networkLoadMetrics) {
-            if (NetworkLoadMetrics() != *a.m_networkLoadMetrics.get())
-                return false;
-        } else if (*a.m_networkLoadMetrics.get() != *b.m_networkLoadMetrics.get())
-            return false;
-    }
     return ResourceResponse::platformCompare(a, b);
 }
 

@@ -1286,9 +1286,13 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
 
     WebCore::NetworkLoadMetrics networkLoadMetrics;
     networkLoadMetrics.markComplete();
-    networkLoadMetrics.requestHeaderBytesSent = 0;
-    networkLoadMetrics.requestBodyBytesSent = 0;
-    networkLoadMetrics.responseHeaderBytesReceived = 0;
+    if (shouldCaptureExtraNetworkLoadMetrics()) {
+        auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
+        additionalMetrics->requestHeaderBytesSent = 0;
+        additionalMetrics->requestBodyBytesSent = 0;
+        additionalMetrics->responseHeaderBytesReceived = 0;
+        networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
+    }
     networkLoadMetrics.responseBodyBytesReceived = 0;
     networkLoadMetrics.responseBodyDecodedSize = 0;
 
