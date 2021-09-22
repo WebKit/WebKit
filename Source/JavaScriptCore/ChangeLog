@@ -1,3 +1,15 @@
+2021-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Intl unicode identifier type will reject underscore
+        https://bugs.webkit.org/show_bug.cgi?id=230645
+
+        Reviewed by Ross Kirsling.
+
+        We reject '_' since BCP-47 rejects it and we should follow BCP-47 in all Intl inputs.
+
+        * runtime/IntlObject.cpp:
+        (JSC::isUnicodeLocaleIdentifierType):
+
 2021-09-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] DOM constructors should extend InternalFunction

@@ -834,9 +834,6 @@ test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
-test/intl402/DisplayNames/prototype/of/type-calendar-invalid.js:
-  default: 'Test262Error: 2 segments, minimum length, underscore Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: 2 segments, minimum length, underscore Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'

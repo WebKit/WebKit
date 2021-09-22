@@ -661,10 +661,6 @@ unsigned intlDefaultNumberOption(JSGlobalObject* globalObject, JSValue value, Pr
 // http://www.unicode.org/reports/tr35/#Unicode_locale_identifier
 bool isUnicodeLocaleIdentifierType(StringView string)
 {
-    // Matching the Unicode Locale Identifier type nonterminal.
-    // Because the spec abstract operation is not mentioning to BCP-47 conformance for this matching,
-    // '-' and '_' separators are allowed while BCP-47 only accepts '-'.
-    // On the other hand, IsStructurallyValidLanguageTag explicitly mentions to BCP-47.
     return readCharactersForParsing(string, [](auto buffer) -> bool {
         while (true) {
             auto begin = buffer.position();
@@ -675,7 +671,7 @@ bool isUnicodeLocaleIdentifierType(StringView string)
                 return false;
             if (!buffer.hasCharactersRemaining())
                 return true;
-            if (*buffer != '-' && *buffer != '_')
+            if (*buffer != '-')
                 return false;
             ++buffer;
         }
