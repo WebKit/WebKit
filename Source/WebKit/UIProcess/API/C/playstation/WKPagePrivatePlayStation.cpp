@@ -31,6 +31,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "WKSharedAPICast.h"
 #include "WebEventFactory.h"
 #include "WebPageProxy.h"
 #include <cairo.h>

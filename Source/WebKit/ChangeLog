@@ -1,3 +1,9 @@
+2021-09-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PlayStation] Unreviewed build fix.
+
+        * UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp:
+
 2021-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Remove GenericCallback
