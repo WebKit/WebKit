@@ -65,6 +65,10 @@ _log = logging.getLogger(__name__)
 FLATPAK_USER_DIR_PATH = os.path.realpath(os.path.join(scriptdir, "../../WebKitBuild", "UserFlatpak"))
 DEFAULT_SCCACHE_SCHEDULER='https://sccache.igalia.com'
 
+# Our SDK branch matches with the FDO SDK branch. When updating the FDO SDK release branch
+# in our SDK build definitions please don't forget to update the version here as well.
+SDK_BRANCH = "21.08"
+
 is_colored_output_supported = False
 try:
     import curses
@@ -512,7 +516,6 @@ class WebkitFlatpak:
 
         self.build_gst = False
 
-        self.sdk_branch = "0.3"
         self.platform = "gtk"
         self.check_available = False
         self.user_command = []
@@ -725,7 +728,7 @@ class WebkitFlatpak:
         sandbox_build_path = os.path.join(self.sandbox_source_root, self.base_build_dir, self.build_type)
         sandbox_environment = {
             "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
-            "PATH": "/usr/lib/sdk/llvm11/bin:/usr/bin:/usr/lib/sdk/rust-stable/bin/",
+            "PATH": "/usr/lib/sdk/llvm12/bin:/usr/bin:/usr/lib/sdk/rust/bin/",
         }
 
         if not args:
@@ -993,7 +996,7 @@ class WebkitFlatpak:
             for package in self._get_dependency_packages():
                 if package.name.startswith("org.webkit") \
                    and self.repos.is_package_installed(package.name) \
-                   and not self.repos.is_package_installed(package.name, branch=self.sdk_branch):
+                   and not self.repos.is_package_installed(package.name, branch=SDK_BRANCH):
 
                     # Cache sccache auth token before removing UserFlatpak.
                     self.acquire_sccache_auth_token_from_config_file()
@@ -1136,7 +1139,7 @@ class WebkitFlatpak:
 
     def check_installed_packages(self):
         for package in self._get_dependency_packages():
-            if package.name.startswith("org.webkit") and not package.is_installed(self.sdk_branch):
+            if package.name.startswith("org.webkit") and not package.is_installed(SDK_BRANCH):
                 Console.error_message("Flatpak package %s not installed. Please update your SDK: Tools/Scripts/update-webkit-flatpak", package)
                 return False
         else:
@@ -1165,20 +1168,17 @@ class WebkitFlatpak:
 
     def _get_dependency_packages(self):
         arch = platform.machine()
-        self.runtime = FlatpakPackage("org.webkit.Platform", self.sdk_branch,
+        self.runtime = FlatpakPackage("org.webkit.Platform", SDK_BRANCH,
                                       self.sdk_repo, arch)
-        self.sdk = FlatpakPackage("org.webkit.Sdk", self.sdk_branch,
+        self.sdk = FlatpakPackage("org.webkit.Sdk", SDK_BRANCH,
                                   self.sdk_repo, arch)
         packages = [self.runtime, self.sdk]
-        packages.append(FlatpakPackage('org.webkit.Sdk.Debug', self.sdk_branch,
+        packages.append(FlatpakPackage('org.webkit.Sdk.Debug', SDK_BRANCH,
                                        self.sdk_repo, arch))
-
-        fdo_branch = "20.08"
-        extensions = ("rust-stable", "llvm11")
-        for name in extensions:
-            packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.%s" % name, fdo_branch,
-                                           self.flathub_repo, arch))
-
+        packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.llvm12", SDK_BRANCH,
+                                       self.flathub_repo, arch))
+        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", SDK_BRANCH,
+                                       self.flathub_repo, arch))
         return packages
 
     def install_all(self):
@@ -1186,7 +1186,7 @@ class WebkitFlatpak:
             return
         Console.message("Installing %s dependencies in %s", self.build_type, self.flatpak_build_path)
         for package in self._get_dependency_packages():
-            if not package.is_installed(self.sdk_branch):
+            if not package.is_installed(SDK_BRANCH):
                 package.install()
 
     def run_gdb(self):

@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include <WebCore/LibWebRTCMacros.h>
+#include <optional>
 #include <webrtc/rtc_base/network.h>
 #include <webrtc/rtc_base/socket_address.h>
 #include <wtf/Forward.h>

@@ -1,3 +1,12 @@
+2021-09-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Switch runtime to 21.08 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=229919
+
+        Reviewed by Michael Catanzaro.
+
+        * Shared/RTCNetwork.h: Unified build fix, include <optional> before using std::optional<T>.
+
 2021-09-22  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unused enums.

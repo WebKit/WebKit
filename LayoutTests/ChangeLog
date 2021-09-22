@@ -1,3 +1,32 @@
+2021-09-22  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Switch runtime to 21.08 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=229919
+
+        Reviewed by Michael Catanzaro.
+
+        Tests expectations update for the new SDK runtime.
+
+        * platform/glib/fast/xsl/xslt-mismatched-tags-in-xslt-expected.txt:
+        * platform/glib/svg/custom/use-invalid-pattern-expected.txt: Added.
+        * platform/glib/svg/custom/use-invalid-style-expected.txt: Added.
+        * platform/gtk/fast/invalid/missing-end-tag-expected.txt:
+        * platform/gtk/http/tests/security/xss-DENIED-xsl-external-entity-expected.txt: Added.
+        * platform/gtk/http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt:
+        * platform/gtk/svg/hixie/error/012-expected.png: Removed.
+        * platform/gtk/svg/hixie/error/012-expected.txt:
+        * platform/wpe/fast/invalid/missing-end-tag-expected.txt:
+        * platform/wpe/fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt:
+        * platform/wpe/fast/table/table-split-on-insert-with-section-crash-expected.txt: Added.
+        * platform/wpe/fast/text/international/spaces-combined-in-vertical-text-expected.txt:
+        * platform/wpe/fast/text/justify-nbsp-expected.txt: Added.
+        * platform/wpe/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * platform/wpe/svg/hixie/error/012-expected.txt:
+        * platform/wpe/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/wpe/svg/text/text-text-04-t-expected.txt:
+        * platform/wpe/svg/text/text-text-06-t-expected.txt:
+
 2021-09-22  Alan Bujtas  <zalan@apple.com>
 
         [WIN] Unreviewed test gardening
