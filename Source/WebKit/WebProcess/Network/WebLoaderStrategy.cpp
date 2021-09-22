@@ -111,7 +111,7 @@ void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, Res
         }
     }
 
-    SubresourceLoader::create(frame, resource, WTFMove(request), options, [this, referrerPolicy = options.referrerPolicy, completionHandler = WTFMove(completionHandler), resource = CachedResourceHandle<CachedResource>(&resource), frame = makeRef(frame)] (RefPtr<SubresourceLoader>&& loader) mutable {
+    SubresourceLoader::create(frame, resource, WTFMove(request), options, [this, referrerPolicy = options.referrerPolicy, completionHandler = WTFMove(completionHandler), resource = CachedResourceHandle<CachedResource>(&resource), frame = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(*loader, resource.get(), referrerPolicy == ReferrerPolicy::NoReferrerWhenDowngrade);
         else
@@ -122,7 +122,7 @@ void WebLoaderStrategy::loadResource(Frame& frame, CachedResource& resource, Res
 
 void WebLoaderStrategy::schedulePluginStreamLoad(Frame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
-    NetscapePlugInStreamLoader::create(frame, client, WTFMove(request), [this, completionHandler = WTFMove(completionHandler), frame = makeRef(frame)] (RefPtr<NetscapePlugInStreamLoader>&& loader) mutable {
+    NetscapePlugInStreamLoader::create(frame, client, WTFMove(request), [this, completionHandler = WTFMove(completionHandler), frame = Ref { frame }] (RefPtr<NetscapePlugInStreamLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(*loader, 0, frame->document()->referrerPolicy() == ReferrerPolicy::NoReferrerWhenDowngrade);
         completionHandler(WTFMove(loader));

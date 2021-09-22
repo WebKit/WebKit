@@ -392,7 +392,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (canUseSpeculativeRevalidation && m_speculativeLoadManager->canRetrieve(storageKey, request, frameID)) {
-        m_speculativeLoadManager->retrieve(storageKey, [networkProcess = makeRef(networkProcess()), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
+        m_speculativeLoadManager->retrieve(storageKey, [networkProcess = Ref { networkProcess() }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), sessionID = m_sessionID](std::unique_ptr<Entry> entry) mutable {
             info.wasSpeculativeLoad = true;
             if (entry && WebCore::verifyVaryingRequestHeaders(networkProcess->storageSession(sessionID), entry->varyingRequestHeaders(), request))
                 completeRetrieve(WTFMove(completionHandler), WTFMove(entry), info);
@@ -403,7 +403,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 #endif
 
-    m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = makeRef(networkProcess()), sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain](auto record, auto timings) mutable {
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = Ref { networkProcess() }, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
         if (!record) {

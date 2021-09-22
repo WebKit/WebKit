@@ -134,7 +134,7 @@ void LegacyDownloadClient::didReceiveAuthenticationChallenge(DownloadProxy& down
         return;
     }
 
-    [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:makeBlockPtr([authenticationChallenge = makeRef(authenticationChallenge), checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
+    [m_delegate _download:[_WKDownload downloadWithDownload:wrapper(downloadProxy)] didReceiveAuthenticationChallenge:wrapper(authenticationChallenge) completionHandler:makeBlockPtr([authenticationChallenge = Ref { authenticationChallenge }, checker = CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(_download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();

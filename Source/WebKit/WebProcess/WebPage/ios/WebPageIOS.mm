@@ -275,7 +275,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         return;
     ASSERT(frame.view());
     auto& postLayoutData = result.postLayoutData();
-    auto view = makeRef(*frame.view());
+    Ref view = *frame.view();
 
     if (frame.editor().hasComposition()) {
         if (auto compositionRange = frame.editor().compositionRange()) {
@@ -2604,7 +2604,7 @@ static inline bool isAssistableElement(Element& element)
 
 static inline bool isObscuredElement(Element& element)
 {
-    auto topDocument = makeRef(element.document().topDocument());
+    Ref topDocument = element.document().topDocument();
     auto elementRectInMainFrame = element.boundingBoxInRootViewCoordinates();
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::IgnoreClipping };
@@ -2849,7 +2849,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
 #if ENABLE(DATA_DETECTION)
     if (info.isImageOverlayText && innerNonSharedNode->shadowHost() == &element && is<HTMLElement>(element)) {
-        if (auto htmlElement = makeRef(downcast<HTMLElement>(element)); htmlElement->hasImageOverlay())
+        if (Ref htmlElement = downcast<HTMLElement>(element); htmlElement->hasImageOverlay())
             dataDetectorImageOverlayPositionInformation(htmlElement.get(), request, info);
     }
 #endif
@@ -4542,7 +4542,7 @@ void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementCo
     }
 
     ASSERT(target->document().frame());
-    auto targetFrame = makeRef(*target->document().frame());
+    Ref targetFrame = *target->document().frame();
 
     targetFrame->document()->updateLayoutIgnorePendingStylesheets();
 
@@ -4618,7 +4618,7 @@ void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileN
 
 void WebPage::animationDidFinishForElement(const WebCore::Element& animatedElement)
 {
-    Ref frame = makeRef(CheckedRef(m_page->focusController())->focusedOrMainFrame());
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     auto& selection = frame->selection().selection();
     if (selection.isNoneOrOrphaned())
         return;

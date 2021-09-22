@@ -215,7 +215,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
             return;
         track->setDiscardPadding(discardPadding);
     });
-    SourceBufferParser::Segment segment(makeRef(buffer.get()));
+    SourceBufferParser::Segment segment(Ref { buffer.get() });
     parser->appendData(WTFMove(segment));
     if (!track)
         return nullptr;

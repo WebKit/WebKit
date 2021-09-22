@@ -126,7 +126,7 @@ void RemoteResourceCacheProxy::recordFontUse(Font& font)
     });
 
     if (result.isNewEntry) {
-        m_remoteRenderingBackendProxy.cacheFont(makeRef(font));
+        m_remoteRenderingBackendProxy.cacheFont(font);
         ++m_numberOfFontsUsedInCurrentRenderingUpdate;
         return;
     }

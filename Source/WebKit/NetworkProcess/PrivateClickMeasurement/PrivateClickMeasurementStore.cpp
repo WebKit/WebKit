@@ -59,7 +59,7 @@ Store::Store(const String& databaseDirectory)
     : m_queue(sharedWorkQueue())
 {
     if (!databaseDirectory.isEmpty()) {
-        postTask([this, protectedThis = makeRef(*this), databaseDirectory = databaseDirectory.isolatedCopy()] () mutable {
+        postTask([this, protectedThis = Ref { *this }, databaseDirectory = databaseDirectory.isolatedCopy()] () mutable {
             m_database = makeUnique<Database>(WTFMove(databaseDirectory));
         });
     }
@@ -81,7 +81,7 @@ void Store::postTaskReply(WTF::Function<void()>&& reply) const
 
 void Store::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& attribution, PrivateClickMeasurementAttributionType attributionType)
 {
-    postTask([this, protectedThis = makeRef(*this), attribution = WTFMove(attribution), attributionType] () mutable {
+    postTask([this, protectedThis = Ref { *this }, attribution = WTFMove(attribution), attributionType] () mutable {
         if (m_database)
             m_database->insertPrivateClickMeasurement(WTFMove(attribution), attributionType);
     });
@@ -89,7 +89,7 @@ void Store::insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&& att
 
 void Store::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
 {
-    postTask([this, protectedThis = makeRef(*this)] {
+    postTask([this, protectedThis = Ref { *this }] {
         if (m_database)
             m_database->markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
     });
@@ -97,7 +97,7 @@ void Store::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
 
 void Store::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, std::optional<WebCore::PrivateClickMeasurement>&& ephemeralMeasurement, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&& completionHandler)
 {
-    postTask([this, protectedThis = makeRef(*this), sourceSite = sourceSite.isolatedCopy(), destinationSite = destinationSite.isolatedCopy(), attributionTriggerData = WTFMove(attributionTriggerData), ephemeralMeasurement = crossThreadCopy(ephemeralMeasurement), completionHandler = WTFMove(completionHandler)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, sourceSite = sourceSite.isolatedCopy(), destinationSite = destinationSite.isolatedCopy(), attributionTriggerData = WTFMove(attributionTriggerData), ephemeralMeasurement = crossThreadCopy(ephemeralMeasurement), completionHandler = WTFMove(completionHandler)] () mutable {
         if (!m_database) {
             return postTaskReply([completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(std::nullopt, { });
@@ -120,7 +120,7 @@ void Store::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurem
 
 void Store::privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&& completionHandler) const
 {
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         String result;
         if (m_database)
             result = m_database->privateClickMeasurementToStringForTesting();
@@ -132,7 +132,7 @@ void Store::privateClickMeasurementToStringForTesting(CompletionHandler<void(Str
 
 void Store::allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<WebCore::PrivateClickMeasurement>&&)>&& completionHandler)
 {
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<WebCore::PrivateClickMeasurement> convertedAttributions;
         if (m_database)
             convertedAttributions = m_database->allAttributedPrivateClickMeasurement();
@@ -144,7 +144,7 @@ void Store::allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<W
 
 void Store::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
 {
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_database)
             m_database->markAttributedPrivateClickMeasurementsAsExpiredForTesting();
         postTaskReply(WTFMove(completionHandler));
@@ -153,7 +153,7 @@ void Store::markAttributedPrivateClickMeasurementsAsExpiredForTesting(Completion
 
 void Store::clearPrivateClickMeasurement(CompletionHandler<void()>&& completionHandler)
 {
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         if (m_database)
             m_database->clearPrivateClickMeasurement(std::nullopt);
         postTaskReply(WTFMove(completionHandler));
@@ -162,7 +162,7 @@ void Store::clearPrivateClickMeasurement(CompletionHandler<void()>&& completionH
 
 void Store::clearPrivateClickMeasurementForRegistrableDomain(const WebCore::RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
 {
-    postTask([this, protectedThis = makeRef(*this), domain = domain.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, domain = domain.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         if (m_database)
             m_database->clearPrivateClickMeasurement(domain);
         postTaskReply(WTFMove(completionHandler));
@@ -171,7 +171,7 @@ void Store::clearPrivateClickMeasurementForRegistrableDomain(const WebCore::Regi
 
 void Store::clearExpiredPrivateClickMeasurement()
 {
-    postTask([this, protectedThis = makeRef(*this)]() {
+    postTask([this, protectedThis = Ref { *this }]() {
         if (m_database)
             m_database->clearExpiredPrivateClickMeasurement();
     });
@@ -179,7 +179,7 @@ void Store::clearExpiredPrivateClickMeasurement()
 
 void Store::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
 {
-    postTask([this, protectedThis = makeRef(*this), attributionToClear = attributionToClear.isolatedCopy(), attributionReportEndpoint]() mutable {
+    postTask([this, protectedThis = Ref { *this }, attributionToClear = attributionToClear.isolatedCopy(), attributionReportEndpoint]() mutable {
         if (m_database)
             m_database->clearSentAttribution(WTFMove(attributionToClear), attributionReportEndpoint);
     });
@@ -187,7 +187,7 @@ void Store::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionT
 
 void Store::close(CompletionHandler<void()>&& completionHandler)
 {
-    postTask([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         m_database = nullptr;
         postTaskReply(WTFMove(completionHandler));
     });

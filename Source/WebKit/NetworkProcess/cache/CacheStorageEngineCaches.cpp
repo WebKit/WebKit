@@ -213,7 +213,7 @@ void Caches::initializeSize()
     }
 
     uint64_t size = 0;
-    m_storage->traverse({ }, { }, [protectedThis = Ref { *this }, this, protectedStorage = makeRef(*m_storage), size](const auto* storage, const auto& information) mutable {
+    m_storage->traverse({ }, { }, [protectedThis = Ref { *this }, this, protectedStorage = Ref { *m_storage }, size](const auto* storage, const auto& information) mutable {
         if (!storage) {
             if (m_pendingInitializationCallbacks.isEmpty()) {
                 // Caches was cleared so let's not get initialized.
@@ -512,7 +512,7 @@ void Caches::readRecordsList(Cache& cache, NetworkCache::Storage::TraverseHandle
         callback(nullptr, { });
         return;
     }
-    m_storage->traverse(cache.uniqueName(), { }, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](const auto* storage, const auto& information) {
+    m_storage->traverse(cache.uniqueName(), { }, [protectedStorage = Ref { *m_storage }, callback = WTFMove(callback)](const auto* storage, const auto& information) {
         callback(storage, information);
     });
 }
@@ -552,7 +552,7 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
     if (!m_storage)
         return callback(std::nullopt);
 
-    m_storage->store(Cache::encode(recordInformation, record), { }, [this, protectedThis = Ref { *this }, protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](int error) mutable {
+    m_storage->store(Cache::encode(recordInformation, record), { }, [this, protectedThis = Ref { *this }, protectedStorage = Ref { *m_storage }, callback = WTFMove(callback)](int error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(CacheStorage, "Caches::writeRecord failed with error %d", error);
             callback(Error::WriteDisk);
@@ -577,7 +577,7 @@ void Caches::readRecord(const NetworkCache::Key& key, WTF::Function<void(Expecte
     if (!m_storage)
         return callback(makeUnexpected(Error::Internal));
 
-    m_storage->retrieve(key, 4, [protectedStorage = makeRef(*m_storage), callback = WTFMove(callback)](std::unique_ptr<Storage::Record> storage, const Storage::Timings&) mutable {
+    m_storage->retrieve(key, 4, [protectedStorage = Ref { *m_storage }, callback = WTFMove(callback)](std::unique_ptr<Storage::Record> storage, const Storage::Timings&) mutable {
         if (!storage) {
             RELEASE_LOG_ERROR(CacheStorage, "Caches::readRecord failed reading record from disk");
             callback(makeUnexpected(Error::ReadDisk));

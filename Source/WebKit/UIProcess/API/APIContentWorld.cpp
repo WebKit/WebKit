@@ -80,7 +80,7 @@ Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
         return adoptRef(*result.iterator->value);
     }
 
-    return makeRef(*result.iterator->value);
+    return *result.iterator->value;
 }
 
 ContentWorld& ContentWorld::pageContentWorld()

@@ -77,7 +77,7 @@ void LibWebRTCNetworkManager::StartUpdating()
 
         auto& monitor = WebProcess::singleton().libWebRTCNetwork().monitor();
         if (m_receivedNetworkList) {
-            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this)] {
+            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }] {
                 SignalNetworksChanged();
             });
         } else if (monitor.didReceiveNetworkList())
@@ -105,7 +105,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
     bool forceSignaling = !m_receivedNetworkList;
     m_receivedNetworkList = true;
 
-    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this), networks, ipv4, ipv6, forceSignaling] {
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, networks, ipv4, ipv6, forceSignaling] {
         std::vector<rtc::Network*> networkList(networks.size());
         for (size_t index = 0; index < networks.size(); ++index)
             networkList[index] = new rtc::Network(networks[index].value());
@@ -126,7 +126,7 @@ void LibWebRTCNetworkManager::networkProcessCrashed()
         return;
 
     // In case we have clients waiting for networksChanged, we call SignalNetworksChanged to make sure they do not wait for nothing.
-    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this)] {
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }] {
         SignalNetworksChanged();
     });
 }

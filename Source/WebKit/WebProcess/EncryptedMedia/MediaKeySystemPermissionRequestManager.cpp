@@ -76,7 +76,7 @@ void MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest(MediaKeyS
         return;
     }
 
-    m_ongoingMediaKeySystemRequests.add(userRequest.identifier(), makeRef(userRequest));
+    m_ongoingMediaKeySystemRequests.add(userRequest.identifier(), userRequest);
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);

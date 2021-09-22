@@ -522,7 +522,7 @@ private:
             auto iter = m_storageQuotaManagers.ensure(origin, [quota, usageGetter = WTFMove(usageGetter), quotaIncreaseRequester = WTFMove(quotaIncreaseRequester)]() mutable {
                 return WebCore::StorageQuotaManager::create(quota, WTFMove(usageGetter), WTFMove(quotaIncreaseRequester));
             }).iterator;
-            return makeRef(*iter->value);
+            return *iter->value;
         }
 
         auto existingStorageQuotaManagers() { return m_storageQuotaManagers.values(); }

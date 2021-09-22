@@ -67,7 +67,7 @@ IGNORE_WARNINGS_END
 
 - (void)cancel
 {
-    _download->_download->cancel([download = makeRef(*_download->_download)] (auto*) {
+    _download->_download->cancel([download = Ref { *_download->_download }] (auto*) {
         download->client().legacyDidCancel(download.get());
     });
 }

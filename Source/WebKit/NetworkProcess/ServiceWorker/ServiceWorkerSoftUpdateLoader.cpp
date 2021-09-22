@@ -115,7 +115,7 @@ void ServiceWorkerSoftUpdateLoader::loadWithCacheEntry(NetworkCache::Entry& entr
     }
 
     if (entry.buffer())
-        didReceiveBuffer(makeRef(*entry.buffer()), 0);
+        didReceiveBuffer(*entry.buffer(), 0);
     didFinishLoading({ });
 }
 

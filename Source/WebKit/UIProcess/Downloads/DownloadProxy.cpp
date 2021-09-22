@@ -134,7 +134,7 @@ void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& 
     if (!m_dataStore)
         return;
 
-    auto authenticationChallengeProxy = AuthenticationChallengeProxy::create(WTFMove(authenticationChallenge), challengeID, makeRef(*m_dataStore->networkProcess().connection()), nullptr);
+    auto authenticationChallengeProxy = AuthenticationChallengeProxy::create(WTFMove(authenticationChallenge), challengeID, *m_dataStore->networkProcess().connection(), nullptr);
     m_client->didReceiveAuthenticationChallenge(*this, authenticationChallengeProxy.get());
 }
 

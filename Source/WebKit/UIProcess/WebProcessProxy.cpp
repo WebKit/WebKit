@@ -1803,9 +1803,9 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
     auto createRealtimeMediaSource = [weakPage = makeWeakPtr(targetPage)]() {
         return weakPage ? weakPage->createRealtimeMediaSourceForSpeechRecognition() : CaptureSourceOrError { "Page is invalid" };
     };
-    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled), WTFMove(createRealtimeMediaSource));
+    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(*connection(), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled), WTFMove(createRealtimeMediaSource));
 #else
-    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(makeRef(*connection()), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled));
+    speechRecognitionServer = makeUnique<SpeechRecognitionServer>(*connection(), identifier, WTFMove(permissionChecker), WTFMove(checkIfMockCaptureDevicesEnabled));
 #endif
 
     addMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier, *speechRecognitionServer);
@@ -1822,7 +1822,7 @@ void WebProcessProxy::destroySpeechRecognitionServer(SpeechRecognitionServerIden
 SpeechRecognitionRemoteRealtimeMediaSourceManager& WebProcessProxy::ensureSpeechRecognitionRemoteRealtimeMediaSourceManager()
 {
     if (!m_speechRecognitionRemoteRealtimeMediaSourceManager) {
-        m_speechRecognitionRemoteRealtimeMediaSourceManager = makeUnique<SpeechRecognitionRemoteRealtimeMediaSourceManager>(makeRef(*connection()));
+        m_speechRecognitionRemoteRealtimeMediaSourceManager = makeUnique<SpeechRecognitionRemoteRealtimeMediaSourceManager>(*connection());
         addMessageReceiver(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::messageReceiverName(), *m_speechRecognitionRemoteRealtimeMediaSourceManager);
     }
 

@@ -171,7 +171,7 @@ void Cache::open(CompletionCallback&& callback)
     }
     m_state = State::Opening;
     TraversalResult traversalResult { m_identifier, { }, { } };
-    m_caches.readRecordsList(*this, [caches = makeRef(m_caches), callback = WTFMove(callback), traversalResult = WTFMove(traversalResult)](const auto* storageRecord, const auto&) mutable {
+    m_caches.readRecordsList(*this, [caches = Ref { m_caches }, callback = WTFMove(callback), traversalResult = WTFMove(traversalResult)](const auto* storageRecord, const auto&) mutable {
         if (!storageRecord) {
             RunLoop::main().dispatch([caches = WTFMove(caches), callback = WTFMove(callback), traversalResult = isolatedCopy(WTFMove(traversalResult)) ]() mutable {
                 for (auto& key : traversalResult.failedRecords)
@@ -275,7 +275,7 @@ private:
 
 void Cache::retrieveRecord(const RecordInformation& record, Ref<ReadRecordTaskCounter>&& taskCounter)
 {
-    readRecordFromDisk(record, [caches = makeRef(m_caches), identifier = m_identifier, recordIdentifier = record.identifier, updateCounter = record.updateResponseCounter, taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
+    readRecordFromDisk(record, [caches = Ref { m_caches }, identifier = m_identifier, recordIdentifier = record.identifier, updateCounter = record.updateResponseCounter, taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
         auto* cache = caches->find(identifier);
         if (!cache)
             return;
@@ -287,7 +287,7 @@ void Cache::retrieveRecords(const RetrieveRecordsOptions& options, RecordsCallba
 {
     ASSERT(m_state == State::Open);
 
-    auto taskCounter = ReadRecordTaskCounter::create([caches = makeRef(m_caches), identifier = m_identifier, options, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
+    auto taskCounter = ReadRecordTaskCounter::create([caches = Ref { m_caches }, identifier = m_identifier, options, callback = WTFMove(callback)](Vector<Record>&& records, Vector<uint64_t>&& failedRecordIdentifiers) mutable {
         auto* cache = caches->find(identifier);
         if (cache)
             cache->removeFromRecordList(failedRecordIdentifiers);
@@ -453,7 +453,7 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         return;
     }
 
-    m_caches.requestSpace(spaceRequired, [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](std::optional<DOMCacheEngine::Error>&& error) mutable {
+    m_caches.requestSpace(spaceRequired, [caches = Ref { m_caches }, identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](std::optional<DOMCacheEngine::Error>&& error) mutable {
         if (error) {
             callback(makeUnexpected(error.value()));
             return;
@@ -520,7 +520,7 @@ void Cache::writeRecordToDisk(const RecordInformation& recordInformation, Record
 void Cache::updateRecordToDisk(RecordInformation& existingRecord, Record&& record, Ref<AsynchronousPutTaskCounter>&& taskCounter)
 {
     ++existingRecord.updateResponseCounter;
-    readRecordFromDisk(existingRecord, [caches = makeRef(m_caches), identifier = m_identifier, recordIdentifier = existingRecord.identifier, record = WTFMove(record), taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
+    readRecordFromDisk(existingRecord, [caches = Ref { m_caches }, identifier = m_identifier, recordIdentifier = existingRecord.identifier, record = WTFMove(record), taskCounter = WTFMove(taskCounter)](Expected<Record, Error>&& result) mutable {
         if (!result.has_value())
             return;
 

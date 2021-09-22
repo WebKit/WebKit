@@ -168,7 +168,7 @@ void StreamServerConnection<Receiver>::startReceivingMessages(Receiver& receiver
         auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
         Locker locker { m_receiversLock };
         ASSERT(!m_receivers.contains(key));
-        m_receivers.add(key, makeRef(receiver));
+        m_receivers.add(key, receiver);
     }
     StreamServerConnectionBase::startReceivingMessagesImpl(receiverName, destinationID);
 }

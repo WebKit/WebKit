@@ -200,7 +200,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     nw_listener_set_queue(m_nwListener.get(), udpSocketQueue());
 
     // The callback holds a reference to the nw_listener and we clear it when going in nw_listener_state_cancelled state, which is triggered when closing the socket.
-    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener, connection = m_connection.copyRef(), protectedRTCProvider = makeRef(rtcProvider), identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
+    nw_listener_set_state_changed_handler(m_nwListener.get(), makeBlockPtr([nwListener = m_nwListener, connection = m_connection.copyRef(), protectedRTCProvider = Ref { rtcProvider }, identifier = m_identifier](nw_listener_state_t state, nw_error_t error) mutable {
         switch (state) {
         case nw_listener_state_invalid:
         case nw_listener_state_waiting:
@@ -224,7 +224,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
         }
     }).get());
 
-    nw_listener_set_new_connection_handler(m_nwListener.get(), makeBlockPtr([protectedThis = makeRef(*this)](nw_connection_t connection) {
+    nw_listener_set_new_connection_handler(m_nwListener.get(), makeBlockPtr([protectedThis = Ref { *this }](nw_connection_t connection) {
         Locker locker { protectedThis->m_nwConnectionsLock };
         if (protectedThis->m_isClosed)
             return;

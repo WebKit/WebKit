@@ -221,7 +221,7 @@ void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSour
     }
 
     ASSERT(!m_sources.contains(identifier));
-    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), makeRef(*messageSenderConnection())));
+    m_sources.add(identifier, makeUnique<Source>(identifier, result.source(), *messageSenderConnection()));
 }
 
 void SpeechRecognitionRealtimeMediaSourceManager::deleteSource(RealtimeMediaSourceIdentifier identifier)

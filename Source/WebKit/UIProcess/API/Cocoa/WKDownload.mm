@@ -77,7 +77,7 @@ private:
         if (!m_delegate || !m_respondsToDidReceiveAuthenticationChallenge)
             return challenge.listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue);
 
-        [m_delegate download:wrapper(download) didReceiveAuthenticationChallenge:wrapper(challenge) completionHandler:makeBlockPtr([challenge = makeRef(challenge), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) mutable {
+        [m_delegate download:wrapper(download) didReceiveAuthenticationChallenge:wrapper(challenge) completionHandler:makeBlockPtr([challenge = Ref { challenge }, checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:didReceiveAuthenticationChallenge:completionHandler:))] (NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -105,7 +105,7 @@ private:
         if (!m_delegate)
             return completionHandler(WebKit::AllowOverwrite::No, { });
 
-        [m_delegate download:wrapper(download) decideDestinationUsingResponse:response.nsURLResponse() suggestedFilename:suggestedFilename completionHandler:makeBlockPtr([download = makeRef(download), completionHandler = WTFMove(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
+        [m_delegate download:wrapper(download) decideDestinationUsingResponse:response.nsURLResponse() suggestedFilename:suggestedFilename completionHandler:makeBlockPtr([download = Ref { download }, completionHandler = WTFMove(completionHandler), checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.get().get(), @selector(download:decideDestinationUsingResponse:suggestedFilename:completionHandler:))] (NSURL *destination) mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();

@@ -378,7 +378,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
     if (!m_layerTreeStateIsFrozen)
         invalidateRenderingUpdateRunLoopObserver();
 
-    ScrollingThread::dispatchBarrier([this, retainedPage = makeRef(m_webPage), function = WTFMove(function)] {
+    ScrollingThread::dispatchBarrier([this, retainedPage = Ref { m_webPage }, function = WTFMove(function)] {
         // It is possible for the drawing area to be destroyed before the bound block is invoked.
         if (!retainedPage->drawingArea())
             return;
@@ -517,7 +517,7 @@ void TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded()
         if (!weakThis)
             return;
 
-        auto protectedPage = makeRef(weakThis->m_webPage);
+        Ref protectedPage = weakThis->m_webPage;
         auto* drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(protectedPage->drawingArea());
         ASSERT(weakThis.get() == drawingArea);
         if (drawingArea != weakThis.get())

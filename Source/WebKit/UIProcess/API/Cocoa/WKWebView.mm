@@ -1954,7 +1954,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
-    _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = makeRef(*_page.get())] (WebKit::FrameTreeNodeData&& data) {
+    _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = Ref { *_page.get() }] (WebKit::FrameTreeNodeData&& data) {
         completionHandler(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())));
     });
 }

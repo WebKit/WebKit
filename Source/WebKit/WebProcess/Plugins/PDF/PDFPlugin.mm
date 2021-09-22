@@ -1267,7 +1267,7 @@ void PDFPlugin::forgetLoader(NetscapePlugInStreamLoader& loader)
 
 void PDFPlugin::cancelAndForgetLoader(NetscapePlugInStreamLoader& loader)
 {
-    auto protectedLoader = makeRef(loader);
+    Ref protectedLoader { loader };
     forgetLoader(loader);
     loader.cancel(loader.cancelledError());
 }

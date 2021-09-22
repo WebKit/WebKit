@@ -1120,7 +1120,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     // FIXME: Provide a specific delegate for display capture.
     if (!request.requiresDisplayCapture() && respondsToRequestMediaCapturePermission) {
         auto checker = CompletionHandlerCallChecker::create(delegate, @selector(webView:requestMediaCapturePermissionForOrigin:initiatedByFrame:type:decisionHandler:));
-        auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](WKPermissionDecision decision) {
+        auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](WKPermissionDecision decision) {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -1168,7 +1168,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     }
 
     auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:));
-    auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](BOOL authorized) {
+    auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](BOOL authorized) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -1200,7 +1200,7 @@ void UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
 
     if ([delegate respondsToSelector:@selector(_webView:includeSensitiveMediaDeviceDetails:)]) {
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:includeSensitiveMediaDeviceDetails:));
-        auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](BOOL includeSensitiveDetails) {
+        auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](BOOL includeSensitiveDetails) {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
@@ -1213,7 +1213,7 @@ void UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
     }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:));
-    auto decisionHandler = makeBlockPtr([protectedRequest = makeRef(request), checker = WTFMove(checker)](NSString*, BOOL authorized) {
+    auto decisionHandler = makeBlockPtr([protectedRequest = Ref { request }, checker = WTFMove(checker)](NSString*, BOOL authorized) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();

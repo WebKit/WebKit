@@ -138,7 +138,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavig
     SSBLookupContext *context = [SSBLookupContext sharedLookupContext];
     if (!context)
         return listener.didReceiveSafeBrowsingResults({ });
-    [context lookUpURL:url completionHandler:makeBlockPtr([listener = makeRef(listener), forMainFrameNavigation, url = url] (SSBLookupResult *result, NSError *error) mutable {
+    [context lookUpURL:url completionHandler:makeBlockPtr([listener = Ref { listener }, forMainFrameNavigation, url = url] (SSBLookupResult *result, NSError *error) mutable {
         RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url)] {
             if (error) {
                 listener->didReceiveSafeBrowsingResults({ });

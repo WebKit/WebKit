@@ -49,7 +49,7 @@ using namespace WebCore;
 
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
     : m_identifier(MediaRecorderIdentifier::generate())
-    , m_stream(makeRef(stream))
+    , m_stream(stream)
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_options(options)
     , m_hasVideo(stream.hasVideo())

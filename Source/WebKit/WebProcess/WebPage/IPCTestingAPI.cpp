@@ -1292,7 +1292,7 @@ JSValueRef JSIPC::vmPageSize(JSContextRef context, JSObjectRef thisObject, JSStr
 JSValueRef JSIPC::visitedLinkStoreID(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
 {
     return retrieveID(context, thisObject, exception, [](JSIPC& wrapped) {
-        auto webPage = makeRef(*wrapped.m_webPage);
+        Ref webPage = *wrapped.m_webPage;
         return webPage->visitedLinkTableID();
     });
 }
@@ -1453,7 +1453,7 @@ void JSMessageListener::didReceiveMessage(const IPC::Decoder& decoder)
         return;
 
     RELEASE_ASSERT(m_jsIPC);
-    auto protectOwnerOfThis = makeRef(*m_jsIPC);
+    Ref protectOwnerOfThis = *m_jsIPC;
     auto* globalObject = toJS(m_context);
     JSC::JSLockHolder lock(globalObject->vm());
 
@@ -1470,7 +1470,7 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
         return;
 
     RELEASE_ASSERT(m_jsIPC);
-    auto protectOwnerOfThis = makeRef(*m_jsIPC);
+    Ref protectOwnerOfThis = *m_jsIPC;
     auto* globalObject = toJS(m_context);
     JSC::JSLockHolder lock(globalObject->vm());
 

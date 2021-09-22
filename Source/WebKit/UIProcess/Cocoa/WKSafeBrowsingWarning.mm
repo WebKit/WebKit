@@ -303,7 +303,7 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #endif
         completionHandler(WTFMove(result));
     };
-    _warning = makeRef(warning);
+    _warning = &warning;
 #if PLATFORM(MAC)
     [self setSafeBrowsingBackgroundColor:colorForItem(WarningItem::Background, self)];
     [self addContent];

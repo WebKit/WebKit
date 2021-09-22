@@ -477,7 +477,7 @@ void PageLoadState::didChangeProcessIsResponsive()
 
 void PageLoadState::callObserverCallback(void (Observer::*callback)())
 {
-    auto protectedPage = makeRef(m_webPageProxy);
+    Ref protectedPage { m_webPageProxy };
 
     auto observerCopy = m_observers;
     for (auto* observer : observerCopy) {

@@ -1018,7 +1018,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.clientRedirectSourceForHistory = documentLoader->clientRedirectSourceForHistory();
 
     // Notify the UIProcess.
-    auto protector = makeRef(*coreFrame);
+    Ref protector { *coreFrame };
 
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
         PolicyDecision policyDecision;

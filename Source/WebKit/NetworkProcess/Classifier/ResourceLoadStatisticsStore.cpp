@@ -183,7 +183,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([store = makeRef(m_store), domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(domainsToDeleteOrRestrictWebsiteDataFor), completionHandler = WTFMove(completionHandler), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue] () mutable {
+    RunLoop::main().dispatch([store = Ref { m_store }, domainsToDeleteOrRestrictWebsiteDataFor = crossThreadCopy(domainsToDeleteOrRestrictWebsiteDataFor), completionHandler = WTFMove(completionHandler), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue] () mutable {
         store->deleteAndRestrictWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToDeleteOrRestrictWebsiteDataFor), shouldNotifyPagesWhenDataRecordsWereScanned, [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue](const HashSet<RegistrableDomain>& domainsWithDeletedWebsiteData) mutable {
             workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(domainsWithDeletedWebsiteData), completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
@@ -231,7 +231,7 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
         if (!m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned)
             return;
 
-        RunLoop::main().dispatch([store = makeRef(m_store)] {
+        RunLoop::main().dispatch([store = Ref { m_store }] {
             store->notifyResourceLoadStatisticsProcessed();
         });
     });
@@ -241,7 +241,7 @@ void ResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandl
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), callback = WTFMove(callback), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue, store = makeRef(m_store)] () mutable {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), callback = WTFMove(callback), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue, store = Ref { m_store }] () mutable {
         store->registrableDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), shouldNotifyPagesWhenDataRecordsWereScanned, [weakThis = WTFMove(weakThis), callback = WTFMove(callback), workQueue] (HashSet<RegistrableDomain>&& domainsWithWebsiteData) mutable {
             workQueue->dispatch([weakThis = WTFMove(weakThis), domainsWithWebsiteData = crossThreadCopy(domainsWithWebsiteData), callback = WTFMove(callback)] () mutable {
                 if (!weakThis) {
@@ -357,7 +357,7 @@ void ResourceLoadStatisticsStore::updateCacheMaxAgeCap()
 {
     ASSERT(!RunLoop::isMain());
     
-    RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.cacheMaxAgeCapTime] () {
+    RunLoop::main().dispatch([store = Ref { m_store }, seconds = m_parameters.cacheMaxAgeCapTime] () {
         store->setCacheMaxAgeCap(seconds, [] { });
     });
 }
@@ -376,7 +376,7 @@ void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
     ASSERT(!RunLoop::isMain());
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.clientSideCookiesAgeCapTime] () {
+    RunLoop::main().dispatch([store = Ref { m_store }, seconds = m_parameters.clientSideCookiesAgeCapTime] () {
         if (auto* networkSession = store->networkSession()) {
             if (auto* storageSession = networkSession->networkStorageSession())
                 storageSession->setAgeCapForClientSideCookies(seconds);
@@ -415,7 +415,7 @@ void ResourceLoadStatisticsStore::updateCookieBlockingForDomains(const Registrab
 {
     ASSERT(!RunLoop::isMain());
     
-    RunLoop::main().dispatch([store = makeRef(m_store), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+    RunLoop::main().dispatch([store = Ref { m_store }, domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
         store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [store, completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
@@ -457,7 +457,7 @@ void ResourceLoadStatisticsStore::logTestingEvent(const String& event)
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([store = makeRef(m_store), event = event.isolatedCopy()] {
+    RunLoop::main().dispatch([store = Ref { m_store }, event = event.isolatedCopy()] {
         store->logTestingEvent(event);
     });
 }
@@ -465,7 +465,7 @@ void ResourceLoadStatisticsStore::logTestingEvent(const String& event)
 void ResourceLoadStatisticsStore::removeAllStorageAccess(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::main().dispatch([store = makeRef(m_store), completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([store = Ref { m_store }, completionHandler = WTFMove(completionHandler)]() mutable {
         store->removeAllStorageAccess([store, completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();

@@ -182,7 +182,7 @@ void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock()
 
     auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
     gpuConnection.addClient(*this);
-    m_connection = makeRef(gpuConnection.connection());
+    m_connection = &gpuConnection.connection();
     m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
 
     if (m_loggingLevel)

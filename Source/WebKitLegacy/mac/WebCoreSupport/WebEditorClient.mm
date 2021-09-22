@@ -1237,7 +1237,7 @@ void WebEditorClient::requestCheckingOfString(TextCheckingRequest& request, cons
     auto identifier = request.data().identifier().value();
 
     ASSERT(!m_requestsInFlight.contains(identifier));
-    m_requestsInFlight.add(identifier, makeRef(request));
+    m_requestsInFlight.add(identifier, request);
 
     NSRange range = NSMakeRange(0, request.data().text().length());
     NSRunLoop *currentLoop = [NSRunLoop currentRunLoop];

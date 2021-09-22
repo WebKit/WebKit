@@ -97,7 +97,7 @@ bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
         return false;
 
     // CachedProcess can destroy the process pool (which owns the WebProcessCache), by making its reference weak in WebProcessProxy::setIsInProcessCache.
-    auto protectedProcessPool = makeRef(process->processPool());
+    Ref protectedProcessPool = process->processPool();
     uint64_t requestIdentifier = generateAddRequestIdentifier();
     m_pendingAddRequests.add(requestIdentifier, makeUnique<CachedProcess>(process.copyRef()));
 

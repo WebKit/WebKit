@@ -137,7 +137,7 @@ void NetworkMDNSRegister::registerMDNSName(MDNSRegisterIdentifier requestIdentif
         return;
     }
 
-    auto pendingRequest = makeUnique<PendingRegistrationRequest>(makeRef(m_connection.connection()), requestIdentifier, WTFMove(name), sessionID());
+    auto pendingRequest = makeUnique<PendingRegistrationRequest>(m_connection.connection(), requestIdentifier, WTFMove(name), sessionID());
     auto* record = &pendingRequest->record;
     auto error = DNSServiceRegisterRecord(service,
         record,

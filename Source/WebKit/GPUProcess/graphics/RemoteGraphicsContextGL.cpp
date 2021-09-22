@@ -66,7 +66,7 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     : m_gpuConnectionToWebProcess(makeWeakPtr(gpuConnectionToWebProcess))
     , m_streamConnection(IPC::StreamServerConnection<RemoteGraphicsContextGL>::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
-    , m_renderingBackend(makeRef(renderingBackend))
+    , m_renderingBackend(renderingBackend)
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
 {
     assertIsMainRunLoop();

@@ -88,7 +88,7 @@ void Engine::from(NetworkProcess& networkProcess, PAL::SessionID sessionID, Func
         return;
     }
 
-    networkProcess.cacheStorageRootPath(sessionID, [networkProcess = makeRef(networkProcess), sessionID, callback = WTFMove(callback)] (auto&& rootPath) mutable {
+    networkProcess.cacheStorageRootPath(sessionID, [networkProcess = Ref { networkProcess }, sessionID, callback = WTFMove(callback)] (auto&& rootPath) mutable {
         callback(networkProcess->ensureCacheEngine(sessionID, [&] {
             return adoptRef(*new Engine { sessionID, networkProcess.get(), WTFMove(rootPath) });
         }));

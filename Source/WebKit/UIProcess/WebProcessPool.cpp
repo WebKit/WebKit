@@ -1578,7 +1578,7 @@ void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const
     if (!webProcessProxy)
         return completionHandler({ });
 
-    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(*this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get(), [webProcessProxy = makeRef(*webProcessProxy), completionHandler = WTFMove(completionHandler)] (RefPtr<API::Object>&& returnData) mutable {
+    m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(*this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get(), [webProcessProxy = Ref { *webProcessProxy }, completionHandler = WTFMove(completionHandler)] (RefPtr<API::Object>&& returnData) mutable {
         completionHandler(UserData(webProcessProxy->transformObjectsToHandles(returnData.get())));
     });
 }
@@ -1808,7 +1808,7 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
 
 void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
 {
-    processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, WTFMove(dataStore), [this, page = Ref { page }, navigation = makeRef(navigation), sourceProcess = sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, completionHandler = WTFMove(completionHandler)](Ref<WebProcessProxy>&& process, SuspendedPageProxy* suspendedPage, const String& reason) mutable {
+    processForNavigationInternal(page, navigation, sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, WTFMove(dataStore), [this, page = Ref { page }, navigation = Ref { navigation }, sourceProcess = sourceProcess.copyRef(), sourceURL, processSwapRequestedByClient, completionHandler = WTFMove(completionHandler)](Ref<WebProcessProxy>&& process, SuspendedPageProxy* suspendedPage, const String& reason) mutable {
         // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
         bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
         if (doingAnAutomaticProcessSwap && !configuration().wasAutomaticProcessWarmingSetByClient() && !configuration().clientWouldBenefitFromAutomaticProcessPrewarming()) {
@@ -1836,7 +1836,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     auto& targetURL = navigation.currentRequest().url();
     auto targetRegistrableDomain = WebCore::RegistrableDomain { targetURL };
 
-    auto createNewProcess = [this, protectedThis = Ref { *this }, page = makeRef(page), targetRegistrableDomain, dataStore] () -> Ref<WebProcessProxy> {
+    auto createNewProcess = [this, protectedThis = Ref { *this }, page = Ref { page }, targetRegistrableDomain, dataStore] () -> Ref<WebProcessProxy> {
         return processForRegistrableDomain(dataStore, page.ptr(), targetRegistrableDomain);
     };
 
@@ -1919,7 +1919,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
             if (&process->websiteDataStore() == dataStore.ptr()) {
                 LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processIdentifier(), targetURL.string().utf8().data());
 
-                return completionHandler(makeRef(*process), nullptr, reason);
+                return completionHandler(*process, nullptr, reason);
             }
         }
     }

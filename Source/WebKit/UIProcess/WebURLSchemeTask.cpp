@@ -44,7 +44,7 @@ Ref<WebURLSchemeTask> WebURLSchemeTask::create(WebURLSchemeHandler& handler, Web
 
 WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& page, WebProcessProxy& process, PageIdentifier webPageID, URLSchemeTaskParameters&& parameters, SyncLoadCompletionHandler&& syncCompletionHandler)
     : m_urlSchemeHandler(handler)
-    , m_process(makeRef(process))
+    , m_process(&process)
     , m_resourceLoaderID(parameters.taskIdentifier)
     , m_pageProxyID(page.identifier())
     , m_webPageID(webPageID)

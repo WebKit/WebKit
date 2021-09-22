@@ -312,7 +312,7 @@ void WebAutomationSession::getBrowsingContext(const Inspector::Protocol::Automat
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    page->getWindowFrameWithCallback([protectedThis = Ref { *this }, page = makeRef(*page), callback = WTFMove(callback)](WebCore::FloatRect windowFrame) mutable {
+    page->getWindowFrameWithCallback([protectedThis = Ref { *this }, page = Ref { *page }, callback = WTFMove(callback)](WebCore::FloatRect windowFrame) mutable {
         callback->sendSuccess(protectedThis->buildBrowsingContextForPage(page.get(), windowFrame));
     });
 }
@@ -373,7 +373,7 @@ void WebAutomationSession::switchToBrowsingContext(const Inspector::Protocol::Au
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     // FIXME: Should we also switch to the frame that frameHandle points to?
-    m_client->requestSwitchToPage(*this, *page, [page = makeRef(*page), callback = WTFMove(callback)]() {
+    m_client->requestSwitchToPage(*this, *page, [page = Ref { *page }, callback = WTFMove(callback)]() {
         page->setFocus(true);
 
         callback->sendSuccess();
@@ -634,7 +634,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
     // the load in case of normal strategy, so we want to dispatch all pending navigation callbacks.
     // If the dialog was shown during a script execution, we want to finish the evaluateJavaScriptFunction
     // operation with an unexpected alert open error.
-    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, page = makeRef(page)] {
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, page = Ref { page }] {
         if (!page->hasRunningProcess() || !m_client || !m_client->isShowingJavaScriptDialogOnPage(*this, page))
             return;
 
@@ -1610,7 +1610,7 @@ void WebAutomationSession::resetClickCount()
 
 void WebAutomationSession::simulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton mouseButton, const WebCore::IntPoint& locationInViewport, const String& pointerType, CompletionHandler<void(std::optional<AutomationCommandError>)>&& completionHandler)
 {
-    page.getWindowFrameWithCallback([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = makeRef(page), interaction, mouseButton, locationInViewport, pointerType](WebCore::FloatRect windowFrame) mutable {
+    page.getWindowFrameWithCallback([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, interaction, mouseButton, locationInViewport, pointerType](WebCore::FloatRect windowFrame) mutable {
         auto clippedX = std::min(std::max(0.0f, (float)locationInViewport.x()), windowFrame.size().width());
         auto clippedY = std::min(std::max(0.0f, (float)locationInViewport.y()), windowFrame.size().height());
         if (clippedX != locationInViewport.x() || clippedY != locationInViewport.y()) {
@@ -1689,7 +1689,7 @@ void WebAutomationSession::simulateKeyboardInteraction(WebPageProxy& page, Keybo
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 void WebAutomationSession::simulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta, AutomationCompletionHandler&& completionHandler)
 {
-    page.getWindowFrameWithCallback([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = makeRef(page), locationInViewport, delta](WebCore::FloatRect windowFrame) mutable {
+    page.getWindowFrameWithCallback([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, locationInViewport, delta](WebCore::FloatRect windowFrame) mutable {
         auto clippedX = std::min(std::max(0.0f, static_cast<float>(locationInViewport.x())), windowFrame.size().width());
         auto clippedY = std::min(std::max(0.0f, static_cast<float>(locationInViewport.y())), windowFrame.size().height());
         if (clippedX != locationInViewport.x() || clippedY != locationInViewport.y()) {
@@ -1775,7 +1775,7 @@ void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Au
         keyModifiers.add(protocolModifierToWebEventModifier(parsedModifier.value()));
     }
 
-    page->getWindowFrameWithCallback([this, protectedThis = Ref { *this }, callback = WTFMove(callback), page = makeRef(*page), floatX, floatY, mouseInteraction, mouseButton, keyModifiers](WebCore::FloatRect windowFrame) mutable {
+    page->getWindowFrameWithCallback([this, protectedThis = Ref { *this }, callback = WTFMove(callback), page = Ref { *page }, floatX, floatY, mouseInteraction, mouseButton, keyModifiers](WebCore::FloatRect windowFrame) mutable {
         floatX = std::min(std::max(0.0f, floatX), windowFrame.size().width());
         floatY = std::min(std::max(0.0f, floatY), windowFrame.size().height());
 
@@ -1873,7 +1873,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
     if (!actionsToPerform.size())
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "No actions to perform.");
 
-    auto keyboardEventsFlushedCallback = [protectedThis = Ref { *this }, callback = WTFMove(callback), page = makeRef(*page)](std::optional<AutomationCommandError> error) {
+    auto keyboardEventsFlushedCallback = [protectedThis = Ref { *this }, callback = WTFMove(callback), page = Ref { *page }](std::optional<AutomationCommandError> error) {
         if (error)
             callback->sendFailure(error.value().toProtocolString());
         else
@@ -2206,7 +2206,7 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 
 #if PLATFORM(GTK)
     Function<void(WebPageProxy&, std::optional<WebCore::IntRect>&&, Ref<TakeScreenshotCallback>&&)> takeViewSnapsot = [](WebPageProxy& page, std::optional<WebCore::IntRect>&& rect, Ref<TakeScreenshotCallback>&& callback) {
-        page.callAfterNextPresentationUpdate([page = makeRef(page), rect = WTFMove(rect), callback = WTFMove(callback)]() mutable {
+        page.callAfterNextPresentationUpdate([page = Ref { page }, rect = WTFMove(rect), callback = WTFMove(callback)]() mutable {
 
             auto snapshot = page->takeViewSnapshot(WTFMove(rect));
             if (!snapshot)
@@ -2225,7 +2225,7 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
         return;
     }
 
-    CompletionHandler<void(std::optional<String>, WebCore::IntRect&&)> completionHandler = [page = makeRef(*page), callback, takeViewSnapsot = WTFMove(takeViewSnapsot)](std::optional<String> errorType, WebCore::IntRect&& rect) mutable {
+    CompletionHandler<void(std::optional<String>, WebCore::IntRect&&)> completionHandler = [page = Ref { *page }, callback, takeViewSnapsot = WTFMove(takeViewSnapsot)](std::optional<String> errorType, WebCore::IntRect&& rect) mutable {
         if (errorType) {
             callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
             return;

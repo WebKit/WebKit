@@ -177,7 +177,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
         return;
     }
 
-    m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
+    m_remoteResourceCache.cacheImageBuffer(*imageBuffer);
     updateRenderingResourceRequest();
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(imageBufferResourceIdentifier))
@@ -490,7 +490,7 @@ void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& han
     if (!image)
         return;
 
-    m_remoteResourceCache.cacheNativeImage(makeRef(*image));
+    m_remoteResourceCache.cacheNativeImage(*image);
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(nativeImageResourceIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);

@@ -219,7 +219,7 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
     if (UNLIKELY(!arguments))
         return false;
 
-    typename T::DelayedReply completionHandler = [replyEncoder = WTFMove(replyEncoder), connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::DelayedReply completionHandler = [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
         logReply(connection, T::name(), args...);
         T::send(WTFMove(replyEncoder), WTFMove(connection), args...);
     };
@@ -236,7 +236,7 @@ bool handleMessageSynchronousWantsConnection(Connection& connection, Decoder& de
     if (UNLIKELY(!arguments))
         return false;
     
-    typename T::DelayedReply completionHandler = [replyEncoder = WTFMove(replyEncoder), connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::DelayedReply completionHandler = [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
         logReply(connection, T::name(), args...);
         T::send(WTFMove(replyEncoder), WTFMove(connection), args...);
     };
@@ -257,7 +257,7 @@ void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& d
     if (UNLIKELY(!arguments))
         return;
 
-    typename T::DelayedReply completionHandler = [syncRequestID, connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::DelayedReply completionHandler = [syncRequestID, connection = Ref { connection }] (auto&&... args) mutable {
         logReply(connection->connection(), T::name(), args...);
         connection->sendSyncReply<T>(syncRequestID, args...);
     };
@@ -278,7 +278,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
     if (UNLIKELY(!arguments))
         return;
 
-    typename T::AsyncReply completionHandler = { [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::AsyncReply completionHandler = { [listenerID = *listenerID, connection = Ref { connection }] (auto&&... args) mutable {
         auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), listenerID);
         logReply(connection, T::name(), args...);
         T::send(WTFMove(encoder), WTFMove(connection), args...);
@@ -300,7 +300,7 @@ void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder,
     if (UNLIKELY(!arguments))
         return;
 
-    typename T::AsyncReply completionHandler = { [listenerID = *listenerID, connection = makeRef(connection)] (auto&&... args) mutable {
+    typename T::AsyncReply completionHandler = { [listenerID = *listenerID, connection = Ref { connection }] (auto&&... args) mutable {
         auto encoder = makeUniqueRef<Encoder>(T::asyncMessageReplyName(), listenerID);
         logReply(connection, T::name(), args...);
         T::send(WTFMove(encoder), WTFMove(connection), args...);

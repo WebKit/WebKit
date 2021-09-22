@@ -98,7 +98,7 @@ void WebInspectorUIExtensionControllerProxy::registerExtension(const Inspector::
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::RegisterExtension { extensionID, displayName }, [strongThis = makeRef(*weakThis.get()), extensionID, completionHandler = WTFMove(completionHandler)](Expected<bool, Inspector::ExtensionError> result) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::RegisterExtension { extensionID, displayName }, [strongThis = Ref { *weakThis.get() }, extensionID, completionHandler = WTFMove(completionHandler)](Expected<bool, Inspector::ExtensionError> result) mutable {
             if (!result) {
                 completionHandler(makeUnexpected(Inspector::ExtensionError::RegistrationFailed));
                 return;
@@ -120,7 +120,7 @@ void WebInspectorUIExtensionControllerProxy::unregisterExtension(const Inspector
             return;
         }
 
-        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::UnregisterExtension { extensionID }, [strongThis = makeRef(*weakThis.get()), extensionID, completionHandler = WTFMove(completionHandler)](Expected<bool, Inspector::ExtensionError> result) mutable {
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::UnregisterExtension { extensionID }, [strongThis = Ref { *weakThis.get() }, extensionID, completionHandler = WTFMove(completionHandler)](Expected<bool, Inspector::ExtensionError> result) mutable {
             if (!result) {
                 completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
                 return;

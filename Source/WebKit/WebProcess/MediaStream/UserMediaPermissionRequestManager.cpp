@@ -74,7 +74,7 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& u
         return;
     }
 
-    m_ongoingUserMediaRequests.add(userRequest.identifier(), makeRef(userRequest));
+    m_ongoingUserMediaRequests.add(userRequest.identifier(), userRequest);
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);

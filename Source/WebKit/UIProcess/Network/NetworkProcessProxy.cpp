@@ -390,9 +390,9 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
             store->addSecKeyProxyStore(WTFMove(newSecKeyProxyStore));
         }
     }
-    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, makeRef(*connection()), WTFMove(secKeyProxyStore));
+    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, *connection(), WTFMove(secKeyProxyStore));
 #else
-    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, makeRef(*connection()), nullptr);
+    auto authenticationChallenge = AuthenticationChallengeProxy::create(WTFMove(coreChallenge), challengeID, *connection(), nullptr);
 #endif
 
     WebPageProxy* page = nullptr;
@@ -1148,7 +1148,7 @@ void NetworkProcessProxy::deleteWebsiteDataInUIProcessForRegistrableDomains(PAL:
         return;
     }
 
-    websiteDataStore->fetchDataForRegistrableDomains(dataTypes, fetchOptions, WTFMove(domains), [dataTypes, websiteDataStore = makeRef(*websiteDataStore), completionHandler = WTFMove(completionHandler)] (Vector<WebsiteDataRecord>&& matchingDataRecords, HashSet<WebCore::RegistrableDomain>&& domainsWithMatchingDataRecords) mutable {
+    websiteDataStore->fetchDataForRegistrableDomains(dataTypes, fetchOptions, WTFMove(domains), [dataTypes, websiteDataStore = Ref { *websiteDataStore }, completionHandler = WTFMove(completionHandler)] (Vector<WebsiteDataRecord>&& matchingDataRecords, HashSet<WebCore::RegistrableDomain>&& domainsWithMatchingDataRecords) mutable {
         websiteDataStore->removeData(dataTypes, WTFMove(matchingDataRecords), [domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords), completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler(WTFMove(domainsWithMatchingDataRecords));
         });

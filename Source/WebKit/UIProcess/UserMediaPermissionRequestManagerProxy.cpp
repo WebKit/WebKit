@@ -237,13 +237,13 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
         m_page.willStartCapture(request, [callback = WTFMove(callback)]() mutable {
             callback(true);
         });
-        m_grantedRequests.append(makeRef(request));
+        m_grantedRequests.append(request);
         return;
     }
 
     auto& userMediaDocumentSecurityOrigin = request.userMediaDocumentSecurityOrigin();
     auto& topLevelDocumentSecurityOrigin = request.topLevelDocumentSecurityOrigin();
-    m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [this, weakThis = makeWeakPtr(*this), request = makeRef(request)](String&&) mutable {
+    m_page.websiteDataStore().deviceIdHashSaltStorage().deviceIdHashSaltForOrigin(userMediaDocumentSecurityOrigin, topLevelDocumentSecurityOrigin, [this, weakThis = makeWeakPtr(*this), request = Ref { request }](String&&) mutable {
         if (!weakThis)
             return;
         finishGrantingRequest(request);
@@ -272,7 +272,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
         return;
     }
 
-    m_page.willStartCapture(request, [this, weakThis = makeWeakPtr(this), strongRequest = makeRef(request)]() mutable {
+    m_page.willStartCapture(request, [this, weakThis = makeWeakPtr(this), strongRequest = Ref { request }]() mutable {
         if (!weakThis)
             return;
 
@@ -386,7 +386,7 @@ bool UserMediaPermissionRequestManagerProxy::wasRequestDenied(const UserMediaPer
 void UserMediaPermissionRequestManagerProxy::updateStoredRequests(UserMediaPermissionRequestProxy& request)
 {
     if (request.requestType() == MediaStreamRequest::Type::UserMedia)
-        m_grantedRequests.append(makeRef(request));
+        m_grantedRequests.append(request);
 
     m_deniedRequests.removeAllMatching([&request](auto& deniedRequest) {
         if (!isMatchingDeniedRequest(request, deniedRequest))

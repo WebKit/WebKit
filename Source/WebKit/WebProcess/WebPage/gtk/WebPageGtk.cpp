@@ -170,7 +170,7 @@ void WebPage::collapseSelectionInFrame(FrameIdentifier frameID)
 
 void WebPage::showEmojiPicker(Frame& frame)
 {
-    CompletionHandler<void(String)> completionHandler = [frame = makeRef(frame)](String result) {
+    CompletionHandler<void(String)> completionHandler = [frame = Ref { frame }](String result) {
         if (!result.isEmpty())
             frame->editor().insertText(result, nullptr);
     };

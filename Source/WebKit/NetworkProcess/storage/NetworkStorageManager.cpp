@@ -44,7 +44,7 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, const Str
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), path = path.isolatedCopy()]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy()]() mutable {
         m_path = path;
         if (!m_path.isEmpty()) {
             auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt");
@@ -114,7 +114,7 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
 void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    m_queue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_localOriginStorageManagers.clear();
         m_sessionOriginStorageManagers.clear();
 

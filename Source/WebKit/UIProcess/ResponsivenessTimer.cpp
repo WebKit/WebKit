@@ -68,7 +68,7 @@ void ResponsivenessTimer::timerFired()
     if (!m_isResponsive)
         return;
 
-    auto protectedClient = makeRef(m_client);
+    Ref protectedClient { m_client };
 
     if (!mayBecomeUnresponsive()) {
         m_waitingForTimer = true;
@@ -135,7 +135,7 @@ void ResponsivenessTimer::startWithLazyStop()
 void ResponsivenessTimer::stop()
 {
     if (!m_isResponsive) {
-        auto protectedClient = makeRef(m_client);
+        Ref protectedClient { m_client };
 
         // We got a life sign from the web process.
         m_client.willChangeIsResponsive();

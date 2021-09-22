@@ -572,7 +572,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
 
 void WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem(const URL& imageURL, Ref<ShareableBitmap>&& imageBitmap, std::optional<WebContextMenuItemData>&& quickLookItemToInsertIfNeeded, bool shouldUpdateQuickLookItemTitle)
 {
-    auto page = makeRef(*this->page());
+    Ref page = *this->page();
     if (quickLookItemToInsertIfNeeded) {
         page->computeHasImageAnalysisResults(imageURL, imageBitmap.get(), ImageAnalysisType::VisualSearch, [weakThis = makeWeakPtr(*this), quickLookItemToInsertIfNeeded = WTFMove(*quickLookItemToInsertIfNeeded)] (bool hasVisualSearchResults) mutable {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && hasVisualSearchResults) {

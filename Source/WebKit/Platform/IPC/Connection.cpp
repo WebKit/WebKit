@@ -185,7 +185,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     }
 
     if (shouldDispatch) {
-        RunLoop::main().dispatch([this, protectedConnection = makeRef(connection)]() mutable {
+        RunLoop::main().dispatch([this, protectedConnection = Ref { connection }]() mutable {
             dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(protectedConnection);
         });
     }

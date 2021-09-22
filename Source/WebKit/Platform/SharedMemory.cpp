@@ -52,7 +52,7 @@ Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
 {
     ASSERT(dataSize <= size());
     return SharedBuffer::create({
-        [protectedThis = makeRef(*this)] () -> const uint8_t* {
+        [protectedThis = Ref { *this }] () -> const uint8_t* {
             return static_cast<const uint8_t*>(protectedThis->data());
         },
         [dataSize] () -> size_t {

@@ -84,7 +84,7 @@ static void doReleaseLogging(rtc::LoggingSeverity severity, const char* message)
 
 NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection)
     : m_connection(&connection)
-    , m_ipcConnection(makeRef(connection.connection()))
+    , m_ipcConnection(connection.connection())
     , m_rtcMonitor(*this)
     , m_rtcNetworkThread(rtcNetworkThread())
     , m_packetSocketFactory(makeUniqueRefWithoutFastMallocCheck<rtc::BasicPacketSocketFactory>(&m_rtcNetworkThread))

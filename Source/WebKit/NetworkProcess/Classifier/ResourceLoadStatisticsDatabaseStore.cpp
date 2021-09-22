@@ -551,7 +551,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
     }
 
     if (!unattributed.isEmpty() || !attributed.isEmpty()) {
-        RunLoop::main().dispatch([store = makeRef(store()), unattributed = unattributed.isolatedCopy(), attributed = attributed.isolatedCopy()] () mutable {
+        RunLoop::main().dispatch([store = Ref { store() }, unattributed = unattributed.isolatedCopy(), attributed = attributed.isolatedCopy()] () mutable {
             auto* networkSession = store->networkSession();
             if (!networkSession)
                 return;
@@ -1287,7 +1287,7 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain&
         completionHandler(false);
         return;
     case CookieAccess::BasedOnCookiePolicy:
-        RunLoop::main().dispatch([store = makeRef(store()), subFrameDomain = subFrameDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([store = Ref { store() }, subFrameDomain = subFrameDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->hasCookies(subFrameDomain, [store, completionHandler = WTFMove(completionHandler)](bool result) mutable {
                 store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
                     completionHandler(result);
@@ -1300,7 +1300,7 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain&
         break;
     };
 
-    RunLoop::main().dispatch([store = makeRef(store()), subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([store = Ref { store() }, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
         store->callHasStorageAccessForFrameHandler(subFrameDomain, topFrameDomain, frameID.value(), pageID, [store, completionHandler = WTFMove(completionHandler)](bool result) mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
                 completionHandler(result);
@@ -1438,7 +1438,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDom
         setUserInteraction(subFrameDomain, true, WallTime::now());
     }
 
-    RunLoop::main().dispatch([subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, store = makeRef(store()), scope, completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, store = Ref { store() }, scope, completionHandler = WTFMove(completionHandler)]() mutable {
         store->callGrantStorageAccessHandler(subFrameDomain, topFrameDomain, frameID, pageID, scope, [completionHandler = WTFMove(completionHandler), store](StorageAccessWasGranted wasGranted) mutable {
             store->statisticsQueue().dispatch([wasGranted, completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(wasGranted);
@@ -2268,7 +2268,7 @@ void ResourceLoadStatisticsDatabaseStore::updateCookieBlocking(CompletionHandler
     if (debugLoggingEnabled() && (!domainsToBlockAndDeleteCookiesFor.isEmpty() || !domainsToBlockButKeepCookiesFor.isEmpty()))
         debugLogDomainsInBatches("Applying cross-site tracking restrictions", domainsToBlock);
 
-    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = makeRef(store()), domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
+    RunLoop::main().dispatch([weakThis = makeWeakPtr(*this), store = Ref { store() }, domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
         store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store, completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();

@@ -3734,7 +3734,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
     }
 #endif
 
-    auto resolveFunction = [world = makeRef(*world), frame = Ref { *frame }, coreFrame = Ref { *frame->coreFrame() }, completionHandler = WTFMove(completionHandler)] (ValueOrException result) mutable {
+    auto resolveFunction = [world = Ref { *world }, frame = Ref { *frame }, coreFrame = Ref { *frame->coreFrame() }, completionHandler = WTFMove(completionHandler)] (ValueOrException result) mutable {
         RefPtr<SerializedScriptValue> serializedResultValue;
         if (result) {
             serializedResultValue = SerializedScriptValue::create(frame->jsContextForWorld(world.ptr()),
@@ -7047,7 +7047,7 @@ void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDo
 
 void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, StorageAccessScope scope, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), frame = makeRef(frame), pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), frame = Ref { frame }, pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
         if (result.wasGranted == StorageAccessWasGranted::Yes) {
             switch (result.scope) {
             case StorageAccessScope::PerFrame:
@@ -7465,7 +7465,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
         return;
     }
 
-    auto htmlElement = makeRef(downcast<HTMLElement>(element));
+    Ref htmlElement = downcast<HTMLElement>(element);
     if (corePage()->hasCachedTextRecognitionResult(htmlElement.get())) {
         if (completion) {
             RefPtr<Element> imageOverlayHost;

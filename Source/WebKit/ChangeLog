@@ -1,3 +1,222 @@
+2021-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop makeRef() and use Ref { } instead
+        https://bugs.webkit.org/show_bug.cgi?id=230626
+
+        Reviewed by Alex Christensen.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::cacheNativeImage):
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::createH264Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createH265Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createVP9Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::ResourceLoadStatisticsStore::updateCacheMaxAgeCap):
+        (WebKit::ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap):
+        (WebKit::ResourceLoadStatisticsStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsStore::logTestingEvent):
+        (WebKit::ResourceLoadStatisticsStore::removeAllStorageAccess):
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        (WebKit::WebIDBConnectionToClient::WebIDBConnectionToClient):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::SessionStorageQuotaManager::ensureOriginStorageQuotaManager):
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::initialize):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        (WebKit::PCM::Store::Store):
+        (WebKit::PCM::Store::insertPrivateClickMeasurement):
+        (WebKit::PCM::Store::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting):
+        (WebKit::PCM::Store::attributePrivateClickMeasurement):
+        (WebKit::PCM::Store::privateClickMeasurementToStringForTesting const):
+        (WebKit::PCM::Store::allAttributedPrivateClickMeasurement):
+        (WebKit::PCM::Store::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+        (WebKit::PCM::Store::clearPrivateClickMeasurement):
+        (WebKit::PCM::Store::clearPrivateClickMeasurementForRegistrableDomain):
+        (WebKit::PCM::Store::clearExpiredPrivateClickMeasurement):
+        (WebKit::PCM::Store::clearSentAttribution):
+        (WebKit::PCM::Store::close):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadWithCacheEntry):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::from):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::open):
+        (WebKit::CacheStorage::Cache::retrieveRecord):
+        (WebKit::CacheStorage::Cache::retrieveRecords):
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::updateRecordToDisk):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initializeSize):
+        (WebKit::CacheStorage::Caches::readRecordsList):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        (WebKit::CacheStorage::Caches::readRecord):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::retrieve):
+        * NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp:
+        (WebKit::NetworkCache::IOChannel::readSyncInThread):
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::NetworkStorageManager::clearStorageForTesting):
+        * NetworkProcess/webrtc/NetworkMDNSRegister.cpp:
+        (WebKit::NetworkMDNSRegister::registerMDNSName):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        * NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm:
+        (WebKit::NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa):
+        * NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm:
+        (WebKit::NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::processIncomingMessage):
+        * Platform/IPC/HandleMessage.h:
+        (IPC::handleMessageSynchronous):
+        (IPC::handleMessageSynchronousWantsConnection):
+        (IPC::handleMessageAsync):
+        (IPC::handleMessageAsyncWantsConnection):
+        * Platform/IPC/MessageReceiveQueues.h:
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnection<Receiver>::startReceivingMessages):
+        * Platform/SharedMemory.cpp:
+        (WebKit::SharedMemory::createSharedBuffer const):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateSceneState):
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::~CompositingRunLoop):
+        * UIProcess/API/APIContentWorld.cpp:
+        (API::ContentWorld::sharedWorldWithName):
+        * UIProcess/API/Cocoa/WKDownload.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _frames:]):
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload cancel]):
+        * UIProcess/API/glib/WebKitDownload.cpp:
+        (webkit_download_cancel):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getBrowsingContext):
+        (WebKit::WebAutomationSession::switchToBrowsingContext):
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog):
+        (WebKit::WebAutomationSession::simulateMouseInteraction):
+        (WebKit::WebAutomationSession::simulateWheelInteraction):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::takeScreenshot):
+        * UIProcess/BackgroundProcessResponsivenessTimer.cpp:
+        (WebKit::BackgroundProcessResponsivenessTimer::setResponsive):
+        * UIProcess/Cocoa/LegacyDownloadClient.mm:
+        (WebKit::LegacyDownloadClient::didReceiveAuthenticationChallenge):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingWarning:completionHandler:]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::beginSafeBrowsingCheck):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::registerExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::unregisterExtension):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataInUIProcessForRegistrableDomains):
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::callObserverCallback):
+        * UIProcess/ResponsivenessTimer.cpp:
+        (WebKit::ResponsivenessTimer::timerFired):
+        (WebKit::ResponsivenessTimer::stop):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::grantRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::finishGrantingRequest):
+        (WebKit::UserMediaPermissionRequestManagerProxy::updateStoredRequests):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::handleSynchronousMessage):
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createSpeechRecognitionServer):
+        (WebKit::WebProcessProxy::ensureSpeechRecognitionRemoteRealtimeMediaSourceManager):
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::WebURLSchemeTask):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::beginAppBoundDomainCheck):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::networkProcessForSession):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::insertOrUpdateQuickLookImageItem):
+        * WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp:
+        (WebKit::MediaKeySystemPermissionRequestManager::sendMediaKeySystemRequest):
+        * WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp:
+        (WebKit::RemoteResourceCacheProxy::recordFontUse):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThreadWithLock):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::MediaRecorderPrivate):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::sendUserMediaRequest):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+        (WebKit::WebLoaderStrategy::schedulePluginStreamLoad):
+        * WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp:
+        (WebKit::LibWebRTCNetworkManager::StartUpdating):
+        (WebKit::LibWebRTCNetworkManager::networksChanged):
+        (WebKit::LibWebRTCNetworkManager::networkProcessCrashed):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::cancelAndForgetLoader):
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::createSource):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPC::visitedLinkStoreID):
+        (WebKit::IPCTestingAPI::JSMessageListener::didReceiveMessage):
+        (WebKit::IPCTestingAPI::JSMessageListener::willSendMessage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::requestStorageAccess):
+        (WebKit::WebPage::requestTextRecognition):
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::showEmojiPicker):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+        (WebKit::isObscuredElement):
+        (WebKit::elementPositionInformation):
+        (WebKit::WebPage::focusTextInputContextAndPlaceCaret):
+        (WebKit::WebPage::animationDidFinishForElement):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition):
+        (WebKit::TiledCoreAnimationDrawingArea::handleActivityStateChangeCallbacksIfNeeded):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureSpeechRecognitionRealtimeMediaSourceManager):
+
 2021-09-22  Brady Eidson  <beidson@apple.com>
 
         Disable FTP.

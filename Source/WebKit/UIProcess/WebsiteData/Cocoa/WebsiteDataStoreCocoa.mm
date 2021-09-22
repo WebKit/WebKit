@@ -534,7 +534,7 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const String& host, const String
 {
     ASSERT(RunLoop::isMain());
 
-    ensureAppBoundDomains([&host, &protocol, listener = makeRef(listener)] (auto& domains, auto& schemes) mutable {
+    ensureAppBoundDomains([&host, &protocol, listener = Ref { listener }] (auto& domains, auto& schemes) mutable {
         // Must check for both an empty app bound domains list and an empty key before returning nullopt
         // because test cases may have app bound domains but no key.
         bool hasAppBoundDomains = keyExists || !domains.isEmpty();

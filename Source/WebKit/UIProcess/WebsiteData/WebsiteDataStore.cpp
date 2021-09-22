@@ -198,7 +198,7 @@ static Ref<NetworkProcessProxy> networkProcessForSession(PAL::SessionID sessionI
         // Reuse a previous persistent session network process for ephemeral sessions.
         for (auto* dataStore : allDataStores().values()) {
             if (dataStore->isPersistent())
-                return makeRef(dataStore->networkProcess());
+                return dataStore->networkProcess();
         }
     }
     return NetworkProcessProxy::create();

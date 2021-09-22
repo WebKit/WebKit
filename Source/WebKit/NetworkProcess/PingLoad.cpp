@@ -81,7 +81,7 @@ void PingLoad::initialize(NetworkProcess& networkProcess)
     // Set a very generous timeout, just in case.
     m_timeoutTimer.startOneShot(60000_s);
 
-    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this, weakThis = makeWeakPtr(*this), networkProcess = makeRef(networkProcess)] (auto&& result) {
+    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this, weakThis = makeWeakPtr(*this), networkProcess = Ref { networkProcess }] (auto&& result) {
         if (!weakThis)
             return;
         WTF::switchOn(result,
