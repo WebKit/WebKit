@@ -3391,9 +3391,6 @@ fast/events/touch/ios/long-press-then-drag-to-select-text.html  [ Failure ]
 # rdar://80386061 ([ iOS15 ] fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ])
 fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html [ Failure ]
 
-# rdar://80392559 ([ iOS15 ] fast/text/simple-line-layout-do-not-support-unicode-range.html is a constant failure)
-fast/text/simple-line-layout-do-not-support-unicode-range.html [ ImageOnlyFailure ]
-
 # rdar://80392665 ([ iOS15 ] fast/text/simple-line-wordspacing.html is a constant failure)
 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 

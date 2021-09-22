@@ -1,3 +1,17 @@
+2021-09-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add fallback font support
+        https://bugs.webkit.org/show_bug.cgi?id=228685
+        <rdar://problem/81661514>
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForText):
+        (WebCore::LayoutIntegration::canUseForFontAndText):
+        * layout/integration/LayoutIntegrationCoverage.h:
+
 2021-09-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Remove ALLOW_ coverage defines

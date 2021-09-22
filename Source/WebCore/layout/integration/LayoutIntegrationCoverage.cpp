@@ -161,9 +161,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowIsMissingPrimaryFont:
         stream << "missing primary font";
         break;
-    case AvoidanceReason::FlowPrimaryFontIsInsufficient:
-        stream << "missing glyph or glyph needs another font";
-        break;
     case AvoidanceReason::FlowTextIsCombineText:
         stream << "text is combine";
         break;
@@ -381,41 +378,27 @@ static void printModernLineLayoutCoverage(void)
 }
 #endif
 
-static OptionSet<AvoidanceReason> canUseForText(StringView text, const FontCascade& fontCascade, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForText(StringView text, IncludeReasons includeReasons)
 {
+    if (text.is8Bit())
+        return { };
+
     OptionSet<AvoidanceReason> reasons;
-    auto& primaryFont = fontCascade.primaryFont();
     auto length = text.length();
+    size_t position = 0;
+    while (position < length) {
+        UChar32 character;
+        U16_NEXT(text.characters16(), position, length, character);
 
-    auto glpyhIsInPrimaryFont = [&](auto character) {
-        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-        return glyphData.isValid() && glyphData.font == &primaryFont;
-    };
-
-    if (text.is8Bit()) {
-        for (size_t i = 0; i < length; ++i) {
-            if (!glpyhIsInPrimaryFont(text[i]))
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
-        }
-    } else {
-        size_t position = 0;
-        while (position < length) {
-            UChar32 character;
-            U16_NEXT(text.characters16(), position, length, character);
-
-            if (!glpyhIsInPrimaryFont(character))
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowPrimaryFontIsInsufficient, reasons, includeReasons);
-
-            auto isRTLDirectional = [&](auto character) {
-                auto direction = u_charDirection(character);
-                return direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
-                    || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
-                    || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
-                    || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL;
-            };
-            if (isRTLDirectional(character))
-                SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
-        }
+        auto isRTLDirectional = [&](auto character) {
+            auto direction = u_charDirection(character);
+            return direction == U_RIGHT_TO_LEFT || direction == U_RIGHT_TO_LEFT_ARABIC
+                || direction == U_RIGHT_TO_LEFT_EMBEDDING || direction == U_RIGHT_TO_LEFT_OVERRIDE
+                || direction == U_LEFT_TO_RIGHT_EMBEDDING || direction == U_LEFT_TO_RIGHT_OVERRIDE
+                || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL;
+        };
+        if (isRTLDirectional(character))
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowTextHasDirectionCharacter, reasons, includeReasons);
     }
     return { };
 }
@@ -452,7 +435,7 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
         }
 
-        auto textReasons = canUseForText(textRenderer.stringView(), fontCascade, includeReasons);
+        auto textReasons = canUseForText(textRenderer.stringView(), includeReasons);
         if (textReasons)
             ADD_REASONS_AND_RETURN_IF_NEEDED(textReasons, reasons, includeReasons);
     }

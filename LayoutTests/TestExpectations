@@ -3701,6 +3701,9 @@ webgl/2.0.0/conformance/misc/invalid-passed-params.html [ Skip ]
 # pre-wrap progression. Other rendering engines agree with the result.
 webkit.org/b/206168 [ Debug ] fast/dom/insert-span-into-long-text-bug-28245.html [ Skip ]
 
+# needs support in IFC
+webkit.org/b/230593 fast/inline/kerning-across-inline-boxes.html [ Skip ]
+
 webkit.org/b/206676 imported/w3c/web-platform-tests/requestidlecallback/callback-xhr-sync.html [ Pass Failure ]
 
 # wpt intersection-observer failures
