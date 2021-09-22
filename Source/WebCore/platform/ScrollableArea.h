@@ -360,7 +360,7 @@ protected:
 
     friend class ScrollingCoordinator;
     virtual GraphicsLayer* layerForScrollCorner() const { return nullptr; }
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     virtual GraphicsLayer* layerForOverhangAreas() const { return nullptr; }
 #endif
 

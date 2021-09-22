@@ -45,10 +45,8 @@ public:
 private:
     bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>) final;
 
-#if ENABLE(RUBBER_BANDING)
     bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&) const;
     bool handleWheelEvent(const PlatformWheelEvent&) final;
-#endif
 
     bool platformAllowsScrollAnimation() const;
 
@@ -65,7 +63,6 @@ private:
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&) final;
 
     // ScrollingEffectsControllerClient.
-#if ENABLE(RUBBER_BANDING)
     IntSize stretchAmount() const final;
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
@@ -77,7 +74,6 @@ private:
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
     void immediateScrollBy(const FloatSize&) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
-#endif
 };
 
 } // namespace WebCore

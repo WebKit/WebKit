@@ -1838,7 +1838,7 @@ RequiresUserGestureToLoadVideo:
 
 RubberBandingForSubScrollableRegionsEnabled:
   type: bool
-  condition: ENABLE(RUBBER_BANDING)
+  condition: HAVE(RUBBER_BANDING)
   defaultValue:
     WebKitLegacy:
       default: false

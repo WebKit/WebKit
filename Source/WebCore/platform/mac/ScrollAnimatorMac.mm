@@ -57,7 +57,6 @@ bool ScrollAnimatorMac::platformAllowsScrollAnimation() const
     return enabled;
 }
 
-#if ENABLE(RUBBER_BANDING)
 static bool rubberBandingEnabledForSystem()
 {
     static bool initialized = false;
@@ -73,7 +72,6 @@ static bool rubberBandingEnabledForSystem()
     }
     return enabled;
 }
-#endif
 
 bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, OptionSet<ScrollBehavior> behavior)
 {
@@ -109,11 +107,7 @@ bool ScrollAnimatorMac::isUserScrollInProgress() const
 
 bool ScrollAnimatorMac::isRubberBandInProgress() const
 {
-#if !ENABLE(RUBBER_BANDING)
-    return false;
-#else
     return m_scrollController.isRubberBandInProgress();
-#endif
 }
 
 bool ScrollAnimatorMac::isScrollSnapInProgress() const
@@ -139,8 +133,6 @@ void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
     else if (phase == PlatformWheelEventPhase::MayBegin)
         m_scrollableArea.scrollbarsController().mayBeginScrollGesture();
 }
-
-#if ENABLE(RUBBER_BANDING)
 
 bool ScrollAnimatorMac::shouldForwardWheelEventsToParent(const PlatformWheelEvent& wheelEvent) const
 {
@@ -288,7 +280,6 @@ void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
 
     setCurrentPosition(newPosition, NotifyScrollableArea::Yes);
 }
-#endif
 
 bool ScrollAnimatorMac::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
 {

@@ -1228,7 +1228,7 @@ void WebChromeClient::disableSuddenTermination()
 
 void WebChromeClient::didAddHeaderLayer(GraphicsLayer& headerParent)
 {
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     if (PageBanner* banner = m_page.headerPageBanner())
         banner->didAddParentLayer(&headerParent);
 #else
@@ -1238,7 +1238,7 @@ void WebChromeClient::didAddHeaderLayer(GraphicsLayer& headerParent)
 
 void WebChromeClient::didAddFooterLayer(GraphicsLayer& footerParent)
 {
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     if (PageBanner* banner = m_page.footerPageBanner())
         banner->didAddParentLayer(&footerParent);
 #else

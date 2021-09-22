@@ -1,3 +1,63 @@
+2021-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Change from ENABLE(RUBBER_BANDING) to HAVE(RUBBER_BANDING)
+        https://bugs.webkit.org/show_bug.cgi?id=230583
+
+        Reviewed by Tim Horton.
+
+        RUBBER_BANDING is not a feature we'll ever turn off on macOS, and it was only ever enabled
+        for that platform. However, it's also used in some cross-platform code, so
+        HAVE(RUBBER_BANDING) makes more sense for that use.
+
+        Also remove ENABLE(RUBBER_BANDING) #ifdefs from inside PLATFORM(MAC) code.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::isScrollable):
+        (WebCore::FrameView::handleWheelEventForScrolling):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setUnderPageBackgroundColorOverride):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::headerLayerForFrameView):
+        (WebCore::ScrollingCoordinator::footerLayerForFrameView):
+        (WebCore::ScrollingCoordinator::contentShadowLayerForFrameView):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollPositionIsNotRubberbandingEdge const):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::paint):
+        * platform/ScrollableArea.h:
+        * platform/ScrollbarTheme.h:
+        * platform/ScrollingEffectsController.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::updateCustomAppearance):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::rubberBandingEnabledForSystem):
+        (WebCore::ScrollAnimatorMac::isRubberBandInProgress const):
+        (WebCore::ScrollAnimatorMac::immediateScrollBy):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::updateRubberBandAnimatingState):
+        (WebCore::ScrollingEffectsController::scrollPositionChanged):
+        (WebCore::ScrollingEffectsController::isRubberBandInProgress const):
+        (WebCore::ScrollingEffectsController::stopRubberbanding):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::~RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::destroyRootLayer):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::isRubberBandInProgress const):
+        (WebCore::RenderLayerScrollableArea::overhangAmount const):
+        (WebCore::RenderLayerScrollableArea::setHasHorizontalScrollbar):
+        (WebCore::RenderLayerScrollableArea::setHasVerticalScrollbar):
+
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete dead code in FontPaletteValues

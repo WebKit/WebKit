@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarTheme_h
-#define ScrollbarTheme_h
+#pragma once
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
@@ -37,7 +36,7 @@ class ScrollableArea;
 class Scrollbar;
 class ScrollView;
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
 class GraphicsLayer;
 #endif
 
@@ -91,7 +90,7 @@ public:
     virtual void paintTickmarks(GraphicsContext&, Scrollbar&, const IntRect&) { }
     virtual void paintOverhangAreas(ScrollView&, GraphicsContext&, const IntRect&, const IntRect&, const IntRect&) { }
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     virtual void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) { }
     virtual void setUpContentShadowLayer(GraphicsLayer*) { }
 #endif
@@ -121,4 +120,3 @@ private:
 };
 
 }
-#endif

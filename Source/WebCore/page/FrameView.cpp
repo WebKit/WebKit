@@ -193,7 +193,7 @@ FrameView::FrameView(Frame& frame)
 {
     init();
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     ScrollElasticity verticalElasticity = ScrollElasticityNone;
     ScrollElasticity horizontalElasticity = ScrollElasticityNone;
     if (m_frame->isMainFrame()) {
@@ -887,7 +887,7 @@ ScrollableArea* FrameView::scrollableAreaForScrollingNodeID(ScrollingNodeID node
     return renderView->compositor().scrollableAreaForScrollingNodeID(nodeID);
 }
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
 GraphicsLayer* FrameView::layerForOverhangAreas() const
 {
     RenderView* renderView = this->renderView();
@@ -914,7 +914,7 @@ GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) co
     return renderView->compositor().updateLayerForBottomOverhangArea(wantsLayer);
 }
 
-#endif // ENABLE(RUBBER_BANDING)
+#endif // HAVE(RUBBER_BANDING)
 
 void FrameView::updateSnapOffsets()
 {
@@ -3890,7 +3890,7 @@ bool FrameView::isScrollable(Scrollability definitionOfScrollable)
         return false;
 
     bool requiresActualOverflowToBeConsideredScrollable = !frame().isMainFrame() || definitionOfScrollable != Scrollability::ScrollableOrRubberbandable;
-#if !ENABLE(RUBBER_BANDING)
+#if !HAVE(RUBBER_BANDING)
     requiresActualOverflowToBeConsideredScrollable = true;
 #endif
 
@@ -5160,7 +5160,7 @@ bool FrameView::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEven
 {
     // Note that to allow for rubber-band over-scroll behavior, even non-scrollable views
     // should handle wheel events.
-#if !ENABLE(RUBBER_BANDING)
+#if !HAVE(RUBBER_BANDING)
     if (!isScrollable())
         return false;
 #endif

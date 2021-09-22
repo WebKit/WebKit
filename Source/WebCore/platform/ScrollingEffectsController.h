@@ -77,7 +77,7 @@ public:
     virtual void updateKeyboardScrollPosition(MonotonicTime) { }
     virtual KeyboardScrollingAnimator *keyboardScrollingAnimator() const { return nullptr; }
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
     virtual IntSize stretchAmount() const = 0;
@@ -158,7 +158,7 @@ public:
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     void stopRubberbanding();
     bool isRubberBandInProgress() const;
     RectEdges<bool> rubberBandingEdges() const { return m_rubberBandingEdges; }
@@ -186,7 +186,7 @@ private:
     void startDeferringWheelEventTestCompletionDueToScrollSnapping();
     void stopDeferringWheelEventTestCompletionDueToScrollSnapping();
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     void startRubberbandAnimation();
     void stopSnapRubberbandAnimation();
 
@@ -224,7 +224,7 @@ private:
     FloatSize m_dragEndedScrollingVelocity;
     std::unique_ptr<ScrollingEffectsControllerTimer> m_statelessSnapTransitionTimer;
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     // Rubber band state.
     MonotonicTime m_startTime;
     FloatSize m_startStretch;

@@ -123,7 +123,6 @@ void ScrollingTreeScrollingNodeDelegateMac::willDoProgrammaticScroll(const Float
 
 bool ScrollingTreeScrollingNodeDelegateMac::scrollPositionIsNotRubberbandingEdge(const FloatPoint& targetPosition) const
 {
-#if ENABLE(RUBBER_BANDING)
     if (!m_scrollController.isRubberBandInProgress())
         return false;
 
@@ -155,9 +154,6 @@ bool ScrollingTreeScrollingNodeDelegateMac::scrollPositionIsNotRubberbandingEdge
             break;
         }
     }
-#else
-    UNUSED_PARAM(targetPosition);
-#endif
     return false;
 }
 

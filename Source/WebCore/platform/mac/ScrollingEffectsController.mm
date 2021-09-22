@@ -38,11 +38,9 @@
 
 namespace WebCore {
 
-#if ENABLE(RUBBER_BANDING)
 static const Seconds scrollVelocityZeroingTimeout = 100_ms;
 static const float rubberbandDirectionLockStretchRatio = 1;
 static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
-#endif
 
 static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, Seconds elapsedTime)
 {
@@ -362,7 +360,6 @@ std::optional<ScrollDirection> ScrollingEffectsController::directionFromEvent(co
     return std::nullopt;
 }
 
-#if ENABLE(RUBBER_BANDING)
 static inline float roundTowardZero(float num)
 {
     return num > 0 ? ceilf(num - 0.5f) : floorf(num + 0.5f);
@@ -435,13 +432,10 @@ void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime cu
 
     updateRubberBandingState();
 }
-#endif
 
 void ScrollingEffectsController::scrollPositionChanged()
 {
-#if ENABLE(RUBBER_BANDING)
     updateRubberBandingState();
-#endif
 }
 
 bool ScrollingEffectsController::isUserScrollInProgress() const
@@ -451,11 +445,7 @@ bool ScrollingEffectsController::isUserScrollInProgress() const
 
 bool ScrollingEffectsController::isRubberBandInProgress() const
 {
-#if ENABLE(RUBBER_BANDING)
     return m_isRubberBanding;
-#else
-    return false;
-#endif
 }
 
 bool ScrollingEffectsController::isScrollSnapInProgress() const
@@ -471,17 +461,14 @@ bool ScrollingEffectsController::isScrollSnapInProgress() const
 
 void ScrollingEffectsController::stopRubberbanding()
 {
-#if ENABLE(RUBBER_BANDING)
     stopSnapRubberbandAnimation();
     m_stretchScrollForce = { };
     m_startTime = { };
     m_startStretch = { };
     m_origVelocity = { };
     updateRubberBandingState();
-#endif
 }
 
-#if ENABLE(RUBBER_BANDING)
 void ScrollingEffectsController::startRubberbandAnimation()
 {
     m_client.willStartRubberBandSnapAnimation();
@@ -561,8 +548,6 @@ void ScrollingEffectsController::updateRubberBandingEdges(IntSize clientStretch)
     m_rubberBandingEdges.setTop(clientStretch.height() < 0);
     m_rubberBandingEdges.setBottom(clientStretch.height() > 0);
 }
-
-#endif // ENABLE(RUBBER_BANDING)
 
 enum class WheelEventStatus {
     UserScrollBegin,

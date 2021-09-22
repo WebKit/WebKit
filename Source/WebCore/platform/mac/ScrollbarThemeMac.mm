@@ -578,7 +578,7 @@ void ScrollbarThemeMac::paintScrollCorner(ScrollableArea&, GraphicsContext& cont
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
 static RetainPtr<CGColorRef> linenBackgroundColor()
 {
     NSImage *image = nil;

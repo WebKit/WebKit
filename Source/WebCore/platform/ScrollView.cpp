@@ -1300,7 +1300,7 @@ void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOr
         paintContents(context, documentDirtyRect, securityOriginPaintPolicy, eventRegionContext);
     }
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     if (!layerForOverhangAreas())
         calculateAndPaintOverhangAreas(context, rect);
 #else

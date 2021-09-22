@@ -1,3 +1,22 @@
+2021-09-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Change from ENABLE(RUBBER_BANDING) to HAVE(RUBBER_BANDING)
+        https://bugs.webkit.org/show_bug.cgi?id=230583
+
+        Reviewed by Tim Horton.
+
+        RUBBER_BANDING is not a feature we'll ever turn off on macOS, and it was only ever enabled
+        for that platform. However, it's also used in some cross-platform code, so
+        HAVE(RUBBER_BANDING) makes more sense for that use.
+
+        Also remove ENABLE(RUBBER_BANDING) #ifdefs from inside PLATFORM(MAC) code.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::updateCustomAppearance):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didAddHeaderLayer):
+        (WebKit::WebChromeClient::didAddFooterLayer):
+
 2021-09-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         [PlayStation] Unreviewed build fix (second attempt).

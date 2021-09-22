@@ -2619,14 +2619,14 @@ void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorO
 
     scheduleRenderingUpdate({ });
 
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     if (RefPtr frameView = mainFrame().view()) {
         if (auto* renderView = frameView->renderView()) {
             if (renderView->usesCompositing())
                 renderView->compositor().updateLayerForOverhangAreasBackgroundColor();
         }
     }
-#endif // ENABLE(RUBBER_BANDING)
+#endif // HAVE(RUBBER_BANDING)
 }
 
 // These are magical constants that might be tweaked over time.

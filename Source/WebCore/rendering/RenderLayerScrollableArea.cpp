@@ -180,7 +180,7 @@ bool RenderLayerScrollableArea::isUserScrollInProgress() const
 
 bool RenderLayerScrollableArea::isRubberBandInProgress() const
 {
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     if (!scrollsOverflow())
         return false;
 
@@ -512,7 +512,7 @@ IntRect RenderLayerScrollableArea::visibleContentRectInternal(VisibleContentRect
 
 IntSize RenderLayerScrollableArea::overhangAmount() const
 {
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     auto& renderer = m_layer.renderer();
     if (!renderer.settings().rubberBandingForSubScrollableRegionsEnabled())
         return IntSize();
@@ -854,14 +854,14 @@ void RenderLayerScrollableArea::setHasHorizontalScrollbar(bool hasScrollbar)
 
     if (hasScrollbar) {
         m_hBar = createScrollbar(HorizontalScrollbar);
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
         auto& renderer = m_layer.renderer();
         ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone;
         ScrollableArea::setHorizontalScrollElasticity(elasticity);
 #endif
     } else {
         destroyScrollbar(HorizontalScrollbar);
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityNone);
 #endif
     }
@@ -880,14 +880,14 @@ void RenderLayerScrollableArea::setHasVerticalScrollbar(bool hasScrollbar)
 
     if (hasScrollbar) {
         m_vBar = createScrollbar(VerticalScrollbar);
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
         auto& renderer = m_layer.renderer();
         ScrollElasticity elasticity = scrollsOverflow() && renderer.settings().rubberBandingForSubScrollableRegionsEnabled() ? ScrollElasticityAutomatic : ScrollElasticityNone;
         ScrollableArea::setVerticalScrollElasticity(elasticity);
 #endif
     } else {
         destroyScrollbar(VerticalScrollbar);
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
         ScrollableArea::setVerticalScrollElasticity(ScrollElasticityNone);
 #endif
     }

@@ -127,7 +127,7 @@ static NSString *toCAFilterType(PlatformCALayer::FilterType type)
 
 static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearance customAppearance)
 {
-#if ENABLE(RUBBER_BANDING)
+#if HAVE(RUBBER_BANDING)
     switch (customAppearance) {
     case GraphicsLayer::CustomAppearance::None:
     case GraphicsLayer::CustomAppearance::DarkBackdrop:
