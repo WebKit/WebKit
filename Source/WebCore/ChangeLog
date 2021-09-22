@@ -1,3 +1,16 @@
+2021-09-22  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        RenderBox is a RenderElement which can have image updates from style changes. We should call
+        the base class imageChanged method and handle image changes appropriately in RenderListMarker.
+        https://bugs.webkit.org/show_bug.cgi?id=230431
+
+        Reviewed by Darin Adler.
+
+        Test: fast/lists/list-marker-image-changed.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::imageChanged):
+
 2021-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ENABLE(SMOOTH_SCROLLING)

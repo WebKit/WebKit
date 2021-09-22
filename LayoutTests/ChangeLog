@@ -1,3 +1,13 @@
+2021-09-22  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        RenderListMarker::imageChanged RenderBox image handling
+        https://bugs.webkit.org/show_bug.cgi?id=230431
+
+        Reviewed by Darin Adler.
+
+        * fast/lists/list-marker-image-changed-expected.txt: Added.
+        * fast/lists/list-marker-image-changed.html: Added.
+
 2021-09-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Switch runtime to 21.08 SDK

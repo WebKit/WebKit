@@ -1797,16 +1797,15 @@ void RenderListMarker::layout()
     clearNeedsLayout();
 }
 
-void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect*)
+void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
 {
-    // A list marker can't have a background or border image, so no need to call the base class method.
-    if (o != m_image->data())
-        return;
-
-    if (width() != m_image->imageSize(this, style().effectiveZoom()).width() || height() != m_image->imageSize(this, style().effectiveZoom()).height() || m_image->errorOccurred())
-        setNeedsLayoutAndPrefWidthsRecalc();
-    else
-        repaint();
+    if (m_image && o == m_image->data()) {
+        if (width() != m_image->imageSize(this, style().effectiveZoom()).width() || height() != m_image->imageSize(this, style().effectiveZoom()).height() || m_image->errorOccurred())
+            setNeedsLayoutAndPrefWidthsRecalc();
+        else
+            repaint();
+    }
+    RenderBox::imageChanged(o, rect);
 }
 
 void RenderListMarker::updateMarginsAndContent()
