@@ -1,3 +1,64 @@
+2021-09-21  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc] freeableMemory and footprint of Heap are completely broken
+        https://bugs.webkit.org/show_bug.cgi?id=230245
+
+        Reviewed by Geoffrey Garen.
+
+        This introduced in r279922. The physical size of the newly allocated range was changed from zero
+        to the size of the range on that commit and that causes the numbers wrong. That change itself is
+        correct fix because the range has physical pages attached. That simply activated the bug which was
+        there for a long time.
+
+        I've added the correction to adjust both numbers with newly allocated region. Also added assertion
+        to check the overflow of those values and the option to log those value change to the console.
+
+        Fortunately those numbers are used for debugging purpose. Scavenger will dump out those to stderr
+        with its verbose mode. There's no practical cases affected by this bug.
+
+        Here is the example of footprint logging before fixing the bug:
+
+                >>> footprint: 18446744073709535232 (-16384) scavenge
+                footprint: 18446744073709518848 (-16384) scavenge
+                footprint: 18446744073709502464 (-16384) scavenge
+                footprint: 18446744073709486080 (-16384) scavenge
+                footprint: 18446744073709469696 (-16384) scavenge
+                footprint: 18446744073709453312 (-16384) scavenge
+                ...
+
+        It just began with negative number which overflows on unsigned. And following is the one with fix:
+
+                footprint: 1048576 (1048576) allocateLarge
+                footprint: 2097152 (1048576) allocateLarge
+                footprint: 3145728 (1048576) allocateLarge
+                footprint: 4194304 (1048576) allocateLarge
+                footprint: 5242880 (1048576) allocateLarge
+                footprint: 6291456 (1048576) allocateLarge
+                >>> footprint: 6275072 (-16384) scavenge
+                footprint: 6258688 (-16384) scavenge
+                footprint: 6242304 (-16384) scavenge
+                footprint: 6225920 (-16384) scavenge
+                footprint: 6209536 (-16384) scavenge
+                footprint: 6193152 (-16384) scavenge
+                ...
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::adjustStat):
+        (bmalloc::Heap::logStat):
+        (bmalloc::Heap::adjustFreeableMemory):
+        (bmalloc::Heap::adjustFootprint):
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::deallocateLarge):
+        (bmalloc::Heap::externalCommit):
+        (bmalloc::Heap::externalDecommit):
+        * bmalloc/Heap.h:
+
 2021-09-16  Filip Pizlo  <fpizlo@apple.com>
 
         Stub out the footprint() API when libpas is in use
