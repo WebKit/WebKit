@@ -202,7 +202,7 @@ void WorkerThreadableLoader::MainThreadBridge::computeIsDone()
 
 void WorkerThreadableLoader::MainThreadBridge::notifyIsDone(bool isDone)
 {
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), isDone](auto&) {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, isDone](auto&) {
         protectedWorkerClientWrapper->notifyIsDone(isDone);
     }, m_taskMode);
 }
@@ -214,7 +214,7 @@ void WorkerThreadableLoader::MainThreadBridge::clearClientWrapper()
 
 void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), bytesSent, totalBytesToBeSent] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, bytesSent, totalBytesToBeSent] (ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         protectedWorkerClientWrapper->didSendData(bytesSent, totalBytesToBeSent);
     }, m_taskMode);
@@ -222,7 +222,7 @@ void WorkerThreadableLoader::MainThreadBridge::didSendData(unsigned long long by
 
 void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
 {
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), workerRequestIdentifier = m_workerRequestIdentifier, identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, identifier, responseData = response.crossThreadData()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         auto response = ResourceResponse::fromCrossThreadData(WTFMove(responseData));
         protectedWorkerClientWrapper->didReceiveResponse(identifier, response);
@@ -234,7 +234,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveResponse(ResourceLoader
 void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const uint8_t* data, int dataLength)
 {
     Vector<uint8_t> buffer(data, dataLength);
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), workerRequestIdentifier = m_workerRequestIdentifier, buffer = WTFMove(buffer)] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, buffer = WTFMove(buffer)] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         protectedWorkerClientWrapper->didReceiveData(buffer.data(), buffer.size());
         if (is<WorkerGlobalScope>(context))
@@ -245,7 +245,7 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const uint8_t* dat
 void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ResourceLoaderIdentifier identifier)
 {
     m_loadingFinished = true;
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), workerRequestIdentifier = m_workerRequestIdentifier, networkLoadMetrics = m_networkLoadMetrics.isolatedCopy(), identifier] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, networkLoadMetrics = m_networkLoadMetrics.isolatedCopy(), identifier] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         protectedWorkerClientWrapper->didFinishLoading(identifier);
         if (is<WorkerGlobalScope>(context))
@@ -256,7 +256,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFinishLoading(ResourceLoaderId
 void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& error)
 {
     m_loadingFinished = true;
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), workerRequestIdentifier = m_workerRequestIdentifier, error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, workerRequestIdentifier = m_workerRequestIdentifier, error = error.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         ThreadableLoader::logError(context, error, protectedWorkerClientWrapper->initiator());
         protectedWorkerClientWrapper->didFail(error);
@@ -268,7 +268,7 @@ void WorkerThreadableLoader::MainThreadBridge::didFail(const ResourceError& erro
 void WorkerThreadableLoader::MainThreadBridge::didFinishTiming(const ResourceTiming& resourceTiming)
 {
     m_networkLoadMetrics = resourceTiming.networkLoadMetrics();
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = makeRef(*m_workerClientWrapper), resourceTiming = resourceTiming.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([protectedWorkerClientWrapper = Ref { *m_workerClientWrapper }, resourceTiming = resourceTiming.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         ASSERT(context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         ASSERT(!resourceTiming.initiator().isEmpty());
 

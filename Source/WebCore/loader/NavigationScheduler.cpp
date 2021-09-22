@@ -120,7 +120,7 @@ class ScheduledURLNavigation : public ScheduledNavigation {
 protected:
     ScheduledURLNavigation(Document& initiatingDocument, double delay, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, bool isLocationChange)
         : ScheduledNavigation(delay, lockHistory, lockBackForwardList, duringLoad, isLocationChange, initiatingDocument.shouldOpenExternalURLsPolicyToPropagate())
-        , m_initiatingDocument { makeRef(initiatingDocument) }
+        , m_initiatingDocument { initiatingDocument }
         , m_securityOrigin { securityOrigin }
         , m_url { url }
         , m_referrer { referrer }

@@ -114,21 +114,21 @@ private:
     void cacheImageBuffer(WebCore::ImageBuffer& imageBuffer)
     {
         m_imageBuffers.ensure(imageBuffer.renderingResourceIdentifier(), [&]() {
-            return makeRef(imageBuffer);
+            return Ref { imageBuffer };
         });
     }
 
     void cacheNativeImage(NativeImage& image)
     {
         m_nativeImages.ensure(image.renderingResourceIdentifier(), [&]() {
-            return makeRef(image);
+            return Ref { image };
         });
     }
 
     void cacheFont(Font& font)
     {
         m_fonts.ensure(font.renderingResourceIdentifier(), [&]() {
-            return makeRef(font);
+            return Ref { font };
         });
     }
 

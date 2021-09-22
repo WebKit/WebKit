@@ -159,7 +159,7 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
     m_transformer->setIsEncrypting(side == Side::Sender);
     m_transformer->setMediaType(backend.mediaType());
 
-    backend.setTransformableFrameCallback([transformer = m_transformer, identifier = context->contextIdentifier(), backend = makeRef(backend), weakThis = makeWeakPtr(this)](auto&& frame) {
+    backend.setTransformableFrameCallback([transformer = m_transformer, identifier = context->contextIdentifier(), backend = Ref { backend }, weakThis = makeWeakPtr(this)](auto&& frame) {
         auto chunk = frame->data();
         if (!chunk.data() || !chunk.size())
             return;

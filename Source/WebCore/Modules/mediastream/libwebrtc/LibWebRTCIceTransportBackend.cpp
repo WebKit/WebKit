@@ -102,7 +102,7 @@ LibWebRTCIceTransportBackendObserver::LibWebRTCIceTransportBackendObserver(RTCIc
 
 void LibWebRTCIceTransportBackendObserver::start()
 {
-    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this)]() mutable {
+    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }]() mutable {
         auto* internal = m_backend->internal();
         if (!internal)
             return;
@@ -114,7 +114,7 @@ void LibWebRTCIceTransportBackendObserver::start()
 void LibWebRTCIceTransportBackendObserver::stop()
 {
     m_client = nullptr;
-    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this)] {
+    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }] {
         auto* internal = m_backend->internal();
         if (!internal)
             return;
@@ -125,7 +125,7 @@ void LibWebRTCIceTransportBackendObserver::stop()
 
 void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(cricket::IceTransportInternal* internal)
 {
-    callOnMainThread([protectedThis = makeRef(*this), state = internal->GetIceTransportState()] {
+    callOnMainThread([protectedThis = Ref { *this }, state = internal->GetIceTransportState()] {
         if (protectedThis->m_client)
             protectedThis->m_client->onStateChanged(toRTCIceTransportState(state));
     });
@@ -133,7 +133,7 @@ void LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged(cricket::I
 
 void LibWebRTCIceTransportBackendObserver::onGatheringStateChanged(cricket::IceTransportInternal* internal)
 {
-    callOnMainThread([protectedThis = makeRef(*this), state = internal->gathering_state()] {
+    callOnMainThread([protectedThis = Ref { *this }, state = internal->gathering_state()] {
         if (protectedThis->m_client)
             protectedThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(state));
     });

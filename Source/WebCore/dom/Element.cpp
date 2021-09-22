@@ -3063,7 +3063,7 @@ void Element::focus(const FocusOptions& options)
     if (!isConnected())
         return;
 
-    auto document = makeRef(this->document());
+    Ref document { this->document() };
     if (document->focusedElement() == this) {
         if (document->page())
             document->page()->chrome().client().elementDidRefocus(*this);

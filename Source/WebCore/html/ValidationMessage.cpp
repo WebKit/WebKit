@@ -184,7 +184,7 @@ void ValidationMessage::buildBubbleTree()
     if (!m_element->renderer())
         return;
 
-    auto shadowRoot = makeRef(m_element->ensureUserAgentShadowRoot());
+    Ref shadowRoot = m_element->ensureUserAgentShadowRoot();
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     ScriptDisallowedScope::EventAllowedScope allowedScope(shadowRoot);

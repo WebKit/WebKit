@@ -172,7 +172,7 @@ void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, Task
     if (!context)
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
-    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = makeRef(target), event = WTFMove(event)] {
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = Ref { target }, event = WTFMove(event)] {
         target->dispatchEvent(event);
     });
     eventLoopTaskGroup.queueTask(WTFMove(task));
@@ -185,7 +185,7 @@ void ActiveDOMObject::queueCancellableTaskToDispatchEventInternal(EventTarget& t
     if (!context)
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
-    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = makeRef(target), event = WTFMove(event)] {
+    auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = Ref { target }, event = WTFMove(event)] {
         target->dispatchEvent(event);
     }));
     eventLoopTaskGroup.queueTask(WTFMove(task));

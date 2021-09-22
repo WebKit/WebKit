@@ -3162,7 +3162,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     if (isUserEvent && !m_currentWheelEventAllowsScrolling)
         return;
 
-    auto protectedFrame = makeRef(m_frame);
+    Ref protectedFrame { m_frame };
 
     FloatSize filteredPlatformDelta(wheelEvent.deltaX(), wheelEvent.deltaY());
     FloatSize filteredVelocity;

@@ -721,7 +721,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (!didReceiveRedirectResponse)
         return completionHandler(WTFMove(newRequest));
 
-    auto navigationPolicyCompletionHandler = [this, protectedThis = Ref { *this }, protectedFrame = makeRef(*m_frame), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) mutable {
+    auto navigationPolicyCompletionHandler = [this, protectedThis = Ref { *this }, protectedFrame = Ref { *m_frame }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) mutable {
         m_waitingForNavigationPolicy = false;
         switch (navigationPolicyDecision) {
         case NavigationPolicyDecision::IgnoreLoad:
@@ -786,7 +786,7 @@ static std::tuple<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseO
     // if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
     // https://github.com/whatwg/html/issues/6913
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(response.url()) && requester)
-        return std::make_tuple(makeRef(requester->securityOrigin()), requester->securityOrigin().isSameOriginAs(requester->topOrigin()) ? requester->crossOriginOpenerPolicy() : CrossOriginOpenerPolicy { });
+        return std::make_tuple(Ref { requester->securityOrigin() }, requester->securityOrigin().isSameOriginAs(requester->topOrigin()) ? requester->crossOriginOpenerPolicy() : CrossOriginOpenerPolicy { });
 
     // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become unique.
     auto responseOrigin = responseCSP && responseCSP->sandboxFlags() != SandboxNone ? SecurityOrigin::createUnique() : SecurityOrigin::create(response.url());

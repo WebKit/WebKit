@@ -46,7 +46,7 @@ static constexpr bool verbose = false;
 }
 
 OMGForOSREntryPlan::OMGForOSREntryPlan(Context* context, Ref<Module>&& module, Ref<Callee>&& callee, uint32_t functionIndex, uint32_t loopIndex, MemoryMode mode, CompletionTask&& task)
-    : Base(context, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
+    : Base(context, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_codeBlock(*m_module->codeBlockFor(mode))
     , m_callee(WTFMove(callee))

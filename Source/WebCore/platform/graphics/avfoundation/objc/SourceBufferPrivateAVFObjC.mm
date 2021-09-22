@@ -368,7 +368,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
             if (!weakThis)
                 return;
 
-            auto videoTrackSelectedChanged = [weakThis, this, trackRef = makeRef(track), selected] {
+            auto videoTrackSelectedChanged = [weakThis, this, trackRef = Ref { track }, selected] {
                 if (!weakThis)
                     return;
                 trackDidChangeSelected(trackRef, selected);
@@ -390,7 +390,7 @@ void SourceBufferPrivateAVFObjC::didParseInitializationData(InitializationSegmen
             if (!weakThis)
                 return;
 
-            auto audioTrackEnabledChanged= [weakThis, this, trackRef = makeRef(track), enabled] {
+            auto audioTrackEnabledChanged= [weakThis, this, trackRef = Ref { track }, enabled] {
                 if (!weakThis)
                     return;
 

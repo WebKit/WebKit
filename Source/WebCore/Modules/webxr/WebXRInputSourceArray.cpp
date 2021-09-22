@@ -88,7 +88,7 @@ void WebXRInputSourceArray::update(double timestamp, const InputSourceList& inpu
     if (!added.isEmpty() || !removed.isEmpty()) {
         // A user agent MUST dispatch an inputsourceschange event on an XRSession when the session’s list of active XR input sources has changed.
         XRInputSourcesChangeEvent::Init init;
-        init.session = makeRef(m_session);
+        init.session = &m_session;
         init.added = WTFMove(added);
         init.removed = WTFMove(removed);
         

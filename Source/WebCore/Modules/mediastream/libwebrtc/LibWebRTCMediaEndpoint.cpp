@@ -307,7 +307,7 @@ void LibWebRTCMediaEndpoint::addPendingTrackEvent(Ref<RTCRtpReceiver>&& receiver
     });
     m_remoteStreamsFromRemoteTrack.add(&track, WTFMove(streamIds));
 
-    m_peerConnectionBackend.addPendingTrackEvent({ WTFMove(receiver), makeRef(track), WTFMove(streams), WTFMove(transceiver) });
+    m_peerConnectionBackend.addPendingTrackEvent({ WTFMove(receiver), track, WTFMove(streams), WTFMove(transceiver) });
 }
 
 void LibWebRTCMediaEndpoint::collectTransceivers()
@@ -343,7 +343,7 @@ void LibWebRTCMediaEndpoint::newTransceiver(rtc::scoped_refptr<webrtc::RtpTransc
     if (!transceiver)
         transceiver = &m_peerConnectionBackend.newRemoteTransceiver(makeUnique<LibWebRTCRtpTransceiverBackend>(WTFMove(rtcTransceiver)), rtcReceiver->media_type() == cricket::MEDIA_TYPE_AUDIO ? RealtimeMediaSource::Type::Audio : RealtimeMediaSource::Type::Video);
 
-    addPendingTrackEvent(makeRef(transceiver->receiver()), transceiver->receiver().track(), rtcReceiver->streams(), makeRef(*transceiver));
+    addPendingTrackEvent(transceiver->receiver(), transceiver->receiver().track(), rtcReceiver->streams(), transceiver);
 }
 
 void LibWebRTCMediaEndpoint::removeRemoteTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface>&& receiver)

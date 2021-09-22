@@ -36,7 +36,7 @@ namespace Nicosia {
 
 SceneIntegration::SceneIntegration(Scene& scene, Client& client)
 {
-    m_client.scene = makeRef(scene);
+    m_client.scene = &scene;
     m_client.object = &client;
 }
 

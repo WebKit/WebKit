@@ -228,7 +228,7 @@ void ReplacementFragment::removeContentsWithSideEffects()
     auto it = descendantsOfType<Element>(*m_fragment).begin();
     auto end = descendantsOfType<Element>(*m_fragment).end();
     while (it != end) {
-        auto element = makeRef(*it);
+        Ref element = *it;
         if (isScriptElement(element) || (is<HTMLStyleElement>(element) && element->getAttribute(classAttr) != WebKitMSOListQuirksStyle)
             || is<HTMLBaseElement>(element) || is<HTMLLinkElement>(element) || is<HTMLMetaElement>(element) || is<HTMLTitleElement>(element)) {
             elementsToRemove.append(WTFMove(element));
@@ -296,7 +296,7 @@ void ReplacementFragment::insertNodeBefore(Node& node, Node& refNode)
 
 Ref<HTMLElement> ReplacementFragment::insertFragmentForTestRendering(Node* rootNode)
 {
-    auto document = makeRef(rootNode->document());
+    Ref document = rootNode->document();
     auto holder = createDefaultParagraphElement(document.get());
 
     holder->appendChild(*m_fragment);
@@ -1681,7 +1681,7 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
         return;
 
     if (auto* previousSibling = text->previousSibling(); is<Text>(previousSibling)) {
-        auto previous = makeRef(downcast<Text>(*previousSibling));
+        Ref previous = downcast<Text>(*previousSibling);
         insertTextIntoNode(*text, 0, previous->data());
 
         if (positionIsOffsetInAnchor)
@@ -1700,7 +1700,7 @@ void ReplaceSelectionCommand::mergeTextNodesAroundPosition(Position& position, P
         removeNode(previous);
     }
     if (auto* nextSibling = text->nextSibling(); is<Text>(nextSibling)) {
-        auto next = makeRef(downcast<Text>(*nextSibling));
+        Ref next = downcast<Text>(*nextSibling);
         unsigned originalLength = text->length();
         insertTextIntoNode(*text, originalLength, next->data());
 
@@ -1796,7 +1796,7 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
 {
     if (!is<Text>(fragment.firstChild()) || fragment.firstChild() != fragment.lastChild())
         return false;
-    auto textNode = makeRef(downcast<Text>(*fragment.firstChild()));
+    Ref textNode = downcast<Text>(*fragment.firstChild());
 
     // FIXME: Would be nice to handle smart replace in the fast path.
     if (m_smartReplace || fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd())

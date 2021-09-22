@@ -526,8 +526,8 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
     if (m_start.isNull() || m_end.isNull())
         return;
 
-    auto startNode = makeRef(*m_start.anchorNode());
-    auto endNode = makeRef(*m_end.anchorNode());
+    Ref startNode = *m_start.anchorNode();
+    Ref endNode = *m_end.anchorNode();
     if (&startNode->treeScope() == &endNode->treeScope())
         return;
 

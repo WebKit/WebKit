@@ -703,7 +703,7 @@ static String typeForAttachmentElement(const String& contentType)
 
 static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path, PresentationSize preferredSize, const String& explicitContentType)
 {
-    auto document = makeRef(*frame.document());
+    Ref document = *frame.document();
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
     if (!supportsClientSideAttachmentData(frame)) {
         attachment->setFile(File::create(document.ptr(), path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
@@ -747,7 +747,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static Ref<HTMLElement> attachmentForData(Frame& frame, SharedBuffer& buffer, const String& contentType, const String& name, PresentationSize preferredSize)
 {
-    auto document = makeRef(*frame.document());
+    Ref document = *frame.document();
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
     auto attachmentType = typeForAttachmentElement(contentType);
 
@@ -817,7 +817,7 @@ bool WebContentReader::readURL(const URL& url, const String& title)
         return false;
 #endif // PLATFORM(IOS_FAMILY)
 
-    auto document = makeRef(*frame.document());
+    Ref document = *frame.document();
     auto anchor = HTMLAnchorElement::create(document.get());
     anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
 

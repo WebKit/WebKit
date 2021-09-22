@@ -38,8 +38,8 @@
 namespace WebCore {
 
 FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, ResourceRequest&& resourceRequest, const String& frameName, InitiatedByMainFrame initiatedByMainFrame, const AtomString& downloadAttribute, const SystemPreviewInfo& systemPreviewInfo)
-    : m_requester { makeRef(requester) }
-    , m_requesterSecurityOrigin { makeRef(requesterSecurityOrigin) }
+    : m_requester { requester }
+    , m_requesterSecurityOrigin { requesterSecurityOrigin }
     , m_resourceRequest { WTFMove(resourceRequest) }
     , m_frameName { frameName }
     , m_downloadAttribute { downloadAttribute }
@@ -49,8 +49,8 @@ FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requeste
 }
 
 FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resourceRequest, const SubstituteData& substituteData)
-    : m_requester { makeRef(*frame.document()) }
-    , m_requesterSecurityOrigin { makeRef(frame.document()->securityOrigin()) }
+    : m_requester { *frame.document() }
+    , m_requesterSecurityOrigin { frame.document()->securityOrigin() }
     , m_resourceRequest { resourceRequest }
     , m_substituteData { substituteData }
 {

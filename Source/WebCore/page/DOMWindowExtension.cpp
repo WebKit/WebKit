@@ -63,7 +63,7 @@ void DOMWindowExtension::suspendForBackForwardCache()
     // while there is still work to do.
     Ref<DOMWindowExtension> protectedThis(*this);
 
-    auto frame = makeRef(*this->frame());
+    Ref frame = *this->frame();
     frame->loader().client().dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
 
     m_disconnectedFrame = WTFMove(frame);

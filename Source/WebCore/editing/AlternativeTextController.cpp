@@ -603,7 +603,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const SimpleRange& r
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(makeDeprecatedLegacyPosition(range.start)));
     if (!paragraphStart)
         return;
-    auto treeScopeRoot = makeRef(range.start.container->treeScope().rootNode());
+    Ref treeScopeRoot = range.start.container->treeScope().rootNode();
     auto treeScopeStart = BoundaryPoint { treeScopeRoot.get(), 0 };
     auto correctionOffsetInParagraph = characterCount({ *paragraphStart, range.start });
     auto paragraphOffsetInTreeScope = characterCount({ treeScopeStart, *paragraphStart });

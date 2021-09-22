@@ -312,7 +312,7 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
         return;
     }
 
-    m_processingQueue->dispatch([this, sample = makeRef(sample)] {
+    m_processingQueue->dispatch([this, sample = Ref { sample }] {
         if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
             RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueSample (%{public}s) not ready for more media data", m_logIdentifier.utf8().data());
             addSampleToPendingQueue(sample);

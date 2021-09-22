@@ -89,7 +89,7 @@ bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerEleme
     CompletionHandlerCallingScope stopDelayingLoadEvent;
     if (!scriptURL.isEmpty()) {
         ownerElement.document().incrementLoadEventDelayCount();
-        stopDelayingLoadEvent = CompletionHandlerCallingScope([ownerDocument = makeRef(ownerElement.document())] {
+        stopDelayingLoadEvent = CompletionHandlerCallingScope([ownerDocument = Ref { ownerElement.document() }] {
             ownerDocument->decrementLoadEventDelayCount();
         });
     }
@@ -260,8 +260,8 @@ Frame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement
 
 RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const String& name, const String& referrer)
 {
-    Ref<Frame> protect(m_frame);
-    auto document = makeRef(ownerElement.document());
+    Ref protectedFrame { m_frame };
+    Ref document = ownerElement.document();
 
     if (!document->securityOrigin().canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(&m_frame, url.string());

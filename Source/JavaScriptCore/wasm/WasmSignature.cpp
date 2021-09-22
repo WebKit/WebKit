@@ -169,7 +169,7 @@ RefPtr<Signature> SignatureInformation::signatureFor(const Vector<Type, 1>& resu
     Locker locker { info.m_lock };
 
     auto addResult = info.m_signatureSet.template add<ParameterTypes>(ParameterTypes { results, args });
-    return makeRef(*addResult.iterator->key);
+    return addResult.iterator->key;
 }
 
 void SignatureInformation::tryCleanup()

@@ -2434,7 +2434,7 @@ String plainText(const SimpleRange& range, TextIteratorBehaviors defaultBehavior
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
     constexpr unsigned initialCapacity = 1 << 15;
 
-    auto document = makeRef(range.start.document());
+    Ref document = range.start.document();
 
     unsigned bufferLength = 0;
     StringBuilder builder;

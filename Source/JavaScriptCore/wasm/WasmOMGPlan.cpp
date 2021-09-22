@@ -45,7 +45,7 @@ static constexpr bool verbose = false;
 }
 
 OMGPlan::OMGPlan(Context* context, Ref<Module>&& module, uint32_t functionIndex, MemoryMode mode, CompletionTask&& task)
-    : Base(context, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
+    : Base(context, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_codeBlock(*m_module->codeBlockFor(mode))
     , m_functionIndex(functionIndex)

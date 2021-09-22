@@ -199,7 +199,7 @@ Vector<Ref<NativeImage>> BitmapImage::framesNativeImages()
 
     for (size_t i = 0; i < count; ++i) {
         if (auto image = frameImageAtIndexCacheIfNeeded(i))
-            images.append(makeRef(*image));
+            images.append(*image);
     }
 
     return images;

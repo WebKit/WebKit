@@ -183,7 +183,7 @@ public:
         initializeIfNeeded(object);
 
         ASSERT(&object == m_impl->template get<T>());
-        return WeakPtr<U, Counter>(makeRef(*m_impl), enableWeakPtrThreadingAssertions);
+        return WeakPtr<U, Counter>(*m_impl, enableWeakPtrThreadingAssertions);
     }
 
     void revokeAll()

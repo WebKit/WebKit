@@ -96,7 +96,7 @@ Ref<CSSValue> BuilderState::resolveImageStyles(CSSValue& value)
         return downcast<CSSImageSetValue>(value).valueWithStylesResolved(*this);
     if (is<CSSImageValue>(value))
         return downcast<CSSImageValue>(value).valueWithStylesResolved(*this);
-    return makeRef(value);
+    return value;
 }
 
 RefPtr<StyleImage> BuilderState::createStyleImage(CSSValue& value)

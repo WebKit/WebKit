@@ -1907,7 +1907,7 @@ void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& func
 {
     ASSERT(!m_mediaElements.hasNullReferences());
     m_mediaElements.forEach([&](auto& element) {
-        function(makeRef(element));
+        function(Ref { element });
     });
 }
 
@@ -5793,7 +5793,7 @@ bool Document::shouldCreateRenderers()
 
 static Editor::Command command(Document* document, const String& commandName, bool userInterface = false)
 {
-    auto protectedDocument = makeRef(*document);
+    Ref protectedDocument { *document };
 
     document->updateStyleIfNeeded();
 

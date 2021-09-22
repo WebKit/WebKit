@@ -162,7 +162,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     if (!is<VTTCue>(textTrackCue))
         return;
 
-    auto cue = makeRef(downcast<VTTCue>(*textTrackCue));
+    Ref cue = downcast<VTTCue>(*textTrackCue);
 
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
     if (!cue->regionId().isEmpty()) {

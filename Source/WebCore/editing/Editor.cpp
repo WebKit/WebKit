@@ -1126,7 +1126,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     document().updateLayout();
 
     ASSERT(command.composition());
-    auto composition = makeRef(*command.composition());
+    Ref composition = *command.composition();
     VisibleSelection newSelection(command.endingSelection());
 
     notifyTextFromControls(composition->startingRootEditableElement(), composition->endingRootEditableElement());
@@ -2706,7 +2706,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType
         return;
 
     // If we're not in an editable node, bail.
-    auto editableNode = makeRef(spellingRange->startContainer());
+    Ref editableNode = spellingRange->startContainer();
     if (!editableNode->hasEditableStyle())
         return;
 
@@ -2765,7 +2765,7 @@ void Editor::replaceRangeForSpellChecking(const SimpleRange& rangeToReplace, con
 
 static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingParagraph& paragraph, const SimpleRange& rangeToReplace, const String& replacement, CharacterRange resultCharacterRange)
 {
-    auto scopeNode = makeRef(downcast<ContainerNode>(paragraph.paragraphRange().startContainer().rootNode()));
+    Ref scopeNode = downcast<ContainerNode>(paragraph.paragraphRange().startContainer().rootNode());
     auto paragraphCharacterRange = characterRange(makeBoundaryPointBeforeNodeContents(scopeNode), paragraph.paragraphRange());
 
     SpellingCorrectionCommand::create(rangeToReplace, replacement)->apply();
@@ -3675,7 +3675,7 @@ bool Editor::shouldDetectTelephoneNumbers() const
 static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
 {
     // Don't scan for phone numbers inside editable regions.
-    if (auto startNode = makeRef(range.startContainer()); startNode->hasEditableStyle())
+    if (Ref startNode = range.startContainer(); startNode->hasEditableStyle())
         return { };
 
     if (HTMLElement::isInsideImageOverlay(range))

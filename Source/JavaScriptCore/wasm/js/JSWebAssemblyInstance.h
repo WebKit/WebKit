@@ -75,7 +75,7 @@ public:
     void setMemory(VM& vm, JSWebAssemblyMemory* value) {
         ASSERT(!memory());
         m_memory.set(vm, this, value);
-        instance().setMemory(makeRef(memory()->memory()));
+        instance().setMemory(memory()->memory());
     }
     Wasm::MemoryMode memoryMode() { return memory()->memory().mode(); }
 
@@ -85,13 +85,13 @@ public:
         ASSERT(index < m_tables.size());
         ASSERT(!table(index));
         m_tables[index].set(vm, this, value);
-        instance().setTable(index, makeRef(*table(index)->table()));
+        instance().setTable(index, *table(index)->table());
     }
 
     void linkGlobal(VM& vm, uint32_t index, JSWebAssemblyGlobal* value)
     {
         ASSERT(value == value->global()->owner<JSWebAssemblyGlobal>());
-        instance().linkGlobal(index, makeRef(*value->global()));
+        instance().linkGlobal(index, *value->global());
         vm.heap.writeBarrier(this, value);
     }
 

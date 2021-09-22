@@ -204,7 +204,7 @@ void ServiceWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
     postTaskForModeToWorkerOrWorkletGlobalScope([isOnline] (ScriptExecutionContext& context) {
         auto& globalScope = downcast<WorkerGlobalScope>(context);
         globalScope.setIsOnline(isOnline);
-        globalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [globalScope = makeRef(globalScope), isOnline] {
+        globalScope.eventLoop().queueTask(TaskSource::DOMManipulation, [globalScope = Ref { globalScope }, isOnline] {
             globalScope->dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, Event::CanBubble::No, Event::IsCancelable::No));
         });
     }, WorkerRunLoop::defaultMode());
@@ -248,7 +248,7 @@ void ServiceWorkerThreadProxy::continueDidReceiveFetchResponse(SWServerConnectio
     if (!client)
         return;
 
-    postTaskForModeToWorkerOrWorkletGlobalScope([client = makeRef(*client)] (ScriptExecutionContext&) {
+    postTaskForModeToWorkerOrWorkletGlobalScope([client = Ref { *client }] (ScriptExecutionContext&) {
         client->continueDidReceiveResponse();
     }, WorkerRunLoop::defaultMode());
 }

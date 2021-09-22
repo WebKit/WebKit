@@ -121,7 +121,7 @@ void Scope::createOrFindSharedShadowTreeResolver()
         m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 
-        return makeRef(*m_resolver);
+        return Ref { *m_resolver };
     });
 
     if (!result.isNewEntry) {
@@ -682,14 +682,14 @@ auto Scope::collectResolverScopes() -> ResolverScopes
 
     ResolverScopes resolverScopes;
 
-    resolverScopes.add(makeRef(*resolverIfExists()), Vector<CheckedPtr<Scope>> { this });
+    resolverScopes.add(*resolverIfExists(), Vector<CheckedPtr<Scope>> { this });
 
     for (auto* shadowRoot : m_document.inDocumentShadowRoots()) {
         auto& scope = shadowRoot->styleScope();
         auto* resolver = scope.resolverIfExists();
         if (!resolver)
             continue;
-        resolverScopes.add(makeRef(*resolver), Vector<CheckedPtr<Scope>> { }).iterator->value.append(&scope);
+        resolverScopes.add(*resolver, Vector<CheckedPtr<Scope>> { }).iterator->value.append(&scope);
     }
     return resolverScopes;
 }

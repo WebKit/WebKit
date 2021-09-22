@@ -715,7 +715,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     if (!inCanvasSubtree && !isHidden && !insideMeterElement)
         return nullptr;
 
-    auto protectedNode = makeRef(*node);
+    Ref protectedNode { *node };
 
     // Fallback content is only focusable as long as the canvas is displayed and visible.
     // Update the style before Element::isFocusable() gets called.

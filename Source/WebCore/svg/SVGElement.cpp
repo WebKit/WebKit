@@ -250,7 +250,7 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
         if (m_svgRareData) {
             for (auto& element : m_svgRareData->takeReferencingElements()) {
                 extensions.addElementToRebuild(element);
-                makeRef(element)->clearTarget();
+                Ref { element }->clearTarget();
             }
             RELEASE_ASSERT(m_svgRareData->referencingElements().computesEmpty());
         }

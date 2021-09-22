@@ -194,7 +194,7 @@ Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(Insertion
 void HTMLBodyElement::didFinishInsertingNode()
 {
     ASSERT(is<HTMLFrameElementBase>(document().ownerElement()));
-    auto ownerElement = makeRef(*document().ownerElement());
+    Ref ownerElement = *document().ownerElement();
 
     // FIXME: It's surprising this is web compatible since it means marginwidth and marginheight attributes
     // appear or get overwritten on body elements of a document embedded through <iframe> or <frame>.

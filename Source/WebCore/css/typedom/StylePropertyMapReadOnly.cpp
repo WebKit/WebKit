@@ -47,7 +47,7 @@ RefPtr<CSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* value, Docu
 {
     if (!value)
         return nullptr;
-    auto result = CSSStyleValueFactory::reifyValue(makeRef(*value), &document);
+    auto result = CSSStyleValueFactory::reifyValue(*value, &document);
     return (result.hasException() ? nullptr : RefPtr<CSSStyleValue> { result.releaseReturnValue() });
 }
 

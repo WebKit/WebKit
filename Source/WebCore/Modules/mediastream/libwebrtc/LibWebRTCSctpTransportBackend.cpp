@@ -94,7 +94,7 @@ void LibWebRTCSctpTransportBackendObserver::updateState(webrtc::SctpTransportInf
 
 void LibWebRTCSctpTransportBackendObserver::start()
 {
-    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = makeRef(*this)]() mutable {
+    LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }]() mutable {
         m_backend->RegisterObserver(this);
         callOnMainThread([protectedThis = WTFMove(protectedThis), info = m_backend->Information()]() mutable {
             protectedThis->updateState(WTFMove(info));
@@ -105,14 +105,14 @@ void LibWebRTCSctpTransportBackendObserver::start()
 void LibWebRTCSctpTransportBackendObserver::stop()
 {
     m_client = nullptr;
-    LibWebRTCProvider::callOnWebRTCNetworkThread([protectedThis = makeRef(*this)] {
+    LibWebRTCProvider::callOnWebRTCNetworkThread([protectedThis = Ref { *this }] {
         protectedThis->m_backend->UnregisterObserver();
     });
 }
 
 void LibWebRTCSctpTransportBackendObserver::OnStateChange(webrtc::SctpTransportInformation info)
 {
-    callOnMainThread([protectedThis = makeRef(*this), info = WTFMove(info)]() mutable {
+    callOnMainThread([protectedThis = Ref { *this }, info = WTFMove(info)]() mutable {
         protectedThis->updateState(WTFMove(info));
     });
 }

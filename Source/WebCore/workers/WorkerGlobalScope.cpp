@@ -183,7 +183,7 @@ SocketProvider* WorkerGlobalScope::socketProvider()
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerGlobalScope::createRTCDataChannelRemoteHandlerConnection()
 {
     RefPtr<RTCDataChannelRemoteHandlerConnection> connection;
-    callOnMainThreadAndWait([workerThread = makeRef(thread()), &connection]() mutable {
+    callOnMainThreadAndWait([workerThread = Ref { thread() }, &connection]() mutable {
         connection = workerThread->workerLoaderProxy().createRTCDataChannelRemoteHandlerConnection();
     });
     ASSERT(connection);

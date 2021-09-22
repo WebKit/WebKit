@@ -1298,7 +1298,7 @@ void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 
     updateCompositingLayersAfterLayout();
 
-    auto document = makeRef(*frame().document());
+    Ref document = *frame().document();
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK)
     if (auto* cache = document->existingAXObjectCache())

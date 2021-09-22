@@ -246,7 +246,7 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
         resolveRopeWithFunction(globalObject, [&] (Ref<StringImpl>&& newImpl) -> Ref<StringImpl> {
             existingAtomString = AtomStringImpl::lookUp(newImpl.ptr());
             if (existingAtomString)
-                return makeRef(*existingAtomString);
+                return Ref { *existingAtomString };
             return WTFMove(newImpl);
         });
         RETURN_IF_EXCEPTION(scope, nullptr);

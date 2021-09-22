@@ -1,3 +1,319 @@
+2021-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of makeRef() and use Ref { } instead
+        https://bugs.webkit.org/show_bug.cgi?id=230585
+
+        Reviewed by Alex Christensen.
+
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::collectDataForWriting):
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::addAll):
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::WorkerCacheStorageConnection::create):
+        (WebCore::WorkerCacheStorageConnection::open):
+        (WebCore::WorkerCacheStorageConnection::remove):
+        (WebCore::WorkerCacheStorageConnection::retrieveCaches):
+        (WebCore::WorkerCacheStorageConnection::retrieveRecords):
+        (WebCore::WorkerCacheStorageConnection::batchDeleteOperation):
+        (WebCore::WorkerCacheStorageConnection::batchPutOperation):
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::listDirectory):
+        (WebCore::DOMFileSystem::getParent):
+        (WebCore::DOMFileSystem::getEntry):
+        (WebCore::DOMFileSystem::getFile):
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp:
+        (WebCore::FileSystemDirectoryReader::readEntries):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::bodyAsFormData const):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::MediaSessionCoordinator):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::newDataChannel):
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::RTCRtpSFrameTransform::initializeTransformer):
+        * Modules/mediastream/RTCRtpScriptTransform.cpp:
+        (WebCore::RTCRtpScriptTransform::create):
+        (WebCore::RTCRtpScriptTransform::initializeTransformer):
+        * Modules/mediastream/RTCRtpScriptTransformer.cpp:
+        (WebCore::RTCRtpScriptTransformer::writable):
+        (WebCore::RTCRtpScriptTransformer::start):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::checkState):
+        (WebCore::LibWebRTCDataChannelHandler::OnMessage):
+        (WebCore::LibWebRTCDataChannelHandler::OnBufferedAmountChange):
+        * Modules/mediastream/libwebrtc/LibWebRTCDtlsTransportBackend.cpp:
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::start):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::stop):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::OnStateChange):
+        (WebCore::LibWebRTCDtlsTransportBackendObserver::OnError):
+        * Modules/mediastream/libwebrtc/LibWebRTCIceTransportBackend.cpp:
+        (WebCore::LibWebRTCIceTransportBackendObserver::start):
+        (WebCore::LibWebRTCIceTransportBackendObserver::stop):
+        (WebCore::LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged):
+        (WebCore::LibWebRTCIceTransportBackendObserver::onGatheringStateChanged):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addPendingTrackEvent):
+        (WebCore::LibWebRTCMediaEndpoint::newTransceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::findExistingSender):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCSctpTransportBackend.cpp:
+        (WebCore::LibWebRTCSctpTransportBackendObserver::start):
+        (WebCore::LibWebRTCSctpTransportBackendObserver::stop):
+        (WebCore::LibWebRTCSctpTransportBackendObserver::OnStateChange):
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::requestPermission):
+        * Modules/speech/SpeechRecognitionResultList.cpp:
+        (WebCore::SpeechRecognitionResultList::add):
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::DecodingTask::notifyComplete):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::toWeakOrStrongContext):
+        * Modules/webaudio/AudioWorklet.cpp:
+        (WebCore::AudioWorklet::createProcessor):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::Function<void):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::runTransaction):
+        * Modules/webxr/WebXRInputSourceArray.cpp:
+        (WebCore::WebXRInputSourceArray::update):
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::requestSession):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::ensureJSFunction const):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::wrapKey):
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::remove):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        * css/DOMCSSPaintWorklet.cpp:
+        (WebCore::PaintWorklet::addModule):
+        * css/typedom/CSSNumericValue.cpp:
+        (WebCore::CSSNumericValue::add):
+        (WebCore::CSSNumericValue::sub):
+        (WebCore::CSSNumericValue::mul):
+        (WebCore::CSSNumericValue::div):
+        (WebCore::CSSNumericValue::min):
+        (WebCore::CSSNumericValue::max):
+        * css/typedom/CSSStyleValueFactory.cpp:
+        (WebCore::CSSStyleValueFactory::reifyValue):
+        * css/typedom/StylePropertyMapReadOnly.cpp:
+        (WebCore::StylePropertyMapReadOnly::reifyValue):
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::queueTaskToDispatchEventInternal):
+        (WebCore::ActiveDOMObject::queueCancellableTaskToDispatchEventInternal):
+        * dom/ActiveDOMObject.h:
+        * dom/DeviceOrientationAndMotionAccessController.cpp:
+        (WebCore::DeviceOrientationAndMotionAccessController::shouldAllowAccess):
+        * dom/Document.cpp:
+        (WebCore::Document::forEachMediaElement):
+        (WebCore::command):
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        * dom/IdleCallbackController.cpp:
+        (WebCore::IdleCallbackController::queueTaskToStartIdlePeriod):
+        (WebCore::IdleCallbackController::queueTaskToInvokeIdleCallbacks):
+        * dom/Microtasks.cpp:
+        (WebCore::MicrotaskQueue::MicrotaskQueue):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::enqueueMutationRecord):
+        (WebCore::MutationObserver::enqueueSlotChangeEvent):
+        (WebCore::MutationObserver::setHasTransientRegistration):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestModuleScript):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss):
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::correctSpellcheckingPreservingTextCheckingParagraph):
+        (WebCore::scanForTelephoneNumbers):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeContentsWithSideEffects):
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition):
+        (WebCore::ReplaceSelectionCommand::performTrivialReplace):
+        * editing/TextIterator.cpp:
+        (WebCore::plainText):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attachmentForFilePath):
+        (WebCore::attachmentForData):
+        (WebCore::WebContentReader::readURL):
+        * editing/markup.cpp:
+        (WebCore::createFragmentForMarkup):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::didFinishInsertingNode):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::forgetResourceSpecificTracks):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::create):
+        (WebCore::OffscreenCanvas::pushBufferToPlaceholder):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::makeXRCompatible):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        * inspector/InspectorFrontendAPIDispatcher.cpp:
+        (WebCore::InspectorFrontendAPIDispatcher::evaluateOrQueueExpression):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::computeResponseOriginAndCOOP):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledURLNavigation::ScheduledURLNavigation):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::startPingLoad):
+        * loader/PolicyChecker.cpp:
+        (WebCore::FrameLoader::PolicyChecker::checkNewWindowPolicy):
+        * loader/SubframeLoader.cpp:
+        (WebCore::FrameLoader::SubframeLoader::requestFrame):
+        (WebCore::FrameLoader::SubframeLoader::loadSubframe):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::notifyIsDone):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didSendData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveData):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishLoading):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFinishTiming):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/ios/LegacyPreviewLoader.mm:
+        (WebCore::LegacyPreviewLoader::previewConverterDidStartConverting):
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::suspendForBackForwardCache):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * page/Frame.cpp:
+        (WebCore::Frame::addUserScriptAwaitingNotification):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didLayout):
+        * page/Page.cpp:
+        (WebCore::Page::didFinishLoadingImageForElement):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::begin):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+        * page/mac/ImageOverlayControllerMac.mm:
+        (WebCore::ImageOverlayController::updateDataDetectorHighlights):
+        (WebCore::ImageOverlayController::elementUnderMouseDidChange):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::createTimer):
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::handleWheelEventForScrolling):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::framesNativeImages):
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::FontCascadeFonts):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::startAsyncDecodingQueue):
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        (WebCore::LocalSampleBufferDisplayLayer::enqueueSample):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseInitializationData):
+        * platform/graphics/cg/GraphicsContextGLCG.cpp:
+        (WebCore::GraphicsContextGLOpenGL::paintToCanvas):
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::copyCGImageForEncoding const):
+        * platform/graphics/displaylists/DisplayList.h:
+        (WebCore::DisplayList::DisplayList::cacheImageBuffer):
+        (WebCore::DisplayList::DisplayList::cacheNativeImage):
+        (WebCore::DisplayList::DisplayList::cacheFont):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::SetState::apply):
+        * platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp:
+        (WebCore::MediaSourceTrackGStreamer::create):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcEmitStreams):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::snapshotNSImage):
+        * platform/graphics/nicosia/NicosiaSceneIntegration.cpp:
+        (Nicosia::SceneIntegration::SceneIntegration):
+        * platform/mac/DataDetectorHighlight.mm:
+        (WebCore::DataDetectorHighlight::fadeOut):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp:
+        (WebCore::RealtimeIncomingVideoSourceLibWebRTC::OnFrame):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable):
+        * platform/network/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandle::disconnect):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::callClient):
+        * platform/network/curl/CurlResourceHandleDelegate.cpp:
+        (WebCore::CurlResourceHandleDelegate::curlDidReceiveResponse):
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyCustomProperty):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueCustomProperty):
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::resolveImageStyles):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::createOrFindSharedShadowTreeResolver):
+        (WebCore::Style::Scope::collectResolverScopes):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::removedFromAncestor):
+        * testing/Internals.cpp:
+        (WebCore:: const):
+        (WebCore::Internals::queueMicroTask):
+        (WebCore::Internals::queueTaskToQueueMicrotask):
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::waitForFetchEventToFinish):
+        * workers/Worker.cpp:
+        (WebCore::Worker::createRTCRtpScriptTransformer):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::createRTCDataChannelRemoteHandlerConnection):
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::loadModuleSynchronously):
+        (WebCore::WorkerOrWorkletScriptController::loadAndEvaluateModule):
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::promiseIsSettled):
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::skipWaiting):
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::stopWorker):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::queueTaskToFireFetchEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToPostMessage):
+        (WebCore::ServiceWorkerThread::queueTaskToFireInstallEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToFireActivateEvent):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::notifyNetworkStateChange):
+        (WebCore::ServiceWorkerThreadProxy::continueDidReceiveFetchResponse):
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchEventWhenPossible):
+
 2021-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Reduce sizeof(NetworkLoadMetrics)

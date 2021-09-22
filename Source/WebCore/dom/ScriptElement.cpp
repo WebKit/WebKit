@@ -357,7 +357,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         m_loadableScript = WTFMove(script);
         if (auto* frame = m_element.document().frame()) {
             auto& script = downcast<LoadableModuleScript>(*m_loadableScript.get());
-            frame->script().loadModuleScript(script, moduleScriptRootURL.string(), makeRef(script.parameters()));
+            frame->script().loadModuleScript(script, moduleScriptRootURL.string(), script.parameters());
         }
         return true;
     }

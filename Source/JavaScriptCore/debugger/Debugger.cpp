@@ -493,9 +493,9 @@ bool Debugger::setBreakpoint(Breakpoint& breakpoint)
         }
     }
 
-    breakpoints.append(makeRef(breakpoint));
+    breakpoints.append(breakpoint);
 
-    m_breakpoints.add(makeRef(breakpoint));
+    m_breakpoints.add(breakpoint);
 
     toggleBreakpoint(breakpoint, BreakpointEnabled);
 
@@ -745,7 +745,7 @@ bool Debugger::schedulePauseForSpecialBreakpoint(Breakpoint& breakpoint)
     if (m_specialBreakpoint)
         return false;
 
-    m_specialBreakpoint = makeRef(breakpoint);
+    m_specialBreakpoint = &breakpoint;
     setSteppingMode(SteppingModeEnabled);
     return true;
 }

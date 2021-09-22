@@ -58,7 +58,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     Vector<Ref<HTMLElement>> dataDetectorResultElements;
     for (auto& child : descendantsOfType<HTMLElement>(*overlayHost.userAgentShadowRoot())) {
         if (child.isImageOverlayDataDetectorResult() && child.renderer())
-            dataDetectorResultElements.append(makeRef(child));
+            dataDetectorResultElements.append(child);
     }
 
     HashSet<Ref<HTMLElement>> dataDetectorResultElementsWithHighlights;
@@ -203,7 +203,7 @@ void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* e
         return;
     }
 
-    auto imageOverlayHost = makeRef(downcast<HTMLElement>(*shadowHost));
+    Ref imageOverlayHost = downcast<HTMLElement>(*shadowHost);
     if (!imageOverlayHost->hasImageOverlay()) {
         ASSERT_NOT_REACHED();
         m_hostElementForDataDetectors = nullptr;

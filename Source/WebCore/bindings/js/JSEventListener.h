@@ -102,7 +102,7 @@ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& 
     // initializeJSFunction can trigger code that deletes this event listener
     // before we're done. It should always return null in this case.
     JSC::VM& vm = m_isolatedWorld->vm();
-    auto protect = makeRef(const_cast<JSEventListener&>(*this));
+    Ref protect = const_cast<JSEventListener&>(*this);
     JSC::EnsureStillAliveScope protectedWrapper(m_wrapper.get());
 
     if (!m_isInitialized) {

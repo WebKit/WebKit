@@ -100,9 +100,9 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
                 return Exception { ExistingExceptionError };
 
             auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
-                return makeRef(value->rtcFrame());
+                return Ref { value->rtcFrame() };
             }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
-                return makeRef(value->rtcFrame());
+                return Ref { value->rtcFrame() };
             });
 
             // If no data, skip the frame since there is nothing to packetize or decode.
@@ -114,7 +114,7 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
             return writableOrException;
         m_writable = writableOrException.releaseReturnValue();
     }
-    return makeRef(*m_writable);
+    return Ref { *m_writable };
 }
 
 void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
@@ -122,7 +122,7 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
     m_backend = WTFMove(backend);
 
     auto& context = downcast<WorkerGlobalScope>(*scriptExecutionContext());
-    m_backend->setTransformableFrameCallback([readableSource = makeWeakPtr(m_readableSource.get()), isAudio = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Audio, thread = makeRef(context.thread())](auto&& frame) mutable {
+    m_backend->setTransformableFrameCallback([readableSource = makeWeakPtr(m_readableSource.get()), isAudio = m_backend->mediaType() == RTCRtpTransformBackend::MediaType::Audio, thread = Ref { context.thread() }](auto&& frame) mutable {
         thread->runLoop().postTaskForMode([readableSource, isAudio, frame = WTFMove(frame)](auto& context) mutable {
             if (!readableSource)
                 return;

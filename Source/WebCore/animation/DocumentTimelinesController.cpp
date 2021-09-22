@@ -133,7 +133,7 @@ void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutio
         timeline->removeReplacedAnimations();
 
     // 3. Perform a microtask checkpoint.
-    makeRef(m_document)->eventLoop().performMicrotaskCheckpoint();
+    Ref { m_document }->eventLoop().performMicrotaskCheckpoint();
 
     // 4. Let events to dispatch be a copy of doc's pending animation event queue.
     // 5. Clear doc's pending animation event queue.

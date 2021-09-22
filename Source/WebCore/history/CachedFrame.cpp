@@ -93,7 +93,7 @@ void CachedFrameBase::restore()
     if (m_isMainFrame)
         m_view->setParentVisible(true);
 
-    auto frame = makeRef(m_view->frame());
+    Ref frame = m_view->frame();
     {
         Style::PostResolutionCallbackDisabler disabler(*m_document);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;

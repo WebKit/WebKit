@@ -131,7 +131,7 @@ RetainPtr<NSImage> BitmapImage::snapshotNSImage()
     if (!nativeImage)
         return nullptr;
 
-    auto data = tiffRepresentation({ makeRef(*nativeImage) });
+    auto data = tiffRepresentation({ Ref { *nativeImage } });
     if (!data)
         return nullptr;
 

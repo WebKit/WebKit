@@ -230,7 +230,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
             break;
         }
     } else if (is<CSSImageValue>(cssValue.get()))
-        return Ref<CSSStyleValue> { CSSStyleImageValue::create(makeRef(downcast<CSSImageValue>(cssValue.get())), document) };
+        return Ref<CSSStyleValue> { CSSStyleImageValue::create(downcast<CSSImageValue>(cssValue.get()), document) };
     else if (is<CSSVariableReferenceValue>(cssValue.get())) {
         return Ref<CSSStyleValue> { CSSUnparsedValue::create(downcast<CSSVariableReferenceValue>(cssValue.get()).data().tokenRange()) };
     } else if (is<CSSPendingSubstitutionValue>(cssValue.get())) {

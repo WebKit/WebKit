@@ -521,7 +521,7 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
     else
         bitmapInfo |= kCGImageAlphaLast;
 
-    auto pixelArray = makeRef(pixelBuffer.data());
+    Ref pixelArray = pixelBuffer.data();
     auto dataSize = pixelArray->byteLength();
     auto data = pixelArray->data();
 

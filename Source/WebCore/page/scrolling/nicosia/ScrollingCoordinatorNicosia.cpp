@@ -77,7 +77,7 @@ bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWhe
     ASSERT(m_page);
     ASSERT(scrollingTree());
 
-    ScrollingThread::dispatch([threadedScrollingTree = makeRef(downcast<ThreadedScrollingTree>(*scrollingTree())), wheelEvent, targetNode, gestureState] {
+    ScrollingThread::dispatch([threadedScrollingTree = Ref { downcast<ThreadedScrollingTree>(*scrollingTree()) }, wheelEvent, targetNode, gestureState] {
         threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent, targetNode, gestureState);
     });
     return true;

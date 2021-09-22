@@ -269,10 +269,8 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
         return FormData::create(arrayBufferBody().data(), arrayBufferBody().byteLength());
     if (isArrayBufferView())
         return FormData::create(arrayBufferViewBody().baseAddress(), arrayBufferViewBody().byteLength());
-    if (isFormData()) {
-        auto body = makeRef(const_cast<FormData&>(formDataBody()));
-        return body;
-    }
+    if (isFormData())
+        return &const_cast<FormData&>(formDataBody());
     if (auto* data = m_consumer.data())
         return FormData::create(data->data(), data->size());
 

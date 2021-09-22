@@ -703,7 +703,7 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
 
 void Frame::addUserScriptAwaitingNotification(DOMWrapperWorld& world, const UserScript& script)
 {
-    m_userScriptsAwaitingNotification.append({ makeRef(world), makeUniqueRef<UserScript>(script) });
+    m_userScriptsAwaitingNotification.append({ world, makeUniqueRef<UserScript>(script) });
 }
 
 void Frame::injectUserScriptsAwaitingNotification()

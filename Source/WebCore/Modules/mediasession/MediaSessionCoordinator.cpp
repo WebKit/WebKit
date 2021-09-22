@@ -57,7 +57,7 @@ Ref<MediaSessionCoordinator> MediaSessionCoordinator::create(ScriptExecutionCont
 
 MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
-    , m_logger(makeRef(Document::sharedLogger()))
+    , m_logger(Document::sharedLogger())
     , m_logIdentifier(nextCoordinatorLogIdentifier())
 {
     ALWAYS_LOG(LOGIDENTIFIER);

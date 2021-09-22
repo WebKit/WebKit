@@ -103,7 +103,7 @@ auto AudioNode::toWeakOrStrongContext(BaseAudioContext& context, NodeType nodeTy
     // Destination nodes are owned by the BaseAudioContext so we use WeakPtr to avoid a retain cycle.
     if (nodeType == AudioNode::NodeTypeDestination)
         return makeWeakPtr(context, EnableWeakPtrThreadingAssertions::No); // WebAudio code uses locking when accessing the context.
-    return makeRef(context);
+    return Ref { context };
 }
 
 AudioNode::AudioNode(BaseAudioContext& context, NodeType type)

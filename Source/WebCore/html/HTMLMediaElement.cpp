@@ -4283,7 +4283,7 @@ void HTMLMediaElement::forgetResourceSpecificTracks()
     if (m_textTracks) {
         TrackDisplayUpdateScope scope { *this };
         for (int i = m_textTracks->length() - 1; i >= 0; --i) {
-            auto track = makeRef(*m_textTracks->item(i));
+            Ref track = *m_textTracks->item(i);
             if (track->trackType() == TextTrack::InBand)
                 removeTextTrack(WTFMove(track), false);
         }

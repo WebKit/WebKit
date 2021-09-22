@@ -130,11 +130,11 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Function
         uint32_t functionIndex = codeBlock->functionIndex();
         RefPtr<Wasm::Plan> plan;
         if (Options::wasmLLIntTiersUpToBBQ())
-            plan = adoptRef(*new Wasm::BBQPlan(instance->context(), makeRef(const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation())), functionIndex, instance->codeBlock(), Wasm::Plan::dontFinalize()));
+            plan = adoptRef(*new Wasm::BBQPlan(instance->context(), const_cast<Wasm::ModuleInformation&>(instance->module().moduleInformation()), functionIndex, instance->codeBlock(), Wasm::Plan::dontFinalize()));
         else
             plan = adoptRef(*new Wasm::OMGPlan(instance->context(), Ref<Wasm::Module>(instance->module()), functionIndex, instance->memory()->mode(), Wasm::Plan::dontFinalize()));
 
-        Wasm::ensureWorklist().enqueue(makeRef(*plan));
+        Wasm::ensureWorklist().enqueue(*plan);
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();
         else

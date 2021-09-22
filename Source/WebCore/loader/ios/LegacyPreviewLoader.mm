@@ -119,7 +119,7 @@ void LegacyPreviewLoader::previewConverterDidStartConverting(PreviewConverter& c
         return;
     }
 
-    resourceLoader->didReceiveResponse(response, [this, weakThis = makeWeakPtr(static_cast<PreviewConverterClient&>(*this)), converter = makeRef(converter)] {
+    resourceLoader->didReceiveResponse(response, [this, weakThis = makeWeakPtr(static_cast<PreviewConverterClient&>(*this)), converter = Ref { converter }] {
         if (!weakThis)
             return;
 

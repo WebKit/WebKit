@@ -134,7 +134,7 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
     m_pendingServiceWorkerTerminationRequests.add(identifier, makeUnique<ServiceWorkerTerminationRequest>(*this, identifier, timeout));
 
     auto& thread = serviceWorker.thread();
-    thread.stop([this, identifier, serviceWorker = makeRef(serviceWorker), completionHandler = WTFMove(completionHandler)]() mutable {
+    thread.stop([this, identifier, serviceWorker = Ref { serviceWorker }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_pendingServiceWorkerTerminationRequests.remove(identifier);
 
         if (auto* connection = SWContextManager::singleton().connection())

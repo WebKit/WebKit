@@ -188,7 +188,7 @@ auto Notification::permission(Document& document) -> Permission
 
 void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback, Ref<DeferredPromise>&& promise)
 {
-    auto resolvePromiseAndCallback = [document = makeRef(document), callback = WTFMove(callback), promise = WTFMove(promise)](Permission permission) mutable {
+    auto resolvePromiseAndCallback = [document = Ref { document }, callback = WTFMove(callback), promise = WTFMove(promise)](Permission permission) mutable {
         document->eventLoop().queueTask(TaskSource::DOMManipulation, [callback = WTFMove(callback), promise = WTFMove(promise), permission]() mutable {
             if (callback)
                 callback->handleEvent(permission);

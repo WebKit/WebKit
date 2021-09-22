@@ -837,7 +837,7 @@ static Ref<NativeJITCode> jitCodeForCallTrampoline()
     std::call_once(onceKey, [&] {
         result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_call_trampoline), JITType::HostCallThunk, NoIntrinsic);
     });
-    return makeRef(*result);
+    return *result;
 }
 
 static Ref<NativeJITCode> jitCodeForConstructTrampoline()
@@ -847,7 +847,7 @@ static Ref<NativeJITCode> jitCodeForConstructTrampoline()
     std::call_once(onceKey, [&] {
         result = new NativeJITCode(LLInt::getCodeRef<JSEntryPtrTag>(llint_native_construct_trampoline), JITType::HostCallThunk, NoIntrinsic);
     });
-    return makeRef(*result);
+    return *result;
 }
 
 NativeExecutable* VM::getHostFunction(NativeFunction function, Intrinsic intrinsic, NativeFunction constructor, const DOMJIT::Signature* signature, const String& name)

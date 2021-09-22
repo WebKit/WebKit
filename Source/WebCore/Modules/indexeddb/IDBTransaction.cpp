@@ -157,7 +157,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     Locker locker { m_referencedObjectStoreLock };
 
     if (auto* store = m_referencedObjectStores.get(objectStoreName))
-        return makeRef(*store);
+        return Ref { *store };
 
     bool found = false;
     for (auto& objectStore : m_info.objectStores()) {
@@ -886,7 +886,7 @@ void IDBTransaction::iterateCursor(IDBCursor& cursor, const IDBIterateCursorData
     addRequest(*cursor.request());
 
     LOG(IndexedDBOperations, "IDB iterate cursor operation: %s %s", cursor.info().loggingString().utf8().data(), data.loggingString().utf8().data());
-    scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, *cursor.request(), [protectedThis = Ref { *this }, request = makeRef(*cursor.request())] (const auto& result) {
+    scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, *cursor.request(), [protectedThis = Ref { *this }, request = Ref { *cursor.request() }] (const auto& result) {
         protectedThis->didIterateCursorOnServer(request.get(), result);
     }, [protectedThis = Ref { *this }, data = data.isolatedCopy()] (auto& operation) {
         protectedThis->iterateCursorOnServer(operation, data);
@@ -1265,7 +1265,7 @@ Ref<IDBRequest> IDBTransaction::requestPutOrAdd(JSGlobalObject& state, IDBObject
     LOG(IndexedDBOperations, "IDB putOrAdd operation: %s key: %s", objectStore.info().condensedLoggingString().utf8().data(), key ? key->loggingString().utf8().data() : "<null key>");
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, request.get(), [protectedThis = Ref { *this }, request] (const auto& result) {
         protectedThis->didPutOrAddOnServer(request.get(), result);
-    }, [protectedThis = Ref { *this }, key, value = makeRef(value), overwriteMode] (auto& operation) {
+    }, [protectedThis = Ref { *this }, key, value = Ref { value }, overwriteMode] (auto& operation) {
         protectedThis->putOrAddOnServer(operation, key.get(), value.ptr(), overwriteMode);
     }), IsWriteOperation::Yes);
 

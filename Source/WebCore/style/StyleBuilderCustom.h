@@ -2057,9 +2057,9 @@ inline void BuilderCustom::applyValueCustomProperty(BuilderState& builderState, 
     const auto& name = value.name();
 
     if (!registered || registered->inherits)
-        builderState.style().setInheritedCustomPropertyValue(name, makeRef(value));
+        builderState.style().setInheritedCustomPropertyValue(name, value);
     else
-        builderState.style().setNonInheritedCustomPropertyValue(name, makeRef(value));
+        builderState.style().setNonInheritedCustomPropertyValue(name, value);
 }
 
 }

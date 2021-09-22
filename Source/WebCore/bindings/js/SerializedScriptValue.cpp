@@ -1347,7 +1347,7 @@ private:
                     return false;
 
                 uint32_t index = m_wasmModules.size(); 
-                m_wasmModules.append(makeRef(module->module()));
+                m_wasmModules.append(&module->module());
                 write(WasmModuleTag);
                 write(index);
                 return true;
@@ -1362,7 +1362,7 @@ private:
                     return true;
                 }
                 uint32_t index = m_wasmMemoryHandles.size();
-                m_wasmMemoryHandles.append(makeRef(memory->memory().handle()));
+                m_wasmMemoryHandles.append(&memory->memory().handle());
                 write(WasmMemoryTag);
                 write(index);
                 return true;

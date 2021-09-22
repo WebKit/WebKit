@@ -253,7 +253,7 @@ void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigat
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request);
 
     auto requestIdentifier = PolicyCheckIdentifier::create();
-    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, requestIdentifier, [frame = makeRef(m_frame), request,
+    m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, requestIdentifier, [frame = Ref { m_frame }, request,
         formState = WTFMove(formState), frameName, navigationAction, function = WTFMove(function), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension),
         requestIdentifier] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
 

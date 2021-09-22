@@ -49,7 +49,7 @@ Ref<CSSNumericValue> CSSNumericValue::add(Vector<CSSNumberish>&& values)
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
-    return makeRef(*this);
+    return *this;
 }
 
 Ref<CSSNumericValue> CSSNumericValue::sub(Vector<CSSNumberish>&& values)
@@ -57,7 +57,7 @@ Ref<CSSNumericValue> CSSNumericValue::sub(Vector<CSSNumberish>&& values)
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
-    return makeRef(*this);
+    return *this;
 }
 
 Ref<CSSNumericValue> CSSNumericValue::mul(Vector<CSSNumberish>&& values)
@@ -65,7 +65,7 @@ Ref<CSSNumericValue> CSSNumericValue::mul(Vector<CSSNumberish>&& values)
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
-    return makeRef(*this);
+    return *this;
 }
 
 Ref<CSSNumericValue> CSSNumericValue::div(Vector<CSSNumberish>&& values)
@@ -73,21 +73,21 @@ Ref<CSSNumericValue> CSSNumericValue::div(Vector<CSSNumberish>&& values)
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
-    return makeRef(*this);
+    return *this;
 }
 Ref<CSSNumericValue> CSSNumericValue::min(Vector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
-    return makeRef(*this);
+    return *this;
 }
 Ref<CSSNumericValue> CSSNumericValue::max(Vector<CSSNumberish>&& values)
 {
     UNUSED_PARAM(values);
     // FIXME: add impl.
 
-    return makeRef(*this);
+    return *this;
 }
 
 Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)

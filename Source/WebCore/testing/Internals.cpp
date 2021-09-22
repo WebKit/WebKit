@@ -2923,7 +2923,7 @@ ExceptionOr<ScrollableArea*> Internals::scrollableAreaForNode(Node* node) const
     if (!node)
         return Exception { InvalidAccessError };
 
-    auto nodeRef = makeRef(*node);
+    Ref nodeRef { *node };
     nodeRef->document().updateLayoutIgnorePendingStylesheets();
 
     ScrollableArea* scrollableArea = nullptr;
@@ -4740,7 +4740,7 @@ void Internals::queueMicroTask(int testNumber)
 
     ScriptExecutionContext* context = document;
     auto& eventLoop = context->eventLoop();
-    eventLoop.queueMicrotask([document = makeRef(*document), testNumber]() {
+    eventLoop.queueMicrotask([document = Ref { *document }, testNumber]() {
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Debug, makeString("MicroTask #", testNumber, " has run."));
     });
 }
@@ -5165,7 +5165,7 @@ ExceptionOr<void> Internals::queueTaskToQueueMicrotask(Document& document, const
         return Exception { NotSupportedError };
 
     ScriptExecutionContext& context = document; // This avoids unnecessarily exporting Document::eventLoop.
-    context.eventLoop().queueTask(*source, [movedCallback = WTFMove(callback), protectedDocument = makeRef(document)]() mutable {
+    context.eventLoop().queueTask(*source, [movedCallback = WTFMove(callback), protectedDocument = Ref { document }]() mutable {
         ScriptExecutionContext& context = protectedDocument.get();
         context.eventLoop().queueMicrotask([callback = WTFMove(movedCallback)] {
             callback->handleEvent();

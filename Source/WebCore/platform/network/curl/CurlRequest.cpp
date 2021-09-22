@@ -209,7 +209,7 @@ void CurlRequest::callClient(Function<void(CurlRequest&, CurlRequestClient&)>&& 
 {
     runOnMainThread([this, protectedThis = Ref { *this }, task = WTFMove(task)]() mutable {
         if (m_client)
-            task(*this, makeRef(*m_client));
+            task(*this, Ref { *m_client });
     });
 }
 

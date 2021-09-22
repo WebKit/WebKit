@@ -134,7 +134,7 @@ void FetchEvent::promiseIsSettled()
         return;
     }
 
-    processResponse(makeRef(*response));
+    processResponse(Ref { *response });
 }
 
 } // namespace WebCore

@@ -32,7 +32,7 @@
 namespace WebCore {
 
 MicrotaskQueue::MicrotaskQueue(JSC::VM& vm)
-    : m_vm(makeRef(vm))
+    : m_vm(vm)
 {
 }
 

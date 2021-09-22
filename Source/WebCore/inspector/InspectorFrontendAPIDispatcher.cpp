@@ -195,7 +195,7 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
         if (!weakThis)
             return;
 
-        auto strongThis = makeRef(*weakThis);
+        Ref strongThis = { *weakThis };
         if (!strongThis->m_pendingResponses.size())
             return;
 

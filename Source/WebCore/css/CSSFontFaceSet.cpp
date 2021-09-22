@@ -252,7 +252,7 @@ void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const C
 
 void CSSFontFaceSet::remove(const CSSFontFace& face)
 {
-    auto protect = makeRef(face);
+    Ref protect { face };
 
     m_cache.clear();
 

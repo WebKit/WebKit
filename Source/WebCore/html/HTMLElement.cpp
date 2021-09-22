@@ -1409,7 +1409,7 @@ void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& r
     if (result.isEmpty())
         return;
 
-    auto shadowRoot = makeRef(ensureUserAgentShadowRoot());
+    Ref shadowRoot = ensureUserAgentShadowRoot();
     if (!textRecognitionElements.root) {
         auto rootContainer = HTMLDivElement::create(document());
         rootContainer->setIdAttribute(imageOverlayElementIdentifier());

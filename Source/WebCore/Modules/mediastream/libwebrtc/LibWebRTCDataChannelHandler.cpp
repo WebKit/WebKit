@@ -155,7 +155,7 @@ void LibWebRTCDataChannelHandler::checkState()
         m_bufferedMessages.append(StateChange { state, WTFMove(error) });
         return;
     }
-    postTask([protectedClient = makeRef(*m_client), state, error = WTFMove(error)] {
+    postTask([protectedClient = Ref { *m_client }, state, error = WTFMove(error)] {
         if (error && !error->ok()) {
             auto rtcError = toRTCError(*error);
             if (!rtcError)
@@ -179,7 +179,7 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
     }
 
     std::unique_ptr<webrtc::DataBuffer> protectedBuffer(new webrtc::DataBuffer(buffer));
-    postTask([protectedClient = makeRef(*m_client), buffer = WTFMove(protectedBuffer)] {
+    postTask([protectedClient = Ref { *m_client }, buffer = WTFMove(protectedBuffer)] {
         auto* data = buffer->data.data<uint8_t>();
         if (buffer->binary)
             protectedClient->didReceiveRawData(data, buffer->size());
@@ -194,7 +194,7 @@ void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t amount)
     if (!m_client)
         return;
 
-    postTask([protectedClient = makeRef(*m_client), amount] {
+    postTask([protectedClient = Ref { *m_client }, amount] {
         protectedClient->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
     });
 }

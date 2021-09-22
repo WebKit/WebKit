@@ -51,7 +51,7 @@ inline SignatureIndex SignatureInformation::get(const Signature& signature)
     if (ASSERT_ENABLED) {
         SignatureInformation& info = singleton();
         Locker locker { info.m_lock };
-        ASSERT_UNUSED(info, info.m_signatureSet.contains(SignatureHash { makeRef(const_cast<Signature&>(signature)) }));
+        ASSERT_UNUSED(info, info.m_signatureSet.contains(SignatureHash { const_cast<Signature&>(signature) }));
     }
     return bitwise_cast<SignatureIndex>(&signature);
 }

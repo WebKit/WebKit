@@ -132,7 +132,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
     m_numberOfPendingClipboardTypes = m_itemPromises.size();
     m_itemTypeLoaders = m_itemPromises.map([&] (auto& typeAndItem) {
         auto type = typeAndItem.key;
-        auto itemTypeLoader = ClipboardItemTypeLoader::create(type, [this, protectedItem = makeRef(m_item)] {
+        auto itemTypeLoader = ClipboardItemTypeLoader::create(type, [this, protectedItem = Ref { m_item }] {
             ASSERT(m_numberOfPendingClipboardTypes);
             if (!--m_numberOfPendingClipboardTypes)
                 invokeCompletionHandler();
@@ -143,7 +143,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
             if (!weakItemTypeLoader)
                 return;
 
-            auto itemTypeLoader = makeRef(*weakItemTypeLoader);
+            Ref itemTypeLoader { *weakItemTypeLoader };
             ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findMatching([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
 
             auto result = promise->result();

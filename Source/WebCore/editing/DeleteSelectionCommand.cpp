@@ -601,7 +601,7 @@ void DeleteSelectionCommand::makeStylingElementsDirectChildrenOfEditableRootToPr
         return;
     auto nodes = intersectingNodes(*range).begin();
     while (nodes) {
-        auto node = makeRef(*nodes);
+        Ref node = *nodes;
         auto shouldMove = is<HTMLLinkElement>(node)
             || (is<HTMLStyleElement>(node) && !downcast<HTMLStyleElement>(node.get()).hasAttributeWithoutSynchronization(scopedAttr));
         if (!shouldMove)

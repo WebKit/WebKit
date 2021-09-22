@@ -59,7 +59,7 @@ void ServiceWorkerInternals::terminate()
 
 void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
 {
-    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] (auto&& result) mutable {
+    event.onResponse([promise = WTFMove(promise), event = Ref { event }] (auto&& result) mutable {
         if (!result.has_value()) {
             String description;
             if (auto& error = result.error())

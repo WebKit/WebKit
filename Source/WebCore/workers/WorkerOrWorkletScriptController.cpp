@@ -278,7 +278,7 @@ MessageQueueWaitResult WorkerOrWorkletScriptController::loadModuleSynchronously(
     VM& vm = globalObject.vm();
     JSLockHolder lock { vm };
 
-    auto protector = makeRef(scriptFetcher);
+    Ref protector { scriptFetcher };
     {
         auto& promise = JSExecState::loadModule(globalObject, sourceCode.jsSourceCode(), JSC::JSScriptFetcher::create(vm, { &scriptFetcher }));
 
@@ -397,7 +397,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
 
     auto scriptFetcher = WorkerScriptFetcher::create(credentials, globalScope()->destination(), globalScope()->referrerPolicy());
     {
-        auto& promise = JSExecState::loadModule(globalObject, moduleURL.string(), JSC::JSScriptFetchParameters::create(vm, makeRef(scriptFetcher->parameters())), JSC::JSScriptFetcher::create(vm, { scriptFetcher.ptr() }));
+        auto& promise = JSExecState::loadModule(globalObject, moduleURL.string(), JSC::JSScriptFetchParameters::create(vm, scriptFetcher->parameters()), JSC::JSScriptFetcher::create(vm, { scriptFetcher.ptr() }));
 
         auto task = createSharedTask<void(std::optional<Exception>&&)>([completionHandler = WTFMove(completionHandler)](std::optional<Exception>&& exception) mutable {
             completionHandler(WTFMove(exception));

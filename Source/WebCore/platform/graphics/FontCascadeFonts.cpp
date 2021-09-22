@@ -106,7 +106,7 @@ FontCascadeFonts::FontCascadeFonts(RefPtr<FontSelector>&& fontSelector)
 {
 #if ASSERT_ENABLED
     if (!isMainThread())
-        m_thread = makeRef(Thread::current());
+        m_thread = Thread::current();
 #endif
 }
 

@@ -97,7 +97,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
 
-    callOnMainThread([detachedCanvas = WTFMove(detachedCanvas), placeholderData = makeRef(*clone->m_placeholderData)] () mutable {
+    callOnMainThread([detachedCanvas = WTFMove(detachedCanvas), placeholderData = Ref { *clone->m_placeholderData }] () mutable {
         placeholderData->canvas = detachedCanvas->takePlaceholderCanvas();
         if (placeholderData->canvas) {
             auto& placeholderContext = downcast<PlaceholderRenderingContext>(*placeholderData->canvas->renderingContext());
@@ -432,7 +432,7 @@ void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
 
 void OffscreenCanvas::pushBufferToPlaceholder()
 {
-    callOnMainThread([placeholderData = makeRef(*m_placeholderData)] () mutable {
+    callOnMainThread([placeholderData = Ref { *m_placeholderData }] () mutable {
         Locker locker { placeholderData->bufferLock };
         if (placeholderData->canvas && placeholderData->pendingCommitBuffer)
             placeholderData->canvas->setImageBufferAndMarkDirty(WTFMove(placeholderData->pendingCommitBuffer));

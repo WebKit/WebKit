@@ -191,7 +191,7 @@ void PrintContext::begin(float width, float height)
     if (!frame())
         return;
 
-    auto frame = makeRef(*this->frame());
+    Ref frame = *this->frame();
     // This function can be called multiple times to adjust printing parameters without going back to screen mode.
     m_isPrinting = true;
 

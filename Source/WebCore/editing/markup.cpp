@@ -1251,7 +1251,7 @@ String urlToMarkup(const URL& url, const String& title)
 enum class DocumentFragmentMode { New, ReuseForInnerOuterHTML };
 static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(Element& contextElement, const String& markup, DocumentFragmentMode mode, ParserContentPolicy parserContentPolicy)
 {
-    auto document = makeRef(contextElement.hasTagName(templateTag) ? contextElement.document().ensureTemplateDocument() : contextElement.document());
+    Ref document = contextElement.hasTagName(templateTag) ? contextElement.document().ensureTemplateDocument() : contextElement.document();
     auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
     if (document->isHTMLDocument()) {

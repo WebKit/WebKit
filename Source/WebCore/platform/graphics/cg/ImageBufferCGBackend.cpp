@@ -189,7 +189,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
         if (!pixelBuffer)
             return nullptr;
 
-        auto pixelArray = makeRef(pixelBuffer->data());
+        Ref pixelArray = pixelBuffer->data();
         auto dataSize = pixelArray->byteLength();
         auto data = pixelArray->data();
 

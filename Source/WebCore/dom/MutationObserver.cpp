@@ -143,12 +143,12 @@ void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 {
     ASSERT(isMainThread());
     ASSERT(mutation->target());
-    auto document = makeRef(mutation->target()->document());
+    Ref document = mutation->target()->document();
 
     m_pendingTargets.add(*mutation->target());
     m_records.append(WTFMove(mutation));
 
-    auto eventLoop = makeRef(document->windowEventLoop());
+    Ref eventLoop = document->windowEventLoop();
     eventLoop->activeMutationObservers().add(this);
     eventLoop->queueMutationObserverCompoundMicrotask();
 }
@@ -156,7 +156,7 @@ void MutationObserver::enqueueMutationRecord(Ref<MutationRecord>&& mutation)
 void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
 {
     ASSERT(isMainThread());
-    auto eventLoop = makeRef(slot.document().windowEventLoop());
+    Ref eventLoop = slot.document().windowEventLoop();
     auto& list = eventLoop->signalSlotList();
     ASSERT(list.findMatching([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
     list.append(slot);
@@ -166,7 +166,7 @@ void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
 
 void MutationObserver::setHasTransientRegistration(Document& document)
 {
-    auto eventLoop = makeRef(document.windowEventLoop());
+    Ref eventLoop = document.windowEventLoop();
     eventLoop->activeMutationObservers().add(this);
     eventLoop->queueMutationObserverCompoundMicrotask();
 }

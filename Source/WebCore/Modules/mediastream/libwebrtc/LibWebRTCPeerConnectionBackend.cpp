@@ -308,7 +308,7 @@ static inline RefPtr<RTCRtpSender> findExistingSender(const Vector<RefPtr<RTCRtp
     for (auto& transceiver : transceivers) {
         auto& sender = transceiver->sender();
         if (!sender.isStopped() && senderBackend.rtcSender() == backendFromRTPSender(sender).rtcSender())
-            return makeRef(sender);
+            return Ref { sender };
     }
     return nullptr;
 }
@@ -321,14 +321,14 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
 
     if (auto sender = findExistingSender(m_peerConnection.currentTransceivers(), *senderBackend)) {
         backendFromRTPSender(*sender).takeSource(*senderBackend);
-        sender->setTrack(makeRef(track));
+        sender->setTrack(track);
         sender->setMediaStreamIds(mediaStreamIds);
         return sender.releaseNonNull();
     }
 
     auto transceiverBackend = m_endpoint->transceiverBackendFromSender(*senderBackend);
 
-    auto sender = RTCRtpSender::create(m_peerConnection, makeRef(track), WTFMove(senderBackend));
+    auto sender = RTCRtpSender::create(m_peerConnection, track, WTFMove(senderBackend));
     sender->setMediaStreamIds(mediaStreamIds);
     auto receiver = createReceiver(transceiverBackend->createReceiverBackend());
     auto transceiver = RTCRtpTransceiver::create(sender.copyRef(), WTFMove(receiver), WTFMove(transceiverBackend));

@@ -165,7 +165,7 @@ void DataDetectorHighlight::fadeOut()
     [animation setToValue:@0];
 
     [CATransaction begin];
-    [CATransaction setCompletionBlock:[protectedSelf = makeRef(*this)]() mutable {
+    [CATransaction setCompletionBlock:[protectedSelf = Ref { *this }]() mutable {
         protectedSelf->didFinishFadeOutAnimation();
     }];
 

@@ -1,3 +1,37 @@
+2021-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of makeRef() and use Ref { } instead
+        https://bugs.webkit.org/show_bug.cgi?id=230585
+
+        Reviewed by Alex Christensen.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::schedulePauseForSpecialBreakpoint):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeToExistingAtomString const):
+        * runtime/VM.cpp:
+        (JSC::jitCodeForCallTrampoline):
+        (JSC::jitCodeForConstructTrampoline):
+        * wasm/WasmCodeBlock.cpp:
+        (JSC::Wasm::CodeBlock::CodeBlock):
+        * wasm/WasmOMGForOSREntryPlan.cpp:
+        (JSC::Wasm::OMGForOSREntryPlan::OMGForOSREntryPlan):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::signatureFor):
+        * wasm/WasmSignatureInlines.h:
+        (JSC::Wasm::SignatureInformation::get):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * wasm/js/JSWebAssemblyInstance.h:
+
 2021-09-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] CompareStrictEq is omitting String check incorrectly

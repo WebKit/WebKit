@@ -252,7 +252,7 @@ void Worker::createRTCRtpScriptTransformer(RTCRtpScriptTransform& transform, Mes
     if (!scriptExecutionContext())
         return;
 
-    m_contextProxy.postTaskToWorkerGlobalScope([transform = makeRef(transform), options = WTFMove(options)](auto& context) mutable {
+    m_contextProxy.postTaskToWorkerGlobalScope([transform = Ref { transform }, options = WTFMove(options)](auto& context) mutable {
         if (auto transformer = downcast<DedicatedWorkerGlobalScope>(context).createRTCRtpScriptTransformer(WTFMove(options)))
             transform->setTransformer(*transformer);
     });
