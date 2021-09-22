@@ -84,6 +84,9 @@ fast/css/text-overflow-ellipsis-strict.html [ Skip ]
 
 webkit.org/b/178337 fast/replaced/width100percent-image.html [ Skip ]
 
+# invisible soft hyphen makes the line taller in legacy line layout.
+fast/text/undefined-glyph-with-ligature.html [ ImageOnlyFailure ]
+
 ################################################################################
 ##############    Missing Functionality Prevents Testing        ################
 ################################################################################
