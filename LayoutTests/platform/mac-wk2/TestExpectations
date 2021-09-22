@@ -758,6 +758,8 @@ webkit.org/b/163136 http/tests/xmlhttprequest/auth-reject-protection-space.html 
 
 webkit.org/b/162975 http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html [ Pass Failure ]
 
+webkit.org/b/230650 [ BigSur+ ] http/tests/cache/disk-cache/shattered-deduplication.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/161653 [ Debug ] storage/indexeddb/key-generator.html [ Pass Timeout ]
 
 webkit.org/b/163702 platform/mac-wk2/plugins/muted-state.html [ Failure ]

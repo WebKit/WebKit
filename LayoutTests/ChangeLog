@@ -1,3 +1,12 @@
+2021-09-22  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur wk2 ] http/tests/cache/disk-cache/shattered-deduplication.html is flaky image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230650
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-22  Alex Christensen  <achristensen@webkit.org>
 
         PCM should include the bundle ID of the app from which it originated
