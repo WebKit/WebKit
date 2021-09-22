@@ -1,3 +1,11 @@
+2021-09-22  Alan Bujtas  <zalan@apple.com>
+
+        IFC progression gardening.
+
+        Unreviewed.
+
+        * TestExpectations: progressed with r282764 and r282872
+
 2021-09-22  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS & macOS wk2 Debug ] imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html is a flaky failure.
