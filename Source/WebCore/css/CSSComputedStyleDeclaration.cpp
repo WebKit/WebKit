@@ -1837,6 +1837,23 @@ static Ref<CSSPrimitiveValue> fontSizeFromStyle(const RenderStyle& style)
     return zoomAdjustedPixelValue(style.fontDescription().computedSize(), style);
 }
 
+static Ref<CSSPrimitiveValue> fontPaletteFromStyle(const RenderStyle& style)
+{
+    auto fontPalette = style.fontDescription().fontPalette();
+    switch (fontPalette.type) {
+    case FontPalette::Type::None:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+    case FontPalette::Type::Normal:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    case FontPalette::Type::Light:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueLight);
+    case FontPalette::Type::Dark:
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueDark);
+    case FontPalette::Type::Custom:
+        return CSSValuePool::singleton().createCustomIdent(fontPalette.identifier);
+    }
+}
+
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::fontNonKeywordWeightFromStyleValue(FontSelectionValue weight)
 {
     return CSSValuePool::singleton().createValue(static_cast<float>(weight), CSSUnitType::CSS_NUMBER);
@@ -2940,6 +2957,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return fontVariantFromStyle(style);
         case CSSPropertyFontWeight:
             return fontNonKeywordWeightFromStyle(style);
+        case CSSPropertyFontPalette:
+            return fontPaletteFromStyle(style);
         case CSSPropertyFontSynthesis:
             return fontSynthesisFromStyle(style);
         case CSSPropertyFontFeatureSettings: {

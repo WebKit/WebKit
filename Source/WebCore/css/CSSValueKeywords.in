@@ -1484,11 +1484,11 @@ more
 less
 // no-preference
 
-#if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
-// prefers-color-scheme
+// prefers-color-scheme, font-palette
 light
 dark
 
+#if defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS
 // color-scheme
 only
 // light

@@ -478,6 +478,18 @@
                 "url": "https://drafts.csswg.org/css-fonts-3/#font-kerning-prop"
             }
         },
+        "font-palette": {
+            "inherited": true,
+            "codegen-properties": {
+                "converter": "FontPalette",
+                "font-property": true,
+                "high-priority": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts/#font-palette-prop"
+            }
+        },
         "-webkit-font-smoothing": {
             "inherited": true,
             "values": [

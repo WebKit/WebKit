@@ -120,6 +120,7 @@ PASS flood-opacity
 PASS font-family
 PASS font-feature-settings
 PASS font-optical-sizing
+PASS font-palette
 PASS font-size
 PASS font-stretch
 PASS font-style

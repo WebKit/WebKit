@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
- * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@ namespace WebCore {
 struct SameSizeAsFontCascadeDescription {
     Vector<void*> vector;
     Vector<void*> vector2;
+    FontPalette palette;
     AtomString string;
     AtomString string2;
     int16_t fontSelectionRequest[3];

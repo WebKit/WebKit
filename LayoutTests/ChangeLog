@@ -1,3 +1,15 @@
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parsing support for font-palette
+        https://bugs.webkit.org/show_bug.cgi?id=230394
+
+        Reviewed by Simon Fraser.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+
 2021-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         Remove XSS Auditor: Part 2 (Remove engine support)

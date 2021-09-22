@@ -1,3 +1,22 @@
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parsing support for font-palette
+        https://bugs.webkit.org/show_bug.cgi?id=230394
+
+        Reviewed by Simon Fraser.
+
+        This is being upstreamed at https://github.com/web-platform-tests/wpt/pull/30845.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-computed-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/parsing/font-palette-computed.html: Added.
+        * web-platform-tests/css/css-fonts/parsing/font-palette-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/parsing/font-palette-invalid.html: Added.
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid.html: Added.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-09-21  Joonghun Park  <pjh0718@gmail.com>
 
         Fix the behavior that 3d translation's second value is serialized to 0px regardless of its specified unit if it is zero value.

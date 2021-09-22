@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include "CSSReflectValue.h"
 #include "CalcExpressionLength.h"
 #include "CalcExpressionOperation.h"
+#include "FontPalette.h"
 #include "FontSelectionValueInlines.h"
 #include "Frame.h"
 #include "GridPositionsResolver.h"
@@ -151,6 +152,7 @@ public:
     static GlyphOrientation convertGlyphOrientationOrAuto(BuilderState&, const CSSValue&);
     static std::optional<Length> convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
     static FontSynthesis convertFontSynthesis(BuilderState&, const CSSValue&);
+    static FontPalette convertFontPalette(BuilderState&, const CSSValue&);
     
     static BreakBetween convertPageBreakBetween(BuilderState&, const CSSValue&);
     static BreakInside convertPageBreakInside(BuilderState&, const CSSValue&);
@@ -1546,6 +1548,28 @@ inline FontSynthesis BuilderConverter::convertFontSynthesis(BuilderState&, const
     }
 
     return result;
+}
+
+inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSSValue& value)
+{
+    ASSERT(is<CSSPrimitiveValue>(value));
+    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    switch (primitiveValue.valueID()) {
+    case CSSValueNone:
+        return { FontPalette::Type::None, nullAtom() };
+    case CSSValueNormal:
+        return { FontPalette::Type::Normal, nullAtom() };
+    case CSSValueLight:
+        return { FontPalette::Type::Light, nullAtom() };
+    case CSSValueDark:
+        return { FontPalette::Type::Dark, nullAtom() };
+    case CSSValueInvalid:
+        ASSERT(primitiveValue.isCustomIdent());
+        return { FontPalette::Type::Custom, primitiveValue.stringValue() };
+    default:
+        ASSERT_NOT_REACHED();
+        return { FontPalette::Type::Normal, nullAtom() };
+    }
 }
     
 inline OptionSet<SpeakAs> BuilderConverter::convertSpeakAs(BuilderState&, const CSSValue& value)

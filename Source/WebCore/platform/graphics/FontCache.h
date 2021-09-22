@@ -37,9 +37,11 @@
 #include "Timer.h"
 #include <array>
 #include <limits.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/PointerComparison.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -78,6 +80,54 @@ using IMLangFontLinkType = IMLangFontLink2;
 using IMLangFontLinkType = IMLangFontLink;
 #endif
 
+struct FontDescriptionKeyRareData : public RefCounted<FontDescriptionKeyRareData> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<FontDescriptionKeyRareData> create(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontPalette&& fontPalette)
+    {
+        return adoptRef(*new FontDescriptionKeyRareData(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(fontPalette)));
+    }
+
+    const FontFeatureSettings& featureSettings() const
+    {
+        return m_featureSettings;
+    }
+
+    const FontVariationSettings& variationSettings() const
+    {
+        return m_variationSettings;
+    }
+
+    const FontPalette& fontPalette() const
+    {
+        return m_fontPalette;
+    }
+
+    bool operator==(const FontDescriptionKeyRareData& other) const
+    {
+        return m_featureSettings == other.m_featureSettings
+            && m_variationSettings == other.m_variationSettings
+            && m_fontPalette == other.m_fontPalette;
+    }
+
+private:
+    FontDescriptionKeyRareData(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontPalette&& fontPalette)
+        : m_featureSettings(WTFMove(featureSettings))
+        , m_variationSettings(WTFMove(variationSettings))
+        , m_fontPalette(WTFMove(fontPalette))
+    {
+    }
+
+    FontFeatureSettings m_featureSettings;
+    FontVariationSettings m_variationSettings;
+    FontPalette m_fontPalette;
+};
+
+inline void add(Hasher& hasher, const FontDescriptionKeyRareData& key)
+{
+    add(hasher, key.featureSettings(), key.variationSettings(), key.fontPalette());
+}
+
 // This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
 struct FontDescriptionKey {
     FontDescriptionKey() = default;
@@ -87,9 +137,13 @@ struct FontDescriptionKey {
         , m_fontSelectionRequest(description.fontSelectionRequest())
         , m_flags(makeFlagsKey(description))
         , m_locale(description.specifiedLocale())
-        , m_featureSettings(description.featureSettings())
-        , m_variationSettings(description.variationSettings())
-    { }
+    {
+        auto featureSettings = description.featureSettings();
+        auto variationSettings = description.variationSettings();
+        auto fontPalette = description.fontPalette();
+        if (!featureSettings.isEmpty() || !variationSettings.isEmpty() || fontPalette.type != FontPalette::Type::Normal)
+            m_rareData = FontDescriptionKeyRareData::create(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(fontPalette));
+    }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
         : m_isDeletedValue(true)
@@ -102,8 +156,7 @@ struct FontDescriptionKey {
             && m_fontSelectionRequest == other.m_fontSelectionRequest
             && m_flags == other.m_flags
             && m_locale == other.m_locale
-            && m_variationSettings == other.m_variationSettings
-            && m_featureSettings == other.m_featureSettings;
+            && arePointingToEqualData(m_rareData, other.m_rareData);
     }
 
     bool operator!=(const FontDescriptionKey& other) const
@@ -152,13 +205,14 @@ private:
     FontSelectionRequest m_fontSelectionRequest;
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
     AtomString m_locale;
-    FontFeatureSettings m_featureSettings;
-    FontVariationSettings m_variationSettings;
+    RefPtr<FontDescriptionKeyRareData> m_rareData;
 };
 
 inline void add(Hasher& hasher, const FontDescriptionKey& key)
 {
-    add(hasher, key.m_size, key.m_fontSelectionRequest, key.m_flags, key.m_locale, key.m_featureSettings, key.m_variationSettings);
+    add(hasher, key.m_size, key.m_fontSelectionRequest, key.m_flags, key.m_locale);
+    if (key.m_rareData)
+        add(hasher, *key.m_rareData);
 }
 
 struct FontDescriptionKeyHash {

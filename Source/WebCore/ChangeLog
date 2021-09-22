@@ -1,3 +1,82 @@
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parsing support for font-palette
+        https://bugs.webkit.org/show_bug.cgi?id=230394
+
+        Reviewed by Simon Fraser.
+
+        This is a pretty straightforward parsing patch. The grammar is just
+        font-palette: none | normal | light | dark | <palette-identifier>.
+        A <palette-identifier> is a <custom-ident>.
+
+        There is a choice to make about how to represent the parsed data:
+        Option 1:
+        class None {}; class Normal {}; class Light {}; class Dark {};
+        class Custom { String value; };
+        using FontPalette = Variant<None, Normal, Light, Dark, Custom>;
+
+        or,
+        Option 2:
+        struct FontPalette {
+            enum class Type { None, Normal, Light, Dark, Custom } type;
+            String value;
+        };
+
+        Upon advice from a trusted colleague, I chose option 2.
+
+        I'm implementing parsing support for @font-palette-values in
+        https://bugs.webkit.org/show_bug.cgi?id=230337.
+
+        Tests: imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-computed.html
+               imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-invalid.html
+               imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-valid.html
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::fontPaletteFromStyle):
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontPalette):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKeyRareData::create):
+        (WebCore::FontDescriptionKeyRareData::featureSettings const):
+        (WebCore::FontDescriptionKeyRareData::variationSettings const):
+        (WebCore::FontDescriptionKeyRareData::fontPalette const):
+        (WebCore::FontDescriptionKeyRareData::operator== const):
+        (WebCore::FontDescriptionKeyRareData::FontDescriptionKeyRareData):
+        (WebCore::add):
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        (WebCore::FontDescriptionKey::operator== const):
+        * platform/graphics/FontCascadeDescription.cpp:
+        * platform/graphics/FontCascadeDescription.h:
+        (WebCore::FontCascadeDescription::initialFontPalette):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::FontDescription):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::fontPalette const):
+        (WebCore::FontDescription::setFontPalette):
+        (WebCore::FontDescription::operator== const):
+        (WebCore::FontDescription::encode const):
+        (WebCore::FontDescription::decode):
+        * platform/graphics/FontPalette.h: Added.
+        (WebCore::FontPaletteNone::operator== const):
+        (WebCore::FontPaletteNone::operator!= const):
+        (WebCore::add):
+        (WebCore::FontPaletteNormal::operator== const):
+        (WebCore::FontPaletteNormal::operator!= const):
+        (WebCore::FontPaletteLight::operator== const):
+        (WebCore::FontPaletteLight::operator!= const):
+        (WebCore::FontPaletteDark::operator== const):
+        (WebCore::FontPaletteDark::operator!= const):
+        (WebCore::FontPaletteCustom::operator== const):
+        (WebCore::FontPaletteCustom::operator!= const):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertFontPalette):
+
 2021-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         Remove XSS Auditor: Part 2 (Remove engine support)

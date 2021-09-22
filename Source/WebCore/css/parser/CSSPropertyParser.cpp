@@ -927,6 +927,13 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
     return nullptr;
 }
 
+static RefPtr<CSSPrimitiveValue> consumeFontPalette(CSSParserTokenRange& range)
+{
+    if (auto result = consumeIdent<CSSValueNone, CSSValueNormal, CSSValueLight, CSSValueDark>(range))
+        return result;
+    return consumeCustomIdent(range);
+}
+
 static RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range)
 {
     auto familyName = consumeFamilyNameRaw(range);
@@ -4017,6 +4024,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontFamily(m_range);
     case CSSPropertyFontWeight:
         return consumeFontWeight(m_range);
+    case CSSPropertyFontPalette:
+        return consumeFontPalette(m_range);
     case CSSPropertyFontStretch:
         return consumeFontStretch(m_range, CSSValuePool::singleton());
     case CSSPropertyFontStyle:
