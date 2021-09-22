@@ -30,6 +30,7 @@
 #pragma once
 
 #include "FontCascadeFonts.h"
+#include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
@@ -301,7 +302,7 @@ public:
     // It comes into play when you create an @font-face which shares a family name as a preinstalled font.
     Vector<FontSelectionCapabilities> getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts);
 
-    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const String&, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
+    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const String&, const FontCreationContext& = { }, bool checkingAlternateName = false);
     WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);
     WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
     RefPtr<Font> similarFont(const FontDescription&, const String& family);
@@ -356,10 +357,10 @@ private:
     void pruneSystemFallbackFonts();
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, RefPtr<FontSelector>&&);
 
-    FontPlatformData* cachedFontPlatformData(const FontDescription&, const String& family, const FontFeatureSettings* = nullptr, FontSelectionSpecifiedCapabilities = { }, bool checkingAlternateName = false);
+    FontPlatformData* cachedFontPlatformData(const FontDescription&, const String& family, const FontCreationContext& = { }, bool checkingAlternateName = false);
 
     // These functions are implemented by each platform (unclear which functions this comment applies to).
-    WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings*, FontSelectionSpecifiedCapabilities);
+    WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontCreationContext&);
     
     static std::optional<ASCIILiteral> alternateFamilyName(const String&);
     static std::optional<ASCIILiteral> platformAlternateFamilyName(const String&);
@@ -392,7 +393,7 @@ private:
 
 inline std::unique_ptr<FontPlatformData> FontCache::createFontPlatformDataForTesting(const FontDescription& fontDescription, const AtomString& family)
 {
-    return createFontPlatformData(fontDescription, family, nullptr, { });
+    return createFontPlatformData(fontDescription, family, { });
 }
 
 #if !PLATFORM(COCOA) && !USE(FREETYPE)

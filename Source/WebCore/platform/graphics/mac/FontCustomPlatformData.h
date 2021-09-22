@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.
+ * Copyright (C) 2007-2021 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,7 @@ typedef const struct __CTFontDescriptor* CTFontDescriptorRef;
 
 namespace WebCore {
 
+struct FontCreationContext;
 class FontDescription;
 struct FontSelectionSpecifiedCapabilities;
 class SharedBuffer;
@@ -51,7 +52,7 @@ public:
 
     WEBCORE_EXPORT ~FontCustomPlatformData();
 
-    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities);
+    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
     static bool supportsFormat(const String&);
 

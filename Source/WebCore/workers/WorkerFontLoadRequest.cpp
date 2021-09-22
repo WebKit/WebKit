@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  * Copyright (C) 2021 Metrological Group B.V.
  * Copyright (C) 2021 Igalia S.L.
@@ -29,6 +29,7 @@
 #include "WorkerFontLoadRequest.h"
 
 #include "Font.h"
+#include "FontCreationContext.h"
 #include "FontCustomPlatformData.h"
 #include "FontSelectionAlgorithm.h"
 #include "ResourceLoaderOptions.h"
@@ -88,11 +89,11 @@ bool WorkerFontLoadRequest::ensureCustomFontData(const AtomString&)
     return m_fontCustomPlatformData.get();
 }
 
-RefPtr<Font> WorkerFontLoadRequest::createFont(const FontDescription& fontDescription, const AtomString&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
+RefPtr<Font> WorkerFontLoadRequest::createFont(const FontDescription& fontDescription, const AtomString&, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext)
 {
     ASSERT(m_fontCustomPlatformData);
     ASSERT(m_context);
-    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities), Font::Origin::Remote, &m_context->fontCache());
+    return Font::create(m_fontCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote, &m_context->fontCache());
 }
 
 void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)

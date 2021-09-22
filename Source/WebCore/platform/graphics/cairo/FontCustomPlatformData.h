@@ -31,6 +31,7 @@ typedef struct FT_FaceRec_*  FT_Face;
 
 namespace WebCore {
 
+struct FontCreationContext;
 class FontDescription;
 class FontPlatformData;
 class SharedBuffer;
@@ -46,7 +47,7 @@ struct FontCustomPlatformData {
 public:
     FontCustomPlatformData(FT_Face, SharedBuffer&);
     ~FontCustomPlatformData() = default;
-    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities);
+    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
     static bool supportsFormat(const String&);
 
 private:

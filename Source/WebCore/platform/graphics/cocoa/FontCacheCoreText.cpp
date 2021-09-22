@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,10 @@
 #include "config.h"
 #include "FontCache.h"
 
+#include "Color.h"
 #include "Font.h"
 #include "FontCascadeDescription.h"
+#include "FontCreationContext.h"
 #include "FontFamilySpecificationCoreText.h"
 #include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
@@ -440,7 +442,7 @@ struct FontType {
     bool aatShaping { false };
 };
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool applyWeightWidthSlopeVariations)
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
 {
     if (!originalFont)
         return originalFont;
@@ -469,7 +471,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool textRenderingModeIsAuto = textRenderingMode == TextRenderingMode::AutoTextRendering;
     bool variantSettingsIsNormal = variantSettings.isAllNormal();
     bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
-    bool fontFaceDoesntSpecifyFeatures = !fontFaceFeatures || fontFaceFeatures->isEmpty();
+    bool fontFaceDoesntSpecifyFeatures = fontCreationContext.fontFaceFeatures.isEmpty();
     if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && !shouldDisableLigaturesForSpacing) {
 #if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
         return originalFont;
@@ -515,11 +517,11 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         float weight = fontSelectionRequest.weight;
         float width = fontSelectionRequest.width;
         float slope = fontSelectionRequest.slope.value_or(normalItalicValue());
-        if (auto weightValue = fontFaceCapabilities.weight)
+        if (auto weightValue = fontCreationContext.fontFaceCapabilities.weight)
             weight = std::max(std::min(weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
-        if (auto widthValue = fontFaceCapabilities.width)
+        if (auto widthValue = fontCreationContext.fontFaceCapabilities.width)
             width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
-        if (auto slopeValue = fontFaceCapabilities.weight)
+        if (auto slopeValue = fontCreationContext.fontFaceCapabilities.weight)
             slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
         if (needsConversion) {
             weight = denormalizeWeight(weight);
@@ -539,8 +541,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     // FIXME: Implement Step 6: the font-variation-settings descriptor inside @font-face
 
     // Step 7: Consult with font-feature-settings inside @font-face
-    if (fontFaceFeatures) {
-        for (auto& fontFaceFeature : *fontFaceFeatures)
+    if (!fontCreationContext.fontFaceFeatures.isEmpty()) {
+        for (auto& fontFaceFeature : fontCreationContext.fontFaceFeatures)
             applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
     }
 
@@ -574,7 +576,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     for (auto& newVariation : variations)
         applyVariation(newVariation.tag(), newVariation.value());
 
-    auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if (!featuresToBeApplied.isEmpty()) {
         auto featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
         for (auto& p : featuresToBeApplied) {
@@ -1242,7 +1244,7 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
     return nullptr;
 }
 
-static RetainPtr<CTFontRef> fontWithFamily(const AtomString& family, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size)
+static RetainPtr<CTFontRef> fontWithFamily(const AtomString& family, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, float size)
 {
     if (family.isEmpty())
         return nullptr;
@@ -1251,7 +1253,7 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomString& family, const FontD
     fontLookup.result = fontWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts());
     if (!fontLookup.result)
         fontLookup = platformFontLookupWithFamily(family, fontDescription.fontSelectionRequest(), size, fontDescription.shouldAllowUserInstalledFonts());
-    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontFaceFeatures, fontFaceCapabilities, !fontLookup.createdFromPostScriptName);
+    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontCreationContext, !fontLookup.createdFromPostScriptName);
 }
 
 #if PLATFORM(MAC)
@@ -1285,11 +1287,11 @@ static void autoActivateFont(const String& name, CGFloat size)
 }
 #endif
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext)
 {
     float size = fontDescription.computedPixelSize();
 
-    auto font = fontWithFamily(family, fontDescription, fontFaceFeatures, fontFaceCapabilities, size);
+    auto font = fontWithFamily(family, fontDescription, fontCreationContext, size);
 
 #if PLATFORM(MAC)
     if (!font) {
@@ -1300,7 +1302,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         // Ignore the result because we want to use our own algorithm to actually find the font.
         autoActivateFont(family.string(), size);
 
-        font = fontWithFamily(family, fontDescription, fontFaceFeatures, fontFaceCapabilities, size);
+        font = fontWithFamily(family, fontDescription, fontCreationContext, size);
     }
 #endif
 
@@ -1412,7 +1414,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
 
     auto result = lookupFallbackFont(platformData.font(), description.weight(), description.computedLocale(), description.shouldAllowUserInstalledFonts(), characters, length);
-    result = preparePlatformFont(result.get(), description, nullptr, { });
+    result = preparePlatformFont(result.get(), description, { });
 
     if (!result)
         return lastResortFallbackFont(description);

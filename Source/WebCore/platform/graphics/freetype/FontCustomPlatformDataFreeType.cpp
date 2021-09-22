@@ -24,6 +24,7 @@
 
 #include "CairoUtilities.h"
 #include "FontCacheFreeType.h"
+#include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
@@ -73,14 +74,14 @@ static RefPtr<FcPattern> defaultFontconfigOptions()
     return adoptRef(FcPatternDuplicate(pattern));
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontCreationContext& fontCreationContext)
 {
     auto* freeTypeFace = static_cast<FT_Face>(cairo_font_face_get_user_data(m_fontFace.get(), &freeTypeFaceKey));
     ASSERT(freeTypeFace);
     RefPtr<FcPattern> pattern = defaultFontconfigOptions();
     FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(freeTypeFace->family_name));
 
-    for (auto& fontFaceFeature : fontFaceFeatures) {
+    for (auto& fontFaceFeature : fontCreationContext.fontFaceFeatures) {
         if (fontFaceFeature.enabled()) {
             const auto& tag = fontFaceFeature.tag();
             const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };

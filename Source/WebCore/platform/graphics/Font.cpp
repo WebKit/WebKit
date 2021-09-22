@@ -74,7 +74,9 @@ Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, fl
     auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping);
     FontDescription description;
     description.setComputedSize(fontSize);
-    return Font::create(CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { }, { }), origin, fontCacheForVerticalData);
+    // FIXME: Why doesn't this pass in any meaningful data for the last few arguments?
+    auto platformData = CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { });
+    return Font::create(WTFMove(platformData), origin, fontCacheForVerticalData);
 }
 
 Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, FontCache* fontCacheForVerticalData)

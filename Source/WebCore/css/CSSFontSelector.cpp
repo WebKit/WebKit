@@ -347,7 +347,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     if (!resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto font = m_fontCache->fontForFamily(*fontDescriptionForLookup, familyForLookup);
+    auto font = m_fontCache->fontForFamily(*fontDescriptionForLookup, familyForLookup, { });
     if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
     return FontRanges { WTFMove(font) };

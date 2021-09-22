@@ -1256,6 +1256,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FontCascade.h
     platform/graphics/FontCascadeDescription.h
     platform/graphics/FontCascadeFonts.h
+    platform/graphics/FontCreationContext.h
     platform/graphics/FontDescription.h
     platform/graphics/FontFamilySpecificationNull.h
     platform/graphics/FontGenericFamilies.h

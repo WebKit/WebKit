@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "FontCreationContext.h"
 #include "FontDescription.h"
 #include "FontMemoryResource.h"
 #include "FontPlatformData.h"
@@ -49,7 +50,7 @@ FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformD
 
 FontCustomPlatformData::~FontCustomPlatformData() = default;
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontCreationContext&)
 {
     int size = fontDescription.computedPixelSize();
     FontRenderingMode renderingMode = fontDescription.renderingMode();

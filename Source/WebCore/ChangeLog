@@ -1,3 +1,80 @@
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add FontCreationContext
+        https://bugs.webkit.org/show_bug.cgi?id=230592
+
+        Reviewed by Alan Bujtas.
+
+        We have this pattern where we pass around "const FontFeatureSettings&, const FontSelectionSpecifiedCapabilities&"
+        through all the various font creation routines. When I add support for font palettes and font-feature-values,
+        this would need to grow to 4 arguments being passed around instead of 2. Rather than passing all these arguments
+        around, a better idea is to encapsulate these arguments in a "context" object. This is because most places that
+        take these arguments don't actually inspect them, but instead just forward them on to other routines.
+
+        No new tests because there is no behavior change.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        (WebCore::CSSFontFaceSource::font):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        * loader/FontLoadRequest.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createFont):
+        (WebCore::CachedFont::platformDataFromCustomData):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedFontLoadRequest.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::createFont):
+        (WebCore::CachedSVGFont::platformDataFromCustomData):
+        * loader/cache/CachedSVGFont.h:
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::create):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::operator==):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontCache::cachedFontPlatformData):
+        (WebCore::FontCache::fontForFamily):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::fontForFamily):
+        (WebCore::FontCache::cachedFontPlatformData):
+        (WebCore::FontCache::createFontPlatformDataForTesting):
+        * platform/graphics/FontCreationContext.h: Added.
+        (WebCore::FontCreationContext::operator== const):
+        (WebCore::FontCreationContext::operator!= const):
+        (WebCore::add):
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * workers/WorkerFontLoadRequest.cpp:
+        (WebCore::WorkerFontLoadRequest::createFont):
+        * workers/WorkerFontLoadRequest.h:
+
 2021-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Change from ENABLE(RUBBER_BANDING) to HAVE(RUBBER_BANDING)

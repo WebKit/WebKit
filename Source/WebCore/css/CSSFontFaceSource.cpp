@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascadeDescription.h"
+#include "FontCreationContext.h"
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "ResourceLoadObserver.h"
@@ -185,7 +186,7 @@ void CSSFontFaceSource::load(Document* document)
             fontDescription.setOneFamily(m_familyNameOrURI);
             fontDescription.setComputedSize(1);
             fontDescription.setShouldAllowUserInstalledFonts(m_face.allowUserInstalledFonts());
-            success = FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, nullptr, FontSelectionSpecifiedCapabilities(), true);
+            success = FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, { }, true);
             if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
                 ResourceLoadObserver::shared().logFontLoad(*document, m_familyNameOrURI.string(), success);
         }
@@ -193,7 +194,7 @@ void CSSFontFaceSource::load(Document* document)
     }
 }
 
-RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
+RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, const FontCreationContext& fontCreationContext)
 {
     ASSERT(status() == Status::Success);
 
@@ -203,12 +204,12 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         if (m_immediateSource) {
             if (!m_immediateFontCustomPlatformData)
                 return nullptr;
-            return Font::create(CachedFont::platformDataFromCustomData(*m_immediateFontCustomPlatformData, fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities), Font::Origin::Remote);
+            return Font::create(CachedFont::platformDataFromCustomData(*m_immediateFontCustomPlatformData, fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote);
         }
 
         // We're local. Just return a Font from the normal cache.
         // We don't want to check alternate font family names here, so pass true as the checkingAlternateName parameter.
-        return FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, &fontFaceFeatures, fontFaceCapabilities, true);
+        return FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, fontCreationContext, true);
     }
 
     if (m_fontRequest) {
@@ -216,7 +217,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         ASSERT_UNUSED(success, success);
 
         ASSERT(status() == Status::Success);
-        auto result = m_fontRequest->createFont(fontDescription, m_familyNameOrURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities);
+        auto result = m_fontRequest->createFont(fontDescription, m_familyNameOrURI, syntheticBold, syntheticItalic, fontCreationContext);
         ASSERT(result);
         return result;
     }
@@ -228,7 +229,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         return nullptr;
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
-    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities), Font::Origin::Remote);
+    return Font::create(m_inDocumentCustomPlatformData->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote);
 }
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
