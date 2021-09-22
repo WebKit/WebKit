@@ -690,16 +690,9 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
     UIWKGestureOneFingerTap = 1,
     UIWKGestureTapAndAHalf = 2,
     UIWKGestureDoubleTap = 3,
-    UIWKGestureTapAndHalf = 4,
-    UIWKGestureDoubleTapInUneditable = 5,
-    UIWKGestureOneFingerTapInUneditable = 6,
-    UIWKGestureOneFingerTapSelectsAll = 7,
     UIWKGestureOneFingerDoubleTap = 8,
     UIWKGestureOneFingerTripleTap = 9,
     UIWKGestureTwoFingerSingleTap = 10,
-    UIWKGestureTwoFingerRangedSelectGesture = 11,
-    UIWKGestureTapOnLinkWithGesture = 12,
-    UIWKGestureMakeWebSelection = 13,
     UIWKGesturePhraseBoundary = 14,
 };
 
