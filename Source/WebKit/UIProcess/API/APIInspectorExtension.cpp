@@ -28,7 +28,6 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-#include "APISerializedScriptValue.h"
 #include "InspectorExtensionTypes.h"
 #include "WebInspectorUIExtensionControllerProxy.h"
 #include <WebCore/ExceptionDetails.h>

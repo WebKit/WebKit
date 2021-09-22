@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeContext.h"
 
+#import "GenericCallback.h"
 #import "GraphicsLayerCARemote.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerBackingStoreCollection.h"

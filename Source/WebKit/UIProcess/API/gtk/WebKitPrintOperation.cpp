@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitPrintOperation.h"
 
-#include "APIError.h"
 #include "WebKitPrintCustomWidgetPrivate.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"

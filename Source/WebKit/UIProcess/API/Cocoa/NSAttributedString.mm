@@ -42,7 +42,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKitSPI.h>
-#import <WebCore/WAKAppKitStubs.h>
 #endif
 
 NSString * const NSReadAccessURLDocumentOption = @"ReadAccessURL";

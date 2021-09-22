@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "CallbackID.h"
 #include "DrawingAreaInfo.h"
 #include "DynamicViewportSizeUpdate.h"
 #include "EditorState.h"
+#include "GenericCallback.h"
 #include "PlatformCAAnimationRemote.h"
 #include "RemoteLayerBackingStore.h"
 #include "TransactionID.h"

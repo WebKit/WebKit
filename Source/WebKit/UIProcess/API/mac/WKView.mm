@@ -1677,7 +1677,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
 {
     auto updateBlockCopy = makeBlockPtr(updateBlock);
-    _data->_impl->page().callAfterNextPresentationUpdate([updateBlockCopy] {
+    _data->_impl->page().callAfterNextPresentationUpdate([updateBlockCopy](WebKit::CallbackBase::Error error) {
         if (updateBlockCopy)
             updateBlockCopy();
     });

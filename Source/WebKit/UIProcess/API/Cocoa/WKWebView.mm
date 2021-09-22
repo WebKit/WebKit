@@ -1168,9 +1168,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(CocoaImage *, NSError *))completionHandler
 {
     THROW_IF_SUSPENDED;
-#if USE(APPKIT)
     constexpr bool snapshotFailedTraceValue = false;
-#endif
     tracePoint(TakeSnapshotStart);
 
     CGRect rectInViewCoordinates = snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect) ? snapshotConfiguration.rect : self.bounds;
@@ -1245,7 +1243,13 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
 
-    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler]() mutable {
+    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler](WebKit::CallbackBase::Error error) mutable {
+        if (error != WebKit::CallbackBase::Error::None) {
+            tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
+            handler(nil, createNSError(WKErrorUnknown).get());
+            return;
+        }
+
         // Create an implicit transaction to ensure a commit will happen next.
         [CATransaction activate];
 
@@ -1515,7 +1519,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     auto updateBlockCopy = makeBlockPtr(updateBlock);
 
     RetainPtr<WKWebView> strongSelf = self;
-    _page->callAfterNextPresentationUpdate([updateBlockCopy, withoutWaitingForAnimatedResize, strongSelf] {
+    _page->callAfterNextPresentationUpdate([updateBlockCopy, withoutWaitingForAnimatedResize, strongSelf](WebKit::CallbackBase::Error error) {
         if (!updateBlockCopy)
             return;
 

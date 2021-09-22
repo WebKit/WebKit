@@ -29,7 +29,6 @@
 
 #include "APIArray.h"
 #include "APINotificationProvider.h"
-#include "APINumber.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"

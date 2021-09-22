@@ -31,7 +31,6 @@
 #import "Logging.h"
 #import "WebAutomationSessionMacros.h"
 #import "WebInspectorUIProxy.h"
-#import "WebMouseEvent.h"
 #import "WebPageProxy.h"
 #import "_WKAutomationSession.h"
 #import <Carbon/Carbon.h>

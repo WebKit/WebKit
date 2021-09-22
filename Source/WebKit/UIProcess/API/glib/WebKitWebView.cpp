@@ -25,7 +25,6 @@
 #include "APIContentWorld.h"
 #include "APIData.h"
 #include "APINavigation.h"
-#include "APINumber.h"
 #include "APISerializedScriptValue.h"
 #include "DataReference.h"
 #include "ImageOptions.h"

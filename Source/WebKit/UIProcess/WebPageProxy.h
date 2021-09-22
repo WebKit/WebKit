@@ -68,7 +68,6 @@
 #include "WebContextMenuItemData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDataListSuggestionsDropdown.h"
-#include "WebEvent.h"
 #include "WebFrameProxy.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageDiagnosticLoggingClient.h"
@@ -199,7 +198,6 @@ interface ID3D11Device1;
 #endif
 
 namespace API {
-class Array;
 class Attachment;
 class ContentWorld;
 class ContextMenuClient;
@@ -210,19 +208,13 @@ class FindMatchesClient;
 class FormClient;
 class FullscreenClient;
 class HistoryClient;
-class HitTestResult;
 class IconLoadingClient;
 class LoaderClient;
 class Navigation;
-class NavigationAction;
 class NavigationClient;
-class NavigationResponse;
-class PageConfiguration;
 class PolicyClient;
 class ResourceLoadClient;
-class SerializedScriptValue;
 class UIClient;
-class URL;
 class URLRequest;
 }
 
@@ -344,10 +336,7 @@ typedef HWND PlatformViewWidget;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
-class AuthenticationChallengeProxy;
-class CallbackID;
 class DrawingAreaProxy;
-class DownloadProxy;
 class GamepadData;
 class MediaUsageManager;
 class NativeWebGestureEvent;
@@ -371,7 +360,6 @@ class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
-class WebFrameProxy;
 class WebFullScreenManagerProxy;
 class PlaybackSessionManagerProxy;
 class UserMediaPermissionRequestProxy;
@@ -379,7 +367,6 @@ class VideoFullscreenManagerProxy;
 class WebAuthenticatorCoordinatorProxy;
 class WebBackForwardCache;
 class WebDeviceOrientationUpdateProviderProxy;
-class WebInspectorUIProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebNavigationState;
@@ -424,7 +411,6 @@ struct WebNavigationDataStore;
 struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
 
-enum class FindOptions : uint16_t;
 enum class ImageAnalysisType : uint8_t;
 enum class TapHandlingResult : uint8_t;
 enum class TextRecognitionUpdateResult : uint8_t;
@@ -433,8 +419,6 @@ enum class ProcessSwapRequestedByClient : bool;
 enum class QuickLookPreviewActivity : uint8_t;
 enum class UndoOrRedo : bool;
 enum class WebContentMode : uint8_t;
-
-typedef uint32_t SnapshotOptions;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 using LayerHostingContextID = uint32_t;
@@ -1635,7 +1619,7 @@ public:
 
     // For testing
     void clearWheelEventTestMonitor();
-    void callAfterNextPresentationUpdate(Function<void()>&&);
+    void callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&&);
 
     void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
 

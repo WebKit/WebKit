@@ -26,7 +26,6 @@
 #pragma once
 
 #include "DrawingAreaProxy.h"
-#include "ProcessThrottler.h"
 #include "RemoteLayerTreeHost.h"
 #include "TransactionID.h"
 #include <WebCore/AnimationFrameRate.h>
@@ -69,7 +68,7 @@ private:
     
     // For now, all callbacks are called before committing changes, because that's what the only client requires.
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
-    void dispatchAfterEnsuringDrawing(Function<void()>&&) final;
+    void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) final;
 
 #if PLATFORM(MAC)
     void didChangeViewExposedRect() final;
@@ -121,7 +120,7 @@ private:
     TransactionID m_transactionIDForUnhidingContent;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
-    HashMap<CallbackID, std::pair<Function<void()>, std::unique_ptr<ProcessThrottler::BackgroundActivity>>> m_callbacks;
+    CallbackMap m_callbacks;
 
     RetainPtr<WKOneShotDisplayLinkHandler> m_displayLinkHandler;
 };

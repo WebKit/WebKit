@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebContextClient.h"
 
-#include "WKAPICast.h"
 #include "WebProcessPool.h"
 
 namespace WebKit {

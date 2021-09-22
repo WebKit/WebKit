@@ -31,7 +31,6 @@
 #include "APIAutomationSessionClient.h"
 #include "APINavigation.h"
 #include "APIOpenPanelParameters.h"
-#include "APIString.h"
 #include "AutomationProtocolObjects.h"
 #include "CoordinateSystem.h"
 #include "WebAutomationSessionMacros.h"
@@ -2206,7 +2205,9 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 
 #if PLATFORM(GTK)
     Function<void(WebPageProxy&, std::optional<WebCore::IntRect>&&, Ref<TakeScreenshotCallback>&&)> takeViewSnapsot = [](WebPageProxy& page, std::optional<WebCore::IntRect>&& rect, Ref<TakeScreenshotCallback>&& callback) {
-        page.callAfterNextPresentationUpdate([page = Ref { page }, rect = WTFMove(rect), callback = WTFMove(callback)]() mutable {
+        page.callAfterNextPresentationUpdate([page = Ref { page }, rect = WTFMove(rect), callback = WTFMove(callback)](CallbackBase::Error error) mutable {
+            if (error != CallbackBase::Error::None)
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
 
             auto snapshot = page->takeViewSnapshot(WTFMove(rect));
             if (!snapshot)

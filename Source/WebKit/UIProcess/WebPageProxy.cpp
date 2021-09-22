@@ -52,7 +52,6 @@
 #include "APIPolicyClient.h"
 #include "APIResourceLoadClient.h"
 #include "APISecurityOrigin.h"
-#include "APISerializedScriptValue.h"
 #include "APIUIClient.h"
 #include "APIURLRequest.h"
 #include "APIWebsitePolicies.h"
@@ -4479,7 +4478,9 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 
     sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)] () mutable {
-        callAfterNextPresentationUpdate(WTFMove(callback));
+        callAfterNextPresentationUpdate([callback = WTFMove(callback)] (auto) mutable {
+            callback();
+        });
     });
 }
 
@@ -9829,10 +9830,12 @@ void WebPageProxy::clearWheelEventTestMonitor()
     send(Messages::WebPage::ClearWheelEventTestMonitor());
 }
 
-void WebPageProxy::callAfterNextPresentationUpdate(Function<void()>&& callback)
+void WebPageProxy::callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&& callback)
 {
-    if (!hasRunningProcess() || !m_drawingArea)
-        return callback();
+    if (!hasRunningProcess() || !m_drawingArea) {
+        callback(CallbackBase::Error::OwnerWasInvalidated);
+        return;
+    }
 
     m_drawingArea->dispatchAfterEnsuringDrawing(WTFMove(callback));
 }

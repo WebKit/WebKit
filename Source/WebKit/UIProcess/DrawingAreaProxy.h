@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include "CallbackID.h"
 #include "DrawingAreaInfo.h"
+#include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include <WebCore/FloatRect.h>
@@ -98,7 +98,7 @@ public:
 
     virtual void waitForDidUpdateActivityState(ActivityStateChangeID) { }
     
-    virtual void dispatchAfterEnsuringDrawing(Function<void()>&&) { ASSERT_NOT_REACHED(); }
+    virtual void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) { ASSERT_NOT_REACHED(); }
 
     // Hide the content until the currently pending update arrives.
     virtual void hideContentUntilPendingUpdate() { ASSERT_NOT_REACHED(); }

@@ -29,7 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "APINavigation.h"
-#import "WKAPICast.h"
+#import <WebKit/WKFrameInfo.h>
 #import "WKInspectorResourceURLSchemeHandler.h"
 #import "WKInspectorWKWebView.h"
 #import <WebKit/WKNavigationAction.h>
@@ -45,7 +45,6 @@
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import <WebCore/VersionChecks.h>
-#import <WebKit/WKFrameInfo.h>
 #import <wtf/WeakObjCPtr.h>
 
 static NSString * const WKInspectorResourceScheme = @"inspector-resource";

@@ -98,6 +98,7 @@ private:
         ASSERT(newID != HashTraits<uint64_t>::emptyValue());
     }
 
+    friend class CallbackMap;
     template <typename CallbackType> friend class SpecificCallbackMap;
     friend struct WTF::CallbackIDHash;
     friend HashTraits<WebKit::CallbackID>;
