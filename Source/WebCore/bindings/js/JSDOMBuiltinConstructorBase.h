@@ -37,8 +37,8 @@ public:
     }
 
 protected:
-    JSDOMBuiltinConstructorBase(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : JSDOMConstructorBase(structure, globalObject)
+    JSDOMBuiltinConstructorBase(JSC::VM& vm, JSC::Structure* structure, JSC::NativeFunction functionForConstruct)
+        : Base(vm, structure, functionForConstruct)
     {
     }
 

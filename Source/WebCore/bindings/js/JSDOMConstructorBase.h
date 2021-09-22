@@ -19,20 +19,21 @@
 
 #pragma once
 
-#include "JSDOMWrapper.h"
+#include "JSDOMGlobalObject.h"
+#include <JavaScriptCore/InternalFunction.h>
 
 namespace WebCore {
 
+JSC_DECLARE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructor);
 JSC_DECLARE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable);
 
-// Base class for all constructor objects in the JSC bindings.
-class JSDOMConstructorBase : public JSDOMObject {
+// Base class for all callable constructor objects in the JSC bindings.
+class JSDOMConstructorBase : public JSC::InternalFunction {
 public:
-    using Base = JSDOMObject;
+    using Base = InternalFunction;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance | JSC::OverridesGetCallData;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
     static constexpr bool needsDestruction = false;
-    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);
 
     template<typename CellType, JSC::SubspaceAccess>
     static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
@@ -45,18 +46,16 @@ public:
 
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM&);
 
+    JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(Base::globalObject()); }
+    ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
+
 protected:
-    JSDOMConstructorBase(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : JSDOMObject(structure, globalObject)
+    JSDOMConstructorBase(JSC::VM& vm, JSC::Structure* structure, JSC::NativeFunction functionForConstruct)
+        : Base(vm, structure,
+            functionForConstruct ? callThrowTypeErrorForJSDOMConstructor : callThrowTypeErrorForJSDOMConstructorNotConstructable,
+            functionForConstruct ? functionForConstruct : callThrowTypeErrorForJSDOMConstructorNotConstructable)
     {
     }
-
-    static JSC::CallData getCallData(JSC::JSCell*);
 };
-
-inline JSC::Structure* JSDOMConstructorBase::createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
-{
-    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
-}
 
 } // namespace WebCore

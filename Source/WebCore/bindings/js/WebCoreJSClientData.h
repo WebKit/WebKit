@@ -64,6 +64,7 @@ public:
     
     JSC::IsoSubspace& domBuiltinConstructorSpace() { return m_domBuiltinConstructorSpace; }
     JSC::IsoSubspace& domConstructorSpace() { return m_domConstructorSpace; }
+    JSC::IsoSubspace& domNamespaceObjectSpace() { return m_domNamespaceObjectSpace; }
     JSC::IsoSubspace& domWindowPropertiesSpace() { return m_domWindowPropertiesSpace; }
     JSC::IsoSubspace& runtimeArraySpace() { return m_runtimeArraySpace; }
     JSC::IsoSubspace& runtimeMethodSpace() { return m_runtimeMethodSpace; }
@@ -113,6 +114,7 @@ public:
 private:
     JSC::IsoSubspace m_domBuiltinConstructorSpace;
     JSC::IsoSubspace m_domConstructorSpace;
+    JSC::IsoSubspace m_domNamespaceObjectSpace;
     JSC::IsoSubspace m_domWindowPropertiesSpace;
     JSC::IsoSubspace m_runtimeArraySpace;
     JSC::IsoSubspace m_runtimeMethodSpace;

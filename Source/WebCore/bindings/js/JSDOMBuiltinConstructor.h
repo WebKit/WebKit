@@ -40,13 +40,12 @@ public:
     static JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES construct(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 private:
-    JSDOMBuiltinConstructor(JSC::Structure* structure, JSDOMGlobalObject& globalObject)
-        : Base(structure, globalObject)
+    JSDOMBuiltinConstructor(JSC::VM& vm, JSC::Structure* structure)
+        : Base(vm, structure, construct)
     {
     }
 
     void finishCreation(JSC::VM&, JSDOMGlobalObject&);
-    static JSC::CallData getConstructData(JSC::JSCell*);
 
     JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&);
     JSC::EncodedJSValue callConstructor(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject*);
@@ -59,14 +58,14 @@ private:
 
 template<typename JSClass> inline JSDOMBuiltinConstructor<JSClass>* JSDOMBuiltinConstructor<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)
 {
-    JSDOMBuiltinConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMBuiltinConstructor>(vm.heap)) JSDOMBuiltinConstructor(structure, globalObject);
+    JSDOMBuiltinConstructor* constructor = new (NotNull, JSC::allocateCell<JSDOMBuiltinConstructor>(vm.heap)) JSDOMBuiltinConstructor(vm, structure);
     constructor->finishCreation(vm, globalObject);
     return constructor;
 }
 
 template<typename JSClass> inline JSC::Structure* JSDOMBuiltinConstructor<JSClass>::createStructure(JSC::VM& vm, JSC::JSGlobalObject& globalObject, JSC::JSValue prototype)
 {
-    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
+    return JSC::Structure::create(vm, &globalObject, prototype, JSC::TypeInfo(JSC::InternalFunctionType, StructureFlags), info());
 }
 
 template<typename JSClass> inline void JSDOMBuiltinConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
@@ -117,14 +116,6 @@ template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES J
     ASSERT(callFrame);
     auto* castedThis = JSC::jsCast<JSDOMBuiltinConstructor*>(callFrame->jsCallee());
     return castedThis->callConstructor(*lexicalGlobalObject, *callFrame, createJSObject(*castedThis));
-}
-
-template<typename JSClass> inline JSC::CallData JSDOMBuiltinConstructor<JSClass>::getConstructData(JSC::JSCell*)
-{
-    JSC::CallData constructData;
-    constructData.type = JSC::CallData::Type::Native;
-    constructData.native.function = construct;
-    return constructData;
 }
 
 } // namespace WebCore

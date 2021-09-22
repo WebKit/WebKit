@@ -1,3 +1,71 @@
+2021-09-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] DOM constructors should extend InternalFunction
+        https://bugs.webkit.org/show_bug.cgi?id=228763
+
+        Reviewed by Sam Weinig.
+
+        This patch makes JSDOMConstructorBase a subclass of InternalFunction, aligning
+        DOM constructors with their ECMA-262 counterparts, which renders a few benefits.
+
+          1. InternalFunction is way faster to call than a class with custom getCallData():
+             JIT inlines InternalFunction::getCallData(), emitting a direct call into
+             m_functionForConstruct. Speeds up invoking Event constructor by ~18% (1M calls).
+          2. Since InternalFunction disallows its subclasses to override getCallData(),
+             the presence of [[Call]] method can be inferred by JSType only. In the future,
+             this invariant will allow to speed up a few bytecodes: is_callable, typeof*.
+          3. InternalFunction::finishCreation() takes care of "length" / "name" properties,
+             which can leveraged (in a follow-up) to align property order of WebIDL constructors
+             with JSC built-ins, and also clean up bindings generator a bit (bug #230584).
+          4. Using InternalFunctionType is essential to keep the `instanceof` update
+             (bug #151348) performance-neutral for DOM constructors.
+
+        No new tests, no behavior change.
+
+        * bindings/js/JSDOMBuiltinConstructor.h:
+        (WebCore::JSDOMBuiltinConstructor<JSClass>::create):
+        (WebCore::JSDOMBuiltinConstructor<JSClass>::createStructure):
+        (WebCore::JSDOMBuiltinConstructor<JSClass>::getConstructData): Deleted.
+        * bindings/js/JSDOMBuiltinConstructorBase.h:
+        (WebCore::JSDOMBuiltinConstructorBase::JSDOMBuiltinConstructorBase):
+        * bindings/js/JSDOMConstructor.h:
+        (WebCore::JSDOMConstructor<JSClass>::create):
+        (WebCore::JSDOMConstructor<JSClass>::createStructure):
+        (WebCore::JSDOMConstructor<JSClass>::getConstructData): Deleted.
+        * bindings/js/JSDOMConstructorBase.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        (WebCore::JSDOMConstructorBase::getCallData): Deleted.
+        * bindings/js/JSDOMConstructorBase.h:
+        (WebCore::JSDOMConstructorBase::globalObject const):
+        (WebCore::JSDOMConstructorBase::scriptExecutionContext const):
+        (WebCore::JSDOMConstructorBase::JSDOMConstructorBase):
+        (WebCore::JSDOMConstructorBase::createStructure): Deleted.
+        * bindings/js/JSDOMConstructorNotCallable.h:
+        (WebCore::JSDOMConstructorNotCallable::subspaceFor):
+        * bindings/js/JSDOMConstructorNotConstructable.h:
+        (WebCore::JSDOMConstructorNotConstructable<JSClass>::create):
+        (WebCore::JSDOMConstructorNotConstructable<JSClass>::createStructure):
+        * bindings/js/JSDOMConstructorWithDocument.h:
+        (WebCore::JSDOMConstructorWithDocument::JSDOMConstructorWithDocument):
+        * bindings/js/JSDOMLegacyFactoryFunction.h:
+        (WebCore::JSDOMLegacyFactoryFunction<JSClass>::create):
+        (WebCore::JSDOMLegacyFactoryFunction<JSClass>::createStructure):
+        (WebCore::JSDOMLegacyFactoryFunction<JSClass>::getConstructData): Deleted.
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::JSVMClientData::domNamespaceObjectSpace):
+        Move JSDOMConstructorNotCallable to separate IsoSubspace since it no longer shares
+        a common parent class with callable constructors.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorHelperMethods):
+        Introduce InternalFunction::finishCreation(VM&) overload and set m_originalName
+        directly to preserve the current property order of WebIDL constructors, and to defer
+        a large code change needed for passing through `length` / `name` parameters (bug #230584).
+
+        * bindings/scripts/test/JS/*: Updated.
+
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add FontCreationContext

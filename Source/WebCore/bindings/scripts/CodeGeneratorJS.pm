@@ -7809,7 +7809,13 @@ sub GenerateConstructorHelperMethods
     }
 
     assert("jsNontrivialString() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, \"$visibleInterfaceName\"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n") if !$interface->isNamespaceObject;
+    if (!$interface->isNamespaceObject) {
+        # FIXME: Align property order of DOM constructors with ECMA-262 counterparts
+        # https://bugs.webkit.org/show_bug.cgi?id=230584
+        push(@$outputArray, "    JSString* nameString = jsNontrivialString(vm, \"$visibleInterfaceName\"_s);\n");
+        push(@$outputArray, "    m_originalName.set(vm, this, nameString);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+    }
 
     if ($interface->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting}) {
         my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $interface, "&globalObject");

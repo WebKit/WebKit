@@ -88,6 +88,7 @@ protected:
 
     enum class PropertyAdditionMode { WithStructureTransition, WithoutStructureTransition };
     JS_EXPORT_PRIVATE void finishCreation(VM&, unsigned length, const String& name, PropertyAdditionMode = PropertyAdditionMode::WithStructureTransition);
+    JS_EXPORT_PRIVATE void finishCreation(VM&);
 
     JS_EXPORT_PRIVATE static CallData getConstructData(JSCell*);
     JS_EXPORT_PRIVATE static CallData getCallData(JSCell*);

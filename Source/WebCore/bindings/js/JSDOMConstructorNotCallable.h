@@ -49,7 +49,7 @@ public:
         static_assert(sizeof(CellType) == sizeof(JSDOMConstructorNotCallable));
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(CellType, JSDOMConstructorNotCallable);
         static_assert(CellType::destroy == JSC::JSCell::destroy, "JSDOMConstructorNotCallable<JSClass> is not destructible actually");
-        return &static_cast<JSVMClientData*>(vm.clientData)->domConstructorSpace();
+        return &static_cast<JSVMClientData*>(vm.clientData)->domNamespaceObjectSpace();
     }
 
 private:

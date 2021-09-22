@@ -30,9 +30,7 @@ using namespace JSC;
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMConstructorBase);
 
-static JSC_DECLARE_HOST_FUNCTION(callThrowTypeError);
-
-JSC_DEFINE_HOST_FUNCTION(callThrowTypeError, (JSGlobalObject* globalObject, CallFrame*))
+JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructor, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -46,14 +44,6 @@ JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable, 
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSC::throwTypeError(globalObject, scope, "Illegal constructor"_s);
     return JSC::JSValue::encode(JSC::jsNull());
-}
-
-CallData JSDOMConstructorBase::getCallData(JSCell*)
-{
-    CallData callData;
-    callData.type = CallData::Type::Native;
-    callData.native.function = callThrowTypeError;
-    return callData;
 }
 
 JSC::IsoSubspace* JSDOMConstructorBase::subspaceForImpl(JSC::VM& vm)

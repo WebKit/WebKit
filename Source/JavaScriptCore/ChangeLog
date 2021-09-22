@@ -1,3 +1,19 @@
+2021-09-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] DOM constructors should extend InternalFunction
+        https://bugs.webkit.org/show_bug.cgi?id=228763
+
+        Reviewed by Sam Weinig.
+
+        Introduce finishCreation(VM&) overload to preserve the current property order of
+        WebIDL constructors, and to defer a large code change needed for passing through
+        `length` / `name` parameters (bug #230584).
+
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        (JSC::InternalFunction::finishCreation):
+        * runtime/InternalFunction.h:
+
 2021-09-21  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of makeRef() and use Ref { } instead

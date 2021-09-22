@@ -41,16 +41,17 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
 {
     ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
     ASSERT(m_functionForConstruct);
-}
 
-void InternalFunction::finishCreation(VM& vm, unsigned length, const String& name, PropertyAdditionMode nameAdditionMode)
-{
-    Base::finishCreation(vm);
     ASSERT(jsDynamicCast<InternalFunction*>(vm, this));
     // JSCell::{getCallData,getConstructData} relies on the following conditions.
     ASSERT(methodTable(vm)->getCallData == InternalFunction::info()->methodTable.getCallData);
     ASSERT(methodTable(vm)->getConstructData == InternalFunction::info()->methodTable.getConstructData);
     ASSERT(type() == InternalFunctionType || type() == NullSetterFunctionType);
+}
+
+void InternalFunction::finishCreation(VM& vm, unsigned length, const String& name, PropertyAdditionMode nameAdditionMode)
+{
+    Base::finishCreation(vm);
 
     JSString* nameString = jsString(vm, name);
     m_originalName.set(vm, this, nameString);
@@ -62,6 +63,11 @@ void InternalFunction::finishCreation(VM& vm, unsigned length, const String& nam
         putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
         putDirectWithoutTransition(vm, vm.propertyNames->name, nameString, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     }
+}
+
+void InternalFunction::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
 }
 
 template<typename Visitor>
