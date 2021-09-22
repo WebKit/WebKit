@@ -72,7 +72,7 @@ private:
 
     // SourceBufferPrivate overrides
     void setActive(bool) final;
-    void append(Vector<unsigned char>&&) final;
+    void append(Ref<WebCore::SharedBuffer>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;

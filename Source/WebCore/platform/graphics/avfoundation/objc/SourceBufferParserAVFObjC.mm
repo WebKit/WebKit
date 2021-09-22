@@ -40,6 +40,7 @@
 #import "MediaSampleAVFObjC.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
+#import "SourceBufferPrivate.h"
 #import "TimeRanges.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
 #import <AVFoundation/AVAssetTrack.h>
@@ -211,8 +212,8 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
 
 void SourceBufferParserAVFObjC::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags flags)
 {
-    auto sharedData = SharedBuffer::create(segment.takeVector());
-    auto nsData = sharedData->createNSData();
+    auto sharedBuffer = segment.takeSharedBuffer();
+    auto nsData = sharedBuffer->createNSData();
     if (m_parserStateWasReset || flags == AppendFlags::Discontinuity)
         [m_parser appendStreamData:nsData.get() withFlags:AVStreamDataParserStreamDataDiscontinuity];
     else

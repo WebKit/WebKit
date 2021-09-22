@@ -29,6 +29,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Span.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -123,6 +124,7 @@ public:
 
     Ref<SharedBuffer> copy() const;
     void copyTo(void* destination, size_t length) const;
+    void copyTo(void* destination, size_t offset, size_t length) const;
 
     // Data wrapped by a DataSegment should be immutable because it can be referenced by other objects.
     // To modify or combine the data, allocate a new DataSegment.
@@ -148,6 +150,13 @@ public:
 #endif
         static Ref<DataSegment> create(FileSystem::MappedFileData&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 
+        struct Provider {
+            WTF::Function<const uint8_t*()> data;
+            WTF::Function<size_t()> size;
+        };
+
+        static Ref<DataSegment> create(Provider&& provider) { return adoptRef(*new DataSegment(WTFMove(provider))); }
+
 #if USE(FOUNDATION)
         RetainPtr<NSData> createNSData() const;
 #endif
@@ -171,6 +180,8 @@ public:
 #endif
         DataSegment(FileSystem::MappedFileData&& data)
             : m_immutableData(WTFMove(data)) { }
+        DataSegment(Provider&& provider)
+            : m_immutableData(WTFMove(provider)) { }
 
         Variant<Vector<uint8_t>,
 #if USE(CF)
@@ -182,9 +193,12 @@ public:
 #if USE(GSTREAMER)
             RefPtr<GstMappedOwnedBuffer>,
 #endif
-            FileSystem::MappedFileData> m_immutableData;
+            FileSystem::MappedFileData,
+            Provider> m_immutableData;
         friend class SharedBuffer;
     };
+
+    static Ref<SharedBuffer> create(DataSegment::Provider&&);
 
     void forEachSegment(const Function<void(const Span<const uint8_t>&)>&) const;
     bool startsWith(const Span<const uint8_t>& prefix) const;
@@ -216,6 +230,7 @@ private:
     explicit SharedBuffer(const char*, size_t);
     explicit SharedBuffer(Vector<uint8_t>&&);
     explicit SharedBuffer(FileSystem::MappedFileData&&);
+    explicit SharedBuffer(DataSegment::Provider&&);
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
 #endif

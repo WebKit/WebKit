@@ -221,7 +221,7 @@ private:
 
     WTF::Observer<void*()> m_opaqueRootProvider;
 
-    Vector<unsigned char> m_pendingAppendData;
+    RefPtr<SharedBuffer> m_pendingAppendData;
     Timer m_appendBufferTimer;
 
     RefPtr<VideoTrackList> m_videoTracks;

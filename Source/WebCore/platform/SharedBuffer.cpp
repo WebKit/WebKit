@@ -52,6 +52,12 @@ SharedBuffer::SharedBuffer(FileSystem::MappedFileData&& fileData)
     m_segments.append({0, DataSegment::create(WTFMove(fileData))});
 }
 
+SharedBuffer::SharedBuffer(DataSegment::Provider&& provider)
+    : m_size(provider.size())
+{
+    m_segments.append({0, DataSegment::create(WTFMove(provider))});
+}
+
 SharedBuffer::SharedBuffer(Vector<uint8_t>&& data)
 {
     append(WTFMove(data));
@@ -236,6 +242,11 @@ Ref<SharedBuffer> SharedBuffer::copy() const
     return clone;
 }
 
+Ref<SharedBuffer> SharedBuffer::create(DataSegment::Provider&& provider)
+{
+    return adoptRef(*new SharedBuffer(WTFMove(provider)));
+}
+
 void SharedBuffer::forEachSegment(const Function<void(const Span<const uint8_t>&)>& apply) const
 {
     auto segments = m_segments;
@@ -267,12 +278,40 @@ bool SharedBuffer::startsWith(const Span<const uint8_t>& prefix) const
 
 void SharedBuffer::copyTo(void* destination, size_t length) const
 {
-    ASSERT(length <= size());
+    return copyTo(destination, 0, length);
+}
+
+void SharedBuffer::copyTo(void* destination, size_t offset, size_t length) const
+{
+    ASSERT(length + offset <= size());
+    if (offset >= size())
+        return;
+    auto remaining = std::min(length, size() - offset);
+    if (!remaining)
+        return;
+
+    auto segment = begin();
+    if (offset >= segment->segment->size()) {
+        auto comparator = [](const size_t& position, const DataSegmentVectorEntry& entry) {
+            return position < entry.beginPosition;
+        };
+        segment = std::upper_bound(segment, end(), offset, comparator);
+        segment--; // std::upper_bound gives a pointer to the segment that is greater than offset. We want the segment just before that.
+    }
     auto destinationPtr = static_cast<uint8_t*>(destination);
-    auto remaining = std::min(length, size());
-    for (auto& segment : m_segments) {
-        size_t amountToCopyThisTime = std::min(remaining, segment.segment->size());
-        memcpy(destinationPtr, segment.segment->data(), amountToCopyThisTime);
+
+    size_t positionInSegment = offset - segment->beginPosition;
+    size_t amountToCopyThisTime = std::min(remaining, segment->segment->size() - positionInSegment);
+    memcpy(destinationPtr, segment->segment->data() + positionInSegment, amountToCopyThisTime);
+    remaining -= amountToCopyThisTime;
+    if (!remaining)
+        return;
+    destinationPtr += amountToCopyThisTime;
+
+    // If we reach here, there must be at least another segment available as we have content left to be fetched.
+    for (++segment; segment != end(); ++segment) {
+        size_t amountToCopyThisTime = std::min(remaining, segment->segment->size());
+        memcpy(destinationPtr, segment->segment->data(), amountToCopyThisTime);
         remaining -= amountToCopyThisTime;
         if (!remaining)
             return;
@@ -312,7 +351,8 @@ const uint8_t* SharedBuffer::DataSegment::data() const
 #if USE(GSTREAMER)
         [](const RefPtr<GstMappedOwnedBuffer>& data) { return data->data(); },
 #endif
-        [](const FileSystem::MappedFileData& data) { return static_cast<const uint8_t*>(data.data()); }
+        [](const FileSystem::MappedFileData& data) { return static_cast<const uint8_t*>(data.data()); },
+        [](const Provider& provider) { return provider.data(); }
     );
     return WTF::visit(visitor, m_immutableData);
 }
@@ -395,7 +435,8 @@ size_t SharedBuffer::DataSegment::size() const
 #if USE(GSTREAMER)
         [](const RefPtr<GstMappedOwnedBuffer>& data) { return data->size(); },
 #endif
-        [](const FileSystem::MappedFileData& data) { return data.size(); }
+        [](const FileSystem::MappedFileData& data) { return data.size(); },
+        [](const Provider& provider) { return provider.size(); }
     );
     return WTF::visit(visitor, m_immutableData);
 }

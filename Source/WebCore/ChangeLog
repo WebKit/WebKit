@@ -1,3 +1,73 @@
+2021-09-21  Jean-Yves Avenard  <jya@apple.com>
+
+        Use SharedMemory for transferring appended buffers from SourceBuffer to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=230329
+        rdar://problem/83291495
+
+        Use SharedBuffer instead of Vector to pass data to the SourceBuffer's related
+        classes (SourceBuffer, SourceBufferPrivate and SourceBufferParser).
+        Modify SourceBufferParserWebM to never perform memory allocation and copy
+        of the original data content. Instead, we use CMBlockBuffer objects that retain the
+        backing SharedBuffer and use offsets inside this SharedBuffer to reference the data.
+        SourceBufferParserAVFObjC requires little modification as a NSData can wrap a SharedBuffer.
+
+        Reviewed by Jer Noble.
+
+        There should be no change from an observable standpoint other than the GPU memory usage
+        being drastically reduced (from 700MB when watching a 4K/60fps YouTube video to just over 200MB
+        on an iMac Pro (which only has software VP9 decoding), 25MB vs 360MB on an iPad)
+        Existing tests are fully exercising this new code.
+
+        * Modules/mediasource/SourceBuffer.cpp: Simplify logic around m_pendingAppendData member.
+        Only one appendBuffer operation can be pending at any given time otherwise appendBuffer
+        will throw an exception; as such, there's no need to append the data to a vector: "there can
+        be only one".
+        (WebCore::SourceBuffer::abortIfUpdating):
+        (WebCore::SourceBuffer::appendBufferInternal):
+        (WebCore::SourceBuffer::appendBufferTimerFired):
+        (WebCore::SourceBuffer::reportExtraMemoryAllocated):
+        * Modules/mediasource/SourceBuffer.h:
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::create):
+        (WebCore::SharedBuffer::copyTo const):
+        (WebCore::SharedBuffer::DataSegment::data const):
+        (WebCore::SharedBuffer::DataSegment::size const):
+        * platform/SharedBuffer.h: Add new DataSegment type that takes a Provider in constructor.
+        A Provider provides two Function members data and size.
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp: The AudioFileReaderCocoa required
+        the CMBlockBuffer containing the compressed content to be contiguous. This is no
+        longer guaranteed so ensure that the CMBlockBuffer is contiguous.
+        (WebCore::AudioFileReader::demuxWebMData const):
+        (WebCore::AudioFileReader::decodeWebMData const):
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::append):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        (WebCore::SourceBufferParserAVFObjC::appendData):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        * platform/graphics/cocoa/SourceBufferParser.cpp:
+        (WebCore::SourceBufferParser::Segment::Segment):
+        (WebCore::SourceBufferParser::Segment::size const):
+        (WebCore::SourceBufferParser::Segment::read const):
+        (WebCore::SourceBufferParser::Segment::takeSharedBuffer):
+        (WebCore::SourceBufferParser::Segment::getSharedBuffer const):
+        * platform/graphics/cocoa/SourceBufferParser.h:
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::SourceBufferParserWebM):
+        (WebCore::SourceBufferParserWebM::TrackData::contiguousCompleteBlockBuffer const):
+        (WebCore::SourceBufferParserWebM::TrackData::readFrameData):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::createSampleBuffer):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::resetCompleted):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::createSampleBuffer):
+        (WebCore::SourceBufferParserWebM::flushPendingAudioBuffers):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+        (WebCore::SourceBufferParserWebM::TrackData::resetCompleted):
+        (WebCore::SourceBufferParserWebM::TrackData::reset):
+
 2021-09-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] DOM constructors should extend InternalFunction

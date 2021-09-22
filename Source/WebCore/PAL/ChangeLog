@@ -1,3 +1,14 @@
+2021-09-21  Jean-Yves Avenard  <jya@apple.com>
+
+        Use SharedMemory for transferring appended buffers from SourceBuffer to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=230329
+        rdar://problem/83291495
+
+        Reviewed by Jer Noble.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h: Add required CoreMedia methods.
+
 2021-09-21  Per Arne Vollan  <pvollan@apple.com>
 
         [Mac Catalyst] Fix build issue

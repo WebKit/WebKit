@@ -1,3 +1,25 @@
+2021-09-21  Jean-Yves Avenard  <jya@apple.com>
+
+        Use SharedMemory for transferring appended buffers from SourceBuffer to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=230329
+        rdar://problem/83291495
+
+        Use SharedMemory to pass SourceBuffer content to RemoteSourceBufferProxy in GPU process.
+        This is done by wrapping a SharedMemory into a SharedBuffer.
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::append):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+        * Platform/SharedMemory.cpp:
+        (WebKit::SharedMemory::createSharedBuffer const):
+        * Platform/SharedMemory.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::append):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+
 2021-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Change from ENABLE(RUBBER_BANDING) to HAVE(RUBBER_BANDING)

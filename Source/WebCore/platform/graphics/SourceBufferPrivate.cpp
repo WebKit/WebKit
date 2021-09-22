@@ -33,6 +33,7 @@
 #include "MediaSample.h"
 #include "PlatformTimeRanges.h"
 #include "SampleMap.h"
+#include "SharedBuffer.h"
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
 #include <wtf/CheckedArithmetic.h>
@@ -1313,6 +1314,16 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
         m_client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp);
 
     updateHighestPresentationTimestamp();
+}
+
+void SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
+{
+    append(buffer->extractData());
+}
+
+void SourceBufferPrivate::append(Vector<unsigned char>&&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore
