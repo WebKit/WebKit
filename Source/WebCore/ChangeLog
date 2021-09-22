@@ -1,3 +1,15 @@
+2021-09-22  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Remove ALLOW_ coverage defines
+        https://bugs.webkit.org/show_bug.cgi?id=230608
+
+        Reviewed by Alan Bujtas.
+
+        They are not useful anymore.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+
 2021-09-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][MSVC] REGRESSION(r282860): ClipboardItemBindingsDataSource.cpp(147): error C2955: 'WTF::Ref': use of class template requires template argument list

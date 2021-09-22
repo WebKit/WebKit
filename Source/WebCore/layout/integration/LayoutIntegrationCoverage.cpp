@@ -45,11 +45,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#define ALLOW_IMAGES 1
-#define ALLOW_ALL_REPLACED 1
-#define ALLOW_INLINE_BLOCK 1
-#define ALLOW_INLINES 1
-
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
         reasons.add(AvoidanceReason::reason); \
@@ -527,7 +522,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedFieldset, reasons, includeReasons)
     }
 
-#if ALLOW_IMAGES || ALLOW_ALL_REPLACED || ALLOW_INLINE_BLOCK
     auto isSupportedStyle = [] (const auto& style) {
         if (style.boxShadow())
             return false;
@@ -535,8 +529,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             return false;
         return true;
     };
-#endif
-#if ALLOW_IMAGES || ALLOW_ALL_REPLACED
+
     if (is<RenderReplaced>(child)) {
         auto& replaced = downcast<RenderReplaced>(child);
         if (replaced.isFloating() || replaced.isPositioned())
@@ -554,14 +547,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
                 SET_REASON_AND_RETURN_IF_NEEDED(UnsupportedImageMap, reasons, includeReasons);
             return reasons;
         }
-#if !ALLOW_ALL_REPLACED
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-#endif
         return reasons;
     }
-#endif
 
-#if ALLOW_INLINE_BLOCK
     if (is<RenderBlockFlow>(child)) {
         auto& block = downcast<RenderBlockFlow>(child);
         if (!block.isReplaced() || !block.isInline())
@@ -579,9 +567,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
         return reasons;
     }
-#endif
 
-#if ALLOW_INLINES
     if (is<RenderInline>(child)) {
         auto& renderInline = downcast<RenderInline>(child);
         if (renderInline.isSVGInline())
@@ -615,7 +601,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
 
         return reasons;
     }
-#endif
 
     SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
     return reasons;
