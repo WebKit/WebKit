@@ -62,6 +62,8 @@ public:
 
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
+    KeyboardScrollingAnimator *keyboardScrollingAnimator() const final { return m_keyboardScrollingAnimator.get(); }
+
     enum ScrollBehavior {
         DoDirectionalSnapping = 1 << 0,
         NeverAnimate = 1 << 1,
@@ -71,12 +73,12 @@ public:
     // already at the destination.  Otherwise, starts scrolling towards the
     // destination and returns true.  Scrolling may be immediate or animated.
     // The base class implementation always scrolls immediately, never animates.
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>);
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>);
 
     virtual bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
-    virtual bool scrollToPositionWithAnimation(const FloatPoint&);
+    bool scrollToPositionWithAnimation(const FloatPoint&);
 
-    virtual void retargetRunningAnimation(const FloatPoint&);
+    void retargetRunningAnimation(const FloatPoint&);
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
 
@@ -96,11 +98,6 @@ public:
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
 
-    // ScrollAnimationClient
-    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset) override;
-    void scrollAnimationDidEnd(ScrollAnimation&) override;
-    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) override;
-
     void contentsSizeChanged() const;
 
     enum NotifyScrollableArea : bool {
@@ -109,20 +106,11 @@ public:
     void setCurrentPosition(const FloatPoint&, NotifyScrollableArea = NotifyScrollableArea::No);
     const FloatPoint& currentPosition() const { return m_currentPosition; }
 
-    KeyboardScrollingAnimator *keyboardScrollingAnimator() const override { return m_keyboardScrollingAnimator.get(); }
-
     void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& testMonitor) { m_wheelEventTestMonitor = testMonitor; }
     WheelEventTestMonitor* wheelEventTestMonitor() const { return m_wheelEventTestMonitor.get(); }
 
     FloatPoint adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod);
     float adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod);
-
-    std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
-
-    void startAnimationCallback(ScrollingEffectsController&) final;
-    void stopAnimationCallback(ScrollingEffectsController&) final;
-
-    void scrollControllerAnimationTimerFired();
 
     bool activeScrollSnapIndexDidChange() const;
     std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
@@ -131,27 +119,53 @@ public:
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void resnapAfterLayout();
 
-    // ScrollingEffectsControllerClient.
-    FloatPoint scrollOffset() const override;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
-    float pageScaleFactor() const override;
-    ScrollExtents scrollExtents() const override;
-#if PLATFORM(MAC)
-    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
-    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const override;
-#endif
-
 protected:
-    virtual void notifyPositionChanged(const FloatSize& delta);
     virtual bool platformAllowsScrollAnimation() const { return true; }
 
+    // ScrollAnimationClient
+    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset) override;
+
+private:
+    void notifyPositionChanged(const FloatSize& delta);
+
+    void scrollControllerAnimationTimerFired();
     void updateActiveScrollSnapIndexForOffset();
 
     FloatPoint offsetFromPosition(const FloatPoint& position) const;
     FloatPoint positionFromOffset(const FloatPoint& offset) const;
 
+
+    // ScrollingEffectsControllerClient.
+    std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
+    void startAnimationCallback(ScrollingEffectsController&) final;
+    void stopAnimationCallback(ScrollingEffectsController&) final;
+
+    FloatPoint scrollOffset() const final;
+    void immediateScrollOnAxis(ScrollEventAxis, float delta) final;
+    float pageScaleFactor() const final;
+    ScrollExtents scrollExtents() const final;
+
+    bool allowsHorizontalScrolling() const final;
+    bool allowsVerticalScrolling() const final;
+
+#if HAVE(RUBBER_BANDING)
+    IntSize stretchAmount() const final;
+    RectEdges<bool> edgePinnedState() const final;
+    bool isPinnedForScrollDelta(const FloatSize&) const final;
+#endif
+
+#if PLATFORM(MAC)
+    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const final;
+    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const final;
+#endif
+
+    // ScrollAnimationClient
+    void scrollAnimationDidEnd(ScrollAnimation&) final;
+    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
+
     static FloatSize deltaFromStep(ScrollbarOrientation, float step, float multiplier);
 
+protected:
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
     ScrollingEffectsController m_scrollController;

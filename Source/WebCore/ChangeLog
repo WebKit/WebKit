@@ -1,3 +1,39 @@
+2021-09-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Push ScrollAnimatorMac code into the base class and clean up the ScrollAnimator interface
+        https://bugs.webkit.org/show_bug.cgi?id=230633
+
+        Reviewed by Martin Robinson.
+
+        Reduce the brainprint of ScrollAnimatorMac by pushing platform-agnostic code into
+        the base class.
+
+        Clean up ScrollAnimator, making more functions protected or private.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::notifyPositionChanged):
+        (WebCore::ScrollAnimator::allowsHorizontalScrolling const):
+        (WebCore::ScrollAnimator::allowsVerticalScrolling const):
+        (WebCore::ScrollAnimator::stretchAmount const):
+        (WebCore::ScrollAnimator::edgePinnedState const):
+        (WebCore::ScrollAnimator::isPinnedForScrollDelta const):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollingEffectsController.h:
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::scrollAnimationDidUpdate):
+        (WebCore::ScrollAnimatorGeneric::updatePosition): Deleted.
+        * platform/generic/ScrollAnimatorGeneric.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scroll): Deleted.
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged): Deleted.
+        (WebCore::ScrollAnimatorMac::edgePinnedState const): Deleted.
+        (WebCore::ScrollAnimatorMac::isPinnedForScrollDelta const): Deleted.
+        (WebCore::ScrollAnimatorMac::stretchAmount const): Deleted.
+        (WebCore::ScrollAnimatorMac::allowsHorizontalScrolling const): Deleted.
+        (WebCore::ScrollAnimatorMac::allowsVerticalScrolling const): Deleted.
+
 2021-09-22  Alex Christensen  <achristensen@webkit.org>
 
         PCM should include the bundle ID of the app from which it originated

@@ -67,6 +67,8 @@ ScrollAnimator::~ScrollAnimator()
 
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, OptionSet<ScrollBehavior> behavior)
 {
+    m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
+
     auto delta = deltaFromStep(orientation, step, multiplier);
     if (behavior.contains(ScrollBehavior::DoDirectionalSnapping)) {
         behavior.remove(ScrollBehavior::DoDirectionalSnapping);
@@ -257,8 +259,7 @@ void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 
 void ScrollAnimator::notifyPositionChanged(const FloatSize& delta)
 {
-    UNUSED_PARAM(delta);
-    
+    m_scrollableArea.scrollbarsController().notifyContentAreaScrolled(delta);
     m_scrollableArea.setScrollPositionFromAnimation(roundedIntPoint(m_currentPosition));
     m_scrollController.scrollPositionChanged();
 }
@@ -277,6 +278,39 @@ FloatPoint ScrollAnimator::scrollOffset() const
 {
     return m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition()));
 }
+
+bool ScrollAnimator::allowsHorizontalScrolling() const
+{
+    return m_scrollableArea.allowsHorizontalScrolling();
+}
+
+bool ScrollAnimator::allowsVerticalScrolling() const
+{
+    return m_scrollableArea.allowsVerticalScrolling();
+}
+
+#if HAVE(RUBBER_BANDING)
+IntSize ScrollAnimator::stretchAmount() const
+{
+    return m_scrollableArea.overhangAmount();
+}
+
+RectEdges<bool> ScrollAnimator::edgePinnedState() const
+{
+    return m_scrollableArea.edgePinnedState();
+}
+
+bool ScrollAnimator::isPinnedForScrollDelta(const FloatSize& delta) const
+{
+    if (fabsf(delta.height()) >= fabsf(delta.width()))
+        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.height(), ScrollEventAxis::Vertical);
+
+    if (delta.width())
+        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.width(), ScrollEventAxis::Horizontal);
+
+    return false;
+}
+#endif
 
 // FIXME: Unused.
 void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)

@@ -43,8 +43,6 @@ public:
     virtual ~ScrollAnimatorMac();
 
 private:
-    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>) final;
-
     bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&) const;
     bool handleWheelEvent(const PlatformWheelEvent&) final;
 
@@ -52,8 +50,6 @@ private:
 
     void handleWheelEventPhase(PlatformWheelEventPhase) final;
     
-    void notifyPositionChanged(const FloatSize& delta) final;
-
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
     bool isUserScrollInProgress() const final;
@@ -63,13 +59,8 @@ private:
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&) final;
 
     // ScrollingEffectsControllerClient.
-    IntSize stretchAmount() const final;
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
-    bool isPinnedForScrollDelta(const FloatSize&) const final;
-    RectEdges<bool> edgePinnedState() const final;
-    bool allowsHorizontalScrolling() const final;
-    bool allowsVerticalScrolling() const final;
     bool shouldRubberBandInDirection(ScrollDirection) const final;
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
     void immediateScrollBy(const FloatSize&) final;

@@ -78,21 +78,13 @@ bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
     return ScrollAnimator::handleWheelEvent(event);
 }
 
-void ScrollAnimatorGeneric::updatePosition(const FloatPoint& position)
-{
-    FloatSize delta = position - m_currentPosition;
-    m_currentPosition = position;
-    notifyPositionChanged(delta);
-    updateActiveScrollSnapIndexForOffset();
-}
-
 // FIXME: Can we just use the base class implementation?
 void ScrollAnimatorGeneric::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& position)
 {
     if (&animation == m_kineticAnimation.get()) {
         // FIXME: Clarify how animations interact. There should never be more than one active at a time.
         m_scrollAnimation->stop();
-        updatePosition(position);
+        setCurrentPosition(position, NotifyScrollableArea::Yes);
         return;
     }
 

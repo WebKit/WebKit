@@ -50,13 +50,6 @@ private:
     // ScrollAnimationClient
     void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) final;
 
-    void updatePosition(const FloatPoint&);
-
-    void overlayScrollbarAnimationTimerFired();
-    void showOverlayScrollbars();
-    void hideOverlayScrollbars();
-    void updateOverlayScrollbarsOpacity();
-
     std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
 };
 

@@ -73,13 +73,6 @@ static bool rubberBandingEnabledForSystem()
     return enabled;
 }
 
-bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, OptionSet<ScrollBehavior> behavior)
-{
-    m_scrollableArea.scrollbarsController().setScrollbarAnimationsUnsuspendedByUserInteraction(true);
-
-    return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
-}
-
 FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& position) const
 {
     if (!m_scrollableArea.constrainsScrollingToContentEdge())
@@ -113,12 +106,6 @@ bool ScrollAnimatorMac::isRubberBandInProgress() const
 bool ScrollAnimatorMac::isScrollSnapInProgress() const
 {
     return m_scrollController.isScrollSnapInProgress();
-}
-
-void ScrollAnimatorMac::notifyPositionChanged(const FloatSize& delta)
-{
-    m_scrollableArea.scrollbarsController().notifyContentAreaScrolled(delta);
-    ScrollAnimator::notifyPositionChanged(delta);
 }
 
 void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
@@ -168,22 +155,6 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         handleWheelEventPhase(wheelEvent.phase());
 
     return didHandleEvent;
-}
-
-RectEdges<bool> ScrollAnimatorMac::edgePinnedState() const
-{
-    return m_scrollableArea.edgePinnedState();
-}
-
-bool ScrollAnimatorMac::isPinnedForScrollDelta(const FloatSize& delta) const
-{
-    if (fabsf(delta.height()) >= fabsf(delta.width()))
-        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.height(), ScrollEventAxis::Vertical);
-
-    if (delta.width())
-        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.width(), ScrollEventAxis::Horizontal);
-
-    return false;
 }
 
 static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis, const LayoutScrollSnapOffsetsInfo* offsetInfo)
@@ -242,21 +213,6 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
 
     ASSERT_NOT_REACHED();
     return false;
-}
-
-IntSize ScrollAnimatorMac::stretchAmount() const
-{
-    return m_scrollableArea.overhangAmount();
-}
-
-bool ScrollAnimatorMac::allowsHorizontalScrolling() const
-{
-    return m_scrollableArea.allowsHorizontalScrolling();
-}
-
-bool ScrollAnimatorMac::allowsVerticalScrolling() const
-{
-    return m_scrollableArea.allowsVerticalScrolling();
 }
 
 bool ScrollAnimatorMac::shouldRubberBandInDirection(ScrollDirection) const

@@ -77,6 +77,9 @@ public:
     virtual void updateKeyboardScrollPosition(MonotonicTime) { }
     virtual KeyboardScrollingAnimator *keyboardScrollingAnimator() const { return nullptr; }
 
+    virtual bool allowsHorizontalScrolling() const = 0;
+    virtual bool allowsVerticalScrolling() const = 0;
+
 #if HAVE(RUBBER_BANDING)
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
@@ -86,8 +89,6 @@ public:
 
     virtual RectEdges<bool> edgePinnedState() const = 0;
 
-    virtual bool allowsHorizontalScrolling() const = 0;
-    virtual bool allowsVerticalScrolling() const = 0;
     virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
     // FIXME: use ScrollClamping to collapse these to one.
