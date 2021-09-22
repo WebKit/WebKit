@@ -191,9 +191,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::MultiColumnFlowIsFloating:
         stream << "column with floating objects";
         break;
-    case AvoidanceReason::FlowHasJustifiedNonBreakingSpace:
-        stream << "justified text has non-breaking-space character";
-        break;
     case AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext:
         stream << "flow does not establishes inline formatting context";
         break;

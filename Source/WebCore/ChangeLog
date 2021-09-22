@@ -1,3 +1,14 @@
+2021-09-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] FlowHasTextSecurity FlowHasJustifiedNonBreakingSpace are unused
+        https://bugs.webkit.org/show_bug.cgi?id=230591
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        * layout/integration/LayoutIntegrationCoverage.h:
+
 2021-09-22  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Remove ensureLineBoxes
