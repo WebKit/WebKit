@@ -106,7 +106,8 @@ class XvfbDriver(Driver):
                     '%sx%s' % (self._xvfb_screen_size(), self._xvfb_screen_depth())]
         if self._port._should_use_jhbuild():
             run_xvfb = self._port._jhbuild_wrapper + run_xvfb
-        self._xvfb_process = self._port.host.executive.popen(run_xvfb, stdout=self._port.host.executive.PIPE, stderr=self._port.host.executive.PIPE, env=environment, close_fds=False)
+        with open(os.devnull, 'w') as devnull:
+            self._xvfb_process = self._port.host.executive.popen(run_xvfb, stderr=devnull, env=environment, close_fds=False)
         display_id = self._xvfb_read_display_id(read_fd)
         self._xvfb_close_pipe((read_fd, write_fd))
         return display_id
@@ -161,8 +162,7 @@ class XvfbDriver(Driver):
                     query_failed = True
             if timeout_expired or query_failed:
                 if self._xvfb_process.poll():
-                    xvfb_stdout, xvfb_stderr = self._xvfb_process.communicate()
-                    _log.error('The Xvfb display server has exited unexpectedly with a return code of %s. stdout is "%s" and stderr is "%s"' % (self._xvfb_process.poll(), xvfb_stdout, xvfb_stderr))
+                    _log.error('The Xvfb display server has exited unexpectedly with a return code of %s' % (self._xvfb_process.poll()))
                     break
             if waited_seconds_for_xvfb_ready > 5:
                 _log.error('Timeout reached meanwhile waiting for the Xvfb display server to be ready')

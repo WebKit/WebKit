@@ -1,3 +1,19 @@
+2021-09-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r282082): [GTK] Tests timeout when using xvfb after r282082
+        https://bugs.webkit.org/show_bug.cgi?id=230610
+
+        Reviewed by Philippe Normand.
+
+        r282082 changed the way xvfb is spawned by providing a PIPE for stdout and stderr instead of redirecting to
+        /dev/null. The problem is that stderr is only read in case of execution failure, so when nothing fails we end up
+        filling the buffer that is never read. We can try to find a better solution to show the stderr output in error
+        messages, but for now we can revert that part to redirect stderr to /dev/null to make the tests work again.
+
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._xvfb_run):
+        (XvfbDriver._xvfb_check_if_ready):
+
 2021-09-21  Chris Dumez  <cdumez@apple.com>
 
         Drop makeRefPtr() and use RefPtr { } directly instead
