@@ -1,3 +1,11 @@
+================
+WebKitGTK 2.34.0
+================
+
+What's new in WebKitGTK 2.34.0?
+
+  - Fix another regression in JavaScriptCore on 32bit systems.
+
 =================
 WebKitGTK 2.33.91
 =================
