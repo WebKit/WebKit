@@ -51,31 +51,9 @@ public:
         return m_basePalette;
     }
 
-    void setBasePalette(const PaletteIndex& basePalette)
-    {
-        m_basePalette = basePalette;
-    }
-
     const Vector<OverriddenColor>& overrideColor() const
     {
         return m_overrideColor;
-    }
-
-    void appendOverrideColor(OverriddenColor&& overriddenColor)
-    {
-        m_overrideColor.append(overriddenColor);
-    }
-
-    void clearOverrideColor()
-    {
-        m_overrideColor.clear();
-    }
-
-    bool remove(unsigned key)
-    {
-        return m_overrideColor.removeAllMatching([key](const OverriddenColor& overriddenColor) -> bool {
-            return WTF::holds_alternative<int64_t>(overriddenColor.first) && WTF::get<int64_t>(overriddenColor.first) == key;
-        });
     }
 
 private:

@@ -1,3 +1,18 @@
+2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete dead code in FontPaletteValues
+        https://bugs.webkit.org/show_bug.cgi?id=230586
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontPaletteValues.h:
+        (WebCore::FontPaletteValues::setBasePalette): Deleted.
+        (WebCore::FontPaletteValues::appendOverrideColor): Deleted.
+        (WebCore::FontPaletteValues::clearOverrideColor): Deleted.
+        (WebCore::FontPaletteValues::remove): Deleted.
+
 2021-09-21  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of makeRef() and use Ref { } instead
