@@ -1,3 +1,14 @@
+2021-09-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][MSVC] REGRESSION(r282860): ClipboardItemBindingsDataSource.cpp(147): error C2955: 'WTF::Ref': use of class template requires template argument list
+        https://bugs.webkit.org/show_bug.cgi?id=230599
+
+        Unreviewed build fix.
+
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::collectDataForWriting):
+        Conditioned out the ASSERT_UNUSED for MSVC.
+
 2021-09-21  Jean-Yves Avenard  <jya@apple.com>
 
         Use SharedMemory for transferring appended buffers from SourceBuffer to the GPU process

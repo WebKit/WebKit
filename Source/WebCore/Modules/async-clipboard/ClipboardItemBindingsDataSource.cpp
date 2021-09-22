@@ -144,7 +144,9 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
                 return;
 
             Ref itemTypeLoader { *weakItemTypeLoader };
+#if !COMPILER(MSVC)
             ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findMatching([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
+#endif
 
             auto result = promise->result();
             if (!result) {
