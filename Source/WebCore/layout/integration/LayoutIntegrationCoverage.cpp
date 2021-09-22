@@ -146,9 +146,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasTextCombine:
         stream << "text combine";
         break;
-    case AvoidanceReason::FlowHasBorderFitLines:
-        stream << "-webkit-border-fit";
-        break;
     case AvoidanceReason::FlowHasAfterWhiteSpaceLineBreak:
         stream << "line-break is after-white-space";
         break;
@@ -476,8 +473,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);
     if (style.lineSnap() != LineSnap::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineSnap, reasons, includeReasons);
-    if (style.borderFit() == BorderFit::Lines)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasBorderFitLines, reasons, includeReasons);    
     return reasons;
 }
 

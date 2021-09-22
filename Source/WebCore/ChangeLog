@@ -1,3 +1,38 @@
+2021-09-22  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Remove ensureLineBoxes
+        https://bugs.webkit.org/show_bug.cgi?id=230597
+
+        Reviewed by Alan Bujtas.
+
+        We don't need to switch to legacy lineboxes dynamically for non-style reasons anymore.
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForStyle):
+
+        Support -webkit-border-fit:lines.
+
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustForBorderFit const):
+
+        Use iterator.
+
+        (WebCore::RenderBlockFlow::clearTruncation):
+
+        Remove an unnecessary ensureLineBoxes call.
+
+        (WebCore::RenderBlockFlow::ensureLineBoxes): Deleted.
+
+        Boom.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+
+        This is not needed before we start supporting RenderInlines with layers on LFC path.
+
 2021-09-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add fallback font support

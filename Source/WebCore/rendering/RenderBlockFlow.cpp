@@ -3042,13 +3042,9 @@ void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutU
     // We don't deal with relative positioning.  Our assumption is that you shrink to fit the lines without accounting
     // for either overflow or translations via relative positioning.
     if (childrenInline()) {
-        const_cast<RenderBlockFlow&>(*this).ensureLineBoxes();
-
-        for (auto* box = firstRootBox(); box; box = box->nextRootBox()) {
-            if (box->firstChild())
-                left = std::min(left, x + LayoutUnit(box->firstChild()->x()));
-            if (box->lastChild())
-                right = std::max(right, x + LayoutUnit(ceilf(box->lastChild()->logicalRight())));
+        for (auto line = LayoutIntegration::firstLineFor(*this); line; line.traverseNext()) {
+            left = std::min(left, x + LayoutUnit(line->contentLogicalLeft()));
+            right = std::max(right, x + LayoutUnit(ceilf(line->contentLogicalRight())));
         }
     } else {
         for (RenderBox* obj = firstChildBox(); obj; obj = obj->nextSiblingBox()) {
@@ -3437,8 +3433,6 @@ void RenderBlockFlow::clearTruncation()
         return;
 
     if (childrenInline() && hasMarkupTruncation()) {
-        ensureLineBoxes();
-
         setHasMarkupTruncation(false);
         for (auto* box = firstRootBox(); box; box = box->nextRootBox())
             box->clearTruncation();
@@ -3834,79 +3828,6 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     setLogicalHeight(newBorderBoxBottom);
 }
 #endif
-
-void RenderBlockFlow::ensureLineBoxes()
-{
-    if (!childrenInline())
-        return;
-
-    setLineLayoutPath(ForceLineBoxesPath);
-
-    if (legacyLineLayout() || !hasLineLayout())
-        return;
-
-    bool needsToPaginateComplexLines = [&] {
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        if (modernLineLayout() && modernLineLayout()->isPaginated())
-            return true;
-#endif
-        return false;
-    }();
-
-    m_lineLayout = makeUnique<LegacyLineLayout>(*this);
-
-    auto& legacyLineLayout = *this->legacyLineLayout();
-
-#if ASSERT_ENABLED
-    LayoutUnit oldHeight = logicalHeight();
-#endif
-    bool didNeedLayout = needsLayout();
-
-    bool relayoutChildren = false;
-    LayoutUnit repaintLogicalTop;
-    LayoutUnit repaintLogicalBottom;
-    if (needsToPaginateComplexLines) {
-        PaginatedLayoutStateMaintainer state(*this);
-        legacyLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
-        // This matches relayoutToAvoidWidows.
-        if (shouldBreakAtLineToAvoidWidow())
-            legacyLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
-        // FIXME: This is needed as long as simple and normal line layout produce different line breakings.
-        repaint();
-    } else
-        legacyLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
-
-    {
-        struct DeprecatedBoxStrechingScope {
-            DeprecatedBoxStrechingScope(RenderElement& parent)
-            {
-                if (is<RenderDeprecatedFlexibleBox>(parent) && parent.style().boxAlign() == BoxAlignment::Stretch) {
-                    // While modern flex box's uses override height to stretch its children, deprecated flex box
-                    // uses a flag which is consulted at updateLogicalHeight().
-                    // This scope class ensures that we don't collapse flex items while swapping the line structures.
-                    // see RenderBox::computeLogicalHeight where isStretchingChildren() is consulted.
-                    strechingRenderer = makeWeakPtr(downcast<RenderDeprecatedFlexibleBox>(parent));
-                    strechingRenderer->setIsStretchingChildren(true);
-                }
-            }
-
-            ~DeprecatedBoxStrechingScope()
-            {
-                if (strechingRenderer)
-                    strechingRenderer->setIsStretchingChildren(false);
-            }
-
-            WeakPtr<RenderDeprecatedFlexibleBox> strechingRenderer;
-
-        };
-        auto deprecatedBoxStrechingScope = DeprecatedBoxStrechingScope(*parent());
-        updateLogicalHeight();
-    }
-    ASSERT(didNeedLayout || ceilf(logicalHeight()) == ceilf(oldHeight));
-
-    if (!didNeedLayout)
-        clearNeedsLayout();
-}
 
 #if ENABLE(TREE_DEBUGGING)
 void RenderBlockFlow::outputFloatingObjects(WTF::TextStream& stream, int depth) const

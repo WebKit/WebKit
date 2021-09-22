@@ -416,9 +416,9 @@ const char* RenderInline::renderName() const
 bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
                                 const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
+    ASSERT(layer());
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)))
-        lineLayout->flow().ensureLineBoxes();
+    ASSERT(!LayoutIntegration::LineLayout::containing(const_cast<RenderInline&>(*this)));
 #endif
     return m_lineBoxes.hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
