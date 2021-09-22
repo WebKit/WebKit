@@ -9878,15 +9878,15 @@ private:
         setBoolean(m_out.phi(Int32, fastTrue, fastFalse, slowResult));
     }
 
-    void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Edge neitherDoubleNorHeapBigIntEdge, Edge notDoubleEdge)
+    void compileNeitherDoubleNorHeapBigIntToNotDoubleStrictEquality(Edge leftNeitherDoubleNorHeapBigIntEdge, Edge rightNotDoubleEdge)
     {
-        ASSERT(neitherDoubleNorHeapBigIntEdge.useKind() == NeitherDoubleNorHeapBigIntUse);
-        ASSERT(notDoubleEdge.useKind() == NotDoubleUse);
+        ASSERT(leftNeitherDoubleNorHeapBigIntEdge.useKind() == NeitherDoubleNorHeapBigIntUse);
+        ASSERT(rightNotDoubleEdge.useKind() == NotDoubleUse);
 
-        LValue leftValue = lowJSValue(neitherDoubleNorHeapBigIntEdge, ManualOperandSpeculation);
-        LValue rightValue = lowJSValue(notDoubleEdge, ManualOperandSpeculation);
-        SpeculatedType leftValueType = provenType(neitherDoubleNorHeapBigIntEdge);
-        SpeculatedType rightValueType = provenType(notDoubleEdge);
+        LValue leftValue = lowJSValue(leftNeitherDoubleNorHeapBigIntEdge, ManualOperandSpeculation);
+        LValue rightValue = lowJSValue(rightNotDoubleEdge, ManualOperandSpeculation);
+        SpeculatedType leftValueType = provenType(leftNeitherDoubleNorHeapBigIntEdge);
+        SpeculatedType rightValueType = provenType(rightNotDoubleEdge);
 
         LBasicBlock triviallyEqualCase = m_out.newBlock();
         LBasicBlock leftIsNotInt32EqualCase = m_out.newBlock();
@@ -9928,11 +9928,11 @@ private:
         m_out.branch(isInt32(leftValue, leftValueType), unsure(returnTrueBlock), unsure(leftIsNotInt32EqualCase));
 
         m_out.appendTo(leftIsNotInt32EqualCase, leftIsCellEqualCase);
-        typeCheckWithoutUpdatingInterpreter(jsValueValue(leftValue), neitherDoubleNorHeapBigIntEdge, ~SpecFullDouble, isNumber(leftValue));
+        typeCheckWithoutUpdatingInterpreter(jsValueValue(leftValue), leftNeitherDoubleNorHeapBigIntEdge, ~SpecFullDouble, isNumber(leftValue));
         m_out.branch(isCell(leftValue, leftValueType & ~SpecFullNumber), unsure(leftIsCellEqualCase), unsure(returnTrueBlock));
 
         m_out.appendTo(leftIsCellEqualCase, returnTrueBlock);
-        typeCheckWithoutUpdatingInterpreter(jsValueValue(leftValue), neitherDoubleNorHeapBigIntEdge, ~SpecHeapBigInt, isHeapBigInt(leftValue));
+        typeCheckWithoutUpdatingInterpreter(jsValueValue(leftValue), leftNeitherDoubleNorHeapBigIntEdge, ~SpecHeapBigInt, isHeapBigInt(leftValue));
         m_out.jump(returnTrueBlock);
 
         m_out.appendTo(returnTrueBlock, notTriviallyEqualCase);
@@ -9940,13 +9940,13 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(notTriviallyEqualCase, leftIsCell);
-        speculateNotDouble(neitherDoubleNorHeapBigIntEdge);
-        speculateNotDouble(notDoubleEdge);
+        speculateNotDouble(leftNeitherDoubleNorHeapBigIntEdge);
+        speculateNotDouble(rightNotDoubleEdge);
         ValueFromBlock fastFalse = m_out.anchor(m_out.booleanFalse);
         m_out.branch(isNotCell(leftValue, leftValueType & ~SpecFullDouble), unsure(continuation), unsure(leftIsCell));
 
         m_out.appendTo(leftIsCell, leftIsString);
-        FTL_TYPE_CHECK(jsValueValue(leftValue), neitherDoubleNorHeapBigIntEdge, ~SpecHeapBigInt, isHeapBigInt(leftValue));
+        FTL_TYPE_CHECK(jsValueValue(leftValue), leftNeitherDoubleNorHeapBigIntEdge, ~SpecHeapBigInt, isHeapBigInt(leftValue));
         m_out.branch(isNotString(leftValue, leftValueType & SpecCell & ~SpecHeapBigInt), unsure(continuation), unsure(leftIsString));
 
         m_out.appendTo(leftIsString, rightIsCell);
@@ -9956,7 +9956,7 @@ private:
         m_out.branch(isNotString(rightValue, rightValueType & SpecCell & ~SpecFullDouble), unsure(continuation), unsure(rightIsString));
 
         m_out.appendTo(rightIsString, continuation);
-        ValueFromBlock slowResult = m_out.anchor(stringsEqual(leftValue, rightValue, neitherDoubleNorHeapBigIntEdge, notDoubleEdge));
+        ValueFromBlock slowResult = m_out.anchor(stringsEqual(leftValue, rightValue, leftNeitherDoubleNorHeapBigIntEdge, rightNotDoubleEdge));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
