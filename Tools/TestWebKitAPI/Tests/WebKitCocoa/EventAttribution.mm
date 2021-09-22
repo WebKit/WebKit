@@ -387,7 +387,7 @@ static RetainPtr<NSURL> currentExecutableDirectory()
 
 static RetainPtr<NSURL> testPCMDaemonLocation()
 {
-    return [currentExecutableDirectory() URLByAppendingPathComponent:@"TestPCMDaemon" isDirectory:NO];
+    return [currentExecutableDirectory() URLByAppendingPathComponent:@"AdAttributionDaemon" isDirectory:NO];
 }
 
 #if HAVE(OS_LAUNCHD_JOB)

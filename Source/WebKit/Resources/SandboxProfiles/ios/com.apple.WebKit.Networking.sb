@@ -686,6 +686,8 @@
         (literal "/dev/dtracehelper"))
 )
 
+(allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
+
 ;; Access to MobileGestalt
 (allow mach-lookup
     (global-name "com.apple.mobilegestalt.xpc"))

@@ -1,3 +1,17 @@
+2021-09-22  Alex Christensen  <achristensen@webkit.org>
+
+        Move PCMDaemon to WebKit.framework and rename it to AdAttributionDaemon
+        https://bugs.webkit.org/show_bug.cgi?id=230516
+
+        Reviewed by Brent Fulgham.
+
+        Also, open iOS NetworkProcess's sandbox to allow connecting to it.
+
+        * Configurations/AdAttributionDaemon.xcconfig: Renamed from Tools/TestWebKitAPI/Configurations/TestPCMDaemon.xcconfig.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Shared/EntryPointUtilities/Cocoa/Daemon/AdAttributionDaemon.c: Renamed from Tools/TestWebKitAPI/cocoa/TestPCMDaemonMain.c.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-09-22  Chris Dumez  <cdumez@apple.com>
 
         Drop makeRef() and use Ref { } instead

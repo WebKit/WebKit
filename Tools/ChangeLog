@@ -1,3 +1,14 @@
+2021-09-22  Alex Christensen  <achristensen@webkit.org>
+
+        Move PCMDaemon to WebKit.framework and rename it to AdAttributionDaemon
+        https://bugs.webkit.org/show_bug.cgi?id=230516
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::testPCMDaemonLocation):
+
 2021-09-22  Brady Eidson  <beidson@apple.com>
 
         Disable FTP.
