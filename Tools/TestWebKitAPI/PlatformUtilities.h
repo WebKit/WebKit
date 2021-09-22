@@ -66,6 +66,11 @@ bool isKeyDown(WKNativeEventPtr);
 std::string toSTD(WKStringRef);
 std::string toSTD(WKRetainPtr<WKStringRef>);
 
+#if PLATFORM(MAC)
+NSString *toNS(WKStringRef);
+NSString *toNS(WKRetainPtr<WKStringRef>);
+#endif // PLATFORM(MAC)
+
 WKRetainPtr<WKStringRef> toWK(const char* utf8String);
 
 #endif // WK_HAVE_C_SPI

@@ -348,7 +348,9 @@
 		51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */; };
 		51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */; };
 		51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */; };
+		5175C7A226F876230003AF5C /* BundlePageConsoleMessage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5175C7A126F876230003AF5C /* BundlePageConsoleMessage.mm */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
+		51819F2A26EAC98300E47375 /* FTP.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51819F2926EAC98200E47375 /* FTP.mm */; };
 		51820A4D22F4EE7F00DF0A01 /* JavascriptURLNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51820A4C22F4EE7700DF0A01 /* JavascriptURLNavigation.mm */; };
 		5182C22E1F2BCE540059BA7C /* WKURLSchemeHandler-leaks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */; };
 		518C1153205B0504001FF4AE /* ProcessSwapOnNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518C1152205B04F9001FF4AE /* ProcessSwapOnNavigation.mm */; };
@@ -2194,8 +2196,10 @@
 		51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "WebProcessKillIDBCleanup-2.html"; sourceTree = "<group>"; };
 		51714EB61CF8C7A4004723C4 /* WebProcessKillIDBCleanup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessKillIDBCleanup.mm; sourceTree = "<group>"; };
 		51714EB91D087416004723C4 /* CrossThreadTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadTask.cpp; sourceTree = "<group>"; };
+		5175C7A126F876230003AF5C /* BundlePageConsoleMessage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundlePageConsoleMessage.mm; sourceTree = "<group>"; };
 		517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCachePruneWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCachePruneWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
+		51819F2926EAC98200E47375 /* FTP.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FTP.mm; sourceTree = "<group>"; };
 		51820A4C22F4EE7700DF0A01 /* JavascriptURLNavigation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JavascriptURLNavigation.mm; sourceTree = "<group>"; };
 		5182C22D1F2BCB410059BA7C /* WKURLSchemeHandler-leaks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "WKURLSchemeHandler-leaks.mm"; sourceTree = "<group>"; };
 		518C1152205B04F9001FF4AE /* ProcessSwapOnNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSwapOnNavigation.mm; sourceTree = "<group>"; };
@@ -3435,6 +3439,7 @@
 				7A89BB652331635D0042CB1E /* BundleFormDelegate.mm */,
 				7A89BB662331635D0042CB1E /* BundleFormDelegatePlugIn.mm */,
 				7A89BB69233165650042CB1E /* BundleFormDelegateProtocol.h */,
+				5175C7A126F876230003AF5C /* BundlePageConsoleMessage.mm */,
 				A13EBBAC1B87436F00097110 /* BundleParameters.mm */,
 				A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */,
 				37A709AD1E3EA8B000CA5969 /* BundleRangeHandle.mm */,
@@ -3486,6 +3491,7 @@
 				6B25A75125DC8D4E0070744F /* EventAttribution.mm */,
 				CDA29B2820FD2A9900F15CED /* ExitFullscreenOnEnterPiP.mm */,
 				1D12BEBF245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm */,
+				51819F2926EAC98200E47375 /* FTP.mm */,
 				2D8104CB1BEC13E70020DA46 /* FindInPage.mm */,
 				51242CD42374E61E00EED9C1 /* FindInPageAPI.mm */,
 				118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm */,
@@ -5836,6 +5842,7 @@
 				7CCE7F141A411AE600447C4C /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
 				37BCA61C1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm in Sources */,
 				7C83E0C51D0A654600FEBCF3 /* ShrinkToFit.mm in Sources */,
+				51819F2A26EAC98300E47375 /* FTP.mm in Sources */,
 				7CCE7ECD1A411A7E00447C4C /* SimplifyMarkup.mm in Sources */,
 				C149D550242E98DF003EBB12 /* SleepDisabler.mm in Sources */,
 				2DFF7B6D1DA487AF00814614 /* SnapshotStore.mm in Sources */,
@@ -6072,6 +6079,7 @@
 				2D3CA3A8221DF4B40088E803 /* PageOverlayPlugin.mm in Sources */,
 				F44C7A0020F9EEBF0014478C /* ParserYieldTokenPlugIn.mm in Sources */,
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
+				5175C7A226F876230003AF5C /* BundlePageConsoleMessage.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */,
 				5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */,

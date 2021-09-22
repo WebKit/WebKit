@@ -390,6 +390,8 @@ public:
     RTCDataChannelRemoteManagerProxy& rtcDataChannelProxy();
 #endif
 
+    bool ftpEnabled() const { return m_ftpEnabled; }
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
@@ -615,6 +617,7 @@ private:
 
     bool m_privateClickMeasurementEnabled { true };
     bool m_privateClickMeasurementDebugModeEnabled { false };
+    bool m_ftpEnabled { false };
 
     HashMap<PAL::SessionID, Ref<NetworkStorageManager>> m_storageManagers;
 };

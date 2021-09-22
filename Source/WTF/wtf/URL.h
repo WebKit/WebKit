@@ -136,6 +136,7 @@ public:
     bool protocolIsData() const { return protocolIs("data"); }
     WTF_EXPORT_PRIVATE bool protocolIsAbout() const;
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
+    WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily() const;
     bool protocolIsInHTTPFamily() const;
     WTF_EXPORT_PRIVATE bool isLocalFile() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
@@ -259,6 +260,7 @@ WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 
 WTF_EXPORT_PRIVATE bool protocolIs(StringView url, const char* protocol);
 WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
+WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily(StringView url);
 WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);

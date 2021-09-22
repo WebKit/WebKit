@@ -567,6 +567,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     NSString *format = @"WebKitExperimental%@";
 #endif
     parameters.enablePrivateClickMeasurementDebugMode = [defaults boolForKey:[NSString stringWithFormat:format, WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey().createCFString().get()]];
+    
+    parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
 }
 
 void WebProcessPool::platformInvalidateContext()

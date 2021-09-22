@@ -329,6 +329,11 @@ bool URL::protocolIsJavaScript() const
     return WTF::protocolIsJavaScript(string());
 }
 
+bool URL::protocolIsInFTPFamily() const
+{
+    return WTF::protocolIsInFTPFamily(string());
+}
+
 bool URL::protocolIs(const char* protocol) const
 {
     assertProtocolIsGood(protocol);
@@ -854,6 +859,17 @@ bool URL::isLocalFile() const
 bool protocolIsJavaScript(StringView string)
 {
     return protocolIsInternal(string, "javascript");
+}
+
+bool protocolIsInFTPFamily(StringView url)
+{
+    auto length = url.length();
+    // Do the comparison without making a new string object.
+    return length >= 4
+        && isASCIIAlphaCaselessEqual(url[0], 'f')
+        && isASCIIAlphaCaselessEqual(url[1], 't')
+        && isASCIIAlphaCaselessEqual(url[2], 'p')
+        && (url[3] == ':' || (isASCIIAlphaCaselessEqual(url[3], 's') && length >= 5 && url[4] == ':'));
 }
 
 bool protocolIsInHTTPFamily(StringView url)

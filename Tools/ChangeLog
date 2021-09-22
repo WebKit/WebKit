@@ -1,3 +1,25 @@
+2021-09-22  Brady Eidson  <beidson@apple.com>
+
+        Disable FTP.
+        <rdar://81193860> and https://bugs.webkit.org/show_bug.cgi?id=230477
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        * TestWebKitAPI/Tests/WebKitCocoa/BundlePageConsoleMessage.mm: Added.
+        (willAddMessageToConsoleCallback):
+        (-[BundlePageConsoleMessage webProcessPlugIn:didCreateBrowserContextController:]):
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FTP.mm: Added.
+        (TestWebKitAPI::didReceivePageMessageFromInjectedBundle):
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm:
+        (TestWebKitAPI::Util::toNS):
+
 2021-09-22  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Switch runtime to 21.08 SDK

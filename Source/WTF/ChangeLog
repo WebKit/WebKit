@@ -1,3 +1,17 @@
+2021-09-22  Brady Eidson  <beidson@apple.com>
+
+        Disable FTP.
+        <rdar://81193860> and https://bugs.webkit.org/show_bug.cgi?id=230477
+
+        Reviewed by Geoff Garen.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+        * wtf/URL.cpp:
+        (WTF::URL::protocolIsInFTPFamily const):
+        (WTF::protocolIsInFTPFamily):
+        * wtf/URL.h:
+
 2021-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Remove ENABLE(SMOOTH_SCROLLING)
