@@ -1,5 +1,58 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282241. rdar://problem/83430068
+
+    Potential crash under CachedRawResource::didAddClient()
+    https://bugs.webkit.org/show_bug.cgi?id=230121
+    <rdar://82936913>
+    
+    Reviewed by Alex Christensen.
+    
+    In r280083, I tried to address this crash by holding a strong reference
+    to the SharedBuffer before calling forEachSegment() on it. However, the
+    crash is still happening after this fix.
+    
+    My suspicion is that the SharedBuffer's internal m_segments vector gets
+    modified as we iterate over it. As a result, I am reverting r280083 and
+    iterating over a copy of m_segments in forEachSegment() instead.
+    
+    No new tests, we haven't been able to reproduce.
+    
+    * WebCore.xcodeproj/project.pbxproj:
+    * loader/cache/CachedRawResource.cpp:
+    (WebCore::CachedRawResource::didAddClient):
+    * platform/SharedBuffer.cpp:
+    (WebCore::SharedBuffer::forEachSegment const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282241 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-09  Chris Dumez  <cdumez@apple.com>
+
+            Potential crash under CachedRawResource::didAddClient()
+            https://bugs.webkit.org/show_bug.cgi?id=230121
+            <rdar://82936913>
+
+            Reviewed by Alex Christensen.
+
+            In r280083, I tried to address this crash by holding a strong reference
+            to the SharedBuffer before calling forEachSegment() on it. However, the
+            crash is still happening after this fix.
+
+            My suspicion is that the SharedBuffer's internal m_segments vector gets
+            modified as we iterate over it. As a result, I am reverting r280083 and
+            iterating over a copy of m_segments in forEachSegment() instead.
+
+            No new tests, we haven't been able to reproduce.
+
+            * WebCore.xcodeproj/project.pbxproj:
+            * loader/cache/CachedRawResource.cpp:
+            (WebCore::CachedRawResource::didAddClient):
+            * platform/SharedBuffer.cpp:
+            (WebCore::SharedBuffer::forEachSegment const):
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282045. rdar://problem/83429674
 
     REGRESSION(r275515): pointer-events:none may get stuck in LFC runs
