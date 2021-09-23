@@ -1,7 +1,10 @@
 <!DOCTYPE HTML>
 <html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
 <body>
-<script src="../resources/js-test-pre.js"></script>
 
 <!-- implicit level of tag -->
 <h1 class="ex" data-expected="1">X</h1>
@@ -40,27 +43,33 @@
 
 <!-- todo: h1 elements nested in section elements should inherit nested level. -->
 
-<div id="console"></div>
 <script>
-if (window.testRunner && window.accessibilityController) {
     description("This tests that headings have a level matching the implicit default value or explicitly defined aria-level value.")
-    var examples = document.querySelectorAll('.ex');
-    for (var i = 0, c = examples.length; i < c; i++) {
-        var el = examples[i];
-        el.id = 'ex' + i;
-        var axElement = accessibilityController.accessibleElementById(el.id);
-        var result = document.getElementById('console');
-        
-        // Test AXLevel.
-        if (axElement.intValue == parseInt(el.getAttribute('data-expected'))) {
-            result.innerText += "PASS: level is " + axElement.intValue + ".\n";
-        } else {
-            result.innerText += "FAIL: level is " + axElement.intValue + " for " + el.outerHTML + ", expected " + parseInt(el.getAttribute('data-expected')) + ".\n";
-        }
-        el.style.display = 'none'; // Hide each example after verification.
+
+    if (window.testRunner && window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        setTimeout(async () => {
+            var examples = document.querySelectorAll('.ex');
+            for (let i = 0; i < examples.length; ++i) {
+                window.el = examples[i];
+                el.id = `ex${i}`;
+
+                window.axElement = null;
+                await waitFor(() => {
+                    axElement = accessibilityController.accessibleElementById(el.id);
+                    return axElement;
+                });
+
+                // Test AXLevel.
+                shouldBe("axElement.intValue", "parseInt(el.getAttribute('data-expected'))");
+
+                el.style.display = 'none'; // Hide each example after verification.
+            }
+
+            finishJSTest();
+        }, 0);
     }
-}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,3 +1,16 @@
+2021-09-22  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for LayoutTests/accessibility/heading-level.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=230654
+        <rdar://problem/83422965>
+
+        Reviewed by Chris Fleizach.
+
+        Rewrote this test using Promises so that it works in isolated tree mode.
+
+        * accessibility/heading-level-expected.txt:
+        * accessibility/heading-level.html:
+
 2021-09-22  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         REGRESSION (r282865?): ASSERTION FAILED: Unsafe to ref/deref from different threads m_isOwnedByMainThread == isMainThread().
