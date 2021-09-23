@@ -10122,6 +10122,7 @@
 				86D446EA25B2125300ECAE75 /* JITOpaqueByproducts.h in Headers */,
 				E3CA3A4E2527AB2F004802BF /* JITOperationList.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
+				6B2360CE26C6253D0054AEEC /* JITOperationValidation.h in Headers */,
 				726B91B726581653008E6F82 /* JITPlan.h in Headers */,
 				72131BFA26587EF2007114CF /* JITPlanStage.h in Headers */,
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
@@ -11179,7 +11180,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\" \"${BUILD_VARIANTS}\"\n";
+			shellScript = "set -e\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --use-deployment-location\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_offset_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\"  \"${BUILT_PRODUCTS_DIR}/JSCLLIntSettingsExtractor\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredOffsets.h\" \"${ARCHS} C_LOOP\" \"${BUILD_VARIANTS}\" ${OFFLINEASM_ARGS}\n";
 		};
 		14BD6892215191450050DAFF /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11193,7 +11194,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_settings_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredSettings.h\" \"${ARCHS} C_LOOP\"\n";
+			shellScript = "set -e\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --use-deployment-location\"\nfi\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}\"\n\n/usr/bin/env ruby \"${SRCROOT}/offlineasm/generate_settings_extractor.rb\" \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" \"${SRCROOT}/llint/LowLevelInterpreter.asm\" \"${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}/LLIntDesiredSettings.h\" \"${ARCHS} C_LOOP\" ${OFFLINEASM_ARGS}\n";
 		};
 		1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11439,7 +11440,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" JavaScriptCore/llint/LowLevelInterpreter.asm \"${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor\" LLIntAssembly.h \"${BUILD_VARIANTS}\" || exit 1\n";
+			shellScript = "if [[ \"${ACTION}\" == \"installhdrs\" ]]; then\n    exit 0\nfi\n\nOFFLINEASM_ARGS=\"\"\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    OFFLINEASM_ARGS=\"${OFFLINEASM_ARGS} --use-deployment-location\"\nfi\n\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\"\n\n/usr/bin/env ruby JavaScriptCore/offlineasm/asm.rb \"-I${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore\" JavaScriptCore/llint/LowLevelInterpreter.asm \"${BUILT_PRODUCTS_DIR}/JSCLLIntOffsetsExtractor\" LLIntAssembly.h \"${BUILD_VARIANTS}\" ${OFFLINEASM_ARGS} || exit 1\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
