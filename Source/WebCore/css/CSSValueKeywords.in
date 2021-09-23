@@ -1353,6 +1353,10 @@ e
 pi
 exp
 log
+asin
+acos
+atan
+atan2
 
 from-image
 

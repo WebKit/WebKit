@@ -137,10 +137,17 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     case CSSValueSin:
     case CSSValueCos:
     case CSSValueTan:
+    
+    case CSSValueAcos:
+    case CSSValueAsin:
+    case CSSValueAtan:
     case CSSValueCalc:
         maxArgumentCount = 1;
         break;
-    // TODO: clamp, sin, cos, tan, asin, acos, atan, atan2, pow, sqrt, hypot.
+    case CSSValueAtan2:
+        maxArgumentCount = 2;
+        break;
+    // TODO: pow, sqrt, hypot.
     default:
         break;
     }
@@ -198,7 +205,19 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     case CSSValueExp:
         result = CSSCalcOperationNode::createExp(WTFMove(nodes));
         break;
-    // TODO: clamp, sin, cos, tan, asin, acos, atan, atan2, pow, sqrt, hypot
+    case CSSValueAcos:
+        result = CSSCalcOperationNode::createInverseTrig(CalcOperator::Acos, WTFMove(nodes));
+        break;
+    case CSSValueAsin:
+        result = CSSCalcOperationNode::createInverseTrig(CalcOperator::Asin, WTFMove(nodes));
+        break;
+    case CSSValueAtan:
+        result = CSSCalcOperationNode::createInverseTrig(CalcOperator::Atan, WTFMove(nodes));
+        break;
+    case CSSValueAtan2:
+        result = CSSCalcOperationNode::createAtan2(WTFMove(nodes));
+        break;
+    // TODO: pow, sqrt, hypot
     default:
         break;
     }

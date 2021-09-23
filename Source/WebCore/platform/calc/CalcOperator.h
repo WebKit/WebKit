@@ -43,6 +43,10 @@ enum class CalcOperator : uint8_t {
     Tan,
     Exp,
     Log,
+    Asin,
+    Acos,
+    Atan,
+    Atan2,
 };
 
 TextStream& operator<<(TextStream&, CalcOperator);

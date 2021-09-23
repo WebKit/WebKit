@@ -81,6 +81,10 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
     case CalcOperator::Clamp:
     case CalcOperator::Log:
     case CalcOperator::Exp:
+    case CalcOperator::Asin:
+    case CalcOperator::Acos:
+    case CalcOperator::Atan:
+    case CalcOperator::Atan2:
         ASSERT_NOT_REACHED();
         return CalculationCategory::Other;
     }
@@ -154,6 +158,10 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
         case CalcOperator::Clamp:
         case CalcOperator::Log:
         case CalcOperator::Exp:
+        case CalcOperator::Asin:
+        case CalcOperator::Acos:
+        case CalcOperator::Atan:
+        case CalcOperator::Atan2:
             // The type of a min(), max(), or clamp() expression is the result of adding the types of its comma-separated calculations
             return CalculationCategory::Other;
         }
@@ -275,6 +283,14 @@ static CSSValueID functionFromOperator(CalcOperator op)
         return CSSValueExp;
     case CalcOperator::Log:
         return CSSValueLog;
+    case CalcOperator::Asin:
+        return CSSValueAsin;
+    case CalcOperator::Acos:
+        return CSSValueAcos;
+    case CalcOperator::Atan:
+        return CSSValueAtan;
+    case CalcOperator::Atan2:
+        return CSSValueAtan2;
     }
     return CSSValueCalc;
 }
@@ -311,6 +327,34 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createSum(Vector<Ref<CSSCalcE
     }
 
     return adoptRef(new CSSCalcOperationNode(newCategory, CalcOperator::Add, WTFMove(values)));
+}
+
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createInverseTrig(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 1)
+        return nullptr;
+
+    auto childCategory = values[0]->category();
+    if (childCategory != CalculationCategory::Number) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create trig node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+
+    return adoptRef(new CSSCalcOperationNode(CalculationCategory::Angle, op, WTFMove(values)));
+}
+
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createAtan2(Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 2)
+        return nullptr;
+
+    auto child1Category = values[0]->category();
+    auto child2Category = values[1]->category();
+    if (child1Category != child2Category) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create atan2 node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+    return adoptRef(new CSSCalcOperationNode(CalculationCategory::Angle, CalcOperator::Atan2, WTFMove(values)));
 }
 
 RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createProduct(Vector<Ref<CSSCalcExpressionNode>>&& values)
@@ -484,7 +528,13 @@ void CSSCalcOperationNode::combineChildren()
         if (isExpNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
             auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
-
+            m_children.clear();
+            m_children.append(WTFMove(newChild));
+        }
+        
+        if (m_children.size() == 1 && isInverseTrigNode()) {
+            double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_DEG));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
@@ -621,6 +671,13 @@ void CSSCalcOperationNode::combineChildren()
         m_children.clear();
         m_children.append(WTFMove(newChild));
     }
+    
+    if (calcOperator() == CalcOperator::Atan2) {
+        double resolvedValue = doubleValue(m_children[0]->primitiveType());
+        auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_DEG));
+        m_children.clear();
+        m_children.append(WTFMove(newChild));
+    }
 }
 
 // https://drafts.csswg.org/css-values-4/#simplify-a-calculation-tree
@@ -679,7 +736,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
     if (is<CSSCalcOperationNode>(rootNode)) {
         auto& calcOperationNode = downcast<CSSCalcOperationNode>(rootNode.get());
         // Simplify operations with only one child node (other than root and operations that only need one node).
-        if (calcOperationNode.children().size() == 1 && depth && !calcOperationNode.isTrigNode() && !calcOperationNode.isExpNode())
+        if (calcOperationNode.children().size() == 1 && depth && !calcOperationNode.isTrigNode() && !calcOperationNode.isExpNode() && !calcOperationNode.isInverseTrigNode())
             return WTFMove(calcOperationNode.children()[0]);
         
         if (calcOperationNode.isCalcSumNode()) {
@@ -701,6 +758,12 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
         if (calcOperationNode.isExpNode() && depth)
             calcOperationNode.combineChildren();
         
+        if (calcOperationNode.isInverseTrigNode() && depth)
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isAtan2Node() && depth)
+            calcOperationNode.combineChildren();
+
         // If only one child remains, return the child (except at the root).
         auto shouldCombineParentWithOnlyChild = [](const CSSCalcOperationNode& parent, int depth)
         {
@@ -788,7 +851,7 @@ CSSUnitType CSSCalcOperationNode::primitiveType() const
     case CalculationCategory::Angle:
     case CalculationCategory::Time:
     case CalculationCategory::Frequency:
-        if (m_children.size() == 1)
+        if (m_children.size() == 1 && !isInverseTrigNode())
             return m_children.first()->primitiveType();
         return canonicalUnitTypeForCalculationCategory(unitCategory);
 
@@ -834,6 +897,10 @@ double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
             childType = CSSUnitType::CSS_NUMBER;
         if (isTrigNode() && unitType != CSSUnitType::CSS_NUMBER)
             childType = CSSUnitType::CSS_RAD;
+        if (isInverseTrigNode())
+            childType = CSSUnitType::CSS_NUMBER;
+        if (isAtan2Node())
+            childType = child->primitiveType();
         return child->doubleValue(childType);
     }));
 }
@@ -894,6 +961,10 @@ static const char* functionPrefixForOperator(CalcOperator op)
     case CalcOperator::Clamp: return "clamp(";
     case CalcOperator::Exp: return "exp(";
     case CalcOperator::Log: return "log(";
+    case CalcOperator::Asin: return "asin(";
+    case CalcOperator::Acos: return "acos(";
+    case CalcOperator::Atan: return "atan(";
+    case CalcOperator::Atan2: return "atan2(";
     }
     
     return "";
@@ -1121,6 +1192,26 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children.size() != 1)
             return std::numeric_limits<double>::quiet_NaN();
         return std::exp(children[0]);
+    }
+    case CalcOperator::Asin: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return rad2deg(std::asin(children[0]));
+    }
+    case CalcOperator::Acos: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return rad2deg(std::acos(children[0]));
+    }
+    case CalcOperator::Atan: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return rad2deg(std::atan(children[0]));
+    }
+    case CalcOperator::Atan2: {
+        if (children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        return rad2deg(atan2(children[0], children[1]));
     }
     }
     ASSERT_NOT_REACHED();

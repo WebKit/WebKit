@@ -1,3 +1,44 @@
+2021-09-23  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement atan, acos, asin, atan2 calc functions
+        https://bugs.webkit.org/show_bug.cgi?id=229775
+
+        Reviewed by Simon Fraser.
+
+        Added support for calc functions asin, acos, atan, atan2. Involved adding function CSS  
+        keywords and handling for parsing these functions and their arguments as well as computing 
+        the result based on the arguments. Spec for these functions: 
+        https://drafts.csswg.org/css-values-4/#trig-funcs.
+
+        Tests: imported/w3c/web-platform-tests/css/css-values/acos-asin-atan-atan2-computed.html
+               imported/w3c/web-platform-tests/css/css-values/acos-asin-atan-atan2-invalid.html
+               imported/w3c/web-platform-tests/css/css-values/acos-asin-atan-atan2-serialize.html
+
+        * css/CSSValueKeywords.in:
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        (WebCore::functionFromOperator):
+        (WebCore::CSSCalcOperationNode::createInverseTrig):
+        (WebCore::CSSCalcOperationNode::createAtan2):
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        (WebCore::CSSCalcOperationNode::primitiveType const):
+        (WebCore::CSSCalcOperationNode::doubleValue const):
+        (WebCore::functionPrefixForOperator):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        * css/calc/CSSCalcOperationNode.h:
+        * css/calc/CSSCalcValue.cpp:
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        * platform/calc/CalcExpressionOperation.cpp:
+        (WebCore::CalcExpressionOperation::evaluate const):
+        Return converted to degrees based on spec: https://drafts.csswg.org/css-values-4/#trig-funcs.
+        * platform/calc/CalcOperator.cpp:
+        (WebCore::operator<<):
+        * platform/calc/CalcOperator.h:
+
 2021-09-23  Tim Horton  <timothy_horton@apple.com>
 
         Move more linked-on-or-after checks to WebCore::linkedOnOrAfter()

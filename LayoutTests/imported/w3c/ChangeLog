@@ -1,3 +1,18 @@
+2021-09-23  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement atan, acos, asin, atan2 calc functions
+        https://bugs.webkit.org/show_bug.cgi?id=229775
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/acos-asin-atan-atan2-computed-expected.txt: Added.
+        * web-platform-tests/css/css-values/acos-asin-atan-atan2-computed.html: Added.
+        * web-platform-tests/css/css-values/acos-asin-atan-atan2-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-values/acos-asin-atan-atan2-invalid.html: Added.
+        * web-platform-tests/css/css-values/acos-asin-atan-atan2-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-values/acos-asin-atan-atan2-serialize.html: Added.
+        * web-platform-tests/css/support/numeric-testcommon.js:
+
 2021-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Hook up palettes to CoreText

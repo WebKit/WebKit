@@ -192,6 +192,20 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
                 return nullptr;
             return CSSCalcOperationNode::createExp(WTFMove(children));
         }
+        case CalcOperator::Asin:
+        case CalcOperator::Acos:
+        case CalcOperator::Atan: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createInverseTrig(op, WTFMove(children));
+        }
+        case CalcOperator::Atan2: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 2)
+                return nullptr;
+            return CSSCalcOperationNode::createAtan2(WTFMove(children));
+        }
         }
         return nullptr;
     }
@@ -308,6 +322,10 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueTan:
     case CSSValueExp:
     case CSSValueLog:
+    case CSSValueAsin:
+    case CSSValueAcos:
+    case CSSValueAtan:
+    case CSSValueAtan2:
         return true;
     default:
         return false;

@@ -40,6 +40,8 @@ public:
     static RefPtr<CSSCalcOperationNode> createTrig(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createLog(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createExp(Vector<Ref<CSSCalcExpressionNode>>&& values);
+    static RefPtr<CSSCalcOperationNode> createInverseTrig(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
+    static RefPtr<CSSCalcOperationNode> createAtan2(Vector<Ref<CSSCalcExpressionNode>>&& values);
 
     static Ref<CSSCalcExpressionNode> simplify(Ref<CSSCalcExpressionNode>&&);
 
@@ -51,6 +53,8 @@ public:
     bool isMinOrMaxNode() const { return m_operator == CalcOperator::Min || m_operator == CalcOperator::Max; }
     bool isTrigNode() const { return m_operator == CalcOperator::Sin || m_operator == CalcOperator::Cos || m_operator == CalcOperator::Tan; }
     bool isExpNode() const { return m_operator == CalcOperator::Exp || m_operator == CalcOperator::Log; }
+    bool isInverseTrigNode() const { return m_operator == CalcOperator::Asin || m_operator == CalcOperator::Acos || m_operator == CalcOperator::Atan; }
+    bool isAtan2Node() const { return m_operator == CalcOperator::Atan2; }
     bool shouldSortChildren() const { return isCalcSumNode() || isCalcProductNode(); }
 
     void hoistChildrenWithOperator(CalcOperator);
