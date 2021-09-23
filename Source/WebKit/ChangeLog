@@ -1,5 +1,34 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282013. rdar://problem/83430076
+
+    [GPUP] Temporarily allow access to power logging service
+    https://bugs.webkit.org/show_bug.cgi?id=229878
+    <rdar://82441564>
+    
+    Reviewed by Brent Fulgham.
+    
+    Temporarily allow access to power logging service in GPUP on macOS.
+    
+    * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282013 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Per Arne  <pvollan@apple.com>
+
+            [GPUP] Temporarily allow access to power logging service
+            https://bugs.webkit.org/show_bug.cgi?id=229878
+            <rdar://82441564>
+
+            Reviewed by Brent Fulgham.
+
+            Temporarily allow access to power logging service in GPUP on macOS.
+
+            * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281431. rdar://problem/83429553
 
     Report correct blocked URI in CSP violation report
