@@ -349,30 +349,30 @@ Modules/websockets/WebSocketExtensionParser.cpp
 Modules/websockets/WebSocketFrame.cpp
 Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
-Modules/webxr/NavigatorWebXR.cpp @no-unify
-Modules/webxr/WebXRBoundedReferenceSpace.cpp @no-unify
-Modules/webxr/WebXRFrame.cpp @no-unify
-Modules/webxr/WebXRGamepad.cpp @no-unify
-Modules/webxr/WebXRInputSource.cpp @no-unify
-Modules/webxr/WebXRInputSourceArray.cpp @no-unify
-Modules/webxr/WebXRInputSpace.cpp @no-unify
-Modules/webxr/WebXRLayer.cpp @no-unify
-Modules/webxr/WebXROpaqueFramebuffer.cpp @no-unify
-Modules/webxr/WebXRPose.cpp @no-unify
-Modules/webxr/WebXRReferenceSpace.cpp @no-unify
-Modules/webxr/WebXRRenderState.cpp @no-unify
-Modules/webxr/WebXRRigidTransform.cpp @no-unify
-Modules/webxr/WebXRSession.cpp @no-unify
-Modules/webxr/WebXRSpace.cpp @no-unify
-Modules/webxr/WebXRSystem.cpp @no-unify
-Modules/webxr/WebXRView.cpp @no-unify
-Modules/webxr/WebXRViewerPose.cpp @no-unify
-Modules/webxr/WebXRViewport.cpp @no-unify
-Modules/webxr/WebXRWebGLLayer.cpp @no-unify
-Modules/webxr/XRInputSourceEvent.cpp @no-unify
-Modules/webxr/XRInputSourcesChangeEvent.cpp @no-unify
-Modules/webxr/XRReferenceSpaceEvent.cpp @no-unify
-Modules/webxr/XRSessionEvent.cpp @no-unify
+Modules/webxr/NavigatorWebXR.cpp
+Modules/webxr/WebXRBoundedReferenceSpace.cpp
+Modules/webxr/WebXRFrame.cpp
+Modules/webxr/WebXRGamepad.cpp
+Modules/webxr/WebXRInputSource.cpp
+Modules/webxr/WebXRInputSourceArray.cpp
+Modules/webxr/WebXRInputSpace.cpp
+Modules/webxr/WebXRLayer.cpp
+Modules/webxr/WebXROpaqueFramebuffer.cpp
+Modules/webxr/WebXRPose.cpp
+Modules/webxr/WebXRReferenceSpace.cpp
+Modules/webxr/WebXRRenderState.cpp
+Modules/webxr/WebXRRigidTransform.cpp
+Modules/webxr/WebXRSession.cpp
+Modules/webxr/WebXRSpace.cpp
+Modules/webxr/WebXRSystem.cpp
+Modules/webxr/WebXRView.cpp
+Modules/webxr/WebXRViewerPose.cpp
+Modules/webxr/WebXRViewport.cpp
+Modules/webxr/WebXRWebGLLayer.cpp
+Modules/webxr/XRInputSourceEvent.cpp
+Modules/webxr/XRInputSourcesChangeEvent.cpp
+Modules/webxr/XRReferenceSpaceEvent.cpp
+Modules/webxr/XRSessionEvent.cpp
 accessibility/AXImage.cpp
 accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
@@ -2172,13 +2172,13 @@ platform/text/TextCodecUserDefined.cpp
 platform/text/TextEncoding.cpp
 platform/text/TextEncodingDetectorICU.cpp
 platform/text/TextEncodingRegistry.cpp
-platform/xr/openxr/OpenXRInput.cpp @no-unify
-platform/xr/openxr/OpenXRInputSource.cpp @no-unify
-platform/xr/openxr/OpenXRInstance.cpp @no-unify
-platform/xr/openxr/OpenXRExtensions.cpp @no-unify
-platform/xr/openxr/OpenXRLayer.cpp @no-unify
-platform/xr/openxr/OpenXRSwapchain.cpp @no-unify
-platform/xr/openxr/PlatformXROpenXR.cpp @no-unify
+platform/xr/openxr/OpenXRInput.cpp
+platform/xr/openxr/OpenXRInputSource.cpp
+platform/xr/openxr/OpenXRInstance.cpp
+platform/xr/openxr/OpenXRExtensions.cpp
+platform/xr/openxr/OpenXRLayer.cpp
+platform/xr/openxr/OpenXRSwapchain.cpp
+platform/xr/openxr/PlatformXROpenXR.cpp
 plugins/DOMMimeType.cpp
 plugins/DOMMimeTypeArray.cpp
 plugins/DOMPlugin.cpp
