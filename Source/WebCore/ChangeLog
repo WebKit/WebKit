@@ -1,3 +1,20 @@
+2021-09-23  Tim Nguyen  <ntim@apple.com>
+
+        AX: Stop exposing isInert & ignoredFromModalPresence in AXCoreObject & AXIsolatedObject
+        https://bugs.webkit.org/show_bug.cgi?id=230690
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::defaultObjectInclusion const):
+        (WebCore::AccessibilityObject::isInert const): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::ignoredFromModalPresence const): Deleted.
+        (WebCore::AXIsolatedObject::isInert const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2021-09-23  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move Layout::Run under InlineDisplay and rename it to Box

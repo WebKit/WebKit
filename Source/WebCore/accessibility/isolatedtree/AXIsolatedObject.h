@@ -547,7 +547,6 @@ private:
     bool supportsPressed() const override;
     bool supportsChecked() const override;
     bool supportsRowCountChange() const override { return boolAttributeValue(AXPropertyName::SupportsRowCountChange); }
-    bool ignoredFromModalPresence() const override;
     bool isModalDescendant(Node*) const override;
     bool isModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
@@ -642,7 +641,6 @@ private:
     bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
     bool isAXHidden() const override;
     bool isDOMHidden() const override;
-    bool isInert() const override;
     bool isHidden() const override;
     void overrideAttachmentParent(AXCoreObject* parent) override;
     bool accessibilityIgnoreAttachment() const override;

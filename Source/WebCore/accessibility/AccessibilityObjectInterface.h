@@ -1068,7 +1068,6 @@ public:
     virtual const String keyShortcutsValue() const = 0;
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
-    virtual bool ignoredFromModalPresence() const = 0;
     virtual bool isModalDescendant(Node*) const = 0;
     virtual bool isModalNode() const = 0;
 
@@ -1438,7 +1437,6 @@ public:
     // Visibility.
     virtual bool isAXHidden() const = 0;
     virtual bool isDOMHidden() const = 0;
-    virtual bool isInert() const = 0;
     virtual bool isHidden() const = 0;
 
 #if ENABLE(ACCESSIBILITY)

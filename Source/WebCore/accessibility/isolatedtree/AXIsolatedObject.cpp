@@ -1825,12 +1825,6 @@ bool AXIsolatedObject::supportsChecked() const
     return false;
 }
 
-bool AXIsolatedObject::ignoredFromModalPresence() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isModalDescendant(Node*) const
 {
     ASSERT_NOT_REACHED();
@@ -2312,12 +2306,6 @@ bool AXIsolatedObject::isAXHidden() const
 }
 
 bool AXIsolatedObject::isDOMHidden() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isInert() const
 {
     ASSERT_NOT_REACHED();
     return false;

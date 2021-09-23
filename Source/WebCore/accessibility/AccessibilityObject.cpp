@@ -3247,11 +3247,6 @@ bool AccessibilityObject::isDOMHidden() const
     return style.display() == DisplayType::None || style.visibility() != Visibility::Visible;
 }
 
-bool AccessibilityObject::isInert() const
-{
-    return node() && node()->isInert();
-}
-
 bool AccessibilityObject::isShowingValidationMessage() const
 {
     if (is<HTMLFormControlElement>(node()))
@@ -3273,7 +3268,7 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
         return AccessibilityObjectInclusion::IgnoreObject;
     
-    if (isInert() || ignoredFromModalPresence())
+    if ((node() && node()->isInert()) || ignoredFromModalPresence())
         return AccessibilityObjectInclusion::IgnoreObject;
     
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())

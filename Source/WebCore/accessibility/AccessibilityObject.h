@@ -319,7 +319,7 @@ public:
     const String keyShortcutsValue() const override;
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
-    bool ignoredFromModalPresence() const override;
+    virtual bool ignoredFromModalPresence() const;
     bool isModalDescendant(Node*) const override;
     bool isModalNode() const override;
 
@@ -700,8 +700,7 @@ public:
     // Visibility.
     bool isAXHidden() const override;
     bool isDOMHidden() const override;
-    bool isInert() const override;
-    bool isHidden() const override { return isAXHidden() || isDOMHidden() || isInert(); }
+    bool isHidden() const override { return isAXHidden() || isDOMHidden(); }
 
 #if PLATFORM(COCOA)
     void overrideAttachmentParent(AXCoreObject* parent) override;
