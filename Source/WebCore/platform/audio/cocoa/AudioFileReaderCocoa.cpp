@@ -40,6 +40,7 @@
 #include "InbandTextTrackPrivate.h"
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
+#include "SharedBuffer.h"
 #include "VideoTrackPrivate.h"
 #include "WebMAudioUtilitiesCocoa.h"
 #include <AudioToolbox/AudioConverter.h>
@@ -129,6 +130,7 @@ class AudioFileReaderWebMData {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
+    Ref<SharedBuffer> m_buffer;
 #if ENABLE(MEDIA_SOURCE)
     Ref<AudioTrackPrivateWebM> m_track;
 #endif
@@ -180,6 +182,7 @@ bool AudioFileReader::isMaybeWebM(const uint8_t* data, size_t dataSize) const
 
 std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const uint8_t* data, size_t dataSize) const
 {
+    auto buffer = SharedBuffer::create(data, dataSize);
     auto parser = adoptRef(new SourceBufferParserWebM());
     bool error = false;
     std::optional<uint64_t> audioTrackId;
@@ -212,12 +215,12 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
             return;
         track->setDiscardPadding(discardPadding);
     });
-    SourceBufferParser::Segment segment({ data, dataSize });
+    SourceBufferParser::Segment segment(makeRef(buffer.get()));
     parser->appendData(WTFMove(segment));
     if (!track)
         return nullptr;
     parser->flushPendingAudioBuffers();
-    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
+    return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(buffer), track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
 }
 
 struct PassthroughUserData {
@@ -335,16 +338,21 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
     for (size_t i = 0; i < m_webmData->m_samples.size(); i++) {
         auto& sample = m_webmData->m_samples[i];
         CMSampleBufferRef sampleBuffer = sample->sampleBuffer();
-        auto buffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
-        ASSERT(PAL::CMBlockBufferIsRangeContiguous(buffer, 0, 0));
-        if (!PAL::CMBlockBufferIsRangeContiguous(buffer, 0, 0)) {
-            RELEASE_LOG_FAULT(WebAudio, "Unable to read sample content (not contiguous)");
-            return { };
+        auto rawBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
+        RetainPtr<CMBlockBufferRef> buffer = rawBuffer;
+        // Make sure block buffer is contiguous.
+        if (!PAL::CMBlockBufferIsRangeContiguous(rawBuffer, 0, 0)) {
+            CMBlockBufferRef contiguousBuffer = nullptr;
+            if (PAL::CMBlockBufferCreateContiguous(nullptr, rawBuffer, nullptr, nullptr, 0, 0, 0, &contiguousBuffer) != kCMBlockBufferNoErr) {
+                RELEASE_LOG_FAULT(WebAudio, "failed to create contiguous block buffer");
+                return { };
+            }
+            buffer = adoptCF(contiguousBuffer);
         }
 
-        size_t srcSize = PAL::CMBlockBufferGetDataLength(buffer);
+        size_t srcSize = PAL::CMBlockBufferGetDataLength(buffer.get());
         char* srcData = nullptr;
-        if (PAL::CMBlockBufferGetDataPointer(buffer, 0, nullptr, nullptr, &srcData) != noErr) {
+        if (PAL::CMBlockBufferGetDataPointer(buffer.get(), 0, nullptr, nullptr, &srcData) != noErr) {
             RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve data");
             return { };
         }

@@ -48,6 +48,7 @@
 
 namespace WebCore {
 
+class SharedBuffer;
 class TimeRanges;
 
 enum class SourceBufferAppendMode : uint8_t {
@@ -66,7 +67,7 @@ public:
     WEBCORE_EXPORT virtual ~SourceBufferPrivate();
 
     virtual void setActive(bool) = 0;
-    virtual void append(Vector<unsigned char>&&) = 0;
+    WEBCORE_EXPORT virtual void append(Ref<SharedBuffer>&&);
     virtual void abort() = 0;
     virtual void resetParserState() = 0;
     virtual void removedFromMediaSource() = 0;
@@ -147,6 +148,8 @@ public:
 #endif
 
 protected:
+    // The following method should never be called directly and be overridden instead.
+    WEBCORE_EXPORT virtual void append(Vector<unsigned char>&&);
     virtual MediaTime timeFudgeFactor() const { return {2002, 24000}; }
     virtual bool isActive() const { return false; }
     virtual bool isSeeking() const { return false; }

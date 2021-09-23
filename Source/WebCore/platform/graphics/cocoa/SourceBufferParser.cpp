@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ContentType.h"
+#include "SharedBuffer.h"
 #include "SourceBufferParserAVFObjC.h"
 #include "SourceBufferParserWebM.h"
 #include <pal/cocoa/MediaToolboxSoftLink.h>
@@ -77,8 +78,8 @@ void SourceBufferParser::setMinimumAudioSampleDuration(float)
 {
 }
 
-SourceBufferParser::Segment::Segment(Vector<uint8_t>&& segment)
-    : m_segment(WTFMove(segment))
+SourceBufferParser::Segment::Segment(Ref<SharedBuffer>&& buffer)
+    : m_segment(WTFMove(buffer))
 {
 }
 
@@ -98,9 +99,9 @@ size_t SourceBufferParser::Segment::size() const
             return clampTo<size_t>(MTPluginByteSourceGetLength(byteSource.get()));
         },
 #endif
-        [](const Vector<uint8_t>& vector)
+        [](const Ref<SharedBuffer>& buffer)
         {
-            return vector.size();
+            return buffer->size();
         }
     );
 }
@@ -119,15 +120,15 @@ size_t SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uin
             return sizeRead;
         },
 #endif
-        [&](const Vector<uint8_t>& vector)
+        [&](const Ref<SharedBuffer>& buffer)
         {
-            memcpy(destination, vector.data() + position, sizeToRead);
+            buffer->copyTo(destination, position, sizeToRead);
             return sizeToRead;
         }
     );
 }
 
-Vector<uint8_t> SourceBufferParser::Segment::takeVector()
+Ref<SharedBuffer> SourceBufferParser::Segment::takeSharedBuffer()
 {
     return WTF::switchOn(m_segment,
 #if HAVE(MT_PLUGIN_FORMAT_READER)
@@ -135,12 +136,28 @@ Vector<uint8_t> SourceBufferParser::Segment::takeVector()
         {
             Vector<uint8_t> vector(size());
             vector.shrink(read(0, vector.size(), vector.data()));
-            return vector;
+            return SharedBuffer::create(WTFMove(vector));
         },
 #endif
-        [](Vector<uint8_t>& vector)
+        [&](Ref<SharedBuffer>& buffer)
         {
-            return std::exchange(vector, { });
+            return std::exchange(buffer, SharedBuffer::create());
+        }
+    );
+}
+
+RefPtr<SharedBuffer> SourceBufferParser::Segment::getSharedBuffer() const
+{
+    return WTF::switchOn(m_segment,
+#if HAVE(MT_PLUGIN_FORMAT_READER)
+        [&](const RetainPtr<MTPluginByteSourceRef>&) -> RefPtr<SharedBuffer>
+        {
+            return nullptr;
+        },
+#endif
+        [&](const Ref<SharedBuffer>& buffer) -> RefPtr<SharedBuffer>
+        {
+            return buffer.ptr();
         }
     );
 }

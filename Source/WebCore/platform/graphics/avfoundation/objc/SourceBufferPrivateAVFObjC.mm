@@ -537,9 +537,9 @@ static dispatch_queue_t globalDataParserQueue()
     return globalQueue;
 }
 
-void SourceBufferPrivateAVFObjC::append(Vector<unsigned char>&& data)
+void SourceBufferPrivateAVFObjC::append(Ref<SharedBuffer>&& data)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data.size());
+    ALWAYS_LOG(LOGIDENTIFIER, "data length = ", data->size());
 
     ASSERT(!m_hasSessionSemaphore);
     ASSERT(!m_abortSemaphore);

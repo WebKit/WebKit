@@ -209,7 +209,7 @@ private:
     MediaSource* m_source;
     AppendMode m_mode { AppendMode::Segments };
 
-    Vector<unsigned char> m_pendingAppendData;
+    RefPtr<SharedBuffer> m_pendingAppendData;
     Timer m_appendBufferTimer;
 
     RefPtr<VideoTrackList> m_videoTracks;

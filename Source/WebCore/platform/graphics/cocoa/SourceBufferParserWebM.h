@@ -58,7 +58,7 @@ class MediaSampleAVFObjC;
 class SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class StreamingVectorReader;
+    class SegmentReader;
 
     static bool isWebMFormatReaderAvailable();
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
@@ -155,30 +155,42 @@ public:
         void setFormatDescription(RetainPtr<CMFormatDescriptionRef>&& description) { m_formatDescription = WTFMove(description); }
 
         SourceBufferParserWebM& parser() const { return m_parser; }
-        
+
         virtual webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int)
         {
             ASSERT_NOT_REACHED();
             return webm::Status(webm::Status::kInvalidElementId);
         }
 
-        virtual void reset()
+        virtual void resetCompleted()
         {
-            m_currentPacketSize = std::nullopt;
+            m_completeBlockBuffer = nullptr;
+        }
+        void reset()
+        {
+            resetCompleted();
+            m_completePacketSize = std::nullopt;
             m_partialBytesRead = 0;
+            m_currentBlockBuffer = nullptr;
         }
 
     protected:
-        std::optional<size_t> m_currentPacketSize;
-        // Size of the currently parsed packet, possibly incomplete.
-        size_t m_partialBytesRead { 0 };
+        RetainPtr<CMBlockBufferRef> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
+        webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
+        RetainPtr<CMBlockBufferRef> m_completeBlockBuffer;
+        std::optional<size_t> m_completePacketSize;
+        // Initial allocation size of empty CMBlockBuffer.
+        size_t mMaxBlockBufferCapacity { 0 };
 
     private:
         CodecType m_codec;
         webm::TrackEntry m_track;
         Type m_trackType;
         RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+        RetainPtr<CMBlockBufferRef> m_currentBlockBuffer;
         SourceBufferParserWebM& m_parser;
+        // Size of the currently incomplete parsed packet.
+        size_t m_partialBytesRead { 0 };
     };
 
     class VideoTrackData : public TrackData {
@@ -193,9 +205,6 @@ public:
         {
         }
 
-#if ENABLE(VP9)
-        void reset() final;
-#endif
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
 
     private:
@@ -204,7 +213,6 @@ public:
 
 #if ENABLE(VP9)
         vp9_parser::Vp9HeaderParser m_headerParser;
-        RetainPtr<CMBlockBufferRef> m_currentBlockBuffer;
 #endif
     };
 
@@ -222,7 +230,7 @@ public:
         }
 
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-        void reset() final;
+        void resetCompleted() final;
         void createSampleBuffer(std::optional<size_t> latestByteRangeOffset = std::nullopt);
 
     private:
@@ -230,15 +238,11 @@ public:
 
         CMTime m_samplePresentationTime;
         CMTime m_packetDuration;
-        Vector<uint8_t> m_packetsData;
-        std::optional<size_t> m_currentPacketByteOffset;
-        // Size of the complete packets parsed so far.
-        size_t m_packetsBytesRead { 0 };
-        size_t m_byteOffset { 0 };
+        size_t m_currentPacketByteOffset { 0 };
         uint8_t m_framesPerPacket { 0 };
         Seconds m_frameDuration { 0_s };
         Vector<AudioStreamPacketDescription> m_packetDescriptions;
-
+        size_t mNumFramesInCompleteBlock { 0 };
         // FIXME: 0.5 - 1.0 seconds is a better duration per sample buffer, but use 2 seconds so at least the first
         // sample buffer will play until we fix MediaSampleCursor::createSampleBuffer to deal with `endCursor`.
         float m_minimumSampleDuration { 2 };
@@ -281,7 +285,7 @@ private:
 
     State m_state { State::None };
 
-    UniqueRef<StreamingVectorReader> m_reader;
+    UniqueRef<SegmentReader> m_reader;
 
     Vector<UniqueRef<TrackData>> m_tracks;
     using BlockVariant = Variant<webm::Block, webm::SimpleBlock>;

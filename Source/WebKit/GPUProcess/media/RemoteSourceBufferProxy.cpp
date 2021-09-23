@@ -192,9 +192,13 @@ void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
 }
 
-void RemoteSourceBufferProxy::append(const IPC::DataReference& data)
+void RemoteSourceBufferProxy::append(const SharedMemory::IPCHandle& bufferHandle)
 {
-    m_sourceBufferPrivate->append(data.vector());
+    auto sharedMemory = SharedMemory::map(bufferHandle.handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return;
+
+    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(bufferHandle.dataSize));
 }
 
 void RemoteSourceBufferProxy::abort()
