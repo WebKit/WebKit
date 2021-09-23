@@ -27,6 +27,7 @@
 
 #import "FontCache.h"
 #import "FontCascade.h"
+#import "Logging.h"
 #import <CoreText/CoreText.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 #import <wtf/SoftLinking.h>

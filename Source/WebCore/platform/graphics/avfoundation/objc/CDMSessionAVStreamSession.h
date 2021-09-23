@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionAVStreamSession_h
-#define CDMSessionAVStreamSession_h
+#pragma once
 
 #include "CDMSessionMediaSourceAVFObjC.h"
 #include "SourceBufferPrivateAVFObjC.h"
@@ -80,5 +79,3 @@ inline CDMSessionAVStreamSession* toCDMSessionAVStreamSession(LegacyCDMSession* 
 }
 
 #endif
-
-#endif // CDMSessionAVStreamSession_h

@@ -283,41 +283,41 @@ platform/gamepad/mac/StadiaHIDGamepad.cpp
 platform/graphics/MediaPlaybackTargetPicker.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify
-platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm @no-unify
+platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm
 platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.cpp
-platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp @no-unify
-platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp @no-unify
-platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm @no-unify
-platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp @no-unify
-platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm @no-unify
+platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
+platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
+platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm
+platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
+platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
 platform/graphics/avfoundation/SampleBufferDisplayLayer.cpp
-platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp @no-unify
-platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm @no-unify
-platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm @no-unify
+platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
+platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm
+platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm
 platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm @no-unify
-platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm @no-unify
-platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm @no-unify
-platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp @no-unify
-platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm @no-unify
-platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm @no-unify
-platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm @no-unify
-platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm @no-unify
-platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm @no-unify
-platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm @no-unify
+platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm
+platform/graphics/avfoundation/objc/AVStreamDataParserMIMETypeCache.mm
+platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
+platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
+platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm
+platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm
+platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm
+platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm
+platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
+platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm
+platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
+platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm
+platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
 platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
+platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
+platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @no-unify
-platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp @no-unify
-platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm @no-unify
-platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm @no-unify
+platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm
+platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm
+platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
+platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
+platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp
 platform/graphics/ca/PlatformCAAnimation.cpp
@@ -521,10 +521,10 @@ platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.cpp
 platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/ios/AVAudioSessionCaptureDevice.mm
 platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm @no-unify
-platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm @no-unify
+platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
-platform/mediastream/mac/AVCaptureDeviceManager.mm @no-unify
-platform/mediastream/mac/AVVideoCaptureSource.mm @no-unify
+platform/mediastream/mac/AVCaptureDeviceManager.mm
+platform/mediastream/mac/AVVideoCaptureSource.mm
 platform/mediastream/mac/BaseAudioSharedUnit.cpp
 platform/mediastream/mac/CGDisplayStreamCaptureSource.cpp
 platform/mediastream/mac/CGDisplayStreamScreenCaptureSource.mm

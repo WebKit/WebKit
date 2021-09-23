@@ -30,6 +30,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/SortedArrayMap.h>
 #import <wtf/TinyLRUCache.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)

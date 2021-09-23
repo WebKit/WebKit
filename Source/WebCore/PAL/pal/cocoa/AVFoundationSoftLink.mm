@@ -241,7 +241,7 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVRouteDetectorMult
 #endif // HAVE(WATCHOS)
 
 #if HAVE(AVROUTEPICKERVIEW)
-SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVOutputContextOutputDevicesDidChangeNotification, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVOutputContextOutputDevicesDidChangeNotification, NSNotificationName, PAL_EXPORT)
 #endif // HAVE(AVROUTEPICKERVIEW)
 
 #if PLATFORM(COCOA)

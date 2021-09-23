@@ -79,8 +79,6 @@
 }
 @end
 
-static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
-
 namespace WebCore {
 
 CDMSessionAVStreamSession::CDMSessionAVStreamSession(Vector<int>&& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient* client)
@@ -141,9 +139,11 @@ void CDMSessionAVStreamSession::releaseKeys()
         if (storagePath.isEmpty() || ![PAL::getAVStreamSessionClass() respondsToSelector:@selector(pendingExpiredSessionReportsWithAppIdentifier:storageDirectoryAtURL:)])
             return;
 
+        // FIXME: This code is repeated in three places.
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
         NSArray* expiredSessions = [PAL::getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
         for (NSData* expiredSessionData in expiredSessions) {
+            static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
             NSString *playbackSessionIdValue = (NSString *)[expiredSession objectForKey:PlaybackSessionIdKey];
             if (![playbackSessionIdValue isKindOfClass:[NSString class]])
@@ -159,7 +159,7 @@ void CDMSessionAVStreamSession::releaseKeys()
     }
 }
 
-static bool isEqual(Uint8Array* data, const char* literal)
+static bool isEqual2(Uint8Array* data, const char* literal)
 {
     ASSERT(data);
     ASSERT(literal);
@@ -177,14 +177,14 @@ static bool isEqual(Uint8Array* data, const char* literal)
 
 bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
 {
-    bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
+    bool shouldGenerateKeyRequest = !m_certificate || isEqual2(key, "renew");
     if (!m_certificate) {
         LOG(Media, "CDMSessionAVStreamSession::update(%p) - certificate data", this);
 
         m_certificate = key;
     }
 
-    if (isEqual(key, "acknowledged")) {
+    if (isEqual2(key, "acknowledged")) {
         LOG(Media, "CDMSessionAVStreamSession::update(%p) - acknowleding secure stop message", this);
 
         if (!m_expiredSession) {

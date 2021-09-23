@@ -1,3 +1,15 @@
+2021-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Unify more media-related WebCore source files
+        https://bugs.webkit.org/show_bug.cgi?id=230666
+
+        Reviewed by Tim Horton.
+
+        AVOutputContextOutputDevicesDidChangeNotification is declared as an NSNotificationName.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2021-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Hook up palettes to CoreText

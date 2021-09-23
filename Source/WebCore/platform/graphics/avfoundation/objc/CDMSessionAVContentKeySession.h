@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionAVContentKeySession_h
-#define CDMSessionAVContentKeySession_h
+#pragma once
 
 #include "CDMSessionMediaSourceAVFObjC.h"
 #include "SourceBufferPrivateAVFObjC.h"
@@ -88,5 +87,3 @@ inline CDMSessionAVContentKeySession* toCDMSessionAVContentKeySession(LegacyCDMS
 }
 
 #endif
-
-#endif // CDMSessionAVContentKeySession_h

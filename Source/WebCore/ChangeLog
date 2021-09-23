@@ -1,3 +1,33 @@
+2021-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Unify more media-related WebCore source files
+        https://bugs.webkit.org/show_bug.cgi?id=230666
+
+        Reviewed by Tim Horton.
+
+        Unified build fixes (some hacky). There's lots of soft linking cleanup and
+        code de-duplication that would allow for more unification.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData):
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::releaseKeys):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::releaseKeys):
+        (WebCore::isEqual2):
+        (WebCore::CDMSessionAVStreamSession::update):
+        (WebCore::isEqual): Deleted.
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        * platform/network/mac/UTIUtilities.mm:
+        * platform/text/TextEncodingDetector.h:
+
 2021-09-23  Antoine Quint  <graouts@webkit.org>
 
         [Media Controls] Allow for a single mute and volume button

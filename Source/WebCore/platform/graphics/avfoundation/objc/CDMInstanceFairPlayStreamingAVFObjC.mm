@@ -49,7 +49,6 @@
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
 static NSString * const InitializationDataTypeKey = @"InitializationDataType";
 static NSString * const ContentKeyReportGroupKey = @"ContentKeyReportGroup";
 static const NSInteger SecurityLevelError = -42811;
@@ -938,6 +937,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::loadSession(LicenseType license
         RetainPtr<NSData> appIdentifier = certificate->createNSData();
         KeyStatusVector changedKeys;
         for (NSData* expiredSessionData in [PAL::getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
+            static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
             NSString *playbackSessionIdValue = (NSString *)[expiredSession objectForKey:PlaybackSessionIdKey];
             if (![playbackSessionIdValue isKindOfClass:[NSString class]])
@@ -1004,6 +1004,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::removeSessionData(const String&
         KeyStatusVector changedKeys;
         for (NSData* expiredSessionData in [PAL::getAVContentKeySessionClass() pendingExpiredSessionReportsWithAppIdentifier:appIdentifier.get() storageDirectoryAtURL:storageURL]) {
             NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
+            static const NSString *PlaybackSessionIdKey = @"PlaybackSessionID";
             NSString *playbackSessionIdValue = (NSString *)[expiredSession objectForKey:PlaybackSessionIdKey];
             if (![playbackSessionIdValue isKindOfClass:[NSString class]])
                 continue;
