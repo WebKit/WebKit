@@ -26,6 +26,7 @@
 #ifndef PAS_BITFIT_PAGE_CONFIG_H
 #define PAS_BITFIT_PAGE_CONFIG_H
 
+#include "pas_bitfit_max_free.h"
 #include "pas_bitfit_page_config_kind.h"
 #include "pas_bitfit_page_config_variant.h"
 #include "pas_bitvector.h"
@@ -58,6 +59,10 @@ typedef size_t (*pas_bitfit_page_config_specialized_page_get_allocation_size_wit
     pas_bitfit_page* page, uintptr_t begin);
 typedef void (*pas_bitfit_page_config_specialized_page_shrink_with_page)(
     pas_bitfit_page* page, uintptr_t begin, size_t new_size);
+
+#define PAS_MAX_BITFIT_OBJECT_SIZE(payload_size, min_align_shift) \
+    PAS_MIN_CONST(PAS_MAX_OBJECT_SIZE((payload_size)), \
+                  PAS_BITFIT_MAX_FREE_MAX_VALID * (1u << (min_align_shift)))
 
 struct pas_bitfit_page_config {
     pas_page_base_config base;
@@ -164,12 +169,6 @@ pas_bitfit_page_config_byte_offset_for_object_bits(pas_bitfit_page_config config
 {
     return PAS_BITFIT_PAGE_CONFIG_BYTE_OFFSET_FOR_OBJECT_BITS(config.base.page_size,
                                                               config.base.min_align_shift);
-}
-
-static PAS_ALWAYS_INLINE bool
-pas_bitfit_page_config_uses_subpages(pas_bitfit_page_config config)
-{
-    return config.base.page_size < pas_page_malloc_alignment();
 }
 
 PAS_END_EXTERN_C;

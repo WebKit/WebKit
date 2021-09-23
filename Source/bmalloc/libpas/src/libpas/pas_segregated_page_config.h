@@ -52,7 +52,7 @@ struct pas_local_allocator;
 struct pas_heap_runtime_config;
 struct pas_page_sharing_pool;
 struct pas_physical_memory_transaction;
-struct pas_segregated_global_size_directory;
+struct pas_segregated_size_directory;
 struct pas_segregated_heap;
 struct pas_segregated_page;
 struct pas_segregated_page_config;
@@ -66,7 +66,7 @@ typedef struct pas_local_allocator pas_local_allocator;
 typedef struct pas_heap_runtime_config pas_heap_runtime_config;
 typedef struct pas_page_sharing_pool pas_page_sharing_pool;
 typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_heap pas_segregated_heap;
 typedef struct pas_segregated_page pas_segregated_page;
 typedef struct pas_segregated_page_config pas_segregated_page_config;
@@ -76,7 +76,7 @@ typedef struct pas_thread_local_cache pas_thread_local_cache;
 
 typedef pas_segregated_shared_page_directory*
 (*pas_segregated_page_config_shared_page_directory_selector)(
-    pas_segregated_heap* heap, pas_segregated_global_size_directory* directory);
+    pas_segregated_heap* heap, pas_segregated_size_directory* directory);
 typedef void (*pas_segregated_page_config_dealloc_func)(pas_thread_local_cache* thread_local_cache,
                                                         uintptr_t begin);
 
@@ -86,7 +86,7 @@ typedef pas_allocation_result
 typedef bool
 (*pas_segregated_page_config_specialized_local_allocator_start_allocating_in_primordial_partial_view)(
     pas_local_allocator* allocator, pas_segregated_partial_view* partial,
-    pas_segregated_global_size_directory* size_directory);
+    pas_segregated_size_directory* size_directory);
 typedef bool (*pas_segregated_page_config_specialized_local_allocator_refill)(
     pas_local_allocator* allocator,
     pas_allocator_counts* counts);
@@ -94,7 +94,7 @@ typedef void (*pas_segregated_page_config_specialized_local_allocator_return_mem
     pas_local_allocator* allocator,
     pas_segregated_view view,
     pas_segregated_page* page,
-    pas_segregated_global_size_directory* directory,
+    pas_segregated_size_directory* directory,
     pas_lock_hold_mode heap_lock_hold_mode);
 
 struct pas_segregated_page_config {
@@ -153,6 +153,9 @@ struct pas_segregated_page_config {
        of bits goes clear. */
     bool enable_empty_word_eligibility_optimization;
 
+    /* Tells if we use the view cache for this size class. */
+    bool enable_view_cache;
+
     pas_segregated_page_config_shared_page_directory_selector shared_page_directory_selector;
 
     /* These two get filled in with the PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATIONS() macro. */
@@ -183,7 +186,7 @@ PAS_API extern bool pas_medium_segregated_page_config_variant_is_enabled_overrid
     PAS_API bool lower_case_page_config_name ## _specialized_local_allocator_start_allocating_in_primordial_partial_view( \
         pas_local_allocator* allocator, \
         pas_segregated_partial_view* partial, \
-        pas_segregated_global_size_directory* size_directory); \
+        pas_segregated_size_directory* size_directory); \
     PAS_API bool lower_case_page_config_name ## _specialized_local_allocator_refill( \
         pas_local_allocator* allocator, \
         pas_allocator_counts* counts); \
@@ -192,7 +195,7 @@ PAS_API extern bool pas_medium_segregated_page_config_variant_is_enabled_overrid
         pas_local_allocator* allocator, \
         pas_segregated_view view, \
         pas_segregated_page* page, \
-        pas_segregated_global_size_directory* directory, \
+        pas_segregated_size_directory* directory, \
         pas_lock_hold_mode heap_lock_hold_mode)
 
 #define PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATIONS(lower_case_page_config_name) \

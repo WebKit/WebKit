@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_ALL_BIASING_DIRECTORIES_H
-#define PAS_ALL_BIASING_DIRECTORIES_H
+#ifndef PAS_SEGREGATED_DEALLOCATION_MODE_H
+#define PAS_SEGREGATED_DEALLOCATION_MODE_H
 
-#include "pas_biasing_directory.h"
-#include "pas_compact_atomic_biasing_directory_ptr.h"
-#include "pas_segmented_vector.h"
+#include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_DECLARE_SEGMENTED_VECTOR(pas_all_biasing_directories_active_bitvector,
-                             unsigned,
-                             4);
-PAS_DECLARE_SEGMENTED_VECTOR(pas_all_biasing_directories_vector,
-                             pas_compact_atomic_biasing_directory_ptr,
-                             4);
+enum pas_segregated_deallocation_mode {
+    pas_segregated_deallocation_direct_mode,
+    pas_segregated_deallocation_to_view_cache_mode
+};
 
-PAS_API extern pas_all_biasing_directories_active_bitvector pas_all_biasing_directories_active_bitvector_instance;
-PAS_API extern pas_all_biasing_directories_vector pas_all_biasing_directories_vector_instance;
+typedef enum pas_segregated_deallocation_mode pas_segregated_deallocation_mode;
 
-PAS_API void pas_all_biasing_directories_append(pas_biasing_directory* directory);
-
-PAS_API bool pas_all_biasing_directories_activate(pas_biasing_directory* directory);
-
-PAS_API bool pas_all_biasing_directories_scavenge(void);
+static inline const char* pas_segregated_deallocation_mode_get_string(
+    pas_segregated_deallocation_mode mode)
+{
+    switch (mode) {
+    case pas_segregated_deallocation_direct_mode:
+        return "direct";
+    case pas_segregated_deallocation_to_view_cache_mode:
+        return "to_view_cache";
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return NULL;
+}
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_ALL_BIASING_DIRECTORIES_H */
+#endif /* PAS_SEGREGATED_DEALLOCATION_MODE_H */
 

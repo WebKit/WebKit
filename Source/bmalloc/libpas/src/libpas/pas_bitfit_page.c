@@ -29,7 +29,7 @@
 
 #include "pas_bitfit_page.h"
 
-#include "pas_bitfit_global_directory.h"
+#include "pas_bitfit_directory.h"
 #include "pas_bitfit_view.h"
 #include "pas_epoch.h"
 #include "pas_log.h"
@@ -125,9 +125,9 @@ void pas_bitfit_page_construct(pas_bitfit_page* page,
 pas_bitfit_page_config* pas_bitfit_page_get_config(pas_bitfit_page* page)
 {
     return pas_bitfit_page_config_kind_get_config(
-        pas_compact_bitfit_global_directory_ptr_load_non_null(
+        pas_compact_bitfit_directory_ptr_load_non_null(
             &pas_compact_atomic_bitfit_view_ptr_load_non_null(
-                &page->owner)->global_directory)->base.config_kind);
+                &page->owner)->directory)->config_kind);
 }
 
 void pas_bitfit_page_log_bits(
@@ -201,8 +201,8 @@ bool pas_bitfit_page_for_each_live_object(
 
     view = pas_compact_atomic_bitfit_view_ptr_load(&page->owner);
     config_ptr = pas_bitfit_page_config_kind_get_config(
-        pas_compact_bitfit_global_directory_ptr_load_non_null(
-            &view->global_directory)->base.config_kind);
+        pas_compact_bitfit_directory_ptr_load_non_null(
+            &view->directory)->config_kind);
     config = *config_ptr;
 
     boundary = pas_bitfit_page_boundary(page, config);

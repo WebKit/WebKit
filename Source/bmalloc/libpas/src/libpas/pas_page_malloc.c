@@ -52,7 +52,11 @@ bool pas_page_malloc_mprotect_decommitted = PAS_ENABLE_TESTING;
 
 size_t pas_page_malloc_alignment_slow(void)
 {
-    return sysconf(_SC_PAGESIZE);
+    long result = sysconf(_SC_PAGESIZE);
+    PAS_ASSERT(result >= 0);
+    PAS_ASSERT(result > 0);
+    PAS_ASSERT(result >= 4096);
+    return (size_t)result;
 }
 
 size_t pas_page_malloc_alignment_shift_slow(void)
@@ -143,9 +147,9 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
     result.result = aligned;
     result.result_size = size;
     result.left_padding = mapped;
-    result.left_padding_size = aligned - mapped;
+    result.left_padding_size = (size_t)(aligned - mapped);
     result.right_padding = aligned_end;
-    result.right_padding_size = mapped_end - aligned_end;
+    result.right_padding_size = (size_t)(mapped_end - aligned_end);
     result.zero_mode = pas_zero_mode_is_all_zero;
 
     return result;

@@ -34,7 +34,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_API pas_segregated_global_size_directory*
+PAS_API pas_segregated_size_directory*
 pas_heap_ensure_size_directory_for_count_slow(
     pas_heap* heap,
     size_t count,
@@ -43,7 +43,7 @@ pas_heap_ensure_size_directory_for_count_slow(
     pas_heap_config* config,
     unsigned* cached_index);
 
-static PAS_ALWAYS_INLINE pas_segregated_global_size_directory*
+static PAS_ALWAYS_INLINE pas_segregated_size_directory*
 pas_heap_ensure_size_directory_for_count(
     pas_heap* heap,
     size_t count,
@@ -55,7 +55,7 @@ pas_heap_ensure_size_directory_for_count(
 {
     static const bool verbose = false;
 
-    pas_segregated_global_size_directory* result;
+    pas_segregated_size_directory* result;
 
     PAS_UNUSED_PARAM(counts);
     
@@ -66,7 +66,7 @@ pas_heap_ensure_size_directory_for_count(
     
     result = pas_segregated_heap_size_directory_for_count(
         &heap->segregated_heap, count, config, cached_index);
-    if (result && pas_segregated_global_size_directory_alignment(result) >= alignment)
+    if (result && pas_segregated_size_directory_alignment(result) >= alignment)
         return result;
 
 #if PAS_ENABLE_TESTING

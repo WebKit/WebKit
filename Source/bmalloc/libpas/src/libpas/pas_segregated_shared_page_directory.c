@@ -144,8 +144,7 @@ pas_segregated_shared_view* pas_segregated_shared_page_directory_find_first_elig
         config.arg = &data;
         data.view = NULL;
 
-        did_find_something = pas_segregated_directory_iterate_forward_to_take_first_eligible(
-            &config, PAS_SEGREGATED_SHARED_PAGE_DIRECTORY_FIRST_ELIGIBLE_KIND);
+        did_find_something = pas_segregated_directory_iterate_forward_to_take_first_eligible(&config);
 
         if (did_find_something) {
             if (!data.view) {
@@ -350,7 +349,7 @@ take_last_empty_consider_view(
 
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
         pas_segregated_partial_view* partial_view;
-        pas_segregated_global_size_directory* size_directory_of_partial;
+        pas_segregated_size_directory* size_directory_of_partial;
         pas_segregated_directory* directory_of_partial;
 
         partial_view = pas_compact_atomic_segregated_partial_view_ptr_load(
@@ -359,7 +358,7 @@ take_last_empty_consider_view(
             continue;
 
         size_directory_of_partial =
-            pas_compact_segregated_global_size_directory_ptr_load(&partial_view->directory);
+            pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
         
         if (!PAS_SEGREGATED_DIRECTORY_SET_BIT(
@@ -451,7 +450,7 @@ return_taken_partial_views_after_decommit:
     switch_to_ownership(shared_view, &held_lock, page_config);
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
         pas_segregated_partial_view* partial_view;
-        pas_segregated_global_size_directory* size_directory_of_partial;
+        pas_segregated_size_directory* size_directory_of_partial;
         pas_segregated_directory* directory_of_partial;
         bool set_result;
 
@@ -463,7 +462,7 @@ return_taken_partial_views_after_decommit:
         partial_view->noted_in_scan = false;
 
         size_directory_of_partial =
-            pas_compact_segregated_global_size_directory_ptr_load(&partial_view->directory);
+            pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
 
         PAS_ASSERT(partial_view->is_attached_to_shared_handle);
@@ -492,7 +491,7 @@ return_taken_partial_views_unlock_this_view_and_return_result:
     switch_to_ownership(shared_view, &held_lock, page_config);
     for (partial_index = pas_segregated_shared_handle_num_views(page_config); partial_index--;) {
         pas_segregated_partial_view* partial_view;
-        pas_segregated_global_size_directory* size_directory_of_partial;
+        pas_segregated_size_directory* size_directory_of_partial;
         pas_segregated_directory* directory_of_partial;
         bool set_result;
 
@@ -502,7 +501,7 @@ return_taken_partial_views_unlock_this_view_and_return_result:
             continue;
         
         size_directory_of_partial =
-            pas_compact_segregated_global_size_directory_ptr_load(&partial_view->directory);
+            pas_compact_segregated_size_directory_ptr_load(&partial_view->directory);
         directory_of_partial = &size_directory_of_partial->base;
 
         set_result = pas_segregated_directory_view_did_become_eligible_at_index(

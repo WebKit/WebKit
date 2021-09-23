@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #ifndef PAS_GET_HEAP_H
 #define PAS_GET_HEAP_H
 
-#include "pas_bitfit_global_directory.h"
+#include "pas_bitfit_directory.h"
 #include "pas_heap.h"
 #include "pas_heap_config.h"
 #include "pas_large_map.h"
@@ -58,10 +58,10 @@ static PAS_ALWAYS_INLINE pas_heap* pas_get_heap(void* ptr,
                 begin, config.small_segregated_config)->heap);
     case pas_small_bitfit_fast_megapage_kind:
         return pas_heap_for_segregated_heap(
-            pas_compact_bitfit_global_directory_ptr_load_non_null(
+            pas_compact_bitfit_directory_ptr_load_non_null(
                 &pas_compact_atomic_bitfit_view_ptr_load_non_null(
                     &pas_bitfit_page_for_address_and_page_config(
-                        begin, config.small_bitfit_config)->owner)->global_directory)->heap);
+                        begin, config.small_bitfit_config)->owner)->directory)->heap);
     case pas_not_a_fast_megapage_kind: {
         pas_page_base* page_base;
         pas_large_map_entry entry;
@@ -85,9 +85,9 @@ static PAS_ALWAYS_INLINE pas_heap* pas_get_heap(void* ptr,
             case pas_medium_bitfit_page_kind:
             case pas_marge_bitfit_page_kind:
                 return pas_heap_for_segregated_heap(
-                    pas_compact_bitfit_global_directory_ptr_load_non_null(
+                    pas_compact_bitfit_directory_ptr_load_non_null(
                         &pas_compact_atomic_bitfit_view_ptr_load_non_null(
-                            &pas_page_base_get_bitfit(page_base)->owner)->global_directory)->heap);
+                            &pas_page_base_get_bitfit(page_base)->owner)->directory)->heap);
             }
             PAS_ASSERT(!"Bad page kind");
             return NULL;

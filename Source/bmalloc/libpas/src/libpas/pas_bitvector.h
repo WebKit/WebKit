@@ -56,7 +56,7 @@ PAS_BEGIN_EXTERN_C;
    ((uint8_t*)bits)[-1] will see that bit. This preserves the property that the bitvector can be
    reinterpreted using any word width. The compiler will use the heck out of this capability: it
    will load 64-bit words. */
-#define PAS_BACKWARD_BITVECTOR_WORD_INDEX(bit_index) (-1l - PAS_BITVECTOR_WORD_INDEX(bit_index))
+#define PAS_BACKWARD_BITVECTOR_WORD_INDEX(bit_index) (-1lu - PAS_BITVECTOR_WORD_INDEX(bit_index))
 #define PAS_BACKWARD_BITVECTOR_BIT_MASK(bit_index) (0x80000000 >> ((bit_index) & 31))
 
 /* This crazy functionality is for optimized accesses to the pxi_pre_header. */
@@ -158,7 +158,7 @@ static inline pas_found_bit_index pas_bitvector_find_first_set(const unsigned* b
         
         if (word) {
             return pas_found_bit_index_create(
-                PAS_BITVECTOR_BIT_INDEX(word_index) + __builtin_ctz(word),
+                PAS_BITVECTOR_BIT_INDEX(word_index) + (size_t)__builtin_ctz(word),
                 word_index,
                 word);
         }
@@ -194,7 +194,7 @@ static PAS_ALWAYS_INLINE bool pas_bitvector_for_each_set_bit(
         while (word) {
             unsigned index_offset;
 
-            index_offset = __builtin_ctz(word);
+            index_offset = (unsigned)__builtin_ctz(word);
 
             if (!callback(
                     pas_found_bit_index_create(base_index + index_offset, word_index, word),

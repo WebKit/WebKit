@@ -372,13 +372,13 @@ static inline unsigned pas_hash_ptr(const void* ptr)
 /* Undefined for value == 0. */
 static inline unsigned pas_log2(uintptr_t value)
 {
-    return (sizeof(uintptr_t) * 8 - 1) - __builtin_clzl(value);
+    return (sizeof(uintptr_t) * 8 - 1) - (unsigned)__builtin_clzl(value);
 }
 
 /* Undefined for value <= 1. */
 static inline unsigned pas_log2_rounded_up(uintptr_t value)
 {
-    return (sizeof(uintptr_t) * 8 - 1) - (__builtin_clzl(value - 1) - 1);
+    return (sizeof(uintptr_t) * 8 - 1) - ((unsigned)__builtin_clzl(value - 1) - 1);
 }
 
 static inline unsigned pas_log2_rounded_up_safe(uintptr_t value)
@@ -386,6 +386,11 @@ static inline unsigned pas_log2_rounded_up_safe(uintptr_t value)
     if (value <= 1)
         return 0;
     return pas_log2_rounded_up(value);
+}
+
+static inline uintptr_t pas_round_up_to_next_power_of_2(uintptr_t value)
+{
+    return (uintptr_t)1 << pas_log2_rounded_up_safe(value);
 }
 
 #define PAS_SWAP(left, right) do { \

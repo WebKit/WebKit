@@ -68,36 +68,36 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     THINGY_HEAP_CONFIG,
     &thingy_intrinsic_primitive_runtime_config.base,
     &thingy_allocator_counts,
-    pas_intrinsic_allocation_result_identity,
+    pas_allocation_result_identity,
     &thingy_primitive_heap,
     &thingy_primitive_heap_support,
     pas_intrinsic_heap_is_not_designated);
 
 void* thingy_try_allocate_primitive(size_t size)
 {
-    return try_allocate_primitive(size, 1).ptr;
+    return (void*)try_allocate_primitive(size, 1).begin;
 }
 
 void* thingy_try_allocate_primitive_zeroed(size_t size)
 {
-    return pas_intrinsic_allocation_result_zero(try_allocate_primitive(size, 1), size).ptr;
+    return (void*)pas_allocation_result_zero(try_allocate_primitive(size, 1), size).begin;
 }
 
 void* thingy_try_allocate_primitive_with_alignment(size_t size, size_t alignment)
 {
-    return try_allocate_primitive(size, alignment).ptr;
+    return (void*)try_allocate_primitive(size, alignment).begin;
 }
 
 void* thingy_try_reallocate_primitive(void* old_ptr, size_t new_size)
 {
-    return pas_try_reallocate_intrinsic_primitive(
+    return (void*)pas_try_reallocate_intrinsic_primitive(
         old_ptr,
         &thingy_primitive_heap,
         new_size,
         THINGY_HEAP_CONFIG,
         try_allocate_primitive_for_realloc,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).ptr;
+        pas_reallocate_free_if_successful).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE(
@@ -105,7 +105,7 @@ PAS_CREATE_TRY_ALLOCATE(
     THINGY_HEAP_CONFIG,
     &thingy_typed_runtime_config.base,
     &thingy_allocator_counts,
-    pas_intrinsic_allocation_result_identity);
+    pas_allocation_result_identity);
 
 __attribute__((malloc))
 void* thingy_try_allocate(pas_heap_ref* heap_ref)
@@ -123,7 +123,7 @@ PAS_CREATE_TRY_ALLOCATE_ARRAY(
     THINGY_HEAP_CONFIG,
     &thingy_typed_runtime_config.base,
     &thingy_allocator_counts,
-    pas_intrinsic_allocation_result_identity);
+    pas_allocation_result_identity);
 
 __attribute__((malloc))
 void* thingy_try_allocate_array(pas_heap_ref* heap_ref, size_t count, size_t alignment)
@@ -170,14 +170,14 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     THINGY_HEAP_CONFIG,
     &thingy_intrinsic_primitive_runtime_config.base,
     &thingy_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error,
+    pas_allocation_result_crash_on_error,
     &thingy_utility_heap,
     &thingy_utility_heap_support,
     pas_intrinsic_heap_is_not_designated);
 
 void* thingy_utility_heap_allocate(size_t size)
 {
-    return utility_heap_allocate(size, 1).ptr;
+    return (void*)utility_heap_allocate(size, 1).begin;
 }
 
 #endif /* PAS_ENABLE_THINGY */

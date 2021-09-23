@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_BIASING_DIRECTORY_INLINES_H
-#define PAS_BIASING_DIRECTORY_INLINES_H
+#include "pas_config.h"
 
-#include "pas_biasing_directory.h"
-#include "pas_bitfit_biasing_directory.h"
-#include "pas_segregated_biasing_directory.h"
+#if LIBPAS_ENABLED
 
-PAS_BEGIN_EXTERN_C;
+#include "pas_local_allocator_scavenger_data.h"
 
-static inline pas_segregated_biasing_directory* pas_unwrap_segregated_biasing_directory(
-    pas_biasing_directory* directory)
+#include "pas_local_allocator.h"
+#include "pas_local_view_cache.h"
+
+uint8_t pas_local_allocator_should_stop_count_for_suspend = 5;
+
+bool pas_local_allocator_scavenger_data_is_active(pas_local_allocator_scavenger_data* data)
 {
-    PAS_ASSERT(pas_is_segregated_biasing_directory(directory));
-    return (pas_segregated_biasing_directory*)(
-        (uintptr_t)directory - PAS_OFFSETOF(pas_segregated_biasing_directory, biasing_base));
+    switch (data->kind) {
+    case pas_local_allocator_allocator_kind:
+        return pas_local_allocator_is_active((pas_local_allocator*)data);
+    case pas_local_allocator_view_cache_kind:
+        return !pas_local_view_cache_is_empty((pas_local_view_cache*)data);
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return false;
 }
 
-static inline pas_bitfit_biasing_directory* pas_unwrap_bitfit_biasing_directory(
-    pas_biasing_directory* directory)
+bool pas_local_allocator_scavenger_data_stop(
+    pas_local_allocator_scavenger_data* data,
+    pas_lock_lock_mode page_lock_mode,
+    pas_lock_hold_mode heap_lock_hold_mode)
 {
-    PAS_ASSERT(pas_is_bitfit_biasing_directory(directory));
-    return (pas_bitfit_biasing_directory*)(
-        (uintptr_t)directory - PAS_OFFSETOF(pas_bitfit_biasing_directory, biasing_base));
+    switch (data->kind) {
+    case pas_local_allocator_allocator_kind:
+        return pas_local_allocator_stop((pas_local_allocator*)data, page_lock_mode, heap_lock_hold_mode);
+    case pas_local_allocator_view_cache_kind:
+        return pas_local_view_cache_stop((pas_local_view_cache*)data, page_lock_mode);
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return false;
 }
 
-PAS_END_EXTERN_C;
+#endif /* LIBPAS_ENABLED */
 
-#endif /* PAS_BIASING_DIRECTORY_INLINES_H */
 

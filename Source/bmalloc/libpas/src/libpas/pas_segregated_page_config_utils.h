@@ -64,7 +64,7 @@ pas_segregated_page_config_verify_dealloc(uintptr_t begin,
     \
     PAS_API pas_segregated_shared_page_directory* \
     name ## _page_config_select_shared_page_directory( \
-        pas_segregated_heap* heap, pas_segregated_global_size_directory* directory); \
+        pas_segregated_heap* heap, pas_segregated_size_directory* directory); \
     \
     static PAS_ALWAYS_INLINE void \
     name ## _dealloc_func(pas_thread_local_cache* cache, uintptr_t begin)

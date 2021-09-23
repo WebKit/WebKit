@@ -54,7 +54,8 @@ PAS_API void minalign32_heap_config_activate(void);
     .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
     .small_segregated_enable_empty_word_eligibility_optimization = true, \
-    .small_use_reversed_current_word = true, \
+    .small_segregated_use_reversed_current_word = true, \
+    .enable_view_cache = true, \
     .use_small_bitfit = true, \
     .small_bitfit_min_align_shift = MINALIGN32_MINALIGN_SHIFT, \
     .small_bitfit_page_size = PAS_SMALL_BITFIT_PAGE_DEFAULT_SIZE, \

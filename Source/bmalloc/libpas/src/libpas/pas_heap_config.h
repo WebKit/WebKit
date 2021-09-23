@@ -39,7 +39,7 @@
 #include "pas_heap_config_kind.h"
 #include "pas_heap_ref.h"
 #include "pas_heap_ref_kind.h"
-#include "pas_intrinsic_allocation_result.h"
+#include "pas_allocation_result.h"
 #include "pas_segregated_heap_lookup_kind.h"
 #include "pas_segregated_page_config.h"
 #include "pas_utils.h"
@@ -86,7 +86,8 @@ typedef bool (*pas_heap_config_for_each_shared_page_directory_remote)(
 typedef pas_allocation_result
 (*pas_heap_config_specialized_local_allocator_try_allocate_small_segregated_slow)(
     pas_local_allocator* allocator,
-    pas_allocator_counts* counts);
+    pas_allocator_counts* counts,
+    pas_allocation_result_filter result_filter);
 typedef pas_allocation_result
 (*pas_heap_config_specialized_local_allocator_try_allocate_medium_segregated_with_free_bits)(
     pas_local_allocator* allocator);
@@ -96,8 +97,9 @@ typedef pas_allocation_result (*pas_heap_config_specialized_local_allocator_try_
     pas_local_allocator* allocator,
     size_t size,
     size_t alignment,
-    pas_allocator_counts* counts);
-typedef pas_intrinsic_allocation_result (*pas_heap_config_specialized_try_allocate_common_impl_slow)(
+    pas_allocator_counts* counts,
+    pas_allocation_result_filter result_filter);
+typedef pas_allocation_result (*pas_heap_config_specialized_try_allocate_common_impl_slow)(
     pas_heap_ref* heap_ref,
     pas_heap_ref_kind heap_ref_kind,
     size_t aligned_count, /* Must be = round_up(count * type_size, alignment) / type_size */
@@ -200,7 +202,8 @@ struct pas_heap_config {
 #define PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(lower_case_heap_config_name) \
     PAS_API pas_allocation_result \
     lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_small_segregated_slow( \
-        pas_local_allocator* allocator, pas_allocator_counts* count); \
+        pas_local_allocator* allocator, pas_allocator_counts* count, \
+        pas_allocation_result_filter result_filter); \
     PAS_API pas_allocation_result \
     lower_case_heap_config_name ## _specialized_local_allocator_try_allocate_inline_cases( \
         pas_local_allocator* allocator); \
@@ -212,8 +215,9 @@ struct pas_heap_config {
         pas_local_allocator* allocator, \
         size_t size, \
         size_t alignment, \
-        pas_allocator_counts* counts); \
-    PAS_API pas_intrinsic_allocation_result \
+        pas_allocator_counts* counts, \
+        pas_allocation_result_filter result_filter); \
+    PAS_API pas_allocation_result \
     lower_case_heap_config_name ## _specialized_try_allocate_common_impl_slow( \
         pas_heap_ref* heap_ref, \
         pas_heap_ref_kind heap_ref_kind, \

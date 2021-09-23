@@ -251,9 +251,18 @@ void pas_enumerator_add_unaccounted_pages(pas_enumerator* enumerator,
 bool pas_enumerator_exclude_accounted_page(pas_enumerator* enumerator,
                                            void* remote_address)
 {
+    static const bool verbose = false;
+    bool result;
     PAS_ASSERT(pas_is_aligned((uintptr_t)remote_address, enumerator->root->page_malloc_alignment));
-    return pas_ptr_hash_set_remove(
+    result = pas_ptr_hash_set_remove(
         enumerator->unaccounted_pages, remote_address, NULL, &enumerator->allocation_config);
+    if (verbose) {
+        if (result)
+            pas_log("Excluding unaccounted page %p\n", remote_address);
+        else
+            pas_log("Ignoring already accounted page %p\n", remote_address);
+    }
+    return result;
 }
 
 void pas_enumerator_exclude_accounted_pages(pas_enumerator* enumerator,

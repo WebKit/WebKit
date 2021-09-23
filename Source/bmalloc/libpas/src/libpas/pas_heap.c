@@ -38,7 +38,7 @@
 #include "pas_log.h"
 #include "pas_monotonic_time.h"
 #include "pas_primitive_heap_ref.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 
 pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
                           pas_heap_ref_kind heap_ref_kind,
@@ -182,7 +182,7 @@ void pas_heap_reset_heap_ref(pas_heap* heap)
     PAS_ASSERT(!"Should not be reached");
 }
 
-pas_segregated_global_size_directory*
+pas_segregated_size_directory*
 pas_heap_ensure_size_directory_for_count_slow(
     pas_heap* heap,
     size_t count,
@@ -191,11 +191,12 @@ pas_heap_ensure_size_directory_for_count_slow(
     pas_heap_config* config,
     unsigned* cached_index)
 {
-    pas_segregated_global_size_directory* result;
+    pas_segregated_size_directory* result;
     
     pas_heap_lock_lock();
     result = pas_segregated_heap_ensure_size_directory_for_count(
-        &heap->segregated_heap, count, alignment, force_count_lookup, config, cached_index);
+        &heap->segregated_heap, count, alignment, force_count_lookup, config, cached_index,
+        pas_segregated_size_directory_full_creation_mode);
     pas_heap_lock_unlock();
     
     return result;

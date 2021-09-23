@@ -52,7 +52,8 @@ PAS_BEGIN_EXTERN_C;
     .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
     .small_segregated_enable_empty_word_eligibility_optimization = false, \
-    .small_use_reversed_current_word = PAS_ARM64, \
+    .small_segregated_use_reversed_current_word = PAS_ARM64, \
+    .enable_view_cache = false, \
     .use_small_bitfit = true, \
     .small_bitfit_min_align_shift = ISO_MINALIGN_SHIFT, \
     .small_bitfit_page_size = PAS_SMALL_BITFIT_PAGE_DEFAULT_SIZE, \

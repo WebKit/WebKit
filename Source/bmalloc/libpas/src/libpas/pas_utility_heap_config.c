@@ -45,9 +45,11 @@ PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DEFINITIONS(
 PAS_HEAP_CONFIG_SPECIALIZATION_DEFINITIONS(
     pas_utility_heap_config, PAS_UTILITY_HEAP_CONFIG);
 
-void* pas_utility_heap_allocate_page(pas_segregated_heap* heap)
+void* pas_utility_heap_allocate_page(
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction)
 {
     PAS_UNUSED_PARAM(heap);
+    PAS_ASSERT(!transaction);
     return (void*)pas_compact_bootstrap_free_heap_try_allocate_with_alignment(
         PAS_SMALL_PAGE_DEFAULT_SIZE,
         pas_alignment_create_traditional(PAS_SMALL_PAGE_DEFAULT_SIZE),

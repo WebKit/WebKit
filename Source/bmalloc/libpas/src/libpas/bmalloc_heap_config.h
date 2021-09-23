@@ -51,9 +51,10 @@ PAS_API void bmalloc_heap_config_activate(void);
     .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
     .small_segregated_enable_empty_word_eligibility_optimization = true, \
-    .small_use_reversed_current_word = PAS_ARM64, \
+    .small_segregated_use_reversed_current_word = PAS_ARM64, \
+    .enable_view_cache = true, \
     .use_small_bitfit = true, \
-    .small_bitfit_min_align_shift = 4, \
+    .small_bitfit_min_align_shift = BMALLOC_MINALIGN_SHIFT, \
     .small_bitfit_page_size = PAS_SMALL_BITFIT_PAGE_DEFAULT_SIZE, \
     .medium_page_size = PAS_MEDIUM_PAGE_DEFAULT_SIZE, \
     .granule_size = PAS_GRANULE_DEFAULT_SIZE, \

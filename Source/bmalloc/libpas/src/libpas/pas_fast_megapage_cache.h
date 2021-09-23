@@ -28,6 +28,7 @@
 
 #include "pas_config.h"
 #include "pas_fast_megapage_kind.h"
+#include "pas_heap_ref.h"
 #include "pas_page_header_placement_mode.h"
 #include "pas_utils.h"
 
@@ -36,9 +37,11 @@ PAS_BEGIN_EXTERN_C;
 struct pas_fast_megapage_table;
 struct pas_megapage_cache;
 struct pas_page_base_config;
+struct pas_physical_memory_transaction;
 typedef struct pas_fast_megapage_table pas_fast_megapage_table;
 typedef struct pas_megapage_cache pas_megapage_cache;
 typedef struct pas_page_base_config pas_page_base_config;
+typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
 
 /* Allocates a small page aligned the way that the type-safe heap demands and returns the
    base on the allocation. This is guaranteed to returned zeroed memory. */
@@ -47,7 +50,9 @@ PAS_API void* pas_fast_megapage_cache_try_allocate(
     pas_fast_megapage_table* table,
     pas_page_base_config* config,
     pas_fast_megapage_kind kind,
-    bool should_zero);
+    bool should_zero,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction);
 
 PAS_END_EXTERN_C;
 

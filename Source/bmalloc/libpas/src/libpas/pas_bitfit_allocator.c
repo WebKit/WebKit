@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 #include "pas_bitfit_size_class.h"
 #include "pas_bitfit_view_inlines.h"
 #include "pas_epoch.h"
-#include "pas_subpage_map.h"
+#include "pas_physical_memory_transaction.h"
 
 bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
                                       pas_local_allocator* local,
@@ -43,10 +43,9 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
 {
     static const bool verbose = false;
     
-    pas_bitfit_global_directory* directory;
-    bool uses_subpages;
+    pas_bitfit_directory* directory;
 
-    directory = pas_compact_bitfit_global_directory_ptr_load(&view->global_directory);
+    directory = pas_compact_bitfit_directory_ptr_load(&view->directory);
 
     /* We're almost certainly gonna commit a page, so let's just get this out of the way. We need to
        release the ownership lock to do this. But, we can't do it at all if we already hold the commit
@@ -55,16 +54,13 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
         pas_lock_unlock(&view->ownership_lock);
         pas_physical_page_sharing_pool_take_for_page_config(
             config->base.page_size, &config->base, pas_lock_is_not_held, NULL, 0);
-        pas_bitfit_view_lock_ownership_lock(view);
+        pas_lock_lock(&view->ownership_lock);
     }
-
-    uses_subpages = pas_bitfit_page_config_uses_subpages(*config);
 
     if (verbose)
         pas_log("committing bitfit view!\n");
 
     for (;;) {
-        pas_subpage_map_entry* subpage_entry;
         pas_lock* commit_lock;
         bool has_page_boundary;
         
@@ -85,47 +81,63 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
         pas_lock_unlock(&view->ownership_lock);
 
         if (!has_page_boundary) {
+            pas_physical_memory_transaction transaction;
             bool did_succeed;
+            bool did_already_have_boundary;
             
             if (verbose)
                 pas_log("need to allocate new page.\n");
+
+            pas_physical_memory_transaction_construct(&transaction);
+
+            did_succeed = false;
+            did_already_have_boundary = false;
             
-            pas_heap_lock_lock();
-            pas_bitfit_view_lock_ownership_lock(view);
-            if (view->page_boundary) {
-                pas_heap_lock_unlock();
-                continue;
-            }
-
-            PAS_ASSERT(!view->is_owned);
-
-            if (verbose) {
-                pas_log("really allocating new page.\n");
+            for (;;) {
+                PAS_ASSERT(!did_succeed);
+                PAS_ASSERT(!did_already_have_boundary);
                 
-                pas_log("Giving view %p with config %s a page.\n",
-                        view, pas_bitfit_page_config_kind_get_string(config->kind));
-            }
-            
-            view->page_boundary = config->base.page_allocator(
-                pas_segregated_view_get_global_size_directory(local->view)->heap);
-            did_succeed = !!view->page_boundary;
-
-            if (verbose)
-                pas_log("page_boundary = %p, did_succeed = %d\n", view->page_boundary, did_succeed);
-            
-            if (did_succeed) {
-                config->base.create_page_header(view->page_boundary, pas_lock_is_held);
-                
-                if (uses_subpages) {
-                    pas_subpage_map_add(
-                        view->page_boundary,
-                        config->base.page_size,
-                        pas_committed,
-                        pas_lock_is_held);
+                pas_physical_memory_transaction_begin(&transaction);
+                pas_heap_lock_lock();
+                pas_lock_lock(&view->ownership_lock);
+                if (view->page_boundary) {
+                    bool end_result;
+                    pas_heap_lock_unlock();
+                    end_result = pas_physical_memory_transaction_end(&transaction);
+                    PAS_ASSERT(end_result);
+                    did_already_have_boundary = true;
+                    break;
                 }
+                
+                PAS_ASSERT(!view->is_owned);
+                
+                if (verbose) {
+                    pas_log("really allocating new page.\n");
+                    
+                    pas_log("Giving view %p with config %s a page.\n",
+                            view, pas_bitfit_page_config_kind_get_string(config->kind));
+                }
+                
+                view->page_boundary = config->base.page_allocator(
+                    pas_segregated_view_get_size_directory(local->view)->heap, &transaction);
+                did_succeed = !!view->page_boundary;
+                
+                if (verbose)
+                    pas_log("page_boundary = %p, did_succeed = %d\n", view->page_boundary, did_succeed);
+                
+                if (did_succeed)
+                    config->base.create_page_header(view->page_boundary, pas_lock_is_held);
+                
+                pas_heap_lock_unlock();
+                if (pas_physical_memory_transaction_end(&transaction))
+                    break;
+
+                PAS_ASSERT(!did_succeed);
+                pas_lock_unlock(&view->ownership_lock);
             }
-            
-            pas_heap_lock_unlock();
+
+            if (did_already_have_boundary)
+                continue;
 
             if (did_succeed) {
                 view->is_owned = true;
@@ -137,16 +149,7 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
             return did_succeed;
         }
 
-        if (uses_subpages) {
-            /* It's not great that this has to acquire the heap lock, but then again if we're
-               here then we're committed to committing the page, so it's probably fine. */
-            subpage_entry = pas_subpage_map_get(
-                view->page_boundary, config->base.page_size, pas_lock_is_not_held);
-            commit_lock = &subpage_entry->commit_lock;
-        } else {
-            subpage_entry = NULL;
-            commit_lock = &view->commit_lock;
-        }
+        commit_lock = &view->commit_lock;
 
         pas_lock_lock_conditionally(commit_lock, commit_lock_hold_mode);
 
@@ -169,18 +172,11 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
         PAS_ASSERT(view->page_boundary);
         PAS_ASSERT(!view->is_owned);
 
-        if (uses_subpages) {
-            pas_subpage_map_entry_commit(
-                subpage_entry,
-                view->page_boundary,
-                config->base.page_size);
-        } else {
-            pas_page_malloc_commit(
-                view->page_boundary, config->base.page_size);
-        }
+        pas_page_malloc_commit(
+            view->page_boundary, config->base.page_size);
         config->base.create_page_header(view->page_boundary, pas_lock_is_not_held);
 
-        pas_bitfit_view_lock_ownership_lock(view);
+        pas_lock_lock(&view->ownership_lock);
 
         PAS_ASSERT(!view->is_owned);
 
@@ -194,7 +190,7 @@ bool pas_bitfit_allocator_commit_view(pas_bitfit_view* view,
         if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT) {
             pas_heap_lock_lock();
             pas_debug_spectrum_add(
-                directory, pas_bitfit_global_directory_dump_for_spectrum, config->base.page_size);
+                directory, pas_bitfit_directory_dump_for_spectrum, config->base.page_size);
             pas_heap_lock_unlock();
         }
         
@@ -212,7 +208,7 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
     pas_bitfit_directory* directory;
     pas_bitfit_size_class* size_class;
     pas_bitfit_view* new_view;
-    pas_bitfit_directory_and_index view_directory_and_index;
+    unsigned view_index;
 
     PAS_UNUSED_PARAM(alignment);
 
@@ -222,14 +218,9 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
 
     directory = pas_compact_bitfit_directory_ptr_load_non_null(&size_class->directory);
 
-    /* If we're in the wrong directory, then regardless of anything else (alignment etc) we should
-       just clean up the allocator and bail. */
-    view_directory_and_index = pas_bitfit_view_current_directory_and_index(view);
-    if (directory != view_directory_and_index.directory) {
-        pas_bitfit_allocator_reset(allocator);
-        pas_lock_unlock(&view->ownership_lock);
-        return NULL;
-    }
+    PAS_ASSERT(pas_compact_bitfit_directory_ptr_load_non_null(&view->directory) == directory);
+
+    view_index = view->index;
 
     /* If we're still on the view that the allocator was on and we found that this view no longer
        has enough max_free for our size class, then tell everyone about this and bail.
@@ -246,7 +237,7 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
         PAS_ASSERT(view->page_boundary);
         pas_bitfit_page_for_boundary(view->page_boundary, *config)->did_note_max_free = false;
         
-        index = view_directory_and_index.index;
+        index = view_index;
         
         pas_bitfit_directory_set_processed_max_free(
             directory, index, largest_available >> config->base.min_align_shift,
@@ -292,8 +283,7 @@ pas_bitfit_view* pas_bitfit_allocator_finish_failing(pas_bitfit_allocator* alloc
        This is an unusual degenerate case that happens only for memalign. */
     PAS_ASSERT((unsigned)size == size);
     new_view = pas_bitfit_directory_get_first_free_view(
-        directory, allocator->global_size_class,
-        view_directory_and_index.index + 1, (unsigned)size, config).view;
+        directory, view_index + 1, (unsigned)size, config).view;
     PAS_ASSERT(new_view);
     return new_view;
 }

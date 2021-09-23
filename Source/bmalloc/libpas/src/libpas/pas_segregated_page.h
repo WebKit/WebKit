@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef PAS_SEGREGATED_PAGE_H
 #define PAS_SEGREGATED_PAGE_H
 
+#include "pas_allocator_index.h"
 #include "pas_bitvector.h"
 #include "pas_config.h"
 #include "pas_free_range_kind.h"
@@ -67,9 +68,7 @@ struct pas_segregated_page {
     bool eligibility_notification_has_been_deferred;
 
     /* This is handy for debugging. */
-    bool is_committing_fully : 1;
-
-    bool avoid_line_allocator : 1;
+    bool is_committing_fully;
 
     unsigned object_size; /* Caching this here is great for performance. */
 
@@ -105,6 +104,7 @@ struct pas_segregated_page {
     pas_segregated_view owner;
     
     uint16_t num_non_empty_words;
+    pas_allocator_index view_cache_index;
 
     unsigned alloc_bits[1];
 };
@@ -288,6 +288,34 @@ pas_segregated_page_get_granule_use_counts(pas_segregated_page* page,
     PAS_ASSERT(page_config.base.page_size > page_config.base.granule_size);
     return (pas_page_granule_use_count*)(
         page->alloc_bits + pas_segregated_page_config_num_alloc_words(page_config));
+}
+
+static PAS_ALWAYS_INLINE bool
+pas_segregated_page_qualifies_for_decommit(
+    pas_segregated_page* page,
+    pas_segregated_page_config page_config)
+{
+    pas_page_granule_use_count* use_counts;
+    uintptr_t num_granules;
+    uintptr_t granule_index;
+    
+    PAS_ASSERT(page_config.base.is_enabled);
+
+    if (!page->num_non_empty_words)
+        return true;
+    
+    if (page_config.base.page_size == page_config.base.granule_size)
+        return false;
+    
+    use_counts = pas_segregated_page_get_granule_use_counts(page, page_config);
+    num_granules = page_config.base.page_size / page_config.base.granule_size;
+    
+    for (granule_index = num_granules; granule_index--;) {
+        if (!use_counts[granule_index])
+            return true;
+    }
+
+    return false;
 }
 
 static PAS_ALWAYS_INLINE pas_segregated_page*

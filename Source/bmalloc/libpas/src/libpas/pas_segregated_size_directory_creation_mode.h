@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_COMPACT_ATOMIC_SEGREGATED_GLOBAL_SIZE_DIRECTORY_PTR_H
-#define PAS_COMPACT_ATOMIC_SEGREGATED_GLOBAL_SIZE_DIRECTORY_PTR_H
+#ifndef PAS_SEGREGATED_SIZE_DIRECTORY_CREATION_MODE_H
+#define PAS_SEGREGATED_SIZE_DIRECTORY_CREATION_MODE_H
 
-#include "pas_compact_atomic_ptr.h"
+#include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_segregated_global_size_directory;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+enum pas_segregated_size_directory_creation_mode {
+    pas_segregated_size_directory_initial_creation_mode,
+    pas_segregated_size_directory_full_creation_mode
+};
 
-PAS_DEFINE_COMPACT_ATOMIC_PTR(pas_segregated_global_size_directory,
-                              pas_compact_atomic_segregated_global_size_directory_ptr);
+typedef enum pas_segregated_size_directory_creation_mode pas_segregated_size_directory_creation_mode;
+
+static inline const char* pas_segregated_size_directory_creation_mode_get_string(
+    pas_segregated_size_directory_creation_mode mode)
+{
+    switch (mode) {
+    case pas_segregated_size_directory_initial_creation_mode:
+        return "initial";
+    case pas_segregated_size_directory_full_creation_mode:
+        return "full";
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return NULL;
+}
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_COMPACT_ATOMIC_SEGREGATED_GLOBAL_SIZE_DIRECTORY_PTR_H */
+#endif /* PAS_SEGREGATED_SIZE_DIRECTORY_CREATION_MODE_H */
 

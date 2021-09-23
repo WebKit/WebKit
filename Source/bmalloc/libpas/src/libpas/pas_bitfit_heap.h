@@ -26,28 +26,28 @@
 #ifndef PAS_BITFIT_HEAP_H
 #define PAS_BITFIT_HEAP_H
 
-#include "pas_bitfit_global_directory.h"
+#include "pas_bitfit_directory.h"
 #include "pas_bitfit_page_config_variant.h"
 
 PAS_BEGIN_EXTERN_C;
 
 struct pas_bitfit_heap;
 struct pas_heap_config;
-struct pas_segregated_global_size_directory;
+struct pas_segregated_size_directory;
 struct pas_segregated_heap;
 typedef struct pas_bitfit_heap pas_bitfit_heap;
 typedef struct pas_heap_config pas_heap_config;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_heap pas_segregated_heap;
 
 struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_bitfit_heap {
-    pas_bitfit_global_directory directories[PAS_NUM_BITFIT_PAGE_CONFIG_VARIANTS];
+    pas_bitfit_directory directories[PAS_NUM_BITFIT_PAGE_CONFIG_VARIANTS];
 };
 
 PAS_API pas_bitfit_heap* pas_bitfit_heap_create(pas_segregated_heap* heap,
                                                 pas_heap_config* heap_config);
 
-static inline pas_bitfit_global_directory* pas_bitfit_heap_get_directory(
+static inline pas_bitfit_directory* pas_bitfit_heap_get_directory(
     pas_bitfit_heap* heap,
     pas_bitfit_page_config_variant variant)
 {
@@ -63,9 +63,9 @@ typedef struct {
 PAS_API pas_bitfit_variant_selection
 pas_bitfit_heap_select_variant(size_t object_size, pas_heap_config* config);
 
-PAS_API pas_bitfit_global_size_class*
-pas_bitfit_heap_ensure_global_size_class(pas_bitfit_heap* heap,
-                                         pas_segregated_global_size_directory* directory,
+PAS_API pas_bitfit_size_class*
+pas_bitfit_heap_ensure_size_class(pas_bitfit_heap* heap,
+                                         pas_segregated_size_directory* directory,
                                          pas_heap_config* config,
                                          pas_lock_hold_mode heap_lock_hold_mode);
 

@@ -57,7 +57,8 @@ PAS_API void pagesize64k_heap_config_activate(void);
     .small_segregated_page_size = PAGESIZE64K_SMALL_PAGE_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
     .small_segregated_enable_empty_word_eligibility_optimization = false, \
-    .small_use_reversed_current_word = !PAS_ARM64, \
+    .small_segregated_use_reversed_current_word = !PAS_ARM64, \
+    .enable_view_cache = false, \
     .use_small_bitfit = true, \
     .small_bitfit_min_align_shift = PAGESIZE64K_MINALIGN_SHIFT, \
     .small_bitfit_page_size = PAGESIZE64K_SMALL_PAGE_SIZE, \

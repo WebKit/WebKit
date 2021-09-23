@@ -66,7 +66,8 @@ PAS_API pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enume
 
 static PAS_ALWAYS_INLINE pas_page_base* jit_small_bitfit_page_header_for_boundary(void* boundary);
 static PAS_ALWAYS_INLINE void* jit_small_bitfit_boundary_for_page_header(pas_page_base* page);
-PAS_API void* jit_small_bitfit_allocate_page(pas_segregated_heap* heap);
+PAS_API void* jit_small_bitfit_allocate_page(
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction);
 PAS_API pas_page_base* jit_small_bitfit_create_page_header(
     void* boundary, pas_lock_hold_mode heap_lock_hold_mode);
 PAS_API void jit_small_bitfit_destroy_page_header(
@@ -76,7 +77,8 @@ PAS_BITFIT_PAGE_CONFIG_SPECIALIZATION_DECLARATIONS(jit_small_bitfit_page_config)
 
 static PAS_ALWAYS_INLINE pas_page_base* jit_medium_bitfit_page_header_for_boundary(void* boundary);
 static PAS_ALWAYS_INLINE void* jit_medium_bitfit_boundary_for_page_headery(pas_page_base* page);
-PAS_API void* jit_medium_bitfit_allocate_page(pas_segregated_heap* heap);
+PAS_API void* jit_medium_bitfit_allocate_page(
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction);
 PAS_API pas_page_base* jit_medium_bitfit_create_page_header(
     void* boundary, pas_lock_hold_mode heap_lock_hold_mode);
 PAS_API void jit_medium_bitfit_destroy_page_header(

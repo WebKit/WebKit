@@ -32,6 +32,7 @@
 #include "pas_create_basic_heap_page_caches_with_reserved_memory.h"
 #include "pas_ensure_heap_with_page_caches.h"
 
+/* Warning: This creates caches that allow type confusion. Only use this for primitive heaps! */
 pas_heap* pas_ensure_heap_forced_into_reserved_memory(
     pas_heap_ref* heap_ref,
     pas_heap_ref_kind heap_ref_kind,
