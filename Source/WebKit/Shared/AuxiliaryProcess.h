@@ -134,6 +134,12 @@ protected:
 
     static std::optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> createIPCConnectionPair();
 
+protected:
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    static id decodePreferenceValue(const std::optional<String>& encodedValue);
+    static void setPreferenceValue(const String& domain, const String& key, id value);
+#endif
+
 private:
     virtual bool shouldOverrideQuarantine() { return true; }
 
