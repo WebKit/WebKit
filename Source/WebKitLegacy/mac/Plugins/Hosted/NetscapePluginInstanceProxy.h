@@ -310,7 +310,7 @@ private:
     void addValueToArray(NSMutableArray *, JSC::JSGlobalObject* exec, JSC::JSValue value);
     
     bool demarshalValueFromArray(JSC::JSGlobalObject*, NSArray *array, NSUInteger& index, JSC::JSValue& result);
-    void demarshalValues(JSC::JSGlobalObject*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::MarkedArgumentBuffer& result);
+    void demarshalValues(JSC::JSGlobalObject*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::MarkedArgumentBufferBase& result);
 
     class LocalObjectMap {
         WTF_MAKE_NONCOPYABLE(LocalObjectMap);
