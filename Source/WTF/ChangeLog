@@ -1,3 +1,12 @@
+2021-09-23  Tim Horton  <timothy_horton@apple.com>
+
+        Move more linked-on-or-after checks to WebCore::linkedOnOrAfter()
+        https://bugs.webkit.org/show_bug.cgi?id=230694
+
+        Reviewed by Wenson Hsieh.
+
+        * wtf/spi/darwin/dyldSPI.h:
+
 2021-09-23  Jean-Yves Avenard  <jya@apple.com>
 
         Opus and Vorbis codecs aren't available on iPad.

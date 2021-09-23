@@ -186,17 +186,13 @@
 #import <WebCore/ColorMac.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
 #if PLATFORM(WATCHOS)
 static const BOOL defaultAllowsViewportShrinkToFit = YES;
 static const BOOL defaultFastClickingEnabled = YES;
-#else
+#elif PLATFORM(IOS_FAMILY)
 static const BOOL defaultAllowsViewportShrinkToFit = NO;
 static const BOOL defaultFastClickingEnabled = NO;
 #endif
-
-static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
-#endif // PLATFORM(IOS_FAMILY)
 
 #define THROW_IF_SUSPENDED if (UNLIKELY(_page && _page->isSuspended())) \
     [NSException raise:NSInternalInconsistencyException format:@"The WKWebView is suspended"]
@@ -260,7 +256,7 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 static bool shouldRequireUserGestureToLoadVideo()
 {
 #if PLATFORM(IOS_FAMILY)
-    static bool shouldRequireUserGestureToLoadVideo = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_10_0;
+    static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfter(WebCore::SDKVersion::FirstThatRequiresUserGestureToLoadVideo);
     return shouldRequireUserGestureToLoadVideo;
 #else
     return false;
@@ -369,9 +365,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
     _initialScaleFactor = 1;
     _allowsViewportShrinkToFit = defaultAllowsViewportShrinkToFit;
-
-    static uint32_t programSDKVersion = dyld_get_program_sdk_version();
-    _allowsLinkPreview = programSDKVersion >= firstSDKVersionWithLinkPreviewEnabledByDefault;
+    _allowsLinkPreview = linkedOnOrAfter(WebCore::SDKVersion::FirstWithLinkPreviewEnabledByDefault);
 
     auto fastClickingEnabled = []() {
         if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])

@@ -1,3 +1,14 @@
+2021-09-23  Tim Horton  <timothy_horton@apple.com>
+
+        Move more linked-on-or-after checks to WebCore::linkedOnOrAfter()
+        https://bugs.webkit.org/show_bug.cgi?id=230694
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/cocoa/VersionChecks.h:
+        Add more versions, move DYLD_IOS_VERSION_FIRST_WITH_IOS_APPS_ON_MACOS
+        inline, and sort some that are out of order.
+
 2021-09-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Graphics: add instrumentation for new `CanvasRenderingContext2DSettings`
