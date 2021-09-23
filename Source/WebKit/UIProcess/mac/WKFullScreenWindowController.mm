@@ -440,14 +440,14 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
 
 - (void)exitFullScreenImmediately
 {
-    if (![self isFullScreen])
+    if (_fullScreenState == NotInFullScreen)
         return;
 
     [self _manager]->requestExitFullScreen();
     [_webViewPlaceholder setExitWarningVisible:NO];
     [self _manager]->willExitFullScreen();
     _fullScreenState = ExitingFullScreen;
-    [self finishedExitFullScreenAnimation:YES];
+    [self finishedExitFullScreenAnimationAndExitImmediately:YES];
 }
 
 - (void)requestExitFullScreen
@@ -463,8 +463,8 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
 
     if (![[self window] isOnActiveSpace]) {
         // If the full screen window is not in the active space, the NSWindow full screen animation delegate methods
-        // will never be called. So call finishedExitFullScreenAnimation explicitly.
-        [self finishedExitFullScreenAnimation:YES];
+        // will never be called. So call finishedExitFullScreenAnimationAndExitImmediately explicitly.
+        [self finishedExitFullScreenAnimationAndExitImmediately:NO];
 
         // Because we are breaking the normal animation pattern, re-enable screen updates
         // as exitFullScreen has disabled them, but _startExitFullScreenAnimationWithDuration:
@@ -497,7 +497,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     return adoptCF(CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, windowID, imageOptions));
 }
 
-- (void)finishedExitFullScreenAnimation:(bool)completed
+- (void)finishedExitFullScreenAnimationAndExitImmediately:(bool)immediately
 {
     if (_fullScreenState == InFullScreen) {
         // If we are currently in the InFullScreen state, this notification is unexpected, meaning
@@ -560,15 +560,20 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     [self _manager]->restoreScrollPosition();
     _page->setTopContentInset(_savedTopContentInset);
 
-    _page->forceRepaint([weakSelf = WeakObjCPtr<WKFullScreenWindowController>(self)] {
-        [weakSelf completeFinishExitFullScreenAnimationAfterRepaint];
-    });
-
     [CATransaction commit];
     [CATransaction flush];
+
+    if (immediately) {
+        [self completeFinishExitFullScreenAnimation];
+        return;
+    }
+
+    _page->forceRepaint([weakSelf = WeakObjCPtr<WKFullScreenWindowController>(self)] {
+        [weakSelf completeFinishExitFullScreenAnimation];
+    });
 }
 
-- (void)completeFinishExitFullScreenAnimationAfterRepaint
+- (void)completeFinishExitFullScreenAnimation
 {
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
@@ -603,11 +608,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     // has closed or the web process has crashed.  Just walk through our
     // normal exit full screen sequence, but don't wait to be called back
     // in response.
-    if ([self isFullScreen])
-        [self exitFullScreenImmediately];
-    
-    if (_fullScreenState == ExitingFullScreen)
-        [self finishedExitFullScreenAnimation:YES];
+    [self exitFullScreenImmediately];
 
     [super close];
 
@@ -692,14 +693,14 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 - (void)windowDidFailToExitFullScreen:(NSWindow *)window
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
-    [self finishedExitFullScreenAnimation:NO];
+    [self finishedExitFullScreenAnimationAndExitImmediately:YES];
     [self clearVideoFullscreenManagerObserver];
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
-    [self finishedExitFullScreenAnimation:YES];
+    [self finishedExitFullScreenAnimationAndExitImmediately:NO];
     [self clearVideoFullscreenManagerObserver];
 }
 
