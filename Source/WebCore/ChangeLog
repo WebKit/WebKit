@@ -1,5 +1,44 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281971. rdar://problem/83429744
+
+    Relative -webkit-scrollbar width value may lead to unstable layout
+    https://bugs.webkit.org/show_bug.cgi?id=229833.
+    <rdar://80336247>
+    
+    Reviewed by Simon Fraser.
+    
+    The way we resolve the relative property value for the webkit-scrollbar width (using the owning renderer’s width) can lead to unstable layout with
+    circular dependency. While -webkit-scrollbar itself is non-standard, Chrome supports it but not with relative width/height values. They are resolved to 0px.
+    Here we use the default platform value instead.
+    
+    * rendering/RenderScrollbarPart.cpp:
+    (WebCore::calcScrollbarThicknessUsing): Do not try to resolve the relative length value.
+    (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+    (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281971 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Alan Bujtas  <zalan@apple.com>
+
+            Relative -webkit-scrollbar width value may lead to unstable layout
+            https://bugs.webkit.org/show_bug.cgi?id=229833.
+            <rdar://80336247>
+
+            Reviewed by Simon Fraser.
+
+            The way we resolve the relative property value for the webkit-scrollbar width (using the owning renderer’s width) can lead to unstable layout with
+            circular dependency. While -webkit-scrollbar itself is non-standard, Chrome supports it but not with relative width/height values. They are resolved to 0px.
+            Here we use the default platform value instead.
+
+            * rendering/RenderScrollbarPart.cpp:
+            (WebCore::calcScrollbarThicknessUsing): Do not try to resolve the relative length value.
+            (WebCore::RenderScrollbarPart::computeScrollbarWidth):
+            (WebCore::RenderScrollbarPart::computeScrollbarHeight):
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281920. rdar://problem/83429601
 
     Braille display is blank in contenteditable elements when the field is followed by another element.

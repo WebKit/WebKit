@@ -80,10 +80,10 @@ void RenderScrollbarPart::layoutVerticalPart()
     } 
 }
 
-static int calcScrollbarThicknessUsing(SizeType sizeType, const Length& length, int containingLength)
+static int calcScrollbarThicknessUsing(SizeType sizeType, const Length& length)
 {
-    if (!length.isIntrinsicOrAuto() || (sizeType == MinSize && length.isAuto()))
-        return minimumValueForLength(length, containingLength);
+    if ((!length.isPercentOrCalculated() && !length.isIntrinsicOrAuto()) || (sizeType == MinSize && length.isAuto()))
+        return minimumValueForLength(length, { });
     return ScrollbarTheme::theme().scrollbarThickness();
 }
 
@@ -91,34 +91,28 @@ void RenderScrollbarPart::computeScrollbarWidth()
 {
     if (!m_scrollbar->owningRenderer())
         return;
-    // FIXME: We are querying layout information but nothing guarantees that it's up-to-date, especially since we are called at style change.
-    // FIXME: Querying the style's border information doesn't work on table cells with collapsing borders.
-    int visibleSize = m_scrollbar->owningRenderer()->width() - m_scrollbar->owningRenderer()->style().borderLeftWidth() - m_scrollbar->owningRenderer()->style().borderRightWidth();
-    int w = calcScrollbarThicknessUsing(MainOrPreferredSize, style().width(), visibleSize);
-    int minWidth = calcScrollbarThicknessUsing(MinSize, style().minWidth(), visibleSize);
-    int maxWidth = style().maxWidth().isUndefined() ? w : calcScrollbarThicknessUsing(MaxSize, style().maxWidth(), visibleSize);
-    setWidth(std::max(minWidth, std::min(maxWidth, w)));
+    int width = calcScrollbarThicknessUsing(MainOrPreferredSize, style().width());
+    int minWidth = calcScrollbarThicknessUsing(MinSize, style().minWidth());
+    int maxWidth = style().maxWidth().isUndefined() ? width : calcScrollbarThicknessUsing(MaxSize, style().maxWidth());
+    setWidth(std::max(minWidth, std::min(maxWidth, width)));
     
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
-    m_marginBox.setLeft(minimumValueForLength(style().marginLeft(), visibleSize));
-    m_marginBox.setRight(minimumValueForLength(style().marginRight(), visibleSize));
+    m_marginBox.setLeft(minimumValueForLength(style().marginLeft(), { }));
+    m_marginBox.setRight(minimumValueForLength(style().marginRight(), { }));
 }
 
 void RenderScrollbarPart::computeScrollbarHeight()
 {
     if (!m_scrollbar->owningRenderer())
         return;
-    // FIXME: We are querying layout information but nothing guarantees that it's up-to-date, especially since we are called at style change.
-    // FIXME: Querying the style's border information doesn't work on table cells with collapsing borders.
-    int visibleSize = m_scrollbar->owningRenderer()->height() -  m_scrollbar->owningRenderer()->style().borderTopWidth() - m_scrollbar->owningRenderer()->style().borderBottomWidth();
-    int h = calcScrollbarThicknessUsing(MainOrPreferredSize, style().height(), visibleSize);
-    int minHeight = calcScrollbarThicknessUsing(MinSize, style().minHeight(), visibleSize);
-    int maxHeight = style().maxHeight().isUndefined() ? h : calcScrollbarThicknessUsing(MaxSize, style().maxHeight(), visibleSize);
-    setHeight(std::max(minHeight, std::min(maxHeight, h)));
+    int height = calcScrollbarThicknessUsing(MainOrPreferredSize, style().height());
+    int minHeight = calcScrollbarThicknessUsing(MinSize, style().minHeight());
+    int maxHeight = style().maxHeight().isUndefined() ? height : calcScrollbarThicknessUsing(MaxSize, style().maxHeight());
+    setHeight(std::max(minHeight, std::min(maxHeight, height)));
 
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
-    m_marginBox.setTop(minimumValueForLength(style().marginTop(), visibleSize));
-    m_marginBox.setBottom(minimumValueForLength(style().marginBottom(), visibleSize));
+    m_marginBox.setTop(minimumValueForLength(style().marginTop(), { }));
+    m_marginBox.setBottom(minimumValueForLength(style().marginBottom(), { }));
 }
 
 void RenderScrollbarPart::computePreferredLogicalWidths()
