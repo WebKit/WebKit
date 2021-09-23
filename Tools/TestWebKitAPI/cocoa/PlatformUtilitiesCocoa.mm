@@ -33,6 +33,25 @@
 namespace TestWebKitAPI {
 namespace Util {
 
+#if PLATFORM(MAC)
+
+NSString *toNS(WKStringRef string)
+{
+    size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string) + 1;
+    auto buffer = makeUniqueWithoutFastMallocCheck<char[]>(bufferSize);
+    size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
+    buffer[stringLength] = '\0';
+
+    return [NSString stringWithUTF8String:buffer.get()];
+}
+
+NSString *toNS(WKRetainPtr<WKStringRef> string)
+{
+    return toNS(string.get());
+}
+
+#endif // PLATFORM(MAC)
+
 std::string toSTD(NSString *string)
 {
     if (!string)

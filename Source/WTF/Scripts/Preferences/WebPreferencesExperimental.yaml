@@ -397,6 +397,18 @@ ExposeSpeakersEnabled:
     WebCore:
       default: false
 
+FTPEnabled:
+  type: bool
+  humanReadableName: "FTP support enabled"
+  humanReadableDescription: "FTP support enabled"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+      
 # FIXME: This seems to be accidentally enabled for WebKit1 right now due to the old code using the
 # wrong preference key in some places. We should identify whether it really makes sense to keep this
 # enabled.
