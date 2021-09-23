@@ -459,5 +459,5 @@
 
 ;; Allow accesses to LocalAuthentication and RemoteService
 (allow mach-lookup
-    (global-name "com.apple.CoreAuthentication.agent.libxpc")
+    (global-name "com.apple.CoreAuthentication.agent")
     (global-name "com.apple.remoted"))

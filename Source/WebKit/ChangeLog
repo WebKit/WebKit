@@ -1,3 +1,16 @@
+2021-09-23  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix incorrect mach service name in sandboxes
+        https://bugs.webkit.org/show_bug.cgi?id=230640
+        <rdar://55258216>
+
+        Reviewed by Brent Fulgham.
+
+        Authentication related rules are using incorrect service names in sandboxes.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+
 2021-09-23  Jean-Yves Avenard  <jya@apple.com>
 
         Opus and Vorbis codecs aren't available on iPad.
