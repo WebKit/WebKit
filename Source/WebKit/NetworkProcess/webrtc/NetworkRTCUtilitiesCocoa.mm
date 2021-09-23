@@ -23,28 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Network/Network.h>
+#import "config.h"
+#import "NetworkRTCUtilitiesCocoa.h"
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(LIBWEBRTC)
 
-#import <nw/private.h>
-
-#else
-
-WTF_EXTERN_C_BEGIN
-
-void nw_parameters_set_account_id(nw_parameters_t, const char * account_id);
-void nw_parameters_set_source_application(nw_parameters_t, audit_token_t);
-void nw_parameters_set_source_application_by_bundle_id(nw_parameters_t, const char*);
-void nw_parameters_set_attributed_bundle_identifier(nw_parameters_t, const char*);
-nw_endpoint_t nw_endpoint_create_host_with_numeric_port(const char* hostname, uint16_t port_host_order);
+#import <wtf/SoftLinking.h>
+#import <wtf/text/WTFString.h>
 
 #if HAVE(NWPARAMETERS_TRACKER_API)
-void nw_parameters_set_is_third_party_web_content(nw_parameters_t, bool is_third_party_web_content);
-void nw_parameters_set_is_known_tracker(nw_parameters_t, bool is_known_tracker);
-void nw_parameters_allow_sharing_port_with_listener(nw_parameters_t, nw_listener_t);
-#endif // HAVE(NWPARAMETERS_TRACKER_API)
+SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
+SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_set_attributed_bundle_identifier, void, __cdecl, (nw_parameters_t, const char*))
+#endif
 
-WTF_EXTERN_C_END
+namespace WebKit {
 
-#endif // USE(APPLE_INTERNAL_SDK)
+void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const char* sourceApplicationBundleIdentifier, std::optional<audit_token_t> sourceApplicationAuditToken, const String& attributedBundleIdentifier)
+{
+    if (sourceApplicationBundleIdentifier && *sourceApplicationBundleIdentifier)
+        nw_parameters_set_source_application_by_bundle_id(parameters, sourceApplicationBundleIdentifier);
+    else if (sourceApplicationAuditToken)
+        nw_parameters_set_source_application(parameters, *sourceApplicationAuditToken);
+
+#if HAVE(NWPARAMETERS_TRACKER_API)
+    if (!attributedBundleIdentifier.isEmpty() && nw_parameters_set_attributed_bundle_identifierPtr())
+        nw_parameters_set_attributed_bundle_identifierPtr()(parameters, attributedBundleIdentifier.utf8().data());
+#endif
+}
+
+} // namespace WebKit
+
+#endif // USE(LIBWEBRTC)

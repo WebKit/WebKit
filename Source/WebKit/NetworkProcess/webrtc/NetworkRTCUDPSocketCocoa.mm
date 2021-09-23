@@ -78,6 +78,7 @@ private:
 #endif
     bool m_shouldBypassRelay { false };
 
+    CString m_sourceApplicationBundleIdentifier;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
     String m_attributedBundleIdentifier;
 
@@ -166,6 +167,7 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     , m_isKnownTracker(isKnownTracker(domain))
 #endif
     , m_shouldBypassRelay(isRelayDisabled)
+    , m_sourceApplicationBundleIdentifier(rtcProvider.applicationBundleIdentifier())
     , m_sourceApplicationAuditToken(rtcProvider.sourceApplicationAuditToken())
     , m_attributedBundleIdentifier(WTFMove(attributedBundleIdentifier))
 {
@@ -242,10 +244,7 @@ void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t pa
     nw_parameters_set_is_known_tracker(parameters, m_isKnownTracker);
 #endif
 
-    if (m_sourceApplicationAuditToken)
-        nw_parameters_set_source_application(parameters, *m_sourceApplicationAuditToken);
-    if (!m_attributedBundleIdentifier.isEmpty())
-        nw_parameters_set_source_application_by_bundle_id(parameters, m_attributedBundleIdentifier.utf8().data());
+    setNWParametersApplicationIdentifiers(parameters, m_sourceApplicationBundleIdentifier.data(), m_sourceApplicationAuditToken, m_attributedBundleIdentifier);
 
     nw_parameters_set_reuse_local_address(parameters, true);
 }
