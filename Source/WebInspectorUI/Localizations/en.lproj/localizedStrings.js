@@ -1027,6 +1027,7 @@ localizedStrings["Online"] = "Online";
 localizedStrings["Only show resources with issues"] = "Only show resources with issues";
 localizedStrings["Only show visual actions"] = "Only show visual actions";
 localizedStrings["Open"] = "Open";
+localizedStrings["Open closed tabs\u2026"] = "Open closed tabs\u2026";
 /* Context menu item for opening the target item in a new window. */
 localizedStrings["Open in New Window @ Context Menu Item"] = "Open in New Window";
 localizedStrings["Option-click to show source"] = "Option-click to show source";
@@ -1343,7 +1344,7 @@ localizedStrings["Show compositing borders"] = "Show compositing borders";
 /* Label for option to toggle the extended lines setting for CSS grid overlays */
 localizedStrings["Show extended lines @ Layout Panel Overlay Options"] = "Extended Grid Lines";
 localizedStrings["Show full certificate"] = "Show full certificate";
-localizedStrings["Show hidden tabs"] = "Show hidden tabs";
+localizedStrings["Show hidden tabs\u2026"] = "Show hidden tabs\u2026";
 /* Settings tab checkbox label for whether the independent styles sidebar should be shown */
 localizedStrings["Show independent Styles sidebar @ Settings Elements Pane"] = "Show independent Styles sidebar";
 localizedStrings["Show jump to effective property button"] = "Show jump to effective property button";

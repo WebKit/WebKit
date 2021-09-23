@@ -1,3 +1,32 @@
+2021-09-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add a pinned [+] button to the tab bar to make it easier to re-open closed tabs
+        https://bugs.webkit.org/show_bug.cgi?id=230600
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        (WI.TabBar.prototype.selectTabBarItem):
+        (WI.TabBar.prototype.layout):
+        (WI.TabBar.prototype._pinnedButtons): Added.
+        (WI.TabBar.prototype._closedTabClasses): Added.
+        (WI.TabBar.prototype._handleTabContainerMouseDown):
+        (WI.TabBar.prototype._handleShowHiddenTabsTabBarItemMouseDown): Added.
+        (WI.TabBar.prototype._handleAddClosedTabsTabBarItemMouseDown): Added.
+        (WI.TabBar.prototype._handleTabContainerClick): Deleted.
+        Add a `_openClosedTabsTabBarItem` that's a `WI.PinnedTabBarItem` without a `representedObject`,
+        meaning that it's basically just a button and won't actually open a tab when clicked. This
+        suits our purposes perfectly as we only want to show a contextmenu on click, not to mention
+        that it will only be shown if there are closed tabs.
+        Drive-by: Rename `_tabPickerTabBarItem` to `_showHiddenTabsTabBarItem` to clarify purpose.
+        Drive-by: Remove `_handleTabContainerClick` as tabs can only be removed via the contextmenu.
+
+        * UserInterface/Images/Overflow.svg: Renamed from UserInterface/Images/TabPicker.svg.
+        Drive-by: Rename to clarify purpose.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2021-09-16  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression(r279613) Audit result scope toggles are missing
