@@ -541,6 +541,9 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "enable-background": [
         "accumulate", "new"
     ],
+    "font-palette": [
+        "none", "normal", "light", "dark"
+    ],
     "hanging-punctuation": [
         "none", "first", "last", "allow-end", "force-end"
     ],
