@@ -130,4 +130,36 @@ void AuxiliaryProcess::registerWithStateDumper(ASCIILiteral title)
 
 #endif // USE(OS_STATE)
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+id AuxiliaryProcess::decodePreferenceValue(const std::optional<String>& encodedValue)
+{
+    if (!encodedValue)
+        return nil;
+    
+    auto encodedData = adoptNS([[NSData alloc] initWithBase64EncodedString:*encodedValue options:0]);
+    if (!encodedData)
+        return nil;
+    NSError *err = nil;
+    auto classes = [NSSet setWithArray:@[[NSString class], [NSNumber class], [NSDate class], [NSDictionary class], [NSArray class], [NSData class]]];
+    id value = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:encodedData.get() error:&err];
+    ASSERT(!err);
+    if (err)
+        return nil;
+
+    return value;
+}
+
+void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& key, id value)
+{
+    if (domain.isEmpty()) {
+        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+#if ASSERT_ENABLED
+        id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages");
+#endif
+    } else
+        CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+}
+#endif // ENABLE(CFPREFS_DIRECT_MODE)
+
 } // namespace WebKit

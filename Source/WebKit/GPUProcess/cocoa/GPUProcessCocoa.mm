@@ -66,6 +66,19 @@ RetainPtr<NSDictionary> GPUProcess::additionalStateForDiagnosticReport() const
 
 #endif // USE(OS_STATE)
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+void GPUProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
+{
+    id value = nil;
+    if (encodedValue) {
+        value = decodePreferenceValue(encodedValue);
+        if (!value)
+            return;
+    }
+    setPreferenceValue(domain, key, value);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
