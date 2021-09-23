@@ -39,11 +39,11 @@ namespace WebCore {
 bool PlatformMediaSessionManager::m_webMFormatReaderEnabled;
 #endif
 
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
 bool PlatformMediaSessionManager::m_vorbisDecoderEnabled;
 #endif
 
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
 bool PlatformMediaSessionManager::m_opusDecoderEnabled;
 #endif
 
@@ -656,7 +656,7 @@ void PlatformMediaSessionManager::setWebMFormatReaderEnabled(bool enabled)
 
 bool PlatformMediaSessionManager::vorbisDecoderEnabled()
 {
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
     return m_vorbisDecoderEnabled;
 #else
     return false;
@@ -665,7 +665,7 @@ bool PlatformMediaSessionManager::vorbisDecoderEnabled()
 
 void PlatformMediaSessionManager::setVorbisDecoderEnabled(bool enabled)
 {
-#if ENABLE(VORBIS) && PLATFORM(MAC)
+#if ENABLE(VORBIS)
     m_vorbisDecoderEnabled = enabled;
 #else
     UNUSED_PARAM(enabled);
@@ -674,7 +674,7 @@ void PlatformMediaSessionManager::setVorbisDecoderEnabled(bool enabled)
 
 bool PlatformMediaSessionManager::opusDecoderEnabled()
 {
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
     return m_opusDecoderEnabled;
 #else
     return false;
@@ -683,7 +683,7 @@ bool PlatformMediaSessionManager::opusDecoderEnabled()
 
 void PlatformMediaSessionManager::setOpusDecoderEnabled(bool enabled)
 {
-#if ENABLE(OPUS) && PLATFORM(MAC)
+#if ENABLE(OPUS)
     m_opusDecoderEnabled = enabled;
 #else
     UNUSED_PARAM(enabled);

@@ -1,3 +1,29 @@
+2021-09-23  Jean-Yves Avenard  <jya@apple.com>
+
+        Opus and Vorbis codecs aren't available on iPad.
+        https://bugs.webkit.org/show_bug.cgi?id=230595
+        rdar://problem/83382734
+
+        Vorbis and Opus are usable on platforms other than macOS and are being checked
+        at runtime.
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::vorbisDecoderEnabled):
+        (WebCore::PlatformMediaSessionManager::setVorbisDecoderEnabled):
+        (WebCore::PlatformMediaSessionManager::opusDecoderEnabled):
+        (WebCore::PlatformMediaSessionManager::setOpusDecoderEnabled):
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm:
+        (WebCore::registerDecoderFactory):
+        (WebCore::isOpusDecoderAvailable):
+        (WebCore::registerOpusDecoderIfNeeded):
+        (WebCore::isVorbisDecoderAvailable):
+        (WebCore::registerVorbisDecoderIfNeeded):
+
 2021-09-09  Sergio Villar Senin  <svillar@igalia.com>
 
         Improve the handling of CompositeEditCommand::splitTreeToNode() return values

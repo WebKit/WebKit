@@ -1,3 +1,19 @@
+2021-09-23  Jean-Yves Avenard  <jya@apple.com>
+
+        Opus and Vorbis codecs aren't available on iPad.
+        https://bugs.webkit.org/show_bug.cgi?id=230595
+        rdar://problem/83382734
+
+        Vorbis and Opus are usable on platforms other than macOS and are being checked
+        at runtime.
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2021-09-23  Chris Lord  <clord@igalia.com>
 
         [GTK] Allow sending precise mouse wheel events in LayoutTests
