@@ -1657,6 +1657,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!backingObject)
         return nil;
 
+    auto* widget = backingObject->widget();
+    if (widget && widget->accessibilityObject())
+        return @[widget->accessibilityObject()];
+
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [backingObject->platformWidget() accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
     ALLOW_DEPRECATED_DECLARATIONS_END
@@ -2945,6 +2949,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (axObject) {
         if (axObject->isAttachment() && [axObject->wrapper() attachmentView])
             return [axObject->wrapper() attachmentView];
+        auto* widget = axObject->widget();
+        if (is<PluginViewBase>(widget))
+            return NSAccessibilityUnignoredAncestor(widget->accessibilityHitTest(IntPoint(point)));
         return NSAccessibilityUnignoredAncestor(axObject->wrapper());
     }
     return NSAccessibilityUnignoredAncestor(self);
@@ -3695,6 +3702,16 @@ enum class TextUnit {
     });
 }
 
+static BOOL isMatchingPlugin(AXCoreObject* axObject, const AccessibilitySearchCriteria& criteria)
+{
+    auto* widget = axObject->widget();
+    if (!is<PluginViewBase>(widget))
+        return false;
+
+    return criteria.searchKeys.contains(AccessibilitySearchKey::AnyType)
+        && (!criteria.visibleOnly || downcast<PluginViewBase>(widget)->isVisible());
+}
+
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (id)accessibilityAttributeValue:(NSString*)attribute forParameter:(id)parameter
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
@@ -3798,15 +3815,42 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
+        NSUInteger widgetChildrenSize = 0;
+        if (isMatchingPlugin(backingObject, criteria)) {
+            // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
+            // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
+            if (auto* widgetChildren = [self renderWidgetChildren]) {
+                widgetChildrenSize = [widgetChildren count];
+                if (widgetChildrenSize >= criteria.resultsLimit)
+                    return @(std::min(widgetChildrenSize, NSUInteger(criteria.resultsLimit)));
+                criteria.resultsLimit -= widgetChildrenSize;
+            }
+        }
+
         AccessibilityObject::AccessibilityChildrenVector results;
         backingObject->findMatchingObjects(&criteria, results);
-        return @(results.size());
+        return @(results.size() + widgetChildrenSize);
     }
 
     if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
+        NSArray *widgetChildren = nil;
+        if (isMatchingPlugin(backingObject, criteria)) {
+            // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
+            // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
+            if (auto* children = [self renderWidgetChildren]) {
+                NSUInteger includedChildrenCount = std::min([children count], NSUInteger(criteria.resultsLimit));
+                widgetChildren = [children subarrayWithRange:NSMakeRange(0, includedChildrenCount)];
+                if ([widgetChildren count] >= criteria.resultsLimit)
+                    return widgetChildren;
+                criteria.resultsLimit -= [widgetChildren count];
+            }
+        }
+
         AccessibilityObject::AccessibilityChildrenVector results;
         backingObject->findMatchingObjects(&criteria, results);
+        if (widgetChildren)
+            return [widgetChildren arrayByAddingObjectsFromArray:convertToNSArray(results)];
         return convertToNSArray(results);
     }
 

@@ -1,5 +1,150 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282358. rdar://problem/83429732
+
+    AX: Make PDFs loaded via <embed> accessible
+    https://bugs.webkit.org/show_bug.cgi?id=229556
+    
+    Patch by Tyler Wilcock <tyler_w@apple.com> on 2021-09-13
+    Reviewed by Chris Fleizach and Andres Gonzalez.
+    
+    Source/WebCore:
+    
+    This patch makes PDFs loaded in `<embed>` elements accessible to
+    clients by exposing the underlying `WKPDFPluginAccessibilityObject`
+    created by PDF plugins.
+    
+    Full-frame PDF accessibility support (e.g. file:///path/to/example.pdf) was
+    implemented in https://bugs.webkit.org/show_bug.cgi?id=170589, but this
+    wasn't sufficient for PDFs loaded in `<embed>`s.
+    
+    This patch only implements `<embed>` PDF support for Mac - iOS support will
+    need to follow in a separate patch.
+    
+    Test: accessibility/mac/basic-embed-pdf-accessibility.html
+    
+    * accessibility/AXObjectCache.cpp:
+    (WebCore::AXObjectCache::getOrCreate):
+    Change comment that suggests PluginViewBase Widgets are not supported,
+    because they are now.
+    
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::AccessibilityRenderObject::isAttachment const):
+    Don't consider plugins to be attachments since they need to be handled
+    differently.
+    (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+    Don't ignore widgets with underlying accessibilty objects (such as PDF
+    plugins).
+    
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper renderWidgetChildren]):
+    Extract underlying accessibility object from widgets that have one.
+    (-[WebAccessibilityObjectWrapper accessibilityHitTest:]):
+    Forward hit test to underlying plugin accessibility object if one
+    exists.
+    (isMatchingPlugin): Added.
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    Match `renderWidgetChildren` for searches with `SearchKey::AnyType`
+    criteria.
+    
+    * platform/Widget.h:
+    (WebCore::Widget::accessibilityHitTest const): Added this virtual
+    method.
+    (WebCore::Widget::accessibilityObject const): Added this virtual
+    method.
+    
+    Source/WebKit:
+    
+    This patch makes PDFs loaded in `<embed>` elements accessible to
+    clients by exposing the underlying `WKPDFPluginAccessibilityObject`
+    created by PDF plugins.
+    
+    Full-frame PDF accessibility support (e.g. file:///path/to/example.pdf) was
+    implemented in https://bugs.webkit.org/show_bug.cgi?id=170589, but this
+    wasn't sufficient for PDFs loaded in `<embed>`s.
+    
+    This patch only implements `<embed>` PDF support for Mac - iOS support will
+    need to follow in a separate patch.
+    
+    * WebProcess/Plugins/PDF/PDFPlugin.h:
+    * WebProcess/Plugins/PDF/PDFPlugin.mm:
+    (-[WKPDFPluginAccessibilityObject initWithPDFPlugin:andElement:]):
+    Change this method to also accept the `HTMLPlugInElement` that the plugin
+    originates from.
+    (-[WKPDFPluginAccessibilityObject parent]):
+    Added. Returns the cached parent if present, otherwises tries to cache
+    the parent in the form of the `HTMLPlugInElement` that the plugin
+    originates from.
+    (-[WKPDFPluginAccessibilityObject setParent:]): Added.
+    (-[WKPDFPluginAccessibilityObject accessibilityAttributeValue:]):
+    Query against newly added `parent` getter when fulfilling attribute
+    value requests.
+    (-[WKPDFPluginAccessibilityObject ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+    (-[WKPDFPluginAccessibilityObject accessibilityHitTestIntPoint:]): Added.
+    (-[WKPDFPluginAccessibilityObject accessibilityHitTest:]):
+    Changed to convert `NSPoint` to `WebCore::IntPoint` and call
+    `accessibilityHitTestIntPoint`.
+    (WebKit::PDFPlugin::create):
+    Add parameter to accept the `HTMLPlugInElement` that the plugin
+    originates from.
+    (WebKit::PDFPlugin::PDFPlugin):
+    Add parameter to accept the `HTMLPlugInElement` that the plugin
+    originates from.
+    (WebKit::PDFPlugin::accessibilityHitTest const): Added.
+    (-[WKPDFPluginAccessibilityObject initWithPDFPlugin:]): Deleted.
+    
+    * WebProcess/Plugins/Plugin.h:
+    (WebKit::Plugin::accessibilityHitTest const): Added.
+    (WebKit::Plugin::accessibilityObject const): Change the return type to
+    `id` as that is more common practice.
+    
+    * WebProcess/Plugins/PluginView.h:
+    Add `id accessibilityHitTest` and change `accessibilityObject()`
+    to return `id`.
+    
+    * WebProcess/Plugins/PluginView.cpp:
+    (WebKit::PluginView::accessibilityObject const): Change return type to
+    `id`.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::createPlugin):
+    Pass the originating `pluginElement` to `PDFPlugin::create`.
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::attributeValue):
+    Some PDFKit elements don't respond to `accessibilityAttributeValue`,
+    so before calling that selector first check to see if the given `element` responds
+    to an attribute-specific selector (like `accessibilityRole`).
+    
+    LayoutTests:
+    
+    Add a test ensuring the PDF accessibility tree of PDFs loaded via
+    `<embed>` elements is accessible.
+    
+    * accessibility/mac/basic-embed-pdf-accessibility-expected.txt: Added.
+    * accessibility/mac/basic-embed-pdf-accessibility.html: Added.
+    * accessibility/resources/simple-webkit-pages.pdf: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282358 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-13  Tyler Wilcock  <tyler_w@apple.com>
+
+            AX: Make PDFs loaded via <embed> accessible
+            https://bugs.webkit.org/show_bug.cgi?id=229556
+
+            Reviewed by Chris Fleizach and Andres Gonzalez.
+
+            Add a test ensuring the PDF accessibility tree of PDFs loaded via
+            `<embed>` elements is accessible.
+
+            * accessibility/mac/basic-embed-pdf-accessibility-expected.txt: Added.
+            * accessibility/mac/basic-embed-pdf-accessibility.html: Added.
+            * accessibility/resources/simple-webkit-pages.pdf: Added.
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282045. rdar://problem/83429674
 
     REGRESSION(r275515): pointer-events:none may get stuck in LFC runs

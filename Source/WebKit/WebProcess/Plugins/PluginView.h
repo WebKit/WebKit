@@ -87,7 +87,8 @@ public:
     void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates);
     bool sendComplexTextInput(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return m_plugin->pdfDocumentForPrinting(); }
-    NSObject *accessibilityObject() const;
+    id accessibilityHitTest(const WebCore::IntPoint& point) const override { return m_plugin->accessibilityHitTest(point); }
+    id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
 #endif
 
