@@ -323,7 +323,12 @@ size_t size(Kind kind)
 
 size_t footprint(Kind kind)
 {
+#if BUSE(LIBPAS)
+    BUNUSED(kind);
+    return 0;
+#else
     return PerProcess<PerHeapKind<Heap>>::get()->at(heapKind(kind)).footprint();
+#endif
 }
 
 } // namespace Gigacage
