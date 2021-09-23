@@ -91,6 +91,7 @@ private:
 
     void paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
+    void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
     void paintTextFieldDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     void paintTextAreaDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
