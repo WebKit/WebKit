@@ -1,3 +1,19 @@
+2021-09-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        Improve the handling of CompositeEditCommand::splitTreeToNode() return values
+        https://bugs.webkit.org/show_bug.cgi?id=229470
+
+        Reviewed by Darin Adler.
+
+        splitTreeToNode() might return nullptr because, among other things, it might insert/remove nodes in
+        the DOM tree. It's well known that by doing so we're allowing the execution of arbitrary scripts
+        (see didFinishInsertingNode() for example). This means that there is a possibility that the node
+        that it's being splitted is no longer part of the DOM tree by the time splitTreeToNode() returns.
+        That's why we should bail out in those cases.
+
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange):
+
 2021-09-22  Jean-Yves Avenard  <jya@apple.com>
 
         Make SharedBuffer inherit from ThreadSafeRefCounted
