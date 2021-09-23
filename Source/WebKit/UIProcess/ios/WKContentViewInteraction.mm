@@ -8753,6 +8753,14 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     [self _removeContainerForContextMenuHintPreviews];
 }
 
+- (void)presentContextMenu:(UIContextMenuInteraction *)contextMenuInteraction atLocation:(CGPoint) location
+{
+    if (!self.window)
+        return;
+
+    [contextMenuInteraction _presentMenuAtLocation:location];
+}
+
 #endif // USE(UICONTEXTMENU)
 
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
@@ -10445,7 +10453,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
             [strongSelf _updateContextMenuForMachineReadableCodeForImageAnalysis:result];
 #endif // ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
             strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
-            [strongSelf->_contextMenuInteraction _presentMenuAtLocation:location];
+            [strongSelf presentContextMenu:strongSelf->_contextMenuInteraction.get() atLocation:location];
 #else
             UNUSED_PARAM(location);
 #endif // USE(UICONTEXTMENU)

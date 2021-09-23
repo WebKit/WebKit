@@ -717,7 +717,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
 - (void)showSelectPicker
 {
     [self ensureContextMenuInteraction];
-    [_selectContextMenuInteraction _presentMenuAtLocation:_interactionPoint];
+    [_view presentContextMenu:_selectContextMenuInteraction.get() atLocation:_interactionPoint];
 }
 
 #endif // USE(UICONTEXTMENU)
