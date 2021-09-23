@@ -175,7 +175,7 @@ ExceptionOr<std::optional<InspectorAuditAccessibilityObject::ComputedProperties>
             computedProperties.focused = axObject->isFocused();
 
         computedProperties.headingLevel = axObject->headingLevel();
-        computedProperties.hidden = axObject->isAXHidden() || axObject->isDOMHidden();
+        computedProperties.hidden = axObject->isHidden();
         computedProperties.hierarchicalLevel = axObject->hierarchicalLevel();
         computedProperties.ignored = axObject->accessibilityIsIgnored();
         computedProperties.ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();

@@ -2117,7 +2117,7 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
             else // Future versions of ARIA may allow additional truthy values. Ex. format, order, or size.
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::True;
             
-            if (axObject->isAXHidden() || axObject->isDOMHidden())
+            if (axObject->isHidden())
                 hidden = true;
             
             label = axObject->computedLabel();
