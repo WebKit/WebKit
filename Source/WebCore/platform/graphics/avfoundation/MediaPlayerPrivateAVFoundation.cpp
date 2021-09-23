@@ -136,6 +136,7 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
         break;
 
     case MediaRenderingToLayer:
+        destroyContextVideoRenderer();
         createVideoLayer();
         break;
     }
