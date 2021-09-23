@@ -1,3 +1,13 @@
+2021-09-23  Tim Horton  <timothy_horton@apple.com>
+
+        shouldAllowPictureInPictureMediaPlayback should use WebCore's linkedOnOrAfter()
+        https://bugs.webkit.org/show_bug.cgi?id=230674
+
+        Reviewed by Simon Fraser.
+
+        * platform/cocoa/VersionChecks.h:
+        Remove the unused `FirstWithNetworkCache` version, and add one for PIP.
+
 2021-09-23  Tim Nguyen  <ntim@apple.com>
 
         AX: Stop exposing isInert & ignoredFromModalPresence in AXCoreObject & AXIsolatedObject

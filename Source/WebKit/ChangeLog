@@ -1,3 +1,14 @@
+2021-09-23  Tim Horton  <timothy_horton@apple.com>
+
+        shouldAllowPictureInPictureMediaPlayback should use WebCore's linkedOnOrAfter()
+        https://bugs.webkit.org/show_bug.cgi?id=230674
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldAllowPictureInPictureMediaPlayback):
+        Adopt the WebCore API (which supports overrides for Safari and for testing).
+
 2021-09-23  Brent Fulgham  <bfulgham@apple.com>
 
         Remove XSS Auditor: Part 3 (Deprecate API)
