@@ -642,6 +642,7 @@ private:
     bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
     bool isAXHidden() const override;
     bool isDOMHidden() const override;
+    bool isInert() const override;
     bool isHidden() const override;
     void overrideAttachmentParent(AXCoreObject* parent) override;
     bool accessibilityIgnoreAttachment() const override;

@@ -700,7 +700,8 @@ public:
     // Visibility.
     bool isAXHidden() const override;
     bool isDOMHidden() const override;
-    bool isHidden() const override { return isAXHidden() || isDOMHidden(); }
+    bool isInert() const override;
+    bool isHidden() const override { return isAXHidden() || isDOMHidden() || isInert(); }
 
 #if PLATFORM(COCOA)
     void overrideAttachmentParent(AXCoreObject* parent) override;

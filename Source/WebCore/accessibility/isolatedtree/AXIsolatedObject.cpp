@@ -2317,6 +2317,12 @@ bool AXIsolatedObject::isDOMHidden() const
     return false;
 }
 
+bool AXIsolatedObject::isInert() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool AXIsolatedObject::isHidden() const
 {
     ASSERT_NOT_REACHED();

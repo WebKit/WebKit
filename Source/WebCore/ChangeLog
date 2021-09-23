@@ -1,5 +1,27 @@
 2021-09-23  Tim Nguyen  <ntim@apple.com>
 
+        AX: Split out isInert from isAXHidden on AccessibilityObject
+        https://bugs.webkit.org/show_bug.cgi?id=230680
+
+        Reviewed by Antti Koivisto.
+
+        Reasons to do this are:
+        - Naming of isAXHidden is a bit of a lie
+        - We don't want to inherit inert state from parent to child like we do for aria-hidden, especially
+        in the document is blocked by modal dialog case, where the modal should be interactable unlike its ancestors/siblings.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAXHidden const):
+        (WebCore::AccessibilityObject::isInert const):
+        (WebCore::AccessibilityObject::defaultObjectInclusion const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::isInert const):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
+2021-09-23  Tim Nguyen  <ntim@apple.com>
+
         Replace `axObject->isAXHidden() || axObject->isDOMHidden()` with `axObject->isHidden()`
         https://bugs.webkit.org/show_bug.cgi?id=230678
 

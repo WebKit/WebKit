@@ -1438,6 +1438,7 @@ public:
     // Visibility.
     virtual bool isAXHidden() const = 0;
     virtual bool isDOMHidden() const = 0;
+    virtual bool isInert() const = 0;
     virtual bool isHidden() const = 0;
 
 #if ENABLE(ACCESSIBILITY)

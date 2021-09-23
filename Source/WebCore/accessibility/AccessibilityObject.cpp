@@ -3227,9 +3227,6 @@ bool AccessibilityObject::accessibilityIsIgnoredByDefault() const
 // http://www.w3.org/TR/wai-aria/terms#def_hidden
 bool AccessibilityObject::isAXHidden() const
 {
-    if (node() && node()->isInert())
-        return true;
-
     if (isFocused())
         return false;
     
@@ -3248,6 +3245,11 @@ bool AccessibilityObject::isDOMHidden() const
     
     const RenderStyle& style = renderer->style();
     return style.display() == DisplayType::None || style.visibility() != Visibility::Visible;
+}
+
+bool AccessibilityObject::isInert() const
+{
+    return node() && node()->isInert();
 }
 
 bool AccessibilityObject::isShowingValidationMessage() const
@@ -3271,7 +3273,7 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
         return AccessibilityObjectInclusion::IgnoreObject;
     
-    if (ignoredFromModalPresence())
+    if (isInert() || ignoredFromModalPresence())
         return AccessibilityObjectInclusion::IgnoreObject;
     
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
