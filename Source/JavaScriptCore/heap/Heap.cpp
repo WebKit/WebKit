@@ -2767,7 +2767,7 @@ void Heap::addCoreConstraints()
             
             if (m_markListSet && m_markListSet->size()) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::ConservativeScan);
-                MarkedArgumentBuffer::markLists(visitor, *m_markListSet);
+                MarkedArgumentBufferBase::markLists(visitor, *m_markListSet);
             }
 
             {

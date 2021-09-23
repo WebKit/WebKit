@@ -1433,7 +1433,7 @@ JSValue NetscapePluginInstanceProxy::demarshalValue(JSGlobalObject* lexicalGloba
     return value;
 }
 
-void NetscapePluginInstanceProxy::demarshalValues(JSGlobalObject* lexicalGlobalObject, data_t valuesData, mach_msg_type_number_t valuesLength, MarkedArgumentBuffer& result)
+void NetscapePluginInstanceProxy::demarshalValues(JSGlobalObject* lexicalGlobalObject, data_t valuesData, mach_msg_type_number_t valuesLength, MarkedArgumentBufferBase& result)
 {
     RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytesNoCopy:valuesData length:valuesLength freeWhenDone:NO]);
 

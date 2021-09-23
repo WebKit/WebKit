@@ -1,3 +1,133 @@
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282707. rdar://problem/83429953
+
+    [JSC] Add fast property enumeration mode for JSON.stringify
+    https://bugs.webkit.org/show_bug.cgi?id=230393
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/json-stringify-object-modify.js: Added.
+    (shouldBe):
+    (throw.new.Error.let.object.hello.get inner):
+    (throw.new.Error):
+    (shouldBe.let.object.hello.get inner):
+    
+    Source/JavaScriptCore:
+    
+    We collected profiles and found several subtests are using JSON.stringify enough. And generated strings are many serialized leaf objects.
+    
+    This patch adds fast object property enumeration. When we know that source object meets some conditions, we can say that,
+    as long as structure is not changed, we can continue using property names and offset collected from the structure.
+    This way removes non observable [[Get]] operations to accelerate JSON.stringify performance for major object iteration cases.
+    
+    We also extend MarkedArgumentBuffer: introducing MarkedArgumentBufferWithSize which can take default inline capacity as a template
+    parameter. This is used in JSON.stringify to increase the buffer because now we also need to record structures in MarkedArgumentBuffer.
+    
+    This offers 0.4% improvement in Speedometer2 (EmberJS-TodoMVC, Vanilla-XXX, EmberJS-Debug-TodoMVC, they have enough amount of JSON.stringify
+    time).
+    
+    ----------------------------------------------------------------------------------------------------------------------------------
+    |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+    ----------------------------------------------------------------------------------------------------------------------------------
+    | Elm-TodoMVC                          |117.710000   |117.751667   |1.000354  | 0.883246                                         |
+    | VueJS-TodoMVC                        |24.500000    |24.311667    |0.992313  | 0.365130                                         |
+    | EmberJS-TodoMVC                      |126.646667   |125.738333   |0.992828  | 0.002587 (significant)                           |
+    | BackboneJS-TodoMVC                   |47.873333    |47.911667    |1.000801  | 0.762509                                         |
+    | Preact-TodoMVC                       |17.020000    |17.070000    |1.002938  | 0.786799                                         |
+    | AngularJS-TodoMVC                    |129.856667   |129.353333   |0.996124  | 0.177632                                         |
+    | Vanilla-ES2015-TodoMVC               |61.698333    |61.120000    |0.990626  | 0.000003 (significant)                           |
+    | Inferno-TodoMVC                      |62.840000    |62.496667    |0.994536  | 0.312340                                         |
+    | Flight-TodoMVC                       |77.095000    |76.936667    |0.997946  | 0.702724                                         |
+    | Angular2-TypeScript-TodoMVC          |39.740000    |39.191667    |0.986202  | 0.053485                                         |
+    | VanillaJS-TodoMVC                    |49.008333    |48.346667    |0.986499  | 0.000638 (significant)                           |
+    | jQuery-TodoMVC                       |216.785000   |217.188333   |1.001861  | 0.270747                                         |
+    | EmberJS-Debug-TodoMVC                |344.230000   |342.993333   |0.996407  | 0.012262 (significant)                           |
+    | React-TodoMVC                        |85.461667    |85.411667    |0.999415  | 0.758049                                         |
+    | React-Redux-TodoMVC                  |140.681667   |140.640000   |0.999704  | 0.871277                                         |
+    | Vanilla-ES2015-Babel-Webpack-TodoMVC |59.928333    |59.351667    |0.990377  | 0.000000 (significant)                           |
+    ----------------------------------------------------------------------------------------------------------------------------------
+    a mean = 264.40650
+    b mean = 265.51533
+    pValue = 0.0005567357
+    (Bigger means are better.)
+    1.004 times better
+    Results ARE significant
+    
+    * heap/Heap.cpp:
+    (JSC::Heap::addCoreConstraints):
+    * heap/Heap.h:
+    * heap/HeapInlines.h:
+    * runtime/ArgList.cpp:
+    (JSC::MarkedArgumentBufferBase::addMarkSet):
+    (JSC::MarkedArgumentBufferBase::markLists):
+    (JSC::MarkedArgumentBufferBase::slowEnsureCapacity):
+    (JSC::MarkedArgumentBufferBase::expandCapacity):
+    (JSC::MarkedArgumentBufferBase::slowAppend):
+    (JSC::MarkedArgumentBuffer::addMarkSet): Deleted.
+    (JSC::MarkedArgumentBuffer::markLists): Deleted.
+    (JSC::MarkedArgumentBuffer::slowEnsureCapacity): Deleted.
+    (JSC::MarkedArgumentBuffer::expandCapacity): Deleted.
+    (JSC::MarkedArgumentBuffer::slowAppend): Deleted.
+    * runtime/ArgList.h:
+    (JSC::MarkedArgumentBufferWithSize::MarkedArgumentBufferWithSize):
+    (JSC::MarkedArgumentBuffer::MarkedArgumentBuffer): Deleted.
+    (JSC::MarkedArgumentBuffer::~MarkedArgumentBuffer): Deleted.
+    (JSC::MarkedArgumentBuffer::size const): Deleted.
+    (JSC::MarkedArgumentBuffer::isEmpty const): Deleted.
+    (JSC::MarkedArgumentBuffer::at const): Deleted.
+    (JSC::MarkedArgumentBuffer::clear): Deleted.
+    (JSC::MarkedArgumentBuffer::appendWithAction): Deleted.
+    (JSC::MarkedArgumentBuffer::append): Deleted.
+    (JSC::MarkedArgumentBuffer::appendWithCrashOnOverflow): Deleted.
+    (JSC::MarkedArgumentBuffer::removeLast): Deleted.
+    (JSC::MarkedArgumentBuffer::last): Deleted.
+    (JSC::MarkedArgumentBuffer::takeLast): Deleted.
+    (JSC::MarkedArgumentBuffer::ensureCapacity): Deleted.
+    (JSC::MarkedArgumentBuffer::hasOverflowed): Deleted.
+    (JSC::MarkedArgumentBuffer::overflowCheckNotNeeded): Deleted.
+    (JSC::MarkedArgumentBuffer::fill): Deleted.
+    (JSC::MarkedArgumentBuffer::slotFor const): Deleted.
+    (JSC::MarkedArgumentBuffer::mallocBase): Deleted.
+    (JSC::MarkedArgumentBuffer::setNeedsOverflowCheck): Deleted.
+    (JSC::MarkedArgumentBuffer::clearNeedsOverflowCheck): Deleted.
+    * runtime/JSONObject.cpp:
+    (JSC::Stringifier::Holder::hasFastObjectProperties const):
+    (JSC::Stringifier::appendStringifiedValue):
+    (JSC::Stringifier::Holder::Holder):
+    (JSC::Stringifier::Holder::appendNextProperty):
+    * runtime/ObjectConstructorInlines.h:
+    (JSC::canPerformFastPropertyEnumerationForJSONStringify):
+    
+    Source/WebCore:
+    
+    * Modules/webaudio/AudioWorkletProcessor.cpp:
+    (WebCore::AudioWorkletProcessor::buildJSArguments):
+    * Modules/webaudio/AudioWorkletProcessor.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+    * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+    (WebKit::NetscapePluginInstanceProxy::demarshalValues):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282707 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Add fast property enumeration mode for JSON.stringify
+            https://bugs.webkit.org/show_bug.cgi?id=230393
+
+            Reviewed by Mark Lam.
+
+            * stress/json-stringify-object-modify.js: Added.
+            (shouldBe):
+            (throw.new.Error.let.object.hello.get inner):
+            (throw.new.Error):
+            (shouldBe.let.object.hello.get inner):
+
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282239. rdar://problem/83183776

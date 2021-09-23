@@ -38,7 +38,7 @@
 
 namespace JSC {
 class JSArray;
-class MarkedArgumentBuffer;
+class MarkedArgumentBufferBase;
 }
 
 namespace WebCore {
@@ -67,7 +67,7 @@ public:
 
 private:
     explicit AudioWorkletProcessor(const AudioWorkletProcessorConstructionData&);
-    void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBuffer&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
+    void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBufferBase&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
     String m_name;
     Ref<MessagePort> m_port;
