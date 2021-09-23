@@ -1769,12 +1769,19 @@ static JSArray* availableNumberingSystems(JSGlobalObject* globalObject)
     elements.reserveInitialCapacity(count);
     for (int32_t index = 0; index < count; ++index) {
         int32_t length = 0;
-        const char* numberingSystem = uenum_next(enumeration.get(), &length, &status);
+        const char* name = uenum_next(enumeration.get(), &length, &status);
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "failed to enumerate available numbering systems"_s);
             return { };
         }
-        elements.constructAndAppend(numberingSystem, length);
+        auto numberingSystem = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_openByName(name, &status));
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to enumerate available numbering systems"_s);
+            return { };
+        }
+        if (unumsys_isAlgorithmic(numberingSystem.get()))
+            continue;
+        elements.constructAndAppend(name, length);
     }
 
     // The AvailableNumberingSystems abstract operation returns a List, ordered as if an Array of the same

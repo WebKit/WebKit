@@ -849,15 +849,6 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
 test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
   default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
   strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
-test/intl402/Intl/supportedValuesOf/numberingSystems-accepted-by-DateTimeFormat.js:
-  default: 'Test262Error: armn is supported by DateTimeFormat Expected SameValue(«latn», «armn») to be true'
-  strict mode: 'Test262Error: armn is supported by DateTimeFormat Expected SameValue(«latn», «armn») to be true'
-test/intl402/Intl/supportedValuesOf/numberingSystems-accepted-by-NumberFormat.js:
-  default: 'Test262Error: armn is supported by NumberFormat Expected SameValue(«latn», «armn») to be true'
-  strict mode: 'Test262Error: armn is supported by NumberFormat Expected SameValue(«latn», «armn») to be true'
-test/intl402/Intl/supportedValuesOf/numberingSystems-accepted-by-RelativeTimeFormat.js:
-  default: 'Test262Error: armn is supported by RelativeTimeFormat Expected SameValue(«latn», «armn») to be true'
-  strict mode: 'Test262Error: armn is supported by RelativeTimeFormat Expected SameValue(«latn», «armn») to be true'
 test/intl402/Locale/extensions-grandfathered.js:
   default: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«fr-Cyrl-FR-u-nu-latn-x-cel-gaulish», «fr-Cyrl-FR-u-nu-latn») to be true'
