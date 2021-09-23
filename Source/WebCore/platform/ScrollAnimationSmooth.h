@@ -73,3 +73,4 @@ private:
 
 } // namespace WebCore
 
+SPECIALIZE_TYPE_TRAITS_SCROLL_ANIMATION(WebCore::ScrollAnimationSmooth, type() == WebCore::ScrollAnimation::Type::Smooth)

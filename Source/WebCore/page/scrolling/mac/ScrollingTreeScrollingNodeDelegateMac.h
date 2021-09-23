@@ -82,6 +82,9 @@ private:
     RectEdges<bool> edgePinnedState() const final;
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;
+    void setScrollBehaviorStatus(ScrollBehaviorStatus status) final { m_scrollBehaviorStatus = status; }
+    ScrollBehaviorStatus scrollBehaviorStatus() const final { return m_scrollBehaviorStatus; }
+
     bool shouldRubberBandInDirection(ScrollDirection) const final;
     void immediateScrollBy(const FloatSize&) final;
     void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
@@ -93,7 +96,6 @@ private:
     void scrollControllerAnimationTimerFired();
 
     FloatPoint scrollOffset() const final;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) final;
     float pageScaleFactor() const final;
     void willStartScrollSnapAnimation() final;
     void didStopScrollSnapAnimation() final;
@@ -108,6 +110,7 @@ private:
 
     std::unique_ptr<RunLoop::Timer<ScrollingTreeScrollingNodeDelegateMac>> m_scrollControllerAnimationTimer;
 
+    ScrollBehaviorStatus m_scrollBehaviorStatus { ScrollBehaviorStatus::NotInAnimation };
     bool m_inMomentumPhase { false };
 };
 

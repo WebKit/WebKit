@@ -33,7 +33,6 @@
 
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
-#include "ScrollAnimation.h"
 #include "ScrollingEffectsController.h"
 #include "Timer.h"
 #include "WheelEventTestMonitor.h"
@@ -52,7 +51,7 @@ class WheelEventTestMonitor;
 
 class ScrollingEffectsControllerTimer;
 
-class ScrollAnimator : private ScrollingEffectsControllerClient, public ScrollAnimationClient {
+class ScrollAnimator : private ScrollingEffectsControllerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<ScrollAnimator> create(ScrollableArea&);
@@ -78,7 +77,7 @@ public:
     virtual bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     bool scrollToPositionWithAnimation(const FloatPoint&);
 
-    void retargetRunningAnimation(const FloatPoint&);
+    void retargetRunningAnimation(const FloatPoint& newPosition);
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
 
@@ -98,7 +97,7 @@ public:
     virtual bool isRubberBandInProgress() const { return false; }
     virtual bool isScrollSnapInProgress() const { return false; }
 
-    void contentsSizeChanged() const;
+    void contentsSizeChanged();
 
     enum NotifyScrollableArea : bool {
         No, Yes
@@ -122,9 +121,6 @@ public:
 protected:
     virtual bool platformAllowsScrollAnimation() const { return true; }
 
-    // ScrollAnimationClient
-    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset) override;
-
 private:
     void notifyPositionChanged(const FloatSize& delta);
 
@@ -134,6 +130,7 @@ private:
     FloatPoint offsetFromPosition(const FloatPoint& position) const;
     FloatPoint positionFromOffset(const FloatPoint& offset) const;
 
+    FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
     // ScrollingEffectsControllerClient.
     std::unique_ptr<ScrollingEffectsControllerTimer> createTimer(Function<void()>&&) final;
@@ -141,12 +138,18 @@ private:
     void stopAnimationCallback(ScrollingEffectsController&) final;
 
     FloatPoint scrollOffset() const final;
-    void immediateScrollOnAxis(ScrollEventAxis, float delta) final;
     float pageScaleFactor() const final;
     ScrollExtents scrollExtents() const final;
 
     bool allowsHorizontalScrolling() const final;
     bool allowsVerticalScrolling() const final;
+
+    void setScrollBehaviorStatus(ScrollBehaviorStatus) final;
+    ScrollBehaviorStatus scrollBehaviorStatus() const final;
+
+    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
+    void immediateScrollBy(const FloatSize&) final;
+    void adjustScrollPositionToBoundsIfNecessary() final;
 
 #if HAVE(RUBBER_BANDING)
     IntSize stretchAmount() const final;
@@ -159,10 +162,6 @@ private:
     void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const final;
 #endif
 
-    // ScrollAnimationClient
-    void scrollAnimationDidEnd(ScrollAnimation&) final;
-    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
-
     static FloatSize deltaFromStep(ScrollbarOrientation, float step, float multiplier);
 
 protected:
@@ -172,7 +171,6 @@ protected:
     Timer m_scrollControllerAnimationTimer;
     FloatPoint m_currentPosition;
 
-    std::unique_ptr<ScrollAnimationSmooth> m_scrollAnimation;
     std::unique_ptr<KeyboardScrollingAnimator> m_keyboardScrollingAnimator;
 };
 

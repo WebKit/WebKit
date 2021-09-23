@@ -379,18 +379,6 @@ FloatPoint ScrollingTreeScrollingNodeDelegateMac::scrollOffset() const
     return ScrollableArea::scrollOffsetFromPosition(currentScrollPosition(), scrollOrigin());
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::immediateScrollOnAxis(ScrollEventAxis axis, float delta)
-{
-    const FloatPoint& scrollPosition = currentScrollPosition();
-    FloatPoint change;
-    if (axis == ScrollEventAxis::Horizontal)
-        change = FloatPoint(scrollPosition.x() + delta, scrollPosition.y());
-    else
-        change = FloatPoint(scrollPosition.x(), scrollPosition.y() + delta);
-
-    immediateScrollBy(change - scrollPosition);
-}
-
 float ScrollingTreeScrollingNodeDelegateMac::pageScaleFactor() const
 {
     // FIXME: What should this return for non-root frames, and overflow?

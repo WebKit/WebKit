@@ -31,26 +31,17 @@
 #pragma once
 
 #include "ScrollAnimator.h"
-#include "Timer.h"
 
 namespace WebCore {
 
 class ScrollAnimation;
-class ScrollAnimationKinetic;
 
 class ScrollAnimatorGeneric final : public ScrollAnimator {
 public:
     explicit ScrollAnimatorGeneric(ScrollableArea&);
     virtual ~ScrollAnimatorGeneric();
 
-private:
-    bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping) final;
     bool handleWheelEvent(const PlatformWheelEvent&) final;
-
-    // ScrollAnimationClient
-    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) final;
-
-    std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
 };
 
 } // namespace WebCore

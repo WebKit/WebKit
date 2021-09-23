@@ -114,7 +114,7 @@ bool ScrollAnimationKinetic::PerAxisData::animateScroll(Seconds timeDelta)
 }
 
 ScrollAnimationKinetic::ScrollAnimationKinetic(ScrollAnimationClient& client)
-    : ScrollAnimation(client)
+    : ScrollAnimation(Type::Kinetic, client)
     , m_animationTimer(RunLoop::current(), this, &ScrollAnimationKinetic::animationTimerFired)
 {
 #if USE(GLIB_EVENT_LOOP)

@@ -47,10 +47,19 @@ public:
 class ScrollAnimation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ScrollAnimation(ScrollAnimationClient& client)
+    enum class Type {
+        Smooth,
+        Kinetic,
+        Momentum,
+    };
+
+    ScrollAnimation(Type animationType, ScrollAnimationClient& client)
         : m_client(client)
+        , m_animationType(animationType)
     { }
     virtual ~ScrollAnimation() = default;
+    
+    Type type() const { return m_animationType; }
 
     virtual bool retargetActiveAnimation(const FloatPoint& newDestinationOffset) = 0;
     virtual void stop() = 0;
@@ -62,6 +71,12 @@ public:
 
 protected:
     ScrollAnimationClient& m_client;
+    const Type m_animationType;
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_SCROLL_ANIMATION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+    static bool isType(const WebCore::ScrollAnimation& scrollAnimation) { return scrollAnimation.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

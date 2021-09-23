@@ -1,3 +1,89 @@
+2021-09-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Move the ScrollAnimationSmooth from ScrollAnimator into ScrollingEffectsController
+        https://bugs.webkit.org/show_bug.cgi?id=230720
+
+        Reviewed by Tim Horton.
+
+        ScrollingEffectsController is where all the ScrollAnimations will live. The first
+        step is to move ScrollAnimator's m_scrollAnimation there; this is used for
+        keyboard scrolling, and CSS smooth scrolling.
+
+        ScrollingEffectsController becomes a ScrollAnimationClient (and ScrollAnimator stops
+        being one), so needs a little bit more glue code.
+
+        Add type traits for ScrollAnimator subclasses because we need to downcast<> them
+        here and in future patches.
+
+        Move some code from ScrollAnimatorMac into ScrollAnimator since it's not platform
+        specific.
+
+        ScrollAnimatorGeneric is almost entirely gutted, and code pushed into ScrollingEffectsController.
+        Make a ScrollAnimationKinetic in ScrollingEffectsController for this code path.
+
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::immediateScrollOnAxis): Deleted.
+        * platform/ScrollAnimation.h:
+        (WebCore::ScrollAnimation::ScrollAnimation):
+        (WebCore::ScrollAnimation::type const):
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::ScrollAnimationKinetic):
+        * platform/ScrollAnimationKinetic.h:
+        * platform/ScrollAnimationMomentum.cpp:
+        (WebCore::ScrollAnimationMomentum::ScrollAnimationMomentum):
+        * platform/ScrollAnimationMomentum.h:
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        * platform/ScrollAnimationSmooth.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::scrollToPositionWithoutAnimation):
+        (WebCore::ScrollAnimator::scrollToPositionWithAnimation):
+        (WebCore::ScrollAnimator::retargetRunningAnimation):
+        (WebCore::ScrollAnimator::setScrollBehaviorStatus):
+        (WebCore::ScrollAnimator::scrollBehaviorStatus const):
+        (WebCore::ScrollAnimator::adjustScrollPositionToBoundsIfNecessary):
+        (WebCore::ScrollAnimator::adjustScrollPositionIfNecessary const):
+        (WebCore::ScrollAnimator::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollAnimator::immediateScrollBy):
+        (WebCore::ScrollAnimator::cancelAnimations):
+        (WebCore::ScrollAnimator::contentsSizeChanged):
+        (WebCore::ScrollAnimator::immediateScrollOnAxis): Deleted.
+        (WebCore::ScrollAnimator::contentsSizeChanged const): Deleted.
+        (WebCore::ScrollAnimator::scrollAnimationDidUpdate): Deleted.
+        (WebCore::ScrollAnimator::scrollAnimationDidEnd): Deleted.
+        (WebCore::ScrollAnimator::scrollExtentsForAnimation): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/ScrollingEffectsController.cpp:
+        (WebCore::ScrollingEffectsController::startAnimatedScrollToDestination):
+        (WebCore::ScrollingEffectsController::regargetAnimatedScroll):
+        (WebCore::ScrollingEffectsController::stopAnimatedScroll):
+        (WebCore::ScrollingEffectsController::processWheelEventForKineticScrolling):
+        (WebCore::ScrollingEffectsController::contentsSizeChanged):
+        (WebCore::ScrollingEffectsController::activeScrollSnapIndexForAxis const):
+        (WebCore::ScrollingEffectsController::scrollToOffsetForAnimation):
+        (WebCore::ScrollingEffectsController::scrollAnimationDidUpdate):
+        (WebCore::ScrollingEffectsController::scrollAnimationDidEnd):
+        (WebCore::ScrollingEffectsController::scrollExtentsForAnimation):
+        * platform/ScrollingEffectsController.h:
+        (WebCore::ScrollingEffectsControllerClient::rubberBandingStateChanged):
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::ScrollAnimatorGeneric):
+        (WebCore::ScrollAnimatorGeneric::handleWheelEvent):
+        (WebCore::ScrollAnimatorGeneric::scrollToPositionWithoutAnimation): Deleted.
+        (WebCore::ScrollAnimatorGeneric::scrollAnimationDidUpdate): Deleted.
+        * platform/generic/ScrollAnimatorGeneric.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionIfNecessary const): Deleted.
+        (WebCore::ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary): Deleted.
+        (WebCore::ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints): Deleted.
+        (WebCore::ScrollAnimatorMac::immediateScrollBy): Deleted.
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::updateScrollSnapAnimatingState):
+
 2021-09-23  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement atan, acos, asin, atan2 calc functions

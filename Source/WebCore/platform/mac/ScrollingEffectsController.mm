@@ -757,11 +757,10 @@ void ScrollingEffectsController::updateScrollSnapAnimatingState(MonotonicTime cu
 
     bool isAnimationComplete;
     auto animationOffset = m_scrollSnapState->currentAnimatedScrollOffset(currentTime, isAnimationComplete);
-    auto currentOffset = m_client.scrollOffset();
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " updateScrollSnapAnimatingState - isAnimationComplete " << isAnimationComplete << " animationOffset " << animationOffset << " (main thread " << isMainThread() << ")");
 
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " updateScrollSnapAnimatingState - isAnimationComplete " << isAnimationComplete << " currentOffset " << currentOffset << " (main thread " << isMainThread() << ")");
+    scrollToOffsetForAnimation(animationOffset);
 
-    m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(animationOffset.x() - currentOffset.x(), animationOffset.y() - currentOffset.y()));
     if (isAnimationComplete) {
         m_scrollSnapState->transitionToDestinationReachedState();
         stopScrollSnapAnimation();

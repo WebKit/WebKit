@@ -30,6 +30,8 @@
 #include "LayoutSize.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollAnimationKinetic.h"
+#include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
 #include "WheelEventTestMonitor.h"
 #include <wtf/text/TextStream.h>
@@ -76,6 +78,59 @@ void ScrollingEffectsController::stopKeyboardScrolling()
     setIsAnimatingKeyboardScrolling(false);
 }
 
+bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset)
+{
+    if (m_currentAnimation)
+        m_currentAnimation->stop();
+
+    m_currentAnimation = makeUnique<ScrollAnimationSmooth>(*this);
+    return downcast<ScrollAnimationSmooth>(*m_currentAnimation).startAnimatedScrollToDestination(startOffset, destinationOffset);
+}
+
+bool ScrollingEffectsController::regargetAnimatedScroll(FloatPoint newDestinationOffset)
+{
+    if (!is<ScrollAnimationSmooth>(m_currentAnimation.get()))
+        return false;
+    
+    ASSERT(m_currentAnimation->isActive());
+    return downcast<ScrollAnimationSmooth>(*m_currentAnimation).retargetActiveAnimation(newDestinationOffset);
+}
+
+void ScrollingEffectsController::stopAnimatedScroll()
+{
+    if (m_currentAnimation)
+        m_currentAnimation->stop();
+}
+
+bool ScrollingEffectsController::processWheelEventForKineticScrolling(const PlatformWheelEvent& event)
+{
+#if ENABLE(KINETIC_SCROLLING)
+    if (m_currentAnimation && !is<ScrollAnimationKinetic>(m_currentAnimation.get())) {
+        m_currentAnimation->stop();
+        m_currentAnimation = nullptr;
+    }
+
+    if (!m_currentAnimation)
+        m_currentAnimation = WTF::makeUnique<ScrollAnimationKinetic>(*this);
+
+    auto& kineticAnimation = downcast<ScrollAnimationKinetic>(*m_currentAnimation);
+    kineticAnimation.appendToScrollHistory(event);
+
+    if (event.isEndOfNonMomentumScroll()) {
+        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), kineticAnimation.computeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
+        return true;
+    }
+    if (event.isTransitioningToMomentumScroll()) {
+        kineticAnimation.clearScrollHistory();
+        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), event.swipeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
+        return true;
+    }
+#else
+    UNUSED_PARAM(event);
+#endif
+    return false;
+}
+
 void ScrollingEffectsController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)
 {
     if (isAnimatingRubberBand == m_isAnimatingRubberBand)
@@ -101,6 +156,12 @@ void ScrollingEffectsController::setIsAnimatingKeyboardScrolling(bool isAnimatin
 
     m_isAnimatingKeyboardScrolling = isAnimatingKeyboardScrolling;
     startOrStopAnimationCallbacks();
+}
+
+void ScrollingEffectsController::contentsSizeChanged()
+{
+    if (m_currentAnimation)
+        m_currentAnimation->updateScrollExtents();
 }
 
 bool ScrollingEffectsController::usesScrollSnap() const
@@ -136,6 +197,7 @@ std::optional<unsigned> ScrollingEffectsController::activeScrollSnapIndexForAxis
 {
     if (!usesScrollSnap())
         return std::nullopt;
+
     return m_scrollSnapState->activeSnapIndexForAxis(axis);
 }
 
@@ -182,6 +244,28 @@ void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(Monotonic
         return;
 
     m_client.keyboardScrollingAnimator()->updateKeyboardScrollPosition(currentTime);
+}
+
+void ScrollingEffectsController::scrollToOffsetForAnimation(const FloatPoint& scrollOffset)
+{
+    auto currentOffset = m_client.scrollOffset();
+    auto scrollDelta = scrollOffset - currentOffset;
+    m_client.immediateScrollBy(scrollDelta);
+}
+
+void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset)
+{
+    scrollToOffsetForAnimation(currentOffset);
+}
+
+void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation&)
+{
+    m_client.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
+}
+
+ScrollExtents ScrollingEffectsController::scrollExtentsForAnimation(ScrollAnimation&)
+{
+    return m_client.scrollExtents();
 }
 
 // Currently, only Mac supports momentum srolling-based scrollsnapping and rubber banding

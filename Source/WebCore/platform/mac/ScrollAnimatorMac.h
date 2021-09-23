@@ -50,8 +50,6 @@ private:
 
     void handleWheelEventPhase(PlatformWheelEventPhase) final;
     
-    FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
-
     bool isUserScrollInProgress() const final;
     bool isRubberBandInProgress() const final;
     bool isScrollSnapInProgress() const final;
@@ -62,9 +60,6 @@ private:
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;
     bool allowsVerticalStretching(const PlatformWheelEvent&) const final;
     bool shouldRubberBandInDirection(ScrollDirection) const final;
-    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) final;
-    void immediateScrollBy(const FloatSize&) final;
-    void adjustScrollPositionToBoundsIfNecessary() final;
 };
 
 } // namespace WebCore

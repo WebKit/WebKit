@@ -29,6 +29,7 @@
 #include "FloatSize.h"
 
 #include "RectEdges.h"
+#include "ScrollAnimation.h"
 #include "ScrollSnapAnimatorState.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
@@ -80,6 +81,17 @@ public:
     virtual bool allowsHorizontalScrolling() const = 0;
     virtual bool allowsVerticalScrolling() const = 0;
 
+    // FIXME: Maybe ScrollBehaviorStatus should be stored on ScrollingEffectsController.
+    virtual void setScrollBehaviorStatus(ScrollBehaviorStatus) = 0;
+    virtual ScrollBehaviorStatus scrollBehaviorStatus() const = 0;
+
+    virtual void immediateScrollBy(const FloatSize&) = 0;
+    virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
+
+    // If the current scroll position is within the overhang area, this function will cause
+    // the page to scroll to the nearest boundary point.
+    virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
+
 #if HAVE(RUBBER_BANDING)
     virtual bool allowsHorizontalStretching(const PlatformWheelEvent&) const = 0;
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
@@ -92,40 +104,39 @@ public:
     virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
     // FIXME: use ScrollClamping to collapse these to one.
-    virtual void immediateScrollBy(const FloatSize&) = 0;
-    virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
-
     virtual void willStartRubberBandSnapAnimation() { }
     virtual void didStopRubberbandSnapAnimation() { }
 
     virtual void rubberBandingStateChanged(bool) { }
-
-    // If the current scroll position is within the overhang area, this function will cause
-    // the page to scroll to the nearest boundary point.
-    virtual void adjustScrollPositionToBoundsIfNecessary() = 0;
 #endif
 
     virtual void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
     virtual void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) const { /* Do nothing */ }
 
     virtual FloatPoint scrollOffset() const = 0;
-    virtual void immediateScrollOnAxis(ScrollEventAxis, float delta) = 0;
     virtual void willStartScrollSnapAnimation() { }
     virtual void didStopScrollSnapAnimation() { }
     virtual float pageScaleFactor() const = 0;
     virtual ScrollExtents scrollExtents() const = 0;
 };
 
-class ScrollingEffectsController {
+class ScrollingEffectsController : public ScrollAnimationClient {
     WTF_MAKE_NONCOPYABLE(ScrollingEffectsController);
 
 public:
     explicit ScrollingEffectsController(ScrollingEffectsControllerClient&);
-    ~ScrollingEffectsController();
+    virtual ~ScrollingEffectsController();
 
     bool usesScrollSnap() const;
     void stopAllTimers();
     void scrollPositionChanged();
+
+    bool startAnimatedScrollToDestination(FloatPoint startOffset, FloatPoint destinationOffset);
+    bool regargetAnimatedScroll(FloatPoint newDestinationOffset);
+    void stopAnimatedScroll();
+
+    // FIXME: Hack for ScrollAnimatorGeneric. Needs cleanup.
+    bool processWheelEventForKineticScrolling(const PlatformWheelEvent&);
 
     void beginKeyboardScrolling();
     void stopKeyboardScrolling();
@@ -134,6 +145,8 @@ public:
     void animationCallback(MonotonicTime);
 
     void updateGestureInProgressState(const PlatformWheelEvent&);
+    
+    void contentsSizeChanged();
 
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
@@ -162,11 +175,9 @@ public:
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
 
-#if HAVE(RUBBER_BANDING)
     void stopRubberbanding();
     bool isRubberBandInProgress() const;
     RectEdges<bool> rubberBandingEdges() const { return m_rubberBandingEdges; }
-#endif
 #endif
 
 private:
@@ -188,7 +199,6 @@ private:
     void startDeferringWheelEventTestCompletionDueToScrollSnapping();
     void stopDeferringWheelEventTestCompletionDueToScrollSnapping();
 
-#if HAVE(RUBBER_BANDING)
     void startRubberbandAnimation();
     void stopSnapRubberbandAnimation();
 
@@ -199,11 +209,19 @@ private:
     void updateRubberBandingState();
     void updateRubberBandingEdges(IntSize clientStretch);
 #endif
-#endif
 
     void startOrStopAnimationCallbacks();
+    void scrollToOffsetForAnimation(const FloatPoint& scrollOffset);
+
+    // ScrollAnimationClient
+    void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& /* currentOffset */) final;
+    void scrollAnimationDidEnd(ScrollAnimation&) final;
+    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&)  final;
 
     ScrollingEffectsControllerClient& m_client;
+
+    std::unique_ptr<ScrollAnimation> m_currentAnimation;
+
     std::unique_ptr<ScrollSnapAnimatorState> m_scrollSnapState;
     bool m_activeScrollSnapIndexDidChange { false };
 

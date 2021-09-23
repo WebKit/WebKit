@@ -31,10 +31,7 @@
 #include "config.h"
 #include "ScrollAnimatorGeneric.h"
 
-#include "ScrollAnimationKinetic.h"
-#include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
-#include "ScrollbarTheme.h"
 
 namespace WebCore {
 
@@ -45,50 +42,18 @@ std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollabl
 
 ScrollAnimatorGeneric::ScrollAnimatorGeneric(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
-    , m_kineticAnimation(makeUnique<ScrollAnimationKinetic>(*this))
 {
 }
 
 ScrollAnimatorGeneric::~ScrollAnimatorGeneric() = default;
 
-bool ScrollAnimatorGeneric::scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping clamping)
-{
-    m_kineticAnimation->stop();
-    return ScrollAnimator::scrollToPositionWithoutAnimation(position, clamping);
-}
-
+// FIXME: Push this into the base class so that ScrollAnimatorGeneric can be removed.
 bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
 {
-    m_kineticAnimation->stop();
-
-#if ENABLE(KINETIC_SCROLLING)
-    m_kineticAnimation->appendToScrollHistory(event);
-
-    if (event.isEndOfNonMomentumScroll()) {
-        m_kineticAnimation->startAnimatedScrollWithInitialVelocity(m_currentPosition, m_kineticAnimation->computeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
+    if (m_scrollController.processWheelEventForKineticScrolling(event))
         return true;
-    }
-    if (event.isTransitioningToMomentumScroll()) {
-        m_kineticAnimation->clearScrollHistory();
-        m_kineticAnimation->startAnimatedScrollWithInitialVelocity(m_currentPosition, event.swipeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
-        return true;
-    }
-#endif
 
     return ScrollAnimator::handleWheelEvent(event);
-}
-
-// FIXME: Can we just use the base class implementation?
-void ScrollAnimatorGeneric::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& position)
-{
-    if (&animation == m_kineticAnimation.get()) {
-        // FIXME: Clarify how animations interact. There should never be more than one active at a time.
-        m_scrollAnimation->stop();
-        setCurrentPosition(position, NotifyScrollableArea::Yes);
-        return;
-    }
-
-    ScrollAnimator::scrollAnimationDidUpdate(animation, position);
 }
 
 } // namespace WebCore

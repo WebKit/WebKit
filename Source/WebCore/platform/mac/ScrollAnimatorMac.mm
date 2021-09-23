@@ -73,26 +73,6 @@ static bool rubberBandingEnabledForSystem()
     return enabled;
 }
 
-FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& position) const
-{
-    if (!m_scrollableArea.constrainsScrollingToContentEdge())
-        return position;
-
-    return m_scrollableArea.constrainScrollPosition(ScrollPosition(position));
-}
-
-void ScrollAnimatorMac::adjustScrollPositionToBoundsIfNecessary()
-{
-    bool currentlyConstrainsToContentEdge = m_scrollableArea.constrainsScrollingToContentEdge();
-    m_scrollableArea.setConstrainsScrollingToContentEdge(true);
-
-    ScrollPosition currentScrollPosition = m_scrollableArea.scrollPosition();
-    ScrollPosition constrainedPosition = m_scrollableArea.constrainScrollPosition(currentScrollPosition);
-    immediateScrollBy(constrainedPosition - currentScrollPosition);
-
-    m_scrollableArea.setConstrainsScrollingToContentEdge(currentlyConstrainsToContentEdge);
-}
-
 bool ScrollAnimatorMac::isUserScrollInProgress() const
 {
     return m_scrollController.isUserScrollInProgress();
@@ -218,23 +198,6 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
 bool ScrollAnimatorMac::shouldRubberBandInDirection(ScrollDirection) const
 {
     return false;
-}
-
-void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& delta)
-{
-    m_scrollableArea.setConstrainsScrollingToContentEdge(false);
-    immediateScrollBy(delta);
-    m_scrollableArea.setConstrainsScrollingToContentEdge(true);
-}
-
-void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
-{
-    FloatPoint currentPosition = this->currentPosition();
-    FloatPoint newPosition = adjustScrollPositionIfNecessary(currentPosition + delta);
-    if (newPosition == currentPosition)
-        return;
-
-    setCurrentPosition(newPosition, NotifyScrollableArea::Yes);
 }
 
 bool ScrollAnimatorMac::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)

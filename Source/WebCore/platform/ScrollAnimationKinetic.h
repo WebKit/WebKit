@@ -61,6 +61,7 @@ public:
     ScrollAnimationKinetic(ScrollAnimationClient&);
     virtual ~ScrollAnimationKinetic();
 
+    // FIXME: Velocity should be a FloatSize.
     bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
 
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;
@@ -86,3 +87,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_SCROLL_ANIMATION(WebCore::ScrollAnimationKinetic, type() == WebCore::ScrollAnimation::Type::Kinetic)

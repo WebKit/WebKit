@@ -32,7 +32,7 @@
 namespace WebCore {
 
 ScrollAnimationMomentum::ScrollAnimationMomentum(ScrollAnimationClient& client)
-    : ScrollAnimation(client)
+    : ScrollAnimation(Type::Momentum, client)
 {
 }
 

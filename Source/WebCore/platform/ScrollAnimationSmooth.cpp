@@ -45,7 +45,7 @@ static constexpr Seconds minimumTimerInterval { 1_ms };
 static const Seconds maxAnimationDuration { 200_ms };
 
 ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)
-    : ScrollAnimation(client)
+    : ScrollAnimation(Type::Smooth, client)
     , m_animationTimer(RunLoop::current(), this, &ScrollAnimationSmooth::animationTimerFired)
     , m_easeInOutTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut))
 {
