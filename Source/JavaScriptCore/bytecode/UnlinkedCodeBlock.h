@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ArrayProfile.h"
 #include "BytecodeConventions.h"
 #include "CodeType.h"
 #include "DFGExitProfile.h"
@@ -38,6 +39,7 @@
 #include "RegExp.h"
 #include "UnlinkedFunctionExecutable.h"
 #include "UnlinkedMetadataTable.h"
+#include "ValueProfile.h"
 #include "VirtualRegister.h"
 #include <algorithm>
 #include <wtf/BitVector.h>
@@ -68,8 +70,6 @@ enum class LinkTimeConstant : int32_t;
 template<typename CodeBlockType>
 class CachedCodeBlock;
 
-typedef unsigned UnlinkedValueProfile;
-typedef unsigned UnlinkedArrayProfile;
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
 typedef unsigned UnlinkedLLIntCallLinkInfo;
@@ -334,6 +334,9 @@ public:
         return m_metadata->sizeInBytes();
     }
 
+    void allocateSharedProfiles();
+    UnlinkedValueProfile& unlinkedValueProfile(unsigned index) { return m_valueProfiles[index]; }
+    UnlinkedArrayProfile& unlinkedArrayProfile(unsigned index) { return m_arrayProfiles[index]; }
 
 protected:
     UnlinkedCodeBlock(VM&, Structure*, CodeType, const ExecutableInfo&, OptionSet<CodeGenerationMode>);
@@ -462,6 +465,8 @@ private:
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
     FixedVector<ExpressionRangeInfo> m_expressionInfo;
+    FixedVector<UnlinkedValueProfile> m_valueProfiles;
+    FixedVector<UnlinkedArrayProfile> m_arrayProfiles;
 
 protected:
     DECLARE_VISIT_CHILDREN;

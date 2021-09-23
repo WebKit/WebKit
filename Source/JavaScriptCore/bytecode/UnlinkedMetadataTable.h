@@ -64,6 +64,12 @@ public:
         return adoptRef(*new UnlinkedMetadataTable);
     }
 
+    template <typename Bytecode>
+    unsigned numEntries();
+
+    bool isFinalized() { return m_isFinalized; }
+    bool hasMetadata() { return m_hasMetadata; }
+
 private:
     enum EmptyTag { Empty };
 

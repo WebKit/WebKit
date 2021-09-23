@@ -2893,6 +2893,7 @@ void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(unsigned& numbe
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
 
+    unsigned index = 0;
     forEachValueProfile([&](ValueProfile& profile, bool isArgument) {
         unsigned numSamples = profile.totalNumberOfSamples();
         static_assert(ValueProfile::numberOfBuckets == 1);
@@ -2901,11 +2902,13 @@ void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(unsigned& numbe
         numberOfSamplesInProfiles += numSamples;
         if (isArgument) {
             profile.computeUpdatedPrediction(locker);
+            unlinkedCodeBlock()->unlinkedValueProfile(index++).update(profile);
             return;
         }
         if (profile.numberOfSamples() || profile.isSampledBefore())
             numberOfLiveNonArgumentValueProfiles++;
         profile.computeUpdatedPrediction(locker);
+        unlinkedCodeBlock()->unlinkedValueProfile(index++).update(profile);
     });
 
     if (m_metadata) {
@@ -2929,13 +2932,49 @@ void CodeBlock::updateAllValueProfilePredictions()
     updateAllValueProfilePredictionsAndCountLiveness(ignoredValue1, ignoredValue2);
 }
 
+void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locker)
+{
+    if (!m_metadata)
+        return;
+
+    unsigned index = 0;
+
+    auto process = [&] (ArrayProfile& profile) {
+        profile.computeUpdatedPrediction(locker, this);
+        unlinkedCodeBlock()->unlinkedArrayProfile(index++).update(profile);
+    };
+
+    m_metadata->forEach<OpGetById>([&] (auto& metadata) {
+        if (metadata.m_modeMetadata.mode == GetByIdMode::ArrayLength)
+            process(metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
+        else {
+            // We reserve an index per GetById whether or not it's currently in ArrayLength mode.
+            ++index;
+        }
+    });
+
+#define VISIT1(__op) \
+    m_metadata->forEach<__op>([&] (auto& metadata) { process(metadata.m_arrayProfile); });
+
+#define VISIT2(__op) \
+    m_metadata->forEach<__op>([&] (auto& metadata) { process(metadata.m_callLinkInfo.m_arrayProfile); });
+
+    FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT1)
+    FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(VISIT2)
+
+#undef VISIT1
+#undef VISIT2
+
+    m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
+        process(metadata.m_iterableProfile);
+    });
+}
+
 void CodeBlock::updateAllArrayPredictions()
 {
     ConcurrentJSLocker locker(m_lock);
-    
-    forEachArrayProfile([&](ArrayProfile& profile) {
-        profile.computeUpdatedPrediction(locker, this);
-    });
+
+    updateAllArrayProfilePredictions(locker);
     
     forEachArrayAllocationProfile([&](ArrayAllocationProfile& profile) {
         profile.updateProfile();

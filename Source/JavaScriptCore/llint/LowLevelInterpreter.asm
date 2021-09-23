@@ -413,6 +413,11 @@ macro metadata(size, opcode, dst, scratch)
     muli sizeof %opcode%::Metadata, scratch # scratch *= sizeof(Op::Metadata)
     addi scratch, dst # offset += scratch
     addp metadataTable, dst # return &metadataTable[offset]
+    # roundUpToMultipleOf(alignof(Metadata), dst)
+    const adder = (constexpr (alignof(%opcode%::Metadata))) - 1
+    const mask = ~adder
+    addp adder, dst
+    andp mask, dst
 end
 
 macro jumpImpl(dispatchIndirect, targetOffsetReg)

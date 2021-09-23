@@ -1069,7 +1069,6 @@ namespace JSC {
         void popLexicalScope(VariableEnvironmentNode*);
         void prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode*, RegisterID* loopSymbolTable);
         int labelScopeDepth() const;
-        UnlinkedArrayProfile newArrayProfile();
 
     private:
         ParserError generate();

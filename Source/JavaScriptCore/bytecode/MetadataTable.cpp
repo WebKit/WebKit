@@ -44,9 +44,11 @@ struct DeallocTable {
     template<typename Op>
     static void withOpcodeType(MetadataTable* table)
     {
-        table->forEach<Op>([](auto& entry) {
-            entry.~Metadata();
-        });
+        if constexpr (static_cast<unsigned>(Op::opcodeID) < NUMBER_OF_BYTECODE_WITH_METADATA) {
+            table->forEach<Op>([](auto& entry) {
+                entry.~Metadata();
+            });
+        }
     }
 };
 
