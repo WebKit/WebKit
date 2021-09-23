@@ -1,3 +1,30 @@
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r281960. rdar://problem/83429573
+
+    [iOS] Gather logs for IOKit class
+    https://bugs.webkit.org/show_bug.cgi?id=228784
+    
+    Reviewed by Brent Fulgham.
+    
+    Add telemetry for an IOKit class on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281960 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Per Arne  <pvollan@apple.com>
+
+            [iOS] Gather logs for IOKit class
+            https://bugs.webkit.org/show_bug.cgi?id=228784
+
+            Reviewed by Brent Fulgham.
+
+            Add telemetry for an IOKit class on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282419. rdar://problem/83183884

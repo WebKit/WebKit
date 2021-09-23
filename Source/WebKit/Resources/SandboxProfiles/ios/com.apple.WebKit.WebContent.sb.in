@@ -97,7 +97,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow
+                (allow (with telemetry)
                     iokit-external-method)
             )
         )
