@@ -91,6 +91,8 @@ public:
 
     static uint64_t generateLoadIdentifier();
 
+    static constexpr Seconds mediaMaximumBufferingTime { 50_ms };
+
 private:
     void scheduleLoad(WebCore::ResourceLoader&, WebCore::CachedResource*, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
