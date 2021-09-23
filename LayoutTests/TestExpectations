@@ -5155,3 +5155,11 @@ http/wpt/crypto/aes-ctr-crash.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.html [ DumpJSConsoleLogInStdErr ]
 
+# Skipping for disabled feature flag for branch
+platform/wpe/http/wpt/webxr [ Skip ]
+platform/wpe/imported/w3c/web-platform-tests/webxr [ Skip ]
+platform/mac/imported/w3c/web-platform-tests/webxr [ Skip ]
+http/wpt/webxr [ Skip ]
+imported/w3c/web-platform-tests/webxr [ Skip ]
+webxr [ Skip ]
+
