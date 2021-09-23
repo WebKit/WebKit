@@ -193,7 +193,7 @@ protected:
     InspectorCSSId ruleOrStyleId(CSSStyleDeclaration*) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration*) const;
-    virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const;
+    virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*, bool combineSplitRules = false) const;
     virtual bool ensureParsedDataReady();
     virtual RefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
 
@@ -219,6 +219,9 @@ private:
     Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelector(const CSSSelector*);
     Ref<Inspector::Protocol::CSS::SelectorList> buildObjectForSelectorList(CSSStyleRule*, int& endingLine);
 
+    Vector<Ref<CSSStyleRule>> cssStyleRulesSplitFromSameRule(CSSStyleRule&);
+    Vector<const CSSSelector*> selectorsForCSSStyleRule(CSSStyleRule&);
+
     InspectorPageAgent* m_pageAgent;
     String m_id;
     RefPtr<CSSStyleSheet> m_pageStyleSheet;
@@ -242,7 +245,7 @@ private:
 
     Document* ownerDocument() const final;
     RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const final { ASSERT_UNUSED(style, style == &inlineStyle()); return m_ruleSourceData; }
-    unsigned ruleIndexByStyle(CSSStyleDeclaration*) const final { return 0; }
+    unsigned ruleIndexByStyle(CSSStyleDeclaration*, bool) const final { return 0; }
     bool ensureParsedDataReady() final;
     RefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&) final;
 

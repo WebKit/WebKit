@@ -1,5 +1,86 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281354. rdar://problem/83429677
+
+    Web Inspector: Style rules declared after a rule whose selector has over 8192 components are not shown correctly
+    https://bugs.webkit.org/show_bug.cgi?id=229218
+    
+    Reviewed by Devin Rousso.
+    
+    Source/WebCore:
+    
+    Test: inspector/css/getMatchedStylesForNodeLargeSelectors.html
+    
+    CSS rules are limited to 8192 selector components in WebCore, and when more components are present the rule is
+    split into multiple `StyleRule` instances. This meant Web Inspector could not reliably resolve a `StyleRule`
+    back to its source data, which we do to enable things like editing, as well as to make sure we show the un-split
+    selector in the Styles sidebar of the Elements tab. Previously, the presences of multiple `StyleRule`s for a
+    single source data declaration was not accounted for, which meant that rules after the split rules would show a
+    mix of style information from the actual rule as well as a rule some number of declarations later in the same
+    style sheet. This is resolved by marking `StyleRule`s that have been split and marking the last of the split
+    rules. This allows us to then forgo incrementing the index for looking up raw declarations until we encounter
+    the last rule from a split `StyleRule`.
+    
+     * css/StyleRule.cpp:
+    (WebCore::StyleRule::StyleRule):
+    (WebCore::StyleRule::createForSplitting):
+    (WebCore::StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount const):
+    
+    * css/StyleRule.h:
+    - Added two members to track rules that are split into multiple rules due to exceeding the 8192 component limit
+    for selectors in order to determine later which rules are effectively duplicates of each other. We use two
+    members here, one to track that the rule was split from a larger authored rule (`m_isSplitRule`), and one to
+    mark the last rule split from a given rule (`m_isLastRuleInSplitRule`). The second member prevents situations
+    where we might otherwise accidentally continue iterating into a list of `StyleRule` where two large authored
+    rules that had to be split are present next to each other in an ordered collection of `StyleRule`.
+    
+    * inspector/InspectorStyleSheet.cpp:
+    (WebCore::selectorsFromSource):
+    - Use a vector of `CSSSelector`s for specificity information since we now collect selectors from potentially
+    multiple `CSSStyleRule`s.
+    
+    (WebCore::InspectorStyleSheet::cssStyleRulesSplitFromSameRule):
+    - Find any neighboring CSSStyleRules that were split from the same original rule based on the order of rules as
+    well as the new flags in `StyleRule`
+    
+    (WebCore::InspectorStyleSheet::selectorsForCSSStyleRule):
+    - Find all selectors for a given CSSStyleRule, including other `CSSStyleRule`s split from the same rule in a
+    style sheet.
+    
+    (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+    - Use all CSSSelectors from for the CSSStyleRule and other rules that were split from the same rule in a style
+    sheet.
+    
+    (WebCore::InspectorStyleSheet::ruleSourceDataFor const):
+    (WebCore::InspectorStyleSheet::ruleIndexByStyle const):
+    - When looking up an index to get rule source data, make sure we don't overcount split rules.
+    
+    * inspector/InspectorStyleSheet.h:
+    
+    LayoutTests:
+    
+    Test very large (8192 individual component) selectors to ensure surrounding styles are correctly resolved.
+    
+    * inspector/css/getMatchedStylesForNodeLargeSelectors-expected.txt: Added.
+    * inspector/css/getMatchedStylesForNodeLargeSelectors.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281354 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-20  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: Style rules declared after a rule whose selector has over 8192 components are not shown correctly
+            https://bugs.webkit.org/show_bug.cgi?id=229218
+
+            Reviewed by Devin Rousso.
+
+            Test very large (8192 individual component) selectors to ensure surrounding styles are correctly resolved.
+
+            * inspector/css/getMatchedStylesForNodeLargeSelectors-expected.txt: Added.
+            * inspector/css/getMatchedStylesForNodeLargeSelectors.html: Added.
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281323. rdar://problem/83430037
 
     Release assert in ScriptController::canExecuteScripts via WebCore::WebSocket::didReceiveMessage
