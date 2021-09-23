@@ -196,15 +196,13 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (diff >= StyleDifference::Repaint) {
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
-            if (selfNeedsLayout()) {
-                // FIXME: Add support for partial invalidation.
-                if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
-                    container->invalidateLineLayoutPath();
-            } else
-                lineLayout->updateStyle(*this);
-        }
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+        if (diff >= StyleDifference::Repaint && selfNeedsLayout()) {
+            // FIXME: Add support for partial invalidation.
+            if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
+                container->invalidateLineLayoutPath();
+        } else
+            lineLayout->updateStyle(*this);
     }
 #endif
 }
