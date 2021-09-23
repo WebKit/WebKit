@@ -1,5 +1,71 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281984. rdar://problem/83460908
+
+    RemoteVideoSample needs CVPixelBufferRef to be kept alive, but relies on caller to retain it
+    <https://webkit.org/b/229806>
+    <rdar://problem/82684479>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Covered by tests:
+        webrtc/video-mute.html
+        webrtc/video-unmute.html
+    
+    * platform/graphics/RemoteVideoSample.cpp:
+    (WebCore::RemoteVideoSample::create):
+    - Pass CVPixelBufferRef to RemoteVideoSample
+      constructor.
+    (WebCore::RemoteVideoSample::RemoteVideoSample):
+    - Change constructor to accept CVPixelBufferRef
+      argument.
+    * platform/graphics/RemoteVideoSample.h:
+    (WebCore::RemoteVideoSample::RemoteVideoSample):
+    - Change constructor to accept CVPixelBufferRef
+      argument.
+    - Add m_imageBuffer instance variable to hold on to the
+      CVPixelBufferRef.
+    
+    Source/WebKit:
+    
+    * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+    (WebKit::LibWebRTCCodecs::encodeFrame):
+    - Pass converted CVPixelBufferRef to
+      RemoteVideoSample::create().  A similar change in an earlier
+      patch for Bug 229661 caused test failures.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281984 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  David Kilzer  <ddkilzer@apple.com>
+
+            RemoteVideoSample needs CVPixelBufferRef to be kept alive, but relies on caller to retain it
+            <https://webkit.org/b/229806>
+            <rdar://problem/82684479>
+
+            Reviewed by Darin Adler.
+
+            Covered by tests:
+                webrtc/video-mute.html
+                webrtc/video-unmute.html
+
+            * platform/graphics/RemoteVideoSample.cpp:
+            (WebCore::RemoteVideoSample::create):
+            - Pass CVPixelBufferRef to RemoteVideoSample
+              constructor.
+            (WebCore::RemoteVideoSample::RemoteVideoSample):
+            - Change constructor to accept CVPixelBufferRef
+              argument.
+            * platform/graphics/RemoteVideoSample.h:
+            (WebCore::RemoteVideoSample::RemoteVideoSample):
+            - Change constructor to accept CVPixelBufferRef
+              argument.
+            - Add m_imageBuffer instance variable to hold on to the
+              CVPixelBufferRef.
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281950. rdar://problem/83460946
 
     Leak of VTImageRotationSessionRef (176 bytes) in com.apple.WebKit.GPU.Development process
