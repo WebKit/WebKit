@@ -1,3 +1,38 @@
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282157. rdar://problem/83429907
+
+    Remove unneeded call on startup of WebContent process
+    https://bugs.webkit.org/show_bug.cgi?id=230022
+    <rdar://problem/82838000>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cg/CoreGraphicsSPI.h:
+    
+    Source/WebKit:
+    
+    There is no need to call CGSShutdownServerConnections during startup of the WebContent process on macOS,
+    since we already have asserted that there are no open connections at this point.
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282157 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-08  Per Arne  <pvollan@apple.com>
+
+            Remove unneeded call on startup of WebContent process
+            https://bugs.webkit.org/show_bug.cgi?id=230022
+            <rdar://problem/82838000>
+
+            Reviewed by Darin Adler.
+
+            * pal/spi/cg/CoreGraphicsSPI.h:
+
 2021-09-09  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r281792. rdar://problem/82949614

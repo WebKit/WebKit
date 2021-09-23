@@ -632,8 +632,6 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     // This call will not succeed if there are open WindowServer connections at this point.
     auto retval = CGSSetDenyWindowServerConnections(true);
     RELEASE_ASSERT(retval == kCGErrorSuccess);
-    // Make sure that we close any WindowServer connections after checking in with Launch Services.
-    CGSShutdownServerConnections();
 
     SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
     MainThreadSharedTimer::shouldSetupPowerObserver() = false;
