@@ -1,5 +1,21 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282698. rdar://problem/83429561
+
+    Unreviewed build fix.
+    
+    * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282698 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-17  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix.
+
+            * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282364. rdar://problem/83429561
 
     Send preference updates to the GPU process
