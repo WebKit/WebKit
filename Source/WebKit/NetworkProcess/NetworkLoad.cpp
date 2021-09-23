@@ -58,8 +58,18 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, BlobRegistryImpl* blobRegist
 
 void NetworkLoad::start()
 {
-    if (m_task)
-        m_task->resume();
+    if (!m_task)
+        return;
+
+    if (!m_networkProcess->ftpEnabled() && m_parameters.request.url().protocolIsInFTPFamily()) {
+        m_task->clearClient();
+        m_task = nullptr;
+        WebCore::NetworkLoadMetrics emptyMetrics;
+        didCompleteWithError(ResourceError { errorDomainWebKitInternal, 0, url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl }, emptyMetrics);
+        return;
+    }
+
+    m_task->resume();
 }
 
 void NetworkLoad::startWithScheduling()
@@ -181,6 +191,17 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
     ASSERT(RunLoop::isMain());
     ASSERT(!m_redirectCompletionHandler);
 
+    if (!m_networkProcess->ftpEnabled() && request.url().protocolIsInFTPFamily()) {
+        m_task->clearClient();
+        m_task = nullptr;
+        WebCore::NetworkLoadMetrics emptyMetrics;
+        didCompleteWithError(ResourceError { errorDomainWebKitInternal, 0, url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl }, emptyMetrics);
+        
+        if (completionHandler)
+            completionHandler({ });
+        return;
+    }
+    
     redirectResponse.setSource(ResourceResponse::Source::Network);
     m_redirectCompletionHandler = WTFMove(completionHandler);
 

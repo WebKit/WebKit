@@ -1,3 +1,83 @@
+2021-09-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282881. rdar://problem/83430003
+
+    Disable FTP.
+    <rdar://81193860> and https://bugs.webkit.org/show_bug.cgi?id=230477
+    
+    Reviewed by Geoff Garen.
+    
+    Source/WebKit:
+    
+    Covered by new API tests.
+    
+    * NetworkProcess/NetworkLoad.cpp:
+    (WebKit::NetworkLoad::start):
+    (WebKit::NetworkLoad::willPerformHTTPRedirection):
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::initializeNetworkProcess):
+    * NetworkProcess/NetworkProcess.h:
+    (WebKit::NetworkProcess::ftpEnabled const):
+    
+    * NetworkProcess/NetworkProcessCreationParameters.cpp:
+    (WebKit::NetworkProcessCreationParameters::encode const):
+    (WebKit::NetworkProcessCreationParameters::decode):
+    * NetworkProcess/NetworkProcessCreationParameters.h:
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesExperimental.yaml:
+    
+    * wtf/URL.cpp:
+    (WTF::URL::protocolIsInFTPFamily const):
+    (WTF::protocolIsInFTPFamily):
+    * wtf/URL.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/BundlePageConsoleMessage.mm: Added.
+    (willAddMessageToConsoleCallback):
+    (-[BundlePageConsoleMessage webProcessPlugIn:didCreateBrowserContextController:]):
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/FTP.mm: Added.
+    (TestWebKitAPI::didReceivePageMessageFromInjectedBundle):
+    (TestWebKitAPI::setInjectedBundleClient):
+    (TestWebKitAPI::TEST):
+    
+    * TestWebKitAPI/PlatformUtilities.h:
+    * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm:
+    (TestWebKitAPI::Util::toNS):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282881 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-22  Brady Eidson  <beidson@apple.com>
+
+            Disable FTP.
+            <rdar://81193860> and https://bugs.webkit.org/show_bug.cgi?id=230477
+
+            Reviewed by Geoff Garen.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+            * TestWebKitAPI/Tests/WebKitCocoa/BundlePageConsoleMessage.mm: Added.
+            (willAddMessageToConsoleCallback):
+            (-[BundlePageConsoleMessage webProcessPlugIn:didCreateBrowserContextController:]):
+
+            * TestWebKitAPI/Tests/WebKitCocoa/FTP.mm: Added.
+            (TestWebKitAPI::didReceivePageMessageFromInjectedBundle):
+            (TestWebKitAPI::setInjectedBundleClient):
+            (TestWebKitAPI::TEST):
+
+            * TestWebKitAPI/PlatformUtilities.h:
+            * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm:
+            (TestWebKitAPI::Util::toNS):
+
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r282369. rdar://problem/83429914

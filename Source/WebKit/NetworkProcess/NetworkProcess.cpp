@@ -344,6 +344,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     setPrivateClickMeasurementEnabled(parameters.enablePrivateClickMeasurement);
     setPrivateClickMeasurementDebugMode(parameters.enablePrivateClickMeasurementDebugMode);
+    m_ftpEnabled = parameters.ftpEnabled;
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);

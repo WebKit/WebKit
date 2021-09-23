@@ -88,6 +88,7 @@ struct NetworkProcessCreationParameters {
 
     bool enablePrivateClickMeasurement { true };
     bool enablePrivateClickMeasurementDebugMode { false };
+    bool ftpEnabled { false };
 
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
 };
