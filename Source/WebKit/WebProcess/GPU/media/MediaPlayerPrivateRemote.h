@@ -444,6 +444,7 @@ private:
     bool m_invalid { false };
     bool m_waitingForKey { false };
     bool m_timeIsProgressing { false };
+    bool m_renderingCanBeAccelerated { false };
 };
 
 } // namespace WebKit
