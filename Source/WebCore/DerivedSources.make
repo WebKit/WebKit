@@ -1549,6 +1549,7 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/media-document.css \
     $(WebCore)/Modules/modern-media-controls/controls/placard.css \
+    $(WebCore)/Modules/modern-media-controls/controls/range-button.css \
     $(WebCore)/Modules/modern-media-controls/controls/slider.css \
     $(WebCore)/Modules/modern-media-controls/controls/status-label.css \
     $(WebCore)/Modules/modern-media-controls/controls/text-tracks.css \
@@ -1624,6 +1625,8 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/rewind-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/forward-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/overflow-button.js \
+    $(WebCore)/Modules/modern-media-controls/controls/range-button.js \
+    $(WebCore)/Modules/modern-media-controls/controls/volume-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/buttons-container.js \
     $(WebCore)/Modules/modern-media-controls/controls/status-label.js \
     $(WebCore)/Modules/modern-media-controls/controls/controls-bar.js \
@@ -1664,6 +1667,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/media/time-control-support.js \
     $(WebCore)/Modules/modern-media-controls/media/tracks-support.js \
     $(WebCore)/Modules/modern-media-controls/media/volume-support.js \
+    $(WebCore)/Modules/modern-media-controls/media/mute-and-volume-support.js \
     $(WebCore)/Modules/modern-media-controls/media/media-document-controller.js \
     $(WebCore)/Modules/modern-media-controls/media/watchos-media-controls-support.js \
     $(WebCore)/Modules/modern-media-controls/media/media-controller.js \

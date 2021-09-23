@@ -44,6 +44,7 @@ class MediaControls extends LayoutNode
         this.muteButton = new MuteButton(this);
         this.tracksButton = new TracksButton(this);
         this.overflowButton = new OverflowButton(this);
+        this.volumeButton = new VolumeButton(this);
 
         this.statusLabel = new StatusLabel(this);
         this.timeControl = new TimeControl(this);
@@ -235,4 +236,8 @@ class MediaControls extends LayoutNode
             super.commitProperty(propertyName);
     }
 
+    get usesSingleMuteAndVolumeButton()
+    {
+        return false;
+    }
 }

@@ -1,3 +1,64 @@
+2021-09-23  Antoine Quint  <graouts@webkit.org>
+
+        [Media Controls] Allow for a single mute and volume button
+        https://bugs.webkit.org/show_bug.cgi?id=230692
+        <rdar://problem/79956248>
+
+        Reviewed by Dean Jackson.
+
+        Up to now, the mute button in the controls bar would act as a toggle for the "muted" property on the media element.
+        Hovering that button would make a slider appear that would allow the "volume" property of the media element to be
+        changed as well.
+
+        We now allow for a single button with a built-in range indicator to be used for mute and volume. Clicking on the
+        button without moving will toggle the mute status, while moving the mouse up or down will adjust the volume
+        and show a pill-link range indicator showing the current volume.
+
+        This new control is a Button subclass called RangeButton. The new VolumeButton class extends it to provide the
+        correct icon depending on the volume and muted state. The new MuteAndVolumeSupport class is used in conjunction
+        with VolumeButton.
+
+        To indicate that media controls want to use this new style, MediaControls subclasses can override the
+        usesSingleMuteAndVolumeButton getter to return true. Currently it's false everywhere until we decide
+        to use this style.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get usesSingleMuteAndVolumeButton):
+        * Modules/modern-media-controls/controls/range-button.css: Added.
+        (button.range > div.indicator):
+        (button.range > div.indicator > div.fill):
+        * Modules/modern-media-controls/controls/range-button.js: Added.
+        (RangeButton.prototype.get value):
+        (RangeButton.prototype.set value):
+        (RangeButton.prototype.commitProperty):
+        (RangeButton.prototype.handleEvent):
+        (RangeButton.prototype._handlePointerdown):
+        (RangeButton.prototype._handlePointermove):
+        (RangeButton.prototype._handlePointerup):
+        * Modules/modern-media-controls/controls/volume-button.js: Added.
+        (VolumeButton):
+        (VolumeButton.prototype.get volume):
+        (VolumeButton.prototype.set volume):
+        (VolumeButton.prototype.get muted):
+        (VolumeButton.prototype.set muted):
+        (VolumeButton.prototype.set usesLTRUserInterfaceLayoutDirection):
+        (VolumeButton.prototype.layout):
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._supportingObjectClasses):
+        * Modules/modern-media-controls/media/mute-and-volume-support.js: Added.
+        (MuteAndVolumeSupport.prototype.get control):
+        (MuteAndVolumeSupport.prototype.get mediaEvents):
+        (MuteAndVolumeSupport.prototype.controlValueWillStartChanging):
+        (MuteAndVolumeSupport.prototype.controlValueDidChange):
+        (MuteAndVolumeSupport.prototype.controlValueDidStopChanging):
+        (MuteAndVolumeSupport.prototype.buttonWasPressed):
+        (MuteAndVolumeSupport.prototype.syncControl):
+        (MuteAndVolumeSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-09-23  Tim Horton  <timothy_horton@apple.com>
 
         shouldAllowPictureInPictureMediaPlayback should use WebCore's linkedOnOrAfter()
