@@ -1,3 +1,14 @@
+2021-09-23  Kyle Piddington  <kpiddington@apple.com>
+
+        [WebGL2, Safari 15 - iOS15] Problems with drawElements in some conditions
+        https://bugs.webkit.org/show_bug.cgi?id=230107
+
+        Index buffer rewrite was dispatching too many threads. 
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/ProvokingVertexHelper.mm:
+        (rx::ProvokingVertexHelper::preconditionIndexBuffer):
+
 2021-09-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal: single-component swizzles do not compile

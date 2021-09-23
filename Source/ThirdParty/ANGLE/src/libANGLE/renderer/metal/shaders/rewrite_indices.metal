@@ -219,36 +219,39 @@ kernel void fixIndexBuffer(
                            device ushort *outIndexBufferUint16 [[ buffer(1), function_constant(outIndexBufferIsUint16) ]],
                            device uint   *outIndexBufferUint32 [[ buffer(1), function_constant(outIndexBufferIsUint32) ]],
                            constant uint &indexCount [[ buffer(2) ]],
+                           constant uint &primCount [[ buffer(3) ]],
                            uint prim [[thread_position_in_grid]])
 {
     constexpr uint restartIndex = 0xFFFFFFFF; // unused
     uint baseIndex = 0;
     uint onIndex = onIndex;
     uint onOutIndex = onOutIndex;
-    switch(fixIndexBufferMode)
+    if(prim < primCount)
     {
-        case MtlFixIndexBufferKeyPoints:
-            onIndex = prim;
-            onOutIndex = prim;
-            break;
-        case MtlFixIndexBufferKeyLines:
-            onIndex = prim * 2 + 0;
-            onOutIndex = prim * 2 + 0;
-            break;
-        case MtlFixIndexBufferKeyLineStrip:
-            onIndex = prim;
-            onOutIndex = prim * 2 + 0;
-            break;
-        case MtlFixIndexBufferKeyTriangles:
-            onIndex = prim * 3 + 0;
-            onOutIndex = prim * 3 + 0;
-            break;
-        case MtlFixIndexBufferKeyTriangleStrip:
-            onIndex = prim;
-            onOutIndex = prim * 3 + 0;
-            break;
-        
+        switch(fixIndexBufferMode)
+        {
+            case MtlFixIndexBufferKeyPoints:
+                onIndex = prim;
+                onOutIndex = prim;
+                break;
+            case MtlFixIndexBufferKeyLines:
+                onIndex = prim * 2 + 0;
+                onOutIndex = prim * 2 + 0;
+                break;
+            case MtlFixIndexBufferKeyLineStrip:
+                onIndex = prim;
+                onOutIndex = prim * 2 + 0;
+                break;
+            case MtlFixIndexBufferKeyTriangles:
+                onIndex = prim * 3 + 0;
+                onOutIndex = prim * 3 + 0;
+                break;
+            case MtlFixIndexBufferKeyTriangleStrip:
+                onIndex = prim;
+                onOutIndex = prim * 3 + 0;
+                break;
             
+        }
+        outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, restartIndex, indexCount, baseIndex, onIndex, onOutIndex);
     }
-    outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, restartIndex, indexCount, baseIndex, onIndex, onOutIndex);
 }
