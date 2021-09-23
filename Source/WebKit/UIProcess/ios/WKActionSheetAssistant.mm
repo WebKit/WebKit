@@ -190,23 +190,6 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return [self superviewForSheet];
 }
 
-- (_WKElementAction *)_elementActionForDDAction:(DDAction *)action
-{
-#if PLATFORM(IOS) && !PLATFORM(MACCATALYST)
-    auto retainedSelf = retainPtr(self);
-    _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
-        retainedSelf->_isPresentingDDUserInterface = action.hasUserInterface;
-        [[getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
-    }];
-    elementAction.dismissalHandler = ^BOOL {
-        return !action.hasUserInterface;
-    };
-    return elementAction;
-#else
-    return nil;
-#endif
-}
-
 static const CGFloat presentationElementRectPadding = 15;
 
 - (CGRect)presentationRectForElementUsingClosestIndicatedRect
@@ -733,6 +716,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #endif // USE(UICONTEXTMENU)
+
+#if ENABLE(DATA_DETECTION)
+
+- (_WKElementAction *)_elementActionForDDAction:(DDAction *)action
+{
+    auto retainedSelf = retainPtr(self);
+    _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
+        retainedSelf->_isPresentingDDUserInterface = action.hasUserInterface;
+        [[getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
+    }];
+    elementAction.dismissalHandler = ^BOOL {
+        return !action.hasUserInterface;
+    };
+    return elementAction;
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 - (void)showDataDetectorsUIForPositionInformation:(const WebKit::InteractionInformationAtPosition&)positionInformation
 {
