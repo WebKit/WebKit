@@ -80,8 +80,17 @@ pas_try_allocate_intrinsic_primitive_impl_medium_slow_case(
 
     PAS_ASSERT(alignment == 1 || !designation_mode);
 
+    if (verbose)
+        pas_log("in impl_medium_slow_case for %s\n", pas_heap_config_kind_get_string(config.kind));
+
     if (!pas_is_power_of_2(alignment))
         return pas_allocation_result_create_failure();
+
+    if (PAS_UNLIKELY(pas_debug_heap_is_enabled(config.kind)))
+        return pas_debug_heap_allocate(size, alignment);
+
+    if (verbose)
+        pas_log("not doing debug heap in impl_medium_slow_case for %s\n", pas_heap_config_kind_get_string(config.kind));
 
     /* In the non-memalign case, we can happily handle zero-sized allocations with aligned_size
        being 0. This works because the heap's 0 size class is just a copy of the minalign size
@@ -183,6 +192,9 @@ pas_try_allocate_intrinsic_primitive_impl_inline_only(
     pas_local_allocator* allocator;
 
     PAS_ASSERT(alignment == 1 || !designation_mode);
+
+    if (verbose)
+        pas_log("in impl_inline_only for %s\n", pas_heap_config_kind_get_string(config.kind));
 
     if (!pas_is_power_of_2(alignment))
         return pas_allocation_result_create_failure();

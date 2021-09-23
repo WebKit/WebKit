@@ -107,22 +107,17 @@ pas_try_allocate_common_impl_slow(
     type = heap_ref->type;
     alignment = PAS_MAX(alignment, config.get_type_alignment(type));
     
-    if (PAS_UNLIKELY(pas_debug_heap_is_enabled())) {
-        void* raw_result;
-        
-        if (alignment != 1) {
-            PAS_ASSERT(alignment > 1);
-            raw_result = pas_debug_heap_memalign(alignment, size);
-        } else
-            raw_result = pas_debug_heap_malloc(size);
-
-        if (raw_result) {
-            result.did_succeed = true;
-            result.begin = (uintptr_t)raw_result;
-        }
-
+    if (PAS_UNLIKELY(pas_debug_heap_is_enabled(config.kind))) {
+        if (verbose)
+            pas_log("Debug heap enabled, asking debug heap.\n");
+        result = pas_debug_heap_allocate(size, alignment);
+        if (verbose)
+            pas_log("Got result.ptr = %p, did_succeed = %d\n", result.begin, result.did_succeed);
         return result;
     }
+
+    if (verbose)
+        pas_log("Not using debug heap.\n");
 
     heap = pas_ensure_heap(heap_ref, heap_ref_kind, config.config_ptr, runtime_config);
     

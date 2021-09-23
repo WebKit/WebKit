@@ -1,3 +1,54 @@
+2021-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] fix DebugHeap
+        https://bugs.webkit.org/show_bug.cgi?id=230658
+
+        Reviewed by Yusuke Suzuki.
+
+        The previous DebugHeap integration with libpas assumed we didn't have a jit_heap. Now that
+        we have a jit_heap, we need to be able to do DebugHeap from the bmalloc_heap while we still
+        use jit_heap.
+
+        This was tricky, since previously, libpas could just follow bmalloc and say that if TLC is
+        not initialized, then we go slow, and the slow path checks for DebugHeap. Now, we might have
+        a TLC. This means having to push down the debug heap checks into other slow paths.
+
+        * bmalloc/DebugHeap.cpp:
+        (pas_debug_heap_is_enabled):
+        (pas_debug_heap_malloc):
+        (pas_debug_heap_memalign):
+        (pas_debug_heap_realloc):
+        (pas_debug_heap_free):
+        * libpas/src/libpas/bmalloc_heap_config.c:
+        (bmalloc_heap_config_activate):
+        * libpas/src/libpas/jit_heap.c:
+        (jit_heap_add_fresh_memory):
+        (jit_heap_try_allocate):
+        * libpas/src/libpas/jit_heap_config.c:
+        * libpas/src/libpas/pas_deallocate.c:
+        (pas_try_deallocate_slow_no_cache):
+        * libpas/src/libpas/pas_deallocate.h:
+        (pas_try_deallocate_not_small):
+        * libpas/src/libpas/pas_debug_heap.h:
+        (pas_debug_heap_is_enabled):
+        (pas_debug_heap_allocate):
+        * libpas/src/libpas/pas_local_allocator_inlines.h:
+        (pas_local_allocator_try_allocate_small_segregated_slow_impl):
+        (pas_local_allocator_try_allocate_slow_impl):
+        (pas_local_allocator_try_allocate):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (allocate_cache):
+        (pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow):
+        * libpas/src/libpas/pas_try_allocate.h:
+        (pas_try_allocate_impl):
+        * libpas/src/libpas/pas_try_allocate_common.h:
+        (pas_try_allocate_common_impl_slow):
+        * libpas/src/libpas/pas_try_allocate_intrinsic_primitive.h:
+        (pas_try_allocate_intrinsic_primitive_impl_medium_slow_case):
+        (pas_try_allocate_intrinsic_primitive_impl_inline_only):
+        * libpas/src/libpas/pas_try_reallocate.h:
+        (pas_try_reallocate):
+
 2021-09-21  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] freeableMemory and footprint of Heap are completely broken

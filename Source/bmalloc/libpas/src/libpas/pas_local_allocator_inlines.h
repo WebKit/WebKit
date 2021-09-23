@@ -31,6 +31,7 @@
 #include "pas_bitfit_directory.h"
 #include "pas_bitfit_size_class.h"
 #include "pas_config.h"
+#include "pas_debug_heap.h"
 #include "pas_epoch.h"
 #include "pas_full_alloc_bits_inlines.h"
 #include "pas_scavenger.h"
@@ -1489,6 +1490,8 @@ pas_local_allocator_try_allocate_small_segregated_slow_impl(
     pas_heap_config config,
     pas_allocator_counts* counts)
 {
+    PAS_ASSERT(!pas_debug_heap_is_enabled(config.kind));
+    
     for (;;) {
         pas_allocation_result result;
         bool skip_bitfit;
@@ -1613,6 +1616,8 @@ pas_local_allocator_try_allocate_slow_impl(pas_local_allocator* allocator,
         pas_log("Called try_allocate_slow with kind = %s\n",
                 pas_local_allocator_config_kind_get_string(allocator->config_kind));
     }
+
+    PAS_ASSERT(!pas_debug_heap_is_enabled(config.kind));
     
     for (;;) {
         pas_fast_path_allocation_result fast_result;
@@ -1745,6 +1750,9 @@ pas_local_allocator_try_allocate(pas_local_allocator* allocator,
             pas_allocation_result_create_success_with_zero_mode(result.begin, result.zero_mode));
     }
 
+    if (PAS_UNLIKELY(pas_debug_heap_is_enabled(config.kind)))
+        return pas_debug_heap_allocate(size_thunk(size_thunk_arg), alignment);
+    
     if (config.small_segregated_config.base.is_enabled &&
         allocator->config_kind == pas_local_allocator_config_kind_create_normal(
             config.small_segregated_config.kind)) {

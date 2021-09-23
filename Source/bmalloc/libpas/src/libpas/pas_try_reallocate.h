@@ -311,7 +311,7 @@ pas_try_reallocate(void* old_ptr,
         if (!begin)
             return allocate_callback(heap, new_count, allocate_callback_arg);
 
-        if (PAS_UNLIKELY(pas_debug_heap_is_enabled())) {
+        if (PAS_UNLIKELY(pas_debug_heap_is_enabled(config.kind))) {
             void* raw_result;
             size_t size;
             bool did_overflow;
