@@ -1,5 +1,45 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282063. rdar://problem/83460750
+
+    REGRESSION (r280017): Calling getBoundingClientRect() on an empty element with "break-before: column" in columns returns a rect with all zeros
+    https://bugs.webkit.org/show_bug.cgi?id=229747
+    
+    Reviewed by Alan Bujtas.
+    Source/WebCore:
+    
+    A zero-height element with `break-before: column` ends up with an offset which is exactly
+    equal to the column height, and therefore logically can be positioned at the bottom of one
+    column, or the top of the next. For elements with non-zero height, we have logic to avoid
+    putting the bottom of the box into the next column. Fix this logic for zero-height elements
+    to avoid the end column being less than the start column. This avoids an early return in
+    RenderMultiColumnSet::fragmentRectsForFlowContentRect() which resulted in a zero client rect.
+    
+    Test: fast/multicol/newmulticol/client-rects-column-breakers.html
+    
+    * rendering/RenderMultiColumnSet.cpp:
+    (WebCore::RenderMultiColumnSet::firstAndLastColumnsFromOffsets const):
+    
+    LayoutTests:
+    
+    * fast/multicol/newmulticol/client-rects-column-breakers-expected.txt: Added.
+    * fast/multicol/newmulticol/client-rects-column-breakers.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282063 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-06  Simon Fraser  <simon.fraser@apple.com>
+
+            REGRESSION (r280017): Calling getBoundingClientRect() on an empty element with "break-before: column" in columns returns a rect with all zeros
+            https://bugs.webkit.org/show_bug.cgi?id=229747
+
+            Reviewed by Alan Bujtas.
+
+            * fast/multicol/newmulticol/client-rects-column-breakers-expected.txt: Added.
+            * fast/multicol/newmulticol/client-rects-column-breakers.html: Added.
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281650. rdar://problem/83460707
 
     Drawing small caps web fonts into canvas causes the GPU process to hang
