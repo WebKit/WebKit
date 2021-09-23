@@ -101,8 +101,6 @@ static pas_thread_local_cache* allocate_cache(unsigned allocator_index_capacity)
     size_t size;
     pas_thread_local_cache* result;
 
-    PAS_ASSERT(!pas_debug_heap_is_enabled());
-    
     size = pas_thread_local_cache_size_for_allocator_index_capacity(allocator_index_capacity);
     
     if (verbose)
@@ -308,7 +306,7 @@ pas_local_allocator_result
 pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow(unsigned allocator_index,
                                                                  pas_heap_config* heap_config)
 {
-    if (!pas_thread_local_cache_can_set() || pas_debug_heap_is_enabled())
+    if (!pas_thread_local_cache_can_set() || pas_debug_heap_is_enabled(heap_config->kind))
         return pas_local_allocator_result_create_failure();
 
     return pas_thread_local_cache_get_local_allocator(

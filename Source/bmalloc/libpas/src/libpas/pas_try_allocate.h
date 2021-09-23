@@ -60,11 +60,14 @@ pas_try_allocate_impl(pas_heap_ref* heap_ref,
                       pas_try_allocate_common_fast try_allocate_common_fast,
                       pas_try_allocate_common_slow try_allocate_common_slow)
 {
+    static const bool verbose = false;
+    
     pas_heap_type* type;
     size_t type_size;
     pas_local_allocator_result allocator;
     unsigned allocator_index;
     pas_thread_local_cache* cache;
+    pas_typed_allocation_result result;
 
     allocator_index = heap_ref->allocator_index;
     cache = pas_thread_local_cache_try_get();
@@ -72,6 +75,10 @@ pas_try_allocate_impl(pas_heap_ref* heap_ref,
         allocator = pas_thread_local_cache_try_get_local_allocator(
             cache,
             allocator_index);
+
+        if (verbose)
+            pas_log("Got an allocator.\n");
+        
         if (PAS_LIKELY(allocator.did_succeed)) {
             pas_allocation_result result;
             pas_try_allocate_impl_size_thunk_data size_thunk_data;
@@ -90,14 +97,25 @@ pas_try_allocate_impl(pas_heap_ref* heap_ref,
             return pas_typed_allocation_result_create_with_intrinsic_allocation_result(
                 result, type, config.get_type_size(type));
         }
+
+        if (verbose)
+            pas_log("Did not succeed at getting an allocator.\n");
     }
 
     type = heap_ref->type;
     type_size = config.get_type_size(type);
 
-    return pas_typed_allocation_result_create_with_intrinsic_allocation_result(
+    if (verbose)
+        pas_log("Allocating the slow way.\n");
+
+    result = pas_typed_allocation_result_create_with_intrinsic_allocation_result(
         try_allocate_common_slow(heap_ref, 1, type_size, 1),
         type, type_size);
+
+    if (verbose)
+        pas_log("result.ptr = %p, result.did_succeed = %d\n", result.ptr, result.did_succeed);
+
+    return result;
 }
 
 #define PAS_CREATE_TRY_ALLOCATE(name, heap_config, runtime_config, allocator_counts, result_filter) \

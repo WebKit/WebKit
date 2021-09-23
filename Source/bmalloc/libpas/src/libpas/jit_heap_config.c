@@ -38,6 +38,10 @@
 #include "pas_heap_config_inlines.h"
 #include "pas_root.h"
 
+#if defined(PAS_BMALLOC)
+#include "BPlatform.h"
+#endif
+
 pas_heap_config jit_heap_config = JIT_HEAP_CONFIG;
 
 pas_simple_large_free_heap jit_fresh_memory_heap = PAS_SIMPLE_LARGE_FREE_HEAP_INITIALIZER;
