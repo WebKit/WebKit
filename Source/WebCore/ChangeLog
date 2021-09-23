@@ -1,3 +1,34 @@
+2021-09-23  Antoine Quint  <graouts@webkit.org>
+
+        [Media Controls] Allow for a brightness control
+        https://bugs.webkit.org/show_bug.cgi?id=230697
+        <rdar://problem/79956277>
+
+        Reviewed by Dean Jackson.
+
+        Add a new brightness button to control a new MediaControlsHost "brightness" property
+        which is currently only a stub.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/modern-media-controls/controls/brightness-button.js: Added.
+        (BrightnessButton):
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/controls/media-controls.js:
+        * Modules/modern-media-controls/images/iOS/Brightness.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Brightness.svg: Added.
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/brightness-support.js: Added.
+        (BrightnessSupport.prototype.get control):
+        (BrightnessSupport.prototype.controlValueWillStartChanging):
+        (BrightnessSupport.prototype.controlValueDidChange):
+        (BrightnessSupport.prototype.controlValueDidStopChanging):
+        (BrightnessSupport):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._supportingObjectClasses):
+
 2021-09-23  Simon Fraser  <simon.fraser@apple.com>
 
         Unify more media-related WebCore source files

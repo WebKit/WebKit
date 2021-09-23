@@ -295,6 +295,8 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/auto-hide-controller.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/background-click-delegate-notifier.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/background-tint.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/background-tint.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/brightness-button.css
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/brightness-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/button.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/buttons-container.css
@@ -355,6 +357,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/gesture-recognizers/tap.js
 $(PROJECT_DIR)/Modules/modern-media-controls/main.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/airplay-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/audio-support.js
+$(PROJECT_DIR)/Modules/modern-media-controls/media/brightness-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/controls-visibility-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/fullscreen-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller-support.js

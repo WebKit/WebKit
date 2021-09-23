@@ -35,6 +35,7 @@ enum DeviceType {
     LegacyNoInterfaceObject,
 ] interface MediaControlsHost {
     readonly attribute DOMString layoutTraitsClassName;
+    attribute double brightness;
 
     sequence<TextTrack> sortedTrackListForMenu(TextTrackList trackList);
     sequence<AudioTrack> sortedTrackListForMenu(AudioTrackList trackList);
@@ -55,7 +56,7 @@ enum DeviceType {
     readonly attribute DeviceType externalDeviceType;
 
     attribute boolean controlsDependOnPageScaleFactor;
-    
+
     undefined updateTextTrackContainer();
     undefined enteredFullscreen();
     undefined exitedFullscreen();

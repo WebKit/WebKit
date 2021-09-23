@@ -56,6 +56,9 @@ public:
 
     String layoutTraitsClassName() const;
 
+    double brightness() const { return 1; }
+    void setBrightness(double) { }
+
     Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList&);
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList&);
 
