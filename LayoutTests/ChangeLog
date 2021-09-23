@@ -1,5 +1,45 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281613. rdar://problem/83429969
+
+    Crash in GraphicsContextGLOpenGL::reshapeDisplayBufferBacking
+    https://bugs.webkit.org/show_bug.cgi?id=229309
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-08-25
+    Reviewed by Myles C. Maxfield.
+    
+    Source/WebCore:
+    
+    Test: fast/canvas/xr-compatible-crash.html
+    
+    Null check m_swapChain because reshapeDisplayBufferBacking can be called before it is set.
+    
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::addContextObject):
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+    * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+    (WebCore::GraphicsContextGLOpenGL::reshapeDisplayBufferBacking):
+    
+    LayoutTests:
+    
+    * fast/canvas/xr-compatible-crash.html: Added.
+    * fast/canvas/xr-compatible-crash-expected.txt: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281613 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-25  Alex Christensen  <achristensen@webkit.org>
+
+            Crash in GraphicsContextGLOpenGL::reshapeDisplayBufferBacking
+            https://bugs.webkit.org/show_bug.cgi?id=229309
+
+            Reviewed by Myles C. Maxfield.
+
+            * fast/canvas/xr-compatible-crash.html: Added.
+            * fast/canvas/xr-compatible-crash-expected.txt: Added.
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281431. rdar://problem/83429553
 
     Report correct blocked URI in CSP violation report

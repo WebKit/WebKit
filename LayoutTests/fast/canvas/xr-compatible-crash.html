@@ -1,0 +1,8 @@
+This test passes if it does not crash.
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+  }
+  in_canvas = document.body.appendChild(document.createElement('canvas'));
+  webgl = in_canvas.getContext('webgl', { xrCompatible: true });
+</script>
