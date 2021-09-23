@@ -277,7 +277,8 @@ public:
 #if PLATFORM(COCOA)
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
     virtual WebCore::FloatSize pdfDocumentSizeForPrinting() const;
-    virtual NSObject *accessibilityObject() const { return 0; }
+    virtual id accessibilityHitTest(const WebCore::IntPoint&) const { return nil; }
+    virtual id accessibilityObject() const { return nil; }
     virtual id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const { return nullptr; }
 #endif
 

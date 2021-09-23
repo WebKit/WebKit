@@ -574,6 +574,9 @@ editing/spelling/spelling-unified-emulation.html [ Failure ]
 accessibility/mac/document-attributes.html [ Failure ]
 accessibility/parent-delete.html [ Failure ]
 
+# Skip because the embedded plugin never resolves in WK1, resulting in a timeout.
+accessibility/mac/basic-embed-pdf-accessibility.html [ Skip ]
+
 # rdar://problem/26478296
 svg/hixie/text/003.html [ Failure ]
 
