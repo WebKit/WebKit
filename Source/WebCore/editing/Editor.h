@@ -266,7 +266,7 @@ public:
     void applyParagraphStyleToSelection(StyleProperties*, EditAction);
 
     // Returns whether or not we should proceed with editing.
-    bool willApplyEditing(CompositeEditCommand&, Vector<RefPtr<StaticRange>>&&) const;
+    bool willApplyEditing(CompositeEditCommand&, Vector<RefPtr<StaticRange>>&&);
     bool willUnapplyEditing(const EditCommandComposition&) const;
     bool willReapplyEditing(const EditCommandComposition&) const;
 
@@ -672,13 +672,14 @@ private:
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
     bool shouldDetectTelephoneNumbers() const;
 
-    Timer m_telephoneNumberDetectionUpdateTimer;
+    DeferrableOneShotTimer m_telephoneNumberDetectionUpdateTimer;
     Vector<SimpleRange> m_detectedTelephoneNumberRanges;
 #endif
 
     mutable std::unique_ptr<ScrollView::ProhibitScrollingWhenChangingContentSizeForScope> m_prohibitScrollingDueToContentSizeChangesWhileTyping;
 
     bool m_isGettingDictionaryPopupInfo { false };
+    bool m_hasHandledAnyEditing { false };
     HashSet<RefPtr<HTMLImageElement>> m_imageElementsToLoadBeforeRevealingSelection;
 };
 
