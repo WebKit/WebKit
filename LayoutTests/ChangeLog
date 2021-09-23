@@ -1,3 +1,12 @@
+2021-09-23  Eric Hutchison  <ehutchison@apple.com>
+
+        [ BigSur Debug ]http/tests/inspector/network/resource-initiatorNode.html is a flaky crash/failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230711.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-09-23  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS macOS Debug ] media/video-ended-seek-crash.html is a flaky timeout.

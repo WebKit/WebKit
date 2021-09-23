@@ -2413,3 +2413,7 @@ webkit.org/b/189448 [ Mojave Catalina ] fast/text/osaka-synthetic-bold.html [ Sk
 webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
 
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure Crash ]
+
+webkit.org/b/230711 [ BigSur ] http/tests/inspector/network/resource-initiatorNode.html [ Pass Failure Crash ]
+
+
