@@ -31,8 +31,8 @@
 namespace WebCore {
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-extern const uintptr_t startOfJITOperationsInWebCore __asm("section$start$__DATA_CONST$__jsc_ops");
-extern const uintptr_t endOfJITOperationsInWebCore __asm("section$end$__DATA_CONST$__jsc_ops");
+extern const JSC::JITOperationAnnotation startOfJITOperationsInWebCore __asm("section$start$__DATA_CONST$__jsc_ops");
+extern const JSC::JITOperationAnnotation endOfJITOperationsInWebCore __asm("section$end$__DATA_CONST$__jsc_ops");
 
 void populateJITOperations()
 {

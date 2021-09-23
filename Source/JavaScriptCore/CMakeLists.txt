@@ -504,6 +504,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/CodeLocation.h
     assembler/FastJITPermissions.h
     assembler/JITOperationList.h
+    assembler/JITOperationValidation.h
     assembler/LinkBuffer.h
     assembler/MIPSAssembler.h
     assembler/MIPSRegisters.h

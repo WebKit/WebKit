@@ -30,6 +30,7 @@
 
 #include "ExecutableAllocationFuzz.h"
 #include "IterationStatus.h"
+#include "JITOperationValidation.h"
 #include "LinkBuffer.h"
 #include <wtf/FastBitVector.h>
 #include <wtf/FileSystem.h>
@@ -54,18 +55,6 @@
 #include <fcntl.h>
 #include <mach/mach.h>
 #include <mach/mach_time.h>
-
-#if ENABLE(JIT_CAGE)
-#include <WebKitAdditions/JITCageAdditions.h>
-#else // ENABLE(JIT_CAGE)
-#if OS(DARWIN)
-#define MAP_EXECUTABLE_FOR_JIT MAP_JIT
-#define MAP_EXECUTABLE_FOR_JIT_WITH_JIT_CAGE MAP_JIT
-#else // OS(DARWIN)
-#define MAP_EXECUTABLE_FOR_JIT 0
-#define MAP_EXECUTABLE_FOR_JIT_WITH_JIT_CAGE 0
-#endif // OS(DARWIN)
-#endif // ENABLE(JIT_CAGE)
 
 extern "C" {
     /* Routine mach_vm_remap */
@@ -373,7 +362,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         if (Options::logJITCodeForPerf())
             return PageReservation::reserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
 #endif
-        if (Options::useJITCage())
+        if (Options::useJITCage() && JSC_ALLOW_JIT_CAGE_SPECIFIC_RESERVATION)
             return PageReservation::reserve(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
         return PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
     };
@@ -413,6 +402,11 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         void* reservationEnd = reinterpret_cast<uint8_t*>(reservation.base) + reservation.size;
         g_jscConfig.startExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservation.base);
         g_jscConfig.endExecutableMemory = tagCodePtr<ExecutableMemoryPtrTag>(reservationEnd);
+
+#if ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+        WebConfig::g_config[0] = bitwise_cast<uintptr_t>(reservation.base);
+        WebConfig::g_config[1] = bitwise_cast<uintptr_t>(reservationEnd);
+#endif
     }
 
     return reservation;
