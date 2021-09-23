@@ -8928,15 +8928,8 @@ void Document::prepareCanvasesForDisplayIfNeeded()
 
     auto canvases = copyToVectorOf<Ref<HTMLCanvasElement>>(m_canvasesNeedingDisplayPreparation);
     m_canvasesNeedingDisplayPreparation.clear();
-    for (auto& canvas : canvases) {
-        // However, if they are not in the document body, then they won't
-        // be composited and thus don't need preparation. Unfortunately they
-        // can't tell at the time they were added to the list, since they
-        // could be inserted or removed from the document body afterwards.
-        if (!canvas->isInTreeScope())
-            continue;
+    for (auto& canvas : canvases)
         canvas->prepareForDisplay();
-    }
 }
 
 void Document::clearCanvasPreparation(HTMLCanvasElement& canvas)
