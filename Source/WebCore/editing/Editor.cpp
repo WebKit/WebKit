@@ -1105,8 +1105,10 @@ static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRo
         dispatchInputEvent(*endRoot, inputTypeName, data, WTFMove(dataTransfer), targetRanges);
 }
 
-bool Editor::willApplyEditing(CompositeEditCommand& command, Vector<RefPtr<StaticRange>>&& targetRanges) const
+bool Editor::willApplyEditing(CompositeEditCommand& command, Vector<RefPtr<StaticRange>>&& targetRanges)
 {
+    m_hasHandledAnyEditing = true;
+
     if (!command.shouldDispatchInputEvents())
         return true;
 
@@ -1225,7 +1227,7 @@ Editor::Editor(Document& document)
     , m_alternativeTextController(makeUnique<AlternativeTextController>(document))
     , m_editorUIUpdateTimer(*this, &Editor::editorUIUpdateTimerFired)
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
-    , m_telephoneNumberDetectionUpdateTimer(*this, &Editor::scanSelectionForTelephoneNumbers)
+    , m_telephoneNumberDetectionUpdateTimer(*this, &Editor::scanSelectionForTelephoneNumbers, 0_s)
 #endif
 {
 }
@@ -3654,11 +3656,14 @@ void Editor::respondToChangedSelection(const VisibleSelection&, OptionSet<FrameS
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
     if (shouldDetectTelephoneNumbers())
-        m_telephoneNumberDetectionUpdateTimer.startOneShot(0_s);
+        m_telephoneNumberDetectionUpdateTimer.restart();
 #endif
 
     setStartNewKillRingSequence(true);
     m_imageElementsToLoadBeforeRevealingSelection.clear();
+
+    if (!m_hasHandledAnyEditing && !m_document.hasHadUserInteraction() && !m_document.isTopDocument())
+        return;
 
     if (m_editorUIUpdateTimer.isActive())
         return;
