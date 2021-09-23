@@ -7,7 +7,7 @@
 <body>
 
 <textarea id="textarea">This is a textarea.</textarea>
-
+<br/>
 <input type="text" id="textfield" value="This is a text field." />
 
 <script>
@@ -16,24 +16,37 @@
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        let elementID = "textarea";
-
-        let p = accessibilityController.accessibleElementById(elementID);
-        let range = p.textMarkerRangeForElement(p);
+        // textarea.
+        var elementID = "textarea";
+        var p = accessibilityController.accessibleElementById(elementID);
+        var range = p.textMarkerRangeForElement(p);
 
         setTimeout(async () => {
             // Select all text.
             p.setSelectedTextMarkerRange(range);
-            let selectedRange = null;
+            window.selectedRange = null;
             await waitFor(() => {
                 selectedRange = p.selectedTextMarkerRange();
                 return p.textMarkerRangeLength(selectedRange) == 19;
             });
             debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
 
-            // Select the first 10 characters.
+            // Move the insertion point to the beginning of the field.
             let start = p.startTextMarkerForTextMarkerRange(range);
-            end = start;
+            let end = start;
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 0;
+            });
+            let selectionStart = p.startTextMarkerForTextMarkerRange(selectedRange);
+            let selectionEnd = p.endTextMarkerForTextMarkerRange(selectedRange);
+            // Move selectionEnd one over so that we have a length 1 range and we can get the character at the insertion point.
+            selectionEnd = p.nextTextMarker(selectionEnd);
+            debug(`selected text "${p.stringForTextMarkerRange(p.textMarkerRangeForMarkers(selectionStart, selectionEnd))}"`);
+
+            // Select the first 10 characters.
             for (let i = 0; i < 10; ++i)
                 end = p.nextTextMarker(end);
             range = p.textMarkerRangeForMarkers(start, end);
@@ -55,8 +68,21 @@
             });
             debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
 
-            elementID = "textfield";
+            // Move the insertion point to the end of the field.
+            range = p.textMarkerRangeForElement(p);
+            end = p.endTextMarkerForTextMarkerRange(range);
+            start = end;
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 0;
+            });
+            selectedRange = p.selectedTextMarkerRange();
+            shouldBe("p.textMarkerRangeLength(selectedRange)", "0");
 
+            // Input text field.
+            elementID = "textfield";
             p = accessibilityController.accessibleElementById(elementID);
             range = p.textMarkerRangeForElement(p);
 
@@ -69,9 +95,22 @@
             });
             debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
 
-            // Select the first 10 characters.
+            // Move the insertion point to the beginning of the field.
             start = p.startTextMarkerForTextMarkerRange(range);
             end = start;
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 0;
+            });
+            selectionStart = p.startTextMarkerForTextMarkerRange(selectedRange);
+            selectionEnd = p.endTextMarkerForTextMarkerRange(selectedRange);
+            // Move selectionEnd one over so that we have a length 1 range and we can get the character at the insertion point.
+            selectionEnd = p.nextTextMarker(selectionEnd);
+            debug(`selected text "${p.stringForTextMarkerRange(p.textMarkerRangeForMarkers(selectionStart, selectionEnd))}"`);
+
+            // Select the first 10 characters.
             for (let i = 0; i < 10; ++i)
                 end = p.nextTextMarker(end);
             range = p.textMarkerRangeForMarkers(start, end);
@@ -94,6 +133,19 @@
                 return p.textMarkerRangeLength(selectedRange) == 10;
             });
             debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
+
+            // Move the insertion point to the end of the field.
+            range = p.textMarkerRangeForElement(p);
+            end = p.endTextMarkerForTextMarkerRange(range);
+            start = end;
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 0;
+            });
+            selectedRange = p.selectedTextMarkerRange();
+            shouldBe("p.textMarkerRangeLength(selectedRange)", "0");
 
             finishJSTest();
         }, 0);

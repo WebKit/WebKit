@@ -612,7 +612,7 @@ static RetainPtr<AXTextMarkerRangeRef> AXTextMarkerRange(AXTextMarkerRef startMa
     return adoptCF(AXTextMarkerRangeCreate(kCFAllocatorDefault, startMarker, endMarker));
 }
 
-static RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef textMarker1, AXTextMarkerRef textMarker2)
+RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef textMarker1, AXTextMarkerRef textMarker2)
 {
     if (!textMarker1 || !textMarker2)
         return nil;
