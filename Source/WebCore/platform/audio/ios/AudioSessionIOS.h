@@ -46,8 +46,6 @@ private:
     // AudioSession
     CategoryType category() const final;
     void setCategory(CategoryType, RouteSharingPolicy) final;
-    AudioSession::CategoryType categoryOverride() const final;
-    void setCategoryOverride(CategoryType) final;
     float sampleRate() const final;
     size_t bufferSize() const final;
     size_t numberOfOutputChannels() const final;
@@ -59,14 +57,8 @@ private:
     void setPreferredBufferSize(size_t) final;
     bool isMuted() const final;
     void handleMutedStateChange() final;
-    void addInterruptionObserver(InterruptionObserver&) final;
-    void removeInterruptionObserver(InterruptionObserver&) final;
-    void beginInterruption() final;
-    void endInterruption(MayResume) final;
 
-    AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };
     Ref<WTF::WorkQueue> m_workQueue;
-    WeakHashSet<InterruptionObserver> m_interruptionObservers;
     RetainPtr<WebInterruptionObserverHelper> m_interruptionObserverHelper;
 };
 

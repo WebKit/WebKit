@@ -103,24 +103,26 @@ bool AudioSession::tryToSetActive(bool active)
     return true;
 }
 
-void AudioSession::addInterruptionObserver(InterruptionObserver&)
+void AudioSession::addInterruptionObserver(InterruptionObserver& observer)
 {
-    notImplemented();
+    m_interruptionObservers.add(observer);
 }
 
-void AudioSession::removeInterruptionObserver(InterruptionObserver&)
+void AudioSession::removeInterruptionObserver(InterruptionObserver& observer)
 {
-    notImplemented();
+    m_interruptionObservers.remove(observer);
 }
 
 void AudioSession::beginInterruption()
 {
-    notImplemented();
+    for (auto& observer : m_interruptionObservers)
+        observer.beginAudioSessionInterruption();
 }
 
-void AudioSession::endInterruption(MayResume)
+void AudioSession::endInterruption(MayResume mayResume)
 {
-    notImplemented();
+    for (auto& observer : m_interruptionObservers)
+        observer.endAudioSessionInterruption(mayResume);
 }
 
 void AudioSession::setCategory(CategoryType, RouteSharingPolicy)
@@ -128,15 +130,18 @@ void AudioSession::setCategory(CategoryType, RouteSharingPolicy)
     notImplemented();
 }
 
-AudioSession::CategoryType AudioSession::categoryOverride() const
+void AudioSession::setCategoryOverride(CategoryType category)
 {
-    notImplemented();
-    return AudioSession::CategoryType::None;
+    if (m_categoryOverride == category)
+        return;
+
+    m_categoryOverride = category;
+    setCategory(category, RouteSharingPolicy::Default);
 }
 
-void AudioSession::setCategoryOverride(CategoryType)
+AudioSession::CategoryType AudioSession::categoryOverride() const
 {
-    notImplemented();
+    return m_categoryOverride;
 }
 
 AudioSession::CategoryType AudioSession::category() const
