@@ -1,3 +1,13 @@
+2021-09-23  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ macOS wk1 Debug ] editing/selection/navigation-clears-editor-state.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230719
+
+        Unreviewed test gardening.
+
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-23  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Graphics: add instrumentation for new `CanvasRenderingContext2DSettings`
