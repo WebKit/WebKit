@@ -1,5 +1,58 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282046. rdar://problem/83463331
+
+    [iOS] Play/pause button's icon does not update when pausing in full screen
+    https://bugs.webkit.org/show_bug.cgi?id=229904
+    
+    Reviewed by Eric Carlson.
+    
+    AVKit expects KVO notification of `rate` to update the play/pause icon.
+    However, with the changes in r280840, `-[WebAVPlayerController setRate]`
+    will be called by AVKit only. When a user taps the play/pause button,
+    `-[WebAVPlayerController setRate:fromJavaScript:]` will be called, which
+    does not generate the KVO notification.
+    
+    This patch fixes the issue by manually generate the KVO notification.
+    
+    To be safe, this patch manually generates the KVO notification for
+    property `defaultPlaybackRate` as well.
+    
+    Tested manually.
+    
+    * platform/ios/WebAVPlayerController.mm:
+    (-[WebAVPlayerController setDefaultPlaybackRate:fromJavaScript:]):
+    (-[WebAVPlayerController setRate:fromJavaScript:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282046 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-04  Peng Liu  <peng.liu6@apple.com>
+
+            [iOS] Play/pause button's icon does not update when pausing in full screen
+            https://bugs.webkit.org/show_bug.cgi?id=229904
+
+            Reviewed by Eric Carlson.
+
+            AVKit expects KVO notification of `rate` to update the play/pause icon.
+            However, with the changes in r280840, `-[WebAVPlayerController setRate]`
+            will be called by AVKit only. When a user taps the play/pause button,
+            `-[WebAVPlayerController setRate:fromJavaScript:]` will be called, which
+            does not generate the KVO notification.
+
+            This patch fixes the issue by manually generate the KVO notification.
+
+            To be safe, this patch manually generates the KVO notification for
+            property `defaultPlaybackRate` as well.
+
+            Tested manually.
+
+            * platform/ios/WebAVPlayerController.mm:
+            (-[WebAVPlayerController setDefaultPlaybackRate:fromJavaScript:]):
+            (-[WebAVPlayerController setRate:fromJavaScript:]):
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r282451. rdar://problem/83460818
 
     [iOS] Search inputs with '-webkit-appearance: textfield' should have a textfield background color
