@@ -28,23 +28,12 @@
 
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
+#include "TemporalObject.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
 
 static constexpr double nanosecondsPerDay = 24.0 * 60 * 60 * 1000 * 1000 * 1000;
-
-static PropertyName propertyName(VM& vm, unsigned index)
-{
-    ASSERT(index < numberOfTemporalUnits);
-    switch (static_cast<TemporalUnit>(index)) {
-#define JSC_TEMPORAL_DURATION_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name##s; 
-        JSC_TEMPORAL_UNITS(JSC_TEMPORAL_DURATION_PROPERTY_NAME)
-#undef JSC_TEMPORAL_DURATION_PROPERTY_NAME
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-}
 
 const ClassInfo TemporalDuration::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalDuration) };
 
@@ -100,7 +89,7 @@ ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObjec
     ISO8601::Duration result;
     auto hasRelevantProperty = false;
     for (size_t i = 0; i < numberOfTemporalUnits; i++) {
-        JSValue value = durationLike->get(globalObject, propertyName(vm, i));
+        JSValue value = durationLike->get(globalObject, temporalUnitPropertyName(vm, static_cast<TemporalUnit>(i)));
         RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
@@ -143,7 +132,8 @@ ISO8601::Duration TemporalDuration::toISO8601Duration(JSGlobalObject* globalObje
 
         auto parsedDuration = ISO8601::parseDuration(string);
         if (!parsedDuration) {
-            throwRangeError(globalObject, scope, "Could not parse Duration string"_s);
+            // 3090: 308 digits * 10 fields + 10 designators
+            throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(3090, string), "' is not a valid Duration string"_s));
             return { };
         }
 
@@ -241,7 +231,7 @@ ISO8601::Duration TemporalDuration::with(JSGlobalObject* globalObject, JSObject*
     ISO8601::Duration result;
     auto hasRelevantProperty = false;
     for (size_t i = 0; i < numberOfTemporalUnits; i++) {
-        JSValue value = durationLike->get(globalObject, propertyName(vm, i));
+        JSValue value = durationLike->get(globalObject, temporalUnitPropertyName(vm, static_cast<TemporalUnit>(i)));
         RETURN_IF_EXCEPTION(scope, { });
 
         if (value.isUndefined()) {
@@ -550,8 +540,7 @@ String TemporalDuration::toString(JSGlobalObject* globalObject, JSValue optionsV
 // https://tc39.es/proposal-temporal/#sec-temporal-temporaldurationtostring
 String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<Precision, unsigned> precision)
 {
-    auto [precisionType, precisionValue] = precision;
-    ASSERT(precisionType == Precision::Auto || precisionValue < 10);
+    ASSERT(std::get<0>(precision) == Precision::Auto || std::get<1>(precision) < 10);
 
     auto balancedMicroseconds = duration.microseconds() + std::trunc(duration.nanoseconds() / 1000);
     auto balancedNanoseconds = std::fmod(duration.nanoseconds(), 1000);
@@ -598,17 +587,7 @@ String TemporalDuration::toString(const ISO8601::Duration& duration, std::tuple<
         builder.append(formatInteger(balancedSeconds));
 
         auto fraction = std::abs(balancedMilliseconds) * 1e6 + std::abs(balancedMicroseconds) * 1e3 + std::abs(balancedNanoseconds);
-        if ((precisionType == Precision::Auto && fraction) || (precisionType == Precision::Fixed && precisionValue)) {
-            auto padded = makeString('.', pad('0', 9, fraction));
-            if (precisionType == Precision::Fixed)
-                builder.append(StringView(padded).left(padded.length() - (9 - precisionValue)));
-            else {
-                auto lengthWithoutTrailingZeroes = padded.length();
-                while (padded[lengthWithoutTrailingZeroes - 1] == '0')
-                    lengthWithoutTrailingZeroes--;
-                builder.append(StringView(padded).left(lengthWithoutTrailingZeroes));
-            }
-        }
+        formatSecondsStringFraction(builder, fraction, precision);
 
         builder.append('S');
     }

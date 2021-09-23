@@ -37,6 +37,8 @@
 #include "TemporalPlainTimePrototype.h"
 #include "TemporalTimeZoneConstructor.h"
 #include "TemporalTimeZonePrototype.h"
+#include <wtf/text/StringConcatenate.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace JSC {
 
@@ -123,6 +125,28 @@ static StringView singularUnit(StringView unit)
 {
     // Plurals are allowed, but thankfully they're all just a simple -s.
     return unit.endsWith("s") ? unit.left(unit.length() - 1) : unit;
+}
+
+// For use in error messages where a string value is potentially unbounded
+WTF::String ellipsizeAt(unsigned maxLength, const WTF::String& string)
+{
+    WTF::String copy { string };
+    if (string.length() > maxLength) {
+        copy.truncate(maxLength - 1);
+        copy.append(horizontalEllipsis);
+    }
+    return copy;
+}
+
+PropertyName temporalUnitPropertyName(VM& vm, TemporalUnit unit)
+{
+    switch (unit) {
+#define JSC_TEMPORAL_DURATION_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name##s; 
+        JSC_TEMPORAL_UNITS(JSC_TEMPORAL_DURATION_PROPERTY_NAME)
+#undef JSC_TEMPORAL_DURATION_PROPERTY_NAME
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 std::optional<TemporalUnit> temporalUnitType(StringView unit)
@@ -228,8 +252,8 @@ std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject* globalObj
 
     if (value.isNumber()) {
         double doubleValue = value.asNumber();
-        if (doubleValue < 0 || doubleValue > 9) {
-            throwRangeError(globalObject, scope, "fractionalSecondDigits is out of range"_s);
+        if (!(doubleValue >= 0 && doubleValue <= 9)) {
+            throwRangeError(globalObject, scope, makeString("fractionalSecondDigits must be 'auto' or 0 through 9, not "_s, doubleValue));
             return std::nullopt;
         }
 
@@ -240,7 +264,7 @@ std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject* globalObj
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     if (stringValue != "auto")
-        throwRangeError(globalObject, scope, "fractionalSecondDigits is out of range"_s);
+        throwRangeError(globalObject, scope, makeString("fractionalSecondDigits must be 'auto' or 0 through 9, not "_s, ellipsizeAt(100, stringValue)));
 
     return std::nullopt;
 }
@@ -307,6 +331,22 @@ RoundingMode temporalRoundingMode(JSGlobalObject* globalObject, JSObject* option
     return intlOption<RoundingMode>(globalObject, options, globalObject->vm().propertyNames->roundingMode,
         { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
         "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, fallback);
+}
+
+void formatSecondsStringFraction(StringBuilder& builder, unsigned fraction, std::tuple<Precision, unsigned> precision)
+{
+    auto [precisionType, precisionValue] = precision;
+    if ((precisionType == Precision::Auto && fraction) || (precisionType == Precision::Fixed && precisionValue)) {
+        auto padded = makeString('.', pad('0', 9, fraction));
+        if (precisionType == Precision::Fixed)
+            builder.append(StringView(padded).left(padded.length() - (9 - precisionValue)));
+        else {
+            auto lengthWithoutTrailingZeroes = padded.length();
+            while (padded[lengthWithoutTrailingZeroes - 1] == '0')
+                lengthWithoutTrailingZeroes--;
+            builder.append(StringView(padded).left(lengthWithoutTrailingZeroes));
+        }
+    }
 }
 
 // MaximumTemporalDurationRoundingIncrement ( unit )
