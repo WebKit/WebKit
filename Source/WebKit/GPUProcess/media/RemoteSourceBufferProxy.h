@@ -32,6 +32,7 @@
 #include "MessageReceiver.h"
 #include "RemoteSourceBufferIdentifier.h"
 #include "RemoteSourceBufferProxyMessagesReplies.h"
+#include "SharedMemory.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/MediaDescription.h>
 #include <WebCore/SourceBufferPrivate.h>
@@ -87,7 +88,7 @@ private:
     void setActive(bool);
     void canSwitchToType(const WebCore::ContentType&, CompletionHandler<void(bool)>&&);
     void setMode(WebCore::SourceBufferAppendMode);
-    void append(const IPC::DataReference&);
+    void append(const SharedMemory::IPCHandle&);
     void abort();
     void resetParserState();
     void removedFromMediaSource();

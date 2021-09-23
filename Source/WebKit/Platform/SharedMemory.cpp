@@ -48,6 +48,19 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const SharedBuffer& buffer)
     return sharedMemory;
 }
 
+Ref<SharedBuffer> SharedMemory::createSharedBuffer(size_t dataSize) const
+{
+    ASSERT(dataSize <= size());
+    return SharedBuffer::create({
+        [protectedThis = makeRef(*this)] () -> const uint8_t* {
+            return static_cast<const uint8_t*>(protectedThis->data());
+        },
+        [dataSize] () -> size_t {
+            return dataSize;
+        }
+    });
+}
+
 #if !PLATFORM(COCOA)
 void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger) const
 {

@@ -153,6 +153,8 @@ public:
     // Return the system page size in bytes.
     static unsigned systemPageSize();
 
+    Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
+
 private:
 #if OS(DARWIN)
     WTF::MachSendRight createSendRight(Protection) const;
