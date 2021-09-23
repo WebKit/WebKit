@@ -1,5 +1,18 @@
 2021-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Adjust Intl currency enumeration
+        https://bugs.webkit.org/show_bug.cgi?id=230656
+
+        Reviewed by Ross Kirsling.
+
+        1. List up all available currencies.
+        2. Introduce a work-around for VES, LSM, and EQE
+
+        * runtime/IntlObject.cpp:
+        (JSC::availableCurrencies):
+
+2021-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] emoji and eor collations are missing
         https://bugs.webkit.org/show_bug.cgi?id=230652
 

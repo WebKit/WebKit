@@ -1697,7 +1697,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     UErrorCode status = U_ZERO_ERROR;
-    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucurr_openISOCurrencies(UCURR_COMMON | UCURR_NON_DEPRECATED, &status));
+    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucurr_openISOCurrencies(UCURR_ALL, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to enumerate available currencies"_s);
         return { };
@@ -1710,15 +1710,28 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
     }
 
     Vector<String, 1> elements;
-    elements.reserveInitialCapacity(count);
+    // ICU ~69 doesn't list VES and UYW, but it is actually supported via Intl.DisplayNames.
+    // And ICU ~69 lists up EQE / LSM while it cannot return information via Intl.DisplayNames.
+    // So, we need to add the following work-around.
+    //     1. Add VES and UYW
+    //     2. Do not add EQE and LSM
+    // https://unicode-org.atlassian.net/browse/ICU-21685
+    elements.reserveInitialCapacity(count + 2);
+    elements.append("VES"_s);
+    elements.append("UYW"_s);
     for (int32_t index = 0; index < count; ++index) {
         int32_t length = 0;
-        const char* currency = uenum_next(enumeration.get(), &length, &status);
+        const char* pointer = uenum_next(enumeration.get(), &length, &status);
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "failed to enumerate available currencies"_s);
             return { };
         }
-        elements.constructAndAppend(currency, length);
+        String currency(pointer, length);
+        if (currency == "EQE"_s)
+            continue;
+        if (currency == "LSM"_s)
+            continue;
+        elements.append(WTFMove(currency));
     }
 
     // The AvailableCurrencies abstract operation returns a List, ordered as if an Array of the same
@@ -1727,6 +1740,8 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
         [](const String& a, const String& b) {
             return WTF::codePointCompare(a, b) < 0;
         });
+    auto end = std::unique(elements.begin(), elements.end());
+    elements.resize(elements.size() - (elements.end() - end));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
