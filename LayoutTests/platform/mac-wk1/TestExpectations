@@ -688,6 +688,8 @@ webkit.org/b/168265 media/modern-media-controls/forward-button/forward-button.ht
 http/wpt/fetch/dnt-header-after-redirection.html [ Skip ]
 http/wpt/fetch/inspect-preflight.html [ Skip ]
 
+webkit.org/b/230693 [ Debug ] http/wpt/fetch/navigation-post-to-get-origin.html [ Pass Crash ]
+
 # requires wk2 speculative tiling
 fast/images/low-memory-decode.html [ Skip ]
 
