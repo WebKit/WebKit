@@ -865,6 +865,22 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     networkLoadMetrics.responseBodyBytesReceived = responseBodySize;
 
     auto additionalMetrics = AdditionalNetworkLoadMetricsForWebInspector::create();
+    if (!m_tlsConnectionInfo) {
+        curl_tlssessioninfo* info = nullptr;
+
+        errorCode = curl_easy_getinfo(m_handle, CURLINFO_TLS_SSL_PTR, &info);
+        if (errorCode != CURLE_OK)
+            return;
+
+        if (info && info->backend == CURLSSLBACKEND_OPENSSL && info->internals) {
+            auto ssl = static_cast<SSL*>(info->internals);
+
+            m_tlsConnectionInfo = makeUnique<TLSConnectionInfo>();
+            m_tlsConnectionInfo->protocol = OpenSSL::tlsVersion(ssl);
+            m_tlsConnectionInfo->cipher = OpenSSL::tlsCipherName(ssl);
+        }
+    }
+
     additionalMetrics->requestHeaderBytesSent = requestHeaderSize;
     additionalMetrics->requestBodyBytesSent = requestBodySize;
     additionalMetrics->responseHeaderBytesReceived = responseHeaderSize;
@@ -873,6 +889,11 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
         additionalMetrics->remoteAddress = String(ip);
         if (port)
             additionalMetrics->remoteAddress.append(":" + String::number(port));
+    }
+
+    if (m_tlsConnectionInfo) {
+        additionalMetrics->tlsProtocol = m_tlsConnectionInfo->protocol;
+        additionalMetrics->tlsCipher = m_tlsConnectionInfo->cipher;
     }
 
     networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);

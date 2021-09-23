@@ -321,4 +321,14 @@ std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_
     return summaryInfo;
 }
 
+String tlsVersion(const SSL* ssl)
+{
+    return SSL_get_version(ssl);
+}
+
+String tlsCipherName(const SSL* ssl)
+{
+    return SSL_CIPHER_get_name(SSL_get_current_cipher(ssl));
+}
+
 }

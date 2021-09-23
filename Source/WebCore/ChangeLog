@@ -1,3 +1,22 @@
+2021-09-22  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Show TLS connection information in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=230526
+
+        Reviewed by Alex Christensen.
+
+        Add TLS version and cipher name in the network security tab.
+
+        No tests yet.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::addExtraNetworkLoadMetrics):
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/OpenSSLHelper.cpp:
+        (OpenSSL::tlsVersion):
+        (OpenSSL::tlsCipherName):
+        * platform/network/curl/OpenSSLHelper.h:
+
 2021-09-22  Simon Fraser  <simon.fraser@apple.com>
 
         Move more scroll snap-related code into ScrollSnapAnimatorState

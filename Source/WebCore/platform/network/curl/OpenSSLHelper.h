@@ -34,4 +34,7 @@ namespace OpenSSL {
 std::optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX*);
 std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem);
 
+String tlsVersion(const SSL*);
+String tlsCipherName(const SSL*);
+
 } // namespace OpenSSL

@@ -318,6 +318,12 @@ public:
 #endif
 
 private:
+    struct TLSConnectionInfo {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        String protocol;
+        String cipher;
+    };
+
     void enableRequestHeaders();
     static int expectedSizeOfCurlOffT();
 
@@ -329,7 +335,9 @@ private:
 
     URL m_url;
     CurlSList m_requestHeaders;
+
     std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
+    std::unique_ptr<TLSConnectionInfo> m_tlsConnectionInfo;
 };
 
 } // namespace WebCore
