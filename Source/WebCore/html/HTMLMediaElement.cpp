@@ -7804,10 +7804,8 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             INFO_LOG(LOGIDENTIFIER, "returning true because isPlayingToAutomotiveHeadUnit() is true");
             return true;
         }
-        if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
-            return true;
-#if PLATFORM(COCOA) && ENABLE(VIDEO_PRESENTATION_MODE)
-        if (((m_videoFullscreenMode == VideoFullscreenModeStandard) || m_videoFullscreenStandby) && supportsPictureInPicture() && isPlaying())
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+        if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture)
             return true;
 #endif
 #if ENABLE(MEDIA_STREAM)
