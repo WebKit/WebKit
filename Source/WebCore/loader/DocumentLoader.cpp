@@ -919,6 +919,12 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
 {
     ASSERT_UNUSED(resource, m_mainResource == &resource);
 
+    if (!response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull()) {
+        m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr);
+        m_contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, m_request.httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+    } else
+        m_contentSecurityPolicy = nullptr;
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
     if (m_frame && m_frame->document()) {
