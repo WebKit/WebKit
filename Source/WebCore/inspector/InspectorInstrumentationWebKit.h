@@ -45,31 +45,19 @@ public:
     static bool shouldInterceptRequest(const Frame*, const ResourceRequest&);
     static bool shouldInterceptResponse(const Frame*, const ResourceResponse&);
     static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
-<<<<<<< ours
-    static void interceptResponse(const Frame*, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-||||||| base
-    static void interceptResponse(const Frame*, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-=======
-    static void interceptResponse(const Frame*, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(std::optional<ResourceError>&& error, const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-    static void interceptDidReceiveData(const Frame*, unsigned long identifier, const SharedBuffer&);
-    static void interceptDidFinishResourceLoad(const Frame*, unsigned long identifier);
-    static void interceptDidFailResourceLoad(const Frame*, unsigned long identifier, const ResourceError& error);
->>>>>>> theirs
+    static void interceptResponse(const Frame*, const ResourceResponse&, ResourceLoaderIdentifier identifier, CompletionHandler<void(std::optional<ResourceError>&& error, const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+    static void interceptDidReceiveData(const Frame*, ResourceLoaderIdentifier identifier, const SharedBuffer&);
+    static void interceptDidFinishResourceLoad(const Frame*, ResourceLoaderIdentifier identifier);
+    static void interceptDidFailResourceLoad(const Frame*, ResourceLoaderIdentifier identifier, const ResourceError& error);
 
 private:
     static bool shouldInterceptRequestInternal(const Frame&, const ResourceRequest&);
     static bool shouldInterceptResponseInternal(const Frame&, const ResourceResponse&);
     static void interceptRequestInternal(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
-<<<<<<< ours
-    static void interceptResponseInternal(const Frame&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-||||||| base
-    static void interceptResponseInternal(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-=======
-    static void interceptResponseInternal(const Frame&, const ResourceResponse&, unsigned long identifier, CompletionHandler<void(std::optional<ResourceError>&& error, const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-    static void interceptDidReceiveDataInternal(const Frame&, unsigned long identifier, const SharedBuffer&);
-    static void interceptDidFinishResourceLoadInternal(const Frame&, unsigned long identifier);
-    static void interceptDidFailResourceLoadInternal(const Frame&, unsigned long identifier, const ResourceError& error);
->>>>>>> theirs
+    static void interceptResponseInternal(const Frame&, const ResourceResponse&, ResourceLoaderIdentifier identifier, CompletionHandler<void(std::optional<ResourceError>&& error, const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
+    static void interceptDidReceiveDataInternal(const Frame&, ResourceLoaderIdentifier identifier, const SharedBuffer&);
+    static void interceptDidFinishResourceLoadInternal(const Frame&, ResourceLoaderIdentifier identifier);
+    static void interceptDidFailResourceLoadInternal(const Frame&, ResourceLoaderIdentifier identifier, const ResourceError& error);
 };
 
 inline bool InspectorInstrumentationWebKit::shouldInterceptRequest(const Frame* frame, const ResourceRequest& request)
@@ -96,19 +84,13 @@ inline void InspectorInstrumentationWebKit::interceptRequest(ResourceLoader& loa
     interceptRequestInternal(loader, WTFMove(handler));
 }
 
-<<<<<<< ours
-inline void InspectorInstrumentationWebKit::interceptResponse(const Frame* frame, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
-||||||| base
-inline void InspectorInstrumentationWebKit::interceptResponse(const Frame* frame, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
-=======
-inline void InspectorInstrumentationWebKit::interceptResponse(const Frame* frame, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(std::optional<ResourceError>&& error, const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
->>>>>>> theirs
+inline void InspectorInstrumentationWebKit::interceptResponse(const Frame* frame, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(std::optional<ResourceError>&& error, const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
 {
     ASSERT(InspectorInstrumentationWebKit::shouldInterceptResponse(frame, response));
     interceptResponseInternal(*frame, response, identifier, WTFMove(handler));
 }
 
-inline void InspectorInstrumentationWebKit::interceptDidReceiveData(const Frame* frame, unsigned long identifier, const SharedBuffer& buffer)
+inline void InspectorInstrumentationWebKit::interceptDidReceiveData(const Frame* frame, ResourceLoaderIdentifier identifier, const SharedBuffer& buffer)
 {
     if (!frame)
         return;
@@ -116,7 +98,7 @@ inline void InspectorInstrumentationWebKit::interceptDidReceiveData(const Frame*
     interceptDidReceiveDataInternal(*frame, identifier, buffer);
 }
 
-inline void InspectorInstrumentationWebKit::interceptDidFinishResourceLoad(const Frame* frame, unsigned long identifier)
+inline void InspectorInstrumentationWebKit::interceptDidFinishResourceLoad(const Frame* frame, ResourceLoaderIdentifier identifier)
 {
     if (!frame)
         return;
@@ -124,7 +106,7 @@ inline void InspectorInstrumentationWebKit::interceptDidFinishResourceLoad(const
     interceptDidFinishResourceLoadInternal(*frame, identifier);
 }
 
-inline void InspectorInstrumentationWebKit::interceptDidFailResourceLoad(const Frame* frame, unsigned long identifier, const ResourceError& error)
+inline void InspectorInstrumentationWebKit::interceptDidFailResourceLoad(const Frame* frame, ResourceLoaderIdentifier identifier, const ResourceError& error)
 {
     if (!frame)
         return;

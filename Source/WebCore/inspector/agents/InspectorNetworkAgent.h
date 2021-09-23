@@ -35,6 +35,7 @@
 #include "InspectorPageAgent.h"
 #include "InspectorWebAgentBase.h"
 #include "ResourceError.h"
+#include "SharedBuffer.h"
 #include "WebSocket.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
@@ -128,17 +129,11 @@ public:
     bool willIntercept(const ResourceRequest&);
     bool shouldInterceptRequest(const ResourceRequest&);
     bool shouldInterceptResponse(const ResourceResponse&);
-<<<<<<< ours
-    void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-||||||| base
-    void interceptResponse(const ResourceResponse&, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
-=======
-    void interceptResponse(const ResourceResponse&, unsigned long identifier, CompletionHandler<void(std::optional<ResourceError>&&, const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
->>>>>>> theirs
+    void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(std::optional<ResourceError>&&, const ResourceResponse&, RefPtr<SharedBuffer>)>&&);
     void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
-    void interceptDidReceiveData(unsigned long identifier, const SharedBuffer&);
-    void interceptDidFinishResourceLoad(unsigned long identifier);
-    void interceptDidFailResourceLoad(unsigned long identifier, const ResourceError& error);
+    void interceptDidReceiveData(ResourceLoaderIdentifier, const SharedBuffer&);
+    void interceptDidFinishResourceLoad(ResourceLoaderIdentifier);
+    void interceptDidFailResourceLoad(ResourceLoaderIdentifier, const ResourceError& error);
 
     void searchOtherRequests(const JSC::Yarr::RegularExpression&, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
     void searchInRequest(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::RequestId&, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);

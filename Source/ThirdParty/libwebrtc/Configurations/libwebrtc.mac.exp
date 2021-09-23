@@ -326,10 +326,7 @@ __ZNK3rtc13SocketAddresseqERKS0_
 __ZNK3rtc9IPAddress5IsNilEv
 __ZN3rtc12SSLCertChainD1Ev
 __ZN6webrtc24SctpTransportInformationD1Ev
-<<<<<<< ours
 __ZNK3rtc9IPAddressneERKS0_
-||||||| base
-=======
 __ZN8mkvmuxer11SegmentInfo15set_writing_appEPKc
 __ZN8mkvmuxer11SegmentInfo4InitEv
 __ZN8mkvmuxer7Segment10OutputCuesEb
@@ -350,4 +347,3 @@ _vpx_codec_get_cx_data
 _vpx_codec_iface_name
 _vpx_codec_version_str
 _vpx_codec_vp8_cx
->>>>>>> theirs

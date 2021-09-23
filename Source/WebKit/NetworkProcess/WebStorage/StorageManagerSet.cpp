@@ -249,7 +249,7 @@ void StorageManagerSet::getLocalStorageData(PAL::SessionID sessionID, GetLocalSt
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 
@@ -264,7 +264,7 @@ void StorageManagerSet::setLocalStorageData(PAL::SessionID sessionID, WebKit::St
 {
     ASSERT(RunLoop::isMain());
 
-    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, storageNamespaceID, origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, sessionID, storageNamespaceID, origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
         auto* storageManager = m_storageManagers.get(sessionID);
         ASSERT(storageManager);
 

@@ -493,7 +493,8 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
             m_networkLoadMetrics.failsTAOCheck = !passesTimingAllowOriginCheck(m_response, *origin);
     }
 
-    m_response.m_httpRequestHeaderFields = m_networkLoadMetrics.requestHeaders;
+    auto& additionalMetrics = additionalNetworkLoadMetricsForWebInspector();
+    m_response.m_httpRequestHeaderFields = additionalMetrics.requestHeaders;
     dispatchDidReceiveResponse();
 }
 
@@ -1213,7 +1214,6 @@ static String tlsProtocolVersionToString(GTlsProtocolVersion version)
 }
 #endif
 
-<<<<<<< ours
 WebCore::AdditionalNetworkLoadMetricsForWebInspector& NetworkDataTaskSoup::additionalNetworkLoadMetricsForWebInspector()
 {
     if (!m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector)
@@ -1221,15 +1221,12 @@ WebCore::AdditionalNetworkLoadMetricsForWebInspector& NetworkDataTaskSoup::addit
     return *m_networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector;
 }
 
-||||||| base
-=======
 static void headers_size(const char *name, const char *value, gpointer pointer)
 {
     int* size = static_cast<int*>(pointer);
     *size += strlen(name) + strlen(value) + 4;
 }
 
->>>>>>> theirs
 void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
@@ -1272,33 +1269,23 @@ void NetworkDataTaskSoup::didGetHeaders()
             GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
             additionalMetrics.remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address)));
         }
-<<<<<<< ours
         additionalMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
         additionalMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));
         additionalMetrics.responseHeaderBytesReceived = soup_message_metrics_get_response_header_bytes_received(metrics);
-||||||| base
-        m_networkLoadMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
-        m_networkLoadMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));
-        m_networkLoadMetrics.responseHeaderBytesReceived = soup_message_metrics_get_response_header_bytes_received(metrics);
-=======
-        m_networkLoadMetrics.tlsProtocol = tlsProtocolVersionToString(soup_message_get_tls_protocol_version(m_soupMessage.get()));
-        m_networkLoadMetrics.tlsCipher = String::fromUTF8(soup_message_get_tls_ciphersuite_name(m_soupMessage.get()));
-        m_networkLoadMetrics.responseHeaderBytesReceived = soup_message_metrics_get_response_header_bytes_received(metrics);
 #else
         {
             auto* requestHeaders = soup_message_get_request_headers(m_soupMessage.get());
             int requestHeadersSize = 0;
             soup_message_headers_foreach(requestHeaders, headers_size, &requestHeadersSize);
-            m_networkLoadMetrics.requestHeaderBytesSent = requestHeadersSize;
+            additionalMetrics.requestHeaderBytesSent = requestHeadersSize;
         }
 
         {
             auto* responseHeaders = soup_message_get_response_headers(m_soupMessage.get());
             int responseHeadersSize = 0;
             soup_message_headers_foreach(responseHeaders, headers_size, &responseHeadersSize);
-            m_networkLoadMetrics.responseHeaderBytesReceived = responseHeadersSize;
+            additionalMetrics.responseHeaderBytesReceived = responseHeadersSize;
         }
->>>>>>> theirs
 #endif
     }
 

@@ -91,15 +91,8 @@ public:
     void setOnLineState(bool);
     void setEmulateOfflineState(bool) final;
 
-<<<<<<< ours
-||||||| base
-    static uint64_t generateLoadIdentifier();
-
-=======
-    static uint64_t generateLoadIdentifier();
     static bool fillParametersForNetworkProcessLoad(WebCore::ResourceLoader&, const WebCore::ResourceRequest&, const WebResourceLoader::TrackingParameters&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime, NetworkResourceLoadParameters&);
 
->>>>>>> theirs
     void setExistingNetworkResourceLoadIdentifierToResume(std::optional<NetworkResourceLoadIdentifier> existingNetworkResourceLoadIdentifierToResume) { m_existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume; }
 
     static constexpr Seconds mediaMaximumBufferingTime { 50_ms };

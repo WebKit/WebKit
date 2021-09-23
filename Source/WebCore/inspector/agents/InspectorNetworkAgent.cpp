@@ -1162,13 +1162,7 @@ void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<vo
     m_frontendDispatcher->requestIntercepted(requestId, buildObjectForResourceRequest(loader.request()));
 }
 
-<<<<<<< ours
-void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
-||||||| base
-void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
-=======
-void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(std::optional<ResourceError>&&, const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
->>>>>>> theirs
+void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(std::optional<ResourceError>&&, const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
 {
     ASSERT(m_enabled);
     ASSERT(m_interceptionEnabled);
@@ -1218,9 +1212,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRespons
     return { };
 }
 
-void InspectorNetworkAgent::interceptDidReceiveData(unsigned long identifier, const SharedBuffer& buffer)
+void InspectorNetworkAgent::interceptDidReceiveData(ResourceLoaderIdentifier identifier, const SharedBuffer& buffer)
 {
-    String requestId = IdentifiersFactory::requestId(identifier);
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     auto* interceptedResponse = m_pendingInterceptResponses.get(requestId);
     if (!interceptedResponse) {
         ASSERT_NOT_REACHED();
@@ -1229,9 +1223,9 @@ void InspectorNetworkAgent::interceptDidReceiveData(unsigned long identifier, co
     interceptedResponse->didReceiveData(buffer);
 }
 
-void InspectorNetworkAgent::interceptDidFinishResourceLoad(unsigned long identifier)
+void InspectorNetworkAgent::interceptDidFinishResourceLoad(ResourceLoaderIdentifier identifier)
 {
-    String requestId = IdentifiersFactory::requestId(identifier);
+    String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     auto* interceptedResponse = m_pendingInterceptResponses.get(requestId);
     if (!interceptedResponse) {
         ASSERT_NOT_REACHED();
@@ -1240,7 +1234,7 @@ void InspectorNetworkAgent::interceptDidFinishResourceLoad(unsigned long identif
     interceptedResponse->didFinishLoading();
 }
 
-void InspectorNetworkAgent::interceptDidFailResourceLoad(unsigned long identifier, const ResourceError&)
+void InspectorNetworkAgent::interceptDidFailResourceLoad(ResourceLoaderIdentifier identifier, const ResourceError&)
 {
     interceptDidFinishResourceLoad(identifier);
 }

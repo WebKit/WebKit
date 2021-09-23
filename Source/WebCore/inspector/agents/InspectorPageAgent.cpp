@@ -1772,7 +1772,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Page::AXNode>> InspectorPageAgent::accessi
 {
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
-    auto document = makeRefPtr(m_inspectedPage.mainFrame().document());
+    RefPtr document = m_inspectedPage.mainFrame().document();
     if (!document)
         return makeUnexpected("No document for main frame"_s);
 
@@ -1794,7 +1794,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Page::AXNode>> InspectorPageAgent::accessi
     }
 
     m_doingAccessibilitySnapshot = true;
-    Ref<Inspector::Protocol::Page::AXNode> axNode = snapshotForAXObject(makeRefPtr(axObject), node);
+    Ref<Inspector::Protocol::Page::AXNode> axNode = snapshotForAXObject(RefPtr { axObject }, node);
     m_doingAccessibilitySnapshot = false;
     return axNode;
 }

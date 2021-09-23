@@ -5454,7 +5454,7 @@ void WebPageProxy::decidePolicyForNavigationActionAsync(FrameIdentifier frameID,
     IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&& redirectResponse, const UserData& userData, uint64_t listenerID)
 {
     if (m_inspectorController->shouldPauseLoading()) {
-        m_inspectorController->setContinueLoadingCallback([this, protectedThis = makeRef(*this), frameID, frameInfo = WTFMove(frameInfo), identifier, navigationID, navigationActionData = WTFMove(navigationActionData),
+        m_inspectorController->setContinueLoadingCallback([this, protectedThis = Ref { *this }, frameID, frameInfo = WTFMove(frameInfo), identifier, navigationID, navigationActionData = WTFMove(navigationActionData),
                 originatingFrameInfo = WTFMove(originatingFrameInfo), originatingPageID, originalRequest, request = WTFMove(request), requestBody = WTFMove(requestBody), redirectResponse = WTFMove(redirectResponse), userData, listenerID] () mutable {
             decidePolicyForNavigationActionAsyncShared(m_process.copyRef(), m_webPageID, frameID, WTFMove(frameInfo), identifier, navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, listenerID);
         });
@@ -5997,14 +5997,8 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     auto* originatingPage = m_process->webPage(originatingPageID);
     auto originatingFrameInfo = API::FrameInfo::create(WTFMove(originatingFrameInfoData), originatingPage);
     auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : URL();
-<<<<<<< ours
-    auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement] (RefPtr<WebPageProxy> newPage) mutable {
-||||||| base
-    auto completionHandler = [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement] (RefPtr<WebPageProxy> newPage) mutable {
-=======
     m_inspectorController->willCreateNewPage(windowFeatures, request.url());
-    auto completionHandler = [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement] (RefPtr<WebPageProxy> newPage) mutable {
->>>>>>> theirs
+    auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(std::nullopt, std::nullopt);
             return;
