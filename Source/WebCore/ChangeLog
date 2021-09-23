@@ -1,5 +1,54 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281334. rdar://problem/83460795
+
+    Followup to <trac.webkit.org/r281288>
+    https://bugs.webkit.org/show_bug.cgi?id=229269
+    rdar://81349236
+    
+    Reviewed by Jer Noble.
+    
+    Make two minor adjustments after the changes in r281288:
+    
+    1.  Rename `keyPathsForValuesAffectingValueCanBeginTouchBarScrubbing` to just
+        `keyPathsForValuesAffectingCanBeginTouchBarScrubbing`, since the Objective-C property name is
+        `-canBeginTouchBarScrubbing` rather than `-valueCanBeginTouchBarScrubbing`.
+    
+    2.  After fixing (1), the implementation of this method is no longer dead code, so we'll to make sure that the
+        `NSSet` we create and return contains valid Objective-C objects (i.e. NSString instead of `const char*`) --
+        in particular, this affects `"contentDuration"`.
+    
+    * platform/mac/WebPlaybackControlsManager.mm:
+    (+[WebPlaybackControlsManager keyPathsForValuesAffectingCanBeginTouchBarScrubbing]):
+    (+[WebPlaybackControlsManager keyPathsForValuesAffectingValueCanBeginTouchBarScrubbing]): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281334 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Followup to <trac.webkit.org/r281288>
+            https://bugs.webkit.org/show_bug.cgi?id=229269
+            rdar://81349236
+
+            Reviewed by Jer Noble.
+
+            Make two minor adjustments after the changes in r281288:
+
+            1.  Rename `keyPathsForValuesAffectingValueCanBeginTouchBarScrubbing` to just
+                `keyPathsForValuesAffectingCanBeginTouchBarScrubbing`, since the Objective-C property name is
+                `-canBeginTouchBarScrubbing` rather than `-valueCanBeginTouchBarScrubbing`.
+
+            2.  After fixing (1), the implementation of this method is no longer dead code, so we'll to make sure that the
+                `NSSet` we create and return contains valid Objective-C objects (i.e. NSString instead of `const char*`) --
+                in particular, this affects `"contentDuration"`.
+
+            * platform/mac/WebPlaybackControlsManager.mm:
+            (+[WebPlaybackControlsManager keyPathsForValuesAffectingCanBeginTouchBarScrubbing]):
+            (+[WebPlaybackControlsManager keyPathsForValuesAffectingValueCanBeginTouchBarScrubbing]): Deleted.
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281288. rdar://problem/83460795
 
     Touchbar not showing time scrubbing

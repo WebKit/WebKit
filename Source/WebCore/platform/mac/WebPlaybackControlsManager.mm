@@ -134,9 +134,9 @@ using WebCore::PlaybackSessionInterfaceMac;
     completionHandler(@[ ]);
 }
 
-+ (NSSet<NSString *> *)keyPathsForValuesAffectingValueCanBeginTouchBarScrubbing
++ (NSSet<NSString *> *)keyPathsForValuesAffectingCanBeginTouchBarScrubbing
 {
-    return [NSSet setWithObjects:@"canSeek", "contentDuration", nil];
+    return [NSSet setWithObjects:@"canSeek", @"contentDuration", nil];
 }
 
 - (BOOL)canBeginTouchBarScrubbing
