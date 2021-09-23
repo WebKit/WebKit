@@ -259,13 +259,14 @@ end
 #
 
 class Parser
-    def initialize(data, fileName)
+    def initialize(data, fileName, options)
         @tokens = lex(data, fileName)
         @idx = 0
         @annotation = nil
         # FIXME: CMake does not currently set BUILT_PRODUCTS_DIR.
         # https://bugs.webkit.org/show_bug.cgi?id=229340
         @buildProductsDirectory = ENV['BUILT_PRODUCTS_DIR'];
+        @options = options
     end
     
     def parseError(*comment)
@@ -830,14 +831,18 @@ class Parser
                 parseError unless isIdentifier(@tokens[@idx])
                 moduleName = @tokens[@idx].string
                 @idx += 1
-                additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                if @options[:use_deployment_location]
+                    additionsDirectoryName = "/usr/local/include/WebKitAdditions/"
+                else
+                    additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                end
                 fileName = IncludeFile.new(moduleName, additionsDirectoryName).fileName
                 if not File.exists?(fileName)
                     fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
                 end
                 fileExists = File.exists?(fileName)
                 raise "File not found: #{fileName}" if not fileExists and not isOptional
-                list << parse(fileName) if fileExists
+                list << parse(fileName, @options) if fileExists
             else
                 parseError "Expecting terminal #{final} #{comment}"
             end
@@ -862,7 +867,11 @@ class Parser
                 parseError unless isIdentifier(@tokens[@idx])
                 moduleName = @tokens[@idx].string
                 @idx += 1
-                additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                if @options[:use_deployment_location]
+                    additionsDirectoryName = "/usr/local/include/WebKitAdditions/"
+                else
+                    additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
+                end
                 fileName = IncludeFile.new(moduleName, additionsDirectoryName).fileName
                 if not File.exists?(fileName)
                     fileName = IncludeFile.new(moduleName, @tokens[@idx].codeOrigin.fileName.dirname).fileName
@@ -890,17 +899,17 @@ def readTextFile(fileName)
     return data
 end
 
-def parseData(data, fileName)
-    parser = Parser.new(data, SourceFile.new(fileName))
+def parseData(data, fileName, options)
+    parser = Parser.new(data, SourceFile.new(fileName), options)
     parser.parseSequence(nil, "")
 end
 
-def parse(fileName)
-    parseData(readTextFile(fileName), fileName)
+def parse(fileName, options)
+    parseData(readTextFile(fileName), fileName, options)
 end
 
-def parseHash(fileName)
-    parser = Parser.new(readTextFile(fileName), SourceFile.new(fileName))
+def parseHash(fileName, options)
+    parser = Parser.new(readTextFile(fileName), SourceFile.new(fileName), options)
     fileList = parser.parseIncludes(nil, "")
     fileListHash(fileList)
 end
