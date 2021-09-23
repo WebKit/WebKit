@@ -1,3 +1,20 @@
+2021-09-23  Chris Lord  <clord@igalia.com>
+
+        [GTK] Allow sending precise mouse wheel events in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=230541
+
+        Reviewed by Tim Horton.
+
+        Add code to be able to send precise synthetic mouse-wheel events in GTK.
+
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/gtk/NativeWebWheelEventGtk.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSynthesizeWheelEvent):
+        (webkitWebViewBaseSetWheelHasPreciseDeltas):
+        * UIProcess/API/gtk/WebKitWebViewBaseInternal.h:
+
 2021-09-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, (manually) reverting r282856.

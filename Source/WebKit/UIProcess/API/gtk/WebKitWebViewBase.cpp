@@ -284,6 +284,7 @@ struct _WebKitWebViewBasePrivate {
     TouchEventsMap touchEvents;
     IntSize contentsSize;
     std::optional<MotionEvent> lastMotionEvent;
+    bool wheelHasPreciseDeltas { false };
     bool isBlank;
     bool shouldNotifyFocusEvents { true };
 
@@ -2994,10 +2995,16 @@ void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase* webViewBase, const
 
     FloatSize wheelTicks(deltaX, deltaY);
     FloatSize delta(wheelTicks);
-    delta.scale(static_cast<float>(Scrollbar::pixelsPerLineStep()));
+    if (!priv->wheelHasPreciseDeltas)
+        delta.scale(static_cast<float>(Scrollbar::pixelsPerLineStep()));
 
     priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(const_cast<GdkEvent*>(event), { x, y }, widgetRootCoords(GTK_WIDGET(webViewBase), x, y),
-        delta, wheelTicks, toWebKitWheelEventPhase(phase), toWebKitWheelEventPhase(momentumPhase)));
+        delta, wheelTicks, toWebKitWheelEventPhase(phase), toWebKitWheelEventPhase(momentumPhase), priv->wheelHasPreciseDeltas));
+}
+
+void webkitWebViewBaseSetWheelHasPreciseDeltas(WebKitWebViewBase* webViewBase, bool hasPreciseDeltas)
+{
+    webViewBase->priv->wheelHasPreciseDeltas = hasPreciseDeltas;
 }
 
 void webkitWebViewBaseMakeBlank(WebKitWebViewBase* webViewBase, bool makeBlank)

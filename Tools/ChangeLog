@@ -1,3 +1,24 @@
+2021-09-23  Chris Lord  <clord@igalia.com>
+
+        [GTK] Allow sending precise mouse wheel events in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=230541
+
+        Reviewed by Tim Horton.
+
+        Add API to be able to send precise mouse-wheel events in EventSender.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::setWheelHasPreciseDeltas):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::toWebKitGLibAPI):
+        (WTR::EventSenderProxy::~EventSenderProxy):
+        (WTR::EventSenderProxy::setWheelHasPreciseDeltas):
+
 2021-09-22  Alex Christensen  <achristensen@webkit.org>
 
         PCM should include the bundle ID of the app from which it originated
