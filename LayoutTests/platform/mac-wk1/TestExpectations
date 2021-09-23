@@ -1413,3 +1413,5 @@ webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
 
 # webkit.org/b/214448 Web Share API is not implemented for mac-wk1
 http/tests/webshare/ [ Skip ]
+
+webkit.org/b/230701 [ Catalina Debug ] performance-api/performance-observer-callback-after-gc.html [ Pass Crash ]

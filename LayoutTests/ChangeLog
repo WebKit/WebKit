@@ -1,3 +1,12 @@
+2021-09-23  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Catalina Debug wk1 ] performance-api/performance-observer-callback-after-gc.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230701.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-23  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS macOS wk2 ] webrtc/datachannel/mdns-ice-candidates.html is a flaky failure.
