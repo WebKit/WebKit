@@ -849,9 +849,6 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
 test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js:
   default: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
   strict mode: 'Test262Error: Expected SameValue(«und-NO-u-sd-no23», «und-NO-u-sd-no50») to be true'
-test/intl402/Intl/supportedValuesOf/collations-accepted-by-Collator.js:
-  default: 'Test262Error: emoji supported but not returned by supportedValuesOf'
-  strict mode: 'Test262Error: emoji supported but not returned by supportedValuesOf'
 test/intl402/Intl/supportedValuesOf/currencies-accepted-by-DisplayNames.js:
   default: 'Test262Error: ADP supported but not returned by supportedValuesOf'
   strict mode: 'Test262Error: ADP supported but not returned by supportedValuesOf'

@@ -1657,7 +1657,11 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
     }
 
     Vector<String, 1> elements;
-    elements.reserveInitialCapacity(count);
+    elements.reserveInitialCapacity(count + 2);
+    // ICU ~69 has a bug that does not report "emoji" and "eor" for collation when using ucol_getKeywordValues.
+    // https://github.com/unicode-org/icu/commit/24778dfc9bf67f431509361a173a33a1ab860b5d
+    elements.append("emoji"_s);
+    elements.append("eor"_s);
     for (int32_t index = 0; index < count; ++index) {
         int32_t length = 0;
         const char* pointer = uenum_next(enumeration.get(), &length, &status);
@@ -1680,6 +1684,8 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
         [](const String& a, const String& b) {
             return WTF::codePointCompare(a, b) < 0;
         });
+    auto end = std::unique(elements.begin(), elements.end());
+    elements.resize(elements.size() - (elements.end() - end));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }

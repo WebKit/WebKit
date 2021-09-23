@@ -1,5 +1,18 @@
 2021-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] emoji and eor collations are missing
+        https://bugs.webkit.org/show_bug.cgi?id=230652
+
+        Reviewed by Ross Kirsling.
+
+        Due to ICU's bug, "emoji" and "eor" collations are missing from enumeration.
+        This patch adds work-around for this.
+
+        * runtime/IntlObject.cpp:
+        (JSC::availableCollations):
+
+2021-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Intl unicode identifier type will reject underscore
         https://bugs.webkit.org/show_bug.cgi?id=230645
 
