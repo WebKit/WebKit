@@ -1,5 +1,17 @@
 2021-09-23  Tim Nguyen  <ntim@apple.com>
 
+        Use visibleToHitTesting() in RenderLayerBacking::updateAfterDescendants() instead of pointer-events check
+        https://bugs.webkit.org/show_bug.cgi?id=230681
+
+        Reviewed by Antti Koivisto.
+
+        The new check should account for inert as well once we implement it in RenderStyle.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+
+2021-09-23  Tim Nguyen  <ntim@apple.com>
+
         AX: Split out isInert from isAXHidden on AccessibilityObject
         https://bugs.webkit.org/show_bug.cgi?id=230680
 

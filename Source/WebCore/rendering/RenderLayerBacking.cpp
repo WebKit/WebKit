@@ -1590,7 +1590,7 @@ void RenderLayerBacking::updateAfterDescendants()
     if (m_scrollContainerLayer) {
         m_scrollContainerLayer->setContentsVisible(renderer().style().visibility() == Visibility::Visible);
 
-        bool userInteractive = renderer().style().pointerEvents() != PointerEvents::None;
+        bool userInteractive = renderer().visibleToHitTesting();
         m_scrollContainerLayer->setUserInteractionEnabled(userInteractive);
         if (m_layerForHorizontalScrollbar)
             m_layerForHorizontalScrollbar->setUserInteractionEnabled(userInteractive);
