@@ -109,7 +109,7 @@ LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingCo
 {
 }
 
-LineBoxBuilder::LineBoxAndGeometry LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
+LineBoxBuilder::LineAndLineBox LineBoxBuilder::build(const LineBuilder::LineContent& lineContent)
 {
     auto& runs = lineContent.runs;
     auto contentLogicalWidth = lineContent.contentLogicalWidth;
@@ -118,11 +118,11 @@ LineBoxBuilder::LineBoxAndGeometry LineBoxBuilder::build(const LineBuilder::Line
 
     auto lineBoxLogicalHeight = constructAndAlignInlineLevelBoxes(lineBox, runs);
 
-    auto lineGeometry = [&] {
+    auto line = [&] {
         auto lineBoxLogicalRect = InlineRect { lineContent.logicalTopLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
         auto scrollableOverflowRect = lineBoxLogicalRect;
         auto& rootInlineBox = lineBox.rootInlineBox();
-        auto enclosingTopAndBottom = LineGeometry::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBox.logicalTop(), lineBoxLogicalRect.top() + rootInlineBox.logicalBottom() };
+        auto enclosingTopAndBottom = InlineDisplay::Line::EnclosingTopAndBottom { lineBoxLogicalRect.top() + rootInlineBox.logicalTop(), lineBoxLogicalRect.top() + rootInlineBox.logicalBottom() };
 
         for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
             if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox())
@@ -153,9 +153,9 @@ LineBoxBuilder::LineBoxAndGeometry LineBoxBuilder::build(const LineBuilder::Line
             enclosingTopAndBottom.top = std::min(enclosingTopAndBottom.top, borderBox.top());
             enclosingTopAndBottom.bottom = std::max(enclosingTopAndBottom.bottom, borderBox.bottom());
         }
-        return LineGeometry { lineBoxLogicalRect, scrollableOverflowRect, enclosingTopAndBottom, rootInlineBox.logicalTop() + rootInlineBox.baseline(), rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth() };
+        return InlineDisplay::Line { lineBoxLogicalRect, scrollableOverflowRect, enclosingTopAndBottom, rootInlineBox.logicalTop() + rootInlineBox.baseline(), rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth() };
     };
-    return { lineBox, lineGeometry() };
+    return { line(), lineBox };
 }
 
 void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox& inlineBox, const TextUtil::FallbackFontList& fallbackFontsForContent) const

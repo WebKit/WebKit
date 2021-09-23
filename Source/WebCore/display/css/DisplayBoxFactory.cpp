@@ -39,7 +39,7 @@
 #include "DisplayTree.h"
 #include "DisplayTreeBuilder.h"
 #include "FloatPoint3D.h"
-#include "InlineLineGeometry.h"
+#include "InlineDisplayLine.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInitialContainingBlock.h"
@@ -143,9 +143,9 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
     return makeUnique<Box>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), flags);
 }
 
-std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::Run& run, const Layout::LineGeometry& lineGeometry, const ContainingBlockContext& containingBlockContext) const
+std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::Run& run, const InlineDisplay::Line& line, const ContainingBlockContext& containingBlockContext) const
 {
-    UNUSED_PARAM(lineGeometry);
+    UNUSED_PARAM(line);
     ASSERT(run.text());
 
     auto runRect = LayoutRect { run.logicalLeft(), run.logicalTop(), run.logicalWidth(), run.logicalHeight() };

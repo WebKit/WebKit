@@ -41,7 +41,7 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-inline Layout::LineGeometry::EnclosingTopAndBottom operator+(const Layout::LineGeometry::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
+inline InlineDisplay::Line::EnclosingTopAndBottom operator+(const InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom, float offset)
 {
     return { enclosingTopAndBottom.top + offset, enclosingTopAndBottom.bottom + offset };
 }

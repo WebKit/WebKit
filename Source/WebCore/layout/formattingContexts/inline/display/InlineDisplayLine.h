@@ -30,44 +30,44 @@
 #include "InlineRect.h"
 
 namespace WebCore {
-namespace Layout {
+namespace InlineDisplay {
 
-class LineGeometry {
+class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct EnclosingTopAndBottom {
         // This values encloses the root inline box and any other inline level box's border box.
-        InlineLayoutUnit top { 0 };
-        InlineLayoutUnit bottom { 0 };
+        Layout::InlineLayoutUnit top { 0 };
+        Layout::InlineLayoutUnit bottom { 0 };
     };
-    LineGeometry(const InlineRect& lineBoxLogicalRect, const InlineRect& scrollableOverflow, EnclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth);
+    Line(const Layout::InlineRect& lineBoxLogicalRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLogicalLeft, Layout::InlineLayoutUnit contentLogicalWidth);
 
-    const InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
-    const InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
+    const Layout::InlineRect& lineBoxLogicalRect() const { return m_lineBoxLogicalRect; }
+    const Layout::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
 
     EnclosingTopAndBottom enclosingTopAndBottom() const { return m_enclosingTopAndBottom; }
 
-    InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
+    Layout::InlineLayoutUnit baseline() const { return m_aligmentBaseline; }
 
-    InlineLayoutUnit contentLogicalLeft() const { return m_contentLogicalLeft; }
-    InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
+    Layout::InlineLayoutUnit contentLogicalLeft() const { return m_contentLogicalLeft; }
+    Layout::InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
-    void moveVertically(InlineLayoutUnit offset) { m_lineBoxLogicalRect.moveVertically(offset); }
+    void moveVertically(Layout::InlineLayoutUnit offset) { m_lineBoxLogicalRect.moveVertically(offset); }
 
 private:
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
-    InlineRect m_lineBoxLogicalRect;
-    InlineRect m_scrollableOverflow;
+    Layout::InlineRect m_lineBoxLogicalRect;
+    Layout::InlineRect m_scrollableOverflow;
     // Enclosing top and bottom includes all inline level boxes (border box) vertically.
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
     EnclosingTopAndBottom m_enclosingTopAndBottom;
-    InlineLayoutUnit m_aligmentBaseline { 0 };
-    InlineLayoutUnit m_contentLogicalLeft { 0 };
-    InlineLayoutUnit m_contentLogicalWidth { 0 };
+    Layout::InlineLayoutUnit m_aligmentBaseline { 0 };
+    Layout::InlineLayoutUnit m_contentLogicalLeft { 0 };
+    Layout::InlineLayoutUnit m_contentLogicalWidth { 0 };
 };
 
-inline LineGeometry::LineGeometry(const InlineRect& lineBoxLogicalRect, const InlineRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, InlineLayoutUnit aligmentBaseline, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth)
+inline Line::Line(const Layout::InlineRect& lineBoxLogicalRect, const Layout::InlineRect& scrollableOverflow, EnclosingTopAndBottom enclosingTopAndBottom, Layout::InlineLayoutUnit aligmentBaseline, Layout::InlineLayoutUnit contentLogicalLeft, Layout::InlineLayoutUnit contentLogicalWidth)
     : m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_enclosingTopAndBottom(enclosingTopAndBottom)

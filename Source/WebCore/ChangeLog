@@ -1,5 +1,39 @@
 2021-09-22  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Move LineGeometry under InlineDisplay namespace
+        https://bugs.webkit.org/show_bug.cgi?id=230635
+
+        Reviewed by Antti Koivisto.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/css/DisplayBoxFactory.cpp:
+        (WebCore::Display::BoxFactory::displayBoxForTextRun const):
+        * display/css/DisplayBoxFactory.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::lines const):
+        (WebCore::Layout::InlineFormattingState::lines):
+        (WebCore::Layout::InlineFormattingState::addLine):
+        (WebCore::Layout::InlineFormattingState::clearLineAndRuns):
+        (WebCore::Layout::InlineFormattingState::shrinkToFit):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::build):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.h:
+        * layout/formattingContexts/inline/display/InlineDisplayLine.h: Renamed from Source/WebCore/layout/formattingContexts/inline/display/InlineLineGeometry.h.
+        (WebCore::InlineDisplay::Line::lineBoxLogicalRect const):
+        (WebCore::InlineDisplay::Line::scrollableOverflow const):
+        (WebCore::InlineDisplay::Line::enclosingTopAndBottom const):
+        (WebCore::InlineDisplay::Line::baseline const):
+        (WebCore::InlineDisplay::Line::contentLogicalLeft const):
+        (WebCore::InlineDisplay::Line::contentLogicalWidth const):
+        (WebCore::InlineDisplay::Line::moveVertically):
+        (WebCore::InlineDisplay::Line::Line):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::operator+):
+
+2021-09-22  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Move LineGeometry and LineRun files under /inline/display
         https://bugs.webkit.org/show_bug.cgi?id=230632
 

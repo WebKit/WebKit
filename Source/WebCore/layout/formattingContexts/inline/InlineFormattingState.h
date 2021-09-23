@@ -28,9 +28,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingState.h"
+#include "InlineDisplayLine.h"
 #include "InlineItem.h"
 #include "InlineLineBox.h"
-#include "InlineLineGeometry.h"
 #include "InlineLineRun.h"
 #include <wtf/IsoMalloc.h>
 
@@ -38,7 +38,7 @@ namespace WebCore {
 namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
-using InlineLines = Vector<LineGeometry>;
+using DisplayLines = Vector<InlineDisplay::Line>;
 using InlineLineBoxes = Vector<LineBox>;
 using InlineRuns = Vector<Run>;
 
@@ -53,9 +53,9 @@ public:
     const InlineItems& inlineItems() const { return m_inlineItems; }
     void addInlineItem(InlineItem&& inlineItem) { m_inlineItems.append(WTFMove(inlineItem)); }
 
-    const InlineLines& lines() const { return m_lines; }
-    InlineLines& lines() { return m_lines; }
-    void addLine(const LineGeometry& line) { m_lines.append(line); }
+    const DisplayLines& lines() const { return m_displayLines; }
+    DisplayLines& lines() { return m_displayLines; }
+    void addLine(const InlineDisplay::Line& line) { m_displayLines.append(line); }
 
     const InlineLineBoxes& lineBoxes() const { return m_lineBoxes; }
     void addLineBox(LineBox&& lineBox) { m_lineBoxes.append(WTFMove(lineBox)); }
@@ -74,7 +74,7 @@ public:
 private:
     // Cacheable input to line layout.
     InlineItems m_inlineItems;
-    InlineLines m_lines;
+    DisplayLines m_displayLines;
     InlineLineBoxes m_lineBoxes;
     InlineRuns m_runs;
     InlineLayoutUnit m_clearGapAfterLastLine { 0 };
@@ -88,7 +88,7 @@ inline void InlineFormattingState::setClearGapAfterLastLine(InlineLayoutUnit ver
 
 inline void InlineFormattingState::clearLineAndRuns()
 {
-    m_lines.clear();
+    m_displayLines.clear();
     m_lineBoxes.clear();
     m_runs.clear();
     m_clearGapAfterLastLine = { };
@@ -97,7 +97,7 @@ inline void InlineFormattingState::clearLineAndRuns()
 inline void InlineFormattingState::shrinkToFit()
 {
     m_inlineItems.shrinkToFit();
-    m_lines.shrinkToFit();
+    m_displayLines.shrinkToFit();
     m_lineBoxes.shrinkToFit();
     m_runs.shrinkToFit();
 }
