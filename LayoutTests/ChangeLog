@@ -1,5 +1,54 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281323. rdar://problem/83430037
+
+    Release assert in ScriptController::canExecuteScripts via WebCore::WebSocket::didReceiveMessage
+    https://bugs.webkit.org/show_bug.cgi?id=229301
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Test: http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html
+    
+    `WebCore::WebSocket::didReceiveMessage` and other functions that fire JS events may be called while the
+    `WebSocketChannel` is being resumed, but it is not yet safe to evaluate JavaScript during resuming. This was
+    already accounted for with some events like errors and closing, but it holds true for all events. We should
+    delay firing these events as well.
+    
+    * Modules/websockets/WebSocket.cpp:
+    (WebCore::WebSocket::didConnect):
+    (WebCore::WebSocket::didReceiveMessage):
+    (WebCore::WebSocket::didReceiveBinaryData):
+    
+    LayoutTests:
+    
+    * http/tests/websocket/tests/hybi/inspector/echo-delayed_wsh.py: Added.
+    (web_socket_do_extra_handshake):
+    (web_socket_transfer_data):
+    - Similar to `echo_wsh.py`, respond with the provided message when received, but delay the response by 100ms.
+    * http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger-expected.txt: Added.
+    * http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281323 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-20  Patrick Angle  <pangle@apple.com>
+
+            Release assert in ScriptController::canExecuteScripts via WebCore::WebSocket::didReceiveMessage
+            https://bugs.webkit.org/show_bug.cgi?id=229301
+
+            Reviewed by Ryosuke Niwa.
+
+            * http/tests/websocket/tests/hybi/inspector/echo-delayed_wsh.py: Added.
+            (web_socket_do_extra_handshake):
+            (web_socket_transfer_data):
+            - Similar to `echo_wsh.py`, respond with the provided message when received, but delay the response by 100ms.
+            * http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger-expected.txt: Added.
+            * http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html: Added.
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282358. rdar://problem/83429732
 
     AX: Make PDFs loaded via <embed> accessible
