@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Color.h"
+#include "Gradient.h"
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
@@ -56,9 +57,25 @@ public:
         return m_overrideColor;
     }
 
+    bool operator==(const FontPaletteValues& other) const
+    {
+        return m_basePalette == other.m_basePalette && m_overrideColor == other.m_overrideColor;
+    }
+
+    bool operator!=(const FontPaletteValues& other) const
+    {
+        return !(*this == other);
+    }
+
 private:
     PaletteIndex m_basePalette;
     Vector<OverriddenColor> m_overrideColor;
 };
+
+inline void add(Hasher& hasher, const FontPaletteValues& fontPaletteValues)
+{
+    add(hasher, fontPaletteValues.basePalette());
+    add(hasher, fontPaletteValues.overrideColor());
+}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,9 @@
 namespace WebCore {
 
 class CSSFontSelector;
+struct FontCreationContext;
 class FontDescription;
+class FontPaletteValues;
 class FontRanges;
 
 class CSSSegmentedFontFace final : public RefCounted<CSSSegmentedFontFace>, public CSSFontFace::Client {
@@ -48,7 +50,7 @@ public:
 
     void appendFontFace(Ref<CSSFontFace>&&);
 
-    FontRanges fontRanges(const FontDescription&);
+    FontRanges fontRanges(const FontDescription&, const FontPaletteValues&);
 
     Vector<Ref<CSSFontFace>, 1>& constituentFaces() { return m_fontFaces; }
 

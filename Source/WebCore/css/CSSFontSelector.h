@@ -105,6 +105,8 @@ private:
 
     std::optional<AtomString> resolveGenericFamily(const FontDescription&, const AtomString& family);
 
+    const FontPaletteValues& lookupFontPaletteValues(const AtomString& familyName, const FontDescription&);
+
     // CSSFontFace::Client
     void fontLoaded(CSSFontFace&) final;
     void updateStyleIfNeeded(CSSFontFace&) final;

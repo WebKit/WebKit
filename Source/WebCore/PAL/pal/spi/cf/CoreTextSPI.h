@@ -87,6 +87,12 @@ enum {
     kCTFontTraitEmphasized = kCTFontTraitBold,
 };
 
+typedef CF_ENUM(CFIndex, CTFontPalette)
+{
+    kCTFontPaletteLight = -1,
+    kCTFontPaletteDark = -2
+};
+
 typedef const struct __OTSVGTable * OTSVGTableRef;
 
 #endif
@@ -149,6 +155,9 @@ extern const CFStringRef kCTFontUIFontDesignDefault;
 extern const CFStringRef kCTFontUIFontDesignSerif;
 extern const CFStringRef kCTFontUIFontDesignMonospaced;
 extern const CFStringRef kCTFontUIFontDesignRounded;
+
+extern const CFStringRef kCTFontPaletteAttribute;
+extern const CFStringRef kCTFontPaletteColorsAttribute;
 
 extern const CFStringRef kCTFrameMaximumNumberOfLinesAttributeName;
 

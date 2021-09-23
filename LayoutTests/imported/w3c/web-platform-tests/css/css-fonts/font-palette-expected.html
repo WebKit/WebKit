@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>CSS Test: font-palette drawing</title>
+<link rel="author" title="Myles C. Maxfield" href="mmaxfield@apple.com">
+<link rel="match" href="font-palette-ref.html">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-4/#font-palette-prop">
+<meta name="assert" content="Font palettes are applied as necessary">
+</head>
+<body>
+<p>Test passes if you see particular rectangles of particular colors.</p>
+<div style="position: relative;">
+<div style="position: absolute; left: 0px; top: 0px; width: 100px; height: 100px; background: #FF00FF;">
+    <div style="position: absolute; left: 20px; top: 0px; width: 20px; height: 100px; background: #00FFFF;"></div>
+</div>
+<div style="position: absolute; left: 100px; top: 0px; width: 100px; height: 100px; background: #0000FF;">
+    <div style="position: absolute; left: 20px; top: 0px; width: 20px; height: 100px; background: #00FF00;"></div>
+</div>
+<div style="position: absolute; left: 200px; top: 0px; width: 100px; height: 100px; background: #0000FF;">
+    <div style="position: absolute; left: 20px; top: 0px; width: 20px; height: 100px; background: #FFFF00;"></div>
+</div>
+<div style="position: absolute; left: 300px; top: 0px; width: 100px; height: 100px; background: #00FF00;">
+    <div style="position: absolute; left: 20px; top: 0px; width: 20px; height: 100px; background: #000000;"></div>
+</div>
+<div style="position: absolute; left: 400px; top: 0px; width: 100px; height: 100px; background: #00FF00;">
+    <div style="position: absolute; left: 20px; top: 0px; width: 20px; height: 100px; background: #000000;"></div>
+</div>
+</div>
+</body>
+</html>

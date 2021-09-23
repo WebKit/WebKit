@@ -1,5 +1,42 @@
 2021-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Hook up palettes to CoreText
+        https://bugs.webkit.org/show_bug.cgi?id=230449
+
+        Reviewed by Simon Fraser.
+
+        Now that we have FontCreationContext, we can just add FontPaletteValues to it, and turn
+        that into Core Text attributes in preparePlatformFont().
+
+        Test: imported/w3c/web-platform-tests/css/css-fonts/font-palette.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::font):
+        * css/CSSFontFace.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::lookupFontPaletteValues):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontRanges):
+        * css/CSSSegmentedFontFace.h:
+        * platform/graphics/FontCreationContext.h:
+        (WebCore::FontCreationContext::operator== const):
+        (WebCore::add):
+        * platform/graphics/FontPaletteValues.h:
+        (WebCore::FontPaletteValues::operator== const):
+        (WebCore::FontPaletteValues::operator!= const):
+        (WebCore::add):
+        * platform/graphics/Gradient.cpp:
+        * platform/graphics/Gradient.h:
+        (WebCore::add):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::addAttributesForFontPalettes):
+        (WebCore::preparePlatformFont):
+
+2021-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Rename the Shaping log channel to TextShaping
         https://bugs.webkit.org/show_bug.cgi?id=230665
 

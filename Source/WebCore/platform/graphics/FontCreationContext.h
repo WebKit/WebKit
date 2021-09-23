@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontPaletteValues.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 
@@ -34,7 +35,8 @@ struct FontCreationContext {
     bool operator==(const FontCreationContext& other) const
     {
         return fontFaceFeatures == other.fontFaceFeatures
-            && fontFaceCapabilities == other.fontFaceCapabilities;
+            && fontFaceCapabilities == other.fontFaceCapabilities
+            && fontPaletteValues == other.fontPaletteValues;
     }
 
     bool operator!=(const FontCreationContext& other) const
@@ -44,13 +46,15 @@ struct FontCreationContext {
 
     FontFeatureSettings fontFaceFeatures;
     FontSelectionSpecifiedCapabilities fontFaceCapabilities;
-    // FIXME: Add support for font-palette-values and font-feature-values.
+    FontPaletteValues fontPaletteValues;
+    // FIXME: Add support for font-feature-values.
 };
 
 inline void add(Hasher& hasher, const FontCreationContext& fontCreationContext)
 {
     add(hasher, fontCreationContext.fontFaceFeatures);
     add(hasher, fontCreationContext.fontFaceCapabilities.tied());
+    add(hasher, fontCreationContext.fontPaletteValues);
 }
 
 }

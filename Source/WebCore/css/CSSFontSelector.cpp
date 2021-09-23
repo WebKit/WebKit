@@ -317,6 +317,20 @@ std::optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescri
     return std::nullopt;
 }
 
+const FontPaletteValues& CSSFontSelector::lookupFontPaletteValues(const AtomString& familyName, const FontDescription& fontDescription)
+{
+    static NeverDestroyed<FontPaletteValues> emptyFontPaletteValues;
+    if (fontDescription.fontPalette().type != FontPalette::Type::Custom)
+        return emptyFontPaletteValues.get();
+
+    const AtomString paletteName = fontDescription.fontPalette().identifier;
+
+    auto iterator = m_paletteFamilyMap.find(std::make_pair(familyName, paletteName));
+    if (iterator == m_paletteFamilyMap.end())
+        return emptyFontPaletteValues.get();
+    return iterator->value;
+}
+
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomString& familyName)
 {
     // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
@@ -333,7 +347,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
             familyForLookup = *genericFamilyOptional;
     };
 
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=230449: Query for font palette data and pass it into the font creation routines.
+    const auto& fontPaletteValues = lookupFontPaletteValues(familyName, fontDescription);
 
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
@@ -342,12 +356,12 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     if (face) {
         if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), true);
-        return face->fontRanges(*fontDescriptionForLookup);
+        return face->fontRanges(*fontDescriptionForLookup, fontPaletteValues);
     }
 
     if (!resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto font = m_fontCache->fontForFamily(*fontDescriptionForLookup, familyForLookup, { });
+    auto font = m_fontCache->fontForFamily(*fontDescriptionForLookup, familyForLookup, { { }, { }, fontPaletteValues });
     if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
     return FontRanges { WTFMove(font) };

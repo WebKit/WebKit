@@ -31,6 +31,7 @@
 #include "FontCascadeDescription.h"
 #include "FontCreationContext.h"
 #include "FontFamilySpecificationCoreText.h"
+#include "FontPaletteValues.h"
 #include "RenderThemeCocoa.h"
 #include "SystemFontDatabaseCoreText.h"
 #include "VersionChecks.h"
@@ -442,6 +443,53 @@ struct FontType {
     bool aatShaping { false };
 };
 
+static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, const FontPalette& fontPalette, const FontPaletteValues& fontPaletteValues)
+{
+    switch (fontPalette.type) {
+    case FontPalette::Type::None:
+        // This is unimplementable in Core Text.
+        break;
+    case FontPalette::Type::Normal:
+        break;
+    case FontPalette::Type::Light: {
+        auto light = kCTFontPaletteLight;
+        auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &light));
+        CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+        break;
+    }
+    case FontPalette::Type::Dark: {
+        auto dark = kCTFontPaletteDark;
+        auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &dark));
+        CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+        break;
+    }
+    case FontPalette::Type::Custom: {
+        WTF::switchOn(fontPaletteValues.basePalette(), [&](int64_t index) {
+            auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &index));
+            CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+        }, [](const AtomString&) {
+            // This is unimplementable in Core Text.
+        });
+        if (!fontPaletteValues.overrideColor().isEmpty()) {
+            auto overrideDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            for (const auto& pair : fontPaletteValues.overrideColor()) {
+                const auto& paletteColorIndex = pair.first;
+                const auto& color = pair.second;
+                WTF::switchOn(paletteColorIndex, [](const AtomString&) {
+                    // This is unimplementable in Core Text.
+                }, [&](int64_t index) {
+                    auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &index));
+                    auto colorObject = cachedCGColor(color);
+                    CFDictionaryAddValue(overrideDictionary.get(), number.get(), colorObject);
+                });
+            }
+            if (CFDictionaryGetCount(overrideDictionary.get()))
+                CFDictionaryAddValue(attributes, kCTFontPaletteColorsAttribute, overrideDictionary.get());
+        }
+    }
+    }
+}
+
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
 {
     if (!originalFont)
@@ -464,6 +512,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     const auto& variantSettings = fontDescription.variantSettings();
     auto textRenderingMode = fontDescription.textRenderingMode();
     auto shouldDisableLigaturesForSpacing = fontDescription.shouldDisableLigaturesForSpacing();
+    bool dontNeedToApplyFontPalettes = fontDescription.fontPalette().type == FontPalette::Type::Normal;
 
     // We might want to check fontType.trackingType == FontType::TrackingType::Manual here, but in order to maintain compatibility with the rest of the system, we don't.
     bool noFontFeatureSettings = features.isEmpty();
@@ -472,7 +521,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool variantSettingsIsNormal = variantSettings.isAllNormal();
     bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
     bool fontFaceDoesntSpecifyFeatures = fontCreationContext.fontFaceFeatures.isEmpty();
-    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && !shouldDisableLigaturesForSpacing) {
+    if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && !shouldDisableLigaturesForSpacing && dontNeedToApplyFontPalettes) {
 #if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
         return originalFont;
 #else
@@ -621,6 +670,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, CFSTR("none"));
 #endif
     }
+
+    addAttributesForFontPalettes(attributes.get(), fontDescription.fontPalette(), fontCreationContext.fontPaletteValues);
 
     addAttributesForInstalledFonts(attributes.get(), fontDescription.shouldAllowUserInstalledFonts());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -124,12 +124,6 @@ void Gradient::setSpreadMethod(GradientSpreadMethod spreadMethod)
 }
 
 // FIXME: Instead of these add(Hasher) functions, consider using encode functions to compute the hash.
-
-static void add(Hasher& hasher, const Color& color)
-{
-    // FIXME: We don't want to hash a hash; do better.
-    add(hasher, color.hash());
-}
 
 static void add(Hasher& hasher, const FloatPoint& point)
 {

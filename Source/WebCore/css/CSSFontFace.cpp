@@ -41,6 +41,7 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "FontFace.h"
+#include "FontPaletteValues.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "StyleBuilderConverter.h"
@@ -651,7 +652,7 @@ static Font::Visibility visibility(CSSFontFace::Status status, CSSFontFace::Font
     }
 }
 
-RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, ExternalResourceDownloadPolicy policy)
+RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, ExternalResourceDownloadPolicy policy, const FontPaletteValues& fontPaletteValues)
 {
     if (computeFailureState())
         return nullptr;
@@ -680,7 +681,7 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
             return Font::create(fontCache.lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, &fontCache, Font::Interstitial::Yes, visibility);
         }
         case CSSFontFaceSource::Status::Success: {
-            FontCreationContext fontCreationContext { m_featureSettings, m_fontSelectionCapabilities };
+            FontCreationContext fontCreationContext { m_featureSettings, m_fontSelectionCapabilities, fontPaletteValues };
             if (auto result = source->font(fontDescription, syntheticBold, syntheticItalic, fontCreationContext))
                 return result;
             break;

@@ -1,3 +1,16 @@
+2021-09-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Hook up palettes to CoreText
+        https://bugs.webkit.org/show_bug.cgi?id=230449
+
+        Reviewed by Simon Fraser.
+
+        This is being upstreamed at https://github.com/web-platform-tests/wpt/pull/30910.
+
+        * web-platform-tests/css/css-fonts/font-palette-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette.html: Added.
+        * web-platform-tests/css/css-fonts/resources/Ahem-COLOR-palettes.ttf: Added.
+
 2021-09-22  Joonghun Park  <jh718.park@samsung.com>
 
         Fix the behavior that setting text field input's value content attribute to the same value moves caret to the end of the input.
