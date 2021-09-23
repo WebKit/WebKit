@@ -1,3 +1,12 @@
+2021-09-23  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ BigSur wk2 Release ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230691
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-22  Jean-Yves Avenard  <jya@apple.com>
 
         Make SharedBuffer inherit from ThreadSafeRefCounted
