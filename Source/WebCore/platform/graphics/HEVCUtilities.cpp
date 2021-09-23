@@ -106,7 +106,7 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     return parameters;
 }
 
-template<typename ValueType> inline std::optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
+template<typename ValueType> static inline std::optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
 {
     if (!pointer)
         return std::nullopt;
