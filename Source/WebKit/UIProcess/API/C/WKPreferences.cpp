@@ -185,16 +185,6 @@ bool WKPreferencesGetDatabasesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->databasesEnabled();
 }
 
-void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef preferencesRef, bool xssAuditorEnabled)
-{
-    toImpl(preferencesRef)->setXSSAuditorEnabled(xssAuditorEnabled);
-}
-
-bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->xssAuditorEnabled();
-}
-
 void WKPreferencesSetFrameFlatteningEnabled(WKPreferencesRef preferencesRef, bool frameFlatteningEnabled)
 {
     toImpl(preferencesRef)->setFrameFlatteningEnabled(frameFlatteningEnabled);
@@ -2226,3 +2216,13 @@ bool WKPreferencesGetWebSQLDisabled(WKPreferencesRef preferencesRef)
 {
     return true;
 }
+
+void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef)
+{
+    return false;
+}
+

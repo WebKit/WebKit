@@ -91,9 +91,9 @@ WK_EXPORT bool WKPreferencesGetLocalStorageEnabled(WKPreferencesRef preferences)
 WK_EXPORT void WKPreferencesSetDatabasesEnabled(WKPreferencesRef preferences, bool databasesEnabled);
 WK_EXPORT bool WKPreferencesGetDatabasesEnabled(WKPreferencesRef preferences);
 
-// Defaults to true.
-WK_EXPORT void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef preferences, bool xssAuditorEnabled);
-WK_EXPORT bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferences);
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef preferences, bool xssAuditorEnabled) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferences) WK_C_API_DEPRECATED;
 
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetFrameFlatteningEnabled(WKPreferencesRef preferences, bool frameFlatteningEnabled);

@@ -1,3 +1,17 @@
+2021-09-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove XSS Auditor: Part 3 (Deprecate API)
+        https://bugs.webkit.org/show_bug.cgi?id=230661
+        <rdar://problem/83428911>
+
+        Reviewed by Mark Lam.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences isXSSAuditorEnabled]):
+        (-[WebPreferences setXSSAuditorEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+
 2021-09-22  Chris Dumez  <cdumez@apple.com>
 
         Drop makeRef() and use Ref { } instead

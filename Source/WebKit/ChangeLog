@@ -1,3 +1,19 @@
+2021-09-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove XSS Auditor: Part 3 (Deprecate API)
+        https://bugs.webkit.org/show_bug.cgi?id=230661
+        <rdar://problem/83428911>
+
+        Reviewed by Mark Lam.
+
+        As a final step, deprecate the API now that the feature is removed. Once all clients have
+        removed use of the API we can remove from the framework.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetXSSAuditorEnabled):
+        (WKPreferencesGetXSSAuditorEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+
 2021-09-23  Per Arne Vollan  <pvollan@apple.com>
 
         Fix incorrect mach service name in sandboxes
