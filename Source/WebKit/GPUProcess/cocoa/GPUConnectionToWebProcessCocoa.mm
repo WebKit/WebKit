@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#import "MediaPermissionUtilities.h"
 #import "SystemStatusSPI.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/RegistrableDomain.h>
@@ -43,15 +44,15 @@ bool GPUConnectionToWebProcess::setCaptureAttributionString()
     if (![PAL::getSTDynamicActivityAttributionPublisherClass() respondsToSelector:@selector(setCurrentAttributionStringWithFormat:auditToken:)])
         return true;
 
-    auto domain = WebCore::RegistrableDomain { m_captureOrigin->data() };
-    if (domain.isEmpty())
-        return false;
-
     auto auditToken = gpuProcess().parentProcessConnection()->getAuditToken();
     if (!auditToken)
         return false;
 
-    RetainPtr<NSString> formatString = [NSString stringWithFormat:WEB_UI_STRING("“%@” in “%%@”", "The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only)."), (NSString *)domain.string()];
+    auto *visibleName = applicationVisibleNameFromOrigin(m_captureOrigin->data());
+    if (!visibleName)
+        visibleName = gpuProcess().applicationVisibleName();
+
+    RetainPtr<NSString> formatString = [NSString stringWithFormat:WEB_UI_STRING("“%@” in “%%@”", "The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only)."), visibleName];
 
     [PAL::getSTDynamicActivityAttributionPublisherClass() setCurrentAttributionStringWithFormat:formatString.get() auditToken:auditToken.value()];
 #endif

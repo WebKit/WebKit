@@ -1,5 +1,78 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282803. rdar://problem/83429994
+
+    Ensure that capture attribution works even for URLS without hostnames
+    https://bugs.webkit.org/show_bug.cgi?id=230479
+    <rdar://81832853>
+    
+    Reviewed by Eric Carlson.
+    
+    Some URLs allow to call getUserMedia but do not have origins, like custom scheme URLs.
+    In that case, the attribution status call was failing previously as we were not able to get a visible name to provide.
+    We mimick what we are doing for the default prompt by using the visible application name if the origin is not available.
+    Since we do the system attribution in GPUProcess, we now send the visible name to GPUProcess when creating it.
+    
+    Manually tested.
+    We do not have system status attributon on MacOS or simulator so we cannot test it automatically.
+    
+    * GPUProcess/GPUProcess.cpp:
+    (WebKit::GPUProcess::initializeGPUProcess):
+    * GPUProcess/GPUProcess.h:
+    (WebKit::GPUProcess::applicationVisibleName const):
+    * GPUProcess/GPUProcessCreationParameters.cpp:
+    (WebKit::GPUProcessCreationParameters::encode const):
+    (WebKit::GPUProcessCreationParameters::decode):
+    * GPUProcess/GPUProcessCreationParameters.h:
+    * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+    (WebKit::GPUConnectionToWebProcess::setCaptureAttributionString):
+    * UIProcess/Cocoa/GPUProcessProxyCocoa.mm:
+    (WebKit::GPUProcessProxy::platformInitializeGPUProcessParameters):
+    * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+    (WebKit::applicationVisibleNameFromOrigin):
+    (WebKit::applicationVisibleName):
+    (WebKit::alertMessageText):
+    * UIProcess/MediaPermissionUtilities.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282803 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-21  Youenn Fablet  <youenn@apple.com>
+
+            Ensure that capture attribution works even for URLS without hostnames
+            https://bugs.webkit.org/show_bug.cgi?id=230479
+            <rdar://81832853>
+
+            Reviewed by Eric Carlson.
+
+            Some URLs allow to call getUserMedia but do not have origins, like custom scheme URLs.
+            In that case, the attribution status call was failing previously as we were not able to get a visible name to provide.
+            We mimick what we are doing for the default prompt by using the visible application name if the origin is not available.
+            Since we do the system attribution in GPUProcess, we now send the visible name to GPUProcess when creating it.
+
+            Manually tested.
+            We do not have system status attributon on MacOS or simulator so we cannot test it automatically.
+
+            * GPUProcess/GPUProcess.cpp:
+            (WebKit::GPUProcess::initializeGPUProcess):
+            * GPUProcess/GPUProcess.h:
+            (WebKit::GPUProcess::applicationVisibleName const):
+            * GPUProcess/GPUProcessCreationParameters.cpp:
+            (WebKit::GPUProcessCreationParameters::encode const):
+            (WebKit::GPUProcessCreationParameters::decode):
+            * GPUProcess/GPUProcessCreationParameters.h:
+            * GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm:
+            (WebKit::GPUConnectionToWebProcess::setCaptureAttributionString):
+            * UIProcess/Cocoa/GPUProcessProxyCocoa.mm:
+            (WebKit::GPUProcessProxy::platformInitializeGPUProcessParameters):
+            * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+            (WebKit::applicationVisibleNameFromOrigin):
+            (WebKit::applicationVisibleName):
+            (WebKit::alertMessageText):
+            * UIProcess/MediaPermissionUtilities.h:
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282393. rdar://problem/83429703
 
     [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()

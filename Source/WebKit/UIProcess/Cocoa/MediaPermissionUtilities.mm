@@ -110,16 +110,27 @@ static NSString* visibleDomain(const String& host)
     return startsWithLettersIgnoringASCIICase(domain, "www.") ? domain.substring(4) : domain;
 }
 
+NSString *applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData& origin)
+{
+    if (origin.protocol != "http" && origin.protocol != "https")
+        return nil;
+
+    return visibleDomain(origin.host);
+}
+
+NSString *applicationVisibleName()
+{
+    NSBundle *appBundle = [NSBundle mainBundle];
+    NSString *displayName = appBundle.infoDictionary[(__bridge NSString *)_kCFBundleDisplayNameKey];
+    NSString *readableName = appBundle.infoDictionary[(__bridge NSString *)kCFBundleNameKey];
+    return displayName ?: readableName;
+}
+
 static NSString *alertMessageText(MediaPermissionReason reason, const WebCore::SecurityOriginData& origin)
 {
-    NSString *visibleOrigin;
-    if (origin.protocol != "http" && origin.protocol != "https") {
-        NSBundle *appBundle = [NSBundle mainBundle];
-        NSString *displayName = appBundle.infoDictionary[(__bridge NSString *)_kCFBundleDisplayNameKey];
-        NSString *readableName = appBundle.infoDictionary[(__bridge NSString *)kCFBundleNameKey];
-        visibleOrigin = displayName ?: readableName;
-    } else
-        visibleOrigin = visibleDomain(origin.host);
+    NSString *visibleOrigin = applicationVisibleNameFromOrigin(origin);
+    if (!visibleOrigin)
+        visibleOrigin = applicationVisibleName();
 
     switch (reason) {
     case MediaPermissionReason::Camera:
