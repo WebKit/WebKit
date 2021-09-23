@@ -72,6 +72,67 @@ bool ScrollSnapAnimatorState::setupAnimationForState(ScrollSnapState state, cons
     return animating;
 }
 
+std::optional<unsigned> ScrollSnapAnimatorState::closestSnapPointForOffset(ScrollEventAxis axis, ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale) const
+{
+    LayoutPoint layoutScrollOffset(scrollOffset.x() / pageScale, scrollOffset.y() / pageScale);
+
+    auto snapOffsets = snapOffsetsForAxis(axis);
+    LayoutSize viewportSize(scrollExtents.viewportSize);
+    std::optional<unsigned> activeIndex;
+    if (snapOffsets.size())
+        activeIndex = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutScrollOffset, 0).second;
+
+    return activeIndex;
+}
+
+float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset, const ScrollExtents& scrollExtents, float pageScale) const
+{
+    auto snapOffsets = snapOffsetsForAxis(axis);
+    if (!snapOffsets.size())
+        return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
+
+    std::optional<LayoutUnit> originalOffsetInLayoutUnits;
+    if (originalOffset)
+        originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / pageScale);
+    LayoutSize viewportSize(scrollExtents.viewportSize);
+    LayoutPoint layoutDestinationOffset(destinationOffset.x() / pageScale, destinationOffset.y() / pageScale);
+    LayoutUnit offset = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits).first;
+    return offset * pageScale;
+}
+
+bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
+{
+    bool snapPointChanged = false;
+    // If we are already snapped in a particular axis, maintain that. Otherwise, snap to the nearest eligible snap point.
+    auto activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
+    if (!activeHorizontalIndex || *activeHorizontalIndex >= snapOffsetsForAxis(ScrollEventAxis::Horizontal).size())
+        snapPointChanged |= setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, scrollOffset, scrollExtents, pageScale);
+
+    auto activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
+    if (!activeVerticalIndex || *activeVerticalIndex >= snapOffsetsForAxis(ScrollEventAxis::Vertical).size())
+        snapPointChanged |= setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, scrollOffset, scrollExtents, pageScale);
+
+    return snapPointChanged;
+}
+
+bool ScrollSnapAnimatorState::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
+{
+    auto activeIndex = closestSnapPointForOffset(axis, scrollOffset, scrollExtents, pageScale);
+    if (activeIndex == activeSnapIndexForAxis(axis))
+        return false;
+
+    setActiveSnapIndexForAxis(axis, activeIndex);
+    return true;
+}
+
+bool ScrollSnapAnimatorState::setNearestScrollSnapIndexForOffset(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
+{
+    bool snapIndexChanged = false;
+    snapIndexChanged |= setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, scrollOffset, scrollExtents, pageScale);
+    snapIndexChanged |= setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, scrollOffset, scrollExtents, pageScale);
+    return snapIndexChanged;
+}
+
 void ScrollSnapAnimatorState::transitionToUserInteractionState()
 {
     teardownAnimationForState(ScrollSnapState::UserInteraction);

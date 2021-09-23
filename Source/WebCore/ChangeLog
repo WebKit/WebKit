@@ -1,3 +1,41 @@
+2021-09-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Move more scroll snap-related code into ScrollSnapAnimatorState
+        https://bugs.webkit.org/show_bug.cgi?id=230659
+
+        Reviewed by Wenson Hsieh.
+
+        Reduce the brain print of ScrollingEffectsController by moving scroll snap-related code
+        into ScrollSnapAnimatorState, which is going to become a ScrollSnapController at some
+        point.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setScrollPosition):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::scrollOffsetAdjustedForSnapping const):
+        (WebCore::ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/ScrollSnapAnimatorState.cpp:
+        (WebCore::ScrollSnapAnimatorState::closestSnapPointForOffset const):
+        (WebCore::ScrollSnapAnimatorState::adjustedScrollDestination const):
+        (WebCore::ScrollSnapAnimatorState::resnapAfterLayout):
+        (WebCore::ScrollSnapAnimatorState::setNearestScrollSnapIndexForAxisAndOffset):
+        (WebCore::ScrollSnapAnimatorState::setNearestScrollSnapIndexForOffset):
+        * platform/ScrollSnapAnimatorState.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::doPostThumbMoveSnapping):
+        * platform/ScrollingEffectsController.cpp:
+        (WebCore::ScrollingEffectsController::adjustedScrollDestination const):
+        (WebCore::ScrollingEffectsController::updateActiveScrollSnapIndexForClientOffset):
+        (WebCore::ScrollingEffectsController::resnapAfterLayout):
+        (WebCore::ScrollingEffectsController::setNearestScrollSnapIndexForAxisAndOffset): Deleted.
+        (WebCore::ScrollingEffectsController::adjustScrollDestination): Deleted.
+        * platform/ScrollingEffectsController.h:
+        (WebCore::ScrollingEffectsController::setScrollSnapIndexDidChange):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::scrollToOffset):
+
 2021-09-22  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move LineGeometry under InlineDisplay namespace

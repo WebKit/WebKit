@@ -133,17 +133,20 @@ public:
     // Should be called periodically by the client. Started by startAnimationCallback(), stopped by stopAnimationCallback().
     void animationCallback(MonotonicTime);
 
+    void updateGestureInProgressState(const PlatformWheelEvent&);
+
     void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
     const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, std::optional<unsigned>);
     void updateActiveScrollSnapIndexForClientOffset();
     void resnapAfterLayout();
-    bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
-    void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
+
     std::optional<unsigned> activeScrollSnapIndexForAxis(ScrollEventAxis) const;
-    void updateScrollSnapState(const ScrollableArea&);
-    void updateGestureInProgressState(const PlatformWheelEvent&);
-    float adjustScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset);
+    float adjustedScrollDestination(ScrollEventAxis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset) const;
+
+    bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
+    // FIXME: This is never called. We never set m_activeScrollSnapIndexDidChange back to false.
+    void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
 
 #if PLATFORM(MAC)
     // Returns true if handled.
@@ -167,8 +170,6 @@ public:
 #endif
 
 private:
-    void setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis, ScrollOffset);
-
     void updateScrollSnapAnimatingState(MonotonicTime);
     void updateRubberBandAnimatingState(MonotonicTime);
     void updateKeyboardScrollingAnimatingState(MonotonicTime);

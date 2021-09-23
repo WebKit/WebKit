@@ -147,46 +147,12 @@ void ScrollingEffectsController::setActiveScrollSnapIndexForAxis(ScrollEventAxis
     m_scrollSnapState->setActiveSnapIndexForAxis(axis, index);
 }
 
-void ScrollingEffectsController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis axis, ScrollOffset scrollOffset)
-{
-    if (!usesScrollSnap())
-        return;
-
-    float scaleFactor = m_client.pageScaleFactor();
-    LayoutPoint layoutScrollOffset(scrollOffset.x() / scaleFactor, scrollOffset.y() / scaleFactor);
-    ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
-
-    auto snapOffsets = snapState.snapOffsetsForAxis(axis);
-    LayoutSize viewportSize(m_client.scrollExtents().viewportSize);
-    std::optional<unsigned> activeIndex;
-    if (snapOffsets.size())
-        activeIndex = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutScrollOffset, 0).second;
-
-    if (activeIndex == activeScrollSnapIndexForAxis(axis))
-        return;
-
-    m_activeScrollSnapIndexDidChange = true;
-    setActiveScrollSnapIndexForAxis(axis, activeIndex);
-}
-
-float ScrollingEffectsController::adjustScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset)
+float ScrollingEffectsController::adjustedScrollDestination(ScrollEventAxis axis, FloatPoint destinationOffset, float velocity, std::optional<float> originalOffset) const
 {
     if (!usesScrollSnap())
         return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
 
-    ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
-    auto snapOffsets = snapState.snapOffsetsForAxis(axis);
-    if (!snapOffsets.size())
-        return axis == ScrollEventAxis::Horizontal ? destinationOffset.x() : destinationOffset.y();
-
-    float scaleFactor = m_client.pageScaleFactor();
-    std::optional<LayoutUnit> originalOffsetInLayoutUnits;
-    if (originalOffset)
-        originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / scaleFactor);
-    LayoutSize viewportSize(m_client.scrollExtents().viewportSize);
-    LayoutPoint layoutDestinationOffset(destinationOffset.x() / scaleFactor, destinationOffset.y() / scaleFactor);
-    LayoutUnit offset = snapState.snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutDestinationOffset, velocity, originalOffsetInLayoutUnits).first;
-    return offset * scaleFactor;
+    return m_scrollSnapState->adjustedScrollDestination(axis, destinationOffset, velocity, originalOffset, m_client.scrollExtents(), m_client.pageScaleFactor());
 }
 
 void ScrollingEffectsController::updateActiveScrollSnapIndexForClientOffset()
@@ -195,8 +161,8 @@ void ScrollingEffectsController::updateActiveScrollSnapIndexForClientOffset()
         return;
 
     ScrollOffset offset = roundedIntPoint(m_client.scrollOffset());
-    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset);
-    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset);
+    if (m_scrollSnapState->setNearestScrollSnapIndexForOffset(offset, m_client.scrollExtents(), m_client.pageScaleFactor()))
+        m_activeScrollSnapIndexDidChange = true;
 }
 
 void ScrollingEffectsController::resnapAfterLayout()
@@ -206,16 +172,8 @@ void ScrollingEffectsController::resnapAfterLayout()
 
     // If we are already snapped in a particular axis, maintain that. Otherwise, snap to the nearest eligible snap point.
     ScrollOffset offset = roundedIntPoint(m_client.scrollOffset());
-    ScrollSnapAnimatorState& snapState = *m_scrollSnapState;
-
-    auto activeHorizontalIndex = m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
-    if (!activeHorizontalIndex || *activeHorizontalIndex >= snapState.snapOffsetsForAxis(ScrollEventAxis::Horizontal).size())
-        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset);
-
-    auto activeVerticalIndex = m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Vertical);
-    if (!activeVerticalIndex || *activeVerticalIndex >= snapState.snapOffsetsForAxis(ScrollEventAxis::Vertical).size())
-        setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset);
-
+    if (m_scrollSnapState->resnapAfterLayout(offset, m_client.scrollExtents(), m_client.pageScaleFactor()))
+        m_activeScrollSnapIndexDidChange = true;
 }
 
 void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(MonotonicTime currentTime)

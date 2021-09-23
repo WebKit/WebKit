@@ -78,13 +78,14 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
         auto currentOffset = offsetFromPosition(currentPosition());
         auto newOffset = currentOffset + delta;
         if (orientation == HorizontalScrollbar)
-            newOffset.setX(m_scrollController.adjustScrollDestination(ScrollEventAxis::Horizontal, newOffset, multiplier, currentOffset.x()));
+            newOffset.setX(m_scrollController.adjustedScrollDestination(ScrollEventAxis::Horizontal, newOffset, multiplier, currentOffset.x()));
         else
-            newOffset.setY(m_scrollController.adjustScrollDestination(ScrollEventAxis::Vertical, newOffset, multiplier, currentOffset.y()));
-        auto newDelta = newOffset - currentOffset;
+            newOffset.setY(m_scrollController.adjustedScrollDestination(ScrollEventAxis::Vertical, newOffset, multiplier, currentOffset.y()));
 
+        auto newDelta = newOffset - currentOffset;
         if (orientation == HorizontalScrollbar)
             return scroll(HorizontalScrollbar, granularity, newDelta.width(), 1.0, behavior);
+
         return scroll(VerticalScrollbar, granularity, newDelta.height(), 1.0, behavior);
     }
 
@@ -393,18 +394,18 @@ void ScrollAnimator::contentsSizeChanged() const
     m_scrollAnimation->updateScrollExtents();
 }
 
-FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod method)
+FloatPoint ScrollAnimator::scrollOffsetAdjustedForSnapping(const FloatPoint& offset, ScrollSnapPointSelectionMethod method) const
 {
     if (!m_scrollController.usesScrollSnap())
         return offset;
 
-    FloatPoint newOffset = offset;
-    newOffset.setX(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Horizontal, newOffset, method));
-    newOffset.setY(adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis::Vertical, newOffset, method));
-    return newOffset;
+    return {
+        scrollOffsetAdjustedForSnapping(ScrollEventAxis::Horizontal, offset, method),
+        scrollOffsetAdjustedForSnapping(ScrollEventAxis::Vertical, offset, method)
+    };
 }
 
-float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod method)
+float ScrollAnimator::scrollOffsetAdjustedForSnapping(ScrollEventAxis axis, const FloatPoint& newOffset, ScrollSnapPointSelectionMethod method) const
 {
     if (!m_scrollController.usesScrollSnap())
         return axis == ScrollEventAxis::Horizontal ? newOffset.x() : newOffset.y();
@@ -419,7 +420,7 @@ float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis
         velocityInScrollAxis = axis == ScrollEventAxis::Horizontal ? velocity.width() : velocity.height();
     }
 
-    return m_scrollController.adjustScrollDestination(axis, newOffset, velocityInScrollAxis, originalOffset);
+    return m_scrollController.adjustedScrollDestination(axis, newOffset, velocityInScrollAxis, originalOffset);
 }
 
 void ScrollAnimator::scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset)
