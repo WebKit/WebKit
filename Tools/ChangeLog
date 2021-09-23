@@ -1,5 +1,59 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282034. rdar://problem/83429808
+
+    Safari’s Privacy Report window is completely blank
+    https://bugs.webkit.org/show_bug.cgi?id=229847
+    <rdar://problem/80974688>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebKit:
+    
+    We should not wait for an IPC reply on a cached web process, because
+    it will cause long hangs.
+    
+    In order to test this I added a new SPI to update the
+    cachedProcessSuspensionDelay (the usual timeout is 30 seconds). I also
+    moved the initial suspension timer call to be after the responsiveness
+    check, otherwise the cached process will be resumed very soon.
+    
+    * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+    (+[WKWebsiteDataStore _setCachedProcessSuspensionDelayForTesting:]):
+    * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+    * UIProcess/WebProcessCache.cpp:
+    (WebKit::WebProcessCache::setCachedProcessSuspensionDelayForTesting):
+    (WebKit::WebProcessCache::addProcess):
+    (WebKit::WebProcessCache::CachedProcess::CachedProcess):
+    (WebKit::WebProcessCache::CachedProcess::startSuspensionTimer):
+    * UIProcess/WebProcessCache.h:
+    * UIProcess/WebProcessPool.cpp:
+    (WebKit::WebProcessPool::sendResourceLoadStatisticsDataImmediately):
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::setCachedProcessSuspensionDelayForTesting):
+    * UIProcess/WebsiteData/WebsiteDataStore.h:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282034 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Kate Cheney  <katherine_cheney@apple.com>
+
+            Safari’s Privacy Report window is completely blank
+            https://bugs.webkit.org/show_bug.cgi?id=229847
+            <rdar://problem/80974688>
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+            (TEST):
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282365. rdar://problem/83429982
 
     Crash under WebPage::runJavaScript()
