@@ -385,7 +385,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
 {
     auto& inlineFormattingState = layoutState.formattingStateForInlineFormattingContext(inlineFormattingRoot);
     auto& lines = inlineFormattingState.lines();
-    auto& runs = inlineFormattingState.runs();
+    auto& boxes = inlineFormattingState.boxes();
 
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto addSpacing = [&] {
@@ -406,11 +406,11 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         stream << "  Inline level boxes:";
         stream.nextLine();
 
-        auto outputInlineLevelBox = [&](const auto& inlineLevelBoxRun) {
+        auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            auto logicalRect = inlineLevelBoxRun.logicalRect();
-            auto& layoutBox = inlineLevelBoxRun.layoutBox();
+            auto logicalRect = inlineLevelBox.logicalRect();
+            auto& layoutBox = inlineLevelBox.layoutBox();
             if (layoutBox.isAtomicInlineLevelBox())
                 stream << "Atomic inline level box";
             else if (layoutBox.isLineBreakBox())
@@ -424,29 +424,29 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
                 << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")";
             stream.nextLine();
         };
-        for (auto& run : runs) {
-            if (run.lineIndex() != lineIndex)
+        for (auto& box : boxes) {
+            if (box.lineIndex() != lineIndex)
                 continue;
-            if (!run.layoutBox().isInlineLevelBox())
+            if (!box.layoutBox().isInlineLevelBox())
                 continue;
-            outputInlineLevelBox(run);
+            outputInlineLevelBox(box);
         }
 
         addSpacing();
         stream << "  Runs:";
         stream.nextLine();
-        for (auto& run : runs) {
-            if (run.lineIndex() != lineIndex)
+        for (auto& box : boxes) {
+            if (box.lineIndex() != lineIndex)
                 continue;
             addSpacing();
             stream << "    ";
-            if (run.text())
-                stream << "text run";
+            if (box.text())
+                stream << "text box";
             else
-                stream << "box run";
-            stream << " at (" << run.logicalLeft() << "," << run.logicalTop() << ") size " << run.logicalWidth() << "x" << run.logicalHeight();
-            if (run.text())
-                stream << " run(" << run.text()->start() << ", " << run.text()->end() << ")";
+                stream << "box box";
+            stream << " at (" << box.logicalLeft() << "," << box.logicalTop() << ") size " << box.logicalWidth() << "x" << box.logicalHeight();
+            if (box.text())
+                stream << " box(" << box.text()->start() << ", " << box.text()->end() << ")";
             stream.nextLine();
         }
 

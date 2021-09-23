@@ -143,16 +143,16 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
     return makeUnique<Box>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), flags);
 }
 
-std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const Layout::Run& run, const InlineDisplay::Line& line, const ContainingBlockContext& containingBlockContext) const
+std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const InlineDisplay::Box& box, const InlineDisplay::Line& line, const ContainingBlockContext& containingBlockContext) const
 {
     UNUSED_PARAM(line);
-    ASSERT(run.text());
+    ASSERT(box.text());
 
-    auto runRect = LayoutRect { run.logicalLeft(), run.logicalTop(), run.logicalWidth(), run.logicalHeight() };
-    runRect.move(containingBlockContext.offsetFromRoot);
+    auto boxRect = LayoutRect { box.logicalLeft(), box.logicalTop(), box.logicalWidth(), box.logicalHeight() };
+    boxRect.move(containingBlockContext.offsetFromRoot);
 
-    auto style = Style { run.layoutBox().style() };
-    return makeUnique<TextBox>(m_treeBuilder.tree(), UnadjustedAbsoluteFloatRect { snapRectToDevicePixels(runRect, m_pixelSnappingFactor) }, WTFMove(style), run);
+    auto style = Style { box.layoutBox().style() };
+    return makeUnique<TextBox>(m_treeBuilder.tree(), UnadjustedAbsoluteFloatRect { snapRectToDevicePixels(boxRect, m_pixelSnappingFactor) }, WTFMove(style), box);
 }
 
 void BoxFactory::setupBoxGeometry(BoxModelBox& box, const Layout::Box&, const Layout::BoxGeometry& layoutGeometry, const ContainingBlockContext& containingBlockContext) const

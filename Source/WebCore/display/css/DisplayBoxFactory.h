@@ -44,6 +44,7 @@ struct Run;
 }
 
 namespace InlineDisplay {
+struct Box;
 class Line;
 }
 
@@ -77,7 +78,7 @@ public:
     std::unique_ptr<Box> displayBoxForBodyBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, RootBackgroundPropagation) const;
     std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&) const;
 
-    std::unique_ptr<Box> displayBoxForTextRun(const Layout::Run&, const InlineDisplay::Line&, const ContainingBlockContext&) const;
+    std::unique_ptr<Box> displayBoxForTextRun(const InlineDisplay::Box&, const InlineDisplay::Line&, const ContainingBlockContext&) const;
 
 private:
     std::unique_ptr<Box> displayBoxForLayoutBox(const Layout::Box&, const Layout::BoxGeometry&, const ContainingBlockContext&, const RenderStyle* styleForBackground, Style&&) const;

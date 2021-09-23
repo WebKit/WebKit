@@ -31,11 +31,11 @@
 #include "FloatingContext.h"
 #include "FontCascade.h"
 #include "InlineDamage.h"
+#include "InlineDisplayBox.h"
 #include "InlineDisplayContentBuilder.h"
 #include "InlineFormattingState.h"
 #include "InlineLineBox.h"
 #include "InlineLineBoxBuilder.h"
-#include "InlineLineRun.h"
 #include "InlineTextItem.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
@@ -126,7 +126,7 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
             boxGeometry.setContentBoxWidth({ });
             boxGeometry.setVerticalMargin({ });
         } else if (layoutBox->isInlineBox()) {
-            // Text wrapper boxes (anonymous inline level boxes) don't have box geometries (they only generate runs).
+            // Text wrapper boxes (anonymous inline level boxes) don't have box geometries (they only generate boxes).
             if (!layoutBox->isInlineTextBox()) {
                 // Inline boxes (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and padding.
                 computeBorderAndPadding(*layoutBox, constraints.horizontal());
@@ -182,7 +182,7 @@ LayoutUnit InlineFormattingContext::usedContentHeight() const
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    formattingState.runs().reserveInitialCapacity(formattingState.inlineItems().size());
+    formattingState.boxes().reserveInitialCapacity(formattingState.inlineItems().size());
     InlineLayoutUnit lineLogicalTop = constraints.logicalTop();
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
@@ -267,7 +267,7 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
     // place the out-of-flow box at the logical right position.
     auto& formattingState = this->formattingState();
     auto& lines = formattingState.lines();
-    auto& runs = formattingState.runs();
+    auto& boxes = formattingState.boxes();
 
     for (auto& outOfFlowBox : outOfFlowBoxes) {
         auto& outOfFlowGeometry = formattingState.boxGeometry(*outOfFlowBox);
@@ -285,10 +285,10 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
         }();
 
         if (!previousContentSkippingFloats) {
-            // This is the first (non-float)child. Let's place it to the left of the first run.
+            // This is the first (non-float)child. Let's place it to the left of the first box.
             // <div><img style="position: absolute">text content</div>
-            ASSERT(runs.size());
-            outOfFlowGeometry.setLogicalTopLeft({ runs[0].logicalLeft(), lines[0].lineBoxLogicalRect().top() });
+            ASSERT(boxes.size());
+            outOfFlowGeometry.setLogicalTopLeft({ boxes[0].logicalLeft(), lines[0].lineBoxLogicalRect().top() });
             continue;
         }
 
@@ -302,24 +302,24 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
         ASSERT(previousContentSkippingFloats->isInFlow());
         auto placeOutOfFlowBoxAfterPreviousInFlowBox = [&] {
             // The out-of-flow box should be placed after this inflow box.
-            // Skip to the last run of this layout box. The last run's geometry is used to compute the out-of-flow box's static position.
-            size_t lastRunIndexOnPreviousLayoutBox = 0;
-            for (; lastRunIndexOnPreviousLayoutBox < runs.size() && &runs[lastRunIndexOnPreviousLayoutBox].layoutBox() != previousContentSkippingFloats; ++lastRunIndexOnPreviousLayoutBox) { }
-            if (lastRunIndexOnPreviousLayoutBox == runs.size()) {
-                // FIXME: In very rare cases, the previous box's content might have been completely collapsed and left us with no run.
+            // Skip to the last box of this layout box. The last box's geometry is used to compute the out-of-flow box's static position.
+            size_t lastBoxIndexOnPreviousLayoutBox = 0;
+            for (; lastBoxIndexOnPreviousLayoutBox < boxes.size() && &boxes[lastBoxIndexOnPreviousLayoutBox].layoutBox() != previousContentSkippingFloats; ++lastBoxIndexOnPreviousLayoutBox) { }
+            if (lastBoxIndexOnPreviousLayoutBox == boxes.size()) {
+                // FIXME: In very rare cases, the previous box's content might have been completely collapsed and left us with no box.
                 ASSERT_NOT_IMPLEMENTED_YET();
                 return;
             }
-            for (; lastRunIndexOnPreviousLayoutBox < runs.size() && &runs[lastRunIndexOnPreviousLayoutBox].layoutBox() == previousContentSkippingFloats; ++lastRunIndexOnPreviousLayoutBox) { }
-                --lastRunIndexOnPreviousLayoutBox;
-            // Let's check if the previous run is the last run on the current line and use the next run's left instead.
-            auto& previousRun = runs[lastRunIndexOnPreviousLayoutBox];
-            auto* nextRun = lastRunIndexOnPreviousLayoutBox + 1 < runs.size() ? &runs[lastRunIndexOnPreviousLayoutBox + 1] : nullptr;
+            for (; lastBoxIndexOnPreviousLayoutBox < boxes.size() && &boxes[lastBoxIndexOnPreviousLayoutBox].layoutBox() == previousContentSkippingFloats; ++lastBoxIndexOnPreviousLayoutBox) { }
+                --lastBoxIndexOnPreviousLayoutBox;
+            // Let's check if the previous box is the last box on the current line and use the next box's left instead.
+            auto& previousBox = boxes[lastBoxIndexOnPreviousLayoutBox];
+            auto* nextBox = lastBoxIndexOnPreviousLayoutBox + 1 < boxes.size() ? &boxes[lastBoxIndexOnPreviousLayoutBox + 1] : nullptr;
 
-            if (nextRun && nextRun->lineIndex() == previousRun.lineIndex()) {
-                // Previous and next runs are on the same line. The out-of-flow box is right at the previous run's logical right.
+            if (nextBox && nextBox->lineIndex() == previousBox.lineIndex()) {
+                // Previous and next boxes are on the same line. The out-of-flow box is right at the previous box's logical right.
                 // <div>text<img style="position: absolute">content</div>
-                auto logicalLeft = previousRun.logicalRight();
+                auto logicalLeft = previousBox.logicalRight();
                 if (previousContentSkippingFloats->isInlineBox() && !previousContentSkippingFloats->isAnonymous()) {
                     // <div>text<span><img style="position: absolute">content</span></div>
                     // or
@@ -329,27 +329,27 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
                         ? BoxGeometry::borderBoxLeft(inlineBoxBoxGeometry) + inlineBoxBoxGeometry.contentBoxLeft()
                         : BoxGeometry::borderBoxRect(inlineBoxBoxGeometry).right();
                 }
-                outOfFlowGeometry.setLogicalTopLeft({ logicalLeft, lines[previousRun.lineIndex()].lineBoxLogicalRect().top() });
+                outOfFlowGeometry.setLogicalTopLeft({ logicalLeft, lines[previousBox.lineIndex()].lineBoxLogicalRect().top() });
                 return;
             }
 
-            if (nextRun) {
-                // The out of flow box is placed at the beginning of the next line (where the first run on the line is).
+            if (nextBox) {
+                // The out of flow box is placed at the beginning of the next line (where the first box on the line is).
                 // <div>text<br><img style="position: absolute"><img style="position: absolute">content</div>
-                outOfFlowGeometry.setLogicalTopLeft({ nextRun->logicalLeft(), lines[nextRun->lineIndex()].lineBoxLogicalRect().top() });
+                outOfFlowGeometry.setLogicalTopLeft({ nextBox->logicalLeft(), lines[nextBox->lineIndex()].lineBoxLogicalRect().top() });
                 return;
             }
 
-            auto& lastLineLogicalRect = lines[previousRun.lineIndex()].lineBoxLogicalRect();
+            auto& lastLineLogicalRect = lines[previousBox.lineIndex()].lineBoxLogicalRect();
             // This out-of-flow box is the last box.
             // FIXME: Use isLineBreak instead to cover preserved new lines too.
-            if (previousRun.layoutBox().isLineBreakBox()) {
+            if (previousBox.layoutBox().isLineBreakBox()) {
                 // <div>text<br><img style="position: absolute"><img style="position: absolute"></div>
                 outOfFlowGeometry.setLogicalTopLeft({ lastLineLogicalRect.left(), lastLineLogicalRect.bottom() });
                 return;
             }
             // FIXME: We may need to check if this box actually fits the last line and move it over to the "next" line.
-            outOfFlowGeometry.setLogicalTopLeft({ previousRun.logicalRight(), lastLineLogicalRect.top() });
+            outOfFlowGeometry.setLogicalTopLeft({ previousBox.logicalRight(), lastLineLogicalRect.top() });
         };
         placeOutOfFlowBoxAfterPreviousInFlowBox();
     }
@@ -577,7 +577,7 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
 
     auto inlineContentBuilder = InlineDisplayContentBuilder { root(), formattingState };
     auto currentLineIndex = formattingState.lines().size();
-    formattingState.addRuns(inlineContentBuilder.build(lineContent, lineAndLineBox.lineBox, lineBoxLogicalRect.topLeft(), currentLineIndex));
+    formattingState.addBoxes(inlineContentBuilder.build(lineContent, lineAndLineBox.lineBox, lineBoxLogicalRect.topLeft(), currentLineIndex));
     formattingState.addLineBox(WTFMove(lineAndLineBox.lineBox));
     formattingState.addLine(lineAndLineBox.line);
 
@@ -589,16 +589,16 @@ void InlineFormattingContext::invalidateFormattingState()
     if (!m_lineDamage) {
         // Non-empty formatting state with no damage means we are trying to layout a clean tree.
         // FIXME: Add ASSERT(formattingState().inlineItems().isEmpty()) when all the codepaths are covered.
-        formattingState().clearLineAndRuns();
+        formattingState().clearLineAndBoxes();
         return;
     }
-    // FIXME: Lines and runs are moved out to under Integration::InlineContent in the integration codepath, so clearLineAndRuns is no-op.
+    // FIXME: Lines and boxes are moved out to under Integration::InlineContent in the integration codepath, so clearLineAndBoxes is no-op.
     switch (m_lineDamage->type()) {
     case InlineDamage::Type::NeedsContentUpdateAndLineLayout:
         formattingState().clearInlineItems();
         FALLTHROUGH;
     case InlineDamage::Type::NeedsLineLayout:
-        formattingState().clearLineAndRuns();
+        formattingState().clearLineAndBoxes();
         break;
     case InlineDamage::Type::NeedsVerticalAdjustment:
     case InlineDamage::Type::NeedsHorizontalAdjustment:

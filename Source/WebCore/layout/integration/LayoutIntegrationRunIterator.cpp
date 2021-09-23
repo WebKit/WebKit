@@ -86,7 +86,7 @@ LineIterator PathRun::line() const
     }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     , [](const RunIteratorModernPath& path) {
-        return LineIterator(LineIteratorModernPath(*path.m_inlineContent, path.run().lineIndex()));
+        return LineIterator(LineIteratorModernPath(*path.m_inlineContent, path.box().lineIndex()));
     }
 #endif
     );
@@ -256,15 +256,15 @@ TextRunIterator textRunFor(const LegacyInlineTextBox* legacyInlineTextBox)
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-TextRunIterator textRunFor(const InlineContent& content, const Layout::Run& run)
+TextRunIterator textRunFor(const InlineContent& content, const InlineDisplay::Box& box)
 {
-    return textRunFor(content, content.indexForRun(run));
+    return textRunFor(content, content.indexForBox(box));
 }
 
-TextRunIterator textRunFor(const InlineContent& content, size_t runIndex)
+TextRunIterator textRunFor(const InlineContent& content, size_t boxIndex)
 {
-    ASSERT(content.runs[runIndex].text());
-    return { RunIteratorModernPath { content, runIndex } };
+    ASSERT(content.boxes[boxIndex].text());
+    return { RunIteratorModernPath { content, boxIndex } };
 }
 #endif
 

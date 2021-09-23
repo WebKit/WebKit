@@ -127,8 +127,8 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
     auto adjustedLine = [&](const Line& line, float offset)
     {
         return Line {
-            line.firstRunIndex(),
-            line.runCount(),
+            line.firstBoxIndex(),
+            line.boxCount(),
             moveVertically({ FloatPoint { line.lineBoxLeft(), line.lineBoxTop() }, FloatPoint { line.lineBoxRight(), line.lineBoxBottom() } }, offset),
             line.enclosingContentTop() + offset,
             line.enclosingContentBottom() + offset,
@@ -140,16 +140,16 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
         };
     };
 
-    auto adjustedRun = [&](const Layout::Run& run, float offset)
+    auto adjustedBox = [&](const InlineDisplay::Box& box, float offset)
     {
-        return Layout::Run {
-            run.lineIndex(),
-            run.type(),
-            run.layoutBox(),
-            moveVertically(run.logicalRect(), offset),
-            moveVertically(run.inkOverflow(), offset),
-            run.expansion(),
-            run.text()
+        return InlineDisplay::Box {
+            box.lineIndex(),
+            box.type(),
+            box.layoutBox(),
+            moveVertically(box.logicalRect(), offset),
+            moveVertically(box.inkOverflow(), offset),
+            box.expansion(),
+            box.text()
         };
     };
 
@@ -158,8 +158,8 @@ static Ref<InlineContent> makeAdjustedContent(const InlineContent& inlineContent
     for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex)
         adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex]));
 
-    for (auto& run : inlineContent.runs)
-        adjustedContent->runs.append(adjustedRun(run, adjustments[run.lineIndex()]));
+    for (auto& box : inlineContent.boxes)
+        adjustedContent->boxes.append(adjustedBox(box, adjustments[box.lineIndex()]));
 
     return adjustedContent;
 }

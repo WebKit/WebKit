@@ -50,8 +50,8 @@ TextBoxPainter::TextBoxPainter(const LegacyInlineTextBox& textBox, PaintInfo& pa
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const Layout::Run& run, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : TextBoxPainter(LayoutIntegration::textRunFor(inlineContent, run), paintInfo, paintOffset)
+TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : TextBoxPainter(LayoutIntegration::textRunFor(inlineContent, box), paintInfo, paintOffset)
 {
 }
 #endif

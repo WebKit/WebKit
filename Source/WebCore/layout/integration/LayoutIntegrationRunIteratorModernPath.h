@@ -44,28 +44,28 @@ public:
     }
     RunIteratorModernPath(const InlineContent& inlineContent, size_t startIndex)
         : m_inlineContent(&inlineContent)
-        , m_runIndex(startIndex)
+        , m_boxIndex(startIndex)
     {
     }
 
-    bool isText() const { return !!run().text(); }
+    bool isText() const { return !!box().text(); }
 
-    FloatRect rect() const { return run().logicalRect(); }
+    FloatRect rect() const { return box().logicalRect(); }
 
     bool isHorizontal() const { return true; }
     bool dirOverride() const { return false; }
-    bool isLineBreak() const { return run().isLineBreak(); }
+    bool isLineBreak() const { return box().isLineBreak(); }
 
     unsigned minimumCaretOffset() const { return isText() ? start() : 0; }
     unsigned maximumCaretOffset() const { return isText() ? end() : 1; }
 
     unsigned char bidiLevel() const { return 0; }
 
-    bool hasHyphen() const { return run().text()->hasHyphen(); }
-    StringView text() const { return run().text()->originalContent(); }
-    unsigned start() const { return run().text()->start(); }
-    unsigned end() const { return run().text()->end(); }
-    unsigned length() const { return run().text()->length(); }
+    bool hasHyphen() const { return box().text()->hasHyphen(); }
+    StringView text() const { return box().text()->originalContent(); }
+    unsigned start() const { return box().text()->start(); }
+    unsigned end() const { return box().text()->end(); }
+    unsigned length() const { return box().text()->length(); }
 
     // FIXME: Make a shared generic version of this.
     inline unsigned offsetForPosition(float x) const
@@ -80,7 +80,7 @@ public:
             return 0;
 
         bool includePartialGlyphs = true;
-        return run().style().fontCascade().offsetForPosition(createTextRun(HyphenMode::Ignore), localX, includePartialGlyphs);
+        return box().style().fontCascade().offsetForPosition(createTextRun(HyphenMode::Ignore), localX, includePartialGlyphs);
     }
 
     // FIXME: Make a shared generic version of this.
@@ -96,7 +96,7 @@ public:
 
         LayoutRect selectionRect = LayoutRect(rect().x(), 0, 0, 0);
         TextRun textRun = createTextRun(HyphenMode::Ignore);
-        run().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, 0, endOffset);
+        box().style().fontCascade().adjustSelectionRectForText(textRun, selectionRect, 0, endOffset);
         return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
     }
 
@@ -105,8 +105,8 @@ public:
         return {
             start(),
             length(),
-            run().text()->hasHyphen() ? run().style().hyphenString().length() : 0,
-            run().isLineBreak()
+            box().text()->hasHyphen() ? box().style().hyphenString().length() : 0,
+            box().isLineBreak()
         };
     }
 
@@ -117,22 +117,22 @@ public:
 
     const RenderObject& renderer() const
     {
-        return m_inlineContent->rendererForLayoutBox(run().layoutBox());
+        return m_inlineContent->rendererForLayoutBox(box().layoutBox());
     }
 
     void traverseNextTextRun()
     {
         ASSERT(!atEnd());
-        ASSERT(run().text());
+        ASSERT(box().text());
 
-        auto& layoutBox = run().layoutBox();
+        auto& layoutBox = box().layoutBox();
 
         traverseNextLeaf();
 
-        if (!atEnd() && &layoutBox != &run().layoutBox())
+        if (!atEnd() && &layoutBox != &box().layoutBox())
             setAtEnd();
 
-        ASSERT(atEnd() || run().text());
+        ASSERT(atEnd() || box().text());
     }
 
     void traverseNextTextRunInTextOrder()
@@ -145,11 +145,11 @@ public:
     {
         ASSERT(!atEnd());
 
-        auto oldLineIndex = run().lineIndex();
+        auto oldLineIndex = box().lineIndex();
 
         traverseNextLeaf();
 
-        if (!atEnd() && oldLineIndex != run().lineIndex())
+        if (!atEnd() && oldLineIndex != box().lineIndex())
             setAtEnd();
     }
 
@@ -157,11 +157,11 @@ public:
     {
         ASSERT(!atEnd());
 
-        auto oldLineIndex = run().lineIndex();
+        auto oldLineIndex = box().lineIndex();
 
         traversePreviousLeaf();
 
-        if (!atEnd() && oldLineIndex != run().lineIndex())
+        if (!atEnd() && oldLineIndex != box().lineIndex())
             setAtEnd();
     }
 
@@ -175,10 +175,10 @@ public:
         traversePreviousOnLine();
     }
 
-    bool operator==(const RunIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
+    bool operator==(const RunIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_boxIndex == other.m_boxIndex; }
 
-    bool atEnd() const { return m_runIndex == runs().size(); }
-    const Layout::Run& run() const { return runs()[m_runIndex]; }
+    bool atEnd() const { return m_boxIndex == boxes().size(); }
+    const InlineDisplay::Box& box() const { return boxes()[m_boxIndex]; }
 
 private:
     friend class LineIteratorModernPath;
@@ -189,28 +189,28 @@ private:
     {
         ASSERT(!atEnd());
         do {
-            ++m_runIndex;
-        } while (!atEnd() && run().isInlineBox());
+            ++m_boxIndex;
+        } while (!atEnd() && box().isInlineBox());
     }
 
     void traversePreviousLeaf()
     {
         ASSERT(!atEnd());
         do {
-            m_runIndex = m_runIndex ? m_runIndex - 1 : runs().size();
-        } while (!atEnd() && run().isInlineBox());
+            m_boxIndex = m_boxIndex ? m_boxIndex - 1 : boxes().size();
+        } while (!atEnd() && box().isInlineBox());
     }
 
-    void setAtEnd() { m_runIndex = runs().size(); }
+    void setAtEnd() { m_boxIndex = boxes().size(); }
 
-    const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
-    const Line& line() const { return m_inlineContent->lineForRun(run()); }
+    const InlineContent::Boxes& boxes() const { return m_inlineContent->boxes; }
+    const Line& line() const { return m_inlineContent->lineForBox(box()); }
 
     enum class HyphenMode { Include, Ignore };
     TextRun createTextRun(HyphenMode hyphenMode) const
     {
-        auto& style = run().style();
-        auto expansion = run().expansion();
+        auto& style = box().style();
+        auto expansion = box().expansion();
         auto rect = this->rect();
         auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLeft());
 
@@ -227,7 +227,7 @@ private:
     };
 
     RefPtr<const InlineContent> m_inlineContent;
-    size_t m_runIndex { 0 };
+    size_t m_boxIndex { 0 };
 };
 
 }

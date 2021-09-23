@@ -32,9 +32,9 @@
 #include "TextFlags.h"
 
 namespace WebCore {
-namespace Layout {
+namespace InlineDisplay {
 
-struct Run {
+struct Box {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     struct Text {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -67,7 +67,7 @@ struct Run {
         GenericInlineLevelBox
     };
     struct Expansion;
-    Run(size_t lineIndex, Type, const Box&, const InlineRect&, const InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true);
+    Box(size_t lineIndex, Type, const Layout::Box&, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true);
 
     bool isText() const { return m_type == Type::Text; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
@@ -84,30 +84,30 @@ struct Run {
 
     bool hasContent() const { return m_hasContent; }
 
-    const InlineRect& logicalRect() const { return m_logicalRect; }
-    const InlineRect& inkOverflow() const { return m_inkOverflow; }
+    const Layout::InlineRect& logicalRect() const { return m_logicalRect; }
+    const Layout::InlineRect& inkOverflow() const { return m_inkOverflow; }
 
-    InlineLayoutUnit logicalTop() const { return logicalRect().top(); }
-    InlineLayoutUnit logicalBottom() const { return logicalRect().bottom(); }
-    InlineLayoutUnit logicalLeft() const { return logicalRect().left(); }
-    InlineLayoutUnit logicalRight() const { return logicalRect().right(); }
+    Layout::InlineLayoutUnit logicalTop() const { return logicalRect().top(); }
+    Layout::InlineLayoutUnit logicalBottom() const { return logicalRect().bottom(); }
+    Layout::InlineLayoutUnit logicalLeft() const { return logicalRect().left(); }
+    Layout::InlineLayoutUnit logicalRight() const { return logicalRect().right(); }
 
-    InlineLayoutUnit logicalWidth() const { return logicalRect().width(); }
-    InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
+    Layout::InlineLayoutUnit logicalWidth() const { return logicalRect().width(); }
+    Layout::InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
 
-    void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
-    void adjustInkOverflow(const InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
+    void moveVertically(Layout::InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
+    void adjustInkOverflow(const Layout::InlineRect& childBorderBox) { return m_inkOverflow.expandToContain(childBorderBox); }
 
     std::optional<Text>& text() { return m_text; }
     const std::optional<Text>& text() const { return m_text; }
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
-        InlineLayoutUnit horizontalExpansion { 0 };
+        Layout::InlineLayoutUnit horizontalExpansion { 0 };
     };
     Expansion expansion() const { return m_expansion; }
 
-    const Box& layoutBox() const { return *m_layoutBox; }
+    const Layout::Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }
 
     size_t lineIndex() const { return m_lineIndex; }
@@ -116,14 +116,14 @@ private:
     const size_t m_lineIndex { 0 };
     const Type m_type { Type::GenericInlineLevelBox };
     WeakPtr<const Layout::Box> m_layoutBox;
-    InlineRect m_logicalRect;
-    InlineRect m_inkOverflow;
+    Layout::InlineRect m_logicalRect;
+    Layout::InlineRect m_inkOverflow;
     bool m_hasContent { true };
     Expansion m_expansion;
     std::optional<Text> m_text;
 };
 
-inline Run::Run(size_t lineIndex, Type type, const Layout::Box& layoutBox, const InlineRect& logicalRect, const InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(makeWeakPtr(layoutBox))
@@ -135,7 +135,7 @@ inline Run::Run(size_t lineIndex, Type type, const Layout::Box& layoutBox, const
 {
 }
 
-inline Run::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
+inline Box::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
     : m_start(start)
     , m_length(length)
     , m_hasHyphen(hasHyphen)

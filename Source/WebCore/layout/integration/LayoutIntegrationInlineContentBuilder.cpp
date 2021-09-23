@@ -28,8 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineDisplayBox.h"
 #include "InlineFormattingState.h"
-#include "InlineLineRun.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutIntegrationInlineContent.h"
@@ -65,16 +65,16 @@ InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, con
 
 void InlineContentBuilder::build(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
-    // FIXME: This might need a different approach with partial layout where the layout code needs to know about the runs.
-    inlineContent.runs = WTFMove(inlineFormattingState.runs());
+    // FIXME: This might need a different approach with partial layout where the layout code needs to know about the boxes.
+    inlineContent.boxes = WTFMove(inlineFormattingState.boxes());
     createDisplayLines(inlineFormattingState, inlineContent);
 }
 
 void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inlineFormattingState, InlineContent& inlineContent) const
 {
     auto& lines = inlineFormattingState.lines();
-    auto& runs = inlineContent.runs;
-    size_t runIndex = 0;
+    auto& boxes = inlineContent.boxes;
+    size_t boxIndex = 0;
     inlineContent.lines.reserveInitialCapacity(lines.size());
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
@@ -82,32 +82,32 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         if (auto overflowWidth = lineOverflowWidth(m_blockFlow, line.contentLogicalWidth()); overflowWidth > scrollableOverflowRect.width())
             scrollableOverflowRect.setWidth(overflowWidth);
 
-        auto firstRunIndex = runIndex;
+        auto firstBoxIndex = boxIndex;
         auto lineInkOverflowRect = scrollableOverflowRect;
-        // Collect overflow from runs.
-        for (; runIndex < runs.size() && runs[runIndex].lineIndex() == lineIndex; ++runIndex) {
-            auto& run = runs[runIndex];
+        // Collect overflow from boxes.
+        for (; boxIndex < boxes.size() && boxes[boxIndex].lineIndex() == lineIndex; ++boxIndex) {
+            auto& box = boxes[boxIndex];
 
-            lineInkOverflowRect.unite(run.inkOverflow());
+            lineInkOverflowRect.unite(box.inkOverflow());
 
-            auto& layoutBox = run.layoutBox();
+            auto& layoutBox = box.layoutBox();
             if (layoutBox.isReplacedBox()) {
                 // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
-                auto& box = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
-                auto runLogicalRect = run.logicalRect();
-                if (!box.hasSelfPaintingLayer()) {
-                    auto childInkOverflow = box.logicalVisualOverflowRectForPropagation(&box.parent()->style());
-                    childInkOverflow.move(runLogicalRect.left(), runLogicalRect.top());
+                auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+                auto boxLogicalRect = box.logicalRect();
+                if (!renderer.hasSelfPaintingLayer()) {
+                    auto childInkOverflow = renderer.logicalVisualOverflowRectForPropagation(&renderer.parent()->style());
+                    childInkOverflow.move(boxLogicalRect.left(), boxLogicalRect.top());
                     lineInkOverflowRect.unite(childInkOverflow);
                 }
-                auto childScrollableOverflow = box.logicalLayoutOverflowRectForPropagation(&box.parent()->style());
-                childScrollableOverflow.move(runLogicalRect.left(), runLogicalRect.top());
+                auto childScrollableOverflow = renderer.logicalLayoutOverflowRectForPropagation(&renderer.parent()->style());
+                childScrollableOverflow.move(boxLogicalRect.left(), boxLogicalRect.top());
                 scrollableOverflowRect.unite(childScrollableOverflow);
             }
         }
         auto lineBoxLogicalRect = FloatRect { line.lineBoxLogicalRect() };
-        auto runCount = runIndex - firstRunIndex;
-        inlineContent.lines.append({ firstRunIndex, runCount, lineBoxLogicalRect, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
+        auto boxCount = boxIndex - firstBoxIndex;
+        inlineContent.lines.append({ firstBoxIndex, boxCount, lineBoxLogicalRect, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.contentLogicalLeft(), line.contentLogicalWidth() });
     }
 }
 

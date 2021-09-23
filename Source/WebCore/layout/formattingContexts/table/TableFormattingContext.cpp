@@ -162,8 +162,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                     }
                     if (cellBox.establishesInlineFormattingContext()) {
                         auto& inlineFormattingStatee = layoutState().formattingStateForInlineFormattingContext(cellBox);
-                        for (auto& run : inlineFormattingStatee.runs())
-                            run.moveVertically(intrinsicPaddingTop);
+                        for (auto& box : inlineFormattingStatee.boxes())
+                            box.moveVertically(intrinsicPaddingTop);
                         for (auto& line : inlineFormattingStatee.lines())
                             line.moveVertically(intrinsicPaddingTop);
                     }

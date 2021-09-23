@@ -88,7 +88,7 @@ public:
     // For intermediate porting steps only.
     const LegacyInlineBox* legacyInlineBox() const;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    const Layout::Run* inlineBox() const;
+    const InlineDisplay::Box* inlineBox() const;
 #endif
     RunIterator nextOnLine() const;
     RunIterator previousOnLine() const;
@@ -212,7 +212,7 @@ TextRunIterator firstTextRunFor(const RenderText&);
 TextRunIterator firstTextRunInTextOrderFor(const RenderText&);
 TextRunIterator textRunFor(const LegacyInlineTextBox*);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-TextRunIterator textRunFor(const InlineContent&, const Layout::Run&);
+TextRunIterator textRunFor(const InlineContent&, const InlineDisplay::Box&);
 TextRunIterator textRunFor(const InlineContent&, size_t runIndex);
 #endif
 TextRunRange textRunsFor(const RenderText&);
@@ -300,11 +300,11 @@ inline const LegacyInlineBox* PathRun::legacyInlineBox() const
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-inline const Layout::Run* PathRun::inlineBox() const
+inline const InlineDisplay::Box* PathRun::inlineBox() const
 {
     if (!WTF::holds_alternative<RunIteratorModernPath>(m_pathVariant))
         return nullptr;
-    return &WTF::get<RunIteratorModernPath>(m_pathVariant).run();
+    return &WTF::get<RunIteratorModernPath>(m_pathVariant).box();
 }
 #endif
 

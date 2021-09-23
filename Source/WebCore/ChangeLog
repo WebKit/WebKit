@@ -1,5 +1,196 @@
 2021-09-23  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Move Layout::Run under InlineDisplay and rename it to Box
+        https://bugs.webkit.org/show_bug.cgi?id=230643
+
+        Reviewed by Antti Koivisto.
+
+        These fragments of inline content should be considered runs only up to the point where we finished breaking the line. Soon after they gain horizontal (and later vertical) geometries, we
+        should call them boxes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * display/DisplayTreeBuilder.cpp:
+        (WebCore::Display::TreeBuilder::buildInlineDisplayTree):
+        * display/css/DisplayBoxFactory.cpp:
+        (WebCore::Display::BoxFactory::displayBoxForTextRun const):
+        * display/css/DisplayBoxFactory.h:
+        * display/css/DisplayTextBox.cpp:
+        (WebCore::Display::TextBox::TextBox):
+        (WebCore::Display::m_text):
+        * display/css/DisplayTextBox.h:
+        (WebCore::Display::TextBox::expansion const):
+        (WebCore::Display::TextBox::text const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingNonTextRuns):
+        (WebCore::Layout::checkForMatchingTextRuns):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineSpanningInlineBoxes):
+        (WebCore::Layout::InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes):
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineContent): Deleted.
+        (WebCore::Layout::InlineDisplayContentBuilder::createRunsAndUpdateGeometryForLineSpanningInlineBoxes): Deleted.
+        (WebCore::Layout::InlineDisplayContentBuilder::collectInkOverflowForInlineBoxRuns): Deleted.
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computeStaticPositionForOutOfFlowContent):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        (WebCore::Layout::InlineFormattingContext::invalidateFormattingState):
+        * layout/formattingContexts/inline/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::lineBoxes const):
+        (WebCore::Layout::InlineFormattingState::addLineBox):
+        (WebCore::Layout::InlineFormattingState::boxes const):
+        (WebCore::Layout::InlineFormattingState::boxes):
+        (WebCore::Layout::InlineFormattingState::addBoxes):
+        (WebCore::Layout::InlineFormattingState::clearLineAndBoxes):
+        (WebCore::Layout::InlineFormattingState::shrinkToFit):
+        (WebCore::Layout::InlineFormattingState::runs const): Deleted.
+        (WebCore::Layout::InlineFormattingState::runs): Deleted.
+        (WebCore::Layout::InlineFormattingState::addRuns): Deleted.
+        (WebCore::Layout::InlineFormattingState::clearLineAndRuns): Deleted.
+        * layout/formattingContexts/inline/InlineLine.h:
+        (WebCore::Layout::Line::Run::expansion const):
+        (WebCore::Layout::Line::Run::setExpansion):
+        * layout/formattingContexts/inline/display/InlineLineRun.h:
+        (WebCore::InlineDisplay::Box::logicalRect const):
+        (WebCore::InlineDisplay::Box::inkOverflow const):
+        (WebCore::InlineDisplay::Box::logicalTop const):
+        (WebCore::InlineDisplay::Box::logicalBottom const):
+        (WebCore::InlineDisplay::Box::logicalLeft const):
+        (WebCore::InlineDisplay::Box::logicalRight const):
+        (WebCore::InlineDisplay::Box::logicalWidth const):
+        (WebCore::InlineDisplay::Box::logicalHeight const):
+        (WebCore::InlineDisplay::Box::moveVertically):
+        (WebCore::InlineDisplay::Box::adjustInkOverflow):
+        (WebCore::InlineDisplay::Box::layoutBox const):
+        (WebCore::InlineDisplay::Box::Box):
+        (WebCore::InlineDisplay::Box::Text::Text):
+        (WebCore::Layout::Run::Text::start const): Deleted.
+        (WebCore::Layout::Run::Text::end const): Deleted.
+        (WebCore::Layout::Run::Text::length const): Deleted.
+        (WebCore::Layout::Run::Text::originalContent const): Deleted.
+        (WebCore::Layout::Run::Text::renderedContent const): Deleted.
+        (WebCore::Layout::Run::Text::hasHyphen const): Deleted.
+        (WebCore::Layout::Run::isText const): Deleted.
+        (WebCore::Layout::Run::isSoftLineBreak const): Deleted.
+        (WebCore::Layout::Run::isLineBreakBox const): Deleted.
+        (WebCore::Layout::Run::isLineBreak const): Deleted.
+        (WebCore::Layout::Run::isAtomicInlineLevelBox const): Deleted.
+        (WebCore::Layout::Run::isInlineBox const): Deleted.
+        (WebCore::Layout::Run::isNonRootInlineBox const): Deleted.
+        (WebCore::Layout::Run::isRootInlineBox const): Deleted.
+        (WebCore::Layout::Run::isGenericInlineLevelBox const): Deleted.
+        (WebCore::Layout::Run::isInlineLevelBox const): Deleted.
+        (WebCore::Layout::Run::isNonRootInlineLevelBox const): Deleted.
+        (WebCore::Layout::Run::type const): Deleted.
+        (WebCore::Layout::Run::hasContent const): Deleted.
+        (WebCore::Layout::Run::logicalRect const): Deleted.
+        (WebCore::Layout::Run::inkOverflow const): Deleted.
+        (WebCore::Layout::Run::logicalTop const): Deleted.
+        (WebCore::Layout::Run::logicalBottom const): Deleted.
+        (WebCore::Layout::Run::logicalLeft const): Deleted.
+        (WebCore::Layout::Run::logicalRight const): Deleted.
+        (WebCore::Layout::Run::logicalWidth const): Deleted.
+        (WebCore::Layout::Run::logicalHeight const): Deleted.
+        (WebCore::Layout::Run::moveVertically): Deleted.
+        (WebCore::Layout::Run::adjustInkOverflow): Deleted.
+        (WebCore::Layout::Run::text): Deleted.
+        (WebCore::Layout::Run::text const): Deleted.
+        (WebCore::Layout::Run::expansion const): Deleted.
+        (WebCore::Layout::Run::layoutBox const): Deleted.
+        (WebCore::Layout::Run::style const): Deleted.
+        (WebCore::Layout::Run::lineIndex const): Deleted.
+        (WebCore::Layout::Run::Run): Deleted.
+        (WebCore::Layout::Run::Text::Text): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::hasContent const):
+        (WebCore::LayoutIntegration:: const):
+        (WebCore::LayoutIntegration::InlineContent::~InlineContent):
+        (WebCore::LayoutIntegration::InlineContent::indexForBox const):
+        (WebCore::LayoutIntegration::InlineContent::firstBoxForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::firstBoxIndexForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::nonRootInlineBoxIndexesForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::releaseCaches):
+        (WebCore::LayoutIntegration::InlineContent::shrinkToFit):
+        (WebCore::LayoutIntegration::InlineContent::indexForRun const): Deleted.
+        (WebCore::LayoutIntegration::InlineContent::firstRunForLayoutBox const): Deleted.
+        (WebCore::LayoutIntegration::InlineContent::firstRunIndexForLayoutBox const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        (WebCore::LayoutIntegration::InlineContent::lineForBox const):
+        (WebCore::LayoutIntegration::InlineContent::traverseNonRootInlineBoxes):
+        (WebCore::LayoutIntegration::InlineContent::lineForRun const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::build const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * layout/integration/LayoutIntegrationLine.h:
+        (WebCore::LayoutIntegration::Line::Line):
+        (WebCore::LayoutIntegration::Line::firstBoxIndex const):
+        (WebCore::LayoutIntegration::Line::boxCount const):
+        (WebCore::LayoutIntegration::Line::firstRunIndex const): Deleted.
+        (WebCore::LayoutIntegration::Line::runCount const): Deleted.
+        * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+        (WebCore::LayoutIntegration::LineIteratorModernPath::firstRun const):
+        (WebCore::LayoutIntegration::LineIteratorModernPath::lastRun const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::textRunsFor const):
+        (WebCore::LayoutIntegration::LineLayout::runFor const):
+        (WebCore::LayoutIntegration::LineLayout::firstInlineBoxRect const):
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        (WebCore::LayoutIntegration::LineLayout::paintTextBoxUsingPhysicalCoordinates):
+        (WebCore::LayoutIntegration::LineLayout::paintTextRunUsingPhysicalCoordinates): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::PathRun::line const):
+        (WebCore::LayoutIntegration::textRunFor):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathRun::inlineBox const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::RunIteratorModernPath):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::isText const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::rect const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::isLineBreak const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::hasHyphen const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::text const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::start const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::end const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::length const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::offsetForPosition const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::positionForOffset const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectableRange const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::renderer const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traverseNextTextRun):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traverseNextOnLine):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traversePreviousOnLine):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::operator== const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::atEnd const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::box const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traverseNextLeaf):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::traversePreviousLeaf):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::setAtEnd):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::boxes const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::line const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::createTextRun const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::run const): Deleted.
+        (WebCore::LayoutIntegration::RunIteratorModernPath::runs const): Deleted.
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::showInlineTreeAndRuns):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::TextBoxPainter):
+        * rendering/TextBoxPainter.h:
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::clearGlyphDisplayLists):
+
+2021-09-23  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] RenderDeprecatedFlexibleBox::setIsStretchingChildren is unused after r282873
         https://bugs.webkit.org/show_bug.cgi?id=230627
 

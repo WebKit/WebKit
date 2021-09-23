@@ -98,21 +98,21 @@ public:
 
     RunIteratorModernPath firstRun() const
     {
-        if (!line().runCount())
+        if (!line().boxCount())
             return { *m_inlineContent };
-        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstRunIndex() };
-        if (runIterator.run().isInlineBox())
+        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstBoxIndex() };
+        if (runIterator.box().isInlineBox())
             runIterator.traverseNextLeaf();
         return runIterator;
     }
 
     RunIteratorModernPath lastRun() const
     {
-        auto runCount = line().runCount();
-        if (!runCount)
+        auto boxCount = line().boxCount();
+        if (!boxCount)
             return { *m_inlineContent };
-        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstRunIndex() + runCount - 1 };
-        if (runIterator.run().isInlineBox())
+        auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstBoxIndex() + boxCount - 1 };
+        if (runIterator.box().isInlineBox())
             runIterator.traversePreviousLeaf();
         return runIterator;
     }

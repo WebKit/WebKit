@@ -43,23 +43,23 @@ InlineContent::InlineContent(const LineLayout& lineLayout)
 
 bool InlineContent::hasContent() const
 {
-    ASSERT(runs.isEmpty() || runs[0].isRootInlineBox());
-    return runs.size() > 1;
+    ASSERT(boxes.isEmpty() || boxes[0].isRootInlineBox());
+    return boxes.size() > 1;
 };
 
-WTF::IteratorRange<const Layout::Run*> InlineContent::runsForRect(const LayoutRect&) const
+WTF::IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const LayoutRect&) const
 {
     // FIXME: Do something efficient e.g. using line boxes.
-    if (runs.isEmpty())
+    if (boxes.isEmpty())
         return { nullptr, nullptr };
-    return { &runs.first(), &runs.last() + 1 };
+    return { &boxes.first(), &boxes.last() + 1 };
 }
 
 InlineContent::~InlineContent()
 {
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        for (auto& run : runs)
-            TextPainter::removeGlyphDisplayList(run);
+        for (auto& box : boxes)
+            TextPainter::removeGlyphDisplayList(box);
     }
 }
 
@@ -78,44 +78,44 @@ const RenderBlockFlow& InlineContent::containingBlock() const
     return m_lineLayout->flow();
 }
 
-size_t InlineContent::indexForRun(const Layout::Run& run) const
+size_t InlineContent::indexForBox(const InlineDisplay::Box& box) const
 {
-    auto index = static_cast<size_t>(&run - runs.begin());
-    RELEASE_ASSERT(index < runs.size());
+    auto index = static_cast<size_t>(&box - boxes.begin());
+    RELEASE_ASSERT(index < boxes.size());
     return index;
 }
 
-const Layout::Run* InlineContent::firstRunForLayoutBox(const Layout::Box& layoutBox) const
+const InlineDisplay::Box* InlineContent::firstBoxForLayoutBox(const Layout::Box& layoutBox) const
 {
-    auto index = firstRunIndexForLayoutBox(layoutBox);
-    return index ? &runs[*index] : nullptr;
+    auto index = firstBoxIndexForLayoutBox(layoutBox);
+    return index ? &boxes[*index] : nullptr;
 }
 
-std::optional<size_t> InlineContent::firstRunIndexForLayoutBox(const Layout::Box& layoutBox) const
+std::optional<size_t> InlineContent::firstBoxIndexForLayoutBox(const Layout::Box& layoutBox) const
 {
     constexpr auto cacheThreshold = 16;
 
-    if (runs.size() < cacheThreshold) {
-        for (size_t i = 0; i < runs.size(); ++i) {
-            auto& run = runs[i];
-            if (&run.layoutBox() == &layoutBox)
+    if (boxes.size() < cacheThreshold) {
+        for (size_t i = 0; i < boxes.size(); ++i) {
+            auto& box = boxes[i];
+            if (&box.layoutBox() == &layoutBox)
                 return i;
         }
         return { };
     }
     
-    if (!m_firstRunIndexCache) {
-        m_firstRunIndexCache = makeUnique<FirstRunIndexCache>();
-        for (size_t i = 0; i < runs.size(); ++i) {
-            auto& run = runs[i];
-            if (run.isRootInlineBox())
+    if (!m_firstBoxIndexCache) {
+        m_firstBoxIndexCache = makeUnique<FirstBoxIndexCache>();
+        for (size_t i = 0; i < boxes.size(); ++i) {
+            auto& box = boxes[i];
+            if (box.isRootInlineBox())
                 continue;
-            m_firstRunIndexCache->add(run.layoutBox(), i);
+            m_firstBoxIndexCache->add(box.layoutBox(), i);
         }
     }
 
-    auto it = m_firstRunIndexCache->find(layoutBox);
-    if (it == m_firstRunIndexCache->end())
+    auto it = m_firstBoxIndexCache->find(layoutBox);
+    if (it == m_firstBoxIndexCache->end())
         return { };
 
     return it->value;
@@ -127,11 +127,11 @@ const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const L
 
     if (!m_inlineBoxIndexCache) {
         m_inlineBoxIndexCache = makeUnique<InlineBoxIndexCache>();
-        for (size_t i = 0; i < runs.size(); ++i) {
-            auto& run = runs[i];
-            if (!run.isNonRootInlineBox())
+        for (size_t i = 0; i < boxes.size(); ++i) {
+            auto& box = boxes[i];
+            if (!box.isNonRootInlineBox())
                 continue;
-            m_inlineBoxIndexCache->ensure(run.layoutBox(), [&] {
+            m_inlineBoxIndexCache->ensure(box.layoutBox(), [&] {
                 return Vector<size_t> { };
             }).iterator->value.append(i);
         }
@@ -150,13 +150,13 @@ const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const L
 
 void InlineContent::releaseCaches()
 {
-    m_firstRunIndexCache = { };
+    m_firstBoxIndexCache = { };
     m_inlineBoxIndexCache = { };
 }
 
 void InlineContent::shrinkToFit()
 {
-    runs.shrinkToFit();
+    boxes.shrinkToFit();
     lines.shrinkToFit();
 }
 
