@@ -1,5 +1,100 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r282175. rdar://problem/83460931
+
+    [macOS] -[WKFullScreenWindowController exitFullScreenImmediately] does not exit fullscreen immediately
+    https://bugs.webkit.org/show_bug.cgi?id=230024
+    
+    Reviewed by Jer Noble.
+    
+    A WebContent process may ask the `WKFullScreenWindowController` in
+    the UI process to exit fullscreen immediately without walking through
+    the normal exit fullscreen sequence, and the WebContent process won't
+    expect any IPC message related to fullscreen to come back from the
+    UI process. If the UI process sends an IPC message to the WebContent
+    process and expects the response from the WebContent process (e.g., in
+    `WebPageProxy::forceRepaint()`), the UI process will be stuck.
+    
+    That will happen when a tab navigates to the previous page while a video
+    element in the current page is playing in fullscreen. The reason is that
+    `-[WKFullScreenWindowController exitFullScreen]` is called before
+    `-[WKFullScreenWindowController exitFullScreenImmediately]`.
+    `-[WKFullScreenWindowController exitFullScreen]` changes `_fullScreenState`
+    to `WaitingToExitFullScreen`, so `-[WKFullScreenWindowController exitFullScreenImmediately]`
+    will return early. This patch fixes this issue by changing the early return condition.
+    
+    In addition, `-[WKFullScreenWindowController exitFullScreenImmediately]`
+    does not really exit fullscreen immediately. Instead, it calls
+    `-[WKFullScreenWindowController finishedExitFullScreenAnimation:]`,
+    which always calls `WebPageProxy::forceRepaint()` and expects a response
+    from the WebContet process. This patch fixes this issue as well.
+    
+    Tested manually.
+    
+    * UIProcess/mac/WKFullScreenWindowController.mm:
+    (-[WKFullScreenWindowController exitFullScreenImmediately]):
+    Update the early return condition to make sure the UI process will proceed
+    to exit fullscreen unless the current state is `NotInFullScreen`.
+    (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+    (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+    The `completed` parameter was not used. This patch renames it to `immediately` to
+    indicate whether `WKFullScreenWindowController` wants to exit fullscreen immediately.
+    (-[WKFullScreenWindowController close]):
+    Clean up this function after revising `-[WKFullScreenWindowController exitFullScreenImmediately]`.
+    (-[WKFullScreenWindowController windowDidFailToExitFullScreen:]):
+    Update the argument according to the change of `-[WKFullScreenWindowController finishedExitFullScreenAnimation:]`.
+    (-[WKFullScreenWindowController windowDidExitFullScreen:]): Ditto.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282175 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-08  Peng Liu  <peng.liu6@apple.com>
+
+            [macOS] -[WKFullScreenWindowController exitFullScreenImmediately] does not exit fullscreen immediately
+            https://bugs.webkit.org/show_bug.cgi?id=230024
+
+            Reviewed by Jer Noble.
+
+            A WebContent process may ask the `WKFullScreenWindowController` in
+            the UI process to exit fullscreen immediately without walking through
+            the normal exit fullscreen sequence, and the WebContent process won't
+            expect any IPC message related to fullscreen to come back from the
+            UI process. If the UI process sends an IPC message to the WebContent
+            process and expects the response from the WebContent process (e.g., in
+            `WebPageProxy::forceRepaint()`), the UI process will be stuck.
+
+            That will happen when a tab navigates to the previous page while a video
+            element in the current page is playing in fullscreen. The reason is that
+            `-[WKFullScreenWindowController exitFullScreen]` is called before
+            `-[WKFullScreenWindowController exitFullScreenImmediately]`.
+            `-[WKFullScreenWindowController exitFullScreen]` changes `_fullScreenState`
+            to `WaitingToExitFullScreen`, so `-[WKFullScreenWindowController exitFullScreenImmediately]`
+            will return early. This patch fixes this issue by changing the early return condition.
+
+            In addition, `-[WKFullScreenWindowController exitFullScreenImmediately]`
+            does not really exit fullscreen immediately. Instead, it calls
+            `-[WKFullScreenWindowController finishedExitFullScreenAnimation:]`,
+            which always calls `WebPageProxy::forceRepaint()` and expects a response
+            from the WebContet process. This patch fixes this issue as well.
+
+            Tested manually.
+
+            * UIProcess/mac/WKFullScreenWindowController.mm:
+            (-[WKFullScreenWindowController exitFullScreenImmediately]):
+            Update the early return condition to make sure the UI process will proceed
+            to exit fullscreen unless the current state is `NotInFullScreen`.
+            (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+            (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+            The `completed` parameter was not used. This patch renames it to `immediately` to
+            indicate whether `WKFullScreenWindowController` wants to exit fullscreen immediately.
+            (-[WKFullScreenWindowController close]):
+            Clean up this function after revising `-[WKFullScreenWindowController exitFullScreenImmediately]`.
+            (-[WKFullScreenWindowController windowDidFailToExitFullScreen:]):
+            Update the argument according to the change of `-[WKFullScreenWindowController finishedExitFullScreenAnimation:]`.
+            (-[WKFullScreenWindowController windowDidExitFullScreen:]): Ditto.
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281984. rdar://problem/83460908
 
     RemoteVideoSample needs CVPixelBufferRef to be kept alive, but relies on caller to retain it
