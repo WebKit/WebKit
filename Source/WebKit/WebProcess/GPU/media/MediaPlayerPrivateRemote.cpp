@@ -351,8 +351,12 @@ void MediaPlayerPrivateRemote::setReadyState(MediaPlayer::ReadyState readyState)
 void MediaPlayerPrivateRemote::readyStateChanged(RemoteMediaPlayerState&& state)
 {
     updateCachedState(WTFMove(state));
-    if (auto player = makeRefPtr(m_player.get()))
+    if (auto player = makeRefPtr(m_player.get())) {
         player->readyStateChanged();
+        bool renderingCanBeAccelerated = player->renderingCanBeAccelerated();
+        if (m_renderingCanBeAccelerated != renderingCanBeAccelerated)
+            acceleratedRenderingStateChanged();
+    }
 }
 
 void MediaPlayerPrivateRemote::volumeChanged(double volume)
@@ -469,8 +473,10 @@ bool MediaPlayerPrivateRemote::supportsAcceleratedRendering() const
 
 void MediaPlayerPrivateRemote::acceleratedRenderingStateChanged()
 {
-    if (auto player = makeRefPtr(m_player.get()))
-        connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(player->renderingCanBeAccelerated()), m_id);
+    if (auto player = makeRefPtr(m_player.get())) {
+        m_renderingCanBeAccelerated = player->renderingCanBeAccelerated();
+        connection().send(Messages::RemoteMediaPlayerProxy::AcceleratedRenderingStateChanged(m_renderingCanBeAccelerated), m_id);
+    }
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

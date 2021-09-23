@@ -47,7 +47,8 @@ struct RemoteMediaPlayerProxyConfiguration {
     WebCore::SecurityOriginData documentSecurityOrigin;
     uint64_t logIdentifier { 0 };
     bool shouldUsePersistentCache { false };
-    bool isVideo { 0 };
+    bool isVideo { false };
+    bool renderingCanBeAccelerated { false };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -65,6 +66,7 @@ struct RemoteMediaPlayerProxyConfiguration {
         encoder << logIdentifier;
         encoder << shouldUsePersistentCache;
         encoder << isVideo;
+        encoder << renderingCanBeAccelerated;
     }
 
     template <class Decoder>
@@ -127,6 +129,11 @@ struct RemoteMediaPlayerProxyConfiguration {
         if (!isVideo)
             return std::nullopt;
 
+        std::optional<bool> renderingCanBeAccelerated;
+        decoder >> renderingCanBeAccelerated;
+        if (!renderingCanBeAccelerated)
+            return std::nullopt;
+
         return {{
             WTFMove(*referrer),
             WTFMove(*userAgent),
@@ -141,6 +148,7 @@ struct RemoteMediaPlayerProxyConfiguration {
             *logIdentifier,
             *shouldUsePersistentCache,
             *isVideo,
+            *renderingCanBeAccelerated,
         }};
     }
 };
