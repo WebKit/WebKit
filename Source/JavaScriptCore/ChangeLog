@@ -1,3 +1,21 @@
+2021-09-22  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Null pointer dereference in JSC::GetByStatus
+        https://bugs.webkit.org/show_bug.cgi?id=229674
+
+        Reviewed by Yusuke Suzuki. 
+
+        In GetByStatus::computeForStubInfoWithoutExitSiteFeedback, there are
+        several places that dereference the stubInfo argument when calling the
+        GetByStatus constructor. To prevent a nullptr dereference, the pointer
+        is not dereferenced anymore, and a check was added to check if stubInfo
+        is a valid pointer before accessing it.
+
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::GetByStatus):
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetByStatus.h:
+
 2021-09-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Filter algorithmic numbering systems from enumeration data

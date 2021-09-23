@@ -78,7 +78,7 @@ public:
         ASSERT(state == NoInformation || state == LikelyTakesSlowPath || state == ObservedTakesSlowPath || state == MakesCalls || state == ObservedSlowPathAndMakesCalls);
     }
     
-    explicit GetByStatus(StubInfoSummary, StructureStubInfo&);
+    explicit GetByStatus(StubInfoSummary, StructureStubInfo*);
     
     GetByStatus(
         State state, bool wasSeenInJIT)
