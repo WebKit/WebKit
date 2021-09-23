@@ -90,7 +90,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
             m_baseAdvances.uncheckedAppend(baseAdvances[i]);
     }
 
-    LOG_WITH_STREAM(Shaping,
+    LOG_WITH_STREAM(TextShaping,
         stream << "Shaping result: " << m_glyphCount << " glyphs.\n";
         stream << "Glyphs:";
         for (unsigned i = 0; i < m_glyphCount; ++i)
@@ -161,7 +161,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
 
     RetainPtr<CTLineRef> line;
 
-    LOG_WITH_STREAM(Shaping,
+    LOG_WITH_STREAM(TextShaping,
         stream << "Complex shaping " << length << " code units with info " << String(adoptCF(CFCopyDescription(stringAttributes.get())).get()) << ".\n";
         stream << "Code Units:";
         for (unsigned i = 0; i < length; ++i)
@@ -187,11 +187,11 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         if (!typesetter)
             return;
 
-        LOG_WITH_STREAM(Shaping, stream << "Forcing " << (m_run.ltr() ? "ltr" : "rtl"));
+        LOG_WITH_STREAM(TextShaping, stream << "Forcing " << (m_run.ltr() ? "ltr" : "rtl"));
 
         line = adoptCF(CTTypesetterCreateLine(typesetter.get(), CFRangeMake(0, 0)));
     } else {
-        LOG_WITH_STREAM(Shaping, stream << "Not forcing direction");
+        LOG_WITH_STREAM(TextShaping, stream << "Not forcing direction");
 
         ProviderInfo info = { cp, length, stringAttributes.get() };
 
@@ -210,7 +210,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
 
     CFIndex runCount = CFArrayGetCount(runArray);
 
-    LOG_WITH_STREAM(Shaping, stream << "Result: " << runCount << " runs.");
+    LOG_WITH_STREAM(TextShaping, stream << "Result: " << runCount << " runs.");
 
     for (CFIndex r = 0; r < runCount; r++) {
         CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, m_run.ltr() ? r : runCount - 1 - r));
@@ -250,7 +250,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         if (m_fallbackFonts && runFont != &m_font.primaryFont())
             m_fallbackFonts->add(font);
 
-        LOG_WITH_STREAM(Shaping, stream << "Run " << r << ":");
+        LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");
 
         m_complexTextRuns.append(ComplexTextRun::create(ctRun, *runFont, cp, stringLocation, length, runRange.location, runRange.location + runRange.length));
     }

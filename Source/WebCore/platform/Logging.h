@@ -107,7 +107,6 @@ namespace WebCore {
     M(Selection) \
     M(Services) \
     M(ServiceWorker) \
-    M(Shaping) \
     M(SpellingAndGrammar) \
     M(SQLDatabase) \
     M(Storage) \
@@ -115,6 +114,7 @@ namespace WebCore {
     M(StyleSheets) \
     M(SVG) \
     M(TextAutosizing) \
+    M(TextShaping) \
     M(Tiling) \
     M(Threading) \
     M(URLParser) \

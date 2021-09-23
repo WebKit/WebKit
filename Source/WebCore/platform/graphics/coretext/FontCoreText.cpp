@@ -605,10 +605,10 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
             range.length = std::min(range.location, -range.length);
             range.location = range.location - range.length;
             glyphBuffer.remove(beginningGlyphIndex + range.location, range.length);
-            LOG_WITH_STREAM(Shaping, stream << "Callback called to remove at location " << range.location << " and length " << range.length);
+            LOG_WITH_STREAM(TextShaping, stream << "Callback called to remove at location " << range.location << " and length " << range.length);
         } else {
             glyphBuffer.makeHole(beginningGlyphIndex + range.location, range.length, this);
-            LOG_WITH_STREAM(Shaping, stream << "Callback called to insert hole at location " << range.location << " and length " << range.length);
+            LOG_WITH_STREAM(TextShaping, stream << "Callback called to insert hole at location " << range.location << " and length " << range.length);
         }
 
         *newGlyphsPointer = glyphBuffer.glyphs(beginningGlyphIndex);
@@ -629,7 +629,7 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
     for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
         glyphBuffer.offsetsInString(beginningGlyphIndex)[i] -= beginningStringIndex;
 
-    LOG_WITH_STREAM(Shaping,
+    LOG_WITH_STREAM(TextShaping,
         stream << "Simple shaping " << numberOfInputGlyphs << " glyphs in font " << String(adoptCF(CTFontCopyPostScriptName(m_platformData.ctFont())).get()) << ".\n";
         const auto* glyphs = glyphBuffer.glyphs(beginningGlyphIndex);
         stream << "Glyphs:";
@@ -669,7 +669,7 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned begi
         localeString.get(),
         handler);
 
-    LOG_WITH_STREAM(Shaping,
+    LOG_WITH_STREAM(TextShaping,
         stream << "Shaping result: " << glyphBuffer.size() - beginningGlyphIndex << " glyphs.\n";
         const auto* glyphs = glyphBuffer.glyphs(beginningGlyphIndex);
         stream << "Glyphs:";
