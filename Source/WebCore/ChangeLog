@@ -1,3 +1,12 @@
+2021-09-23  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] RenderDeprecatedFlexibleBox::setIsStretchingChildren is unused after r282873
+        https://bugs.webkit.org/show_bug.cgi?id=230627
+
+        Reviewed by Antti Koivisto.
+
+        * rendering/RenderDeprecatedFlexibleBox.h:
+
 2021-09-23  Antti Koivisto  <antti@apple.com>
 
         Factor LegacyInlineFlowBox painting into a class
