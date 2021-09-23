@@ -1,5 +1,43 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282561. rdar://problem/83430086
+
+    Stub out the footprint() API when libpas is in use
+    https://bugs.webkit.org/show_bug.cgi?id=230362
+    
+    Reviewed by Yusuke Suzuki.
+    
+    The Gigacage's footprint API is called from some test-only code in JSC, evidently to no
+    meaningful effect. It's possible for libpas to support such an API but it currently
+    doesn't. So, stub it out. To my knowledge we don't actually use this API for anything
+    other than tests, and even tests seem to use it only in the sense that they expect to be
+    able to call it without crashing.
+    
+    * bmalloc/Gigacage.cpp:
+    (Gigacage::footprint):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282561 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+            Stub out the footprint() API when libpas is in use
+            https://bugs.webkit.org/show_bug.cgi?id=230362
+
+            Reviewed by Yusuke Suzuki.
+
+            The Gigacage's footprint API is called from some test-only code in JSC, evidently to no
+            meaningful effect. It's possible for libpas to support such an API but it currently
+            doesn't. So, stub it out. To my knowledge we don't actually use this API for anything
+            other than tests, and even tests seem to use it only in the sense that they expect to be
+            able to call it without crashing.
+
+            * bmalloc/Gigacage.cpp:
+            (Gigacage::footprint):
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282556. rdar://problem/83430136
 
     [libpas] Update to 38b9b0b92ccc9628627c742523de6200acc08211 and fully enable on AS
