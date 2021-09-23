@@ -1,3 +1,12 @@
+2021-09-23  Eric Hutchison  <ehutchison@apple.com>
+
+        [iOS] multiple CSS tests with image-only failures.
+        https://bugs.webkit.org/show_bug.cgi?id=230695.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-09-23  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ macOS wk2 ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html is a flaky failure.
