@@ -1,5 +1,36 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281533. rdar://problem/83460974
+
+    MediaSession artwork URL is showing in logs.
+    https://bugs.webkit.org/show_bug.cgi?id=229320
+    rdar://82156288
+    
+    Reviewed by Eric Carlson.
+    
+    Only enable artwork logging in debug builds.
+    
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (WebCore::MediaSessionManagerCocoa::updateNowPlayingInfo):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281533 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-24  Jean-Yves Avenard  <jya@apple.com>
+
+            MediaSession artwork URL is showing in logs.
+            https://bugs.webkit.org/show_bug.cgi?id=229320
+            rdar://82156288
+
+            Reviewed by Eric Carlson.
+
+            Only enable artwork logging in debug builds.
+
+            * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+            (WebCore::MediaSessionManagerCocoa::updateNowPlayingInfo):
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281334. rdar://problem/83460795
 
     Followup to <trac.webkit.org/r281288>
