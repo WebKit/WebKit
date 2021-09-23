@@ -1,5 +1,60 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281650. rdar://problem/83460707
+
+    Drawing small caps web fonts into canvas causes the GPU process to hang
+    https://bugs.webkit.org/show_bug.cgi?id=229401
+    <rdar://problem/82282054>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    Web fonts retain their downloaded data in case they need to send that data to the GPU process
+    to render into canvas. Small caps fonts are implemented by creating a "derivative" variant font.
+    When we were creating these derivative fonts, we weren't forwarding this downloaded data to
+    those new fonts. Without it, the font fails to transfer across IPC.
+    
+    Test: fast/text/small-caps-canvas.html
+    
+    * platform/graphics/FontPlatformData.cpp:
+    (WebCore::makeOptionalFromPointer):
+    (WebCore::FontPlatformData::FontPlatformData):
+    * platform/graphics/FontPlatformData.h:
+    * platform/graphics/HEVCUtilities.cpp:
+    (WebCore::makeOptionalFromPointer):
+    * platform/graphics/coretext/FontCoreText.cpp:
+    (WebCore::createDerivativeFont):
+    (WebCore::Font::createFontWithoutSynthesizableFeatures const):
+    (WebCore::Font::platformCreateScaledFont const):
+    * platform/graphics/coretext/FontPlatformDataCoreText.cpp:
+    (WebCore::FontPlatformData::FontPlatformData):
+    * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+    (WebCore::FontPlatformData::FontPlatformData):
+    * platform/graphics/win/FontPlatformDataWin.cpp:
+    (WebCore::FontPlatformData::FontPlatformData):
+    
+    LayoutTests:
+    
+    * fast/text/small-caps-canvas-expected.txt: Added.
+    * fast/text/small-caps-canvas.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281650 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Drawing small caps web fonts into canvas causes the GPU process to hang
+            https://bugs.webkit.org/show_bug.cgi?id=229401
+            <rdar://problem/82282054>
+
+            Reviewed by Wenson Hsieh.
+
+            * fast/text/small-caps-canvas-expected.txt: Added.
+            * fast/text/small-caps-canvas.html: Added.
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281579. rdar://problem/83461036
 
     [iOS] Crash when tapping <select> element and calling window.open()

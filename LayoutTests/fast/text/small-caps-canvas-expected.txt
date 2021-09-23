@@ -1,0 +1,2 @@
+This test makes sure that drawing small caps text into a canvas does not hang the GPU process. This test passes if the test does not time out.
+
