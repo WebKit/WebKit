@@ -1,3 +1,62 @@
+2021-09-22  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move LineGeometry and LineRun files under /inline/display
+        https://bugs.webkit.org/show_bug.cgi?id=230632
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for moving these classes out of the "layout namespace".
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/formattingContexts/inline/display/InlineLineGeometry.h: Renamed from Source/WebCore/layout/formattingContexts/inline/InlineLineGeometry.h.
+        (WebCore::Layout::LineGeometry::lineBoxLogicalRect const):
+        (WebCore::Layout::LineGeometry::scrollableOverflow const):
+        (WebCore::Layout::LineGeometry::enclosingTopAndBottom const):
+        (WebCore::Layout::LineGeometry::baseline const):
+        (WebCore::Layout::LineGeometry::contentLogicalLeft const):
+        (WebCore::Layout::LineGeometry::contentLogicalWidth const):
+        (WebCore::Layout::LineGeometry::moveVertically):
+        (WebCore::Layout::LineGeometry::LineGeometry):
+        * layout/formattingContexts/inline/display/InlineLineRun.h: Renamed from Source/WebCore/layout/formattingContexts/inline/InlineLineRun.h.
+        (WebCore::Layout::Run::Text::start const):
+        (WebCore::Layout::Run::Text::end const):
+        (WebCore::Layout::Run::Text::length const):
+        (WebCore::Layout::Run::Text::originalContent const):
+        (WebCore::Layout::Run::Text::renderedContent const):
+        (WebCore::Layout::Run::Text::hasHyphen const):
+        (WebCore::Layout::Run::isText const):
+        (WebCore::Layout::Run::isSoftLineBreak const):
+        (WebCore::Layout::Run::isLineBreakBox const):
+        (WebCore::Layout::Run::isLineBreak const):
+        (WebCore::Layout::Run::isAtomicInlineLevelBox const):
+        (WebCore::Layout::Run::isInlineBox const):
+        (WebCore::Layout::Run::isNonRootInlineBox const):
+        (WebCore::Layout::Run::isRootInlineBox const):
+        (WebCore::Layout::Run::isGenericInlineLevelBox const):
+        (WebCore::Layout::Run::isInlineLevelBox const):
+        (WebCore::Layout::Run::isNonRootInlineLevelBox const):
+        (WebCore::Layout::Run::type const):
+        (WebCore::Layout::Run::hasContent const):
+        (WebCore::Layout::Run::logicalRect const):
+        (WebCore::Layout::Run::inkOverflow const):
+        (WebCore::Layout::Run::logicalTop const):
+        (WebCore::Layout::Run::logicalBottom const):
+        (WebCore::Layout::Run::logicalLeft const):
+        (WebCore::Layout::Run::logicalRight const):
+        (WebCore::Layout::Run::logicalWidth const):
+        (WebCore::Layout::Run::logicalHeight const):
+        (WebCore::Layout::Run::moveVertically):
+        (WebCore::Layout::Run::adjustInkOverflow):
+        (WebCore::Layout::Run::text):
+        (WebCore::Layout::Run::text const):
+        (WebCore::Layout::Run::expansion const):
+        (WebCore::Layout::Run::layoutBox const):
+        (WebCore::Layout::Run::style const):
+        (WebCore::Layout::Run::lineIndex const):
+        (WebCore::Layout::Run::Run):
+        (WebCore::Layout::Run::Text::Text):
+
 2021-09-22  Joonghun Park  <jh718.park@samsung.com>
 
         Fix the behavior that setting text field input's value content attribute to the same value moves caret to the end of the input.
