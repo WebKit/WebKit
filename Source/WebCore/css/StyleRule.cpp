@@ -191,6 +191,8 @@ StyleRule::StyleRule(const StyleRule& o)
     : StyleRuleBase(o)
     , m_properties(o.properties().mutableCopy())
     , m_selectorList(o.m_selectorList)
+    , m_isSplitRule(o.m_isSplitRule)
+    , m_isLastRuleInSplitRule(o.m_isLastRuleInSplitRule)
 {
 }
 
@@ -227,7 +229,9 @@ Ref<StyleRule> StyleRule::createForSplitting(const Vector<const CSSSelector*>& s
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
     selectorListArray[selectors.size() - 1].setLastInSelectorList();
-    return StyleRule::create(WTFMove(properties), hasDocumentSecurityOrigin, CSSSelectorList(WTFMove(selectorListArray)));
+    auto styleRule = StyleRule::create(WTFMove(properties), hasDocumentSecurityOrigin, CSSSelectorList(WTFMove(selectorListArray)));
+    styleRule->markAsSplitRule();
+    return styleRule;
 }
 
 Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned maxCount) const
@@ -252,6 +256,9 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
 
     if (!componentsSinceLastSplit.isEmpty())
         rules.append(createForSplitting(componentsSinceLastSplit, const_cast<StyleProperties&>(properties()), hasDocumentSecurityOrigin()));
+
+    if (!rules.isEmpty())
+        rules.last()->markAsLastRuleInSplitRule();
 
     return rules;
 }
