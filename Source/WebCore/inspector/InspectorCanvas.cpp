@@ -813,6 +813,67 @@ bool InspectorCanvas::overFrameCount() const
     return m_frameCount && m_framesCaptured >= m_frameCount.value();
 }
 
+static RefPtr<Inspector::Protocol::Canvas::ContextAttributes> buildObjectForCanvasContextAttributes(CanvasRenderingContext& context)
+{
+    if (is<CanvasRenderingContext2D>(context)) {
+        auto attributes = downcast<CanvasRenderingContext2D>(context).getContextAttributes();
+        auto contextAttributesPayload = Inspector::Protocol::Canvas::ContextAttributes::create()
+            .release();
+        switch (attributes.colorSpace) {
+        case PredefinedColorSpace::SRGB:
+            contextAttributesPayload->setColorSpace("srgb"_s);
+            break;
+
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+        case PredefinedColorSpace::DisplayP3:
+            contextAttributesPayload->setColorSpace("display-p3"_s);
+            break;
+#endif
+        }
+        contextAttributesPayload->setDesynchronized(attributes.desynchronized);
+        return contextAttributesPayload;
+    }
+
+    if (is<ImageBitmapRenderingContext>(context)) {
+        auto contextAttributesPayload = Inspector::Protocol::Canvas::ContextAttributes::create()
+            .release();
+        contextAttributesPayload->setAlpha(downcast<ImageBitmapRenderingContext>(context).hasAlpha());
+        return contextAttributesPayload;
+    }
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(context)) {
+        const auto& attributes = downcast<WebGLRenderingContextBase>(context).getContextAttributes();
+        if (!attributes)
+            return nullptr;
+
+        auto contextAttributesPayload = Inspector::Protocol::Canvas::ContextAttributes::create()
+            .release();
+        contextAttributesPayload->setAlpha(attributes->alpha);
+        contextAttributesPayload->setDepth(attributes->depth);
+        contextAttributesPayload->setStencil(attributes->stencil);
+        contextAttributesPayload->setAntialias(attributes->antialias);
+        contextAttributesPayload->setPremultipliedAlpha(attributes->premultipliedAlpha);
+        contextAttributesPayload->setPreserveDrawingBuffer(attributes->preserveDrawingBuffer);
+        switch (attributes->powerPreference) {
+        case WebGLPowerPreference::Default:
+            contextAttributesPayload->setPowerPreference("default"_s);
+            break;
+        case WebGLPowerPreference::LowPower:
+            contextAttributesPayload->setPowerPreference("low-power"_s);
+            break;
+        case WebGLPowerPreference::HighPerformance:
+            contextAttributesPayload->setPowerPreference("high-performance"_s);
+            break;
+        }
+        contextAttributesPayload->setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat);
+        return contextAttributesPayload;
+    }
+#endif // ENABLE(WEBGL)
+
+    return nullptr;
+}
+
 Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool captureBacktrace)
 {
     using ContextTypeType = std::optional<Protocol::Canvas::ContextType>;
@@ -856,45 +917,9 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
         // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
     }
 
-    using ContextAttributesType = RefPtr<Protocol::Canvas::ContextAttributes>;
     auto contextAttributes = WTF::switchOn(m_context,
-        [] (std::reference_wrapper<CanvasRenderingContext> contextWrapper) -> ContextAttributesType {
-            auto& context = contextWrapper.get();
-            if (is<ImageBitmapRenderingContext>(context)) {
-                auto contextAttributesPayload = Protocol::Canvas::ContextAttributes::create()
-                    .release();
-                contextAttributesPayload->setAlpha(downcast<ImageBitmapRenderingContext>(context).hasAlpha());
-                return contextAttributesPayload;
-            }
-
-#if ENABLE(WEBGL)
-            if (is<WebGLRenderingContextBase>(context)) {
-                if (const auto& attributes = downcast<WebGLRenderingContextBase>(context).getContextAttributes()) {
-                    auto contextAttributesPayload = Protocol::Canvas::ContextAttributes::create()
-                        .release();
-                    contextAttributesPayload->setAlpha(attributes->alpha);
-                    contextAttributesPayload->setDepth(attributes->depth);
-                    contextAttributesPayload->setStencil(attributes->stencil);
-                    contextAttributesPayload->setAntialias(attributes->antialias);
-                    contextAttributesPayload->setPremultipliedAlpha(attributes->premultipliedAlpha);
-                    contextAttributesPayload->setPreserveDrawingBuffer(attributes->preserveDrawingBuffer);
-                    switch (attributes->powerPreference) {
-                    case WebGLPowerPreference::Default:
-                        contextAttributesPayload->setPowerPreference("default");
-                        break;
-                    case WebGLPowerPreference::LowPower:
-                        contextAttributesPayload->setPowerPreference("low-power");
-                        break;
-                    case WebGLPowerPreference::HighPerformance:
-                        contextAttributesPayload->setPowerPreference("high-performance");
-                        break;
-                    }
-                    contextAttributesPayload->setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat);
-                    return contextAttributesPayload;
-                }
-            }
-#endif
-            return nullptr;
+        [] (std::reference_wrapper<CanvasRenderingContext> contextWrapper) {
+            return buildObjectForCanvasContextAttributes(contextWrapper);
         },
         [] (Monostate) {
             ASSERT_NOT_REACHED();
@@ -1229,22 +1254,9 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
             statesPayload->addItem(WTFMove(statePayload));
         }
     }
-#if ENABLE(WEBGL)
-    else if (is<WebGLRenderingContextBase>(context)) {
-        auto& contextWebGLBase = downcast<WebGLRenderingContextBase>(*context);
-        if (std::optional<WebGLContextAttributes> webGLContextAttributes = contextWebGLBase.getContextAttributes()) {
-            auto webGLContextAttributesPayload = JSON::Object::create();
-            webGLContextAttributesPayload->setBoolean("alpha"_s, webGLContextAttributes->alpha);
-            webGLContextAttributesPayload->setBoolean("depth"_s, webGLContextAttributes->depth);
-            webGLContextAttributesPayload->setBoolean("stencil"_s, webGLContextAttributes->stencil);
-            webGLContextAttributesPayload->setBoolean("antialias"_s, webGLContextAttributes->antialias);
-            webGLContextAttributesPayload->setBoolean("premultipliedAlpha"_s, webGLContextAttributes->premultipliedAlpha);
-            webGLContextAttributesPayload->setBoolean("preserveDrawingBuffer"_s, webGLContextAttributes->preserveDrawingBuffer);
-            webGLContextAttributesPayload->setBoolean("failIfMajorPerformanceCaveat"_s, webGLContextAttributes->failIfMajorPerformanceCaveat);
-            parametersPayload->addItem(WTFMove(webGLContextAttributesPayload));
-        }
-    }
-#endif
+
+    if (auto contextAttributes = buildObjectForCanvasContextAttributes(*context))
+        parametersPayload->addItem(contextAttributes.releaseNonNull());
 
     initialStatePayload->setAttributes(WTFMove(attributesPayload));
 

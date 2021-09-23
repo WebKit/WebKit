@@ -1,3 +1,18 @@
+2021-09-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Graphics: add instrumentation for new `CanvasRenderingContext2DSettings`
+        https://bugs.webkit.org/show_bug.cgi?id=225180
+        <rdar://problem/77587429>
+
+        Reviewed by BJ Burg.
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::buildObjectForCanvasContextAttributes): Added.
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        (WebCore::InspectorCanvas::buildInitialState):
+        Unify the two cases where we fetch canvas attributes into a single method so that both get
+        the same data. This means that the canvas recorder now also uses `Canvas.ContextAttributes`.
+
 2021-09-23  Antoine Quint  <graouts@webkit.org>
 
         [Media Controls] Allow for a brightness control

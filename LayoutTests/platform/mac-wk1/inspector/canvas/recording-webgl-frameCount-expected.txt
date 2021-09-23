@@ -2,16 +2,16 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
 
 
 == Running test suite: Canvas.recordingWebGL
--- Running test case: Canvas.recordingWebGL.memoryLimit
+-- Running test case: Canvas.recordingWebGL.singleFrame
 initialState:
   attributes:
     width: 2
     height: 2
   parameters:
-    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"powerPreference":"default","failIfMajorPerformanceCaveat":false}
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"powerPreference":"low-power","failIfMajorPerformanceCaveat":false}
   content: <filtered>
 frames:
-  0: (duration) (incomplete)
+  0: (duration)
     0: activeTexture(1)
       swizzleTypes: [Number]
       trace:
