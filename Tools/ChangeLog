@@ -1,3 +1,20 @@
+2021-09-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Flatpak] Use NUMBER_OF_PROCESSORS if already defined
+        https://bugs.webkit.org/show_bug.cgi?id=230638
+
+        Reviewed by Martin Robinson.
+
+        The environment variable NUMBER_OF_PROCESSORS can be defined to instruct the build system
+        to spawn as many concurrent build commands as specified. By default flatpak was using 3x the number
+        of processors in the local system. However we might prefer to provide a more convenient number
+        by using the environment variable. Note that this approach is better than passing -j as
+        --makeargs because cmake would have to be reconfigured everytime the number passed to -j changes.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Use NUMBER_OF_PROCESSORS if already defined. Otherwise fallback
+        to 3x the number of processors.
+
 2021-09-23  Chris Lord  <clord@igalia.com>
 
         [GTK] Allow sending precise mouse wheel events in LayoutTests

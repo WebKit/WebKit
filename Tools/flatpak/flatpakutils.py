@@ -882,8 +882,11 @@ class WebkitFlatpak:
             _log.debug('Enabling the icecream compiler')
             flatpak_command.extend([share_network_option, "--filesystem=home"])
 
-            n_cores = multiprocessing.cpu_count() * 3
-            _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
+            try:
+                n_cores = os.environ["NUMBER_OF_PROCESSORS"]
+            except KeyError:
+                n_cores = multiprocessing.cpu_count() * 3
+                _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
             toolchain_name = os.environ.get("CC", "gcc")
             try:
                 toolchain_path = os.environ.get("ICECC_VERSION_OVERRIDE", self.icc_version[toolchain_name])
