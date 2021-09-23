@@ -1,5 +1,53 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282365. rdar://problem/83429982
+
+    Crash under WebPage::runJavaScript()
+    https://bugs.webkit.org/show_bug.cgi?id=230223
+    <rdar://80172436>
+    
+    Reviewed by Brady Eidson.
+    
+    Source/WebKit:
+    
+    The resolveFunction() was capturing `frame = makeRef(frame)` and then calling `frame->coreFrame()->script()`.
+    This would lead to a null dereference crash in the case where the core frame gets destroyed before the JS
+    promise gets resolved. Protecting the WebFrame does not keep the core Frame alive as WebFrame::m_coreFrame
+    is merely a WeakPtr. To address the issue, the lambda now also protects the core frame and uses it to get
+    the script controller.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::runJavaScript):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+    (-[AsyncJSUIDelegate initWithAlertHandler:]):
+    (-[AsyncJSUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282365 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-13  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebPage::runJavaScript()
+            https://bugs.webkit.org/show_bug.cgi?id=230223
+            <rdar://80172436>
+
+            Reviewed by Brady Eidson.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/AsyncFunction.mm:
+            (-[AsyncJSUIDelegate initWithAlertHandler:]):
+            (-[AsyncJSUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+            (TestWebKitAPI::TEST):
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282358. rdar://problem/83429732
 
     AX: Make PDFs loaded via <embed> accessible
