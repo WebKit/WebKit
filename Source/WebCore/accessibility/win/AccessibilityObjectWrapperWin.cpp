@@ -56,8 +56,8 @@ void AccessibilityObjectWrapper::accessibilityAttributeValue(const AtomString& a
         return;
     }
 
-    // Used by DRT to find an accessible node by its element id.
-    if (attributeName == "AXDRTElementIdAttribute") {
+    // Used to find an accessible node by its element id.
+    if (attributeName == "AXDOMIdentifier") {
         ASSERT(V_VT(result) == VT_EMPTY);
 
         V_VT(result) = VT_BSTR;

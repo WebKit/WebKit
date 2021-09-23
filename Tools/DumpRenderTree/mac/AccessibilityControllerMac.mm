@@ -75,7 +75,7 @@ AccessibilityUIElement AccessibilityController::rootElement()
 static id findAccessibleObjectById(id obj, NSString *idAttribute)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id objIdAttribute = [obj accessibilityAttributeValue:@"AXDRTElementIdAttribute"];
+    id objIdAttribute = [obj accessibilityAttributeValue:@"AXDOMIdentifier"];
     if ([objIdAttribute isKindOfClass:[NSString class]] && [objIdAttribute isEqualToString:idAttribute])
         return obj;
     END_AX_OBJC_EXCEPTIONS
@@ -90,7 +90,7 @@ static id findAccessibleObjectById(id obj, NSString *idAttribute)
     }
     END_AX_OBJC_EXCEPTIONS
 
-    return nullptr;
+    return nil;
 }
 
 AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef idAttributeRef)

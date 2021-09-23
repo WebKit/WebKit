@@ -1,3 +1,22 @@
+2021-09-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Remove AXDRTElementIdAttribute from the AX object platform wrapper interface.
+        https://bugs.webkit.org/show_bug.cgi?id=230657
+        <rdar://problem/83424767>
+
+        Reviewed by Chris Fleizach.
+
+        No change in functionality.
+
+        AXDRTElementIdAttribute is a duplicate of AXDOMIdentifier, thus removing
+        an unnecessary attribute from the platform wrapper's
+        accessibilityAttributeValue method.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * accessibility/win/AccessibilityObjectWrapperWin.cpp:
+        (WebCore::AccessibilityObjectWrapper::accessibilityAttributeValue):
+
 2021-09-23  Tim Nguyen  <ntim@apple.com>
 
         Use visibleToHitTesting() in RenderLayerBacking::updateAfterDescendants() instead of pointer-events check

@@ -2831,10 +2831,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:@"AXDRTSpeechAttribute"])
         return [self baseAccessibilitySpeechHint];
 
-    // Used by TestRunner and DRT AccessibilityController to find an accessible node by its element id.
-    if ([attributeName isEqualToString:@"AXDRTElementIdAttribute"])
-        return backingObject->identifierAttribute();
-
     if ([attributeName isEqualToString:@"AXAutocompleteValue"])
         return backingObject->autoCompleteValue();
 

@@ -1,3 +1,23 @@
+2021-09-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Remove AXDRTElementIdAttribute from the AX object platform wrapper interface.
+        https://bugs.webkit.org/show_bug.cgi?id=230657
+        <rdar://problem/83424767>
+
+        Reviewed by Chris Fleizach.
+
+        AXDRTElementIdAttribute is a duplicate of AXDOMIdentifier, thus removing
+        an unnecessary attribute from the platform wrapper's
+        accessibilityAttributeValue method, and making the corresponding change
+        to the DRT and WTR accessibilityControllers.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (findAccessibleObjectById):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (findAccessibleObjectById):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::findAccessibleObjectById):
+
 2021-09-23  Sergio Villar Senin  <svillar@igalia.com>
 
         [Flatpak] Use NUMBER_OF_PROCESSORS if already defined
