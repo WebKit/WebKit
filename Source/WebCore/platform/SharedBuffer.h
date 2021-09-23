@@ -30,7 +30,6 @@
 #include <wtf/FileSystem.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Span.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Variant.h>
@@ -65,7 +64,7 @@ namespace WebCore {
 
 class SharedBufferDataView;
 
-class WEBCORE_EXPORT SharedBuffer : public RefCounted<SharedBuffer> {
+class WEBCORE_EXPORT SharedBuffer : public ThreadSafeRefCounted<SharedBuffer> {
 public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer); }
     static Ref<SharedBuffer> create(const uint8_t* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
