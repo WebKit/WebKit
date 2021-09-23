@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +64,7 @@ extern "C" void returnFromLLIntTrampoline(void);
 
 #if ENABLE(CSS_SELECTOR_JIT) && CPU(ARM64E)
 extern "C" void vmEntryToCSSJITAfter(void);
-JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToCSSJITAfter, vmEntryToCSSJITAfter);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToCSSJITAfter);
 #endif
 
 void initialize()

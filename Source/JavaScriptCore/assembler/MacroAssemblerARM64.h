@@ -29,6 +29,7 @@
 
 #include "ARM64Assembler.h"
 #include "AbstractMacroAssembler.h"
+#include "JITOperationValidation.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -4628,6 +4629,8 @@ public:
     {
         Assembler::repatchPointer(call.dataLabelPtrAtOffset(REPATCH_OFFSET_CALL_TO_POINTER).dataLocation(), destination.executableAddress());
     }
+
+    JSC_OPERATION_VALIDATION_MACROASSEMBLER_ARM64_SUPPORT();
 
 protected:
     ALWAYS_INLINE Jump makeBranch(Assembler::Condition cond)

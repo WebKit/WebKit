@@ -1159,6 +1159,7 @@
 		65B8392E1BACAD360044E824 /* CachedRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B8392C1BACA92A0044E824 /* CachedRecovery.h */; };
 		6A38CFAA1E32B5AB0060206F /* AsyncStackTrace.h in Headers */ = {isa = PBXBuildFile; fileRef = 6A38CFA81E32B58B0060206F /* AsyncStackTrace.h */; };
 		6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6B2360CE26C6253D0054AEEC /* JITOperationValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B2360CD26C6253C0054AEEC /* JITOperationValidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6B767E7B26791F270017F8D1 /* AssemblyHelpersSpoolers.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B767E7A26791F270017F8D1 /* AssemblyHelpersSpoolers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6BCCEC0425D1FA27000F391D /* VerifierSlotVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BCCEC0325D1FA27000F391D /* VerifierSlotVisitorInlines.h */; };
 		70113D4C1A8DB093003848C4 /* IteratorOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 70113D4A1A8DB093003848C4 /* IteratorOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4022,6 +4023,7 @@
 		6A38CFA71E32B58B0060206F /* AsyncStackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncStackTrace.cpp; sourceTree = "<group>"; };
 		6A38CFA81E32B58B0060206F /* AsyncStackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncStackTrace.h; sourceTree = "<group>"; };
 		6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerEvalEnabler.h; sourceTree = "<group>"; };
+		6B2360CD26C6253C0054AEEC /* JITOperationValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITOperationValidation.h; sourceTree = "<group>"; };
 		6B731CC02647A8370014646F /* SlowPathCall.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SlowPathCall.cpp; sourceTree = "<group>"; };
 		6B767E7A26791F270017F8D1 /* AssemblyHelpersSpoolers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssemblyHelpersSpoolers.h; sourceTree = "<group>"; };
 		6BA93C9590484C5BAD9316EA /* JSScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptFetcher.h; sourceTree = "<group>"; };
@@ -8481,6 +8483,7 @@
 				5267CF81249316AD0022BF6D /* FastJITPermissions.h */,
 				E3CA3A4B2527AB2E004802BF /* JITOperationList.cpp */,
 				E3CA3A4C2527AB2F004802BF /* JITOperationList.h */,
+				6B2360CD26C6253C0054AEEC /* JITOperationValidation.h */,
 				0FF4275615914A20004CB9FF /* LinkBuffer.cpp */,
 				86D3B3C110159D7F002865E7 /* LinkBuffer.h */,
 				0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */,
@@ -10307,6 +10310,7 @@
 				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
 				795AC61820A2355E0052C76C /* JSVirtualMachinePrivate.h in Headers */,
 				A7CA3AE817DA41AE006538AF /* JSWeakMap.h in Headers */,
+				6B2360CE26C6253D0054AEEC /* JITOperationValidation.h in Headers */,
 				FEF5B4272628ABD90016E776 /* JSWeakMapInlines.h in Headers */,
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,

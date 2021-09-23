@@ -42,24 +42,17 @@ namespace JSC {
 
 #if CPU(ARM64E)
 
-#define JSC_ANNOTATE_LLINT_JIT_OPERATION(name) \
-    JSC_ANNOTATE_JIT_OPERATION(_JITTarget_##name, name)
-
-#define JSC_ANNOTATE_LLINT_JIT_OPERATION_WITH_DECLARE(name) \
-    extern "C" void name(void); \
-    JSC_ANNOTATE_JIT_OPERATION(_JITTarget_##name, name)
-
-JSC_ANNOTATE_LLINT_JIT_OPERATION(jitCagePtrGateAfter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryToJavaScript);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryToNative);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryToJavaScriptGateAfter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_call_arity_checkUntagGateAfter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_call_arity_checkTagGateAfter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_construct_arity_checkUntagGateAfter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_construct_arity_checkTagGateAfter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryCustomGetter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryCustomSetter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryHostFunction);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(jitCagePtrGateAfter);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToJavaScript);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryToNative);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToJavaScriptGateAfter);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_call_arity_checkUntagGateAfter);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_call_arity_checkTagGateAfter);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_construct_arity_checkUntagGateAfter);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(llint_function_for_construct_arity_checkTagGateAfter);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryCustomGetter);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryCustomSetter);
+JSC_ANNOTATE_JIT_OPERATION(vmEntryHostFunction);
 
 static_assert(FunctionTraits<decltype(vmEntryCustomGetter)>::arity == FunctionTraits<GetValueFuncWithPtr>::arity, "When changing GetValueFuncWithPtr, need to change vmEntryCustomGetter implementation too.");
 static_assert(FunctionTraits<decltype(vmEntryCustomSetter)>::arity == FunctionTraits<PutValueFuncWithPtr>::arity, "When changing PutValueFuncWithPtr, need to change vmEntryCustomSetter implementation too.");

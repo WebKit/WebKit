@@ -48,7 +48,7 @@ static constexpr bool verbose = false;
 }
 
 #if CPU(ARM64E)
-JSC_ANNOTATE_JIT_OPERATION(_JITTarget_vmEntryToYarrJITAfter, vmEntryToYarrJITAfter);
+JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToYarrJITAfter);
 #endif
 
 void BoyerMooreFastCandidates::dump(PrintStream& out) const

@@ -33,11 +33,9 @@
 // We need to include this before MacroAssemblerARM64.h because MacroAssemblerARM64
 // will be defined in terms of ARM64EAssembler for ARM64E.
 #include "ARM64EAssembler.h"
+#include "JITOperationValidation.h"
 #include "JSCPtrTag.h"
 #include "MacroAssemblerARM64.h"
-#if ENABLE(JIT_CAGE)
-#include <WebKitAdditions/JITCageAdditions.h>
-#endif
 
 #if OS(DARWIN)
 #include <mach/vm_param.h>

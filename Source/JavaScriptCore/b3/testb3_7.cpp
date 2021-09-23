@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -549,14 +549,18 @@ void generateLoopNotBackwardsDominant(Procedure& proc, std::array<int, 100>& arr
     end->appendNew<Value>(proc, Return, Origin());
 }
 
+extern "C" {
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(oneFunction, int, (int* callCount));
+}
 JSC_DEFINE_JIT_OPERATION(oneFunction, int, (int* callCount))
 {
     (*callCount)++;
     return 1;
 }
 
+extern "C" {
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(noOpFunction, void, ());
+}
 JSC_DEFINE_JIT_OPERATION(noOpFunction, void, ())
 {
 }
@@ -1342,7 +1346,9 @@ void testFloatEqualOrUnorderedDontFold()
     }
 }
 
+extern "C" {
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(functionNineArgs, void, (int32_t, void*, void*, void*, void*, void*, void*, void*, void*));
+}
 JSC_DEFINE_JIT_OPERATION(functionNineArgs, void, (int32_t, void*, void*, void*, void*, void*, void*, void*, void*))
 {
 }

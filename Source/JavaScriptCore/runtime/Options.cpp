@@ -28,6 +28,7 @@
 
 #include "AssemblerCommon.h"
 #include "CPU.h"
+#include "JITOperationValidation.h"
 #include "LLIntCommon.h"
 #include "MinimumReservedZoneSize.h"
 #include <algorithm>
@@ -51,7 +52,6 @@
 #endif
 
 #if ENABLE(JIT_CAGE)
-#include <WebKitAdditions/JITCageAdditions.h>
 #include <machine/cpu_capabilities.h>
 #include <wtf/cocoa/Entitlements.h>
 #endif
@@ -1147,6 +1147,8 @@ bool OptionReader::Option::operator==(const Option& other) const
 #if ENABLE(JIT_CAGE)
 bool canUseJITCage()
 {
+    if (JSC_FORCE_USE_JIT_CAGE)
+        return true;
     return JSC_JIT_CAGE_VERSION() && WTF::processHasEntitlement("com.apple.private.verified-jit");
 }
 #else

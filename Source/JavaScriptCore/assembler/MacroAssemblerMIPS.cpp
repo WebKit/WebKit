@@ -34,8 +34,8 @@
 
 namespace JSC {
 
-extern "C" JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
-JSC_ANNOTATE_JIT_OPERATION(ctiMasmProbeTrampolineId, ctiMasmProbeTrampoline);
+JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
+JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);
 
 using namespace MIPSRegisters;
 

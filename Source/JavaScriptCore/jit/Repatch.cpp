@@ -71,22 +71,31 @@
 
 namespace JSC {
 
+static FunctionPtr<CFunctionPtrTag> retagOperationWithValidation(FunctionPtr<OperationPtrTag> operation)
+{
+    JSC_RETURN_RETAGGED_OPERATION_WITH_VALIDATION(operation);
+}
+
+static FunctionPtr<CFunctionPtrTag> retagCallTargetWithValidation(CodeLocationCall<JSInternalPtrTag> call)
+{
+    JSC_RETURN_RETAGGED_CALL_TARGET_WITH_VALIDATION(call);
+}
+
 static FunctionPtr<CFunctionPtrTag> readPutICCallTarget(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
     if (codeBlock->useDataIC())
-        return stubInfo.m_slowOperation.retagged<CFunctionPtrTag>();
+        return retagOperationWithValidation(stubInfo.m_slowOperation);
     CodeLocationCall<JSInternalPtrTag> call = stubInfo.m_slowPathCallLocation;
 #if ENABLE(FTL_JIT)
     if (codeBlock->jitType() == JITType::FTLJIT) {
         FunctionPtr<JITThunkPtrTag> target = MacroAssembler::readCallTarget<JITThunkPtrTag>(call);
         MacroAssemblerCodePtr<JITThunkPtrTag> thunk = MacroAssemblerCodePtr<JITThunkPtrTag>::createFromExecutableAddress(target.executableAddress());
-        return codeBlock->vm().ftlThunks->keyForSlowPathCallThunk(thunk).callTarget().retagged<CFunctionPtrTag>();
+        return retagOperationWithValidation(codeBlock->vm().ftlThunks->keyForSlowPathCallThunk(thunk).callTarget());
     }
 #else
     UNUSED_PARAM(codeBlock);
 #endif // ENABLE(FTL_JIT)
-    FunctionPtr<OperationPtrTag> target = MacroAssembler::readCallTarget<OperationPtrTag>(call);
-    return target.retagged<CFunctionPtrTag>();
+    return retagCallTargetWithValidation(call);
 }
 
 void ftlThunkAwareRepatchCall(CodeBlock* codeBlock, CodeLocationCall<JSInternalPtrTag> call, FunctionPtr<CFunctionPtrTag> newCalleeFunction)

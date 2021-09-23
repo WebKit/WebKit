@@ -200,7 +200,7 @@ class CallFrame;
 struct Instruction;
 
 #define JSC_DECLARE_COMMON_SLOW_PATH(name) \
-    extern "C" JSC_DECLARE_JIT_OPERATION(name, SlowPathReturnType, (CallFrame*, const Instruction*))
+    JSC_DECLARE_JIT_OPERATION(name, SlowPathReturnType, (CallFrame*, const Instruction*))
 
 #define JSC_DEFINE_COMMON_SLOW_PATH(name) \
     JSC_DEFINE_JIT_OPERATION(name, SlowPathReturnType, (CallFrame* callFrame, const Instruction* pc))

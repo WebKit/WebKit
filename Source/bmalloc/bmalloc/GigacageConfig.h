@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,15 +104,16 @@ struct Config {
 
 #if BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
-constexpr size_t startSlotOfGigacageConfig = 0;
+// The first 2 slots are reserved for the use of the ExecutableAllocator.
+constexpr size_t startSlotOfGigacageConfig = 2;
 constexpr size_t startOffsetOfGigacageConfig = startSlotOfGigacageConfig * sizeof(WebConfig::Slot);
 
-constexpr size_t reservedSlotsForGigacageConfig = 10;
+constexpr size_t reservedSlotsForGigacageConfig = 12;
 constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig * sizeof(WebConfig::Slot);
 
 constexpr size_t alignmentOfGigacageConfig = std::alignment_of<Gigacage::Config>::value;
 
-static_assert(sizeof(Gigacage::Config) <= reservedBytesForGigacageConfig);
+static_assert(sizeof(Gigacage::Config) + startOffsetOfGigacageConfig <= reservedBytesForGigacageConfig);
 static_assert(bmalloc::roundUpToMultipleOf<alignmentOfGigacageConfig>(startOffsetOfGigacageConfig) == startOffsetOfGigacageConfig);
 
 #define g_gigacageConfig (*bmalloc::bitwise_cast<Gigacage::Config*>(&WebConfig::g_config[Gigacage::startSlotOfGigacageConfig]))

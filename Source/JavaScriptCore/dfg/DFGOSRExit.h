@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,8 +149,6 @@ JSC_DECLARE_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM*, cons
 struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
-    friend void JIT_OPERATION_ATTRIBUTES operationCompileOSRExit(CallFrame*, void*);
-
     CodeLocationLabel<JSInternalPtrTag> m_patchableJumpLocation;
     MacroAssemblerCodeRef<OSRExitPtrTag> m_code;
 
@@ -169,8 +167,9 @@ struct OSRExit : public OSRExitBase {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromDFG);
     }
 
-private:
     static void compileExit(CCallHelpers&, VM&, const OSRExit&, const Operands<ValueRecovery>&, SpeculationRecovery*);
+
+private:
     static void emitRestoreArguments(CCallHelpers&, VM&, const Operands<ValueRecovery>&);
     friend void JIT_OPERATION_ATTRIBUTES operationDebugPrintSpeculationFailure(CallFrame*, void*, void*);
 };
