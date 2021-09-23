@@ -2207,6 +2207,7 @@ rendering/HitTestLocation.cpp
 rendering/HitTestResult.cpp
 rendering/HitTestingTransformState.cpp
 rendering/ImageQualityController.cpp
+rendering/InlineBoxPainter.cpp
 rendering/InlineIterator.cpp
 rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp

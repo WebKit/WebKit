@@ -115,11 +115,6 @@ public:
 
     void clearTruncation() override;
 
-    void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
-    void paintMask(PaintInfo&, const LayoutPoint&);
-    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer&, const LayoutRect&, CompositeOperator = CompositeOperator::SourceOver);
-    void paintFillLayer(const PaintInfo&, const Color&, const FillLayer&, const LayoutRect&, CompositeOperator = CompositeOperator::SourceOver);
-    void paintBoxShadow(const PaintInfo&, const RenderStyle&, ShadowStyle, const LayoutRect&);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
@@ -305,7 +300,6 @@ private:
     void addTextBoxVisualOverflow(LegacyInlineTextBox&, GlyphOverflowAndFallbackFontsMap&, LayoutRect& logicalVisualOverflow);
     void addOutlineVisualOverflow(LayoutRect& logicalVisualOverflow);
     void addReplacedChildOverflow(const LegacyInlineBox*, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow);
-    void constrainToLineTopAndBottomIfNeeded(LayoutRect&) const;
 
 private:
     unsigned m_includeLogicalLeftEdge : 1;

@@ -1,3 +1,52 @@
+2021-09-23  Antti Koivisto  <antti@apple.com>
+
+        Factor LegacyInlineFlowBox painting into a class
+        https://bugs.webkit.org/show_bug.cgi?id=230683
+
+        Reviewed by Alan Bujtas.
+
+        Introduce InlineBoxPainter, similar to TextBoxPainter.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/InlineBoxPainter.cpp: Added.
+        (WebCore::InlineBoxPainter::InlineBoxPainter):
+        (WebCore::InlineBoxPainter::paint):
+        (WebCore::clipRectForNinePieceImageStrip):
+        (WebCore::InlineBoxPainter::paintMask):
+        (WebCore::InlineBoxPainter::paintDecorations):
+        (WebCore::InlineBoxPainter::style const):
+        (WebCore::InlineBoxPainter::constrainToLineTopAndBottomIfNeeded const):
+        (WebCore::InlineBoxPainter::paintFillLayers):
+        (WebCore::InlineBoxPainter::paintFillLayer):
+        (WebCore::InlineBoxPainter::paintBoxShadow):
+        * rendering/InlineBoxPainter.h: Added.
+        (WebCore::InlineBoxPainter::renderer const):
+        (WebCore::InlineBoxPainter::isHorizontal const):
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::paint):
+        (WebCore::LegacyInlineFlowBox::paintFillLayers): Deleted.
+        (WebCore::LegacyInlineFlowBox::paintFillLayer): Deleted.
+        (WebCore::LegacyInlineFlowBox::paintBoxShadow): Deleted.
+        (WebCore::LegacyInlineFlowBox::constrainToLineTopAndBottomIfNeeded const): Deleted.
+        (WebCore::clipRectForNinePieceImageStrip): Deleted.
+        (WebCore::LegacyInlineFlowBox::paintBoxDecorations): Deleted.
+        (WebCore::LegacyInlineFlowBox::paintMask): Deleted.
+        * rendering/LegacyInlineFlowBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::getBackgroundRoundedRect const):
+        (WebCore::RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance const):
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderImage.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderTableCell.h:
+
 2021-09-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Remove AXDRTElementIdAttribute from the AX object platform wrapper interface.
