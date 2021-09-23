@@ -1,3 +1,18 @@
+2021-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] The "/Zc:lambda" switch is recommended to use the new lambda processor.
+        https://bugs.webkit.org/show_bug.cgi?id=226070
+
+        Reviewed by Ross Kirsling.
+
+        Visual Studio 16.5 added the "/Zc:lambda" switch for the better
+        C++ conformance, but it had a compiler crashing bug. Visual Studio
+        16.9 fixed the bug.
+
+        * Source/cmake/OptionsMSVC.cmake: Added /Zc:lambda for Visual
+        Studio 16.9 or later. I will remove the MSVC_VERSION check after
+        AppleWin bots will upgrade MSVC.
+
 2021-09-17  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Unbreak GCC_OFFLINEASM_SOURCE_MAP when LTO is in use

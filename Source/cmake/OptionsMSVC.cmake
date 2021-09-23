@@ -205,3 +205,8 @@ if (COMPILER_IS_CLANG_CL)
     set(HAVE_INT128_T OFF)
     list(REMOVE_ITEM _WEBKIT_CONFIG_FILE_VARIABLES HAVE_INT128_T)
 endif ()
+
+# Enable the new lambda processor for better C++ conformance
+if (NOT COMPILER_IS_CLANG_CL AND MSVC_VERSION GREATER_EQUAL 1928)
+    add_compile_options(/Zc:lambda)
+endif ()
