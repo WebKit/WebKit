@@ -1,3 +1,13 @@
+2021-09-23  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS macOS wk2 ] webrtc/datachannel/mdns-ice-candidates.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230700
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-09-23  Eric Hutchison  <ehutchison@apple.com>
 
         [iOS] multiple CSS tests with image-only failures.

@@ -1642,6 +1642,8 @@ webkit.org/b/229595 [ Debug ] imported/w3c/web-platform-tests/fetch/http-cache/i
 
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
 
+webkit.org/b/230700 webrtc/datachannel/mdns-ice-candidates.html [ Pass Failure ]
+
 # rdar://82002352 ([ Monterey wk2 Release ] css3/blending/background-blend-mode-background-clip-content-box.html is flaky image failing)
 [ Monterey Release ] css3/blending/background-blend-mode-background-clip-content-box.html [ Pass ImageOnlyFailure ]
 

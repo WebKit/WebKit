@@ -2092,3 +2092,5 @@ webkit.org/b/230434 http/tests/navigation/back-to-slow-frame.html [ Pass Crash ]
 
 webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-003.html [ Pass ImageOnlyFailure ]
 webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-004.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/230700 webrtc/datachannel/mdns-ice-candidates.html [ Pass Failure ]
