@@ -1,5 +1,36 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r281847. rdar://problem/83429949
+
+    visualWordPosition should operate on a clean tree
+    https://bugs.webkit.org/show_bug.cgi?id=229744
+    <rdar://80684065>
+    
+    Reviewed by Antti Koivisto.
+    
+    This function expects the tree to not be mutated while walking the inline runs.
+    
+    * editing/VisibleUnits.cpp:
+    (WebCore::visualWordPosition):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281847 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-01  Alan Bujtas  <zalan@apple.com>
+
+            visualWordPosition should operate on a clean tree
+            https://bugs.webkit.org/show_bug.cgi?id=229744
+            <rdar://80684065>
+
+            Reviewed by Antti Koivisto.
+
+            This function expects the tree to not be mutated while walking the inline runs.
+
+            * editing/VisibleUnits.cpp:
+            (WebCore::visualWordPosition):
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281839. rdar://problem/83429771
 
     [GPU Process](REGRESSION): A detached canvas leaks all the images it draws

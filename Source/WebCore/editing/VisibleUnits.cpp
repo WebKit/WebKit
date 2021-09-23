@@ -309,8 +309,10 @@ enum CursorMovementDirection { MoveLeft, MoveRight };
 static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition, CursorMovementDirection direction, 
     bool skipsSpaceWhenMovingRight)
 {
-    if (visiblePosition.isNull())
+    if (visiblePosition.isNull() || !visiblePosition.deepEquivalent().document())
         return VisiblePosition();
+
+    visiblePosition.deepEquivalent().document()->updateLayoutIgnorePendingStylesheets();
 
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     LayoutIntegration::RunIterator previouslyVisitedRun;
