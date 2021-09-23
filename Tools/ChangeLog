@@ -1,5 +1,79 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282369. rdar://problem/83429914
+
+    AX: set insertion point to the end of a native text control does not work when passing a collapsed TextMarkerRange with both start and end equals to the end TextMarker for the element.
+    https://bugs.webkit.org/show_bug.cgi?id=230166
+    
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Test: accessibility/mac/native-text-control-set-selected-textmarker-range.html
+    
+    Added a special case to AX object's setSelectedVisiblePositionRange for
+    when the passed range is a collapsed range to the end of a native text
+    control element's range.
+    To accomplish this, it is necessary to compare for equality two
+    VisiblePositions obtained from TextMarkers.
+    In order to reconstruct the VisiblePositions from the TextMarkers in a
+    way that equality is preserved, the AnchorType of the underlying
+    Position needs to be added to the TextMarkerData.
+    
+    * accessibility/AXObjectCache.cpp:
+    Added the AnchorType to the TextMarkerData struct.
+    (WebCore::AXObjectCache::visiblePositionForTextMarkerData):
+    (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+    * accessibility/AXObjectCache.h:
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+    * accessibility/mac/AXObjectCacheMac.mm:
+    Exposed textMarkerRangeFromMarkers.
+    (WebCore::textMarkerRangeFromMarkers):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.h:
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    Added the AXTextMarkerRangeForTextMarkers attribute which, unlike
+    AXTextMarkerRangeForUnorderedTextMarkers, assumes that the range's start
+    and end are ordered, and thus is more efficient.
+    (-[WebAccessibilityObjectWrapper ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+    Use AXTextMarkerRangeForTextMarkers instead of
+    AXTextMarkerRangeForUnorderedTextMarkers.
+    
+    LayoutTests:
+    
+    * accessibility/mac/bounds-for-range-expected.txt:
+    Added AXTextMarkerRangeForTextMarkers attribute name.
+    * accessibility/mac/native-text-control-set-selected-textmarker-range-expected.txt:
+    * accessibility/mac/native-text-control-set-selected-textmarker-range.html:
+    Expanded to include the test cases to move the insertion point to the
+    beginning and end of the text cotnrol.
+    * accessibility/text-marker/text-marker-previous-next-expected.txt:
+    * accessibility/text-marker/text-marker-previous-next.html:
+    Adjusted expected value to include linebreak character.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282369 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-13  Andres Gonzalez  <andresg_22@apple.com>
+
+            AX: set insertion point to the end of a native text control does not work when passing a collapsed TextMarkerRange with both start and end equals to the end TextMarker for the element.
+            https://bugs.webkit.org/show_bug.cgi?id=230166
+
+            Reviewed by Chris Fleizach.
+
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::textMarkerRangeForMarkers):
+            Use AXTextMarkerRangeForTextMarkers instead of
+            AXTextMarkerRangeForUnorderedTextMarkers.
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282034. rdar://problem/83429808
 
     Safari’s Privacy Report window is completely blank

@@ -1882,16 +1882,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::rectsForTextMarkerRange(Accessi
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    id startPlatformMarker = startMarker->platformTextMarker();
-    id endPlatformMarker = endMarker->platformTextMarker();
-    if (!startPlatformMarker || !endPlatformMarker)
-        return nullptr;
-
-    NSArray* textMarkers = @[startPlatformMarker, endPlatformMarker];
-    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForUnorderedTextMarkers" forParameter:textMarkers];
+    NSArray *textMarkers = @[startMarker->platformTextMarker(), endMarker->platformTextMarker()];
+    id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForTextMarkers" forParameter:textMarkers];
     return AccessibilityTextMarkerRange::create(textMarkerRange);
     END_AX_OBJC_EXCEPTIONS
-    
+
     return nullptr;
 }
 
