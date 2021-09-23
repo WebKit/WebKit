@@ -948,7 +948,7 @@
 		41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D129D91F3D101400D15E47 /* WebCacheStorageProvider.h */; };
 		41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */; };
 		41DC459C1E3DBB2800B11F51 /* LibWebRTCSocketClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DC459A1E3DBB2400B11F51 /* LibWebRTCSocketClient.h */; };
-		41DD72AB2682167300A90C71 /* NWParametersSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DD72AA2682167300A90C71 /* NWParametersSPI.h */; };
+		41DD72AB2682167300A90C71 /* NWSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DD72AA2682167300A90C71 /* NWSPI.h */; };
 		41DE7C6C22278F1E00532B65 /* ServiceWorkerFetchTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41518536222704F6005430C6 /* ServiceWorkerFetchTask.cpp */; };
 		41E0A7CB23B645CD00561060 /* WebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417915AC2256BB7400D6F97E /* WebSocketChannel.cpp */; };
 		41E242E026E0C908009A8C64 /* NetworkRTCUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41E242DF26E0C904009A8C64 /* NetworkRTCUtilitiesCocoa.mm */; };
@@ -3870,7 +3870,7 @@
 		41DC45A01E3DC53C00B11F51 /* WebRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebRTCResolver.cpp; path = Network/webrtc/WebRTCResolver.cpp; sourceTree = "<group>"; };
 		41DD72A6267B8C3000A90C71 /* NetworkRTCUDPSocketCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCUDPSocketCocoa.mm; sourceTree = "<group>"; };
 		41DD72A7267B8C3100A90C71 /* NetworkRTCUDPSocketCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCUDPSocketCocoa.h; sourceTree = "<group>"; };
-		41DD72AA2682167300A90C71 /* NWParametersSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWParametersSPI.h; sourceTree = "<group>"; };
+		41DD72AA2682167300A90C71 /* NWSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NWSPI.h; sourceTree = "<group>"; };
 		41E0A7C623B6397800561060 /* LibWebRTCCodecsProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibWebRTCCodecsProxy.h; sourceTree = "<group>"; };
 		41E0A7C723B6397900561060 /* LibWebRTCCodecsProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LibWebRTCCodecsProxy.messages.in; sourceTree = "<group>"; };
 		41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibWebRTCCodecsProxy.mm; sourceTree = "<group>"; };
@@ -8012,7 +8012,7 @@
 				574217912400E098002B303D /* LocalAuthenticationSPI.h */,
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
-				41DD72AA2682167300A90C71 /* NWParametersSPI.h */,
+				41DD72AA2682167300A90C71 /* NWSPI.h */,
 				F4EB4AFC269CD23600D297AE /* OSStateSPI.h */,
 				5CB6AE432609799C00B6ED5A /* ReasonSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
@@ -12251,7 +12251,7 @@
 				1C20936022318CB000026A39 /* NSAttributedString.h in Headers */,
 				1C2184022233872800BAC700 /* NSAttributedStringPrivate.h in Headers */,
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
-				41DD72AB2682167300A90C71 /* NWParametersSPI.h in Headers */,
+				41DD72AB2682167300A90C71 /* NWSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
 				F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,
