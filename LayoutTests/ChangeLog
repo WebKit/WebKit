@@ -1,3 +1,12 @@
+2021-09-22  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        REGRESSION (r282865?): ASSERTION FAILED: Unsafe to ref/deref from different threads m_isOwnedByMainThread == isMainThread().
+        https://bugs.webkit.org/show_bug.cgi?id=230644
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-22  Alan Bujtas  <zalan@apple.com>
 
         IFC progression gardening.

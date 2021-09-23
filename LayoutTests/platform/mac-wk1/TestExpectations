@@ -1300,6 +1300,13 @@ http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
+webkit.org/b/230644 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Pass Crash ]
+webkit.org/b/230644 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Crash ]
+webkit.org/b/230644 [ Debug ] media/media-source/media-source-abort-resets-parser.html [ Pass Crash ]
+webkit.org/b/230644 [ Debug ] media/media-source/media-source-resize.html [ Pass Crash ]
+webkit.org/b/230644 [ Debug ] media/media-source/media-source-trackid-change.html [ Pass Crash ]
+webkit.org/b/230644 [ Debug ] media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Pass Crash ]
+
 [ BigSur ] imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-filter-order.html [ Pass ImageOnlyFailure ]
 
 [ BigSur ] imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-transform-1.html [ Pass ImageOnlyFailure ]
