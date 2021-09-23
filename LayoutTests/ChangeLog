@@ -1,3 +1,55 @@
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r281920. rdar://problem/83429601
+
+    Braille display is blank in contenteditable elements when the field is followed by another element.
+    https://bugs.webkit.org/show_bug.cgi?id=229713
+    rdar://82095237
+    
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Test: accessibility/mac/range-for-line-index.html
+    
+    We were making the length of line ranges in text fields 1 more than the
+    number of characters in the line even when no line break character
+    existed, like in the case of a single line text field.
+    Clients like VoiceOver expect the length of the line ranges in text
+    fields to match the number of charaters in the line including the line
+    break if one exists.
+    
+    * accessibility/AccessibilityRenderObject.cpp:
+    (WebCore::isHardLineBreak): Helper function used in doAXRangeForLine.
+    Determines whether the given VisiblePosition corresponds to a hard line
+    break.
+    (WebCore::AccessibilityRenderObject::doAXRangeForLine const):
+    Returns a PlainTextRange whose length matches the number of characters
+    in the given line, accounting for line break characters.
+    
+    LayoutTests:
+    
+    * accessibility/mac/range-for-line-index-expected.txt: Added.
+    * accessibility/mac/range-for-line-index.html: Added.
+    * platform/mac/accessibility/content-editable-as-textarea-expected.txt:
+    * platform/win/accessibility/content-editable-as-textarea-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281920 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Andres Gonzalez  <andresg_22@apple.com>
+
+            Braille display is blank in contenteditable elements when the field is followed by another element.
+            https://bugs.webkit.org/show_bug.cgi?id=229713
+            rdar://82095237
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/mac/range-for-line-index-expected.txt: Added.
+            * accessibility/mac/range-for-line-index.html: Added.
+            * platform/mac/accessibility/content-editable-as-textarea-expected.txt:
+            * platform/win/accessibility/content-editable-as-textarea-expected.txt:
+
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282163. rdar://problem/83184019
