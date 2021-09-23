@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<textarea id="textarea">This is a textarea.</textarea>
+
+<input type="text" id="textfield" value="This is a text field." />
+
+<script>
+    description("Test for setting the selected TextMarkerRange in a native text control: textarea and text field.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        let elementID = "textarea";
+
+        let p = accessibilityController.accessibleElementById(elementID);
+        let range = p.textMarkerRangeForElement(p);
+
+        setTimeout(async () => {
+            // Select all text.
+            p.setSelectedTextMarkerRange(range);
+            let selectedRange = null;
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 19;
+            });
+            debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
+
+            // Select the first 10 characters.
+            let start = p.startTextMarkerForTextMarkerRange(range);
+            end = start;
+            for (let i = 0; i < 10; ++i)
+                end = p.nextTextMarker(end);
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 10;
+            });
+            debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
+
+            // Select some characters in the middle.
+            for (let i = 0; i < 4; ++i)
+                start = p.nextTextMarker(start);
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 6;
+            });
+            debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
+
+            elementID = "textfield";
+
+            p = accessibilityController.accessibleElementById(elementID);
+            range = p.textMarkerRangeForElement(p);
+
+            // Select all text.
+            p.setSelectedTextMarkerRange(range);
+            selectedRange = null;
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 21;
+            });
+            debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
+
+            // Select the first 10 characters.
+            start = p.startTextMarkerForTextMarkerRange(range);
+            end = start;
+            for (let i = 0; i < 10; ++i)
+                end = p.nextTextMarker(end);
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 10;
+            });
+            debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
+
+            // Select some characters in the middle.
+            for (let i = 0; i < 4; ++i)
+                start = p.nextTextMarker(start);
+            for (let i = 0; i < 4; ++i)
+                end = p.nextTextMarker(end);
+            range = p.textMarkerRangeForMarkers(start, end);
+            p.setSelectedTextMarkerRange(range);
+            await waitFor(() => {
+                selectedRange = p.selectedTextMarkerRange();
+                return p.textMarkerRangeLength(selectedRange) == 10;
+            });
+            debug(`selected text "${p.stringForTextMarkerRange(selectedRange)}"`);
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

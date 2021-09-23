@@ -384,6 +384,7 @@ private:
     unsigned doAXLineForIndex(unsigned) override;
 
     VisibleSelection selection() const override;
+    VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
 
     // TODO: Text ranges and selection.
