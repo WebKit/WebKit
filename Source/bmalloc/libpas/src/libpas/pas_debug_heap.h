@@ -26,6 +26,9 @@
 #ifndef PAS_DEBUG_HEAP_H
 #define PAS_DEBUG_HEAP_H
 
+#include "pas_allocation_result.h"
+#include "pas_heap_config_kind.h"
+#include "pas_log.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -36,7 +39,7 @@ PAS_BEGIN_EXTERN_C;
 #if PAS_BMALLOC
 
 /* The implementations are provided by bmalloc. */
-PAS_API extern bool pas_debug_heap_is_enabled(void);
+PAS_API extern bool pas_debug_heap_is_enabled(pas_heap_config_kind kind);
 PAS_API extern void* pas_debug_heap_malloc(size_t size);
 PAS_API extern void* pas_debug_heap_memalign(size_t alignment, size_t size);
 PAS_API extern void* pas_debug_heap_realloc(void* ptr, size_t size);
@@ -44,8 +47,9 @@ PAS_API extern void pas_debug_heap_free(void* ptr);
 
 #else /* PAS_BMALLOC -> so !PAS_BMALLOC */
 
-static inline bool pas_debug_heap_is_enabled(void)
+static inline bool pas_debug_heap_is_enabled(pas_heap_config_kind kind)
 {
+    PAS_UNUSED_PARAM(kind);
     return false;
 }
 
@@ -79,6 +83,33 @@ static inline void pas_debug_heap_free(void* ptr)
 }
 
 #endif /* PAS_BMALLOC -> so end of !PAS_BMALLOC */
+
+static inline pas_allocation_result pas_debug_heap_allocate(size_t size, size_t alignment)
+{
+    static const bool verbose = false;
+    
+    pas_allocation_result result;
+    void* raw_result;
+    
+    if (alignment > sizeof(void*)) {
+        if (verbose)
+            pas_log("Going down debug memalign path.\n");
+        raw_result = pas_debug_heap_memalign(alignment, size);
+    } else {
+        if (verbose)
+            pas_log("Going down debug malloc path.\n");
+        raw_result = pas_debug_heap_malloc(size);
+    }
+
+    if (verbose)
+        pas_log("raw_result = %p\n", raw_result);
+
+    result.did_succeed = !!raw_result;
+    result.begin = (uintptr_t)raw_result;
+    result.zero_mode = pas_zero_mode_may_have_non_zero;
+
+    return result;
+}
 
 PAS_END_EXTERN_C;
 

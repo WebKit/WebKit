@@ -45,13 +45,12 @@ PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
 
 void bmalloc_heap_config_activate(void)
 {
-    // FIXME: Temporarily disable it for now until bmalloc is replaced with libpas.
-    static const bool register_with_libmalloc = false;
+    static const bool register_with_libmalloc = true;
     
     pas_designated_intrinsic_heap_initialize(&bmalloc_common_primitive_heap.segregated_heap,
                                              &bmalloc_heap_config);
 
-    if (register_with_libmalloc)
+    if (register_with_libmalloc && !pas_debug_heap_is_enabled(pas_heap_config_kind_bmalloc))
         pas_root_ensure_for_libmalloc_enumeration();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "pas_bitfit_page_inlines.h"
 #include "pas_deallocation_mode.h"
+#include "pas_debug_heap.h"
 #include "pas_heap_config.h"
 #include "pas_heap_lock.h"
 #include "pas_heap_ref.h"
@@ -83,6 +84,11 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_not_small(
     pas_deallocation_mode deallocation_mode)
 {
     pas_page_base* page_base;
+
+    if (pas_debug_heap_is_enabled(config.kind)) {
+        pas_debug_heap_free((void*)begin);
+        return true;
+    }
 
     page_base = config.page_header_func(begin);
     if (page_base) {
