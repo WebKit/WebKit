@@ -197,8 +197,8 @@ static void writeStyle(TextStream& ts, const RenderElement& renderer)
             writeIfNotDefault(ts, "opacity", svgStyle.strokeOpacity(), 1.0f);
             writeIfNotDefault(ts, "stroke width", strokeWidth, 1.0);
             writeIfNotDefault(ts, "miter limit", style.strokeMiterLimit(), 4.0f);
-            writeIfNotDefault(ts, "line cap", style.capStyle(), ButtCap);
-            writeIfNotDefault(ts, "line join", style.joinStyle(), MiterJoin);
+            writeIfNotDefault(ts, "line cap", style.capStyle(), LineCap::Butt);
+            writeIfNotDefault(ts, "line join", style.joinStyle(), LineJoin::Miter);
             writeIfNotDefault(ts, "dash offset", dashOffset, 0.0);
             if (!dashArray.isEmpty())
                 writeNameValuePair(ts, "dash array", dashArray);

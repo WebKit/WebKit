@@ -195,7 +195,7 @@ void updateGraphicsContext(GraphicsContext& context, const TextPaintStyle& paint
             context.setStrokeThickness(paintStyle.strokeWidth);
         context.setLineJoin(paintStyle.lineJoin);
         context.setLineCap(paintStyle.lineCap);
-        if (paintStyle.lineJoin == MiterJoin)
+        if (paintStyle.lineJoin == LineJoin::Miter)
             context.setMiterLimit(paintStyle.miterLimit);
     }
 }

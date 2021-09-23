@@ -626,13 +626,13 @@ void setLineCap(GraphicsContextCairo& platformContext, LineCap lineCap)
 {
     cairo_line_cap_t cairoCap { };
     switch (lineCap) {
-    case ButtCap:
+    case LineCap::Butt:
         cairoCap = CAIRO_LINE_CAP_BUTT;
         break;
-    case RoundCap:
+    case LineCap::Round:
         cairoCap = CAIRO_LINE_CAP_ROUND;
         break;
-    case SquareCap:
+    case LineCap::Square:
         cairoCap = CAIRO_LINE_CAP_SQUARE;
         break;
     }
@@ -651,13 +651,13 @@ void setLineJoin(GraphicsContextCairo& platformContext, LineJoin lineJoin)
 {
     cairo_line_join_t cairoJoin { };
     switch (lineJoin) {
-    case MiterJoin:
+    case LineJoin::Miter:
         cairoJoin = CAIRO_LINE_JOIN_MITER;
         break;
-    case RoundJoin:
+    case LineJoin::Round:
         cairoJoin = CAIRO_LINE_JOIN_ROUND;
         break;
-    case BevelJoin:
+    case LineJoin::Bevel:
         cairoJoin = CAIRO_LINE_JOIN_BEVEL;
         break;
     }

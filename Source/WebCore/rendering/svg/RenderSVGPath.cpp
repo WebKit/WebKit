@@ -110,11 +110,11 @@ bool RenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, PointC
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
         ASSERT(style().svgStyle().hasStroke());
         float strokeWidth = this->strokeWidth();
-        if (style().capStyle() == SquareCap) {
+        if (style().capStyle() == LineCap::Square) {
             if (zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth).contains(point))
                 return true;
         } else {
-            ASSERT(style().capStyle() == RoundCap);
+            ASSERT(style().capStyle() == LineCap::Round);
             FloatPoint radiusVector(point.x() - m_zeroLengthLinecapLocations[i].x(), point.y() -  m_zeroLengthLinecapLocations[i].y());
             if (radiusVector.lengthSquared() < strokeWidth * strokeWidth * .25f)
                 return true;
@@ -127,7 +127,7 @@ bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
 {
     // Spec(11.4): Any zero length subpath shall not be stroked if the "stroke-linecap" property has a value of butt
     // but shall be stroked if the "stroke-linecap" property has a value of round or square
-    return style().svgStyle().hasStroke() && style().capStyle() != ButtCap;
+    return style().svgStyle().hasStroke() && style().capStyle() != LineCap::Butt;
 }
 
 Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
@@ -135,7 +135,7 @@ Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) co
     static NeverDestroyed<Path> tempPath;
 
     tempPath.get().clear();
-    if (style().capStyle() == SquareCap)
+    if (style().capStyle() == LineCap::Square)
         tempPath.get().addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
     else
         tempPath.get().addEllipse(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));

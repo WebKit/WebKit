@@ -1359,13 +1359,13 @@ public:
     static PaintOrder initialPaintOrder() { return PaintOrder::Normal; }
     static Vector<PaintType, 3> paintTypesForPaintOrder(PaintOrder);
     
-    void setCapStyle(LineCap val) { SET_VAR(m_rareInheritedData, capStyle, val); }
+    void setCapStyle(LineCap val) { SET_VAR(m_rareInheritedData, capStyle, static_cast<unsigned>(val)); }
     LineCap capStyle() const { return static_cast<LineCap>(m_rareInheritedData->capStyle); }
-    static LineCap initialCapStyle() { return ButtCap; }
+    static LineCap initialCapStyle() { return LineCap::Butt; }
     
-    void setJoinStyle(LineJoin val) { SET_VAR(m_rareInheritedData, joinStyle, val); }
+    void setJoinStyle(LineJoin val) { SET_VAR(m_rareInheritedData, joinStyle, static_cast<unsigned>(val)); }
     LineJoin joinStyle() const { return static_cast<LineJoin>(m_rareInheritedData->joinStyle); }
-    static LineJoin initialJoinStyle() { return MiterJoin; }
+    static LineJoin initialJoinStyle() { return LineJoin::Miter; }
     
     const Length& strokeWidth() const { return m_rareInheritedData->strokeWidth; }
     void setStrokeWidth(Length&& w) { SET_VAR(m_rareInheritedData, strokeWidth, WTFMove(w)); }

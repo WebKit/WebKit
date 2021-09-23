@@ -129,8 +129,8 @@ void ThemeAdwaita::paintFocus(GraphicsContext& graphicsContext, const Path& path
     graphicsContext.beginTransparencyLayer(color.alphaAsFloat());
     graphicsContext.setStrokeThickness(focusLineWidth);
     graphicsContext.setLineDash({ focusLineWidth, 2 * focusLineWidth }, 0);
-    graphicsContext.setLineCap(SquareCap);
-    graphicsContext.setLineJoin(MiterJoin);
+    graphicsContext.setLineCap(LineCap::Square);
+    graphicsContext.setLineJoin(LineJoin::Miter);
     graphicsContext.setStrokeColor(color.opaqueColor());
     graphicsContext.strokePath(path);
     graphicsContext.setFillRule(WindRule::NonZero);

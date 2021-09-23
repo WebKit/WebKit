@@ -361,13 +361,13 @@ void setLineCap(PlatformContextDirect2D& platformContext, LineCap lineCap)
 {
     D2D1_CAP_STYLE capStyle = D2D1_CAP_STYLE_FLAT;
     switch (lineCap) {
-    case RoundCap:
+    case LineCap::Round:
         capStyle = D2D1_CAP_STYLE_ROUND;
         break;
-    case SquareCap:
+    case LineCap::Square:
         capStyle = D2D1_CAP_STYLE_SQUARE;
         break;
-    case ButtCap:
+    case LineCap::Butt:
     default:
         capStyle = D2D1_CAP_STYLE_FLAT;
         break;
@@ -386,13 +386,13 @@ void setLineJoin(PlatformContextDirect2D& platformContext, LineJoin lineJoin)
 {
     D2D1_LINE_JOIN joinStyle = D2D1_LINE_JOIN_MITER;
     switch (lineJoin) {
-    case RoundJoin:
+    case LineJoin::Round:
         joinStyle = D2D1_LINE_JOIN_ROUND;
         break;
-    case BevelJoin:
+    case LineJoin::Bevel:
         joinStyle = D2D1_LINE_JOIN_BEVEL;
         break;
-    case MiterJoin:
+    case LineJoin::Miter:
     default:
         joinStyle = D2D1_LINE_JOIN_MITER;
         break;

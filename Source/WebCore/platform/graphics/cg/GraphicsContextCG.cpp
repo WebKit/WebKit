@@ -1184,13 +1184,13 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
 void GraphicsContextCG::setLineCap(LineCap cap)
 {
     switch (cap) {
-    case ButtCap:
+    case LineCap::Butt:
         CGContextSetLineCap(platformContext(), kCGLineCapButt);
         break;
-    case RoundCap:
+    case LineCap::Round:
         CGContextSetLineCap(platformContext(), kCGLineCapRound);
         break;
-    case SquareCap:
+    case LineCap::Square:
         CGContextSetLineCap(platformContext(), kCGLineCapSquare);
         break;
     }
@@ -1211,13 +1211,13 @@ void GraphicsContextCG::setLineDash(const DashArray& dashes, float dashOffset)
 void GraphicsContextCG::setLineJoin(LineJoin join)
 {
     switch (join) {
-    case MiterJoin:
+    case LineJoin::Miter:
         CGContextSetLineJoin(platformContext(), kCGLineJoinMiter);
         break;
-    case RoundJoin:
+    case LineJoin::Round:
         CGContextSetLineJoin(platformContext(), kCGLineJoinRound);
         break;
-    case BevelJoin:
+    case LineJoin::Bevel:
         CGContextSetLineJoin(platformContext(), kCGLineJoinBevel);
         break;
     }

@@ -53,8 +53,8 @@ struct TextPaintStyle {
     bool useDarkAppearance { false };
 #endif
     PaintOrder paintOrder { PaintOrder::Normal };
-    LineJoin lineJoin { MiterJoin };
-    LineCap lineCap { ButtCap };
+    LineJoin lineJoin { LineJoin::Miter };
+    LineCap lineCap { LineCap::Butt };
     float miterLimit { defaultMiterLimit };
 };
 

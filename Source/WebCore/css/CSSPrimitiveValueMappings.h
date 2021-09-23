@@ -3917,13 +3917,13 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineCap e)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     switch (e) {
-    case ButtCap:
+    case LineCap::Butt:
         m_value.valueID = CSSValueButt;
         break;
-    case RoundCap:
+    case LineCap::Round:
         m_value.valueID = CSSValueRound;
         break;
-    case SquareCap:
+    case LineCap::Square:
         m_value.valueID = CSSValueSquare;
         break;
     }
@@ -3935,17 +3935,17 @@ template<> inline CSSPrimitiveValue::operator LineCap() const
 
     switch (m_value.valueID) {
     case CSSValueButt:
-        return ButtCap;
+        return LineCap::Butt;
     case CSSValueRound:
-        return RoundCap;
+        return LineCap::Round;
     case CSSValueSquare:
-        return SquareCap;
+        return LineCap::Square;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return ButtCap;
+    return LineCap::Butt;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineJoin e)
@@ -3953,13 +3953,13 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineJoin e)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     switch (e) {
-    case MiterJoin:
+    case LineJoin::Miter:
         m_value.valueID = CSSValueMiter;
         break;
-    case RoundJoin:
+    case LineJoin::Round:
         m_value.valueID = CSSValueRound;
         break;
-    case BevelJoin:
+    case LineJoin::Bevel:
         m_value.valueID = CSSValueBevel;
         break;
     }
@@ -3971,17 +3971,17 @@ template<> inline CSSPrimitiveValue::operator LineJoin() const
 
     switch (m_value.valueID) {
     case CSSValueMiter:
-        return MiterJoin;
+        return LineJoin::Miter;
     case CSSValueRound:
-        return RoundJoin;
+        return LineJoin::Round;
     case CSSValueBevel:
-        return BevelJoin;
+        return LineJoin::Bevel;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return MiterJoin;
+    return LineJoin::Miter;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WindRule e)

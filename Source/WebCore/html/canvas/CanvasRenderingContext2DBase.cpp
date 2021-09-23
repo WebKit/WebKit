@@ -91,11 +91,11 @@ static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
 static CanvasLineCap toCanvasLineCap(LineCap lineCap)
 {
     switch (lineCap) {
-    case ButtCap:
+    case LineCap::Butt:
         return CanvasLineCap::Butt;
-    case RoundCap:
+    case LineCap::Round:
         return CanvasLineCap::Round;
-    case SquareCap:
+    case LineCap::Square:
         return CanvasLineCap::Square;
     }
     ASSERT_NOT_REACHED();
@@ -106,24 +106,24 @@ static LineCap fromCanvasLineCap(CanvasLineCap canvasLineCap)
 {
     switch (canvasLineCap) {
     case CanvasLineCap::Butt:
-        return ButtCap;
+        return LineCap::Butt;
     case CanvasLineCap::Round:
-        return RoundCap;
+        return LineCap::Round;
     case CanvasLineCap::Square:
-        return SquareCap;
+        return LineCap::Square;
     }
     ASSERT_NOT_REACHED();
-    return ButtCap;
+    return LineCap::Butt;
 }
 
 static CanvasLineJoin toCanvasLineJoin(LineJoin lineJoin)
 {
     switch (lineJoin) {
-    case RoundJoin:
+    case LineJoin::Round:
         return CanvasLineJoin::Round;
-    case BevelJoin:
+    case LineJoin::Bevel:
         return CanvasLineJoin::Bevel;
-    case MiterJoin:
+    case LineJoin::Miter:
         return CanvasLineJoin::Miter;
     }
     ASSERT_NOT_REACHED();
@@ -134,14 +134,14 @@ static LineJoin fromCanvasLineJoin(CanvasLineJoin canvasLineJoin)
 {
     switch (canvasLineJoin) {
     case CanvasLineJoin::Round:
-        return RoundJoin;
+        return LineJoin::Round;
     case CanvasLineJoin::Bevel:
-        return BevelJoin;
+        return LineJoin::Bevel;
     case CanvasLineJoin::Miter:
-        return MiterJoin;
+        return LineJoin::Miter;
     }
     ASSERT_NOT_REACHED();
-    return RoundJoin;
+    return LineJoin::Round;
 }
 
 static CanvasTextAlign toCanvasTextAlign(TextAlign textAlign)
@@ -273,8 +273,8 @@ CanvasRenderingContext2DBase::State::State()
     : strokeStyle(Color::black)
     , fillStyle(Color::black)
     , lineWidth(1)
-    , lineCap(ButtCap)
-    , lineJoin(MiterJoin)
+    , lineCap(LineCap::Butt)
+    , lineJoin(LineJoin::Miter)
     , miterLimit(10)
     , shadowBlur(0)
     , shadowColor(Color::transparentBlack)
@@ -2266,9 +2266,9 @@ void CanvasRenderingContext2DBase::inflateStrokeRect(FloatRect& rect) const
     // compared to Path::strokeBoundingRect().
     static const float root2 = sqrtf(2);
     float delta = state().lineWidth / 2;
-    if (state().lineJoin == MiterJoin)
+    if (state().lineJoin == LineJoin::Miter)
         delta *= state().miterLimit;
-    else if (state().lineCap == SquareCap)
+    else if (state().lineCap == LineCap::Square)
         delta *= root2;
     rect.inflate(delta);
 }

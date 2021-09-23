@@ -153,13 +153,13 @@ TextStream& operator<<(TextStream& ts, WindRule rule)
 TextStream& operator<<(TextStream& ts, LineCap capStyle)
 {
     switch (capStyle) {
-    case ButtCap:
+    case LineCap::Butt:
         ts << "BUTT";
         break;
-    case RoundCap:
+    case LineCap::Round:
         ts << "ROUND";
         break;
-    case SquareCap:
+    case LineCap::Square:
         ts << "SQUARE";
         break;
     }
@@ -169,13 +169,13 @@ TextStream& operator<<(TextStream& ts, LineCap capStyle)
 TextStream& operator<<(TextStream& ts, LineJoin joinStyle)
 {
     switch (joinStyle) {
-    case MiterJoin:
+    case LineJoin::Miter:
         ts << "MITER";
         break;
-    case RoundJoin:
+    case LineJoin::Round:
         ts << "ROUND";
         break;
-    case BevelJoin:
+    case LineJoin::Bevel:
         ts << "BEVEL";
         break;
     }

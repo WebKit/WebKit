@@ -1,3 +1,68 @@
+2021-09-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Turn WebCore::LineCap and WebCore::LineJoin into 8-bit enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=230642
+
+        Reviewed by Simon Fraser.
+
+        Make LineJoin and LineCap enum classes, backed by uint8_t. This makes it easier to send these enum types as IPC
+        arguments to the GPU process. Using strongly typed identifiers is also better for type safety.
+
+        No change in behavior.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator LineCap const):
+        (WebCore::CSSPrimitiveValue::operator LineJoin const):
+
+        Prefix individual enum values with `LineCap::` and `LineJoin::`, as needed.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::toCanvasLineCap):
+        (WebCore::fromCanvasLineCap):
+        (WebCore::toCanvasLineJoin):
+        (WebCore::fromCanvasLineJoin):
+        (WebCore::CanvasRenderingContext2DBase::State::State):
+        (WebCore::CanvasRenderingContext2DBase::inflateStrokeRect const):
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::paintFocus):
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/GraphicsTypes.h:
+
+        Additionally rename these enum values to just (Butt, Round, Square) and (Miter, Round, Bevel) for LineCap and
+        LineJoin, respectively.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::setLineCap):
+        (WebCore::Cairo::setLineJoin):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContextCG::setLineCap):
+        (WebCore::GraphicsContextCG::setLineJoin):
+        * platform/graphics/win/Direct2DOperations.cpp:
+        (WebCore::Direct2D::setLineCap):
+        (WebCore::Direct2D::setLineJoin):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::drawReplacementArrow):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::updateGraphicsContext):
+        * rendering/TextPaintStyle.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setCapStyle):
+        (WebCore::RenderStyle::initialCapStyle):
+        (WebCore::RenderStyle::setJoinStyle):
+        (WebCore::RenderStyle::initialJoinStyle):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::shapeDependentStrokeContains):
+        (WebCore::RenderSVGPath::shouldStrokeZeroLengthSubpath const):
+        (WebCore::RenderSVGPath::zeroLengthLinecapPath const):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::applyStrokeStyleToContext):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+
 2021-09-22  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Show TLS connection information in the inspector
