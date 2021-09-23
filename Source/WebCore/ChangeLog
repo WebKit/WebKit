@@ -1,5 +1,94 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281996. rdar://problem/83460851
+
+    [iOS] Media playback continues after backgrounding Safari
+    https://bugs.webkit.org/show_bug.cgi?id=229827
+    
+    Reviewed by Eric Carlson.
+    
+    In r277766, we make a video element ignore the background playback restriction
+    (`HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction()` returns true)
+    if the video element can *potentially* enter picture-in-picture automatically
+    (either the video element is currently in the video fullscreen mode
+    or m_videoFullscreenStandby is true).
+    
+    Unfortunately, this is not the correct fix if the OS has disabled the
+    "Start PiP Automatically" feature. The problem is that a video continues
+    playing after Safari is in the background.
+    
+    Only when the video element is in the picture-in-picture mode, the video element
+    can ignore the background playback restriction.
+    
+    The UI process will receive "didStartPictureInPicture" notification (if any)
+    and "applicationDidEnterBackground" notification in order. The UI process will
+    send IPC messages to the WebContent process regarding the notifications.
+    
+    1) For the "didStartPictureInPicture" notification, the WebContent process will
+    modify the corresponding video element's presentation mode to picture-in-picture.
+    2) For the "applicationDidEnterBackground" notification, the WebContent process
+    will call `PlatformMediaSession::beginInterruption()` to suspend media playback
+    if needed.
+    
+    It is guaranteed that 1) happens before 2). Therefore, when
+    `PlatformMediaSession::beginInterruption()` calls `HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction()`,
+    if the video element enters picture-in-picture ("Start PiP Automatically" is enabled),
+    `m_videoFullscreenMode` must be `VideoFullscreenModePictureInPicture`.
+    Therefore, `HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction()`
+    should return true when `m_videoFullscreenMode == VideoFullscreenModePictureInPicture`.
+    
+    Tested manually.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction const):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281996 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Peng Liu  <peng.liu6@apple.com>
+
+            [iOS] Media playback continues after backgrounding Safari
+            https://bugs.webkit.org/show_bug.cgi?id=229827
+
+            Reviewed by Eric Carlson.
+
+            In r277766, we make a video element ignore the background playback restriction
+            (`HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction()` returns true)
+            if the video element can *potentially* enter picture-in-picture automatically
+            (either the video element is currently in the video fullscreen mode
+            or m_videoFullscreenStandby is true).
+
+            Unfortunately, this is not the correct fix if the OS has disabled the
+            "Start PiP Automatically" feature. The problem is that a video continues
+            playing after Safari is in the background.
+
+            Only when the video element is in the picture-in-picture mode, the video element
+            can ignore the background playback restriction.
+
+            The UI process will receive "didStartPictureInPicture" notification (if any)
+            and "applicationDidEnterBackground" notification in order. The UI process will
+            send IPC messages to the WebContent process regarding the notifications.
+
+            1) For the "didStartPictureInPicture" notification, the WebContent process will
+            modify the corresponding video element's presentation mode to picture-in-picture.
+            2) For the "applicationDidEnterBackground" notification, the WebContent process
+            will call `PlatformMediaSession::beginInterruption()` to suspend media playback
+            if needed.
+
+            It is guaranteed that 1) happens before 2). Therefore, when
+            `PlatformMediaSession::beginInterruption()` calls `HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction()`,
+            if the video element enters picture-in-picture ("Start PiP Automatically" is enabled),
+            `m_videoFullscreenMode` must be `VideoFullscreenModePictureInPicture`.
+            Therefore, `HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction()`
+            should return true when `m_videoFullscreenMode == VideoFullscreenModePictureInPicture`.
+
+            Tested manually.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction const):
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281984. rdar://problem/83460908
 
     RemoteVideoSample needs CVPixelBufferRef to be kept alive, but relies on caller to retain it
