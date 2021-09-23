@@ -61,33 +61,6 @@ void CodeBlock::forEachValueProfile(const Functor& func)
 }
 
 template<typename Functor>
-void CodeBlock::forEachArrayProfile(const Functor& func)
-{
-    if (m_metadata) {
-        m_metadata->forEach<OpGetById>([&] (auto& metadata) {
-            if (metadata.m_modeMetadata.mode == GetByIdMode::ArrayLength)
-                func(metadata.m_modeMetadata.arrayLengthMode.arrayProfile);
-        });
-
-#define VISIT1(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_arrayProfile); });
-
-#define VISIT2(__op) \
-    m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_callLinkInfo.m_arrayProfile); });
-
-        FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT1)
-        FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(VISIT2)
-
-#undef VISIT1
-#undef VISIT2
-
-        m_metadata->forEach<OpIteratorNext>([&] (auto& metadata) {
-            func(metadata.m_iterableProfile);
-        });
-    }
-}
-
-template<typename Functor>
 void CodeBlock::forEachArrayAllocationProfile(const Functor& func)
 {
     if (m_metadata) {

@@ -32,6 +32,7 @@ namespace JSC {
 
 class CodeBlock;
 class LLIntOffsetsExtractor;
+class UnlinkedArrayProfile;
 
 // This is a bitfield where each bit represents an type of array access that we have seen.
 // There are 19 indexing types that use the lower bits.
@@ -195,6 +196,7 @@ inline bool hasSeenCopyOnWriteArray(ArrayModes arrayModes)
 
 class ArrayProfile {
     friend class CodeBlock;
+    friend class UnlinkedArrayProfile;
 
 public:
     explicit ArrayProfile()
@@ -248,5 +250,47 @@ private:
     ArrayModes m_observedArrayModes { 0 };
 };
 static_assert(sizeof(ArrayProfile) == 12);
+
+class UnlinkedArrayProfile {
+public:
+    UnlinkedArrayProfile() = default;
+
+    void update(ArrayProfile& arrayProfile)
+    {
+        ArrayModes newModes = arrayProfile.m_observedArrayModes | m_observedArrayModes;
+        m_observedArrayModes = newModes;
+        arrayProfile.m_observedArrayModes = newModes;
+
+        if (m_mayStoreToHole)
+            arrayProfile.m_mayStoreToHole = true;
+        else
+            m_mayStoreToHole = arrayProfile.m_mayStoreToHole;
+
+        if (m_outOfBounds)
+            arrayProfile.m_outOfBounds = true;
+        else
+            m_outOfBounds = arrayProfile.m_outOfBounds;
+
+        if (m_mayInterceptIndexedAccesses)
+            arrayProfile.m_mayInterceptIndexedAccesses = true;
+        else
+            m_mayInterceptIndexedAccesses = arrayProfile.m_mayInterceptIndexedAccesses;
+
+        if (!m_usesOriginalArrayStructures)
+            arrayProfile.m_usesOriginalArrayStructures = false;
+        else
+            m_usesOriginalArrayStructures = arrayProfile.m_usesOriginalArrayStructures;
+    }
+
+private:
+    ArrayModes m_observedArrayModes { 0 };
+    // We keep these as full byte-sized booleans just for speed, because the
+    // alignment of this struct will already make us 8 bytes large. But if we
+    // ever need to add more stuff, these fields can become bitfields.
+    bool m_mayStoreToHole { false };
+    bool m_outOfBounds { false };
+    bool m_mayInterceptIndexedAccesses { false };
+    bool m_usesOriginalArrayStructures { true };
+};
 
 } // namespace JSC

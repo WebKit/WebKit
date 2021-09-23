@@ -73,6 +73,14 @@ ALWAYS_INLINE unsigned UnlinkedMetadataTable::addEntry(OpcodeID opcodeID)
     return preprocessBuffer()[opcodeID]++;
 }
 
+template <typename Bytecode>
+ALWAYS_INLINE unsigned UnlinkedMetadataTable::numEntries()
+{
+    constexpr auto opcodeID = Bytecode::opcodeID;
+    ASSERT(!m_isFinalized && opcodeID < s_offsetTableEntries - 1);
+    return preprocessBuffer()[opcodeID];
+}
+
 ALWAYS_INLINE size_t UnlinkedMetadataTable::sizeInBytes()
 {
     if (m_isFinalized && !m_hasMetadata)
