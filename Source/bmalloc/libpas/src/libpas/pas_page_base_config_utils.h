@@ -34,7 +34,7 @@
 
 PAS_BEGIN_EXTERN_C;
 
-#define PAS_BASIC_PAGE_BASE_CONFIG_FORWARD_DECLARATIONS(name)     \
+#define PAS_BASIC_PAGE_BASE_CONFIG_FORWARD_DECLARATIONS(name) \
     static PAS_ALWAYS_INLINE pas_page_base* \
     name ## _page_header_for_boundary(void* boundary); \
     static PAS_ALWAYS_INLINE void* \

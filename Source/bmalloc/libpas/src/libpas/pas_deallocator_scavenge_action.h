@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@ PAS_BEGIN_EXTERN_C;
 
 enum pas_deallocator_scavenge_action {
     pas_deallocator_scavenge_no_action,
+    pas_deallocator_scavenge_flush_log_if_clean_action,
     pas_deallocator_scavenge_flush_log_action
 };
 
@@ -44,6 +45,8 @@ pas_deallocator_scavenge_action_get_string(pas_deallocator_scavenge_action actio
     {
     case pas_deallocator_scavenge_no_action:
         return "no_action";
+    case pas_deallocator_scavenge_flush_log_if_clean_action:
+        return "flush_log_if_clean_action";
     case pas_deallocator_scavenge_flush_log_action:
         return "flush_log_action";
     }

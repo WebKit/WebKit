@@ -320,7 +320,11 @@
 
 /* BUSE(LIBPAS) is using libpas for bmalloc replacement. */
 #if !defined(BUSE_LIBPAS)
+#if defined(BENABLE_LIBPAS) && BENABLE_LIBPAS
+#define BUSE_LIBPAS 1
+#else
 #define BUSE_LIBPAS 0
+#endif
 #endif
 
 #if !defined(BUSE_PRECOMPUTED_CONSTANTS_VMPAGE4K)

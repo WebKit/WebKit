@@ -27,34 +27,190 @@
 #define PAS_SEGREGATED_SIZE_DIRECTORY_H
 
 #include "pas_allocator_index.h"
+#include "pas_compact_atomic_bitfit_size_class_ptr.h"
+#include "pas_compact_atomic_page_sharing_pool_ptr.h"
+#include "pas_compact_atomic_segregated_size_directory_ptr.h"
+#include "pas_compact_atomic_thread_local_cache_layout_node.h"
+#include "pas_compact_tagged_page_granule_use_count_ptr.h"
+#include "pas_compact_tagged_unsigned_ptr.h"
 #include "pas_config.h"
 #include "pas_heap_config.h"
+#include "pas_page_granule_use_count.h"
 #include "pas_segregated_directory.h"
+#include "pas_segregated_size_directory_creation_mode.h"
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_API extern bool pas_segregated_size_directory_use_tabling;
+struct pas_extended_segregated_size_directory_data;
+struct pas_segregated_size_directory;
+struct pas_segregated_size_directory_data;
+typedef struct pas_extended_segregated_size_directory_data pas_extended_segregated_size_directory_data;
+typedef struct pas_segregated_size_directory_data pas_segregated_size_directory_data;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
+typedef struct pas_segregated_size_directory_data pas_segregated_size_directory_data;
 
-PAS_API void pas_segregated_size_directory_construct(
-    pas_segregated_directory* directory,
-    pas_segregated_page_config_kind page_config_kind,
-    pas_page_sharing_mode page_sharing_mode,
-    pas_segregated_directory_kind kind);
+PAS_DEFINE_COMPACT_ATOMIC_PTR(pas_segregated_size_directory_data,
+                              pas_segregated_size_directory_data_ptr);
+
+struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_segregated_size_directory {
+    pas_segregated_directory base;
+    
+    pas_segregated_heap* heap;
+
+    unsigned object_size : 27;
+    unsigned alignment_shift : 5;
+
+    /* This has a funny encoding (let N = PAS_NUM_BASELINE_ALLOCATORS):
+       
+       index in [0, N)     => attached to index
+       index in [N, 2N)    => attaching to index - N
+       2N                  => detached
+       
+       In the detached state, the only way to change this is to CAS it.
+       
+       In the attached and attaching states, the corresponding index's lock protects this field. */
+    uint16_t baseline_allocator_index;
+
+    pas_allocator_index view_cache_index; /* This could be in the size_directory_data but we put it here
+                                             because it takes less space to put it here. */
+    
+    pas_segregated_size_directory_data_ptr data;
+    pas_compact_atomic_bitfit_size_class_ptr bitfit_size_class;
+
+    /* The owning segregated heap holds these in a singly linked list. */
+    pas_compact_atomic_segregated_size_directory_ptr next_for_heap;
+};
+
+struct pas_segregated_size_directory_data {
+    unsigned offset_from_page_boundary_to_first_object; /* Cached to make refill fast. */
+    unsigned offset_from_page_boundary_to_end_of_last_object; /* Cached to make refill fast. */
+    
+    pas_allocator_index allocator_index;
+    
+    uint8_t full_num_non_empty_words;
+
+    pas_compact_tagged_unsigned_ptr full_alloc_bits; /* Precomputed alloc bits in the case that a page is empty. */
+    pas_compact_atomic_thread_local_cache_layout_node next_for_layout;
+};
+
+struct pas_extended_segregated_size_directory_data {
+    pas_segregated_size_directory_data base;
+    pas_compact_tagged_page_granule_use_count_ptr full_use_counts;
+};
+
+static inline pas_segregated_view
+pas_segregated_size_directory_as_view(pas_segregated_size_directory* directory)
+{
+    return pas_segregated_view_create(directory, pas_segregated_size_directory_view_kind);
+}
+
+static inline size_t
+pas_segregated_size_directory_alignment(pas_segregated_size_directory* directory)
+{
+    return (size_t)1 << (size_t)directory->alignment_shift;
+}
+
+PAS_API pas_segregated_size_directory* pas_segregated_size_directory_create(
+    pas_segregated_heap* heap,
+    unsigned object_size,
+    unsigned alignment,
+    pas_heap_config* heap_config,
+    pas_segregated_page_config* page_config,
+    pas_segregated_size_directory_creation_mode creation_mode);
+
+PAS_API void pas_segregated_size_directory_finish_creation(pas_segregated_size_directory* directory);
+
+static inline bool pas_segregated_size_directory_did_try_to_create_view_cache(
+    pas_segregated_size_directory* directory)
+{
+    return pas_segregated_directory_get_misc_bit(&directory->base);
+}
+
+static inline bool pas_segregated_size_directory_set_did_try_to_create_view_cache(
+    pas_segregated_size_directory* directory,
+    bool value)
+{
+    return pas_segregated_directory_set_misc_bit(&directory->base, value);
+}
+
+PAS_API pas_segregated_size_directory_data* pas_segregated_size_directory_ensure_data(
+    pas_segregated_size_directory* directory,
+    pas_lock_hold_mode heap_lock_hold_mode);
+
+PAS_API pas_extended_segregated_size_directory_data*
+pas_segregated_size_directory_get_extended_data(
+    pas_segregated_size_directory* directory);
+
+/* Call with heap lock held. */
+PAS_API void pas_segregated_size_directory_create_tlc_allocator(
+    pas_segregated_size_directory* directory);
+
+static inline bool pas_segregated_size_directory_has_tlc_allocator(
+    pas_segregated_size_directory* directory)
+{
+    pas_segregated_size_directory_data* data;
+    data = pas_segregated_size_directory_data_ptr_load(&directory->data);
+    return data && data->allocator_index != (pas_allocator_index)UINT_MAX;
+}
+
+/* Call with heap lock held. */
+PAS_API void pas_segregated_size_directory_create_tlc_view_cache(
+    pas_segregated_size_directory* directory);
+
+/* Call with heap lock held. */
+PAS_API void pas_segregated_size_directory_enable_exclusive_views(
+    pas_segregated_size_directory* directory);
+
+static inline bool pas_segregated_size_directory_are_exclusive_views_enabled(
+    pas_segregated_size_directory* directory)
+{
+    pas_segregated_size_directory_data* data;
+    data = pas_segregated_size_directory_data_ptr_load(&directory->data);
+    return data && data->full_num_non_empty_words;
+}
+
+PAS_API pas_segregated_view pas_segregated_size_directory_take_first_eligible(
+    pas_segregated_size_directory* directory);
+
+PAS_API pas_page_sharing_pool_take_result
+pas_segregated_size_directory_take_last_empty(
+    pas_segregated_size_directory* directory,
+    pas_deferred_decommit_log* log,
+    pas_lock_hold_mode heap_lock_hold_mode);
+
+PAS_API pas_segregated_size_directory* pas_segregated_size_directory_for_object(
+    uintptr_t begin,
+    pas_heap_config* config);
+
+/* This assumes that we already have a data. That's a valid assumption if we have exclusives. */
+PAS_API pas_heap_summary pas_segregated_size_directory_compute_summary_for_unowned_exclusive(
+    pas_segregated_size_directory* directory);
 
 typedef bool (*pas_segregated_size_directory_for_each_live_object_callback)(
-    pas_segregated_directory* directory,
+    pas_segregated_size_directory* directory,
     pas_segregated_view view,
     uintptr_t begin,
     void* arg);
 
 PAS_API bool pas_segregated_size_directory_for_each_live_object(
-    pas_segregated_directory* directory,
+    pas_segregated_size_directory* directory,
     pas_segregated_size_directory_for_each_live_object_callback callback,
     void* arg);
 
-PAS_API pas_segregated_directory* pas_segregated_size_directory_for_object(
-    uintptr_t begin,
-    pas_heap_config* config);
+PAS_API uint8_t pas_segregated_size_directory_view_cache_capacity(
+    pas_segregated_size_directory* directory);
+
+PAS_API size_t pas_segregated_size_directory_local_allocator_size(
+    pas_segregated_size_directory* directory);
+
+PAS_API pas_allocator_index pas_segregated_size_directory_num_allocator_indices(
+    pas_segregated_size_directory* directory);
+
+PAS_API void pas_segregated_size_directory_dump_reference(
+    pas_segregated_size_directory* directory, pas_stream* stream);
+
+PAS_API void pas_segregated_size_directory_dump_for_spectrum(
+    pas_stream* stream, void* directory);
 
 PAS_END_EXTERN_C;
 

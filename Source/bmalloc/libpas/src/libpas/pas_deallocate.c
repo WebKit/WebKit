@@ -83,7 +83,8 @@ static void deallocate_segregated(uintptr_t begin,
 {
     pas_lock* held_lock;
     held_lock = NULL;
-    pas_segregated_page_deallocate(begin, &held_lock, *page_config);
+    pas_segregated_page_deallocate(
+        begin, &held_lock, pas_segregated_deallocation_direct_mode, NULL, *page_config);
     pas_lock_switch(&held_lock, NULL);
 }
 

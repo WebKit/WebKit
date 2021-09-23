@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,8 @@ PAS_API pas_allocation_result pas_bootstrap_heap_page_provider(
     size_t size,
     pas_alignment alignment,
     const char* name,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction,
     void *arg);
 
 PAS_END_EXTERN_C;

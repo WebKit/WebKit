@@ -61,7 +61,9 @@ void* pas_fast_megapage_cache_try_allocate(
     pas_fast_megapage_table* table,
     pas_page_base_config* config,
     pas_fast_megapage_kind kind,
-    bool should_zero)
+    bool should_zero,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction)
 {
     pas_megapage_cache_config cache_config;
     table_set_by_index_data data;
@@ -78,7 +80,7 @@ void* pas_fast_megapage_cache_try_allocate(
     cache_config.table_set_by_index_arg = &data;
     cache_config.should_zero = should_zero;
     
-    return pas_megapage_cache_try_allocate(cache, &cache_config);
+    return pas_megapage_cache_try_allocate(cache, &cache_config, heap, transaction);
 }
 
 #endif /* LIBPAS_ENABLED */

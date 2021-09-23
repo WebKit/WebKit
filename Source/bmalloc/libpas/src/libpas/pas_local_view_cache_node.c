@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_COMPACT_SEGREGATED_GLOBAL_SIZE_DIRECTORY_PTR_H
-#define PAS_COMPACT_SEGREGATED_GLOBAL_SIZE_DIRECTORY_PTR_H
+#include "pas_config.h"
 
-#include "pas_compact_ptr.h"
+#if LIBPAS_ENABLED
 
-PAS_BEGIN_EXTERN_C;
+#include "pas_local_view_cache_node.h"
 
-struct pas_segregated_global_size_directory;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+#include "pas_immortal_heap.h"
 
-PAS_DEFINE_COMPACT_PTR(pas_segregated_global_size_directory,
-                       pas_compact_segregated_global_size_directory_ptr);
+pas_local_view_cache_node*
+pas_local_view_cache_node_create(pas_segregated_size_directory* directory)
+{
+    pas_local_view_cache_node* result;
 
-PAS_END_EXTERN_C;
+    result = pas_immortal_heap_allocate(
+        sizeof(pas_local_view_cache_node),
+        "pas_local_view_cache_node",
+        pas_object_allocation);
 
-#endif /* PAS_COMPACT_SEGREGATED_GLOBAL_SIZE_DIRECTORY_PTR_H */
+    pas_compact_atomic_thread_local_cache_layout_node_store(&result->next, NULL);
+    pas_compact_segregated_size_directory_ptr_store(&result->directory, directory);
 
+    return result;
+}
+
+#endif /* LIBPAS_ENABLED */

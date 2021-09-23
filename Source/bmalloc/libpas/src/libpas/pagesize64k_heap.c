@@ -54,7 +54,7 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
     PAGESIZE64K_HEAP_CONFIG,
     &pagesize64k_intrinsic_primitive_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error,
+    pas_allocation_result_crash_on_error,
     &pagesize64k_common_primitive_heap,
     &pagesize64k_common_primitive_heap_support,
     pas_intrinsic_heap_is_designated);
@@ -64,18 +64,18 @@ PAS_CREATE_TRY_ALLOCATE(
     PAGESIZE64K_HEAP_CONFIG,
     &pagesize64k_typed_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 PAS_CREATE_TRY_ALLOCATE_ARRAY(
     test_allocate_array_impl,
     PAGESIZE64K_HEAP_CONFIG,
     &pagesize64k_typed_runtime_config.base,
     &iso_allocator_counts,
-    pas_intrinsic_allocation_result_crash_on_error);
+    pas_allocation_result_crash_on_error);
 
 void* pagesize64k_allocate_common_primitive(size_t size)
 {
-    return test_allocate_common_primitive(size, 1).ptr;
+    return (void*)test_allocate_common_primitive(size, 1).begin;
 }
 
 void* pagesize64k_allocate(pas_heap_ref* heap_ref)

@@ -38,6 +38,8 @@
 typedef struct {
     pas_megapage_cache* cache;
     pas_megapage_cache_config* cache_config;
+    pas_heap* heap;
+    pas_physical_memory_transaction* transaction;
 } megapage_cache_allocate_aligned_data;
 
 static pas_aligned_allocation_result megapage_cache_allocate_aligned(size_t size,
@@ -92,6 +94,8 @@ static pas_aligned_allocation_result megapage_cache_allocate_aligned(size_t size
     bootstrap_result = cache->provider(
         new_size, new_alignment,
         "pas_megapage_cache/chunk",
+        data->heap,
+        data->transaction,
         cache->provider_arg);
     if (!bootstrap_result.did_succeed)
         return result;
@@ -172,7 +176,9 @@ void pas_megapage_cache_construct(pas_megapage_cache* cache,
 }
 
 void* pas_megapage_cache_try_allocate(pas_megapage_cache* cache,
-                                      pas_megapage_cache_config* cache_config)
+                                      pas_megapage_cache_config* cache_config,
+                                      pas_heap* heap,
+                                      pas_physical_memory_transaction* transaction)
 {
     megapage_cache_allocate_aligned_data data;
     pas_large_free_heap_config config;
@@ -182,6 +188,8 @@ void* pas_megapage_cache_try_allocate(pas_megapage_cache* cache,
 
     data.cache = cache;
     data.cache_config = cache_config;
+    data.heap = heap;
+    data.transaction = transaction;
     
     pas_zero_memory(&config, sizeof(config));
     config.type_size = 1;

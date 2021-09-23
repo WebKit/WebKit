@@ -98,7 +98,7 @@ pas_try_allocate_array_impl(pas_heap_ref* heap_ref,
         allocator_index, config.config_ptr);
 
     if (alignment != 1 && allocator.did_succeed
-        && alignment > pas_local_allocator_alignment(allocator.allocator))
+        && alignment > pas_local_allocator_alignment((pas_local_allocator*)allocator.allocator))
         allocator.did_succeed = false;
     
     return pas_typed_allocation_result_create_with_intrinsic_allocation_result(

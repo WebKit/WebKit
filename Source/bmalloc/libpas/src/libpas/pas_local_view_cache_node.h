@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_BITFIT_DIRECTORY_KIND_H
-#define PAS_BITFIT_DIRECTORY_KIND_H
+#ifndef PAS_LOCAL_VIEW_CACHE_NODE_H
+#define PAS_LOCAL_VIEW_CACHE_NODE_H
 
-#include "pas_utils.h"
+#include "pas_compact_segregated_size_directory_ptr.h"
+#include "pas_compact_atomic_thread_local_cache_layout_node.h"
+#include "pas_allocator_index.h"
 
 PAS_BEGIN_EXTERN_C;
 
-/* Bitfit directories form a type hierarchy like so:
-   
-       - directory
-           - global directory
-           - biasing directory
-   
-   Only the types at the leaves are instantiable. The pas_bitfit_directory_kind enum is for
-   describing the instantiable leaves. */
+struct pas_local_view_cache_node;
+typedef struct pas_local_view_cache_node pas_local_view_cache_node;
 
-enum pas_bitfit_directory_kind {
-    pas_bitfit_global_directory_kind,
-    pas_bitfit_biasing_directory_kind
+struct pas_local_view_cache_node {
+    pas_compact_atomic_thread_local_cache_layout_node next;
+    pas_compact_segregated_size_directory_ptr directory;
 };
 
-typedef enum pas_bitfit_directory_kind pas_bitfit_directory_kind;
-
-static inline const char* pas_bitfit_directory_kind_get_string(pas_bitfit_directory_kind kind)
-{
-    switch (kind) {
-    case pas_bitfit_global_directory_kind:
-        return "bitfit_global_directory";
-    case pas_bitfit_biasing_directory_kind:
-        return "bitfit_biasing_directory";
-    }
-    PAS_ASSERT(!"Should not be reached");
-    return NULL;
-}
+PAS_API pas_local_view_cache_node*
+pas_local_view_cache_node_create(pas_segregated_size_directory* directory);
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_BITFIT_DIRECTORY_KIND_H */
+#endif /* PAS_LOCAL_VIEW_CACHE_NODE_H */
 

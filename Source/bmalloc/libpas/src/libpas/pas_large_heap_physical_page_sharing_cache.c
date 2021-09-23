@@ -95,6 +95,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
     allocation_result = data->cache->provider(
         aligned_size, aligned_alignment,
         "pas_large_heap_physical_page_sharing_cache/chunk",
+        NULL, NULL,
         data->cache->provider_arg);
 
     if (!allocation_result.did_succeed) {
@@ -109,7 +110,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
                     (char*)allocation_result.begin + aligned_size);
         }
         
-        pas_allocation_result_zero(&allocation_result, aligned_size);
+        allocation_result = pas_allocation_result_zero(allocation_result, aligned_size);
     }
 
     pas_enumerable_range_list_append(

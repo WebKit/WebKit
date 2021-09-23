@@ -32,7 +32,6 @@
 #include "jit_heap_config.h"
 #include "minalign32_heap_config.h"
 #include "pagesize64k_heap_config.h"
-#include "pas_all_magazines.h"
 #include "pas_epoch.h"
 #include "pas_fd_stream.h"
 #include "pas_heap.h"
@@ -209,35 +208,6 @@ InstallVerifier::InstallVerifier()
 {
 }
 
-DisableExplosion::DisableExplosion()
-    : TestScope(
-        "disable-explosion",
-        [] () {
-            pas_segregated_global_size_directory_can_explode = false;
-            pas_segregated_global_size_directory_force_explode = false;
-        })
-{
-}
-
-ForceExplosion::ForceExplosion()
-    : TestScope(
-        "force-explosion",
-        [] () {
-            pas_segregated_global_size_directory_can_explode = true;
-            pas_segregated_global_size_directory_force_explode = true;
-        })
-{
-}
-
-ForceOneMagazine::ForceOneMagazine()
-    : TestScope(
-        "force-one-magazine",
-        [] () {
-            pas_all_magazines_forced_cpu_number = 0;
-        })
-{
-}
-
 EpochIsCounter::EpochIsCounter()
     : TestScope(
         "epoch-is-counter",
@@ -256,9 +226,10 @@ BootJITHeap::BootJITHeap()
             constexpr unsigned numRegions = 10;
             
             for (unsigned i = numRegions; i--;) {
-                constexpr size_t size = 5000000;
+                size_t size =
+                    pas_round_up_to_power_of_2(5000000, pas_page_malloc_alignment());
                 
-                void* base = malloc(size);
+                void* base = valloc(size);
                 
                 jit_heap_add_fresh_memory(
                     pas_range_create(reinterpret_cast<uintptr_t>(base),
@@ -356,7 +327,6 @@ void addIsoHeapChaosTests();
 void addIsoHeapPageSharingTests();
 void addIsoHeapPartialAndBaselineTests();
 void addIsoHeapReservedMemoryTests();
-void addIsoHeapTablingTests();
 void addJITHeapTests();
 void addLargeFreeHeapTests();
 void addLargeSharingPoolTests();
@@ -714,7 +684,6 @@ int main(int argc, char** argv)
     ADD_SUITE(IsoHeapPageSharing);
     ADD_SUITE(IsoHeapPartialAndBaseline);
     ADD_SUITE(IsoHeapReservedMemory);
-    ADD_SUITE(IsoHeapTabling);
     ADD_SUITE(JITHeap);
     ADD_SUITE(LargeFreeHeap);
     ADD_SUITE(LargeSharingPool);

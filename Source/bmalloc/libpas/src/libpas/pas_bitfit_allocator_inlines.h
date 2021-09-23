@@ -28,27 +28,27 @@
 
 #include "pas_bitfit_allocation_result.h"
 #include "pas_bitfit_allocator.h"
-#include "pas_bitfit_global_directory.h"
-#include "pas_bitfit_global_size_class.h"
+#include "pas_bitfit_directory.h"
+#include "pas_bitfit_size_class.h"
 #include "pas_bitfit_page_inlines.h"
 #include "pas_bitfit_view.h"
 #include "pas_debug_spectrum.h"
 #include "pas_epoch.h"
 #include "pas_fast_path_allocation_result.h"
-#include "pas_segregated_global_size_directory_inlines.h"
+#include "pas_segregated_size_directory_inlines.h"
 
 PAS_BEGIN_EXTERN_C;
 
 static inline void pas_bitfit_allocator_reset(pas_bitfit_allocator* allocator)
 {
-    allocator->global_size_class = NULL;
+    allocator->size_class = NULL;
     allocator->size_class = NULL;
     allocator->view = NULL;
 }
 
 static inline void pas_bitfit_allocator_assert_reset(pas_bitfit_allocator* allocator)
 {
-    PAS_TESTING_ASSERT(!allocator->global_size_class);
+    PAS_TESTING_ASSERT(!allocator->size_class);
     PAS_TESTING_ASSERT(!allocator->size_class);
     PAS_TESTING_ASSERT(!allocator->view);
 }
@@ -118,7 +118,7 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
                 pas_lock_lock(&view->commit_lock);
             }
 
-            pas_bitfit_view_lock_ownership_lock(view);
+            pas_lock_lock(&view->ownership_lock);
 
             if (PAS_UNLIKELY(!view->is_owned)) {
                 /* Note that this would have flashed the ownership lock possibly. */
@@ -185,8 +185,8 @@ pas_bitfit_allocator_try_allocate(pas_bitfit_allocator* allocator,
         if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT && bytes_committed) {
             pas_heap_lock_lock();
             pas_debug_spectrum_add(
-                pas_compact_bitfit_directory_ptr_load(&allocator->global_size_class->base.directory),
-                pas_bitfit_global_directory_dump_for_spectrum,
+                pas_compact_bitfit_directory_ptr_load(&allocator->size_class->directory),
+                pas_bitfit_directory_dump_for_spectrum,
                 bytes_committed);
             pas_heap_lock_unlock();
         }

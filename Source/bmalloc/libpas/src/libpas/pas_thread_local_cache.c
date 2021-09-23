@@ -31,14 +31,13 @@
 
 #include <mach/thread_act.h>
 #include "pas_all_heap_configs.h"
-#include "pas_all_magazines.h"
 #include "pas_compact_large_utility_free_heap.h"
 #include "pas_debug_heap.h"
 #include "pas_heap_lock.h"
 #include "pas_log.h"
 #include "pas_monotonic_time.h"
 #include "pas_scavenger.h"
-#include "pas_segregated_global_size_directory_inlines.h"
+#include "pas_segregated_size_directory_inlines.h"
 #include "pas_segregated_page.h"
 #include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
@@ -59,18 +58,6 @@ size_t pas_thread_local_cache_size_for_allocator_index_capacity(unsigned allocat
 static void deallocate(pas_thread_local_cache* thread_local_cache)
 {
     char* begin;
-    pas_thread_local_cache_layout_node layout_node;
-
-    for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
-        pas_allocator_index allocator_index;
-
-        allocator_index = pas_thread_local_cache_layout_node_get_allocator_index(layout_node);
-        
-        if (allocator_index >= thread_local_cache->allocator_index_upper_bound)
-            break;
-        pas_local_allocator_destruct(
-            pas_thread_local_cache_get_local_allocator_impl(thread_local_cache, allocator_index));
-    }
 
     pas_compact_large_utility_free_heap_deallocate(
         thread_local_cache->should_stop_bitvector,
@@ -173,13 +160,8 @@ pas_thread_local_cache* pas_thread_local_cache_create(void)
     
     thread_local_cache->allocator_index_upper_bound = allocator_index_upper_bound;
 
-    for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
-        pas_local_allocator_construct(
-            pas_thread_local_cache_get_local_allocator_impl(
-                thread_local_cache,
-                pas_thread_local_cache_layout_node_get_allocator_index(layout_node)),
-            pas_thread_local_cache_layout_node_get_directory(layout_node));
-    }
+    for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node))
+        pas_thread_local_cache_layout_node_construct(layout_node, thread_local_cache);
 
     pas_thread_local_cache_set_impl(thread_local_cache);
     
@@ -242,10 +224,7 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     old_index_upper_bound = thread_local_cache->allocator_index_upper_bound;
     
     PAS_ASSERT(desired_allocator_index >= old_index_upper_bound);
-    
-    /* It could be that we just don't have an allocator index yet. */
-    if (desired_allocator_index >= (pas_allocator_index)UINT_MAX)
-        return pas_local_allocator_result_create_failure();
+    PAS_ASSERT(desired_allocator_index < (pas_allocator_index)UINT_MAX);
     
     /* Rather than copy the deallocation log let's just flush it. */
     pas_thread_local_cache_flush_deallocation_log(thread_local_cache, heap_lock_hold_mode);
@@ -278,15 +257,13 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
         for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
             pas_allocator_index allocator_index;
             
-            allocator_index = pas_thread_local_cache_layout_node_get_allocator_index(layout_node);
+            allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(layout_node);
             
             if (allocator_index >= old_index_upper_bound)
                 break;
-            pas_local_allocator_move(
-                pas_thread_local_cache_get_local_allocator_impl(
-                    new_thread_local_cache, allocator_index),
-                pas_thread_local_cache_get_local_allocator_impl(
-                    thread_local_cache, allocator_index));
+
+            pas_thread_local_cache_layout_node_move(
+                layout_node, new_thread_local_cache, thread_local_cache);
         }
 
         memcpy(new_thread_local_cache->should_stop_bitvector,
@@ -300,16 +277,14 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
     for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
         pas_allocator_index allocator_index;
 
-        allocator_index = pas_thread_local_cache_layout_node_get_allocator_index(layout_node);
+        allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(layout_node);
         
         if (allocator_index < old_index_upper_bound)
             continue;
         if (allocator_index >= desired_index_upper_bound)
             break;
-        pas_local_allocator_construct(
-            pas_thread_local_cache_get_local_allocator_impl(
-                new_thread_local_cache, allocator_index),
-            pas_thread_local_cache_layout_node_get_directory(layout_node));
+
+        pas_thread_local_cache_layout_node_construct(layout_node, new_thread_local_cache);
     }
 
     pas_compiler_fence();
@@ -345,30 +320,26 @@ pas_thread_local_cache_get_local_allocator_if_can_set_cache_slow(unsigned alloca
 void pas_thread_local_cache_stop_local_allocators(pas_thread_local_cache* thread_local_cache,
                                                   pas_lock_hold_mode heap_lock_hold_mode)
 {
-    static const bool verbose = false;
-    
     pas_thread_local_cache_layout_node layout_node;
 
     /* We have to hold the heap lock to do things to our local allocators unless we also set the
        is_in_use bit. */
     pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
-    
+    pas_lock_lock(&thread_local_cache->node->log_flush_lock);
+
     for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
         pas_allocator_index allocator_index;
-        pas_local_allocator *allocator;
 
-        allocator_index = pas_thread_local_cache_layout_node_get_allocator_index(layout_node);
+        allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(layout_node);
         
         if (allocator_index >= thread_local_cache->allocator_index_upper_bound)
             break;
 
-        allocator = pas_thread_local_cache_get_local_allocator_impl(
-            thread_local_cache, allocator_index);
-        if (verbose)
-            pas_log("Stopping allocator %p because pas_thread_local_cache_stop_local_allocators\n", allocator);
-        pas_local_allocator_stop(allocator, pas_lock_lock_mode_lock, pas_lock_is_held);
+        pas_thread_local_cache_layout_node_stop(
+            layout_node, thread_local_cache, pas_lock_lock_mode_lock, pas_lock_is_held);
     }
 
+    pas_lock_unlock(&thread_local_cache->node->log_flush_lock);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
 }
 
@@ -398,7 +369,7 @@ static bool stop_local_allocators_if_necessary_set_bit_callback(
     
     stop_local_allocators_if_necessary_data* data;
     pas_allocator_index allocator_index;
-    pas_local_allocator* allocator;
+    pas_local_allocator_scavenger_data* scavenger_data;
 
     data = arg;
 
@@ -408,18 +379,19 @@ static bool stop_local_allocators_if_necessary_set_bit_callback(
     
     pas_bitvector_set(data->should_stop_bitvector, allocator_index, false);
     
-    allocator = pas_thread_local_cache_get_local_allocator_impl(
+    scavenger_data = pas_thread_local_cache_get_local_allocator_impl(
         data->thread_local_cache, allocator_index);
-    
-    if (allocator == data->requesting_allocator)
+
+    if ((pas_local_allocator*)scavenger_data == data->requesting_allocator)
         return true;
     
-    if (!allocator->should_stop_count)
+    if (!scavenger_data->should_stop_count)
         return true;
     
     if (verbose)
-        pas_log("Stopping allocator %p because pas_thread_local_cache_stop_local_allocators_if_necessary\n", allocator);
-    pas_local_allocator_stop(allocator, pas_lock_lock_mode_lock, data->heap_lock_hold_mode);
+        pas_log("Stopping allocator %p because pas_thread_local_cache_stop_local_allocators_if_necessary\n", scavenger_data);
+    pas_local_allocator_scavenger_data_stop(
+        scavenger_data, pas_lock_lock_mode_lock, data->heap_lock_hold_mode);
 
     return true;
 }
@@ -451,6 +423,7 @@ void pas_thread_local_cache_stop_local_allocators_if_necessary(
 
 static PAS_ALWAYS_INLINE void
 process_deallocation_log_with_config(pas_thread_local_cache* cache,
+                                     pas_segregated_deallocation_mode deallocation_mode,
                                      pas_segregated_page_config page_config,
                                      size_t* index,
                                      uintptr_t encoded_begin,
@@ -477,7 +450,8 @@ process_deallocation_log_with_config(pas_thread_local_cache* cache,
 
         default:
             last_held_lock = *held_lock;
-            pas_segregated_page_deallocate(begin, held_lock, page_config);
+            pas_segregated_page_deallocate(
+                begin, held_lock, deallocation_mode, cache, page_config);
             if (verbose && *held_lock != last_held_lock && last_held_lock)
                 pas_log("Switched lock from %p to %p.\n", last_held_lock, *held_lock);
             
@@ -497,19 +471,15 @@ process_deallocation_log_with_config(pas_thread_local_cache* cache,
     }
 }
 
-static void flush_deallocation_log(pas_thread_local_cache* thread_local_cache,
-                                   pas_lock_hold_mode heap_lock_hold_mode,
-                                   bool is_local)
+static PAS_ALWAYS_INLINE void flush_deallocation_log(
+    pas_thread_local_cache* thread_local_cache,
+    pas_segregated_deallocation_mode deallocation_mode)
 {
     size_t index;
     pas_lock* held_lock;
+
+    pas_lock_testing_assert_held(&thread_local_cache->node->log_flush_lock);
     
-    if (!thread_local_cache)
-        return;
-
-    pas_lock_lock(&thread_local_cache->node->log_flush_lock);
-    pas_compiler_fence();
-
     index = thread_local_cache->deallocation_log_index;
     held_lock = NULL;
 
@@ -523,7 +493,7 @@ static void flush_deallocation_log(pas_thread_local_cache* thread_local_cache,
 #define PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND(name, value) \
         case pas_segregated_page_config_kind_ ## name: \
             process_deallocation_log_with_config( \
-                thread_local_cache, value, &index, encoded_begin, &held_lock); \
+                thread_local_cache, deallocation_mode, value, &index, encoded_begin, &held_lock); \
             break;
 #include "pas_segregated_page_config_kind.def"
 #undef PAS_DEFINE_SEGREGATED_PAGE_CONFIG_KIND
@@ -531,24 +501,37 @@ static void flush_deallocation_log(pas_thread_local_cache* thread_local_cache,
     }
     
     pas_lock_switch(&held_lock, NULL);
-    
-    if (is_local) {
-        thread_local_cache->deallocation_log_index = 0;
-        thread_local_cache->num_logged_bytes = 0;
-    }
+}
 
-    pas_compiler_fence();
-    pas_lock_unlock(&thread_local_cache->node->log_flush_lock);
+static void flush_deallocation_log_for_scavenger(pas_thread_local_cache* thread_local_cache)
+{
+    if (!thread_local_cache->deallocation_log_index)
+        return;
     
-    if (heap_lock_hold_mode == pas_lock_is_not_held)
-        pas_scavenger_notify_eligibility_if_needed();
+    flush_deallocation_log(thread_local_cache, pas_segregated_deallocation_direct_mode);
 }
 
 void pas_thread_local_cache_flush_deallocation_log(pas_thread_local_cache* thread_local_cache,
                                                    pas_lock_hold_mode heap_lock_hold_mode)
 {
-    bool is_local = true;
-    flush_deallocation_log(thread_local_cache, heap_lock_hold_mode, is_local);
+    if (!thread_local_cache)
+        return;
+
+    pas_lock_lock(&thread_local_cache->node->log_flush_lock);
+
+    flush_deallocation_log(thread_local_cache, pas_segregated_deallocation_to_view_cache_mode);
+    
+    thread_local_cache->deallocation_log_index = 0;
+    thread_local_cache->num_logged_bytes = 0;
+
+    /* Dirtying the deallocation log is a signal to the scavenger that we are actively operating on
+       this log. */
+    thread_local_cache->deallocation_log_dirty = true;
+
+    pas_lock_unlock(&thread_local_cache->node->log_flush_lock);
+    
+    if (heap_lock_hold_mode == pas_lock_is_not_held)
+        pas_scavenger_notify_eligibility_if_needed();
 }
 
 static void suspend(pas_thread_local_cache* cache)
@@ -587,7 +570,7 @@ static void resume(pas_thread_local_cache* cache)
     
     if (cache->thread == pthread_self())
         return;
-    
+
     result = thread_resume(pthread_mach_thread_np(cache->thread));
     
     PAS_ASSERT(result == KERN_SUCCESS);
@@ -627,7 +610,26 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
         cache = node->cache;
         if (!cache)
             continue;
-        
+
+        pas_lock_lock(&node->log_flush_lock);
+
+        switch (deallocator_action) {
+        case pas_deallocator_scavenge_no_action:
+            break;
+            
+        case pas_deallocator_scavenge_flush_log_if_clean_action:
+            if (cache->deallocation_log_dirty) {
+                cache->deallocation_log_dirty = false;
+                result = !!cache->deallocation_log_index;
+            } else
+                flush_deallocation_log_for_scavenger(cache);
+            break;
+            
+        case pas_deallocator_scavenge_flush_log_action:
+            flush_deallocation_log_for_scavenger(cache);
+            break;
+        }
+
         if (allocator_action != pas_allocator_scavenge_no_action) {
             bool did_suspend;
             pas_thread_local_cache_layout_node layout_node;
@@ -636,39 +638,40 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
 
             for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
                 pas_allocator_index allocator_index;
-                pas_local_allocator* allocator;
+                pas_local_allocator_scavenger_data* scavenger_data;
 
-                allocator_index = pas_thread_local_cache_layout_node_get_allocator_index(layout_node);
+                allocator_index =
+                    pas_thread_local_cache_layout_node_get_allocator_index_generic(layout_node);
 
                 if (allocator_index >= cache->allocator_index_upper_bound)
                     break;
-                
-                allocator = pas_thread_local_cache_get_local_allocator_impl(cache, allocator_index);
-                
+
+                scavenger_data = pas_thread_local_cache_get_local_allocator_impl(cache, allocator_index);
+
                 if (allocator_action == pas_allocator_scavenge_request_stop_action) {
                     uint8_t should_stop_count;
                     
                     if (verbose)
                         pas_log("Doing the request thingy.\n");
                     
-                    if (allocator->dirty) {
+                    if (scavenger_data->dirty) {
                         if (verbose)
                             pas_log("It was dirty.\n");
-                        allocator->dirty = false;
+                        scavenger_data->dirty = false;
                         result = true;
                         continue;
                     }
 
                     /* Bail out if it's no longer active. */
-                    if (!pas_local_allocator_is_active(allocator)) {
+                    if (!pas_local_allocator_scavenger_data_is_active(scavenger_data)) {
                         if (verbose)
                             pas_log("It was empty.\n");
                         continue;
                     }
 
-                    should_stop_count = allocator->should_stop_count;
+                    should_stop_count = scavenger_data->should_stop_count;
                     if (should_stop_count < pas_local_allocator_should_stop_count_for_suspend) {
-                        allocator->should_stop_count = ++should_stop_count;
+                        scavenger_data->should_stop_count = ++should_stop_count;
                         
                         PAS_ASSERT(should_stop_count
                                    <= pas_local_allocator_should_stop_count_for_suspend);
@@ -693,7 +696,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                     PAS_ASSERT(allocator_action == pas_allocator_scavenge_force_stop_action);
                 }
 
-                if (!pas_local_allocator_is_active(allocator)) {
+                if (!pas_local_allocator_scavenger_data_is_active(scavenger_data)) {
                     if (verbose)
                         pas_log("It was empty.\n");
                     continue;
@@ -707,23 +710,22 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                 }
 
                 if (verbose)
-                    pas_log("Need to suspend for allocator %p\n", allocator);
+                    pas_log("Need to suspend for allocator %p\n", scavenger_data);
                 
                 if (!did_suspend) {
                     suspend(cache);
-                    
                     did_suspend = true;
                 }
                 
-                if (allocator->is_in_use) {
+                if (scavenger_data->is_in_use) {
                     result = true;
                     continue;
                 }
 
                 if (verbose)
-                    pas_log("Stopping allocator %p while suspended\n", allocator);
-                if (!pas_local_allocator_stop(
-                        allocator, pas_lock_lock_mode_try_lock, pas_lock_is_held))
+                    pas_log("Stopping allocator %p while suspended\n", scavenger_data);
+                if (!pas_local_allocator_scavenger_data_stop(
+                        scavenger_data, pas_lock_lock_mode_try_lock, pas_lock_is_held))
                     result = true;
             }
             
@@ -731,12 +733,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                 resume(cache);
         }
         
-        if (deallocator_action == pas_deallocator_scavenge_flush_log_action) {
-            bool is_local;
-            
-            is_local = false;
-            flush_deallocation_log(cache, pas_lock_is_held, is_local);
-        }
+        pas_lock_unlock(&node->log_flush_lock);
     }
     
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);

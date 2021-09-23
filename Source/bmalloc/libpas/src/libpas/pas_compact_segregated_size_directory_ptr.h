@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_ALL_MAGAZINES_H
-#define PAS_ALL_MAGAZINES_H
+#ifndef PAS_COMPACT_SEGREGATED_SIZE_DIRECTORY_PTR_H
+#define PAS_COMPACT_SEGREGATED_SIZE_DIRECTORY_PTR_H
 
-#include "pas_immutable_vector.h"
+#include "pas_compact_ptr.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_magazine;
-typedef struct pas_magazine pas_magazine;
+struct pas_segregated_size_directory;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 
-PAS_DECLARE_IMMUTABLE_VECTOR(pas_all_magazines_vector,
-                             pas_magazine*);
-
-PAS_API extern pas_all_magazines_vector pas_all_magazines_vector_instance;
-PAS_API extern unsigned pas_all_magazines_forced_cpu_number;
-
-PAS_API pas_magazine* pas_all_magazines_get_current(void);
+PAS_DEFINE_COMPACT_PTR(pas_segregated_size_directory,
+                       pas_compact_segregated_size_directory_ptr);
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_ALL_MAGAZINES_H */
+#endif /* PAS_COMPACT_SEGREGATED_SIZE_DIRECTORY_PTR_H */
 

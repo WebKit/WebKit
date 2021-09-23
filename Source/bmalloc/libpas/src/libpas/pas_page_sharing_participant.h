@@ -65,7 +65,9 @@ struct pas_page_sharing_participant_payload {
        
        If this is true then:
        
-       - we must be tracked as a delta. */
+       - we must be tracked as a delta.
+    
+       FIXME: There's a pretty obvious size win to be had just from removing this field. */
     bool delta_has_been_noted;
 };
 

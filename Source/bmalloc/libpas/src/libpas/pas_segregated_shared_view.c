@@ -34,6 +34,7 @@
 #include "pas_immortal_heap.h"
 #include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_physical_memory_transaction.h"
 #include "pas_range16.h"
 #include "pas_segregated_page_inlines.h"
 #include "pas_segregated_shared_handle.h"
@@ -81,6 +82,7 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
     pas_segregated_directory* directory;
     pas_segregated_shared_handle* handle;
     pas_segregated_page_config page_config;
+    pas_physical_memory_transaction transaction;
 
     PAS_UNUSED_PARAM(partial_view);
 
@@ -111,18 +113,38 @@ pas_segregated_shared_handle* pas_segregated_shared_view_commit_page(
 
     if (!handle->page_boundary) {
         pas_segregated_page* page;
+        void* page_boundary;
 
-        page = (pas_segregated_page*)
-            page_config.base.create_page_header(page_config.base.page_allocator(heap),
-                                                pas_lock_is_held);
+        page_boundary = NULL;
+
+        pas_heap_lock_unlock_conditionally(
+            pas_segregated_page_config_heap_lock_hold_mode(page_config));
         
-        if (!page) {
+        pas_physical_memory_transaction_construct(&transaction);
+        do {
+            PAS_ASSERT(!page_boundary);
+            pas_physical_memory_transaction_begin(&transaction);
+            pas_heap_lock_lock_conditionally(
+                pas_segregated_page_config_heap_lock_hold_mode(page_config));
+            page_boundary = page_config.base.page_allocator(
+                heap,
+                pas_segregated_page_config_heap_lock_hold_mode(page_config) ? NULL : &transaction);
+            pas_heap_lock_unlock_conditionally(
+                pas_segregated_page_config_heap_lock_hold_mode(page_config));
+        } while (!pas_physical_memory_transaction_end(&transaction));
+        
+        pas_heap_lock_lock_conditionally(
+            pas_segregated_page_config_heap_lock_hold_mode(page_config));
+        if (!page_boundary) {
             pas_segregated_shared_handle_destroy(handle);
             pas_heap_lock_unlock_conditionally(
                 pas_segregated_page_config_heap_lock_hold_mode(page_config));
             return NULL;
         }
-
+        
+        page = (pas_segregated_page*)
+            page_config.base.create_page_header(page_boundary, pas_lock_is_held);
+        
         pas_heap_lock_unlock_conditionally(
             pas_segregated_page_config_heap_lock_hold_mode(page_config));
 
@@ -300,8 +322,8 @@ static pas_heap_summary compute_summary(pas_segregated_shared_view* view,
         unsigned offset_end;
 
         range = data.live_objects[index];
-        offset = range.begin << page_config.base.min_align_shift;
-        offset_end = range.end << page_config.base.min_align_shift;
+        offset = (unsigned)range.begin << page_config.base.min_align_shift;
+        offset_end = (unsigned)range.end << page_config.base.min_align_shift;
 
         PAS_ASSERT(offset >= start_of_last_free);
         pas_page_base_add_free_range(

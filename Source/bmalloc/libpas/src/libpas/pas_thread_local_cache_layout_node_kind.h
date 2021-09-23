@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_BITFIT_BIASING_DIRECTORY_H
-#define PAS_BITFIT_BIASING_DIRECTORY_H
+#ifndef PAS_THREAD_LOCAL_CACHE_LAYOUT_NODE_KIND_H
+#define PAS_THREAD_LOCAL_CACHE_LAYOUT_NODE_KIND_H
 
-#include "pas_biasing_directory.h"
-#include "pas_bitfit_directory.h"
-#include "pas_compact_bitfit_global_directory_ptr.h"
-#include "pas_page_sharing_pool_take_result.h"
+#include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_biasing_directory;
-typedef struct pas_bitfit_biasing_directory pas_bitfit_biasing_directory;
-
-struct PAS_ALIGNED(sizeof(uintptr_t) * 2) pas_bitfit_biasing_directory {
-    pas_bitfit_directory base;
-    pas_biasing_directory biasing_base;
-    pas_compact_bitfit_global_directory_ptr parent_global;
+enum pas_thread_local_cache_layout_node_kind {
+    pas_thread_local_cache_layout_segregated_size_directory_node_kind,
+    pas_thread_local_cache_layout_redundant_local_allocator_node_kind,
+    pas_thread_local_cache_layout_local_view_cache_node_kind
 };
 
-PAS_API pas_bitfit_biasing_directory* pas_bitfit_biasing_directory_create(
-    pas_bitfit_global_directory* parent_global,
-    unsigned magazine_index);
-
-PAS_API pas_page_sharing_pool_take_result pas_bitfit_biasing_directory_take_last_unused(
-    pas_bitfit_biasing_directory* directory);
+typedef enum pas_thread_local_cache_layout_node_kind pas_thread_local_cache_layout_node_kind;
+static inline const char* pas_thread_local_cache_layout_node_kind_get_string(
+    pas_thread_local_cache_layout_node_kind kind)
+{
+    switch (kind) {
+    case pas_thread_local_cache_layout_segregated_size_directory_node_kind:
+        return "segregated_size_directory";
+    case pas_thread_local_cache_layout_redundant_local_allocator_node_kind:
+        return "redundant_local_allocator";
+    case pas_thread_local_cache_layout_local_view_cache_node_kind:
+        return "local_view_cache";
+    }
+    PAS_ASSERT(!"Should not be reached");
+    return NULL;
+}
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_BITFIT_BIASING_DIRECTORY_H */
-
+#endif /* PAS_THREAD_LOCAL_CACHE_LAYOUT_NODE_KIND_H */
 

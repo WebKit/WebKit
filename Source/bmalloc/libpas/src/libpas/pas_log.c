@@ -54,8 +54,10 @@ void pas_vlog_fd(int fd, const char* format, va_list list)
 
     result = pas_vsnprintf(buf, PAS_LOG_MAX_BYTES, format, list);
 
+    PAS_ASSERT(result >= 0);
+
     if ((size_t)result < PAS_LOG_MAX_BYTES)
-        bytes_left_to_write = result;
+        bytes_left_to_write = (size_t)result;
     else
         bytes_left_to_write = PAS_LOG_MAX_BYTES - 1;
 
@@ -71,7 +73,7 @@ void pas_vlog_fd(int fd, const char* format, va_list list)
         PAS_ASSERT(result);
 
         ptr += result;
-        bytes_left_to_write -= result;
+        bytes_left_to_write -= (size_t)result;
     }
 }
 

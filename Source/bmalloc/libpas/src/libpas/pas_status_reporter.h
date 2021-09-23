@@ -31,36 +31,26 @@
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_biasing_directory;
-struct pas_bitfit_global_directory;
+struct pas_bitfit_directory;
 struct pas_large_heap;
-struct pas_segregated_biasing_directory;
 struct pas_segregated_heap;
 struct pas_segregated_shared_page_directory;
-struct pas_segregated_global_size_directory;
+struct pas_segregated_size_directory;
 struct pas_stream;
-typedef struct pas_bitfit_biasing_directory pas_bitfit_biasing_directory;
-typedef struct pas_bitfit_global_directory pas_bitfit_global_directory;
+typedef struct pas_bitfit_directory pas_bitfit_directory;
 typedef struct pas_large_heap pas_large_heap;
-typedef struct pas_segregated_biasing_directory pas_segregated_biasing_directory;
 typedef struct pas_segregated_heap pas_segregated_heap;
 typedef struct pas_segregated_shared_page_directory pas_segregated_shared_page_directory;
-typedef struct pas_segregated_global_size_directory pas_segregated_global_size_directory;
+typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_stream pas_stream;
 
 PAS_API extern unsigned pas_status_reporter_enabled;
 PAS_API extern unsigned pas_status_reporter_period_in_microseconds;
 
-PAS_API void pas_status_reporter_dump_bitfit_biasing_directory(
-    pas_stream* stream, pas_bitfit_biasing_directory* directory);
-PAS_API void pas_status_reporter_dump_bitfit_global_directory(
-    pas_stream* stream, pas_bitfit_global_directory* directory);
 PAS_API void pas_status_reporter_dump_bitfit_directory(
-    pas_stream* stream, pas_bitfit_global_directory* directory);
-PAS_API void pas_status_reporter_dump_segregated_biasing_directory(
-    pas_stream* stream, pas_segregated_biasing_directory* directory);
-PAS_API void pas_status_reporter_dump_segregated_global_size_directory(
-    pas_stream* stream, pas_segregated_global_size_directory* directory);
+    pas_stream* stream, pas_bitfit_directory* directory);
+PAS_API void pas_status_reporter_dump_segregated_size_directory(
+    pas_stream* stream, pas_segregated_size_directory* directory);
 PAS_API void pas_status_reporter_dump_segregated_shared_page_directory(
     pas_stream* stream, pas_segregated_shared_page_directory* directory);
 PAS_API void pas_status_reporter_dump_large_heap(pas_stream* stream, pas_large_heap* heap);

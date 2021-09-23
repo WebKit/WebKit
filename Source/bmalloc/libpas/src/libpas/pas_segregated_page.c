@@ -42,7 +42,7 @@
 #include "pas_page_sharing_pool.h"
 #include "pas_range.h"
 #include "pas_segregated_page_inlines.h"
-#include "pas_segregated_global_size_directory.h"
+#include "pas_segregated_size_directory.h"
 #include "pas_utility_heap_config.h"
 
 double pas_segregated_page_extra_wasteage_handicap_for_config_variant[
@@ -55,15 +55,13 @@ PAS_API bool pas_segregated_page_lock_with_unbias_impl(
     pas_lock** held_lock,
     pas_lock* lock_ptr)
 {
-    static const bool verbose = false;
-    
     pas_lock_lock(lock_ptr);
     
     if (lock_ptr == page->lock_ptr) {
         pas_segregated_view owner;
 
         owner = page->owner;
-        if (pas_segregated_view_is_exclusive_ish(owner)) {
+        if (pas_segregated_view_is_some_exclusive(owner)) {
             pas_segregated_exclusive_view* exclusive;
             pas_lock* fallback_lock;
             
@@ -74,13 +72,6 @@ PAS_API bool pas_segregated_page_lock_with_unbias_impl(
             fallback_lock = &exclusive->ownership_lock;
             
             if (lock_ptr != fallback_lock) {
-                if (verbose)
-                    pas_log("Triggering explosion.\n");
-                
-                pas_segregated_global_size_directory_set_contention_did_trigger_explosion(
-                    pas_compact_segregated_global_size_directory_ptr_load(&exclusive->directory),
-                    true);
-                
                 pas_lock_lock(fallback_lock);
                 page->lock_ptr = fallback_lock;
                 pas_lock_unlock(lock_ptr);
@@ -120,10 +111,10 @@ pas_lock* pas_segregated_page_switch_lock_slow(
     PAS_ASSERT(!"Should not be reached");
 }
 
-void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_impl(
+void pas_segregated_page_switch_lock_and_rebias_while_ineligible_impl(
     pas_segregated_page* page,
     pas_lock** held_lock,
-    pas_magazine* magazine)
+    pas_thread_local_cache_node* cache_node)
 {
     for (;;) {
         pas_segregated_view owner;
@@ -134,14 +125,14 @@ void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_imp
     
         page_lock = page->lock_ptr;
 
-        if (*held_lock == page_lock && *held_lock == &magazine->lock) {
+        if (*held_lock == page_lock && *held_lock == &cache_node->page_lock) {
             pas_compiler_fence();
             return;
         }
 
         owner = page->owner;
 
-        if (!pas_segregated_view_is_exclusive_ish(owner) || !magazine) {
+        if (!pas_segregated_view_is_some_exclusive(owner) || !cache_node) {
             pas_lock_switch(held_lock, page_lock);
             if (page->lock_ptr != page_lock)
                 continue;
@@ -149,14 +140,14 @@ void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_imp
         }
 
         did_lock_quickly =
-            (*held_lock == &magazine->lock && pas_lock_try_lock(page_lock)) ||
-            (*held_lock == page_lock && pas_lock_try_lock(&magazine->lock));
+            (*held_lock == &cache_node->page_lock && pas_lock_try_lock(page_lock)) ||
+            (*held_lock == page_lock && pas_lock_try_lock(&cache_node->page_lock));
 
         if (!did_lock_quickly) {
             if (*held_lock)
                 pas_lock_unlock(*held_lock);
 
-            if (&magazine->lock == page_lock) {
+            if (&cache_node->page_lock == page_lock) {
                 pas_lock_lock(page_lock);
                 *held_lock = page_lock;
                 if (page->lock_ptr != page_lock)
@@ -168,26 +159,27 @@ void pas_segregated_page_switch_lock_and_rebias_to_magazine_while_ineligible_imp
 
             /* This enforces that:
                
-               - Magazine locks must be acquired before page locks.
+               - Cache node page locks must be acquired before page locks.
                
-               - Magazine locks are acquired in pointer-as-integer order relative to one another. */
-            if (&exclusive->ownership_lock == page_lock || &magazine->lock < page_lock) {
-                pas_lock_lock(&magazine->lock);
+               - Cache node page locks are acquired in pointer-as-integer order relative to one
+                 another. */
+            if (&exclusive->ownership_lock == page_lock || &cache_node->page_lock < page_lock) {
+                pas_lock_lock(&cache_node->page_lock);
                 pas_lock_lock(page_lock);
             } else {
                 pas_lock_lock(page_lock);
-                pas_lock_lock(&magazine->lock);
+                pas_lock_lock(&cache_node->page_lock);
             }
         }
 
-        PAS_ASSERT(page_lock != &magazine->lock);
+        PAS_ASSERT(page_lock != &cache_node->page_lock);
 
         got_right_lock = (page->lock_ptr == page_lock);
         if (got_right_lock)
-            page->lock_ptr = &magazine->lock;
+            page->lock_ptr = &cache_node->page_lock;
         
         pas_lock_unlock(page_lock);
-        *held_lock = &magazine->lock;
+        *held_lock = &cache_node->page_lock;
 
         if (got_right_lock)
             return;
@@ -214,8 +206,9 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     page->use_epoch = PAS_EPOCH_INVALID;
 
     if (verbose) {
-        pas_log("Constructing page %p for view %p and config %s.\n",
-                page, owner, pas_segregated_page_config_kind_get_string(page_config.kind));
+        pas_log("Constructing page %p with boundary %p for view %p and config %s.\n",
+                page, pas_segregated_page_boundary(page, page_config),
+                owner, pas_segregated_page_config_kind_get_string(page_config.kind));
     }
 
     if (pas_segregated_page_config_is_utility(page_config))
@@ -228,22 +221,29 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 
     page->num_non_empty_words = 0;
     
-    if (pas_segregated_view_is_exclusive_ish(owner)) {
-        pas_segregated_global_size_directory* directory;
-        pas_segregated_global_size_directory_data* data;
+    page->view_cache_index = (pas_allocator_index)UINT_MAX;
 
-        directory = pas_segregated_view_get_global_size_directory(owner);
-        data = pas_segregated_global_size_directory_data_ptr_load_non_null(&directory->data);
+    if (pas_segregated_view_is_some_exclusive(owner)) {
+        pas_segregated_size_directory* directory;
+        pas_segregated_size_directory_data* data;
+
+        directory = pas_segregated_view_get_size_directory(owner);
+        data = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data);
 
         PAS_ASSERT(directory->object_size);
         page->object_size = directory->object_size;
         PAS_ASSERT(page->object_size == directory->object_size); /* Check for overflows. */
+
+        if (pas_segregated_size_directory_view_cache_capacity(directory)) {
+            PAS_ASSERT(directory->view_cache_index < (pas_allocator_index)UINT_MAX);
+            page->view_cache_index = directory->view_cache_index;
+        } else
+            PAS_ASSERT(directory->view_cache_index == (pas_allocator_index)UINT_MAX);
     } else
         page->object_size = 0;
 
     page->is_in_use_for_allocation = false;
     page->is_committing_fully = false;
-    page->avoid_line_allocator = false;
 
     if (page_config.base.page_size != page_config.base.granule_size) {
         pas_page_granule_use_count* use_counts;
@@ -506,8 +506,8 @@ void pas_segregated_page_commit_fully(
                     commit_span.total_bytes);
             } else {
                 pas_debug_spectrum_add(
-                    pas_segregated_view_get_global_size_directory(owner),
-                    pas_segregated_global_size_directory_dump_for_spectrum,
+                    pas_segregated_view_get_size_directory(owner),
+                    pas_segregated_size_directory_dump_for_spectrum,
                     commit_span.total_bytes);
             }
             pas_heap_lock_unlock();

@@ -30,7 +30,6 @@
 #include "pas_scavenger.h"
 
 #include <math.h>
-#include "pas_all_biasing_directories.h"
 #include "pas_all_heaps.h"
 #include "pas_baseline_allocator_table.h"
 #include "pas_deferred_decommit_log.h"
@@ -45,6 +44,7 @@
 #include "pas_utility_heap.h"
 #include <stdio.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 static const bool verbose = false;
 
@@ -149,7 +149,7 @@ static void* scavenger_thread_main(void* arg)
     data = ensure_data_instance(pas_lock_is_not_held);
     
     for (;;) {
-        pas_page_sharing_pool_take_result take_result;
+        pas_page_sharing_pool_scavenge_result scavenge_result;
         bool should_shut_down;
         double time_in_milliseconds;
         double absolute_timeout_in_milliseconds_for_period_sleep;
@@ -166,6 +166,14 @@ static void* scavenger_thread_main(void* arg)
         
         if (verbose)
             printf("Scavenger is running.\n");
+
+#if PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY
+        pas_local_allocator_refill_efficiency_lock_lock();
+        pas_log("%d: Refill efficiency: %lf\n",
+                getpid(),
+                pas_local_allocator_refill_efficiency_sum / pas_local_allocator_refill_efficiency_n);
+        pas_local_allocator_refill_efficiency_lock_unlock();
+#endif /* PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY */
         
         should_go_again |=
             pas_baseline_allocator_table_for_all(pas_allocator_scavenge_request_stop_action);
@@ -176,10 +184,8 @@ static void* scavenger_thread_main(void* arg)
         
         should_go_again |=
             pas_thread_local_cache_for_all(pas_allocator_scavenge_request_stop_action,
-                                           pas_deallocator_scavenge_flush_log_action,
+                                           pas_deallocator_scavenge_flush_log_if_clean_action,
                                            pas_lock_is_not_held);
-
-        should_go_again |= pas_all_biasing_directories_scavenge();
 
         /* For the purposes of performance tuning, as well as some of the scavenger tests, the epoch
            is time in nanoseconds.
@@ -198,8 +204,9 @@ static void* scavenger_thread_main(void* arg)
         if (verbose)
             pas_log("epoch = %llu, delta = %llu, max_epoch = %llu\n", epoch, delta, max_epoch);
 
-        take_result = pas_physical_page_sharing_pool_scavenge(max_epoch);
-        switch (take_result) {
+        scavenge_result = pas_physical_page_sharing_pool_scavenge(max_epoch);
+
+        switch (scavenge_result.take_result) {
         case pas_page_sharing_pool_take_none_available:
             break;
             
@@ -216,6 +223,13 @@ static void* scavenger_thread_main(void* arg)
             PAS_ASSERT(!"Should not see pas_page_sharing_pool_take_locks_unavailable.");
             break;
         } }
+
+        if (verbose) {
+            pas_log("%d: %.0lf: scavenger freed %zu bytes (%s, should_go_again = %s).\n",
+                    getpid(), get_time_in_milliseconds(), scavenge_result.total_bytes,
+                    pas_page_sharing_pool_take_result_get_string(scavenge_result.take_result),
+                    should_go_again ? "yes" : "no");
+        }
         
         completion_callback = pas_scavenger_completion_callback;
         if (completion_callback)
@@ -241,7 +255,10 @@ static void* scavenger_thread_main(void* arg)
             if (verbose)
                 printf("Waiting for a period.\n");
 
-            pas_scavenger_current_state = pas_scavenger_state_polling;
+            /* This field is accessed a lot by other threads, so don't write to it if we don't
+               have to. */
+            if (pas_scavenger_current_state != pas_scavenger_state_polling)
+                pas_scavenger_current_state = pas_scavenger_state_polling;
         } else {
             double absolute_timeout_in_milliseconds_for_deep_pre_sleep;
             
@@ -425,11 +442,11 @@ void pas_scavenger_clear_all_caches_except_remote_tlcs(void)
 {
     pas_thread_local_cache* cache;
     
-    pas_scavenger_clear_all_non_tlc_caches();
-
     cache = pas_thread_local_cache_try_get();
     if (cache)
         pas_thread_local_cache_shrink(cache, pas_lock_is_not_held);
+
+    pas_scavenger_clear_all_non_tlc_caches();
 }
 
 void pas_scavenger_clear_all_caches(void)
@@ -441,13 +458,15 @@ void pas_scavenger_clear_all_caches(void)
                                    pas_lock_is_not_held);
 }
 
-void pas_scavenger_decommit_free_memory(void)
+size_t pas_scavenger_decommit_free_memory(void)
 {
-    pas_page_sharing_pool_take_result result;
+    pas_page_sharing_pool_scavenge_result result;
 
     result = pas_physical_page_sharing_pool_scavenge(PAS_EPOCH_MAX);
     
-    PAS_ASSERT(result == pas_page_sharing_pool_take_none_available);
+    PAS_ASSERT(result.take_result == pas_page_sharing_pool_take_none_available);
+
+    return result.total_bytes;
 }
 
 void pas_scavenger_run_synchronously_now(void)

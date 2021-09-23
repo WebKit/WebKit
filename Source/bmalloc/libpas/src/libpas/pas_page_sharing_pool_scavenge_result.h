@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_COMPACT_SUBPAGE_MAP_ENTRY_PTR_H
-#define PAS_COMPACT_SUBPAGE_MAP_ENTRY_PTR_H
+#ifndef PAS_PAGE_SHARING_POOL_SCAVENGE_RESULT_H
+#define PAS_PAGE_SHARING_POOL_SCAVENGE_RESULT_H
 
-#include "pas_compact_ptr.h"
+#include "pas_page_sharing_pool_take_result.h"
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_subpage_map_entry;
-typedef struct pas_subpage_map_entry pas_subpage_map_entry;
+struct pas_page_sharing_pool_scavenge_result;
+typedef struct pas_page_sharing_pool_scavenge_result pas_page_sharing_pool_scavenge_result;
 
-PAS_DEFINE_COMPACT_PTR(pas_subpage_map_entry, pas_compact_subpage_map_entry_ptr);
+struct pas_page_sharing_pool_scavenge_result {
+    pas_page_sharing_pool_take_result take_result;
+    size_t total_bytes;
+};
+
+static inline pas_page_sharing_pool_scavenge_result pas_page_sharing_pool_scavenge_result_create(
+    pas_page_sharing_pool_take_result take_result,
+    size_t total_bytes)
+{
+    pas_page_sharing_pool_scavenge_result result;
+    result.take_result = take_result;
+    result.total_bytes = total_bytes;
+    return result;
+}
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_COMPACT_SUBPAGE_MAP_ENTRY_PTR_H */
+#endif /* PAS_PAGE_SHARING_POOL_SCAVENGE_RESULT_H */
 

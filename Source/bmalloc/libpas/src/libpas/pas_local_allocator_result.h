@@ -30,15 +30,13 @@
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_local_allocator;
 struct pas_local_allocator_result;
-typedef struct pas_local_allocator pas_local_allocator;
 typedef struct pas_local_allocator_result pas_local_allocator_result;
 
 /* This exists to allow jump-threading of success. */
 struct pas_local_allocator_result {
     bool did_succeed;
-    pas_local_allocator* allocator;
+    void* allocator; /* Could really be a local_allocator or a local_view_cache. */
 };
 
 static inline pas_local_allocator_result pas_local_allocator_result_create_failure(void)
@@ -49,7 +47,7 @@ static inline pas_local_allocator_result pas_local_allocator_result_create_failu
     return result;
 }
 
-static inline pas_local_allocator_result pas_local_allocator_result_create_success(pas_local_allocator* allocator)
+static inline pas_local_allocator_result pas_local_allocator_result_create_success(void* allocator)
 {
     pas_local_allocator_result result;
     result.did_succeed = true;

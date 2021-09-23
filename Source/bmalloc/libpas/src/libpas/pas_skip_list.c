@@ -74,7 +74,7 @@ void* pas_skip_list_node_allocate(size_t offset_of_skip_list_node)
     if (!random)
         height = 33;
     else
-        height = __builtin_clz(random) + 1;
+        height = (unsigned)__builtin_clz(random) + 1u;
 
     return pas_skip_list_node_allocate_with_height(offset_of_skip_list_node, height);
 }

@@ -26,6 +26,7 @@
 #ifndef PAS_THREAD_LOCAL_CACHE_H
 #define PAS_THREAD_LOCAL_CACHE_H
 
+#include "pas_allocator_index.h"
 #include "pas_allocator_scavenge_action.h"
 #include "pas_deallocator_scavenge_action.h"
 #include "pas_fast_tls.h"
@@ -55,6 +56,10 @@ struct pas_thread_local_cache {
     uintptr_t deallocation_log[PAS_DEALLOCATION_LOG_SIZE];
 
     unsigned deallocation_log_index;
+
+    /* A dirty allocation log is one that has been flushed by the thread recently. A clean one is
+       one that hasn't been touched by the thread (except maybe by appending more things to it). */
+    bool deallocation_log_dirty;
 
     size_t num_logged_bytes; /* This undercounts since when we append small objects we don't
                                 touch this. */
@@ -168,12 +173,12 @@ PAS_API pas_local_allocator_result pas_thread_local_cache_get_local_allocator_sl
     unsigned allocator_index,
     pas_lock_hold_mode heap_lock_hold_mode);
 
-static PAS_ALWAYS_INLINE pas_local_allocator*
+static PAS_ALWAYS_INLINE void*
 pas_thread_local_cache_get_local_allocator_impl(
     pas_thread_local_cache* thread_local_cache,
     uintptr_t allocator_index)
 {
-    return (pas_local_allocator*)(thread_local_cache->local_allocators + allocator_index);
+    return (void*)(thread_local_cache->local_allocators + allocator_index);
 }
 
 static PAS_ALWAYS_INLINE pas_local_allocator_result
@@ -183,6 +188,10 @@ pas_thread_local_cache_get_local_allocator(
     pas_lock_hold_mode heap_lock_hold_mode)
 {
     if (PAS_UNLIKELY(allocator_index >= thread_local_cache->allocator_index_upper_bound)) {
+        /* It could be that we just don't have an allocator index yet. */
+        if (allocator_index >= (pas_allocator_index)UINT_MAX)
+            return pas_local_allocator_result_create_failure();
+    
         return pas_thread_local_cache_get_local_allocator_slow(
             thread_local_cache, allocator_index, heap_lock_hold_mode);
     }

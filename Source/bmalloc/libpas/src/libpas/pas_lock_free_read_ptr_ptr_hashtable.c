@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,10 @@
 #include "pas_bootstrap_free_heap.h"
 #include "pas_hashtable.h"
 #include "pas_heap_lock.h"
+
+#if PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_ENABLE_COLLISION_COUNT
+uint64_t pas_lock_free_read_ptr_ptr_hashtable_collision_count;
+#endif /* PAS_LOCK_FREE_READ_PTR_PTR_HASHTABLE_ENABLE_COLLISION_COUNT */
 
 void pas_lock_free_read_ptr_ptr_hashtable_set(
     pas_lock_free_read_ptr_ptr_hashtable* hashtable,

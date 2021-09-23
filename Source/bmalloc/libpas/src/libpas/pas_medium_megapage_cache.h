@@ -26,21 +26,26 @@
 #ifndef PAS_MEDIUM_MEGAPAGE_CACHE_H
 #define PAS_MEDIUM_MEGAPAGE_CACHE_H
 
+#include "pas_heap_ref.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
 struct pas_megapage_cache;
 struct pas_page_base_config;
+struct pas_physical_memory_transaction;
 typedef struct pas_megapage_cache pas_megapage_cache;
 typedef struct pas_page_base_config pas_page_base_config;
+typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
 
 /* Allocates a small page aligned the way that the type-safe heap demands and returns the
    base on the allocation. This is guaranteed to returned zeroed memory. */
 PAS_API void* pas_medium_megapage_cache_try_allocate(
     pas_megapage_cache* cache,
     pas_page_base_config* config,
-    bool should_zero);
+    bool should_zero,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction);
 
 PAS_END_EXTERN_C;
 

@@ -26,7 +26,7 @@
 #ifndef PAS_TYPED_ALLOCATION_RESULT_H
 #define PAS_TYPED_ALLOCATION_RESULT_H
 
-#include "pas_intrinsic_allocation_result.h"
+#include "pas_allocation_result.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -71,12 +71,12 @@ pas_typed_allocation_result_create(pas_heap_type* type,
     return result;
 }
 
-static PAS_ALWAYS_INLINE pas_intrinsic_allocation_result
+static PAS_ALWAYS_INLINE pas_allocation_result
 pas_typed_allocation_result_as_intrinsic_allocation_result(
     pas_typed_allocation_result internal_result)
 {
-    pas_intrinsic_allocation_result result;
-    result.ptr = internal_result.ptr;
+    pas_allocation_result result;
+    result.begin = (uintptr_t)internal_result.ptr;
     result.did_succeed = internal_result.did_succeed;
     result.zero_mode = internal_result.zero_mode;
     return result;
@@ -84,13 +84,13 @@ pas_typed_allocation_result_as_intrinsic_allocation_result(
 
 static PAS_ALWAYS_INLINE pas_typed_allocation_result
 pas_typed_allocation_result_create_with_intrinsic_allocation_result(
-    pas_intrinsic_allocation_result intrinsic_result,
+    pas_allocation_result intrinsic_result,
     pas_heap_type* type,
     size_t size)
 {
     pas_typed_allocation_result result;
     result.type = type;
-    result.ptr = intrinsic_result.ptr;
+    result.ptr = (void*)intrinsic_result.begin;
     result.size = size;
     result.did_succeed = intrinsic_result.did_succeed;
     result.zero_mode = intrinsic_result.zero_mode;
@@ -100,7 +100,7 @@ pas_typed_allocation_result_create_with_intrinsic_allocation_result(
 static PAS_ALWAYS_INLINE pas_typed_allocation_result
 pas_typed_allocation_result_zero(pas_typed_allocation_result result)
 {
-    pas_intrinsic_allocation_result_zero(
+    pas_allocation_result_zero(
         pas_typed_allocation_result_as_intrinsic_allocation_result(result),
         result.size);
     return result;
@@ -109,7 +109,7 @@ pas_typed_allocation_result_zero(pas_typed_allocation_result result)
 static PAS_ALWAYS_INLINE pas_typed_allocation_result
 pas_typed_allocation_result_set_errno(pas_typed_allocation_result result)
 {
-    pas_intrinsic_allocation_result_set_errno(
+    pas_allocation_result_set_errno(
         pas_typed_allocation_result_as_intrinsic_allocation_result(result));
     return result;
 }
@@ -117,7 +117,7 @@ pas_typed_allocation_result_set_errno(pas_typed_allocation_result result)
 static PAS_ALWAYS_INLINE pas_typed_allocation_result
 pas_typed_allocation_result_crash_on_error(pas_typed_allocation_result result)
 {
-    pas_intrinsic_allocation_result_crash_on_error(
+    pas_allocation_result_crash_on_error(
         pas_typed_allocation_result_as_intrinsic_allocation_result(result));
     return result;
 }

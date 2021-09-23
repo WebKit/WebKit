@@ -275,21 +275,6 @@ public:
     InstallVerifier();
 };
 
-class DisableExplosion : public TestScope {
-public:
-    DisableExplosion();
-};
-
-class ForceExplosion : public TestScope {
-public:
-    ForceExplosion();
-};
-
-class ForceOneMagazine : public TestScope {
-public:
-    ForceOneMagazine();
-};
-
 class EpochIsCounter : public TestScope {
 public:
     EpochIsCounter();

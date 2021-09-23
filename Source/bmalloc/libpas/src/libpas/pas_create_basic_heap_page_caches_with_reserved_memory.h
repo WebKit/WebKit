@@ -35,6 +35,7 @@ struct pas_basic_heap_runtime_config;
 typedef struct pas_basic_heap_page_caches pas_basic_heap_page_caches;
 typedef struct pas_basic_heap_runtime_config pas_basic_heap_runtime_config;
 
+/* Warning: This creates caches that allow type confusion. Only use this for primitive heaps! */
 PAS_API pas_basic_heap_page_caches* pas_create_basic_heap_page_caches_with_reserved_memory(
     pas_basic_heap_runtime_config* template_runtime_config,
     uintptr_t begin,

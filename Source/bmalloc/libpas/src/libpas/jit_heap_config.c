@@ -34,6 +34,7 @@
 #include "bmalloc_heap_config.h"
 #include "pas_basic_heap_config_enumerator_data.h"
 #include "pas_bitfit_page_config_inlines.h"
+#include "pas_enumerable_page_malloc.h"
 #include "pas_heap_config_inlines.h"
 #include "pas_root.h"
 
@@ -72,9 +73,12 @@ static pas_allocation_result allocate_from_fresh(size_t size, pas_alignment alig
 }
 
 static pas_allocation_result page_provider(
-    size_t size, pas_alignment alignment, const char* name, void* arg)
+    size_t size, pas_alignment alignment, const char* name,
+    pas_heap* heap, pas_physical_memory_transaction* transaction, void* arg)
 {
     PAS_UNUSED_PARAM(name);
+    PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(transaction);
     PAS_ASSERT(!arg);
     return allocate_from_fresh(size, alignment);
 }
@@ -97,8 +101,10 @@ pas_heap_runtime_config jit_heap_runtime_config = {
     .is_part_of_heap = true,
     .directory_size_bound_for_partial_views = 0,
     .directory_size_bound_for_baseline_allocators = 0,
+    .directory_size_bound_for_no_view_cache = UINT_MAX,
     .max_segregated_object_size = 0,
-    .max_bitfit_object_size = UINT_MAX
+    .max_bitfit_object_size = UINT_MAX,
+    .view_cache_capacity_for_object_size = pas_heap_runtime_config_zero_view_cache_capacity
 };
 
 jit_heap_config_root_data jit_root_data = {
@@ -123,9 +129,11 @@ pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enumerator, v
     return pas_ptr_hash_map_get(&data->page_header_table, boundary).value;
 }
 
-void* jit_small_bitfit_allocate_page(pas_segregated_heap* heap)
+void* jit_small_bitfit_allocate_page(
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction)
 {
     PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(transaction);
     return (void*)allocate_from_fresh(
         JIT_SMALL_PAGE_SIZE, pas_alignment_create_traditional(JIT_SMALL_PAGE_SIZE)).begin;
 }
@@ -153,9 +161,11 @@ void jit_small_bitfit_destroy_page_header(
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
 }
 
-void* jit_medium_bitfit_allocate_page(pas_segregated_heap* heap)
+void* jit_medium_bitfit_allocate_page(
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction)
 {
     PAS_UNUSED_PARAM(heap);
+    PAS_UNUSED_PARAM(transaction);
     return (void*)allocate_from_fresh(
         JIT_MEDIUM_PAGE_SIZE, pas_alignment_create_traditional(JIT_MEDIUM_PAGE_SIZE)).begin;
 }
@@ -288,7 +298,11 @@ void jit_heap_config_add_fresh_memory(pas_range range)
 {
     pas_large_free_heap_config config;
 
+    PAS_ASSERT(pas_is_aligned(range.begin, pas_page_malloc_alignment()));
+    PAS_ASSERT(pas_is_aligned(range.end, pas_page_malloc_alignment()));
+
     pas_heap_lock_assert_held();
+    pas_enumerable_range_list_append(&pas_enumerable_page_malloc_page_list, range);
     initialize_fresh_memory_config(&config);
     pas_simple_large_free_heap_deallocate(
         &jit_fresh_memory_heap, range.begin, range.end, pas_zero_mode_is_all_zero, &config);

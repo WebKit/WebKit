@@ -88,12 +88,11 @@ static void initialize_config(pas_large_free_heap_config* config,
     config->deallocator_arg = heap;
 }
 
-pas_allocation_result
-pas_large_heap_try_allocate(pas_large_heap* heap,
-                            size_t size,
-                            size_t alignment,
-                            pas_heap_config* heap_config,
-                            pas_physical_memory_transaction* transaction)
+static pas_allocation_result allocate_impl(pas_large_heap* heap,
+                                           size_t* size,
+                                           size_t* alignment,
+                                           pas_heap_config* heap_config,
+                                           pas_physical_memory_transaction* transaction)
 {
     static const bool verbose = false;
     
@@ -101,23 +100,22 @@ pas_large_heap_try_allocate(pas_large_heap* heap,
     pas_heap_type* type;
     pas_large_free_heap_config config;
     aligned_allocator_data data;
-    pas_large_map_entry entry;
     
-    PAS_ASSERT(pas_is_power_of_2(alignment));
+    PAS_ASSERT(pas_is_power_of_2(*alignment));
     pas_heap_lock_assert_held();
     
     type = pas_heap_for_large_heap(heap)->type;
     
-    if (!size)
-        size = heap_config->get_type_size(type);
+    if (!*size)
+        *size = heap_config->get_type_size(type);
     
-    alignment = PAS_MAX(alignment, heap_config->get_type_alignment(type));
-    alignment = PAS_MAX(alignment, heap_config->large_alignment);
+    *alignment = PAS_MAX(*alignment, heap_config->get_type_alignment(type));
+    *alignment = PAS_MAX(*alignment, heap_config->large_alignment);
     
-    size = pas_round_up_to_power_of_2(size, alignment);
+    *size = pas_round_up_to_power_of_2(*size, *alignment);
     
     if (verbose) {
-        printf("Allocating large object of size %zu\n", size);
+        printf("Allocating large object of size %zu\n", *size);
         printf("Cartesian tree minimum = %p\n", pas_cartesian_tree_minimum(&heap->free_heap.tree));
         printf("Num mapped bytes = %zu\n", heap->free_heap.num_mapped_bytes);
     }
@@ -126,8 +124,8 @@ pas_large_heap_try_allocate(pas_large_heap* heap,
     
     result = pas_fast_large_free_heap_try_allocate(
         &heap->free_heap,
-        size,
-        pas_alignment_create_traditional(alignment),
+        *size,
+        pas_alignment_create_traditional(*alignment),
         &config);
     
     if (!result.did_succeed)
@@ -135,22 +133,50 @@ pas_large_heap_try_allocate(pas_large_heap* heap,
     
     if (heap_config->aligned_allocator_talks_to_sharing_pool &&
         !pas_large_sharing_pool_allocate_and_commit(
-            pas_range_create(result.begin, result.begin + size),
+            pas_range_create(result.begin, result.begin + *size),
             transaction,
             pas_physical_memory_is_locked_by_virtual_range_common_lock)) {
         pas_fast_large_free_heap_deallocate(
-            &heap->free_heap, result.begin, result.begin + size,
+            &heap->free_heap, result.begin, result.begin + *size,
             result.zero_mode, &config);
         return pas_allocation_result_create_failure();
     }
+
+    PAS_ASSERT(pas_is_aligned(result.begin, *alignment));
+    
+    return result;
+}
+
+pas_allocation_result
+pas_large_heap_try_allocate_and_forget(pas_large_heap* heap,
+                                       size_t size,
+                                       size_t alignment,
+                                       pas_heap_config* heap_config,
+                                       pas_physical_memory_transaction* transaction)
+{
+    return allocate_impl(heap, &size, &alignment, heap_config, transaction);
+}
+
+pas_allocation_result
+pas_large_heap_try_allocate(pas_large_heap* heap,
+                            size_t size,
+                            size_t alignment,
+                            pas_heap_config* heap_config,
+                            pas_physical_memory_transaction* transaction)
+{
+    pas_allocation_result result;
+    pas_large_map_entry entry;
+
+    result = allocate_impl(
+        heap, &size, &alignment, heap_config, transaction);
+    if (!result.did_succeed)
+        return result;
 
     entry.begin = result.begin;
     entry.end = result.begin + size;
     entry.heap = heap;
     pas_large_map_add(entry);
-    
-    PAS_ASSERT(pas_is_aligned(result.begin, alignment));
-    
+
     return result;
 }
 

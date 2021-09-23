@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "pas_config.h"
+#ifndef PAS_COMPACT_SEGREGATED_EXCLUSIVE_VIEW_PTR_H
+#define PAS_COMPACT_SEGREGATED_EXCLUSIVE_VIEW_PTR_H
 
-#if LIBPAS_ENABLED
+#include "pas_compact_ptr.h"
 
-#include "pas_magazine.h"
+PAS_BEGIN_EXTERN_C;
 
-#include "pas_immortal_heap.h"
+struct pas_segregated_exclusive_view;
+typedef struct pas_segregated_exclusive_view pas_segregated_exclusive_view;
 
-pas_magazine* pas_magazine_create(unsigned magazine_index)
-{
-    pas_magazine* result;
+PAS_DEFINE_COMPACT_PTR(pas_segregated_exclusive_view,
+                       pas_compact_segregated_exclusive_view_ptr);
 
-    result = pas_immortal_heap_allocate(
-        sizeof(pas_magazine),
-        "pas_magazine",
-        pas_object_allocation);
+PAS_END_EXTERN_C;
 
-    pas_lock_construct(&result->lock);
+#endif /* PAS_COMPACT_SEGREGATED_EXCLUSIVE_VIEW_PTR_H */
 
-    result->magazine_index = magazine_index;
-
-    return result;
-}
-
-#endif /* LIBPAS_ENABLED */

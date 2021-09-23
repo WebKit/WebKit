@@ -28,12 +28,18 @@
 
 #include "pas_page_sharing_mode.h"
 #include "pas_segregated_heap_lookup_kind.h"
+#include "pas_segregated_page_config_variant.h"
 #include "pas_utils.h"
 
 PAS_BEGIN_EXTERN_C;
 
 struct pas_heap_runtime_config;
+struct pas_segregated_page_config;
 typedef struct pas_heap_runtime_config pas_heap_runtime_config;
+typedef struct pas_segregated_page_config pas_segregated_page_config;
+
+typedef size_t (*pas_heap_runtime_config_view_cache_capacity_for_object_size_callback)(
+    size_t object_size, pas_segregated_page_config* page_config);
 
 struct pas_heap_runtime_config {
     pas_segregated_heap_lookup_kind lookup_kind : 8;
@@ -44,11 +50,27 @@ struct pas_heap_runtime_config {
     
     unsigned directory_size_bound_for_partial_views;
     unsigned directory_size_bound_for_baseline_allocators;
+    unsigned directory_size_bound_for_no_view_cache;
 
     /* It's OK to set these to UINT_MAX, in which case the maximum is decided by the heap_config. */
     unsigned max_segregated_object_size;
     unsigned max_bitfit_object_size;
+
+    pas_heap_runtime_config_view_cache_capacity_for_object_size_callback view_cache_capacity_for_object_size;
 };
+
+PAS_API uint8_t pas_heap_runtime_config_view_cache_capacity_for_object_size(
+    pas_heap_runtime_config* config,
+    size_t object_size,
+    pas_segregated_page_config* page_config);
+
+PAS_API size_t pas_heap_runtime_config_zero_view_cache_capacity(
+    size_t object_size,
+    pas_segregated_page_config* page_config);
+
+PAS_API size_t pas_heap_runtime_config_aggressive_view_cache_capacity(
+    size_t object_size,
+    pas_segregated_page_config* page_config);
 
 PAS_END_EXTERN_C;
 

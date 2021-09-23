@@ -30,11 +30,11 @@
 
 PAS_BEGIN_EXTERN_C;
 
-struct pas_bitfit_global_size_class;
-typedef struct pas_bitfit_global_size_class pas_bitfit_global_size_class;
+struct pas_bitfit_size_class;
+typedef struct pas_bitfit_size_class pas_bitfit_size_class;
 
-PAS_DEFINE_COMPACT_ATOMIC_PTR(pas_bitfit_global_size_class,
-                              pas_compact_atomic_bitfit_global_size_class_ptr);
+PAS_DEFINE_COMPACT_ATOMIC_PTR(pas_bitfit_size_class,
+                              pas_compact_atomic_bitfit_size_class_ptr);
 
 PAS_END_EXTERN_C;
 

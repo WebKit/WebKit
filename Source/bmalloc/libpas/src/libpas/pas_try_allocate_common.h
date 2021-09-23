@@ -28,7 +28,7 @@
 
 #include "pas_debug_heap.h"
 #include "pas_heap_inlines.h"
-#include "pas_intrinsic_allocation_result.h"
+#include "pas_allocation_result.h"
 #include "pas_local_allocator_inlines.h"
 #include "pas_primitive_heap_ref.h"
 #include "pas_segregated_heap_inlines.h"
@@ -42,26 +42,43 @@ pas_try_allocate_common_can_go_fast(pas_local_allocator_result allocator_result)
     return allocator_result.did_succeed;
 }
 
-static PAS_ALWAYS_INLINE pas_intrinsic_allocation_result
+static PAS_ALWAYS_INLINE pas_allocation_result
+pas_try_allocate_common_impl_fast_inline_only(
+    pas_heap_config config,
+    pas_allocation_result_filter result_filter,
+    pas_local_allocator* allocator)
+{
+    return pas_local_allocator_try_allocate_inline_only(allocator,
+                                                        config,
+                                                        result_filter);
+}
+
+static PAS_ALWAYS_INLINE pas_allocation_result
 pas_try_allocate_common_impl_fast(
     pas_heap_config config,
     pas_allocator_counts* allocator_counts,
-    pas_intrinsic_allocation_result (*result_filter)(pas_intrinsic_allocation_result result),
+    pas_allocation_result_filter result_filter,
     pas_local_allocator* allocator,
     pas_size_thunk size_thunk,
     void* size_thunk_arg,
     size_t alignment)
 {
-    return result_filter(pas_intrinsic_allocation_result_create(
-        pas_local_allocator_try_allocate(allocator,
-                                         size_thunk,
-                                         size_thunk_arg,
-                                         alignment,
-                                         config,
-                                         allocator_counts)));
+    static const bool verbose = false;
+    
+    pas_allocation_result result;
+    result = pas_local_allocator_try_allocate(allocator,
+                                              size_thunk,
+                                              size_thunk_arg,
+                                              alignment,
+                                              config,
+                                              allocator_counts,
+                                              result_filter);
+    if (verbose)
+        pas_log("in common - result.begin = %p\n", result.begin);
+    return result;
 }
 
-static PAS_ALWAYS_INLINE pas_intrinsic_allocation_result
+static PAS_ALWAYS_INLINE pas_allocation_result
 pas_try_allocate_common_impl_slow(
     pas_heap_ref* heap_ref,
     pas_heap_ref_kind heap_ref_kind,
@@ -79,7 +96,7 @@ pas_try_allocate_common_impl_slow(
     pas_allocation_result result;
     pas_heap* heap;
     pas_heap_type* type;
-    pas_segregated_global_size_directory* directory;
+    pas_segregated_size_directory* directory;
     unsigned* cached_index;
 
     if (verbose)
@@ -104,7 +121,7 @@ pas_try_allocate_common_impl_slow(
             result.begin = (uintptr_t)raw_result;
         }
 
-        return pas_intrinsic_allocation_result_create(result);
+        return result;
     }
 
     heap = pas_ensure_heap(heap_ref, heap_ref_kind, config.config_ptr, runtime_config);
@@ -156,7 +173,7 @@ pas_try_allocate_common_impl_slow(
         
         pas_scavenger_notify_eligibility_if_needed();
         
-        return pas_intrinsic_allocation_result_create(result);
+        return result;
     }
     
     if (verbose)
@@ -164,7 +181,7 @@ pas_try_allocate_common_impl_slow(
     
     PAS_ASSERT(directory);
     
-    baseline_allocator_result = pas_segregated_global_size_directory_select_allocator(
+    baseline_allocator_result = pas_segregated_size_directory_select_allocator(
         directory, aligned_count, count_lookup_mode, config.config_ptr, cached_index);
     
     result = pas_local_allocator_try_allocate(baseline_allocator_result.allocator,
@@ -172,16 +189,17 @@ pas_try_allocate_common_impl_slow(
                                               (void*)size,
                                               alignment,
                                               config,
-                                              allocator_counts);
+                                              allocator_counts,
+                                              pas_allocation_result_identity);
     
     pas_compiler_fence();
     if (baseline_allocator_result.lock)
         pas_lock_unlock(baseline_allocator_result.lock);
 
-    return pas_intrinsic_allocation_result_create(result);
+    return result;
 }
 
-static PAS_ALWAYS_INLINE pas_intrinsic_allocation_result
+static PAS_ALWAYS_INLINE pas_allocation_result
 pas_try_allocate_common_impl(
     pas_heap_ref* heap_ref,
     size_t aligned_count, /* Must be = round_up(count * type_size, alignment) / type_size */
@@ -189,8 +207,8 @@ pas_try_allocate_common_impl(
     size_t alignment,
     pas_heap_config config,
     pas_allocator_counts* allocator_counts,
-    pas_intrinsic_allocation_result (*result_filter)(pas_intrinsic_allocation_result result),
-    pas_intrinsic_allocation_result (*slow)(
+    pas_allocation_result (*result_filter)(pas_allocation_result result),
+    pas_allocation_result (*slow)(
         pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment),
     pas_local_allocator_result allocator_result)
 {
@@ -203,7 +221,7 @@ pas_try_allocate_common_impl(
 
     if (PAS_LIKELY(pas_try_allocate_common_can_go_fast(allocator_result))) {
         return pas_try_allocate_common_impl_fast(
-            config, allocator_counts, result_filter, allocator_result.allocator,
+            config, allocator_counts, result_filter, (pas_local_allocator*)allocator_result.allocator,
             pas_trivial_size_thunk, (void*)size, alignment);
     }
 
@@ -211,7 +229,14 @@ pas_try_allocate_common_impl(
 }
 
 #define PAS_CREATE_TRY_ALLOCATE_COMMON(name, heap_ref_kind, heap_config, runtime_config, allocator_counts, count_lookup_mode, result_filter) \
-    static PAS_UNUSED PAS_ALWAYS_INLINE pas_intrinsic_allocation_result \
+    static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
+    name ## _fast_inline_only(pas_local_allocator* allocator) \
+    { \
+        return pas_try_allocate_common_impl_fast_inline_only( \
+            (heap_config), (result_filter), allocator); \
+    } \
+    \
+    static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
     name ## _fast(pas_local_allocator* allocator, pas_size_thunk size_thunk, void* size_thunk_arg, \
                   size_t alignment) \
     { \
@@ -220,7 +245,7 @@ pas_try_allocate_common_impl(
             size_thunk, size_thunk_arg, alignment); \
     } \
     \
-    static PAS_NEVER_INLINE pas_intrinsic_allocation_result \
+    static PAS_NEVER_INLINE pas_allocation_result \
     name ## _slow(pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment) \
     { \
         return (result_filter)( \
@@ -229,7 +254,7 @@ pas_try_allocate_common_impl(
                 (allocator_counts), (count_lookup_mode))); \
     } \
     \
-    static PAS_UNUSED PAS_ALWAYS_INLINE pas_intrinsic_allocation_result \
+    static PAS_UNUSED PAS_ALWAYS_INLINE pas_allocation_result \
     name(pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment, \
          pas_local_allocator_result allocator_result) \
     { \
@@ -240,13 +265,16 @@ pas_try_allocate_common_impl(
     \
     struct pas_dummy
 
-typedef pas_intrinsic_allocation_result (*pas_try_allocate_common_fast)(
+typedef pas_allocation_result (*pas_try_allocate_common_fast_inline_only)(
+    pas_local_allocator* allocator);
+
+typedef pas_allocation_result (*pas_try_allocate_common_fast)(
     pas_local_allocator* allocator, pas_size_thunk size_thunk, void* size_thunk_arg, size_t alignment);
 
-typedef pas_intrinsic_allocation_result (*pas_try_allocate_common_slow)(
+typedef pas_allocation_result (*pas_try_allocate_common_slow)(
     pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment);
 
-typedef pas_intrinsic_allocation_result (*pas_try_allocate_common)(
+typedef pas_allocation_result (*pas_try_allocate_common)(
     pas_heap_ref* heap_ref, size_t aligned_count, size_t size, size_t alignment,
     pas_local_allocator_result allocator_result);
 
