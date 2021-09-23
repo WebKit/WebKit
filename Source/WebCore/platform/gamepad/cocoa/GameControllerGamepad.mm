@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 #import "GameControllerGamepadProvider.h"
 #import "GamepadConstants.h"
+#import <GameController/GCControllerElement.h>
 #import <GameController/GameController.h>
 
 #import "GameControllerSoftLink.h"
@@ -68,6 +69,16 @@ static GCControllerButtonInput *homeButtonFromExtendedGamepad(GCExtendedGamepad 
         return potentialButton;
 
     return nil;
+}
+
+static void disableDefaultSystemAction(GCControllerButtonInput *button)
+{
+#if PLATFORM(IOS_FAMILY)
+    if ([button respondsToSelector:@selector(preferredSystemGestureState)])
+        button.preferredSystemGestureState = GCSystemGestureStateDisabled;
+#else
+    UNUSED_PARAM(button);
+#endif
 }
 
 void GameControllerGamepad::setupAsExtendedGamepad()
@@ -113,13 +124,17 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     bindButton(m_extendedGamepad.get().dpad.left, GamepadButtonRole::LeftClusterLeft);
     bindButton(m_extendedGamepad.get().dpad.right, GamepadButtonRole::LeftClusterRight);
 
-    if (homeButton)
+    if (homeButton) {
         bindButton(homeButton, GamepadButtonRole::CenterClusterCenter);
+        disableDefaultSystemAction(homeButton);
+    }
 
     // Select, Start
 #if HAVE(GCEXTENDEDGAMEPAD_BUTTONS_OPTIONS_MENU)
     bindButton(m_extendedGamepad.get().buttonOptions, GamepadButtonRole::CenterClusterLeft);
+    disableDefaultSystemAction(m_extendedGamepad.get().buttonOptions);
     bindButton(m_extendedGamepad.get().buttonMenu, GamepadButtonRole::CenterClusterRight);
+    disableDefaultSystemAction(m_extendedGamepad.get().buttonMenu);
 #endif
 
     // L3, R3
