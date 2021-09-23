@@ -249,6 +249,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
 #endif
 
+    m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);
+
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
 

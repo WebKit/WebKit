@@ -97,6 +97,8 @@ public:
 
     void tryExitIfUnusedAndUnderMemoryPressure();
 
+    const String& applicationVisibleName() const { return m_applicationVisibleName; }
+
 private:
     void lowMemoryHandler(Critical, Synchronous);
 
@@ -204,6 +206,7 @@ private:
 #if ENABLE(VORBIS)
     bool m_vorbisEnabled { false };
 #endif
+    String m_applicationVisibleName;
 };
 
 } // namespace WebKit

@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessCreationParameters.h"
+#include "MediaPermissionUtilities.h"
 
 namespace WebKit {
 
@@ -39,6 +40,8 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     parameters.webCoreLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebCoreLogging"];
     parameters.webKitLoggingChannels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKit2Logging"];
 #endif
+
+    parameters.applicationVisibleName = applicationVisibleName();
 }
 
 }
