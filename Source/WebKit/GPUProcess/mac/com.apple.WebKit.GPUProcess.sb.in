@@ -700,17 +700,10 @@
     (ipc-posix-name-regex #"^AudioIO"))
 
 (allow mach-lookup
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
-    (with report) (with telemetry)
-#endif
     (global-name "com.apple.audio.AudioComponentRegistrar")
-    (global-name "com.apple.awdd")
 #if !ENABLE(CFPREFS_DIRECT_MODE)
     (global-name "com.apple.cfprefsd.agent")
 #endif
-    (global-name "com.apple.cookied")
-    (global-name "com.apple.iconservices")
-    (global-name "com.apple.iconservices.store")
 )
 
 (with-filter (system-attribute apple-internal)

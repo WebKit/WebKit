@@ -1,3 +1,15 @@
+2021-09-23  Per Arne Vollan  <pvollan@apple.com>
+
+        Remove access to unused services in the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=230716
+        <rdar://problem/83464232>
+
+        Reviewed by Brent Fulgham.
+
+        Telemetry is showing that some services allowed in the GPU process' sandbox are unused. These should be removed.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+
 2021-09-23  Tim Horton  <timothy_horton@apple.com>
 
         Move more linked-on-or-after checks to WebCore::linkedOnOrAfter()
