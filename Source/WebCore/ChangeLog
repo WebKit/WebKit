@@ -1,5 +1,61 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281543. rdar://problem/83460773
+
+    [Cocoa] Should video stop being live, time scrubber will not show
+    https://bugs.webkit.org/show_bug.cgi?id=229286
+    rdar://82114447
+    
+    Reviewed by Eric Carlson.
+    
+    Work around an issue with AVKit AVTouchBarPlaybackControlsProvider SPI which will
+    not properly make the time scrubber to be displayed when only the content duration
+    change.
+    We do so by toggling the canSeek property to force a relayout of the touch bar
+    content.
+    
+    While we can reproduce the issue programatically, at this stage we can only
+    visually confirm that it's been fixed as we have no infrastructure to check
+    the content of the touch bar and that the issue itself is in AVKit.
+    Test: ManualTests/video-livechange-touchbar.html
+    
+    * platform/mac/WebPlaybackControlsManager.mm:
+    (-[WebPlaybackControlsManager canSeek]): Add code as property is otherwise read-only.
+    (-[WebPlaybackControlsManager setCanSeek:]): Add code as property is otherwise read-only.
+    (-[WebPlaybackControlsManager setContentDuration:]):
+    (-[WebPlaybackControlsManager setSeekableTimeRanges:]): Explictly set canSeek propery to
+    ensure property watchers will be called.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281543 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-24  Jean-Yves Avenard  <jya@apple.com>
+
+            [Cocoa] Should video stop being live, time scrubber will not show
+            https://bugs.webkit.org/show_bug.cgi?id=229286
+            rdar://82114447
+
+            Reviewed by Eric Carlson.
+
+            Work around an issue with AVKit AVTouchBarPlaybackControlsProvider SPI which will
+            not properly make the time scrubber to be displayed when only the content duration
+            change.
+            We do so by toggling the canSeek property to force a relayout of the touch bar
+            content.
+
+            While we can reproduce the issue programatically, at this stage we can only
+            visually confirm that it's been fixed as we have no infrastructure to check
+            the content of the touch bar and that the issue itself is in AVKit.
+            Test: ManualTests/video-livechange-touchbar.html
+
+            * platform/mac/WebPlaybackControlsManager.mm:
+            (-[WebPlaybackControlsManager canSeek]): Add code as property is otherwise read-only.
+            (-[WebPlaybackControlsManager setCanSeek:]): Add code as property is otherwise read-only.
+            (-[WebPlaybackControlsManager setContentDuration:]):
+            (-[WebPlaybackControlsManager setSeekableTimeRanges:]): Explictly set canSeek propery to
+            ensure property watchers will be called.
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281533. rdar://problem/83460974
 
     MediaSession artwork URL is showing in logs.
@@ -1041,7 +1097,11 @@
             * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
             (WebCore::GraphicsContextGLOpenGL::reshapeDisplayBufferBacking):
 
+<<<<<<< THEIRS
 2021-09-22  Alan Coon  <alancoon@apple.com>
+=======
+        This is in preparation for removing content scanning completely.
+>>>>>>> OURS
 
         Cherry-pick r281431. rdar://problem/83429553
 
