@@ -412,10 +412,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         clearOverridingContentSize();
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (diff >= StyleDifference::Repaint) {
-        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-            lineLayout->updateStyle(*this);
-    }
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+        lineLayout->updateStyle(*this);
 #endif
 }
 

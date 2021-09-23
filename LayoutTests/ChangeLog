@@ -1,5 +1,49 @@
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282045. rdar://problem/83429674
+
+    REGRESSION(r275515): pointer-events:none may get stuck in LFC runs
+    https://bugs.webkit.org/show_bug.cgi?id=229854
+    rdar://81165275
+    
+    Reviewed by Alan Bujtas.
+    
+    Source/WebCore:
+    
+    We only update run style with diff >= StyleDifference::Repaint but pointer-events changes don't require repaint.
+    
+    Test: fast/events/pointer-events-mutation.html
+    
+    * rendering/RenderBlockFlow.cpp:
+    (WebCore::RenderBlockFlow::styleDidChange):
+    * rendering/RenderBox.cpp:
+    (WebCore::RenderBox::styleDidChange):
+    * rendering/RenderInline.cpp:
+    (WebCore::RenderInline::styleDidChange):
+    
+    Fix by pushing the new style to LFC unconditionally. This has no meaningful cost.
+    
+    LayoutTests:
+    
+    * fast/events/pointer-events-mutation-expected.txt: Added.
+    * fast/events/pointer-events-mutation.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282045 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-04  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION(r275515): pointer-events:none may get stuck in LFC runs
+            https://bugs.webkit.org/show_bug.cgi?id=229854
+            rdar://81165275
+
+            Reviewed by Alan Bujtas.
+
+            * fast/events/pointer-events-mutation-expected.txt: Added.
+            * fast/events/pointer-events-mutation.html: Added.
+
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r281920. rdar://problem/83429601
 
     Braille display is blank in contenteditable elements when the field is followed by another element.
