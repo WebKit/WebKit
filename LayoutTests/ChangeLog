@@ -1,3 +1,13 @@
+2021-09-23  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS macOS Debug ] media/video-ended-seek-crash.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=230708
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-09-23  Eric Hutchison  <ehutchison@apple.com>
 
         LayoutTest memory/memory-pressure-simulation.html is a flaky failure.

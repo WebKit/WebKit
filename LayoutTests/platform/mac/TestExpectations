@@ -764,6 +764,8 @@ webkit.org/b/116651 media/context-menu-actions.html [ Skip ]
 
 webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
 
+webkit.org/b/230708 [ Debug ] media/video-ended-seek-crash.html [ Pass Timeout ]
+
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
