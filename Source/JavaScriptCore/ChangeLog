@@ -1,3 +1,29 @@
+2021-09-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Handle syntactic production for `#x in expr` correctly
+        https://bugs.webkit.org/show_bug.cgi?id=230668
+
+        Reviewed by Yusuke Suzuki.
+
+        The production for `#x in expr` is easy to get wrong.
+
+            RelationalExpression[In, Yield, Await] :
+                ShiftExpression[?Yield, ?Await]
+                RelationalExpression[?In, ?Yield, ?Await] < ShiftExpression[?Yield, ?Await]
+                RelationalExpression[?In, ?Yield, ?Await] > ShiftExpression[?Yield, ?Await]
+                RelationalExpression[?In, ?Yield, ?Await] <= ShiftExpression[?Yield, ?Await]
+                RelationalExpression[?In, ?Yield, ?Await] >= ShiftExpression[?Yield, ?Await]
+                RelationalExpression[?In, ?Yield, ?Await] instanceof ShiftExpression[?Yield, ?Await]
+                [+In] RelationalExpression[+In, ?Yield, ?Await] in ShiftExpression[?Yield, ?Await]
+                [+In] PrivateIdentifier in ShiftExpression[?Yield, ?Await]
+
+        We were ensuring that a standalone private name `#x` is always followed by operator `in`;
+        this patch further ensures that that particular `in` can't have its LHS misparsed as a RelationalExpression.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseBinaryExpression):
+        Verify the precedence of the topmost operator on the stack (if any) when parsing standalone `#x`.
+
 2021-09-22  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Null pointer dereference in JSC::GetByStatus

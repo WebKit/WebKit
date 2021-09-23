@@ -1595,9 +1595,6 @@ test/language/expressions/generators/scope-body-lex-distinct.js:
   default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/in/private-field-in-nested.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
   default: "Test262Error: getter for 'prototype' called"
   strict mode: "Test262Error: getter for 'prototype' called"

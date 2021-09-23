@@ -4238,6 +4238,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
     bool hasLogicalOperator = false;
     bool hasCoalesceOperator = false;
 
+    int previousOperator = 0;
     while (true) {
         JSTextPosition exprStart = tokenStartPosition();
         int initialAssignments = m_parserState.assignmentCount;
@@ -4250,7 +4251,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
             currentScope()->usePrivateName(*ident);
             m_seenPrivateNameUseInNonReparsingFunctionMode = true;
             next();
-            semanticFailIfTrue(m_token.m_type != INTOKEN, "Bare private name can only be used as the left-hand side of an `in` expression");
+            semanticFailIfTrue(m_token.m_type != INTOKEN || previousOperator >= INTOKEN, "Bare private name can only be used as the left-hand side of an `in` expression");
             current = context.createPrivateIdentifierNode(location, *ident);
         } else
             current = parseUnaryExpression(context);
@@ -4307,6 +4308,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
             context.operatorStackPop(operatorStackDepth);
         }
         context.operatorStackAppend(operatorStackDepth, operatorToken, precedence);
+        previousOperator = operatorToken;
     }
     while (operatorStackDepth) {
         ASSERT(operandStackDepth > 1);
