@@ -180,6 +180,9 @@ WK_COCOA_TOUCH_appletvos = cocoatouch;
 WK_COCOA_TOUCH_appletvsimulator = cocoatouch;
 WK_IS_COCOA_TOUCH = $(WK_NOT_$(WK_EMPTY_$(WK_COCOA_TOUCH)));
 
+WK_WEBKITADDITIONS_INSTALL_PATH = /usr/local/include/WebKitAdditions
+WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH = $(SDKROOT)/$(WK_WEBKITADDITIONS_INSTALL_PATH)
+
 // Disable LTO for JavaScriptCore, due to <rdar://problem/24543547>. Add back the following line and delete the one that says "LLVM_LTO = NO" when that issue is resolved.
 // LLVM_LTO = $(WK_LLVM_LTO_$(WK_XCODE_SUPPORTS_LTO));
 LLVM_LTO = NO;
