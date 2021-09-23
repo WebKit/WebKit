@@ -58,6 +58,7 @@ public:
 
     enum class ShouldShutDownProcess { No, Yes };
     void removeProcess(WebProcessProxy&, ShouldShutDownProcess);
+    static void setCachedProcessSuspensionDelayForTesting(Seconds);
 
 private:
     static Seconds cachedProcessLifetime;
@@ -71,6 +72,7 @@ private:
 
         Ref<WebProcessProxy> takeProcess();
         WebProcessProxy& process() { ASSERT(m_process); return *m_process; }
+        void startSuspensionTimer();
 
 #if PLATFORM(MAC)
         bool isSuspended() const { return !m_suspensionTimer.isActive(); }
