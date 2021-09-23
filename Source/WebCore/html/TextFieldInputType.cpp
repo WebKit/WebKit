@@ -133,17 +133,16 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
     // TextFieldInputType dispatches events different way from InputType.
     InputType::setValue(sanitizedValue, valueChanged, DispatchNoEvent);
 
-    if (valueChanged)
-        updateInnerTextValue();
+    if (!valueChanged)
+        return;
+
+    updateInnerTextValue();
 
     unsigned max = visibleValue().length();
     if (input->focused())
         input->setSelectionRange(max, max);
     else
         input->cacheSelectionInResponseToSetValue(max);
-
-    if (!valueChanged)
-        return;
 
     switch (eventBehavior) {
     case DispatchChangeEvent:

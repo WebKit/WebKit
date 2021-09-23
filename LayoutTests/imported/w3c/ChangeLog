@@ -1,3 +1,22 @@
+2021-09-22  Joonghun Park  <jh718.park@samsung.com>
+
+        Fix the behavior that setting text field input's value content attribute to the same value moves caret to the end of the input.
+        https://bugs.webkit.org/show_bug.cgi?id=191255
+
+        Reviewed by Simon Fraser.
+
+        This patch changes the behavior specified above to make WebKit's behavior interoperable
+        according to the spec below at
+        https://html.spec.whatwg.org/multipage/form-elements.html#dom-textarea-value.
+
+        '4. If the new API value is different from oldAPIValue,
+        then move the text entry cursor position to the end of the text control,
+        unselecting any selected text and resetting the selection direction to "none".'
+
+        * web-platform-tests/html/semantics/forms/textfieldselection/defaultSelection-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-value-interactions-expected.txt:
+
 2021-09-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Parsing support for font-palette
