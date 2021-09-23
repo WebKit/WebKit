@@ -335,13 +335,13 @@ variants = ARGV.shift.split(/[,\s]+/)
 
 $options = {}
 OptionParser.new do |opts|
-    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--assembler=<ASM>] [--use-deployment-location]"
+    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--assembler=<ASM>] [--webkit-additions-path=<path>]"
     # This option is currently only used to specify the masm assembler
     opts.on("--assembler=[ASM]", "Specify an assembler to use.") do |assembler|
         $options[:assembler] = assembler
     end
-    opts.on("--use-deployment-location", "Flag to use deployment location.") do |flag|
-        $options[:use_deployment_location] = flag
+    opts.on("--webkit-additions-path=PATH", "WebKitAdditions path.") do |path|
+        $options[:webkit_additions_path] = path
     end
 end.parse!
 

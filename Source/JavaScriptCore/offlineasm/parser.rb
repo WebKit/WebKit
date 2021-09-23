@@ -84,14 +84,14 @@ class IncludeFile
         directory = nil
         @@includeDirs.each {
             | includePath |
-            fileName = includePath + (moduleName + ".asm")
+            fileName = File.join(includePath, moduleName + ".asm")
             directory = includePath unless not File.file?(fileName)
         }
         if not directory
             directory = defaultDir
         end
 
-        @fileName = directory + (moduleName + ".asm")
+        @fileName = File.join(directory, moduleName + ".asm")
     end
 
     def self.processIncludeOptions()
@@ -831,8 +831,8 @@ class Parser
                 parseError unless isIdentifier(@tokens[@idx])
                 moduleName = @tokens[@idx].string
                 @idx += 1
-                if @options[:use_deployment_location]
-                    additionsDirectoryName = "/usr/local/include/WebKitAdditions/"
+                if @options[:webkit_additions_path]
+                    additionsDirectoryName = @options[:webkit_additions_path]
                 else
                     additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
                 end
@@ -867,8 +867,8 @@ class Parser
                 parseError unless isIdentifier(@tokens[@idx])
                 moduleName = @tokens[@idx].string
                 @idx += 1
-                if @options[:use_deployment_location]
-                    additionsDirectoryName = "/usr/local/include/WebKitAdditions/"
+                if @options[:webkit_additions_path]
+                    additionsDirectoryName = @options[:webkit_additions_path]
                 else
                     additionsDirectoryName = "#{@buildProductsDirectory}/usr/local/include/WebKitAdditions/"
                 end

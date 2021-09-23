@@ -1,3 +1,59 @@
+2021-09-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282009. rdar://problem/83430109
+
+    [JSC] Fix WebKitAdditions directory traversal in offlineasm part 2
+    https://bugs.webkit.org/show_bug.cgi?id=229853
+    
+    Reviewed by Mark Lam.
+    
+    When DEPLOYMENT_LOCATION is YES, WEBKITADDITIONS_HEADERS_FOLDER_PATH is /usr/local/include/WebKitAdditions.
+    However, since Xcode implicitly changes it to ${SDKROOT}/usr/local/include/WebKitAdditions, we need to
+    pass the path with ${SDKROOT} if this path is used by non-Xcode.
+    
+    In this patch, we replace --use-deployment-location with --webkit-additions-path=path and passing WebKitAdditions
+    path directly from Xcode. We define WK_WEBKITADDITIONS_INSTALL_PATH and WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH in
+    JavaScriptCore/Configurations/Base.xcconfig to populate this variable and pass WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH
+    to the scripts.
+    
+    We also fix offlineasm's path concatenation. It was using +, but this does not work if directory doesn't end with '/'.
+    We should use File.join when concatenating file paths.
+    
+    * Configurations/Base.xcconfig:
+    * JavaScriptCore.xcodeproj/project.pbxproj:
+    * offlineasm/asm.rb:
+    * offlineasm/generate_offset_extractor.rb:
+    * offlineasm/generate_settings_extractor.rb:
+    * offlineasm/parser.rb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282009 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Fix WebKitAdditions directory traversal in offlineasm part 2
+            https://bugs.webkit.org/show_bug.cgi?id=229853
+
+            Reviewed by Mark Lam.
+
+            When DEPLOYMENT_LOCATION is YES, WEBKITADDITIONS_HEADERS_FOLDER_PATH is /usr/local/include/WebKitAdditions.
+            However, since Xcode implicitly changes it to ${SDKROOT}/usr/local/include/WebKitAdditions, we need to
+            pass the path with ${SDKROOT} if this path is used by non-Xcode.
+
+            In this patch, we replace --use-deployment-location with --webkit-additions-path=path and passing WebKitAdditions
+            path directly from Xcode. We define WK_WEBKITADDITIONS_INSTALL_PATH and WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH in
+            JavaScriptCore/Configurations/Base.xcconfig to populate this variable and pass WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH
+            to the scripts.
+
+            We also fix offlineasm's path concatenation. It was using +, but this does not work if directory doesn't end with '/'.
+            We should use File.join when concatenating file paths.
+
+            * Configurations/Base.xcconfig:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * offlineasm/asm.rb:
+            * offlineasm/generate_offset_extractor.rb:
+            * offlineasm/generate_settings_extractor.rb:
+            * offlineasm/parser.rb:
+
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r281972. rdar://problem/83429723
