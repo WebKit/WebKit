@@ -388,6 +388,10 @@ inline int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
     return d - step;
 }
 
+WTF_EXPORT_PRIVATE bool setTimeZoneForAutomation(const String& timeZone);
+WTF_EXPORT_PRIVATE String timeZoneForAutomation();
+WTF_EXPORT_PRIVATE String timeZoneDisplayNameForAutomation();
+
 // Returns combined offset in millisecond (UTC + DST).
 WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = UTCTime);
 

@@ -224,7 +224,7 @@ bool screenSupportsExtendedColor(Widget*)
 }
 
 #if ENABLE(TOUCH_EVENTS)
-bool screenHasTouchDevice()
+bool platformScreenHasTouchDevice()
 {
     auto* display = gdk_display_get_default();
     if (!display)
@@ -234,7 +234,7 @@ bool screenHasTouchDevice()
     return seat ? gdk_seat_get_capabilities(seat) & GDK_SEAT_CAPABILITY_TOUCH : true;
 }
 
-bool screenIsTouchPrimaryInputDevice()
+bool platformScreenIsTouchPrimaryInputDevice()
 {
     auto* display = gdk_display_get_default();
     if (!display)

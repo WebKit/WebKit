@@ -94,6 +94,7 @@ private:
         void runJavaScriptAlert(WebPageProxy&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void()>&& completionHandler) final;
         void runJavaScriptConfirm(WebPageProxy&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void(bool)>&& completionHandler) final;
         void runJavaScriptPrompt(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy*, FrameInfoData&&, Function<void(const WTF::String&)>&&) final;
+        void handleJavaScriptDialog(WebKit::WebPageProxy&, bool accept, const WTF::String&) final;
         void presentStorageAccessConfirmDialog(const WTF::String& requestingDomain, const WTF::String& currentDomain, CompletionHandler<void(bool)>&&);
         void requestStorageAccessConfirm(WebPageProxy&, WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&&) final;
         void decidePolicyForGeolocationPermissionRequest(WebPageProxy&, WebFrameProxy&, const FrameInfoData&, Function<void(bool)>&) final;
@@ -187,6 +188,7 @@ private:
         bool webViewRunJavaScriptAlertPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler : 1;
+        bool webViewHandleJavaScriptDialogValue : 1;
         bool webViewRequestStorageAccessPanelUnderFirstPartyCompletionHandler : 1;
         bool webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestGeolocationPermissionForFrameDecisionHandler : 1;

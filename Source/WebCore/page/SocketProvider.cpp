@@ -33,7 +33,7 @@ namespace WebCore {
     
 Ref<SocketStreamHandle> SocketProvider::createSocketStreamHandle(const URL& url, SocketStreamHandleClient& client, WebSocketIdentifier, PAL::SessionID sessionID, const String& credentialPartition, const StorageSessionProvider* provider)
 {
-    return SocketStreamHandleImpl::create(url, client, sessionID, credentialPartition, { }, provider);
+    return SocketStreamHandleImpl::create(url, false, client, sessionID, credentialPartition, { }, provider);
 }
 
 RefPtr<ThreadableWebSocketChannel> SocketProvider::createWebSocketChannel(Document&, WebSocketChannelClient&)

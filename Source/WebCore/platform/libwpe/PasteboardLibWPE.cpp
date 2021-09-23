@@ -32,6 +32,10 @@
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
 
+#if ENABLE(DRAG_SUPPORT)
+#include "DragData.h"
+#endif
+
 namespace WebCore {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
@@ -73,6 +77,16 @@ String Pasteboard::readOrigin()
 
 String Pasteboard::readString(const String& type)
 {
+    if (m_selectionData) {
+        if (type == "text/plain")
+            return m_selectionData->text();;
+        if (type == "text/html")
+            return m_selectionData->markup();
+        if (type == "Files" || type == "text/uri-list")
+            return m_selectionData->uriList();
+        return { };
+    }
+
     return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type, name(), context());
 }
 
@@ -84,6 +98,15 @@ String Pasteboard::readStringInCustomData(const String&)
 
 void Pasteboard::writeString(const String& type, const String& text)
 {
+   if (m_selectionData) {
+        if (type == "Files" || type == "text/uri-list")
+            m_selectionData->setURIList(text);
+        else if (type == "text/html")
+            m_selectionData->setMarkup(text);
+        else if (type == "text/plain")
+            m_selectionData->setText(text);
+        return;
+    }
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(type, text);
 }
 
@@ -111,7 +134,12 @@ void Pasteboard::read(PasteboardFileReader&, std::optional<size_t>)
 
 void Pasteboard::write(const PasteboardURL& url)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard("text/plain;charset=utf-8", url.url.string());
+    if (m_selectionData) {
+        m_selectionData->clearAll();
+        m_selectionData->setURL(url.url, url.title);
+    } else {
+        platformStrategies()->pasteboardStrategy()->writeToPasteboard("text/plain;charset=utf-8", url.url.string());
+    }
 }
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
@@ -119,13 +147,28 @@ void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL&)
     notImplemented();
 }
 
-void Pasteboard::write(const PasteboardImage&)
+void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
+    if (m_selectionData) {
+        m_selectionData->clearAll();
+        if (!pasteboardImage.url.url.isEmpty()) {
+            m_selectionData->setURL(pasteboardImage.url.url, pasteboardImage.url.title);
+            m_selectionData->setMarkup(pasteboardImage.url.markup);
+        }
+        m_selectionData->setImage(pasteboardImage.image.get());
+    }
 }
 
 void Pasteboard::write(const PasteboardWebContent& content)
 {
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(content);
+    if (m_selectionData) {
+        m_selectionData->clearAll();
+        m_selectionData->setText(content.text);
+        m_selectionData->setMarkup(content.markup);
+        m_selectionData->setCanSmartReplace(content.canSmartCopyOrDelete);
+    } else {
+        platformStrategies()->pasteboardStrategy()->writeToPasteboard(content);
+    }
 }
 
 Pasteboard::FileContentState Pasteboard::fileContentState()
@@ -155,6 +198,35 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>&)
 void Pasteboard::write(const Color&)
 {
 }
+
+#if ENABLE(DRAG_SUPPORT)
+
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionData&& selectionData)
+    : m_context(WTFMove(context))
+    , m_selectionData(WTFMove(selectionData))
+{
+}
+
+Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, SelectionData& selectionData)
+    : m_context(WTFMove(context))
+    , m_selectionData(selectionData)
+{
+}
+
+std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
+{
+    return makeUnique<Pasteboard>(WTFMove(context), SelectionData());
+}
+
+std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
+{
+    RELEASE_ASSERT(dragData.platformData());
+    return makeUnique<Pasteboard>(dragData.createPasteboardContext(), *dragData.platformData());
+}
+void Pasteboard::setDragImage(DragImage, const IntPoint&)
+{
+}
+#endif
 
 } // namespace WebCore
 

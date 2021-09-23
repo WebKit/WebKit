@@ -96,8 +96,11 @@ void ProcessLauncher::launchProcess()
 
     STARTUPINFO startupInfo { };
     startupInfo.cb = sizeof(startupInfo);
-    startupInfo.dwFlags = STARTF_USESHOWWINDOW;
+    startupInfo.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
     startupInfo.wShowWindow = SW_HIDE;
+    startupInfo.hStdInput = ::GetStdHandle(STD_INPUT_HANDLE);
+    startupInfo.hStdOutput = ::GetStdHandle(STD_OUTPUT_HANDLE);
+    startupInfo.hStdError = ::GetStdHandle(STD_ERROR_HANDLE);
     PROCESS_INFORMATION processInformation { };
     BOOL result = ::CreateProcess(0, commandLine.data(), 0, 0, true, 0, 0, 0, &startupInfo, &processInformation);
 

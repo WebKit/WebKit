@@ -292,7 +292,8 @@ private:
             return true;
         if (textRenderingMode == TextRenderingMode::OptimizeSpeed)
             return false;
-#if PLATFORM(COCOA) || USE(FREETYPE)
+        // WIN: quick fix for https://bugs.webkit.org/show_bug.cgi?id=201213
+#if PLATFORM(COCOA) || USE(FREETYPE) || PLATFORM(WIN)
         return true;
 #else
         return false;

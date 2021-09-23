@@ -1134,7 +1134,21 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
     }
 
     clear();
+    if (m_dataObject) {
+        const auto& customData = data.first();
+        customData.forEachPlatformString([&](auto& type, auto& string) {
+            writeString(type, string);
+        });
 
+        if (customData.hasSameOriginCustomData() || !customData.origin().isEmpty()) {
+            customData.forEachCustomString([&](auto& type, auto& string) {
+                writeString(type, string);
+            });
+        }
+        return;
+    }
+
+    // this is the real real clipboard. Prbaobly need to be doing drag data stuff.
     if (::OpenClipboard(m_owner)) {
         const auto& customData = data.first();
         customData.forEachPlatformStringOrBuffer([](auto& type, auto& stringOrBuffer) {
@@ -1171,6 +1185,27 @@ void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
 
 void Pasteboard::write(const Color&)
 {
+}
+
+DragDataMap Pasteboard::createDragDataMap() {
+    DragDataMap dragDataMap;
+    auto dragObject = dataObject();
+    if (!dragObject)
+        return dragDataMap;
+    // Enumerate clipboard content and load it in the map.
+    COMPtr<IEnumFORMATETC> itr;
+
+    if (FAILED(dragObject->EnumFormatEtc(DATADIR_GET, &itr)) || !itr)
+        return dragDataMap;
+
+    FORMATETC dataFormat;
+    while (itr->Next(1, &dataFormat, 0) == S_OK) {
+        Vector<String> dataStrings;
+        getClipboardData(dragObject.get(), &dataFormat, dataStrings);
+        if (!dataStrings.isEmpty())
+            dragDataMap.set(dataFormat.cfFormat, dataStrings);
+    }
+    return dragDataMap;
 }
 
 } // namespace WebCore

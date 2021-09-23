@@ -56,7 +56,12 @@ static gboolean enableITP;
 static gboolean enableSandbox;
 static gboolean exitAfterLoad;
 static gboolean webProcessCrashed;
+static gboolean inspectorPipe;
+static gboolean headless;
+static gboolean noStartupWindow;
+static const char *userDataDir;
 static gboolean printVersion;
+static GtkApplication *browserApplication = NULL;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -150,6 +155,10 @@ static const GOptionEntry commandLineOptions[] =
     { "enable-sandbox", 0, 0, G_OPTION_ARG_NONE, &enableSandbox, "Enable web process sandbox support", NULL },
     { "exit-after-load", 0, 0, G_OPTION_ARG_NONE, &exitAfterLoad, "Quit the browser after the load finishes", NULL },
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WebKitGTK version", NULL },
+    { "inspector-pipe", 0, 0, G_OPTION_ARG_NONE, &inspectorPipe, "Open pipe connection to the remote inspector", NULL },
+    { "user-data-dir", 0, 0, G_OPTION_ARG_STRING, &userDataDir, "Default profile persistence folder location", NULL },
+    { "headless", 0, 0, G_OPTION_ARG_NONE, &headless, "Noop headless operation", NULL },
+    { "no-startup-window", 0, 0, G_OPTION_ARG_NONE, &noStartupWindow, "Do not open default page", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };
@@ -618,6 +627,48 @@ static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResul
     g_main_loop_quit(data->mainLoop);
 }
 
+static WebKitWebContext *persistentWebContext = NULL;
+
+static WebKitWebView *createNewPage(WebKitBrowserInspector *browser_inspector, WebKitWebContext *context)
+{
+    if (context == NULL)
+        context = persistentWebContext;
+
+    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-context", context,
+        "is-ephemeral", webkit_web_context_is_ephemeral(context),
+        "is-controlled-by-automation", TRUE,
+        NULL));
+    GtkWidget *newWindow = browser_window_new(NULL, context);
+    gtk_window_set_application(GTK_WINDOW(newWindow), browserApplication);
+    browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
+    gtk_widget_grab_focus(GTK_WIDGET(newWebView));
+    gtk_widget_show(GTK_WIDGET(newWindow));
+    webkit_web_view_load_uri(newWebView, "about:blank");
+    return newWebView;
+}
+
+static void quitBroserApplication(WebKitBrowserInspector* browser_inspector)
+{
+    g_application_release(G_APPLICATION(browserApplication));
+}
+
+static void keepApplicationAliveUntilQuit(GApplication *application)
+{
+    // Reference the application, it will be released in quitBroserApplication.
+    g_application_hold(application);
+    WebKitBrowserInspector* browserInspector = webkit_browser_inspector_get_default();
+    g_signal_connect(browserInspector, "quit-application", G_CALLBACK(quitBroserApplication), NULL);
+}
+
+static void configureBrowserInspectorPipe()
+{
+    WebKitBrowserInspector* browserInspector = webkit_browser_inspector_get_default();
+    g_signal_connect(browserInspector, "create-new-page", G_CALLBACK(createNewPage), NULL);
+ 
+    webkit_browser_inspector_initialize_pipe(proxy, ignoreHosts);
+}
+
 static void startup(GApplication *application)
 {
     const char *actionAccels[] = {
@@ -648,10 +699,22 @@ static void startup(GApplication *application)
 
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
+    if (inspectorPipe)
+        configureBrowserInspectorPipe();
+
+    if (noStartupWindow) {
+        keepApplicationAliveUntilQuit(application);
+        g_clear_object(&webkitSettings);
+        return;
+    }
+
     WebKitWebsiteDataManager *manager;
-    if (privateMode || automationMode)
+    if (userDataDir) {
+        manager = webkit_website_data_manager_new("base-data-directory", userDataDir, "base-cache-directory", userDataDir, NULL);
+        cookiesFile = g_build_filename(userDataDir, "cookies.txt", NULL);
+    } else if (inspectorPipe || privateMode || automationMode) {
         manager = webkit_website_data_manager_new_ephemeral();
-    else {
+    } else {
         char *dataDirectory = g_build_filename(g_get_user_data_dir(), "webkitgtk-" WEBKITGTK_API_VERSION_STRING, "MiniBrowser", NULL);
         char *cacheDirectory = g_build_filename(g_get_user_cache_dir(), "webkitgtk-" WEBKITGTK_API_VERSION_STRING, "MiniBrowser", NULL);
         manager = webkit_website_data_manager_new("base-data-directory", dataDirectory, "base-cache-directory", cacheDirectory, NULL);
@@ -675,6 +738,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         "use-system-appearance-for-scrollbars", FALSE,
 #endif
         NULL);
+    persistentWebContext = webContext;
     g_object_unref(manager);
 
     if (enableSandbox)
@@ -756,9 +820,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
                 if (exitAfterLoad)
                     exitAfterWebViewLoadFinishes(webView, application);
             }
-            gchar *url = argumentToURL(uriArguments[i]);
-            webkit_web_view_load_uri(webView, url);
-            g_free(url);
+            webkit_web_view_load_uri(webView, uriArguments[i]);
         }
     } else {
         WebKitWebView *webView = createBrowserTab(mainWindow, webkitSettings, userContentManager, defaultWebsitePolicies);
@@ -834,9 +896,11 @@ int main(int argc, char *argv[])
     }
 
     GtkApplication *application = gtk_application_new("org.webkitgtk.MiniBrowser", G_APPLICATION_NON_UNIQUE);
+    browserApplication = application;
     g_signal_connect(application, "startup", G_CALLBACK(startup), NULL);
     g_signal_connect(application, "activate", G_CALLBACK(activate), webkitSettings);
     g_application_run(G_APPLICATION(application), 0, NULL);
+    browserApplication = NULL;
     g_object_unref(application);
 
     return exitAfterLoad && webProcessCrashed ? 1 : 0;

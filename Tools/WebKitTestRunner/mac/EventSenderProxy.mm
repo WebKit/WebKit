@@ -977,4 +977,51 @@ void EventSenderProxy::scaleGestureEnd(double scale)
 
 #endif // ENABLE(MAC_GESTURE_EVENTS)
 
+#if ENABLE(TOUCH_EVENTS)
+void EventSenderProxy::addTouchPoint(int, int)
+{
+}
+
+void EventSenderProxy::updateTouchPoint(int, int, int)
+{
+}
+
+void EventSenderProxy::touchStart()
+{
+}
+
+void EventSenderProxy::touchMove()
+{
+}
+
+void EventSenderProxy::touchEnd()
+{
+}
+
+void EventSenderProxy::touchCancel()
+{
+}
+
+void EventSenderProxy::clearTouchPoints()
+{
+}
+
+void EventSenderProxy::releaseTouchPoint(int)
+{
+}
+
+void EventSenderProxy::cancelTouchPoint(int)
+{
+}
+
+void EventSenderProxy::setTouchPointRadius(int, int)
+{
+}
+
+void EventSenderProxy::setTouchModifier(WKEventModifiers, bool)
+{
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
+
 } // namespace WTR

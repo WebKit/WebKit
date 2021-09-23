@@ -90,6 +90,9 @@ public:
 
 #if ENABLE(DRAG_SUPPORT)
     static Ref<DataTransfer> createForDrag(const Document&);
+#if PLATFORM(MAC)
+    static Ref<DataTransfer> createForDrag(const Document&, const String& pasteboardName);
+#endif
     static Ref<DataTransfer> createForDragStartEvent(const Document&);
     static Ref<DataTransfer> createForDrop(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     static Ref<DataTransfer> createForUpdatingDropTarget(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);

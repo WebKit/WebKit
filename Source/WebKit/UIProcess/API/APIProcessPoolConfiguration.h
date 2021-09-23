@@ -102,6 +102,11 @@ public:
     const Vector<WTF::String>& overrideLanguages() const { return m_overrideLanguages; }
     void setOverrideLanguages(Vector<WTF::String>&& languages) { m_overrideLanguages = WTFMove(languages); }
     
+#if PLATFORM(MAC)
+    bool forceOverlayScrollbars() const { return m_forceOverlayScrollbars; }
+    void setForceOverlayScrollbars(bool forceOverlayScrollbars) { m_forceOverlayScrollbars = forceOverlayScrollbars; }
+#endif
+
     bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
     void setAlwaysRunsAtBackgroundPriority(bool alwaysRunsAtBackgroundPriority) { m_alwaysRunsAtBackgroundPriority = alwaysRunsAtBackgroundPriority; }
 
@@ -170,6 +175,9 @@ private:
     bool m_attrStyleEnabled { false };
     bool m_shouldThrowExceptionForGlobalConstantRedeclaration { true };
     Vector<WTF::String> m_overrideLanguages;
+#if PLATFORM(MAC)
+    bool m_forceOverlayScrollbars { false };
+#endif
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_shouldTakeUIBackgroundAssertion { true };
     bool m_shouldCaptureDisplayInUIProcess { DEFAULT_CAPTURE_DISPLAY_IN_UI_PROCESS };

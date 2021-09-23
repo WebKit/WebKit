@@ -44,6 +44,8 @@ editing/libwpe/EditorLibWPE.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
 
+page/wpe/DragControllerWPE.cpp
+
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 
@@ -86,8 +88,12 @@ platform/text/LocaleICU.cpp
 
 platform/unix/LoggingUnix.cpp
 
+platform/wpe/DragDataWPE.cpp
+platform/wpe/DragImageWPE.cpp
 platform/wpe/PlatformScreenWPE.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
 
 rendering/RenderThemeAdwaita.cpp
+
+platform/wpe/SelectionData.cpp

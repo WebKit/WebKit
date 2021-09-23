@@ -32,19 +32,25 @@
 #include "config.h"
 #include "InspectorPageAgent.h"
 
+#include "AXObjectCache.h"
+#include "BackForwardController.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "CustomHeaderFields.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "InspectorClient.h"
@@ -55,19 +61,28 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "PageRuntimeAgent.h"
 #include "RenderObject.h"
 #include "RenderTheme.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleScope.h"
 #include "TextEncoding.h"
+#include "TypingCommand.h"
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/DateMath.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
@@ -80,10 +95,14 @@
 #include "LegacyWebArchive.h"
 #endif
 
-
 namespace WebCore {
 
 using namespace Inspector;
+
+static HashMap<String, Ref<DOMWrapperWorld>>& createdUserWorlds() {
+    static NeverDestroyed<HashMap<String, Ref<DOMWrapperWorld>>> nameToWorld;
+    return nameToWorld;
+}
 
 static bool decodeBuffer(const uint8_t* buffer, unsigned size, const String& textEncodingName, String* result)
 {
@@ -234,6 +253,8 @@ Protocol::Page::ResourceType InspectorPageAgent::resourceTypeJSON(InspectorPageA
         return Protocol::Page::ResourceType::Beacon;
     case WebSocketResource:
         return Protocol::Page::ResourceType::WebSocket;
+    case EventSource:
+        return Protocol::Page::ResourceType::EventSource;
     case OtherResource:
         return Protocol::Page::ResourceType::Other;
 #if ENABLE(APPLICATION_MANIFEST)
@@ -321,6 +342,7 @@ InspectorPageAgent::InspectorPageAgent(PageAgentContext& context, InspectorClien
     , m_frontendDispatcher(makeUnique<Inspector::PageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::PageBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
+    , m_injectedScriptManager(context.injectedScriptManager)
     , m_client(client)
     , m_overlay(overlay)
 {
@@ -352,12 +374,20 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
     defaultAppearanceDidChange(m_inspectedPage.defaultUseDarkAppearance());
 #endif
 
+    if (!createdUserWorlds().isEmpty()) {
+        Vector<DOMWrapperWorld*> worlds;
+        for (const auto& world : createdUserWorlds().values())
+            worlds.append(world.ptr());
+        ensureUserWorldsExistInAllFrames(worlds);
+    }
     return { };
 }
 
 Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 {
     m_instrumentingAgents.setEnabledPageAgent(nullptr);
+    m_interceptFileChooserDialog = false;
+    m_bypassCSP = false;
 
     setShowPaintRects(false);
 #if !PLATFORM(IOS_FAMILY)
@@ -406,6 +436,22 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::reload(std::optional<bool>&& i
     return { };
 }
 
+Protocol::ErrorStringOr<void> InspectorPageAgent::goBack()
+{
+    if (!m_inspectedPage.backForward().goBack())
+        return makeUnexpected("Failed to go back"_s);
+
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::goForward()
+{
+    if (!m_inspectedPage.backForward().goForward())
+        return makeUnexpected("Failed to go forward"_s);
+
+    return { };
+}
+
 Protocol::ErrorStringOr<void> InspectorPageAgent::navigate(const String& url)
 {
     UserGestureIndicator indicator { ProcessingUserGesture };
@@ -426,6 +472,13 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserAgent(const String
     return { };
 }
 
+Protocol::ErrorStringOr<void> InspectorPageAgent::overridePlatform(const String& value)
+{
+    m_platformOverride = value;
+
+    return { };
+}
+
 Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page::Setting setting, std::optional<bool>&& value)
 {
     auto& inspectedPageSettings = m_inspectedPage.settings();
@@ -438,6 +491,12 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page
     case Protocol::Page::Setting::AuthorAndUserStylesEnabled:
         inspectedPageSettings.setAuthorAndUserStylesEnabledInspectorOverride(value);
         return { };
+
+#if ENABLE(DEVICE_ORIENTATION)
+    case Protocol::Page::Setting::DeviceOrientationEventEnabled:
+        inspectedPageSettings.setDeviceOrientationEventEnabled(value.value_or(false));
+        return { };
+#endif
 
     case Protocol::Page::Setting::ICECandidateFilteringEnabled:
         inspectedPageSettings.setICECandidateFilteringEnabledInspectorOverride(value);
@@ -464,6 +523,36 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page
         inspectedPageSettings.setNeedsSiteSpecificQuirksInspectorOverride(value);
         return { };
 
+#if ENABLE(NOTIFICATIONS)
+    case Protocol::Page::Setting::NotificationsEnabled:
+        inspectedPageSettings.setNotificationsEnabled(value.value_or(false));
+        return { };
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    case Protocol::Page::Setting::FullScreenEnabled:
+        inspectedPageSettings.setFullScreenEnabled(value.value_or(false));
+        return { };
+#endif
+
+#if ENABLE(INPUT_TYPE_MONTH)
+    case Protocol::Page::Setting::InputTypeMonthEnabled:
+        inspectedPageSettings.setInputTypeMonthEnabled(value.value_or(false));
+        return { };
+#endif
+
+#if ENABLE(INPUT_TYPE_WEEK)
+    case Protocol::Page::Setting::InputTypeWeekEnabled:
+        inspectedPageSettings.setInputTypeWeekEnabled(value.value_or(false));
+        return { };
+#endif
+
+#if ENABLE(POINTER_LOCK)
+    case Protocol::Page::Setting::PointerLockEnabled:
+        inspectedPageSettings.setPointerLockEnabled(value.value_or(false));
+        return { };
+#endif
+
     case Protocol::Page::Setting::ScriptEnabled:
         inspectedPageSettings.setScriptEnabledInspectorOverride(value);
         return { };
@@ -475,6 +564,12 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page
     case Protocol::Page::Setting::ShowRepaintCounter:
         inspectedPageSettings.setShowRepaintCounterInspectorOverride(value);
         return { };
+
+#if ENABLE(MEDIA_STREAM)
+    case Protocol::Page::Setting::SpeechRecognitionEnabled:
+        inspectedPageSettings.setSpeechRecognitionEnabled(value.value_or(false));
+        return { };
+#endif
 
     case Protocol::Page::Setting::WebRTCEncryptionEnabled:
         inspectedPageSettings.setWebRTCEncryptionEnabledInspectorOverride(value);
@@ -696,9 +791,13 @@ Protocol::ErrorStringOr<std::tuple<String, bool /* base64Encoded */>> InspectorP
     return { { content, base64Encoded } };
 }
 
-Protocol::ErrorStringOr<void> InspectorPageAgent::setBootstrapScript(const String& source)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setBootstrapScript(const String& source, const String& worldName)
 {
-    m_bootstrapScript = source;
+    String key = worldName.isNull() ? emptyString() : worldName;
+    if (source.isEmpty())
+        m_worldNameToBootstrapScript.remove(key);
+    else
+        m_worldNameToBootstrapScript.set(key, source);
 
     return { };
 }
@@ -801,15 +900,16 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setShowPaintRects(bool show)
     return { };
 }
 
-void InspectorPageAgent::domContentEventFired()
+void InspectorPageAgent::domContentEventFired(Frame& frame)
 {
-    m_isFirstLayoutAfterOnLoad = true;
-    m_frontendDispatcher->domContentEventFired(timestamp());
+    if (frame.isMainFrame())
+        m_isFirstLayoutAfterOnLoad = true;
+    m_frontendDispatcher->domContentEventFired(timestamp(), frameId(&frame));
 }
 
-void InspectorPageAgent::loadEventFired()
+void InspectorPageAgent::loadEventFired(Frame& frame)
 {
-    m_frontendDispatcher->loadEventFired(timestamp());
+    m_frontendDispatcher->loadEventFired(timestamp(), frameId(&frame));
 }
 
 void InspectorPageAgent::frameNavigated(Frame& frame)
@@ -817,13 +917,23 @@ void InspectorPageAgent::frameNavigated(Frame& frame)
     m_frontendDispatcher->frameNavigated(buildObjectForFrame(&frame));
 }
 
+String InspectorPageAgent::makeFrameID(ProcessIdentifier processID,  FrameIdentifier frameID)
+{
+    return makeString(processID.toUInt64(), ".", frameID.toUInt64());
+}
+
+static String globalIDForFrame(Frame& frame)
+{
+    return InspectorPageAgent::makeFrameID(Process::identifier(), *frame.loader().client().frameID());
+}
+
 void InspectorPageAgent::frameDetached(Frame& frame)
 {
-    auto identifier = m_frameToIdentifier.take(&frame);
-    if (identifier.isNull())
+    String identifier = globalIDForFrame(frame);
+    if (!m_identifierToFrame.take(identifier))
         return;
+
     m_frontendDispatcher->frameDetached(identifier);
-    m_identifierToFrame.remove(identifier);
 }
 
 Frame* InspectorPageAgent::frameForId(const Protocol::Network::FrameId& frameId)
@@ -835,20 +945,18 @@ String InspectorPageAgent::frameId(Frame* frame)
 {
     if (!frame)
         return emptyString();
-    return m_frameToIdentifier.ensure(frame, [this, frame] {
-        auto identifier = IdentifiersFactory::createIdentifier();
-        m_identifierToFrame.set(identifier, makeWeakPtr(frame));
-        return identifier;
-    }).iterator->value;
+
+    String identifier = globalIDForFrame(*frame);
+    m_identifierToFrame.set(identifier, makeWeakPtr(frame));
+    return identifier;
 }
 
 String InspectorPageAgent::loaderId(DocumentLoader* loader)
 {
     if (!loader)
         return emptyString();
-    return m_loaderToIdentifier.ensure(loader, [] {
-        return IdentifiersFactory::createIdentifier();
-    }).iterator->value;
+
+    return String::number(loader->loaderIDForInspector());
 }
 
 Frame* InspectorPageAgent::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
@@ -857,11 +965,6 @@ Frame* InspectorPageAgent::assertFrame(Protocol::ErrorString& errorString, const
     if (!frame)
         errorString = "Missing frame for given frameId"_s;
     return frame;
-}
-
-void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
-{
-    m_loaderToIdentifier.remove(&loader);
 }
 
 void InspectorPageAgent::frameStartedLoading(Frame& frame)
@@ -884,6 +987,12 @@ void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
     m_frontendDispatcher->frameClearedScheduledNavigation(frameId(&frame));
 }
 
+void InspectorPageAgent::didNavigateWithinPage(Frame& frame)
+{
+    String url = frame.document()->url().string();
+    m_frontendDispatcher->navigatedWithinDocument(frameId(&frame), url);
+}
+
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
 void InspectorPageAgent::defaultAppearanceDidChange(bool useDarkAppearance)
 {
@@ -893,13 +1002,22 @@ void InspectorPageAgent::defaultAppearanceDidChange(bool useDarkAppearance)
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
 {
-    if (&world != &mainThreadNormalWorld())
+    if (m_worldNameToBootstrapScript.isEmpty())
         return;
 
-    if (m_bootstrapScript.isEmpty())
+    if (world.name().isEmpty() && &world != &mainThreadNormalWorld())
+       return;
+
+    String worldName = world.name();
+    // Null string cannot be used as a key.
+    if (worldName.isNull())
+        worldName = emptyString();
+
+    if (!m_worldNameToBootstrapScript.contains(worldName))
         return;
 
-    frame.script().evaluateIgnoringException(ScriptSourceCode(m_bootstrapScript, URL { URL(), "web-inspector://bootstrap.js"_s }));
+    String bootstrapScript = m_worldNameToBootstrapScript.get(worldName);
+    frame.script().evaluateInWorldIgnoringException(ScriptSourceCode(bootstrapScript, URL { URL(), "web-inspector://bootstrap.js"_s }), world);
 }
 
 void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect)
@@ -941,6 +1059,52 @@ void InspectorPageAgent::didScroll()
 void InspectorPageAgent::didRecalculateStyle()
 {
     m_overlay->update();
+}
+
+void InspectorPageAgent::runOpenPanel(HTMLInputElement* element, bool* intercept)
+{
+    if (m_interceptFileChooserDialog) {
+        *intercept = true;
+    } else {
+        return;
+    }
+    Document& document = element->document();
+    auto* frame =  document.frame();
+    if (!frame)
+        return;
+
+    auto& state = *mainWorldExecState(frame);
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(&state);
+    if (injectedScript.hasNoValue())
+        return;
+
+    auto object = injectedScript.wrapObject(InspectorDOMAgent::nodeAsScriptValue(state, element), WTF::String());
+    if (!object)
+        return;
+
+    m_frontendDispatcher->fileChooserOpened(frameId(frame), object.releaseNonNull());
+}
+
+void InspectorPageAgent::frameAttached(Frame& frame)
+{
+    Frame* parent = frame.tree().parent();
+    String parentFrameId = frameId(parent);
+    m_frontendDispatcher->frameAttached(frameId(&frame), parentFrameId);
+}
+
+bool InspectorPageAgent::shouldBypassCSP()
+{
+    return m_bypassCSP;
+}
+
+void InspectorPageAgent::willCheckNewWindowPolicy(const URL& url)
+{
+    m_frontendDispatcher->willRequestOpenWindow(url.string());
+}
+
+void InspectorPageAgent::didCheckNewWindowPolicy(bool allowed)
+{
+    m_frontendDispatcher->didRequestOpenWindow(allowed);
 }
 
 Ref<Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
@@ -1056,6 +1220,12 @@ void InspectorPageAgent::applyUserAgentOverride(String& userAgent)
         userAgent = m_userAgentOverride;
 }
 
+void InspectorPageAgent::applyPlatformOverride(String& platform)
+{
+    if (!m_platformOverride.isEmpty())
+        platform = m_platformOverride;
+}
+
 void InspectorPageAgent::applyEmulatedMedia(String& media)
 {
     if (!m_emulatedMedia.isEmpty())
@@ -1079,11 +1249,13 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Protocol::DOM::
     return snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
 }
 
-Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem coordinateSystem)
+Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem coordinateSystem, std::optional<bool>&& omitDeviceScaleFactor)
 {
     SnapshotOptions options { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
     if (coordinateSystem == Protocol::Page::CoordinateSystem::Viewport)
         options.flags.add(SnapshotFlags::InViewCoordinates);
+    if (omitDeviceScaleFactor.has_value() && *omitDeviceScaleFactor)
+        options.flags.add(SnapshotFlags::OmitDeviceScaleFactor);
 
     IntRect rectangle(x, y, width, height);
     auto snapshot = snapshotFrameRect(m_inspectedPage.mainFrame(), rectangle, WTFMove(options));
@@ -1093,6 +1265,47 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, i
 
     return snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
 }
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setForcedReducedMotion(std::optional<Protocol::Page::ReducedMotion>&& reducedMotion)
+{
+    if (!reducedMotion) {
+        m_inspectedPage.setUseReducedMotionOverride(std::nullopt);
+        return { };
+    }
+
+    switch (*reducedMotion) {
+        case Protocol::Page::ReducedMotion::Reduce:
+            m_inspectedPage.setUseReducedMotionOverride(true);
+            return { };
+        case Protocol::Page::ReducedMotion::NoPreference:
+            m_inspectedPage.setUseReducedMotionOverride(false);
+            return { };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setTimeZone(const String& timeZone)
+{
+    bool success = WTF::setTimeZoneForAutomation(timeZone);
+    if (!success)
+        return makeUnexpected("Invalid time zone " + timeZone);
+
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setTouchEmulationEnabled(bool enabled)
+{
+#if ENABLE(TOUCH_EVENTS)
+    RuntimeEnabledFeatures::sharedFeatures().setTouchEventsEnabled(enabled);
+    return { };
+#else
+    UNUSED_PARAM(enabled);
+    return makeUnexpected("Not supported"_s);
+#endif
+}
+
 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
 Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
@@ -1106,7 +1319,6 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
 }
 #endif
 
-#if !PLATFORM(COCOA)
 Protocol::ErrorStringOr<void> InspectorPageAgent::setScreenSizeOverride(std::optional<int>&& width, std::optional<int>&& height)
 {
     if (width.has_value() != height.has_value())
@@ -1121,6 +1333,604 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setScreenSizeOverride(std::opt
     m_inspectedPage.mainFrame().setOverrideScreenSize(FloatSize(width.value_or(0), height.value_or(0)));
     return { };
 }
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::insertText(const String& text)
+{
+    UserGestureIndicator indicator { ProcessingUserGesture };
+    Document* focusedDocument = m_inspectedPage.focusController().focusedOrMainFrame().document();
+    TypingCommand::insertText(*focusedDocument, text, 0);
+    return { };
+}
+
+static String roleFromObject(RefPtr<AXCoreObject> axObject)
+{
+    String computedRoleString = axObject->computedRoleString();
+    if (!computedRoleString.isEmpty())
+        return computedRoleString;
+    AccessibilityRole role = axObject->roleValue();
+    switch(role) {
+        case AccessibilityRole::Annotation:
+            return "Annotation";
+        case AccessibilityRole::Application:
+            return "Application";
+        case AccessibilityRole::ApplicationAlert:
+            return "ApplicationAlert";
+        case AccessibilityRole::ApplicationAlertDialog:
+            return "ApplicationAlertDialog";
+        case AccessibilityRole::ApplicationDialog:
+            return "ApplicationDialog";
+        case AccessibilityRole::ApplicationGroup:
+            return "ApplicationGroup";
+        case AccessibilityRole::ApplicationLog:
+            return "ApplicationLog";
+        case AccessibilityRole::ApplicationMarquee:
+            return "ApplicationMarquee";
+        case AccessibilityRole::ApplicationStatus:
+            return "ApplicationStatus";
+        case AccessibilityRole::ApplicationTextGroup:
+            return "ApplicationTextGroup";
+        case AccessibilityRole::ApplicationTimer:
+            return "ApplicationTimer";
+        case AccessibilityRole::Audio:
+            return "Audio";
+        case AccessibilityRole::Blockquote:
+            return "Blockquote";
+        case AccessibilityRole::Browser:
+            return "Browser";
+        case AccessibilityRole::BusyIndicator:
+            return "BusyIndicator";
+        case AccessibilityRole::Button:
+            return "Button";
+        case AccessibilityRole::Canvas:
+            return "Canvas";
+        case AccessibilityRole::Caption:
+            return "Caption";
+        case AccessibilityRole::Cell:
+            return "Cell";
+        case AccessibilityRole::CheckBox:
+            return "CheckBox";
+        case AccessibilityRole::ColorWell:
+            return "ColorWell";
+        case AccessibilityRole::Column:
+            return "Column";
+        case AccessibilityRole::ColumnHeader:
+            return "ColumnHeader";
+        case AccessibilityRole::ComboBox:
+            return "ComboBox";
+        case AccessibilityRole::Definition:
+            return "Definition";
+        case AccessibilityRole::Deletion:
+            return "Deletion";
+        case AccessibilityRole::DescriptionList:
+            return "DescriptionList";
+        case AccessibilityRole::DescriptionListTerm:
+            return "DescriptionListTerm";
+        case AccessibilityRole::DescriptionListDetail:
+            return "DescriptionListDetail";
+        case AccessibilityRole::Details:
+            return "Details";
+        case AccessibilityRole::Directory:
+            return "Directory";
+        case AccessibilityRole::DisclosureTriangle:
+            return "DisclosureTriangle";
+        case AccessibilityRole::Div:
+            return "Div";
+        case AccessibilityRole::Document:
+            return "Document";
+        case AccessibilityRole::DocumentArticle:
+            return "DocumentArticle";
+        case AccessibilityRole::DocumentMath:
+            return "DocumentMath";
+        case AccessibilityRole::DocumentNote:
+            return "DocumentNote";
+        case AccessibilityRole::Drawer:
+            return "Drawer";
+        case AccessibilityRole::EditableText:
+            return "EditableText";
+        case AccessibilityRole::Feed:
+            return "Feed";
+        case AccessibilityRole::Figure:
+            return "Figure";
+        case AccessibilityRole::Footer:
+            return "Footer";
+        case AccessibilityRole::Footnote:
+            return "Footnote";
+        case AccessibilityRole::Form:
+            return "Form";
+        case AccessibilityRole::GraphicsDocument:
+            return "GraphicsDocument";
+        case AccessibilityRole::GraphicsObject:
+            return "GraphicsObject";
+        case AccessibilityRole::GraphicsSymbol:
+            return "GraphicsSymbol";
+        case AccessibilityRole::Grid:
+            return "Grid";
+        case AccessibilityRole::GridCell:
+            return "GridCell";
+        case AccessibilityRole::Group:
+            return "Group";
+        case AccessibilityRole::GrowArea:
+            return "GrowArea";
+        case AccessibilityRole::Heading:
+            return "Heading";
+        case AccessibilityRole::HelpTag:
+            return "HelpTag";
+        case AccessibilityRole::HorizontalRule:
+            return "HorizontalRule";
+        case AccessibilityRole::Ignored:
+            return "Ignored";
+        case AccessibilityRole::Inline:
+            return "Inline";
+        case AccessibilityRole::Image:
+            return "Image";
+        case AccessibilityRole::ImageMap:
+            return "ImageMap";
+        case AccessibilityRole::ImageMapLink:
+            return "ImageMapLink";
+        case AccessibilityRole::Incrementor:
+            return "Incrementor";
+        case AccessibilityRole::Insertion:
+            return "Insertion";
+        case AccessibilityRole::Label:
+            return "Label";
+        case AccessibilityRole::LandmarkBanner:
+            return "LandmarkBanner";
+        case AccessibilityRole::LandmarkComplementary:
+            return "LandmarkComplementary";
+        case AccessibilityRole::LandmarkContentInfo:
+            return "LandmarkContentInfo";
+        case AccessibilityRole::LandmarkDocRegion:
+            return "LandmarkDocRegion";
+        case AccessibilityRole::LandmarkMain:
+            return "LandmarkMain";
+        case AccessibilityRole::LandmarkNavigation:
+            return "LandmarkNavigation";
+        case AccessibilityRole::LandmarkRegion:
+            return "LandmarkRegion";
+        case AccessibilityRole::LandmarkSearch:
+            return "LandmarkSearch";
+        case AccessibilityRole::Legend:
+            return "Legend";
+        case AccessibilityRole::Link:
+            return "Link";
+        case AccessibilityRole::List:
+            return "List";
+        case AccessibilityRole::ListBox:
+            return "ListBox";
+        case AccessibilityRole::ListBoxOption:
+            return "ListBoxOption";
+        case AccessibilityRole::ListItem:
+            return "ListItem";
+        case AccessibilityRole::ListMarker:
+            return "ListMarker";
+        case AccessibilityRole::Mark:
+            return "Mark";
+        case AccessibilityRole::MathElement:
+            return "MathElement";
+        case AccessibilityRole::Matte:
+            return "Matte";
+        case AccessibilityRole::Menu:
+            return "Menu";
+        case AccessibilityRole::MenuBar:
+            return "MenuBar";
+        case AccessibilityRole::MenuButton:
+            return "MenuButton";
+        case AccessibilityRole::MenuItem:
+            return "MenuItem";
+        case AccessibilityRole::MenuItemCheckbox:
+            return "MenuItemCheckbox";
+        case AccessibilityRole::MenuItemRadio:
+            return "MenuItemRadio";
+        case AccessibilityRole::MenuListPopup:
+            return "MenuListPopup";
+        case AccessibilityRole::MenuListOption:
+            return "MenuListOption";
+        case AccessibilityRole::Meter:
+            return "Meter";
+        case AccessibilityRole::Outline:
+            return "Outline";
+        case AccessibilityRole::Paragraph:
+            return "Paragraph";
+        case AccessibilityRole::PopUpButton:
+            return "PopUpButton";
+        case AccessibilityRole::Pre:
+            return "Pre";
+        case AccessibilityRole::Presentational:
+            return "Presentational";
+        case AccessibilityRole::ProgressIndicator:
+            return "ProgressIndicator";
+        case AccessibilityRole::RadioButton:
+            return "RadioButton";
+        case AccessibilityRole::RadioGroup:
+            return "RadioGroup";
+        case AccessibilityRole::RowHeader:
+            return "RowHeader";
+        case AccessibilityRole::Row:
+            return "Row";
+        case AccessibilityRole::RowGroup:
+            return "RowGroup";
+        case AccessibilityRole::RubyBase:
+            return "RubyBase";
+        case AccessibilityRole::RubyBlock:
+            return "RubyBlock";
+        case AccessibilityRole::RubyInline:
+            return "RubyInline";
+        case AccessibilityRole::RubyRun:
+            return "RubyRun";
+        case AccessibilityRole::RubyText:
+            return "RubyText";
+        case AccessibilityRole::Ruler:
+            return "Ruler";
+        case AccessibilityRole::RulerMarker:
+            return "RulerMarker";
+        case AccessibilityRole::ScrollArea:
+            return "ScrollArea";
+        case AccessibilityRole::ScrollBar:
+            return "ScrollBar";
+        case AccessibilityRole::SearchField:
+            return "SearchField";
+        case AccessibilityRole::Sheet:
+            return "Sheet";
+        case AccessibilityRole::Slider:
+            return "Slider";
+        case AccessibilityRole::SliderThumb:
+            return "SliderThumb";
+        case AccessibilityRole::SpinButton:
+            return "SpinButton";
+        case AccessibilityRole::SpinButtonPart:
+            return "SpinButtonPart";
+        case AccessibilityRole::SplitGroup:
+            return "SplitGroup";
+        case AccessibilityRole::Splitter:
+            return "Splitter";
+        case AccessibilityRole::StaticText:
+            return "StaticText";
+        case AccessibilityRole::Subscript:
+            return "Subscript";
+        case AccessibilityRole::Summary:
+            return "Summary";
+        case AccessibilityRole::Superscript:
+            return "Superscript";
+        case AccessibilityRole::Switch:
+            return "Switch";
+        case AccessibilityRole::SystemWide:
+            return "SystemWide";
+        case AccessibilityRole::SVGRoot:
+            return "SVGRoot";
+        case AccessibilityRole::SVGText:
+            return "SVGText";
+        case AccessibilityRole::SVGTSpan:
+            return "SVGTSpan";
+        case AccessibilityRole::SVGTextPath:
+            return "SVGTextPath";
+        case AccessibilityRole::TabGroup:
+            return "TabGroup";
+        case AccessibilityRole::TabList:
+            return "TabList";
+        case AccessibilityRole::TabPanel:
+            return "TabPanel";
+        case AccessibilityRole::Tab:
+            return "Tab";
+        case AccessibilityRole::Table:
+            return "Table";
+        case AccessibilityRole::TableHeaderContainer:
+            return "TableHeaderContainer";
+        case AccessibilityRole::TextArea:
+            return "TextArea";
+        case AccessibilityRole::TextGroup:
+            return "TextGroup";
+        case AccessibilityRole::Term:
+            return "Term";
+        case AccessibilityRole::Time:
+            return "Time";
+        case AccessibilityRole::Tree:
+            return "Tree";
+        case AccessibilityRole::TreeGrid:
+            return "TreeGrid";
+        case AccessibilityRole::TreeItem:
+            return "TreeItem";
+        case AccessibilityRole::TextField:
+            return "TextField";
+        case AccessibilityRole::ToggleButton:
+            return "ToggleButton";
+        case AccessibilityRole::Toolbar:
+            return "Toolbar";
+        case AccessibilityRole::Unknown:
+            return "Unknown";
+        case AccessibilityRole::UserInterfaceTooltip:
+            return "UserInterfaceTooltip";
+        case AccessibilityRole::ValueIndicator:
+            return "ValueIndicator";
+        case AccessibilityRole::Video:
+            return "Video";
+        case AccessibilityRole::WebApplication:
+            return "WebApplication";
+        case AccessibilityRole::WebArea:
+            return "WebArea";
+        case AccessibilityRole::WebCoreLink:
+            return "WebCoreLink";
+        case AccessibilityRole::Window:
+            return "Window";
+    };
+    return "Unknown";
+}
+
+static Ref<Inspector::Protocol::Page::AXNode> snapshotForAXObject(RefPtr<AXCoreObject> axObject, Node* nodeToFind)
+{
+    auto axNode = Inspector::Protocol::Page::AXNode::create()
+        .setRole(roleFromObject(axObject))
+        .release();
+
+    if (!axObject->computedLabel().isEmpty())
+        axNode->setName(axObject->computedLabel());
+    if (!axObject->stringValue().isEmpty())
+        axNode->setValue(JSON::Value::create(axObject->stringValue()));
+    if (!axObject->accessibilityDescription().isEmpty())
+        axNode->setDescription(axObject->accessibilityDescription());
+    if (!axObject->keyShortcutsValue().isEmpty())
+        axNode->setKeyshortcuts(axObject->keyShortcutsValue());
+    if (!axObject->valueDescription().isEmpty())
+        axNode->setValuetext(axObject->valueDescription());
+    if (!axObject->roleDescription().isEmpty())
+        axNode->setRoledescription(axObject->roleDescription());
+    if (!axObject->isEnabled())
+        axNode->setDisabled(!axObject->isEnabled());
+    if (axObject->supportsExpanded())
+        axNode->setExpanded(axObject->isExpanded());
+    if (axObject->isFocused())
+        axNode->setFocused(axObject->isFocused());
+    if (axObject->isModalNode())
+        axNode->setModal(axObject->isModalNode());
+    bool multiline = axObject->ariaIsMultiline() || axObject->roleValue() == AccessibilityRole::TextArea;
+    if (multiline)
+        axNode->setMultiline(multiline);
+    if (axObject->isMultiSelectable())
+        axNode->setMultiselectable(axObject->isMultiSelectable());
+    if (axObject->supportsReadOnly() && !axObject->canSetValueAttribute() && axObject->isEnabled())
+        axNode->setReadonly(true);
+    if (axObject->supportsRequiredAttribute())
+        axNode->setRequired(axObject->isRequired());
+    if (axObject->isSelected())
+        axNode->setSelected(axObject->isSelected());
+    if (axObject->supportsChecked()) {
+        AccessibilityButtonState checkedState = axObject->checkboxOrRadioValue();
+        switch (checkedState) {
+            case AccessibilityButtonState::On:
+                axNode->setChecked(Inspector::Protocol::Page::AXNode::Checked::True);
+                break;
+            case AccessibilityButtonState::Off:
+                axNode->setChecked(Inspector::Protocol::Page::AXNode::Checked::False);
+                break;
+            case AccessibilityButtonState::Mixed:
+                axNode->setChecked(Inspector::Protocol::Page::AXNode::Checked::Mixed);
+                break;
+        }
+    }
+    if (axObject->supportsPressed()) {
+        AccessibilityButtonState checkedState = axObject->checkboxOrRadioValue();
+        switch (checkedState) {
+            case AccessibilityButtonState::On:
+                axNode->setPressed(Inspector::Protocol::Page::AXNode::Pressed::True);
+                break;
+            case AccessibilityButtonState::Off:
+                axNode->setPressed(Inspector::Protocol::Page::AXNode::Pressed::False);
+                break;
+            case AccessibilityButtonState::Mixed:
+                axNode->setPressed(Inspector::Protocol::Page::AXNode::Pressed::Mixed);
+                break;
+        }
+    }
+    unsigned level = axObject->hierarchicalLevel() ? axObject->hierarchicalLevel() : axObject->headingLevel();
+    if (level)
+        axNode->setLevel(level);
+    if (axObject->minValueForRange() != 0)
+        axNode->setValuemin(axObject->minValueForRange());
+    if (axObject->maxValueForRange() != 0)
+        axNode->setValuemax(axObject->maxValueForRange());
+    if (axObject->supportsAutoComplete())
+        axNode->setAutocomplete(axObject->autoCompleteValue());
+    if (axObject->hasPopup())
+        axNode->setHaspopup(axObject->popupValue());
+
+    String invalidValue = axObject->invalidStatus();
+    if (invalidValue != "false") {
+        if (invalidValue == "grammar")
+            axNode->setInvalid(Inspector::Protocol::Page::AXNode::Invalid::Grammar);
+        else if (invalidValue == "spelling")
+            axNode->setInvalid(Inspector::Protocol::Page::AXNode::Invalid::Spelling);
+        else // Future versions of ARIA may allow additional truthy values. Ex. format, order, or size.
+            axNode->setInvalid(Inspector::Protocol::Page::AXNode::Invalid::True);
+    }
+    switch (axObject->orientation()) {
+        case AccessibilityOrientation::Undefined:
+            break;
+        case AccessibilityOrientation::Vertical:
+            axNode->setOrientation("vertical"_s);
+            break;
+        case AccessibilityOrientation::Horizontal:
+            axNode->setOrientation("horizontal"_s);
+            break;
+    }
+
+    if (axObject->isKeyboardFocusable())
+        axNode->setFocusable(axObject->isKeyboardFocusable());
+
+    if (nodeToFind && axObject->node() == nodeToFind)
+        axNode->setFound(true);
+
+    if (axObject->hasChildren()) {
+        Ref<JSON::ArrayOf<Inspector::Protocol::Page::AXNode>> children = JSON::ArrayOf<Inspector::Protocol::Page::AXNode>::create();
+        for (auto& childObject : axObject->children())
+            children->addItem(snapshotForAXObject(childObject, nodeToFind));
+        axNode->setChildren(WTFMove(children));
+    }
+    return axNode;
+}
+
+
+Protocol::ErrorStringOr<Ref<Protocol::Page::AXNode>> InspectorPageAgent::accessibilitySnapshot(const String& objectId)
+{
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        WebCore::AXObjectCache::enableAccessibility();
+    auto document = makeRefPtr(m_inspectedPage.mainFrame().document());
+    if (!document)
+        return makeUnexpected("No document for main frame"_s);
+
+    AXObjectCache* axObjectCache = document->axObjectCache();
+    if (!axObjectCache)
+        return makeUnexpected("No AXObjectCache for main document"_s);
+
+    AXCoreObject* axObject = axObjectCache->rootObject();
+    if (!axObject)
+        return makeUnexpected("No AXObject for main document"_s);
+
+    Node* node = nullptr;
+    if (!objectId.isEmpty()) {
+        InspectorDOMAgent* domAgent = m_instrumentingAgents.persistentDOMAgent();
+        ASSERT(domAgent);
+        node = domAgent->nodeForObjectId(objectId);
+        if (!node)
+            return makeUnexpected("No Node for objectId"_s);
+    }
+
+    m_doingAccessibilitySnapshot = true;
+    Ref<Inspector::Protocol::Page::AXNode> axNode = snapshotForAXObject(makeRefPtr(axObject), node);
+    m_doingAccessibilitySnapshot = false;
+    return axNode;
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setInterceptFileChooserDialog(bool enabled)
+{
+    m_interceptFileChooserDialog = enabled;
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setDefaultBackgroundColorOverride(RefPtr<JSON::Object>&& color)
+{
+    FrameView* view = m_inspectedPage.mainFrame().view();
+    if (!view)
+        return makeUnexpected("Internal error: No frame view to set color two"_s);
+
+    if (!color) {
+        view->updateBackgroundRecursively(std::optional<Color>());
+        return { };
+    }
+
+    view->updateBackgroundRecursively(InspectorDOMAgent::parseColor(WTFMove(color)));
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::createUserWorld(const String& name)
+{
+    if (createdUserWorlds().contains(name))
+        return makeUnexpected("World with the given name already exists"_s);
+
+    Ref<DOMWrapperWorld> world = ScriptController::createWorld(name, ScriptController::WorldType::User);
+    ensureUserWorldsExistInAllFrames({world.ptr()});
+    createdUserWorlds().set(name, WTFMove(world));
+    return { };
+}
+
+void InspectorPageAgent::ensureUserWorldsExistInAllFrames(const Vector<DOMWrapperWorld*>& worlds)
+{
+    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (auto* world : worlds)
+            frame->windowProxy().jsWindowProxy(*world)->window();
+    }
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setBypassCSP(bool enabled)
+{
+    m_bypassCSP = enabled;
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::crash()
+{
+    CRASH();
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setOrientationOverride(std::optional<int>&& angle)
+{
+#if ENABLE(ORIENTATION_EVENTS)
+    m_inspectedPage.setOverrideOrientation(WTFMove(angle));
+    return { };
+#else
+    UNUSED_PARAM(angle);
+    return makeUnexpected("Orientation events are disabled in this build");
 #endif
+}
+
+static std::optional<FloatBoxExtent> parseInsets(RefPtr<JSON::Object>&& insets)
+{
+    std::optional<double> top = insets->getDouble("top");
+    std::optional<double> right = insets->getDouble("right");
+    std::optional<double> bottom = insets->getDouble("bottom");
+    std::optional<double> left = insets->getDouble("left");
+    if (top && right && bottom && left)
+        return FloatBoxExtent(static_cast<float>(*top), static_cast<float>(*right), static_cast<float>(*bottom), static_cast<float>(*left));
+    return std::optional<FloatBoxExtent>();
+}
+
+static std::optional<FloatRect> parseRect(RefPtr<JSON::Object>&& insets)
+{
+    std::optional<double> x = insets->getDouble("x");
+    std::optional<double> y = insets->getDouble("y");
+    std::optional<double> width = insets->getDouble("width");
+    std::optional<double> height = insets->getDouble("height");
+    if (x && y && width && height)
+        return FloatRect(static_cast<float>(*x), static_cast<float>(*y), static_cast<float>(*width), static_cast<float>(*height));
+    return std::optional<FloatRect>();
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::setVisibleContentRects(RefPtr<JSON::Object>&& unobscuredContentRect, RefPtr<JSON::Object>&& contentInsets, RefPtr<JSON::Object>&& obscuredInsets, RefPtr<JSON::Object>&& unobscuredInsets)
+{
+    FrameView* view = m_inspectedPage.mainFrame().view();
+    if (!view)
+        return makeUnexpected("Internal error: No frame view to set content rects for"_s);
+
+    if (unobscuredContentRect) {
+        std::optional<FloatRect> ucr = parseRect(WTFMove(unobscuredContentRect));
+        if (!ucr)
+            return makeUnexpected("Invalid unobscured content rect");
+
+        view->setUnobscuredContentSize(FloatSize(ucr->width(), ucr->height()));
+    }
+
+    if (contentInsets) {
+        std::optional<FloatBoxExtent> ci = parseInsets(WTFMove(contentInsets));
+        if (!ci)
+            return makeUnexpected("Invalid content insets");
+
+        m_inspectedPage.setContentInsets(*ci);
+    }
+
+    if (obscuredInsets) {
+        std::optional<FloatBoxExtent> oi = parseInsets(WTFMove(obscuredInsets));
+        if (!oi)
+            return makeUnexpected("Invalid obscured insets");
+
+        m_inspectedPage.setObscuredInsets(*oi);
+    }
+
+    if (unobscuredInsets) {
+        std::optional<FloatBoxExtent> ui = parseInsets(WTFMove(unobscuredInsets));
+        if (!ui)
+            return makeUnexpected("Invalid unobscured insets");
+
+        m_inspectedPage.setUnobscuredSafeAreaInsets(*ui);
+    }
+    return {};
+}
+
+Protocol::ErrorStringOr<void> InspectorPageAgent::updateScrollingState()
+{
+    auto* scrollingCoordinator = m_inspectedPage.scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return {};
+    scrollingCoordinator->commitTreeStateIfNeeded();
+    return {};
+}
 
 } // namespace WebCore

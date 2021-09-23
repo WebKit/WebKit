@@ -54,7 +54,7 @@ NativeWebMouseEvent::NativeWebMouseEvent(Type type, Button button, unsigned shor
 }
 
 NativeWebMouseEvent::NativeWebMouseEvent(const NativeWebMouseEvent& event)
-    : WebMouseEvent(event.type(), event.button(), event.buttons(), event.position(), event.globalPosition(), event.deltaX(), event.deltaY(), event.deltaZ(), event.clickCount(), event.modifiers(), event.timestamp(), 0, NoTap, event.pointerId(), event.pointerType())
+    : WebMouseEvent(event)
     , m_nativeEvent(event.nativeEvent() ? gdk_event_copy(const_cast<GdkEvent*>(event.nativeEvent())) : nullptr)
 {
 }

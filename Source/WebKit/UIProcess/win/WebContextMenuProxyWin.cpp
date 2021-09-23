@@ -112,5 +112,11 @@ WebContextMenuProxyWin::~WebContextMenuProxyWin()
         ::DestroyMenu(m_menu);
 }
 
+void WebContextMenuProxyWin::hide()
+{
+    if (m_menu)
+        ::EndMenu();
+}
+
 } // namespace WebKit
 #endif // ENABLE(CONTEXT_MENUS)

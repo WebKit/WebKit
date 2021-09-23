@@ -29,6 +29,7 @@
 #include "StorageArea.h"
 #include "StorageManager.h"
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Forward.h>
 
 namespace WebKit {
 
@@ -101,6 +102,13 @@ Vector<StorageAreaIdentifier> LocalStorageNamespace::storageAreaIdentifiers() co
     for (auto& storageArea : m_storageAreaMap.values())
         identifiers.append(storageArea->identifier());
     return identifiers;
+}
+
+void LocalStorageNamespace::forEachStorageArea(Function<void(const StorageArea&)> callback) const
+{
+    ASSERT(!RunLoop::isMain());
+    for (auto& storageArea : m_storageAreaMap.values())
+        callback(*storageArea);
 }
 
 } // namespace WebKit

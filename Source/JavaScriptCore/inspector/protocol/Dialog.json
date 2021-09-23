@@ -1,0 +1,36 @@
+{
+    "domain": "Dialog",
+    "description": "Actions and events related to alert boxes.",
+    "availability": ["web"],
+    "types": [
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables dialog domain notifications."
+        },
+        {
+            "name": "disable",
+            "description": "Disables dialog domain notifications."
+        },
+        {
+            "name": "handleJavaScriptDialog",
+            "description": "Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).",
+            "parameters": [
+                { "name": "accept", "type": "boolean", "description": "Whether to accept or dismiss the dialog."},
+                { "name": "promptText", "optional": true, "type": "string", "description": "The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog."}
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "javascriptDialogOpening",
+            "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to open.",
+            "parameters": [
+                { "name": "type", "type": "string", "description": "Dialog type."},
+                { "name": "message", "type": "string", "description": "Message that will be displayed by the dialog."},
+                { "name": "defaultPrompt", "optional": true, "type": "string", "description": "Default dialog prompt."}
+            ]
+        }
+    ]
+}

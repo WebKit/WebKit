@@ -24,6 +24,7 @@
  */
 
 #import "_WKDownload.h"
+#import "WKObject.h"
 
 #import <wtf/RetainPtr.h>
 

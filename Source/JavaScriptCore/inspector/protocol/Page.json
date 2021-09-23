@@ -21,13 +21,20 @@
                 "ShowDebugBorders",
                 "ShowRepaintCounter",
                 "WebRTCEncryptionEnabled",
-                "WebSecurityEnabled"
+                "WebSecurityEnabled",
+                "DeviceOrientationEventEnabled",
+                "SpeechRecognitionEnabled",
+                "PointerLockEnabled",
+                "NotificationsEnabled",
+                "FullScreenEnabled",
+                "InputTypeMonthEnabled",
+                "InputTypeWeekEnabled"
             ]
         },
         {
             "id": "ResourceType",
             "type": "string",
-            "enum": ["Document", "StyleSheet", "Image", "Font", "Script", "XHR", "Fetch", "Ping", "Beacon", "WebSocket", "Other"],
+            "enum": ["Document", "StyleSheet", "Image", "Font", "Script", "XHR", "Fetch", "Ping", "Beacon", "WebSocket", "EventSource", "Other"],
             "description": "Resource type as it was perceived by the rendering engine."
         },
         {
@@ -48,6 +55,12 @@
             "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
             "enum": ["Light", "Dark"],
             "description": "Page appearance name."
+        },
+        {
+            "id": "ReducedMotion",
+            "type": "string",
+            "enum": ["Reduce", "NoPreference"],
+            "description": "Page reduced-motion media query override."
         },
         {
             "id": "Frame",
@@ -112,6 +125,51 @@
                 { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
                 { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." }
             ]
+        },
+        {
+            "id": "AXNode",
+            "type": "object",
+            "description": "Accessibility Node",
+            "properties": [
+                { "name": "role", "type": "string", "description": "The role."},
+                { "name": "name", "type": "string","optional": true, "description": "A human readable name for the node."},
+                { "name": "value", "type": "any", "optional": true, "description": "The current value of the node."},
+                { "name": "description", "type": "string", "optional": true, "description": "An additional human readable description of the node."},
+                { "name": "keyshortcuts", "type": "string", "optional": true, "description": "Keyboard shortcuts associated with this node."},
+                { "name": "roledescription", "type": "string", "optional": true, "description": "A human readable alternative to the role."},
+                { "name": "valuetext", "type": "string", "optional": true, "description": "A description of the current value."},
+                { "name": "disabled", "type": "boolean", "optional": true, "description": "Whether the node is disabled."},
+                { "name": "expanded", "type": "boolean", "optional": true, "description": "Whether the node is expanded or collapsed."},
+                { "name": "focused", "type": "boolean", "optional": true, "description": "Whether the node is focused."},
+                { "name": "modal", "type": "boolean", "optional": true, "description": "Whether the node is modal."},
+                { "name": "multiline", "type": "boolean", "optional": true, "description": "Whether the node text input supports multiline."},
+                { "name": "multiselectable", "type": "boolean", "optional": true, "description": "Whether more than one child can be selected."},
+                { "name": "readonly", "type": "boolean", "optional": true, "description": "Whether the node is read only."},
+                { "name": "required", "type": "boolean", "optional": true, "description": "Whether the node is required."},
+                { "name": "selected", "type": "boolean", "optional": true, "description": "Whether the node is selected in its parent node."},
+                { "name": "checked", "type": "string", "optional": true, "enum": ["true", "false", "mixed"], "description": "Whether the checkbox is checked, or \"mixed\"."},
+                { "name": "pressed", "type": "string", "optional": true, "enum": ["true", "false", "mixed"], "description": "Whether the toggle button is checked, or \"mixed\"."},
+                { "name": "level", "type": "integer", "optional": true, "description": "The level of a heading."},
+                { "name": "valuemin", "type": "number", "optional": true, "description": "The minimum value in a node."},
+                { "name": "valuemax", "type": "number", "optional": true, "description": "The maximum value in a node."},
+                { "name": "autocomplete", "type": "string", "optional": true, "description": "What kind of autocomplete is supported by a control."},
+                { "name": "haspopup", "type": "string", "optional": true, "description": "What kind of popup is currently being shown for a node."},
+                { "name": "invalid", "type": "string", "optional": true, "enum": ["true", "false", "grammar", "spelling"], "description": "Whether and in what way this node's value is invalid."},
+                { "name": "orientation", "type": "string", "optional": true, "description": "Whether the node is oriented horizontally or vertically."},
+                { "name": "focusable", "type": "boolean", "optional": true, "description": "Whether the node is focusable."},
+                { "name": "children", "type": "array", "optional": true, "items": { "$ref": "AXNode"}, "description": "Child AXNodes of this node, if any."},
+                { "name": "found", "type": "boolean", "optional": true, "description": "True if this AXNode corresponds with the ObjectId passed into acessibilitySnapshot."}
+            ]
+        },
+        {
+            "id": "Insets",
+            "type": "object",
+            "properties": [
+                { "name": "top", "type": "number" },
+                { "name": "right", "type": "number" },
+                { "name": "bottom", "type": "number" },
+                { "name": "left", "type": "number" }
+            ]
         }
     ],
     "commands": [
@@ -132,6 +190,14 @@
             ]
         },
         {
+            "name": "goBack",
+            "description": "Goes back in the history."
+        },
+        {
+            "name": "goForward",
+            "description": "Goes forward in the history."
+        },
+        {
             "name": "navigate",
             "description": "Navigates current page to the given URL.",
             "targetTypes": ["page"],
@@ -145,6 +211,14 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "value", "type": "string", "optional": true, "description": "Value to override the user agent with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
+            ]
+        },
+        {
+            "name": "overridePlatform",
+            "description": "Override's the navigator.platform of the inspected page",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "value", "type": "string", "optional": true, "description": "Value to override the platform with. If this value is not provided, the override is removed. Overrides are removed when Web Inspector closes/disconnects." }
             ]
         },
         {
@@ -204,7 +278,8 @@
             "name": "setBootstrapScript",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future global objects as soon as they're created. Omitting `source` will stop this from happening." }
+                { "name": "source", "type": "string", "optional": true, "description": "If `source` is provided (and not empty), it will be injected into all future global objects as soon as they're created. Omitting `source` will stop this from happening." },
+                { "name": "worldName", "type": "string", "optional": true, "description": "Isolated world name to evaluate the script in. If not specified main world will be used." }
             ]
         },
         {
@@ -271,6 +346,28 @@
             ]
         },
         {
+            "name": "setForcedReducedMotion",
+            "description": "Forces the reduced-motion media query for the page.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "reducedMotion", "$ref": "ReducedMotion", "optional": true }
+            ]
+        },
+        {
+            "name": "setTimeZone",
+            "description": "Enables time zone emulation.",
+            "parameters": [
+                { "name": "timeZone", "type": "string", "optional": true }
+            ]
+        },
+        {
+            "name": "setTouchEmulationEnabled",
+            "description": "Enables touch events on platforms that lack them.",
+            "parameters": [
+                {"name": "enabled", "type": "boolean", "description": "Whether touch should be enabled."}
+            ]
+        },
+        {
             "name": "snapshotNode",
             "description": "Capture a snapshot of the specified node that does not include unrelated layers.",
             "targetTypes": ["page"],
@@ -290,7 +387,8 @@
                 { "name": "y", "type": "integer", "description": "Y coordinate" },
                 { "name": "width", "type": "integer", "description": "Rectangle width" },
                 { "name": "height", "type": "integer", "description": "Rectangle height" },
-                { "name": "coordinateSystem", "$ref": "CoordinateSystem", "description": "Indicates the coordinate system of the supplied rectangle." }
+                { "name": "coordinateSystem", "$ref": "CoordinateSystem", "description": "Indicates the coordinate system of the supplied rectangle." },
+                { "name": "omitDeviceScaleFactor", "type": "boolean", "optional": true, "description": "By default, screenshot is inflated by device scale factor to avoid blurry image. This flag disables it." }
             ],
             "returns": [
                 { "name": "dataURL", "type": "string", "description": "Base64-encoded image data (PNG)." }
@@ -308,12 +406,81 @@
         {
             "name": "setScreenSizeOverride",
             "description": "Overrides screen size exposed to DOM and used in media queries for testing with provided values.",
-            "condition": "!(defined(WTF_PLATFORM_COCOA) && WTF_PLATFORM_COCOA)",
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "width", "type": "integer", "description": "Screen width", "optional": true },
                 { "name": "height", "type": "integer", "description": "Screen height", "optional": true }
             ]
+        },
+        {
+            "name": "insertText",
+            "description": "Insert text into the current selection of the page.",
+            "parameters": [
+                { "name": "text", "type": "string", "description": "Text to insert." }
+            ]
+        },
+        {
+            "name": "accessibilitySnapshot",
+            "description": "Serializes and returns all of the accessibility nodes of the page.",
+            "parameters": [
+                { "name": "objectId", "type": "string", "optional": true, "description": "Object Id of a node to find in the accessibility tree."}
+            ],
+            "returns": [
+                { "name": "axNode", "$ref": "AXNode", "description": "The root AXNode."}
+            ]
+        },
+        {
+            "name": "setInterceptFileChooserDialog",
+            "description": "Intercepts file chooser dialog",
+            "parameters": [
+                { "name": "enabled", "type": "boolean", "description": "True to enable." }
+            ]
+        },
+        {
+            "name": "setDefaultBackgroundColorOverride",
+            "description": "Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.",
+            "parameters": [
+                { "name": "color", "$ref": "DOM.RGBAColor", "optional": true, "description": "RGBA of the default background color. If not specified, any existing override will be cleared." }
+            ]
+        },
+        {
+            "name": "createUserWorld",
+            "description": "Creates an user world for every loaded frame.",
+            "parameters": [
+                { "name": "name", "type": "string", "description": "Isolated world name, will be used as an execution context name." }
+            ]
+        },
+        {
+            "name": "setBypassCSP",
+            "description": "Enable page Content Security Policy by-passing.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean", "description": "Whether to bypass page CSP." }
+            ]
+        },
+        {
+            "name": "crash",
+            "description": "Crashes the page process"
+        },
+        {
+            "name": "setOrientationOverride",
+            "description": "Overrides window.orientation with provided value.",
+            "parameters": [
+                { "name": "angle", "type": "integer", "optional": true }
+            ]
+        },
+        {
+            "name": "setVisibleContentRects",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "unobscuredContentRect", "$ref": "DOM.Rect", "optional": true },
+                { "name": "contentInsets", "$ref": "Insets", "optional": true },
+                { "name": "obscuredInsets", "$ref": "Insets", "optional": true },
+                { "name": "unobscuredInsets", "$ref": "Insets", "optional": true }
+            ]
+        },
+        {
+            "name": "updateScrollingState",
+            "description": "Ensures that the scroll regions are up to date."
         }
     ],
     "events": [
@@ -321,14 +488,16 @@
             "name": "domContentEventFired",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "timestamp", "type": "number" }
+                { "name": "timestamp", "type": "number" },
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has fired DOMContentLoaded event." }
             ]
         },
         {
             "name": "loadEventFired",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "timestamp", "type": "number" }
+              { "name": "timestamp", "type": "number" },
+              { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has fired load event." }
             ]
         },
         {
@@ -337,6 +506,14 @@
             "parameters": [
                 { "name": "frame", "$ref": "Frame", "description": "Frame object." }
             ]
+        },
+        {
+          "name": "frameAttached",
+          "description": "Fired when frame has been attached to its parent.",
+          "parameters": [
+              { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has been detached." },
+              { "name": "parentFrameId", "$ref": "Network.FrameId", "optional": true, "description": "Parent frame id if non-root." }
+          ]
         },
         {
             "name": "frameDetached",
@@ -378,12 +555,50 @@
             ]
         },
         {
+            "name": "navigatedWithinDocument",
+            "description": "Fired when same-document navigation happens, e.g. due to history API usage or anchor navigation.",
+            "parameters": [
+                {
+                    "name": "frameId",
+                    "description": "Id of the frame.",
+                    "$ref": "Network.FrameId"
+                },
+                {
+                    "name": "url",
+                    "description": "Frame's new url.",
+                    "type": "string"
+                }
+            ]
+        },
+        {
             "name": "defaultAppearanceDidChange",
             "description": "Fired when page's default appearance changes, even if there is a forced appearance.",
             "condition": "(defined(ENABLE_DARK_MODE_CSS) && ENABLE_DARK_MODE_CSS) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)",
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "appearance", "$ref": "Appearance", "description": "Name of the appearance that is active (not considering any forced appearance.)" }
+            ]
+        },
+        {
+          "name": "willRequestOpenWindow",
+          "description": "Fired when page tries to open a new window.",
+          "parameters": [
+              { "name": "url", "type": "string" }
+          ]
+        },
+        {
+          "name": "didRequestOpenWindow",
+          "description": "Fired after page did try to open a new window.",
+          "parameters": [
+              { "name": "opened", "type": "boolean" }
+          ]
+        },
+        {
+            "name": "fileChooserOpened",
+            "description": "Fired when the page shows file chooser for it's <input type=file>.",
+            "parameters": [
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame where file chooser is opened." },
+                { "name": "element", "$ref": "Runtime.RemoteObject", "description": "Input element." }
             ]
         }
     ]

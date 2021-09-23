@@ -35,6 +35,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/WTFString.h>
+#import <wtf/RunLoop.h>
 
 using namespace Inspector;
 

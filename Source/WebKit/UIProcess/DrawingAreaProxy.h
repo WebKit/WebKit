@@ -75,6 +75,7 @@ public:
 
     const WebCore::IntSize& size() const { return m_size; }
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
+    void waitForSizeUpdate(Function<void ()>&&);
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     // The timeout we use when waiting for a DidUpdateGeometry message.
@@ -161,6 +162,9 @@ private:
     virtual void update(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
     virtual void didUpdateBackingStoreState(uint64_t /* backingStoreStateID */, const UpdateInfo&, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
+#endif
+#if PLATFORM(WIN)
+    virtual void didChangeAcceleratedCompositingMode(bool) { }
 #endif
     bool m_startedReceivingMessages { false };
 };

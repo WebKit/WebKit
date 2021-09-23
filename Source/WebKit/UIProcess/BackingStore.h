@@ -60,6 +60,7 @@ public:
 
 #if USE(CAIRO)
     typedef cairo_t* PlatformGraphicsContext;
+    cairo_surface_t* surface() const;
 #elif USE(DIRECT2D)
     struct DXConnections {
         ID3D11DeviceContext1* immediateContext { nullptr };

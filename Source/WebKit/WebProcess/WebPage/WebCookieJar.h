@@ -52,6 +52,8 @@ public:
     void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);
     void allCookiesDeleted();
 
+    void setCookieFromResponse(WebCore::ResourceLoader&, const String& setCookieValue);
+
 private:
     WebCookieJar();
 

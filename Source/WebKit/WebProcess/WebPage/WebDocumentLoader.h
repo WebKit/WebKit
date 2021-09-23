@@ -43,7 +43,10 @@ public:
 private:
     WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
 
+    uint64_t loaderIDForInspector() override { return navigationID(); }
+
     void detachFromFrame() override;
+    void replacedByFragmentNavigation(WebCore::Frame&) override;
 
     uint64_t m_navigationID;
 };

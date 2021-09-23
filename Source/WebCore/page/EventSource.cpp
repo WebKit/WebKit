@@ -36,6 +36,7 @@
 #include "CachedResourceRequestInitiators.h"
 #include "ContentSecurityPolicy.h"
 #include "EventNames.h"
+#include "InspectorNetworkAgent.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -94,6 +95,7 @@ void EventSource::connect()
     ASSERT(!m_requestInFlight);
 
     ResourceRequest request { m_url };
+    request.setInitiatorIdentifier(InspectorNetworkAgent::initiatorIdentifierForEventSource());
     request.setHTTPMethod("GET");
     request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream");
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");

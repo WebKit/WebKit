@@ -1,0 +1,65 @@
+{
+    "domain": "Screencast",
+    "availability": ["web"],
+    "types": [
+        {
+            "id": "ScreencastId",
+            "type": "string",
+            "description": "Unique identifier of the screencast."
+        }
+    ],
+    "commands": [
+        {
+            "name": "startVideo",
+            "description": "Starts recoring video to speified file.",
+            "parameters": [
+                { "name": "file", "type": "string", "description": "Output file location." },
+                { "name": "width", "type": "integer" },
+                { "name": "height", "type": "integer" },
+                { "name": "toolbarHeight", "type": "integer" },
+                { "name": "scale", "type": "number", "optional": true }
+            ],
+            "returns": [
+                { "name": "screencastId", "$ref": "ScreencastId", "description": "Unique identifier of the screencast." }
+            ]
+        },
+        {
+            "name": "stopVideo",
+            "async": true,
+            "description": "Stops recoding video. Returns after the file has been closed."
+        },
+        {
+            "name": "startScreencast",
+            "description": "Starts screencast.",
+            "parameters": [
+                { "name": "width", "type": "integer" },
+                { "name": "height", "type": "integer" },
+                { "name": "toolbarHeight", "type": "integer" },
+                { "name": "quality", "type": "integer" }
+            ],
+            "returns": [
+                { "name": "generation", "type": "integer", "description": "Screencast session generation." }
+            ]
+        },
+        {
+            "name": "stopScreencast",
+            "description": "Stops screencast."
+        },
+        {
+            "name": "screencastFrameAck",
+            "parameters": [
+                { "name": "generation", "type": "integer", "description": "Screencast session generation" }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "screencastFrame",
+            "parameters": [
+                { "name": "data", "type": "string", "description": "Base64 data" },
+                { "name": "deviceWidth", "type": "integer" },
+                { "name": "deviceHeight", "type": "integer" }
+            ]
+        }
+    ]
+}

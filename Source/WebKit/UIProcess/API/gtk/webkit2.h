@@ -32,6 +32,7 @@
 #include <webkit2/WebKitAutomationSession.h>
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitBackForwardListItem.h>
+#include <webkit2/WebKitBrowserInspector.h>
 #include <webkit2/WebKitColorChooserRequest.h>
 #include <webkit2/WebKitContextMenu.h>
 #include <webkit2/WebKitContextMenuActions.h>

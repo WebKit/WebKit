@@ -87,6 +87,34 @@ Protocol::ErrorStringOr<void> InspectorTargetAgent::sendMessageToTarget(const St
     return { };
 }
 
+Protocol::ErrorStringOr<void> InspectorTargetAgent::activate(const String& targetId)
+{
+    InspectorTarget* target = m_targets.get(targetId);
+    if (!target)
+        return makeUnexpected("Missing target for given targetId"_s);
+
+    String errorString;
+    target->activate(errorString);
+    if (!errorString.isEmpty())
+        return makeUnexpected(errorString);
+
+    return { };
+}
+
+Protocol::ErrorStringOr<void> InspectorTargetAgent::close(const String& targetId,  std::optional<bool>&& runBeforeUnload)
+{
+    InspectorTarget* target = m_targets.get(targetId);
+    if (!target)
+        return makeUnexpected("Missing target for given targetId"_s);
+
+    String errorString;
+    target->close(errorString, runBeforeUnload && *runBeforeUnload);
+    if (!errorString.isEmpty())
+        return makeUnexpected(errorString);
+
+    return { };
+}
+
 void InspectorTargetAgent::sendMessageFromTargetToFrontend(const String& targetId, const String& message)
 {
     ASSERT_WITH_MESSAGE(m_targets.get(targetId), "Sending a message from an untracked target to the frontend.");
@@ -144,7 +172,17 @@ void InspectorTargetAgent::targetDestroyed(InspectorTarget& target)
     if (!m_isConnected)
         return;
 
-    m_frontendDispatcher->targetDestroyed(target.identifier());
+    m_frontendDispatcher->targetDestroyed(target.identifier(), false);
+}
+
+void InspectorTargetAgent::targetCrashed(InspectorTarget& target)
+{
+    m_targets.remove(target.identifier());
+
+    if (!m_isConnected)
+        return;
+
+    m_frontendDispatcher->targetDestroyed(target.identifier(), true);
 }
 
 void InspectorTargetAgent::didCommitProvisionalTarget(const String& oldTargetID, const String& committedTargetID)
@@ -157,6 +195,18 @@ void InspectorTargetAgent::didCommitProvisionalTarget(const String& oldTargetID,
         return;
 
     m_frontendDispatcher->didCommitProvisionalTarget(oldTargetID, committedTargetID);
+}
+
+void InspectorTargetAgent::ensureConnected(const String& targetID)
+{
+    if (!m_isConnected)
+        return;
+
+    auto* target = m_targets.get(targetID);
+    if (!target)
+        return;
+
+    target->connect(connectionType());
 }
 
 FrontendChannel::ConnectionType InspectorTargetAgent::connectionType() const

@@ -104,6 +104,13 @@ public:
     void adjustTransientZoom(double, WebCore::FloatPoint);
     void commitTransientZoom(double, WebCore::FloatPoint);
 #endif
+
+// Playwright begin
+#if USE(COORDINATED_GRAPHICS)
+    const SimpleViewportController& viewportController() const { return m_viewportController; }
+#endif
+// Playwright end
+
 private:
 #if USE(COORDINATED_GRAPHICS)
     void layerFlushTimerFired();

@@ -3856,6 +3856,9 @@
 		CDFD2FCC24C4DAF70048DAC3 /* reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40524C0191A00ADBD44 /* reader.h */; };
 		CDFD2FCD24C4DAF70048DAC3 /* status.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40624C0191A00ADBD44 /* status.h */; };
 		CDFD2FCE24C4DAF70048DAC3 /* webm_parser.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40824C0191A00ADBD44 /* webm_parser.h */; };
+		F3B7819924C7CC5200FCB122 /* mkvmuxerutil.cc in Sources */ = {isa = PBXBuildFile; fileRef = F3B7819624C7CC5100FCB122 /* mkvmuxerutil.cc */; };
+		F3B7819A24C7CC5200FCB122 /* mkvmuxer.cc in Sources */ = {isa = PBXBuildFile; fileRef = F3B7819724C7CC5200FCB122 /* mkvmuxer.cc */; };
+		F3B7819B24C7CC5200FCB122 /* mkvwriter.cc in Sources */ = {isa = PBXBuildFile; fileRef = F3B7819824C7CC5200FCB122 /* mkvwriter.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -8318,6 +8321,9 @@
 		CDEBB49D24C0191A00ADBD44 /* master_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = master_parser.h; sourceTree = "<group>"; };
 		CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vp9_header_parser.h; sourceTree = "<group>"; };
 		CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vp9_header_parser.cc; sourceTree = "<group>"; };
+		F3B7819624C7CC5100FCB122 /* mkvmuxerutil.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mkvmuxerutil.cc; path = mkvmuxer/mkvmuxerutil.cc; sourceTree = "<group>"; };
+		F3B7819724C7CC5200FCB122 /* mkvmuxer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mkvmuxer.cc; path = mkvmuxer/mkvmuxer.cc; sourceTree = "<group>"; };
+		F3B7819824C7CC5200FCB122 /* mkvwriter.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mkvwriter.cc; path = mkvmuxer/mkvwriter.cc; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libwebrtc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwebrtc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -15298,6 +15304,7 @@
 			isa = PBXGroup;
 			children = (
 				CDFD2F9224C4B2F90048DAC3 /* common */,
+				F3B7819524C7CC1300FCB122 /* mkvmuxer */,
 				CDEBB19224C0191800ADBD44 /* webm_parser */,
 			);
 			path = libwebm;
@@ -15430,6 +15437,16 @@
 				CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */,
 			);
 			path = common;
+			sourceTree = "<group>";
+		};
+		F3B7819524C7CC1300FCB122 /* mkvmuxer */ = {
+			isa = PBXGroup;
+			children = (
+				F3B7819724C7CC5200FCB122 /* mkvmuxer.cc */,
+				F3B7819624C7CC5100FCB122 /* mkvmuxerutil.cc */,
+				F3B7819824C7CC5200FCB122 /* mkvwriter.cc */,
+			);
+			name = mkvmuxer;
 			sourceTree = "<group>";
 		};
 		FB39D06E1200ED9200088E69 = {
@@ -17491,7 +17508,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PRIVATE_HEADERS_FOLDER_PATH=usr/local/include\n\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"NO\" ]]; then\n    PRIVATE_HEADERS_PATH=\"${TARGET_BUILD_DIR%/}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nelse\n    PRIVATE_HEADERS_PATH=\"${DSTROOT}${INSTALL_PATH_PREFIX%/}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nfi;\n\nmkdir -p \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/webrtc\" \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/third_party/abseil-cpp/absl\" \"${PRIVATE_HEADERS_PATH}\"\n";
+			shellScript = "PRIVATE_HEADERS_FOLDER_PATH=usr/local/include\n\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"NO\" ]]; then\n    PRIVATE_HEADERS_PATH=\"${TARGET_BUILD_DIR%/}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nelse\n    PRIVATE_HEADERS_PATH=\"${DSTROOT}${INSTALL_PATH_PREFIX%/}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nfi;\n\nmkdir -p \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/webrtc\" \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/third_party/abseil-cpp/absl\" \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/third_party/libyuv/include/\" \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --exclude \"src\" --exclude \"internal\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/third_party/libvpx/source/libvpx/vpx\" \"${PRIVATE_HEADERS_PATH}\"\n\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/Source/third_party/libwebm/\" \"${PRIVATE_HEADERS_PATH}\"\n";
 		};
 		5CD286461E6E154E0094FDC8 /* Check for Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -18634,6 +18651,7 @@
 				419C82F51FE20EB50040C30F /* audio_encoder_opus.cc in Sources */,
 				419C82F31FE20EB50040C30F /* audio_encoder_opus_config.cc in Sources */,
 				4140B8201E4E3383007409E6 /* audio_encoder_pcm.cc in Sources */,
+				F3B7819A24C7CC5200FCB122 /* mkvmuxer.cc in Sources */,
 				5CDD8FFE1E43CE3A00621E92 /* audio_encoder_pcm16b.cc in Sources */,
 				5CD285461E6A61D20094FDC8 /* audio_format.cc in Sources */,
 				41DDB26F212679D200296D47 /* audio_format_to_string.cc in Sources */,
@@ -19071,6 +19089,7 @@
 				417953DB216983910028266B /* metrics.cc in Sources */,
 				5CDD865E1E43B8B500621E92 /* min_max_operations.c in Sources */,
 				4189395B242A71F5007FDC41 /* min_video_bitrate_experiment.cc in Sources */,
+				F3B7819B24C7CC5200FCB122 /* mkvwriter.cc in Sources */,
 				4131C387234B957D0028A615 /* moving_average.cc in Sources */,
 				41FCBB1521B1F7AA00A5DF27 /* moving_average.cc in Sources */,
 				5CD286101E6A64C90094FDC8 /* moving_max.cc in Sources */,
@@ -19303,6 +19322,7 @@
 				4131C53B234C8B190028A615 /* rtc_event_rtp_packet_outgoing.cc in Sources */,
 				4131C552234C8B190028A615 /* rtc_event_video_receive_stream_config.cc in Sources */,
 				4131C554234C8B190028A615 /* rtc_event_video_send_stream_config.cc in Sources */,
+				F3B7819924C7CC5200FCB122 /* mkvmuxerutil.cc in Sources */,
 				4131C3CF234B98420028A615 /* rtc_stats.cc in Sources */,
 				41323A1D2665288B00B38623 /* packet_sequencer.cc in Sources */,
 				4131BF2D234B88200028A615 /* rtc_stats_collector.cc in Sources */,

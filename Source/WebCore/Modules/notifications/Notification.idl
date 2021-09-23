@@ -34,6 +34,7 @@
 [
     Conditional=NOTIFICATIONS,
     ActiveDOMObject,
+    EnabledBySetting=Notifications,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window
 ] interface Notification : EventTarget {

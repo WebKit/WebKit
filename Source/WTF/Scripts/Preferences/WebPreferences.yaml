@@ -1020,7 +1020,7 @@ InspectorStartsAttached:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      default: true
+      default: false
 
 InspectorWindowFrame:
   type: String
@@ -1748,6 +1748,17 @@ PluginsEnabled:
       default: false
     WebCore:
       default: false
+
+PointerLockEnabled:
+  type: bool
+  condition: ENABLE(POINTER_LOCK)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 PrivateClickMeasurementEnabled:
   type: bool

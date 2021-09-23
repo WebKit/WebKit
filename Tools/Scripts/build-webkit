@@ -247,7 +247,7 @@ if (isAppleCocoaWebKit()) {
     push @projects, ("Source/WebKit");
 
     if (!isEmbeddedWebKit()) {
-        push @projects, ("Tools/MiniBrowser");
+        push @projects, ("Tools/Playwright");
 
         # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
         my $webKitIndex = first { $projects[$_] eq "Source/WebKitLegacy" } 0..$#projects;

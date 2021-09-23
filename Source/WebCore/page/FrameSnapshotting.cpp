@@ -103,7 +103,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);
 
-    float scaleFactor = frame.page()->deviceScaleFactor();
+    float scaleFactor = options.flags.contains(SnapshotFlags::OmitDeviceScaleFactor) ? 1 : frame.page()->deviceScaleFactor();
 
     if (frame.page()->delegatesScaling())
         scaleFactor *= frame.page()->pageScaleFactor();
@@ -114,7 +114,12 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     auto buffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, scaleFactor, options.colorSpace, options.pixelFormat);
     if (!buffer)
         return nullptr;
+#if !PLATFORM(MAC)
+    buffer->context().scale(scaleFactor);
+#endif
     buffer->context().translate(-imageRect.x(), -imageRect.y());
+    if (coordinateSpace != FrameView::ViewCoordinates)
+      buffer->context().scale(1 / frame.page()->pageScaleFactor());
 
     if (!clipRects.isEmpty()) {
         Path clipPath;
@@ -123,7 +128,10 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
         buffer->context().clipPath(clipPath);
     }
 
-    frame.view()->paintContentsForSnapshot(buffer->context(), imageRect, shouldIncludeSelection, coordinateSpace);
+    FloatRect fr = imageRect;
+    if (coordinateSpace != FrameView::ViewCoordinates)
+      fr.scale(frame.page()->pageScaleFactor());
+    frame.view()->paintContentsForSnapshot(buffer->context(), enclosingIntRect(fr), shouldIncludeSelection, coordinateSpace);
     return buffer;
 }
 

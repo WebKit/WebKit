@@ -77,6 +77,11 @@ public:
     NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
 #endif
 
+#if PLATFORM(GTK) || USE(LIBWPE) || PLATFORM(WIN)
+    NativeWebMouseEvent(Type type, Button button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier> modifiers, WallTime timestamp)
+       : WebMouseEvent(type, button, buttons, position, globalPosition, deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp) { }
+#endif
+
 #if USE(APPKIT)
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)

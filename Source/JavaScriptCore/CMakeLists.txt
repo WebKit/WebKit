@@ -1323,22 +1323,27 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/CSS.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Canvas.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Console.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Dialog.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOM.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOMDebugger.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOMStorage.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Database.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Debugger.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Emulation.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/GenericTypes.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Heap.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/IndexedDB.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Input.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Inspector.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/LayerTree.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Memory.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Network.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Page.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Playwright.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Recording.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Runtime.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/ScriptProfiler.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Screencast.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Security.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/ServiceWorker.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Target.json

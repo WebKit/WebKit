@@ -10,7 +10,7 @@
             "properties": [
                 { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
                 { "name": "type", "type": "string", "enum": ["page", "service-worker", "worker"] },
-                { "name": "isProvisional", "type": "boolean", "optional": true, "description": "Whether this is a provisional page target." },
+                { "name": "isProvisional", "type": "boolean", "optional": true, "description": "True value indicates that this is a provisional page target i.e. Such target may be created when current page starts cross-origin navigation. Eventually each provisional target is either committed and swaps with the current target or gets destroyed, e.g. in case of load request failure." },
                 { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." }
             ]
         }
@@ -37,6 +37,21 @@
                 { "name": "targetId", "type": "string" },
                 { "name": "message", "type": "string", "description": "JSON Inspector Protocol message (command) to be dispatched on the backend." }
             ]
+        },
+        {
+            "name": "activate",
+            "description": "Reveals the target on screen.",
+            "parameters": [
+                { "name": "targetId", "type": "string" }
+            ]
+        },
+        {
+            "name": "close",
+            "description": "Closes the target.",
+            "parameters": [
+                { "name": "targetId", "type": "string" },
+                { "name": "runBeforeUnload", "type": "boolean", "optional": true }
+            ]
         }
     ],
     "events": [
@@ -49,7 +64,8 @@
         {
             "name": "targetDestroyed",
             "parameters": [
-                { "name": "targetId", "type": "string" }
+                { "name": "targetId", "type": "string" },
+                { "name": "crashed", "type": "boolean" }
             ]
         },
         {

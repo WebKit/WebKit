@@ -57,7 +57,7 @@ public:
 
     RefPtr<PointerEvent> pointerEventForMouseEvent(const MouseEvent&, PointerID, const String& pointerType);
 
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_EVENTS)
     void dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);
 #endif
 
@@ -77,7 +77,7 @@ private:
 
         RefPtr<Element> pendingTargetOverride;
         RefPtr<Element> targetOverride;
-#if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(TOUCH_EVENTS)
         RefPtr<Element> previousTarget;
 #endif
         bool hasAnyElement() const {

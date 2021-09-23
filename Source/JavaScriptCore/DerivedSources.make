@@ -275,22 +275,27 @@ INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/CSS.json \
     $(JavaScriptCore)/inspector/protocol/Canvas.json \
     $(JavaScriptCore)/inspector/protocol/Console.json \
+    $(JavaScriptCore)/inspector/protocol/Dialog.json \
     $(JavaScriptCore)/inspector/protocol/DOM.json \
     $(JavaScriptCore)/inspector/protocol/DOMDebugger.json \
     $(JavaScriptCore)/inspector/protocol/DOMStorage.json \
     $(JavaScriptCore)/inspector/protocol/Database.json \
     $(JavaScriptCore)/inspector/protocol/Debugger.json \
+    $(JavaScriptCore)/inspector/protocol/Emulation.json \
     $(JavaScriptCore)/inspector/protocol/GenericTypes.json \
     $(JavaScriptCore)/inspector/protocol/Heap.json \
     $(JavaScriptCore)/inspector/protocol/IndexedDB.json \
+    $(JavaScriptCore)/inspector/protocol/Input.json \
     $(JavaScriptCore)/inspector/protocol/Inspector.json \
     $(JavaScriptCore)/inspector/protocol/LayerTree.json \
     $(JavaScriptCore)/inspector/protocol/Memory.json \
     $(JavaScriptCore)/inspector/protocol/Network.json \
     $(JavaScriptCore)/inspector/protocol/Page.json \
+    $(JavaScriptCore)/inspector/protocol/Playwright.json \
     $(JavaScriptCore)/inspector/protocol/Recording.json \
     $(JavaScriptCore)/inspector/protocol/Runtime.json \
     $(JavaScriptCore)/inspector/protocol/ScriptProfiler.json \
+    $(JavaScriptCore)/inspector/protocol/Screencast.json \
     $(JavaScriptCore)/inspector/protocol/Security.json \
     $(JavaScriptCore)/inspector/protocol/ServiceWorker.json \
     $(JavaScriptCore)/inspector/protocol/Target.json \

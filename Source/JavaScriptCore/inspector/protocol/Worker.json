@@ -16,7 +16,7 @@
             "description": "Sent after the frontend has sent all initialization messages and can resume this worker. This command is required to allow execution in the worker.",
             "parameters": [
                 { "name": "workerId", "type": "string" }
-            ]            
+            ]
         },
         {
             "name": "sendMessageToWorker",
@@ -33,7 +33,8 @@
             "parameters": [
                 { "name": "workerId", "type": "string" },
                 { "name": "url", "type": "string" },
-                { "name": "name", "type": "string" }
+                { "name": "name", "type": "string" },
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame this worker belongs to." }
             ]
         },
         {

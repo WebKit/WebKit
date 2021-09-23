@@ -76,9 +76,14 @@
 #include <limits>
 #include <stdint.h>
 #include <time.h>
+#include <unicode/ucal.h>
 #include <wtf/Assertions.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Language.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/UTF8Conversion.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -90,6 +95,18 @@ namespace WTF {
 template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const char* string, const char (&lowercaseLetters)[length])
 {
     return equalLettersIgnoringASCIICase(string, lowercaseLetters, length - 1);
+}
+
+struct TimeZoneForAutomation {
+    UCalendar* cal;
+    String id;
+    String displayName;
+};
+
+static TimeZoneForAutomation& innerTimeZoneForAutomation()
+{
+    static NeverDestroyed<WTF::ThreadSpecific<TimeZoneForAutomation>> timeZoneForAutomation;
+    return *timeZoneForAutomation.get();
 }
 
 /* Constants */
@@ -318,6 +335,14 @@ static double calculateDSTOffset(time_t localTime, double utcOffset)
 // Returns combined offset in millisecond (UTC + DST).
 LocalTimeOffset calculateLocalTimeOffset(double ms, TimeType inputTimeType)
 {
+    TimeZoneForAutomation& tz = innerTimeZoneForAutomation();
+    if (tz.cal) {
+        UErrorCode status = U_ZERO_ERROR;
+        ucal_setMillis(tz.cal, ms, &status);
+        int32_t offset = ucal_get(tz.cal, UCAL_ZONE_OFFSET, &status);
+        int32_t dstOffset = ucal_get(tz.cal, UCAL_DST_OFFSET, &status);
+        return LocalTimeOffset(dstOffset, offset + dstOffset);
+    }
 #if HAVE(TM_GMTOFF)
     double localToUTCTimeOffset = inputTimeType == LocalTime ? calculateUTCOffset() : 0;
 #else
@@ -1014,6 +1039,67 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
     appendTwoDigitNumber(stringBuilder, absoluteUTCOffset % 60);
 
     return stringBuilder.toString();
+}
+
+bool setTimeZoneForAutomation(const String& timeZone)
+{
+    innerTimeZoneForAutomation().displayName = String();
+    if (innerTimeZoneForAutomation().cal) {
+        ucal_close(innerTimeZoneForAutomation().cal);
+        innerTimeZoneForAutomation().cal = nullptr;
+    }
+    if (timeZone.isEmpty()) {
+        innerTimeZoneForAutomation().id = String();
+        return true;
+    }
+
+    // Timezone is ascii.
+    Vector<UChar> buffer(timeZone.length());
+    UChar* bufferStart = buffer.data();
+    CString ctz = timeZone.utf8();
+    if (!Unicode::convertUTF8ToUTF16(ctz.data(), ctz.data() + ctz.length(), &bufferStart, bufferStart + timeZone.length()))
+        return false;
+
+    Vector<UChar, 32> canonicalBuffer(32);
+    UErrorCode status = U_ZERO_ERROR;
+    auto canonicalLength = ucal_getCanonicalTimeZoneID(buffer.data(), buffer.size(), canonicalBuffer.data(), canonicalBuffer.size(), nullptr, &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        status = U_ZERO_ERROR;
+        canonicalBuffer.grow(canonicalLength);
+        ucal_getCanonicalTimeZoneID(buffer.data(), buffer.size(), canonicalBuffer.data(), canonicalLength, nullptr, &status);
+    }
+    if (!U_SUCCESS(status))
+        return false;
+
+    UCalendar* cal = ucal_open(canonicalBuffer.data(), canonicalLength, nullptr, UCAL_TRADITIONAL, &status);
+    if (!U_SUCCESS(status))
+        return false;
+
+    Vector<UChar, 32> displayNameBuffer(32);
+    auto displayNameLength = ucal_getTimeZoneDisplayName(cal, UCAL_STANDARD, defaultLanguage().utf8().data(), displayNameBuffer.data(), displayNameBuffer.size(), &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        status = U_ZERO_ERROR;
+        displayNameBuffer.grow(displayNameLength);
+        ucal_getTimeZoneDisplayName(cal, UCAL_STANDARD, defaultLanguage().utf8().data(), displayNameBuffer.data(), displayNameLength, &status);
+    }
+    if (!U_SUCCESS(status))
+        return false;
+
+    TimeZoneForAutomation& tzfa = innerTimeZoneForAutomation();
+    tzfa.cal = cal;
+    tzfa.id = String(canonicalBuffer.data(), canonicalLength);
+    tzfa.displayName = String(displayNameBuffer.data(), displayNameLength);
+    return true;
+}
+
+String timeZoneForAutomation()
+{
+    return innerTimeZoneForAutomation().id;
+}
+
+String timeZoneDisplayNameForAutomation()
+{
+    return innerTimeZoneForAutomation().displayName;
 }
 
 } // namespace WTF

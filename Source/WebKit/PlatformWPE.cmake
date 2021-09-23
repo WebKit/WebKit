@@ -166,6 +166,7 @@ set(WPE_API_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitOptionMenuItem.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitPlugin.h
+    ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitPointerLockPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitPolicyDecision.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitRectangle.h
     ${WEBKIT_DIR}/UIProcess/API/wpe/WebKitResponsePolicyDecision.h
@@ -290,6 +291,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/wpe"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/geoclue"
+    "${WEBKIT_DIR}/UIProcess/glib"
     "${WEBKIT_DIR}/UIProcess/gstreamer"
     "${WEBKIT_DIR}/UIProcess/linux"
     "${WEBKIT_DIR}/UIProcess/soup"
@@ -312,7 +314,16 @@ list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
+# Playwright begin
+    "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/libyuv/include"
+# Playwright end
 )
+
+# Playwright begin
+list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+    "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/libwebm"
+)
+# Playwright end
 
 list(APPEND WebKit_LIBRARIES
     Cairo::Cairo

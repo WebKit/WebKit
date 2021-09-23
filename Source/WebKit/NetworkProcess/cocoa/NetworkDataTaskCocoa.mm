@@ -42,6 +42,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/MainThread.h>
@@ -743,6 +744,61 @@ void NetworkDataTaskCocoa::checkTAO(const WebCore::ResourceResponse& response)
 
     if (origin)
         networkLoadMetrics().failsTAOCheck = !passesTimingAllowOriginCheck(response, *origin);
+}
+
+class DummyNetworkDataTaskClient: public NetworkDataTaskClient {
+public:
+  void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final {}
+  void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final {}
+  void didReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, ResponseCompletionHandler&&) final {}
+  void didReceiveData(Ref<WebCore::SharedBuffer>&&) final {}
+  void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) final {}
+  void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final {}
+  void wasBlocked() final {}
+  void cannotShowURL() final {}
+  void wasBlockedByRestrictions() final {}
+  ~DummyNetworkDataTaskClient() {}
+};
+
+// static
+void NetworkDataTaskCocoa::setCookieFromResponse(NetworkSessionCocoa& networkSession, const NetworkLoadParameters& parameters, const URL& mainDocumentURL, const String& setCookieValue)
+{
+    const URL& url = parameters.request.url();
+    DummyNetworkDataTaskClient client;
+    RefPtr<NetworkDataTask> taskGeneric = NetworkDataTask::create(networkSession, client, parameters);
+    NetworkDataTaskCocoa* task = static_cast<NetworkDataTaskCocoa*>(taskGeneric.get());
+    // Note: we are not calling task->resume(), and miss some logic from there.
+
+    WebCore::ResourceResponse resourceResponse;
+    resourceResponse.setURL(url);
+    task->didReceiveResponse(WTFMove(resourceResponse), NegotiatedLegacyTLS::No, [](WebCore::PolicyAction policyAction) {});
+
+    if (task->m_hasBeenSetToUseStatelessCookieStorage || !task->m_sessionWrapper) {
+        task->cancel();
+        return;
+    }
+
+    NSURLSessionConfiguration* configuration = [task->m_sessionWrapper->session configuration];
+    if (!configuration.HTTPCookieStorage) {
+        task->cancel();
+        return;
+    }
+
+    NSString* cookieString = (NSString *)setCookieValue;
+    NSString* cookieKey = @"Set-Cookie";
+    NSDictionary* headers = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObject:cookieString] forKeys:[NSArray arrayWithObject:cookieKey]];
+    NSArray<NSHTTPCookie*>* cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers forURL:(NSURL *)url];
+
+    NSURL* siteForCookies = task->m_task.get()._siteForCookies;
+    NSURL* documentURL = task->isTopLevelNavigation() ? siteForCookies : (NSURL *)mainDocumentURL;
+    if (siteForCookies && documentURL) {
+        // Both siteForCookies and/or documentURL may be nil, for example when one of them is about:blank.
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        [configuration.HTTPCookieStorage setCookies:cookies forURL:siteForCookies mainDocumentURL:documentURL];
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+
+    task->cancel();
 }
 
 }

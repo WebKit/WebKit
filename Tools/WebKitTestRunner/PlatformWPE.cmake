@@ -31,6 +31,7 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${WPEBACKEND_FDO_LIBRARIES}
     Cairo::Cairo
     WPEToolingBackends
+    stdc++fs
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES

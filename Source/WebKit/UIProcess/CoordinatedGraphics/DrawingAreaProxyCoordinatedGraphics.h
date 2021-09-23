@@ -30,6 +30,7 @@
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
+#include <wtf/Function.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -49,6 +50,10 @@ public:
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
     const LayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
+    void waitForSizeUpdate(Function<void ()>&&);
+#if !PLATFORM(WPE)
+    void captureFrame();
+#endif
 
 private:
     // DrawingAreaProxy
@@ -68,6 +73,9 @@ private:
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+#if PLATFORM(WIN)
+    void didChangeAcceleratedCompositingMode(bool enabled) override;
+#endif
 
 #if !PLATFORM(WPE)
     void incorporateUpdate(const UpdateInfo&);
@@ -131,12 +139,18 @@ private:
     // For a new Drawing Area don't draw anything until the WebProcess has sent over the first content.
     bool m_hasReceivedFirstUpdate { false };
 
+    Vector<Function<void ()>> m_callbacks;
+
 #if !PLATFORM(WPE)
     bool m_isBackingStoreDiscardable { true };
     std::unique_ptr<BackingStore> m_backingStore;
     RunLoop::Timer<DrawingAreaProxyCoordinatedGraphics> m_discardBackingStoreTimer;
 #endif
     std::unique_ptr<DrawingMonitor> m_drawingMonitor;
+
+#if PLATFORM(WIN)
+    bool m_isInAcceleratedCompositingMode { false };
+#endif
 };
 
 } // namespace WebKit

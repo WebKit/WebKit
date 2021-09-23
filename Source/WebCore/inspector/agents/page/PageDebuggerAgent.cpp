@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMWindowBase.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageDebugger.h"
@@ -69,7 +70,11 @@ bool PageDebuggerAgent::enabled() const
 
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> PageDebuggerAgent::evaluateOnCallFrame(const Protocol::Debugger::CallFrameId& callFrameId, const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
-    UserGestureEmulationScope userGestureScope(m_inspectedPage, emulateUserGesture && *emulateUserGesture);
+    InjectedScript injectedScript = injectedScriptManager().injectedScriptForObjectId(callFrameId);
+    JSC::JSGlobalObject* globalObject = injectedScript.globalObject();
+    Document* document = globalObject ? activeDOMWindow(*globalObject).document() : nullptr;
+    auto shouldEmulateUserGesture = emulateUserGesture && *emulateUserGesture;
+    UserGestureEmulationScope userGestureScope(m_inspectedPage, shouldEmulateUserGesture, document);
 
     return WebDebuggerAgent::evaluateOnCallFrame(callFrameId, expression, objectGroup, WTFMove(includeCommandLineAPI), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(saveResult), WTFMove(emulateUserGesture));
 }
@@ -121,8 +126,9 @@ void PageDebuggerAgent::unmuteConsole()
 
 void PageDebuggerAgent::debuggerWillEvaluate(JSC::Debugger&, const JSC::Breakpoint::Action& action)
 {
+    // FIXME(playwright): we should pass proper Documnt instead of nullptr here.
     if (action.emulateUserGesture)
-        m_breakpointActionUserGestureEmulationScopeStack.append(makeUniqueRef<UserGestureEmulationScope>(m_inspectedPage, true));
+        m_breakpointActionUserGestureEmulationScopeStack.append(makeUniqueRef<UserGestureEmulationScope>(m_inspectedPage, true, nullptr));
 }
 
 void PageDebuggerAgent::debuggerDidEvaluate(JSC::Debugger&, const JSC::Breakpoint::Action& action)

@@ -83,7 +83,10 @@ public:
     };
 
     void registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher*);
-    void dispatch(const String& message);
+
+    enum class InterceptionResult { Intercepted, Continue };
+    using Interceptor = WTF::Function<InterceptionResult(const RefPtr<JSON::Object>&)>;
+    void dispatch(const String& message, Interceptor&& interceptor = Interceptor());
 
     // Note that 'unused' is a workaround so the compiler can pick the right sendResponse based on arity.
     // When <http://webkit.org/b/179847> is fixed or this class is renamed for the JSON::Object case,

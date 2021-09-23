@@ -250,6 +250,8 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 {
     if (wasEventHandled || event.type() != WebEvent::Type::KeyDown || !event.nativeEvent())
         return;
+    if (!event.nativeEvent())
+        return;
 
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
     webkitWebViewBaseForwardNextKeyEvent(webkitWebViewBase);

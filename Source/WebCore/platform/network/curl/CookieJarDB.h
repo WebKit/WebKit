@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT ~CookieJarDB();
 
 private:
-    CookieAcceptPolicy m_acceptPolicy { CookieAcceptPolicy::Always };
+    CookieAcceptPolicy m_acceptPolicy { CookieAcceptPolicy::OnlyFromMainDocumentDomain };
     String m_databasePath;
 
     bool m_detectedDatabaseCorruption { false };

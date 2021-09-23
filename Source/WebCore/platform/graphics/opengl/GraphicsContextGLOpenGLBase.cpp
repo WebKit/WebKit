@@ -27,7 +27,7 @@
 #include "config.h"
 #include "GraphicsContextGLOpenGL.h"
 
-#if ENABLE(WEBGL) && USE(OPENGL)
+#if !PLATFORM(WIN) && ENABLE(WEBGL) && USE(OPENGL)
 
 #include "ExtensionsGLOpenGL.h"
 #include "IntRect.h"

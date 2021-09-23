@@ -97,6 +97,9 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
             appendNumber<2>(builder, offset / 60);
             appendNumber<2>(builder, offset % 60);
 
+            if (!WTF::timeZoneDisplayNameForAutomation().isEmpty()) {
+                builder.append(" (", WTF::timeZoneDisplayNameForAutomation(), ')');
+            } else {
 #if OS(WINDOWS)
             TIME_ZONE_INFORMATION timeZoneInformation;
             GetTimeZoneInformation(&timeZoneInformation);
@@ -109,6 +112,7 @@ String formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool as
 #endif
             if (timeZoneName[0])
                 builder.append(" (", timeZoneName, ')');
+            }
         }
     }
 

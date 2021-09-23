@@ -24,7 +24,6 @@
  */
 
 #import <WebKit/WKFoundation.h>
-
 #import <WebKit/WKWebsiteDataRecord.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -78,6 +77,8 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
 
 /*! @abstract Returns the cookie store representing HTTP cookies in this website data store. */
 @property (nonatomic, readonly) WKHTTPCookieStore *httpCookieStore WK_API_AVAILABLE(macos(10.13), ios(11.0));
+
+- (uint64_t)sessionID;
 
 @end
 

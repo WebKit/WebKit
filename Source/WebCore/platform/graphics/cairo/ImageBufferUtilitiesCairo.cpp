@@ -48,6 +48,13 @@
 #include <wtf/glib/GUniquePtr.h>
 #endif
 
+#if PLATFORM(WPE) || PLATFORM(WIN)
+#include <stdio.h> // Needed by jpeglib.h for FILE.
+extern "C" {
+#include "jpeglib.h"
+}
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(GTK)
@@ -65,8 +72,75 @@ static bool encodeImage(cairo_surface_t* image, const String& mimeType, Vector<u
     return cairo_surface_write_to_png_stream(image, writeFunction, output) == CAIRO_STATUS_SUCCESS;
 }
 
-Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, std::optional<double>)
+static Vector<uint8_t> encodeJpeg(cairo_surface_t* image, int quality)
 {
+    if (cairo_surface_get_type(image) != CAIRO_SURFACE_TYPE_IMAGE) {
+        fprintf(stderr, "Unexpected cairo surface type: %d\n", cairo_surface_get_type(image));
+        return { };
+    }
+
+    if (cairo_image_surface_get_format(image) != CAIRO_FORMAT_ARGB32) {
+        fprintf(stderr, "Unexpected surface image format: %d\n", cairo_image_surface_get_format(image));
+        return { };
+    }
+
+    struct jpeg_compress_struct info;
+    struct jpeg_error_mgr error;
+    info.err = jpeg_std_error(&error);
+    jpeg_create_compress(&info);
+
+    unsigned char* bufferPtr = nullptr;
+    unsigned long bufferSize;
+    jpeg_mem_dest(&info, &bufferPtr, &bufferSize);
+    info.image_width = cairo_image_surface_get_width(image);
+    info.image_height = cairo_image_surface_get_height(image);
+
+#ifndef LIBJPEG_TURBO_VERSION
+    COMPILE_ASSERT(false, only_libjpeg_turbo_is_supported);
+#endif
+
+#if CPU(LITTLE_ENDIAN)
+    info.in_color_space = JCS_EXT_BGRA;
+#else
+    info.in_color_space = JCS_EXT_ARGB;
+#endif
+    // # of color components in input image
+    info.input_components = 4;
+
+    jpeg_set_defaults(&info);
+    jpeg_set_quality(&info, quality, true);
+
+    jpeg_start_compress(&info, true);
+
+    while (info.next_scanline < info.image_height)
+    {
+        JSAMPROW row = cairo_image_surface_get_data(image) + (info.next_scanline * cairo_image_surface_get_stride(image));
+        if (jpeg_write_scanlines(&info, &row, 1) != 1) {
+            fprintf(stderr, "JPEG library failed to encode line\n");
+            break;
+        }
+    }
+
+    jpeg_finish_compress(&info);
+    jpeg_destroy_compress(&info);
+
+    Vector<uint8_t> output;
+    output.append(bufferPtr, bufferSize);
+    // Cannot use unique_ptr as bufferPtr changes during compression. GUniquePtr would work
+    // but it's under GLib and won't work on Windows.
+    free(bufferPtr);
+    return output;
+}
+
+Vector<uint8_t> data(cairo_surface_t* image, const String& mimeType, std::optional<double> quality)
+{
+    if (mimeType == "image/jpeg") {
+        int qualityPercent = 100;
+        if (quality)
+            qualityPercent = static_cast<int>(*quality * 100.0 + 0.5);
+        return encodeJpeg(image, qualityPercent);
+    }
+
     Vector<uint8_t> encodedImage;
     if (!image || !encodeImage(image, mimeType, &encodedImage))
         return { };

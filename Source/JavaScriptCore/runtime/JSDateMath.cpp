@@ -76,6 +76,7 @@
 #include "VM.h"
 #include <limits>
 #include <wtf/unicode/icu/ICUHelpers.h>
+#include <wtf/DateMath.h>
 
 #if U_ICU_VERSION_MAJOR_NUM >= 69 || (U_ICU_VERSION_MAJOR_NUM == 68 && USE(APPLE_INTERNAL_SDK))
 #define HAVE_ICU_C_TIMEZONE_API 1
@@ -334,6 +335,10 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
 // https://tc39.es/ecma402/#sec-defaulttimezone
 String DateCache::defaultTimeZone()
 {
+    String tz = WTF::timeZoneForAutomation();
+    if (!tz.isEmpty())
+        return tz;
+
 #if HAVE(ICU_C_TIMEZONE_API)
     return timeZoneCache()->m_canonicalTimeZoneID;
 #else
@@ -368,12 +373,20 @@ Ref<DateInstanceData> DateCache::cachedDateInstanceData(double millisecondsFromE
 void DateCache::timeZoneCacheSlow()
 {
     ASSERT(!m_timeZoneCache);
+
+    String override = WTF::timeZoneForAutomation();
 #if HAVE(ICU_C_TIMEZONE_API)
     auto* cache = new OpaqueICUTimeZone;
 
     String canonical;
+    UErrorCode status = U_ZERO_ERROR;
     Vector<UChar, 32> timeZoneID;
-    auto status = callBufferProducingFunction(ucal_getHostTimeZone, timeZoneID);
+    if (override.isEmpty()) {
+        status = callBufferProducingFunction(ucal_getHostTimeZone, timeZoneID);
+        ASSERT_UNUSED(status, U_SUCCESS(status));
+    } else {
+        timeZoneID = override.charactersWithoutNullTermination();
+    }
     if (U_SUCCESS(status)) {
         Vector<UChar, 32> canonicalBuffer;
         auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneID.data(), timeZoneID.size(), canonicalBuffer, nullptr);
@@ -390,6 +403,11 @@ void DateCache::timeZoneCacheSlow()
     ucal_setGregorianChange(cache->m_calendar.get(), minECMAScriptTime, &status); // Ignore "unsupported" error.
     m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(cache);
 #else
+    if (!override.isEmpty()) {
+        auto* timezone = icu::TimeZone::createTimeZone(override.utf8().data());
+        m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(bitwise_cast<OpaqueICUTimeZone*>(timezone));
+        return;
+    }
     // Do not use icu::TimeZone::createDefault. ICU internally has a cache for timezone and createDefault returns this cached value.
     m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(bitwise_cast<OpaqueICUTimeZone*>(icu::TimeZone::detectHostTimeZone()));
 #endif

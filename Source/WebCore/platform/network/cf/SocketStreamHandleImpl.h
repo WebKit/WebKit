@@ -47,7 +47,7 @@ class SocketStreamHandleClient;
 
 class SocketStreamHandleImpl : public SocketStreamHandle {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, client, sessionID, credentialPartition, WTFMove(auditData), provider)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, bool ignoreCertificateErrors, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, ignoreCertificateErrors, client, sessionID, credentialPartition, WTFMove(auditData), provider)); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -61,7 +61,7 @@ private:
     std::optional<size_t> platformSendInternal(const uint8_t*, size_t);
     bool sendPendingData();
 
-    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, SourceApplicationAuditToken&&, const StorageSessionProvider*);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, bool ignoreCertificateErrors, SocketStreamHandleClient&, PAL::SessionID, const String& credentialPartition, SourceApplicationAuditToken&&, const StorageSessionProvider*);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -106,6 +106,7 @@ private:
     String m_credentialPartition;
     SourceApplicationAuditToken m_auditData;
     RefPtr<const StorageSessionProvider> m_storageSessionProvider;
+    bool m_ignoreCertificateErrors { false };
 
     StreamBuffer<uint8_t, 1024 * 1024> m_buffer;
     static const unsigned maxBufferSize = 100 * 1024 * 1024;

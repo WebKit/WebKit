@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "WKWebViewPrivate.h"
 #import "_WKRemoteWebInspectorViewControllerInternal.h"
 
 #if PLATFORM(MAC)

@@ -116,6 +116,10 @@ typedef struct _AtkObject AtkObject;
 #include "WebPrintOperationGtk.h"
 #endif
 
+#if PLATFORM(WPE)
+#include "ArgumentCodersWPE.h"
+#endif
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
 #include "InputMethodState.h"
 #endif
@@ -974,11 +978,11 @@ public:
     void clearSelection();
     void restoreSelectionInFocusedEditableElement();
 
-#if ENABLE(DRAG_SUPPORT) && PLATFORM(GTK)
+#if ENABLE(DRAG_SUPPORT) && (PLATFORM(GTK) || PLATFORM(WPE))
     void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData&&, OptionSet<WebCore::DragApplicationFlags>);
 #endif
 
-#if ENABLE(DRAG_SUPPORT) && !PLATFORM(GTK)
+#if ENABLE(DRAG_SUPPORT) && !PLATFORM(GTK) && !PLATFORM(WPE)
     void performDragControllerAction(DragControllerAction, const WebCore::DragData&, SandboxExtension::Handle&&, Vector<SandboxExtension::Handle>&&);
 #endif
 
@@ -992,6 +996,9 @@ public:
     void didStartDrag();
     void dragCancelled();
     OptionSet<WebCore::DragSourceAction> allowedDragSourceActions() const { return m_allowedDragSourceActions; }
+#if PLATFORM(MAC)
+    void setDragPasteboardName(const String& pasteboardName) { m_page->setDragPasteboardName(pasteboardName); }
+#endif
 #endif
 
     void beginPrinting(WebCore::FrameIdentifier, const PrintInfo&);
@@ -1226,6 +1233,7 @@ public:
     void connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector(const String& targetId);
     void sendMessageToTargetBackend(const String& targetId, const String& message);
+    void resumeInspectorIfPausedInNewWindow();
 
     void insertNewlineInQuotedContent();
 
@@ -1583,6 +1591,7 @@ private:
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);
+    void loadRequestInFrameForInspector(LoadParameters&&, WebCore::FrameIdentifier);
     void loadRequest(LoadParameters&&);
     NO_RETURN void loadRequestWaitingForProcessLaunch(LoadParameters&&, URL&&, WebPageProxyIdentifier, bool);
     void loadData(LoadParameters&&);
@@ -1620,6 +1629,7 @@ private:
     void updatePotentialTapSecurityOrigin(const WebTouchEvent&, bool wasHandled);
 #elif ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
+    void fakeTouchTap(const WebCore::IntPoint& position, uint8_t modifiers, CompletionHandler<void()>&& completionHandler);
 #endif
 
     void cancelPointer(WebCore::PointerID, const WebCore::IntPoint&);
@@ -1743,9 +1753,7 @@ private:
     void countStringMatches(const String&, OptionSet<FindOptions>, uint32_t maxMatchCount);
     void replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
 
-#if USE(COORDINATED_GRAPHICS)
     void sendViewportAttributesChanged(const WebCore::ViewportArguments&);
-#endif
 
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
     void setTextForActivePopupMenu(int32_t index);
@@ -2278,6 +2286,7 @@ private:
     UserActivity m_userActivity;
 
     uint64_t m_pendingNavigationID { 0 };
+    uint64_t m_pendingFrameNavigationID { 0 };
     std::optional<WebsitePoliciesData> m_pendingWebsitePolicies;
 
     bool m_mainFrameProgressCompleted { false };

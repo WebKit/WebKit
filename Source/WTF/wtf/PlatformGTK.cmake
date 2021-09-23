@@ -74,6 +74,7 @@ list(APPEND WTF_LIBRARIES
     ${GLIB_LIBRARIES}
     Threads::Threads
     ZLIB::ZLIB
+    stdc++fs
 )
 
 if (Systemd_FOUND)

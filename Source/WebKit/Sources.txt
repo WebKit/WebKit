@@ -307,11 +307,14 @@ Shared/XR/XRDeviceProxy.cpp
 
 UIProcess/AuxiliaryProcessProxy.cpp
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
+UIProcess/BrowserInspectorPipe.cpp
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DrawingAreaProxy.cpp
 UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
 UIProcess/GeolocationPermissionRequestProxy.cpp
+UIProcess/InspectorDialogAgent.cpp
+UIProcess/InspectorPlaywrightAgent.cpp
 UIProcess/LegacyGlobalSettings.cpp
 UIProcess/MediaKeySystemPermissionRequestManagerProxy.cpp
 UIProcess/MediaKeySystemPermissionRequestProxy.cpp
@@ -320,6 +323,7 @@ UIProcess/PageLoadState.cpp
 UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalPageProxy.cpp
+UIProcess/RemoteInspectorPipe.cpp
 UIProcess/ResponsivenessTimer.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
@@ -360,6 +364,8 @@ UIProcess/WebOpenPanelResultListenerProxy.cpp
 UIProcess/WebPageDiagnosticLoggingClient.cpp
 UIProcess/WebPageGroup.cpp
 UIProcess/WebPageInjectedBundleClient.cpp
+UIProcess/WebPageInspectorEmulationAgent.cpp
+UIProcess/WebPageInspectorInputAgent.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPreferences.cpp
@@ -481,7 +487,11 @@ UIProcess/Inspector/WebInspectorUtilities.cpp
 UIProcess/Inspector/WebPageDebuggable.cpp
 UIProcess/Inspector/WebPageInspectorController.cpp
 
+UIProcess/Inspector/Agents/CairoJpegEncoder.cpp
 UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
+UIProcess/Inspector/Agents/InspectorScreencastAgent.cpp
+UIProcess/Inspector/Agents/ScreencastEncoder.cpp
+UIProcess/Inspector/Agents/WebMFileWriter.cpp
 
 UIProcess/Media/AudioSessionRoutingArbitratorProxy.cpp
 UIProcess/Media/MediaUsageManager.cpp

@@ -33,6 +33,7 @@
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "Settings.h"
+#include "WebContentReader.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -89,6 +90,14 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 
     if (fragment && shouldInsertFragment(*fragment, *range, EditorInsertAction::Pasted))
         pasteAsFragment(*fragment, canSmartReplaceWithPasteboard(*pasteboard), chosePlainText, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote);
+}
+
+RefPtr<DocumentFragment> Editor::webContentFromPasteboard(Pasteboard& pasteboard, const SimpleRange& context, bool allowPlainText, bool& chosePlainText)
+{
+    WebContentReader reader(*m_document.frame(), context, allowPlainText);
+    pasteboard.read(reader);
+    chosePlainText = reader.madeFragmentFromPlainText;
+    return WTFMove(reader.fragment);
 }
 
 } // namespace WebCore

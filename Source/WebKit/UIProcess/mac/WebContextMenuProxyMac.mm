@@ -362,6 +362,12 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
 }
 #endif
 
+void WebContextMenuProxyMac::hide()
+{
+    if (m_menu)
+        [m_menu cancelTracking];
+}
+
 void WebContextMenuProxyMac::show()
 {
 #if ENABLE(SERVICE_CONTROLS)

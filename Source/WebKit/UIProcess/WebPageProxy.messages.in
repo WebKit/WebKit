@@ -29,6 +29,7 @@ messages -> WebPageProxy {
     RunJavaScriptConfirm(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message) -> (bool result) Synchronous
     RunJavaScriptPrompt(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, String message, String defaultValue) -> (String result) Synchronous
     MouseDidMoveOverElement(struct WebKit::WebHitTestResultData hitTestResultData, uint32_t modifiers, WebKit::UserData userData)
+    LogToStderr(String text)
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, String mimeType, String pluginURLString, String pluginspageAttributeURLString, String frameURLString, String pageURLString)
@@ -180,6 +181,7 @@ messages -> WebPageProxy {
 #endif
 
     PageScaleFactorDidChange(double scaleFactor)
+    ViewScaleFactorDidChange(double scaleFactor)
     PluginScaleFactorDidChange(double zoomFactor)
     PluginZoomFactorDidChange(double zoomFactor)
 
@@ -308,10 +310,12 @@ messages -> WebPageProxy {
     StartDrag(struct WebCore::DragItem dragItem, WebKit::ShareableBitmap::Handle dragImage)
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::IPCHandle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::IPCHandle archiveHandle, String originIdentifier)
 #endif
-#if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && ENABLE(DRAG_SUPPORT)
     StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, WebKit::ShareableBitmap::Handle dragImage)
 #endif
-
+#if PLATFORM(WIN) && ENABLE(DRAG_SUPPORT)
+    StartDrag(HashMap<unsigned, Vector<String>> dragDataMap)
+#endif
 #if ENABLE(DRAG_SUPPORT)
     DidPerformDragOperation(bool handled)
 #endif

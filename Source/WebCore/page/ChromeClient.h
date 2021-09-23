@@ -306,7 +306,7 @@ public:
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
-    virtual int deviceOrientation() const = 0;
+    virtual int deviceOrientation() const { return 0; }
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)

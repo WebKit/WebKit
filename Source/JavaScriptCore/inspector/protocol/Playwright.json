@@ -1,0 +1,289 @@
+{
+    "domain": "Playwright",
+    "availability": ["web"],
+    "types": [
+        {
+            "id": "ContextID",
+            "type": "string",
+            "description": "Id of Browser context."
+        },
+        {
+            "id": "PageProxyID",
+            "type": "string",
+            "description": "Id of WebPageProxy."
+        },
+        {
+            "id": "CookieSameSitePolicy",
+            "type": "string",
+            "enum": ["None", "Lax", "Strict"],
+            "description": "Same-Site policy of a cookie."
+        },
+        {
+            "id": "Cookie",
+            "type": "object",
+            "description": "Cookie object",
+            "properties": [
+                { "name": "name", "type": "string", "description": "Cookie name." },
+                { "name": "value", "type": "string", "description": "Cookie value." },
+                { "name": "domain", "type": "string", "description": "Cookie domain." },
+                { "name": "path", "type": "string", "description": "Cookie path." },
+                { "name": "expires", "type": "number", "description": "Cookie expires." },
+                { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
+                { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
+                { "name": "session", "type": "boolean", "description": "True if cookie is session cookie." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." }
+            ]
+        },
+        {
+            "id": "SetCookieParam",
+            "type": "object",
+            "description": "Cookie object",
+            "properties": [
+                { "name": "name", "type": "string", "description": "Cookie name." },
+                { "name": "value", "type": "string", "description": "Cookie value." },
+                { "name": "domain", "type": "string", "description": "Cookie domain." },
+                { "name": "path", "type": "string", "description": "Cookie path." },
+                { "name": "expires", "type": "number", "optional": true, "description": "Cookie expires." },
+                { "name": "httpOnly", "type": "boolean", "optional": true, "description": "True if cookie is http-only." },
+                { "name": "secure", "type": "boolean", "optional": true, "description": "True if cookie is secure." },
+                { "name": "session", "type": "boolean", "optional": true, "description": "True if cookie is session cookie." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "optional": true, "description": "Cookie Same-Site policy." }
+            ]
+        },
+        {
+            "id": "NameValue",
+            "type": "object",
+            "description": "Name-value pair",
+            "properties": [
+                { "name": "name", "type": "string" },
+                { "name": "value", "type": "string" }
+            ]
+        },
+        {
+            "id": "OriginStorage",
+            "type": "object",
+            "description": "Origin object",
+            "properties": [
+                { "name": "origin", "type": "string", "description": "Origin." },
+                { "name": "items", "type": "array", "items": { "$ref": "NameValue" }, "description": "Storage entries." }
+            ]
+        },
+        {
+            "id": "Geolocation",
+            "type": "object",
+            "description": "Geolocation",
+            "properties": [
+                { "name": "timestamp", "type": "number", "description": "Mock latitude" },
+                { "name": "latitude", "type": "number", "description": "Mock latitude" },
+                { "name": "longitude", "type": "number", "description": "Mock longitude" },
+                { "name": "accuracy", "type": "number", "description": "Mock accuracy" }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable"
+        },
+        {
+            "name": "disable"
+        },
+        {
+            "name": "close",
+            "async": true,
+            "description": "Close browser."
+        },
+        {
+            "name": "createContext",
+            "description": "Creates new ephemeral browser context.",
+            "parameters": [
+                { "name": "proxyServer", "type": "string", "optional": true, "description": "Proxy server, similar to the one passed to --proxy-server" },
+                { "name": "proxyBypassList", "type": "string", "optional": true, "description": "Proxy bypass list, similar to the one passed to --proxy-bypass-list" }
+            ],
+            "returns": [
+                { "name": "browserContextId", "$ref": "ContextID", "description": "Unique identifier of the context." }
+            ]
+        },
+        {
+            "name": "deleteContext",
+            "async": true,
+            "description": "Deletes browser context previously created with createContect. The command will automatically close all pages that use the context.",
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "description": "Identifier of the context to delete." }
+            ]
+        },
+        {
+            "name": "createPage",
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "JSON Inspector Protocol message (command) to be dispatched on the backend." }
+            ],
+            "returns": [
+                { "name": "pageProxyId", "$ref": "PageProxyID", "description": "Unique identifier of the page proxy." }
+            ]
+        },
+        {
+            "name": "navigate",
+            "async": true,
+            "description": "Navigates current page to the given URL.",
+            "parameters": [
+                { "name": "url", "type": "string", "description": "URL to navigate the page to." },
+                { "name": "pageProxyId", "$ref": "PageProxyID", "description": "Unique identifier of the page proxy." },
+                { "name": "frameId", "$ref": "Network.FrameId", "optional": true, "description": "Id of the frame to navigate."},
+                { "name": "referrer", "type": "string", "optional": true, "description": "Referrer URL." }
+            ],
+            "returns": [
+                { "name": "loaderId", "$ref": "Network.LoaderId", "optional": true, "description": "Identifier of the loader associated with the navigation." }
+            ]
+        },
+        {
+            "name": "setIgnoreCertificateErrors",
+            "description": "Change whether all certificate errors should be ignored.",
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." },
+                { "name": "ignore", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "getAllCookies",
+            "description": "Returns all cookies in the given browser context.",
+            "async": true,
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." }
+            ],
+            "returns": [
+                { "name": "cookies", "type": "array", "items": { "$ref": "Cookie" }, "description": "Cookies." }
+            ]
+        },
+        {
+            "name": "setCookies",
+            "description": "Sets cookies in the given browser context.",
+            "async": true,
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." },
+                { "name": "cookies", "type": "array", "items": { "$ref": "SetCookieParam" }, "description": "Cookies." }
+            ]
+        },
+        {
+            "name": "deleteAllCookies",
+            "description": "Deletes cookies in the given browser context.",
+            "async": true,
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." }
+            ]
+        },
+        {
+            "name": "getLocalStorageData",
+            "description": "Returns all local storage data in the given browser context.",
+            "async": true,
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." }
+            ],
+            "returns": [
+                { "name": "origins", "type": "array", "items": { "$ref": "OriginStorage" }, "description": "Local storage data." }
+            ]
+        },
+        {
+            "name": "setLocalStorageData",
+            "description": "Populates local storage data in the given browser context.",
+            "async": true,
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." },
+                { "name": "origins", "type": "array", "items": { "$ref": "OriginStorage" }, "description": "Local storage data." }
+            ]
+        },
+        {
+            "name": "setGeolocationOverride",
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." },
+                { "name": "geolocation", "$ref": "Geolocation", "optional": true, "description": "Geolocation to set, if missing emulates position unavailable." }
+            ],
+            "description": "Overrides the geolocation position or error."
+        },
+        {
+            "name": "setLanguages",
+            "description": "Allows to set locale language for context.",
+            "parameters": [
+                { "name": "languages", "type": "array", "items": { "type": "string" } },
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." }
+            ]
+        },
+        {
+            "name": "setDownloadBehavior",
+            "description": "Allows to override download behavior.",
+            "parameters": [
+                { "name": "behavior", "optional": true, "type": "string", "enum": ["allow", "deny"] },
+                { "name": "downloadPath", "optional": true, "type": "string" },
+                { "name": "browserContextId", "$ref": "ContextID", "optional": true, "description": "Browser context id." }
+            ]
+        },
+        {
+            "name": "cancelDownload",
+            "parameters": [
+                { "name": "uuid", "type": "string" }
+            ],
+            "description": "Cancels a current running download."
+        }
+    ],
+    "events": [
+        {
+            "name": "pageProxyCreated",
+            "parameters": [
+                { "name": "browserContextId", "$ref": "ContextID", "description": "Unique identifier of the context." },
+                { "name": "pageProxyId", "$ref": "PageProxyID" },
+                { "name": "openerId", "$ref": "PageProxyID", "optional": true, "description": "Unique identifier of the opening page. Only set for pages created by window.open()." }
+            ]
+        },
+        {
+            "name": "pageProxyDestroyed",
+            "parameters": [
+                { "name": "pageProxyId", "$ref": "PageProxyID" }
+            ]
+        },
+        {
+            "name": "provisionalLoadFailed",
+            "description": "Fired when provisional load fails.",
+            "parameters": [
+                { "name": "pageProxyId", "$ref": "PageProxyID", "description": "Unique identifier of the page proxy." },
+                { "name": "loaderId", "$ref": "Network.LoaderId", "description": "Identifier of the loader associated with the navigation." },
+                { "name": "error", "type": "string", "description": "Localized error string." }
+            ]
+        },
+        {
+          "name": "windowOpen",
+          "description": "Fired when page opens a new window.",
+          "parameters": [
+              { "name": "pageProxyId", "$ref": "PageProxyID", "description": "Unique identifier of the page proxy." },
+              { "name": "url", "type": "string" },
+              { "name": "windowFeatures", "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        {
+            "name": "downloadCreated",
+            "parameters": [
+                { "name": "pageProxyId", "$ref": "PageProxyID", "description": "Unique identifier of the page proxy." },
+                { "name": "frameId", "$ref": "Network.FrameId", "description": "Unique identifier of the originating frame." },
+                { "name": "uuid", "type": "string" },
+                { "name": "url", "type": "string" }
+            ]
+        },
+        {
+            "name": "downloadFilenameSuggested",
+            "parameters": [
+                { "name": "uuid", "type": "string" },
+                { "name": "suggestedFilename", "type": "string" }
+            ]
+        },
+        {
+            "name": "downloadFinished",
+            "parameters": [
+                { "name": "uuid", "type": "string" },
+                { "name": "error", "type": "string" }
+            ]
+        },
+        {
+            "name": "screencastFinished",
+            "parameters": [
+                { "name": "screencastId", "$ref": "Screencast.ScreencastId", "description": "Unique identifier of the screencast." }
+            ]
+        }
+    ]
+}

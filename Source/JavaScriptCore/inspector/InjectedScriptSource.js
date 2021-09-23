@@ -136,7 +136,7 @@ let InjectedScript = class InjectedScript
             return;
         }
 
-        if (!(promiseObject instanceof Promise)) {
+        if (InjectedScriptHost.internalConstructorName(promiseObject) !== 'Promise') {
             callback("Object with given id is not a Promise");
             return;
         }
@@ -171,14 +171,16 @@ let InjectedScript = class InjectedScript
         return this._evaluateAndWrap(callFrame.evaluateWithScopeExtension, callFrame, expression, objectGroup, isEvalOnCallFrame, includeCommandLineAPI, returnByValue, generatePreview, saveResult);
     }
 
-    callFunctionOn(objectId, expression, args, returnByValue, generatePreview)
+    callFunctionOn(objectId, expression, args, returnByValue, generatePreview, awaitPromise, callback)
     {
         let parsedObjectId = this._parseObjectId(objectId);
         let object = this._objectForId(parsedObjectId);
         let objectGroupName = this._idToObjectGroupName[parsedObjectId.id];
 
-        if (!isDefined(object))
-            return "Could not find object with given id";
+        if (!isDefined(object)) {
+            callback(this._createThrownValue("Could not find object with given id", objectGroupName));
+            return ;
+        }
 
         let resolvedArgs = [];
         if (args) {
@@ -187,22 +189,37 @@ let InjectedScript = class InjectedScript
                 try {
                     resolvedArgs[i] = this._resolveCallArgument(callArgs[i]);
                 } catch (e) {
-                    return String(e);
+                    callback(this._createThrownValue(e, objectGroupName));
+                    return;
                 }
             }
         }
 
         try {
             let func = InjectedScriptHost.evaluate("(" + expression + ")");
-            if (typeof func !== "function")
-                return "Given expression does not evaluate to a function";
-
-            return {
-                wasThrown: false,
-                result: RemoteObject.create(func.apply(object, resolvedArgs), objectGroupName, returnByValue, generatePreview)
-            };
+            if (typeof func !== "function") {
+                callback(this._createThrownValue("Given expression does not evaluate to a function", objectGroupName));
+                return;
+            }
+            let result = func.apply(object, resolvedArgs);
+            if (awaitPromise && isDefined(result) && (InjectedScriptHost.internalConstructorName(result) === 'Promise')) {
+                result.then(value => {
+                    callback({
+                        wasThrown: false,
+                        result: RemoteObject.create(value, objectGroupName, returnByValue, generatePreview),
+                    });
+                }, reason => {
+                    callback(this._createThrownValue(reason, objectGroupName));
+                });
+            } else {
+                callback({
+                    wasThrown: false,
+                    result: RemoteObject.create(result, objectGroupName, returnByValue, generatePreview)
+                });
+            }
         } catch (e) {
-            return this._createThrownValue(e, objectGroupName);
+            callback(this._createThrownValue(e, objectGroupName));
+            return;
         }
     }
 

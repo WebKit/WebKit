@@ -2209,6 +2209,17 @@ void WebsiteDataStore::renameOriginInWebsiteData(URL&& oldName, URL&& newName, O
     networkProcess().renameOriginInWebsiteData(m_sessionID, oldName, newName, dataTypes, WTFMove(completionHandler));
 }
 
+void WebsiteDataStore::setLanguagesForAutomation(Vector<String>&& languages)
+{
+    m_languagesForAutomation = WTFMove(languages);
+}
+
+void WebsiteDataStore::setDownloadForAutomation(std::optional<bool> allow, const String& downloadPath)
+{
+    m_allowDownloadForAutomation = allow;
+    m_downloadPathForAutomation = downloadPath;
+}
+
 #if ENABLE(APP_BOUND_DOMAINS)
 void WebsiteDataStore::hasAppBoundSession(CompletionHandler<void(bool)>&& completionHandler) const
 {

@@ -473,7 +473,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message
 }
 
 #if ENABLE(TOUCH_EVENTS)
-WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector<WebPlatformTouchPoint>&& touchPoints)
+WebTouchEvent WebEventFactory::createWebTouchEvent()
 {
     return WebTouchEvent();
 }

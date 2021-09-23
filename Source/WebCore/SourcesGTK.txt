@@ -91,7 +91,7 @@ platform/graphics/egl/GLContextEGLLibWPE.cpp @no-unify
 platform/graphics/egl/GLContextEGLWayland.cpp @no-unify
 platform/graphics/egl/GLContextEGLX11.cpp @no-unify
 
-platform/graphics/glx/GLContextGLX.cpp
+platform/graphics/glx/GLContextGLX.cpp @no-unify
 
 platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp

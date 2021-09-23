@@ -65,6 +65,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 #endif
 @property (nonatomic) pid_t presentingApplicationPID WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic) BOOL processSwapsOnNavigation WK_API_AVAILABLE(macos(10.14), ios(12.0));
+@property (nonatomic) BOOL forceOverlayScrollbars WK_API_AVAILABLE(macos(10.14));
 @property (nonatomic) BOOL alwaysKeepAndReuseSwappedProcesses WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic) BOOL processSwapsOnWindowOpenWithOpener WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic) BOOL processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol WK_API_AVAILABLE(macos(12.0), ios(15.0));

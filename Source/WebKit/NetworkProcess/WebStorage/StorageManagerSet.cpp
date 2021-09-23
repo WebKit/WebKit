@@ -245,6 +245,50 @@ void StorageManagerSet::getLocalStorageOrigins(PAL::SessionID sessionID, GetOrig
     });
 }
 
+void StorageManagerSet::getLocalStorageData(PAL::SessionID sessionID, GetLocalStorageDataCallback&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, completionHandler = WTFMove(completionHandler)]() mutable {
+        auto* storageManager = m_storageManagers.get(sessionID);
+        ASSERT(storageManager);
+
+        auto origins = storageManager->getLocalStorageDataCrossThreadCopy();
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), origins = WTFMove(origins)]() mutable {
+            completionHandler(WTFMove(origins));
+        });
+    });
+}
+
+void StorageManagerSet::setLocalStorageData(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>>&& origins, CompletionHandler<void(String)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_queue->dispatch([this, protectedThis = makeRef(*this), sessionID, storageNamespaceID, origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto* storageManager = m_storageManagers.get(sessionID);
+        ASSERT(storageManager);
+
+        String error;
+        for (const auto& originData : origins) {
+            auto* storageArea = storageManager->createLocalStorageArea(storageNamespaceID, originData.first.isolatedCopy(), m_queue.copyRef());
+            if (!storageArea) {
+                error = "Cannot create storage area";
+                break;
+            }
+            bool quotaException = false;
+            storageArea->setItems(originData.second, quotaException);
+            if (quotaException) {
+                error = "Storage quota exceeded";
+                break;
+            }
+        }
+
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), error = WTFMove(error)]() mutable {
+            completionHandler(error);
+        });
+    });
+}
+
 void StorageManagerSet::deleteLocalStorageModifiedSince(PAL::SessionID sessionID, WallTime time, DeleteCallback&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

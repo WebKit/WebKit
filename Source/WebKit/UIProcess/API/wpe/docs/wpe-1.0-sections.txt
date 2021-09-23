@@ -327,6 +327,8 @@ WEBKIT_TYPE_WEB_VIEW_BACKEND
 WebKitWebViewBackend
 webkit_web_view_backend_get_wpe_backend
 webkit_web_view_backend_new
+take_screenshot_callback
+webkit_web_view_backend_set_screenshot_callback
 
 <SUBSECTION Private>
 webkit_web_view_backend_get_type

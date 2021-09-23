@@ -54,6 +54,7 @@ struct _WebKitWebViewBackend {
     struct wpe_view_backend* backend;
     GDestroyNotify notifyCallback;
     gpointer notifyCallbackData;
+    take_screenshot_callback screenshotCallback;
     int referenceCount { 1 };
 };
 
@@ -114,6 +115,19 @@ struct wpe_view_backend* webkit_web_view_backend_get_wpe_backend(WebKitWebViewBa
 {
     g_return_val_if_fail(viewBackend, nullptr);
     return viewBackend->backend;
+}
+
+void webkit_web_view_backend_set_screenshot_callback(WebKitWebViewBackend *view_backend, take_screenshot_callback callback)
+{
+    view_backend->screenshotCallback = callback;
+}
+
+cairo_surface_t* webkitWebViewBackendTakeScreenshot(WebKitWebViewBackend* view_backend)
+{
+    if (!view_backend->screenshotCallback)
+        return nullptr;
+
+    return view_backend->screenshotCallback(view_backend->notifyCallbackData);
 }
 
 namespace WTF {

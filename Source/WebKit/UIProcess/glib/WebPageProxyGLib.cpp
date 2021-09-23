@@ -57,4 +57,34 @@ void WebPageProxy::loadRecentSearches(const String&, CompletionHandler<void(Vect
     completionHandler({ });
 }
 
+#if ENABLE(SPEECH_SYNTHESIS)
+void WebPageProxy::didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+}
+
+void WebPageProxy::didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+}
+
+void WebPageProxy::didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+}
+
+void WebPageProxy::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+}
+
+void WebPageProxy::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+}
+
+void WebPageProxy::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex)
+{
+}
+
+void WebPageProxy::voicesDidChange()
+{
+}
+#endif // ENABLE(SPEECH_SYNTHESIS)
+
 }

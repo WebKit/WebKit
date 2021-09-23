@@ -59,6 +59,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
+#include "InspectorInstrumentation.h"
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"
 #include "NodeList.h"
@@ -3276,10 +3277,15 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
         return AccessibilityObjectInclusion::IgnoreObject;
-    
-    return accessibilityPlatformIncludesObject();
+
+    AccessibilityObjectInclusion platformBehavior = accessibilityPlatformIncludesObject();
+    if (platformBehavior != AccessibilityObjectInclusion::DefaultBehavior) {
+        if (auto* page = this->page())
+            InspectorInstrumentation::maybeOverrideDefaultObjectInclusion(*page, platformBehavior);
+    }
+    return platformBehavior;
 }
-    
+
 bool AccessibilityObject::accessibilityIsIgnored() const
 {
     AXComputedObjectAttributeCache* attributeCache = nullptr;

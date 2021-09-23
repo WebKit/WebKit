@@ -99,11 +99,9 @@ static bool prependPath(const std::wstring& directoryToPrepend)
 static int fatalError(const std::wstring& programName, const std::wstring& message)
 {
     std::wstring caption = programName + L" can't open.";
-#if USE_CONSOLE_ENTRY_POINT
+// Playwright begin
     fwprintf(stderr, L"%s\n%s\n", caption.c_str(), message.c_str());
-#else
-    ::MessageBoxW(0, message.c_str(), caption.c_str(), MB_ICONERROR);
-#endif
+// Playwright end
     return 1;
 }
 

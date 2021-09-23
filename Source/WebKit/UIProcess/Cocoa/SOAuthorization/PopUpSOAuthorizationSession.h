@@ -27,6 +27,8 @@
 
 #if HAVE(APP_SSO)
 
+#include <wtf/Forward.h>
+#include <wtf/CompletionHandler.h>
 #include "SOAuthorizationSession.h"
 #include <wtf/CompletionHandler.h>
 
@@ -38,6 +40,8 @@ class NavigationAction;
 }
 
 namespace WebKit {
+
+class WebPageProxy;
 
 // FSM: Idle => Active => Completed
 class PopUpSOAuthorizationSession final : public SOAuthorizationSession {

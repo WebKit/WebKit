@@ -90,6 +90,7 @@ typedef void (*WKPageRunBeforeUnloadConfirmPanelCallback)(WKPageRef page, WKStri
 typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptAlertResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptConfirmResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, WKSecurityOriginRef securityOrigin, WKPageRunJavaScriptPromptResultListenerRef listener, const void *clientInfo);
+typedef void (*WKPageHandleJavaScriptDialogCallback)(WKPageRef page, bool accept, WKStringRef value, const void *clientInfo);
 typedef void (*WKPageRequestStorageAccessConfirmCallback)(WKPageRef page, WKFrameRef frame, WKStringRef requestingDomain, WKStringRef currentDomain, WKPageRequestStorageAccessConfirmResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageTakeFocusCallback)(WKPageRef page, WKFocusDirection direction, const void *clientInfo);
 typedef void (*WKPageFocusCallback)(WKPageRef page, const void *clientInfo);
@@ -1354,6 +1355,7 @@ typedef struct WKPageUIClientV14 {
 
     // Version 14.
     WKPageRunWebAuthenticationPanelCallback                             runWebAuthenticationPanel;
+    WKPageHandleJavaScriptDialogCallback                                handleJavaScriptDialog;
 } WKPageUIClientV14;
 
 typedef struct WKPageUIClientV15 {
@@ -1461,6 +1463,7 @@ typedef struct WKPageUIClientV15 {
 
     // Version 14.
     WKPageRunWebAuthenticationPanelCallback                             runWebAuthenticationPanel;
+    WKPageHandleJavaScriptDialogCallback                                handleJavaScriptDialog;
 
     // Version 15.
     WKPageDecidePolicyForSpeechRecognitionPermissionRequestCallback     decidePolicyForSpeechRecognitionPermissionRequest;
@@ -1572,6 +1575,7 @@ typedef struct WKPageUIClientV16 {
 
     // Version 14.
     WKPageRunWebAuthenticationPanelCallback                             runWebAuthenticationPanel;
+    WKPageHandleJavaScriptDialogCallback                                handleJavaScriptDialog;
 
     // Version 15.
     WKPageDecidePolicyForSpeechRecognitionPermissionRequestCallback     decidePolicyForSpeechRecognitionPermissionRequest;

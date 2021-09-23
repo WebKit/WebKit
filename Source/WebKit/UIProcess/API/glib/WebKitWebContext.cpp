@@ -121,8 +121,8 @@ enum {
     PROP_LOCAL_STORAGE_DIRECTORY,
 #endif
     PROP_WEBSITE_DATA_MANAGER,
-#if PLATFORM(GTK)
     PROP_PSON_ENABLED,
+#if PLATFORM(GTK)
 #if !USE(GTK4)
     PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS,
 #endif
@@ -210,8 +210,8 @@ struct _WebKitWebContextPrivate {
 
     RefPtr<WebProcessPool> processPool;
     bool clientsDetached;
-#if PLATFORM(GTK)
     bool psonEnabled;
+#if PLATFORM(GTK)
 #if !USE(GTK4)
     bool useSystemAppearanceForScrollbars;
 #endif
@@ -312,11 +312,9 @@ WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 static const char* injectedBundleDirectory()
 {
-#if ENABLE(DEVELOPER_MODE)
     const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
     if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
         return bundleDirectory;
-#endif
 
 #if PLATFORM(GTK)
     static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit2gtk-" WEBKITGTK_API_VERSION_STRING
@@ -341,10 +339,10 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     case PROP_WEBSITE_DATA_MANAGER:
         g_value_set_object(value, webkit_web_context_get_website_data_manager(context));
         break;
-#if PLATFORM(GTK)
     case PROP_PSON_ENABLED:
         g_value_set_boolean(value, context->priv->psonEnabled);
         break;
+#if PLATFORM(GTK)
 #if !USE(GTK4)
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
         g_value_set_boolean(value, webkit_web_context_get_use_system_appearance_for_scrollbars(context));
@@ -371,10 +369,10 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->websiteDataManager = manager ? WEBKIT_WEBSITE_DATA_MANAGER(manager) : nullptr;
         break;
     }
-#if PLATFORM(GTK)
     case PROP_PSON_ENABLED:
         context->priv->psonEnabled = g_value_get_boolean(value);
         break;
+#if PLATFORM(GTK)
 #if !USE(GTK4)
     case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
         webkit_web_context_set_use_system_appearance_for_scrollbars(context, g_value_get_boolean(value));
@@ -391,9 +389,18 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     }
 }
 
+static int webkitWebContext = 0;
+
+int webkitWebContextExistingCount()
+{
+    return webkitWebContext;
+}
+
 static void webkitWebContextConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
+
+    ++webkitWebContext;
 
     GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), INJECTED_BUNDLE_FILENAME, nullptr));
 
@@ -403,8 +410,8 @@ static void webkitWebContextConstructed(GObject* object)
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(FileSystem::stringFromFileSystemRepresentation(bundleFilename.get()));
     configuration.setUsesWebProcessCache(true);
-#if PLATFORM(GTK)
     configuration.setProcessSwapsOnNavigation(priv->psonEnabled);
+#if PLATFORM(GTK)
 #if !USE(GTK4)
     configuration.setUseSystemAppearanceForScrollbars(priv->useSystemAppearanceForScrollbars);
 #endif
@@ -446,6 +453,8 @@ static void webkitWebContextConstructed(GObject* object)
 
 static void webkitWebContextDispose(GObject* object)
 {
+    --webkitWebContext;
+
     WebKitWebContextPrivate* priv = WEBKIT_WEB_CONTEXT(object)->priv;
     if (!priv->clientsDetached) {
         priv->clientsDetached = true;
@@ -514,7 +523,6 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             WEBKIT_TYPE_WEBSITE_DATA_MANAGER,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
-#if PLATFORM(GTK)
     /**
      * WebKitWebContext:process-swap-on-cross-site-navigation-enabled:
      *
@@ -536,6 +544,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
+#if PLATFORM(GTK)
 #if !USE(GTK4)
     /**
      * WebKitWebContext:use-system-appearance-for-scrollbars:

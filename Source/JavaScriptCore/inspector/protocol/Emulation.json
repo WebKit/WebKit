@@ -1,0 +1,51 @@
+{
+    "domain": "Emulation",
+    "availability": ["web"],
+    "commands": [
+        {
+            "name": "setDeviceMetricsOverride",
+            "description": "Overrides device metrics with provided values.",
+            "async": true,
+            "parameters": [
+                { "name": "width", "type": "integer" },
+                { "name": "height", "type": "integer" },
+                { "name": "fixedLayout", "type": "boolean" },
+                { "name": "deviceScaleFactor", "type": "number", "optional": true }
+            ]
+        },
+        {
+            "name": "setJavaScriptEnabled",
+            "description": "Allows to disable script execution for the page.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "setAuthCredentials",
+            "description": "Credentials to use during HTTP authentication.",
+            "parameters": [
+                { "name": "username", "type": "string", "optional": true },
+                { "name": "password", "type": "string", "optional": true }
+            ]
+        },
+        {
+            "name": "setActiveAndFocused",
+            "description": "Makes page focused for test.",
+            "parameters": [
+                { "name": "active", "type": "boolean", "optional": true }
+            ]
+        },
+        {
+            "name": "grantPermissions",
+            "parameters": [
+                { "name": "origin", "type": "string" },
+                { "name": "permissions", "type": "array", "items": { "type": "string" } }
+            ],
+            "description": "Overrides the permissions."
+        },
+        {
+            "name": "resetPermissions",
+            "description": "Clears permission overrides."
+        }
+    ]
+}

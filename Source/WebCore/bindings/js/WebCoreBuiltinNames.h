@@ -109,6 +109,8 @@ namespace WebCore {
     macro(Database) \
     macro(DataTransferItem) \
     macro(DataTransferItemList) \
+    macro(DeviceMotionEvent) \
+    macro(DeviceOrientationEvent) \
     macro(DocumentTimeline) \
     macro(EnterPictureInPictureEvent) \
     macro(ExtendableEvent) \
@@ -179,6 +181,7 @@ namespace WebCore {
     macro(NavigatorMediaDevices) \
     macro(NavigatorPermissions) \
     macro(NavigatorUserMedia) \
+    macro(Notification) \
     macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
     macro(OffscreenCanvasRenderingContext2D) \

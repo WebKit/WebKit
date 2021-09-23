@@ -81,6 +81,16 @@
             ]
         },
         {
+          "id": "Rect",
+          "type": "object",
+          "properties": [
+            { "name": "x", "type": "integer", "description": "X coordinate" },
+            { "name": "y", "type": "integer", "description": "Y coordinate" },
+            { "name": "width", "type": "integer", "description": "Rectangle width" },
+            { "name": "height", "type": "integer", "description": "Rectangle height" }
+      ]
+        },
+        {
             "id": "EventListener",
             "type": "object",
             "description": "A structure holding event listener properties.",
@@ -167,6 +177,16 @@
                 { "name": "paddingColor", "$ref": "RGBAColor", "optional": true, "description": "The padding highlight fill color (default: transparent)." },
                 { "name": "borderColor", "$ref": "RGBAColor", "optional": true, "description": "The border highlight fill color (default: transparent)." },
                 { "name": "marginColor", "$ref": "RGBAColor", "optional": true, "description": "The margin highlight fill color (default: transparent)." }
+            ]
+        },
+        {
+            "id": "FilePayload",
+            "type": "object",
+            "description": "Data to construct File object.",
+            "properties": [
+                { "name": "name", "type": "string", "description": "File name." },
+                { "name": "type", "type": "string", "description": "File type." },
+                { "name": "data", "type": "string", "description": "Base64-encoded file data." }
             ]
         }
     ],
@@ -532,7 +552,9 @@
             "description": "Resolves JavaScript node object for given node id.",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to resolve." },
+                { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "Id of the node to resolve." },
+                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "optional": true, "description": "Source element handle." },
+                { "name": "executionContextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which execution context to adopt to." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
             ],
             "returns": [
@@ -598,6 +620,45 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "allow", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "describeNode",
+            "description": "Returns node description.",
+            "parameters": [
+                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id of the node wrapper." }
+            ],
+            "returns": [
+                { "name": "contentFrameId", "$ref": "Network.FrameId", "optional": true, "description": "Frame ID for frame owner elements." },
+                { "name": "ownerFrameId", "$ref": "Network.FrameId", "optional": true, "description": "ID of the owning frame element." }
+            ]
+        },
+        {
+          "name": "scrollIntoViewIfNeeded",
+          "description": "Scrolls the given rect into view if not already in the viewport.",
+          "parameters": [
+              { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id of the node wrapper." },
+              { "name": "rect", "$ref": "Rect", "optional": true, "description": "Rect relative to the node's border box, in CSS pixels." }
+          ]
+        },
+        {
+            "name": "getContentQuads",
+            "description": "Returns quads that describe node position on the page. This method\nmight return multiple quads for inline nodes.",
+            "parameters": [
+                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id of the node wrapper." }
+            ],
+            "returns": [
+                {
+                    "name": "quads", "type": "array", "items": { "$ref": "Quad" }, "description": "Quads that describe node layout relative to viewport."
+                }
+            ]
+        },
+        {
+            "name": "setInputFiles",
+            "description": "Sets input files for given <input type=file>",
+            "parameters": [
+                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "Input element handle." },
+                { "name": "files", "type": "array", "items": { "$ref": "FilePayload" }, "description": "Files to set" }
             ]
         }
     ],

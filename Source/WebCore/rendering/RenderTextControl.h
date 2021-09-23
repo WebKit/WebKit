@@ -36,9 +36,9 @@ public:
 
     WEBCORE_EXPORT HTMLTextFormControlElement& textFormControlElement() const;
 
-#if PLATFORM(IOS_FAMILY)
     bool canScroll() const;
 
+#if PLATFORM(IOS_FAMILY)
     // Returns the line height of the inner renderer.
     int innerLineHeight() const override;
 #endif

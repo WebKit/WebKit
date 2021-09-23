@@ -28,15 +28,19 @@
 
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "NetworkResourceLoadParameters.h"
 #include "WebFrame.h"
+#include "WebLoaderStrategy.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include "WebResourceLoader.h"
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
+#include <WebCore/ResourceLoader.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageSessionProvider.h>
 
@@ -253,6 +257,24 @@ void WebCookieJar::setRawCookie(const WebCore::Document& document, const Cookie&
 void WebCookieJar::deleteCookie(const WebCore::Document& document, const URL& url, const String& cookieName)
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::DeleteCookie(url, cookieName), 0);
+}
+
+void WebCookieJar::setCookieFromResponse(ResourceLoader& loader, const String& setCookieValue)
+{
+    auto* webFrame = WebFrame::fromCoreFrame(*loader.frame());
+
+    WebResourceLoader::TrackingParameters trackingParameters;
+    trackingParameters.webPageProxyID = webFrame->page()->webPageProxyIdentifier();
+    trackingParameters.pageID = webFrame->page()->identifier();
+    trackingParameters.frameID = webFrame->frameID();
+    trackingParameters.resourceID = loader.identifier();
+
+    NetworkResourceLoadParameters loadParameters;
+    if (!WebLoaderStrategy::fillParametersForNetworkProcessLoad(loader, loader.request(), trackingParameters, true, 0_s, loadParameters))
+        return;
+
+    URL mainDocumentURL = loader.frame()->document()->topDocument().url();
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCookieFromResponse(loadParameters, mainDocumentURL, setCookieValue), 0);
 }
 
 } // namespace WebKit

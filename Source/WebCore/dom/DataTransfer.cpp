@@ -494,6 +494,14 @@ Ref<DataTransfer> DataTransfer::createForDrag(const Document& document)
     return adoptRef(*new DataTransfer(StoreMode::ReadWrite, Pasteboard::createForDragAndDrop(PagePasteboardContext::create(document.pageID())), Type::DragAndDropData));
 }
 
+#if PLATFORM(MAC)
+Ref<DataTransfer> DataTransfer::createForDrag(const Document& document, const String& pasteboardName)
+{
+    return adoptRef(*new DataTransfer(StoreMode::ReadWrite, makeUnique<Pasteboard>(PagePasteboardContext::create(document.pageID()), pasteboardName), Type::DragAndDropData));
+}
+#endif
+
+
 Ref<DataTransfer> DataTransfer::createForDragStartEvent(const Document& document)
 {
     auto dataTransfer = adoptRef(*new DataTransfer(StoreMode::ReadWrite, makeUnique<StaticPasteboard>(), Type::DragAndDropData));

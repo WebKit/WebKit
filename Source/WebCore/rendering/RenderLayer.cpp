@@ -2575,7 +2575,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect& visibleRect, const Lay
     ScrollAlignment::Behavior scrollX;
     LayoutRect exposeRectX(exposeRect.x(), visibleRect.y(), exposeRect.width(), visibleRect.height());
     LayoutUnit intersectWidth = intersection(visibleRect, exposeRectX).width();
-    if (intersectWidth == exposeRect.width() || intersectWidth >= MIN_INTERSECT_FOR_REVEAL)
+    if (intersectWidth == exposeRect.width() || (intersectWidth >= MIN_INTERSECT_FOR_REVEAL && !alignX.m_disableMinThreshold))
         // If the rectangle is fully visible, use the specified visible behavior.
         // If the rectangle is partially visible, but over a certain threshold,
         // then treat it as fully visible to avoid unnecessary horizontal scrolling

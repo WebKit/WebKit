@@ -34,6 +34,7 @@ namespace WebCore {
 
 class Document;
 class DocumentFragment;
+class Pasteboard;
 
 HGLOBAL createGlobalData(const String&);
 HGLOBAL createGlobalData(const Vector<char>&);

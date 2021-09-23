@@ -256,6 +256,7 @@ void LineLayout::updateFormattingRootGeometryAndInvalidate()
 {
     auto& flow = this->flow();
 
+<<<<<<< ours
     auto updateGeometry = [&](auto& root) {
         root.setContentBoxWidth(flow.contentLogicalWidth());
         root.setPadding(Layout::Edges { { flow.paddingStart(), flow.paddingEnd() }, { flow.paddingBefore(), flow.paddingAfter() } });
@@ -277,6 +278,21 @@ void LineLayout::updateFormattingRootGeometryAndInvalidate()
 void LineLayout::prepareLayoutState()
 {
     m_layoutState.setViewportSize(flow().frame().view()->size());
+||||||| base
+    auto& rootGeometry = m_layoutState.ensureGeometryForBox(rootLayoutBox());
+    rootGeometry.setContentBoxWidth(flow.contentSize().width());
+    rootGeometry.setPadding(Layout::Edges { { flow.paddingStart(), flow.paddingEnd() }, { flow.paddingBefore(), flow.paddingAfter() } });
+    rootGeometry.setBorder(Layout::Edges { { flow.borderStart(), flow.borderEnd() }, { flow.borderBefore(), flow.borderAfter() } });
+    rootGeometry.setHorizontalMargin({ });
+    rootGeometry.setVerticalMargin({ });
+=======
+    auto& rootGeometry = m_layoutState.ensureGeometryForBox(rootLayoutBox());
+    rootGeometry.setContentBoxWidth(flow.contentSize().width());
+    rootGeometry.setPadding(Layout::Edges{});
+    rootGeometry.setBorder(Layout::Edges { { flow.borderStart(), flow.borderEnd() }, { flow.borderBefore(), flow.borderAfter() } });
+    rootGeometry.setHorizontalMargin({ });
+    rootGeometry.setVerticalMargin({ });
+>>>>>>> theirs
 }
 
 void LineLayout::prepareFloatingState()

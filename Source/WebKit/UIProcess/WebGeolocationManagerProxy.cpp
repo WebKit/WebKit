@@ -128,7 +128,8 @@ void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection, WebP
     if (!wasUpdating) {
         m_provider->setEnableHighAccuracy(*this, isHighAccuracyEnabled());
         m_provider->startUpdating(*this);
-    } else if (m_lastPosition)
+    }
+    if (m_lastPosition)
         connection.send(Messages::WebGeolocationManager::DidChangePosition(m_lastPosition.value()), 0);
 }
 

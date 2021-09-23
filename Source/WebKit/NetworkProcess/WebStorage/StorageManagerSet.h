@@ -46,6 +46,7 @@ using ConnectToStorageAreaCallback = CompletionHandler<void(const std::optional<
 using GetValuesCallback = CompletionHandler<void(const HashMap<String, String>&)>;
 using GetOriginsCallback = CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>;
 using GetOriginDetailsCallback = CompletionHandler<void(Vector<LocalStorageDatabaseTracker::OriginDetails>&&)>;
+using GetLocalStorageDataCallback = CompletionHandler<void(Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>>&&)>;
 using DeleteCallback = CompletionHandler<void()>;
 
 class StorageManagerSet : public IPC::Connection::WorkQueueMessageReceiver {
@@ -73,6 +74,8 @@ public:
     void deleteLocalStorageModifiedSince(PAL::SessionID, WallTime, DeleteCallback&&);
     void deleteLocalStorageForOrigins(PAL::SessionID, const Vector<WebCore::SecurityOriginData>&, DeleteCallback&&);
     void getLocalStorageOriginDetails(PAL::SessionID, GetOriginDetailsCallback&&);
+    void getLocalStorageData(PAL::SessionID, GetLocalStorageDataCallback&&);
+    void setLocalStorageData(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>>&& origins, CompletionHandler<void(String)>&&);
     void renameOrigin(PAL::SessionID, const URL&, const URL&, CompletionHandler<void()>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

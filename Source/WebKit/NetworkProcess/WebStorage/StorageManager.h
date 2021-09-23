@@ -66,6 +66,7 @@ public:
     void deleteSessionStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&);
 
     HashSet<WebCore::SecurityOriginData> getLocalStorageOriginsCrossThreadCopy() const;
+    Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>> getLocalStorageDataCrossThreadCopy() const;
     void deleteLocalStorageOriginsModifiedSince(WallTime);
     void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&);
     Vector<LocalStorageDatabaseTracker::OriginDetails> getLocalStorageOriginDetailsCrossThreadCopy() const;

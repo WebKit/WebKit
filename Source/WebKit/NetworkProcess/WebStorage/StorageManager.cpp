@@ -148,6 +148,19 @@ HashSet<SecurityOriginData> StorageManager::getLocalStorageOriginsCrossThreadCop
     return origins;
 }
 
+Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>> StorageManager::getLocalStorageDataCrossThreadCopy() const
+{
+    ASSERT(!RunLoop::isMain());
+
+    Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>> result;
+    for (const auto& localStorageNameSpace : m_localStorageNamespaces.values()) {
+        localStorageNameSpace->forEachStorageArea([&] (const StorageArea& area) {
+            result.append({ area.securityOrigin().isolatedCopy(), area.items() });
+        });
+    }
+    return result;
+}
+
 Vector<LocalStorageDatabaseTracker::OriginDetails> StorageManager::getLocalStorageOriginDetailsCrossThreadCopy() const
 {
     ASSERT(!RunLoop::isMain());

@@ -44,7 +44,7 @@ class StorageSessionProvider;
 
 class SocketStreamHandleImpl : public SocketStreamHandle, public CurlStream::Client {
 public:
-    static Ref<SocketStreamHandleImpl> create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, client, provider)); }
+    static Ref<SocketStreamHandleImpl> create(const URL& url, bool ignoreCertificateErrors, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&, const StorageSessionProvider* provider) { return adoptRef(*new SocketStreamHandleImpl(url, ignoreCertificateErrors, client, provider)); }
 
     virtual ~SocketStreamHandleImpl();
 
@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT void platformClose() final;
 
 private:
-    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&, const StorageSessionProvider*);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, bool ignoreCertificateErrors, SocketStreamHandleClient&, const StorageSessionProvider*);
 
     size_t bufferedAmount() final;
     std::optional<size_t> platformSendInternal(const uint8_t*, size_t);

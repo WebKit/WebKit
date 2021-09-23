@@ -98,6 +98,10 @@ private:
         page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
         webkitWebViewRunJavaScriptPrompt(m_webView, message.utf8(), defaultValue.utf8(), WTFMove(completionHandler));
     }
+    void handleJavaScriptDialog(WebPageProxy&, bool accept, const String& value) final
+    {
+        webkitWebViewHandleJavaScriptDialog(m_webView, accept, value);
+    }
 
     bool canRunBeforeUnloadConfirmPanel() const final { return true; }
 

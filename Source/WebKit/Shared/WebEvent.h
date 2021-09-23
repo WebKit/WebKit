@@ -31,6 +31,7 @@
 
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 

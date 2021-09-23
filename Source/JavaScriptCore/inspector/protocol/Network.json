@@ -193,6 +193,17 @@
             ]
         },
         {
+            "name": "getInterceptedResponseBody",
+            "description": "Returns content served for the given request. Will wait for the request to finish loading.",
+            "async": true,
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier of the intercepted network response's request." }
+            ],
+            "returns": [
+                { "name": "body", "type": "string", "description": "Base64 encoded response body." }
+            ]
+        },
+        {
             "name": "setResourceCachingDisabled",
             "description": "Toggles whether the resource cache may be used when loading resources in the inspected page. If <code>true</code>, the resource cache will not be used when loading resources.",
             "parameters": [
@@ -303,6 +314,15 @@
             ]
         },
         {
+            "name": "interceptResponseWithError",
+            "description": "Fail response with given error type.",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network response to fail." },
+                { "name": "errorType", "$ref": "ResourceErrorType", "description": "Deliver error reason for the request failure." }
+            ]
+        },
+        {
             "name": "interceptRequestWithResponse",
             "description": "Provide response for an intercepted request. Request completely bypasses the network in this case and is immediately fulfilled with the provided data.",
             "targetTypes": ["page"],
@@ -323,6 +343,13 @@
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request to fail." },
                 { "name": "errorType", "$ref": "ResourceErrorType", "description": "Deliver error reason for the request failure." }
+            ]
+        },
+        {
+            "name": "setEmulateOfflineState",
+            "description": "Emulate offline state overriding the actual state.",
+            "parameters": [
+                { "name": "offline", "type": "boolean", "description": "True to emulate offline." }
             ]
         }
     ],

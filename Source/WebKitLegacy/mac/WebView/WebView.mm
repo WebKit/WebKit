@@ -4036,7 +4036,7 @@ IGNORE_WARNINGS_END
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(IOS_TOUCH_EVENTS)
 
 - (NSArray *)_touchEventRegions
 {
@@ -4078,7 +4078,7 @@ IGNORE_WARNINGS_END
     }).autorelease();
 }
 
-#endif // ENABLE(TOUCH_EVENTS)
+#endif // ENABLE(IOS_TOUCH_EVENTS)
 
 // For backwards compatibility with the WebBackForwardList API, we honor both
 // a per-WebView and a per-preferences setting for whether to use the back/forward cache.

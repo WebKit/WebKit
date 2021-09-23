@@ -52,6 +52,7 @@ private:
 #else
     bool paint(cairo_t*, const WebCore::IntRect&) override;
 #endif
+    cairo_surface_t* surface() override { return m_surface.get(); }
 
     RefPtr<cairo_surface_t> m_surface;
     WebCore::XUniqueDamage m_damage;

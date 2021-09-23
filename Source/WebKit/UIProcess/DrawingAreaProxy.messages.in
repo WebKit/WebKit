@@ -36,4 +36,7 @@ messages -> DrawingAreaProxy NotRefCounted {
     DidUpdateBackingStoreState(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
 #endif
+#if PLATFORM(WIN)
+    DidChangeAcceleratedCompositingMode(bool enabled)
+#endif
 }

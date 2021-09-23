@@ -70,7 +70,7 @@ struct _BrowserWindowClass {
     GtkApplicationWindowClass parent;
 };
 
-static const char *defaultWindowTitle = "WebKitGTK MiniBrowser";
+static const char *defaultWindowTitle = "🎭 Playwright";
 static const gdouble minimumZoomLevel = 0.5;
 static const gdouble maximumZoomLevel = 3;
 static const gdouble defaultZoomLevel = 1;
@@ -154,13 +154,11 @@ static void webViewURIChanged(WebKitWebView *webView, GParamSpec *pspec, Browser
 static void webViewTitleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
 {
     const char *title = webkit_web_view_get_title(webView);
+    char *privateTitle = NULL;
     if (!title)
         title = defaultWindowTitle;
-    char *privateTitle = NULL;
-    if (webkit_web_view_is_controlled_by_automation(webView))
-        privateTitle = g_strdup_printf("[Automation] %s", title);
-    else if (webkit_web_view_is_ephemeral(webView))
-        privateTitle = g_strdup_printf("[Private] %s", title);
+    else
+        privateTitle = g_strdup_printf("🎭 Playwright: %s", title);
     gtk_window_set_title(GTK_WINDOW(window), privateTitle ? privateTitle : title);
     g_free(privateTitle);
 }
@@ -1445,6 +1443,12 @@ static gboolean browserWindowDeleteEvent(GtkWidget *widget, GdkEventAny* event)
 }
 #endif
 
+static void zeroPreferredSize(GtkWidget* widget, gint* minimumSize, gint* naturalSize)
+{
+    *minimumSize = 10;
+    *naturalSize = 10;
+}
+
 static void browser_window_class_init(BrowserWindowClass *klass)
 {
     GObjectClass *gobjectClass = G_OBJECT_CLASS(klass);
@@ -1458,6 +1462,14 @@ static void browser_window_class_init(BrowserWindowClass *klass)
     GtkWidgetClass *widgetClass = GTK_WIDGET_CLASS(klass);
     widgetClass->delete_event = browserWindowDeleteEvent;
 #endif
+
+// Playwrigth begin
+    // Override preferred (which is minimum :-) size to 0 so that we can
+    // emulate arbitrary resolution.
+    GtkWidgetClass* browserWidgetClass = GTK_WIDGET_CLASS(klass);
+    browserWidgetClass->get_preferred_width = zeroPreferredSize;
+    browserWidgetClass->get_preferred_height = zeroPreferredSize;
+// Playwrigth end
 }
 
 /* Public API. */

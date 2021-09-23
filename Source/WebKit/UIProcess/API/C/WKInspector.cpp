@@ -28,6 +28,11 @@
 
 #if !PLATFORM(IOS_FAMILY)
 
+#if PLATFORM(WIN)
+#include "BrowserInspectorPipe.h"
+#include "InspectorPlaywrightAgentClientWin.h"
+#endif
+
 #include "WKAPICast.h"
 #include "WebInspectorUIProxy.h"
 #include "WebPageProxy.h"
@@ -128,6 +133,13 @@ bool WKInspectorIsElementSelectionActive(WKInspectorRef inspectorRef)
 void WKInspectorToggleElementSelection(WKInspectorRef inspectorRef)
 {
     toImpl(inspectorRef)->toggleElementSelection();
+}
+
+void WKInspectorInitializeRemoteInspectorPipe(ConfigureDataStoreCallback configureDataStore, CreatePageCallback createPage, QuitCallback quit)
+{
+#if PLATFORM(WIN)
+    initializeBrowserInspectorPipe(makeUnique<InspectorPlaywrightAgentClientWin>(configureDataStore, createPage, quit));
+#endif
 }
 
 #endif // !PLATFORM(IOS_FAMILY)

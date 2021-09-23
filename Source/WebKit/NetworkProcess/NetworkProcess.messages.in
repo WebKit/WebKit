@@ -77,6 +77,14 @@ messages -> NetworkProcess LegacyReceiver {
 
     PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, URL url, String userAgent, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, enum:bool WebKit::LastNavigationWasAppInitiated lastNavigationWasAppInitiated);
 
+    GetAllCookies(PAL::SessionID sessionID) -> (Vector<WebCore::Cookie> cookies) Async
+    SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies) -> (bool success) Async
+    DeleteAllCookies(PAL::SessionID sessionID) -> (bool success) Async
+    SetIgnoreCertificateErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)
+
+    GetLocalStorageData(PAL::SessionID sessionID) -> (Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>> origins) Async
+    SetLocalStorageData(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>> origins) -> (String error) Async
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async
     ClearUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async

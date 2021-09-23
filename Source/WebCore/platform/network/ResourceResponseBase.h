@@ -221,6 +221,8 @@ public:
 
     WEBCORE_EXPORT static ResourceResponse dataURLResponse(const URL&, const DataURLDecoder::Result&);
 
+    HTTPHeaderMap m_httpRequestHeaderFields;
+
 protected:
     enum InitLevel {
         Uninitialized,
@@ -300,6 +302,7 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_httpStatusText;
     encoder << m_httpVersion;
     encoder << m_httpHeaderFields;
+    encoder << m_httpRequestHeaderFields;
 
     // We don't want to put the networkLoadMetrics info
     // into the disk cache, because we will never use the old info.
@@ -371,6 +374,12 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!httpHeaderFields)
         return false;
     response.m_httpHeaderFields = WTFMove(*httpHeaderFields);
+
+    std::optional<HTTPHeaderMap> httpRequestHeaderFields;
+    decoder >> httpRequestHeaderFields;
+    if (!httpRequestHeaderFields)
+        return false;
+    response.m_httpRequestHeaderFields = WTFMove(*httpRequestHeaderFields);
 
     // The networkLoadMetrics info is only send over IPC and not stored in disk cache.
     if constexpr (Decoder::isIPCDecoder) {

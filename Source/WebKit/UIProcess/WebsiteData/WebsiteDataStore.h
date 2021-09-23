@@ -86,6 +86,7 @@ class SecKeyProxyStore;
 class DeviceIdHashSaltStorage;
 class NetworkProcessProxy;
 class SOAuthorizationCoordinator;
+class DownloadProxy;
 class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
@@ -94,6 +95,7 @@ enum class CacheModel : uint8_t;
 enum class WebsiteDataFetchOption : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
+struct FrameInfoData;
 struct NetworkProcessConnectionInfo;
 struct WebsiteDataRecord;
 struct WebsiteDataStoreParameters;
@@ -107,6 +109,16 @@ enum class StorageAccessPromptStatus;
 #if ENABLE(NETSCAPE_PLUGIN_API)
 struct PluginModuleInfo;
 #endif
+
+class WebsiteDataStore;
+
+class DownloadInstrumentation {
+public:
+    virtual void downloadCreated(const String& uuid, const WebCore::ResourceRequest&, const FrameInfoData& frameInfoData, WebPageProxy* page, RefPtr<DownloadProxy> download) = 0;
+    virtual void downloadFilenameSuggested(const String& uuid, const String& suggestedFilename) = 0;
+    virtual void downloadFinished(const String& uuid, const String& error) = 0;
+    virtual ~DownloadInstrumentation() = default;
+};
 
 class WebsiteDataStore : public API::ObjectImpl<API::Object::Type::WebsiteDataStore>, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
@@ -289,11 +301,13 @@ public:
     const WebCore::CurlProxySettings& networkProxySettings() const { return m_proxySettings; }
 #endif
 
-#if USE(SOUP)
+#if USE(SOUP) || PLATFORM(COCOA) || PLATFORM(WIN)
     void setPersistentCredentialStorageEnabled(bool);
     bool persistentCredentialStorageEnabled() const { return m_persistentCredentialStorageEnabled && isPersistent(); }
     void setIgnoreTLSErrors(bool);
     bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
+#endif
+#if USE(SOUP)
     void setNetworkProxySettings(WebCore::SoupNetworkProxySettings&&);
     const WebCore::SoupNetworkProxySettings& networkProxySettings() const { return m_networkProxySettings; }
     void setCookiePersistentStorage(const String&, SoupCookiePersistentStorageType);
@@ -351,6 +365,14 @@ public:
     static WTF::String defaultDeviceIdHashSaltsStorageDirectory();
     static WTF::String defaultJavaScriptConfigurationDirectory();
     static bool http3Enabled();
+
+    void setLanguagesForAutomation(Vector<String>&&);
+    Vector<String>& languagesForAutomation() { return m_languagesForAutomation; };
+    void setDownloadForAutomation(std::optional<bool> allow, const String& downloadPath);
+    std::optional<bool> allowDownloadForAutomation() { return m_allowDownloadForAutomation; };
+    String downloadPathForAutomation() { return m_downloadPathForAutomation; };
+    void setDownloadInstrumentation(DownloadInstrumentation* instrumentation) { m_downloadInstrumentation = instrumentation; };
+    DownloadInstrumentation* downloadInstrumentation() { return m_downloadInstrumentation; };
 
     void resetQuota(CompletionHandler<void()>&&);
     void clearStorage(CompletionHandler<void()>&&);
@@ -439,9 +461,11 @@ private:
     WebCore::CurlProxySettings m_proxySettings;
 #endif
 
-#if USE(SOUP)
+#if USE(SOUP) || PLATFORM(COCOA) || PLATFORM(WIN)
     bool m_persistentCredentialStorageEnabled { true };
     bool m_ignoreTLSErrors { true };
+#endif
+#if USE(SOUP)
     WebCore::SoupNetworkProxySettings m_networkProxySettings;
     String m_cookiePersistentStoragePath;
     SoupCookiePersistentStorageType m_cookiePersistentStorageType { SoupCookiePersistentStorageType::SQLite };
@@ -468,6 +492,11 @@ private:
 
     RefPtr<API::HTTPCookieStore> m_cookieStore;
     RefPtr<NetworkProcessProxy> m_networkProcess;
+
+    Vector<String> m_languagesForAutomation;
+    std::optional<bool> m_allowDownloadForAutomation;
+    String m_downloadPathForAutomation;
+    DownloadInstrumentation* m_downloadInstrumentation { nullptr };
 
 #if HAVE(APP_SSO)
     UniqueRef<SOAuthorizationCoordinator> m_soAuthorizationCoordinator;

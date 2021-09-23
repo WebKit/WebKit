@@ -149,27 +149,24 @@ void HeadlessViewBackend::updateSnapshot(struct wpe_fdo_shm_exported_buffer* exp
             return;
     }
 
-    uint32_t bufferStride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width);
-    uint8_t* buffer = new uint8_t[bufferStride * m_height];
-    memset(buffer, 0, bufferStride * m_height);
+    uint32_t width = std::max(0, wl_shm_buffer_get_width(shmBuffer));
+    uint32_t height = std::max(0, wl_shm_buffer_get_height(shmBuffer));
+    if (!width || !height) {
+        fprintf(stderr, "HeadlessViewBackend::updateSnapshot shmBuffer is empty: %ux%u\n", width, height);
+        return;
+    }
 
+    uint32_t bufferStride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, width);
+    uint32_t stride = std::max(0, wl_shm_buffer_get_stride(shmBuffer));
+    if (bufferStride != stride) {
+        fprintf(stderr, "bufferStride != stride: %u != %u\n", bufferStride, stride);
+        return;
+    }
+    uint8_t* buffer = new uint8_t[bufferStride * height];
     {
-        uint32_t width = std::min<uint32_t>(m_width, std::max(0, wl_shm_buffer_get_width(shmBuffer)));
-        uint32_t height = std::min<uint32_t>(m_height, std::max(0, wl_shm_buffer_get_height(shmBuffer)));
-        uint32_t stride = std::max(0, wl_shm_buffer_get_stride(shmBuffer));
-
         wl_shm_buffer_begin_access(shmBuffer);
         auto* data = static_cast<uint8_t*>(wl_shm_buffer_get_data(shmBuffer));
-
-        for (uint32_t y = 0; y < height; ++y) {
-            for (uint32_t x = 0; x < width; ++x) {
-                buffer[bufferStride * y + 4 * x + 0] = data[stride * y + 4 * x + 0];
-                buffer[bufferStride * y + 4 * x + 1] = data[stride * y + 4 * x + 1];
-                buffer[bufferStride * y + 4 * x + 2] = data[stride * y + 4 * x + 2];
-                buffer[bufferStride * y + 4 * x + 3] = data[stride * y + 4 * x + 3];
-            }
-        }
-
+        memcpy(buffer, data, bufferStride * height);
         wl_shm_buffer_end_access(shmBuffer);
     }
 
@@ -177,7 +174,7 @@ void HeadlessViewBackend::updateSnapshot(struct wpe_fdo_shm_exported_buffer* exp
         cairo_surface_destroy(m_snapshot);
 
     m_snapshot = cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32,
-        m_width, m_height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, m_width));
+        width, height, cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, width));
 
     static cairo_user_data_key_t bufferKey;
     cairo_surface_set_user_data(m_snapshot, &bufferKey, buffer,

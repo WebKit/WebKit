@@ -239,10 +239,16 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
 {
 }
 
-void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type, bool)
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCompatibility)
 {
-    // No KeyDown events on Windows to disambiguate.
-    ASSERT_NOT_REACHED();
+    m_type = type;
+    if (type == PlatformEvent::RawKeyDown) {
+        m_text = String();
+        m_unmodifiedText = String();
+    } else {
+        m_keyIdentifier = String();
+        m_windowsVirtualKeyCode = 0;
+    }
 }
 
 bool PlatformKeyboardEvent::currentCapsLockState()

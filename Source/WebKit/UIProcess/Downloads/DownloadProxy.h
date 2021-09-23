@@ -147,6 +147,7 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSProgress> m_progress;
 #endif
+    String m_uuid;
 };
 
 } // namespace WebKit

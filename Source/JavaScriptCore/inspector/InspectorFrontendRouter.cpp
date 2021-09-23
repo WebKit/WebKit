@@ -49,7 +49,7 @@ void FrontendRouter::connectFrontend(FrontendChannel& connection)
 void FrontendRouter::disconnectFrontend(FrontendChannel& connection)
 {
     if (!m_connections.contains(&connection)) {
-        ASSERT_NOT_REACHED();
+        ASSERT(m_connections.isEmpty());
         return;
     }
 

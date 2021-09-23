@@ -25,6 +25,7 @@
 
 [
     Conditional=DEVICE_ORIENTATION,
+    EnabledBySetting=DeviceOrientationEvent,
     Exposed=Window
 ] interface DeviceOrientationEvent : Event {
     readonly attribute unrestricted double? alpha;

@@ -31,3 +31,5 @@ template <> void derefGPtr(WebKitWebViewBackend* ptr);
 }
 
 void webkitWebViewBackendUnref(WebKitWebViewBackend*);
+
+cairo_surface_t* webkitWebViewBackendTakeScreenshot(WebKitWebViewBackend*);

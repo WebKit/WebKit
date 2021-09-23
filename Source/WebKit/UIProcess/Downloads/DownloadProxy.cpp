@@ -42,8 +42,10 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/ResourceResponseBase.h>
 #include <wtf/FileSystem.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/UUID.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -56,7 +58,10 @@ DownloadProxy::DownloadProxy(DownloadProxyMap& downloadProxyMap, WebsiteDataStor
     , m_request(resourceRequest)
     , m_originatingPage(makeWeakPtr(originatingPage))
     , m_frameInfo(API::FrameInfo::create(FrameInfoData { frameInfoData }, originatingPage))
+    , m_uuid(createCanonicalUUIDString())
 {
+    if (auto* instrumentation = m_dataStore->downloadInstrumentation())
+      instrumentation->downloadCreated(m_uuid, m_request, frameInfoData, originatingPage, this);
 }
 
 DownloadProxy::~DownloadProxy()
@@ -75,9 +80,18 @@ static RefPtr<API::Data> createData(const IPC::DataReference& data)
 void DownloadProxy::cancel(CompletionHandler<void(API::Data*)>&& completionHandler)
 {
     if (m_dataStore) {
+<<<<<<< ours
         m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (const IPC::DataReference& resumeData) mutable {
+||||||| base
+        m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (const IPC::DataReference& resumeData) mutable {
+=======
+        auto* instrumentation = m_dataStore->downloadInstrumentation();
+        m_dataStore->networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CancelDownload(m_downloadID), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), instrumentation] (const IPC::DataReference& resumeData) mutable {
+>>>>>>> theirs
             m_legacyResumeData = createData(resumeData);
             completionHandler(m_legacyResumeData.get());
+            if (instrumentation)
+                instrumentation->downloadFinished(m_uuid, "canceled"_s);
             m_downloadProxyMap.downloadFinished(*this);
         });
     } else
@@ -164,7 +178,28 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
         suggestedFilename = m_suggestedFilename;
     suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
 
+<<<<<<< ours
     m_client->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
+||||||| base
+    m_client->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
+=======
+    if (auto* instrumentation = m_dataStore->downloadInstrumentation())
+      instrumentation->downloadFilenameSuggested(m_uuid, suggestedFilename);
+
+    if (m_dataStore->allowDownloadForAutomation()) {
+        SandboxExtension::Handle sandboxExtensionHandle;
+        String destination;
+        if (*m_dataStore->allowDownloadForAutomation()) {
+            destination = FileSystem::pathByAppendingComponent(m_dataStore->downloadPathForAutomation(), m_uuid);
+            if (auto handle = SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite))
+                sandboxExtensionHandle = WTFMove(*handle);
+        }
+        completionHandler(destination, WTFMove(sandboxExtensionHandle), AllowOverwrite::Yes);
+        return;
+    }
+
+    m_client->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
+>>>>>>> theirs
         SandboxExtension::Handle sandboxExtensionHandle;
         if (!destination.isNull()) {
             if (auto handle = SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite))
@@ -184,6 +219,8 @@ void DownloadProxy::didCreateDestination(const String& path)
 void DownloadProxy::didFinish()
 {
     m_client->didFinish(*this);
+    if (auto* instrumentation = m_dataStore->downloadInstrumentation())
+      instrumentation->downloadFinished(m_uuid, String());
 
     // This can cause the DownloadProxy object to be deleted.
     m_downloadProxyMap.downloadFinished(*this);
@@ -194,6 +231,8 @@ void DownloadProxy::didFail(const ResourceError& error, const IPC::DataReference
     m_legacyResumeData = createData(resumeData);
 
     m_client->didFail(*this, error, m_legacyResumeData.get());
+    if (auto* instrumentation = m_dataStore->downloadInstrumentation())
+      instrumentation->downloadFinished(m_uuid, error.localizedDescription());
 
     // This can cause the DownloadProxy object to be deleted.
     m_downloadProxyMap.downloadFinished(*this);

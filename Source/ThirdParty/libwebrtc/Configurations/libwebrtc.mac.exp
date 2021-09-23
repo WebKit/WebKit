@@ -326,4 +326,28 @@ __ZNK3rtc13SocketAddresseqERKS0_
 __ZNK3rtc9IPAddress5IsNilEv
 __ZN3rtc12SSLCertChainD1Ev
 __ZN6webrtc24SctpTransportInformationD1Ev
+<<<<<<< ours
 __ZNK3rtc9IPAddressneERKS0_
+||||||| base
+=======
+__ZN8mkvmuxer11SegmentInfo15set_writing_appEPKc
+__ZN8mkvmuxer11SegmentInfo4InitEv
+__ZN8mkvmuxer7Segment10OutputCuesEb
+__ZN8mkvmuxer7Segment13AddVideoTrackEiii
+__ZN8mkvmuxer7Segment4InitEPNS_10IMkvWriterE
+__ZN8mkvmuxer7Segment8AddFrameEPKhyyyb
+__ZN8mkvmuxer7Segment8FinalizeEv
+__ZN8mkvmuxer7SegmentC1Ev
+__ZN8mkvmuxer7SegmentD1Ev
+__ZN8mkvmuxer9MkvWriterC1EP7__sFILE
+_ARGBToI420
+_vpx_codec_enc_config_default
+_vpx_codec_enc_init_ver
+_vpx_codec_encode
+_vpx_codec_err_to_string
+_vpx_codec_error
+_vpx_codec_get_cx_data
+_vpx_codec_iface_name
+_vpx_codec_version_str
+_vpx_codec_vp8_cx
+>>>>>>> theirs

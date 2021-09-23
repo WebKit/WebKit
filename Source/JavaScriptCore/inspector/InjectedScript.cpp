@@ -91,7 +91,7 @@ void InjectedScript::awaitPromise(const String& promiseObjectId, bool returnByVa
     makeAsyncCall(function, WTFMove(callback));
 }
 
-void InjectedScript::callFunctionOn(Protocol::ErrorString& errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown)
+void InjectedScript::callFunctionOn(const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, bool awaitPromise, AsyncCallCallback&& callback)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "callFunctionOn"_s, inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
@@ -99,10 +99,8 @@ void InjectedScript::callFunctionOn(Protocol::ErrorString& errorString, const St
     function.appendArgument(arguments);
     function.appendArgument(returnByValue);
     function.appendArgument(generatePreview);
-
-    std::optional<int> savedResultIndex;
-    makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
-    ASSERT(!savedResultIndex);
+    function.appendArgument(awaitPromise);
+    makeAsyncCall(function, WTFMove(callback));
 }
 
 void InjectedScript::evaluateOnCallFrame(Protocol::ErrorString& errorString, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
@@ -288,6 +286,10 @@ RefPtr<Protocol::Runtime::RemoteObject> InjectedScript::wrapObject(JSC::JSValue 
 
     auto callResult = callFunctionWithEvalEnabled(wrapFunction);
     if (!callResult)
+        return nullptr;
+    auto callResultValue = callResult.value();
+    // callResultValue could be missing if the execution was terminated
+    if (!callResultValue)
         return nullptr;
 
     auto resultValue = toInspectorValue(globalObject(), callResult.value());

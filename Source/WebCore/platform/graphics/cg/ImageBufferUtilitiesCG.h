@@ -36,10 +36,10 @@ class PixelBuffer;
 
 WEBCORE_EXPORT uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t bufferSize);
 
-CFStringRef jpegUTI();
+WEBCORE_EXPORT CFStringRef jpegUTI();
 RetainPtr<CFStringRef> utiFromImageBufferMIMEType(const String&);
 
-Vector<uint8_t> data(CGImageRef, CFStringRef destinationUTI, std::optional<double> quality);
+WEBCORE_EXPORT Vector<uint8_t> data(CGImageRef, CFStringRef destinationUTI, std::optional<double> quality);
 Vector<uint8_t> data(const PixelBuffer&, const String& mimeType, std::optional<double> quality);
 
 String dataURL(CGImageRef, CFStringRef destinationUTI, const String& mimeType, std::optional<double> quality);

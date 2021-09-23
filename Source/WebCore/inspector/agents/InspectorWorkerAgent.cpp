@@ -168,7 +168,11 @@ void InspectorWorkerAgent::connectToWorkerInspectorProxy(WorkerInspectorProxy& p
 
     m_connectedProxies.set(proxy.identifier(), makeWeakPtr(proxy));
 
-    m_frontendDispatcher->workerCreated(proxy.identifier(), proxy.url().string(), proxy.name());
+    ASSERT(is<Document>(proxy.scriptExecutionContext()));
+    Document& document = downcast<Document>(*proxy.scriptExecutionContext());
+    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
+    m_frontendDispatcher->workerCreated(proxy.identifier(), proxy.url().string(), proxy.name(),
+        pageAgent ? pageAgent->frameId(document.frame()) : emptyString());
 }
 
 void InspectorWorkerAgent::disconnectFromWorkerInspectorProxy(WorkerInspectorProxy& proxy)

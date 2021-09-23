@@ -569,6 +569,13 @@ void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents& i
         pageAgent->applyUserAgentOverride(userAgent);
 }
 
+void InspectorInstrumentation::applyPlatformOverrideImpl(InstrumentingAgents& instrumentingAgents, String& platform)
+{
+    if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
+        pageAgent->applyPlatformOverride(platform);
+}
+
+
 void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instrumentingAgents, String& media)
 {
     if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
@@ -636,6 +643,12 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumen
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }
 
+void InspectorInstrumentation::didReceiveMainResourceErrorImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, const ResourceError&)
+{
+    if (auto* pageRuntimeAgent = instrumentingAgents.enabledPageRuntimeAgent())
+        pageRuntimeAgent->didReceiveMainResourceError(frame);
+}
+
 void InspectorInstrumentation::willLoadXHRSynchronouslyImpl(InstrumentingAgents& instrumentingAgents)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
@@ -668,20 +681,17 @@ void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents&
 
 void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
-    if (!frame.isMainFrame())
-        return;
-
     if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
-        pageAgent->domContentEventFired();
+        pageAgent->domContentEventFired(frame);
 }
 
 void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents& instrumentingAgents, Frame* frame)
 {
-    if (!frame || !frame->isMainFrame())
+    if (!frame)
         return;
 
     if (auto* pageAgent = instrumentingAgents.enabledPageAgent())
-        pageAgent->loadEventFired();
+        pageAgent->loadEventFired(*frame);
 }
 
 void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
@@ -762,12 +772,6 @@ void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& ins
         pageDOMDebuggerAgent->frameDocumentUpdated(frame);
 }
 
-void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader& loader)
-{
-    if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
-        inspectorPageAgent->loaderDetachedFromFrame(loader);
-}
-
 void InspectorInstrumentation::frameStartedLoadingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
 {
     if (frame.isMainFrame()) {
@@ -802,6 +806,12 @@ void InspectorInstrumentation::frameClearedScheduledNavigationImpl(Instrumenting
 {
     if (auto* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
         inspectorPageAgent->frameClearedScheduledNavigation(frame);
+}
+
+void InspectorInstrumentation::didNavigateWithinPageImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+{
+    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.enabledPageAgent())
+        inspectorPageAgent->didNavigateWithinPage(frame);
 }
 
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
@@ -850,10 +860,34 @@ void InspectorInstrumentation::interceptRequestImpl(InstrumentingAgents& instrum
         networkAgent->interceptRequest(loader, WTFMove(handler));
 }
 
+<<<<<<< ours
 void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+||||||| base
+void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+=======
+void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, unsigned long identifier, CompletionHandler<void(std::optional<ResourceError>&&, const ResourceResponse&, RefPtr<SharedBuffer>)>&& handler)
+>>>>>>> theirs
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->interceptResponse(response, identifier, WTFMove(handler));
+}
+
+void InspectorInstrumentation::interceptDidReceiveDataImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const SharedBuffer& buffer)
+{
+    if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
+        networkAgent->interceptDidReceiveData(identifier, buffer);
+}
+
+void InspectorInstrumentation::interceptDidFinishResourceLoadImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
+{
+    if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
+        networkAgent->interceptDidFinishResourceLoad(identifier);
+}
+
+void InspectorInstrumentation::interceptDidFailResourceLoadImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const ResourceError& error)
+{
+    if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
+        networkAgent->interceptDidFailResourceLoad(identifier, error);
 }
 
 // JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
@@ -1286,6 +1320,36 @@ void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents& ins
         layerTreeAgent->renderLayerDestroyed(renderLayer);
 }
 
+void InspectorInstrumentation::runOpenPanelImpl(InstrumentingAgents& instrumentingAgents, HTMLInputElement* element, bool* intercept)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents.enabledPageAgent())
+        pageAgent->runOpenPanel(element, intercept);
+}
+
+void InspectorInstrumentation::frameAttachedImpl(InstrumentingAgents& instrumentingAgents, Frame& frame) {
+    if (InspectorPageAgent* pageAgent = instrumentingAgents.enabledPageAgent())
+        pageAgent->frameAttached(frame);
+}
+
+bool InspectorInstrumentation::shouldBypassCSPImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents.enabledPageAgent())
+        return pageAgent->shouldBypassCSP();
+    return false;
+}
+
+void InspectorInstrumentation::willCheckNewWindowPolicyImpl(InstrumentingAgents& instrumentingAgents, const URL& url)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents.enabledPageAgent())
+        pageAgent->willCheckNewWindowPolicy(url);
+}
+
+void InspectorInstrumentation::didCheckNewWindowPolicyImpl(InstrumentingAgents& instrumentingAgents, bool allowed)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents.enabledPageAgent())
+        pageAgent->didCheckNewWindowPolicy(allowed);
+}
+
 InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(WorkerOrWorkletGlobalScope& globalScope)
 {
     return globalScope.inspectorController().m_instrumentingAgents;
@@ -1295,6 +1359,13 @@ InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(Page& page)
 {
     ASSERT(isMainThread());
     return page.inspectorController().m_instrumentingAgents.get();
+}
+
+void InspectorInstrumentation::maybeOverrideDefaultObjectInclusion(Page& page, AccessibilityObjectInclusion& inclusion) {
+    if (InspectorPageAgent* pageAgent = instrumentingAgents(page).enabledPageAgent()) {
+        if (pageAgent->doingAccessibilitySnapshot())
+            inclusion = AccessibilityObjectInclusion::DefaultBehavior;
+    }
 }
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(ScriptExecutionContext& context)

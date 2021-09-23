@@ -96,7 +96,7 @@ static inline auto callbacksRunLoopMode()
 #endif
 }
 
-SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider)
+SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, bool ignoreCertificateErrors, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider)
     : SocketStreamHandle(url, client)
     , m_connectingSubstate(New)
     , m_connectionType(Unknown)
@@ -104,6 +104,7 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     , m_credentialPartition(credentialPartition)
     , m_auditData(WTFMove(auditData))
     , m_storageSessionProvider(provider)
+    , m_ignoreCertificateErrors(ignoreCertificateErrors)
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
 
@@ -357,7 +358,7 @@ void SocketStreamHandleImpl::createStreams()
     }
 
     if (shouldUseSSL()) {
-        CFBooleanRef validateCertificateChain = DeprecatedGlobalSettings::allowsAnySSLCertificate() ? kCFBooleanFalse : kCFBooleanTrue;
+        CFBooleanRef validateCertificateChain = m_ignoreCertificateErrors || DeprecatedGlobalSettings::allowsAnySSLCertificate() ? kCFBooleanFalse : kCFBooleanTrue;
         const void* keys[] = {
             kCFStreamSSLPeerName,
             kCFStreamSSLLevel,

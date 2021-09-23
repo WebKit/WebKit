@@ -42,7 +42,9 @@ public:
     bool platformInitialize() override
     {
         if (SetProcessDpiAwarenessContextPtr())
-            SetProcessDpiAwarenessContextPtr()(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+            // Playwright begin
+            SetProcessDpiAwarenessContextPtr()(DPI_AWARENESS_CONTEXT_UNAWARE);
+            // Playwright end
         else
             SetProcessDPIAware();
         return true;

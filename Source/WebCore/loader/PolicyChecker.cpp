@@ -46,6 +46,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInElement.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/CompletionHandler.h>
@@ -252,26 +253,32 @@ void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigat
 
     auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request);
 
+    InspectorInstrumentation::willCheckNewWindowPolicy(m_frame, request.url());
     auto requestIdentifier = PolicyCheckIdentifier::create();
     m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, requestIdentifier, [frame = Ref { m_frame }, request,
         formState = WTFMove(formState), frameName, navigationAction, function = WTFMove(function), blobURLLifetimeExtension = WTFMove(blobURLLifetimeExtension),
         requestIdentifier] (PolicyAction policyAction, PolicyCheckIdentifier responseIdentifier) mutable {
 
-        if (!responseIdentifier.isValidFor(requestIdentifier))
+        if (!responseIdentifier.isValidFor(requestIdentifier)) {
+            InspectorInstrumentation::didCheckNewWindowPolicy(frame.get(), false);
             return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
+        }
 
         switch (policyAction) {
         case PolicyAction::Download:
             frame->loader().client().startDownload(request);
             FALLTHROUGH;
         case PolicyAction::Ignore:
+            InspectorInstrumentation::didCheckNewWindowPolicy(frame.get(), false);
             function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
             return;
         case PolicyAction::StopAllLoads:
             ASSERT_NOT_REACHED();
+            InspectorInstrumentation::didCheckNewWindowPolicy(frame.get(), false);
             function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
             return;
         case PolicyAction::Use:
+            InspectorInstrumentation::didCheckNewWindowPolicy(frame.get(), true);
             function(request, makeWeakPtr(formState.get()), frameName, navigationAction, ShouldContinuePolicyCheck::Yes);
             return;
         }

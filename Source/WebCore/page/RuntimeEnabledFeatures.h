@@ -200,6 +200,7 @@ public:
     void setMouseEventsSimulationEnabled(bool isEnabled) { m_mouseEventsSimulationEnabled = isEnabled; }
     bool touchEventsEnabled() const;
     void setTouchEventsEnabled(bool isEnabled) { m_touchEventsEnabled = isEnabled; }
+    bool isTouchPrimaryInputDevice() const;
 #endif
 
     bool pageAtRuleSupportEnabled() const { return m_pageAtRuleSupportEnabled; }

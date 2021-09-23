@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "NetworkProcess.h"
-
 #include "ArgumentCoders.h"
 #include "Attachment.h"
 #include "AuthenticationManager.h"
@@ -576,6 +575,59 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
     if (auto server = m_webIDBServers.take(sessionID))
         server->close();
     removeStorageManagerForSession(sessionID);
+}
+
+void NetworkProcess::getAllCookies(PAL::SessionID sessionID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+{
+    if (auto* networkStorageSession = storageSession(sessionID)) {
+        completionHandler(networkStorageSession->getAllCookies());
+        return;
+    }
+    completionHandler({ });
+}
+
+void NetworkProcess::setCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, CompletionHandler<void(bool)>&& completionHandler) {
+    if (auto* networkStorageSession = storageSession(sessionID)) {
+        for (auto cookie : cookies)
+            networkStorageSession->setCookie(cookie);
+        completionHandler(true);
+        return;
+    }
+    completionHandler(false);
+}
+
+void NetworkProcess::deleteAllCookies(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (auto* networkStorageSession = storageSession(sessionID)) {
+        networkStorageSession->deleteAllCookies();
+        completionHandler(true);
+        return;
+    }
+    completionHandler(false);
+}
+
+void NetworkProcess::getLocalStorageData(PAL::SessionID sessionID, CompletionHandler<void(Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>>&&)>&& completionHandler)
+{
+    if (m_storageManagerSet->contains(sessionID)) {
+        m_storageManagerSet->getLocalStorageData(sessionID, WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>>());
+}
+
+void NetworkProcess::setLocalStorageData(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, Vector<std::pair<WebCore::SecurityOriginData, HashMap<String, String>>>&& origins, CompletionHandler<void(String)>&& completionHandler)
+{
+    if (m_storageManagerSet->contains(sessionID)) {
+        m_storageManagerSet->setLocalStorageData(sessionID, storageNamespaceID, WTFMove(origins), WTFMove(completionHandler));
+        return;
+    }
+    completionHandler("Cannot find storage manager for given session id");
+}
+
+void NetworkProcess::setIgnoreCertificateErrors(PAL::SessionID sessionID, bool ignore)
+{
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->setIgnoreCertificateErrors(ignore);
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)

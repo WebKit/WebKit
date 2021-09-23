@@ -38,7 +38,7 @@ public:
     CurlStreamScheduler();
     virtual ~CurlStreamScheduler();
 
-    CurlStreamID createStream(const URL&, CurlStream::Client&);
+    CurlStreamID createStream(const URL&, bool ignoreCertificateErrors, CurlStream::Client&);
     void destroyStream(CurlStreamID);
     void send(CurlStreamID, UniqueArray<uint8_t>&&, size_t);
 

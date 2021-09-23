@@ -47,6 +47,14 @@ void WebDocumentLoader::detachFromFrame()
     DocumentLoader::detachFromFrame();
 }
 
+void WebDocumentLoader::replacedByFragmentNavigation(Frame& frame)
+{
+    ASSERT(!this->frame());
+    // Notify WebPageProxy that the navigation has been converted into same page navigation.
+    if (m_navigationID)
+        WebFrame::fromCoreFrame(frame)->documentLoaderDetached(m_navigationID);
+}
+
 void WebDocumentLoader::setNavigationID(uint64_t navigationID)
 {
     ASSERT(navigationID);

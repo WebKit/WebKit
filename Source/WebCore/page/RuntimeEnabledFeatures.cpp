@@ -61,7 +61,11 @@ RuntimeEnabledFeatures& RuntimeEnabledFeatures::sharedFeatures()
 #if ENABLE(TOUCH_EVENTS)
 bool RuntimeEnabledFeatures::touchEventsEnabled() const
 {
-    return m_touchEventsEnabled.value_or(screenHasTouchDevice());
+    return m_touchEventsEnabled.value_or(platformScreenHasTouchDevice());
+}
+bool RuntimeEnabledFeatures::isTouchPrimaryInputDevice() const
+{
+    return m_touchEventsEnabled.value_or(platformScreenIsTouchPrimaryInputDevice());
 }
 #endif
 

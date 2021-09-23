@@ -323,6 +323,11 @@ public:
     virtual void selectionDidChange() = 0;
 #endif
 
+// Paywright begin
+#if PLATFORM(COCOA)
+    virtual RetainPtr<CGImageRef> takeSnapshotForAutomation() = 0;
+#endif
+// Paywright end
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual RefPtr<ViewSnapshot> takeViewSnapshot(std::optional<WebCore::IntRect>&&) = 0;
 #endif

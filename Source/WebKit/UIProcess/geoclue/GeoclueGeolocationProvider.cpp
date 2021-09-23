@@ -60,6 +60,8 @@ void GeoclueGeolocationProvider::start(UpdateNotifyFunction&& updateNotifyFuncti
     m_isRunning = true;
     m_cancellable = adoptGRef(g_cancellable_new());
     if (!m_manager) {
+        g_cancellable_cancel(m_cancellable_start.get());
+        m_cancellable_start = adoptGRef(g_cancellable_new());
         g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr,
             "org.freedesktop.GeoClue2", "/org/freedesktop/GeoClue2/Manager", "org.freedesktop.GeoClue2.Manager", m_cancellable.get(),
             [](GObject*, GAsyncResult* result, gpointer userData) {
@@ -91,6 +93,12 @@ void GeoclueGeolocationProvider::stop()
     g_cancellable_cancel(m_cancellable.get());
     m_cancellable = nullptr;
     stopClient();
+    g_cancellable_cancel(m_cancellable_start.get());
+    m_cancellable_start = nullptr;
+    g_cancellable_cancel(m_cancellable_setup.get());
+    m_cancellable_setup = nullptr;
+    g_cancellable_cancel(m_cancellable_create.get());
+    m_cancellable_create = nullptr;
     destroyManagerLater();
 }
 
@@ -153,6 +161,8 @@ void GeoclueGeolocationProvider::createClient(const char* clientPath)
         return;
     }
 
+    g_cancellable_cancel(m_cancellable_create.get());
+    m_cancellable_create = adoptGRef(g_cancellable_new());
     g_dbus_proxy_new_for_bus(G_BUS_TYPE_SYSTEM, G_DBUS_PROXY_FLAGS_NONE, nullptr,
         "org.freedesktop.GeoClue2", clientPath, "org.freedesktop.GeoClue2.Client", m_cancellable.get(),
         [](GObject*, GAsyncResult* result, gpointer userData) {

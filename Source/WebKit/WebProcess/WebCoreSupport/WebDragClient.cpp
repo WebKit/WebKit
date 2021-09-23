@@ -29,6 +29,13 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #include "WebPage.h"
+#include <WebCore/DataTransfer.h>
+#include <WebCore/Pasteboard.h>
+#include "ShareableBitmap.h"
+
+#if PLATFORM(WPE)
+#include "ArgumentCodersWPE.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -50,7 +57,7 @@ OptionSet<DragSourceAction> WebDragClient::dragSourceActionMaskForPoint(const In
     return m_page->allowedDragSourceActions();
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(GTK)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE) && !PLATFORM(WIN)
 void WebDragClient::startDrag(DragItem, DataTransfer&, Frame&)
 {
 }

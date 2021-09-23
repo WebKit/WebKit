@@ -622,3 +622,5 @@ bool ProvisionalPageProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Option
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK

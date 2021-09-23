@@ -64,6 +64,7 @@ public:
     void removeItem(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier, const String& key, const String& urlString);
     void clear(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier, const String& urlString);
 
+    void setItems(const HashMap<String, String>& items, bool& quotaException);
     HashMap<String, String> items() const;
     void clear();
 

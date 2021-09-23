@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, URL&& url)
+CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, bool ignoreCertificateErrors, URL&& url)
     : m_scheduler(scheduler)
     , m_streamID(streamID)
 {
@@ -45,6 +45,9 @@ CurlStream::CurlStream(CurlStreamScheduler& scheduler, CurlStreamID streamID, UR
     m_curlHandle->setUrl(WTFMove(url));
 
     m_curlHandle->enableConnectionOnly();
+    if (ignoreCertificateErrors)
+        m_curlHandle->disableServerTrustEvaluation();
+
 
     auto errorCode = m_curlHandle->perform();
     if (errorCode != CURLE_OK) {

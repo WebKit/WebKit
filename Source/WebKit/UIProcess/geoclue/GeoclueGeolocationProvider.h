@@ -71,6 +71,9 @@ private:
     GRefPtr<GDBusProxy> m_manager;
     GRefPtr<GDBusProxy> m_client;
     GRefPtr<GCancellable> m_cancellable;
+    GRefPtr<GCancellable> m_cancellable_start;
+    GRefPtr<GCancellable> m_cancellable_setup;
+    GRefPtr<GCancellable> m_cancellable_create;
     UpdateNotifyFunction m_updateNotifyFunction;
     RunLoop::Timer<GeoclueGeolocationProvider> m_destroyManagerLaterTimer;
 };

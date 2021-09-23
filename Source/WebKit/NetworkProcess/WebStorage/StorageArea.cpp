@@ -112,6 +112,18 @@ void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, StorageAre
     dispatchEvents(sourceConnection, storageAreaImplID, key, oldValue, value, urlString);
 }
 
+void StorageArea::setItems(const HashMap<String, String>& items, bool& quotaException) {
+    ASSERT(!RunLoop::isMain());
+
+    for (const auto& item : items) {
+        String oldValue;
+        if (isEphemeral())
+            m_sessionStorageMap->setItem(item.key, item.value, oldValue, quotaException);
+        else
+            ensureDatabase().setItem(item.key, item.value, oldValue, quotaException);
+    }
+}
+
 void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());

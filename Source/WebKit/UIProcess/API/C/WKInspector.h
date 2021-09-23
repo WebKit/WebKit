@@ -66,6 +66,10 @@ WK_EXPORT void WKInspectorTogglePageProfiling(WKInspectorRef inspector);
 WK_EXPORT bool WKInspectorIsElementSelectionActive(WKInspectorRef inspector);
 WK_EXPORT void WKInspectorToggleElementSelection(WKInspectorRef inspector);
 
+typedef void (*ConfigureDataStoreCallback)(WKWebsiteDataStoreRef dataStore);
+typedef WKPageRef (*CreatePageCallback)(WKPageConfigurationRef configuration);
+typedef void (*QuitCallback)();
+WK_EXPORT void WKInspectorInitializeRemoteInspectorPipe(ConfigureDataStoreCallback, CreatePageCallback, QuitCallback);
 #ifdef __cplusplus
 }
 #endif

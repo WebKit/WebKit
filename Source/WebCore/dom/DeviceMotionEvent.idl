@@ -25,6 +25,7 @@
 
 [
     Conditional=DEVICE_ORIENTATION,
+    EnabledBySetting=DeviceOrientationEvent,
     Exposed=Window
 ] interface DeviceMotionEvent : Event {
     readonly attribute Acceleration? acceleration;

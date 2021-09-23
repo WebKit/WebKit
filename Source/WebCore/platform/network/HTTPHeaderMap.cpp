@@ -205,8 +205,11 @@ void HTTPHeaderMap::add(HTTPHeaderName name, const String& value)
     auto index = m_commonHeaders.findMatching([&](auto& header) {
         return header.key == name;
     });
+    // Align with Chromium and Firefox, but just for SetCookies where it is critical:
+    // https://bit.ly/2HCa0iq
+    String separator = name == HTTPHeaderName::SetCookie ? "\n " : ", ";
     if (index != notFound)
-        m_commonHeaders[index].value = makeString(m_commonHeaders[index].value, ", ", value);
+        m_commonHeaders[index].value = makeString(m_commonHeaders[index].value, separator, value);
     else
         m_commonHeaders.append(CommonHeader { name, value });
 }

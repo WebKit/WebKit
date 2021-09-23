@@ -48,6 +48,7 @@ DragData::DragData(const DragDataMap& data, const IntPoint& clientPosition, cons
     , m_applicationFlags(flags)
     , m_pageID(pageID)
     , m_dragDataMap(data)
+    , m_dragDestinationActionMask(anyDragDestinationAction())
 {
 }
 

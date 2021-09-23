@@ -12,4 +12,5 @@ endif ()
 
 if (ENABLE_WEBKIT)
     add_subdirectory(WebKitTestRunner)
+    add_subdirectory(Playwright/win)
 endif ()

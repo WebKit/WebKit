@@ -127,7 +127,8 @@ static WebCore::CachedImage* cachedImage(Element& element)
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    ASSERT(pasteboardName == String(NSDragPboard));
+    if (pasteboardName != String(NSDragPboard))
+        return;
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     WebCore::CachedImage* image = cachedImage(element);

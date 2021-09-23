@@ -78,6 +78,7 @@ struct ScrollAlignment {
     Behavior m_rectVisible;
     Behavior m_rectHidden;
     Behavior m_rectPartial;
+    bool m_disableMinThreshold = false;
 };
     
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollAlignment::Behavior);

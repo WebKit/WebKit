@@ -47,6 +47,7 @@ public:
 private:
     WebContextMenuProxyWin(WebPageProxy&, ContextMenuContextData&&, const UserData&);
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
+    void hide() override;
 
     HMENU m_menu;
 };

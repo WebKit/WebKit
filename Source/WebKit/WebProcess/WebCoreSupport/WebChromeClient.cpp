@@ -398,6 +398,8 @@ void WebChromeClient::setResizable(bool resizable)
 
 void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID)
 {
+    if (level == MessageLevel::Error)
+        m_page.send(Messages::WebPageProxy::LogToStderr(message));
     // Notify the bundle client.
     m_page.injectedBundleUIClient().willAddMessageToConsole(&m_page, source, level, message, lineNumber, columnNumber, sourceID);
 }
@@ -834,6 +836,13 @@ std::unique_ptr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTime
     return makeUnique<WebDateTimeChooser>(m_page, client);
 }
 
+#endif
+
+#if ENABLE(ORIENTATION_EVENTS) && !PLATFORM(IOS_FAMILY)
+int WebChromeClient::deviceOrientation() const {
+    // Only overrides are supported for non-iOS platforms.
+    return 0;
+}
 #endif
 
 void WebChromeClient::runOpenPanel(Frame& frame, FileChooser& fileChooser)

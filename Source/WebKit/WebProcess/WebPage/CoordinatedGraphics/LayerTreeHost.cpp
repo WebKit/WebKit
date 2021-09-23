@@ -183,8 +183,16 @@ void LayerTreeHost::setViewOverlayRootLayer(GraphicsLayer* viewOverlayRootLayer)
 void LayerTreeHost::scrollNonCompositedContents(const IntRect& rect)
 {
     auto* frameView = m_webPage.mainFrameView();
+
+// Playwright begin
+#if PLATFORM(WIN)
     if (!frameView || !frameView->delegatesScrolling())
+        return
+#else
+    if (!frameView)
         return;
+#endif
+// Playwright end
 
     m_viewportController.didScroll(rect.location());
     if (m_isDiscardable)
@@ -313,6 +321,10 @@ void LayerTreeHost::didChangeViewport()
 
         if (!view->useFixedLayout())
             view->notifyScrollPositionChanged(m_lastScrollPosition);
+// Playwright begin
+        else
+            m_viewportController.didScroll(m_lastScrollPosition);
+// Playwright end
     }
 
     if (m_lastPageScaleFactor != pageScale) {

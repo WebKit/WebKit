@@ -25,6 +25,7 @@
 
 // https://w3c.github.io/pointerlock/#extensions-to-the-documentorshadowroot-mixin
 [
+    EnabledBySetting=PointerLock,
     Conditional=POINTER_LOCK
 ] partial interface mixin DocumentOrShadowRoot {
     readonly attribute Element? pointerLockElement;

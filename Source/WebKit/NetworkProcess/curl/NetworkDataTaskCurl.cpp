@@ -26,9 +26,13 @@
 #include "config.h"
 #include "NetworkDataTaskCurl.h"
 
+#include "APIError.h"
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
+#include "DataReference.h"
+#include "Download.h"
 #include "NetworkSessionCurl.h"
+#include "NetworkProcess.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/CurlRequest.h>
@@ -40,6 +44,7 @@
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/SynchronousLoaderClient.h>
 #include <WebCore/TextEncoding.h>
+#include <wtf/FileSystem.h>
 
 namespace WebKit {
 
@@ -77,6 +82,8 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
     }
+    if (m_session->ignoreCertificateErrors())
+        m_curlRequest->disableServerTrustEvaluation();
     m_curlRequest->start();
 }
 
@@ -106,6 +113,9 @@ void NetworkDataTaskCurl::cancel()
 
     if (m_curlRequest)
         m_curlRequest->cancel();
+
+    if (isDownload())
+        deleteDownloadFile();
 }
 
 void NetworkDataTaskCurl::invalidateAndCancel()
@@ -150,6 +160,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, CurlRespo
     m_response = ResourceResponse(receivedResponse);
     m_response.setCertificateInfo(WTFMove(receivedResponse.certificateInfo));
     m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(WTFMove(receivedResponse.networkLoadMetrics)));
+    m_response.m_httpRequestHeaderFields = request.resourceRequest().httpHeaderFields();
 
     handleCookieHeaders(request.resourceRequest(), receivedResponse);
 
@@ -177,7 +188,10 @@ void NetworkDataTaskCurl::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBuffer>&&
     Ref protectedThis { *this };
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
-
+    if (isDownload()) {
+        FileSystem::writeToFile(m_downloadDestinationFile, buffer->data(), buffer->size());
+        return;
+    }
     m_client->didReceiveData(WTFMove(buffer));
 }
 
@@ -186,7 +200,24 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
+    if (isDownload()) {
+        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        ASSERT(download);
+        FileSystem::closeFile(m_downloadDestinationFile);
+        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
+        download->didFinish();
+        return;
+    }
     m_client->didCompleteWithError({ }, WTFMove(networkLoadMetrics));
+}
+
+void NetworkDataTaskCurl::deleteDownloadFile()
+{
+    if (m_downloadDestinationFile != FileSystem::invalidPlatformFileHandle) {
+        FileSystem::closeFile(m_downloadDestinationFile);
+        FileSystem::deleteFile(m_pendingDownloadLocation);
+        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
+    }
 }
 
 void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceError&& resourceError, CertificateInfo&& certificateInfo)
@@ -196,6 +227,14 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
 
     if (resourceError.isSSLCertVerificationError()) {
         tryServerTrustEvaluation(AuthenticationChallenge(request.resourceRequest().url(), certificateInfo, resourceError));
+        return;
+    }
+
+    if (isDownload()) {
+        deleteDownloadFile();
+        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
+        ASSERT(download);
+        download->didFail(resourceError, IPC::DataReference());
         return;
     }
 
@@ -236,6 +275,19 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
         case PolicyAction::Ignore:
             invalidateAndCancel();
             break;
+        case PolicyAction::Download: {
+            FileSystem::deleteFile(m_pendingDownloadLocation);
+            auto& downloadManager = m_session->networkProcess().downloadManager();
+            auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, *m_session, suggestedFilename());
+            auto* downloadPtr = download.get();
+            downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
+            m_downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Write);
+            downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+
+            if (m_curlRequest)
+                m_curlRequest->completeDidReceiveResponse();
+            break;
+        }
         default:
             notImplemented();
             break;
@@ -315,6 +367,8 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
             m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
         }
+        if (m_session->ignoreCertificateErrors())
+            m_curlRequest->disableServerTrustEvaluation();
         m_curlRequest->start();
 
         if (m_state != State::Suspended) {

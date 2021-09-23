@@ -43,7 +43,7 @@ Ref<NetworkSocketStream> NetworkSocketStream::create(NetworkProcess& networkProc
 NetworkSocketStream::NetworkSocketStream(NetworkProcess& networkProcess, URL&& url, PAL::SessionID sessionID, const String& credentialPartition, WebSocketIdentifier identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
     : m_identifier(identifier)
     , m_connection(connection)
-    , m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData), NetworkStorageSessionProvider::create(networkProcess, sessionID).ptr()))
+    , m_impl(SocketStreamHandleImpl::create(url, networkProcess.networkSession(sessionID)->ignoreCertificateErrors(), *this, sessionID, credentialPartition, WTFMove(auditData), NetworkStorageSessionProvider::create(networkProcess, sessionID).ptr()))
     , m_delayFailTimer(*this, &NetworkSocketStream::sendDelayedFailMessage)
 {
 }

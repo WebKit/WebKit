@@ -32,6 +32,7 @@
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
+#include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {
@@ -85,13 +86,13 @@ private:
 
     void appendCookieHeader(WebCore::ResourceRequest&);
     void handleCookieHeaders(const WebCore::ResourceRequest&, const WebCore::CurlResponse&);
+    String suggestedFilename() const override;
 
     bool isThirdPartyRequest(const WebCore::ResourceRequest&);
     bool shouldBlockCookies(const WebCore::ResourceRequest&);
     void blockCookies();
     void unblockCookies();
-
-    String suggestedFilename() const override;
+    void deleteDownloadFile();
 
     State m_state { State::Suspended };
 
@@ -102,6 +103,8 @@ private:
 
     WebCore::FrameIdentifier m_frameID;
     WebCore::PageIdentifier m_pageID;
+
+    FileSystem::PlatformFileHandle m_downloadDestinationFile { FileSystem::invalidPlatformFileHandle };
 
     bool m_blockingCookies { false };
 

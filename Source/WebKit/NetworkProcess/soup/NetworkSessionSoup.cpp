@@ -109,6 +109,11 @@ static gboolean webSocketAcceptCertificateCallback(GTlsConnection* connection, G
     return !session->soupNetworkSession().checkTLSErrors(soupURIToURL(soup_message_get_uri(soupMessage)), certificate, errors);
 }
 
+static gboolean webSocketAcceptCertificateCallbackIgnoreTLSErrors(GTlsConnection* connection, GTlsCertificate* certificate, GTlsCertificateFlags errors, NetworkSessionSoup* session)
+{
+    return TRUE;
+}
+
 static void webSocketMessageNetworkEventCallback(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream* connection, NetworkSessionSoup* session)
 {
     if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
@@ -119,6 +124,15 @@ static void webSocketMessageNetworkEventCallback(SoupMessage* soupMessage, GSock
 }
 #endif
 
+static void webSocketMessageNetworkEventCallbackIgnoreTLSErrors(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream* connection)
+{
+    if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
+        return;
+
+    g_object_set_data(G_OBJECT(connection), "wk-soup-message", soupMessage);
+    g_signal_connect(connection, "accept-certificate", G_CALLBACK(webSocketAcceptCertificateCallbackIgnoreTLSErrors), soupMessage);
+}
+
 std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol)
 {
     GRefPtr<SoupMessage> soupMessage = request.createSoupMessage(blobRegistry());
@@ -127,14 +141,21 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPagePr
 
     if (request.url().protocolIs("wss")) {
 #if USE(SOUP2)
-        g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), this);
+        if (ignoreCertificateErrors())
+          g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallbackIgnoreTLSErrors), this);
+        else
+          g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), this);
 #else
-        g_signal_connect(soupMessage.get(), "accept-certificate", G_CALLBACK(+[](SoupMessage* message, GTlsCertificate* certificate, GTlsCertificateFlags errors,  NetworkSessionSoup* session) -> gboolean {
-            if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
-                return TRUE;
+        if (ignoreCertificateErrors()) {
+            g_signal_connect(soupMessage.get(), "accept-certificate", G_CALLBACK(webSocketAcceptCertificateCallbackIgnoreTLSErrors), this);
+        } else {            
+            g_signal_connect(soupMessage.get(), "accept-certificate", G_CALLBACK(+[](SoupMessage* message, GTlsCertificate* certificate, GTlsCertificateFlags errors,  NetworkSessionSoup* session) -> gboolean {
+                if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
+                    return TRUE;
 
-            return !session->soupNetworkSession().checkTLSErrors(soup_message_get_uri(message), certificate, errors);
-        }), this);
+                return !session->soupNetworkSession().checkTLSErrors(soup_message_get_uri(message), certificate, errors);
+            }), this);
+        }
 #endif
     }
     return makeUnique<WebSocketTask>(channel, request, soupSession(), soupMessage.get(), protocol);

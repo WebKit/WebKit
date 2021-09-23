@@ -66,6 +66,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     ClearPageSpecificData(WebCore::PageIdentifier pageID);
 
+    SetCookieFromResponse(WebKit::NetworkResourceLoadParameters parameters, URL mainDocumentURL, String setCookieValue);
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
     LogUserInteraction(WebCore::RegistrableDomain domain)

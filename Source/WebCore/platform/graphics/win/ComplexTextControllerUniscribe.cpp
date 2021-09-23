@@ -172,6 +172,33 @@ static Vector<unsigned> stringIndicesFromClusters(const Vector<WORD>& clusters, 
     return stringIndices;
 }
 
+static int compactScriptItemsIfNeeded(const UChar* cp, unsigned stringLength, Vector<SCRIPT_ITEM>& items, int numItems, const Font* font)
+{
+    // https://bugs.webkit.org/show_bug.cgi?id=201214
+    // Uniscribe is overly aggressive in separating the runs. It'll split "3d_rotation" into "3", "d", "_" and "rotation" and we
+    // will ScriptShape them separately. As a result, a ligature for "3d_rotation" in the Material icon set
+    // (https://www.materialui.co/icon/3d-rotation) will not be used. A quick and dirty hack is to glue them back here, only making
+    // this apply to the readable characters, digits and _.
+
+    if (!numItems)
+        return numItems;
+
+    if (font->platformData().isSystemFont() || font->platformData().hasVariations())
+        return numItems;
+
+    bool allGoodCharacters = true;
+    for (unsigned i = 0; allGoodCharacters && i < stringLength; ++i) {
+        const UChar c = cp[i];
+        allGoodCharacters = (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
+    }
+    if (!allGoodCharacters)
+        return numItems;
+
+    // Consume entire string into a single run. |items| is at least numItems + 1 long.
+    items[1] = items[numItems];
+    return 1;
+}
+
 void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp, unsigned stringLength, unsigned stringLocation, const Font* font)
 {
     if (!font) {
@@ -200,6 +227,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         items.resize(items.size() * 2);
     }
     items.resize(numItems + 1);
+
+    numItems = compactScriptItemsIfNeeded(cp, stringLength, items, numItems, font);
 
     for (int i = 0; i < numItems; i++) {
         // Determine the string for this item.

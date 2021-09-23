@@ -32,6 +32,7 @@
 #import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
 #import "WKWebViewInternal.h"
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/WeakObjCPtr.h>
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

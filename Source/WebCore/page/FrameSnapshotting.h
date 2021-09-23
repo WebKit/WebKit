@@ -50,6 +50,7 @@ enum class SnapshotFlags : uint8_t {
     PaintSelectionAndBackgroundsOnly = 1 << 4,
     PaintEverythingExcludingSelection = 1 << 5,
     PaintWithIntegralScaleFactor = 1 << 6,
+    OmitDeviceScaleFactor = 1 << 7,
 };
 
 struct SnapshotOptions {

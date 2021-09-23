@@ -27,11 +27,10 @@
 #include "InspectorTargetProxy.h"
 
 #include "ProvisionalPageProxy.h"
-#include "WebFrameProxy.h"
+#include "WebPageInspectorController.h"
 #include "WebPageInspectorTarget.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
-#include "WebProcessProxy.h"
 
 namespace WebKit {
 
@@ -39,18 +38,17 @@ using namespace Inspector;
 
 std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
 {
-    return makeUnique<InspectorTargetProxy>(page, targetId, type);
+    return makeUnique<InspectorTargetProxy>(page, nullptr, targetId, type);
 }
 
-std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, const String& targetId, Inspector::InspectorTargetType type)
+std::unique_ptr<InspectorTargetProxy> InspectorTargetProxy::create(ProvisionalPageProxy& provisionalPage, const String& targetId)
 {
-    auto target = InspectorTargetProxy::create(provisionalPage.page(), targetId, type);
-    target->m_provisionalPage = makeWeakPtr(provisionalPage);
-    return target;
+    return makeUnique<InspectorTargetProxy>(provisionalPage.page(), &provisionalPage, targetId, Inspector::InspectorTargetType::Page);
 }
 
-InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& targetId, Inspector::InspectorTargetType type)
+InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, ProvisionalPageProxy* provisionalPage, const String& targetId, Inspector::InspectorTargetType type)
     : m_page(page)
+    , m_provisionalPage(makeWeakPtr(provisionalPage))
     , m_identifier(targetId)
     , m_type(type)
 {
@@ -95,6 +93,31 @@ void InspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 void InspectorTargetProxy::didCommitProvisionalTarget()
 {
     m_provisionalPage = nullptr;
+}
+
+void InspectorTargetProxy::willResume()
+{
+    if (m_page.hasRunningProcess())
+        m_page.send(Messages::WebPage::ResumeInspectorIfPausedInNewWindow());
+}
+
+void InspectorTargetProxy::activate(String& error)
+{
+    if (m_type != Inspector::InspectorTargetType::Page)
+        return InspectorTarget::activate(error);
+
+    platformActivate(error);
+}
+
+void InspectorTargetProxy::close(String& error, bool runBeforeUnload)
+{
+    if (m_type != Inspector::InspectorTargetType::Page)
+        return InspectorTarget::close(error, runBeforeUnload);
+
+    if (runBeforeUnload)
+        m_page.tryClose();
+    else
+        m_page.closePage();
 }
 
 bool InspectorTargetProxy::isProvisional() const

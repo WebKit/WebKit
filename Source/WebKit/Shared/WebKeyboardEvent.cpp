@@ -35,6 +35,7 @@ WebKeyboardEvent::WebKeyboardEvent()
 {
 }
 
+
 #if USE(APPKIT)
 
 WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool handledByInputMethod, const Vector<WebCore::KeypressCommand>& commands, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
@@ -49,6 +50,24 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     , m_macCharCode(macCharCode)
     , m_handledByInputMethod(handledByInputMethod)
     , m_commands(commands)
+    , m_isAutoRepeat(isAutoRepeat)
+    , m_isKeypad(isKeypad)
+    , m_isSystemKey(isSystemKey)
+{
+    ASSERT(isKeyboardEventType(type));
+}
+
+WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp, Vector<WebCore::KeypressCommand>&& commands)
+    : WebEvent(type, modifiers, timestamp)
+    , m_text(text)
+    , m_unmodifiedText(text)
+    , m_key(key)
+    , m_code(code)
+    , m_keyIdentifier(keyIdentifier)
+    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
+    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
+    , m_macCharCode(0)
+    , m_commands(WTFMove(commands))
     , m_isAutoRepeat(isAutoRepeat)
     , m_isKeypad(isKeypad)
     , m_isSystemKey(isSystemKey)
@@ -75,6 +94,24 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     , m_isAutoRepeat(false)
     , m_isKeypad(isKeypad)
     , m_isSystemKey(false)
+{
+    ASSERT(isKeyboardEventType(type));
+}
+
+WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp, Vector<String>&& commands)
+    : WebEvent(type, modifiers, timestamp)
+    , m_text(text)
+    , m_unmodifiedText(text)
+    , m_key(key)
+    , m_code(code)
+    , m_keyIdentifier(keyIdentifier)
+    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
+    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
+    , m_macCharCode(0)
+    , m_commands(WTFMove(commands))
+    , m_isAutoRepeat(isAutoRepeat)
+    , m_isKeypad(isKeypad)
+    , m_isSystemKey(isSystemKey)
 {
     ASSERT(isKeyboardEventType(type));
 }
@@ -133,6 +170,27 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
     , m_macCharCode(macCharCode)
+    , m_isAutoRepeat(isAutoRepeat)
+    , m_isKeypad(isKeypad)
+    , m_isSystemKey(isSystemKey)
+{
+    ASSERT(isKeyboardEventType(type));
+}
+
+#endif
+
+#if PLATFORM(WIN) || USE(LIBWPE)
+
+WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
+    : WebEvent(type, modifiers, timestamp)
+    , m_text(text)
+    , m_unmodifiedText(text)
+    , m_key(key)
+    , m_code(code)
+    , m_keyIdentifier(keyIdentifier)
+    , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
+    , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
+    , m_macCharCode(0)
     , m_isAutoRepeat(isAutoRepeat)
     , m_isKeypad(isKeypad)
     , m_isSystemKey(isSystemKey)

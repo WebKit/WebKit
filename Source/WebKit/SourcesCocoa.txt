@@ -274,6 +274,7 @@ UIProcess/API/Cocoa/_WKApplicationManifest.mm
 UIProcess/API/Cocoa/_WKAttachment.mm
 UIProcess/API/Cocoa/_WKAutomationSession.mm
 UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm
+UIProcess/API/Cocoa/_WKBrowserInspector.mm
 UIProcess/API/Cocoa/_WKContentRuleListAction.mm
 UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm
 UIProcess/API/Cocoa/_WKCustomHeaderFields.mm @no-unify
@@ -446,6 +447,7 @@ UIProcess/Inspector/ios/WKInspectorHighlightView.mm
 UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.mm
 
 UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm
+UIProcess/Inspector/mac/ScreencastEncoderMac.mm
 UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm
 UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm
 UIProcess/Inspector/mac/WKInspectorViewController.mm

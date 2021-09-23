@@ -599,3 +599,9 @@ platform/graphics/angle/ExtensionsGLANGLE.cpp @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
 platform/graphics/angle/GraphicsContextGLANGLEEGLUtilities.cpp @no-unify
 platform/graphics/angle/TemporaryANGLESetting.cpp @no-unify
+
+// Playwright begin
+JSTouch.cpp
+JSTouchEvent.cpp
+JSTouchList.cpp
+// Playwright end

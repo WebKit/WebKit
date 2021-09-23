@@ -32,6 +32,7 @@
 #include <wpe/WebKitAutomationSession.h>
 #include <wpe/WebKitBackForwardList.h>
 #include <wpe/WebKitBackForwardListItem.h>
+#include <wpe/WebKitBrowserInspector.h>
 #include <wpe/WebKitContextMenu.h>
 #include <wpe/WebKitContextMenuActions.h>
 #include <wpe/WebKitContextMenuItem.h>

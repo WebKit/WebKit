@@ -35,12 +35,14 @@
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowBase.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "UserGestureEmulationScope.h"
@@ -101,6 +103,15 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld
         return;
 
     notifyContextCreated(pageAgent->frameId(&frame), frame.script().globalObject(world), world);
+}
+
+void PageRuntimeAgent::didReceiveMainResourceError(Frame& frame)
+{
+    if (frame.loader().stateMachine().isDisplayingInitialEmptyDocument()) {
+        // Ensure execution context is created for the empty docment to make
+        // it usable in case loading failed.
+        mainWorldExecState(&frame);
+    }
 }
 
 InjectedScript PageRuntimeAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
@@ -191,14 +202,24 @@ void PageRuntimeAgent::notifyContextCreated(const Protocol::Network::FrameId& fr
 
 Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */, std::optional<int> /* savedResultIndex */>> PageRuntimeAgent::evaluate(const String& expression, const String& objectGroup, std::optional<bool>&& includeCommandLineAPI, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& saveResult, std::optional<bool>&& emulateUserGesture)
 {
-    UserGestureEmulationScope userGestureScope(m_inspectedPage, emulateUserGesture && *emulateUserGesture);
+    String errorString;
+    InjectedScript injectedScript = injectedScriptForEval(errorString, std::optional<Protocol::Runtime::ExecutionContextId>(executionContextId));
+    if (!errorString.isEmpty())
+        return makeUnexpected(errorString);
+
+    JSC::JSGlobalObject* globalObject = injectedScript.globalObject();
+    Document* document = globalObject ? activeDOMWindow(*globalObject).document() : nullptr;
+    UserGestureEmulationScope userGestureScope(m_inspectedPage, emulateUserGesture && *emulateUserGesture, document);
     return InspectorRuntimeAgent::evaluate(expression, objectGroup, WTFMove(includeCommandLineAPI), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(executionContextId), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(saveResult), WTFMove(emulateUserGesture));
 }
 
-Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> PageRuntimeAgent::callFunctionOn(const Protocol::Runtime::RemoteObjectId& objectId, const String& expression, RefPtr<JSON::Array>&& optionalArguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture)
+void PageRuntimeAgent::callFunctionOn(const Protocol::Runtime::RemoteObjectId& objectId, const String& expression, RefPtr<JSON::Array>&& optionalArguments, std::optional<bool>&& doNotPauseOnExceptionsAndMuteConsole, std::optional<bool>&& returnByValue, std::optional<bool>&& generatePreview, std::optional<bool>&& emulateUserGesture, std::optional<bool>&& awaitPromise, Ref<CallFunctionOnCallback>&& callback)
 {
-    UserGestureEmulationScope userGestureScope(m_inspectedPage, emulateUserGesture && *emulateUserGesture);
-    return InspectorRuntimeAgent::callFunctionOn(objectId, expression, WTFMove(optionalArguments), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(emulateUserGesture));
+    InjectedScript injectedScript = injectedScriptManager().injectedScriptForObjectId(objectId);
+    JSC::JSGlobalObject* globalObject = injectedScript.globalObject();
+    Document* document = globalObject ? activeDOMWindow(*globalObject).document() : nullptr;
+    UserGestureEmulationScope userGestureScope(m_inspectedPage, emulateUserGesture && *emulateUserGesture, document);
+    return InspectorRuntimeAgent::callFunctionOn(objectId, expression, WTFMove(optionalArguments), WTFMove(doNotPauseOnExceptionsAndMuteConsole), WTFMove(returnByValue), WTFMove(generatePreview), WTFMove(emulateUserGesture), WTFMove(awaitPromise), WTFMove(callback));
 }
 
 } // namespace WebCore

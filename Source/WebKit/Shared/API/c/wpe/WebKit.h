@@ -77,6 +77,7 @@
 // From Source/WebKit/UIProcess/API/C
 #include <WebKit/WKBackForwardListItemRef.h>
 #include <WebKit/WKBackForwardListRef.h>
+#include <WebKit/WKBrowserInspector.h>
 #include <WebKit/WKContext.h>
 #include <WebKit/WKContextConfigurationRef.h>
 #include <WebKit/WKCredential.h>

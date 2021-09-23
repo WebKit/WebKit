@@ -24,6 +24,7 @@
  */
 
 [
+    EnabledBySetting=PointerLock,
     Conditional=POINTER_LOCK
 ] partial interface Element {
     undefined requestPointerLock();

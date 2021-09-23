@@ -38,12 +38,13 @@ namespace WebCore {
 
 class ChromeClient;
 class Page;
+class Document;
 
 class UserGestureEmulationScope {
     WTF_MAKE_NONCOPYABLE(UserGestureEmulationScope);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    UserGestureEmulationScope(Page& inspectedPage, bool emulateUserGesture);
+    UserGestureEmulationScope(Page& inspectedPage, bool emulateUserGesture, Document* document);
     ~UserGestureEmulationScope();
 
 private:

@@ -114,4 +114,61 @@ EventInterface PointerEvent::eventInterface() const
     return PointerEventInterfaceType;
 }
 
+#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
+
+static const AtomString& pointerEventType(PlatformTouchPoint::State state)
+{
+    switch (state) {
+    case PlatformTouchPoint::State::TouchPressed:
+        return eventNames().pointerdownEvent;
+    case PlatformTouchPoint::State::TouchMoved:
+        return eventNames().pointermoveEvent;
+    case PlatformTouchPoint::State::TouchStationary:
+        return eventNames().pointermoveEvent;
+    case PlatformTouchPoint::State::TouchReleased:
+        return eventNames().pointerupEvent;
+    case PlatformTouchPoint::State::TouchCancelled:
+        return eventNames().pointercancelEvent;
+    case PlatformTouchPoint::State::TouchStateEnd:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return nullAtom();
+}
+
+static short buttonForType(const AtomString& type)
+{
+    return type == eventNames().pointermoveEvent ? -1 : 0;
+}
+
+static unsigned short buttonsForType(const AtomString& type)
+{
+    // We have contact with the touch surface for most events except when we've released the touch or canceled it.
+    return (type == eventNames().pointerupEvent || type == eventNames().pointeroutEvent || type == eventNames().pointerleaveEvent || type == eventNames().pointercancelEvent) ? 0 : 1;
+}
+
+Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
+{
+    const auto& type = pointerEventType(event.touchPoints().at(index).state());
+    return adoptRef(*new PointerEvent(type, event, typeIsCancelable(type), index, isPrimary, WTFMove(view)));
+}
+
+Ref<PointerEvent> PointerEvent::create(const String& type, const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
+{
+    return adoptRef(*new PointerEvent(type, event, typeIsCancelable(type), index, isPrimary, WTFMove(view)));
+}
+
+PointerEvent::PointerEvent(const AtomString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
+    : MouseEvent(type, typeCanBubble(type), isCancelable, typeIsComposed(type), event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchPoints().at(index).pos(), event.touchPoints().at(index).pos(), { }, event.modifiers(), buttonForType(type), buttonsForType(type), nullptr, 0, 0, IsSimulated::No, IsTrusted::Yes)
+    , m_pointerId(2)
+    , m_width(2 * event.touchPoints().at(index).radiusX())
+    , m_height(2 * event.touchPoints().at(index).radiusY())
+    , m_pressure(event.touchPoints().at(index).force())
+    , m_pointerType(touchPointerEventType())
+    , m_isPrimary(isPrimary)
+{
+}
+
+#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS_FAMILY)
+
 } // namespace WebCore

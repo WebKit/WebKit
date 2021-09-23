@@ -57,6 +57,7 @@ namespace WebCore {
 
 class AXCoreObject;
 class CharacterData;
+class Color;
 class DOMEditor;
 class Document;
 class Element;
@@ -86,6 +87,7 @@ public:
     static String toErrorString(Exception&&);
 
     static String documentURLString(Document*);
+    static std::optional<Color> parseColor(RefPtr<JSON::Object>&&);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
@@ -129,7 +131,7 @@ public:
     Inspector::Protocol::ErrorStringOr<std::tuple<String /* searchId */, int /* resultCount */>> performSearch(const String& query, RefPtr<JSON::Array>&& nodeIds, std::optional<bool>&& caseSensitive);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> getSearchResults(const String& searchId, int fromIndex, int toIndex);
     Inspector::Protocol::ErrorStringOr<void> discardSearchResults(const String& searchId);
-    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveNode(Inspector::Protocol::DOM::NodeId, const String& objectGroup);
+    Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveNode(std::optional<Inspector::Protocol::DOM::NodeId>&& nodeId, const String& objectId, std::optional<int>&& contextId, const String& objectGroup);
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getAttributes(Inspector::Protocol::DOM::NodeId);
 #if PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> setInspectModeEnabled(bool, RefPtr<JSON::Object>&& highlightConfig);
@@ -154,6 +156,10 @@ public:
     Inspector::Protocol::ErrorStringOr<void> focus(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::ErrorStringOr<void> setInspectedNode(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::ErrorStringOr<void> setAllowEditingUserAgentShadowTrees(bool);
+    Inspector::Protocol::ErrorStringOr<std::tuple<String /* contentFrameId */, String /* ownerFrameId */>> describeNode(const String& objectId);
+    Inspector::Protocol::ErrorStringOr<void> scrollIntoViewIfNeeded(const String& objectId, RefPtr<JSON::Object>&& rect);
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Quad>>> getContentQuads(const String& objectId);
+    Inspector::Protocol::ErrorStringOr<void> setInputFiles(const String& objectId, Ref<JSON::Array>&& files);
 
     // InspectorInstrumentation
     Inspector::Protocol::DOM::NodeId identifierForNode(Node&);
@@ -191,7 +197,7 @@ public:
     Node* nodeForId(Inspector::Protocol::DOM::NodeId);
     Inspector::Protocol::DOM::NodeId boundNodeId(const Node*);
 
-    RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
+    RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup, std::optional<int>&& contextId);
     bool handleMousePress();
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void inspect(Node*);
@@ -202,11 +208,14 @@ public:
     void reset();
 
     Node* assertNode(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
+    Node* assertNode(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::DOM::NodeId>&& nodeId, const String& objectId);
     Element* assertElement(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
     Document* assertDocument(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
 
     RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     Inspector::Protocol::DOM::EventListenerId idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+
+    Node* nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId&);
 
 private:
 #if ENABLE(VIDEO)
@@ -236,7 +245,6 @@ private:
     void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>&);
     
     Node* nodeForPath(const String& path);
-    Node* nodeForObjectId(const Inspector::Protocol::Runtime::RemoteObjectId&);
 
     void discardBindings();
 

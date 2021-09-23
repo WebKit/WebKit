@@ -135,6 +135,12 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
  */
 - (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(nullable NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable result))completionHandler;
 
+/*! @abstract Handle a JavaScript dialog.
+ @param webView The web view invoking the delegate method.
+ @param accept Whether to accept the dialog.
+ @param value Value to use for prompt dialog.
+ */
+- (void)webView:(WKWebView *)webView handleJavaScriptDialog:(BOOL)accept value:(nullable NSString *)value;
 
 /*! @abstract A delegate to request permission for microphone audio and camera video access.
  @param webView The web view invoking the delegate method.

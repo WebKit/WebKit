@@ -836,21 +836,37 @@ String WebPage::platformUserAgent(const URL&) const
 
 bool WebPage::hoverSupportedByPrimaryPointingDevice() const
 {
+#if ENABLE(TOUCH_EVENTS)
+    return !screenIsTouchPrimaryInputDevice();
+#else
     return true;
+#endif
 }
 
 bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
 {
+#if ENABLE(TOUCH_EVENTS)
+    return !screenHasTouchDevice();
+#else
     return true;
+#endif
 }
 
 std::optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
 {
+#if ENABLE(TOUCH_EVENTS)
+    if (screenIsTouchPrimaryInputDevice())
+        return PointerCharacteristics::Coarse;
+#endif
     return PointerCharacteristics::Fine;
 }
 
 OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
 {
+#if ENABLE(TOUCH_EVENTS)
+    if (screenHasTouchDevice())
+        return PointerCharacteristics::Coarse;
+#endif
     return PointerCharacteristics::Fine;
 }
 
