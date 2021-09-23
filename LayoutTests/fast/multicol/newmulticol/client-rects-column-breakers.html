@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .columns {
+            margin: 10px;
+            width: 500px;
+            height: 400px;
+            column-count: 2;
+            column-gap: 40px;
+            column-fill: auto;
+            border: 1px solid gray;
+            box-sizing:border-box;
+        }
+        
+        .box {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: silver;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function logClientRect(elementId)
+        {
+            let target = document.getElementById(elementId);
+            var bounds = target.getBoundingClientRect();
+            debug('bounding client rect x:' + bounds.x + ' y:' + bounds.y + ' width: ' + bounds.width + ' height:'+ bounds.height);
+        }
+    </script>
+</head>
+<body>
+    <div class='columns'>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div id="target-before" style="break-before: column;"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+
+    <div class='columns'>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div id="target-after" style="break-after: column;"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+        <div class="box"></div>
+    </div>
+    <div id="console"></div>
+    <script>
+        logClientRect('target-before');
+        logClientRect('target-after');
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
