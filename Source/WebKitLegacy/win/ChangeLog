@@ -1,3 +1,81 @@
+2021-09-22  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282393. rdar://problem/83429703
+
+    [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()
+    https://bugs.webkit.org/show_bug.cgi?id=230233
+    <rdar://79562514>
+    
+    Reviewed by Brady Eidson.
+    
+    Source/WebCore:
+    
+    Rename writeBlobsToTemporaryFiles() to writeBlobsToTemporaryFilesForIndexedDB() for clarity
+    since it is currently only used for IndexedDB and we wouldn't want to expand usage to
+    other things.
+    
+    * bindings/js/SerializedScriptValue.cpp:
+    (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+    * platform/network/BlobRegistry.h:
+    * platform/network/BlobRegistryImpl.cpp:
+    (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB):
+    * platform/network/BlobRegistryImpl.h:
+    
+    Source/WebKit:
+    
+    When the SerializedScriptValue contains BlobURLs, IDBTransaction::putOrAddOnServer()
+    calls SerializedScriptValue::writeBlobsToDiskForIndexedDB() before sending the
+    WebIDBServer::PutOrAdd IPC to the network process. writeBlobsToDiskForIndexedDB()
+    sends a NetworkProcessConnection::writeBlobsToTemporaryFilesForIndexedDB IPC to the
+    network process and the network process will write the blobs to temporary files and
+    then return the file paths to those temporary files to the WebProcess. The file paths
+    are then stored inside the IDBValue object that gets sent in the WebIDBServer::PutOrAdd
+    IPC.
+    
+    This patch hardens our IPC by validating in WebIDBServer::PutOrAdd() that the IDBValue's
+    Blob file paths were indeed file paths previously created by the network process on behalf
+    of the WebProcess sending the IPC. If it is not, we ignore the IPC.
+    
+    * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+    (WebKit::WebIDBServer::putOrAdd):
+    (WebKit::WebIDBServer::removeConnection):
+    (WebKit::WebIDBServer::registerTemporaryBlobFilePaths):
+    * NetworkProcess/IndexedDB/WebIDBServer.h:
+    * NetworkProcess/IndexedDB/WebIDBServer.messages.in:
+    * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+    (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB):
+    * NetworkProcess/NetworkConnectionToWebProcess.h:
+    * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+    * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+    (WebKit::NetworkProcessPlatformStrategies::createBlobRegistry):
+    * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+    (WebKit::BlobRegistryProxy::writeBlobsToTemporaryFilesForIndexedDB):
+    * WebProcess/FileAPI/BlobRegistryProxy.h:
+    * WebProcess/Network/NetworkProcessConnection.cpp:
+    (WebKit::NetworkProcessConnection::writeBlobsToTemporaryFilesForIndexedDB):
+    * WebProcess/Network/NetworkProcessConnection.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebCoreSupport/WebPlatformStrategies.mm:
+    
+    Source/WebKitLegacy/win:
+    
+    * WebCoreSupport/WebPlatformStrategies.cpp:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282393 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-14  Chris Dumez  <cdumez@apple.com>
+
+            [Hardening] Validate IDBValue's blob paths in WebIDBServer::putOrAdd()
+            https://bugs.webkit.org/show_bug.cgi?id=230233
+            <rdar://79562514>
+
+            Reviewed by Brady Eidson.
+
+            * WebCoreSupport/WebPlatformStrategies.cpp:
+
 2021-08-19  Youenn Fablet  <youenn@apple.com>
 
         Rename MediaPlayer::setVisible to MediaPlayer::setPageIsVisible

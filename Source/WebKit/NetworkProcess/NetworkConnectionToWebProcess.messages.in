@@ -55,7 +55,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
     UnregisterBlobURL(URL url)
     BlobSize(URL url) -> (uint64_t resultSize) Synchronous
-    WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
+    WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
     RegisterBlobURLHandle(URL url);
     UnregisterBlobURLHandle(URL url);
 

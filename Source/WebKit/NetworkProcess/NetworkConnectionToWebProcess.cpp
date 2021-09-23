@@ -890,7 +890,7 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, CompletionHandler<v
     completionHandler(session ? session->blobRegistry().blobSize(url) : 0);
 }
 
-void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     auto* session = networkSession();
     if (!session)
@@ -903,10 +903,12 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
     for (auto& file : fileReferences)
         file->prepareForFileAccess();
 
-    session->blobRegistry().writeBlobsToTemporaryFiles(blobURLs, [fileReferences = WTFMove(fileReferences), completionHandler = WTFMove(completionHandler)](auto&& fileNames) mutable {
+    session->blobRegistry().writeBlobsToTemporaryFilesForIndexedDB(blobURLs, [this, protectedThis = makeRef(*this), fileReferences = WTFMove(fileReferences), completionHandler = WTFMove(completionHandler)](auto&& filePaths) mutable {
         for (auto& file : fileReferences)
             file->revokeFileAccess();
-        completionHandler(WTFMove(fileNames));
+
+        m_networkProcess->webIDBServer(m_sessionID).registerTemporaryBlobFilePaths(m_connection, filePaths);
+        completionHandler(WTFMove(filePaths));
     });
 }
 

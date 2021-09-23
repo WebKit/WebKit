@@ -311,7 +311,7 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, Thr
     return true;
 }
 
-void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
+void BlobRegistryImpl::writeBlobsToTemporaryFilesForIndexedDB(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
     Vector<BlobForFileWriting> blobsForWriting;
     if (!populateBlobsForFileWriting(blobURLs, blobsForWriting)) {

@@ -56,6 +56,8 @@ public:
     bool suspend(SuspensionCondition = SuspensionCondition::Always);
     void resume();
 
+    void registerTemporaryBlobFilePaths(IPC::Connection&, const Vector<String>&);
+
     // Message handlers.
     void openDatabase(const WebCore::IDBRequestData&);
     void deleteDatabase(const WebCore::IDBRequestData&);
@@ -69,7 +71,7 @@ public:
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
     void renameIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
-    void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
+    void putOrAdd(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
     void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);
@@ -103,6 +105,7 @@ private:
     std::unique_ptr<WebCore::IDBServer::IDBServer> m_server WTF_GUARDED_BY_LOCK(m_serverLock);
     bool m_isSuspended { false };
 
+    HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsPerConnection; // Only used on the work queue.
     HashMap<IPC::Connection::UniqueID, std::unique_ptr<WebIDBConnectionToClient>> m_connectionMap;
     WeakHashSet<IPC::Connection> m_connections; // Only used on the main thread.
 };
