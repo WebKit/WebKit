@@ -232,20 +232,6 @@ String AudioSessionIOS::routingContextUID() const
 #endif
 }
 
-void AudioSessionIOS::setCategoryOverride(CategoryType category)
-{
-    if (m_categoryOverride == category)
-        return;
-
-    m_categoryOverride = category;
-    setCategory(category, RouteSharingPolicy::Default);
-}
-
-AudioSession::CategoryType AudioSessionIOS::categoryOverride() const
-{
-    return m_categoryOverride;
-}
-
 float AudioSessionIOS::sampleRate() const
 {
     return [[PAL::getAVAudioSessionClass() sharedInstance] sampleRate];
@@ -312,28 +298,6 @@ bool AudioSessionIOS::isMuted() const
 
 void AudioSessionIOS::handleMutedStateChange()
 {
-}
-
-void AudioSessionIOS::addInterruptionObserver(InterruptionObserver& observer)
-{
-    m_interruptionObservers.add(observer);
-}
-
-void AudioSessionIOS::removeInterruptionObserver(InterruptionObserver& observer)
-{
-    m_interruptionObservers.remove(observer);
-}
-
-void AudioSessionIOS::beginInterruption()
-{
-    for (auto& observer : m_interruptionObservers)
-        observer.beginAudioSessionInterruption();
-}
-
-void AudioSessionIOS::endInterruption(MayResume mayResume)
-{
-    for (auto& observer : m_interruptionObservers)
-        observer.endAudioSessionInterruption(mayResume);
 }
 
 }

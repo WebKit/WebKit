@@ -257,15 +257,6 @@ void AudioSessionMac::setCategory(CategoryType category, RouteSharingPolicy)
 #endif
 }
 
-void AudioSessionMac::setCategoryOverride(CategoryType category)
-{
-    if (m_categoryOverride == category)
-        return;
-
-    m_categoryOverride = category;
-    setCategory(category, RouteSharingPolicy::Default);
-}
-
 float AudioSessionMac::sampleRate() const
 {
     if (!m_sampleRate) {

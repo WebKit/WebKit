@@ -1,5 +1,69 @@
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r281597. rdar://problem/83460725
+
+    [GPUP] RemoteAudioSession doesn't implement begin/endInterruption
+    https://bugs.webkit.org/show_bug.cgi?id=229514
+    rdar://80896732
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    Move the code necessary to deal with interruptions from AudioSessionIOS to the
+    base class so it can be shared with RemoteAudioSession.
+    
+    Tested manually.
+    
+    * platform/audio/AudioSession.cpp:
+    (WebCore::AudioSession::addInterruptionObserver): Move implementation from AudioSessionIOS
+    so it can be shared.
+    (WebCore::AudioSession::removeInterruptionObserver): Ditto.
+    (WebCore::AudioSession::beginInterruption): Ditto.
+    (WebCore::AudioSession::endInterruption): Ditto.
+    (WebCore::AudioSession::setCategoryOverride): Ditto.
+    (WebCore::AudioSession::categoryOverride const): Ditto.
+    * platform/audio/AudioSession.h:
+    
+    * platform/audio/ios/AudioSessionIOS.h:
+    * platform/audio/ios/AudioSessionIOS.mm:
+    (WebCore::AudioSessionIOS::setCategoryOverride): Deleted.
+    (WebCore::AudioSessionIOS::categoryOverride const): Deleted.
+    (WebCore::AudioSessionIOS::addInterruptionObserver): Deleted.
+    (WebCore::AudioSessionIOS::removeInterruptionObserver): Deleted.
+    (WebCore::AudioSessionIOS::beginInterruption): Deleted.
+    (WebCore::AudioSessionIOS::endInterruption): Deleted.
+    * platform/audio/mac/AudioSessionMac.h:
+    * platform/audio/mac/AudioSessionMac.mm:
+    (WebCore::AudioSessionMac::setCategoryOverride): Deleted.
+    
+    Source/WebKit:
+    
+    * WebProcess/GPU/media/RemoteAudioSession.cpp:
+    (WebKit::RemoteAudioSession::setIsPlayingToBluetoothOverride): Remove
+    ENABLE_ROUTING_ARBITRATION guard because it isn't used in the base class.
+    * WebProcess/GPU/media/RemoteAudioSession.h: Change the order virtual methods are declared
+    so they match the base class, to make it easier to spot differences.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281597 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+            [GPUP] RemoteAudioSession doesn't implement begin/endInterruption
+            https://bugs.webkit.org/show_bug.cgi?id=229514
+            rdar://80896732
+
+            Reviewed by Jer Noble.
+
+            * WebProcess/GPU/media/RemoteAudioSession.cpp:
+            (WebKit::RemoteAudioSession::setIsPlayingToBluetoothOverride): Remove
+            ENABLE_ROUTING_ARBITRATION guard because it isn't used in the base class.
+            * WebProcess/GPU/media/RemoteAudioSession.h: Change the order virtual methods are declared
+            so they match the base class, to make it easier to spot differences.
+
+2021-09-23  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r281579. rdar://problem/83461036
 
     [iOS] Crash when tapping <select> element and calling window.open()

@@ -53,8 +53,6 @@ private:
     void audioOutputDeviceChanged() final;
     void setIsPlayingToBluetoothOverride(std::optional<bool>) final;
     void setCategory(CategoryType, RouteSharingPolicy) final;
-    AudioSession::CategoryType categoryOverride() const final { return m_categoryOverride; }
-    void setCategoryOverride(CategoryType) final;
     float sampleRate() const final;
     size_t bufferSize() const final;
     size_t numberOfOutputChannels() const final;
@@ -78,7 +76,6 @@ private:
     std::optional<bool> m_playingToBluetooth;
     std::optional<bool> m_playingToBluetoothOverride;
 #endif
-    AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };
     mutable bool m_hasSampleRateObserver { false };
     mutable bool m_hasBufferSizeObserver { false };
     mutable std::optional<double> m_sampleRate;

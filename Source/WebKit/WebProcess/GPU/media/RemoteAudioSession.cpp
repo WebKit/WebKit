@@ -133,13 +133,11 @@ void RemoteAudioSession::removeConfigurationChangeObserver(ConfigurationChangeOb
     m_configurationChangeObservers.remove(observer);
 }
 
-#if ENABLE(ROUTING_ARBITRATION)
 void RemoteAudioSession::setIsPlayingToBluetoothOverride(std::optional<bool> value)
 {
     m_isPlayingToBluetoothOverrideChanged = true;
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetIsPlayingToBluetoothOverride(value), { });
 }
-#endif
 
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
