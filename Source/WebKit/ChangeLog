@@ -1,5 +1,19 @@
 2021-09-23  Per Arne Vollan  <pvollan@apple.com>
 
+        Remove access to unused services in the Networking access
+        https://bugs.webkit.org/show_bug.cgi?id=230715
+        <rdar://problem/83462947>
+
+        Reviewed by Brent Fulgham.
+
+        Telemetry is showing that some services allowed in the Networking process' sandbox are unused. These should be removed.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
+2021-09-23  Per Arne Vollan  <pvollan@apple.com>
+
         Remove access to unused services in the GPU process
         https://bugs.webkit.org/show_bug.cgi?id=230716
         <rdar://problem/83464232>
