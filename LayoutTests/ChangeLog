@@ -1,5 +1,14 @@
 2021-09-23  Eric Hutchison  <ehutchison@apple.com>
 
+        [Catalina Release wk1] imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230729.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-09-23  Eric Hutchison  <ehutchison@apple.com>
+
         [ Windows ] fast/images/exif-orientation-composited.html is a flaky image-only failure.
         https://bugs.webkit.org/show_bug.cgi?id=230727.
 
