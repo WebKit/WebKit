@@ -473,7 +473,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if (!strongSelf)
                 return;
 
-            [strongSelf->_suggestionsContextMenuInteraction _presentMenuAtLocation:[[strongSelf view] lastInteractionLocation]];
+            auto view = [strongSelf view];
+            [view presentContextMenu:strongSelf->_suggestionsContextMenuInteraction.get() atLocation:[view lastInteractionLocation]];
         }];
     } else {
         [_suggestionsContextMenuInteraction updateVisibleMenuWithBlock:[&](UIMenu *visibleMenu) -> UIMenu * {

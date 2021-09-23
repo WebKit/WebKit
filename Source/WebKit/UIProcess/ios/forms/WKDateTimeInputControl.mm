@@ -513,7 +513,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     [_view.webView _didShowContextMenu];
 #elif USE(UICONTEXTMENU) && HAVE(UICONTEXTMENU_LOCATION)
     [self ensureContextMenuInteraction];
-    [_dateTimeContextMenuInteraction _presentMenuAtLocation:_interactionPoint];
+    [_view presentContextMenu:_dateTimeContextMenuInteraction.get() atLocation:_interactionPoint];
 #endif
 }
 

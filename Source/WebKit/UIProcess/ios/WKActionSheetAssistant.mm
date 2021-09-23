@@ -770,7 +770,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     
 #if USE(UICONTEXTMENU) && HAVE(UICONTEXTMENU_LOCATION)
-    [self._ensureDataDetectorContextMenuInteraction _presentMenuAtLocation:_positionInformation->request.point];
+    if ([_view window])
+        [self._ensureDataDetectorContextMenuInteraction _presentMenuAtLocation:_positionInformation->request.point];
 #else
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
@@ -831,7 +832,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         items = WTFMove(items[0].children);
     }
 
-    if (items.isEmpty()) {
+    if (![_view window] || items.isEmpty()) {
         completionHandler(WebCore::MediaControlsContextMenuItem::invalidID);
         return;
     }
