@@ -536,6 +536,7 @@ public:
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override;
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
+    VisiblePositionRange selectedVisiblePositionRange() const override { return { }; }
 
     std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
 #if PLATFORM(MAC)

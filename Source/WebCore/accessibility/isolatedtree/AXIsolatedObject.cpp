@@ -1435,6 +1435,15 @@ VisibleSelection AXIsolatedObject::selection() const
     return object ? object->selection() : VisibleSelection();
 }
 
+VisiblePositionRange AXIsolatedObject::selectedVisiblePositionRange() const
+{
+    ASSERT(isMainThread());
+
+    if (auto* axObject = associatedAXObject())
+        return axObject->selectedVisiblePositionRange();
+    return { };
+}
+
 void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     ASSERT(isMainThread());
