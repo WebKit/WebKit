@@ -1,5 +1,14 @@
 2021-09-23  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Windows ] fast/images/exif-orientation-composited.html is a flaky image-only failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230727.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2021-09-23  Eric Hutchison  <ehutchison@apple.com>
+
         Update test expectations for js/dfg-float64array.html.
         https://bugs.webkit.org/show_bug.cgi?id=229594.
 

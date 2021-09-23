@@ -4696,3 +4696,6 @@ webkit.org/b/229594 js/dfg-float64array.html [ Pass Crash ]
 
 # webkit.org/b/214448 Web Share API is not implemented in the Windows port
 http/tests/webshare/ [ Skip ]
+
+webkit.org/b/230727 fast/images/exif-orientation-composited.html [ Pass ImageOnlyFailure ]
+
