@@ -1,3 +1,16 @@
+2021-09-24 Rick Waldron <waldron.rick@gmail.com>
+
+        [JSC] Add checkScriptSyntax function to jsc host environment
+        https://bugs.webkit.org/show_bug.cgi?id=230631
+
+        Reviewed by Yusuke Suzuki.
+
+        Updates tests that were using eval() to verify syntax.
+
+        * stress/arrow-function-syntax.js: Replace custom checkSyntax with checkScriptSyntax
+        * stress/async-iteration-for-await-of-syntax.js: Replace custom checkSyntax with checkScriptSyntax
+        * stress/async-iteration-syntax.js: Replace custom checkSyntax with checkScriptSyntax
+
 2021-09-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Handle syntactic production for `#x in expr` correctly

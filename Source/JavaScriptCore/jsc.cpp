@@ -328,6 +328,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionFinalizationRegistryLiveCount);
 static JSC_DECLARE_HOST_FUNCTION(functionFinalizationRegistryDeadCount);
 static JSC_DECLARE_HOST_FUNCTION(functionIs32BitPlatform);
 static JSC_DECLARE_HOST_FUNCTION(functionCheckModuleSyntax);
+static JSC_DECLARE_HOST_FUNCTION(functionCheckScriptSyntax);
 static JSC_DECLARE_HOST_FUNCTION(functionPlatformSupportsSamplingProfiler);
 static JSC_DECLARE_HOST_FUNCTION(functionGenerateHeapSnapshot);
 static JSC_DECLARE_HOST_FUNCTION(functionGenerateHeapSnapshotForGCDebugging);
@@ -598,6 +599,7 @@ private:
         addFunction(vm, "is32BitPlatform", functionIs32BitPlatform, 0);
 
         addFunction(vm, "checkModuleSyntax", functionCheckModuleSyntax, 1);
+        addFunction(vm, "checkScriptSyntax", functionCheckScriptSyntax, 1);
 
         addFunction(vm, "platformSupportsSamplingProfiler", functionPlatformSupportsSamplingProfiler, 0);
         addFunction(vm, "generateHeapSnapshot", functionGenerateHeapSnapshot, 0);
@@ -2609,6 +2611,28 @@ JSC_DEFINE_HOST_FUNCTION(functionCheckModuleSyntax, (JSGlobalObject* globalObjec
 
     ParserError error;
     bool validSyntax = checkModuleSyntax(globalObject, jscSource(source, { }, String(), TextPosition(), SourceProviderSourceType::Module), error);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    stopWatch.stop();
+
+    if (!validSyntax)
+        throwException(globalObject, scope, jsNontrivialString(vm, toString("SyntaxError: ", error.message(), ":", error.line())));
+    return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionCheckScriptSyntax, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String source = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    StopWatch stopWatch;
+    stopWatch.start();
+
+    ParserError error;
+
+    bool validSyntax = checkSyntax(vm, jscSource(source, { }), error);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     stopWatch.stop();
 

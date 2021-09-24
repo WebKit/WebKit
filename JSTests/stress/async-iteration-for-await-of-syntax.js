@@ -4,16 +4,7 @@ var assert = function (result, expected, message = "") {
   }
 };
 
-function checkSyntax(src) {
-    try {
-        eval(src);
-    } catch (error) {
-        if (error instanceof SyntaxError)
-            throw new Error("Syntax Error: " + String(error) + "\n script: `" + src + "`");
-    }
-}
-
-function checkSyntaxError(src, message) {
+function evalForSyntaxError(src, message) {
     var bError = false;
     try {
         eval(src);
@@ -26,17 +17,17 @@ function checkSyntaxError(src, message) {
 }
 
 (function checkSimpleAsyncGeneratorSloppyMode() {
-    checkSyntax('var a1 = async function*asyncGenWithName1(){ for await(const value of foo()) {} }');
-    checkSyntax('var a1 = async function asyncWithName1(){ for await(const value of foo()) {} }');
-    checkSyntax('var a1 = async function*asyncGenWithName1(){ for await(let value of foo()) {} }');
-    checkSyntax('var a1 = async function asyncWithName1(){ for await(let value of foo()) {} }');
+    checkScriptSyntax('var a1 = async function*asyncGenWithName1(){ for await(const value of foo()) {} }');
+    checkScriptSyntax('var a1 = async function asyncWithName1(){ for await(const value of foo()) {} }');
+    checkScriptSyntax('var a1 = async function*asyncGenWithName1(){ for await(let value of foo()) {} }');
+    checkScriptSyntax('var a1 = async function asyncWithName1(){ for await(let value of foo()) {} }');
 })();
 
 (function checkSimpleAsyncGeneratorStrictMode() {
-    checkSyntax('"use strict"; var a1 = async function*asyncGenWithName1(){ for await(const value of foo()) {}  }');
-    checkSyntax('"use strict"; var a1 = async function asyncWithName1(){ for await(const value of foo()) {} }');
-    checkSyntax('"use strict"; var a1 = async function*asyncGenWithName1(){ for await(let value of foo()) {} }');
-    checkSyntax('"use strict"; var a1 = async function asyncWithName1(){ for await(let value of foo()) {} }');
+    checkScriptSyntax('"use strict"; var a1 = async function*asyncGenWithName1(){ for await(const value of foo()) {}  }');
+    checkScriptSyntax('"use strict"; var a1 = async function asyncWithName1(){ for await(const value of foo()) {} }');
+    checkScriptSyntax('"use strict"; var a1 = async function*asyncGenWithName1(){ for await(let value of foo()) {} }');
+    checkScriptSyntax('"use strict"; var a1 = async function asyncWithName1(){ for await(let value of foo()) {} }');
 })();
 
 
@@ -79,40 +70,40 @@ function checkSyntaxError(src, message) {
 
     wrappers.forEach(wrapper => {
         expressions.forEach(exp => {
-            checkSyntax(wrapper.start + exp + wrapper.finish);
+            checkScriptSyntax(wrapper.start + exp + wrapper.finish);
         });
     })
 })();
 
 
 (function checkSimpleAsyncGeneratorSyntaxErrorInSloppyMode() {
-    checkSyntaxError("var asyncGenFn = function () { for await(const value of foo()) {} }");
-    checkSyntaxError("var asyncGenFn = async function () { var arr = () => { for await(const value of foo()) {} } }");
-    checkSyntaxError("var asyncGenFn = function* () { for await(const value of foo()) {} }");
-    checkSyntaxError("var asyncGenFn = async function* () { var arr = () => { for await(const value of foo()) {} } }");
-    checkSyntaxError('var a1 = async function*asyncGenWithName1(){ for await(const value in foo()) {} }');
-    checkSyntaxError('var a1 = async function asyncWithName1(){ for await(const value in foo()) {} }');
-    checkSyntaxError('var a1 = async function asyncWithName1(){ for await (;;) {} }');
-    checkSyntaxError("var a1 = async function asyncWithName1(){ for await (let v = 4;;) {} }");
-    checkSyntaxError("var a1 = async function asyncWithName1(){ for await (let v of f();;) {} }");
-    checkSyntaxError("var a1 = async function asyncWithName1(){ for await (let v of boo;;) {} }");
-    checkSyntaxError("var a1 = async function asyncWithName1(){ for await (let v of boo of) {} }");
-    checkSyntaxError("async function asyncWithName1(){ for await (let v of boo in) {} }");
-    checkSyntaxError("async function asyncWithName1(){ for await (v in x + x ) {} }");
+    evalForSyntaxError("var asyncGenFn = function () { for await(const value of foo()) {} }");
+    evalForSyntaxError("var asyncGenFn = async function () { var arr = () => { for await(const value of foo()) {} } }");
+    evalForSyntaxError("var asyncGenFn = function* () { for await(const value of foo()) {} }");
+    evalForSyntaxError("var asyncGenFn = async function* () { var arr = () => { for await(const value of foo()) {} } }");
+    evalForSyntaxError('var a1 = async function*asyncGenWithName1(){ for await(const value in foo()) {} }');
+    evalForSyntaxError('var a1 = async function asyncWithName1(){ for await(const value in foo()) {} }');
+    evalForSyntaxError('var a1 = async function asyncWithName1(){ for await (;;) {} }');
+    evalForSyntaxError("var a1 = async function asyncWithName1(){ for await (let v = 4;;) {} }");
+    evalForSyntaxError("var a1 = async function asyncWithName1(){ for await (let v of f();;) {} }");
+    evalForSyntaxError("var a1 = async function asyncWithName1(){ for await (let v of boo;;) {} }");
+    evalForSyntaxError("var a1 = async function asyncWithName1(){ for await (let v of boo of) {} }");
+    evalForSyntaxError("async function asyncWithName1(){ for await (let v of boo in) {} }");
+    evalForSyntaxError("async function asyncWithName1(){ for await (v in x + x ) {} }");
 })();
 
 (function checkSimpleAsyncGeneratorSyntaxErrorInStrictMode() {
-    checkSyntaxError("'use strict'; var asyncGenFn = function () { for await(const value of foo()) {} }");
-    checkSyntaxError("'use strict'; var asyncGenFn = async function () { var arr = () => { for await(const value of foo()) {} } }");
-    checkSyntaxError("'use strict'; var asyncGenFn = function* () { for await(const value of foo()) {} }");
-    checkSyntaxError("'use strict'; var asyncGenFn = async function* () { var arr = () => { for await(const value of foo()) {} } }");
-    checkSyntaxError("'use strict'; var a1 = async function*asyncGenWithName1(){ for await(const value in foo()) {} }");
-    checkSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await(const value in foo()) {} }");
-    checkSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (;;) {} }");
-    checkSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v = 4;;) {} }");
-    checkSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v of f();;) {} }");
-    checkSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v of boo;;) {} }");
-    checkSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v of boo of) {} }");
-    checkSyntaxError("'use strict'; async function asyncWithName1(){ for await (let v of boo in) {} }");
-    checkSyntaxError("'use strict'; async function asyncWithName1(){ for await (v in x + x ) {} }");
+    evalForSyntaxError("'use strict'; var asyncGenFn = function () { for await(const value of foo()) {} }");
+    evalForSyntaxError("'use strict'; var asyncGenFn = async function () { var arr = () => { for await(const value of foo()) {} } }");
+    evalForSyntaxError("'use strict'; var asyncGenFn = function* () { for await(const value of foo()) {} }");
+    evalForSyntaxError("'use strict'; var asyncGenFn = async function* () { var arr = () => { for await(const value of foo()) {} } }");
+    evalForSyntaxError("'use strict'; var a1 = async function*asyncGenWithName1(){ for await(const value in foo()) {} }");
+    evalForSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await(const value in foo()) {} }");
+    evalForSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (;;) {} }");
+    evalForSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v = 4;;) {} }");
+    evalForSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v of f();;) {} }");
+    evalForSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v of boo;;) {} }");
+    evalForSyntaxError("'use strict'; var a1 = async function asyncWithName1(){ for await (let v of boo of) {} }");
+    evalForSyntaxError("'use strict'; async function asyncWithName1(){ for await (let v of boo in) {} }");
+    evalForSyntaxError("'use strict'; async function asyncWithName1(){ for await (v in x + x ) {} }");
 })();

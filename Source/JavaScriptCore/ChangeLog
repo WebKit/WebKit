@@ -1,3 +1,17 @@
+2021-09-24 Rick Waldron <waldron.rick@gmail.com>
+
+        [JSC] Add checkScriptSyntax function to jsc host environment
+        https://bugs.webkit.org/show_bug.cgi?id=230631
+
+        Reviewed by Yusuke Suzuki.
+
+        Introduce a function called checkScriptSyntax() that performs the same
+        operation as checkModuleSyntax(), without the module specific semantics.
+        Updates tests that were using eval() to verify syntax.
+
+        * jsc.cpp:
+        (functionCheckScriptSyntax)
+
 2021-09-23  Philip Chimento  <pchimento@igalia.com>
 
         Various tweaks in preparation for Temporal.Instant
