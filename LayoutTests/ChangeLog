@@ -1,5 +1,14 @@
 2021-09-24  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Catalina Debug wk1 EWS ] Multiple WebGL tests are flaky timeouts.
+        https://bugs.webkit.org/show_bug.cgi?id=230774.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-09-24  Eric Hutchison  <ehutchison@apple.com>
+
         [ iOS ] CSS Flexbox tests are constant failure.
         https://bugs.webkit.org/show_bug.cgi?id=230773.
 
