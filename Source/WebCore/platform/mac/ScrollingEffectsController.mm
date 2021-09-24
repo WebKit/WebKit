@@ -755,8 +755,17 @@ void ScrollingEffectsController::updateScrollSnapAnimatingState(MonotonicTime cu
         return;
     }
 
-    bool isAnimationComplete;
-    auto animationOffset = m_scrollSnapState->currentAnimatedScrollOffset(currentTime, isAnimationComplete);
+    if (!is<ScrollAnimationMomentum>(m_currentAnimation.get())) {
+        m_scrollSnapState->transitionToDestinationReachedState();
+        stopScrollSnapAnimation();
+        return;
+    }
+
+    auto& momentumScrollAnimation = downcast<ScrollAnimationMomentum>(*m_currentAnimation);
+
+    auto animationOffset = momentumScrollAnimation.serviceAnimation(currentTime);
+    bool isAnimationComplete = !momentumScrollAnimation.isActive();
+
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " updateScrollSnapAnimatingState - isAnimationComplete " << isAnimationComplete << " animationOffset " << animationOffset << " (main thread " << isMainThread() << ")");
 
     scrollToOffsetForAnimation(animationOffset);

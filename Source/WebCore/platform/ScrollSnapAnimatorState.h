@@ -40,6 +40,8 @@ class TextStream;
 
 namespace WebCore {
 
+class ScrollingEffectsController;
+
 enum class ScrollSnapState {
     Snapping,
     Gliding,
@@ -47,9 +49,12 @@ enum class ScrollSnapState {
     UserInteraction
 };
 
-class ScrollSnapAnimatorState : public ScrollAnimationClient {
+class ScrollSnapAnimatorState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    ScrollSnapAnimatorState(ScrollingEffectsController& scrollController)
+        : m_scrollController(scrollController)
+    { }
     virtual ~ScrollSnapAnimatorState();
 
     const Vector<SnapOffset<LayoutUnit>>& snapOffsetsForAxis(ScrollEventAxis axis) const
@@ -84,8 +89,6 @@ public:
 
     bool setNearestScrollSnapIndexForOffset(ScrollOffset, const ScrollExtents&, float pageScale);
 
-    FloatPoint currentAnimatedScrollOffset(MonotonicTime, bool& isAnimationComplete) const;
-
     // State transition helpers.
     // These return true if they start a new animation.
     bool transitionToSnapAnimationState(const ScrollExtents&, float pageScale, const FloatPoint& initialOffset);
@@ -99,20 +102,14 @@ private:
     bool setupAnimationForState(ScrollSnapState, const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
     void teardownAnimationForState(ScrollSnapState);
 
-    // ScrollAnimationClient.
-    ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
+    ScrollingEffectsController& m_scrollController;
 
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
     LayoutScrollSnapOffsetsInfo m_snapOffsetsInfo;
-    
-    ScrollExtents m_scrollExtents;
 
     std::optional<unsigned> m_activeSnapIndexX;
     std::optional<unsigned> m_activeSnapIndexY;
-
-    MonotonicTime m_startTime;
-    std::unique_ptr<ScrollAnimationMomentum> m_momentumScrollAnimation;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);

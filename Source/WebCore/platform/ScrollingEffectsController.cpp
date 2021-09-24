@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimationKinetic.h"
+#include "ScrollAnimationMomentum.h"
 #include "ScrollAnimationSmooth.h"
 #include "ScrollableArea.h"
 #include "WheelEventTestMonitor.h"
@@ -111,7 +112,7 @@ bool ScrollingEffectsController::processWheelEventForKineticScrolling(const Plat
     }
 
     if (!m_currentAnimation)
-        m_currentAnimation = WTF::makeUnique<ScrollAnimationKinetic>(*this);
+        m_currentAnimation = makeUnique<ScrollAnimationKinetic>(*this);
 
     auto& kineticAnimation = downcast<ScrollAnimationKinetic>(*m_currentAnimation);
     kineticAnimation.appendToScrollHistory(event);
@@ -129,6 +130,21 @@ bool ScrollingEffectsController::processWheelEventForKineticScrolling(const Plat
     UNUSED_PARAM(event);
 #endif
     return false;
+}
+
+bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier)
+{
+    if (m_currentAnimation) {
+        if (is<ScrollAnimationMomentum>(m_currentAnimation.get()))
+            m_currentAnimation->stop();
+        else
+            m_currentAnimation = nullptr;
+    }
+
+    if (!m_currentAnimation)
+        m_currentAnimation = makeUnique<ScrollAnimationMomentum>(*this);
+
+    return downcast<ScrollAnimationMomentum>(*m_currentAnimation).startAnimatedScrollWithInitialVelocity(initialOffset, initialVelocity, initialDelta, destinationModifier);
 }
 
 void ScrollingEffectsController::setIsAnimatingRubberBand(bool isAnimatingRubberBand)
@@ -178,7 +194,7 @@ void ScrollingEffectsController::setSnapOffsetsInfo(const LayoutScrollSnapOffset
 
     bool shouldComputeCurrentSnapIndices = !m_scrollSnapState;
     if (!m_scrollSnapState)
-        m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
+        m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>(*this);
 
     m_scrollSnapState->setSnapOffsetInfo(snapOffsetInfo);
 

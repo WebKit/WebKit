@@ -138,6 +138,8 @@ public:
     // FIXME: Hack for ScrollAnimatorGeneric. Needs cleanup.
     bool processWheelEventForKineticScrolling(const PlatformWheelEvent&);
 
+    bool startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const WTF::Function<FloatPoint(const FloatPoint&)>& destinationModifier);
+
     void beginKeyboardScrolling();
     void stopKeyboardScrolling();
     
