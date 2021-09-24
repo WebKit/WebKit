@@ -1,3 +1,19 @@
+2021-09-24  Devin Rousso  <drousso@apple.com>
+
+        Add typechecking `is` overloads for `std::unique_ptr`, `WTF::UniqueRef`, and `WTF::WeakPtr`
+        https://bugs.webkit.org/show_bug.cgi?id=230734
+
+        Reviewed by Chris Dumez.
+
+        * wtf/StdLibExtras.h:
+        * wtf/TypeCasts.h:
+        (WTF::is):
+        * wtf/UniqueRef.h:
+        (WTF::GetPtrHelper<UniqueRef<T>>::getPtr): Added.
+        (WTF::is): Added.
+        * wtf/WeakPtr.h:
+        (WTF::is): Added.
+
 2021-09-24  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 15] Support building WebKit (Part 3)

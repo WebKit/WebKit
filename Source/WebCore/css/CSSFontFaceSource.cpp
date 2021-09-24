@@ -234,7 +234,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
-    return m_hasSVGFontFaceElement || (is<CachedFontLoadRequest>(m_fontRequest.get()) && is<CachedSVGFont>(downcast<CachedFontLoadRequest>(m_fontRequest.get())->cachedFont()));
+    return m_hasSVGFontFaceElement || (is<CachedFontLoadRequest>(m_fontRequest) && is<CachedSVGFont>(downcast<CachedFontLoadRequest>(m_fontRequest.get())->cachedFont()));
 }
 
 }

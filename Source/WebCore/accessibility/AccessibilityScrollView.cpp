@@ -194,7 +194,7 @@ void AccessibilityScrollView::addChildren()
 
 AccessibilityObject* AccessibilityScrollView::webAreaObject() const
 {
-    if (!is<FrameView>(m_scrollView.get()))
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
 
     Document* document = downcast<FrameView>(*m_scrollView).frame().document();
@@ -236,7 +236,7 @@ LayoutRect AccessibilityScrollView::elementRect() const
 
 FrameView* AccessibilityScrollView::documentFrameView() const
 {
-    if (!is<FrameView>(m_scrollView.get()))
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
 
     return downcast<FrameView>(m_scrollView.get());
@@ -244,7 +244,7 @@ FrameView* AccessibilityScrollView::documentFrameView() const
 
 AccessibilityObject* AccessibilityScrollView::parentObject() const
 {
-    if (!is<FrameView>(m_scrollView.get()))
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
 
     AXObjectCache* cache = axObjectCache();
@@ -260,7 +260,7 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
     
 AccessibilityObject* AccessibilityScrollView::parentObjectIfExists() const
 {
-    if (!is<FrameView>(m_scrollView.get()))
+    if (!is<FrameView>(m_scrollView))
         return nullptr;
 
     AXObjectCache* cache = axObjectCache();

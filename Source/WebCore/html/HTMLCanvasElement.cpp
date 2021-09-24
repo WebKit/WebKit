@@ -550,7 +550,7 @@ void HTMLCanvasElement::reset()
     int h = limitToOnlyHTMLNonNegative(attributeWithoutSynchronization(heightAttr), defaultHeight);
 
     resetGraphicsContextState();
-    if (is<CanvasRenderingContext2D>(m_context.get()))
+    if (is<CanvasRenderingContext2D>(m_context))
         downcast<CanvasRenderingContext2D>(*m_context).reset();
 
     IntSize oldSize = size();
@@ -744,7 +744,7 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context.get())) {
+    if (is<WebGLRenderingContextBase>(m_context)) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logCanvasRead(document());
         return ImageData::create(downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer());
@@ -985,7 +985,7 @@ const char* HTMLCanvasElement::activeDOMObjectName() const
 bool HTMLCanvasElement::virtualHasPendingActivity() const
 {
 #if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(m_context.get())) {
+    if (is<WebGLRenderingContextBase>(m_context)) {
         // WebGL rendering context may fire contextlost / contextchange / contextrestored events at any point.
         return m_hasRelevantWebGLEventListener && !downcast<WebGLRenderingContextBase>(*m_context).isContextUnrecoverablyLost();
     }

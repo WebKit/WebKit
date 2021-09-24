@@ -870,7 +870,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
 
 AVStreamDataParser* SourceBufferPrivateAVFObjC::streamDataParser() const
 {
-    if (is<SourceBufferParserAVFObjC>(m_parser.get()))
+    if (is<SourceBufferParserAVFObjC>(m_parser))
         return downcast<SourceBufferParserAVFObjC>(m_parser.get()).streamDataParser();
     return nil;
 }

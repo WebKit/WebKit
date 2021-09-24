@@ -1128,7 +1128,7 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
     if (formElement) {
         AtomString targetName((UChar*)name, SysStringLen(name));
         for (auto& associatedElement : formElement->copyAssociatedElementsVector()) {
-            if (!is<HTMLFormControlElement>(associatedElement.get()))
+            if (!is<HTMLFormControlElement>(associatedElement))
                 continue;
             auto& elt = downcast<HTMLFormControlElement>(associatedElement.get());
             // Skip option elements, other duds.

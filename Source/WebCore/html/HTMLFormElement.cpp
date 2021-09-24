@@ -794,7 +794,7 @@ bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<HTML
     auto elements = copyAssociatedElementsVector();
     bool hasInvalidControls = false;
     for (auto& element : elements) {
-        if (element->form() == this && is<HTMLFormControlElement>(element.get())) {
+        if (element->form() == this && is<HTMLFormControlElement>(element)) {
             HTMLFormControlElement& control = downcast<HTMLFormControlElement>(element.get());
             if (!control.checkValidity(&unhandledInvalidControls) && control.form() == this)
                 hasInvalidControls = true;

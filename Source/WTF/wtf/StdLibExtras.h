@@ -32,6 +32,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
+#include <wtf/GetPtr.h>
+#include <wtf/TypeCasts.h>
 
 // Use this macro to declare and define a debug-only global variable that may have a
 // non-trivial constructor and destructor. When building with clang, this will suppress

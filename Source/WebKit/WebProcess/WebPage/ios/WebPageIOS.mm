@@ -1130,9 +1130,9 @@ void WebPage::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, Transa
     auto invalidTargetForSingleClick = !m_potentialTapNode;
     if (!invalidTargetForSingleClick) {
         bool targetRenders = m_potentialTapNode->renderer();
-        if (!targetRenders && is<Element>(m_potentialTapNode.get()))
+        if (!targetRenders && is<Element>(m_potentialTapNode))
             targetRenders = downcast<Element>(*m_potentialTapNode).renderOrDisplayContentsStyle();
-        invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode.get());
+        invalidTargetForSingleClick = !targetRenders && !is<HTMLAreaElement>(m_potentialTapNode);
     }
     if (invalidTargetForSingleClick) {
         commitPotentialTapFailed();
@@ -3103,7 +3103,7 @@ void WebPage::stopInteraction()
 
 void WebPage::performActionOnElement(uint32_t action)
 {
-    if (!is<HTMLElement>(m_interactionNode.get()))
+    if (!is<HTMLElement>(m_interactionNode))
         return;
 
     HTMLElement& element = downcast<HTMLElement>(*m_interactionNode);
@@ -3380,7 +3380,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)
 {
-    if (is<HTMLInputElement>(m_focusedElement.get())) {
+    if (is<HTMLInputElement>(m_focusedElement)) {
         if (auto autofillElements = AutofillElements::computeAutofillElements(downcast<HTMLInputElement>(*m_focusedElement)))
             autofillElements->autofill(username, password);
     }

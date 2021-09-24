@@ -151,7 +151,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
 
 ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&& cssValue, Document* document)
 {
-    if (is<CSSPrimitiveValue>(cssValue.get())) {
+    if (is<CSSPrimitiveValue>(cssValue)) {
         auto primitiveValue = downcast<CSSPrimitiveValue>(cssValue.ptr());
         switch (primitiveValue->primitiveType()) {
         case CSSUnitType::CSS_NUMBER:
@@ -229,13 +229,13 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
         default:
             break;
         }
-    } else if (is<CSSImageValue>(cssValue.get()))
+    } else if (is<CSSImageValue>(cssValue))
         return Ref<CSSStyleValue> { CSSStyleImageValue::create(downcast<CSSImageValue>(cssValue.get()), document) };
-    else if (is<CSSVariableReferenceValue>(cssValue.get())) {
+    else if (is<CSSVariableReferenceValue>(cssValue)) {
         return Ref<CSSStyleValue> { CSSUnparsedValue::create(downcast<CSSVariableReferenceValue>(cssValue.get()).data().tokenRange()) };
-    } else if (is<CSSPendingSubstitutionValue>(cssValue.get())) {
+    } else if (is<CSSPendingSubstitutionValue>(cssValue)) {
         return Ref<CSSStyleValue> { CSSUnparsedValue::create(downcast<CSSPendingSubstitutionValue>(cssValue.get()).shorthandValue().data().tokenRange()) };
-    } else if (is<CSSCustomPropertyValue>(cssValue.get())) {
+    } else if (is<CSSCustomPropertyValue>(cssValue)) {
         // FIXME: remove CSSStyleValue::create(WTFMove(cssValue)), add reification control flow
         return WTF::switchOn(downcast<CSSCustomPropertyValue>(cssValue.get()).value(), [&](const Ref<CSSVariableReferenceValue>& value) {
             return reifyValue(value.copyRef(), document);
@@ -245,7 +245,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
             // FIXME: Property reify the other cases.
             return ExceptionOr<Ref<CSSStyleValue>> { CSSStyleValue::create(WTFMove(cssValue)) };
         });
-    } else if (is<CSSValueList>(cssValue.get())) {
+    } else if (is<CSSValueList>(cssValue)) {
         // Reifying the first value in value list.
         // FIXME: Verify this is the expected behavior.
         // Refer to LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get.html

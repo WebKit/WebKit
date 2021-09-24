@@ -205,7 +205,7 @@ void RenderTreeBuilder::Table::attach(RenderTableSection& parent, RenderPtr<Rend
         beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, *beforeChild);
 
     // FIXME: child should always be a RenderTableRow at this point.
-    if (is<RenderTableRow>(*child.get()))
+    if (is<RenderTableRow>(child))
         parent.willInsertTableRow(downcast<RenderTableRow>(*child.get()), beforeChild);
     ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
     m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);

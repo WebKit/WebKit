@@ -282,7 +282,7 @@ void CSSFontSelector::fontModified()
 
 void CSSFontSelector::updateStyleIfNeeded()
 {
-    if (is<Document>(m_context.get()))
+    if (is<Document>(m_context))
         downcast<Document>(*m_context).updateStyleIfNeeded();
 }
 
@@ -351,7 +351,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    Document* document = is<Document>(m_context.get()) ? &downcast<Document>(*m_context) : nullptr;
+    Document* document = is<Document>(m_context) ? &downcast<Document>(*m_context) : nullptr;
     auto* face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup);
     if (face) {
         if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
@@ -393,7 +393,7 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
         return nullptr;
     auto& pictographFontFamily = m_context->settingsValues().fontGenericFamilies.pictographFontFamily();
     auto font = m_fontCache->fontForFamily(fontDescription, pictographFontFamily);
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled() && is<Document>(m_context.get()))
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled() && is<Document>(m_context))
         ResourceLoadObserver::shared().logFontLoad(downcast<Document>(*m_context), pictographFontFamily, !!font);
 
     return font;

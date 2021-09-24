@@ -214,7 +214,7 @@ void FrameViewLayoutContext::layout()
             return;
 
         layoutRoot = makeWeakPtr(subtreeLayoutRoot() ? subtreeLayoutRoot() : renderView());
-        m_needsFullRepaint = is<RenderView>(layoutRoot.get()) && (m_firstLayout || renderView()->printing());
+        m_needsFullRepaint = is<RenderView>(layoutRoot) && (m_firstLayout || renderView()->printing());
         view().willDoLayout(layoutRoot);
         m_firstLayout = false;
     }
@@ -238,7 +238,7 @@ void FrameViewLayoutContext::layout()
     }
     {
         SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
-        if (is<RenderView>(layoutRoot.get()) && !renderView()->printing()) {
+        if (is<RenderView>(layoutRoot) && !renderView()->printing()) {
             // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
             SetForScope<bool> needsFullRepaint(m_needsFullRepaint);
             view().adjustViewSize();

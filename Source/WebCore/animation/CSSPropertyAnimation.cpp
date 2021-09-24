@@ -191,7 +191,7 @@ static RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, 
     }
 
     auto blendedOperation = to->blend(from, context);
-    if (is<ScaleTransformOperation>(blendedOperation.get())) {
+    if (is<ScaleTransformOperation>(blendedOperation)) {
         auto& scale = downcast<ScaleTransformOperation>(blendedOperation.get());
         return ScaleTransformOperation::create(scale.x(), scale.y(), scale.z(), scale.type());
     }
@@ -227,7 +227,7 @@ static RefPtr<RotateTransformOperation> blendFunc(RotateTransformOperation* from
     }
 
     auto blendedOperation = to->blend(from, context);
-    if (is<RotateTransformOperation>(blendedOperation.get())) {
+    if (is<RotateTransformOperation>(blendedOperation)) {
         auto& rotate = downcast<RotateTransformOperation>(blendedOperation.get());
         return RotateTransformOperation::create(rotate.x(), rotate.y(), rotate.z(), rotate.angle(), rotate.type());
     }
@@ -263,7 +263,7 @@ static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation
     }
 
     Ref<TransformOperation> blendedOperation = to->blend(from, context);
-    if (is<TranslateTransformOperation>(blendedOperation.get())) {
+    if (is<TranslateTransformOperation>(blendedOperation)) {
         TranslateTransformOperation& translate = downcast<TranslateTransformOperation>(blendedOperation.get());
         return TranslateTransformOperation::create(translate.x(), translate.y(), translate.z(), translate.type());
     }

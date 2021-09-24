@@ -459,7 +459,7 @@ void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 
     auto hasChildWithOperator = [&] (CalcOperator op) {
         for (auto& child : m_children) {
-            if (is<CSSCalcOperationNode>(child.get()) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op)
+            if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op)
                 return true;
         }
         return false;
@@ -470,7 +470,7 @@ void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 
     Vector<Ref<CSSCalcExpressionNode>> newChildren;
     for (auto& child : m_children) {
-        if (is<CSSCalcOperationNode>(child.get()) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op) {
+        if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op) {
             auto& children = downcast<CSSCalcOperationNode>(child.get()).children();
             for (auto& childToMove : children)
                 newChildren.append(WTFMove(childToMove));
@@ -620,14 +620,14 @@ void CSSCalcOperationNode::combineChildren()
                 newChildren.uncheckedAppend(m_children.last().copyRef());
                 downcast<CSSCalcPrimitiveValueNode>(newChildren[0].get()).multiply(multiplier);
                 didMultiply = true;
-            } else if (is<CSSCalcOperationNode>(m_children.last().get()) && downcast<CSSCalcOperationNode>(m_children.last().get()).calcOperator() == CalcOperator::Add) {
+            } else if (is<CSSCalcOperationNode>(m_children.last()) && downcast<CSSCalcOperationNode>(m_children.last().get()).calcOperator() == CalcOperator::Add) {
                 // If we're multiplying with another operation that is an addition and all the added children
                 // are percentages or dimensions, we should multiply each child and make this expression an
                 // addition.
                 auto allChildrenArePrimitiveValues = [](const Vector<Ref<CSSCalcExpressionNode>>& children) -> bool
                 {
                     for (auto& child : children) {
-                        if (!is<CSSCalcPrimitiveValueNode>(child.get()))
+                        if (!is<CSSCalcPrimitiveValueNode>(child))
                             return false;
                     }
                     return true;

@@ -170,7 +170,7 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
     // We need to detach the subtree first so that the descendants don't have
     // access to previous/next sublings at detach().
     // FIXME: webkit.org/b/182909.
-    if (!is<RenderElement>(toDestroy.get()))
+    if (!is<RenderElement>(toDestroy))
         return;
 
     auto& childToDestroy = downcast<RenderElement>(*toDestroy.get());

@@ -346,7 +346,7 @@ void FormController::restoreControlStateFor(HTMLFormControlElementWithState& con
 void FormController::restoreControlStateIn(HTMLFormElement& form)
 {
     for (auto& element : form.copyAssociatedElementsVector()) {
-        if (!is<HTMLFormControlElementWithState>(element.get()))
+        if (!is<HTMLFormControlElementWithState>(element))
             continue;
         auto& control = downcast<HTMLFormControlElementWithState>(element.get());
         if (!control.shouldSaveAndRestoreFormControlState() || ownerForm(control) != &form)

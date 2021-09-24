@@ -360,7 +360,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
 
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
         if (supportsClientSideAttachmentData(frame)) {
-            if (is<HTMLImageElement>(originalElement.get()) && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
+            if (is<HTMLImageElement>(originalElement) && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
                 auto& image = downcast<HTMLImageElement>(originalElement.get());
                 image.setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(*frame.document(), Blob::create(frame.document(), info.data->copyData(), info.contentType)));
                 image.setAttachmentElement(attachment.copyRef());

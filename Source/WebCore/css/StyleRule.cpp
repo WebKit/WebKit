@@ -233,7 +233,7 @@ const StyleProperties& StyleRule::properties() const
 
 MutableStyleProperties& StyleRule::mutableProperties()
 {
-    if (!is<MutableStyleProperties>(m_properties.get()))
+    if (!is<MutableStyleProperties>(m_properties))
         m_properties = properties().mutableCopy();
     return downcast<MutableStyleProperties>(m_properties.get());
 }
@@ -302,7 +302,7 @@ Ref<StyleRulePage> StyleRulePage::create(Ref<StyleProperties>&& properties, CSSS
 
 MutableStyleProperties& StyleRulePage::mutableProperties()
 {
-    if (!is<MutableStyleProperties>(m_properties.get()))
+    if (!is<MutableStyleProperties>(m_properties))
         m_properties = m_properties->mutableCopy();
     return downcast<MutableStyleProperties>(m_properties.get());
 }
@@ -323,7 +323,7 @@ StyleRuleFontFace::~StyleRuleFontFace() = default;
 
 MutableStyleProperties& StyleRuleFontFace::mutableProperties()
 {
-    if (!is<MutableStyleProperties>(m_properties.get()))
+    if (!is<MutableStyleProperties>(m_properties))
         m_properties = m_properties->mutableCopy();
     return downcast<MutableStyleProperties>(m_properties.get());
 }

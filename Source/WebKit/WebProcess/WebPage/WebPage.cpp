@@ -5787,7 +5787,7 @@ void WebPage::setTextAsync(const String& text)
         return;
     }
 
-    if (is<HTMLInputElement>(m_focusedElement.get())) {
+    if (is<HTMLInputElement>(m_focusedElement)) {
         downcast<HTMLInputElement>(*m_focusedElement).setValueForUser(text);
         return;
     }

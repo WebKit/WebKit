@@ -61,7 +61,7 @@ StyleRuleKeyframe::~StyleRuleKeyframe() = default;
 
 MutableStyleProperties& StyleRuleKeyframe::mutableProperties()
 {
-    if (!is<MutableStyleProperties>(m_properties.get()))
+    if (!is<MutableStyleProperties>(m_properties))
         m_properties = m_properties->mutableCopy();
     return downcast<MutableStyleProperties>(m_properties.get());
 }

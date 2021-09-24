@@ -1875,7 +1875,7 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
     int lineNumber = 0;
     int columnNumber = 0;
     String scriptID;
-    if (is<JSEventListener>(eventListener.get())) {
+    if (is<JSEventListener>(eventListener)) {
         auto& scriptListener = downcast<JSEventListener>(eventListener.get());
 
         Document* document = nullptr;

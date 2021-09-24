@@ -561,7 +561,7 @@ void PlatformCAAnimationWin::setAnimations(const Vector<RefPtr<PlatformCAAnimati
 {
     auto array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
     for (auto& animation : value) {
-        if (is<PlatformCAAnimationWin>(animation.get()))
+        if (is<PlatformCAAnimationWin>(animation))
             CFArrayAppendValue(array.get(), downcast<PlatformCAAnimationWin>(*animation).m_animation.get());
     }
 

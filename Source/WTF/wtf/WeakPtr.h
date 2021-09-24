@@ -26,8 +26,10 @@
 
 #pragma once
 
+#include <wtf/GetPtr.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Threading.h>
+#include <wtf/TypeCasts.h>
 
 namespace WTF {
 
@@ -286,6 +288,29 @@ template<typename T, typename = std::enable_if_t<!IsSmartPtr<T>::value>> inline 
 template<typename T, typename = std::enable_if_t<!IsSmartPtr<T>::value>> inline auto makeWeakPtr(const RefPtr<T>& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes)
 {
     return makeWeakPtr(object.get(), enableWeakPtrThreadingAssertions);
+}
+
+template <typename T, typename Counter>
+struct GetPtrHelper<WeakPtr<T, Counter>> {
+    using PtrType = T*;
+    static T* getPtr(const WeakPtr<T, Counter>& p) { return const_cast<T*>(p.get()); }
+};
+
+template <typename T, typename Counter>
+struct IsSmartPtr<WeakPtr<T, Counter>> {
+    static constexpr bool value = true;
+};
+
+template<typename ExpectedType, typename ArgType, typename Counter>
+inline bool is(WeakPtr<ArgType, Counter>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
+template<typename ExpectedType, typename ArgType, typename Counter>
+inline bool is(const WeakPtr<ArgType, Counter>& source)
+{
+    return is<ExpectedType>(source.get());
 }
 
 template<typename T, typename U, typename Counter> inline bool operator==(const WeakPtr<T, Counter>& a, const WeakPtr<U, Counter>& b)

@@ -332,7 +332,7 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
     // If a DataCue is added to a TextTrack via the addCue() method but the text track does not have its text
     // track kind set to metadata, throw a InvalidNodeTypeError exception and don't add the cue to the TextTrackList
     // of the TextTrack.
-    if (is<DataCue>(cue.get()) && m_kind != Kind::Metadata)
+    if (is<DataCue>(cue) && m_kind != Kind::Metadata)
         return Exception { InvalidNodeTypeError };
 
     INFO_LOG(LOGIDENTIFIER, cue.get());

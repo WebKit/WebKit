@@ -580,7 +580,7 @@ void PlatformCAAnimationCocoa::setAnimations(const Vector<RefPtr<PlatformCAAnima
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAAnimationGroup class]]);
 
     [static_cast<CAAnimationGroup *>(m_animation.get()) setAnimations:createNSArray(value, [&] (auto& animation) -> CAAnimation * {
-        if (is<PlatformCAAnimationCocoa>(animation.get()))
+        if (is<PlatformCAAnimationCocoa>(animation))
             return downcast<PlatformCAAnimationCocoa>(animation.get())->m_animation.get();
         return nil;
     }).get()];

@@ -1,3 +1,17 @@
+2021-09-24  Devin Rousso  <drousso@apple.com>
+
+        Add typechecking `is` overloads for `std::unique_ptr`, `WTF::UniqueRef`, and `WTF::WeakPtr`
+        https://bugs.webkit.org/show_bug.cgi?id=230734
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTextAsync):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::commitPotentialTap):
+        (WebKit::WebPage::performActionOnElement):
+        (WebKit::WebPage::autofillLoginCredentials):
+
 2021-09-24  Eric Hutchison  <ehutchison@apple.com>
 
         Unreviewed, reverting r283024.

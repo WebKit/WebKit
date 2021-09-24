@@ -1,3 +1,81 @@
+2021-09-24  Devin Rousso  <drousso@apple.com>
+
+        Add typechecking `is` overloads for `std::unique_ptr`, `WTF::UniqueRef`, and `WTF::WeakPtr`
+        https://bugs.webkit.org/show_bug.cgi?id=230734
+
+        Reviewed by Chris Dumez.
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::isEnabled const):
+        (WebCore::AccessibilityListBoxOption::isSelected const):
+        (WebCore::AccessibilityListBoxOption::canSetSelectedAttribute const):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::webAreaObject const):
+        (WebCore::AccessibilityScrollView::documentFrameView const):
+        (WebCore::AccessibilityScrollView::parentObject const):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists const):
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * bindings/js/JSAbstractRangeCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/CSSCounterStyleRule.cpp:
+        (WebCore::StyleRuleCounterStyle::mutableProperties):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::selectBestFitImage):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::isSVGFontFaceSource const):
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::fontLoadRequest):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::updateStyleIfNeeded):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        (WebCore::CSSFontSelector::fallbackFontAt):
+        * css/CSSKeyframeRule.cpp:
+        (WebCore::StyleRuleKeyframe::mutableProperties):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::mutableProperties):
+        (WebCore::StyleRulePage::mutableProperties):
+        (WebCore::StyleRuleFontFace::mutableProperties):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::CSSCalcOperationNode::hoistChildrenWithOperator):
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        * css/typedom/CSSStyleValueFactory.cpp:
+        (WebCore::CSSStyleValueFactory::reifyValue):
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+        (WebCore::TextManipulationController::replace):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::replaceRichContentWithAttachments):
+        * html/FormController.cpp:
+        (WebCore::FormController::restoreControlStateIn):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::getImageData):
+        (WebCore::HTMLCanvasElement::virtualHasPendingActivity const):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::checkInvalidControlsAndCollectUnhandled):
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::reset):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layout):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::streamDataParser const):
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::PlatformCAAnimationCocoa::setAnimations):
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (PlatformCAAnimationWin::setAnimations):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::imageSize const):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::destroy):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::attach):
+
 2021-09-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line breaking only uses a few style properties

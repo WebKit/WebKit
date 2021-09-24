@@ -510,7 +510,7 @@ RefPtr<ImageBuffer> OffscreenCanvas::takeImageBuffer() const
 void OffscreenCanvas::reset()
 {
     resetGraphicsContextState();
-    if (is<OffscreenCanvasRenderingContext2D>(m_context.get()))
+    if (is<OffscreenCanvasRenderingContext2D>(m_context))
         downcast<OffscreenCanvasRenderingContext2D>(*m_context).reset();
 
     m_hasCreatedImageBuffer = false;

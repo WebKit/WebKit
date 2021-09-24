@@ -101,6 +101,20 @@ private:
 }; \
 }
 
+// Explicit specialization for C++ standard library types.
+
+template<typename ExpectedType, typename ArgType, typename Deleter>
+inline bool is(std::unique_ptr<ArgType, Deleter>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
+template<typename ExpectedType, typename ArgType, typename Deleter>
+inline bool is(const std::unique_ptr<ArgType, Deleter>& source)
+{
+    return is<ExpectedType>(source.get());
+}
+
 } // namespace WTF
 
 using WTF::TypeCastTraits;

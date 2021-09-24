@@ -56,7 +56,7 @@ Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create(HTMLElement& 
     
 bool AccessibilityListBoxOption::isEnabled() const
 {
-    if (is<HTMLOptGroupElement>(m_optionElement.get()))
+    if (is<HTMLOptGroupElement>(m_optionElement))
         return false;
 
     if (equalLettersIgnoringASCIICase(getAttribute(aria_disabledAttr), "true"))
@@ -70,7 +70,7 @@ bool AccessibilityListBoxOption::isEnabled() const
     
 bool AccessibilityListBoxOption::isSelected() const
 {
-    if (!is<HTMLOptionElement>(m_optionElement.get()))
+    if (!is<HTMLOptionElement>(m_optionElement))
         return false;
 
     return downcast<HTMLOptionElement>(*m_optionElement).selected();
@@ -121,7 +121,7 @@ bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
     
 bool AccessibilityListBoxOption::canSetSelectedAttribute() const
 {
-    if (!is<HTMLOptionElement>(m_optionElement.get()))
+    if (!is<HTMLOptionElement>(m_optionElement))
         return false;
     
     if (m_optionElement->isDisabledFormControl())

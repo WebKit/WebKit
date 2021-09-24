@@ -606,11 +606,11 @@ void TextManipulationController::scheduleObservationUpdate()
             if (!node->isConnected())
                 continue;
 
-            if (RefPtr host = node->shadowHost(); is<HTMLInputElement>(host.get()) && downcast<HTMLInputElement>(*host).lastChangeWasUserEdit())
+            if (RefPtr host = node->shadowHost(); is<HTMLInputElement>(host) && downcast<HTMLInputElement>(*host).lastChangeWasUserEdit())
                 continue;
 
             if (!commonAncestor)
-                commonAncestor = is<ContainerNode>(node.get()) ? node.ptr() : node->parentNode();
+                commonAncestor = is<ContainerNode>(node) ? node.ptr() : node->parentNode();
             else if (!node->isDescendantOf(commonAncestor.get()))
                 commonAncestor = commonInclusiveAncestor<ComposedTree>(*commonAncestor, node.get());
         }
@@ -851,7 +851,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     auto startTopDownPath = getPath(commonAncestor.get(), firstContentNode.get());
     while (!startTopDownPath.isEmpty()) {
         auto lastNode = startTopDownPath.last();
-        ASSERT(is<ContainerNode>(lastNode.get()));
+        ASSERT(is<ContainerNode>(lastNode));
         if (!downcast<ContainerNode>(lastNode.get()).hasOneChild())
             break;
         nodesToRemove.add(startTopDownPath.takeLast());
