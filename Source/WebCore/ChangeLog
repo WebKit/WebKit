@@ -1,3 +1,29 @@
+2021-09-24  Antoine Quint  <graouts@webkit.org>
+
+        [Media Controls] Allow for a close button
+        https://bugs.webkit.org/show_bug.cgi?id=230761
+        <rdar://problem/83505067>
+
+        Reviewed by Dean Jackson.
+
+        Add a new close button with an "X" icon which simple exits fullscreen.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * Modules/modern-media-controls/controls/close-button.js: Added.
+        (CloseButton):
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/images/iOS/X.svg: Added.
+        * Modules/modern-media-controls/images/macOS/X.svg: Added.
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/close-support.js: Added.
+        (CloseSupport.prototype.get control):
+        (CloseSupport.prototype.buttonWasPressed):
+        (CloseSupport):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._supportingObjectClasses):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement abs,sign calc functions
