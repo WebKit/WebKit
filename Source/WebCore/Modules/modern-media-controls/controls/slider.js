@@ -190,7 +190,7 @@ class Slider extends LayoutNode
     _interactionEndTarget()
     {
         const mediaControls = this.parentOfType(MediaControls);
-        return (!mediaControls || mediaControls instanceof MacOSInlineMediaControls) ? window : mediaControls.element;
+        return (!mediaControls || !mediaControls.layoutTraits.isFullscreen) ? window : mediaControls.element;
     }
 
     _valueWillStartChanging()

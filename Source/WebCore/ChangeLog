@@ -1,5 +1,27 @@
 2021-09-24  Antoine Quint  <graouts@webkit.org>
 
+        [Media Controls] RangeButton doesn't show the fill indicator in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=230759
+        <rdar://problem/82206303>
+
+        Reviewed by Dean Jackson.
+
+        RangeButton cannot work in fullscreen since it only ever registers "pointermove" and "pointerup"
+        events on window, which is not in the same display, rather than the controls element displayed
+        in fullscreen. So we adopt the same approach used for Slider, but also improve by not looking
+        for a specific MediaControls subclass, but rather by checking whether the traits indicate
+        these are fullscreen controls.
+
+        * Modules/modern-media-controls/controls/controls/range-button.js:
+        (RangeButton.prototype.handleEvent):
+        (RangeButton.prototype._pointerMoveAndEndTarget):
+        (RangeButton.prototype._handlePointerdown):
+        (RangeButton.prototype._handlePointerup):
+        * Modules/modern-media-controls/controls/controls/slider.js:
+        (Slider.prototype._interactionEndTarget):
+
+2021-09-24  Antoine Quint  <graouts@webkit.org>
+
         [Media Controls] Allow for a close button
         https://bugs.webkit.org/show_bug.cgi?id=230761
 

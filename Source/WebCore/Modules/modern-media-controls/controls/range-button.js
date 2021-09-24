@@ -72,11 +72,11 @@ class RangeButton extends Button
 
     handleEvent(event)
     {
-        if (event.currentTarget === this.element && event.type == "pointerdown")
+        if (event.currentTarget === this.element && event.type === "pointerdown")
             this._handlePointerdown(event);
-        else if (event.currentTarget === window && event.type === "pointermove")
+        else if (event.currentTarget === this._pointerMoveAndEndTarget() && event.type === "pointermove")
             this._handlePointermove(event);
-        else if (event.currentTarget === window && event.type === "pointerup")
+        else if (event.currentTarget === this._pointerMoveAndEndTarget() && event.type === "pointerup")
             this._handlePointerup(event);
         else
             super.handleEvent(event);
@@ -84,10 +84,16 @@ class RangeButton extends Button
 
     // Private
 
+    _pointerMoveAndEndTarget()
+    {
+        const mediaControls = this.parentOfType(MediaControls);
+        return (!mediaControls || !mediaControls.layoutTraits.isFullscreen) ? window : mediaControls.element;
+    }
+
     _handlePointerdown(event)
     {
-        window.addEventListener("pointermove", this, true);
-        window.addEventListener("pointerup", this, true);
+        this._pointerMoveAndEndTarget().addEventListener("pointermove", this, true);
+        this._pointerMoveAndEndTarget().addEventListener("pointerup", this, true);
 
         this._initialPointerY = event.clientY;
         this._initialValue = this._value;
@@ -123,8 +129,8 @@ class RangeButton extends Button
 
     _handlePointerup(event)
     {
-        window.removeEventListener("pointermove", this, true);
-        window.removeEventListener("pointerup", this, true);
+        this._pointerMoveAndEndTarget().removeEventListener("pointermove", this, true);
+        this._pointerMoveAndEndTarget().removeEventListener("pointerup", this, true);
 
         delete this._initialPointerY;
         delete this._initialValue;
