@@ -1,3 +1,14 @@
+2021-09-24  Aakash Jain  <aakash_jain@apple.com>
+
+        Gracefully handle security bugs in apply-watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=229961
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._parse_bug_dictionary_from_xml):
+        (Bugzilla.fetch_bug):
+
 2021-09-24  Sam Sneddon  <gsnedders@apple.com>
 
         LayoutTestFinder should return tests in order
