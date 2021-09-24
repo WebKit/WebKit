@@ -900,6 +900,7 @@ http/tests/ssl/media-stream [ Skip ]
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
 http/tests/webrtc [ Skip ]
+http/tests/webshare [ Skip ]
 
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 
@@ -2097,3 +2098,12 @@ fast/masking/clip-path-selection.html [ Failure ]
 animations/remove-syncing-animation.html [ Pass Failure ]
 
 editing/execCommand/indent-input-in-image-crash.html [ Failure ]
+
+fast/text/undefined-glyph-with-ligature.html [ ImageOnlyFailure ]
+fast/text/soft-hyphen-2.html [ Failure ]
+fast/text/soft-hyphen-3.html [ Failure ]
+fast/text/soft-hyphen-4.html [ Failure ]
+http/tests/messaging/broadcastchannel-partitioning-with-storage-access.html [ Failure ]
+http/tests/xmlhttprequest/onabort-response-getters.html [ Failure ]
+http/tests/xmlhttprequest/onload-progressevent-attributes.html [ Failure ]
+http/tests/xmlhttprequest/xmlhttprequest-LSProgressEvent-ProgressEvent-should-match.html [ Failure ]

@@ -1,3 +1,13 @@
+2021-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/css/font-face-implicit-local-font-expected.txt:
+        * platform/wincairo/fast/css/font-face-opentype-expected.txt:
+        * platform/wincairo/fast/text/fixed-pitch-control-characters-expected.txt:
+        * platform/wincairo/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+
 2021-09-23  Eric Hutchison  <ehutchison@apple.com>
 
         [Catalina Release wk1] imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html is a flaky failure.
