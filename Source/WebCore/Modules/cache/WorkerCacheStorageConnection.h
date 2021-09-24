@@ -28,6 +28,8 @@
 
 #include "CacheStorageConnection.h"
 
+#include "ResourceRequest.h"
+
 namespace WebCore {
 
 class WorkerGlobalScope;

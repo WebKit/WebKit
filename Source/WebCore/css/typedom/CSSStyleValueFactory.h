@@ -27,7 +27,9 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSImageValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSStyleValue.h"
 #include "CSSValue.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>

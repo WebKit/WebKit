@@ -33,7 +33,9 @@
 #pragma once
 
 #include "ReferrerPolicy.h"
+#include "SecurityOriginData.h"
 #include <wtf/Forward.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

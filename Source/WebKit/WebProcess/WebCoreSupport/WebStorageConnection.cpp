@@ -31,6 +31,7 @@
 #include "NetworkStorageManagerMessages.h"
 #include "WebProcess.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/ExceptionOr.h>
 
 namespace WebKit {
 

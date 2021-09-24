@@ -33,6 +33,7 @@
 #include "ScrollView.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
+#include "ScrollbarsController.h"
 #include <algorithm>
 
 #if PLATFORM(GTK)

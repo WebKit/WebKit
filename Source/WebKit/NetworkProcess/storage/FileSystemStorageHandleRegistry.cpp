@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FileSystemStorageHandleRegistry.h"
 
+#include "FileSystemStorageHandle.h"
+
 namespace WebKit {
 
 FileSystemStorageHandleRegistry::FileSystemStorageHandleRegistry() = default;

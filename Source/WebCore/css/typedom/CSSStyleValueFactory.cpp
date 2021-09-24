@@ -38,6 +38,7 @@
 #include "CSSParser.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSStyleImageValue.h"
 #include "CSSStyleValue.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"

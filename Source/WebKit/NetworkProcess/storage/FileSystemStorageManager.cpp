@@ -27,6 +27,7 @@
 #include "FileSystemStorageManager.h"
 
 #include "FileSystemStorageError.h"
+#include "FileSystemStorageHandleRegistry.h"
 
 namespace WebKit {
 

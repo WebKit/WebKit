@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CrossOriginEmbedderPolicy.h"
 
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "JSFetchRequest.h"

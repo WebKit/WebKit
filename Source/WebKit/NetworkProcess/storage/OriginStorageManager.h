@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "FileSystemStorageHandleIdentifier.h"
 #include <wtf/text/WTFString.h>
 

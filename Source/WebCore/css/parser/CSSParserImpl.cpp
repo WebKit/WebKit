@@ -34,6 +34,7 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSDeferredParser.h"
+#include "CSSFontFamily.h"
 #include "CSSFontPaletteValuesOverrideColorValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"

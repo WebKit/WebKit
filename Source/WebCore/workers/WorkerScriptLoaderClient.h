@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include "ResourceLoaderIdentifier.h"
+
 namespace WebCore {
 
 class ResourceResponse;

@@ -1,3 +1,20 @@
+2021-09-24  Lauro Moura  <lmoura@igalia.com>
+
+        Non-unified partial build fixes late September edition
+        https://bugs.webkit.org/show_bug.cgi?id=230763
+
+        Unreviewed non-unified build fixes.
+
+        * NetworkProcess/NetworkProcess.cpp: Add missing header.
+        * NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp: Ditto.
+        * NetworkProcess/storage/FileSystemStorageManager.cpp: Ditto.
+        * NetworkProcess/storage/OriginStorageManager.h: Ditto.
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp: Add missing header.
+        (WebKit::RTCDataChannelRemoteManager::detectError): WebCore namespace.
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError): Ditto.
+        * WebProcess/WebCoreSupport/WebStorageConnection.cpp: Add missing
+        header.
+
 2021-09-24  Per Arne Vollan  <pvollan@apple.com>
 
         Clean up preference rules in sandboxes

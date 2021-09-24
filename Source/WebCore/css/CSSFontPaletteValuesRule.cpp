@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSFontPaletteValuesRule.h"
 
+#include "CSSMarkup.h"
 #include "ColorSerialization.h"
 #include "JSDOMMapLike.h"
 #include "PropertySetCSSStyleDeclaration.h"

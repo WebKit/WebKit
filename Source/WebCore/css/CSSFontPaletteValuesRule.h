@@ -27,6 +27,8 @@
 
 #include "CSSRule.h"
 
+#include "StyleRule.h"
+
 namespace WebCore {
 
 class CSSStyleDeclaration;

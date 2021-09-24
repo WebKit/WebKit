@@ -33,6 +33,7 @@
 #include "RTCDataChannelRemoteManagerProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/RTCDataChannel.h>
+#include <WebCore/RTCError.h>
 #include <WebCore/ScriptExecutionContext.h>
 
 namespace WebKit {
@@ -160,7 +161,7 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
 void RTCDataChannelRemoteManager::detectError(WebCore::RTCDataChannelIdentifier handlerIdentifier, WebCore::RTCErrorDetailType detail, String&& message)
 {
     postTaskToHandler(handlerIdentifier, [detail, message = WTFMove(message)](auto& handler) mutable {
-        handler.didDetectError(RTCError::create(detail, WTFMove(message)));
+        handler.didDetectError(WebCore::RTCError::create(detail, WTFMove(message)));
     });
 }
 
@@ -235,7 +236,7 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebC
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, true, IPC::DataReference { data, size  } }, 0);
 }
 
-void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore::RTCDataChannelIdentifier identifier, RTCErrorDetailType type, const String& message)
+void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore::RTCDataChannelIdentifier identifier, WebCore::RTCErrorDetailType type, const String& message)
 {
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::DetectError { identifier, type, message }, 0);
 }

@@ -36,6 +36,7 @@
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
 #include "RenderText.h"
+#include "RenderView.h"
 #include "ShadowData.h"
 #include "StyledMarkedText.h"
 #include "TextPaintStyle.h"
