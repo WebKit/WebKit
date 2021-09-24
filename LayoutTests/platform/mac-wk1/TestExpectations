@@ -1421,3 +1421,5 @@ webkit.org/b/230701 [ Catalina Debug ] performance-api/performance-observer-call
 webkit.org/b/230717 [ Catalina BigSur Debug ] resize-observer/delete-observers-in-callbacks.html [ Pass Crash ]
 
 webkit.org/b/230729 [ Catalina Release ] imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ Pass Failure ]
+
+webkit.org/b/230756 [ Catalina Debug ] svg/dom/SVGAnimatedListPropertyTearOff-crash-2.html [ Pass Crash ]
