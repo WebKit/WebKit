@@ -73,12 +73,13 @@ def _normalized_find(filesystem, paths, skipped_directories, file_filter, direct
           Glob patterns are ok.
     """
 
-    paths_to_walk = itertools.chain(*(filesystem.glob(path) for path in paths))
-
     def sort_by_directory_key(files_list):
-        if directory_sort_key:
-            files_list.sort(key=directory_sort_key)
-        return files_list
+        if not directory_sort_key:
+            return files_list[:]
+
+        return sorted(files_list, key=directory_sort_key)
+
+    paths_to_walk = itertools.chain(*(sort_by_directory_key(filesystem.glob(path)) for path in paths))
 
     all_files = itertools.chain(*(sort_by_directory_key(filesystem.files_under(path, skipped_directories, file_filter)) for path in paths_to_walk))
     return all_files

@@ -1,3 +1,25 @@
+2021-09-24  Sam Sneddon  <gsnedders@apple.com>
+
+        LayoutTestFinder should return tests in order
+        https://bugs.webkit.org/show_bug.cgi?id=230684
+
+        Reviewed by Jonathan Bedard.
+
+        It has always been intended that LayoutTestFinder return tests in a deterministic order;
+        however, a bug in find_files means that directories found by glob aren't sorted, and hence
+        running run-webkit-tests with no arguments ends up running the top-level directories in a
+        non-deterministic order.
+
+        * Scripts/webkitpy/common/find_files.py:
+        (_normalized_find):
+        (_normalized_find.sort_by_directory_key):
+        * Scripts/webkitpy/common/find_files_unittest.py:
+        (TestWinNormalize.assert_filesystem_normalizes):
+        (TestWinNormalize.test_win):
+        (TestFindFiles):
+        (TestFindFiles.test_directory_sort_key):
+        (TestFindFiles.test_directory_sort_key_with_paths):
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15
