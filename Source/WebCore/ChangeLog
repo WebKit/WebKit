@@ -1,3 +1,30 @@
+2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Handle CSSOM style mutation of font-palette-values
+        https://bugs.webkit.org/show_bug.cgi?id=230448
+        <rdar://problem/83343481>
+
+        Reviewed by Antti Koivisto.
+
+        The CSSSegmentedFontFace cache needs to be sensitive to FontPaletteValues.
+
+        Tests: imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add-2.html
+               imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html
+               imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete-2.html
+               imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html
+
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontRanges):
+        * css/CSSSegmentedFontFace.h:
+        * platform/graphics/FontCache.h:
+        (WTF::DefaultHash<WebCore::FontDescriptionKey>::hash):
+        (WTF::DefaultHash<WebCore::FontDescriptionKey>::equal):
+        (WebCore::FontDescriptionKeyHash::hash): Deleted.
+        (WebCore::FontDescriptionKeyHash::equal): Deleted.
+        * platform/graphics/FontPaletteValues.h:
+        (WTF::DefaultHash<WebCore::FontPaletteValues>::hash):
+        (WTF::DefaultHash<WebCore::FontPaletteValues>::equal):
+
 2021-09-24  Brandon Stewart  <brandonstewart@apple.com>
 
         [RenderTreeUpdater] NULL ptr deref in updateRenderTree

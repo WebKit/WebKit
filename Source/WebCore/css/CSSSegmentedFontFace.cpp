@@ -112,7 +112,7 @@ static void appendFont(FontRanges& ranges, Ref<FontAccessor>&& fontAccessor, con
 
 FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescription, const FontPaletteValues& fontPaletteValues)
 {
-    auto addResult = m_cache.add(FontDescriptionKey(fontDescription), FontRanges());
+    auto addResult = m_cache.add(std::make_tuple(FontDescriptionKey(fontDescription), fontPaletteValues), FontRanges());
     auto& ranges = addResult.iterator->value;
 
     if (!addResult.isNewEntry)

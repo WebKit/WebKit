@@ -27,6 +27,7 @@
 
 #include "Color.h"
 #include "Gradient.h"
+#include <wtf/HashFunctions.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
@@ -77,5 +78,15 @@ inline void add(Hasher& hasher, const FontPaletteValues& fontPaletteValues)
     add(hasher, fontPaletteValues.basePalette());
     add(hasher, fontPaletteValues.overrideColor());
 }
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct DefaultHash<WebCore::FontPaletteValues> {
+    static unsigned hash(const WebCore::FontPaletteValues& key) { return computeHash(key); }
+    static bool equal(const WebCore::FontPaletteValues& a, const WebCore::FontPaletteValues& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
 
 }

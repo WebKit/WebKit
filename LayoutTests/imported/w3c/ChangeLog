@@ -1,3 +1,22 @@
+2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Handle CSSOM style mutation of font-palette-values
+        https://bugs.webkit.org/show_bug.cgi?id=230448
+        <rdar://problem/83343481>
+
+        Reviewed by Antti Koivisto.
+
+        These tests are being upstreamed at https://github.com/web-platform-tests/wpt/pull/30939.
+
+        * web-platform-tests/css/css-fonts/palette-values-rule-add-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/palette-values-rule-add-2.html: Added.
+        * web-platform-tests/css/css-fonts/palette-values-rule-add-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/palette-values-rule-add.html: Added.
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete-2.html: Added.
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete.html: Added.
+
 2021-09-24  Sihui Liu  <sihui_liu@apple.com>
 
         Add initial support for File System Access API

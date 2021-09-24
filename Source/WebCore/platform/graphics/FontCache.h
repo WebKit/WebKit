@@ -40,6 +40,7 @@
 #include <limits.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/PointerComparison.h>
@@ -216,11 +217,22 @@ inline void add(Hasher& hasher, const FontDescriptionKey& key)
         add(hasher, *key.m_rareData);
 }
 
-struct FontDescriptionKeyHash {
-    static unsigned hash(const FontDescriptionKey& key) { return computeHash(key); }
-    static bool equal(const FontDescriptionKey& a, const FontDescriptionKey& b) { return a == b; }
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct DefaultHash<WebCore::FontDescriptionKey> {
+    static unsigned hash(const WebCore::FontDescriptionKey& key) { return computeHash(key); }
+    static bool equal(const WebCore::FontDescriptionKey& a, const WebCore::FontDescriptionKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
+
+template<> struct HashTraits<WebCore::FontDescriptionKey> : WTF::SimpleClassHashTraits<WebCore::FontDescriptionKey> {
+};
+
+}
+
+namespace WebCore {
 
 // This class holds the name of a font family, and defines hashing and == of this name to
 // use the rules for font family names instead of using straight string comparison.
