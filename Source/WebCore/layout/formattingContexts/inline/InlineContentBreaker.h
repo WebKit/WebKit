@@ -154,7 +154,7 @@ inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlin
         , style.hyphenationLimitBefore() != style.initialHyphenationLimitBefore() ? std::make_optional(style.hyphenationLimitBefore()) : std::nullopt
         , style.hyphenationLimitAfter() != style.initialHyphenationLimitAfter() ? std::make_optional(style.hyphenationLimitAfter()) : std::nullopt
         , style.fontCascade()
-        , style.hyphenString()
+        , (style.hyphens() == Hyphens::None ? nullAtom() : style.hyphenString())
         , style.fontDescription().computedLocale() })
     , logicalWidth(logicalWidth)
 {

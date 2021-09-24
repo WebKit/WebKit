@@ -1,3 +1,12 @@
+2021-09-24  Alan Bujtas  <zalan@apple.com>
+
+        r283047 broke some hyphen related debug tests.
+
+        Apparently we can't access the hyphen string when the hyphen property is not set.
+
+        * layout/formattingContexts/inline/InlineContentBreaker.h:
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::Run::Run):
+
 2021-09-24  Eric Hutchison  <ehutchison@apple.com>
 
         Unreviewed, reverting r283050.
