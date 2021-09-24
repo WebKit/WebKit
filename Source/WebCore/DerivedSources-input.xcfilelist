@@ -301,6 +301,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/button.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/buttons-container.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/buttons-container.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/close-button.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/controls-bar.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/controls-bar.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/forward-button.js
@@ -358,6 +359,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/main.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/airplay-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/audio-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/brightness-support.js
+$(PROJECT_DIR)/Modules/modern-media-controls/media/close-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/controls-visibility-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/fullscreen-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/media-controller-support.js
