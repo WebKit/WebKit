@@ -408,11 +408,6 @@
 )
 
 (define-once (dictionary-support)
-    ; Dictionary Services used by UITextFields.
-    ; <rdar://problem/9386926>
-    (allow-create-directory
-        (home-literal "/Library/Caches/com.apple.DictionaryServices"))
-
     ; <rdar://problem/8548856> Sub-TLF: Sandbox change for apps for read-only access to the dictionary directory/data
     (allow file-read*
         ; XXX - /Library ought to be allowed in all UI profiles but isn't (CF, MobileSafari)
