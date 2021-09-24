@@ -142,12 +142,6 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         && m_frame->document()->isSecureTransitionTo(url)
         && (m_frame->window() && !m_frame->window()->wasWrappedWithoutInitializedSecurityOrigin() && m_frame->window()->mayReuseForNavigation());
 
-    if (shouldReuseDefaultView) {
-        ASSERT(m_frame->loader().documentLoader());
-        if (auto* contentSecurityPolicy = m_frame->loader().documentLoader()->contentSecurityPolicy())
-            shouldReuseDefaultView = !(contentSecurityPolicy->sandboxFlags() & SandboxOrigin);
-    }
-
     // Temporarily extend the lifetime of the existing document so that FrameLoader::clear() doesn't destroy it as
     // we need to retain its ongoing set of upgraded requests in new navigation contexts per <http://www.w3.org/TR/upgrade-insecure-requests/>
     // and we may also need to inherit its Content Security Policy below.
