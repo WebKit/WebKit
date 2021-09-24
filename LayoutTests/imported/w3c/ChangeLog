@@ -1,5 +1,29 @@
 2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Handle CSSOM style mutation of font-palette
+        https://bugs.webkit.org/show_bug.cgi?id=230673
+
+        Reviewed by Antti Koivisto.
+
+        It already works.
+
+        The tests are being upstreamed at https://github.com/web-platform-tests/wpt/pull/30942.
+
+        * web-platform-tests/css/css-fonts/font-palette-add-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-add-2.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-add-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-add.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-modify-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-modify-2.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-modify-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-modify.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-remove-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-remove-2.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-remove-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-remove.html: Added.
+
+2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Handle CSSOM style mutation of font-palette-values
         https://bugs.webkit.org/show_bug.cgi?id=230448
         <rdar://problem/83343481>
