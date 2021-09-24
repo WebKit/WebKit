@@ -1,3 +1,22 @@
+2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Color keywords in override-color cause a crash
+        https://bugs.webkit.org/show_bug.cgi?id=230605
+        <rdar://problem/83389290>
+
+        Reviewed by Simon Fraser.
+
+        I was assuming that consumeColor() would always produce a color. Instead, if the color
+        was specified as a keyword, consumeColor() would produce the keyword.
+
+        This passes in the default context for color resolution, because
+        https://github.com/w3c/csswg-drafts/issues/6680 isn't resolved yet.
+
+        Test: imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeFontPaletteValuesRule):
+
 2021-09-24  Antoine Quint  <graouts@webkit.org>
 
         [Media Controls] RangeButton doesn't show the fill indicator in fullscreen

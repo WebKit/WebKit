@@ -698,7 +698,8 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
                 key = pair.key().value<int64_t>();
             else
                 continue;
-            overrideColor.append(std::make_pair(key, pair.color().color()));
+            Color color = pair.color().isRGBColor() ? pair.color().color() : StyleColor::colorFromKeyword(pair.color().valueID(), { });
+            overrideColor.append(std::make_pair(key, color));
         }
     }
 
