@@ -1,3 +1,39 @@
+2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+        [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms
+        https://bugs.webkit.org/show_bug.cgi?id=230538
+        <rdar://problem/83355705>
+
+        Reviewed by Eric Carlson.
+
+        Add support for interrupting mock cameras.
+        Update internals to handle the case of out of main thread videoSampleAvailable calls.
+
+        Update Page::setMuted to trigger setMuted logic even if Page muted state did not change.
+        This ensures we can restart capture in case a track is muted without the page being muted itself.
+
+        When a source is muted and is in producing data state, it is interrupted.
+        When setMuted(false) is called, we need to uninterrupt.
+        To do so, we do a stop/start cycle
+
+        Test: fast/mediastream/media-stream-video-track-interrupted.html
+
+        * page/Page.cpp:
+        (WebCore::Page::setMuted):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::setMuted):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource):
+        (WebCore::MockRealtimeVideoSource::~MockRealtimeVideoSource):
+        (WebCore::MockRealtimeVideoSource::setIsInterrupted):
+        * platform/mock/MockRealtimeVideoSource.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::videoSampleAvailable):
+        * testing/Internals.h:
+
 2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Handle CSSOM style mutation of font-palette-values

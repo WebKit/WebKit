@@ -43,6 +43,7 @@ messages -> GPUProcess LegacyReceiver {
     ClearMockMediaDevices();
     RemoveMockMediaDevice(String persistentId);
     ResetMockMediaDevices();
+    SetMockCameraIsInterrupted(bool isInterrupted);
 #endif
 #if PLATFORM(MAC)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)

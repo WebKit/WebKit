@@ -310,6 +310,11 @@ void GPUProcessProxy::resetMockMediaDevices()
 {
     send(Messages::GPUProcess::ResetMockMediaDevices { }, 0);
 }
+
+void GPUProcessProxy::setMockCameraIsInterrupted(bool isInterrupted)
+{
+    send(Messages::GPUProcess::SetMockCameraIsInterrupted { isInterrupted }, 0);
+}
 #endif
 
 void GPUProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

@@ -5438,24 +5438,28 @@ void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
 
 void Internals::videoSampleAvailable(MediaSample& sample)
 {
-    m_trackVideoSampleCount++;
-    if (!m_nextTrackFramePromise)
-        return;
+    callOnMainThread([this, weakThis = makeWeakPtr(this), sample = Ref { sample }] {
+        if (!weakThis)
+            return;
+        m_trackVideoSampleCount++;
+        if (!m_nextTrackFramePromise)
+            return;
 
-    auto& videoSettings = m_trackSource->settings();
-    if (!videoSettings.width() || !videoSettings.height())
-        return;
-    
-    auto rgba = sample.getRGBAImageData();
-    if (!rgba)
-        return;
-    
-    auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
-    if (!imageData.hasException())
-        m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
-    else
-        m_nextTrackFramePromise->reject(imageData.exception().code());
-    m_nextTrackFramePromise = nullptr;
+        auto& videoSettings = m_trackSource->settings();
+        if (!videoSettings.width() || !videoSettings.height())
+            return;
+
+        auto rgba = sample->getRGBAImageData();
+        if (!rgba)
+            return;
+
+        auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
+        if (!imageData.hasException())
+            m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
+        else
+            m_nextTrackFramePromise->reject(imageData.exception().code());
+        m_nextTrackFramePromise = nullptr;
+    });
 }
 
 void Internals::delayMediaStreamTrackSamples(MediaStreamTrack& track, float delay)

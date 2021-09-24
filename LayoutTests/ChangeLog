@@ -1,3 +1,14 @@
+2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+        [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms
+        https://bugs.webkit.org/show_bug.cgi?id=230538
+        <rdar://problem/83355705>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/media-stream-video-track-interrupted-expected.txt: Added.
+        * fast/mediastream/media-stream-video-track-interrupted.html: Added.
+
 2021-09-24  Brandon Stewart  <brandonstewart@apple.com>
 
         [RenderTreeUpdater] NULL ptr deref in updateRenderTree

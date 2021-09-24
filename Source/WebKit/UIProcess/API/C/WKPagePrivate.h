@@ -195,6 +195,7 @@ WK_EXPORT void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef page, WKStr
 
 WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);
+WK_EXPORT void WKPageSetMockCameraIsInterrupted(WKPageRef page, bool isInterrupted);
 
 typedef void (*WKPageLoadedSubresourceDomainsFunction)(WKArrayRef domains, void* functionContext);
 WK_EXPORT void WKPageLoadedSubresourceDomains(WKPageRef page, WKPageLoadedSubresourceDomainsFunction callback, void* callbackContext);

@@ -137,9 +137,9 @@ void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier id)
 void UserMediaCaptureManager::sourceMutedChanged(RealtimeMediaSourceIdentifier id, bool muted)
 {
     if (auto source = m_audioSources.get(id))
-        source->setMuted(muted);
+        source->sourceMutedChanged(muted);
     else if (auto source = m_videoSources.get(id))
-        source->setMuted(muted);
+        source->sourceMutedChanged(muted);
 }
 
 void UserMediaCaptureManager::sourceSettingsChanged(RealtimeMediaSourceIdentifier id, RealtimeMediaSourceSettings&& settings)

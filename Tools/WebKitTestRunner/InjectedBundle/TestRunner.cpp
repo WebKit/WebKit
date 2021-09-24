@@ -1806,6 +1806,11 @@ bool TestRunner::isMockRealtimeMediaSourceCenterEnabled()
     return postSynchronousMessageReturningBoolean("IsMockRealtimeMediaSourceCenterEnabled");
 }
 
+void TestRunner::setMockCameraIsInterrupted(bool isInterrupted)
+{
+    postSynchronousMessage("SetMockCameraIsInterrupted", isInterrupted);
+}
+
 #if ENABLE(GAMEPAD)
 
 void TestRunner::connectMockGamepad(unsigned index)

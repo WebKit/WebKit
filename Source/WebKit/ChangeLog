@@ -1,3 +1,32 @@
+2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+        [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms
+        https://bugs.webkit.org/show_bug.cgi?id=230538
+        <rdar://problem/83355705>
+
+        Reviewed by Eric Carlson.
+
+        Add support for mock capture interruption.
+        When receiving a notification that GPUProcess source is muted, we consider it is interrupted.
+        In that case, we notify the source is muted instead of calling setMuted (which would set the source as muted AND stop producing data).
+        It is important to not stop the source so that it can continue receiving interruption notifications.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::setMockCameraIsInterrupted):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageIsMockRealtimeMediaSourceCenterEnabled):
+        (WKPageSetMockCameraIsInterrupted):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::setMockCameraIsInterrupted):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::sourceMutedChanged):
+
 2021-09-24  Sihui Liu  <sihui_liu@apple.com>
 
         Add initial support for File System Access API

@@ -307,6 +307,7 @@ public:
     void resetMockMediaDevices();
     void setMockCameraOrientation(uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
+    void setMockCameraIsInterrupted(bool);
     bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);

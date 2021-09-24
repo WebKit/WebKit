@@ -383,6 +383,7 @@ interface TestRunner {
     undefined resetMockMediaDevices();
     undefined setMockCameraOrientation(unsigned long orientation);
     boolean isMockRealtimeMediaSourceCenterEnabled();
+    undefined setMockCameraIsInterrupted(boolean isInterrupted);
 
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();

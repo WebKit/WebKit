@@ -343,6 +343,12 @@ void GPUProcess::resetMockMediaDevices()
 {
     MockRealtimeMediaSourceCenter::resetDevices();
 }
+
+void GPUProcess::setMockCameraIsInterrupted(bool isInterrupted)
+{
+    MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted(isInterrupted);
+}
+
 #endif
 
 #if PLATFORM(MAC)
