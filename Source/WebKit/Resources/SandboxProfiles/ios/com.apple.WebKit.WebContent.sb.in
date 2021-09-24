@@ -80,7 +80,12 @@
 
 (define-once (mobile-preferences-read . domains)
     (allow-preferences-common)
-    (allow user-preference-read (apply preference-domain domains)))
+    (for-each (lambda (domain)
+        (begin
+            (allow user-preference-read (preference-domain domain))
+            (allow file-read*
+                (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
+        domains))
 
 (define-once (framebuffer-access)
     (allow iokit-open
@@ -571,7 +576,7 @@
     (allow file-read*
            (subpath "/private/var/preferences/Logging"))
 
-    (mobile-preferences-read "kCFPreferencesAnyApplication")
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
     (allow file-read*
            (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist")
            (front-user-home-literal "/Library/Preferences/.GlobalPreferences_m.plist"))
@@ -838,9 +843,6 @@
 
 (uikit-requirements)
 
-;; <rdar://problem/9404009>
-(mobile-preferences-read "kCFPreferencesAnyApplication")
-
 (dictionary-support)
 
 ; <rdar://problem/8440231>
@@ -871,51 +873,7 @@
 ;;; End UIKit-apps.sb content
 ;;;
 
-;; In CFPrefs direct mode, access to preference files is required.
-(allow file-read*
-    (home-literal
-        "/Library/Preferences/com.apple.Accessibility.plist"
-        "/Library/Preferences/com.apple.AdLib.plist"
-        "/Library/Preferences/com.apple.EmojiPreferences.plist"
-        "/Library/Preferences/com.apple.InputModePreferences.plist"
-        "/Library/Preferences/com.apple.LaunchServices.plist"
-        "/Library/Preferences/com.apple.Metal.plist"
-        "/Library/Preferences/com.apple.MobileAsset.plist"
-        "/Library/Preferences/com.apple.Preferences.plist"
-        "/Library/Preferences/com.apple.PrototypeTools.plist"
-        "/Library/Preferences/com.apple.SpeakSelection.plist"
-        "/Library/Preferences/com.apple.UIKit.plist"
-        "/Library/Preferences/com.apple.VoiceOverTouch.plist"
-        "/Library/Preferences/com.apple.WebFoundation.plist"
-        "/Library/Preferences/com.apple.WebUI.plist"
-        "/Library/Preferences/com.apple.airplay.plist"
-        "/Library/Preferences/com.apple.audio.virtualaudio.plist"
-        "/Library/Preferences/com.apple.avfoundation.plist"
-        "/Library/Preferences/com.apple.avfoundation.frecents.plist"
-        "/Library/Preferences/com.apple.avfoundation.videoperformancehud.plist"
-        "/Library/Preferences/com.apple.avkit.plist"
-        "/Library/Preferences/com.apple.coreanimation.plist"
-        "/Library/Preferences/com.apple.coreaudio.plist"
-        "/Library/Preferences/com.apple.coremedia.plist"
-        "/Library/Preferences/com.apple.corevideo.plist"
-        "/Library/Preferences/com.apple.da.plist"
-        "/Library/Preferences/com.apple.keyboard.plist"
-        "/Library/Preferences/com.apple.lookup.shared.plist"
-        "/Library/Preferences/com.apple.mediaaccessibility.plist"
-        "/Library/Preferences/com.apple.mediaaccessibility.public.plist"
-        "/Library/Preferences/com.apple.mediaremote.plist"
-        "/Library/Preferences/com.apple.mobileipod.plist"
-        "/Library/Preferences/com.apple.mt.plist"
-        "/Library/Preferences/com.apple.hangtracer.plist"
-        "/Library/Preferences/com.apple.iokit.IOMobileGraphicsFamily.plist"
-        "/Library/Preferences/com.apple.itunesstored.plist"
-        "/Library/Preferences/com.apple.opengl.plist"
-        "/Library/Preferences/com.apple.preferences.sounds.plist"
-        "/Library/Preferences/com.apple.security.plist"
-        "/Library/Preferences/com.apple.voiceservices.plist"
-        "/Library/Preferences/com.apple.voiceservices.logging.plist"
-    )
-)
+(mobile-preferences-read "com.apple.AdLib.plist")
 
 (deny file-read* (with no-report)
     (home-literal

@@ -26,6 +26,8 @@
 (deny nvram*)
 (allow system-audit file-read-metadata)
 
+#include "Shared/Sandbox/preferences.sb"
+
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
@@ -987,83 +989,39 @@
     ;; Needed for AES3 support
     (subpath "/Library/Audio/Plug-Ins/Components"))
 
+
 ;; Preferences support
-(allow user-preference-read
-    (preference-domain
-        "kCFPreferencesAnyApplication"
-        "com.apple.Accessibility"
-        "com.apple.ATS"
-        "com.apple.CoreGraphics"
-        "com.apple.DownloadAssessment"
-        "com.apple.HIToolbox"
-        "com.apple.LaunchServices"
-        "com.apple.MultitouchSupport" ;; FIXME: Remove when <rdar://problem/13011633> is fixed.
-        "com.apple.ServicesMenu.Services" ;; Needed for NSAttributedString <rdar://problem/10844321>
-        "com.apple.ViewBridge" ;; Needed for Input elements.
-        "com.apple.WebFoundation"
-        "com.apple.avfoundation"
-        "com.apple.avfoundation.frecents" ;; <rdar://problem/33137029>
-        "com.apple.avfoundation.videoperformancehud" ;; <rdar://problem/31594568>
-        "com.apple.coremedia"
-        "com.apple.crypto"
-        "com.apple.driver.AppleBluetoothMultitouch.mouse"
-        "com.apple.driver.AppleBluetoothMultitouch.trackpad"
-        "com.apple.driver.AppleHIDMouse"
-        "com.apple.lookup.shared"
-        "com.apple.mediaaccessibility" ;; Needed for custom caption styles
-        "com.apple.networkConnect"
-        "com.apple.speech.voice.prefs"
-        "com.apple.systemsound"
-        "com.apple.universalaccess"
-        "edu.mit.Kerberos"
-        "pbs" ;; Needed for NSAttributedString <rdar://problem/10844321>
-))
+(shared-preferences-read
+    "com.apple.Accessibility"
+    "com.apple.ATS"
+    "com.apple.CoreGraphics"
+    "com.apple.DownloadAssessment"
+    "com.apple.HIToolbox"
+    "com.apple.LaunchServices"
+    "com.apple.MultitouchSupport" ;; FIXME: Remove when <rdar://problem/13011633> is fixed.
+    "com.apple.ServicesMenu.Services" ;; Needed for NSAttributedString <rdar://problem/10844321>
+    "com.apple.ViewBridge" ;; Needed for Input elements.
+    "com.apple.WebFoundation"
+    "com.apple.WebKit"
+    "com.apple.avfoundation"
+    "com.apple.avfoundation.frecents" ;; <rdar://problem/33137029>
+    "com.apple.avfoundation.videoperformancehud" ;; <rdar://problem/31594568>
+    "com.apple.coremedia"
+    "com.apple.crypto"
+    "com.apple.driver.AppleBluetoothMultitouch.mouse"
+    "com.apple.driver.AppleBluetoothMultitouch.trackpad"
+    "com.apple.driver.AppleHIDMouse"
+    "com.apple.lookup.shared"
+    "com.apple.mediaaccessibility" ;; Needed for custom caption styles
+    "com.apple.networkConnect"
+    "com.apple.security"
+    "com.apple.speech.voice.prefs"
+    "com.apple.systemsound"
+    "com.apple.universalaccess"
+    "edu.mit.Kerberos"
+    "pbs") ;; Needed for NSAttributedString <rdar://problem/10844321>
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-(allow file-read*
-    (literal "/Library/Preferences/.GlobalPreferences.plist")
-    (home-subpath "/Library/Preferences/.GlobalPreferences.plist")
-    (home-subpath "/Library/Preferences/.GlobalPreferences_m.plist")
-    (home-subpath "/Library/Preferences/com.apple.security.plist")
-    (home-subpath "/Library/Preferences/com.apple.Accessibility.plist")
-    (home-subpath "/Library/Preferences/com.apple.ATS.plist")
-    (home-subpath "/Library/Preferences/com.apple.CoreGraphics.plist")
-    (home-subpath "/Library/Preferences/com.apple.DownloadAssessment.plist")
-    (home-subpath "/Library/Preferences/com.apple.HIToolbox.plist")
-    (home-subpath "/Library/Preferences/com.apple.LaunchServices.plist")
-    (home-subpath "/Library/Preferences/com.apple.MultitouchSupport.plist")
-    (home-subpath "/Library/Preferences/com.apple.ServicesMenu.Services.plist")
-    (home-subpath "/Library/Preferences/com.apple.ViewBridge.plist")
-    (home-subpath "/Library/Preferences/com.apple.WebKit.plist")
-    (home-subpath "/Library/Preferences/com.apple.WebFoundation.plist")
-    (home-subpath "/Library/Preferences/com.apple.avfoundation.plist")
-    (home-subpath "/Library/Preferences/com.apple.avfoundation.frecents.plist")
-    (home-subpath "/Library/Preferences/com.apple.avfoundation.videoperformancehud.plist")
-    (home-subpath "/Library/Preferences/com.apple.coremedia.plist")
-    (home-subpath "/Library/Preferences/com.apple.crypto.plist")
-    (home-subpath "/Library/Preferences/com.apple.driver.AppleBluetoothMultitouch.mouse.plist")
-    (home-subpath "/Library/Preferences/com.apple.driver.AppleBluetoothMultitouch.trackpad.plist")
-    (home-subpath "/Library/Preferences/com.apple.driver.AppleHIDMouse.plist")
-    (home-subpath "/Library/Preferences/com.apple.lookup.shared.plist")
-    (home-subpath "/Library/Preferences/com.apple.mediaaccessibility.plist")
-    (home-subpath "/Library/Preferences/com.apple.networkConnect.plist")
-    (home-subpath "/Library/Preferences/com.apple.speech.voice.prefs.plist")
-    (home-subpath "/Library/Preferences/com.apple.systemsound.plist")
-    (home-subpath "/Library/Preferences/com.apple.universalaccess.plist")
-    (home-subpath "/Library/Preferences/edu.mit.Kerberos.plist")
-    (home-subpath "/Library/Preferences/pbs.plist")
-    (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\..*\.plist$")
-)
-#endif
-
-; (Temporary) backward compatibility with non-CFPreferences readers.
-(allow file-read*
-    (literal "/Library/Preferences/com.apple.ViewBridge.plist"))
-
-; FIXME: This is needed for some security framework calls (that use non-CFPreferences readers)
-(allow file-read-data
-    (literal "/Library/Preferences/com.apple.security.plist")
-    (home-subpath "/Library/Preferences/com.apple.security.plist"))
+(allow-reading-global-preferences)
 
 ;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
 ;; and to allow issuing extensions.
@@ -1649,24 +1607,6 @@
         ,@rules
         (set! deny orig-deny)
         (set! allow orig-allow))))
-
-(define (home-library-preferences-regex home-library-preferences-relative-regex)
-    (regex (string-append "^" (regex-quote (param "HOME_LIBRARY_PREFERENCES_DIR")) home-library-preferences-relative-regex)))
-
-(define (home-library-preferences-literal home-library-preferences-relative-literal)
-    (literal (string-append (param "HOME_LIBRARY_PREFERENCES_DIR") home-library-preferences-relative-literal)))
-
-(define (shared-preferences-read . domains)
-  (for-each (lambda (domain)
-              (begin
-                (if (defined? `user-preference-read)
-                    (allow user-preference-read (preference-domain domain)))
-                ; (Temporary) backward compatibility with non-CFPreferences readers.
-                (allow file-read*
-                       (literal (string-append "/Library/Preferences/" domain ".plist"))
-                       (home-library-preferences-literal (string-append "/" domain ".plist"))
-                       (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
-            domains))
 
 ;; Media capture, camera access
 (with-filter (extension "com.apple.webkit.camera")

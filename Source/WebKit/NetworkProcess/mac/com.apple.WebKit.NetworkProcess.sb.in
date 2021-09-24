@@ -26,6 +26,8 @@
 (deny nvram*)
 (allow system-audit file-read-metadata)
 
+#include "Shared/Sandbox/preferences.sb"
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
@@ -264,14 +266,14 @@
     *uuid-pattern*)
 
 ;; Read-only preferences and data
-(allow user-preference-read
-    (preference-domain
-        "kCFPreferencesAnyApplication"
-        "com.apple.CFNetwork"
-        "com.apple.DownloadAssessment"
-        "com.apple.WebFoundation"
-        "com.apple.ist.ds.appleconnect2.uat" ;; Remove after <rdar://problem/35542803> ships
-        "com.apple.networkConnect"))
+(allow-reading-global-preferences)
+
+(shared-preferences-read
+    "com.apple.CFNetwork"
+    "com.apple.DownloadAssessment"
+    "com.apple.WebFoundation"
+    "com.apple.ist.ds.appleconnect2.uat" ;; Remove after <rdar://problem/35542803> ships
+    "com.apple.networkConnect")
 
 (allow file-read*
     ;; Basic system paths
@@ -378,12 +380,11 @@
         (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 )
 
-(allow user-preference-read
-    (preference-domain
-        "com.apple.crypto"
-        "com.apple.security"
-        "com.apple.security.common"
-        "com.apple.security.revocation"))
+(shared-preferences-read
+    "com.apple.crypto"
+    "com.apple.security"
+    "com.apple.security.common"
+    "com.apple.security.revocation")
 
 (allow file-read*
        (subpath "/private/var/db/mds")
@@ -423,11 +424,10 @@
     (global-name "com.apple.system.logger"))
 (allow network-outbound
     (remote udp))
-(allow user-preference-read
-    (preference-domain
-        "com.apple.GSS"
-        "com.apple.Kerberos"
-        "edu.mit.Kerberos"))
+(shared-preferences-read
+    "com.apple.GSS"
+    "com.apple.Kerberos"
+    "edu.mit.Kerberos")
 (allow file-read*
     (literal "/private/etc/krb5.conf")
     (literal "/private/etc/services")

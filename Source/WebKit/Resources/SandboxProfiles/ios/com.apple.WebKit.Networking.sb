@@ -331,7 +331,7 @@
     (allow file-read*
         (subpath "/private/var/preferences/Logging"))
 
-    (mobile-preferences-read "kCFPreferencesAnyApplication")
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
     (allow file-read*
         (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist"))
 

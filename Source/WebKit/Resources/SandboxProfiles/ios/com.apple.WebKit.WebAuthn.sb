@@ -45,7 +45,12 @@
 
 (define-once (mobile-preferences-read . domains)
     (allow-preferences-common)
-    (allow user-preference-read (apply preference-domain domains)))
+    (for-each (lambda (domain)
+        (begin
+            (allow user-preference-read (preference-domain domain))
+            (allow file-read*
+                (home-literal (string-append "/Library/Preferences/" domain ".plist")))))
+        domains))
 
 (define-once (internal-debugging-support)
     (allow file-read* file-map-executable
@@ -180,7 +185,9 @@
         )
     )
 
-    (mobile-preferences-read "kCFPreferencesAnyApplication")
+    (allow user-preference-read (preference-domain "kCFPreferencesAnyApplication"))
+    (allow file-read*
+        (front-user-home-literal "/Library/Preferences/.GlobalPreferences.plist"))
     (allow managed-preference-read (preference-domain "kCFPreferencesAnyApplication"))
     
     (allow file-read*

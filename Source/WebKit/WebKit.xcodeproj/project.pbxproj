@@ -6013,6 +6013,7 @@
 		E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebKit.WebContent.sb; path = DerivedSources/WebKit2/com.apple.WebKit.WebContent.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
+		E3612FF026F90862007B1175 /* Sandbox */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sandbox; sourceTree = "<group>"; };
 		E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDeviceOrientationUpdateProviderProxy.mm; path = ios/WebDeviceOrientationUpdateProviderProxy.mm; sourceTree = "<group>"; };
 		E3866AE62397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationUpdateProviderProxy.h; path = ios/WebDeviceOrientationUpdateProviderProxy.h; sourceTree = "<group>"; };
 		E3866AED2398471A00F88FE9 /* WebDeviceOrientationUpdateProviderProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebDeviceOrientationUpdateProviderProxy.messages.in; path = ios/WebDeviceOrientationUpdateProviderProxy.messages.in; sourceTree = "<group>"; };
@@ -6856,6 +6857,7 @@
 				BC111B5A112F628200337BAB /* mac */,
 				1AAE058C1279DCD400852418 /* Plugins */,
 				2D2E04761F5BEC4F00BB25ED /* RemoteLayerTree */,
+				E3612FF026F90862007B1175 /* Sandbox */,
 				1ABF43781A368035003FB0E6 /* WebsiteData */,
 				118502602673B0DA00A6425E /* XR */,
 				E3BCE877267252120011D8DB /* AccessibilityPreferences.cpp */,
