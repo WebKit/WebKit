@@ -183,7 +183,6 @@ public:
 #endif
 
 private:
-    void updateScrollSnapAnimatingState(MonotonicTime);
     void updateRubberBandAnimatingState(MonotonicTime);
     void updateKeyboardScrollingAnimatingState(MonotonicTime);
 
@@ -191,10 +190,10 @@ private:
     void setIsAnimatingScrollSnap(bool);
     void setIsAnimatingKeyboardScrolling(bool);
 
-#if PLATFORM(MAC)
     void startScrollSnapAnimation();
     void stopScrollSnapAnimation();
 
+#if PLATFORM(MAC)
     bool shouldOverrideMomentumScrolling() const;
     void statelessSnapTransitionTimerFired();
     void scheduleStatelessScrollSnap();
@@ -217,6 +216,7 @@ private:
 
     // ScrollAnimationClient
     void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& /* currentOffset */) final;
+    void scrollAnimationWillStart(ScrollAnimation&) final;
     void scrollAnimationDidEnd(ScrollAnimation&) final;
     ScrollExtents scrollExtentsForAnimation(ScrollAnimation&)  final;
 

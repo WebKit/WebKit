@@ -36,18 +36,13 @@ public:
     virtual ~ScrollAnimationMomentum();
 
     bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const WTF::Function<FloatPoint(const FloatPoint&)>& destinationModifier);
-
     bool retargetActiveAnimation(const FloatPoint& newDestination) final;
     void stop() final;
-    bool isActive() const final;
-    FloatPoint serviceAnimation(MonotonicTime) final;
+    void serviceAnimation(MonotonicTime) final;
     void updateScrollExtents() final;
 
 private:
     std::unique_ptr<ScrollingMomentumCalculator> m_momentumCalculator;
-    
-    MonotonicTime m_startTime;
-    bool m_animationComplete { false };
 };
 
 } // namespace WebCore

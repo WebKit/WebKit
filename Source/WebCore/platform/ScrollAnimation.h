@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "FloatPoint.h"
 #include "ScrollTypes.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/MonotonicTime.h>
@@ -40,6 +41,7 @@ public:
     virtual ~ScrollAnimationClient() = default;
 
     virtual void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& /* currentOffset */) { }
+    virtual void scrollAnimationWillStart(ScrollAnimation&) { }
     virtual void scrollAnimationDidEnd(ScrollAnimation&) { }
     virtual ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) = 0;
 };
@@ -62,16 +64,43 @@ public:
     Type type() const { return m_animationType; }
 
     virtual bool retargetActiveAnimation(const FloatPoint& newDestinationOffset) = 0;
-    virtual void stop() = 0;
-    virtual bool isActive() const = 0;
+    virtual void stop()
+    {
+        if (!m_isActive)
+            return;
+        didEnd();
+    }
+    virtual bool isActive() const { return m_isActive; }
     virtual void updateScrollExtents() { };
     
-    // Returns current offset.
-    virtual FloatPoint serviceAnimation(MonotonicTime) { return { }; };
+    FloatPoint currentOffset() const { return m_currentOffset; }
+    
+    virtual void serviceAnimation(MonotonicTime) = 0;
 
 protected:
+    void didStart(MonotonicTime currentTime)
+    {
+        m_startTime = currentTime;
+        m_isActive = true;
+        m_client.scrollAnimationWillStart(*this);
+    }
+    
+    void didEnd()
+    {
+        m_isActive = false;
+        m_client.scrollAnimationDidEnd(*this);
+    }
+    
+    Seconds timeSinceStart(MonotonicTime currentTime) const
+    {
+        return currentTime - m_startTime;
+    }
+
     ScrollAnimationClient& m_client;
     const Type m_animationType;
+    bool m_isActive { false };
+    MonotonicTime m_startTime;
+    FloatPoint m_currentOffset;
 };
 
 } // namespace WebCore

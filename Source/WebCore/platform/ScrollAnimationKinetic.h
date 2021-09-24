@@ -28,7 +28,6 @@
 
 #include "FloatPoint.h"
 #include "ScrollAnimation.h"
-#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -61,28 +60,21 @@ public:
     ScrollAnimationKinetic(ScrollAnimationClient&);
     virtual ~ScrollAnimationKinetic();
 
-    // FIXME: Velocity should be a FloatSize.
-    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatPoint& velocity, bool mayHScroll, bool mayVScroll);
-
+    bool startAnimatedScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& velocity, bool mayHScroll, bool mayVScroll);
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;
-    void stop() final;
-    bool isActive() const final;
+
+    // FIXME: only public for ScrollingTreeScrollingNodeDelegateNicosia.
+    void serviceAnimation(MonotonicTime) final;
 
     void appendToScrollHistory(const PlatformWheelEvent&);
     void clearScrollHistory();
 
-    FloatPoint computeVelocity();
+    FloatSize computeVelocity();
 
 private:
-    void animationTimerFired();
-    Seconds deltaToNextFrame();
-
     std::optional<PerAxisData> m_horizontalData;
     std::optional<PerAxisData> m_verticalData;
 
-    MonotonicTime m_startTime;
-    RunLoop::Timer<ScrollAnimationKinetic> m_animationTimer;
-    FloatPoint m_offset;
     Vector<PlatformWheelEvent> m_scrollHistory;
 };
 

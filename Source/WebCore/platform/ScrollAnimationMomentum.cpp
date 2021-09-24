@@ -27,7 +27,6 @@
 
 #include "Logging.h"
 #include "ScrollingMomentumCalculator.h"
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -52,55 +51,49 @@ bool ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity(const Float
 
     if (predictedScrollOffset == initialOffset) {
         m_momentumCalculator = nullptr;
-        m_animationComplete = true;
         return false;
     }
 
-    m_startTime = MonotonicTime::now();
-    m_animationComplete = false;
+    didStart(MonotonicTime::now());
     return true;
 }
 
 bool ScrollAnimationMomentum::retargetActiveAnimation(const FloatPoint& newDestination)
 {
-    if (m_momentumCalculator) {
+    if (m_momentumCalculator && isActive()) {
         m_momentumCalculator->setRetargetedScrollOffset(newDestination);
         auto newDuration = m_momentumCalculator->animationDuration();
-        m_animationComplete = newDuration > 0_s;
-        return !m_animationComplete;
+        bool animationComplete = newDuration > 0_s;
+        if (animationComplete)
+            didEnd();
+
+        return !animationComplete;
     }
+
     return false;
 }
 
 void ScrollAnimationMomentum::stop()
 {
     m_momentumCalculator = nullptr;
-    m_animationComplete = true;
-    m_client.scrollAnimationDidEnd(*this);
+    ScrollAnimation::stop();
 }
 
-bool ScrollAnimationMomentum::isActive() const
-{
-    return !m_animationComplete;
-}
-
-FloatPoint ScrollAnimationMomentum::serviceAnimation(MonotonicTime currentTime)
+void ScrollAnimationMomentum::serviceAnimation(MonotonicTime currentTime)
 {
     if (!m_momentumCalculator) {
         ASSERT_NOT_REACHED();
-        return { };
+        return;
     }
 
-    auto elapsedTime = currentTime - m_startTime;
-    m_animationComplete = elapsedTime >= m_momentumCalculator->animationDuration();
+    auto elapsedTime = timeSinceStart(currentTime);
+    bool animationComplete = elapsedTime >= m_momentumCalculator->animationDuration();
     auto newOffset = m_momentumCalculator->scrollOffsetAfterElapsedTime(elapsedTime);
 
     m_client.scrollAnimationDidUpdate(*this, newOffset);
 
-    if (m_animationComplete)
-        m_client.scrollAnimationDidEnd(*this);
-    
-    return newOffset;
+    if (animationComplete)
+        didEnd();
 }
 
 void ScrollAnimationMomentum::updateScrollExtents()
@@ -108,11 +101,8 @@ void ScrollAnimationMomentum::updateScrollExtents()
     auto extents = m_client.scrollExtentsForAnimation(*this);
     auto predictedScrollOffset = m_momentumCalculator->predictedDestinationOffset();
     auto constrainedOffset = predictedScrollOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
-    if (constrainedOffset != predictedScrollOffset) {
+    if (constrainedOffset != predictedScrollOffset)
         retargetActiveAnimation(constrainedOffset);
-        if (m_animationComplete)
-            m_client.scrollAnimationDidEnd(*this);
-    }
 }
 
 } // namespace WebCore

@@ -28,8 +28,6 @@
 
 #include "ScrollAnimation.h"
 
-#include <wtf/RunLoop.h>
-
 namespace WebCore {
 
 class FloatPoint;
@@ -41,33 +39,25 @@ public:
     virtual ~ScrollAnimationSmooth();
 
     bool startAnimatedScrollToDestination(const FloatPoint& fromOffset, const FloatPoint& destinationOffset);
-
     bool retargetActiveAnimation(const FloatPoint& newOffset) final;
-    void stop() final;
-    void updateScrollExtents() final;
-    bool isActive() const final;
 
+    // FIXME: only public for ScrollingTreeScrollingNodeDelegateNicosia.
+    void updateScrollExtents() final;
+    void serviceAnimation(MonotonicTime) final;
 
 private:
-    bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destinationOffset);
 
-    void requestAnimationTimerFired();
-    void startNextTimer(Seconds delay);
-    void animationTimerFired();
+    bool startOrRetargetAnimation(const ScrollExtents&, const FloatPoint& destinationOffset);
     
     Seconds durationFromDistance(const FloatSize&) const;
     
     bool animateScroll(MonotonicTime);
 
-    MonotonicTime m_startTime;
     Seconds m_duration;
 
     FloatPoint m_startOffset;
     FloatPoint m_destinationOffset;
-    FloatPoint m_currentOffset;
-    
-    // FIXME: Should not have timer here, and instead use serviceAnimation().
-    RunLoop::Timer<ScrollAnimationSmooth> m_animationTimer;
+
     RefPtr<TimingFunction> m_easeInOutTimingFunction;
 };
 

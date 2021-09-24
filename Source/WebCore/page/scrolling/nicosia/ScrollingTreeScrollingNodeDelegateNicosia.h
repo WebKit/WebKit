@@ -43,8 +43,13 @@
 #include "ScrollAnimationSmooth.h"
 #endif
 
+#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
+#include <wtf/RunLoop.h>
+#endif
+
 namespace WebCore {
 
+// FIXME: This should not be a ScrollAnimationClient.
 class ScrollingTreeScrollingNodeDelegateNicosia : public ScrollingTreeScrollingNodeDelegate, public ScrollAnimationClient {
 public:
     explicit ScrollingTreeScrollingNodeDelegateNicosia(ScrollingTreeScrollingNode&, bool scrollAnimatorEnabled);
@@ -67,16 +72,27 @@ private:
     void ensureScrollAnimationSmooth();
 #endif
 
+    void animationTimerFired();
+    void startTimerIfNecessary();
+
     // ScrollAnimationClient
     void scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentPosition) final;
     void scrollAnimationDidEnd(ScrollAnimation&) final;
     ScrollExtents scrollExtentsForAnimation(ScrollAnimation&) final;
 
+    // FIXME: These animations should not live here. They need to be managed by ScrollingEffectsController,
+    // to be coordinated with other kinds of scroll animations, and be referenced by ScrollingEffectsController::m_currentAnimation.
+    
 #if ENABLE(KINETIC_SCROLLING)
     std::unique_ptr<ScrollAnimationKinetic> m_kineticAnimation;
 #endif
 #if ENABLE(SMOOTH_SCROLLING)
     std::unique_ptr<ScrollAnimationSmooth> m_smoothAnimation;
+#endif
+
+#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
+    // FIXME: When the above two animations are removed, this timer can be removed.
+    RunLoop::Timer<ScrollingTreeScrollingNodeDelegateNicosia> m_animationTimer;
 #endif
 };
 

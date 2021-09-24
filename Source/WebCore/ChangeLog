@@ -1,3 +1,79 @@
+2021-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Have ScrollingEffectsController drive all the ScrollAnimations
+        https://bugs.webkit.org/show_bug.cgi?id=230739
+
+        Reviewed by Tim Horton.
+
+        Instead of each ScrollAnimation subclass having its own timer code, have them all
+        implement serviceAnimations(), so that ScrollingEffectsController can then drive
+        them all via its existing animationCallback() code.
+
+        Give ScrollingTreeScrollingNodeDelegateNicosia a temporary timer to drive its animations,
+        but leave FIXME comments noting that these animations should move into ScrollingEffectsCoordinator.
+
+        Push a bit more common ScrollAnimation logic into the base class, and add a
+        'willStart' client function which ScrollingEffectsController can use to
+        start callbacks if necessary.
+
+        ScrollAnimation lifetime is controlled by ScrollingEffectsController; an animation
+        will be deleted in the first animationCallback() where it is no longer active. This
+        avoids potential pitfalls where an animation might be deleted inside the scrollAnimationDidEnd()
+        callback.
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::swipeVelocity const):
+        * platform/ScrollAnimation.h:
+        (WebCore::ScrollAnimationClient::scrollAnimationWillStart):
+        (WebCore::ScrollAnimation::stop):
+        (WebCore::ScrollAnimation::isActive const):
+        (WebCore::ScrollAnimation::currentOffset const):
+        (WebCore::ScrollAnimation::didStart):
+        (WebCore::ScrollAnimation::didEnd):
+        (WebCore::ScrollAnimation::timeSinceStart const):
+        (WebCore::ScrollAnimation::serviceAnimation): Deleted.
+        * platform/ScrollAnimationKinetic.cpp:
+        (WebCore::ScrollAnimationKinetic::PerAxisData::animateScroll):
+        (WebCore::ScrollAnimationKinetic::ScrollAnimationKinetic):
+        (WebCore::ScrollAnimationKinetic::computeVelocity):
+        (WebCore::ScrollAnimationKinetic::startAnimatedScrollWithInitialVelocity):
+        (WebCore::ScrollAnimationKinetic::serviceAnimation):
+        (WebCore::ScrollAnimationKinetic::stop): Deleted.
+        (WebCore::ScrollAnimationKinetic::isActive const): Deleted.
+        (WebCore::ScrollAnimationKinetic::animationTimerFired): Deleted.
+        (WebCore::ScrollAnimationKinetic::deltaToNextFrame): Deleted.
+        * platform/ScrollAnimationKinetic.h:
+        * platform/ScrollAnimationMomentum.cpp:
+        (WebCore::ScrollAnimationMomentum::startAnimatedScrollWithInitialVelocity):
+        (WebCore::ScrollAnimationMomentum::retargetActiveAnimation):
+        (WebCore::ScrollAnimationMomentum::stop):
+        (WebCore::ScrollAnimationMomentum::serviceAnimation):
+        (WebCore::ScrollAnimationMomentum::updateScrollExtents):
+        (WebCore::ScrollAnimationMomentum::isActive const): Deleted.
+        * platform/ScrollAnimationMomentum.h:
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        (WebCore::ScrollAnimationSmooth::startOrRetargetAnimation):
+        (WebCore::ScrollAnimationSmooth::serviceAnimation):
+        (WebCore::ScrollAnimationSmooth::stop): Deleted.
+        (WebCore::ScrollAnimationSmooth::animationTimerFired): Deleted.
+        (WebCore::ScrollAnimationSmooth::startNextTimer): Deleted.
+        (WebCore::ScrollAnimationSmooth::isActive const): Deleted.
+        * platform/ScrollAnimationSmooth.h:
+        * platform/ScrollingEffectsController.cpp:
+        (WebCore::ScrollingEffectsController::animationCallback):
+        (WebCore::ScrollingEffectsController::startOrStopAnimationCallbacks):
+        (WebCore::ScrollingEffectsController::startAnimatedScrollToDestination):
+        (WebCore::ScrollingEffectsController::scrollAnimationWillStart):
+        (WebCore::ScrollingEffectsController::scrollAnimationDidEnd):
+        (WebCore::ScrollingEffectsController::updateScrollSnapAnimatingState): Deleted.
+        * platform/ScrollingEffectsController.h:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::processWheelEventForScrollSnap): If transitionToGlideAnimationState()
+        starts an animation we have to call startScrollSnapAnimation() (because the previous stop() will have
+        puts us in a "not animating scroll snap" state).
+        (WebCore::ScrollingEffectsController::updateScrollSnapAnimatingState): Deleted.
+
 2021-09-24  Antoine Quint  <graouts@webkit.org>
 
         [Media Controls] Allow for a close button

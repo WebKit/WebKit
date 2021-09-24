@@ -32,6 +32,10 @@
 #include "NicosiaPlatformLayer.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 namespace WebCore {
 class ScrollAnimation;
 class ScrollAnimationKinetic;
@@ -39,12 +43,18 @@ class ScrollAnimationKinetic;
 ScrollingTreeScrollingNodeDelegateNicosia::ScrollingTreeScrollingNodeDelegateNicosia(ScrollingTreeScrollingNode& scrollingNode, bool scrollAnimatorEnabled)
     : ScrollingTreeScrollingNodeDelegate(scrollingNode)
     , m_scrollAnimatorEnabled(scrollAnimatorEnabled)
+#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
+    , m_animationTimer(RunLoop::current(), this, &ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired)
+#endif
 {
+#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
+#if USE(GLIB_EVENT_LOOP)
+    m_animationTimer.setPriority(WTF::RunLoopSourcePriority::DisplayRefreshMonitorTimer);
+#endif
+#endif    
 }
 
-ScrollingTreeScrollingNodeDelegateNicosia::~ScrollingTreeScrollingNodeDelegateNicosia()
-{
-}
+ScrollingTreeScrollingNodeDelegateNicosia::~ScrollingTreeScrollingNodeDelegateNicosia() = default;
 
 std::unique_ptr<Nicosia::SceneIntegration::UpdateScope> ScrollingTreeScrollingNodeDelegateNicosia::createUpdateScope()
 {
@@ -80,6 +90,7 @@ void ScrollingTreeScrollingNodeDelegateNicosia::ensureScrollAnimationKinetic()
         return;
 
     m_kineticAnimation = makeUnique<ScrollAnimationKinetic>(*this);
+    startTimerIfNecessary();
 }
 #endif
 
@@ -90,6 +101,7 @@ void ScrollingTreeScrollingNodeDelegateNicosia::ensureScrollAnimationSmooth()
         return;
 
     m_smoothAnimation = makeUnique<ScrollAnimationSmooth>(*this);
+    startTimerIfNecessary();
 }
 #endif
 
@@ -116,6 +128,7 @@ WheelEventHandlingResult ScrollingTreeScrollingNodeDelegateNicosia::handleWheelE
     }
 #endif
 
+    // FIXME: This needs to share code with ScrollAnimator::handleWheelEvent(), perhaps by moving code into ScrollingEffectsController::handleWheelEvent().
     float deltaX = canHaveHorizontalScrollbar ? wheelEvent.deltaX() : 0;
     float deltaY = canHaveVerticalScrollbar ? wheelEvent.deltaY() : 0;
     if ((deltaX < 0 && currentScrollPosition().x() >= maximumScrollPosition().x())
@@ -187,6 +200,9 @@ void ScrollingTreeScrollingNodeDelegateNicosia::stopScrollAnimations()
     if (m_smoothAnimation)
         m_smoothAnimation->stop();
 #endif
+#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
+    m_animationTimer.stop();
+#endif
 }
 
 float ScrollingTreeScrollingNodeDelegateNicosia::pageScaleFactor()
@@ -197,7 +213,7 @@ float ScrollingTreeScrollingNodeDelegateNicosia::pageScaleFactor()
         downcast<ScrollingTreeFrameScrollingNode>(scrollingNode()).frameScaleFactor() : 1.;
 }
 
-void ScrollingTreeScrollingNodeDelegateNicosia::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& position)
+void ScrollingTreeScrollingNodeDelegateNicosia::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& offset)
 {
 #if ENABLE(SMOOTH_SCROLLING)
     if (&animation == m_kineticAnimation.get()) {
@@ -206,7 +222,9 @@ void ScrollingTreeScrollingNodeDelegateNicosia::scrollAnimationDidUpdate(ScrollA
     }
 #endif
     auto updateScope = createUpdateScope();
-    scrollingNode().scrollTo(position);
+
+    // FIXME: Need to convert an offset to a position.
+    scrollingNode().scrollTo(offset);
 }
 
 void ScrollingTreeScrollingNodeDelegateNicosia::scrollAnimationDidEnd(ScrollAnimation&)
@@ -219,6 +237,35 @@ ScrollExtents ScrollingTreeScrollingNodeDelegateNicosia::scrollExtentsForAnimati
         scrollingNode().totalContentsSize(),
         scrollingNode().scrollableAreaSize()
     };
+}
+
+void ScrollingTreeScrollingNodeDelegateNicosia::startTimerIfNecessary()
+{
+#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
+    if (m_animationTimer.isActive())
+        return;
+
+    static constexpr double frameRate = 60;
+    static constexpr Seconds tickTime = 1_s / frameRate;
+    
+    m_animationTimer.startRepeating(tickTime);
+#endif
+}
+
+void ScrollingTreeScrollingNodeDelegateNicosia::animationTimerFired()
+{
+#if ENABLE(KINETIC_SCROLLING) || ENABLE(SMOOTH_SCROLLING)
+    auto now = MonotonicTime::now();
+#endif
+
+#if ENABLE(KINETIC_SCROLLING)
+    if (m_kineticAnimation)
+        m_kineticAnimation->serviceAnimation(now);
+#endif
+#if ENABLE(SMOOTH_SCROLLING)
+    if (m_smoothAnimation)
+        m_smoothAnimation->serviceAnimation(now);
+#endif    
 }
 
 } // namespace WebCore

@@ -33,25 +33,15 @@
 #include "ScrollableArea.h"
 #include "TimingFunction.h"
 
-#if USE(GLIB_EVENT_LOOP)
-#include <wtf/glib/RunLoopSourcePriority.h>
-#endif
-
 namespace WebCore {
 
-static const double frameRate = 60;
 static const float animationSpeed { 1000.0f };
-static constexpr Seconds minimumTimerInterval { 1_ms };
 static const Seconds maxAnimationDuration { 200_ms };
 
 ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollAnimationClient& client)
     : ScrollAnimation(Type::Smooth, client)
-    , m_animationTimer(RunLoop::current(), this, &ScrollAnimationSmooth::animationTimerFired)
     , m_easeInOutTimingFunction(CubicBezierTimingFunction::create(CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut))
 {
-#if USE(GLIB_EVENT_LOOP)
-    m_animationTimer.setPriority(WTF::RunLoopSourcePriority::DisplayRefreshMonitorTimer);
-#endif
 }
 
 ScrollAnimationSmooth::~ScrollAnimationSmooth() = default;
@@ -79,17 +69,10 @@ bool ScrollAnimationSmooth::startOrRetargetAnimation(const ScrollExtents& extent
     m_destinationOffset = destinationOffset.constrainedBetween(extents.minimumScrollOffset(), extents.maximumScrollOffset());
     bool needToScroll = m_startOffset != m_destinationOffset;
 
-    if (needToScroll && !isActive()) {
-        m_startTime = MonotonicTime::now();
-        animationTimerFired();
-    }
-    return needToScroll;
-}
+    if (needToScroll && !isActive())
+        didStart(MonotonicTime::now());
 
-void ScrollAnimationSmooth::stop()
-{
-    m_animationTimer.stop();
-    m_client.scrollAnimationDidEnd(*this);
+    return needToScroll;
 }
 
 void ScrollAnimationSmooth::updateScrollExtents()
@@ -110,6 +93,14 @@ inline float linearInterpolation(float progress, float a, float b)
     return a + progress * (b - a);
 }
 
+void ScrollAnimationSmooth::serviceAnimation(MonotonicTime currentTime)
+{
+    bool animationActive = animateScroll(currentTime);
+    m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
+    if (!animationActive)
+        didEnd();
+}
+
 bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
 {
     MonotonicTime endTime = m_startTime + m_duration;
@@ -124,31 +115,6 @@ bool ScrollAnimationSmooth::animateScroll(MonotonicTime currentTime)
     };
 
     return currentTime < endTime;
-}
-
-void ScrollAnimationSmooth::animationTimerFired()
-{
-    MonotonicTime currentTime = MonotonicTime::now();
-    Seconds deltaToNextFrame = 1_s * ceil((currentTime - m_startTime).value() * frameRate) / frameRate - (currentTime - m_startTime);
-    currentTime += deltaToNextFrame;
-
-    bool continueAnimation = animateScroll(currentTime);
-    if (continueAnimation)
-        startNextTimer(std::max(minimumTimerInterval, deltaToNextFrame));
-
-    m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
-    if (!continueAnimation)
-        m_client.scrollAnimationDidEnd(*this);
-}
-
-void ScrollAnimationSmooth::startNextTimer(Seconds delay)
-{
-    m_animationTimer.startOneShot(delay);
-}
-
-bool ScrollAnimationSmooth::isActive() const
-{
-    return m_animationTimer.isActive();
 }
 
 } // namespace WebCore

@@ -690,8 +690,10 @@ bool ScrollingEffectsController::processWheelEventForScrollSnap(const PlatformWh
             startScrollSnapAnimation();
         break;
     case WheelEventStatus::MomentumScrollBegin:
-        if (m_scrollSnapState->transitionToGlideAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset(), m_dragEndedScrollingVelocity, FloatSize(-wheelEvent.deltaX(), -wheelEvent.deltaY())))
+        if (m_scrollSnapState->transitionToGlideAnimationState(m_client.scrollExtents(), m_client.pageScaleFactor(), m_client.scrollOffset(), m_dragEndedScrollingVelocity, FloatSize(-wheelEvent.deltaX(), -wheelEvent.deltaY()))) {
+            startScrollSnapAnimation();
             isMomentumScrolling = true;
+        }
         m_dragEndedScrollingVelocity = { };
         break;
     case WheelEventStatus::MomentumScrolling:
@@ -718,62 +720,6 @@ void ScrollingEffectsController::updateGestureInProgressState(const PlatformWhee
         m_inScrollGesture = false;
 
     updateRubberBandingState();
-}
-
-void ScrollingEffectsController::startScrollSnapAnimation()
-{
-    if (m_isAnimatingScrollSnap)
-        return;
-
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " startScrollSnapAnimation (main thread " << isMainThread() << ")");
-
-    startDeferringWheelEventTestCompletionDueToScrollSnapping();
-    m_client.willStartScrollSnapAnimation();
-    setIsAnimatingScrollSnap(true);
-}
-
-void ScrollingEffectsController::stopScrollSnapAnimation()
-{
-    if (!m_isAnimatingScrollSnap)
-        return;
-
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " stopScrollSnapAnimation (main thread " << isMainThread() << ")");
-
-    stopDeferringWheelEventTestCompletionDueToScrollSnapping();
-    m_client.didStopScrollSnapAnimation();
-
-    setIsAnimatingScrollSnap(false);
-}
-
-void ScrollingEffectsController::updateScrollSnapAnimatingState(MonotonicTime currentTime)
-{
-    if (!m_isAnimatingScrollSnap)
-        return;
-
-    if (!usesScrollSnap()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (!is<ScrollAnimationMomentum>(m_currentAnimation.get())) {
-        m_scrollSnapState->transitionToDestinationReachedState();
-        stopScrollSnapAnimation();
-        return;
-    }
-
-    auto& momentumScrollAnimation = downcast<ScrollAnimationMomentum>(*m_currentAnimation);
-
-    auto animationOffset = momentumScrollAnimation.serviceAnimation(currentTime);
-    bool isAnimationComplete = !momentumScrollAnimation.isActive();
-
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " updateScrollSnapAnimatingState - isAnimationComplete " << isAnimationComplete << " animationOffset " << animationOffset << " (main thread " << isMainThread() << ")");
-
-    scrollToOffsetForAnimation(animationOffset);
-
-    if (isAnimationComplete) {
-        m_scrollSnapState->transitionToDestinationReachedState();
-        stopScrollSnapAnimation();
-    }
 }
 
 } // namespace WebCore

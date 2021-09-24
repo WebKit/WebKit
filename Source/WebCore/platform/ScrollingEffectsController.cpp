@@ -48,14 +48,23 @@ void ScrollingEffectsController::animationCallback(MonotonicTime currentTime)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingEffectsController " << this << " animationCallback: isAnimatingRubberBand " << m_isAnimatingRubberBand << " isAnimatingScrollSnap " << m_isAnimatingScrollSnap << "isAnimatingKeyboardScrolling" << m_isAnimatingKeyboardScrolling);
 
-    updateScrollSnapAnimatingState(currentTime);
+    if (m_currentAnimation) {
+        if (m_currentAnimation->isActive())
+            m_currentAnimation->serviceAnimation(currentTime);
+
+        if (m_currentAnimation && !m_currentAnimation->isActive())
+            m_currentAnimation = nullptr;
+    }
+
     updateRubberBandAnimatingState(currentTime);
     updateKeyboardScrollingAnimatingState(currentTime);
+    
+    startOrStopAnimationCallbacks();
 }
 
 void ScrollingEffectsController::startOrStopAnimationCallbacks()
 {
-    bool needsCallbacks = m_isAnimatingRubberBand || m_isAnimatingScrollSnap || m_isAnimatingKeyboardScrolling;
+    bool needsCallbacks = m_isAnimatingRubberBand || m_isAnimatingKeyboardScrolling || m_currentAnimation;
     if (needsCallbacks == m_isRunningAnimatingCallback)
         return;
 
@@ -84,6 +93,8 @@ bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint sta
     if (m_currentAnimation)
         m_currentAnimation->stop();
 
+    // We always create and attempt to start the animation. If it turns out to not need animating, then the animation
+    // remains inactive, and we'll remove it on the next animationCallback().
     m_currentAnimation = makeUnique<ScrollAnimationSmooth>(*this);
     return downcast<ScrollAnimationSmooth>(*m_currentAnimation).startAnimatedScrollToDestination(startOffset, destinationOffset);
 }
@@ -254,6 +265,35 @@ void ScrollingEffectsController::resnapAfterLayout()
         m_activeScrollSnapIndexDidChange = true;
 }
 
+void ScrollingEffectsController::startScrollSnapAnimation()
+{
+    if (m_isAnimatingScrollSnap)
+        return;
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " startScrollSnapAnimation (main thread " << isMainThread() << ")");
+
+#if PLATFORM(MAC)
+    startDeferringWheelEventTestCompletionDueToScrollSnapping();
+#endif
+    m_client.willStartScrollSnapAnimation();
+    setIsAnimatingScrollSnap(true);
+}
+
+void ScrollingEffectsController::stopScrollSnapAnimation()
+{
+    if (!m_isAnimatingScrollSnap)
+        return;
+
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollingEffectsController " << this << " stopScrollSnapAnimation (main thread " << isMainThread() << ")");
+
+#if PLATFORM(MAC)
+    stopDeferringWheelEventTestCompletionDueToScrollSnapping();
+#endif
+    m_client.didStopScrollSnapAnimation();
+
+    setIsAnimatingScrollSnap(false);
+}
+
 void ScrollingEffectsController::updateKeyboardScrollingAnimatingState(MonotonicTime currentTime)
 {
     if (!m_isAnimatingKeyboardScrolling)
@@ -274,9 +314,20 @@ void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation&, cons
     scrollToOffsetForAnimation(currentOffset);
 }
 
+void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation&)
+{
+    startOrStopAnimationCallbacks();
+}
+
 void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation&)
 {
+    if (usesScrollSnap() && m_isAnimatingScrollSnap) {
+        m_scrollSnapState->transitionToDestinationReachedState();
+        stopScrollSnapAnimation();
+    }
+
     m_client.setScrollBehaviorStatus(ScrollBehaviorStatus::NotInAnimation);
+    startOrStopAnimationCallbacks();
 }
 
 ScrollExtents ScrollingEffectsController::scrollExtentsForAnimation(ScrollAnimation&)
@@ -299,14 +350,8 @@ void ScrollingEffectsController::scrollPositionChanged()
 {
 }
 
-void ScrollingEffectsController::updateScrollSnapAnimatingState(MonotonicTime)
-{
-
-}
-
 void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime)
 {
-
 }
 
 #endif // PLATFORM(MAC)
