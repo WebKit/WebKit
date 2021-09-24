@@ -50,7 +50,7 @@ namespace WebCore {
 class Blob;
 class RTCPeerConnectionHandler;
 
-class RTCDataChannel final : public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
+class RTCDataChannel final : public RefCounted<RTCDataChannel>, public ActiveDOMObject, public RTCDataChannelHandlerClient, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(RTCDataChannel);
 public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, std::unique_ptr<RTCDataChannelHandler>&&, String&&, RTCDataChannelInit&&);
@@ -85,8 +85,8 @@ public:
     bool canDetach() const;
     std::unique_ptr<DetachedRTCDataChannel> detach();
 
-    using RTCDataChannelHandlerClient::ref;
-    using RTCDataChannelHandlerClient::deref;
+    using RefCounted<RTCDataChannel>::ref;
+    using RefCounted<RTCDataChannel>::deref;
 
     WEBCORE_EXPORT static std::unique_ptr<RTCDataChannelHandler> handlerFromIdentifier(RTCDataChannelLocalIdentifier);
 

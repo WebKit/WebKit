@@ -91,7 +91,9 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client,
 {
     Locker locker { m_clientLock };
     ASSERT(!m_client);
-    m_client = &client;
+    ASSERT(!m_hasClient);
+    m_hasClient = true;
+    m_client = makeWeakPtr(client);
     m_contextIdentifier = contextIdentifier;
 
     for (auto& message : m_bufferedMessages) {
@@ -151,25 +153,27 @@ void LibWebRTCDataChannelHandler::checkState()
     }
 
     Locker locker { m_clientLock };
-    if (!m_client) {
+    if (!m_hasClient) {
         m_bufferedMessages.append(StateChange { state, WTFMove(error) });
         return;
     }
-    postTask([protectedClient = Ref { *m_client }, state, error = WTFMove(error)] {
+    postTask([client = m_client, state, error = WTFMove(error)] {
+        if (!client)
+            return;
         if (error && !error->ok()) {
             auto rtcError = toRTCError(*error);
             if (!rtcError)
                 rtcError = RTCError::create(RTCError::Init { RTCErrorDetailType::DataChannelFailure, { }, { }, { }, { } }, String { });
-            protectedClient->didDetectError(rtcError.releaseNonNull());
+            client->didDetectError(rtcError.releaseNonNull());
         }
-        protectedClient->didChangeReadyState(state);
+        client->didChangeReadyState(state);
     });
 }
 
 void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
 {
     Locker locker { m_clientLock };
-    if (!m_client) {
+    if (!m_hasClient) {
         auto* data = buffer.data.data<uint8_t>();
         if (buffer.binary)
             m_bufferedMessages.append(SharedBuffer::create(data, buffer.size()));
@@ -179,23 +183,27 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
     }
 
     std::unique_ptr<webrtc::DataBuffer> protectedBuffer(new webrtc::DataBuffer(buffer));
-    postTask([protectedClient = Ref { *m_client }, buffer = WTFMove(protectedBuffer)] {
+    postTask([client = m_client, buffer = WTFMove(protectedBuffer)] {
+        if (!client)
+            return;
+
         auto* data = buffer->data.data<uint8_t>();
         if (buffer->binary)
-            protectedClient->didReceiveRawData(data, buffer->size());
+            client->didReceiveRawData(data, buffer->size());
         else
-            protectedClient->didReceiveStringData(String::fromUTF8(data, buffer->size()));
+            client->didReceiveStringData(String::fromUTF8(data, buffer->size()));
     });
 }
 
 void LibWebRTCDataChannelHandler::OnBufferedAmountChange(uint64_t amount)
 {
     Locker locker { m_clientLock };
-    if (!m_client)
+    if (!m_hasClient)
         return;
 
-    postTask([protectedClient = Ref { *m_client }, amount] {
-        protectedClient->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
+    postTask([client = m_client, amount] {
+        if (client)
+            client->bufferedAmountIsDecreasing(static_cast<size_t>(amount));
     });
 }
 

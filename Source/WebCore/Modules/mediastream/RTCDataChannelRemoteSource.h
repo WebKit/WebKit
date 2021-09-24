@@ -36,8 +36,9 @@
 namespace WebCore {
 
 class RTCDataChannelRemoteSource : public RTCDataChannelHandlerClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RTCDataChannelRemoteSource> create(RTCDataChannelIdentifier identifier, UniqueRef<RTCDataChannelHandler>&& handler, Ref<RTCDataChannelRemoteSourceConnection>&& connection) { return adoptRef(*new RTCDataChannelRemoteSource(identifier, WTFMove(handler), WTFMove(connection))); }
+    WEBCORE_EXPORT RTCDataChannelRemoteSource(RTCDataChannelIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
     ~RTCDataChannelRemoteSource();
 
     void sendStringData(const CString& text) { m_handler->sendStringData(text); }
@@ -45,7 +46,6 @@ public:
     void close() { m_handler->close(); }
 
 private:
-    WEBCORE_EXPORT RTCDataChannelRemoteSource(RTCDataChannelIdentifier, UniqueRef<RTCDataChannelHandler>&&, Ref<RTCDataChannelRemoteSourceConnection>&&);
 
     // RTCDataChannelHandlerClient
     void didChangeReadyState(RTCDataChannelState state) final { m_connection->didChangeReadyState(m_identifier, state); }

@@ -89,7 +89,8 @@ private:
 
     rtc::scoped_refptr<webrtc::DataChannelInterface> m_channel;
     Lock m_clientLock;
-    RTCDataChannelHandlerClient* m_client WTF_GUARDED_BY_LOCK(m_clientLock) { nullptr };
+    bool m_hasClient WTF_GUARDED_BY_LOCK(m_clientLock)  { false };
+    WeakPtr<RTCDataChannelHandlerClient> m_client WTF_GUARDED_BY_LOCK(m_clientLock) { nullptr };
     ScriptExecutionContextIdentifier m_contextIdentifier;
     PendingMessages m_bufferedMessages WTF_GUARDED_BY_LOCK(m_clientLock);
 };

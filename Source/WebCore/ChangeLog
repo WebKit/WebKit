@@ -1,3 +1,24 @@
+2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+        RTCDataChannelHandlerClient does not need to be ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=230679
+
+        Reviewed by Eric Carlson.
+
+        We can move from using a protected ref counted client to using a WeakPtr client
+        as we always hop to the client's thread before accessing it.
+        This reduces ref counting and simplifies lifetime management.
+
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannelRemoteSource.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::setClient):
+        (WebCore::LibWebRTCDataChannelHandler::checkState):
+        (WebCore::LibWebRTCDataChannelHandler::OnMessage):
+        (WebCore::LibWebRTCDataChannelHandler::OnBufferedAmountChange):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * platform/mediastream/RTCDataChannelHandlerClient.h:
+
 2021-09-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Line::Run only needs a handful of style properties

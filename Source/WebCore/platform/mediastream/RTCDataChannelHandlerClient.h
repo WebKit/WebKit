@@ -29,13 +29,14 @@
 
 #include "RTCDataChannelState.h"
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class RTCError;
 
-class RTCDataChannelHandlerClient : public ThreadSafeRefCounted<RTCDataChannelHandlerClient> {
+class RTCDataChannelHandlerClient : public CanMakeWeakPtr<RTCDataChannelHandlerClient, WeakPtrFactoryInitialization::Eager> {
 public:
     virtual ~RTCDataChannelHandlerClient() = default;
 
