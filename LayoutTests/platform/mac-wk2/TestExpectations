@@ -1601,6 +1601,8 @@ imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html [ Pass Failure
 
 webkit.org/b/226789 [ Catalina Release ] imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html [ Pass Failure ]
 
+webkit.org/b/230775 [ BigSur Release arm64 ] imported/w3c/web-platform-tests/resource-timing/status-codes-create-entry.html [ Pass Failure ]
+
 webkit.org/b/229429 [ BigSur Debug ] http/tests/inspector/network/fetch-network-data.html [ Pass Failure ]
 
 webkit.org/b/229454 [ BigSur Debug ] http/tests/inspector/network/resource-timing.html [ Pass Failure ]
