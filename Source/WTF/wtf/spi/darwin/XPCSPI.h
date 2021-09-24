@@ -120,6 +120,7 @@ extern "C" void xpc_activity_register(const char *identifier, xpc_object_t crite
 #else // USE(APPLE_INTERNAL_SDK)
 
 #ifdef __OBJC__
+#import <Foundation/NSError.h>
 #if HAVE(OS_LAUNCHD_JOB)
 @interface OSLaunchdJob : NSObject
 - (instancetype)initWithPlist:(xpc_object_t)plist;

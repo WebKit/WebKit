@@ -1,3 +1,13 @@
+2021-09-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Ryan Haddad.
+
+        * wtf/spi/darwin/XPCSPI.h: Import NSError header.
+
 2021-09-23  Tim Horton  <timothy_horton@apple.com>
 
         Move more linked-on-or-after checks to WebCore::linkedOnOrAfter()

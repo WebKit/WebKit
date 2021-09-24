@@ -1,3 +1,13 @@
+2021-09-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15] Support building WebKit (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=227002
+        <rdar://problem/79316598>
+
+        Reviewed by Ryan Haddad.
+
+        * WebKitPrivateFrameworkStubs/iOS/15/VisionKitCore.framework/VisionKitCore.tbd: Added.
+
 2021-07-07  Tim Horton  <timothy_horton@apple.com>
 
         Add WKHoverPlatter and some knobs to tweak its appearance

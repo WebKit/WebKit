@@ -46,6 +46,8 @@
 @class QLItem;
 @class QLPreviewController;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol ASVThumbnailViewDelegate <NSObject>
 - (void)thumbnailView:(ASVThumbnailView *)thumbnailView wantsToPresentPreviewController:(QLPreviewController *)previewController forItem:(QLItem *)item;
 @end
@@ -75,7 +77,7 @@
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 @class ASVInlinePreview;
-
+@class CAFenceHandle;
 @interface ASVInlinePreview : NSObject
 @property (nonatomic, readonly) CALayer *layer;
 
@@ -93,5 +95,7 @@
 @end
 
 #endif
+
+NS_ASSUME_NONNULL_END
 
 #endif
