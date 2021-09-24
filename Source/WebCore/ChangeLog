@@ -1,5 +1,46 @@
 2021-09-24  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Line::Run only needs a handful of style properties
+        https://bugs.webkit.org/show_bug.cgi?id=230730
+
+        Reviewed by Antti Koivisto.
+
+        This patch is in preparation for supporting first-line style.
+
+        Line::Run is the first structure that we use to construct line objects after line breaking (or last in the context of the series of patches going backwards from the final display box structure towards line breaking) where
+        we could retain the fist-line dependent property values.
+
+        * layout/formattingContexts/inline/InlineLine.cpp:
+        (WebCore::Layout::Line::removeCollapsibleContent):
+        (WebCore::Layout::Line::applyRunExpansion):
+        (WebCore::Layout::Line::visuallyCollapseHangingOverflow):
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineLevelBox):
+        (WebCore::Layout::Line::appendLineBreak):
+        (WebCore::Layout::Line::appendWordBreakOpportunity):
+        (WebCore::Layout::Line::Run::Run):
+        (WebCore::Layout::m_style):
+        (WebCore::Layout::Line::Run::hasTrailingLetterSpacing const):
+        (WebCore::Layout::Line::Run::trailingLetterSpacing const):
+        (WebCore::Layout::Line::Run::removeTrailingLetterSpacing):
+        (WebCore::Layout::Line::visuallyCollapsePreWrapOverflowContent): Deleted.
+        * layout/formattingContexts/inline/InlineLine.h:
+        (WebCore::Layout::Line::Run::layoutBox const):
+        (WebCore::Layout::Line::Run::isOverflowWhitespaceHanging const):
+        (WebCore::Layout::Line::Run::inlineDirection const):
+        (WebCore::Layout::Line::Run::letterSpacing const):
+        (WebCore::Layout::Line::Run::hasTextCombine const):
+        (WebCore::Layout::Line::Run::style const): Deleted.
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::hangingGlyphWidth):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        * layout/formattingContexts/inline/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::fallbackFontsForRun):
+        * layout/formattingContexts/inline/text/TextUtil.h:
+
+2021-09-24  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] InlineLevelBox only needs a handful of style properties
         https://bugs.webkit.org/show_bug.cgi?id=230724
 

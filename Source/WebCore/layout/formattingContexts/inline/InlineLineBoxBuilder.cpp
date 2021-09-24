@@ -53,7 +53,7 @@ static InlineLayoutUnit hangingGlyphWidth(InlineLayoutUnit extraHorizontalSpace,
         if (!run.hasTrailingWhitespace())
             break;
         // Check if we have a preserved or hung whitespace.
-        if (run.style().whiteSpace() != WhiteSpace::PreWrap)
+        if (!run.isOverflowWhitespaceHanging())
             break;
         // This is either a normal or conditionally hanging trailing whitespace.
         hangingWidth += run.trailingWhitespaceWidth();
@@ -359,7 +359,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
         if (run.isText()) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(layoutBox.parent());
             parentInlineBox.setHasContent();
-            auto fallbackFonts = TextUtil::fallbackFontsForRun(run);
+            auto fallbackFonts = TextUtil::fallbackFontsForRun(run, style);
             if (!fallbackFonts.isEmpty()) {
                 // Adjust non-empty inline box height when glyphs from the non-primary font stretch the box.
                 adjustVerticalGeometryForInlineBoxWithFallbackFonts(parentInlineBox, fallbackFonts);

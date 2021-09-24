@@ -71,7 +71,6 @@ public:
         auto type() const { return m_type; }
 
         const Box& layoutBox() const { return *m_layoutBox; }
-        const RenderStyle& style() const { return m_layoutBox->style(); }
         struct Text {
             size_t start { 0 };
             size_t length { 0 };
@@ -88,12 +87,18 @@ public:
         bool hasTrailingWhitespace() const { return m_trailingWhitespaceType != TrailingWhitespace::None; }
         InlineLayoutUnit trailingWhitespaceWidth() const { return m_trailingWhitespaceWidth; }
 
+        bool isOverflowWhitespaceHanging() const;
+        TextDirection inlineDirection() const;
+        InlineLayoutUnit letterSpacing() const;
+        bool hasTextCombine() const;
+
     private:
         friend class Line;
 
-        Run(const InlineTextItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         Run(const InlineSoftLineBreakItem&, InlineLayoutUnit logicalLeft);
-        Run(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+        Run(const InlineItem&, InlineLayoutUnit logicalLeft);
 
         void expand(const InlineTextItem&, InlineLayoutUnit logicalWidth);
         void moveHorizontally(InlineLayoutUnit offset) { m_logicalLeft += offset; }
@@ -125,6 +130,13 @@ public:
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
         std::optional<Text> m_textContent;
         InlineDisplay::Box::Expansion m_expansion;
+        struct Style {
+            bool isOverflowWhitespaceHanging { false };
+            TextDirection inlineDirection { TextDirection::RTL };
+            InlineLayoutUnit letterSpacing { 0 };
+            bool hasTextCombine { false };
+        };
+        Style m_style { };
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
@@ -140,7 +152,7 @@ private:
     void appendWordBreakOpportunity(const InlineItem&);
 
     void removeTrailingTrimmableContent();
-    void visuallyCollapsePreWrapOverflowContent(InlineLayoutUnit extraHorizontalSpace);
+    void visuallyCollapseHangingOverflow(InlineLayoutUnit extraHorizontalSpace);
 
     const InlineFormattingContext& formattingContext() const;
 
@@ -199,6 +211,26 @@ inline void Line::Run::setNeedsHyphen(InlineLayoutUnit hyphenLogicalWidth)
     ASSERT(m_textContent);
     m_textContent->needsHyphen = true;
     m_logicalWidth += hyphenLogicalWidth;
+}
+
+inline bool Line::Run::isOverflowWhitespaceHanging() const
+{
+    return m_style.isOverflowWhitespaceHanging;
+}
+
+inline TextDirection Line::Run::inlineDirection() const
+{
+    return m_style.inlineDirection;
+}
+
+inline InlineLayoutUnit Line::Run::letterSpacing() const
+{
+    return m_style.letterSpacing;
+}
+
+inline bool Line::Run::hasTextCombine() const
+{
+    return m_style.hasTextCombine;
 }
 
 }

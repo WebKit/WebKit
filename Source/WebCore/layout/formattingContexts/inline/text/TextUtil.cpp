@@ -110,7 +110,7 @@ static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts,
     }
 }
 
-TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run)
+TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run, const RenderStyle& style)
 {
     ASSERT(run.isText());
     auto& inlineTextBox = downcast<InlineTextBox>(run.layoutBox());
@@ -119,7 +119,6 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run)
         return { };
     }
 
-    auto& style = run.style();
     TextUtil::FallbackFontList fallbackFonts;
 
     auto collectFallbackFonts = [&](const auto& textRun) {

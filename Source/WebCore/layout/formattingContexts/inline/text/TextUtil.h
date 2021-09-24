@@ -49,7 +49,7 @@ public:
     static InlineLayoutUnit width(const InlineTextBox&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
 
     using FallbackFontList = HashSet<const Font*>;
-    static FallbackFontList fallbackFontsForRun(const Line::Run&);
+    static FallbackFontList fallbackFontsForRun(const Line::Run&, const RenderStyle&);
 
     struct MidWordBreak {
         size_t start { 0 };
