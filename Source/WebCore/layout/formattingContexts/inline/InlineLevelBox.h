@@ -43,10 +43,10 @@ class LineBoxVerticalAligner;
 class InlineLevelBox {
 public:
     enum class LineSpanningInlineBox { Yes, No };
-    static InlineLevelBox createInlineBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
-    static InlineLevelBox createAtomicInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize);
-    static InlineLevelBox createLineBreakBox(const Box&, InlineLayoutUnit logicalLeft);
-    static InlineLevelBox createGenericInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft);
+    static InlineLevelBox createInlineBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox = LineSpanningInlineBox::No);
+    static InlineLevelBox createAtomicInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize);
+    static InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
+    static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
     InlineLayoutUnit baseline() const { return m_baseline; }
     std::optional<InlineLayoutUnit> descent() const { return m_descent; }
@@ -69,9 +69,9 @@ public:
     };
     VerticalAlignment verticalAlign() const;
     InlineLayoutUnit preferredLineHeight() const;
-    bool isPreferredLineHeightFontMetricsBased() const { return layoutBox().style().lineHeight().isNegative(); }
-    const FontMetrics& primaryFontMetrics() const { return layoutBox().style().fontCascade().primaryFont().fontMetrics(); }
-    InlineLayoutUnit fontSize() const { return layoutBox().style().fontCascade().fontDescription().computedPixelSize(); }
+    bool isPreferredLineHeightFontMetricsBased() const;
+    const FontMetrics& primaryFontMetrics() const;
+    InlineLayoutUnit fontSize() const;
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
@@ -92,8 +92,7 @@ public:
 
     const Box& layoutBox() const { return *m_layoutBox; }
 
-    InlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type);
-    InlineLevelBox() = default;
+    InlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type);
 
 private:
     friend class LineBox;
@@ -124,13 +123,26 @@ private:
     std::optional<InlineLayoutUnit> m_descent;
     bool m_hasContent { false };
     Type m_type { Type::InlineBox };
+
+    struct Style {
+        const FontMetrics& primaryFontMetrics;
+        const Length& lineHeight;
+        InlineLayoutUnit primaryFontSize { 0 };
+        VerticalAlignment verticalAlignment { };
+    };
+    Style m_style;
 };
 
-inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type)
+inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type)
     : m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
     , m_type(type)
+    , m_style({ style.fontCascade().primaryFont().fontMetrics(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
+    m_style.verticalAlignment.type = style.verticalAlign();
+    if (m_style.verticalAlignment.type == VerticalAlign::Length)
+        m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
+
 }
 
 inline void InlineLevelBox::setHasContent()
@@ -145,45 +157,55 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
     if (isPreferredLineHeightFontMetricsBased())
         return primaryFontMetrics().lineSpacing();
 
-    auto& lineHeight = layoutBox().style().lineHeight();
-    if (lineHeight.isPercentOrCalculated())
-        return floorf(minimumValueForLength(lineHeight, fontSize()));
-    return floorf(lineHeight.value());
+    if (m_style.lineHeight.isPercentOrCalculated())
+        return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));
+    return floorf(m_style.lineHeight.value());
 }
 
 inline InlineLevelBox::VerticalAlignment InlineLevelBox::verticalAlign() const
 {
-    auto& style = layoutBox().style();
-    auto verticalAlign = style.verticalAlign();
-    if (verticalAlign != VerticalAlign::Length)
-        return { verticalAlign, { } };
-    return { verticalAlign, floatValueForLength(style.verticalAlignLength(), preferredLineHeight()) };
+    return m_style.verticalAlignment;
 }
 
 inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
 {
-    auto verticalAlignment = layoutBox().style().verticalAlign();
+    auto verticalAlignment = verticalAlign().type;
     return verticalAlignment == VerticalAlign::Top || verticalAlignment == VerticalAlign::Bottom;
 }
 
-inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize)
+inline bool InlineLevelBox::isPreferredLineHeightFontMetricsBased() const
 {
-    return InlineLevelBox { layoutBox, logicalLeft, logicalSize, Type::AtomicInlineLevelBox };
+    return m_style.lineHeight.isNegative();
 }
 
-inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning)
+inline const FontMetrics& InlineLevelBox::primaryFontMetrics() const
 {
-    return InlineLevelBox { layoutBox, logicalLeft, InlineLayoutSize { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox };
+    return m_style.primaryFontMetrics;
 }
 
-inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
+inline InlineLayoutUnit InlineLevelBox::fontSize() const
 {
-    return InlineLevelBox { layoutBox, logicalLeft, InlineLayoutSize { }, Type::LineBreakBox };
+    return m_style.primaryFontSize;
 }
 
-inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, InlineLayoutUnit logicalLeft)
+inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize)
 {
-    return InlineLevelBox { layoutBox, logicalLeft, InlineLayoutSize { }, Type::GenericInlineLevelBox };
+    return InlineLevelBox { layoutBox, style, logicalLeft, logicalSize, Type::AtomicInlineLevelBox };
+}
+
+inline InlineLevelBox InlineLevelBox::createInlineBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, LineSpanningInlineBox isLineSpanning)
+{
+    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { logicalWidth, { } }, isLineSpanning == LineSpanningInlineBox::Yes ? Type::LineSpanningInlineBox : Type::InlineBox };
+}
+
+inline InlineLevelBox InlineLevelBox::createLineBreakBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
+{
+    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { }, Type::LineBreakBox };
+}
+
+inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft)
+{
+    return InlineLevelBox { layoutBox, style, logicalLeft, InlineLayoutSize { }, Type::GenericInlineLevelBox };
 }
 
 }

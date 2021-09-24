@@ -265,7 +265,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
         }
         // Construct the missing LineBox::InlineBoxes starting with the topmost layout box.
         for (auto* layoutBox : WTF::makeReversedRange(layoutBoxesWithoutInlineBoxes)) {
-            auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth(), InlineLevelBox::LineSpanningInlineBox::Yes);
+            auto inlineBox = InlineLevelBox::createInlineBox(*layoutBox, layoutBox->style(), rootInlineBox.logicalLeft(), rootInlineBox.logicalWidth(), InlineLevelBox::LineSpanningInlineBox::Yes);
             setInitialVerticalGeometryForInlineBox(inlineBox);
             updateCanUseSimplifiedAlignment(inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
@@ -276,6 +276,8 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
     auto lineHasContent = false;
     for (auto& run : runs) {
         auto& layoutBox = run.layoutBox();
+        // FIXME: Make this line index dependent to support first-line style.
+        auto& style = layoutBox.style();
         auto runHasContent = [&] () -> bool {
             ASSERT(!lineHasContent);
             if (run.isText() || run.isBox() || run.isSoftLineBreak() || run.isHardLineBreak())
@@ -304,7 +306,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             } else if (layoutBox.isInlineBlockBox()) {
                 // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
                 // if its 'overflow' property has a computed value other than 'visible', in which case the baseline is the bottom margin edge.
-                auto synthesizeBaseline = !layoutBox.establishesInlineFormattingContext() || !layoutBox.style().isOverflowVisible();
+                auto synthesizeBaseline = !layoutBox.establishesInlineFormattingContext() || !style.isOverflowVisible();
                 if (synthesizeBaseline)
                     ascent = marginBoxHeight;
                 else {
@@ -318,7 +320,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             else
                 ascent = marginBoxHeight;
             logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
-            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), marginBoxHeight });
+            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), marginBoxHeight });
             atomicInlineLevelBox.setBaseline(ascent);
             atomicInlineLevelBox.setLayoutBounds(InlineLevelBox::LayoutBounds { ascent, marginBoxHeight - ascent });
             updateCanUseSimplifiedAlignment(atomicInlineLevelBox, inlineLevelBoxGeometry);
@@ -332,7 +334,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
             auto initialLogicalWidth = rootInlineBox.logicalWidth() - (run.logicalLeft() + marginStart);
             ASSERT(initialLogicalWidth >= 0);
-            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, logicalLeft + marginStart, initialLogicalWidth);
+            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft + marginStart, initialLogicalWidth);
             setInitialVerticalGeometryForInlineBox(inlineBox);
             updateCanUseSimplifiedAlignment(inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
@@ -370,14 +372,14 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
             continue;
         }
         if (run.isHardLineBreak()) {
-            auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, logicalLeft);
+            auto lineBreakBox = InlineLevelBox::createLineBreakBox(layoutBox, style, logicalLeft);
             setInitialVerticalGeometryForInlineBox(lineBreakBox);
             updateCanUseSimplifiedAlignment(lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
             continue;
         }
         if (run.isWordBreakOpportunity()) {
-            lineBox.addInlineLevelBox(InlineLevelBox::createGenericInlineLevelBox(layoutBox, logicalLeft));
+            lineBox.addInlineLevelBox(InlineLevelBox::createGenericInlineLevelBox(layoutBox, style, logicalLeft));
             continue;
         }
         ASSERT_NOT_REACHED();

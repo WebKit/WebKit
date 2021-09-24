@@ -1,5 +1,30 @@
 2021-09-24  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] InlineLevelBox only needs a handful of style properties
+        https://bugs.webkit.org/show_bug.cgi?id=230724
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting first-line style where the incoming RenderStyle& depends on whether the inline level box is on the first line or not.
+
+        * layout/formattingContexts/inline/InlineLevelBox.h:
+        (WebCore::Layout::InlineLevelBox::InlineLevelBox):
+        (WebCore::Layout::m_style):
+        (WebCore::Layout::InlineLevelBox::isPreferredLineHeightFontMetricsBased const):
+        (WebCore::Layout::InlineLevelBox::primaryFontMetrics const):
+        (WebCore::Layout::InlineLevelBox::fontSize const):
+        (WebCore::Layout::InlineLevelBox::createAtomicInlineLevelBox):
+        (WebCore::Layout::InlineLevelBox::createInlineBox):
+        (WebCore::Layout::InlineLevelBox::createLineBreakBox):
+        (WebCore::Layout::InlineLevelBox::createGenericInlineLevelBox):
+        (WebCore::Layout::m_type): Deleted.
+        * layout/formattingContexts/inline/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::LineBox):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+
+2021-09-24  Alan Bujtas  <zalan@apple.com>
+
         [IFC][LFC] InlineLevelBox needs to retain only a small set of style properties
         https://bugs.webkit.org/show_bug.cgi?id=230718
 
