@@ -1,3 +1,15 @@
+2021-09-24  Eric Hutchison  <ehutchison@apple.com>
+
+        Unreviewed, reverting r283050.
+
+        Broke commit-queue
+
+        Reverted changeset:
+
+        "[Media Controls] Allow for a close button"
+        https://bugs.webkit.org/show_bug.cgi?id=230761
+        https://commits.webkit.org/r283050
+
 2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Color keywords in override-color cause a crash

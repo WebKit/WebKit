@@ -1628,7 +1628,6 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/controls/range-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/volume-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/brightness-button.js \
-    $(WebCore)/Modules/modern-media-controls/controls/close-button.js \
     $(WebCore)/Modules/modern-media-controls/controls/buttons-container.js \
     $(WebCore)/Modules/modern-media-controls/controls/status-label.js \
     $(WebCore)/Modules/modern-media-controls/controls/controls-bar.js \
@@ -1652,7 +1651,6 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/media/airplay-support.js \
     $(WebCore)/Modules/modern-media-controls/media/audio-support.js \
     $(WebCore)/Modules/modern-media-controls/media/brightness-support.js \
-    $(WebCore)/Modules/modern-media-controls/media/close-support.js \
     $(WebCore)/Modules/modern-media-controls/media/controls-visibility-support.js \
     $(WebCore)/Modules/modern-media-controls/media/fullscreen-support.js \
     $(WebCore)/Modules/modern-media-controls/media/mute-support.js \
