@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerJobData.h"

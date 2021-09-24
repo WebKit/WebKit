@@ -25,9 +25,13 @@
 
 #pragma once
 
+#include "FileSystemStorageHandleIdentifier.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+
+class FileSystemStorageHandleRegistry;
+class FileSystemStorageManager;
 
 class OriginStorageManager {
     WTF_MAKE_FAST_ALLOCATED;
@@ -35,12 +39,15 @@ public:
     explicit OriginStorageManager(String&& path);
     ~OriginStorageManager();
 
+    void connectionClosed(IPC::Connection::UniqueID);
     bool persisted() const { return m_persisted; }
     void persist();
+    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
 
 private:
     enum class StorageBucketMode : bool;
     class StorageBucket;
+    StorageBucket& defaultBucket();
 
     std::unique_ptr<StorageBucket> m_defaultBucket;
     String m_path;

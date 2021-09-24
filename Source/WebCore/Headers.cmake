@@ -40,6 +40,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/filesystemaccess/FileSystemDirectoryHandle.h
     Modules/filesystemaccess/FileSystemFileHandle.h
     Modules/filesystemaccess/FileSystemHandle.h
+    Modules/filesystemaccess/FileSystemHandleImpl.h
     Modules/filesystemaccess/StorageManagerFileSystemAccess.h
 
     Modules/geolocation/Geolocation.h

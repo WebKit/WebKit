@@ -1471,6 +1471,9 @@
 		93085DDF26E5BCF1000EC6A7 /* NetworkStorageManagerMessagesReplies.h in Headers */ = {isa = PBXBuildFile; fileRef = 93085DCE26E2E902000EC6A7 /* NetworkStorageManagerMessagesReplies.h */; };
 		93085DE026E5BCFD000EC6A7 /* NetworkStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93085DC426E1BBBD000EC6A7 /* NetworkStorageManager.h */; };
 		93085DE126E5BD13000EC6A7 /* NetworkStorageManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 93085DCD26E2E902000EC6A7 /* NetworkStorageManagerMessages.h */; };
+		9312BAD526F33C2600FDDF5F /* FileSystemStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 931A075026F06310004474CD /* FileSystemStorageManager.h */; };
+		9312BAD626F33C2900FDDF5F /* FileSystemStorageHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 931A075326F06AB4004474CD /* FileSystemStorageHandle.h */; };
+		931A1BE226F870090081A7E5 /* FileSystemStorageError.h in Headers */ = {isa = PBXBuildFile; fileRef = 931A1BE026F85C320081A7E5 /* FileSystemStorageError.h */; };
 		9321D5861A38EE3C008052BE /* WKImmediateActionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5851A38EE3C008052BE /* WKImmediateActionController.h */; };
 		9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5891A38F196008052BE /* WKImmediateActionTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1487,6 +1490,7 @@
 		9356F2DF2152B72300E6D5DF /* WebSWOriginStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */; };
 		9356F2E02152B75200E6D5DF /* WebSWServerToContextConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04DD2151ADF3007F455F /* WebSWServerToContextConnection.cpp */; };
 		9356F2E12152B76600E6D5DF /* WebSWServerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */; };
+		935B579A26F51933008B48AC /* FileSystemStorageHandleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */; };
 		935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB961277616D003322B8 /* WKBundleBackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9368EEDE2303A90200BDB11A /* StorageManagerSetMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9368EEDC2303A8D800BDB11A /* StorageManagerSetMessageReceiver.cpp */; };
@@ -4931,6 +4935,14 @@
 		93085DCC26E2E902000EC6A7 /* NetworkStorageManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkStorageManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		93085DCD26E2E902000EC6A7 /* NetworkStorageManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageManagerMessages.h; sourceTree = "<group>"; };
 		93085DCE26E2E902000EC6A7 /* NetworkStorageManagerMessagesReplies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageManagerMessagesReplies.h; sourceTree = "<group>"; };
+		931A075026F06310004474CD /* FileSystemStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageManager.h; sourceTree = "<group>"; };
+		931A075126F06310004474CD /* FileSystemStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemStorageManager.cpp; sourceTree = "<group>"; };
+		931A075226F06AB4004474CD /* FileSystemStorageHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemStorageHandle.cpp; sourceTree = "<group>"; };
+		931A075326F06AB4004474CD /* FileSystemStorageHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageHandle.h; sourceTree = "<group>"; };
+		931A075726F125A3004474CD /* FileSystemStorageHandleIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageHandleIdentifier.h; sourceTree = "<group>"; };
+		931A075926F1B967004474CD /* FileSystemStorageHandleProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemStorageHandleProxy.cpp; sourceTree = "<group>"; };
+		931A075A26F1B968004474CD /* FileSystemStorageHandleProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageHandleProxy.h; sourceTree = "<group>"; };
+		931A1BE026F85C320081A7E5 /* FileSystemStorageError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageError.h; sourceTree = "<group>"; };
 		9321D5851A38EE3C008052BE /* WKImmediateActionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKImmediateActionController.h; sourceTree = "<group>"; };
 		9321D5871A38EE74008052BE /* WKImmediateActionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKImmediateActionController.mm; sourceTree = "<group>"; };
 		9321D5891A38F196008052BE /* WKImmediateActionTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKImmediateActionTypes.h; sourceTree = "<group>"; };
@@ -4945,6 +4957,8 @@
 		9342588F2555DCA50059EEDD /* MediaPermissionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPermissionUtilities.mm; sourceTree = "<group>"; };
 		93425898255B534B0059EEDD /* MediaPermissionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPermissionUtilities.h; sourceTree = "<group>"; };
 		934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKActionMenuItemTypes.h; sourceTree = "<group>"; };
+		935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageHandleRegistry.h; sourceTree = "<group>"; };
+		935B579926F5192F008B48AC /* FileSystemStorageHandleRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemStorageHandleRegistry.cpp; sourceTree = "<group>"; };
 		935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardList.cpp; sourceTree = "<group>"; };
 		935EEB961277616D003322B8 /* WKBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardList.h; sourceTree = "<group>"; };
 		935EEB971277616D003322B8 /* WKBundleBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardListItem.cpp; sourceTree = "<group>"; };
@@ -9729,6 +9743,14 @@
 		93085DC226E1BB65000EC6A7 /* storage */ = {
 			isa = PBXGroup;
 			children = (
+				931A1BE026F85C320081A7E5 /* FileSystemStorageError.h */,
+				931A075226F06AB4004474CD /* FileSystemStorageHandle.cpp */,
+				931A075326F06AB4004474CD /* FileSystemStorageHandle.h */,
+				931A075726F125A3004474CD /* FileSystemStorageHandleIdentifier.h */,
+				935B579926F5192F008B48AC /* FileSystemStorageHandleRegistry.cpp */,
+				935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */,
+				931A075126F06310004474CD /* FileSystemStorageManager.cpp */,
+				931A075026F06310004474CD /* FileSystemStorageManager.h */,
 				93085DC326E1BBBD000EC6A7 /* NetworkStorageManager.cpp */,
 				93085DC426E1BBBD000EC6A7 /* NetworkStorageManager.h */,
 				93085DC726E1C6EE000EC6A7 /* NetworkStorageManager.messages.in */,
@@ -10044,6 +10066,8 @@
 				CD6178111E6DE98000FDA57D /* cocoa */,
 				2D28F3DF1885CCB4004B9EAE /* ios */,
 				BC111ADE112F5B9A00337BAB /* mac */,
+				931A075926F1B967004474CD /* FileSystemStorageHandleProxy.cpp */,
+				931A075A26F1B968004474CD /* FileSystemStorageHandleProxy.h */,
 				1A7284441959ED100007BCE5 /* SessionStateConversion.cpp */,
 				1A7284451959ED100007BCE5 /* SessionStateConversion.h */,
 				F43A9CDE25D72E2D00990E26 /* ShareableBitmapUtilities.cpp */,
@@ -12223,6 +12247,10 @@
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
 				572EBBD72537EBAE000552B3 /* ExtraPrivateSymbolsForTAPI.h in Headers */,
 				57B8264823050C5100B72EB0 /* FidoService.h in Headers */,
+				931A1BE226F870090081A7E5 /* FileSystemStorageError.h in Headers */,
+				9312BAD626F33C2900FDDF5F /* FileSystemStorageHandle.h in Headers */,
+				935B579A26F51933008B48AC /* FileSystemStorageHandleRegistry.h in Headers */,
+				9312BAD526F33C2600FDDF5F /* FileSystemStorageManager.h in Headers */,
 				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 				C59C4A5918B81174007BDCB6 /* FocusedElementInformation.h in Headers */,

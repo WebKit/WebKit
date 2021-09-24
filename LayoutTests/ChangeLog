@@ -1,3 +1,16 @@
+2021-09-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Add initial support for File System Access API
+        https://bugs.webkit.org/show_bug.cgi?id=230484
+        rdar://83405890
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/wk2/TestExpectations:
+        * storage/filesystemaccess/directory-handle-basics-expected.txt: Added.
+        * storage/filesystemaccess/directory-handle-basics.html: Added.
+
 2021-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

@@ -26,41 +26,64 @@
 #include "config.h"
 #include "FileSystemDirectoryHandle.h"
 
+#include "FileSystemHandleImpl.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSFileSystemDirectoryHandle.h"
+#include "JSFileSystemFileHandle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemDirectoryHandle);
 
-Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(String&& name)
+Ref<FileSystemDirectoryHandle> FileSystemDirectoryHandle::create(String&& name, Ref<FileSystemHandleImpl>&& impl)
 {
-    return adoptRef(*new FileSystemDirectoryHandle(WTFMove(name)));
+    return adoptRef(*new FileSystemDirectoryHandle(WTFMove(name), WTFMove(impl)));
 }
 
-FileSystemDirectoryHandle::FileSystemDirectoryHandle(String&& name)
-    : FileSystemHandle(FileSystemHandle::Kind::Directory, WTFMove(name))
+FileSystemDirectoryHandle::FileSystemDirectoryHandle(String&& name, Ref<FileSystemHandleImpl>&& impl)
+    : FileSystemHandle(FileSystemHandle::Kind::Directory, WTFMove(name), WTFMove(impl))
 {
 }
 
-void FileSystemDirectoryHandle::getFileHandle(const String&, std::optional<FileSystemDirectoryHandle::GetFileOptions>, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&& promise)
+void FileSystemDirectoryHandle::getFileHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetFileOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    bool createIfNecessary = options ? options->create : false;
+    impl().getFileHandle(name, createIfNecessary, [name, promise = WTFMove(promise)](auto result) mutable {
+        if (result.hasException())
+            return promise.reject(result.releaseException());
+
+        promise.resolve(FileSystemFileHandle::create(String { name }, result.releaseReturnValue()));
+    });
 }
 
-void FileSystemDirectoryHandle::getDirectoryHandle(const String&, std::optional<FileSystemDirectoryHandle::GetDirectoryOptions>, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
+void FileSystemDirectoryHandle::getDirectoryHandle(const String& name, std::optional<FileSystemDirectoryHandle::GetDirectoryOptions> options, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    bool createIfNecessary = options ? options->create : false;
+    impl().getDirectoryHandle(name, createIfNecessary, [name, promise = WTFMove(promise)](auto result) mutable {
+        if (result.hasException())
+            return promise.reject(result.releaseException());
+
+        promise.resolve(FileSystemDirectoryHandle::create(String { name }, result.releaseReturnValue()));
+    });
 }
 
-void FileSystemDirectoryHandle::removeEntry(const String&, std::optional<FileSystemDirectoryHandle::RemoveOptions>, DOMPromiseDeferred<void>&& promise)
+void FileSystemDirectoryHandle::removeEntry(const String& name, std::optional<FileSystemDirectoryHandle::RemoveOptions> options, DOMPromiseDeferred<void>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    bool deleteRecursively = options ? options->recursive : false;
+    impl().removeEntry(name, deleteRecursively, [promise = WTFMove(promise)](auto result) mutable {
+        promise.settle(WTFMove(result));
+    });
 }
 
-void FileSystemDirectoryHandle::resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&& promise)
+void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&& promise)
 {
-    promise.reject(Exception { NotSupportedError, "Not implemented"_s });
+    impl().resolve(handle.impl(), [promise = WTFMove(promise)](auto result) mutable {
+        if (result.hasException())
+            return promise.reject(result.releaseException());
+
+        promise.resolve(result.releaseReturnValue());
+    });
 }
 
 } // namespace WebCore

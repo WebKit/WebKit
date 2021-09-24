@@ -29,6 +29,7 @@ enum FileSystemHandleKind {
 };
 
 [
+    CustomToJSObject,
     Exposed=(Window,Worker),
     EnabledBySetting=FileSystemAccess,
     SecureContext

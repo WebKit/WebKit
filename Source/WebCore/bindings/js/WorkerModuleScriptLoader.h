@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ModuleScriptLoader.h"
+#include "ResourceLoaderIdentifier.h"
 #include "ScriptBuffer.h"
 #include "WorkerScriptFetcher.h"
 #include "WorkerScriptLoaderClient.h"

@@ -115,6 +115,9 @@ NetworkProcess/ServiceWorker/WebSWOriginStore.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerConnection.cpp @no-unify
 NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp @no-unify
 
+NetworkProcess/storage/FileSystemStorageManager.cpp
+NetworkProcess/storage/FileSystemStorageHandle.cpp
+NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp
 NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
 
@@ -692,6 +695,7 @@ WebProcess/UserContent/WebUserContentController.cpp
 WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
 WebProcess/WebAuthentication/WebAuthnProcessConnection.cpp
 
+WebProcess/WebCoreSupport/FileSystemStorageHandleProxy.cpp
 WebProcess/WebCoreSupport/SessionStateConversion.cpp
 WebProcess/WebCoreSupport/ShareableBitmapUtilities.cpp
 WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.cpp

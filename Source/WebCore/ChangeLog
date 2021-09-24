@@ -1,3 +1,59 @@
+2021-09-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Add initial support for File System Access API
+        https://bugs.webkit.org/show_bug.cgi?id=230484
+        rdar://83405890
+
+        Reviewed by Youenn Fablet.
+
+        Implemented FileSystemHandle and FileSystemDirectoryHandle (except directory iteration) interfaces for Origin 
+        Private File System.
+        Spec: https://wicg.github.io/file-system-access/#api-filesystemhandle
+              https://wicg.github.io/file-system-access/#api-filesystemdirectoryhandle
+              https://wicg.github.io/file-system-access/#sandboxed-filesystem
+
+        Test: storage/filesystemaccess/directory-handle-basics.html
+
+        * Headers.cmake:
+        * Modules/filesystemaccess/FileSystemDirectoryHandle.cpp:
+        (WebCore::FileSystemDirectoryHandle::create):
+        (WebCore::FileSystemDirectoryHandle::FileSystemDirectoryHandle):
+        (WebCore::FileSystemDirectoryHandle::getFileHandle):
+        (WebCore::FileSystemDirectoryHandle::getDirectoryHandle):
+        (WebCore::FileSystemDirectoryHandle::removeEntry):
+        (WebCore::FileSystemDirectoryHandle::resolve):
+        * Modules/filesystemaccess/FileSystemDirectoryHandle.h:
+        (isType):
+        * Modules/filesystemaccess/FileSystemFileHandle.cpp:
+        (WebCore::FileSystemFileHandle::create):
+        (WebCore::FileSystemFileHandle::FileSystemFileHandle):
+        * Modules/filesystemaccess/FileSystemFileHandle.h:
+        (isType):
+        * Modules/filesystemaccess/FileSystemHandle.cpp:
+        (WebCore::FileSystemHandle::FileSystemHandle):
+        (WebCore::FileSystemHandle::isSameEntry const):
+        (WebCore::FileSystemHandle::isSameEntry): Deleted.
+        * Modules/filesystemaccess/FileSystemHandle.h:
+        (WebCore::FileSystemHandle::impl const):
+        * Modules/filesystemaccess/FileSystemHandle.idl:
+        * Modules/filesystemaccess/FileSystemHandleImpl.h: Added.
+        (WebCore::FileSystemHandleImpl::~FileSystemHandleImpl):
+        * Modules/storage/DummyStorageProvider.h:
+        * Modules/storage/StorageConnection.h:
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::connectionInfo):
+        (WebCore::StorageManager::persisted):
+        (WebCore::StorageManager::persist):
+        (WebCore::StorageManager::fileSystemAccessGetDirectory):
+        * Modules/storage/StorageManager.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSFileSystemHandleCustom.cpp: Added.
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/WorkerModuleScriptLoader.h:
+        * workers/service/ServiceWorkerJob.h:
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         DOMPromiseDeferred should be able to handle Ref/RefPtr resolution values for interface types

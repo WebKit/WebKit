@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkStorageManager.h"
 
+#include "FileSystemStorageHandleRegistry.h"
+#include "FileSystemStorageManager.h"
 #include "NetworkStorageManagerMessages.h"
 #include "OriginStorageManager.h"
 #include <pal/crypto/CryptoDigest.h>
@@ -45,6 +47,7 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, const Str
     ASSERT(RunLoop::isMain());
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy()]() mutable {
+        m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
         m_path = path;
         if (!m_path.isEmpty()) {
             auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt");
@@ -53,18 +56,54 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, const Str
     });
 }
 
+NetworkStorageManager::~NetworkStorageManager()
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(m_closed);
+}
+
+void NetworkStorageManager::close()
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_closed)
+        return;
+    m_closed = true;
+
+    for (auto& connection : m_connections)
+        connection.removeWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName());
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }]() mutable {
+        m_localOriginStorageManagers.clear();
+        m_sessionOriginStorageManagers.clear();
+        m_fileSystemStorageHandleRegistry = nullptr;
+
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
+    });
+}
+
 void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
     connection.addWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName(), m_queue.get(), this);
+    m_connections.add(connection);
 }
 
 void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
+    
+    if (!m_connections.remove(connection))
+        return;
 
     connection.removeWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName());
+    m_queue->dispatch([this, protectedThis = Ref { *this }, connection = connection.uniqueID()]() mutable {
+        for (auto& originStorageManager : m_localOriginStorageManagers.values())
+            originStorageManager->connectionClosed(connection);
+
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
+    });
 }
 
 static String encode(const String& string, FileSystem::Salt salt)
@@ -114,12 +153,77 @@ void NetworkStorageManager::persist(const WebCore::ClientOrigin& origin, Complet
 void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
+
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_localOriginStorageManagers.clear();
         m_sessionOriginStorageManagers.clear();
 
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
     });
+}
+
+void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    completionHandler(localOriginStorageManager(origin).fileSystemStorageManager(*m_fileSystemStorageHandleRegistry).getDirectory(connection.uniqueID()));
+}
+
+void NetworkStorageManager::isSameEntry(FileSystemStorageHandleIdentifier identifier, FileSystemStorageHandleIdentifier targetIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(false);
+
+    completionHandler(handle->isSameEntry(targetIdentifier));
+}
+
+void NetworkStorageManager::getFileHandle(IPC::Connection& connection, FileSystemStorageHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    completionHandler(handle->getFileHandle(connection.uniqueID(), WTFMove(name), createIfNecessary));
+}
+
+void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, FileSystemStorageHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    completionHandler(handle->getDirectoryHandle(connection.uniqueID(), WTFMove(name), createIfNecessary));
+}
+
+void NetworkStorageManager::removeEntry(FileSystemStorageHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(FileSystemStorageError::Unknown);
+
+    completionHandler(handle->removeEntry(name, deleteRecursively));
+}
+
+void NetworkStorageManager::resolve(FileSystemStorageHandleIdentifier identifier, FileSystemStorageHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    completionHandler(handle->resolve(targetIdentifier));
 }
 
 } // namespace WebKit

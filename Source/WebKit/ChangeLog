@@ -1,3 +1,89 @@
+2021-09-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Add initial support for File System Access API
+        https://bugs.webkit.org/show_bug.cgi?id=230484
+        rdar://83405890
+
+        Reviewed by Youenn Fablet.
+
+        Introduce FileSystemStorageManager to manage file handles. Each FileSystemStorageHandle corresponds to a 
+        FileSystemHandle in web process.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::removeStorageManagerForSession):
+        * NetworkProcess/storage/FileSystemStorageError.h: Added.
+        (WebKit::convertToExceptionCode):
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp: Added.
+        (WebKit::FileSystemStorageHandle::FileSystemStorageHandle):
+        (WebKit::FileSystemStorageHandle::isSameEntry):
+        (WebKit::FileSystemStorageHandle::requestCreateHandle):
+        (WebKit::FileSystemStorageHandle::getFileHandle):
+        (WebKit::FileSystemStorageHandle::getDirectoryHandle):
+        (WebKit::FileSystemStorageHandle::removeEntry):
+        (WebKit::FileSystemStorageHandle::resolve):
+        * NetworkProcess/storage/FileSystemStorageHandle.h: Added.
+        (WebKit::FileSystemStorageHandle::identifier const):
+        (WebKit::FileSystemStorageHandle::path const):
+        * NetworkProcess/storage/FileSystemStorageHandleIdentifier.h: Added.
+        * NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp: Added.
+        (WebKit::FileSystemStorageHandleRegistry::registerHandle):
+        (WebKit::FileSystemStorageHandleRegistry::unregisterHandle):
+        (WebKit::FileSystemStorageHandleRegistry::getHandle):
+        * NetworkProcess/storage/FileSystemStorageHandleRegistry.h: Added.
+        * NetworkProcess/storage/FileSystemStorageManager.cpp: Added.
+        (WebKit::FileSystemStorageManager::FileSystemStorageManager):
+        (WebKit::FileSystemStorageManager::~FileSystemStorageManager):
+        (WebKit::FileSystemStorageManager::createHandle):
+        (WebKit::FileSystemStorageManager::getPath):
+        (WebKit::FileSystemStorageManager::connectionClosed):
+        (WebKit::FileSystemStorageManager::getDirectory):
+        * NetworkProcess/storage/FileSystemStorageManager.h: Added.
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::NetworkStorageManager::~NetworkStorageManager):
+        (WebKit::NetworkStorageManager::close):
+        (WebKit::NetworkStorageManager::startReceivingMessageFromConnection):
+        (WebKit::NetworkStorageManager::stopReceivingMessageFromConnection):
+        (WebKit::NetworkStorageManager::clearStorageForTesting):
+        (WebKit::NetworkStorageManager::fileSystemGetDirectory):
+        (WebKit::NetworkStorageManager::isSameEntry):
+        (WebKit::NetworkStorageManager::getFileHandle):
+        (WebKit::NetworkStorageManager::getDirectoryHandle):
+        (WebKit::NetworkStorageManager::removeEntry):
+        (WebKit::NetworkStorageManager::resolve):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        (WebKit::NetworkStorageManager::sessionID const): Deleted.
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::connectionClosed):
+        (WebKit::OriginStorageManager::StorageBucket::typeStoragePath const):
+        (WebKit::OriginStorageManager::StorageBucket::fileSystemStorageManager):
+        (WebKit::OriginStorageManager::connectionClosed):
+        (WebKit::OriginStorageManager::defaultBucket):
+        (WebKit::OriginStorageManager::persist):
+        (WebKit::OriginStorageManager::fileSystemStorageManager):
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/FileSystemStorageHandleProxy.cpp: Added.
+        (WebKit::FileSystemStorageHandleProxy::create):
+        (WebKit::FileSystemStorageHandleProxy::FileSystemStorageHandleProxy):
+        (WebKit::FileSystemStorageHandleProxy::connectionClosed):
+        (WebKit::FileSystemStorageHandleProxy::isSameEntry):
+        (WebKit::FileSystemStorageHandleProxy::getFileHandle):
+        (WebKit::FileSystemStorageHandleProxy::getDirectoryHandle):
+        (WebKit::FileSystemStorageHandleProxy::removeEntry):
+        (WebKit::FileSystemStorageHandleProxy::resolve):
+        * WebProcess/WebCoreSupport/FileSystemStorageHandleProxy.h: Added.
+        * WebProcess/WebCoreSupport/WebStorageConnection.cpp:
+        (WebKit::WebStorageConnection::getPersisted):
+        (WebKit::WebStorageConnection::persist):
+        (WebKit::WebStorageConnection::fileSystemGetDirectory):
+        (WebKit::WebStorageConnection::persisted): Deleted.
+        * WebProcess/WebCoreSupport/WebStorageConnection.h:
+
 2021-09-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit2] Refactor some IPC argument encoder logic to work with StreamConnectionEncoder
