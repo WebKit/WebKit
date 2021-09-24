@@ -1,3 +1,19 @@
+2021-09-23  Rob Buis  <rbuis@igalia.com>
+
+        RenderElement::moveLayers should take reference
+        https://bugs.webkit.org/show_bug.cgi?id=230706
+
+        Reviewed by Simon Fraser.
+
+        RenderElement::moveLayers should take reference for newParent
+        since it is always non-null.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::moveLayers):
+        * rendering/RenderElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::insertOnlyThisLayer):
+
 2021-09-23  Simon Fraser  <simon.fraser@apple.com>
 
         Move ScrollSnapAnimatorState's ScrollAnimationMomentum into ScrollingEffectsController

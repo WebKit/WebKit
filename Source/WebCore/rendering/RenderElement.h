@@ -109,7 +109,7 @@ public:
     // can contain a mixture of boxes and other object types, these functions need to be in the base class.
     void addLayers(RenderLayer* parentLayer);
     void removeLayers(RenderLayer* parentLayer);
-    void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
+    void moveLayers(RenderLayer* oldParent, RenderLayer& newParent);
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
     virtual void dirtyLinesFromChangedChild(RenderObject&) { }

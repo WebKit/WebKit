@@ -706,17 +706,14 @@ void RenderElement::removeLayers(RenderLayer* parentLayer)
         child.removeLayers(parentLayer);
 }
 
-void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer* newParent)
+void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer& newParent)
 {
-    if (!newParent)
-        return;
-
     if (hasLayer()) {
         RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         ASSERT(oldParent == layer->parent());
         if (oldParent)
             oldParent->removeChild(*layer);
-        newParent->addChild(*layer);
+        newParent.addChild(*layer);
         return;
     }
 
