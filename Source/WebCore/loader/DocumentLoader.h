@@ -423,6 +423,7 @@ public:
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
     void setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated) { m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated; }
 
+    ContentSecurityPolicy* contentSecurityPolicy() const { return m_contentSecurityPolicy.get(); }
     CrossOriginOpenerPolicy crossOriginOpenerPolicy() const { return m_currentCoopEnforcementResult ? m_currentCoopEnforcementResult->crossOriginOpenerPolicy : CrossOriginOpenerPolicy { }; }
 
 protected:
@@ -624,6 +625,7 @@ private:
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 
     std::unique_ptr<ApplicationCacheHost> m_applicationCacheHost;
+    std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
 
 #if ENABLE(CONTENT_FILTERING)
     std::unique_ptr<ContentFilter> m_contentFilter;
