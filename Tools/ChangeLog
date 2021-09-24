@@ -1,3 +1,17 @@
+2021-09-24  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r282742): Broke IceCC builds
+        https://bugs.webkit.org/show_bug.cgi?id=230547
+
+        Reviewed by Sergio Villar Senin.
+
+        There's no need to check the default IceCC toolchain exists, we can't do that from the host
+        anyway because their path is a sandbox path. Additionally we now check host paths supplied
+        through $ICECC_VERSION_OVERRIDE and ICECC_VERSION_APPEND.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms

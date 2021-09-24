@@ -888,20 +888,31 @@ class WebkitFlatpak:
                 n_cores = multiprocessing.cpu_count() * 3
                 _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
             toolchain_name = os.environ.get("CC", "gcc")
+            default_toolchain = self.icc_version.get(toolchain_name)
+
             try:
-                toolchain_path = os.environ.get("ICECC_VERSION_OVERRIDE", self.icc_version[toolchain_name])
+                toolchain_override = os.environ["ICECC_VERSION_OVERRIDE"]
             except KeyError:
-                Console.error_message("Toolchains configuration not found. Please run webkit-flatpak -r")
-                return 1
+                toolchain_path = default_toolchain
             else:
-                toolchain_path = self.host_path_to_sandbox_path(toolchain_path)
-            if "ICECC_VERSION_APPEND" in os.environ:
-                toolchain_path += ","
-                toolchain_path += self.host_path_to_sandbox_path(os.environ["ICECC_VERSION_APPEND"])
-            native_toolchain = toolchain_path.split(",")[0]
-            if not os.path.isfile(native_toolchain):
-                Console.error_message("%s is not a valid IceCC toolchain. Please run webkit-flatpak -r", native_toolchain)
+                if not os.path.isfile(toolchain_override):
+                    Console.error_message("%s toolchain not found. ICECC_VERSION_OVERRIDE mis-configured?", toolchain_override)
+                    return 1
+
+                toolchain_path = self.host_path_to_sandbox_path(toolchain_override)
+
+            if not toolchain_path:
+                Console.error_message("Toolchains configuration not found. Please run webkit-flatpak -r or set ICECC_VERSION_OVERRIDE to a valid host path")
                 return 1
+
+            if "ICECC_VERSION_APPEND" in os.environ:
+                extra_toolchain = os.environ["ICECC_VERSION_APPEND"]
+                if not os.path.isfile(extra_toolchain):
+                    Console.error_message("%s is not a valid IceCC toolchain. ICECC_VERSION_APPEND mis-configured?", extra_toolchain)
+                    return 1
+                toolchain_path += ","
+                toolchain_path += self.host_path_to_sandbox_path(extra_toolchain)
+
             sandbox_environment.update({
                 "CCACHE_PREFIX": "icecc",
                 "ICECC_TEST_SOCKET": "/run/icecc/iceccd.socket",
