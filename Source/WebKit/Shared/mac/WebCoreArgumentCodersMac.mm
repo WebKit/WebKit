@@ -321,6 +321,79 @@ std::optional<WebCore::KeypressCommand> ArgumentCoder<WebCore::KeypressCommand>:
     return WTFMove(command);
 }
 
+void ArgumentCoder<CGRect>::encode(Encoder& encoder, CGRect rect)
+{
+    encoder << rect.origin << rect.size;
+}
+
+std::optional<CGRect> ArgumentCoder<CGRect>::decode(Decoder& decoder)
+{
+    std::optional<CGPoint> origin;
+    decoder >> origin;
+    if (!origin)
+        return { };
+
+    std::optional<CGSize> size;
+    decoder >> size;
+    if (!size)
+        return { };
+
+    return CGRect { *origin, *size };
+}
+
+void ArgumentCoder<CGSize>::encode(Encoder& encoder, CGSize size)
+{
+    encoder << size.width << size.height;
+}
+
+std::optional<CGSize> ArgumentCoder<CGSize>::decode(Decoder& decoder)
+{
+    CGSize size;
+    if (!decoder.decode(size.width))
+        return { };
+    if (!decoder.decode(size.height))
+        return { };
+    return size;
+}
+
+void ArgumentCoder<CGPoint>::encode(Encoder& encoder, CGPoint point)
+{
+    encoder << point.x << point.y;
+}
+
+std::optional<CGPoint> ArgumentCoder<CGPoint>::decode(Decoder& decoder)
+{
+    CGPoint point;
+    if (!decoder.decode(point.x))
+        return { };
+    if (!decoder.decode(point.y))
+        return { };
+    return point;
+}
+
+void ArgumentCoder<CGAffineTransform>::encode(Encoder& encoder, CGAffineTransform transform)
+{
+    encoder << transform.a << transform.b << transform.c << transform.d << transform.tx << transform.ty;
+}
+
+std::optional<CGAffineTransform> ArgumentCoder<CGAffineTransform>::decode(Decoder& decoder)
+{
+    CGAffineTransform transform;
+    if (!decoder.decode(transform.a))
+        return { };
+    if (!decoder.decode(transform.b))
+        return { };
+    if (!decoder.decode(transform.c))
+        return { };
+    if (!decoder.decode(transform.d))
+        return { };
+    if (!decoder.decode(transform.tx))
+        return { };
+    if (!decoder.decode(transform.ty))
+        return { };
+    return transform;
+}
+
 #if ENABLE(CONTENT_FILTERING)
 
 void ArgumentCoder<WebCore::ContentFilterUnblockHandler>::encode(Encoder& encoder, const WebCore::ContentFilterUnblockHandler& contentFilterUnblockHandler)

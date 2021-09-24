@@ -1,3 +1,16 @@
+2021-09-24  Eric Hutchison  <ehutchison@apple.com>
+
+        Unreviewed, reverting r283024.
+
+        Causes slowdown and crash on EWS
+
+        Reverted changeset:
+
+        "[WebKit2] Refactor some IPC argument encoder logic to work
+        with StreamConnectionEncoder"
+        https://bugs.webkit.org/show_bug.cgi?id=230714
+        https://commits.webkit.org/r283024
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         RTCDataChannelHandlerClient does not need to be ref counted

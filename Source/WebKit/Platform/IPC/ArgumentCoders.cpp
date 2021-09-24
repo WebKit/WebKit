@@ -30,7 +30,6 @@
 #include "PrivateClickMeasurementDecoder.h"
 #include "PrivateClickMeasurementEncoder.h"
 #include "StreamConnectionEncoder.h"
-#include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -219,7 +218,6 @@ WARN_UNUSED_RETURN bool ArgumentCoder<SHA1::Digest>::decode(Decoder& decoder, SH
 }
 
 #if HAVE(AUDIT_TOKEN)
-
 void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t& auditToken)
 {
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++)
@@ -234,7 +232,15 @@ WARN_UNUSED_RETURN bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, a
     }
     return true;
 }
+#endif
 
-#endif // HAVE(AUDIT_TOKEN)
+void ArgumentCoder<Monostate>::encode(Encoder&, const Monostate&)
+{
+}
+
+WARN_UNUSED_RETURN std::optional<Monostate> ArgumentCoder<Monostate>::decode(Decoder&)
+{
+    return Monostate { };
+}
 
 } // namespace IPC
