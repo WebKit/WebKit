@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FontCascade.h"
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
@@ -62,9 +63,15 @@ public:
     bool hasContent() const { return m_hasContent; }
     void setHasContent();
 
-    VerticalAlign verticalAlign() const { return layoutBox().style().verticalAlign(); }
-    const Box& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const { return m_layoutBox->style(); }
+    struct VerticalAlignment {
+        VerticalAlign type { VerticalAlign::Baseline };
+        std::optional<InlineLayoutUnit> baselineOffset;
+    };
+    VerticalAlignment verticalAlign() const;
+    InlineLayoutUnit preferredLineHeight() const;
+    bool isPreferredLineHeightFontMetricsBased() const { return layoutBox().style().lineHeight().isNegative(); }
+    const FontMetrics& primaryFontMetrics() const { return layoutBox().style().fontCascade().primaryFont().fontMetrics(); }
+    InlineLayoutUnit fontSize() const { return layoutBox().style().fontCascade().fontDescription().computedPixelSize(); }
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
@@ -82,6 +89,8 @@ public:
         GenericInlineLevelBox = 1 << 4
     };
     Type type() const { return m_type; }
+
+    const Box& layoutBox() const { return *m_layoutBox; }
 
     InlineLevelBox(const Box&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type);
     InlineLevelBox() = default;
@@ -128,6 +137,27 @@ inline void InlineLevelBox::setHasContent()
 {
     ASSERT(isInlineBox());
     m_hasContent = true;
+}
+
+inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
+{
+    // FIXME: Remove integral flooring when legacy line layout stops using it.
+    if (isPreferredLineHeightFontMetricsBased())
+        return primaryFontMetrics().lineSpacing();
+
+    auto& lineHeight = layoutBox().style().lineHeight();
+    if (lineHeight.isPercentOrCalculated())
+        return floorf(minimumValueForLength(lineHeight, fontSize()));
+    return floorf(lineHeight.value());
+}
+
+inline InlineLevelBox::VerticalAlignment InlineLevelBox::verticalAlign() const
+{
+    auto& style = layoutBox().style();
+    auto verticalAlign = style.verticalAlign();
+    if (verticalAlign != VerticalAlign::Length)
+        return { verticalAlign, { } };
+    return { verticalAlign, floatValueForLength(style.verticalAlignLength(), preferredLineHeight()) };
 }
 
 inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const

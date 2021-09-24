@@ -1,5 +1,49 @@
 2021-09-24  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][LFC] InlineLevelBox needs to retain only a small set of style properties
+        https://bugs.webkit.org/show_bug.cgi?id=230718
+
+        Reviewed by Antti Koivisto.
+
+        Let's not expose all the style properties in here. InlineLevelBoxes only need certain font and alignment related properties values.
+        It also enables us to map certain property values to proper names.
+
+        e.g. RenderStyle::computeLineHeight() -> preferredLineHeight() (spec term)
+          or RenderStyle::lineHeight().isNegative() -> isPreferredLineHeightFontMetricsBased()
+
+          Now code like this
+
+          LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(const InlineBox&)
+          {
+              if (!inlineBox.isPreferredLineHeightFontMetricsBased())
+                  return;
+          ...
+          start making sense.
+
+        This patch is also in preparation for supporting first-line style.
+
+        * layout/formattingContexts/inline/InlineLevelBox.h:
+        (WebCore::Layout::InlineLevelBox::isPreferredLineHeightFontMetricsBased const):
+        (WebCore::Layout::InlineLevelBox::primaryFontMetrics const):
+        (WebCore::Layout::InlineLevelBox::fontSize const):
+        (WebCore::Layout::InlineLevelBox::layoutBox const):
+        (WebCore::Layout::InlineLevelBox::preferredLineHeight const):
+        (WebCore::Layout::InlineLevelBox::verticalAlign const):
+        (WebCore::Layout::InlineLevelBox::style const): Deleted.
+        * layout/formattingContexts/inline/InlineLineBox.cpp:
+        (WebCore::Layout::LineBox::logicalRectForTextRun const):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts const):
+        (WebCore::Layout::LineBoxBuilder::setInitialVerticalGeometryForInlineBox const):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        * layout/formattingContexts/inline/InlineLineBoxVerticalAligner.cpp:
+        (WebCore::Layout::LineBoxVerticalAligner::canUseSimplifiedAlignmentForInlineLevelBox):
+        (WebCore::Layout::LineBoxVerticalAligner::computeLineBoxLogicalHeight const):
+        (WebCore::Layout::LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition const):
+        (WebCore::Layout::LineBoxVerticalAligner::alignInlineLevelBoxes const):
+
+2021-09-24  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] InlineDisplay::Box should be able to provide first-line style when applicable
         https://bugs.webkit.org/show_bug.cgi?id=230709
 

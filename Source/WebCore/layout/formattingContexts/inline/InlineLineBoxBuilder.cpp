@@ -162,8 +162,7 @@ void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineL
 {
     ASSERT(!fallbackFontsForContent.isEmpty());
     ASSERT(inlineBox.isInlineBox());
-    auto& style = inlineBox.style();
-    if (!style.lineHeight().isNegative())
+    if (!inlineBox.isPreferredLineHeightFontMetricsBased())
         return;
 
     // https://www.w3.org/TR/css-inline-3/#inline-height
@@ -195,30 +194,27 @@ void LineBoxBuilder::adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineL
 void LineBoxBuilder::setInitialVerticalGeometryForInlineBox(InlineLevelBox& inlineLevelBox) const
 {
     ASSERT(inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox());
-    auto& fontMetrics = inlineLevelBox.style().fontMetrics();
-    InlineLayoutUnit ascent = fontMetrics.ascent();
-    InlineLayoutUnit descent = fontMetrics.descent();
+    auto& primaryFontMetrics = inlineLevelBox.primaryFontMetrics();
+    InlineLayoutUnit ascent = primaryFontMetrics.ascent();
+    InlineLayoutUnit descent = primaryFontMetrics.descent();
     auto logicalHeight = ascent + descent;
     // We need floor/ceil to match legacy layout integral positioning.
     inlineLevelBox.setBaseline(floorf(ascent));
     inlineLevelBox.setDescent(ceilf(descent));
     inlineLevelBox.setLogicalHeight(logicalHeight);
 
-    // FIXME: Adjust layout bounds with fallback font when applicable.
-    auto& style = inlineLevelBox.layoutBox().style();
-    auto lineHeight = style.lineHeight();
-    if (lineHeight.isNegative()) {
+    if (inlineLevelBox.isPreferredLineHeightFontMetricsBased()) {
         // If line-height computes to normal and either text-edge is leading or this is the root inline box,
         // the font’s line gap metric may also be incorporated into A and D by adding half to each side as half-leading.
         // https://www.w3.org/TR/css-inline-3/#inline-height
         // Since text-edge is not supported yet and the initial value is leading, we should just apply it to
         // all inline boxes.
-        auto halfLineGap = (fontMetrics.lineSpacing() - logicalHeight) / 2;
+        auto halfLineGap = (primaryFontMetrics.lineSpacing() - logicalHeight) / 2;
         ascent += halfLineGap;
         descent += halfLineGap;
     } else {
-        InlineLayoutUnit lineHeight = style.computedLineHeight();
-        InlineLayoutUnit halfLeading = (lineHeight - (ascent + descent)) / 2;
+        auto preferredLineHeight = inlineLevelBox.preferredLineHeight();
+        InlineLayoutUnit halfLeading = (preferredLineHeight - (ascent + descent)) / 2;
         ascent += halfLeading;
         descent += halfLeading;
     }
@@ -233,7 +229,7 @@ InlineLayoutUnit LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& line
 
     // FIXME: Add fast path support for line-height content.
     // FIXME: We should always be able to exercise the fast path when the line has no content at all, even in non-standards mode or with line-height set.
-    auto canUseSimplifiedAlignment = layoutState().inStandardsMode() && rootBox().style().lineHeight().isNegative();
+    auto canUseSimplifiedAlignment = layoutState().inStandardsMode() && rootInlineBox.isPreferredLineHeightFontMetricsBased();
     auto updateCanUseSimplifiedAlignment = [&](auto& inlineLevelBox, std::optional<const BoxGeometry> boxGeometry = std::nullopt) {
         if (!canUseSimplifiedAlignment)
             return;
