@@ -1,3 +1,40 @@
+2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement abs,sign calc functions
+        https://bugs.webkit.org/show_bug.cgi?id=229786
+
+        Reviewed by Simon Fraser.
+
+        Added support for calc functions sign and abs. Involved adding new css keywords and handling 
+        for parsing calc expression and computing the resulting value. Spec for these functions: 
+        https://drafts.csswg.org/css-values-4/#sign-funcs.
+
+        Tests: imported/w3c/web-platform-tests/css/css-values/signs-abs-computed.html
+               imported/w3c/web-platform-tests/css/css-values/signs-abs-invalid.html
+               imported/w3c/web-platform-tests/css/css-values/signs-abs-serialize.html
+
+        * css/CSSValueKeywords.in:
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        (WebCore::functionFromOperator):
+        (WebCore::CSSCalcOperationNode::createSign):
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        (WebCore::CSSCalcOperationNode::doubleValue const):
+        (WebCore::functionPrefixForOperator):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        * css/calc/CSSCalcOperationNode.h:
+        * css/calc/CSSCalcValue.cpp:
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        * platform/calc/CalcExpressionOperation.cpp:
+        (WebCore::CalcExpressionOperation::evaluate const):
+        * platform/calc/CalcOperator.cpp:
+        (WebCore::operator<<):
+        * platform/calc/CalcOperator.h:
+
 2021-09-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBuilder should have the option of passing in the correct style when a run is added to the line

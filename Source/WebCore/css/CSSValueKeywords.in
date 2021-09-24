@@ -1357,6 +1357,8 @@ asin
 acos
 atan
 atan2
+abs
+sign
 
 from-image
 

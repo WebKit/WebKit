@@ -85,6 +85,8 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
     case CalcOperator::Acos:
     case CalcOperator::Atan:
     case CalcOperator::Atan2:
+    case CalcOperator::Abs:
+    case CalcOperator::Sign:
         ASSERT_NOT_REACHED();
         return CalculationCategory::Other;
     }
@@ -153,6 +155,8 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
         case CalcOperator::Sin:
         case CalcOperator::Cos:
         case CalcOperator::Tan:
+        case CalcOperator::Abs:
+        case CalcOperator::Sign:
         case CalcOperator::Min:
         case CalcOperator::Max:
         case CalcOperator::Clamp:
@@ -291,6 +295,10 @@ static CSSValueID functionFromOperator(CalcOperator op)
         return CSSValueAtan;
     case CalcOperator::Atan2:
         return CSSValueAtan2;
+    case CalcOperator::Abs:
+        return CSSValueAbs;
+    case CalcOperator::Sign:
+        return CSSValueSign;
     }
     return CSSValueCalc;
 }
@@ -453,6 +461,21 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createTrig(CalcOperator op, V
     return adoptRef(new CSSCalcOperationNode(CalculationCategory::Number, op, WTFMove(values)));
 }
 
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createSign(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 1)
+        return nullptr;
+    auto newCategory = determineCategory(values, op);
+    if (op == CalcOperator::Sign)
+        newCategory = CalculationCategory::Number;
+    
+    if (newCategory == CalculationCategory::Other) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create sign-related node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+    return adoptRef(new CSSCalcOperationNode(newCategory, op, WTFMove(values)));
+}
+
 void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 {
     ASSERT(op == CalcOperator::Add || op == CalcOperator::Multiply);
@@ -535,6 +558,15 @@ void CSSCalcOperationNode::combineChildren()
         if (m_children.size() == 1 && isInverseTrigNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
             auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_DEG));
+            m_children.clear();
+            m_children.append(WTFMove(newChild));
+        }
+        if (isSignNode()) {
+            auto combinedUnitType = m_children[0]->primitiveType();
+            if (calcOperator() == CalcOperator::Sign)
+                combinedUnitType = CSSUnitType::CSS_NUMBER;
+            double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
@@ -736,7 +768,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
     if (is<CSSCalcOperationNode>(rootNode)) {
         auto& calcOperationNode = downcast<CSSCalcOperationNode>(rootNode.get());
         // Simplify operations with only one child node (other than root and operations that only need one node).
-        if (calcOperationNode.children().size() == 1 && depth && !calcOperationNode.isTrigNode() && !calcOperationNode.isExpNode() && !calcOperationNode.isInverseTrigNode())
+        if (calcOperationNode.children().size() == 1 && depth && !calcOperationNode.isTrigNode() && !calcOperationNode.isExpNode() && !calcOperationNode.isInverseTrigNode() && !calcOperationNode.isSignNode())
             return WTFMove(calcOperationNode.children()[0]);
         
         if (calcOperationNode.isCalcSumNode()) {
@@ -762,6 +794,8 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             calcOperationNode.combineChildren();
         
         if (calcOperationNode.isAtan2Node() && depth)
+            calcOperationNode.combineChildren();
+        if (calcOperationNode.isSignNode() && depth)
             calcOperationNode.combineChildren();
 
         // If only one child remains, return the child (except at the root).
@@ -901,6 +935,8 @@ double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
             childType = CSSUnitType::CSS_NUMBER;
         if (isAtan2Node())
             childType = child->primitiveType();
+        if (isSignNode())
+            childType = child->primitiveType();
         return child->doubleValue(childType);
     }));
 }
@@ -965,6 +1001,8 @@ static const char* functionPrefixForOperator(CalcOperator op)
     case CalcOperator::Acos: return "acos(";
     case CalcOperator::Atan: return "atan(";
     case CalcOperator::Atan2: return "atan2(";
+    case CalcOperator::Abs: return "abs(";
+    case CalcOperator::Sign: return "sign(";
     }
     
     return "";
@@ -1212,6 +1250,20 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
         return rad2deg(atan2(children[0], children[1]));
+    }
+    case CalcOperator::Abs: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::abs(children[0]);
+    }
+    case CalcOperator::Sign: {
+        if (children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        if (children[0] > 0)
+            return 1;
+        if (children[0] < 0)
+            return -1;
+        return children[0];
     }
     }
     ASSERT_NOT_REACHED();

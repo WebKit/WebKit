@@ -137,10 +137,11 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     case CSSValueSin:
     case CSSValueCos:
     case CSSValueTan:
-    
     case CSSValueAcos:
     case CSSValueAsin:
     case CSSValueAtan:
+    case CSSValueSign:
+    case CSSValueAbs:
     case CSSValueCalc:
         maxArgumentCount = 1;
         break;
@@ -216,6 +217,12 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
         break;
     case CSSValueAtan2:
         result = CSSCalcOperationNode::createAtan2(WTFMove(nodes));
+        break;
+    case CSSValueAbs:
+        result = CSSCalcOperationNode::createSign(CalcOperator::Abs, WTFMove(nodes));
+        break;
+    case CSSValueSign:
+        result = CSSCalcOperationNode::createSign(CalcOperator::Sign, WTFMove(nodes));
         break;
     // TODO: pow, sqrt, hypot
     default:

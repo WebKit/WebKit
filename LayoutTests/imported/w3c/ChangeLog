@@ -1,3 +1,17 @@
+2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement abs,sign calc functions
+        https://bugs.webkit.org/show_bug.cgi?id=229786
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/signs-abs-computed-expected.txt: Added.
+        * web-platform-tests/css/css-values/signs-abs-computed.html: Added.
+        * web-platform-tests/css/css-values/signs-abs-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-values/signs-abs-invalid.html: Added.
+        * web-platform-tests/css/css-values/signs-abs-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-values/signs-abs-serialize.html: Added.
+
 2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Color keywords in override-color cause a crash

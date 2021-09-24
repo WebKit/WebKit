@@ -134,6 +134,20 @@ float CalcExpressionOperation::evaluate(float maxValue) const
             return std::numeric_limits<float>::quiet_NaN();
         return rad2deg(atan2(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue)));
     }
+    case CalcOperator::Abs: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return std::abs(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Sign: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<double>::quiet_NaN();
+        if (m_children[0]->evaluate(maxValue) > 0)
+            return 1;
+        if (m_children[0]->evaluate(maxValue) < 0)
+            return -1;
+        return m_children[0]->evaluate(maxValue);
+    }
     }
     ASSERT_NOT_REACHED();
     return std::numeric_limits<float>::quiet_NaN();

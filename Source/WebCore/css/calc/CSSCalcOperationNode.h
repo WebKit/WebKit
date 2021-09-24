@@ -42,7 +42,7 @@ public:
     static RefPtr<CSSCalcOperationNode> createExp(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createInverseTrig(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createAtan2(Vector<Ref<CSSCalcExpressionNode>>&& values);
-
+    static RefPtr<CSSCalcOperationNode> createSign(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
     static Ref<CSSCalcExpressionNode> simplify(Ref<CSSCalcExpressionNode>&&);
 
     static void buildCSSText(const CSSCalcExpressionNode&, StringBuilder&);
@@ -55,6 +55,7 @@ public:
     bool isExpNode() const { return m_operator == CalcOperator::Exp || m_operator == CalcOperator::Log; }
     bool isInverseTrigNode() const { return m_operator == CalcOperator::Asin || m_operator == CalcOperator::Acos || m_operator == CalcOperator::Atan; }
     bool isAtan2Node() const { return m_operator == CalcOperator::Atan2; }
+    bool isSignNode() const { return m_operator == CalcOperator::Abs || m_operator == CalcOperator::Sign; }
     bool shouldSortChildren() const { return isCalcSumNode() || isCalcProductNode(); }
 
     void hoistChildrenWithOperator(CalcOperator);

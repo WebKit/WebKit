@@ -206,6 +206,13 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
                 return nullptr;
             return CSSCalcOperationNode::createAtan2(WTFMove(children));
         }
+        case CalcOperator::Sign:
+        case CalcOperator::Abs: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 1)
+                return nullptr;
+            return CSSCalcOperationNode::createSign(op, WTFMove(children));
+        }
         }
         return nullptr;
     }
@@ -326,6 +333,8 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueAcos:
     case CSSValueAtan:
     case CSSValueAtan2:
+    case CSSValueAbs:
+    case CSSValueSign:
         return true;
     default:
         return false;

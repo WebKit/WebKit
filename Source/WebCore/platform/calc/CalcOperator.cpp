@@ -49,6 +49,8 @@ TextStream& operator<<(TextStream& ts, CalcOperator op)
     case CalcOperator::Acos: ts << "acos"; break;
     case CalcOperator::Atan: ts << "atan"; break;
     case CalcOperator::Atan2: ts << "atan2"; break;
+    case CalcOperator::Abs: ts << "abs"; break;
+    case CalcOperator::Sign: ts << "sign"; break;
     }
     return ts;
 }
