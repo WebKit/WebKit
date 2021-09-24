@@ -31,7 +31,6 @@
 #include "DataReference.h"
 #include "RTCDecoderIdentifier.h"
 #include "RTCEncoderIdentifier.h"
-#include <WebCore/ImageTransferSessionVT.h>
 #include <wtf/Lock.h>
 
 namespace IPC {
@@ -93,7 +92,6 @@ private:
     HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders WTF_GUARDED_BY_LOCK(m_lock); // Only modified on the libWebRTCCodecsQueue but may get accessed from the main thread.
 
     Ref<WorkQueue> m_queue;
-    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 };
 
 }

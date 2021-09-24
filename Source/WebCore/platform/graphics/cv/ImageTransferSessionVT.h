@@ -58,18 +58,12 @@ public:
 #endif
 #endif
 
-#if !PLATFORM(MACCATALYST)
-    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef);
-    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createPixelBuffer(IOSurfaceRef, const IntSize&);
-#endif
-
     uint32_t pixelFormat() const { return m_pixelFormat; }
 
 private:
     WEBCORE_EXPORT explicit ImageTransferSessionVT(uint32_t pixelFormat);
 
 #if !PLATFORM(MACCATALYST)
-    CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
     RetainPtr<CMSampleBufferRef> createCMSampleBuffer(IOSurfaceRef, const MediaTime&, const IntSize&);
 #endif
 

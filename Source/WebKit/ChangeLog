@@ -1,3 +1,27 @@
+2021-09-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add utility to create CVPixelBuffers from IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=230338
+
+        Reviewed by Youenn Fablet.
+
+        The helper function moved from ImageTransferSessionVT
+        to free standalone function. Stop instantiating the
+        object and just call the function.
+
+        In both of the cases, the pixel buffer is created out of
+        the IOSurface and the pool is not used. In both of the cases
+        the size and the pixel format of the image transfer session
+        is the same as the input IOSurface.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::completedDecoding):
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        (WebKit::LibWebRTCCodecs::pixelBufferPool):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15

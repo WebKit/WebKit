@@ -1,3 +1,70 @@
+2021-09-24  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add utility to create CVPixelBuffers from IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=230338
+
+        Reviewed by Youenn Fablet.
+
+        Move the functionality of creating CVPixelBuffers
+        from IOSurfaces from ImageTransferSessionVT to
+        standalone functions in new header CVUtilities.
+        The functionality did not use any state of
+        ImageTransferSessionVT.
+
+        This functionality is useful in other scenarios too.
+
+        Remove instantiations of ImageTransferSessionVT from
+        the old call sites, as it was never used for anything
+        else than creation of the pixel buffer.
+
+        Move the related CVPixelBufferPool instantiation
+        from RealtimeVideoUtilities.h to CVUtilities.h
+
+        Remove the usage of kCVPixelFormatOpenGLESCompatibility
+        from the CVPixelBuffer creation code. It was incorrect property
+        all along, property of pixel formats not of pixel buffers. The
+        intended property was kCVPixelBufferOpenGLESCompatibilityKey
+        but it is not needed anymore.
+        Retains the usage of kCVPixelBufferOpenGLCompatibilityKey, though
+        it is incorrect and unneeded for the current operation too.
+        Since theoretically this could affect something on Mac, this
+        will be removed in a separate fix.
+
+        No new tests, a refactor.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cv/CVUtilities.h: Added.
+        * platform/graphics/cv/CVUtilities.mm: Added.
+        (WebCore::createIOSurfaceCVPixelBufferPool):
+        (WebCore::createCVPixelBufferFromPool):
+        (WebCore::pixelBufferCreationOptions):
+        (WebCore::createCVPixelBuffer):
+        The added functions return Expected<object, status> since
+        some of the callers want to log the failure status code.
+        * platform/graphics/cv/ImageTransferSessionVT.h:
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        (WebCore::ImageTransferSessionVT::setSize):
+        (WebCore::ImageTransferSessionVT::convertPixelBuffer):
+        (WebCore::ImageTransferSessionVT::convertCMSampleBuffer):
+        (WebCore::ImageTransferSessionVT::createCMSampleBuffer):
+        (WebCore::cvPixelFormatOpenGLKey): Deleted.
+        Incorrect, replaced with Mac-only use of OpenGLCompatibilityKey in
+        CVUtilities.mm.
+        (WebCore::roundUpToMacroblockMultiple): Deleted.
+        Use the similar function in WTF.
+        (WebCore::ImageTransferSessionVT::ioSurfacePixelBufferCreationOptions): Deleted.
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferPool):
+        * platform/mediastream/mac/RealtimeVideoUtilities.h:
+        Preserved, since preferedPixelBufferFormat means
+        "the pixel buffer format that is preferred by media stream implementations"
+        which does not fit to category of "CoreVideo Utilities".
+        * platform/mediastream/mac/RealtimeVideoUtilities.mm: Removed.
+        * platform/network/mac/WebCoreURLResponse.mm:
+        Fix unified build failure due to a missing include.
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15

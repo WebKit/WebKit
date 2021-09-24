@@ -33,9 +33,9 @@
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/CVUtilities.h>
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/PlatformMediaSessionManager.h>
-#include <WebCore/RealtimeVideoUtilities.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
@@ -332,15 +332,9 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
     if (!decoder->decodedImageCallback)
         return;
 
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
-        m_imageTransferSession = WebCore::ImageTransferSessionVT::create(remoteSample.videoFormat());
-
-    if (!m_imageTransferSession) {
-        ASSERT_NOT_REACHED();
+    if (!remoteSample.surface())
         return;
-    }
-
-    auto pixelBuffer = m_imageTransferSession->createPixelBuffer(remoteSample.surface(), remoteSample.size());
+    auto pixelBuffer = createCVPixelBuffer(remoteSample.surface()).value_or(nullptr);
     if (!pixelBuffer) {
         ASSERT_NOT_REACHED();
         return;
@@ -444,7 +438,7 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
         if (!pixelBufferPool)
             return nullptr;
 
-        return WebCore::createPixelBufferFromPool(pixelBufferPool).leakRef();
+        return WebCore::createCVPixelBufferFromPool(pixelBufferPool).value_or(nullptr).leakRef();
     }));
 
     if (!pixelBuffer)
@@ -503,9 +497,14 @@ void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::Da
 CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)
 {
     if (!m_pixelBufferPool || m_pixelBufferPoolWidth != width || m_pixelBufferPoolHeight != height) {
-        m_pixelBufferPool = createPixelBufferPool(width, height, type);
-        m_pixelBufferPoolWidth = width;
-        m_pixelBufferPoolHeight = height;
+        m_pixelBufferPool = nullptr;
+        m_pixelBufferPoolWidth = 0;
+        m_pixelBufferPoolHeight = 0;
+        if (auto pool = WebCore::createIOSurfaceCVPixelBufferPool(width, height, type)) {
+            m_pixelBufferPool = WTFMove(*pool);
+            m_pixelBufferPoolWidth = width;
+            m_pixelBufferPoolHeight = height;
+        }
     }
     return m_pixelBufferPool.get();
 }
