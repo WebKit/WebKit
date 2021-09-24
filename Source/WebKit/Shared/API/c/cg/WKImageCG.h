@@ -38,6 +38,8 @@ WK_EXPORT CGImageRef WKImageCreateCGImage(WKImageRef image) CF_RETURNS_RETAINED;
 
 WK_EXPORT WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options);
 
+WK_EXPORT WKStringRef WKImageCreateDataURLFromImage(CGImageRef imageRef);
+
 #ifdef __cplusplus
 }
 #endif

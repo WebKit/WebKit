@@ -1,5 +1,19 @@
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
+        <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15
+        https://bugs.webkit.org/show_bug.cgi?id=229792
+        <rdar://problem/82776741>
+
+        Reviewed by Eric Carlson.
+
+        Helper routined used in WTR.
+
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateDataURLFromImage):
+        * Shared/API/c/cg/WKImageCG.h:
+
+2021-09-24  Youenn Fablet  <youenn@apple.com>
+
         [IOS 15] Video track does not get unmuted in case of tab was inactive less than ~500 ms
         https://bugs.webkit.org/show_bug.cgi?id=230538
         <rdar://problem/83355705>

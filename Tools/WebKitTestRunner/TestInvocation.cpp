@@ -744,6 +744,12 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         TestController::singleton().setStatisticsFirstPartyWebsiteDataRemovalMode(booleanValue(messageBody));
         return;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "TakeViewPortSnapshot")) {
+        auto value = TestController::singleton().takeViewPortSnapshot();
+        postPageMessage("ViewPortSnapshotTaken", value.get());
+        return;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetToSameSiteStrictCookies")) {
         TestController::singleton().setStatisticsToSameSiteStrictCookies(stringValue(messageBody));

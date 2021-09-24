@@ -269,18 +269,26 @@ void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, Media
     updateRootLayerBoundsAndPosition(bounds, rotation, ShouldUpdateRootLayer::No);
 }
 
+void LocalSampleBufferDisplayLayer::setRootLayerBoundsAndPositions(CGRect bounds, MediaSample::VideoRotation rotation)
+{
+    CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
+    if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
+        std::swap(bounds.size.width, bounds.size.height);
+
+    m_rootLayer.get().position = position;
+    m_rootLayer.get().bounds = bounds;
+}
+
 void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect bounds, MediaSample::VideoRotation rotation, ShouldUpdateRootLayer shouldUpdateRootLayer)
 {
     runWithoutAnimations([&] {
-        CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
-
-        if (shouldUpdateRootLayer == ShouldUpdateRootLayer::Yes) {
-            m_rootLayer.get().position = position;
-            m_rootLayer.get().bounds = bounds;
-        }
+        if (shouldUpdateRootLayer == ShouldUpdateRootLayer::Yes)
+            setRootLayerBoundsAndPositions(bounds, rotation);
 
         if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
             std::swap(bounds.size.width, bounds.size.height);
+
+        CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
 
         m_sampleBufferDisplayLayer.get().position = position;
         m_sampleBufferDisplayLayer.get().bounds = bounds;

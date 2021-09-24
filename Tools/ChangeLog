@@ -1,3 +1,29 @@
+2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+        <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15
+        https://bugs.webkit.org/show_bug.cgi?id=229792
+        <rdar://problem/82776741>
+
+        Reviewed by Eric Carlson.
+
+        Add testRunner API to take a view port snapshot as a PNG data URL.
+        We can then use this data URL to validate some rendered pixel values.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::takeViewPortSnapshot):
+        (WTR::TestRunner::viewPortSnapshotTaken):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::takeViewPortSnapshot):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::takeViewPortSnapshot):
+
 2021-09-24  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r282742): Broke IceCC builds
