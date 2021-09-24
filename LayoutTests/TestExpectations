@@ -4321,7 +4321,6 @@ webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/percentage-h
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars-auto.html [ ImageOnlyFailure ]
 webkit.org/b/212046 imported/w3c/web-platform-tests/css/css-flexbox/scrollbars.html [ ImageOnlyFailure ]
 
-
 # Static position alignment in Flexbox.
 webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-001.html [ ImageOnlyFailure ]
 webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002.html [ ImageOnlyFailure ]
@@ -4387,6 +4386,7 @@ webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-base
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change-nested.html [ ImageOnlyFailure ]
 webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/dynamic-baseline-change.html [ ImageOnlyFailure ]
+webkit.org/b/221478 imported/w3c/web-platform-tests/css/css-flexbox/synthesize-vrl-baseline.html [ ImageOnlyFailure ]
 
 # flex-basis:content.
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-001a.html [ ImageOnlyFailure ]
@@ -4395,6 +4395,13 @@ webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-002b.html [ ImageOnlyFailure ]
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a.html [ ImageOnlyFailure ]
 webkit.org/b/221479 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a.html [ ImageOnlyFailure ]
+
+# flex-basis with %.
+webkit.org/b/ imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-011.html [ ImageOnlyFailure ]
+
+# Flex item's min|max content contributions
+webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-max-content-001.html [ ImageOnlyFailure ]
+webkit.org/b/230747 imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-001.html [ ImageOnlyFailure ]
 
 # break request in flexbox.
 webkit.org/b/221480 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-break-request-horiz-001a.html [ ImageOnlyFailure ]
@@ -4415,6 +4422,7 @@ webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-coll
 
 # Painting order in flexbox
 webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002.xhtml [ ImageOnlyFailure ]
+webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/order/order-abs-children-painting-order.html [ ImageOnlyFailure ]
 
 # Newly imported Canvas WPT tests that are failing.
 imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure Pass ]

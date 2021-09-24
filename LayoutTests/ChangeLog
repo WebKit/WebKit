@@ -1,3 +1,12 @@
+2021-09-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import latest changes from css-flexbox WPT repo
+        https://bugs.webkit.org/show_bug.cgi?id=230748
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * TestExpectations: Added 6 new tests that fail since the import.
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15

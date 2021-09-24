@@ -1,3 +1,251 @@
+2021-09-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Import latest changes from css-flexbox WPT repo
+        https://bugs.webkit.org/show_bug.cgi?id=230748
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-003-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-003.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-004-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-004-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-005-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-005-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-005.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-006-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-006-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-006.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-007-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-007-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-007.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-008-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-008-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-008.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-rtl-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-content-vertWM-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-003-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-003.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-004-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-004-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-005-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-005-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-005.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-006-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-006-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-006.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-007-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-007-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-007.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-008-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-008-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-008.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-003-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-003.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-004-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-004-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-rtl-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-003-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-003.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-004-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-004-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-vertWM-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-003-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-003-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-003.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-004-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-004-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-004.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-005-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-005-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-005.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-006-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-006-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-006.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-007-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-007-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-007.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-008-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-008-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-008.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-rtl-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-001-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-001.html:
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-002-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-justify-content-vertWM-002.html:
+        * web-platform-tests/css/css-flexbox/abspos/w3c-import.log:
+        * web-platform-tests/css/css-flexbox/align-content-wrap-005-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/align-content-wrap-005.html: Added.
+        * web-platform-tests/css/css-flexbox/column-intrinsic-size-aspect-ratio-crash.html: Added.
+        * web-platform-tests/css/css-flexbox/display_flex_exist-expected.txt: Removed.
+        * web-platform-tests/css/css-flexbox/display_flex_exist.html: Removed.
+        * web-platform-tests/css/css-flexbox/display_inline-flex_exist-expected.txt: Removed.
+        * web-platform-tests/css/css-flexbox/display_inline-flex_exist.html: Removed.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-001.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-002-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-002.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-003-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-003.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-004-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-isize-change-004.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-stretch-change-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/dynamic-stretch-change.html: Added.
+        * web-platform-tests/css/css-flexbox/fixed-table-layout-with-percentage-width-in-flex-item-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/fixed-table-layout-with-percentage-width-in-flex-item.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-base-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/flex-base.html: Removed.
+        * web-platform-tests/css/css-flexbox/flex-basis-011-expected.html:
+        * web-platform-tests/css/css-flexbox/flex-basis-011.html:
+        * web-platform-tests/css/css-flexbox/flex-basis-012-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-012.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-intrinsics-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flex-basis-intrinsics-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-container-max-content-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-container-max-content-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-container-min-content-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-container-min-content-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-childmargin-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-childmargin.html: Removed.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-percentage-prescation-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/flex-flexitem-percentage-prescation.html: Removed.
+        * web-platform-tests/css/css-flexbox/flex-grow-008-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/flex-grow-008.html: Added.
+        * web-platform-tests/css/css-flexbox/flex-item-compressible-001.html:
+        * web-platform-tests/css/css-flexbox/flex-item-compressible-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001a-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-001b-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-006-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-007-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-baseline-horiz-008-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-001-block-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-001-table-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-003-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-004-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-align-self-baseline-horiz-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-align-self-baseline-vert-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-horiz-001b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-item-vert-001b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-001.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-002-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-horiz-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-001-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-001.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-multi-line-vert-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-nested-001-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-baseline-nested-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-003b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004a.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004b-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-flex-basis-content-004b.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-002-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-002.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-003-expected.html:
+        * web-platform-tests/css/css-flexbox/flexbox-items-as-stacking-contexts-003.html:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-horiz-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-vert-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-justify-content-wmvert-002.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox-mbp-horiz-004-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-mbp-horiz-004.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-paint-ordering-002.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox-table-fixup-001-expected.xhtml:
+        * web-platform-tests/css/css-flexbox/flexbox_columns.html:
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-rtl-001-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-rtl-001.html: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-rtl-002-expected.txt: Added.
+        * web-platform-tests/css/css-flexbox/flexbox_justifycontent-rtl-002.html: Added.
+        * web-platform-tests/css/css-flexbox/floated-flexitem-expected.html: Removed.
+        * web-platform-tests/css/css-flexbox/floated-flexitem.html: Removed.
+        * web-platform-tests/css/css-flexbox/image-nested-within-definite-column-flexbox-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/image-nested-within-definite-column-flexbox.html: Added.
+        * web-platform-tests/css/css-flexbox/order/order-abs-children-painting-order-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/order/order-abs-children-painting-order.html: Added.
+        * web-platform-tests/css/css-flexbox/order/w3c-import.log:
+        * web-platform-tests/css/css-flexbox/overflow-area-003-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/overflow-area-003.html: Added.
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed.html:
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-valid-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-valid.html:
+        * web-platform-tests/css/css-flexbox/parsing/flex-shorthand-expected.txt:
+        * web-platform-tests/css/css-flexbox/parsing/flex-shorthand.html:
+        * web-platform-tests/css/css-flexbox/percentage-heights-015-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-heights-015.html: Added.
+        * web-platform-tests/css/css-flexbox/svg-no-natural-size-grandchild-expected.xht: Added.
+        * web-platform-tests/css/css-flexbox/svg-no-natural-size-grandchild.html: Added.
+        * web-platform-tests/css/css-flexbox/synthesize-vrl-baseline-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/synthesize-vrl-baseline.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2021-09-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Handle CSSOM style mutation of font-palette

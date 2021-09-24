@@ -2,6 +2,10 @@
 PASS Property flex-basis value '1px'
 PASS Property flex-basis value '400%'
 PASS Property flex-basis value 'auto'
+FAIL Property flex-basis value 'content' assert_true: 'content' is a supported value for flex-basis. expected true got false
+FAIL Property flex-basis value 'fit-content' assert_true: 'fit-content' is a supported value for flex-basis. expected true got false
+FAIL Property flex-basis value 'min-content' assert_true: 'min-content' is a supported value for flex-basis. expected true got false
+FAIL Property flex-basis value 'max-content' assert_true: 'max-content' is a supported value for flex-basis. expected true got false
 PASS Property flex-basis value 'calc(10px + 0.5em)'
 PASS Property flex-basis value 'calc(10px - 0.5em)'
 PASS Property flex-basis value 'calc(10%)'

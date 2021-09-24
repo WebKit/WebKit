@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order/order-abs-children-painting-order-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order/order-abs-children-painting-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order/order-with-column-reverse-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order/order-with-column-reverse.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/order/order-with-row-reverse-expected.html

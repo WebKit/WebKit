@@ -21,6 +21,7 @@
         "css/css-color/t425-hsla-basic-a.xht",
         "css/css-flexbox/align-self-006.html",
         "css/css-flexbox/align-self-010.html",
+        "css/css-flexbox/column-intrinsic-size-aspect-ratio-crash.html",
         "css/css-flexbox/contain-size-layout-abspos-flex-container-crash.html",
         "css/css-flexbox/fixedpos-video-in-abspos-quirk-crash.html",
         "css/css-flexbox/flex-direction-column-001-visual.html",
