@@ -67,7 +67,7 @@ struct Box {
         GenericInlineLevelBox
     };
     struct Expansion;
-    Box(size_t lineIndex, Type, const Layout::Box&, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true);
+    Box(size_t lineIndex, Type, const Layout::Box&, const RenderStyle&, const Layout::InlineRect&, const Layout::InlineRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true);
 
     bool isText() const { return m_type == Type::Text; }
     bool isSoftLineBreak() const { return m_type == Type::SoftLineBreak; }
@@ -108,7 +108,7 @@ struct Box {
     Expansion expansion() const { return m_expansion; }
 
     const Layout::Box& layoutBox() const { return *m_layoutBox; }
-    const RenderStyle& style() const { return layoutBox().style(); }
+    const RenderStyle& style() const { return m_style; }
 
     size_t lineIndex() const { return m_lineIndex; }
 
@@ -116,6 +116,7 @@ private:
     const size_t m_lineIndex { 0 };
     const Type m_type { Type::GenericInlineLevelBox };
     WeakPtr<const Layout::Box> m_layoutBox;
+    const RenderStyle& m_style;
     Layout::InlineRect m_logicalRect;
     Layout::InlineRect m_inkOverflow;
     bool m_hasContent { true };
@@ -123,10 +124,11 @@ private:
     std::optional<Text> m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, const RenderStyle& style, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(makeWeakPtr(layoutBox))
+    , m_style(style)
     , m_logicalRect(logicalRect)
     , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)

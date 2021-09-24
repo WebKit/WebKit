@@ -1,3 +1,23 @@
+2021-09-24  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineDisplay::Box should be able to provide first-line style when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=230709
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting first-line style. The idea here is that the run/box objects we construct after line breaking should
+        retain the applicable style.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineSpanningInlineBoxes):
+        * layout/formattingContexts/inline/display/InlineDisplayBox.h:
+        (WebCore::InlineDisplay::Box::style const):
+        (WebCore::InlineDisplay::Box::Box):
+        * layout/integration/LayoutIntegrationPagination.cpp:
+        (WebCore::LayoutIntegration::makeAdjustedContent):
+
 2021-09-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Add utility to create CVPixelBuffers from IOSurfaces

@@ -50,7 +50,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     rootInlineBoxRect.moveBy(lineBoxLogicalTopLeft);
-    boxes.append({ lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), rootInlineBoxRect, rootInlineBoxRect, { }, { },  lineBox.rootInlineBox().hasContent()});
+    boxes.append({ lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), root().style(), rootInlineBoxRect, rootInlineBoxRect, { }, { },  lineBox.rootInlineBox().hasContent()});
 
     createBoxesAndUpdateGeometryForLineSpanningInlineBoxes(lineBox, lineBoxLogicalTopLeft, lineIndex, boxes);
     createBoxesAndUpdateGeometryForLineContent(lineContent, lineBox, lineBoxLogicalTopLeft, lineIndex, boxes);
@@ -64,12 +64,14 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
     // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
+        // FIXME: This should be lineIndex dependent to support first-line style.
+        auto& style = layoutBox.style();
+
         switch (lineRun.type()) {
         case InlineItem::Type::Text: {
             auto textRunRect = lineBox.logicalRectForTextRun(lineRun);
             textRunRect.moveBy(lineBoxLogicalTopLeft);
 
-            auto& style = layoutBox.style();
             auto inkOverflow = [&] {
                 auto initialContaingBlockSize = RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()
                     ? formattingState.layoutState().viewportSize()
@@ -93,6 +95,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             boxes.append({ lineIndex
                 , InlineDisplay::Box::Type::Text
                 , layoutBox
+                , style
                 , textRunRect
                 , inkOverflow()
                 , lineRun.expansion()
@@ -108,6 +111,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             boxes.append({ lineIndex
                 , InlineDisplay::Box::Type::SoftLineBreak
                 , layoutBox
+                , style
                 , softLineBreakRunRect
                 , softLineBreakRunRect
                 , lineRun.expansion()
@@ -118,7 +122,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             // Only hard linebreaks have associated layout boxes.
             auto lineBreakBoxRect = lineBox.logicalRectForLineBreakBox(layoutBox);
             lineBreakBoxRect.moveBy(lineBoxLogicalTopLeft);
-            boxes.append({ lineIndex, InlineDisplay::Box::Type::LineBreakBox, layoutBox, lineBreakBoxRect, lineBreakBoxRect, lineRun.expansion(), { } });
+            boxes.append({ lineIndex, InlineDisplay::Box::Type::LineBreakBox, layoutBox, style, lineBreakBoxRect, lineBreakBoxRect, lineRun.expansion(), { } });
 
             auto& boxGeometry = formattingState.boxGeometry(layoutBox);
             boxGeometry.setLogicalTopLeft(toLayoutPoint(lineBreakBoxRect.topLeft()));
@@ -131,7 +135,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             auto logicalBorderBox = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
             logicalBorderBox.moveBy(lineBoxLogicalTopLeft);
             // FIXME: Add ink overflow support for atomic inline level boxes (e.g. box shadow).
-            boxes.append({ lineIndex, InlineDisplay::Box::Type::AtomicInlineLevelBox, layoutBox, logicalBorderBox, logicalBorderBox, lineRun.expansion(), { } });
+            boxes.append({ lineIndex, InlineDisplay::Box::Type::AtomicInlineLevelBox, layoutBox, style, logicalBorderBox, logicalBorderBox, lineRun.expansion(), { } });
 
             auto borderBoxLogicalTopLeft = logicalBorderBox.topLeft();
             // Note that inline boxes are relative to the line and their top position can be negative.
@@ -158,7 +162,7 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
             if (lineBox.hasContent()) {
                 // FIXME: It's expected to not have any boxes on empty lines. We should reconsider this.
                 m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
-                boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent() });
+                boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, style, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent() });
             }
 
             auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
@@ -191,13 +195,15 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineSpanningInl
         if (!inlineLevelBox.isLineSpanningInlineBox())
             continue;
         auto& layoutBox = inlineLevelBox.layoutBox();
+        // FIXME: This should be lineIndex dependent to support first-line style.
+        auto& style = layoutBox.style();
         auto& boxGeometry = formattingState.boxGeometry(layoutBox);
         // Inline boxes may or may not be wrapped and have boxes on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
         auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
         inlineBoxBorderBox.moveBy(lineBoxLogicalTopLeft);
 
         m_inlineBoxIndexMap.add(&layoutBox, boxes.size());
-        boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent() });
+        boxes.append({ lineIndex, InlineDisplay::Box::Type::NonRootInlineBox, layoutBox, style, inlineBoxBorderBox, inlineBoxBorderBox, { }, { }, inlineLevelBox.hasContent() });
 
         auto inlineBoxSize = LayoutSize { LayoutUnit::fromFloatCeil(inlineBoxBorderBox.width()), LayoutUnit::fromFloatCeil(inlineBoxBorderBox.height()) };
         auto logicalRect = Rect { LayoutPoint { inlineBoxBorderBox.topLeft() }, inlineBoxSize };
