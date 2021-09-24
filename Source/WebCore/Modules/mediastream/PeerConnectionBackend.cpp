@@ -35,6 +35,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
+#include "JSRTCCertificate.h"
 #include "LibWebRTCCertificateGenerator.h"
 #include "Logging.h"
 #include "Page.h"
@@ -435,7 +436,9 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
         promise.reject(InvalidStateError);
         return;
     }
-    LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), page->libWebRTCProvider(), info, WTFMove(promise));
+    LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), page->libWebRTCProvider(), info, [promise = WTFMove(promise)](auto&& result) mutable {
+        promise.settle(WTFMove(result));
+    });
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(expires);

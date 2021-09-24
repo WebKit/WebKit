@@ -59,12 +59,12 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
 
     auto page = document.page();
     if (!page) {
-        promise.settle(Exception { InvalidStateError });
+        promise.reject(Exception { InvalidStateError });
         return;
     }
 
     if (m_setupFeaturesPromise) {
-        promise.settle(Exception { InvalidStateError });
+        promise.reject(Exception { InvalidStateError });
         return;
     }
 
@@ -91,18 +91,18 @@ void ApplePaySetup::begin(Document& document, Vector<RefPtr<ApplePaySetupFeature
     }
 
     if (!UserGestureIndicator::processingUserGesture()) {
-        promise.settle(Exception { InvalidAccessError, "Must call ApplePaySetup.begin from a user gesture handler." });
+        promise.reject(Exception { InvalidAccessError, "Must call ApplePaySetup.begin from a user gesture handler." });
         return;
     }
 
     auto page = document.page();
     if (!page) {
-        promise.settle(Exception { InvalidStateError });
+        promise.reject(Exception { InvalidStateError });
         return;
     }
 
     if (m_beginPromise) {
-        promise.settle(Exception { InvalidStateError });
+        promise.reject(Exception { InvalidStateError });
         return;
     }
 

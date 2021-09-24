@@ -1,3 +1,32 @@
+2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+        DOMPromiseDeferred should be able to handle Ref/RefPtr resolution values for interface types
+        https://bugs.webkit.org/show_bug.cgi?id=230603
+
+        Reviewed by Sihui Liu.
+
+        Refactoring to allow DOMPromiseDeferred<IDLInterface<T>> to be able to call settle on ExceptionOr<Ref<T>>&&.
+        Apply new support on PeerConnectionBackend::generateCertificate.
+        Small refactoring to use reject instead of settle in ApplePaySetup.
+        No expected change of behavior.
+
+        * Modules/applepay/ApplePaySetup.cpp:
+        (WebCore::ApplePaySetup::getSetupFeatures):
+        (WebCore::ApplePaySetup::begin):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::generateCertificate):
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp:
+        (WebCore::LibWebRTCCertificateGenerator::RTCCertificateGeneratorCallback::RTCCertificateGeneratorCallback):
+        (WebCore::LibWebRTCCertificateGenerator::generateCertificate):
+        * Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.h:
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DOMPromiseDeferred::resolve):
+        (WebCore::DOMPromiseDeferred::settle):
+        (WebCore::DOMPromiseDeferred<IDLInterface<T>>::resolve):
+        (WebCore::DOMPromiseDeferred<IDLInterface<T>>::settle):
+        * testing/Internals.cpp:
+        (WebCore::Internals::sendH2Ping):
+
 2021-09-23  Rob Buis  <rbuis@igalia.com>
 
         RenderElement::moveLayers should take reference

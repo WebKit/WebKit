@@ -261,7 +261,7 @@ protected:
     Ref<DeferredPromise> m_promise;
 };
 
-template<typename IDLType> 
+template<typename IDLType>
 class DOMPromiseDeferred : public DOMPromiseDeferredBase {
 public:
     using DOMPromiseDeferredBase::DOMPromiseDeferredBase;
@@ -270,8 +270,41 @@ public:
     using DOMPromiseDeferredBase::reject;
 
     void resolve(typename IDLType::ParameterType value)
-    { 
+    {
         m_promise->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
+    }
+
+    void settle(ExceptionOr<typename IDLType::ParameterType>&& result)
+    {
+        if (result.hasException()) {
+            reject(result.releaseException());
+            return;
+        }
+        resolve(result.releaseReturnValue());
+    }
+};
+
+template<typename T>
+class DOMPromiseDeferred<IDLInterface<T>> : public DOMPromiseDeferredBase {
+public:
+    using DOMPromiseDeferredBase::DOMPromiseDeferredBase;
+    using DOMPromiseDeferredBase::operator=;
+    using DOMPromiseDeferredBase::promise;
+    using DOMPromiseDeferredBase::reject;
+    using IDLType = IDLInterface<T>;
+
+    void resolve(typename IDLType::InnerParameterType value)
+    {
+        m_promise->resolve<IDLType>(std::forward<typename IDLType::ParameterType>(value));
+    }
+
+    void settle(ExceptionOr<typename IDLType::InnerParameterType>&& result)
+    {
+        if (result.hasException()) {
+            reject(result.releaseException());
+            return;
+        }
+        resolve(result.releaseReturnValue());
     }
 
     void settle(ExceptionOr<typename IDLType::ParameterType>&& result)
