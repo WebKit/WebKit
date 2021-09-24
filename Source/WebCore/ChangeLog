@@ -1,5 +1,29 @@
 2021-09-24  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] LineBuilder should have the option of passing in the correct style when a run is added to the line
+        https://bugs.webkit.org/show_bug.cgi?id=230760
+
+        Reviewed by Antti Koivisto.
+
+        Now the Line only uses the passed in style information. It's up to the LineBuilder to pass in the line index dependent style when attaching a run.
+
+        * layout/formattingContexts/inline/InlineLine.cpp:
+        (WebCore::Layout::Line::append):
+        (WebCore::Layout::Line::appendNonBreakableSpace):
+        (WebCore::Layout::Line::appendInlineBoxStart):
+        (WebCore::Layout::Line::appendInlineBoxEnd):
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::Line::appendNonReplacedInlineLevelBox):
+        (WebCore::Layout::Line::appendReplacedInlineLevelBox):
+        * layout/formattingContexts/inline/InlineLine.h:
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::placeInlineContent):
+        (WebCore::Layout::LineBuilder::handleInlineContent):
+        (WebCore::Layout::LineBuilder::commitPartialContent):
+        (WebCore::Layout::LineBuilder::rebuildLine):
+
+2021-09-24  Alan Bujtas  <zalan@apple.com>
+
         r283047 broke some hyphen related debug tests.
 
         Apparently we can't access the hyphen string when the hyphen property is not set.

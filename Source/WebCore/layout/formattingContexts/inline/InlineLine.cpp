@@ -198,42 +198,42 @@ void Line::visuallyCollapseHangingOverflow(InlineLayoutUnit extraHorizontalSpace
     m_contentLogicalWidth -= trimmedContentWidth;
 }
 
-void Line::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     if (inlineItem.isText())
-        appendTextContent(downcast<InlineTextItem>(inlineItem), logicalWidth);
+        appendTextContent(downcast<InlineTextItem>(inlineItem), style, logicalWidth);
     else if (inlineItem.isLineBreak())
         appendLineBreak(inlineItem);
     else if (inlineItem.isWordBreakOpportunity())
         appendWordBreakOpportunity(inlineItem);
     else if (inlineItem.isInlineBoxStart())
-        appendInlineBoxStart(inlineItem, logicalWidth);
+        appendInlineBoxStart(inlineItem, style, logicalWidth);
     else if (inlineItem.isInlineBoxEnd())
-        appendInlineBoxEnd(inlineItem, logicalWidth);
+        appendInlineBoxEnd(inlineItem, style, logicalWidth);
     else if (inlineItem.layoutBox().isReplacedBox())
-        appendReplacedInlineLevelBox(inlineItem, logicalWidth);
+        appendReplacedInlineLevelBox(inlineItem, style, logicalWidth);
     else if (inlineItem.isBox())
-        appendNonReplacedInlineLevelBox(inlineItem, logicalWidth);
+        appendNonReplacedInlineLevelBox(inlineItem, style, logicalWidth);
     else
         ASSERT_NOT_REACHED();
 }
 
-void Line::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
+void Line::appendNonBreakableSpace(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
-    m_runs.append({ inlineItem, inlineItem.style(), logicalLeft, logicalWidth });
+    m_runs.append({ inlineItem, style, logicalLeft, logicalWidth });
     // Do not let negative margin make the content shorter than it already is.
     auto runLogicalRight = logicalLeft + logicalWidth;
     m_contentLogicalWidth = std::max(m_contentLogicalWidth, runLogicalRight);
 }
 
-void Line::appendInlineBoxStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the start of the inline box <span>.
     ++m_nonSpanningInlineLevelBoxCount;
-    appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
+    appendNonBreakableSpace(inlineItem, style, contentLogicalRight(), logicalWidth);
 }
 
-void Line::appendInlineBoxEnd(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     // This is really just a placeholder to mark the end of the inline box </span>.
     auto removeTrailingLetterSpacing = [&] {
@@ -244,12 +244,11 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, InlineLayoutUnit log
     // Prevent trailing letter-spacing from spilling out of the inline box.
     // https://drafts.csswg.org/css-text-3/#letter-spacing-property See example 21.
     removeTrailingLetterSpacing();
-    appendNonBreakableSpace(inlineItem, contentLogicalRight(), logicalWidth);
+    appendNonBreakableSpace(inlineItem, style, contentLogicalRight(), logicalWidth);
 }
 
-void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutUnit logicalWidth)
+void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
-    auto& style = inlineTextItem.style();
     auto willCollapseCompletely = [&] {
         if (inlineTextItem.isEmptyContent())
             return true;
@@ -295,7 +294,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     if (needsNewRun) {
         // Note, negative words spacing may cause glyph overlap.
         auto runLogicalLeft = contentLogicalRight() + (inlineTextItem.isWordSeparator() ? style.fontCascade().wordSpacing() : 0.0f);
-        m_runs.append({ inlineTextItem, inlineTextItem.style(), runLogicalLeft, logicalWidth });
+        m_runs.append({ inlineTextItem, style, runLogicalLeft, logicalWidth });
         m_contentLogicalWidth = std::max(oldContentLogicalWidth, runLogicalLeft + logicalWidth);
     } else {
         m_runs.last().expand(inlineTextItem, logicalWidth);
@@ -314,7 +313,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     m_trailingSoftHyphenWidth = inlineTextItem.hasTrailingSoftHyphen() ? std::make_optional(style.fontCascade().width(TextRun { StringView { style.hyphenString() } })) : std::nullopt;
 }
 
-void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
 {
     m_trimmableTrailingContent.reset();
     m_trailingSoftHyphenWidth = { };
@@ -322,21 +321,21 @@ void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, InlineL
     ++m_nonSpanningInlineLevelBoxCount;
     auto marginStart = formattingContext().geometryForBox(inlineItem.layoutBox()).marginStart();
     if (marginStart >= 0) {
-        m_runs.append({ inlineItem, inlineItem.style(), contentLogicalRight(), marginBoxLogicalWidth });
+        m_runs.append({ inlineItem, style, contentLogicalRight(), marginBoxLogicalWidth });
         return;
     }
     // Negative margin-start pulls the content to the logical left direction.
     // Negative margin also squeezes the margin box, we need to stretch it to make sure the subsequent content won't overlap.
     // e.g. <img style="width: 100px; margin-left: -100px;"> pulls the replaced box to -100px with the margin box width of 0px.
     // Instead we need to position it at -100px and size it to 100px so the subsequent content starts at 0px. 
-    m_runs.append({ inlineItem, inlineItem.style(), contentLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
+    m_runs.append({ inlineItem, style, contentLogicalRight() + marginStart, marginBoxLogicalWidth - marginStart });
 }
 
-void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
+void Line::appendReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
 {
     ASSERT(inlineItem.layoutBox().isReplacedBox());
     // FIXME: Surely replaced boxes behave differently.
-    appendNonReplacedInlineLevelBox(inlineItem, marginBoxLogicalWidth);
+    appendNonReplacedInlineLevelBox(inlineItem, style, marginBoxLogicalWidth);
 }
 
 void Line::appendLineBreak(const InlineItem& inlineItem)

@@ -44,7 +44,7 @@ public:
 
     void initialize();
 
-    void append(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     InlineLayoutUnit contentLogicalRight() const { return m_runs.isEmpty() ? 0.0f : m_runs.last().logicalRight(); }
@@ -142,12 +142,12 @@ public:
     const RunList& runs() const { return m_runs; }
 
 private:
-    void appendNonBreakableSpace(const InlineItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
-    void appendTextContent(const InlineTextItem&, InlineLayoutUnit logicalWidth);
-    void appendNonReplacedInlineLevelBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
-    void appendReplacedInlineLevelBox(const InlineItem&, InlineLayoutUnit marginBoxLogicalWidth);
-    void appendInlineBoxStart(const InlineItem&, InlineLayoutUnit logicalWidth);
-    void appendInlineBoxEnd(const InlineItem&, InlineLayoutUnit logicalWidth);
+    void appendNonBreakableSpace(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
+    void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+    void appendNonReplacedInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
+    void appendReplacedInlineLevelBox(const InlineItem&, const RenderStyle&, InlineLayoutUnit marginBoxLogicalWidth);
+    void appendInlineBoxStart(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
+    void appendInlineBoxEnd(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
     void appendLineBreak(const InlineItem&);
     void appendWordBreakOpportunity(const InlineItem&);
 

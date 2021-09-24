@@ -330,14 +330,15 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
                 if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
                     // <wbr> needs to be on the line as an empty run so that we can construct an inline box and compute basic geometry.
                     ++committedInlineItemCount;
-                    m_line.append(*wordBreakOpportunity, { });
+                    m_line.append(*wordBreakOpportunity, wordBreakOpportunity->style(), { });
                 }
                 if (inlineContent.trailingLineBreak()) {
                     // Fully committed (or empty) content followed by a line break means "end of line".
                     // FIXME: This will put the line break box at the end of the line while in case of some inline boxes, the line break
                     // could very well be at an earlier position. This has no visual implications at this point though (only geometry correctness on the line break box).
                     // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
-                    m_line.append(*inlineContent.trailingLineBreak(), { });
+                    auto& trailingLineBreak = *inlineContent.trailingLineBreak();
+                    m_line.append(trailingLineBreak, trailingLineBreak.style(), { });
                     ++committedInlineItemCount;
                     isEndOfLine = true;
                 }
@@ -690,7 +691,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         // This continuous content can be fully placed on the current line.
         m_lineLogicalRect = lineLogicalRectForCandidateContent;
         for (auto& run : candidateRuns)
-            m_line.append(run.inlineItem, run.logicalWidth);
+            m_line.append(run.inlineItem, run.inlineItem.style(), run.logicalWidth);
         if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity()) {
             // Check if we are allowed to wrap at this position.
             auto& trailingRun = candidateRuns.last();
@@ -773,16 +774,16 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
                 ASSERT(run.inlineItem.isText());
                 auto& trailingInlineTextItem = downcast<InlineTextItem>(runs[partialTrailingContent.trailingRunIndex].inlineItem);
                 auto partialTrailingTextItem = trailingInlineTextItem.left(partialRun->length);
-                m_line.append(partialTrailingTextItem, partialRun->logicalWidth);
+                m_line.append(partialTrailingTextItem, trailingInlineTextItem.style(), partialRun->logicalWidth);
                 if (auto hyphenWidth = partialRun->hyphenWidth)
                     m_line.addTrailingHyphen(*hyphenWidth);
                 return;
             }
             // The partial run is the last content to commit.
-            m_line.append(run.inlineItem, run.logicalWidth);
+            m_line.append(run.inlineItem, run.inlineItem.style(), run.logicalWidth);
             return;
         }
-        m_line.append(run.inlineItem, run.logicalWidth);
+        m_line.append(run.inlineItem, run.inlineItem.style(), run.logicalWidth);
     }
 }
 
@@ -794,14 +795,14 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
     m_line.initialize();
     auto currentItemIndex = layoutRange.start;
     if (m_partialLeadingTextItem) {
-        m_line.append(*m_partialLeadingTextItem, inlineItemWidth(*m_partialLeadingTextItem, { }));
+        m_line.append(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), inlineItemWidth(*m_partialLeadingTextItem, { }));
         if (&m_partialLeadingTextItem.value() == &lastInlineItemToAdd)
             return 1;
         ++currentItemIndex;
     }
     for (; currentItemIndex < layoutRange.end; ++currentItemIndex) {
         auto& inlineItem = m_inlineItems[currentItemIndex];
-        m_line.append(inlineItem, inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
+        m_line.append(inlineItem, inlineItem.style(), inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
         if (&inlineItem == &lastInlineItemToAdd)
             return currentItemIndex - layoutRange.start + 1;
     }
