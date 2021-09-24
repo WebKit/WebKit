@@ -1454,3 +1454,4 @@ webkit.org/b/230765 [ Catalina Debug ] storage/indexeddb/mozilla/cursors-private
 [ Catalina Debug ] webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Pass Timeout ]
 [ Catalina Debug ] webgl/2.0.0/conformance/rendering/draw-elements-out-of-bounds.html [ Pass Timeout ]
 
+webkit.org/b/230777 [ Catalina Debug ] transitions/transition-end-event-destroy-renderer.html [ Pass Crash ]
