@@ -1,3 +1,54 @@
+2021-09-24  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281941. rdar://problem/83429618
+
+    [COOP] html/cross-origin-opener-policy/coop-navigate-same-origin-csp-sandbox.html WPT test is failing
+    https://bugs.webkit.org/show_bug.cgi?id=229716
+    
+    Reviewed by Darin Adler.
+    
+    LayoutTests/imported/w3c:
+    
+    Rebaseline WPT test that is now passing.
+    
+    * web-platform-tests/html/cross-origin-opener-policy/coop-navigate-same-origin-csp-sandbox-expected.txt:
+    
+    Source/WebCore:
+    
+    The COOP algorithm is relying on the response origin for some of the checks. We were computing the
+    response origin via `SecurityOrigin::create(response.url())`, which worked fine in most cases.
+    However, the response may contain a CSP header, which could set sandbox flags. If sandbox flags
+    are set, the response origin should be unique, not the origin of the response URL. This patch fixes
+    that.
+    
+    No new tests, rebaselined existing WPT test.
+    
+    * loader/DocumentLoader.cpp:
+    (WebCore::computeResponseOriginAndCOOP):
+    (WebCore::DocumentLoader::doCrossOriginOpenerHandlingOfResponse):
+    * loader/DocumentLoader.h:
+    (WebCore::DocumentLoader::contentSecurityPolicy const):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::didBeginDocument):
+    * page/csp/ContentSecurityPolicy.cpp:
+    (WebCore::ContentSecurityPolicy::copyStateFrom):
+    (WebCore::ContentSecurityPolicy::didReceiveHeaders):
+    * page/csp/ContentSecurityPolicy.h:
+    (WebCore::ContentSecurityPolicy::sandboxFlags const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281941 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-02  Chris Dumez  <cdumez@apple.com>
+
+            [COOP] html/cross-origin-opener-policy/coop-navigate-same-origin-csp-sandbox.html WPT test is failing
+            https://bugs.webkit.org/show_bug.cgi?id=229716
+
+            Reviewed by Darin Adler.
+
+            Rebaseline WPT test that is now passing.
+
+            * web-platform-tests/html/cross-origin-opener-policy/coop-navigate-same-origin-csp-sandbox-expected.txt:
+
 2021-09-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282017. rdar://problem/83183644
