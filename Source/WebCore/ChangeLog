@@ -1,3 +1,25 @@
+2021-09-24  Brandon Stewart  <brandonstewart@apple.com>
+
+        [RenderTreeUpdater] NULL ptr deref in updateRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=230581
+
+        Reviewed by Antti Koivisto.
+
+        Text element changes are buffered. This can lead to undesirable behavior
+        when switching a node to a document that is not rendered, and then proceeding
+        with a rendering update.
+
+        If we cannot find a renderer in a node or its ancestors then just give up
+        instead of returning a document.
+
+        Test: fast/dom/Document/clearPendingRenderTreeUpdater.html
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::findRenderingRoot):
+        (WebCore::RenderTreeUpdater::commit):
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::RenderTreeUpdater::textRendererIsNeeded):
+
 2021-09-24  Sihui Liu  <sihui_liu@apple.com>
 
         Add initial support for File System Access API

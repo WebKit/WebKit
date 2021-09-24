@@ -1,0 +1,22 @@
+<html>
+<body>
+<script>
+    onload = () => {
+        if (window.testRunner)
+          testRunner.dumpAsText()
+
+        let div0 = document.createElement('div');
+        div0.style.display = 'contents';
+        let div1 = document.createElement('div');
+        div1.append('ab');
+        div0.appendChild(div1);
+        document.body.appendChild(div0);
+        document.body.offsetTop;
+        div1.innerHTML = 'a';
+        new Document().appendChild(div0);
+    }
+</script>
+
+This test shall pass if it does not crash.
+</body>
+</html>

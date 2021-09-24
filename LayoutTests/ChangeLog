@@ -1,3 +1,16 @@
+2021-09-24  Brandon Stewart  <brandonstewart@apple.com>
+
+        [RenderTreeUpdater] NULL ptr deref in updateRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=230581
+
+        Reviewed by Antti Koivisto.
+
+        New regression test to handle case where we trigger a text update,
+        and then switch the node to a new unrendered document.
+
+        * fast/dom/Document/clearPendingRenderTreeUpdater-expected.txt: Added.
+        * fast/dom/Document/clearPendingRenderTreeUpdater.html: Added.
+
 2021-09-24  Sihui Liu  <sihui_liu@apple.com>
 
         Add initial support for File System Access API
