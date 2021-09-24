@@ -1,3 +1,28 @@
+2021-09-24  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Line breaking only uses a few style properties
+        https://bugs.webkit.org/show_bug.cgi?id=230757
+
+        Reviewed by Antti Koivisto.
+
+        The continuous runs, input to the line breaking, should only contain style properties that line breaking actually uses. 
+        This is in preparation for supporting first-line.
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::isWrappingAllowed):
+        (WebCore::Layout::InlineContentBreaker::shouldKeepEndOfLineWhitespace const):
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContent const):
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContentWithText const):
+        (WebCore::Layout::InlineContentBreaker::wordBreakBehavior const):
+        (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::append):
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::reset):
+        * layout/formattingContexts/inline/InlineContentBreaker.h:
+        (WebCore::Layout::InlineContentBreaker::ContinuousContent::Run::Run):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+        (WebCore::Layout::LineBuilder::handleInlineContent):
+
 2021-09-24  Youenn Fablet  <youenn@apple.com>
 
         RTCDataChannelHandlerClient does not need to be ref counted

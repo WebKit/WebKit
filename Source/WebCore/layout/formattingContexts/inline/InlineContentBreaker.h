@@ -28,11 +28,9 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutUnits.h"
+#include "RenderStyle.h"
 
 namespace WebCore {
-
-class RenderStyle;
-
 namespace Layout {
 
 class InlineItem;
@@ -84,15 +82,28 @@ public:
         bool hasTrailingCollapsibleContent() const { return !!collapsibleLogicalWidth(); }
         bool isFullyCollapsible() const { return logicalWidth() == collapsibleLogicalWidth(); }
 
-        void append(const InlineItem&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth);
+        void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth);
         void reset();
 
         struct Run {
-            Run(const InlineItem&, InlineLayoutUnit logicalWidth);
+            Run(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
             Run(const Run&);
             Run& operator=(const Run&);
 
             const InlineItem& inlineItem;
+            struct Style {
+                WhiteSpace whiteSpace { WhiteSpace::Normal };
+                LineBreak lineBreak { LineBreak::Auto };
+                WordBreak wordBreak { WordBreak::Normal };
+                OverflowWrap overflowWrap { OverflowWrap::Normal };
+                Hyphens hyphens { Hyphens::None };
+                std::optional<unsigned> hyphenationLimitBefore;
+                std::optional<unsigned> hyphenationLimitAfter;
+                const FontCascade& fontCascade;
+                const AtomString& hyphenString;
+                const AtomString& locale;
+            };
+            Style style;
             InlineLayoutUnit logicalWidth { 0 };
         };
         using RunList = Vector<Run, 3>;
@@ -116,7 +127,7 @@ public:
     Result processInlineContent(const ContinuousContent&, const LineStatus&);
     void setHyphenationDisabled() { n_hyphenationIsDisabled = true; }
 
-    static bool isWrappingAllowed(const InlineItem&);
+    static bool isWrappingAllowed(const ContinuousContent::Run&);
 
 private:
     Result processOverflowingContent(const ContinuousContent&, const LineStatus&) const;
@@ -127,20 +138,31 @@ private:
         AtArbitraryPosition        = 1 << 0,
         AtHyphenationOpportunities = 1 << 1
     };
-    OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
+    OptionSet<WordBreakRule> wordBreakBehavior(const ContinuousContent::Run::Style&, bool hasWrapOpportunityAtPreviousPosition) const;
     bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
 };
 
-inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
     : inlineItem(inlineItem)
+    , style({ style.whiteSpace()
+        , style.lineBreak()
+        , style.wordBreak()
+        , style.overflowWrap()
+        , style.hyphens()
+        , style.hyphenationLimitBefore() != style.initialHyphenationLimitBefore() ? std::make_optional(style.hyphenationLimitBefore()) : std::nullopt
+        , style.hyphenationLimitAfter() != style.initialHyphenationLimitAfter() ? std::make_optional(style.hyphenationLimitAfter()) : std::nullopt
+        , style.fontCascade()
+        , style.hyphenString()
+        , style.fontDescription().computedLocale() })
     , logicalWidth(logicalWidth)
 {
 }
 
 inline InlineContentBreaker::ContinuousContent::Run::Run(const Run& other)
     : inlineItem(other.inlineItem)
+    , style(other.style)
     , logicalWidth(other.logicalWidth)
 {
 }

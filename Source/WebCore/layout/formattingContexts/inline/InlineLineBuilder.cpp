@@ -195,7 +195,8 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         ASSERT(logicalWidth > letterSpacing);
         return letterSpacing;
     };
-    m_continuousContent.append(inlineItem, logicalWidth, collapsibleWidth());
+    // FIXME: While the line breaking related properties for atomic level boxes do not depend on the line index (first line style) it'd be great to figure out the correct style to pass in.
+    m_continuousContent.append(inlineItem, !inlineItem.isBox() ? inlineItem.style() : inlineItem.layoutBox().parent().style(), logicalWidth, collapsibleWidth());
     m_hasInlineLevelBox = m_hasInlineLevelBox || inlineItem.isBox() || inlineItem.isInlineBoxStart();
 }
 
@@ -692,11 +693,11 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
             m_line.append(run.inlineItem, run.logicalWidth);
         if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity()) {
             // Check if we are allowed to wrap at this position.
-            auto& trailingItem = candidateRuns.last().inlineItem;
+            auto& trailingRun = candidateRuns.last();
             // FIXME: There must be a way to decide if the trailing run actually ended up on the line.
             // Let's just deal with collapsed leading whitespace for now.
-            if (!m_line.runs().isEmpty() && InlineContentBreaker::isWrappingAllowed(trailingItem))
-                m_wrapOpportunityList.append(&trailingItem);
+            if (!m_line.runs().isEmpty() && InlineContentBreaker::isWrappingAllowed(trailingRun))
+                m_wrapOpportunityList.append(&trailingRun.inlineItem);
         }
         return { result.isEndOfLine, { candidateRuns.size(), false } };
     }
