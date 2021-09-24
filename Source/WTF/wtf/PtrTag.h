@@ -353,6 +353,17 @@ ALWAYS_INLINE static bool isTaggedNativeCodePtrImpl(PtrType ptr)
 }
 
 template<PtrTag tag, typename PtrType>
+ALWAYS_INLINE static bool isTaggedNativeCodePtrImpl(PtrType ptr)
+{
+#if CPU(ARM64E)
+    return ptr == tagNativeCodePtrImpl<tag>(removeCodePtrTag(ptr));
+#else
+    UNUSED_PARAM(ptr);
+    return true;
+#endif
+}
+
+template<PtrTag tag, typename PtrType>
 bool isTaggedWith(PtrType value)
 {
     void* ptr = bitwise_cast<void*>(value);
