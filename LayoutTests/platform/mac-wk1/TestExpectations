@@ -1423,3 +1423,6 @@ webkit.org/b/230717 [ Catalina BigSur Debug ] resize-observer/delete-observers-i
 webkit.org/b/230729 [ Catalina Release ] imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ Pass Failure ]
 
 webkit.org/b/230756 [ Catalina Debug ] svg/dom/SVGAnimatedListPropertyTearOff-crash-2.html [ Pass Crash ]
+
+webkit.org/b/230765 [ Catalina Debug ] storage/indexeddb/mozilla/cursors-private.html [ Pass Crash ]
+
