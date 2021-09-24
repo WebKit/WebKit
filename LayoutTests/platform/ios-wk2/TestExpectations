@@ -2096,3 +2096,6 @@ webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-pai
 webkit.org/b/230695 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-004.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/230700 webrtc/datachannel/mdns-ice-candidates.html [ Pass Failure ]
+
+webkit.org/b/230773 imported/w3c/web-platform-tests/css/css-flexbox/fixed-table-layout-with-percentage-width-in-flex-item.html [ Pass Failure ]
+webkit.org/b/230773 imported/w3c/web-platform-tests/css/css-flexbox/flex-item-compressible-001.html [ Pass Failure ]
