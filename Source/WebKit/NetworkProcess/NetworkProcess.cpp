@@ -1402,9 +1402,9 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 
-    networkSession->networkLoadScheduler().startedPreconnectForMainResource(url);
-    auto task = new PreconnectTask(*networkSession, WTFMove(parameters), [networkSession, url](const WebCore::ResourceError& error) {
-        networkSession->networkLoadScheduler().finishedPreconnectForMainResource(url, error);
+    networkSession->networkLoadScheduler().startedPreconnectForMainResource(url, userAgent);
+    auto task = new PreconnectTask(*networkSession, WTFMove(parameters), [networkSession, url, userAgent](const WebCore::ResourceError& error) {
+        networkSession->networkLoadScheduler().finishedPreconnectForMainResource(url, userAgent, error);
     });
     task->setTimeout(10_s);
     task->start();

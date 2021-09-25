@@ -153,6 +153,13 @@ void NetworkLoadScheduler::unscheduleLoad(NetworkLoad& load)
         context->unschedule(load);
 }
 
+// We add User-Agent to the preconnect key since it part of the HTTP connection cache key used for
+// coalescing sockets in CFNetwork when using an HTTPS proxy (<rdar://problem/59434166>).
+static std::tuple<String, String> mainResourceLoadKey(const String& protocolHostAndPort, const String& userAgent)
+{
+    return std::make_tuple(protocolHostAndPort.isNull() ? emptyString() : protocolHostAndPort, userAgent.isNull() ? emptyString() : userAgent);
+}
+
 void NetworkLoadScheduler::scheduleMainResourceLoad(NetworkLoad& load)
 {
     String protocolHostAndPort = load.url().protocolHostAndPort();
@@ -161,7 +168,7 @@ void NetworkLoadScheduler::scheduleMainResourceLoad(NetworkLoad& load)
         return;
     }
 
-    auto iter = m_pendingMainResourcePreconnects.find(protocolHostAndPort);
+    auto iter = m_pendingMainResourcePreconnects.find(mainResourceLoadKey(protocolHostAndPort, load.parameters().request.httpUserAgent()));
     if (iter == m_pendingMainResourcePreconnects.end()) {
         load.start();
         return;
@@ -185,7 +192,7 @@ void NetworkLoadScheduler::unscheduleMainResourceLoad(NetworkLoad& load, const W
     if (metrics)
         updateOriginProtocolInfo(protocolHostAndPort, metrics->protocol);
 
-    auto iter = m_pendingMainResourcePreconnects.find(protocolHostAndPort);
+    auto iter = m_pendingMainResourcePreconnects.find(mainResourceLoadKey(protocolHostAndPort, load.parameters().request.httpUserAgent()));
     if (iter == m_pendingMainResourcePreconnects.end())
         return;
 
@@ -194,9 +201,10 @@ void NetworkLoadScheduler::unscheduleMainResourceLoad(NetworkLoad& load, const W
         maybePrunePreconnectInfo(iter);
 }
 
-void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url)
+void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url, const String& userAgent)
 {
-    auto iter = m_pendingMainResourcePreconnects.find(url.protocolHostAndPort());
+    auto key = mainResourceLoadKey(url.protocolHostAndPort(), userAgent);
+    auto iter = m_pendingMainResourcePreconnects.find(key);
     if (iter != m_pendingMainResourcePreconnects.end()) {
         PendingMainResourcePreconnectInfo& info = iter->value;
         info.pendingPreconnects++;
@@ -204,12 +212,12 @@ void NetworkLoadScheduler::startedPreconnectForMainResource(const URL& url)
     }
 
     PendingMainResourcePreconnectInfo info;
-    m_pendingMainResourcePreconnects.add(url.protocolHostAndPort(), WTFMove(info));
+    m_pendingMainResourcePreconnects.add(key, WTFMove(info));
 }
 
-void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, const WebCore::ResourceError& error)
+void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, const String& userAgent, const WebCore::ResourceError& error)
 {
-    auto iter = m_pendingMainResourcePreconnects.find(url.protocolHostAndPort());
+    auto iter = m_pendingMainResourcePreconnects.find(mainResourceLoadKey(url.protocolHostAndPort(), userAgent));
     if (iter == m_pendingMainResourcePreconnects.end())
         return;
 

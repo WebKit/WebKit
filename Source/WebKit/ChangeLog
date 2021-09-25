@@ -1,3 +1,27 @@
+2021-09-25  Ben Nham  <nham@apple.com>
+
+        Pending preconnect key should include User-Agent
+        https://bugs.webkit.org/show_bug.cgi?id=230565
+
+        Reviewed by Chris Dumez.
+
+        When using an HTTPS proxy, the HTTP connection cache key used for connection coalescing in
+        CFNetwork includes the User-Agent (<rdar://problem/59434166>). This means we should also
+        include it in the preconnect cache key. Otherwise, we might delay the main resource load on
+        preconnect unnecessarily in cases where the User-Agent mismatches and the preconnect gets
+        thrown away. This can happen if (for instance) a page is force-loaded into desktop or mobile
+        mode on iOS, which causes a UA change after the call to decidePolicyForNavigationAction.
+
+        * NetworkProcess/NetworkLoadScheduler.cpp:
+        (WebKit::mainResourceLoadKey):
+        (WebKit::NetworkLoadScheduler::scheduleMainResourceLoad):
+        (WebKit::NetworkLoadScheduler::unscheduleMainResourceLoad):
+        (WebKit::NetworkLoadScheduler::startedPreconnectForMainResource):
+        (WebKit::NetworkLoadScheduler::finishedPreconnectForMainResource):
+        * NetworkProcess/NetworkLoadScheduler.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+
 2021-09-24  Lauro Moura  <lmoura@igalia.com>
 
         Non-unified partial build fixes late September edition
