@@ -103,6 +103,9 @@ protected:
     FloatPoint m_currentOffset;
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, ScrollAnimation::Type);
+WTF::TextStream& operator<<(WTF::TextStream&, const ScrollAnimation&);
+
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_SCROLL_ANIMATION(ToValueTypeName, predicate) \

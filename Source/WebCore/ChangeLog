@@ -1,3 +1,35 @@
+2021-09-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a ScrollAnimations log channel
+        https://bugs.webkit.org/show_bug.cgi?id=230772
+
+        Reviewed by Tim Horton.
+
+        Add a ScrollAnimations log channel and do some logging in ScrollingEffectsController,
+        as well as logging some rubberbanding info via this channel.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Logging.h:
+        * platform/ScrollAnimation.cpp: Added.
+        (WebCore::operator<<):
+        * platform/ScrollAnimation.h:
+        * platform/ScrollAnimationMomentum.cpp:
+        (WebCore::ScrollAnimationMomentum::serviceAnimation):
+        * platform/ScrollingEffectsController.cpp:
+        (WebCore::ScrollingEffectsController::animationCallback):
+        (WebCore::ScrollingEffectsController::startAnimatedScrollToDestination):
+        (WebCore::ScrollingEffectsController::regargetAnimatedScroll):
+        (WebCore::ScrollingEffectsController::stopAnimatedScroll):
+        (WebCore::ScrollingEffectsController::startMomentumScrollWithInitialVelocity):
+        (WebCore::ScrollingEffectsController::scrollAnimationDidUpdate):
+        (WebCore::ScrollingEffectsController::scrollAnimationWillStart):
+        (WebCore::ScrollingEffectsController::scrollAnimationDidEnd):
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::handleWheelEvent):
+        (WebCore::ScrollingEffectsController::updateRubberBandAnimatingState):
+        (WebCore::ScrollingEffectsController::updateRubberBandingState):
+
 2021-09-24  Lauro Moura  <lmoura@igalia.com>
 
         Non-unified partial build fixes late September edition

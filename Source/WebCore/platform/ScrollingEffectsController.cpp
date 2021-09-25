@@ -46,8 +46,6 @@ ScrollingEffectsController::ScrollingEffectsController(ScrollingEffectsControlle
 
 void ScrollingEffectsController::animationCallback(MonotonicTime currentTime)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingEffectsController " << this << " animationCallback: isAnimatingRubberBand " << m_isAnimatingRubberBand << " isAnimatingScrollSnap " << m_isAnimatingScrollSnap << "isAnimatingKeyboardScrolling" << m_isAnimatingKeyboardScrolling);
-
     if (m_currentAnimation) {
         if (m_currentAnimation->isActive())
             m_currentAnimation->serviceAnimation(currentTime);
@@ -93,6 +91,8 @@ bool ScrollingEffectsController::startAnimatedScrollToDestination(FloatPoint sta
     if (m_currentAnimation)
         m_currentAnimation->stop();
 
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startAnimatedScrollToDestination start " << startOffset << " end " << destinationOffset);
+
     // We always create and attempt to start the animation. If it turns out to not need animating, then the animation
     // remains inactive, and we'll remove it on the next animationCallback().
     m_currentAnimation = makeUnique<ScrollAnimationSmooth>(*this);
@@ -104,12 +104,16 @@ bool ScrollingEffectsController::regargetAnimatedScroll(FloatPoint newDestinatio
     if (!is<ScrollAnimationSmooth>(m_currentAnimation.get()))
         return false;
     
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " regargetAnimatedScroll to " << newDestinationOffset);
+
     ASSERT(m_currentAnimation->isActive());
     return downcast<ScrollAnimationSmooth>(*m_currentAnimation).retargetActiveAnimation(newDestinationOffset);
 }
 
 void ScrollingEffectsController::stopAnimatedScroll()
 {
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " stopAnimatedScroll");
+
     if (m_currentAnimation)
         m_currentAnimation->stop();
 }
@@ -155,6 +159,7 @@ bool ScrollingEffectsController::startMomentumScrollWithInitialVelocity(const Fl
     if (!m_currentAnimation)
         m_currentAnimation = makeUnique<ScrollAnimationMomentum>(*this);
 
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " startMomentumScrollWithInitialVelocity " << initialVelocity << " from " << initialOffset);
     return downcast<ScrollAnimationMomentum>(*m_currentAnimation).startAnimatedScrollWithInitialVelocity(initialOffset, initialVelocity, initialDelta, destinationModifier);
 }
 
@@ -309,18 +314,27 @@ void ScrollingEffectsController::scrollToOffsetForAnimation(const FloatPoint& sc
     m_client.immediateScrollBy(scrollDelta);
 }
 
-void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation&, const FloatPoint& currentOffset)
+void ScrollingEffectsController::scrollAnimationDidUpdate(ScrollAnimation& animation, const FloatPoint& currentOffset)
 {
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidUpdate " << animation << " (main thread " << isMainThread() << ")");
+    UNUSED_PARAM(animation);
+
     scrollToOffsetForAnimation(currentOffset);
 }
 
-void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation&)
+void ScrollingEffectsController::scrollAnimationWillStart(ScrollAnimation& animation)
 {
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationWillStart " << animation);
+    UNUSED_PARAM(animation);
+
     startOrStopAnimationCallbacks();
 }
 
-void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation&)
+void ScrollingEffectsController::scrollAnimationDidEnd(ScrollAnimation& animation)
 {
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " scrollAnimationDidEnd " << animation);
+    UNUSED_PARAM(animation);
+
     if (usesScrollSnap() && m_isAnimatingScrollSnap) {
         m_scrollSnapState->transitionToDestinationReachedState();
         stopScrollSnapAnimation();

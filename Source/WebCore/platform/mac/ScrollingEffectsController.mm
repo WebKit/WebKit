@@ -228,8 +228,6 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
                 shouldStretch = deltaX || deltaY;
             }
         }
-
-        LOG_WITH_STREAM(Scrolling, stream << "ScrollingEffectsController::handleWheelEvent() - deltaX " << deltaX << " deltaY " << deltaY << " pinned " << m_client.isPinnedForScrollDelta(FloatSize(deltaX, deltaY)) << " shouldStretch " << shouldStretch);
     }
 
     bool handled = true;
@@ -285,6 +283,8 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
             m_stretchScrollForce.setHeight(m_stretchScrollForce.height() + deltaY);
 
             FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height())));
+
+            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::handleWheelEvent() - overscrolled by " << m_overflowScrollDelta << " stretchScrollForce " << m_stretchScrollForce << " move delta " << FloatSize(deltaX, deltaY) << " dampedDelta " << dampedDelta);
 
             m_client.immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
         }
@@ -382,8 +382,6 @@ void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime cu
     if (isScrollSnapInProgress())
         return;
     
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - main thread " << isMainThread());
-
     if (!m_momentumScrollInProgress || m_ignoreMomentumScrolls) {
         auto timeDelta = currentTime - m_startTime;
 
@@ -407,23 +405,33 @@ void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime cu
             // Don't rubber-band vertically if it's not possible to scroll vertically
             if (!m_client.allowsVerticalScrolling())
                 m_origVelocity.setHeight(0);
+
+            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - starting rubbberband with m_origVelocity" << m_origVelocity << " m_startStretch " << m_startStretch);
         }
 
-        FloatPoint delta(roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.width(), -m_origVelocity.width(), timeDelta)),
-            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), timeDelta)));
+        auto rubberBandDelta = FloatSize {
+            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.width(), -m_origVelocity.width(), timeDelta)),
+            roundToDevicePixelTowardZero(elasticDeltaForTimeDelta(m_startStretch.height(), -m_origVelocity.height(), timeDelta))
+        };
 
-        if (fabs(delta.x()) >= 1 || fabs(delta.y()) >= 1) {
-            m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(delta.x(), delta.y()) - m_client.stretchAmount());
+        if (fabs(rubberBandDelta.width()) >= 1 || fabs(rubberBandDelta.height()) >= 1) {
+            auto stretchDelta = rubberBandDelta - FloatSize(m_client.stretchAmount());
+
+            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - rubberBandDelta " << rubberBandDelta << " stretched " << m_client.stretchAmount() << " moving by " << stretchDelta);
+
+            m_client.immediateScrollByWithoutContentEdgeConstraints(stretchDelta);
 
             FloatSize newStretch = m_client.stretchAmount();
 
             m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(newStretch.width()));
             m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
+            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - rubber band complete");
             m_client.adjustScrollPositionToBoundsIfNecessary();
             stopRubberbanding();
         }
     } else {
+        LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::updateRubberBandAnimatingState() - not animating, momentumScrollInProgress " << m_momentumScrollInProgress << " ignoreMomentumScrolls " << m_ignoreMomentumScrolls);
         m_startTime = currentTime;
         m_startStretch = { };
         if (!isRubberBandInProgressInternal())
@@ -530,6 +538,8 @@ void ScrollingEffectsController::updateRubberBandingState()
     bool isRubberBanding = isRubberBandInProgressInternal();
     if (isRubberBanding == m_isRubberBanding)
         return;
+
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController " << this << " updateRubberBandingState - isRubberBanding " << isRubberBanding);
 
     m_isRubberBanding = isRubberBanding;
     if (m_isRubberBanding)

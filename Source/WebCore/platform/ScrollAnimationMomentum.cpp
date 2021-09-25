@@ -88,9 +88,9 @@ void ScrollAnimationMomentum::serviceAnimation(MonotonicTime currentTime)
 
     auto elapsedTime = timeSinceStart(currentTime);
     bool animationComplete = elapsedTime >= m_momentumCalculator->animationDuration();
-    auto newOffset = m_momentumCalculator->scrollOffsetAfterElapsedTime(elapsedTime);
+    m_currentOffset = m_momentumCalculator->scrollOffsetAfterElapsedTime(elapsedTime);
 
-    m_client.scrollAnimationDidUpdate(*this, newOffset);
+    m_client.scrollAnimationDidUpdate(*this, m_currentOffset);
 
     if (animationComplete)
         didEnd();
