@@ -1,3 +1,20 @@
+2021-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make sure empty font families do the right thing for font palettes
+        https://bugs.webkit.org/show_bug.cgi?id=230598
+        <rdar://problem/83383955>
+
+        Reviewed by Tim Horton.
+
+        It already works.
+
+        These tests are being upstreamed in https://github.com/web-platform-tests/wpt/pull/30957.
+
+        * web-platform-tests/css/css-fonts/font-palette-empty-font-family-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-empty-font-family.html: Added.
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html:
+
 2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement round,mod,rem functions for calc

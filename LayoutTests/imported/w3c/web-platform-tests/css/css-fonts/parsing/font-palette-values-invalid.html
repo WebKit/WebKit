@@ -78,13 +78,18 @@
 @font-palette-values A {
     override-color: 0;
 }
+
+/* 13 */
+@font-palette-values A {
+    font-family: "";
+}
 </style>
 </head>
 <body>
 <script>
 let rules = document.getElementById("style").sheet.cssRules;
 test(function() {
-    assert_equals(rules.length, 13);
+    assert_equals(rules.length, 14);
 });
 
 test(function() {
@@ -176,6 +181,13 @@ test(function() {
     let rule = rules[12];
     assert_equals(text.indexOf("override-color"), -1);
     assert_equals(rule.size, 0);
+});
+
+test(function() {
+    let text = rules[13].cssText;
+    let rule = rules[13];
+    // I see nothing in the spec that indicates an empty string is a parse error.
+    assert_not_equals(text.indexOf("font-family"), -1);
 });
 </script>
 </body>
