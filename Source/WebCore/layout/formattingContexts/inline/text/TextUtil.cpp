@@ -40,48 +40,46 @@
 namespace WebCore {
 namespace Layout {
 
-InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, InlineLayoutUnit contentLogicalLeft)
+InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit contentLogicalLeft)
 {
-    return TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.end(), contentLogicalLeft);
+    return TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.end(), contentLogicalLeft);
 }
 
-InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
+InlineLayoutUnit TextUtil::width(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
     RELEASE_ASSERT(from >= inlineTextItem.start());
     RELEASE_ASSERT(to <= inlineTextItem.end());
-    if (inlineTextItem.isWhitespace() && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
-        auto spaceWidth = inlineTextItem.style().fontCascade().spaceWidth();
+    if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox())) {
+        auto spaceWidth = fontCascade.spaceWidth();
         return std::isnan(spaceWidth) ? 0.0f : std::isinf(spaceWidth) ? maxInlineLayoutUnit() : spaceWidth;
     }
-    return TextUtil::width(inlineTextItem.inlineTextBox(), from, to, contentLogicalLeft);
+    return TextUtil::width(inlineTextItem.inlineTextBox(), fontCascade, from, to, contentLogicalLeft);
 }
 
-InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
+InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontCascade& fontCascade, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft)
 {
     if (from == to)
         return 0;
 
-    auto& style = inlineTextBox.style();
-    auto& font = style.fontCascade();
     auto text = inlineTextBox.content();
     ASSERT(to <= text.length());
-    auto hasKerningOrLigatures = font.enableKerning() || font.requiresShaping();
+    auto hasKerningOrLigatures = fontCascade.enableKerning() || fontCascade.requiresShaping();
     auto measureWithEndSpace = hasKerningOrLigatures && to < text.length() && text[to] == ' ';
     if (measureWithEndSpace)
         ++to;
     float width = 0;
     if (inlineTextBox.canUseSimplifiedContentMeasuring())
-        width = font.widthForSimpleText(StringView(text).substring(from, to - from));
+        width = fontCascade.widthForSimpleText(StringView(text).substring(from, to - from));
     else {
-        auto tabWidth = style.collapseWhiteSpace() ? TabSize(0) : style.tabSize();
         WebCore::TextRun run(StringView(text).substring(from, to - from), contentLogicalLeft);
-        if (tabWidth)
-            run.setTabSize(true, tabWidth);
-        width = font.width(run);
+        auto& style = inlineTextBox.style();
+        if (!style.collapseWhiteSpace() && style.tabSize() > 0)
+            run.setTabSize(true, style.tabSize());
+        width = fontCascade.width(run);
     }
 
     if (measureWithEndSpace)
-        width -= (font.spaceWidth() + font.wordSpacing());
+        width -= (fontCascade.spaceWidth() + fontCascade.wordSpacing());
 
     return std::isnan(width) ? 0.0f : std::isinf(width) ? maxInlineLayoutUnit() : width;
 }
@@ -138,7 +136,7 @@ TextUtil::FallbackFontList TextUtil::fallbackFontsForRun(const Line::Run& run, c
     return fallbackFonts;
 }
 
-TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextItem, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
+TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextItem, const FontCascade& fontCascade, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
 {
     ASSERT(availableWidth >= 0);
     auto startPosition = inlineTextItem.start();
@@ -166,7 +164,7 @@ TextUtil::MidWordBreak TextUtil::midWordBreak(const InlineTextItem& inlineTextIt
     auto leftSideWidth = InlineLayoutUnit { 0 };
     while (left < right) {
         auto middle = surrogatePairAwareIndex((left + right) / 2);
-        auto width = TextUtil::width(inlineTextItem, startPosition, middle + 1, contentLogicalLeft);
+        auto width = TextUtil::width(inlineTextItem, fontCascade, startPosition, middle + 1, contentLogicalLeft);
         if (width < availableWidth) {
             left = middle + 1;
             leftSideWidth = width;

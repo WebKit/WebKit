@@ -44,9 +44,9 @@ class InlineTextItem;
 
 class TextUtil {
 public:
-    static InlineLayoutUnit width(const InlineTextItem&, InlineLayoutUnit contentLogicalLeft);
-    static InlineLayoutUnit width(const InlineTextItem&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
-    static InlineLayoutUnit width(const InlineTextBox&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
+    static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, InlineLayoutUnit contentLogicalLeft);
+    static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
+    static InlineLayoutUnit width(const InlineTextBox&, const FontCascade&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
 
     using FallbackFontList = HashSet<const Font*>;
     static FallbackFontList fallbackFontsForRun(const Line::Run&, const RenderStyle&);
@@ -56,7 +56,7 @@ public:
         size_t length { 0 };
         InlineLayoutUnit logicalWidth { 0 };
     };
-    static MidWordBreak midWordBreak(const InlineTextItem&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
+    static MidWordBreak midWordBreak(const InlineTextItem&, const FontCascade&, InlineLayoutUnit textWidth, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft);
 
     static unsigned findNextBreakablePosition(LazyLineBreakIterator&, unsigned startPosition, const RenderStyle&);
     static LineBreakIteratorMode lineBreakIteratorMode(LineBreak);

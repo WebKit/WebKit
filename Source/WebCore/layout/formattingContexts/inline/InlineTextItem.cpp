@@ -78,7 +78,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
         return inlineContent.append(InlineTextItem::createEmptyItem(inlineTextBox));
 
     auto& style = inlineTextBox.style();
-    auto& font = style.fontCascade();
+    auto& fontCascade = style.fontCascade();
     auto whitespaceContentIsTreatedAsSingleSpace = !TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
     auto shouldTreatNonBreakingSpaceAsRegularSpace = style.nbspMode() == NBSPMode::Space;
@@ -88,7 +88,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> std::optional<InlineLayoutUnit> {
         if (!inlineTextBox.canUseSimplifiedContentMeasuring())
             return { };
-        return TextUtil::width(inlineTextBox, startPosition, startPosition + length, { });
+        return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + length, { });
     };
 
     while (currentPosition < text.length()) {
@@ -107,7 +107,7 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
             ASSERT(whitespaceContent->length);
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);
-                auto width = simpleSingleWhitespaceContent ? std::make_optional(InlineLayoutUnit { font.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
+                auto width = simpleSingleWhitespaceContent ? std::make_optional(InlineLayoutUnit { fontCascade.spaceWidth() }) : inlineItemWidth(startPosition, itemLength);
                 inlineContent.append(InlineTextItem::createWhitespaceItem(inlineTextBox, startPosition, itemLength, whitespaceContent->isWordSeparator, width));
             };
             if (style.whiteSpace() == WhiteSpace::BreakSpaces) {

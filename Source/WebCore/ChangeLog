@@ -1,3 +1,25 @@
+2021-09-25  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Text measuring is first-line style dependent
+        https://bugs.webkit.org/show_bug.cgi?id=230796
+
+        Reviewed by Antti Koivisto.
+
+        First-line style may change the font to be used for measuring the text content.
+        (This is in preparation for supporting first-line style)
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::processOverflowingContent const):
+        (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::inlineItemWidth const):
+        * layout/formattingContexts/inline/InlineTextItem.cpp:
+        (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+        * layout/formattingContexts/inline/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::midWordBreak):
+        * layout/formattingContexts/inline/text/TextUtil.h:
+
 2021-09-23  Tim Nguyen  <ntim@apple.com>
 
         Make inert nodes invisible to hit testing

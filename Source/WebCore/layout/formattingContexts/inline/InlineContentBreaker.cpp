@@ -218,7 +218,8 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                     return Result { Result::Action::Wrap, IsEndOfLine::Yes };
 
                 auto leadingTextRunIndex = *firstTextRunIndex(continuousContent);
-                auto& inlineTextItem = downcast<InlineTextItem>(continuousContent.runs()[leadingTextRunIndex].inlineItem);
+                auto& leadingTextRun = continuousContent.runs()[leadingTextRunIndex];
+                auto& inlineTextItem = downcast<InlineTextItem>(leadingTextRun.inlineItem);
                 auto firstCodePointLength = [&]() -> size_t {
                     auto textContent = inlineTextItem.inlineTextBox().content();
                     if (textContent.is8Bit())
@@ -232,7 +233,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 if (inlineTextItem.length() <= firstCodePointLength)
                     return Result { Result::Action::Keep, IsEndOfLine::Yes };
 
-                auto firstCodePointWidth = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + firstCodePointLength, lineStatus.contentLogicalRight);
+                auto firstCodePointWidth = TextUtil::width(inlineTextItem, leadingTextRun.style.fontCascade, inlineTextItem.start(), inlineTextItem.start() + firstCodePointLength, lineStatus.contentLogicalRight);
                 return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, PartialRun { firstCodePointLength, firstCodePointWidth } } };
             }
             if (trailingContent->overflows && lineStatus.hasContent) {
@@ -473,7 +474,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 auto availableWidthExcludingHyphen = *availableWidth - hyphenWidth;
                 if (availableWidthExcludingHyphen <= 0 || !enoughWidthForHyphenation(availableWidthExcludingHyphen, style.fontCascade.pixelSize()))
                     return { };
-                leftSideLength = TextUtil::midWordBreak(inlineTextItem, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
+                leftSideLength = TextUtil::midWordBreak(inlineTextItem, overflowingRun.style.fontCascade, overflowingRun.logicalWidth, availableWidthExcludingHyphen, logicalLeft).length;
             }
             if (leftSideLength < limitBefore)
                 return { };
@@ -484,7 +485,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
                 return { };
             // hyphenLocation is relative to the start of this InlineItemText.
             ASSERT(inlineTextItem.start() + hyphenLocation < inlineTextItem.end());
-            auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation, logicalLeft);
+            auto trailingPartialRunWidthWithHyphen = TextUtil::width(inlineTextItem, overflowingRun.style.fontCascade, inlineTextItem.start(), inlineTextItem.start() + hyphenLocation, logicalLeft);
             return PartialRun { hyphenLocation, trailingPartialRunWidthWithHyphen, hyphenWidth };
         };
         if (auto partialRun = tryBreakingAtHyphenationOpportunity())
@@ -500,14 +501,14 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
             if (availableSpaceIsInfinite) {
                 // When the run can be split at arbitrary position let's just return the entire run when it is intended to fit on the line.
                 ASSERT(inlineTextItem.length());
-                auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, logicalLeft);
+                auto trailingPartialRunWidth = TextUtil::width(inlineTextItem, overflowingRun.style.fontCascade, logicalLeft);
                 return { inlineTextItem.length(), trailingPartialRunWidth };
             }
             if (!*availableWidth) {
                 // Fast path for cases when there's no room at all. The content is breakable but we don't have space for it.
                 return { };
             }
-            auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, overflowingRun.logicalWidth, *availableWidth, logicalLeft);
+            auto midWordBreak = TextUtil::midWordBreak(inlineTextItem, overflowingRun.style.fontCascade, overflowingRun.logicalWidth, *availableWidth, logicalLeft);
             return { midWordBreak.length, midWordBreak.logicalWidth };
         };
         // With arbitrary breaking there's always a valid breaking position (even if it is before the first position).
