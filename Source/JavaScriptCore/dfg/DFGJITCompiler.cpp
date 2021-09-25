@@ -185,13 +185,12 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     m_graph.registerFrozenValues();
 
-    if (!m_graph.m_stringSwitchJumpTables.isEmpty() || !m_graph.m_switchJumpTables.isEmpty()) {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        if (!m_graph.m_stringSwitchJumpTables.isEmpty())
-            m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = WTFMove(m_graph.m_stringSwitchJumpTables);
-        if (!m_graph.m_switchJumpTables.isEmpty())
-            m_codeBlock->ensureJITData(locker).m_switchJumpTables = WTFMove(m_graph.m_switchJumpTables);
-    }
+    ASSERT(m_jitCode->m_stringSwitchJumpTables.isEmpty());
+    ASSERT(m_jitCode->m_switchJumpTables.isEmpty());
+    if (!m_graph.m_stringSwitchJumpTables.isEmpty()) 
+        m_jitCode->m_stringSwitchJumpTables = WTFMove(m_graph.m_stringSwitchJumpTables);
+    if (!m_graph.m_switchJumpTables.isEmpty())
+        m_jitCode->m_switchJumpTables = WTFMove(m_graph.m_switchJumpTables);
 
     for (Bag<SwitchData>::iterator iter = m_graph.m_switchData.begin(); !!iter; ++iter) {
         SwitchData& data = **iter;
@@ -199,12 +198,12 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         case SwitchChar:
         case SwitchImm: {
             if (!data.didUseJumpTable) {
-                ASSERT(m_codeBlock->switchJumpTable(data.switchTableIndex).isEmpty());
+                ASSERT(m_jitCode->m_switchJumpTables[data.switchTableIndex].isEmpty());
                 continue;
             }
 
             const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
-            SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(data.switchTableIndex);
+            SimpleJumpTable& linkedTable = m_jitCode->m_switchJumpTables[data.switchTableIndex];
             linkedTable.m_ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
             RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_branchOffsets.size());
             for (unsigned j = linkedTable.m_ctiOffsets.size(); j--;)
@@ -219,12 +218,12 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
         case SwitchString: {
             if (!data.didUseJumpTable) {
-                ASSERT(m_codeBlock->stringSwitchJumpTable(data.switchTableIndex).isEmpty());
+                ASSERT(m_jitCode->m_stringSwitchJumpTables[data.switchTableIndex].isEmpty());
                 continue;
             }
 
             const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data.switchTableIndex);
-            StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
+            StringJumpTable& linkedTable = m_jitCode->m_stringSwitchJumpTables[data.switchTableIndex];
             auto ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
             RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_offsetTable.size() + 1);
             for (auto& entry : linkedTable.m_ctiOffsets)
@@ -333,7 +332,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     }
 
     if (m_pcToCodeOriginMapBuilder.didBuildMapping())
-        m_codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), linkBuffer));
+        m_jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(WTFMove(m_pcToCodeOriginMapBuilder), linkBuffer);
 }
 
 static void emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& stackOverflow)

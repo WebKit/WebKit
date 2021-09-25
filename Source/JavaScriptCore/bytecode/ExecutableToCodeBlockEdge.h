@@ -70,6 +70,8 @@ public:
     static ExecutableToCodeBlockEdge* wrap(CodeBlock* codeBlock);
     
     static ExecutableToCodeBlockEdge* wrapAndActivate(CodeBlock* codeBlock);
+
+    static ptrdiff_t offsetOfCodeBlock() { return OBJECT_OFFSETOF(ExecutableToCodeBlockEdge, m_codeBlock); }
     
 private:
     friend class LLIntOffsetsExtractor;

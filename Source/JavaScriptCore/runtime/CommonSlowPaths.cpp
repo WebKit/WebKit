@@ -480,7 +480,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_string)
 #if ENABLE(JIT)
 static void updateArithProfileForUnaryArithOp(OpNegate::Metadata& metadata, JSValue result, JSValue operand)
 {
-    UnaryArithProfile& profile = metadata.m_arithProfile;
+    UnaryArithProfile& profile = *metadata.m_arithProfile;
     profile.observeArg(operand);
     ASSERT(result.isNumber() || result.isBigInt());
 

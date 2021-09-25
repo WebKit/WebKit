@@ -27,6 +27,7 @@
 #include "StructureStubInfo.h"
 
 #include "CacheableIdentifierInlines.h"
+#include "JITInlineCacheGenerator.h"
 #include "PolymorphicAccess.h"
 #include "Repatch.h"
 
@@ -65,9 +66,9 @@ void StructureStubInfo::initGetByIdSelf(const ConcurrentJSLockerBase& locker, Co
     ASSERT(hasConstantIdentifier);
     setCacheType(locker, CacheType::GetByIdSelf);
     m_identifier = identifier;
-    m_inlineAccessBaseStructure.setWithoutWriteBarrier(inlineAccessBaseStructure);
+    m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
     codeBlock->vm().heap.writeBarrier(codeBlock);
-    u.byIdSelf.offset = offset;
+    byIdSelfOffset = offset;
 }
 
 void StructureStubInfo::initArrayLength(const ConcurrentJSLockerBase& locker)
@@ -87,9 +88,9 @@ void StructureStubInfo::initPutByIdReplace(const ConcurrentJSLockerBase& locker,
     ASSERT(m_cacheType == CacheType::Unset);
     setCacheType(locker, CacheType::PutByIdReplace);
     m_identifier = identifier;
-    m_inlineAccessBaseStructure.setWithoutWriteBarrier(inlineAccessBaseStructure);
+    m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
     codeBlock->vm().heap.writeBarrier(codeBlock);
-    u.byIdSelf.offset = offset;
+    byIdSelfOffset = offset;
 }
 
 void StructureStubInfo::initInByIdSelf(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock, Structure* inlineAccessBaseStructure, PropertyOffset offset, CacheableIdentifier identifier)
@@ -97,9 +98,9 @@ void StructureStubInfo::initInByIdSelf(const ConcurrentJSLockerBase& locker, Cod
     ASSERT(m_cacheType == CacheType::Unset);
     setCacheType(locker, CacheType::InByIdSelf);
     m_identifier = identifier;
-    m_inlineAccessBaseStructure.setWithoutWriteBarrier(inlineAccessBaseStructure);
+    m_inlineAccessBaseStructure = inlineAccessBaseStructure->id();
     codeBlock->vm().heap.writeBarrier(codeBlock);
-    u.byIdSelf.offset = offset;
+    byIdSelfOffset = offset;
 }
 
 void StructureStubInfo::deref()
@@ -236,7 +237,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         // we're buffered is because we rely on it to reset during GC if m_inlineAccessBaseStructure
         // is collected.
         m_identifier = nullptr;
-        m_inlineAccessBaseStructure.clear();
+        m_inlineAccessBaseStructure = 0;
         
         // If we generated some code then we don't want to attempt to repatch in the future until we
         // gather enough cases.
@@ -251,7 +252,7 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
 {
     clearBufferedStructures();
     m_identifier = nullptr;
-    m_inlineAccessBaseStructure.clear();
+    m_inlineAccessBaseStructure = 0;
 
     if (m_cacheType == CacheType::Unset)
         return;
@@ -285,6 +286,7 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
         resetPutBy(codeBlock, *this, PutByKind::ById);
         break;
     case AccessType::PutByVal:
+    case AccessType::PutPrivateName:
         resetPutBy(codeBlock, *this, PutByKind::ByVal);
         break;
     case AccessType::InById:
@@ -360,8 +362,8 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
     }
 
     bool isValid = true;
-    if (m_inlineAccessBaseStructure)
-        isValid &= vm.heap.isMarked(m_inlineAccessBaseStructure.get());
+    if (Structure* structure = inlineAccessBaseStructure(vm))
+        isValid &= vm.heap.isMarked(structure);
     if (m_cacheType == CacheType::Stub)
         isValid &= u.stub->visitWeak(vm);
 
@@ -375,8 +377,8 @@ void StructureStubInfo::visitWeakReferences(const ConcurrentJSLockerBase& locker
 template<typename Visitor>
 void StructureStubInfo::propagateTransitions(Visitor& visitor)
 {
-    if (m_inlineAccessBaseStructure)
-        m_inlineAccessBaseStructure->markIfCheap(visitor);
+    if (Structure* structure = inlineAccessBaseStructure(visitor.vm()))
+        structure->markIfCheap(visitor);
 
     if (m_cacheType == CacheType::Stub)
         u.stub->propagateTransitions(visitor);
@@ -428,6 +430,209 @@ bool StructureStubInfo::containsPC(void* pc) const
 ALWAYS_INLINE void StructureStubInfo::setCacheType(const ConcurrentJSLockerBase&, CacheType newCacheType)
 {
     m_cacheType = newCacheType;
+}
+
+void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(CodeBlock*, UnlinkedStructureStubInfo& unlinkedStubInfo)
+{
+#if USE(JSVALUE64)
+    accessType = unlinkedStubInfo.accessType;
+    start = unlinkedStubInfo.start;
+    doneLocation = unlinkedStubInfo.doneLocation;
+    slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
+    callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
+    codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
+    m_codePtr = slowPathStartLocation;
+
+    usedRegisters = RegisterSet::stubUnavailableRegisters();
+    if (accessType == AccessType::GetById && unlinkedStubInfo.bytecodeIndex.checkpoint()) {
+        // For iterator_next, we can't clobber the "dontClobberRegister" register either.
+        usedRegisters.add(BaselineGetByIdRegisters::dontClobberRegister);
+    }
+
+    switch (accessType) {
+    case AccessType::DeleteByVal:
+        m_slowOperation = operationDeleteByValOptimize;
+        break;
+    case AccessType::DeleteByID:
+        m_slowOperation = operationDeleteByIdOptimize;
+        break;
+    case AccessType::GetByVal:
+        m_slowOperation = operationGetByValOptimize;
+        break;
+    case AccessType::InstanceOf:
+        m_slowOperation = operationInstanceOfOptimize;
+        break;
+    case AccessType::InByVal:
+        m_slowOperation = operationInByValOptimize;
+        break;
+    case AccessType::InById:
+        m_slowOperation = operationInByIdOptimize;
+        break;
+    case AccessType::GetById:
+        m_slowOperation = operationGetByIdOptimize;
+        break;
+    case AccessType::TryGetById:
+        m_slowOperation = operationTryGetByIdOptimize;
+        break;
+    case AccessType::GetByIdDirect:
+        m_slowOperation = operationGetByIdDirectOptimize;
+        break;
+    case AccessType::GetByIdWithThis:
+        m_slowOperation = operationGetByIdWithThisOptimize;
+        break;
+    case AccessType::HasPrivateName: 
+        m_slowOperation = operationHasPrivateNameOptimize;
+        break;
+    case AccessType::HasPrivateBrand: 
+        m_slowOperation = operationHasPrivateBrandOptimize;
+        break;
+    case AccessType::GetPrivateName: 
+        m_slowOperation = operationGetPrivateNameOptimize;
+        break;
+    case AccessType::PutById:
+        switch (unlinkedStubInfo.putKind) {
+        case PutKind::NotDirect:
+            if (unlinkedStubInfo.ecmaMode.isStrict())
+                m_slowOperation = operationPutByIdStrictOptimize;
+            else
+                m_slowOperation = operationPutByIdNonStrictOptimize;
+            break;
+        case PutKind::Direct:
+            if (unlinkedStubInfo.ecmaMode.isStrict())
+                m_slowOperation = operationPutByIdDirectStrictOptimize;
+            else
+                m_slowOperation = operationPutByIdDirectNonStrictOptimize;
+            break;
+        case PutKind::DirectPrivateFieldDefine:
+            m_slowOperation = operationPutByIdDefinePrivateFieldStrictOptimize;
+            break;
+        case PutKind::DirectPrivateFieldSet:
+            m_slowOperation = operationPutByIdSetPrivateFieldStrictOptimize;
+            break;
+        }
+        break;
+    case AccessType::PutByVal:
+        switch (unlinkedStubInfo.putKind) {
+        case PutKind::NotDirect:
+            if (unlinkedStubInfo.ecmaMode.isStrict())
+                m_slowOperation = operationPutByValStrictOptimize;
+            else
+                m_slowOperation = operationPutByValNonStrictOptimize;
+            break;
+        case PutKind::Direct:
+            if (unlinkedStubInfo.ecmaMode.isStrict())
+                m_slowOperation = operationDirectPutByValStrictOptimize;
+            else
+                m_slowOperation = operationDirectPutByValNonStrictOptimize;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        break;
+    case AccessType::PutPrivateName:
+        m_slowOperation = unlinkedStubInfo.privateFieldPutKind.isDefine() ? operationPutByValDefinePrivateFieldOptimize : operationPutByValSetPrivateFieldOptimize;
+        break;
+    case AccessType::SetPrivateBrand:
+        m_slowOperation = operationSetPrivateBrandOptimize;
+        break;
+    case AccessType::CheckPrivateBrand:
+        m_slowOperation = operationCheckPrivateBrandOptimize;
+        break;
+    }
+
+    switch (accessType) {
+    case AccessType::DeleteByVal:
+        hasConstantIdentifier = false;
+        baseGPR = BaselineDelByValRegisters::base;
+        regs.propertyGPR = BaselineDelByValRegisters::property;
+        valueGPR = BaselineDelByValRegisters::result;
+        m_stubInfoGPR = BaselineDelByValRegisters::stubInfo;
+        break;
+    case AccessType::DeleteByID:
+        hasConstantIdentifier = true;
+        baseGPR = BaselineDelByIdRegisters::base;
+        regs.propertyGPR = InvalidGPRReg;
+        valueGPR = BaselineDelByIdRegisters::result;
+        m_stubInfoGPR = BaselineDelByIdRegisters::stubInfo;
+        break;
+    case AccessType::GetByVal:
+    case AccessType::GetPrivateName:
+        hasConstantIdentifier = false;
+        baseGPR = BaselineGetByValRegisters::base;
+        regs.propertyGPR = BaselineGetByValRegisters::property;
+        valueGPR = BaselineGetByValRegisters::result;
+        m_stubInfoGPR = BaselineGetByValRegisters::stubInfo;
+        break;
+    case AccessType::InstanceOf:
+        hasConstantIdentifier = false;
+        prototypeIsKnownObject = false;
+        baseGPR = BaselineInstanceofRegisters::value;
+        valueGPR = BaselineInstanceofRegisters::result;
+        regs.prototypeGPR = BaselineInstanceofRegisters::proto;
+        m_stubInfoGPR = BaselineInstanceofRegisters::stubInfo;
+        break;
+    case AccessType::InByVal:
+    case AccessType::HasPrivateName: 
+    case AccessType::HasPrivateBrand: 
+        hasConstantIdentifier = false;
+        baseGPR = BaselineInByValRegisters::base;
+        regs.propertyGPR = BaselineInByValRegisters::property;
+        valueGPR = BaselineInByValRegisters::result;
+        m_stubInfoGPR = BaselineInByValRegisters::stubInfo;
+        break;
+    case AccessType::InById:
+        hasConstantIdentifier = true;
+        regs.thisGPR = InvalidGPRReg;
+        baseGPR = BaselineInByIdRegisters::base;
+        valueGPR = BaselineInByIdRegisters::result;
+        m_stubInfoGPR = BaselineInByIdRegisters::stubInfo;
+        break;
+    case AccessType::TryGetById:
+    case AccessType::GetByIdDirect:
+    case AccessType::GetById:
+        hasConstantIdentifier = true;
+        regs.thisGPR = InvalidGPRReg;
+        baseGPR = BaselineGetByIdRegisters::base;
+        valueGPR = BaselineGetByIdRegisters::result;
+        m_stubInfoGPR = BaselineGetByIdRegisters::stubInfo;
+        break;
+    case AccessType::GetByIdWithThis:
+        hasConstantIdentifier = true;
+        baseGPR = BaselineGetByIdWithThisRegisters::base;
+        valueGPR = BaselineGetByIdWithThisRegisters::result;
+        regs.thisGPR = BaselineGetByIdWithThisRegisters::thisValue;
+        m_stubInfoGPR = BaselineGetByIdWithThisRegisters::stubInfo;
+        break;
+    case AccessType::PutById:
+        hasConstantIdentifier = true;
+        regs.thisGPR = InvalidGPRReg;
+        baseGPR = BaselinePutByIdRegisters::base;
+        valueGPR = BaselinePutByIdRegisters::value;
+        m_stubInfoGPR = BaselinePutByIdRegisters::stubInfo;
+        break;
+    case AccessType::PutByVal:
+    case AccessType::PutPrivateName:
+        hasConstantIdentifier = false;
+        baseGPR = BaselinePutByValRegisters::base;
+        regs.propertyGPR = BaselinePutByValRegisters::property;
+        valueGPR = BaselinePutByValRegisters::value;
+        m_stubInfoGPR = BaselinePutByValRegisters::stubInfo;
+        if (accessType == AccessType::PutByVal)
+            m_arrayProfileGPR = BaselinePutByValRegisters::profile;
+        break;
+    case AccessType::SetPrivateBrand:
+    case AccessType::CheckPrivateBrand:
+        hasConstantIdentifier = false;
+        valueGPR = InvalidGPRReg;
+        baseGPR = BaselinePrivateBrandRegisters::base;
+        regs.brandGPR = BaselinePrivateBrandRegisters::brand;
+        m_stubInfoGPR = BaselinePrivateBrandRegisters::stubInfo;
+        break;
+    }
+#else
+    UNUSED_PARAM(unlinkedStubInfo);
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 #if ASSERT_ENABLED

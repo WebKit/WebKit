@@ -1,3 +1,15 @@
+2021-09-25  Saam Barati  <sbarati@apple.com>
+
+        Build an unlinked baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=229223
+        <rdar://problem/82321772>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/Bag.h:
+        * wtf/Packed.h:
+        (WTF::PackedAlignedPtr::operator* const):
+
 2021-09-24  Devin Rousso  <drousso@apple.com>
 
         Add typechecking `is` overloads for `std::unique_ptr`, `WTF::UniqueRef`, and `WTF::WeakPtr`

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedTypes.h"
 
+#include "BaselineJITCode.h"
 #include "BuiltinNames.h"
 #include "BytecodeCacheError.h"
 #include "BytecodeLivenessAnalysis.h"
@@ -1918,6 +1919,8 @@ public:
 
     unsigned numValueProfiles() const { return m_numValueProfiles; }
     unsigned numArrayProfiles() const { return m_numArrayProfiles; }
+    unsigned numBinaryArithProfiles() const { return m_numBinaryArithProfiles; }
+    unsigned numUnaryArithProfiles() const { return m_numUnaryArithProfiles; }
 
 private:
     VirtualRegister m_thisRegister;
@@ -1952,6 +1955,8 @@ private:
 
     unsigned m_numValueProfiles;
     unsigned m_numArrayProfiles;
+    unsigned m_numBinaryArithProfiles;
+    unsigned m_numUnaryArithProfiles;
 
     CachedMetadataTable m_metadata;
 
@@ -2160,6 +2165,8 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_rareData(cachedCodeBlock.rareData(decoder))
     , m_valueProfiles(cachedCodeBlock.numValueProfiles())
     , m_arrayProfiles(cachedCodeBlock.numArrayProfiles())
+    , m_binaryArithProfiles(cachedCodeBlock.numBinaryArithProfiles())
+    , m_unaryArithProfiles(cachedCodeBlock.numUnaryArithProfiles())
 {
 }
 
@@ -2337,6 +2344,8 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_hasCheckpoints = codeBlock.m_hasCheckpoints;
     m_numValueProfiles = codeBlock.m_valueProfiles.size();
     m_numArrayProfiles = codeBlock.m_arrayProfiles.size();
+    m_numBinaryArithProfiles = codeBlock.m_binaryArithProfiles.size();
+    m_numUnaryArithProfiles = codeBlock.m_unaryArithProfiles.size();
 
     m_metadata.encode(encoder, codeBlock.m_metadata.get());
     m_rareData.encode(encoder, codeBlock.m_rareData.get());

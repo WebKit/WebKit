@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,48 +24,37 @@
  */
 
 #include "config.h"
-#include "CallFrameShuffleData.h"
+#include "BaselineJITCode.h"
 
 #if ENABLE(JIT)
 
-#include "CodeBlock.h"
-#include "RegisterAtOffsetList.h"
+#include "JITMathIC.h"
+#include "JumpTable.h"
+#include "StructureStubInfo.h"
 
 namespace JSC {
 
-#if USE(JSVALUE64)
+JITAddIC* MathICHolder::addJITAddIC(BinaryArithProfile* arithProfile) { return m_addICs.add(arithProfile); }
+JITMulIC* MathICHolder::addJITMulIC(BinaryArithProfile* arithProfile) { return m_mulICs.add(arithProfile); }
+JITSubIC* MathICHolder::addJITSubIC(BinaryArithProfile* arithProfile) { return m_subICs.add(arithProfile); }
+JITNegIC* MathICHolder::addJITNegIC(UnaryArithProfile* arithProfile) { return m_negICs.add(arithProfile); }
 
-void CallFrameShuffleData::setupCalleeSaveRegisters(CodeBlock* codeBlock)
+void MathICHolder::adoptMathICs(MathICHolder& other)
 {
-    setupCalleeSaveRegisters(codeBlock->calleeSaveRegisters());
+    m_addICs = WTFMove(other.m_addICs);
+    m_mulICs = WTFMove(other.m_mulICs);
+    m_negICs = WTFMove(other.m_negICs);
+    m_subICs = WTFMove(other.m_subICs);
 }
 
-void CallFrameShuffleData::setupCalleeSaveRegisters(const RegisterAtOffsetList* registerSaveLocations)
+BaselineJITCode::BaselineJITCode(CodeRef<JSEntryPtrTag> code, CodePtr<JSEntryPtrTag> withArityCheck)
+    : DirectJITCode(WTFMove(code), withArityCheck, JITType::BaselineJIT)
+    , MathICHolder()
+{ }
+
+BaselineJITCode::~BaselineJITCode()
 {
-    RegisterSet calleeSaveRegisters { RegisterSet::vmCalleeSaveRegisters() };
-
-    for (size_t i = 0; i < registerSaveLocations->size(); ++i) {
-        RegisterAtOffset entry { registerSaveLocations->at(i) };
-        if (!calleeSaveRegisters.get(entry.reg()))
-            continue;
-
-        VirtualRegister saveSlot { entry.offsetAsIndex() };
-        registers[entry.reg()]
-            = ValueRecovery::displacedInJSStack(saveSlot, DataFormatJS);
-    }
-
-    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!calleeSaveRegisters.get(reg))
-            continue;
-
-        if (registers[reg])
-            continue;
-
-        registers[reg] = ValueRecovery::inRegister(reg, DataFormatJS);
-    }
 }
-
-#endif // USE(JSVALUE64)
 
 } // namespace JSC
 

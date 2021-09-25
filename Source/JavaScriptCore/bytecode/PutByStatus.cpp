@@ -180,10 +180,10 @@ PutByStatus PutByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, Co
         CacheableIdentifier identifier = stubInfo->identifier();
         UniquedStringImpl* uid = identifier.uid();
         RELEASE_ASSERT(uid);
-        PropertyOffset offset =
-            stubInfo->m_inlineAccessBaseStructure->getConcurrently(uid);
+        Structure* structure = stubInfo->inlineAccessBaseStructure(profiledBlock->vm());
+        PropertyOffset offset = structure->getConcurrently(uid);
         if (isValidOffset(offset))
-            return PutByVariant::replace(WTFMove(identifier), stubInfo->m_inlineAccessBaseStructure.get(), offset);
+            return PutByVariant::replace(WTFMove(identifier), structure, offset);
         return PutByStatus(JSC::slowVersion(summary), *stubInfo);
     }
         

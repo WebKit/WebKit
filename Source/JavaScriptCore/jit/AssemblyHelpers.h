@@ -234,8 +234,9 @@ public:
 #endif
     }
     
-    // Note that this clobbers offset.
+    // Note that these clobber offset.
     void loadProperty(GPRReg object, GPRReg offset, JSValueRegs result);
+    void storeProperty(JSValueRegs value, GPRReg object, GPRReg offset, GPRReg scratch);
 
     void moveValueRegs(JSValueRegs srcRegs, JSValueRegs destRegs)
     {
@@ -379,14 +380,25 @@ public:
 #endif
     }
 
+    void copyCalleeSavesToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, GPRReg scratch)
+    {
+#if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+        loadPtr(&topEntryFrame, scratch);
+        copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(scratch);
+#else
+        UNUSED_PARAM(topEntryFrame);
+        UNUSED_PARAM(scratch);
+#endif
+    }
+
     void copyCalleeSavesToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)
     {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
         const TempRegisterSet& usedRegisters = { RegisterSet::stubUnavailableRegisters() };
         GPRReg temp1 = usedRegisters.getFreeGPR(0);
-        loadPtr(&topEntryFrame, temp1);
-        copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(temp1);
+        copyCalleeSavesToEntryFrameCalleeSavesBuffer(topEntryFrame, temp1);
 #else
+        UNUSED_PARAM(topEntryFrame);
         UNUSED_PARAM(topEntryFrame);
 #endif
     }
@@ -1720,6 +1732,7 @@ public:
     }
     
     void emitVirtualCall(VM&, JSGlobalObject*, CallLinkInfo*);
+    void emitVirtualCallWithoutMovingGlobalObject(VM&, CallLinkInfo*);
     
     void makeSpaceOnStackForCCall();
     void reclaimSpaceOnStackForCCall();
