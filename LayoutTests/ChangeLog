@@ -1,3 +1,17 @@
+2021-09-25  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: aria-expanded is no longer supported on quite a few roles in ARIA 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=230609
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-expanded-supported-roles.html: Added.
+        * accessibility/mac/aria-expanded-not-exposed-when-undefined.html: Updated.
+        * accessibility/mac/aria-expanded-standard-items.html: Updated.
+        * platform/glib/accessibility/aria-expanded-supported-roles-expected.txt: Added.
+        * platform/mac/accessibility/aria-expanded-supported-roles-expected.txt: Added.
+        * platform/win/TestExpectations:
+
 2021-09-24  Eric Hutchison  <ehutchison@apple.com>
 
         [ Catalina BigSur Debug ] fast/workers/use-machine-stack.html is a flaky crash.

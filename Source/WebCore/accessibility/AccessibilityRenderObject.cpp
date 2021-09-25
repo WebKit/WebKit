@@ -3239,12 +3239,8 @@ bool AccessibilityRenderObject::canSetExpandedAttribute() const
 {
     if (roleValue() == AccessibilityRole::Details)
         return true;
-    
-    // An object can be expanded if it aria-expanded is true or false.
-    const AtomString& expanded = getAttribute(aria_expandedAttr);
-    if (equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false"))
-        return true;
-    return false;
+
+    return supportsExpanded();
 }
 
 bool AccessibilityRenderObject::canSetTextRangeAttributes() const

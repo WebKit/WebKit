@@ -2704,15 +2704,29 @@ bool AccessibilityObject::supportsPressed() const
     
 bool AccessibilityObject::supportsExpanded() const
 {
-    // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
-    const AtomString& expanded = getAttribute(aria_expandedAttr);
-    if (equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false"))
-        return true;
     switch (roleValue()) {
+    case AccessibilityRole::Button:
+    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::ColumnHeader:
     case AccessibilityRole::ComboBox:
-    case AccessibilityRole::DisclosureTriangle:
     case AccessibilityRole::Details:
-        return true;
+    case AccessibilityRole::DisclosureTriangle:
+    case AccessibilityRole::GridCell:
+    case AccessibilityRole::Link:
+    case AccessibilityRole::ListBox:
+    case AccessibilityRole::MenuItem:
+    case AccessibilityRole::MenuItemCheckbox:
+    case AccessibilityRole::MenuItemRadio:
+    case AccessibilityRole::Row:
+    case AccessibilityRole::RowHeader:
+    case AccessibilityRole::Switch:
+    case AccessibilityRole::Tab:
+    case AccessibilityRole::TreeItem:
+    case AccessibilityRole::WebApplication: {
+        // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
+        const AtomString& expanded = getAttribute(aria_expandedAttr);
+        return equalLettersIgnoringASCIICase(expanded, "true") || equalLettersIgnoringASCIICase(expanded, "false");
+    }
     default:
         return false;
     }
@@ -2720,9 +2734,6 @@ bool AccessibilityObject::supportsExpanded() const
     
 bool AccessibilityObject::isExpanded() const
 {
-    if (equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"))
-        return true;
-    
     if (is<HTMLDetailsElement>(node()))
         return downcast<HTMLDetailsElement>(node())->isOpen();
     
@@ -2733,6 +2744,9 @@ bool AccessibilityObject::isExpanded() const
         }))
             return parent->isExpanded();
     }
+
+    if (supportsExpanded())
+        return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true");
 
     return false;  
 }

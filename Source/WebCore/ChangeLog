@@ -1,3 +1,24 @@
+2021-09-25  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: aria-expanded is no longer supported on quite a few roles in ARIA 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=230609
+
+        Reviewed by Chris Fleizach.
+
+        We were exposing aria-expanded on any element where it was explicitly
+        given a valid value (true/false). We should only expose it on roles where
+        aria-expanded is a supported property. In addition, the number of roles
+        where aria-expanded is a supported property was greatly reduced in ARIA 1.2.
+        This commit brings us in alignment with the spec.
+
+        Test: accessibility/aria-expanded-supported-roles.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsExpanded const):
+        (WebCore::AccessibilityObject::isExpanded const):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetExpandedAttribute const):
+
 2021-09-24  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GTK] Assertion on gamepad in debug build

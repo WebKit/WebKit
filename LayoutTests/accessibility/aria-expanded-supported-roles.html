@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<div id="content">
+<div id="alert" role="alert" aria-expanded="true"></div>
+<div id="alertdialog" role="alertdialog" aria-expanded="true"></div>
+<div id="application" role="application" aria-expanded="true"></div>
+<div id="article" role="article" aria-expanded="true"></div>
+<div id="banner" role="banner" aria-expanded="true"></div>
+<div id="blockquote" role="blockquote" aria-expanded="true"></div>
+<div id="button" role="button" aria-expanded="true"></div>
+<div id="caption" role="caption" aria-expanded="true"></div>
+<div id="cell" role="cell" aria-expanded="true"></div>
+<div id="checkbox" role="checkbox" aria-expanded="true"></div>
+<div id="columnheader" role="columnheader" aria-expanded="true"></div>
+<div id="combobox" role="combobox" aria-expanded="true"></div>
+<div id="complementary" role="complementary" aria-expanded="true"></div>
+<div id="contentinfo" role="contentinfo" aria-expanded="true"></div>
+<div id="definition" role="definition" aria-expanded="true"></div>
+<div id="deletion" role="deletion" aria-expanded="true"></div>
+<div id="dialog" role="dialog" aria-expanded="true"></div>
+<div id="directory" role="directory" aria-expanded="true"></div>
+<div id="document" role="document" aria-expanded="true"></div>
+<div id="emphasis" role="emphasis" aria-expanded="true"></div>
+<div id="feed" role="feed" aria-expanded="true"></div>
+<div id="figure" role="figure" aria-expanded="true"></div>
+<div id="form" role="form" aria-expanded="true"></div>
+<div id="generic" role="generic" aria-expanded="true"></div>
+<div id="grid" role="grid" aria-expanded="true"></div>
+<div id="gridcell" role="gridcell" aria-expanded="true"></div>
+<div id="group" role="group" aria-expanded="true"></div>
+<div id="heading" role="heading" aria-expanded="true"></div>
+<div id="img" role="img" aria-expanded="true"></div>
+<div id="insertion" role="insertion" aria-expanded="true"></div>
+<div id="label" role="label" aria-expanded="true"></div>
+<div id="legend" role="legend" aria-expanded="true"></div>
+<div id="link" role="link" aria-expanded="true"></div>
+<div id="list" role="list" aria-expanded="true"></div>
+<div id="listbox" role="listbox" aria-expanded="true"></div>
+<div id="listitem" role="listitem" aria-expanded="true"></div>
+<div id="log" role="log" aria-expanded="true"></div>
+<div id="main" role="main" aria-expanded="true"></div>
+<div id="marquee" role="marquee" aria-expanded="true"></div>
+<div id="math" role="math" aria-expanded="true"></div>
+<div id="menu" role="menu" aria-expanded="true"></div>
+<div id="menubar" role="menubar" aria-expanded="true"></div>
+<div id="menuitem" role="menuitem" aria-expanded="true"></div>
+<div id="menuitemcheckbox" role="menuitemcheckbox" aria-expanded="true"></div>
+<div id="menuitemradio" role="menuitemradio" aria-expanded="true"></div>
+<div id="meter" role="meter" aria-expanded="true"></div>
+<div id="navigation" role="navigation" aria-expanded="true"></div>
+<div id="none" role="none" aria-expanded="true"></div>
+<div id="note" role="note" aria-expanded="true"></div>
+<div id="option" role="option" aria-expanded="true"></div>
+<div id="paragraph" role="paragraph" aria-expanded="true"></div>
+<div id="presentation" role="presentation" aria-expanded="true"></div>
+<div id="progressbar" role="progressbar" aria-expanded="true"></div>
+<div id="radio" role="radio" aria-expanded="true"></div>
+<div id="radiogroup" role="radiogroup" aria-expanded="true"></div>
+<div id="region" role="region" aria-expanded="true"></div>
+<div id="row" role="row" aria-expanded="true"></div>
+<div id="rowheader" role="rowheader" aria-expanded="true"></div>
+<div id="scrollbar" role="scrollbar" aria-expanded="true"></div>
+<div id="search" role="search" aria-expanded="true"></div>
+<div id="searchbox" role="searchbox" aria-expanded="true"></div>
+<div id="separator" role="separator" aria-expanded="true"></div>
+<div id="splitter" role="separator" aria-expanded="true" tabindex="0"></div>
+<div id="slider" role="slider" aria-expanded="true"></div>
+<div id="spinbutton" role="spinbutton" aria-expanded="true"></div>
+<div id="status" role="status" aria-expanded="true"></div>
+<div id="strong" role="strong" aria-expanded="true"></div>
+<div id="subscript" role="subscript" aria-expanded="true"></div>
+<div id="superscript" role="superscript" aria-expanded="true"></div>
+<div id="switch" role="switch" aria-expanded="true"></div>
+<div id="tab" role="tab" aria-expanded="true"></div>
+<div id="table" role="table" aria-expanded="true"></div>
+<div id="tablist" role="tablist" aria-expanded="true"></div>
+<div id="tabpanel" role="tabpanel" aria-expanded="true"></div>
+<div id="term" role="term" aria-expanded="true"></div>
+<div id="textbox" role="textbox" aria-expanded="true"></div>
+<div id="time" role="time" aria-expanded="true"></div>
+<div id="timer" role="timer" aria-expanded="true"></div>
+<div id="toolbar" role="toolbar" aria-expanded="true"></div>
+<div id="tooltip" role="tooltip" aria-expanded="true"></div>
+<div id="tree" role="tree" aria-expanded="true"></div>
+<div id="treegrid" role="treegrid" aria-expanded="true"></div>
+<div id="treeitem" role="treeitem" aria-expanded="true"></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Verify which roles support aria-expanded.");
+if (window.accessibilityController) {
+    Array.from(document.getElementById("content").children).forEach(element => {
+        var axElement = accessibilityController.accessibleElementById(element.id);
+        if (axElement && axElement.isExpanded)
+            debug(axElement.role + " is expanded");
+    });
+    document.getElementById("content").style.visibility = "hidden";
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>
