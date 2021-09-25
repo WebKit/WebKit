@@ -43,6 +43,9 @@ public:
     static RefPtr<CSSCalcOperationNode> createInverseTrig(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createAtan2(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createSign(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
+    static RefPtr<CSSCalcOperationNode> createStep(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
+    static RefPtr<CSSCalcOperationNode> createRound(Vector<Ref<CSSCalcExpressionNode>>&& values);
+    static RefPtr<CSSCalcOperationNode> createRoundConstant(CalcOperator);
     static Ref<CSSCalcExpressionNode> simplify(Ref<CSSCalcExpressionNode>&&);
 
     static void buildCSSText(const CSSCalcExpressionNode&, StringBuilder&);
@@ -57,6 +60,9 @@ public:
     bool isAtan2Node() const { return m_operator == CalcOperator::Atan2; }
     bool isSignNode() const { return m_operator == CalcOperator::Abs || m_operator == CalcOperator::Sign; }
     bool shouldSortChildren() const { return isCalcSumNode() || isCalcProductNode(); }
+    bool isSteppedNode() const { return m_operator == CalcOperator::Mod || m_operator == CalcOperator::Rem || m_operator == CalcOperator::Round; }
+    bool isRoundOperation() const { return m_operator == CalcOperator::Down || m_operator == CalcOperator::Up || m_operator == CalcOperator::ToZero || m_operator == CalcOperator::Nearest; }
+    bool isRoundConstant() const { return (isRoundOperation()) && !m_children.size(); }
 
     void hoistChildrenWithOperator(CalcOperator);
     void combineChildren();

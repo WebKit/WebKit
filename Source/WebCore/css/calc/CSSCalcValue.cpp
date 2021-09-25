@@ -213,6 +213,20 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
                 return nullptr;
             return CSSCalcOperationNode::createSign(op, WTFMove(children));
         }
+        case CalcOperator::Mod:
+        case CalcOperator::Rem:
+        case CalcOperator::Round: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() != 2)
+                return nullptr;
+            return CSSCalcOperationNode::createStep(op, WTFMove(children));
+        }
+        case CalcOperator::Nearest:
+        case CalcOperator::ToZero:
+        case CalcOperator::Up:
+        case CalcOperator::Down: {
+            return CSSCalcOperationNode::createRoundConstant(op);
+        }
         }
         return nullptr;
     }
@@ -335,6 +349,9 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueAtan2:
     case CSSValueAbs:
     case CSSValueSign:
+    case CSSValueRound:
+    case CSSValueMod:
+    case CSSValueRem:
         return true;
     default:
         return false;

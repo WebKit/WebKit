@@ -31,6 +31,14 @@
 
 namespace WebCore {
 
+static std::pair<double, double> getNearestMultiples(double a, double b)
+{
+    auto absB = std::abs(b);
+    double lowerB = std::floor(a / absB) * absB;
+    double upperB = lowerB + absB;
+    return std::make_pair(lowerB, upperB);
+}
+
 float CalcExpressionOperation::evaluate(float maxValue) const
 {
     switch (m_operator) {
@@ -147,6 +155,58 @@ float CalcExpressionOperation::evaluate(float maxValue) const
         if (m_children[0]->evaluate(maxValue) < 0)
             return -1;
         return m_children[0]->evaluate(maxValue);
+    }
+    case CalcOperator::Mod: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        float left = m_children[0]->evaluate(maxValue);
+        float right = m_children[1]->evaluate(maxValue);
+        if (!right)
+            return std::numeric_limits<double>::quiet_NaN();
+        if ((left < 0) == (right < 0))
+            return std::fmod(left, right);
+        return std::remainder(left, right);
+    }
+    case CalcOperator::Rem: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        float left = m_children[0]->evaluate(maxValue);
+        float right = m_children[1]->evaluate(maxValue);
+        if (!right)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::fmod(left, right);
+    }
+    case CalcOperator::Round:
+        return std::numeric_limits<double>::quiet_NaN();
+    case CalcOperator::Up: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue));
+        return ret.second;
+    }
+    case CalcOperator::Down: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue));
+        return ret.first;
+    }
+    case CalcOperator::Nearest: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto a = m_children[0]->evaluate(maxValue);
+        auto b = m_children[1]->evaluate(maxValue);
+        auto ret = getNearestMultiples(a, b);
+        auto upperB = ret.second;
+        auto lowerB = ret.first;
+        return std::abs(upperB - a) <= std::abs(b) / 2 ? upperB : lowerB;
+    }
+    case CalcOperator::ToZero: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(m_children[0]->evaluate(maxValue), m_children[1]->evaluate(maxValue));
+        auto upperB = ret.second;
+        auto lowerB = ret.first;
+        return std::abs(upperB) < std::abs(lowerB) ? upperB : lowerB;
     }
     }
     ASSERT_NOT_REACHED();

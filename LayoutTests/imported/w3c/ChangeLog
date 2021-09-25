@@ -1,5 +1,21 @@
 2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
+        Implement round,mod,rem functions for calc
+        https://bugs.webkit.org/show_bug.cgi?id=230073
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/round-function-expected.txt:
+        * web-platform-tests/css/css-values/round-mod-rem-computed-expected.txt: Added.
+        * web-platform-tests/css/css-values/round-mod-rem-computed.html: Added.
+        * web-platform-tests/css/css-values/round-mod-rem-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-values/round-mod-rem-invalid.html: Added.
+        * web-platform-tests/css/css-values/round-mod-rem-serialize-expected.txt: Added.
+        * web-platform-tests/css/css-values/round-mod-rem-serialize.html: Added.
+        * web-platform-tests/css/support/numeric-testcommon.js:
+
+2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
         Implement abs,sign calc functions
         https://bugs.webkit.org/show_bug.cgi?id=229786
 

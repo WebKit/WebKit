@@ -1,3 +1,53 @@
+2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
+
+        Implement round,mod,rem functions for calc
+        https://bugs.webkit.org/show_bug.cgi?id=230073
+
+        Reviewed by Simon Fraser.
+
+        Implemented round, mod and rem calc functions. Involved adding css keywords for the functions
+        and the keywords associated with the round function, as well as implementing the parsing and 
+        computation of the expression. The spec for these functions: 
+        https://drafts.csswg.org/css-values-4/#round-func.
+
+        Tests: imported/w3c/web-platform-tests/css/css-values/round-mod-rem-computed.html
+               imported/w3c/web-platform-tests/css/css-values/round-mod-rem-invalid.html
+               imported/w3c/web-platform-tests/css/css-values/round-mod-rem-serialize.html
+
+        * css/CSSValueKeywords.in:
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        (WebCore::checkRoundKeyword):
+        Addition of functionID to parsing so the round keywords are only parsed within round 
+        function.
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcProduct):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcSum):
+        * css/calc/CSSCalcExpressionNodeParser.h:
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        (WebCore::functionFromOperator):
+        (WebCore::CSSCalcOperationNode::createStep):
+        (WebCore::validateRoundChildren):
+        (WebCore::CSSCalcOperationNode::createRound):
+        (WebCore::CSSCalcOperationNode::createRoundConstant):
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        (WebCore::functionPrefixForOperator):
+        (WebCore::getNearestMultiples):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        * css/calc/CSSCalcOperationNode.h:
+        * css/calc/CSSCalcValue.cpp:
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        * platform/calc/CalcExpressionOperation.cpp:
+        (WebCore::getNearestMultiples):
+        (WebCore::CalcExpressionOperation::evaluate const):
+        * platform/calc/CalcOperator.cpp:
+        (WebCore::operator<<):
+        * platform/calc/CalcOperator.h:
+
 2021-09-24  Simon Fraser  <simon.fraser@apple.com>
 
         Add a ScrollAnimations log channel

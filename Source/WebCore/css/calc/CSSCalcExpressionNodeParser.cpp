@@ -129,8 +129,16 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
         minArgumentCount = 3;
         maxArgumentCount = 3;
         break;
-
     case CSSValueLog:
+        maxArgumentCount = 2;
+        break;
+    case CSSValueRound:
+        minArgumentCount = 2;
+        maxArgumentCount = 3;
+        break;
+    case CSSValueMod:
+    case CSSValueRem:
+        minArgumentCount = 2;
         maxArgumentCount = 2;
         break;
     case CSSValueExp:
@@ -163,7 +171,7 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
             return false;
 
         RefPtr<CSSCalcExpressionNode> node;
-        if (!parseCalcSum(tokens, depth, node))
+        if (!parseCalcSum(tokens, functionID, depth, node))
             return false;
 
         ++argumentCount;
@@ -195,6 +203,15 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
         break;
     case CSSValueTan:
         result = CSSCalcOperationNode::createTrig(CalcOperator::Tan, WTFMove(nodes));
+        break;
+    case CSSValueRound:
+        result = CSSCalcOperationNode::createRound(WTFMove(nodes));
+        break;
+    case CSSValueMod:
+        result = CSSCalcOperationNode::createStep(CalcOperator::Mod, WTFMove(nodes));
+        break;
+    case CSSValueRem:
+        result = CSSCalcOperationNode::createStep(CalcOperator::Rem, WTFMove(nodes));
         break;
     case CSSValueWebkitCalc:
     case CSSValueCalc:
@@ -232,7 +249,29 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     return !!result;
 }
 
-bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr<CSSCalcExpressionNode>& result)
+static bool checkRoundKeyword(CSSValueID functionID, RefPtr<CSSCalcExpressionNode>& result, CSSValueID constantID)
+{
+    if (functionID != CSSValueRound)
+        return false;
+    switch (constantID) {
+    case CSSValueNearest:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::Nearest);
+        return true;
+    case CSSValueToZero:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::ToZero);
+        return true;
+    case CSSValueUp:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::Up);
+        return true;
+    case CSSValueDown:
+        result = CSSCalcOperationNode::createRoundConstant(CalcOperator::Down);
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, CSSValueID functionID, RefPtr<CSSCalcExpressionNode>& result)
 {
     auto makeCSSCalcPrimitiveValueNode = [&] (CSSUnitType type, double value) -> bool {
         if (calcUnitCategory(type) == CalculationCategory::Other)
@@ -246,6 +285,8 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr
 
     switch (token.type()) {
     case IdentToken: {
+        if (checkRoundKeyword(functionID, result, token.id()))
+            return true;
         auto value = m_symbolTable.get(token.id());
         value = value ? value : getConstantTable().get(token.id());
         if (!value)
@@ -266,7 +307,7 @@ bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr
     return false;
 }
 
-bool CSSCalcExpressionNodeParser::parseCalcValue(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
+bool CSSCalcExpressionNodeParser::parseCalcValue(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(depth, tokens) != OK)
         return false;
@@ -289,16 +330,16 @@ bool CSSCalcExpressionNodeParser::parseCalcValue(CSSParserTokenRange& tokens, in
         return parseCalcFunction(innerRange, functionId, depth + 1, result);
     }
 
-    return parseValue(tokens, result);
+    return parseValue(tokens, functionID, result);
 }
 
-bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
+bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(depth, tokens) != OK)
         return false;
 
     RefPtr<CSSCalcExpressionNode> firstValue;
-    if (!parseCalcValue(tokens, depth, firstValue))
+    if (!parseCalcValue(tokens, functionID, depth, firstValue))
         return false;
 
     Vector<Ref<CSSCalcExpressionNode>> nodes;
@@ -310,7 +351,7 @@ bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, 
         tokens.consumeIncludingWhitespace();
         
         RefPtr<CSSCalcExpressionNode> nextValue;
-        if (!parseCalcValue(tokens, depth, nextValue) || !nextValue)
+        if (!parseCalcValue(tokens, functionID, depth, nextValue) || !nextValue)
             return false;
 
         if (operatorCharacter == static_cast<char>(CalcOperator::Divide))
@@ -331,13 +372,13 @@ bool CSSCalcExpressionNodeParser::parseCalcProduct(CSSParserTokenRange& tokens, 
     return !!result;
 }
 
-bool CSSCalcExpressionNodeParser::parseCalcSum(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
+bool CSSCalcExpressionNodeParser::parseCalcSum(CSSParserTokenRange& tokens, CSSValueID functionID, int depth, RefPtr<CSSCalcExpressionNode>& result)
 {
     if (checkDepthAndIndex(depth, tokens) != OK)
         return false;
 
     RefPtr<CSSCalcExpressionNode> firstValue;
-    if (!parseCalcProduct(tokens, depth, firstValue))
+    if (!parseCalcProduct(tokens, functionID, depth, firstValue))
         return false;
 
     Vector<Ref<CSSCalcExpressionNode>> nodes;
@@ -357,7 +398,7 @@ bool CSSCalcExpressionNodeParser::parseCalcSum(CSSParserTokenRange& tokens, int 
         tokens.consumeIncludingWhitespace();
 
         RefPtr<CSSCalcExpressionNode> nextValue;
-        if (!parseCalcProduct(tokens, depth, nextValue) || !nextValue)
+        if (!parseCalcProduct(tokens, functionID, depth, nextValue) || !nextValue)
             return false;
 
         if (operatorCharacter == static_cast<char>(CalcOperator::Subtract))

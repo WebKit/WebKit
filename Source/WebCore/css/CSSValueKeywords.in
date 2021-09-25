@@ -1359,6 +1359,10 @@ atan
 atan2
 abs
 sign
+mod
+rem
+to-zero
+nearest
 
 from-image
 

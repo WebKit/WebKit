@@ -87,6 +87,13 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
     case CalcOperator::Atan2:
     case CalcOperator::Abs:
     case CalcOperator::Sign:
+    case CalcOperator::Mod:
+    case CalcOperator::Rem:
+    case CalcOperator::Round:
+    case CalcOperator::Up:
+    case CalcOperator::Down:
+    case CalcOperator::Nearest:
+    case CalcOperator::ToZero:
         ASSERT_NOT_REACHED();
         return CalculationCategory::Other;
     }
@@ -166,6 +173,13 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
         case CalcOperator::Acos:
         case CalcOperator::Atan:
         case CalcOperator::Atan2:
+        case CalcOperator::Mod:
+        case CalcOperator::Rem:
+        case CalcOperator::Round:
+        case CalcOperator::Up:
+        case CalcOperator::Down:
+        case CalcOperator::Nearest:
+        case CalcOperator::ToZero:
             // The type of a min(), max(), or clamp() expression is the result of adding the types of its comma-separated calculations
             return CalculationCategory::Other;
         }
@@ -299,6 +313,20 @@ static CSSValueID functionFromOperator(CalcOperator op)
         return CSSValueAbs;
     case CalcOperator::Sign:
         return CSSValueSign;
+    case CalcOperator::Mod:
+        return CSSValueMod;
+    case CalcOperator::Rem:
+        return CSSValueRem;
+    case CalcOperator::Round:
+        return CSSValueRound;
+    case CalcOperator::Up:
+        return CSSValueUp;
+    case CalcOperator::Down:
+        return CSSValueDown;
+    case CalcOperator::Nearest:
+        return CSSValueNearest;
+    case CalcOperator::ToZero:
+        return CSSValueToZero;
     }
     return CSSValueCalc;
 }
@@ -474,6 +502,68 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createSign(CalcOperator op, V
         return nullptr;
     }
     return adoptRef(new CSSCalcOperationNode(newCategory, op, WTFMove(values)));
+}
+
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createStep(CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 2)
+        return nullptr;
+
+    if (values[0]->category() != values[1]->category()) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create stepped value node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+    
+    if (!values[1]->doubleValue(values[1]->primitiveType())) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create stepped value node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+
+    return adoptRef(new CSSCalcOperationNode(values[0]->category(), op, WTFMove(values)));
+}
+
+static bool validateRoundChildren(Vector<Ref<CSSCalcExpressionNode>>& values)
+{
+    // for 3 children 1st node must be round constant
+    if (values.size() == 3) {
+        if (!is<CSSCalcOperationNode>(values[0]) || !(downcast<CSSCalcOperationNode>(values[0].get()).isRoundOperation()))
+            return false;
+    }
+    // for 2 children should not have round constant anywhere but first node of 3
+    for (size_t i = values.size() == 2 ? 0 : 1; i < values.size(); i++) {
+        if (is<CSSCalcOperationNode>(values[i])) {
+            if (downcast<CSSCalcOperationNode>(values[i].get()).isRoundConstant())
+                return false;
+        }
+    }
+    // check that two categories of numerical values are the same
+    return values.rbegin()[1]->category() == values.rbegin()[0]->category();
+    
+}
+
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createRound(Vector<Ref<CSSCalcExpressionNode>>&& values)
+{
+    if (values.size() != 2 && values.size() != 3)
+        return nullptr;
+    
+    if (!validateRoundChildren(values)) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create round node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+    
+    CalcOperator roundType = values.size() == 2 ?  CalcOperator::Nearest : downcast<CSSCalcOperationNode>(values[0].get()).calcOperator();
+    if (values.size() == 3)
+        values.remove(0);
+    if (!values[1]->doubleValue(values[1]->primitiveType())) {
+        LOG_WITH_STREAM(Calc, stream << "Failed to create round node because unable to determine category from " << prettyPrintNodes(values));
+        return nullptr;
+    }
+    return adoptRef(new CSSCalcOperationNode(values.rbegin()[0]->category(), roundType, WTFMove(values)));
+}
+
+RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createRoundConstant(CalcOperator op)
+{
+    return adoptRef(new CSSCalcOperationNode(CalculationCategory::Number, op, { }));
 }
 
 void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
@@ -710,6 +800,20 @@ void CSSCalcOperationNode::combineChildren()
         m_children.clear();
         m_children.append(WTFMove(newChild));
     }
+    if (isSteppedNode()) {
+        auto combinedUnitType = m_children[0]->primitiveType();
+        double resolvedValue = doubleValue(combinedUnitType);
+        auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
+        m_children.clear();
+        m_children.append(WTFMove(newChild));
+    }
+    if (isRoundOperation()) {
+        auto combinedUnitType = m_children[0]->primitiveType();
+        double resolvedValue = doubleValue(combinedUnitType);
+        auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
+        m_children.clear();
+        m_children.append(WTFMove(newChild));
+    }
 }
 
 // https://drafts.csswg.org/css-values-4/#simplify-a-calculation-tree
@@ -798,6 +902,11 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
         if (calcOperationNode.isSignNode() && depth)
             calcOperationNode.combineChildren();
 
+        if (calcOperationNode.isSteppedNode() && depth)
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isRoundOperation() && depth)
+            calcOperationNode.combineChildren();
         // If only one child remains, return the child (except at the root).
         auto shouldCombineParentWithOnlyChild = [](const CSSCalcOperationNode& parent, int depth)
         {
@@ -1003,6 +1112,13 @@ static const char* functionPrefixForOperator(CalcOperator op)
     case CalcOperator::Atan2: return "atan2(";
     case CalcOperator::Abs: return "abs(";
     case CalcOperator::Sign: return "sign(";
+    case CalcOperator::Mod: return "mod(";
+    case CalcOperator::Rem: return "rem(";
+    case CalcOperator::Round: return "round(";
+    case CalcOperator::Up: return "round(up, ";
+    case CalcOperator::Down: return "round(down, ";
+    case CalcOperator::Nearest: return "round(nearest, ";
+    case CalcOperator::ToZero: return "round(to-zero, ";
     }
     
     return "";
@@ -1157,6 +1273,13 @@ bool CSSCalcOperationNode::equals(const CSSCalcExpressionNode& exp) const
     return true;
 }
 
+static std::pair<double, double> getNearestMultiples(double a, double b)
+{
+    double lowerB = std::floor(a / std::abs(b))*std::abs(b);
+    double upperB = lowerB + std::abs(b);
+    return std::make_pair(lowerB, upperB);
+}
+
 double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<double>& children)
 {
     switch (op) {
@@ -1264,6 +1387,56 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children[0] < 0)
             return -1;
         return children[0];
+    }
+    case CalcOperator::Mod: {
+        if (children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        float left = children[0];
+        float right = children[1];
+        if (!right)
+            return std::numeric_limits<double>::quiet_NaN();
+        if ((left < 0) == (right < 0))
+            return std::fmod(left, right);
+        return std::remainder(left, right);
+    }
+    case CalcOperator::Rem: {
+        if (children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        float left = children[0];
+        float right = children[1];
+        if (!right)
+            return std::numeric_limits<double>::quiet_NaN();
+        return std::fmod(left, right);
+    }
+    case CalcOperator::Round:
+        return std::numeric_limits<double>::quiet_NaN();
+    case CalcOperator::Up: {
+        if (children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(children[0], children[1]);
+        return ret.second;
+    }
+    case CalcOperator::Down: {
+        if (children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(children[0], children[1]);
+        return ret.first;
+    }
+    case CalcOperator::Nearest: {
+        if (children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(children[0], children[1]);
+        auto upperB = ret.second;
+        auto lowerB = ret.first;
+        return std::abs(upperB - children[0]) <= std::abs(children[1]) / 2 ? upperB : lowerB;
+    }
+    case CalcOperator::ToZero: {
+        if (children.size() != 2)
+            return std::numeric_limits<double>::quiet_NaN();
+        auto ret = getNearestMultiples(children[0], children[1]);
+        auto upperB = ret.second;
+        auto lowerB = ret.first;
+        return std::abs(upperB) < std::abs(lowerB) ? upperB : lowerB;
     }
     }
     ASSERT_NOT_REACHED();
