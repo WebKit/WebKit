@@ -2416,4 +2416,6 @@ webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure Crash
 
 webkit.org/b/230711 [ BigSur ] http/tests/inspector/network/resource-initiatorNode.html [ Pass Failure Crash ]
 
+webkit.org/b/230780 [ Catalina BigSur Debug ] fast/workers/use-machine-stack.html [ Pass Crash ]
+
 
