@@ -73,7 +73,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     else {
         WebCore::TextRun run(StringView(text).substring(from, to - from), contentLogicalLeft);
         auto& style = inlineTextBox.style();
-        if (!style.collapseWhiteSpace() && style.tabSize() > 0)
+        if (!style.collapseWhiteSpace() && style.tabSize())
             run.setTabSize(true, style.tabSize());
         width = fontCascade.width(run);
     }
