@@ -1,3 +1,26 @@
+2021-09-23  Tim Nguyen  <ntim@apple.com>
+
+        Make inert nodes invisible to hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=229330
+
+        Reviewed by Antti Koivisto.
+
+        Test: LayoutTests/imported/w3c/web-platform-tests/inert/inert-inlines.tentative.html
+
+        This adds an internal inherited effectiveInert style property in RenderStyle and starts using it for hit testing checks.
+        Invalidation is done through style invalidation.
+
+        Skipped and removed test expectations for inert event retargeting tests that should soon become irrelevant per
+        this CSSWG discussion:
+        https://logs.csswg.org/irc.w3.org/css/2021-09-08/#e1431357
+        https://lists.w3.org/Archives/Public/www-style/2021Sep/0004.html
+
+        Pending WPT PR to remove inert event retargeting tests: https://github.com/web-platform-tests/wpt/pull/30866
+
+        * web-platform-tests/inert/inert-inlines.tentative-expected.txt:
+        * web-platform-tests/inert/inert-retargeting-iframe.tentative-expected.txt: Removed.
+        * web-platform-tests/inert/inert-retargeting.tentative-expected.txt: Removed.
+
 2021-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update WPT font-palette tests from upstream

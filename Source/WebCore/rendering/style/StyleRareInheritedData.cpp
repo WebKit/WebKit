@@ -135,6 +135,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , mathStyle(static_cast<unsigned>(RenderStyle::initialMathStyle()))
     , hasAutoCaretColor(true)
     , hasVisitedLinkAutoCaretColor(true)
+    , effectiveInert(false)
     , isInSubtreeWithBlendMode(false)
     , effectiveTouchActions(RenderStyle::initialTouchActions())
     , strokeWidth(RenderStyle::initialStrokeWidth())
@@ -232,6 +233,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , mathStyle(o.mathStyle)
     , hasAutoCaretColor(o.hasAutoCaretColor)
     , hasVisitedLinkAutoCaretColor(o.hasVisitedLinkAutoCaretColor)
+    , effectiveInert(o.effectiveInert)
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
     , effectiveTouchActions(o.effectiveTouchActions)
     , eventListenerRegionTypes(o.eventListenerRegionTypes)
@@ -359,6 +361,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && isInSubtreeWithBlendMode == o.isInSubtreeWithBlendMode
         && effectiveTouchActions == o.effectiveTouchActions
         && eventListenerRegionTypes == o.eventListenerRegionTypes
+        && effectiveInert == o.effectiveInert
         && strokeWidth == o.strokeWidth
         && strokeColor == o.strokeColor
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor

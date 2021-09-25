@@ -28,6 +28,7 @@
 
 #include "ElementRuleCollector.h"
 #include "FullscreenManager.h"
+#include "HTMLDialogElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
@@ -278,6 +279,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.elementData() != element.elementData()) {
         if (candidateElement.attributeWithoutSynchronization(HTMLNames::readonlyAttr) != element.attributeWithoutSynchronization(HTMLNames::readonlyAttr))
             return false;
+        if (m_document.settings().inertAttributeEnabled() && candidateElement.attributeWithoutSynchronization(HTMLNames::inertAttr) != element.attributeWithoutSynchronization(HTMLNames::inertAttr))
+            return false;
         if (candidateElement.isSVGElement()) {
             if (candidateElement.getAttribute(HTMLNames::typeAttr) != element.getAttribute(HTMLNames::typeAttr))
                 return false;
@@ -306,6 +309,9 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.hasEventListeners() || element.hasEventListeners())
         return false;
 #endif
+
+    if (&candidateElement == m_document.activeModalDialog() || &element == m_document.activeModalDialog())
+        return false;
 
 #if ENABLE(FULLSCREEN_API)
     if (&candidateElement == m_document.fullscreenManager().currentFullscreenElement() || &element == m_document.fullscreenManager().currentFullscreenElement())

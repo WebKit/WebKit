@@ -1725,7 +1725,8 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
 
     if (diff >= StyleDifference::RecompositeLayer) {
         if (layer.isComposited()) {
-            if (is<RenderWidget>(layer.renderer()) || (oldStyle && oldStyle->pointerEvents() != newStyle.pointerEvents())) {
+            bool hitTestingStateChanged = oldStyle && (oldStyle->pointerEvents() != newStyle.pointerEvents() || oldStyle->effectiveInert() != newStyle.effectiveInert());
+            if (is<RenderWidget>(layer.renderer()) || hitTestingStateChanged) {
                 // For RenderWidgets this is necessary to get iframe layers hooked up in response to scheduleInvalidateStyleAndLayerComposition().
                 layer.setNeedsCompositingConfigurationUpdate();
             }

@@ -60,6 +60,7 @@
 #include "GetAnimationsOptions.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLLabelElement.h"
@@ -3373,7 +3374,10 @@ void Element::addToTopLayer()
     document().addTopLayerElement(*this);
     setNodeFlag(NodeFlag::IsInTopLayer);
 
+    // Invalidate inert state
     invalidateStyleInternal();
+    if (document().documentElement())
+        document().documentElement()->invalidateStyleInternal();
 
     if (auto* layer = renderLayerForElement(*this))
         layer->establishesTopLayerDidChange();
@@ -3390,7 +3394,12 @@ void Element::removeFromTopLayer()
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
 
+    // Invalidate inert state
     invalidateStyleInternal();
+    if (document().documentElement())
+        document().documentElement()->invalidateStyleInternal();
+    if (auto* modalElement = document().activeModalDialog())
+        modalElement->invalidateStyleInternal();
 
     if (auto* layer = renderLayerForElement(*this))
         layer->establishesTopLayerDidChange();

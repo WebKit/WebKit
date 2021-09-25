@@ -743,6 +743,8 @@ public:
     OptionSet<TouchAction> effectiveTouchActions() const { return m_rareInheritedData->effectiveTouchActions; }
     OptionSet<EventListenerRegionType> eventListenerRegionTypes() const { return m_rareInheritedData->eventListenerRegionTypes; }
 
+    bool effectiveInert() const { return m_rareInheritedData->effectiveInert; }
+
     const LengthBox& scrollMargin() const;
     const Length& scrollMarginTop() const;
     const Length& scrollMarginBottom() const;
@@ -1303,6 +1305,9 @@ public:
     void setTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareNonInheritedData, touchActions, touchActions); }
     void setEffectiveTouchActions(OptionSet<TouchAction> touchActions) { SET_VAR(m_rareInheritedData, effectiveTouchActions, touchActions); }
     void setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET_VAR(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
+
+    // internal property
+    void setEffectiveInert(bool effectiveInert) { SET_VAR(m_rareInheritedData, effectiveInert, effectiveInert); }
 
     void setScrollMarginTop(Length&&);
     void setScrollMarginBottom(Length&&);

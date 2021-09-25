@@ -853,6 +853,8 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         }
 
         auto needsInvalidateEventRegion = [&] {
+            if (m_style.effectiveInert() != newStyle.effectiveInert())
+                return true;
             if (m_style.pointerEvents() != newStyle.pointerEvents())
                 return true;
 #if ENABLE(TOUCH_ACTION_REGIONS)

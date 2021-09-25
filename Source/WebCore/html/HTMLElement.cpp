@@ -483,6 +483,9 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& va
         return;
     }
 
+    if (document().settings().inertAttributeEnabled() && name == inertAttr)
+        invalidateStyleInternal();
+
     if (name == inputmodeAttr) {
         auto& document = this->document();
         if (this == document.focusedElement()) {

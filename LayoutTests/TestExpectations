@@ -5375,3 +5375,7 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-ove
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-overlay-and-spelling-001.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-paint-image.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-textarea-011.html [ ImageOnlyFailure ]
+
+# Awaiting official CSSWG resolution making these tests irrelevant: https://lists.w3.org/Archives/Public/www-style/2021Sep/0004.html
+imported/w3c/web-platform-tests/inert/inert-retargeting.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative.html [ Skip ]
