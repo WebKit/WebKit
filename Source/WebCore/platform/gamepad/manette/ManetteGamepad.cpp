@@ -47,7 +47,7 @@ static ManetteGamepad::StandardGamepadAxis toStandardGamepadAxis(uint16_t axis)
     case ABS_RY:
         return ManetteGamepad::StandardGamepadAxis::RightStickY;
     default:
-        ASSERT_NOT_REACHED();
+        break;
     }
     return ManetteGamepad::StandardGamepadAxis::Unknown;
 }
@@ -98,7 +98,7 @@ static ManetteGamepad::StandardGamepadButton toStandardGamepadButton(uint16_t ma
     case BTN_DPAD_RIGHT:
         return ManetteGamepad::StandardGamepadButton::DPadRight;
     default:
-        ASSERT_NOT_REACHED();
+        break;
     }
     return ManetteGamepad::StandardGamepadButton::Unknown;
 }

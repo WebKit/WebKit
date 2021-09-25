@@ -1,3 +1,21 @@
+2021-09-24  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GTK] Assertion on gamepad in debug build
+        https://bugs.webkit.org/show_bug.cgi?id=230682
+
+        Reviewed by Adrian Perez de Castro.
+
+        Fix assertions on gamepad handling in debug build.
+
+        No new tests needed.
+
+        * platform/gamepad/manette/ManetteGamepad.cpp:
+        (WebCore::toStandardGamepadAxis): remove assertion if unknown axis change.
+        (WebCore::toStandardGamepadButton): remove assertion if unknown buttons change.
+        * platform/gamepad/manette/ManetteGamepadProvider.cpp:
+        (WebCore::ManetteGamepadProvider::startMonitoringGamepads): Insert connected devices
+        asynchronously, after starting the device monitor, as expected by WebProcess.
+
 2021-09-24  Nikos Mouchtaris  <nmouchtaris@apple.com>
 
         Implement round,mod,rem functions for calc
