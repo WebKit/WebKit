@@ -1,3 +1,25 @@
+2021-09-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Use Python 3 (Revert)
+        https://bugs.webkit.org/show_bug.cgi?id=226658
+        <rdar://problem/78882016>
+
+        Unreviewed revert.
+
+        When running run-webkit-tests with Python 3, our simulator often
+        encounter https://bugs.webkit.org/show_bug.cgi?id=230513. Until we
+        resolve this bug, we must use Python 2 to run run-webkit-tests.
+
+        * CISupport/build-webkit-org/steps.py:
+        (RunWebKitTests):
+        * CISupport/build-webkit-org/steps_unittest.py:
+        * CISupport/ews-build/steps.py:
+        (RunWebKitTests):
+        * CISupport/ews-build/steps_unittest.py:
+        (test_success):
+        (test_warnings):
+        * Scripts/run-webkit-tests:
+
 2021-09-24  Aakash Jain  <aakash_jain@apple.com>
 
         Gracefully handle security bugs in apply-watchlist
