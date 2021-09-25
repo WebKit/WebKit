@@ -1,5 +1,20 @@
 2021-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Test css-wide keywords in base-palette and override-color
+        https://bugs.webkit.org/show_bug.cgi?id=230737
+        <rdar://problem/83479016>
+
+        Reviewed by Tim Horton.
+
+        It already works.
+
+        The tests are being upstreamed at https://github.com/web-platform-tests/wpt/pull/30958.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html:
+
+2021-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Make sure empty font families do the right thing for font palettes
         https://bugs.webkit.org/show_bug.cgi?id=230598
         <rdar://problem/83383955>
