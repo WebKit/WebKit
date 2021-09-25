@@ -9,7 +9,7 @@
 <style>
 @font-face {
     font-family: "Ahem-COLR";
-    src: url("resources/Ahem-COLOR-palettes.ttf") format("truetype");
+    src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
 }
 
 @font-palette-values MyPalette {
@@ -37,7 +37,7 @@ function tick() {
         requestAnimationFrame(tick);
     }
 }
-requestAnimationFrame(tick);
+[...document.fonts][0].load().then(tick);
 </script>
 </body>
 </html>
