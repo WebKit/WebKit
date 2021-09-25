@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tests that animating font-palette is discrete</title>
+<link rel="help" href="https://drafts.csswg.org/css-fonts/#font-palette-prop">
+<link rel="author" title="Myles C. Maxfield" href="mailto:mmaxfield@apple.com">
+<style>
+@font-face {
+    font-family: "Ahem-COLR";
+    src: url("../resources/Ahem-COLOR-palettes.ttf") format("truetype");
+}
+
+@font-palette-values Palette0 {
+    font-family: "Ahem-COLR";
+    base-palette: 0;
+}
+
+@font-palette-values Palette1 {
+    font-family: "Ahem-COLR";
+    base-palette: 1;
+}
+
+#target {
+    font-palette: Palette1;
+}
+</style>
+</head>
+<body>
+<div id="target" style="font: 48px 'Ahem-COLR';">A</div>
+</body>
+</html>

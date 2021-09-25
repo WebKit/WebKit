@@ -1944,6 +1944,16 @@ void RenderStyle::setFontItalic(std::optional<FontSelectionValue> value)
     fontCascade().update(currentFontSelector);
 }
 
+void RenderStyle::setFontPalette(FontPalette value)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setFontPalette(value);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(currentFontSelector);
+}
+
 LayoutBoxExtent RenderStyle::shadowExtent(const ShadowData* shadow)
 {
     LayoutUnit top;

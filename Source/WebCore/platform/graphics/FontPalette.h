@@ -28,6 +28,7 @@
 #include <wtf/Hasher.h>
 #include <wtf/Variant.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -60,6 +61,28 @@ inline void add(Hasher& hasher, const FontPalette& request)
     add(hasher, request.type);
     if (request.type == FontPalette::Type::Custom)
         add(hasher, request.identifier);
+}
+
+inline TextStream& operator<<(TextStream& ts, const FontPalette& fontPalette)
+{
+    switch (fontPalette.type) {
+    case FontPalette::Type::None:
+        ts << "none";
+        break;
+    case FontPalette::Type::Normal:
+        ts << "normal";
+        break;
+    case FontPalette::Type::Light:
+        ts << "light";
+        break;
+    case FontPalette::Type::Dark:
+        ts << "dark";
+        break;
+    case FontPalette::Type::Custom:
+        ts << "custom: " << fontPalette.identifier;
+        break;
+    }
+    return ts;
 }
 
 }

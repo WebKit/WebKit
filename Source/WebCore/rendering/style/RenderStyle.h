@@ -366,6 +366,7 @@ public:
     FontSelectionValue fontWeight() const { return fontDescription().weight(); }
     FontSelectionValue fontStretch() const { return fontDescription().stretch(); }
     std::optional<FontSelectionValue> fontItalic() const { return fontDescription().italic(); }
+    FontPalette fontPalette() const { return fontDescription().fontPalette(); }
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
@@ -973,6 +974,7 @@ public:
     void setFontWeight(FontSelectionValue);
     void setFontStretch(FontSelectionValue);
     void setFontItalic(std::optional<FontSelectionValue>);
+    void setFontPalette(FontPalette);
 
     void setColor(const Color&);
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }
