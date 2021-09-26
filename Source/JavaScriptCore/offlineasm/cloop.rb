@@ -259,11 +259,9 @@ class BaseIndex
         case type
         when :int8;       int8MemRef
         when :int32;      int32MemRef
-        when :int16;      int16MemRef
         when :int64;      int64MemRef
         when :intptr;     intptrMemRef
         when :uint8;      uint8MemRef
-        when :uint16;     uint16MemRef
         when :uint32;     uint32MemRef
         when :uint64;     uint64MemRef
         when :uintptr;    uintptrMemRef

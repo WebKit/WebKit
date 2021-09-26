@@ -611,7 +611,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     builtins/BuiltinNames.h
     builtins/BuiltinUtils.h
 
-    bytecode/ArithProfile.h
     bytecode/ArrayAllocationProfile.h
     bytecode/ArrayProfile.h
     bytecode/BytecodeConventions.h
@@ -838,7 +837,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     jit/AssemblyHelpers.h
     jit/AssemblyHelpersSpoolers.h
-    jit/BaselineJITCode.h
     jit/CCallHelpers.h
     jit/ExecutableAllocator.h
     jit/ExecutableMemoryHandle.h
@@ -877,7 +875,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     parser/ParserError.h
     parser/ParserModes.h
     parser/ParserTokens.h
-    parser/ResultType.h
     parser/SourceCode.h
     parser/SourceProvider.h
     parser/SourceProviderCache.h

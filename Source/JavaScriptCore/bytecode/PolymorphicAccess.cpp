@@ -73,7 +73,7 @@ void AccessGenerationState::succeed()
 {
     restoreScratch();
     if (jit->codeBlock()->useDataIC())
-        jit->farJump(CCallHelpers::Address(stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfDoneLocation()), JSInternalPtrTag);
+        jit->ret();
     else
         success.append(jit->jump());
 }
@@ -110,8 +110,6 @@ const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExcept
             RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
 
         m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
-        if (jit->codeBlock()->useDataIC())
-            m_liveRegistersForCall.add(stubInfo->m_stubInfoGPR);
         m_liveRegistersForCall.exclude(calleeSaveRegisters());
     }
     return m_liveRegistersForCall;
@@ -130,12 +128,11 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSe
     };
 }
 
-auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions() -> SpillState
+auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions(const RegisterSet& extra) -> SpillState
 {
     RegisterSet liveRegisters = allocator->usedRegisters();
-    if (jit->codeBlock()->useDataIC())
-        liveRegisters.add(stubInfo->m_stubInfoGPR);
     liveRegisters.exclude(calleeSaveRegisters());
+    liveRegisters.merge(extra);
 
     constexpr unsigned extraStackPadding = 0;
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
@@ -599,11 +596,16 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     CCallHelpers jit(codeBlock);
     state.jit = &jit;
 
-    if (!canBeShared && ASSERT_ENABLED) {
-        jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, jit.scratchRegister());
-        auto ok = jit.branchPtr(CCallHelpers::Equal, CCallHelpers::stackPointerRegister, jit.scratchRegister());
-        jit.breakpoint();
-        ok.link(&jit);
+    if (codeBlock->useDataIC()) {
+        if (state.m_doesJSGetterSetterCalls) {
+            // We have no guarantee that stack-pointer is the expected one. This is not a problem if we do not have JS getter / setter calls since stack-pointer is
+            // a callee-save register in the C calling convension. However, our JS executable call does not save stack-pointer. So we are adjusting stack-pointer after
+            // JS getter / setter calls. But this could be different from the initial stack-pointer, and makes PAC tagging broken.
+            // To ensure PAC-tagging work, we first adjust stack-pointer to the appropriate one.
+            jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            jit.tagReturnAddress();
+        } else
+            jit.tagReturnAddress();
     }
 
     state.preservedReusedRegisterState =

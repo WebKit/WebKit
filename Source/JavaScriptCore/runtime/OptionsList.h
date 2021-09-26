@@ -309,6 +309,7 @@ bool canUseWebAssemblyFastMemory();
     v(Int32, evalThresholdMultiplier, 10, Normal, nullptr) \
     v(Unsigned, maximumEvalCacheableSourceLength, 256, Normal, nullptr) \
     \
+    v(Bool, randomizeExecutionCountsBetweenCheckpoints, false, Normal, nullptr) \
     v(Int32, maximumExecutionCountsBetweenCheckpointsForBaseline, 1000, Normal, nullptr) \
     v(Int32, maximumExecutionCountsBetweenCheckpointsForUpperTiers, 50000, Normal, nullptr) \
     \
@@ -531,7 +532,6 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDataIC, false, Normal, nullptr) \
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
-    v(Bool, useBaselineJITCodeSharing, true, Normal, nullptr) \
     \
     /* Feature Flags */\
     \

@@ -156,17 +156,6 @@ static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(m
     macro(OpIteratorOpen) \
     macro(OpIteratorNext) \
 
-#define FOR_EACH_OPCODE_WITH_BINARY_ARITH_PROFILE(macro) \
-    macro(OpAdd) \
-    macro(OpMul) \
-    macro(OpDiv) \
-    macro(OpSub) \
-
-#define FOR_EACH_OPCODE_WITH_UNARY_ARITH_PROFILE(macro) \
-    macro(OpInc) \
-    macro(OpDec) \
-    macro(OpNegate) \
-
 
 IGNORE_WARNINGS_BEGIN("type-limits")
 

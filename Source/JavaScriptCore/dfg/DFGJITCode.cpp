@@ -30,7 +30,6 @@
 
 #include "CodeBlock.h"
 #include "FTLForOSREntryJITCode.h"
-#include "JumpTable.h"
 
 namespace JSC { namespace DFG {
 

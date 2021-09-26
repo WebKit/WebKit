@@ -104,7 +104,6 @@ public:
         CallFrameShuffleData data;
         data.numLocals = numLocals();
         data.numPassedArgs = m_numPassedArgs;
-        data.numParameters = m_numParameters;
         data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
         data.args.resize(argCount());
         for (size_t i = 0; i < argCount(); ++i)
@@ -799,7 +798,6 @@ private:
     bool performSafeWrites();
     
     unsigned m_numPassedArgs { UINT_MAX };
-    unsigned m_numParameters { UINT_MAX };
 };
 
 } // namespace JSC

@@ -27,7 +27,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "BaselineJITCode.h"
 #include "CodeBlockJettisoningWatchpoint.h"
 #include "DFGAdaptiveInferredPropertyValueWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
@@ -35,9 +34,7 @@
 #include "DFGJumpReplacement.h"
 #include "DFGOSREntry.h"
 #include "InlineCallFrameSet.h"
-#include "JITMathIC.h"
 #include "JSCast.h"
-#include "PCToCodeOriginMap.h"
 #include "ProfilerCompilation.h"
 #include "RecordedStatuses.h"
 #include <wtf/Bag.h>
@@ -73,7 +70,7 @@ struct WeakReferenceTransition {
     WriteBarrier<JSCell> m_to;
 };
         
-class CommonData : public MathICHolder {
+class CommonData {
     WTF_MAKE_NONCOPYABLE(CommonData);
 public:
     CommonData()
@@ -119,7 +116,6 @@ public:
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
     FixedVector<AdaptiveStructureWatchpoint> m_adaptiveStructureWatchpoints;
     FixedVector<AdaptiveInferredPropertyValueWatchpoint> m_adaptiveInferredPropertyValueWatchpoints;
-    std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
     RecordedStatuses recordedStatuses;
     Vector<JumpReplacement> m_jumpReplacements;
     

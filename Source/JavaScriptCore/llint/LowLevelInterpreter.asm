@@ -1420,8 +1420,7 @@ end
 
 macro checkSwitchToJIT(increment, action)
     loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_llintExecuteCounter[t0], t0
-    baddis increment, BaselineExecutionCounter::m_counter[t0], .continue
+    baddis increment, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t0], .continue
     action()
     .continue:
 end
@@ -1504,8 +1503,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     codeBlockGetter(t1)
     codeBlockSetter(t1)
     if not (C_LOOP or C_LOOP_WIN)
-        loadp CodeBlock::m_llintExecuteCounter[t1], t0
-        baddis 5, BaselineExecutionCounter::m_counter[t0], .continue
+        baddis 5, CodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter[t1], .continue
         if JSVALUE64
             move cfr, a0
             move PC, a1
@@ -1619,14 +1617,14 @@ macro functionInitialization(profileArgSkip)
     # optimal way for architectures that have more than five registers available
     # for arbitrary use in the interpreter.
     loadi CodeBlock::m_numParameters[t1], t0
-    addp -profileArgSkip, t0
+    addp -profileArgSkip, t0 # Use addi because that's what has the peephole
     assert(macro (ok) bpgteq t0, 0, ok end)
     btpz t0, .argumentProfileDone
     loadp CodeBlock::m_argumentValueProfiles + FixedVector::m_storage + RefCountedArray::m_data[t1], t3
     btpz t3, .argumentProfileDone # When we can't JIT, we don't allocate any argument value profiles.
     mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
     lshiftp 3, t0 # offset of last JSValue arguments on the stack.
-    addp t2, t3 # pointer to end of ValueProfile array in the value profile array.
+    addp t2, t3 # pointer to end of ValueProfile array in CodeBlock::m_argumentValueProfiles.
 .argumentProfileLoop:
     if JSVALUE64
         loadq ThisArgumentOffset - 8 + profileArgSkip * 8[cfr, t0], t2
@@ -2563,23 +2561,6 @@ macro notSupported()
         # on Intel, which is 1 byte, and bkpt on ARMv7, which is 2 bytes.)
         break
     end
-end
-
-
-macro updateUnaryArithProfile(size, opcodeStruct, type, scratch1, scratch2)
-    getu(size, opcodeStruct, m_profileIndex, scratch1)
-    loadp CodeBlock[cfr], scratch2
-    loadp CodeBlock::m_unlinkedCode[scratch2], scratch2
-    loadp UnlinkedCodeBlock::m_unaryArithProfiles + FixedVector::m_storage + RefCountedArray::m_data[scratch2], scratch2
-    orh type, UnaryArithProfile::m_bits[scratch2, scratch1, 2]
-end
-
-macro updateBinaryArithProfile(size, opcodeStruct, type, scratch1, scratch2)
-    getu(size, opcodeStruct, m_profileIndex, scratch1)
-    loadp CodeBlock[cfr], scratch2
-    loadp CodeBlock::m_unlinkedCode[scratch2], scratch2
-    loadp UnlinkedCodeBlock::m_binaryArithProfiles + FixedVector::m_storage + RefCountedArray::m_data[scratch2], scratch2
-    orh type, BinaryArithProfile::m_bits[scratch2, scratch1, 2]
 end
 
 // FIXME: We should not need the X86_64_WIN condition here, since WEBASSEMBLY should already be false on Windows

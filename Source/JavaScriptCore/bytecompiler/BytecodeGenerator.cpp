@@ -1598,7 +1598,7 @@ RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, R
         emitUnaryOp<OpNot>(dst, src);
         break;
     case op_negate:
-        OpNegate::emit(this, dst, src, m_codeBlock->addUnaryArithProfile(), type);
+        OpNegate::emit(this, dst, src, type);
         break;
     case op_bitnot:
         emitUnaryOp<OpBitnot>(dst, src);
@@ -1696,13 +1696,13 @@ RegisterID* BytecodeGenerator::emitTypeOf(RegisterID* dst, RegisterID* src)
 
 RegisterID* BytecodeGenerator::emitInc(RegisterID* srcDst)
 {
-    OpInc::emit(this, srcDst, m_codeBlock->addUnaryArithProfile());
+    OpInc::emit(this, srcDst);
     return srcDst;
 }
 
 RegisterID* BytecodeGenerator::emitDec(RegisterID* srcDst)
 {
-    OpDec::emit(this, srcDst, m_codeBlock->addUnaryArithProfile());
+    OpDec::emit(this, srcDst);
     return srcDst;
 }
 

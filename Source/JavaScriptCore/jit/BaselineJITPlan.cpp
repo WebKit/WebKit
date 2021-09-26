@@ -50,7 +50,7 @@ size_t BaselineJITPlan::codeSize() const
 
 CompilationResult BaselineJITPlan::finalize()
 {
-    CompilationResult result = m_jit.finalizeOnMainThread(m_codeBlock);
+    CompilationResult result = m_jit.finalizeOnMainThread();
     switch (result) {
     case CompilationFailed:
         CODEBLOCK_LOG_EVENT(m_codeBlock, "delayJITCompile", ("compilation failed"));

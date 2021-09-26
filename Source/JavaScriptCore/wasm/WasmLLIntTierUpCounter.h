@@ -52,9 +52,9 @@ public:
     void optimizeAfterWarmUp()
     {
         if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp());
+            setNewThreshold(Options::thresholdForBBQOptimizeAfterWarmUp(), nullptr);
         else
-            setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
+            setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp(), nullptr);
     }
 
     bool checkIfOptimizationThresholdReached()
@@ -65,9 +65,9 @@ public:
     void optimizeSoon()
     {
         if (Options::wasmLLIntTiersUpToBBQ())
-            setNewThreshold(Options::thresholdForBBQOptimizeSoon());
+            setNewThreshold(Options::thresholdForBBQOptimizeSoon(), nullptr);
         else
-            setNewThreshold(Options::thresholdForOMGOptimizeSoon());
+            setNewThreshold(Options::thresholdForOMGOptimizeSoon(), nullptr);
     }
 
     struct OSREntryData {

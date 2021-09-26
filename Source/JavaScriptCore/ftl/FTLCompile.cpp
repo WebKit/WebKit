@@ -156,7 +156,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     if (vm.shouldBuilderPCToCodeOriginMapping()) {
         B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
-        state.jitCode->common.m_pcToCodeOriginMap = makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer);
+        codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer));
     }
 
     CodeLocationLabel<JSEntryPtrTag> label = state.finalizer->b3CodeLinkBuffer->locationOf<JSEntryPtrTag>(state.proc->code().entrypointLabel(0));

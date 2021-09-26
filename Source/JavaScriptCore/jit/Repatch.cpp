@@ -236,9 +236,9 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             if (isJSArray(baseCell)) {
                 if (stubInfo.cacheType() == CacheType::Unset
                     && slot.slotBase() == baseCell
-                    && InlineAccess::isCacheableArrayLength(codeBlock, stubInfo, jsCast<JSArray*>(baseCell))) {
+                    && InlineAccess::isCacheableArrayLength(stubInfo, jsCast<JSArray*>(baseCell))) {
 
-                    bool generatedCodeInline = InlineAccess::generateArrayLength(codeBlock, stubInfo, jsCast<JSArray*>(baseCell));
+                    bool generatedCodeInline = InlineAccess::generateArrayLength(stubInfo, jsCast<JSArray*>(baseCell));
                     if (generatedCodeInline) {
                         repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingGetByFunction(kind));
                         stubInfo.initArrayLength(locker);
@@ -249,8 +249,8 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 newCase = AccessCase::create(vm, codeBlock, AccessCase::ArrayLength, propertyName);
             } else if (isJSString(baseCell)) {
                 if (stubInfo.cacheType() == CacheType::Unset
-                    && InlineAccess::isCacheableStringLength(codeBlock, stubInfo)) {
-                    bool generatedCodeInline = InlineAccess::generateStringLength(codeBlock, stubInfo);
+                    && InlineAccess::isCacheableStringLength(stubInfo)) {
+                    bool generatedCodeInline = InlineAccess::generateStringLength(stubInfo);
                     if (generatedCodeInline) {
                         repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingGetByFunction(kind));
                         stubInfo.initStringLength(locker);
@@ -304,7 +304,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 && !slot.watchpointSet()
                 && !structure->needImpurePropertyWatchpoint()
                 && !loadTargetFromProxy) {
-                bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(codeBlock, stubInfo, structure, slot.cachedOffset());
+                bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(stubInfo, structure, slot.cachedOffset());
                 if (generatedCodeInline) {
                     LOG_IC((ICEvent::GetBySelfPatch, structure->classInfo(), Identifier::fromUid(vm, propertyName.uid()), slot.slotBase() == baseValue));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
@@ -731,11 +731,11 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
             
                 if (stubInfo.cacheType() == CacheType::Unset
-                    && InlineAccess::canGenerateSelfPropertyReplace(codeBlock, stubInfo, slot.cachedOffset())
+                    && InlineAccess::canGenerateSelfPropertyReplace(stubInfo, slot.cachedOffset())
                     && !oldStructure->needImpurePropertyWatchpoint()
                     && !isProxy) {
                     
-                    bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(codeBlock, stubInfo, oldStructure, slot.cachedOffset());
+                    bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(stubInfo, oldStructure, slot.cachedOffset());
                     if (generatedCodeInline) {
                         LOG_IC((ICEvent::PutBySelfPatch, oldStructure->classInfo(), ident, slot.base() == baseValue));
                         repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingPutByFunction(slot, putByKind, putKind));
@@ -1132,7 +1132,7 @@ static InlineCacheAction tryCacheInBy(
                 && slot.slotBase() == base
                 && !slot.watchpointSet()
                 && !structure->needImpurePropertyWatchpoint()) {
-                bool generatedCodeInline = InlineAccess::generateSelfInAccess(codeBlock, stubInfo, structure);
+                bool generatedCodeInline = InlineAccess::generateSelfInAccess(stubInfo, structure);
                 if (generatedCodeInline) {
                     LOG_IC((ICEvent::InBySelfPatch, structure->classInfo(), ident, slot.slotBase() == base));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
@@ -1552,7 +1552,7 @@ static void revertCall(VM& vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef
 
 void unlinkCall(VM& vm, CallLinkInfo& callLinkInfo)
 {
-    dataLogLnIf(Options::dumpDisassembly(), "Unlinking CallLinkInfo: ", RawPointer(&callLinkInfo));
+    dataLogLnIf(Options::dumpDisassembly(), "Unlinking call at ", callLinkInfo.fastPathStart());
     
     revertCall(vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator).retagged<JITStubRoutinePtrTag>());
 }

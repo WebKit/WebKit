@@ -200,9 +200,6 @@ public:
 
     void dump(PrintStream&) const;
 
-    unsigned addBinaryArithProfile() { return m_numBinaryArithProfiles++; }
-    unsigned addUnaryArithProfile() { return m_numUnaryArithProfiles++; }
-
 private:
     VM& m_vm;
     Strong<UnlinkedCodeBlock> m_codeBlock;
@@ -224,8 +221,6 @@ private:
     Vector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     Vector<BitVector> m_bitVectors;
     Vector<IdentifierSet> m_constantIdentifierSets;
-    unsigned m_numBinaryArithProfiles { 0 };
-    unsigned m_numUnaryArithProfiles { 0 };
 };
 
 } // namespace JSC

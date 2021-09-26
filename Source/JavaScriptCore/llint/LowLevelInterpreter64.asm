@@ -441,13 +441,8 @@ macro checkSwitchToJITForLoop()
             move PC, a1
             cCall2(_llint_loop_osr)
             btpz r0, .recover
+
             move r1, sp
-
-            # Baseline uses LLInt's PB register for its JIT constant pool.
-            loadp CodeBlock[cfr], PB
-            loadp CodeBlock::m_jitData[PB], PB
-            loadp CodeBlock::JITData::m_jitConstantPool[PB], PB
-
             if ARM64E
                 leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
                 jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
@@ -1061,15 +1056,20 @@ strictEqualityJumpOp(jnstricteq, OpJnstricteq,
 
 macro preOp(opcodeName, opcodeStruct, integerOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
+        macro updateArithProfile(type)
+            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t2]
+        end
+
         get(m_srcDst, t0)
         loadq [cfr, t0, 8], t1
-        # srcDst in t1
+        metadata(t2, t3)
+        # srcDst in t1, metadata in t2
         # FIXME: the next line jumps to the slow path for BigInt32. We could instead have a dedicated path in here for them.
         bqb t1, numberTag, .slow
         integerOperation(t1, .slow)
         orq numberTag, t1
         storeq t1, [cfr, t0, 8]
-        updateUnaryArithProfile(size, opcodeStruct, ArithProfileInt, t5, t3)
+        updateArithProfile(ArithProfileInt)
         dispatch()
 
     .slow:
@@ -1134,18 +1134,24 @@ end)
 
 
 llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, return)
+
+    macro updateArithProfile(type)
+        orh type, OpNegate::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t1]
+    end
+
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t3)
+    metadata(t1, t2)
     bqb t3, numberTag, .opNegateNotInt
     btiz t3, 0x7fffffff, .opNegateSlow
     negi t3
     orq numberTag, t3
-    updateUnaryArithProfile(size, OpNegate, ArithProfileInt, t1, t2)
+    updateArithProfile(ArithProfileInt)
     return(t3)
 .opNegateNotInt:
     btqz t3, numberTag, .opNegateSlow
     xorq 0x8000000000000000, t3
-    updateUnaryArithProfile(size, OpNegate, ArithProfileNumber, t1, t2)
+    updateArithProfile(ArithProfileNumber)
     return(t3)
 
 .opNegateSlow:
@@ -1156,6 +1162,12 @@ end)
 
 macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, doubleOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
+        metadata(t5, t0)
+
+        macro profile(type)
+            orh type, %opcodeStruct%::Metadata::m_arithProfile + BinaryArithProfile::m_bits[t5]
+        end
+
         get(m_rhs, t0)
         get(m_lhs, t2)
         loadConstantOrVariable(size, t0, t1)
@@ -1165,7 +1177,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_dst, t2)
         integerOperationAndStore(t1, t0, .slow, t2)
 
-        updateBinaryArithProfile(size, opcodeStruct, ArithProfileIntInt, t5, t2)
+        profile(ArithProfileIntInt)
         dispatch()
 
     .op1NotInt:
@@ -1175,10 +1187,10 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         btqz t1, numberTag, .slow
         addq numberTag, t1
         fq2d t1, ft1
-        updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberNumber, t5, t2)
+        profile(ArithProfileNumberNumber)
         jmp .op1NotIntReady
     .op1NotIntOp2Int:
-        updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberInt, t5, t2)
+        profile(ArithProfileNumberInt)
         ci2ds t1, ft1
     .op1NotIntReady:
         get(m_dst, t2)
@@ -1192,9 +1204,9 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
 
     .op2NotInt:
         # First operand is definitely an int, the second is definitely not.
-        btqz t1, numberTag, .slow
-        updateBinaryArithProfile(size, opcodeStruct, ArithProfileIntNumber, t5, t2)
         get(m_dst, t2)
+        btqz t1, numberTag, .slow
+        profile(ArithProfileIntNumber)
         ci2ds t0, ft0
         addq numberTag, t1
         fq2d t1, ft1

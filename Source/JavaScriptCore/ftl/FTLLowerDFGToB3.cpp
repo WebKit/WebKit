@@ -88,7 +88,6 @@
 #include "JSSetIterator.h"
 #include "LLIntThunks.h"
 #include "OperandsInlines.h"
-#include "PCToCodeOriginMap.h"
 #include "ProbeContext.h"
 #include "RegExpObject.h"
 #include "ScratchRegisterAllocator.h"
@@ -2321,18 +2320,6 @@ private:
         compileBinaryMathIC<JITSubGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
     }
 
-    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITAddGenerator>::value>::type>
-    static JITAddIC* addMathIC(DFG::CommonData& common, BinaryArithProfile* profile) { return common.addJITAddIC(profile); }
-
-    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITMulGenerator>::value>::type>
-    static JITMulIC* addMathIC(DFG::CommonData& common, BinaryArithProfile* profile) { return common.addJITMulIC(profile); }
-
-    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITNegGenerator>::value>::type>
-    static JITNegIC* addMathIC(DFG::CommonData& common, UnaryArithProfile* profile) { return common.addJITNegIC(profile); }
-
-    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITSubGenerator>::value>::type>
-    static JITSubIC* addMathIC(DFG::CommonData& common, BinaryArithProfile* profile) { return common.addJITSubIC(profile); }
-
     void compileValueMul()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
@@ -2404,7 +2391,7 @@ private:
 #endif
 
                 Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
-                JITUnaryMathIC<Generator>* mathIC = addMathIC<Generator>(state->jitCode->common, arithProfile);
+                JITUnaryMathIC<Generator>* mathIC = jit.codeBlock()->addMathIC<Generator>(arithProfile);
                 mathIC->m_generator = Generator(JSValueRegs(params[0].gpr()), JSValueRegs(params[1].gpr()), params.gpScratch(0));
 
                 bool shouldEmitProfiling = false;
@@ -2513,7 +2500,7 @@ private:
 #endif
 
                 Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
-                JITBinaryMathIC<Generator>* mathIC = addMathIC<Generator>(state->jitCode->common, arithProfile);
+                JITBinaryMathIC<Generator>* mathIC = jit.codeBlock()->addMathIC<Generator>(arithProfile);
                 mathIC->m_generator = Generator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.fpScratch(0),
                     params.fpScratch(1), params.gpScratch(0));
@@ -4330,7 +4317,7 @@ private:
             GPRReg stubInfoGPR = JITCode::useDataIC(JITType::FTLJIT) ? params.gpScratch(0) : InvalidGPRReg;
 
             auto generator = Box<JITPutByValGenerator>::create(
-                jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutPrivateName,
+                jit.codeBlock(), JITType::FTLJIT, nodeSemanticOrigin, callSiteIndex, AccessType::PutByVal,
                 params.unavailableRegisters(), JSValueRegs(baseGPR), JSValueRegs(propertyGPR), JSValueRegs(valueGPR), InvalidGPRReg, stubInfoGPR);
 
             generator->stubInfo()->propertyIsSymbol = true;
@@ -10298,7 +10285,6 @@ private:
                     for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                         shuffleData.args.append(ValueRecovery::constant(jsUndefined()));
                     shuffleData.numPassedArgs = numPassedArgs;
-                    shuffleData.numParameters = jit.codeBlock()->numParameters();
                     shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
                     
                     CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(semanticNodeOrigin);
@@ -10457,14 +10443,13 @@ private:
                     shuffleData.args.append(params[1 + i].recoveryForJSValue());
 
                 shuffleData.numPassedArgs = numArgs;
-                shuffleData.numParameters = jit.codeBlock()->numParameters();
                 
                 shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo(codeOrigin);
                 callLinkInfo->setUpCall(CallLinkInfo::TailCall, GPRInfo::regT0);
 
-                auto slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, [&] {
+                auto slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
                     callLinkInfo->setFrameShuffleData(shuffleData);
                     CallFrameShuffler(jit, shuffleData).prepareForTailCall();
                 });
@@ -10807,7 +10792,7 @@ private:
                 CCallHelpers::JumpList slowPath;
                 CCallHelpers::Jump done;
                 if (isTailCall) {
-                    slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, [&] {
+                    slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
                         jit.emitRestoreCalleeSaves();
                         jit.prepareForTailCallSlow();
                     });
@@ -11088,7 +11073,7 @@ private:
                 CCallHelpers::JumpList slowPath;
                 CCallHelpers::Jump done;
                 if (isTailCall) {
-                    slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, [&] {
+                    slowPath = callLinkInfo->emitTailCallFastPath(jit, GPRInfo::regT0, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
                         jit.emitRestoreCalleeSaves();
                         jit.prepareForTailCallSlow();
                     });

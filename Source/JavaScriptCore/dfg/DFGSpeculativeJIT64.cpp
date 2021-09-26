@@ -828,7 +828,6 @@ void SpeculativeJIT::emitCall(Node* node)
             shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatJS);
             shuffleData.args.resize(numAllocatedArgs);
             shuffleData.numPassedArgs = numPassedArgs;
-            shuffleData.numParameters = m_jit.codeBlock()->numParameters();
             
             for (unsigned i = 0; i < numPassedArgs; ++i) {
                 Edge argEdge = m_jit.graph().varArgChild(node, i + 1);
@@ -980,7 +979,7 @@ void SpeculativeJIT::emitCall(Node* node)
     
     CCallHelpers::JumpList slowCases;
     if (isTail) {
-        slowCases = callLinkInfo->emitTailCallFastPath(m_jit, calleeGPR, [&] {
+        slowCases = callLinkInfo->emitTailCallFastPath(m_jit, calleeGPR, InvalidGPRReg, CallLinkInfo::UseDataIC::No, [&] {
             if (node->op() == TailCall) {
                 callLinkInfo->setFrameShuffleData(shuffleData);
                 CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
