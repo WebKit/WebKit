@@ -1458,3 +1458,5 @@ webkit.org/b/230777 [ Catalina Debug ] transitions/transition-end-event-destroy-
 
 webkit.org/b/230807 [ Catalina Debug ] media/media-source/media-source-append-before-last-range-no-quota-exceeded.html [ Pass Crash ]
 webkit.org/b/230807 [ Catalina Debug ] media/media-source/media-source-remove.html [ Pass Crash ]
+
+webkit.org/b/230808 [ Catalina Debug ] media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html [ Pass Crash ]
