@@ -722,7 +722,7 @@ void JIT::emitBinaryDoubleOp(const Instruction *instruction, OperandTypes types,
 
 void JIT::emit_op_negate(const Instruction* currentInstruction)
 {
-    UnaryArithProfile* arithProfile = currentInstruction->as<OpNegate>().metadata(m_profiledCodeBlock).m_arithProfile;
+    UnaryArithProfile* arithProfile = &m_unlinkedCodeBlock->unaryArithProfile(currentInstruction->as<OpNegate>().m_profileIndex);
     JITNegIC* negateIC = m_mathICs.addJITNegIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, negateIC);
     // FIXME: it would be better to call those operationValueNegate, since the operand can be a BigInt
@@ -904,7 +904,7 @@ void JIT::emit_op_urshift(const Instruction* currentInstruction)
 
 void JIT::emit_op_add(const Instruction* currentInstruction)
 {
-    BinaryArithProfile* arithProfile = currentInstruction->as<OpAdd>().metadata(m_profiledCodeBlock).m_arithProfile;
+    BinaryArithProfile* arithProfile = &m_unlinkedCodeBlock->binaryArithProfile(currentInstruction->as<OpAdd>().m_profileIndex);
     JITAddIC* addIC = m_mathICs.addJITAddIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, addIC);
     emitMathICFast<OpAdd>(addIC, currentInstruction, operationValueAddProfiled, operationValueAdd);
@@ -1175,7 +1175,7 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 
     BinaryArithProfile* arithProfile = nullptr;
     if (shouldEmitProfiling())
-        arithProfile = currentInstruction->as<OpDiv>().metadata(m_profiledCodeBlock).m_arithProfile;
+        arithProfile = &m_unlinkedCodeBlock->binaryArithProfile(currentInstruction->as<OpDiv>().m_profileIndex);
 
     SnippetOperand leftOperand(bytecode.m_operandTypes.first());
     SnippetOperand rightOperand(bytecode.m_operandTypes.second());
@@ -1220,7 +1220,7 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
 
 void JIT::emit_op_mul(const Instruction* currentInstruction)
 {
-    BinaryArithProfile* arithProfile = currentInstruction->as<OpMul>().metadata(m_profiledCodeBlock).m_arithProfile;
+    BinaryArithProfile* arithProfile = &m_unlinkedCodeBlock->binaryArithProfile(currentInstruction->as<OpMul>().m_profileIndex);
     JITMulIC* mulIC = m_mathICs.addJITMulIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, mulIC);
     emitMathICFast<OpMul>(mulIC, currentInstruction, operationValueMulProfiled, operationValueMul);
@@ -1236,7 +1236,7 @@ void JIT::emitSlow_op_mul(const Instruction* currentInstruction, Vector<SlowCase
 
 void JIT::emit_op_sub(const Instruction* currentInstruction)
 {
-    BinaryArithProfile* arithProfile = currentInstruction->as<OpSub>().metadata(m_profiledCodeBlock).m_arithProfile;
+    BinaryArithProfile* arithProfile = &m_unlinkedCodeBlock->binaryArithProfile(currentInstruction->as<OpSub>().m_profileIndex);
     JITSubIC* subIC = m_mathICs.addJITSubIC(arithProfile);
     m_instructionToMathIC.add(currentInstruction, subIC);
     emitMathICFast<OpSub>(subIC, currentInstruction, operationValueSubProfiled, operationValueSub);

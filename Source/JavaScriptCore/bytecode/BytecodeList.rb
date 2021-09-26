@@ -64,8 +64,6 @@ types [
 
     :ValueProfile,
     :ValueProfileAndVirtualRegisterBuffer,
-    :UnaryArithProfile,
-    :BinaryArithProfile,
     :ArrayProfile,
     :ArrayAllocationProfile,
     :ObjectAllocationProfile,
@@ -289,10 +287,8 @@ op_group :ProfiledBinaryOp,
         dst: VirtualRegister,
         lhs: VirtualRegister,
         rhs: VirtualRegister,
+        profileIndex: unsigned,
         operandTypes: OperandTypes,
-    },
-    metadata: {
-        arithProfile: BinaryArithProfile.*
     }
 
 op_group :ValueProfiledBinaryOp,
@@ -351,9 +347,7 @@ op_group :UnaryInPlaceProfiledOp,
     ],
     args: {
         srcDst: VirtualRegister,
-    },
-    metadata: {
-        arithProfile: UnaryArithProfile.*
+        profileIndex: unsigned,
     }
 
 op :to_object,
@@ -383,10 +377,8 @@ op :negate,
     args: {
         dst: VirtualRegister,
         operand: VirtualRegister,
+        profileIndex: unsigned,
         resultType: ResultType,
-    },
-    metadata: {
-        arithProfile: UnaryArithProfile.*
     }
 
 op :not,

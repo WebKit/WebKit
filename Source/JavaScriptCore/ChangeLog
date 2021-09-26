@@ -1,3 +1,45 @@
+2021-09-26  Saam Barati  <sbarati@apple.com>
+
+        Make byte codes with arithmetic profiles switch to using an index instead of a pointer in metadata
+        https://bugs.webkit.org/show_bug.cgi?id=230798
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes each bytecode that uses a BinaryArithProfile/UnaryArithProfile
+        have an index into a table instead of storing a pointer to the profile in its metadata.
+        Then, we can just load the profile using the index in the bytecode, which saves memory.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::binaryArithProfileForPC):
+        (JSC::CodeBlock::unaryArithProfileForPC):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::allocateSharedProfiles):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::addBinaryArithProfile):
+        (JSC::UnlinkedCodeBlockGenerator::addUnaryArithProfile):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        (JSC::BytecodeGenerator::emitInc):
+        (JSC::BytecodeGenerator::emitDec):
+        * bytecompiler/BytecodeGenerator.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_sub):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateArithProfileForUnaryArithOp):
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+
 2021-09-25  Saam Barati  <sbarati@apple.com>
 
         Build an unlinked baseline JIT

@@ -2566,14 +2566,20 @@ macro notSupported()
 end
 
 
-macro updateUnaryArithProfile(opcodeStruct, type, metadata, temp)
-    loadp %opcodeStruct%::Metadata::m_arithProfile[metadata], temp
-    orh type, UnaryArithProfile::m_bits[temp]
+macro updateUnaryArithProfile(size, opcodeStruct, type, scratch1, scratch2)
+    getu(size, opcodeStruct, m_profileIndex, scratch1)
+    loadp CodeBlock[cfr], scratch2
+    loadp CodeBlock::m_unlinkedCode[scratch2], scratch2
+    loadp UnlinkedCodeBlock::m_unaryArithProfiles + FixedVector::m_storage + RefCountedArray::m_data[scratch2], scratch2
+    orh type, UnaryArithProfile::m_bits[scratch2, scratch1, 2]
 end
 
-macro updateBinaryArithProfile(opcodeStruct, type, metadata, temp)
-    loadp %opcodeStruct%::Metadata::m_arithProfile[metadata], temp
-    orh type, BinaryArithProfile::m_bits[temp]
+macro updateBinaryArithProfile(size, opcodeStruct, type, scratch1, scratch2)
+    getu(size, opcodeStruct, m_profileIndex, scratch1)
+    loadp CodeBlock[cfr], scratch2
+    loadp CodeBlock::m_unlinkedCode[scratch2], scratch2
+    loadp UnlinkedCodeBlock::m_binaryArithProfiles + FixedVector::m_storage + RefCountedArray::m_data[scratch2], scratch2
+    orh type, BinaryArithProfile::m_bits[scratch2, scratch1, 2]
 end
 
 // FIXME: We should not need the X86_64_WIN condition here, since WEBASSEMBLY should already be false on Windows
