@@ -4,6 +4,23 @@
         https://bugs.webkit.org/show_bug.cgi?id=230677
         <rdar://problem/83437391>
 
+        Fix palette animations tests after r283077.
+
+        Unreviewed.
+
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-2-expected.html:
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-2.html:
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-3-expected-mismatch.html:
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-3.html:
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation-expected.html:
+        * web-platform-tests/css/css-fonts/animations/font-palette-animation.html:
+
+2021-09-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test palette animations
+        https://bugs.webkit.org/show_bug.cgi?id=230677
+        <rdar://problem/83437391>
+
         Reviewed by Simon Fraser.
 
         These are being upstreamed at https://github.com/web-platform-tests/wpt/pull/30955.
