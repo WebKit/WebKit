@@ -1,3 +1,12 @@
+2021-09-26  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Catalina Debug wk1 EWS ] Media tests flakily crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=230807.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-26  Antti Koivisto  <antti@apple.com>
 
         Line iterator firstRun/lastRun may return runs from wrong lines
