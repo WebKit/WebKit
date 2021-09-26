@@ -102,7 +102,7 @@ public:
             return { *m_inlineContent };
         auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstBoxIndex() };
         if (runIterator.box().isInlineBox())
-            runIterator.traverseNextLeaf();
+            runIterator.traverseNextOnLine();
         return runIterator;
     }
 
@@ -113,7 +113,7 @@ public:
             return { *m_inlineContent };
         auto runIterator = RunIteratorModernPath { *m_inlineContent, line().firstBoxIndex() + boxCount - 1 };
         if (runIterator.box().isInlineBox())
-            runIterator.traversePreviousLeaf();
+            runIterator.traversePreviousOnLine();
         return runIterator;
     }
 

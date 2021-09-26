@@ -1,3 +1,14 @@
+2021-09-26  Antti Koivisto  <antti@apple.com>
+
+        Line iterator firstRun/lastRun may return runs from wrong lines
+        https://bugs.webkit.org/show_bug.cgi?id=230770
+        <rdar://problem/83509753>
+
+        Reviewed by Alan Bujtas.
+
+        * editing/iterator-line-start-end-expected.txt: Added.
+        * editing/iterator-line-start-end.html: Added.
+
 2021-09-23  Tim Nguyen  <ntim@apple.com>
 
         Make inert nodes invisible to hit testing
