@@ -1,3 +1,18 @@
+2021-09-27  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Set CURL_LOCK_DATA_SSL_SESSION option to reduce SSL/TLS handshake time
+        https://bugs.webkit.org/show_bug.cgi?id=230818
+
+        Reviewed by Fujii Hironori.
+
+        Set CURL_LOCK_DATA_SSL_SESSION option to reuse Session ID.
+        It reduces SSL/TLS handshake time.
+
+        Covered by existing tests.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlShareHandle::CurlShareHandle):
+
 2021-09-27  Tim Nguyen  <ntim@apple.com>
 
         Rename Style::queuePostResolutionCallback to Style::deprecatedQueuePostResolutionCallback
