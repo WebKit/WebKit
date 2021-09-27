@@ -1,5 +1,27 @@
 2021-09-27  Youenn Fablet  <youenn@apple.com>
 
+        Make sure to reset presenting application pid in case of mediaserverd crash
+        https://bugs.webkit.org/show_bug.cgi?id=230822
+        <rdar://83474184>
+
+        Reviewed by Eric Carlson.
+
+        Add API to crash GPUProcess from WebKitTestRunner.
+
+        Make sure to forward to MediaPlayer the fact that the layer failed.
+        This was handled for GPUProcess crash but not for other cases like mediaserverd crashes.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextTerminateGPUProcess):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::terminateForTesting):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::setDidFail):
+
+2021-09-27  Youenn Fablet  <youenn@apple.com>
+
         Rename RemoteCaptureSampleManager::RemoteAudio thread appropriately
         https://bugs.webkit.org/show_bug.cgi?id=230745
 

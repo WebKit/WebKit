@@ -277,6 +277,7 @@ public:
     void setOpenPanelFileURLsMediaIcon(WKDataRef mediaIcon) { m_openPanelFileURLsMediaIcon = mediaIcon; }
 #endif
 
+    void terminateGPUProcess();
     void terminateNetworkProcess();
     void terminateServiceWorkers();
 

@@ -1291,6 +1291,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "TerminateGPUProcess")) {
+        ASSERT(!messageBody);
+        TestController::singleton().terminateGPUProcess();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "TerminateNetworkProcess")) {
         ASSERT(!messageBody);
         TestController::singleton().terminateNetworkProcess();

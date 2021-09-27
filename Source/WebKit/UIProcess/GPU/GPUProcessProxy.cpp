@@ -394,6 +394,11 @@ void GPUProcessProxy::processIsReadyToExit()
     gpuProcessExited(GPUProcessTerminationReason::IdleExit); // May cause |this| to get deleted.
 }
 
+void GPUProcessProxy::terminateForTesting()
+{
+    processIsReadyToExit();
+}
+
 void GPUProcessProxy::didClose(IPC::Connection&)
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::didClose:", this);

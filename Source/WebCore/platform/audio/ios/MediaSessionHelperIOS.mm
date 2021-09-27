@@ -114,7 +114,7 @@ private:
 
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
 #if HAVE(CELESTIAL)
-    bool m_havePresentedApplicationPID { false };
+    std::optional<int> m_presentedApplicationPID;
 #endif
 };
 
@@ -186,12 +186,6 @@ void MediaSessionHelper::applicationDidBecomeActive()
         client.applicationDidBecomeActive();
 }
 
-void MediaSessionHelper::mediaServerConnectionDied()
-{
-    for (auto& client : m_clients)
-        client.mediaServerConnectionDied();
-}
-
 void MediaSessionHelper::externalOutputDeviceAvailableDidChange(HasAvailableTargets hasAvailableTargets)
 {
     m_isExternalOutputDeviceAvailable = hasAvailableTargets == HasAvailableTargets::Yes;
@@ -259,9 +253,10 @@ MediaSessionHelperiOS::~MediaSessionHelperiOS()
 void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
 {
 #if HAVE(CELESTIAL)
-    if (m_havePresentedApplicationPID)
+    if (m_presentedApplicationPID)
         return;
-    m_havePresentedApplicationPID = true;
+
+    m_presentedApplicationPID = pid;
 
     if (RuntimeEnabledFeatures::sharedFeatures().disableMediaExperiencePIDInheritance())
         return;
@@ -305,11 +300,12 @@ void MediaSessionHelperiOS::mediaServerConnectionDied()
     if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification() && canLoadAVSystemController_SubscribeToNotificationsAttribute())
         [[getAVSystemControllerClass() sharedAVSystemController] setAttribute:@[getAVSystemController_CarPlayIsConnectedDidChangeNotification()] forKey:getAVSystemController_SubscribeToNotificationsAttribute() error:nil];
 
-    if (!m_havePresentedApplicationPID)
-        return;
-
-    m_havePresentedApplicationPID = false;
-    MediaSessionHelper::mediaServerConnectionDied();
+    if (m_presentedApplicationPID) {
+        auto presentedApplicationPID = std::exchange(m_presentedApplicationPID, { });
+        callOnMainRunLoop([presentedApplicationPID] {
+            sharedHelper().providePresentingApplicationPID(*presentedApplicationPID);
+        });
+    }
 }
 
 void MediaSessionHelperiOS::updateCarPlayIsConnected(std::optional<bool>&& carPlayIsConnected)

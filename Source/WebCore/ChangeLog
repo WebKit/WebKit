@@ -1,3 +1,33 @@
+2021-09-27  Youenn Fablet  <youenn@apple.com>
+
+        Make sure to reset presenting application pid in case of mediaserverd crash
+        https://bugs.webkit.org/show_bug.cgi?id=230822
+        <rdar://83474184>
+
+        Reviewed by Eric Carlson.
+
+        Before the patch, we were asking MediaSessionHelper client to set the pid in case of mediaserverd crash.
+        Given GPUProcess is the only one receiving the notification now, only the GPUProcess client could do it,
+        which was not the case as MediaSessionManager in WebProcess was responsible to do so.
+
+        Instead of relying on MediaSessionHelper client to do the setup, we now let MediaSessionHelper do it on its own.
+        Everything will happen in GPUProcess which should also be faster.
+
+        We also make sure to reset the affine transform of m_sampleBufferDisplayLayer so that rotation is applied correctly
+        after mediaserverd crash.
+
+        Manually tested by crashing mediaserverd.
+        Test: fast/mediastream/video-rotation-gpu-process-crash.html (covers affine transform change).
+
+        * platform/audio/ios/MediaSessionHelperIOS.h:
+        * platform/audio/ios/MediaSessionHelperIOS.mm:
+        (MediaSessionHelperiOS::providePresentingApplicationPID):
+        (MediaSessionHelperiOS::mediaServerConnectionDied):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+
 2021-09-27  Kate Cheney  <katherine_cheney@apple.com>
 
         Send CSP violation reports to the DOM window

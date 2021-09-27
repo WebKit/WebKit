@@ -361,6 +361,7 @@ interface TestRunner {
 
     undefined setCustomUserAgent(DOMString userAgent);
 
+    undefined terminateGPUProcess();
     undefined terminateNetworkProcess();
     undefined terminateServiceWorkers();
     undefined setUseSeparateServiceWorkerProcess(boolean value);
