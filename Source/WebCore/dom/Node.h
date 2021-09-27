@@ -524,12 +524,8 @@ public:
     static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
 
-    // Whether the node is inert:
-    // https://html.spec.whatwg.org/multipage/interaction.html#inert
-    // https://github.com/WICG/inert/blob/master/README.md
-    // This can't be in Element because text nodes must be recognized as
-    // inert to prevent text selection.
-    WEBCORE_EXPORT bool isInert() const;
+    // Whether a node is inert, please use RenderStyle::effectiveInert instead!
+    bool deprecatedIsInert() const;
 
 protected:
     enum class NodeFlag : uint32_t {

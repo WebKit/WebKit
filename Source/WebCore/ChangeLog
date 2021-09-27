@@ -1,3 +1,28 @@
+2021-09-27  Tim Nguyen  <ntim@apple.com>
+
+        Replace Node::isInert() with RenderStyle::effectiveInert()
+        https://bugs.webkit.org/show_bug.cgi?id=230686
+
+        Reviewed by Antti Koivisto.
+
+        This replaces Node::isInert() in favor of RenderStyle::effectiveInert() which is more accurate. We can't use it in
+        Element::isFocusable(), since there's a bug with invalidation when accessing the cached computedStyle, hence
+        the Node::deprecatedIsInert() method.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::defaultObjectInclusion const):
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable const):
+        * dom/Node.cpp:
+        (WebCore::Node::canStartSelection const):
+        (WebCore::Node::deprecatedIsInert const): Added.
+        * dom/Node.h:
+        * dom/Position.cpp:
+        (WebCore::Position::nodeIsInertOrUserSelectNone):
+        (WebCore::Position::nodeIsUserSelectAll):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::collectSelectionGeometriesInternal):
+
 2021-09-27  Martin Robinson  <mrobinson@webkit.org>
 
         Mandatory scroll snapping doesn't work correctly in tables with position:sticky

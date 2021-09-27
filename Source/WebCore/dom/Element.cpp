@@ -641,7 +641,7 @@ Vector<String> Element::getAttributeNames() const
 
 bool Element::isFocusable() const
 {
-    if (!isConnected() || !supportsFocus() || isInert())
+    if (!isConnected() || !supportsFocus() || deprecatedIsInert())
         return false;
 
     if (!renderer()) {

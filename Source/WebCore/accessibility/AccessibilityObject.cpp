@@ -3281,8 +3281,8 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     
     if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
         return AccessibilityObjectInclusion::IgnoreObject;
-    
-    if ((node() && node()->isInert()) || ignoredFromModalPresence())
+
+    if ((renderer() && renderer()->style().effectiveInert()) || ignoredFromModalPresence())
         return AccessibilityObjectInclusion::IgnoreObject;
     
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())

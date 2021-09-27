@@ -1,3 +1,17 @@
+2021-09-27  Tim Nguyen  <ntim@apple.com>
+
+        Replace Node::isInert() with RenderStyle::effectiveInert()
+        https://bugs.webkit.org/show_bug.cgi?id=230686
+
+        Reviewed by Antti Koivisto.
+
+        This replaces Node::isInert() in favor of RenderStyle::effectiveInert() which is more accurate. We can't use it in
+        Element::isFocusable(), since there's a bug with invalidation when accessing the cached computedStyle, hence
+        the Node::deprecatedIsInert() method.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::selectionPositionInformation):
+
 2021-09-25  Ben Nham  <nham@apple.com>
 
         Pending preconnect key should include User-Agent

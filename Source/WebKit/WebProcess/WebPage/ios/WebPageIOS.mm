@@ -2885,7 +2885,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         if (attachment.file())
             info.url = URL::fileURLWithFileSystemPath(downcast<HTMLAttachmentElement>(*hitNode).file()->path());
     } else {
-        info.isSelectable = renderer->style().userSelect() != UserSelect::None && !hitNode->isInert();
+        info.isSelectable = renderer->style().userSelect() != UserSelect::None && !renderer->style().effectiveInert();
         // We don't want to select blocks that are larger than 97% of the visible area of the document.
         // FIXME: Is this heuristic still needed, now that block selection has been removed?
         if (info.isSelectable && !hitNode->isTextNode())

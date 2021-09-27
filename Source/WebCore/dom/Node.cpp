@@ -1127,11 +1127,11 @@ bool Node::canStartSelection() const
     if (hasEditableStyle())
         return true;
 
-    if (isInert())
-        return false;
-
     if (renderer()) {
         const RenderStyle& style = renderer()->style();
+        if (style.effectiveInert())
+            return false;
+
         // We allow selections to begin within an element that has -webkit-user-select: none set,
         // but if the element is draggable then dragging should take priority over selection.
         if (style.userDrag() == UserDrag::Element && style.userSelect() == UserSelect::None)
@@ -2623,7 +2623,8 @@ void* Node::opaqueRootSlow() const
     return const_cast<void*>(static_cast<const void*>(node));
 }
 
-bool Node::isInert() const
+// Please use RenderStyle::effectiveInert instead!
+bool Node::deprecatedIsInert() const
 {
     if (!isConnected())
         return true;
@@ -2644,7 +2645,7 @@ bool Node::isInert() const
     if (!document().frame() || !document().frame()->ownerElement())
         return false;
 
-    return document().frame()->ownerElement()->isInert();
+    return document().frame()->ownerElement()->deprecatedIsInert();
 }
 
 template<> ContainerNode* parent<Tree>(const Node& node)

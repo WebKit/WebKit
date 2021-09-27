@@ -939,16 +939,14 @@ bool Position::nodeIsInertOrUserSelectNone(Node* node)
 {
     if (!node)
         return false;
-    if (node->isInert())
-        return true;
-    return node->renderer() && node->renderer()->style().userSelect() == UserSelect::None;
+    return node->renderer() && (node->renderer()->style().userSelect() == UserSelect::None || node->renderer()->style().effectiveInert());
 }
 
 bool Position::nodeIsUserSelectAll(const Node* node)
 {
-    if (!node || node->isInert())
+    if (!node)
         return false;
-    return node->renderer() && node->renderer()->style().userSelect() == UserSelect::All;
+    return node->renderer() && (node->renderer()->style().userSelect() == UserSelect::All && !node->renderer()->style().effectiveInert());
 }
 
 Node* Position::rootUserSelectAllForNode(Node* node)
