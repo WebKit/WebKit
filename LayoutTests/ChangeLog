@@ -1,3 +1,12 @@
+2021-09-27  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Windows ] svg/as-background-image/svg-as-background-body.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230838.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2021-09-27  Kate Cheney  <katherine_cheney@apple.com>
 
         Send CSP violation reports to the DOM window

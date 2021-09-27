@@ -4700,3 +4700,5 @@ http/tests/webshare/ [ Skip ]
 
 webkit.org/b/230727 fast/images/exif-orientation-composited.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/230838 svg/as-background-image/svg-as-background-body.html [ Pass Crash ]
+
