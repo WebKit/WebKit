@@ -23,3 +23,4 @@ webkit.org/b/230509 fast/events/ios/dom-update-on-keydown-quirk.html [ Pass Fail
 
 webkit.org/b/230514 imported/w3c/web-platform-tests/html/webappapis/structured-clone/structured-clone.any.html [ Pass Crash ]
 
+webkit.org/b/230696 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.html [ Pass Failure ]
