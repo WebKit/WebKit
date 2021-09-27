@@ -1,3 +1,27 @@
+2021-09-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Update baselines after 242013@main
+
+        Unreviewed test gardening.
+
+        These tests were updated to use the application bundle ID, which is
+        not used by the GLIB ports.
+
+        * platform/glib/http/tests/contentextensions/block-private-click-measurement-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-ephemeral-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/private-click-measurement-with-source-nonce-null-content-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/private-click-measurement-with-source-nonce-wrong-content-type-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/second-conversion-with-higher-priority-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/second-conversion-with-lower-priority-expected.txt: Added.
+        * platform/glib/http/tests/privateClickMeasurement/store-private-click-measurement-expected.txt: Added.
+
 2021-09-26  Eric Hutchison  <ehutchison@apple.com>
 
         [ Catalina Debug wk1 EWS ] media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html is a flay crash.
