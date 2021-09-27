@@ -544,7 +544,7 @@ class Port(object):
             except ValueError:
                 return val
 
-        return [tryint(chunk) for chunk in re.split(r'(\d+)', string_to_split)]
+        return [(tryint(chunk), chunk) for chunk in re.split(r'(\d+)', string_to_split)]
 
     def test_dirs(self):
         """Returns the list of top-level test directories."""
