@@ -1,3 +1,20 @@
+2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use op_jeq_ptr for empty JSPropertyNameEnumerator check
+        https://bugs.webkit.org/show_bug.cgi?id=230817
+
+        Reviewed by Saam Barati.
+
+        We use op_jeq_ptr for empty JSPropertyNameEnumerator check instead of stricteq for smaller
+        bytecode size and efficient branching in LLInt and Baseline. In DFG and FTL, both will get
+        the same nodes.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfEmptyPropertyNameEnumerator):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+
 2021-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize PutByVal with for-in

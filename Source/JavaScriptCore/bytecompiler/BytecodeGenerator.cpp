@@ -1498,6 +1498,11 @@ void BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond, Label& targ
     OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::applyFunction), target.bind(this));
 }
 
+void BytecodeGenerator::emitJumpIfEmptyPropertyNameEnumerator(RegisterID* cond, Label& target)
+{
+    OpJeqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::emptyPropertyNameEnumerator), target.bind(this));
+}
+
 void BytecodeGenerator::emitJumpIfSentinelString(RegisterID* cond, Label& target)
 {
     OpJeqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::sentinelString), target.bind(this));

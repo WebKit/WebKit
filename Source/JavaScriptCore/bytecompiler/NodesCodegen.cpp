@@ -4216,9 +4216,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         Ref<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
 
         enumerator = generator.emitGetPropertyEnumerator(generator.newTemporary(), base.get());
-        generator.moveLinkTimeConstant(propertyName.get(), LinkTimeConstant::emptyPropertyNameEnumerator);
-        generator.emitEqualityOp<OpStricteq>(propertyName.get(), enumerator.get(), propertyName.get());
-        generator.emitJumpIfTrue(propertyName.get(), scope->breakTarget());
+        generator.emitJumpIfEmptyPropertyNameEnumerator(enumerator.get(), scope->breakTarget());
 
         generator.emitLabel(*scope->continueTarget());
         generator.emitLoopHint();
