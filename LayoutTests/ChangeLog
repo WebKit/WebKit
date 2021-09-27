@@ -1,3 +1,12 @@
+2021-09-27  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Catalina BigSur wk1 Debug ] media/track/audio-track.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230842.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-27  Youenn Fablet  <youenn@apple.com>
 
         Make sure to reset presenting application pid in case of mediaserverd crash
