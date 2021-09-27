@@ -1463,3 +1463,5 @@ webkit.org/b/230808 [ Catalina Debug ] media/modern-media-controls/media-control
 
 webkit.org/b/230831 [ Catalina Debug ] storage/websql/multiple-transactions-on-different-handles.html [ Pass Crash ]
 
+webkit.org/b/230833 [ Catalina Debug ] performance-api/performance-observer-order.html [ Pass Crash ]
+
