@@ -42,6 +42,7 @@ public:
 
     virtual ~CSSFontPaletteValuesRule();
 
+    String name() const;
     String fontFamily() const;
     String basePalette() const;
 

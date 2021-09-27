@@ -23,6 +23,7 @@ typedef USVString CSSOMString;
     Exposed=Window
 ] interface CSSFontPaletteValuesRule : CSSRule {
     readonly maplike<unsigned long, CSSOMString>;
+    readonly attribute CSSOMString name;
     readonly attribute CSSOMString fontFamily;
     readonly attribute CSSOMString basePalette;
 };

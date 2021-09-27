@@ -46,6 +46,11 @@ CSSFontPaletteValuesRule::~CSSFontPaletteValuesRule()
 {
 }
 
+String CSSFontPaletteValuesRule::name() const
+{
+    return m_fontPaletteValuesRule->name();
+}
+
 String CSSFontPaletteValuesRule::fontFamily() const
 {
     return m_fontPaletteValuesRule->fontFamily();

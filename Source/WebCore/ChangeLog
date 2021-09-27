@@ -1,3 +1,21 @@
+2021-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add support for CSSFontPaletteValuesRule.name
+        https://bugs.webkit.org/show_bug.cgi?id=230787
+        <rdar://problem/83528540>
+
+        Reviewed by Tim Horton.
+
+        This was added to the CSS spec in
+        https://github.com/w3c/csswg-drafts/commit/8868476c571d63b7f3f2718e22601a711a2d8683.
+
+        Test: web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html
+
+        * css/CSSFontPaletteValuesRule.cpp:
+        (WebCore::CSSFontPaletteValuesRule::name const):
+        * css/CSSFontPaletteValuesRule.h:
+        * css/CSSFontPaletteValuesRule.idl:
+
 2021-09-27  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Set CURL_LOCK_DATA_SSL_SESSION option to reduce SSL/TLS handshake time

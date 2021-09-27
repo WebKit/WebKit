@@ -1,5 +1,17 @@
 2021-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Add support for CSSFontPaletteValuesRule.name
+        https://bugs.webkit.org/show_bug.cgi?id=230787
+        <rdar://problem/83528540>
+
+        Reviewed by Tim Horton.
+
+        This is being upstreamed in https://github.com/web-platform-tests/wpt/pull/30960.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html:
+
+2021-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         The CSS Fonts spec has deleted CSSRule.FONT_PALETTE_VALUES_RULE
         https://bugs.webkit.org/show_bug.cgi?id=230786
         <rdar://problem/83528219>
