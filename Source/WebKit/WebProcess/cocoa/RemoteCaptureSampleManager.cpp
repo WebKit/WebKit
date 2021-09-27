@@ -190,7 +190,7 @@ void RemoteCaptureSampleManager::RemoteAudio::startThread()
             m_source->remoteAudioSamplesAvailable(currentTime, *m_buffer, m_description, m_frameChunkSize);
         } while (!m_shouldStopThread);
     };
-    m_thread = Thread::create("RemoteAudioSourceProviderManager::RemoteAudio thread", WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
+    m_thread = Thread::create("RemoteCaptureSampleManager::RemoteAudio thread", WTFMove(threadLoop), ThreadType::Audio, Thread::QOS::UserInteractive);
 }
 
 void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)
