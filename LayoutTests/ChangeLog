@@ -1,3 +1,25 @@
+2021-09-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r282895. rdar://problem/83584505
+
+    REGRESSION (r282865?): ASSERTION FAILED: Unsafe to ref/deref from different threads m_isOwnedByMainThread == isMainThread().
+    https://bugs.webkit.org/show_bug.cgi?id=230644
+    
+    Unreviewed test gardening.
+    
+    * platform/mac-wk1/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282895 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-22  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+            REGRESSION (r282865?): ASSERTION FAILED: Unsafe to ref/deref from different threads m_isOwnedByMainThread == isMainThread().
+            https://bugs.webkit.org/show_bug.cgi?id=230644
+
+            Unreviewed test gardening.
+
+            * platform/mac-wk1/TestExpectations:
+
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282451. rdar://problem/83460818
