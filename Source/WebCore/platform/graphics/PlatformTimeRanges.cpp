@@ -203,6 +203,33 @@ size_t PlatformTimeRanges::find(const MediaTime& time) const
     return notFound;
 }
 
+size_t PlatformTimeRanges::findWithEpsilon(const MediaTime& time, const MediaTime& epsilon)
+{
+    bool ignoreInvalid;
+    for (unsigned n = 0; n < length(); n++) {
+        if (time + epsilon >= start(n, ignoreInvalid) && time < end(n, ignoreInvalid))
+            return n;
+    }
+    return notFound;
+}
+
+PlatformTimeRanges PlatformTimeRanges::copyWithEpsilon(const MediaTime& epsilon) const
+{
+    if (length() <= 1)
+        return *this;
+    Vector<Range> ranges;
+    unsigned n1 = 0;
+    for (unsigned n2 = 1; n2 < length(); n2++) {
+        auto& previousRangeEnd = m_ranges[n2 - 1].m_end;
+        if (previousRangeEnd + epsilon < m_ranges[n2].m_start) {
+            ranges.append({ m_ranges[n1].m_start, previousRangeEnd });
+            n1 = n2;
+        }
+    }
+    ranges.append({ m_ranges[n1].m_start, m_ranges[length() - 1].m_end });
+    return ranges;
+}
+
 MediaTime PlatformTimeRanges::nearest(const MediaTime& time) const
 {
     MediaTime closestDelta = MediaTime::positiveInfiniteTime();

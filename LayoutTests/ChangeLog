@@ -1,3 +1,14 @@
+2021-09-26  Jean-Yves Avenard  <jya@apple.com>
+
+        [MSE] appending to the source buffer will not throw when the source buffer is full.
+        https://bugs.webkit.org/show_bug.cgi?id=230672
+        rdar://problem/83496195
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error-expected.txt:
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error.html:
+
 2021-09-26  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Rebaseline a number of text-only failures

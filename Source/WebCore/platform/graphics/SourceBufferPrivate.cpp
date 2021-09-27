@@ -692,8 +692,8 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     // If there still isn't enough free space and there buffers in time ranges after the current range (ie. there is a gap after
     // the current buffered range), delete 30 seconds at a time from duration back to the current time range or 30 seconds after
     // currenTime whichever we hit first.
-    auto buffered = m_buffered->ranges();
-    uint64_t currentTimeRange = buffered.find(currentTime);
+    auto buffered = m_buffered->ranges().copyWithEpsilon(timeFudgeFactor());
+    uint64_t currentTimeRange = buffered.findWithEpsilon(currentTime, timeFudgeFactor());
     if (!buffered.length() || currentTimeRange == buffered.length() - 1) {
 #if !RELEASE_LOG_DISABLED
         ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
