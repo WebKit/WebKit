@@ -268,7 +268,9 @@ sub originalFile($$$$)
         $command = SVN . " cat $escapedPathsString";
     } elsif (isGit()) {
         $command = GIT . " show ";
-        if ($mergeBase) {
+        if ($gitCommit) {
+            $command .= "$gitCommit^";
+        } elsif ($mergeBase) {
             $command .= "$mergeBase";
         } else {
             $command .= "HEAD";
@@ -290,7 +292,12 @@ sub generateFunctionLists($$$$$)
         },
         openFile => sub ($) {
             my ($file) = @_;
-            return unless open(SOURCE, "<", $file);
+            if (isGit() && $gitCommit && !$gitIndex) {
+                my $command = GIT . " show " . "$gitCommit" . ":'$file'";
+                return unless open(SOURCE, "-|", $command);
+            } else {
+                return unless open(SOURCE, "<", $file);
+            }
             return \*SOURCE;
         },
         openOriginalFile => sub ($) {

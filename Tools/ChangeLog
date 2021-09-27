@@ -1,3 +1,21 @@
+2021-09-27  Hoa Dinh  <dvh@apple.com>
+
+        prepare-ChangeLog does not show the correct result with using --git-commit
+        https://bugs.webkit.org/show_bug.cgi?id=230816
+
+        Reviewed by Jonathan Bedard.
+
+        When we pass the parameter --git-commit, we need to use the correct reference version when
+        computing the difference between the version before and after the change.
+        This patch fixes it by passing the version before the specified commit.
+
+        Also, when --git-commit is used, we need compare against the correct version of the file.
+        This patch fixes that part by calling git to retrieve the accurate version.
+
+        * Scripts/prepare-ChangeLog:
+        (originalFile):
+        (generateFunctionLists):
+
 2021-09-27  Saam Barati  <sbarati@apple.com>
 
         Build an unlinked baseline JIT
