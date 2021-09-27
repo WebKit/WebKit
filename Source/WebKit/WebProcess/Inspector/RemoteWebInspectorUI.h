@@ -65,6 +65,8 @@ public:
     void didSave(const String& url);
     void didAppend(const String& url);
     void sendMessageToFrontend(const String&);
+    void showConsole();
+    void showResources();
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     void setDiagnosticLoggingAvailable(bool);

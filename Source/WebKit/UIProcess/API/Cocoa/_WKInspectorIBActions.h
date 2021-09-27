@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +25,31 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
-#import <WebKit/_WKInspectorExtensionHost.h>
-#import <WebKit/_WKInspectorIBActions.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WKWebView;
-@class _WKFrameHandle;
-@class _WKInspectorExtension;
-@protocol _WKInspectorDelegate;
+@protocol _WKInspectorIBActions <NSObject>
 
-WK_CLASS_AVAILABLE(macos(10.14.4), ios(12.2))
-@interface _WKInspector : NSObject <_WKInspectorExtensionHost, _WKInspectorIBActions>
+/**
+ * @abstract Shows the associated Web Inspector instance.
+ */
+- (void)show;
 
-- (instancetype)init NS_UNAVAILABLE;
+/**
+ * @abstract Closes the associated Web Inspector instance. This will cause all
+ * registered _WKInspectorExtensions to be unregistered and invalidated.
+ */
+- (void)close;
 
-@property (nonatomic, weak) id <_WKInspectorDelegate> delegate WK_API_AVAILABLE(macos(12.0), ios(15.0));
+/**
+ * @abstract Opens the Console Tab in the associated Web Inspector instance.
+ */
+- (void)showConsole;
 
-@property (nonatomic, readonly) WKWebView *webView;
-@property (nonatomic, readonly) BOOL isConnected;
-@property (nonatomic, readonly) BOOL isVisible;
-@property (nonatomic, readonly) BOOL isFront;
-@property (nonatomic, readonly) BOOL isProfilingPage;
-@property (nonatomic, readonly) BOOL isElementSelectionActive;
-
-- (void)connect;
-- (void)hide;
-- (void)showMainResourceForFrame:(_WKFrameHandle *)frame;
-- (void)attach;
-- (void)detach;
-- (void)togglePageProfiling;
-- (void)toggleElementSelection;
-- (void)printErrorToConsole:(NSString *)error;
+/**
+ * @abstract Opens the Sources Tab in the associated Web Inspector instance.
+ */
+- (void)showResources;
 
 @end
 

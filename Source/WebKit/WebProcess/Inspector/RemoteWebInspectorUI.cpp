@@ -203,6 +203,16 @@ void RemoteWebInspectorUI::resetState()
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::ResetState(), m_page.identifier());
 }
 
+void RemoteWebInspectorUI::showConsole()
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showConsole"_s);
+}
+
+void RemoteWebInspectorUI::showResources()
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showResources"_s);
+}
+
 void RemoteWebInspectorUI::openURLExternally(const String& url)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::OpenURLExternally(url), m_page.identifier());

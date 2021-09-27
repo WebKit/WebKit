@@ -207,6 +207,16 @@ private:
 #endif
 }
 
+- (void)showConsole
+{
+    m_remoteInspectorProxy->showConsole();
+}
+
+- (void)showResources
+{
+    m_remoteInspectorProxy->showResources();
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

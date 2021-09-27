@@ -54,12 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)unregisterExtension:(_WKInspectorExtension *)extension completionHandler:(void(^)(NSError * _Nullable))completionHandler;
 
 /**
- * @abstract Closes the associated Web Inspector instance. This will cause all
- * registered _WKInspectorExtensions to be unregistered and invalidated.
- */
-- (void)close;
-
-/**
  * @abstract The web view that is used to host extension tabs created via _WKInspectorExtension.
  * @discussion Browsing contexts for extension tabs are loaded in subframes of this web view.
  */
