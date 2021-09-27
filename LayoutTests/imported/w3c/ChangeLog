@@ -1,5 +1,19 @@
 2021-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Add test to make sure CSSFontPaletteValuesRule's attributes are readonly
+        https://bugs.webkit.org/show_bug.cgi?id=230791
+        <rdar://problem/83530165>
+
+        Reviewed by Simon Fraser.
+
+        The spec enforces this in w3c/csswg-drafts@9ddf938. This is already the case in WebKit.
+
+        This is being upstreamed in https://github.com/web-platform-tests/wpt/pull/30964.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html:
+
+2021-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Add support for CSSFontPaletteValuesRule.name
         https://bugs.webkit.org/show_bug.cgi?id=230787
         <rdar://problem/83528540>

@@ -115,6 +115,20 @@ test(function() {
     let rule = rules[0];
     assert_equals(text.indexOf("font-family"), -1);
     assert_equals(rule.fontFamily, "");
+    rule.fontFamily = "SomeFontFamily";
+    assert_equals(rule.fontFamily, "");
+    assert_equals(rule.basePalette, "");
+    rule.basePalette = "7";
+    assert_equals(rule.basePalette, "");
+    assert_throws_js(TypeError, function() {
+        rule.clear();
+    });
+    assert_throws_js(TypeError, function() {
+        rule.delete(4);
+    });
+    assert_throws_js(TypeError, function() {
+        rule.set(4, "0 #123");
+    });
 });
 
 test(function() {
