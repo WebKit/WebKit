@@ -13526,14 +13526,14 @@ private:
 
             {
                 m_out.appendTo(outOfBoundsBlock);
-                results.append(m_out.anchor(m_out.constInt64(JSValue::encode(jsNull()))));
+                results.append(m_out.anchor(weakPointer(vm().smallStrings.sentinelString())));
                 m_out.jump(continuation);
             }
 
             {
                 m_out.appendTo(loadPropertyNameBlock);
                 LValue namesVector = m_out.loadPtr(enumerator, m_heaps.JSPropertyNameEnumerator_cachedPropertyNamesVector);
-                results.append(m_out.anchor(m_out.zeroExtPtr(m_out.loadPtr(m_out.baseIndex(m_heaps.WriteBarrierBuffer_bufferContents.atAnyIndex(), namesVector, m_out.zeroExt(index, Int64), ScalePtr)))));
+                results.append(m_out.anchor(m_out.loadPtr(m_out.baseIndex(m_heaps.WriteBarrierBuffer_bufferContents.atAnyIndex(), namesVector, m_out.zeroExt(index, Int64), ScalePtr))));
                 m_out.jump(continuation);
             }
         }
@@ -13541,14 +13541,14 @@ private:
         if (operationBlock)
             m_out.appendTo(operationBlock);
         // Note: We can't omit the operation because we have no guarantee that the mode will match what we profiled.
-        results.append(m_out.anchor(vmCall(Int64, operationEnumeratorNextUpdatePropertyName, weakPointer(globalObject), index, mode, enumerator)));
+        results.append(m_out.anchor(vmCall(pointerType(), operationEnumeratorNextUpdatePropertyName, weakPointer(globalObject), index, mode, enumerator)));
         if (continuation) {
             m_out.jump(continuation);
             m_out.appendTo(continuation);
         }
 
         ASSERT(results.size());
-        LValue result = m_out.phi(Int64, results);
+        LValue result = m_out.phi(pointerType(), results);
         setJSValue(result);
     }
 

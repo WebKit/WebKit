@@ -1,3 +1,108 @@
+2021-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize PutByVal with for-in
+        https://bugs.webkit.org/show_bug.cgi?id=230801
+
+        Reviewed by Saam Barati.
+
+        We found that some of Speedometer2 subtests are heavily using for-in with PutByVal or the other DFG nodes.
+        And we also found that we are using polluted non-good type for the property names from for-in: String | Other.
+        The reason is that we are returning null when op_enumerator_next finishes instead of string. And this design
+        forces DFG and FTL to return null from EnumeratorNextUpdatePropertyName at the end of iteration. This pollutes
+        the type of property names as String | Other instead of String, and leading to suboptimal DFG nodes.
+
+        In this patch, we add special sentinel string in vm.smallString.sentinelString(). We know that this string cell
+        pointer will be never returned from EnumeratorNextUpdatePropertyName in the normal for-in iteration. This is easy
+        since we are always allocating a JSString when creating JSPropertyNameEnumerator. So this string cell (not the content)
+        is always different from pre-allocated vm.smallString.sentinelString(). So, we use this special string pointer
+        as a sentinel instead of null so that we can avoid polluting return type of EnumeratorNextUpdatePropertyName.
+
+        To check the sentinel in LLInt / Baseline, this patch adds jeq_ptr, which performs cell pointer comparison and do
+        not check string content equality. We do not need to have an implementation in DFG since we already have CompareEqPtr
+        for existing jneq_ptr bytecode.
+
+        We also clean up DFG operation related to PutByVal.
+
+        ----------------------------------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue (significance using False Discovery Rate) |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |116.010000   |112.701667   |0.971482  | 0.000000 (significant)                           |
+        | VueJS-TodoMVC                        |22.995000    |23.023333    |1.001232  | 0.907086                                         |
+        | EmberJS-TodoMVC                      |125.498333   |125.525000   |1.000212  | 0.932546                                         |
+        | BackboneJS-TodoMVC                   |45.700000    |45.975000    |1.006018  | 0.084799                                         |
+        | Preact-TodoMVC                       |16.681667    |16.610000    |0.995704  | 0.722758                                         |
+        | AngularJS-TodoMVC                    |123.753333   |123.740000   |0.999892  | 0.971431                                         |
+        | Vanilla-ES2015-TodoMVC               |61.255000    |61.380000    |1.002041  | 0.300654                                         |
+        | Inferno-TodoMVC                      |58.646667    |58.948333    |1.005144  | 0.267611                                         |
+        | Flight-TodoMVC                       |73.283333    |72.801667    |0.993427  | 0.207389                                         |
+        | Angular2-TypeScript-TodoMVC          |39.746667    |40.015000    |1.006751  | 0.449821                                         |
+        | VanillaJS-TodoMVC                    |50.096667    |49.823333    |0.994544  | 0.162020                                         |
+        | jQuery-TodoMVC                       |212.870000   |213.196667   |1.001535  | 0.371944                                         |
+        | EmberJS-Debug-TodoMVC                |331.878333   |332.710000   |1.002506  | 0.094499                                         |
+        | React-TodoMVC                        |83.078333    |82.726667    |0.995767  | 0.076143                                         |
+        | React-Redux-TodoMVC                  |136.018333   |133.935000   |0.984683  | 0.000000 (significant)                           |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |59.743333    |59.643333    |0.998326  | 0.393671                                         |
+        ----------------------------------------------------------------------------------------------------------------------------------
+        a mean = 271.75873
+        b mean = 272.45804
+        pValue = 0.0263030803
+        (Bigger means are better.)
+        1.003 times better
+        Results ARE significant
+
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecode/LinkTimeConstant.h:
+        * bytecode/Opcode.h:
+        (JSC::isBranch):
+        * bytecode/PreciseJumpTargetsInlines.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::GenericLabel<JSGeneratorTraits>::setLocation):
+        (JSC::BytecodeGenerator::emitJumpIfSentinelString):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        (JSC::DFG::putByValInternal):
+        (JSC::DFG::putByValCellInternal):
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileEnumeratorNextUpdatePropertyName):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jeq_ptr):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jeq_ptr):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_enumerator_next):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::initializeCommonStrings):
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::sentinelString const):
+
 2021-09-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r283095.

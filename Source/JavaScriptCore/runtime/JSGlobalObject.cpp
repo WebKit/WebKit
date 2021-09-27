@@ -981,6 +981,8 @@ void JSGlobalObject::init(VM& vm)
     m_setIteratorPrototype.set(vm, this, setIteratorPrototype);
     m_setIteratorStructure.set(vm, this, JSSetIterator::createStructure(vm, this, setIteratorPrototype));
 
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::sentinelString)].set(vm, this, vm.smallStrings.sentinelString());
+
     JSFunction* defaultPromiseThen = JSFunction::create(vm, promisePrototypeThenCodeGenerator(vm), this);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::defaultPromiseThen)].set(vm, this, defaultPromiseThen);
 
