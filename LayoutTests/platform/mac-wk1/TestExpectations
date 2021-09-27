@@ -1475,3 +1475,5 @@ webkit.org/b/230844 [ Catalina Debug ] storage/indexeddb/mozilla/cursor-mutation
 
 webkit.org/b/230846 [ Catalina Debug ] svg/filters/big-height-filter.svg [ Pass Crash ]
 
+webkit.org/b/230848 [ Catalina BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
+
