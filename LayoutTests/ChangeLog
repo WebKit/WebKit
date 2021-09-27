@@ -1,3 +1,12 @@
+2021-09-27  Eric Hutchison  <ehutchison@apple.com>
+
+        [ Catalina Debug wk1 EWS ] storage/indexeddb/mozilla/cursor-mutation.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230844.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-27  Lauro Moura  <lmoura@igalia.com>
 
         Garden passing flexbox abspos tests since updated in 242101@main
