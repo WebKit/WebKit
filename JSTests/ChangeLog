@@ -1,3 +1,14 @@
+2021-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Optimize PutByVal with for-in
+        https://bugs.webkit.org/show_bug.cgi?id=230801
+
+        Reviewed by Saam Barati.
+
+        * stress/for-in-sentinel.js: Added.
+        (shouldBe):
+        (test):
+
 2021-09-24 Rick Waldron <waldron.rick@gmail.com>
 
         [JSC] Add checkScriptSyntax function to jsc host environment
