@@ -340,7 +340,7 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
 
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     startResponsivenessTimer(UseLazyStop::No);
-    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier) mutable {
+    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier, auto&& connectionParameters) mutable {
         if (!weakThis) {
             RELEASE_LOG_ERROR(Process, "GPUProcessProxy::getGPUProcessConnection: GPUProcessProxy deallocated during connection establishment");
             return reply({ });
@@ -357,7 +357,7 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
         UNUSED_VARIABLE(this);
 #elif OS(DARWIN)
         MESSAGE_CHECK(MACH_PORT_VALID(identifier->port()));
-        reply(GPUProcessConnectionInfo { IPC::Attachment { identifier->port(), MACH_MSG_TYPE_MOVE_SEND }, this->connection()->getAuditToken() });
+        reply(GPUProcessConnectionInfo { IPC::Attachment { identifier->port(), MACH_MSG_TYPE_MOVE_SEND }, this->connection()->getAuditToken(), WTFMove(connectionParameters) });
 #else
         notImplemented();
 #endif

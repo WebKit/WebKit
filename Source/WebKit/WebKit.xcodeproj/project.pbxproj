@@ -918,6 +918,7 @@
 		3FB08E431F60B240005E5312 /* iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FB08E421F60B240005E5312 /* iOS.xcassets */; };
 		3FFDDB961F577F480050E593 /* WKFullScreenWindowControllerIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F915C0F1F564DED00183CE9 /* WKFullScreenWindowControllerIOS.h */; };
 		410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 410482CC1DDD2FB500F006D0 /* RTCNetwork.h */; };
+		410F0D4C2701EFF900F96DFC /* GPUProcessConnectionInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 410F0D4B2701EFEA00F96DFC /* GPUProcessConnectionInitializationParameters.h */; };
 		4112EDDB20E407A500BEA92A /* com.apple.BocomSubmitCtrl.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD920E4077500BEA92A /* com.apple.BocomSubmitCtrl.sb */; };
 		4112EDDC20E407A500BEA92A /* com.apple.NPSafeInput.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD820E4077500BEA92A /* com.apple.NPSafeInput.sb */; };
 		4112EDDD20E407A500BEA92A /* com.apple.NPSafeSubmit.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 4112EDD720E4077500BEA92A /* com.apple.NPSafeSubmit.sb */; };
@@ -3774,6 +3775,7 @@
 		410482CC1DDD2FB500F006D0 /* RTCNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNetwork.h; sourceTree = "<group>"; };
 		410BA139257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCTCPSocketCocoa.mm; sourceTree = "<group>"; };
 		410BA13A257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCTCPSocketCocoa.h; sourceTree = "<group>"; };
+		410F0D4B2701EFEA00F96DFC /* GPUProcessConnectionInitializationParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessConnectionInitializationParameters.h; sourceTree = "<group>"; };
 		4111436320F677B10026F912 /* InjectUserScriptImmediately.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectUserScriptImmediately.h; sourceTree = "<group>"; };
 		411223B72602152B00B0A0B6 /* RTCDataChannelRemoteManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = RTCDataChannelRemoteManager.messages.in; path = Network/webrtc/RTCDataChannelRemoteManager.messages.in; sourceTree = "<group>"; };
 		411223BB26024E8000B0A0B6 /* RTCDataChannelRemoteManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelRemoteManagerProxy.h; sourceTree = "<group>"; };
@@ -6902,6 +6904,7 @@
 				1A14F8DF1D74C834006CBEC6 /* FrameInfoData.cpp */,
 				1A14F8E01D74C834006CBEC6 /* FrameInfoData.h */,
 				5C121E8324101F7000486F9B /* FrameTreeNodeData.h */,
+				410F0D4B2701EFEA00F96DFC /* GPUProcessConnectionInitializationParameters.h */,
 				46AC532425DED81E003B57EC /* GPUProcessConnectionParameters.h */,
 				F40BBB40257FF46E0067463A /* GPUProcessWakeupMessageArguments.h */,
 				1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */,
@@ -12273,6 +12276,7 @@
 				BC06F43A12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h in Headers */,
 				F4CF1E9D25E40DCC000F9D73 /* GestureRecognizerConsistencyEnforcer.h in Headers */,
 				2DA944A41884E4F000ED86DB /* GestureTypes.h in Headers */,
+				410F0D4C2701EFF900F96DFC /* GPUProcessConnectionInitializationParameters.h in Headers */,
 				4614F13225DED875007006E7 /* GPUProcessConnectionParameters.h in Headers */,
 				F40BBB41257FF46E0067463A /* GPUProcessWakeupMessageArguments.h in Headers */,
 				2DA049B8180CCD0A00AAFA9E /* GraphicsLayerCARemote.h in Headers */,

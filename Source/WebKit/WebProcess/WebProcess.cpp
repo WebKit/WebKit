@@ -1256,7 +1256,7 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         if (!IPC::Connection::identifierIsValid(connectionInfo.identifier()))
             CRASH();
 
-        m_gpuProcessConnection = GPUProcessConnection::create(connectionInfo.releaseIdentifier());
+        m_gpuProcessConnection = GPUProcessConnection::create(connectionInfo.releaseIdentifier(), connectionInfo.parameters);
 #if HAVE(AUDIT_TOKEN)
         ASSERT(connectionInfo.auditToken);
         m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));

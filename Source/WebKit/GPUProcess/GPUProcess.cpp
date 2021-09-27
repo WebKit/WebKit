@@ -33,6 +33,7 @@
 #include "AuxiliaryProcessMessages.h"
 #include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcessConnectionInitializationParameters.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessProxyMessages.h"
@@ -106,12 +107,12 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     didReceiveGPUProcessMessage(connection, decoder);
 }
 
-void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Attachment>&&)>&& completionHandler)
+void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Attachment>&&, GPUProcessConnectionInitializationParameters&&)>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
     auto ipcConnection = createIPCConnectionPair();
     if (!ipcConnection) {
-        completionHandler({ });
+        completionHandler({ }, { });
         return;
     }
 
@@ -132,7 +133,11 @@ void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, P
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 
-    completionHandler(WTFMove(ipcConnection->second));
+    GPUProcessConnectionInitializationParameters connectionParameters;
+#if ENABLE(VP9)
+    connectionParameters.hasVP9HardwareDecoder = WebCore::vp9HardwareDecoderAvailable();
+#endif
+    completionHandler(WTFMove(ipcConnection->second), WTFMove(connectionParameters));
 }
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)

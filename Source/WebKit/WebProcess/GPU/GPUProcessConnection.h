@@ -53,14 +53,15 @@ class RemoteAudioSourceProviderManager;
 class RemoteMediaPlayerManager;
 class SampleBufferDisplayLayerManager;
 class WebPage;
+struct GPUProcessConnectionInitializationParameters;
 struct OverrideScreenDataForTesting;
 struct WebPageCreationParameters;
 
 class GPUProcessConnection : public RefCounted<GPUProcessConnection>, public IPC::Connection::Client {
 public:
-    static Ref<GPUProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
+    static Ref<GPUProcessConnection> create(IPC::Connection::Identifier connectionIdentifier, const GPUProcessConnectionInitializationParameters& parameters)
     {
-        return adoptRef(*new GPUProcessConnection(connectionIdentifier));
+        return adoptRef(*new GPUProcessConnection(connectionIdentifier, parameters));
     }
     ~GPUProcessConnection();
     
@@ -89,6 +90,7 @@ public:
     bool isVP8DecoderEnabled() const { return m_enableVP8Decoder; }
     bool isVP9DecoderEnabled() const { return m_enableVP9Decoder; }
     bool isVPSWDecoderEnabled() const { return m_enableVP9SWDecoder; }
+    bool hasVP9HardwareDecoder() const { return m_hasVP9HardwareDecoder; }
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -108,7 +110,7 @@ public:
     void removeClient(const Client& client) { m_clients.remove(client); }
 
 private:
-    GPUProcessConnection(IPC::Connection::Identifier);
+    GPUProcessConnection(IPC::Connection::Identifier, const GPUProcessConnectionInitializationParameters&);
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override;
@@ -143,6 +145,7 @@ private:
     bool m_enableVP8Decoder { false };
     bool m_enableVP9Decoder { false };
     bool m_enableVP9SWDecoder { false };
+    bool m_hasVP9HardwareDecoder { false };
 #endif
 
 #if PLATFORM(COCOA)

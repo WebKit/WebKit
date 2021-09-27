@@ -45,6 +45,7 @@ WEBCORE_EXPORT void registerWebKitVP9Decoder();
 WEBCORE_EXPORT void registerWebKitVP8Decoder();
 WEBCORE_EXPORT void registerSupplementalVP9Decoder();
 bool isVP9DecoderAvailable();
+WEBCORE_EXPORT bool vp9HardwareDecoderAvailable();
 bool isVP8DecoderAvailable();
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
 std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const VideoConfiguration&);
