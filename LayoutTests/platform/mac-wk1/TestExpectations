@@ -1288,6 +1288,8 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 # rdar://80342885 ([ Monterey wk1 arm64 ] webanimations/accelerated-transition-by-removing-property.html is a flaky image only failure)
 [ Monterey arm64 ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/230863 webanimations/relative-ordering-of-translate-and-rotate-properties-accelerated.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
 
 # rdar://80346975
