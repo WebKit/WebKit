@@ -361,6 +361,7 @@ public:
 
     void completeMediaKeySystemPermissionCheck(WKMediaKeySystemPermissionCallbackRef);
     void setIsMediaKeySystemPermissionGranted(bool);
+    WKRetainPtr<WKStringRef> takeViewPortSnapshot();
 
     void didHandleTap(bool wasMeaningful);
 

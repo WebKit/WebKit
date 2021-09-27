@@ -650,6 +650,7 @@ enum {
     ExitFullscreenForElementCallbackID,
     AppBoundRequestContextDataForDomainCallbackID,
     DidHandleTapCallbackID,
+    TakeViewPortSnapshotCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -2171,6 +2172,23 @@ void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)
 void TestRunner::setIsMediaKeySystemPermissionGranted(bool granted)
 {
     postSynchronousPageMessage("SetIsMediaKeySystemPermissionGranted", granted);
+}
+
+void TestRunner::takeViewPortSnapshot(JSValueRef callback)
+{
+    if (m_takeViewPortSnapshot)
+        return;
+
+    cacheTestRunnerCallback(TakeViewPortSnapshotCallbackID, callback);
+    postMessage("TakeViewPortSnapshot");
+    m_takeViewPortSnapshot = true;
+}
+
+void TestRunner::viewPortSnapshotTaken(WKStringRef value)
+{
+    auto jsValue = JSValueMakeString(mainFrameJSContext(), toJS(value).get());
+    callTestRunnerCallback(TakeViewPortSnapshotCallbackID, 1, &jsValue);
+    m_takeViewPortSnapshot = false;
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

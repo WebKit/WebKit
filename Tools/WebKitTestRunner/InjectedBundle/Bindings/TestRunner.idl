@@ -423,4 +423,6 @@ interface TestRunner {
 
     // MediaKeySystem
     undefined setIsMediaKeySystemPermissionGranted(boolean value);
+
+    undefined takeViewPortSnapshot(object callback);
 };

@@ -541,6 +541,9 @@ public:
 
     void setIsMediaKeySystemPermissionGranted(bool);
 
+    void takeViewPortSnapshot(JSValueRef callback);
+    void viewPortSnapshotTaken(WKStringRef);
+
 private:
     TestRunner();
 
@@ -609,6 +612,7 @@ private:
     bool m_hasSetDowngradeReferrerCallback { false };
     bool m_hasSetBlockThirdPartyCookiesCallback { false };
     bool m_hasSetFirstPartyWebsiteDataRemovalModeCallback { false };
+    bool m_takeViewPortSnapshot { false };
 };
 
 } // namespace WTR

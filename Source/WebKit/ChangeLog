@@ -1,3 +1,78 @@
+2021-09-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283035. rdar://problem/83584492
+
+    <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15
+    https://bugs.webkit.org/show_bug.cgi?id=229792
+    <rdar://problem/82776741>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    We need to swap the bounds for both m_rootLayer and m_sampleBufferDisplayLayer if the sample is rotated by 90.
+    We also need to ompute m_sampleBufferDisplayLayer position based on m_rootLayer coordinates.
+    This means we swap root layer bounds width and height before computing m_sampleBufferDisplayLayer position based on it.
+    
+    Test: fast/mediastream/video-rotation.html
+    
+    * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+    * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+    (WebCore::LocalSampleBufferDisplayLayer::setRootLayerBoundsAndPositions):
+    (WebCore::LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition):
+    * platform/graphics/cg/ImageBufferUtilitiesCG.h:
+    
+    Source/WebKit:
+    
+    Helper routined used in WTR.
+    
+    * Shared/API/c/cg/WKImageCG.cpp:
+    (WKImageCreateDataURLFromImage):
+    * Shared/API/c/cg/WKImageCG.h:
+    
+    Tools:
+    
+    Add testRunner API to take a view port snapshot as a PNG data URL.
+    We can then use this data URL to validate some rendered pixel values.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+    (WTR::InjectedBundle::didReceiveMessageToPage):
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::takeViewPortSnapshot):
+    (WTR::TestRunner::viewPortSnapshotTaken):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::takeViewPortSnapshot):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::takeViewPortSnapshot):
+    
+    LayoutTests:
+    
+    * fast/mediastream/video-rotation-expected.txt: Added.
+    * fast/mediastream/video-rotation.html: Added.
+    * platform/ios-simulator/fast/mediastream/video-rotation-expected.png: Added.
+    * platform/mac/fast/mediastream/video-rotation-expected.png: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283035 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-24  Youenn Fablet  <youenn@apple.com>
+
+            <video> element rendered incorrectly when provided with a portrait orientation stream in Safari 15
+            https://bugs.webkit.org/show_bug.cgi?id=229792
+            <rdar://problem/82776741>
+
+            Reviewed by Eric Carlson.
+
+            Helper routined used in WTR.
+
+            * Shared/API/c/cg/WKImageCG.cpp:
+            (WKImageCreateDataURLFromImage):
+            * Shared/API/c/cg/WKImageCG.h:
+
 2021-09-23  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r282175. rdar://problem/83460931
