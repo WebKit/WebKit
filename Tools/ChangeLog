@@ -1,3 +1,24 @@
+2021-09-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Exception in run-webkit-tests: Bad file descriptor (Revert)
+        https://bugs.webkit.org/show_bug.cgi?id=229994
+        <rdar://problem/82826083>
+
+        Unreviewed revert.
+
+        Revert of 241391@main, 241474@main, 241546@main and 241782@main
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.rmtree):
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.write):
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess):
+        (SimulatorProcess._start):
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.launch_app):
+
 2021-09-27  Youenn Fablet  <youenn@apple.com>
 
         Make sure to reset presenting application pid in case of mediaserverd crash

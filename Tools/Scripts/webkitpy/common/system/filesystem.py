@@ -290,10 +290,7 @@ class FileSystem(object):
 
     def rmtree(self, path):
         """Delete the directory rooted at path, whether empty or not."""
-        try:
-            shutil.rmtree(path, ignore_errors=True)
-        except OSError:
-            pass
+        shutil.rmtree(path, ignore_errors=True)
 
     def copytree(self, source, destination):
         shutil.copytree(source, destination)

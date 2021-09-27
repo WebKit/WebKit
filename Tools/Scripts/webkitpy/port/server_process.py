@@ -184,7 +184,7 @@ class ServerProcess(object):
         try:
             self._proc.stdin.write(string_utils.encode(bytes))
             self._proc.stdin.flush()
-        except (IOError, OSError, ValueError):
+        except (IOError, ValueError):
             self.stop(0.0)
             # stop() calls _reset(), so we have to set crashed to True after calling stop()
             # unless we already know that this is a timeout.
@@ -284,10 +284,6 @@ class ServerProcess(object):
         select_fds = (out_fd, err_fd)
         try:
             read_fds, _, _ = select.select(select_fds, [], select_fds, max(deadline - time.time(), 0))
-        except OSError:
-            # FIXME: https://bugs.webkit.org/show_bug.cgi?id=229994
-            _log.debug('Caught OSError for {}, continuing'.format(self.pid()))
-            return
         except select.error as e:
             # We can ignore EINVAL since it's likely the process just crashed and we'll
             # figure that out the next time through the loop in _read().
@@ -316,10 +312,6 @@ class ServerProcess(object):
                     _log.debug('{} because of no data while reading stdout for the server process.'.format(self._crash_message))
                     self._crashed = True
                 self._error += data
-        except OSError:
-            # FIXME: https://bugs.webkit.org/show_bug.cgi?id=229994
-            _log.debug('Caught OSError for {}, continuing'.format(self.pid()))
-            pass
         except IOError:
             # We can ignore the IOErrors because we will detect if the subporcess crashed
             # the next time through the loop in _read()
