@@ -858,7 +858,6 @@ namespace JSC {
         void emitJumpIfFalse(RegisterID* cond, Label& target);
         void emitJumpIfNotFunctionCall(RegisterID* cond, Label& target);
         void emitJumpIfNotFunctionApply(RegisterID* cond, Label& target);
-        void emitJumpIfSentinelString(RegisterID* cond, Label& target);
         unsigned emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target);
         void recordHasOwnPropertyInForInLoop(ForInContext&, unsigned branchOffset, Label& genericPath);
 

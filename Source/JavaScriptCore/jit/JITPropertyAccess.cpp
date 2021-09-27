@@ -2866,7 +2866,7 @@ void JIT::emit_op_enumerator_next(const Instruction* currentInstruction)
         done.append(jump());
 
         outOfBounds.link(this);
-        storeTrustedValue(vm().smallStrings.sentinelString(), addressFor(propertyName));
+        storeTrustedValue(jsNull(), addressFor(propertyName));
         done.append(jump());
     }
 

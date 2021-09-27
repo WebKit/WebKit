@@ -2072,19 +2072,6 @@ undefinedOrNullJumpOp(jundefined_or_null, OpJundefinedOrNull,
 undefinedOrNullJumpOp(jnundefined_or_null, OpJnundefinedOrNull,
     macro (value, target) bqneq value, ValueNull, target end)
 
-llintOpWithReturn(op_jeq_ptr, OpJeqPtr, macro (size, get, dispatch, return)
-    get(m_value, t0)
-    get(m_specialPointer, t1)
-    loadConstant(size, t1, t2)
-    bpeq t2, [cfr, t0, 8], .opJeqPtrTarget
-    dispatch()
-
-.opJeqPtrTarget:
-    get(m_targetLabel, t0)
-    jumpImpl(dispatchIndirect, t0)
-end)
-
-
 llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata, return)
     get(m_value, t0)
     get(m_specialPointer, t1)

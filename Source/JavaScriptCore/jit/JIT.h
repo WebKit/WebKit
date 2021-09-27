@@ -461,7 +461,6 @@ namespace JSC {
         void emit_op_jneq_null(const Instruction*);
         void emit_op_jundefined_or_null(const Instruction*);
         void emit_op_jnundefined_or_null(const Instruction*);
-        void emit_op_jeq_ptr(const Instruction*);
         void emit_op_jneq_ptr(const Instruction*);
         void emit_op_jless(const Instruction*);
         void emit_op_jlesseq(const Instruction*);

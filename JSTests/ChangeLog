@@ -1,3 +1,17 @@
+2021-09-26  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r283095.
+        https://bugs.webkit.org/show_bug.cgi?id=230815
+
+        We should land the original patch since this does not work
+        with bytecode cache
+
+        Reverted changeset:
+
+        "[JSC] Optimize PutByVal with for-in"
+        https://bugs.webkit.org/show_bug.cgi?id=230801
+        https://commits.webkit.org/r283095
+
 2021-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize PutByVal with for-in

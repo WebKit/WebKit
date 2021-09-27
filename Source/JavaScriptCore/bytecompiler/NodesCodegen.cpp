@@ -4227,7 +4227,9 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         // FIXME: We should have a way to see if anyone is actually using the propertyName for something other than a get_by_val. If not, we could eliminate the toString in this opcode.
         generator.emitEnumeratorNext(propertyName.get(), mode.get(), index.get(), base.get(), enumerator.get());
-        generator.emitJumpIfSentinelString(propertyName.get(), scope->breakTarget());
+
+        // Note, choosing undefined or null helps please DFG's Abstract Interpreter as it doesn't distinguish null and undefined as types (via SpecOther).
+        generator.emitJumpIfTrue(generator.emitIsUndefinedOrNull(generator.newTemporary(), propertyName.get()), scope->breakTarget());
 
         this->emitLoopHeader(generator, propertyName.get());
 

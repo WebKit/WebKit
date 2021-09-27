@@ -86,10 +86,10 @@ IGNORE_WARNINGS_BEGIN("frame-address")
 namespace JSC { namespace DFG {
 
 template<bool strict, bool direct>
-static ALWAYS_INLINE void putByVal(JSGlobalObject* globalObject, VM& vm, JSValue baseValue, uint32_t index, JSValue value)
+static inline void putByVal(JSGlobalObject* globalObject, VM& vm, JSValue baseValue, uint32_t index, JSValue value)
 {
     ASSERT(isIndex(index));
-    if constexpr (direct) {
+    if (direct) {
         RELEASE_ASSERT(baseValue.isObject());
         asObject(baseValue)->putDirectIndex(globalObject, index, value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         return;
@@ -128,7 +128,7 @@ ALWAYS_INLINE static void putByValInternal(JSGlobalObject* globalObject, VM& vm,
     RETURN_IF_EXCEPTION(scope, void());
 
     PutPropertySlot slot(baseValue, strict);
-    if constexpr (direct) {
+    if (direct) {
         RELEASE_ASSERT(baseValue.isObject());
         JSObject* baseObject = asObject(baseValue);
         if (std::optional<uint32_t> index = parseIndex(propertyName)) {
@@ -148,7 +148,7 @@ template<bool strict, bool direct>
 ALWAYS_INLINE static void putByValCellInternal(JSGlobalObject* globalObject, VM& vm, JSCell* base, PropertyName propertyName, JSValue value)
 {
     PutPropertySlot slot(base, strict);
-    if constexpr (direct) {
+    if (direct) {
         RELEASE_ASSERT(base->isObject());
         JSObject* baseObject = asObject(base);
         if (std::optional<uint32_t> index = parseIndex(propertyName)) {
@@ -2486,7 +2486,7 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdateIndexAndMode, EncodedJSVal
     return JSValue::encode(result);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, (JSGlobalObject* globalObject, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))
+JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, EncodedJSValue, (JSGlobalObject* globalObject, uint32_t index, int32_t modeNumber, JSPropertyNameEnumerator* enumerator))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2494,15 +2494,15 @@ JSC_DEFINE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, (
 
     if (modeNumber == JSPropertyNameEnumerator::IndexedMode) {
         if (index < enumerator->indexedLength())
-            return jsString(vm, Identifier::from(vm, index).string());
-        return vm.smallStrings.sentinelString();
+            return JSValue::encode(jsString(vm, Identifier::from(vm, index).string()));
+        return JSValue::encode(jsNull());
     }
 
     JSString* result = enumerator->propertyNameAtIndex(index);
     if (!result)
-        return vm.smallStrings.sentinelString();
+        return JSValue::encode(jsNull());
 
-    return result;
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, uint32_t index, JSPropertyNameEnumerator* enumerator))

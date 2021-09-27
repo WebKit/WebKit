@@ -13646,12 +13646,12 @@ void SpeculativeJIT::compileEnumeratorNextUpdatePropertyName(Node* node)
     SpeculateStrictInt32Operand indexOperand(this, node->child1());
     SpeculateStrictInt32Operand modeOperand(this, node->child2());
     SpeculateCellOperand enumeratorOperand(this, node->child3());
-    GPRTemporary result(this);
+    JSValueRegsTemporary resultTemp(this);
 
     GPRReg index = indexOperand.gpr();
     GPRReg mode = modeOperand.gpr();
     GPRReg enumerator = enumeratorOperand.gpr();
-    GPRReg resultGPR = result.gpr();
+    JSValueRegs resultRegs = resultTemp.regs();
 
     OptionSet seenModes = node->enumeratorMetadata();
 
@@ -13667,21 +13667,24 @@ void SpeculativeJIT::compileEnumeratorNextUpdatePropertyName(Node* node)
 
         auto outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, index, MacroAssembler::Address(enumerator, JSPropertyNameEnumerator::endGenericPropertyIndexOffset()));
 
-        m_jit.loadPtr(MacroAssembler::Address(enumerator, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), resultGPR);
-        m_jit.loadPtr(MacroAssembler::BaseIndex(resultGPR, index, MacroAssembler::ScalePtr), resultGPR);
+        m_jit.loadPtr(MacroAssembler::Address(enumerator, JSPropertyNameEnumerator::cachedPropertyNamesVectorOffset()), resultRegs.payloadGPR());
+        m_jit.loadPtr(MacroAssembler::BaseIndex(resultRegs.payloadGPR(), index, MacroAssembler::ScalePtr), resultRegs.payloadGPR());
+#if USE(JSVALUE32_64)
+        m_jit.move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
+#endif
         doneCases.append(m_jit.jump());
 
         outOfBounds.link(&m_jit);
-        m_jit.move(TrustedImmPtr::weakPointer(m_graph, vm().smallStrings.sentinelString()), resultGPR);
+        m_jit.moveTrustedValue(jsNull(), resultRegs);
         doneCases.append(m_jit.jump());
         operationCall.link(&m_jit);
     }
 
-    callOperation(operationEnumeratorNextUpdatePropertyName, resultGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), index, mode, enumerator);
+    callOperation(operationEnumeratorNextUpdatePropertyName, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), index, mode, enumerator);
     m_jit.exceptionCheck();
 
     doneCases.link(&m_jit);
-    cellResult(resultGPR, node);
+    jsValueResult(resultRegs, node);
 }
 
 template<typename SlowPathFunctionType>

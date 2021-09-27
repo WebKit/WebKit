@@ -501,21 +501,6 @@ void JIT::emit_op_jnundefined_or_null(const Instruction* currentInstruction)
     addJump(branchIfNotNull(regT0), target);
 }
 
-void JIT::emit_op_jeq_ptr(const Instruction* currentInstruction)
-{
-    auto bytecode = currentInstruction->as<OpJeqPtr>();
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
-    VirtualRegister src = bytecode.m_value;
-    JSValue specialPointer = getConstantOperand(bytecode.m_specialPointer);
-    ASSERT(specialPointer.isCell());
-    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
-
-    emitLoad(src, regT1, regT0);
-    Jump notCell = branchIfNotCell(regT1);
-    addJump(branchPtr(Equal, regT0, TrustedImmPtr(specialPointer.asCell())), target);
-    notCell.link(this);
-}
-
 void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneqPtr>();

@@ -108,7 +108,7 @@ JSC_DECLARE_JIT_OPERATION(operationHasEnumerableIndexedProperty, size_t, (JSGlob
 JSC_DECLARE_JIT_OPERATION(operationGetPropertyEnumerator, JSCell*, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetPropertyEnumeratorCell, JSCell*, (JSGlobalObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorNextUpdateIndexAndMode, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, uint32_t, int32_t, JSPropertyNameEnumerator*));
-JSC_DECLARE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, JSString*, (JSGlobalObject*, uint32_t, int32_t, JSPropertyNameEnumerator*));
+JSC_DECLARE_JIT_OPERATION(operationEnumeratorNextUpdatePropertyName, EncodedJSValue, (JSGlobalObject*, uint32_t, int32_t, JSPropertyNameEnumerator*));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorInByVal, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorHasOwnProperty, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, uint32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationEnumeratorRecoverNameAndGetByVal, EncodedJSValue, (JSGlobalObject*, JSCell*, uint32_t, JSPropertyNameEnumerator*));

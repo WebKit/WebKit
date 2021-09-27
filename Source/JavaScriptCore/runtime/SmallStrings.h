@@ -119,7 +119,6 @@ public:
     JSString* notEqualString() const { return m_notEqualString; }
     JSString* timedOutString() const { return m_timedOutString; }
     JSString* okString() const { return m_okString; }
-    JSString* sentinelString() const { return m_sentinelString; }
 
     bool needsToBeVisited(CollectionScope scope) const
     {
@@ -144,7 +143,6 @@ private:
     JSString* m_notEqualString { nullptr };
     JSString* m_timedOutString { nullptr };
     JSString* m_okString { nullptr };
-    JSString* m_sentinelString { nullptr };
     JSString* m_singleCharacterStrings[singleCharacterStringCount] { nullptr };
     bool m_needsToBeVisited { true };
     bool m_isInitialized { false };

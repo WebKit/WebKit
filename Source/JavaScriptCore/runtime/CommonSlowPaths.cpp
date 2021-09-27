@@ -1001,7 +1001,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_enumerator_next)
     metadata.m_enumeratorMetadata |= static_cast<uint8_t>(mode);
     modeRegister = jsNumber(static_cast<uint8_t>(mode));
     indexRegister = jsNumber(index);
-    nameRegister = name ? name : vm.smallStrings.sentinelString();
+    nameRegister = name ? name : jsNull();
     END();
 }
 

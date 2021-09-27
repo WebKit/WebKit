@@ -105,7 +105,6 @@ void GenericLabel<JSGeneratorTraits>::setLocation(BytecodeGenerator& generator, 
         CASE(OpJeq)
         CASE(OpJstricteq)
         CASE(OpJneq)
-        CASE(OpJeqPtr)
         CASE(OpJneqPtr)
         CASE(OpJnstricteq)
         CASE(OpJless)
@@ -1496,11 +1495,6 @@ void BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond, Label& targe
 void BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond, Label& target)
 {
     OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::applyFunction), target.bind(this));
-}
-
-void BytecodeGenerator::emitJumpIfSentinelString(RegisterID* cond, Label& target)
-{
-    OpJeqPtr::emit(this, cond, emitLoad(nullptr, JSValue(vm().smallStrings.sentinelString())), target.bind(this));
 }
 
 unsigned BytecodeGenerator::emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target)
