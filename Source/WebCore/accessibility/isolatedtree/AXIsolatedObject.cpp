@@ -68,6 +68,8 @@ void AXIsolatedObject::init()
 
 void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot)
 {
+    ASSERT(is<AccessibilityObject>(object));
+
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
     setProperty(AXPropertyName::BoundingBoxRect, object.boundingBoxRect());
@@ -281,6 +283,11 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
 
     if (object.isTextControl())
         setProperty(AXPropertyName::TextLength, object.textLength());
+
+    if (object.isRadioButton()) {
+        if (auto nameAttribute = object.attributeValue("name"))
+            setProperty(AXPropertyName::NameAttribute, nameAttribute->isolatedCopy());
+    }
 
     if (object.canHaveSelectedChildren()) {
         AccessibilityChildrenVector selectedChildren;
@@ -2158,16 +2165,13 @@ AXCoreObject* AXIsolatedObject::firstAnonymousBlockChild() const
     return nullptr;
 }
 
-bool AXIsolatedObject::hasAttribute(const QualifiedName&) const
+std::optional<String> AXIsolatedObject::attributeValue(const String& attributeName) const
 {
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-const AtomString& AXIsolatedObject::getAttribute(const QualifiedName&) const
-{
-    ASSERT_NOT_REACHED();
-    return nullAtom();
+    if (attributeName == "name") {
+        if (m_propertyMap.contains(AXPropertyName::NameAttribute))
+            return stringAttributeValue(AXPropertyName::NameAttribute);
+    }
+    return std::nullopt;
 }
 
 bool AXIsolatedObject::hasTagName(const QualifiedName&) const

@@ -514,8 +514,9 @@ public:
     AccessibilityObject* firstAnonymousBlockChild() const override;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
-    bool hasAttribute(const QualifiedName&) const override;
-    const AtomString& getAttribute(const QualifiedName&) const override;
+    virtual bool hasAttribute(const QualifiedName&) const;
+    virtual const AtomString& getAttribute(const QualifiedName&) const;
+    std::optional<String> attributeValue(const String&) const override;
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const override;
     String tagName() const override;

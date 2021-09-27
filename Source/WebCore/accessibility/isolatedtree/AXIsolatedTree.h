@@ -251,6 +251,7 @@ enum class AXPropertyName : uint16_t {
     MathSuperscriptObject,
     MaxValueForRange,
     MinValueForRange,
+    NameAttribute,
     NextSibling,
     Orientation,
     OuterHTML,

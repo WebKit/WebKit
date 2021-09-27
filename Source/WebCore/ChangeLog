@@ -1,3 +1,40 @@
+2021-09-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for crash in accessibility/Mac/search-predicate-for-adhoc-radio-groups.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=230754
+        <rdar://problem/83498599>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/Mac/search-predicate-for-adhoc-radio-groups.html
+
+        The crash was caused by the call in isRadioButtonInDifferentAdhocGroup
+        to axObject->element()->getNameAttribute(), since element() should not
+        be called off of the main thread. That brins up the question of how to
+        get element attributes on the AX thread. For that purpose, I added the
+        attributeValue method to the AXCoreObject interface, and removed the
+        related methods that take QualifiedNames and return an AtomString, since
+        they cannot be used off of the main thread.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::attributeValue const):
+        (WebCore::AccessibilityObject::setIsIgnoredFromParentDataForChild):
+        (WebCore::Accessibility::isRadioButtonInDifferentAdhocGroup):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::columnHeaders):
+        (WebCore::AccessibilityTableCell::rowHeaders):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityIdentifier]):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::attributeValue const):
+        (WebCore::AXIsolatedObject::hasAttribute const): Deleted.
+        (WebCore::AXIsolatedObject::getAttribute const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
 2021-09-27  Youenn Fablet  <youenn@apple.com>
 
         Make sure to reset presenting application pid in case of mediaserverd crash

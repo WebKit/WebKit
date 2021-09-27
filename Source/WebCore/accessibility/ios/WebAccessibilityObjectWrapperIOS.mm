@@ -2773,8 +2773,7 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (![self _prepareAccessibilityCall])
         return nil;
-    
-    return self.axBackingObject->getAttribute(HTMLNames::idAttr);
+    return self.axBackingObject->identifierAttribute();
 }
 
 - (NSArray<NSString *> *)accessibilitySpeechHint

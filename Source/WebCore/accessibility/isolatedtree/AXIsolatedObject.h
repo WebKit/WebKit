@@ -615,8 +615,7 @@ private:
     AXCoreObject* activeDescendant() const override;
     void handleActiveDescendantChanged() override;
     AXCoreObject* firstAnonymousBlockChild() const override;
-    bool hasAttribute(const QualifiedName&) const override;
-    const AtomString& getAttribute(const QualifiedName&) const override;
+    std::optional<String> attributeValue(const String&) const override;
     bool hasTagName(const QualifiedName&) const override;
     String stringValueForMSAA() const override;
     String stringRoleForMSAA() const override;

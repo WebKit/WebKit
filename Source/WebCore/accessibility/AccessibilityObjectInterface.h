@@ -1254,8 +1254,7 @@ public:
     bool isAncestorOfObject(const AXCoreObject*) const;
     virtual AXCoreObject* firstAnonymousBlockChild() const = 0;
 
-    virtual bool hasAttribute(const QualifiedName&) const = 0;
-    virtual const AtomString& getAttribute(const QualifiedName&) const = 0;
+    virtual std::optional<String> attributeValue(const String&) const = 0;
     virtual bool hasTagName(const QualifiedName&) const = 0;
     virtual String tagName() const = 0;
 

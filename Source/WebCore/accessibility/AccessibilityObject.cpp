@@ -1955,6 +1955,16 @@ const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribu
     return nullAtom();
 }
 
+std::optional<String> AccessibilityObject::attributeValue(const String& attributeName) const
+{
+    if (attributeName == "name") {
+        auto value = getAttribute(nameAttr);
+        if (!value.isNull())
+            return value;
+    }
+    return std::nullopt;
+}
+
 int AccessibilityObject::getIntegralAttribute(const QualifiedName& attributeName) const
 {
     return parseHTMLInteger(getAttribute(attributeName)).value_or(0);
@@ -2677,12 +2687,12 @@ int AccessibilityObject::posInSet() const
 {
     return getIntegralAttribute(aria_posinsetAttr);
 }
-    
+
 String AccessibilityObject::identifierAttribute() const
 {
     return getAttribute(idAttr);
 }
-    
+
 void AccessibilityObject::classList(Vector<String>& classList) const
 {
     Node* node = this->node();
@@ -3603,17 +3613,17 @@ void AccessibilityObject::ariaOwnsReferencingElements(AccessibilityChildrenVecto
 
 void AccessibilityObject::setIsIgnoredFromParentDataForChild(AXCoreObject* child)
 {
-    if (!child)
+    if (!is<AccessibilityObject>(child))
         return;
-    
+
     if (child->parentObject() != this) {
         child->clearIsIgnoredFromParentData();
         return;
     }
-    
+
     AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
     if (!m_isIgnoredFromParentData.isNull()) {
-        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || equalLettersIgnoringASCIICase(child->getAttribute(aria_hiddenAttr), "true")) && !child->isFocused();
+        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || equalLettersIgnoringASCIICase(downcast<AccessibilityObject>(child)->getAttribute(aria_hiddenAttr), "true")) && !child->isFocused();
         result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
         result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
     } else {
@@ -3621,7 +3631,7 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AXCoreObject* child
         result.isPresentationalChildOfAriaRole = child->isPresentationalChildOfAriaRole();
         result.isDescendantOfBarrenParent = child->isDescendantOfBarrenParent();
     }
-    
+
     child->setIsIgnoredFromParentData(result);
 }
 
@@ -3662,7 +3672,7 @@ static bool isRadioButtonInDifferentAdhocGroup(AXCoreObject* axObject, AXCoreObj
     if (!referenceObject || !referenceObject->isRadioButton())
         return true;
 
-    return axObject->element()->getNameAttribute() != referenceObject->element()->getNameAttribute();
+    return axObject->attributeValue("name") != referenceObject->attributeValue("name");
 }
 
 static bool isAccessibilityObjectSearchMatchAtIndex(AXCoreObject* axObject, AccessibilitySearchCriteria const& criteria, size_t index)
