@@ -77,6 +77,7 @@ public:
         // may follow it, i.e. @namespace rules and regular rules.
         // AllowCharsetRules and AllowNamespaceRules behave similarly.
         AllowCharsetRules,
+        AllowLayerStatementRules,
         AllowImportRules,
         AllowNamespaceRules,
         RegularRules,

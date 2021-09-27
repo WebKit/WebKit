@@ -500,17 +500,17 @@ StyleRuleLayer::StyleRuleLayer(const StyleRuleLayer& other)
 {
 }
 
-Ref<StyleRuleLayer> StyleRuleLayer::create(Vector<CascadeLayerName>&& nameList)
+Ref<StyleRuleLayer> StyleRuleLayer::createStatement(Vector<CascadeLayerName>&& nameList)
 {
     return adoptRef(*new StyleRuleLayer(WTFMove(nameList)));
 }
 
-Ref<StyleRuleLayer> StyleRuleLayer::create(CascadeLayerName&& name, Vector<RefPtr<StyleRuleBase>>&& rules)
+Ref<StyleRuleLayer> StyleRuleLayer::createBlock(CascadeLayerName&& name, Vector<RefPtr<StyleRuleBase>>&& rules)
 {
     return adoptRef(*new StyleRuleLayer(WTFMove(name), WTFMove(rules)));
 }
 
-Ref<StyleRuleLayer> StyleRuleLayer::create(CascadeLayerName&& name, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
+Ref<StyleRuleLayer> StyleRuleLayer::createBlock(CascadeLayerName&& name, std::unique_ptr<DeferredStyleGroupRuleList>&& rules)
 {
     return adoptRef(*new StyleRuleLayer(WTFMove(name), WTFMove(rules)));
 }

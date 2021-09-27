@@ -171,6 +171,7 @@ private:
         void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
         void addStyleRule(const StyleRule&);
 
+        void registerLayers(const Vector<CascadeLayerName>&);
         void pushCascadeLayer(const CascadeLayerName&);
         void popCascadeLayer(const CascadeLayerName&);
         void updateCascadeLayerOrder();

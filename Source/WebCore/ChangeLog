@@ -1,3 +1,56 @@
+2021-09-27  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Support @layer statement before @import statements
+        https://bugs.webkit.org/show_bug.cgi?id=230826
+
+        Reviewed by Simon Fraser.
+
+        Support case like
+
+            @layer a, b;
+            @import url(foo.css);
+
+        Before this patch @import rules could only be preceded by a @charset rule.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleLayer::createStatement):
+        (WebCore::StyleRuleLayer::createBlock):
+        (WebCore::StyleRuleLayer::create): Deleted.
+
+        Some clarifying renaming.
+
+        * css/StyleRule.h:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule):
+
+        Add a new m_layerRulesBeforeImportRules vector and put any early layer statements there.
+
+        (WebCore::StyleSheetContents::ruleAt const):
+        (WebCore::StyleSheetContents::ruleCount const):
+        (WebCore::StyleSheetContents::clearRules):
+        (WebCore::StyleSheetContents::wrapperInsertRule):
+        (WebCore::StyleSheetContents::wrapperDeleteRule):
+        * css/StyleSheetContents.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::computeNewAllowedRules):
+        (WebCore::CSSParserImpl::consumeImportRule):
+        (WebCore::CSSParserImpl::consumeLayerRule):
+
+        Parsing support.
+
+        * css/parser/CSSParserImpl.h:
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::Builder::addChildRules):
+        (WebCore::Style::RuleSet::Builder::addRulesFromSheet):
+
+        Register layers before imports.
+
+        (WebCore::Style::RuleSet::Builder::registerLayers):
+
+        Factor into a function.
+
+        * style/RuleSet.h:
+
 2021-09-27  Youenn Fablet  <youenn@apple.com>
 
         iPadOS 15 / iOS 15 unable to decode VP9 stream

@@ -335,12 +335,9 @@ void RuleSet::Builder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
         }
         if (is<StyleRuleLayer>(*rule)) {
             auto& layerRule = downcast<StyleRuleLayer>(*rule);
-            if (layerRule.isList()) {
-                // List syntax that just registers the layers.
-                for (auto& name : layerRule.nameList()) {
-                    pushCascadeLayer(name);
-                    popCascadeLayer(name);
-                }
+            if (layerRule.isStatement()) {
+                // Statement syntax just registers the layers.
+                registerLayers(layerRule.nameList());
                 continue;
             }
             // Block syntax.
@@ -381,6 +378,9 @@ void RuleSet::Builder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
 
 void RuleSet::Builder::addRulesFromSheet(const StyleSheetContents& sheet)
 {
+    for (auto& rule : sheet.layerRulesBeforeImportRules())
+        registerLayers(rule->nameList());
+
     for (auto& rule : sheet.importRules()) {
         if (!rule->styleSheet())
             continue;
@@ -415,6 +415,14 @@ void RuleSet::Builder::addStyleRule(const StyleRule& rule)
     unsigned selectorListIndex = 0;
     for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex))
         ruleSet->addRule(rule, selectorIndex, selectorListIndex++, currentCascadeLayerIdentifier, &mediaQueryCollector);
+}
+
+void RuleSet::Builder::registerLayers(const Vector<CascadeLayerName>& names)
+{
+    for (auto& name : names) {
+        pushCascadeLayer(name);
+        popCascadeLayer(name);
+    }
 }
 
 void RuleSet::Builder::pushCascadeLayer(const CascadeLayerName& name)

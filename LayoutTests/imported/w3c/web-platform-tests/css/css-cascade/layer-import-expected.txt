@@ -17,9 +17,9 @@ PASS C7 Named imports
 PASS C8 Named imports
 PASS C9 Named imports
 PASS D1 Layer statement with imports
-FAIL D2 Layer statement with imports assert_equals: D2 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D3 Layer statement with imports assert_equals: D3 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D4 Layer statement with imports assert_equals: D4 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
-FAIL D5 Layer statement with imports assert_equals: D5 Layer statement with imports, target 'first' expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS D2 Layer statement with imports
+PASS D3 Layer statement with imports
+PASS D4 Layer statement with imports
+PASS D5 Layer statement with imports
 PASS D6 Layer statement with imports
 

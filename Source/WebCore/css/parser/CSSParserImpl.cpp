@@ -344,7 +344,9 @@ static CSSParserImpl::AllowedRulesType computeNewAllowedRules(CSSParserImpl::All
     if (!rule || allowedRules == CSSParserImpl::KeyframeRules || allowedRules == CSSParserImpl::CounterStyleRules || allowedRules == CSSParserImpl::NoRules)
         return allowedRules;
     ASSERT(allowedRules <= CSSParserImpl::RegularRules);
-    if (rule->isCharsetRule() || rule->isImportRule())
+    if (allowedRules <= CSSParserImpl::AllowLayerStatementRules && (rule->isCharsetRule() || rule->isLayerRule()))
+        return CSSParserImpl::AllowLayerStatementRules;
+    if (rule->isImportRule())
         return CSSParserImpl::AllowImportRules;
     if (rule->isNamespaceRule())
         return CSSParserImpl::AllowNamespaceRules;
@@ -557,7 +559,7 @@ RefPtr<StyleRuleImport> CSSParserImpl::consumeImportRule(CSSParserTokenRange pre
     auto consumeCascadeLayer = [&]() -> std::optional<CascadeLayerName> {
         if (!m_context.cascadeLayersEnabled)
             return { };
-        
+
         auto& token = prelude.peek();
         if (token.type() == FunctionToken && equalIgnoringASCIICase(token.value(), "layer")) {
             auto contents = CSSPropertyParserHelpers::consumeFunction(prelude);
@@ -814,7 +816,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
             m_observerWrapper->observer().endRuleBody(endOffset);
         }
 
-        return StyleRuleLayer::create(WTFMove(nameList));
+        return StyleRuleLayer::createStatement(WTFMove(nameList));
     }
 
     auto name = consumeCascadeLayerName(prelude, AllowAnonymous::Yes);
@@ -826,7 +828,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
         return nullptr;
 
     if (m_deferredParser)
-        return StyleRuleLayer::create(WTFMove(*name), makeUnique<DeferredStyleGroupRuleList>(*block, *m_deferredParser));
+        return StyleRuleLayer::createBlock(WTFMove(*name), makeUnique<DeferredStyleGroupRuleList>(*block, *m_deferredParser));
 
     if (m_observerWrapper) {
         m_observerWrapper->observer().startRuleHeader(StyleRuleType::Layer, m_observerWrapper->startOffset(preludeCopy));
@@ -843,7 +845,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(*block));
 
-    return StyleRuleLayer::create(WTFMove(*name), WTFMove(rules));
+    return StyleRuleLayer::createBlock(WTFMove(*name), WTFMove(rules));
 }
 
 // FIXME-NEWPARSER: Support "apply"
