@@ -504,7 +504,6 @@ void JIT::emit_op_jnundefined_or_null(const Instruction* currentInstruction)
 void JIT::emit_op_jeq_ptr(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeqPtr>();
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
     VirtualRegister src = bytecode.m_value;
     JSValue specialPointer = getConstantOperand(bytecode.m_specialPointer);
     ASSERT(specialPointer.isCell());
