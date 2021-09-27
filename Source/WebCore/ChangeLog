@@ -1,3 +1,14 @@
+2021-09-27  Andres Gonzalez  <andresg_22@apple.com>
+
+        Boundary check of AccessibilityMathMLElement::mathOverObject is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=230828
+        <rdar://problem/83571752>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AccessibilityMathMLElement.cpp:
+        (WebCore::AccessibilityMathMLElement::mathOverObject):
+
 2021-09-27  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Support @layer statement before @import statements

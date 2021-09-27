@@ -307,12 +307,11 @@ AXCoreObject* AccessibilityMathMLElement::mathOverObject()
         return nullptr;
 
     const auto& children = this->children();
-    if (children.size() < 2)
-        return nullptr;
 
-    if (node()->hasTagName(MathMLNames::moverTag))
+    if (children.size() >= 2 && node()->hasTagName(MathMLNames::moverTag))
         return children[1].get();
-    if (node()->hasTagName(MathMLNames::munderoverTag))
+
+    if (children.size() >= 3 && node()->hasTagName(MathMLNames::munderoverTag))
         return children[2].get();
 
     return nullptr;
