@@ -1,3 +1,15 @@
+2021-09-27  Per Arne  <pvollan@apple.com>
+
+        [iOS][GPUP] Remove access to unused mach services in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=230832
+        <rdar://problem/83573640>
+
+        Reviewed by Brent Fulgham.
+
+        Remove access to mach services on iOS in the GPU process that are unused, according to telemetry.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2021-09-27  BJ Burg  <bburg@apple.com>
 
         [Cocoa] backport showConsole() and showResources() for RemoteWebInspectorUI

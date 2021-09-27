@@ -204,8 +204,6 @@
         "com.apple.mobileipod")
     (allow mach-lookup
            (global-name "com.apple.mediaremoted.xpc"))
-    (allow mach-lookup (with report) (with telemetry)
-        (xpc-service-name "com.apple.MediaPlayer.RemotePlayerService"))
 )
 
 (define-once (media-capture-support)
@@ -392,11 +390,6 @@
 
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
-
-    (allow mach-lookup (with report) (with telemetry)
-        (global-name-regex #"^com\.apple\.uikit\.viewservice\..+")
-        (xpc-service-name-regex #"\.viewservice$") ;; <rdar://problem/31252371>
-    )
 
     ; UIKit-required IOKit nodes.
     (allow iokit-open
@@ -671,9 +664,6 @@
 (mobile-preferences-read "com.apple.da")
 
 (speech-synthesis-and-voiceover)
-
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.audio.AudioComponentRegistrar"))
 
 ;; Permit reading assets via MobileAsset framework.
 (asset-access 'with-media-playback)
