@@ -1233,7 +1233,7 @@ private:
         }
 
         case EnumeratorNextUpdatePropertyName: {
-            setPrediction(SpecString | SpecOther);
+            setPrediction(SpecStringIdent);
             break;
         }
 

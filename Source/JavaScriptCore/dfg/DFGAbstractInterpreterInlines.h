@@ -4323,7 +4323,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case EnumeratorNextUpdatePropertyName: {
-        setTypeForNode(node, SpecString | SpecOther);
+        setTypeForNode(node, SpecStringIdent);
         break;
     }
 

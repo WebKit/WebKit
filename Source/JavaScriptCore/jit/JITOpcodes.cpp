@@ -579,6 +579,18 @@ void JIT::emit_op_jnundefined_or_null(const Instruction* currentInstruction)
     addJump(branch64(NotEqual, regT0, TrustedImm64(JSValue::encode(jsNull()))), target);
 }
 
+void JIT::emit_op_jeq_ptr(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpJeqPtr>();
+    VirtualRegister src = bytecode.m_value;
+    JSValue specialPointer = getConstantOperand(bytecode.m_specialPointer);
+    ASSERT(specialPointer.isCell());
+    unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
+
+    emitGetVirtualRegister(src, regT0);
+    addJump(branchPtr(Equal, regT0, TrustedImmPtr(specialPointer.asCell())), target);
+}
+
 void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneqPtr>();

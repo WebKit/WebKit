@@ -1944,6 +1944,20 @@ undefinedOrNullJumpOp(jundefined_or_null, OpJundefinedOrNull,
 undefinedOrNullJumpOp(jnundefined_or_null, OpJnundefinedOrNull,
     macro (value, target) bineq value, NullTag, target end)
 
+llintOpWithReturn(op_jeq_ptr, OpJeqPtr, macro (size, get, dispatch, return)
+    get(m_value, t0)
+    get(m_specialPointer, t1)
+    loadConstant(size, t1, t3, t2)
+    bineq TagOffset[cfr, t0, 8], CellTag, .opJeqPtrFallThrough
+    bpneq PayloadOffset[cfr, t0, 8], t2, .opJeqPtrFallThrough
+.opJeqPtrBranch:
+    get(m_targetLabel, t0)
+    jumpImpl(dispatchIndirect, t0)
+.opJeqPtrFallThrough:
+    dispatch()
+end)
+
+
 llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata, return)
     get(m_value, t0)
     get(m_specialPointer, t1)
