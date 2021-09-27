@@ -1473,3 +1473,5 @@ webkit.org/b/230842 [ Catalina BigSur Debug ] media/track/audio-track.html [ Pas
 
 webkit.org/b/230844 [ Catalina Debug ] storage/indexeddb/mozilla/cursor-mutation.html [ Pass Crash ]
 
+webkit.org/b/230846 [ Catalina Debug ] svg/filters/big-height-filter.svg [ Pass Crash ]
+
