@@ -1,5 +1,49 @@
 2021-09-26  Lauro Moura  <lmoura@igalia.com>
 
+        [WPE] Rebaseline a number of text-only failures
+
+        Unreviewed test gardening.
+
+        Most are 1-pixel differences after some recent LFC-related commits.
+
+        * platform/glib/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/glib/fast/encoding/charset-replacement-expected.txt:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/css2.1/t0805-c5518-brdr-t-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5519-brdr-r-00-a-expected.txt:
+        * platform/wpe/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5520-brdr-b-01-e-expected.txt:
+        * platform/wpe/css2.1/t0805-c5521-brdr-l-00-a-expected.txt:
+        * platform/wpe/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/wpe/css2.1/t0905-c414-flt-02-c-expected.txt:
+        * platform/wpe/css2.1/t0905-c414-flt-03-c-expected.txt:
+        * platform/wpe/css2.1/t0905-c414-flt-04-c-expected.txt:
+        * platform/wpe/css2.1/t0905-c414-flt-fit-01-d-g-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltblck-01-d-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-flthw-00-c-g-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt:
+        * platform/wpe/css2.1/t0905-c5525-fltwrap-00-b-expected.txt:
+        * platform/wpe/css2.1/t0905-c5526-flthw-00-c-g-expected.txt:
+        * platform/wpe/css2.1/t090501-c414-flt-01-b-expected.txt:
+        * platform/wpe/css2.1/t100304-c43-rpl-bbx-01-d-g-expected.txt:
+        * platform/wpe/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/wpe/css2.1/t1202-counter-09-b-expected.txt:
+        * platform/wpe/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/wpe/css2.1/t1202-counters-09-b-expected.txt:
+        * platform/wpe/fast/attachment/attachment-select-on-click-expected.txt:
+        * platform/wpe/fast/attachment/attachment-select-on-click-inside-user-select-all-expected.txt:
+        * platform/wpe/fast/borders/rtl-border-05-expected.txt:
+        * platform/wpe/fast/css/font-face-implicit-local-font-expected.txt:
+        * platform/wpe/fast/css/font-face-locally-installed-expected.txt:
+        * platform/wpe/fast/css/font-face-opentype-expected.txt:
+        * platform/wpe/fast/css/font-face-unicode-range-expected.txt:
+
+2021-09-26  Lauro Moura  <lmoura@igalia.com>
+
         [GLIB] Update baselines after 242013@main
 
         Unreviewed test gardening.

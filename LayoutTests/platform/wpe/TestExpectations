@@ -178,6 +178,7 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.ht
 
 # Accessibility
 webkit.org/b/225479 accessibility/aria-modal.html [ Timeout ]
+webkit.org/b/225479 accessibility/dialog-showModal.html [ Timeout ]
 
 # Complex Text Path: Tests passing with --complex-text
 webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
