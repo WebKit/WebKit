@@ -431,16 +431,16 @@ macro callTrapHandler(throwHandler)
     loadi LLIntReturnPC[cfr], PC
 end
 
-macro checkSwitchToJITForLoop()
-    checkSwitchToJIT(
-        1,
-        macro()
-            storePC()
-            prepareStateForCCall()
-            move cfr, a0
-            move PC, a1
-            cCall2(_llint_loop_osr)
-            if not JIT
+if JIT
+    macro checkSwitchToJITForLoop()
+        checkSwitchToJIT(
+            1,
+            macro()
+                storePC()
+                prepareStateForCCall()
+                move cfr, a0
+                move PC, a1
+                cCall2(_llint_loop_osr)
                 btpz r0, .recover
                 move r1, sp
 
@@ -455,10 +455,23 @@ macro checkSwitchToJITForLoop()
                 else
                     jmp r0, JSEntryPtrTag
                 end
-            end
-        .recover:
-            loadPC()
-        end)
+            .recover:
+                loadPC()
+            end)
+    end
+else
+    macro checkSwitchToJITForLoop()
+        checkSwitchToJIT(
+            1,
+            macro()
+                storePC()
+                prepareStateForCCall()
+                move cfr, a0
+                move PC, a1
+                cCall2(_llint_loop_osr)
+                loadPC()
+            end)
+    end
 end
 
 macro cage(basePtr, mask, ptr, scratch)
