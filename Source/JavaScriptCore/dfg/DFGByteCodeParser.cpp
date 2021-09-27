@@ -7632,6 +7632,18 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_iterator_next);
         }
 
+        case op_jeq_ptr: {
+            auto bytecode = currentInstruction->as<OpJeqPtr>();
+            JSValue constant = m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer);
+            FrozenValue* frozenPointer = m_graph.freezeStrong(constant);
+            ASSERT(frozenPointer->cell() == constant);
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
+            Node* child = get(bytecode.m_value);
+            Node* condition = addToGraph(CompareEqPtr, OpInfo(frozenPointer), child);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
+            LAST_OPCODE(op_jeq_ptr);
+        }
+
         case op_jneq_ptr: {
             auto bytecode = currentInstruction->as<OpJneqPtr>();
             FrozenValue* frozenPointer = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer));
