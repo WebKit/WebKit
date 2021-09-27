@@ -1,3 +1,14 @@
+2021-09-27  Lauro Moura  <lmoura@igalia.com>
+
+        Garden passing flexbox abspos tests since updated in 242101@main
+
+        Unreviewed test gardening.
+
+        These tests are passing in all platforms according to
+        results.webkit.org.
+
+        * TestExpectations:
+
 2021-09-27  Eric Hutchison  <ehutchison@apple.com>
 
         [ Catalina BigSur wk1 Debug ] media/track/audio-track.html is a flaky crash.
