@@ -1,5 +1,51 @@
 2021-09-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r282924. rdar://problem/83584505
+
+    Make SharedBuffer inherit from ThreadSafeRefCounted
+    https://bugs.webkit.org/show_bug.cgi?id=230662
+    rdar://83419269
+    
+    Source/WebCore:
+    
+    The SourceBufferPrivateAVFObjC uses dispatch_async that takes an objective-C class.
+    This copies its argument rather than move it and we end up with the SharedBuffer
+    captured in the lambda to have its ref count be > 1.
+    The easiest workaround is to make SharedBuffer use thread-safe refcount.
+    Of course, this doesn't make a SharedBuffer a thread-safe class, but it allows
+    to safely move it between threads.
+    
+    Already covered by existing tests.
+    
+    Reviewed by Chris Dumez.
+    
+    * platform/SharedBuffer.h:
+    
+    LayoutTests:
+    
+    Revert bug 230644.
+    
+    Reviewed by Chris Dumez.
+    
+    * platform/mac-wk1/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@282924 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-22  Jean-Yves Avenard  <jya@apple.com>
+
+            Make SharedBuffer inherit from ThreadSafeRefCounted
+            https://bugs.webkit.org/show_bug.cgi?id=230662
+            rdar://83419269
+
+            Revert bug 230644.
+
+            Reviewed by Chris Dumez.
+
+            * platform/mac-wk1/TestExpectations:
+
+2021-09-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r282895. rdar://problem/83584505
 
     REGRESSION (r282865?): ASSERTION FAILED: Unsafe to ref/deref from different threads m_isOwnedByMainThread == isMainThread().
