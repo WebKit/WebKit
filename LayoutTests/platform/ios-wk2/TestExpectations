@@ -1386,6 +1386,8 @@ webkit.org/b/208018 [ Release ] perf/clone-with-focus.html [ Pass Failure ]
 
 webkit.org/b/207943 fast/images/exif-orientation-webgl-texture.html [ ImageOnlyFailure ]
 
+webkit.org/b/230857 fast/images/image-subsampling.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/208030 http/tests/workers/service/registration-clear-redundant-worker.html [ Pass Timeout ]
 
 webkit.org/b/207038 compositing/webgl/webgl-reflection.html [ Pass Failure ]
