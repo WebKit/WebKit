@@ -1,5 +1,14 @@
 2021-09-27  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Catalina BigSur wk1 Debug ] Assertion Failure: WebGL tests are flaky crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=230835.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-09-27  Eric Hutchison  <ehutchison@apple.com>
+
         [ Catalina Debug wk1 EWS] performance-api/performance-observer-order.html is a flaky crash.
         https://bugs.webkit.org/show_bug.cgi?id=230833.
 

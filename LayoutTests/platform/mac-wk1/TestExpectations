@@ -1465,3 +1465,7 @@ webkit.org/b/230831 [ Catalina Debug ] storage/websql/multiple-transactions-on-d
 
 webkit.org/b/230833 [ Catalina Debug ] performance-api/performance-observer-order.html [ Pass Crash ]
 
+webkit.org/b/230835 [ Catalina BigSur Debug ] webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pass Crash ]
+webkit.org/b/230835 [ Catalina BigSur Debug ] webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Pass Crash ]
+webkit.org/b/230835 [ Catalina BigSur Debug ] webgl/2.0.0/conformance/extensions/ext-blend-minmax.html [ Pass Crash ]
+
