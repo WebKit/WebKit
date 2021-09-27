@@ -524,7 +524,7 @@ protected:
     RefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor, const char* functionName);
 
 #if ENABLE(VIDEO)
-    RefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy, const char* functionName);
+    RefPtr<Image> videoFrameToImage(HTMLVideoElement*, BackingStoreCopy);
 #endif
 
     WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;
@@ -614,9 +614,8 @@ protected:
     class LRUImageBufferCache {
     public:
         LRUImageBufferCache(int capacity);
-        // Returns pointer to a cleared image buffer that is owned by the cache. The pointer is valid until next call.
-        // Using fillOperator == CompositeOperator::Copy can be used to omit the clear of the buffer.
-        ImageBuffer* imageBuffer(const IntSize&, CompositeOperator fillOperator = CompositeOperator::SourceOver);
+        // The pointer returned is owned by the image buffer map.
+        ImageBuffer* imageBuffer(const IntSize& size);
     private:
         void bubbleToFront(size_t idx);
         Vector<RefPtr<ImageBuffer>> m_buffers;

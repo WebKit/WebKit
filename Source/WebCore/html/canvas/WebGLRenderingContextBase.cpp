@@ -4933,7 +4933,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         }
 
         // Fallback pure SW path.
-        RefPtr<Image> image = videoFrameToImage(video.get(), DontCopyBackingStore, functionName);
+        RefPtr<Image> image = videoFrameToImage(video.get(), DontCopyBackingStore);
         if (!image)
             return { };
         texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Video, m_unpackFlipY, m_unpackPremultiplyAlpha, false, inputSourceImageRect, depth, unpackImageHeight);
@@ -5767,44 +5767,18 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
 
 #if ENABLE(VIDEO)
 
-RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement* video, BackingStoreCopy backingStoreCopy, const char* functionName)
+RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement* video, BackingStoreCopy backingStoreCopy)
 {
-#if USE(AVFOUNDATION)
-    auto nativeImage = video->nativeImageForCurrentTime();
-    // Currently we might be missing an image due to MSE not being able to provide the first requested frame.
-    // https://bugs.webkit.org/show_bug.cgi?id=228997
-    if (!nativeImage)
-        return nullptr;
-    IntSize imageSize = nativeImage->size();
-    if (imageSize.isEmpty()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "video visible size is empty");
+    IntSize size(video->videoWidth(), video->videoHeight());
+    ImageBuffer* buf = m_generatedImageCache.imageBuffer(size);
+    if (!buf) {
+        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, "texImage2D", "out of memory");
         return nullptr;
     }
-    FloatRect imageRect { { }, imageSize };
-    ImageBuffer* imageBuffer = m_generatedImageCache.imageBuffer(imageSize, CompositeOperator::Copy);
-    if (!imageBuffer) {
-        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
-        return nullptr;
-    }
-    imageBuffer->context().drawNativeImage(*nativeImage, imageRect.size(), imageRect, imageRect, CompositeOperator::Copy);
-#else
-    // This is a legacy code path that produces incompatible texture size when the
-    // video visible size is different to the natural size. This should be removed
-    // once all platforms implement nativeImageForCurrentTime().
-    IntSize videoSize { static_cast<int>(video->videoWidth()), static_cast<int>(video->videoHeight()) };
-    ImageBuffer* imageBuffer = m_generatedImageCache.imageBuffer(videoSize);
-    if (!imageBuffer) {
-        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
-        return nullptr;
-    }
-    video->paintCurrentFrameInContext(imageBuffer->context(), { { }, videoSize });
-#endif
-    RefPtr<Image> image = imageBuffer->copyImage(backingStoreCopy);
-    if (!image) {
-        synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
-        return nullptr;
-    }
-    return image;
+    FloatRect destRect(0, 0, size.width(), size.height());
+    // FIXME: Turn this into a GPU-GPU texture copy instead of CPU readback.
+    video->paintCurrentFrameInContext(buf->context(), destRect);
+    return buf->copyImage(backingStoreCopy);
 }
 
 #endif
@@ -7645,7 +7619,7 @@ WebGLRenderingContextBase::LRUImageBufferCache::LRUImageBufferCache(int capacity
 {
 }
 
-ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size, CompositeOperator fillOperator)
+ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size)
 {
     size_t i;
     for (i = 0; i < m_buffers.size(); ++i) {
@@ -7655,8 +7629,7 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
         if (buf->logicalSize() != size)
             continue;
         bubbleToFront(i);
-        if (fillOperator != CompositeOperator::Copy && fillOperator != CompositeOperator::Clear)
-            buf->context().clearRect({ { }, size });
+        buf->context().clearRect(FloatRect({ }, FloatSize(size)));
         return buf;
     }
 
