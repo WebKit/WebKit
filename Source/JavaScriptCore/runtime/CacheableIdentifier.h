@@ -48,8 +48,10 @@ public:
     CacheableIdentifier() = default;
 
     static inline CacheableIdentifier createFromCell(JSCell* identifier);
-    static inline CacheableIdentifier createFromIdentifierOwnedByCodeBlock(CodeBlock*, const Identifier&);
-    static inline CacheableIdentifier createFromIdentifierOwnedByCodeBlock(CodeBlock*, UniquedStringImpl*);
+    template <typename CodeBlockType>
+    static inline CacheableIdentifier createFromIdentifierOwnedByCodeBlock(CodeBlockType*, const Identifier&);
+    template <typename CodeBlockType>
+    static inline CacheableIdentifier createFromIdentifierOwnedByCodeBlock(CodeBlockType*, UniquedStringImpl*);
     static inline CacheableIdentifier createFromImmortalIdentifier(UniquedStringImpl*);
     static constexpr CacheableIdentifier createFromRawBits(uintptr_t rawBits) { return CacheableIdentifier(rawBits); }
 

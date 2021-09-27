@@ -190,7 +190,7 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
 
     // Let's store the reused registers to the stack. After that, we can use allocated scratch registers.
     ScratchRegisterAllocator::PreservedState preservedState =
-    allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
     if (GetterSetterAccessCaseInternal::verbose) {
         dataLog("baseGPR = ", baseGPR, "\n");
@@ -225,12 +225,9 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
         registersToSpillForCCall.set(reg);
     for (FPRReg reg : fpScratch)
         registersToSpillForCCall.set(reg);
+    if (jit.codeBlock()->useDataIC())
+        registersToSpillForCCall.set(stubInfo.m_stubInfoGPR);
     registersToSpillForCCall.exclude(RegisterSet::registersToNotSaveForCCall());
-#if CPU(ARM64)
-    CodeBlock* codeBlock = jit.codeBlock();
-    if (codeBlock->useDataIC())
-        registersToSpillForCCall.set(ARM64Registers::lr);
-#endif
 
     AccessCaseSnippetParams params(state.m_vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     snippet->generator()->run(jit, params);

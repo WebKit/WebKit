@@ -32,6 +32,7 @@
 #include "BytecodeOperandsForCheckpoint.h"
 #include "CallFrame.h"
 #include "CheckpointOSRExitSideState.h"
+#include "CodeBlockInlines.h"
 #include "CommonSlowPathsInlines.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
@@ -370,13 +371,22 @@ inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeInd
     
     codeBlock->updateAllValueProfilePredictions();
 
+    if (codeBlock->jitType() != JITType::BaselineJIT) {
+        if (RefPtr<BaselineJITCode> baselineRef = codeBlock->unlinkedCodeBlock()->m_unlinkedBaselineCode) {
+            codeBlock->setupWithUnlinkedBaselineCode(baselineRef.releaseNonNull());
+            codeBlock->ownerExecutable()->installCode(codeBlock);
+            codeBlock->jitNextInvocation();
+            return true;
+        }
+    }
+
     if (!codeBlock->checkIfJITThresholdReached()) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayJITCompile", ("threshold not reached, counter = ", codeBlock->llintExecuteCounter()));
         dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
         return false;
     }
     
-    JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(vm, JITCompilationKey(codeBlock, JITCompilationMode::Baseline));
+    JITWorklist::State worklistState = JITWorklist::ensureGlobalWorklist().completeAllReadyPlansForVM(vm, JITCompilationKey(codeBlock->unlinkedCodeBlock(), JITCompilationMode::Baseline));
 
     if (codeBlock->jitType() == JITType::BaselineJIT) {
         dataLogLnIf(Options::verboseOSR(), "    Code was already compiled.");
@@ -466,8 +476,10 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && codeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
         uintptr_t* ptr = vm.getLoopHintExecutionCounter(pc);
         *ptr += codeBlock->llintExecuteCounter().m_activeThreshold;
-        if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit())
+        if (*ptr >= Options::earlyReturnFromInfiniteLoopsLimit()) {
+            codeBlock->ensureJITData(ConcurrentJSLocker(codeBlock->m_lock)); // We're returning to the OSR entry code here, which expects that m_jitData is not null.
             LLINT_RETURN_TWO(LLInt::fuzzerReturnEarlyFromLoopHintEntrypoint().code().executableAddress(), callFrame->topOfFrame());
+        }
     }
     
     

@@ -289,6 +289,8 @@ public:
 
     static inline ptrdiff_t offsetOfRareData() { return OBJECT_OFFSETOF(FunctionExecutable, m_rareData); }
     static inline ptrdiff_t offsetOfAsStringInRareData() { return OBJECT_OFFSETOF(RareData, m_asString); }
+    static inline ptrdiff_t offsetOfCodeBlockForCall() { return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForCall); }
+    static inline ptrdiff_t offsetOfCodeBlockForConstruct() { return OBJECT_OFFSETOF(FunctionExecutable, m_codeBlockForConstruct); }
 
 private:
     friend class ExecutableBase;

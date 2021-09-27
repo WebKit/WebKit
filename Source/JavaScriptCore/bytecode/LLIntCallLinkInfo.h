@@ -87,6 +87,7 @@ public:
     }
 
     ArrayProfile m_arrayProfile;
+    static ptrdiff_t offsetOfArrayProfile() { return OBJECT_OFFSETOF(LLIntCallLinkInfo, m_arrayProfile); }
 
 private:
     uintptr_t m_calleeOrLastSeenCalleeWithLinkBit { unlinkedBit };

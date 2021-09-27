@@ -367,6 +367,28 @@ void AssemblyHelpers::loadProperty(GPRReg object, GPRReg offset, JSValueRegs res
         result);
 }
 
+void AssemblyHelpers::storeProperty(JSValueRegs value, GPRReg object, GPRReg offset, GPRReg scratch)
+{
+    Jump isInline = branch32(LessThan, offset, TrustedImm32(firstOutOfLineOffset));
+    
+    loadPtr(Address(object, JSObject::butterflyOffset()), scratch);
+    neg32(offset);
+    signExtend32ToPtr(offset, offset);
+    Jump ready = jump();
+    
+    isInline.link(this);
+    addPtr(
+        TrustedImm32(
+            static_cast<int32_t>(sizeof(JSObject)) -
+            (static_cast<int32_t>(firstOutOfLineOffset) - 2) * static_cast<int32_t>(sizeof(EncodedJSValue))),
+        object, scratch);
+    
+    ready.link(this);
+    
+    storeValue(value,
+        BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
+}
+
 void AssemblyHelpers::emitLoadStructure(VM& vm, RegisterID source, RegisterID dest, RegisterID scratch)
 {
 #if USE(JSVALUE64)
@@ -698,8 +720,13 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 
 void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, CallLinkInfo* info)
 {
-    move(TrustedImmPtr(info), GPRInfo::regT2);
     move(TrustedImmPtr(globalObject), GPRInfo::regT3);
+    emitVirtualCallWithoutMovingGlobalObject(vm, info);
+}
+
+void AssemblyHelpers::emitVirtualCallWithoutMovingGlobalObject(VM& vm, CallLinkInfo* info)
+{
+    move(TrustedImmPtr(info), GPRInfo::regT2);
     Call call = nearCall();
     addLinkTask([=, &vm] (LinkBuffer& linkBuffer) {
         auto callLocation = linkBuffer.locationOfNearCall<JITCompilationPtrTag>(call);

@@ -619,6 +619,7 @@ interpreter/ShadowChicken.cpp
 interpreter/StackVisitor.cpp
 
 jit/AssemblyHelpers.cpp
+jit/BaselineJITCode.cpp
 jit/BaselineJITPlan.cpp
 jit/BinarySwitch.cpp
 jit/CCallHelpers.cpp

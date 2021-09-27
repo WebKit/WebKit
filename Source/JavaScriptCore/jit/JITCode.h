@@ -32,7 +32,10 @@
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterSet.h"
 
+
 namespace JSC {
+
+class PCToCodeOriginMap;
 
 namespace DFG {
 class CommonData;
@@ -159,10 +162,10 @@ public:
 
     static bool useDataIC(JITType jitType)
     {
-        if (!Options::useDataIC())
-            return false;
         if (JITCode::isBaselineCode(jitType))
             return true;
+        if (!Options::useDataIC())
+            return false;
         return Options::useDataICInOptimizingJIT();
     }
 
@@ -222,6 +225,8 @@ public:
     Intrinsic intrinsic() { return m_intrinsic; }
 
     bool isShared() const { return m_shareAttribute == ShareAttribute::Shared; }
+
+    virtual PCToCodeOriginMap* pcToCodeOriginMap() { return nullptr; }
 
 private:
     JITType m_jitType;

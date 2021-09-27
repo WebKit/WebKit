@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "BaselineJITCode.h"
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
+#include "DFGJITCode.h"
 #include "UnlinkedMetadataTableInlines.h"
 
 namespace JSC {
@@ -40,9 +42,7 @@ void CodeBlock::forEachValueProfile(const Functor& func)
     if (m_metadata) {
 #define VISIT(__op) \
         m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_profile, false); });
-
         FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
-
 #undef VISIT
 
         m_metadata->forEach<OpIteratorOpen>([&] (auto& metadata) { 
@@ -57,7 +57,6 @@ void CodeBlock::forEachValueProfile(const Functor& func)
             func(metadata.m_valueProfile, false);
         });
     }   
-
 }
 
 template<typename Functor>
@@ -98,5 +97,39 @@ void CodeBlock::forEachLLIntCallLinkInfo(const Functor& func)
 #undef VISIT
     }
 }
+
+#if ENABLE(JIT)
+ALWAYS_INLINE const JITCodeMap& CodeBlock::jitCodeMap()
+{
+    ASSERT(jitType() == JITType::BaselineJIT);
+    return static_cast<BaselineJITCode*>(m_jitCode.get())->m_jitCodeMap;
+}
+
+ALWAYS_INLINE SimpleJumpTable& CodeBlock::baselineSwitchJumpTable(int tableIndex)
+{
+    ASSERT(jitType() == JITType::BaselineJIT);
+    return static_cast<BaselineJITCode*>(m_jitCode.get())->m_switchJumpTables[tableIndex];
+}
+
+ALWAYS_INLINE StringJumpTable& CodeBlock::baselineStringSwitchJumpTable(int tableIndex)
+{
+    ASSERT(jitType() == JITType::BaselineJIT);
+    return static_cast<BaselineJITCode*>(m_jitCode.get())->m_stringSwitchJumpTables[tableIndex];
+}
+#endif
+
+#if ENABLE(DFG_JIT)
+ALWAYS_INLINE SimpleJumpTable& CodeBlock::dfgSwitchJumpTable(int tableIndex)
+{
+    ASSERT(jitType() == JITType::DFGJIT);
+    return static_cast<DFG::JITCode*>(m_jitCode.get())->m_switchJumpTables[tableIndex];
+}
+
+ALWAYS_INLINE StringJumpTable& CodeBlock::dfgStringSwitchJumpTable(int tableIndex)
+{
+    ASSERT(jitType() == JITType::DFGJIT);
+    return static_cast<DFG::JITCode*>(m_jitCode.get())->m_stringSwitchJumpTables[tableIndex];
+}
+#endif
 
 } // namespace JSC

@@ -1012,10 +1012,6 @@ strictEqualityJumpOp(jnstricteq, OpJnstricteq,
 
 macro preOp(opcodeName, opcodeStruct, integerOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
-        macro updateArithProfile(type)
-            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t1]
-        end
-
         metadata(t1, t2)
         get(m_srcDst, t0)
         bineq TagOffset[cfr, t0, 8], Int32Tag, .slow
@@ -1023,7 +1019,7 @@ macro preOp(opcodeName, opcodeStruct, integerOperation)
         # Metadata in t1, srcDst in t2
         integerOperation(t2, .slow)
         storei t2, PayloadOffset[cfr, t0, 8]
-        updateArithProfile(ArithProfileInt)
+        updateUnaryArithProfile(opcodeStruct, ArithProfileInt, t1, t2)
         dispatch()
 
     .slow:
@@ -1089,22 +1085,18 @@ end)
 
 llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, return)
 
-    macro updateArithProfile(type)
-        orh type, OpNegate::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t5]
-    end
-
     metadata(t5, t0)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t1, t2)
     bineq t1, Int32Tag, .opNegateSrcNotInt
     btiz t2, 0x7fffffff, .opNegateSlow
     negi t2
-    updateArithProfile(ArithProfileInt)
+    updateUnaryArithProfile(OpNegate, ArithProfileInt, t5, t3)
     return (Int32Tag, t2)
 .opNegateSrcNotInt:
     bia t1, LowestTag, .opNegateSlow
     xori 0x80000000, t1
-    updateArithProfile(ArithProfileNumber)
+    updateUnaryArithProfile(OpNegate, ArithProfileNumber, t5, t3)
     return(t1, t2)
 
 .opNegateSlow:
@@ -1115,10 +1107,6 @@ end)
 
 macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, doubleOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
-        macro arithProfile(type)
-            orh type, %opcodeStruct%::Metadata::m_arithProfile + BinaryArithProfile::m_bits[t5]
-        end
-
         metadata(t5, t2)
         get(m_rhs, t2)
         get(m_lhs, t0)
@@ -1126,7 +1114,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         loadConstantOrVariable2Reg(size, t0, t2, t0)
         bineq t2, Int32Tag, .op1NotInt
         bineq t3, Int32Tag, .op2NotInt
-        arithProfile(ArithProfileIntInt)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileIntInt, t5, t2)
         get(m_dst, t2)
         integerOperationAndStore(t3, t1, t0, .slow, t2)
         dispatch()
@@ -1136,12 +1124,12 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         bia t2, LowestTag, .slow
         bib t3, LowestTag, .op1NotIntOp2Double
         bineq t3, Int32Tag, .slow
-        arithProfile(ArithProfileNumberInt)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileNumberInt, t5, t4)
         ci2ds t1, ft1
         jmp .op1NotIntReady
     .op1NotIntOp2Double:
         fii2d t1, t3, ft1
-        arithProfile(ArithProfileNumberNumber)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileNumberNumber, t5, t4)
     .op1NotIntReady:
         get(m_dst, t1)
         fii2d t0, t2, ft0
@@ -1153,7 +1141,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         # First operand is definitely an int, the second operand is definitely not.
         get(m_dst, t2)
         bia t3, LowestTag, .slow
-        arithProfile(ArithProfileIntNumber)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileIntNumber, t5, t4)
         ci2ds t0, ft0
         fii2d t1, t3, ft1
         doubleOperation(ft1, ft0)

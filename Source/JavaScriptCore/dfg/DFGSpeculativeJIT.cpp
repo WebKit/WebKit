@@ -3985,7 +3985,7 @@ void SpeculativeJIT::compilePutPrivateName(Node* node)
     RegisterSet usedRegisters = this->usedRegisters();
 
     JITPutByValGenerator gen(
-        m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, AccessType::PutByVal, usedRegisters,
+        m_jit.codeBlock(), JITType::DFGJIT, codeOrigin, callSite, AccessType::PutPrivateName, usedRegisters,
         JSValueRegs::payloadOnly(baseGPR), JSValueRegs::payloadOnly(propertyGPR), valueRegs, InvalidGPRReg, stubInfoGPR);
     gen.stubInfo()->propertyIsSymbol = true;
 
@@ -4905,7 +4905,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
     BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
-    JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC(arithProfile);
+    JITAddIC* addIC = m_jit.jitCode()->common.addJITAddIC(arithProfile);
     auto repatchingFunction = operationValueAddOptimize;
     auto nonRepatchingFunction = operationValueAdd;
     
@@ -4989,7 +4989,7 @@ void SpeculativeJIT::compileValueSub(Node* node)
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
     BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
-    JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile);
+    JITSubIC* subIC = m_jit.jitCode()->common.addJITSubIC(arithProfile);
     auto repatchingFunction = operationValueSubOptimize;
     auto nonRepatchingFunction = operationValueSub;
 
@@ -5571,7 +5571,7 @@ void SpeculativeJIT::compileValueNegate(Node* node)
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
     UnaryArithProfile* arithProfile = baselineCodeBlock->unaryArithProfileForBytecodeIndex(bytecodeIndex);
-    JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile);
+    JITNegIC* negIC = m_jit.jitCode()->common.addJITNegIC(arithProfile);
     auto repatchingFunction = operationArithNegateOptimize;
     auto nonRepatchingFunction = operationArithNegate;
     compileMathIC(node, negIC, repatchingFunction, nonRepatchingFunction);
@@ -5815,7 +5815,7 @@ void SpeculativeJIT::compileValueMul(Node* node)
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
     BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
-    JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC(arithProfile);
+    JITMulIC* mulIC = m_jit.jitCode()->common.addJITMulIC(arithProfile);
     auto repatchingFunction = operationValueMulOptimize;
     auto nonRepatchingFunction = operationValueMul;
 
@@ -14767,7 +14767,7 @@ void SpeculativeJIT::compileLogShadowChickenTail(Node* node)
     SpeculateCellOperand scope(this, node->child2());
     GPRReg scopeReg = scope.gpr();
 
-    m_jit.logShadowChickenTailPacket(shadowPacketReg, thisRegs, scopeReg, m_jit.codeBlock(), callSiteIndex);
+    m_jit.logShadowChickenTailPacket(shadowPacketReg, thisRegs, scopeReg, CCallHelpers::TrustedImmPtr(m_jit.codeBlock()), callSiteIndex);
     noResult(node);
 }
 
