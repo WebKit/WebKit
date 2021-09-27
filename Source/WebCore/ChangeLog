@@ -1,3 +1,23 @@
+2021-09-27  Martin Robinson  <mrobinson@webkit.org>
+
+        Mandatory scroll snapping doesn't work correctly in tables with position:sticky
+        https://bugs.webkit.org/show_bug.cgi?id=227300
+        <rdar://problem/79971196>
+
+        Reviewed by Simon Fraser.
+
+        Add a mode for mapLocalToContainer which ignores sticky offsets. This will be
+        used by more code in the future.
+
+        Test: css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-sticky.html
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::updateSnapOffsetsForScrollableArea): Pass the IgnoreStickyOffsets flag.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer const): When the IgnoreStickyOffsets flag is
+        passed, explicitly remove sticky offsets from the container offset.
+        * rendering/RenderObjectEnums.h: Add the IgnoreStickyOffests flag.
+
 2021-09-26  Jean-Yves Avenard  <jya@apple.com>
 
         [MSE] appending to the source buffer will not throw when the source buffer is full.

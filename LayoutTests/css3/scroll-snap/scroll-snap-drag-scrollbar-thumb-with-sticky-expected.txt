@@ -1,0 +1,5 @@
+PASS sticky positioned snap element creates snap point at static position
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

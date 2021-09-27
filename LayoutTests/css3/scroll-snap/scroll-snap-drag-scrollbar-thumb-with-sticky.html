@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+    <head>
+        <title>Sticky position items should create snap points at their static position</title>
+        <style type="text/css">
+            /* Use customized scrollbar to avoid platform differences. */
+            ::-webkit-scrollbar {
+                width: 20px;
+                height: 20px;
+            }
+            ::-webkit-scrollbar-button {
+                height: 20px;
+                width: 20px;
+                background-color: blue;
+            }
+
+            ::-webkit-scrollbar-track-piece  {
+                background-color: gray;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                height: 20px;
+                width: 20px;
+                background-color: black;
+            }
+
+            body {
+                margin: 0px;
+            }
+
+            .container {
+                height: 200px;
+                width: 200px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: both mandatory;
+            }
+
+            .horizontal-drawer {
+                height: 100%;
+                width: 1500px;
+            }
+
+            .block {
+                height: 100%;
+                width: 250px;
+            }
+
+            .snap {
+                scroll-snap-align: start;
+            }
+
+            .sticky {
+                width: 20px;
+                height: 20px;
+                left: 0px;
+                top: 0px;
+                position: sticky;
+            }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function onLoad()
+        {
+            if (window.eventSender == undefined) {
+                document.getElementById('console').innerText = "Dragging the scrollbar thumb into the white part of the container should trigger scroll snapping.";
+                return;
+            }
+            try {
+                eventSender.mouseMoveTo(20, 190);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(100, 190);
+                eventSender.mouseUp();
+
+                let horizontalContainer = document.getElementById("horizontal-container");
+                await UIHelper.waitForTargetScrollAnimationToSettle(horizontalContainer);
+                expectTrue(horizontalContainer.scrollLeft == 1020, "sticky positioned snap element creates snap point at static position");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="horizontal-container" class="container">
+            <div class="horizontal-drawer">
+                <div class="sticky snap" style="float: left; background: grey;"></div>
+                <div class="block" style="float: left; width: 1000px;"></div>
+                <div class="block snap" style="float: left; background: #80475E;"></div>
+            </div>
+        </div>
+        <p id="console"></p>
+    </body>
+</html>

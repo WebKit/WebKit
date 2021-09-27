@@ -2252,6 +2252,11 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
         *wasFixed = mode.contains(IsFixed);
     
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
+
+    // Remove sticky positioning from the offset if it should be ignored. This is done here in
+    // order to avoid piping this flag down the method chain.
+    if (mode.contains(IgnoreStickyOffsets) && isStickilyPositioned())
+        containerOffset -= stickyPositionOffset();
     
     bool preserve3D = mode.contains(UseTransforms) && (container->style().preserves3D() || style().preserves3D());
     if (mode.contains(UseTransforms) && shouldUseTransformFromContainer(container)) {
