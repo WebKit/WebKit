@@ -2409,6 +2409,16 @@ webkit.org/b/189448 [ Mojave Catalina ] fast/text/osaka-synthetic-bold.html [ Sk
 
 webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtests/transform-marquee-resize-div-image-001.html [ Pass Failure ]
 
+# rdar://83591040
+[ Monterey+ ] editing/mac/dictionary-lookup/dictionary-lookup-input.html [ Crash ]
+[ Monterey+ ] editing/mac/dictionary-lookup/dictionary-lookup-inside-selection.html [ Crash ]
+[ Monterey+ ] editing/mac/dictionary-lookup/dictionary-lookup-outside-selection.html [ Crash ]
+[ Monterey+ ] editing/mac/dictionary-lookup/dictionary-lookup-rtl.html [ Crash ]
+[ Monterey+ ] editing/mac/dictionary-lookup/dictionary-lookup.html [ Crash ]
+[ Monterey+ ] editing/selection/5354455-2.html [ Crash ]
+[ Monterey+ ] editing/selection/context-menu-on-text.html [ Crash ]
+[ Monterey+ ] editing/selection/context-menu-text-selection-lookup.html [ Crash ]
+
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure Crash ]
 
 webkit.org/b/230711 [ BigSur ] http/tests/inspector/network/resource-initiatorNode.html [ Pass Failure Crash ]
