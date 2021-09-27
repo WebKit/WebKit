@@ -491,6 +491,13 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "ViewPortSnapshotTaken")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        m_testRunner->viewPortSnapshotTaken(static_cast<WKStringRef>(messageBody));
+        return;
+    }
+
     postPageMessage("Error", "Unknown");
 }
 

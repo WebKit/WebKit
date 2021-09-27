@@ -3579,6 +3579,10 @@ void TestController::setAllowedMenuActions(const Vector<String>&)
 {
 }
 
+WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
+{
+    return adoptWK(WKStringCreateWithUTF8CString("not implemented"));
+}
 #endif
 
 void TestController::sendDisplayConfigurationChangedMessageForTesting()

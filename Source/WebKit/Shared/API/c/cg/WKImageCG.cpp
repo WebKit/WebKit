@@ -31,6 +31,7 @@
 #include "WebImage.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBufferUtilitiesCG.h>
 #include <WebCore/NativeImage.h>
 
 CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
@@ -62,3 +63,10 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     return toAPI(webImage.leakRef());
 }
 
+WKStringRef WKImageCreateDataURLFromImage(CGImageRef imageRef)
+{
+    String mimeType { "image/png"_s };
+    auto destinationUTI = WebCore::utiFromImageBufferMIMEType(mimeType);
+    auto value = WebCore::dataURL(imageRef, destinationUTI.get(), mimeType, { });
+    return WKStringCreateWithUTF8CString(value.utf8().data());
+}

@@ -88,6 +88,7 @@ private:
     void addSampleToPendingQueue(MediaSample&);
     void requestNotificationWhenReadyForVideoData();
     void enqueueSampleBuffer(MediaSample&);
+    void setRootLayerBoundsAndPositions(CGRect, MediaSample::VideoRotation);
 
 #if !RELEASE_LOG_DISABLED
     void onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime);

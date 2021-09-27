@@ -37,6 +37,7 @@
 #import <Security/SecItem.h>
 #import <WebKit/WKContextConfigurationRef.h>
 #import <WebKit/WKContextPrivate.h>
+#import <WebKit/WKImageCG.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
@@ -568,6 +569,11 @@ void TestController::configureContentMode(WKWebViewConfiguration *configuration,
     UNUSED_PARAM(options);
 #endif
     configuration.defaultWebpagePreferences = webpagePreferences.get();
+}
+
+WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
+{
+    return adoptWK(WKImageCreateDataURLFromImage(mainWebView()->windowSnapshotImage().get()));
 }
 
 } // namespace WTR
