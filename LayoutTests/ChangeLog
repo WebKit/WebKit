@@ -1,5 +1,14 @@
 2021-09-27  Truitt Savell  <tsavell@apple.com>
 
+        6 editing spelling tests crashing with uncaught exception 'NSInvalidArgumentException'
+        rdar://83592102
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-09-27  Truitt Savell  <tsavell@apple.com>
+
         8 editing/ tests crashing with Assertion failed
         rdar://83591040
 

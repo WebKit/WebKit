@@ -2419,6 +2419,14 @@ webkit.org/b/230327 imported/w3c/web-platform-tests/css/css-transforms/crashtest
 [ Monterey+ ] editing/selection/context-menu-on-text.html [ Crash ]
 [ Monterey+ ] editing/selection/context-menu-text-selection-lookup.html [ Crash ]
 
+# rdar://83591040
+[ Monterey+ ] editing/mac/selection/context-menu-select-editability.html [ Crash ]
+[ Monterey+ ] editing/mac/spelling/advance-to-next-misspelling.html [ Crash ]
+[ Monterey+ ] editing/selection/5354455-1.html [ Crash ]
+[ Monterey+ ] editing/spelling/context-menu-suggestions-multiword-selection.html [ Crash ]
+[ Monterey+ ] editing/spelling/context-menu-suggestions-subword-selection.html [ Crash ]
+[ Monterey+ ] editing/spelling/context-menu-suggestions.html [ Crash ]
+
 webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure Crash ]
 
 webkit.org/b/230711 [ BigSur ] http/tests/inspector/network/resource-initiatorNode.html [ Pass Failure Crash ]
