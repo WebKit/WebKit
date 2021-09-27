@@ -1471,10 +1471,6 @@ http/tests/media/now-playing-info.html [ Skip ]
 http/wpt/mediarecorder [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative.html [ Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative.html [ Pass ]
-
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content-rendering-rules/canvas-update-with-border-object-fit.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Pass ]

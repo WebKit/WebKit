@@ -420,7 +420,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-invalid-args.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-event-during-parse.html [ DumpJSConsoleLogInStdErr ]
@@ -4425,14 +4424,7 @@ webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-pain
 webkit.org/b/221482 imported/w3c/web-platform-tests/css/css-flexbox/order/order-abs-children-painting-order.html [ ImageOnlyFailure ]
 
 # Newly imported Canvas WPT tests that are failing.
-imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_complexshapes_arcto_001.htm [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.broken.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-orientation-none.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height-orientation-none.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-orientation-none.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height-orientation-none.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/canvas_colorsandstyles_createlineargradient_001.htm [ Slow ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-orientation-none.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height-orientation-none.tentative.html [ ImageOnlyFailure ]
@@ -4923,8 +4915,6 @@ webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-range-00
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-values/ex-unit-004.html [ ImageOnlyFailure ]
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/formatting-context/shape-outside-formatting-context.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-display/display-first-line-002.html [ ImageOnlyFailure ]
-
-webkit.org/b/214467 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
 
 # WebKit2 only.
 js/throw-large-string-oom.html [ Skip ]

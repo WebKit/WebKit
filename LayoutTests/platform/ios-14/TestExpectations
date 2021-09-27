@@ -59,9 +59,6 @@ fast/text/international/system-language/navigator-language/navigator-language-ru
 # rdar://80386075 ([ iOS15 ] fast/css/ios/system-color-for-css-value.html)
 fast/css/ios/system-color-for-css-value.html [ Pass ]
 
-# rdar://77070325 (REGRESSION: [ iOS15 ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html is flaky failling)
-imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY.html [ Pass ]
-
 # Privacy Transparency tests are iOS15 only.
 http/tests/app-privacy-report/ [ Skip ]
 

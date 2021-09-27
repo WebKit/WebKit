@@ -1,3 +1,27 @@
+2021-09-26  Cameron McCormack  <heycam@apple.com>
+
+        Remove old test files from canvas WPTs that were moved
+        https://bugs.webkit.org/show_bug.cgi?id=230811
+        <rdar://problem/83554404>
+
+        Reviewed by Tim Horton.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/image-smoothing/imagesmoothing-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer-expected.txt: Removed.
+        * platform/ios-14/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+
 2021-09-26  Jean-Yves Avenard  <jya@apple.com>
 
         [MSE] appending to the source buffer will not throw when the source buffer is full.
