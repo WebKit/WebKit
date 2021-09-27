@@ -117,7 +117,6 @@ test(function() {
 
 test(function() {
     let rule = rules[0];
-    assert_equals(rule.type, CSSRule.FONT_PALETTE_VALUES_RULE);
     assert_equals(rule.constructor.name, "CSSFontPaletteValuesRule");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");

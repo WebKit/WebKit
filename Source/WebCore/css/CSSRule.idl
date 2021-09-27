@@ -44,7 +44,6 @@
     const unsigned short NAMESPACE_RULE = 10;
     [EnabledBySetting=CSSCounterStyleAtRules] const unsigned short COUNTER_STYLE_RULE = 11;
     const unsigned short SUPPORTS_RULE = 12;
-    const unsigned short FONT_PALETTE_VALUES_RULE = 19; /* https://github.com/w3c/csswg-drafts/issues/6623 */
 
     // Legacy synonyms for the above, kept to avoid breaking existing content.
     const unsigned short WEBKIT_KEYFRAMES_RULE = 7;

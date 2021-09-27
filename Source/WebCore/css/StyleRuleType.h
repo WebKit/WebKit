@@ -41,7 +41,7 @@ enum class StyleRuleType : uint8_t {
     Namespace = 10,
     CounterStyle = 11,
     Supports = 12,
-    FontPaletteValues = 19, // https://github.com/w3c/csswg-drafts/issues/6623
+    FontPaletteValues = 19,
     Layer = 20
 };
 

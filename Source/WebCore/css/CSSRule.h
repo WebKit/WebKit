@@ -51,7 +51,7 @@ public:
         NAMESPACE_RULE = 10,
         COUNTER_STYLE_RULE = 11,
         SUPPORTS_RULE = 12,
-        FONT_PALETTE_VALUES_RULE = 19 // https://github.com/w3c/csswg-drafts/issues/6623
+        FONT_PALETTE_VALUES_RULE = 19
     };
 
     enum DeprecatedType {
