@@ -1,3 +1,635 @@
+2021-09-27  Saam Barati  <sbarati@apple.com>
+
+        Build an unlinked baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=229223
+        <rdar://problem/82321772>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds an "unlinked" baseline JIT to JSVALUE64 platforms. The JIT
+        code produced by this baseline JIT can be shared between all CodeBlocks that
+        share an UnlinkedCodeBlock. The benefit of this is, if we're creating a CodeBlock
+        from an UnlinkedCodeBlock that already compiled an unlinked baseline JIT
+        instance, this new CodeBlock just starts off executing in the baseline JIT
+        "for free".
+        
+        To make this work, the code we emit now needs to be independent of a specific
+        CodeBlock instance. We use a CodeBlock instance for minimal profiling information
+        when compiling, but otherwise, the code is tied to the UnlinkedCodeBlock. When
+        we need CodeBlock specific information, we load it. This usually means things
+        like we'll load things from the Metadata dynamically. This patch also adds a
+        "linked constant pool" concept, and anytime we instantiate such a CodeBlock,
+        we also need to instantiate this "linked constant pool". This contains things
+        like our inline cache data structures (StructureStubInfo*), JSGlobalObject*,
+        etc.
+        
+        Unlinked baseline JIT always runs ICs in the "data" mode. To make this work, I
+        made data ICs work on x86_64. To do this, we no longer call/ret to the IC.
+        Instead, we jump to the IC, and the IC jumps back by loading the "done" location
+        from the StructureStubInfo dynamically. This simplifies the design to not be
+        based on the arm64 calling convention, and keeps the same performance characteristics. 
+        
+        This patch also adds a new version of InlineAccess that is only used in baseline
+        JIT (for now). In the future, we can make the DFG/FTL also use this for Data
+        ICs. But we don't need to do that yet since those tiers don't use data ICs by
+        default. The baseline JIT now has a pure data IC approach to InlineAccess. So
+        instead of repatching code, we repatch fields we load dynamically.
+        
+        This patch also cleans up a few things in OSR exit, where both DFG/FTL were
+        storing callee saves to the callee saves buffer in a weird place, and separate
+        from one another. I noticed this code can be simplified if we just store
+        callee saves at the end of the OSR exit handler, and from common JIT emission
+        code.
+        
+        This patch also fixes a bug where we could end up with the wrong (and always
+        more negative) SP in the baseline JIT. This could happen when we OSR exit
+        from an inlined getter/setter. The OSR exit code puts the return PC when
+        returning to the call site of the getter/setter to be the inline cache's
+        "done location". However, this "done location" didn't used to restore SP.
+        This patch conservatively makes it so that we restore the SP at these sites.
+        
+        This is measured as a 1% speedup on Speedometer2.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::fromStructureStubInfo):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeOperandsForCheckpoint.h:
+        (JSC::valueProfileOffsetFor):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::fastPathStart):
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        (JSC::CallLinkInfo::emitFastPath):
+        (JSC::CallLinkInfo::emitTailCallFastPath):
+        (JSC::CallLinkInfo::emitDataICFastPath):
+        (JSC::CallLinkInfo::emitTailCallDataICFastPath):
+        (JSC::CallLinkInfo::emitDataICSlowPath):
+        (JSC::CallLinkInfo::initializeDataIC):
+        (JSC::CallLinkInfo::emitDirectFastPath):
+        (JSC::CallLinkInfo::emitDirectTailCallFastPath):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::offsetOfMaxArgumentCountIncludingThis):
+        (JSC::CallLinkInfo::slowStub): Deleted.
+        (JSC::CallLinkInfo::addressOfMaxArgumentCountIncludingThis): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setupWithUnlinkedBaselineCode):
+        (JSC::CodeBlock::isConstantOwnedByUnlinkedCodeBlock const):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::finalizeJITInlineCaches):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::frameRegisterCount):
+        (JSC::CodeBlock::binaryArithProfileForPC):
+        (JSC::CodeBlock::unaryArithProfileForPC):
+        (JSC::CodeBlock::findPC):
+        (JSC::CodeBlock::jitSoon):
+        (JSC::CodeBlock::jitNextInvocation):
+        (JSC::CodeBlock::dumpMathICStats):
+        (JSC::CodeBlock::finalizeBaselineJITInlineCaches): Deleted.
+        (JSC::CodeBlock::addJITAddIC): Deleted.
+        (JSC::CodeBlock::addJITMulIC): Deleted.
+        (JSC::CodeBlock::addJITSubIC): Deleted.
+        (JSC::CodeBlock::addJITNegIC): Deleted.
+        (JSC::CodeBlock::setPCToCodeOriginMap): Deleted.
+        (JSC::CodeBlock::thresholdForJIT): Deleted.
+        (JSC::CodeBlock::jitAfterWarmUp): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::JITData::offsetOfJITConstantPool):
+        (JSC::CodeBlock::offsetOfJITData):
+        (JSC::CodeBlock::offsetOfArgumentValueProfiles):
+        (JSC::CodeBlock::offsetOfConstantsVectorBuffer):
+        (JSC::CodeBlock::baselineJITConstantPool):
+        (JSC::CodeBlock::checkIfJITThresholdReached):
+        (JSC::CodeBlock::dontJITAnytimeSoon):
+        (JSC::CodeBlock::llintExecuteCounter const):
+        (JSC::CodeBlock::offsetOfDebuggerRequests):
+        (JSC::CodeBlock::offsetOfShouldAlwaysBeInlined):
+        (JSC::CodeBlock::loopHintsAreEligibleForFuzzingEarlyReturn):
+        (JSC::CodeBlock::addressOfNumParameters): Deleted.
+        (JSC::CodeBlock::isKnownCell): Deleted.
+        (JSC::CodeBlock::addMathIC): Deleted.
+        (JSC::CodeBlock::setJITCodeMap): Deleted.
+        (JSC::CodeBlock::jitCodeMap): Deleted.
+        (JSC::CodeBlock::switchJumpTable): Deleted.
+        (JSC::CodeBlock::stringSwitchJumpTable): Deleted.
+        * bytecode/CodeBlockInlines.h:
+        (JSC::CodeBlock::forEachValueProfile):
+        (JSC::CodeBlock::jitCodeMap):
+        (JSC::CodeBlock::baselineSwitchJumpTable):
+        (JSC::CodeBlock::baselineStringSwitchJumpTable):
+        (JSC::CodeBlock::dfgSwitchJumpTable):
+        (JSC::CodeBlock::dfgStringSwitchJumpTable):
+        * bytecode/ExecutableToCodeBlockEdge.h:
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter<countingVariant>::setThreshold):
+        * bytecode/ExecutionCounter.h:
+        (JSC::ExecutionCounter::clippedThreshold):
+        * bytecode/GetByIdMetadata.h:
+        (JSC::GetByIdModeMetadataArrayLength::offsetOfArrayProfile):
+        (JSC::GetByIdModeMetadata::offsetOfMode):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/InByStatus.cpp:
+        (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::generateSelfPropertyAccess):
+        (JSC::InlineAccess::canGenerateSelfPropertyReplace):
+        (JSC::InlineAccess::generateSelfPropertyReplace):
+        (JSC::InlineAccess::isCacheableArrayLength):
+        (JSC::InlineAccess::generateArrayLength):
+        (JSC::InlineAccess::isCacheableStringLength):
+        (JSC::InlineAccess::generateStringLength):
+        (JSC::InlineAccess::generateSelfInAccess):
+        (JSC::InlineAccess::rewireStubAsJumpInAccess):
+        (JSC::InlineAccess::resetStubAsJumpInAccess):
+        * bytecode/InlineAccess.h:
+        * bytecode/IterationModeMetadata.h:
+        (JSC::IterationModeMetadata::offsetOfSeenModes):
+        * bytecode/LLIntCallLinkInfo.h:
+        (JSC::LLIntCallLinkInfo::offsetOfArrayProfile):
+        * bytecode/Opcode.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::succeed):
+        (JSC::AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling):
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions): Deleted.
+        * bytecode/PutByStatus.cpp:
+        (JSC::PutByStatus::computeForStubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::initInByIdSelf):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        (JSC::StructureStubInfo::propagateTransitions):
+        (JSC::StructureStubInfo::initializeFromUnlinkedStructureStubInfo):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::offsetOfByIdSelfOffset):
+        (JSC::StructureStubInfo::offsetOfInlineAccessBaseStructure):
+        (JSC::StructureStubInfo::inlineAccessBaseStructure):
+        (JSC::StructureStubInfo::offsetOfDoneLocation):
+        * bytecode/SuperSampler.cpp:
+        (JSC::printSuperSamplerState):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::hasIdentifier):
+        (JSC::UnlinkedCodeBlock::thresholdForJIT):
+        (JSC::UnlinkedCodeBlock::allocateSharedProfiles):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::constantRegister):
+        (JSC::UnlinkedCodeBlock::instructionAt const):
+        (JSC::UnlinkedCodeBlock::bytecodeOffset):
+        (JSC::UnlinkedCodeBlock::instructionsSize const):
+        (JSC::UnlinkedCodeBlock::loopHintsAreEligibleForFuzzingEarlyReturn):
+        (JSC::UnlinkedCodeBlock::outOfLineJumpOffset):
+        (JSC::UnlinkedCodeBlock::binaryArithProfile):
+        (JSC::UnlinkedCodeBlock::unaryArithProfile):
+        (JSC::UnlinkedCodeBlock::llintExecuteCounter):
+        * bytecode/UnlinkedMetadataTable.h:
+        (JSC::UnlinkedMetadataTable::offsetInMetadataTable):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::ValueProfileBase):
+        (JSC::ValueProfileBase::clearBuckets):
+        (JSC::ValueProfile::offsetOfFirstBucket):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGJITCode.cpp:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::callerReturnPC):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateName):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        (JSC::DFG::SpeculativeJIT::compileLogShadowChickenTail):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::addMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * generator/Metadata.rb:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::storeProperty):
+        (JSC::AssemblyHelpers::emitVirtualCall):
+        (JSC::AssemblyHelpers::emitVirtualCallWithoutMovingGlobalObject):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBuffer):
+        * jit/BaselineJITCode.cpp: Added.
+        (JSC::MathICHolder::addJITAddIC):
+        (JSC::MathICHolder::addJITMulIC):
+        (JSC::MathICHolder::addJITSubIC):
+        (JSC::MathICHolder::addJITNegIC):
+        (JSC::MathICHolder::adoptMathICs):
+        (JSC::BaselineJITCode::BaselineJITCode):
+        (JSC::BaselineJITCode::~BaselineJITCode):
+        * jit/BaselineJITCode.h: Added.
+        (JSC::JITConstantPool::add):
+        (JSC::JITConstantPool::size const):
+        (JSC::JITConstantPool::at const):
+        * jit/BaselineJITPlan.cpp:
+        (JSC::BaselineJITPlan::finalize):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::logShadowChickenTailPacketImpl):
+        (JSC::CCallHelpers::logShadowChickenTailPacket):
+        * jit/CCallHelpers.h:
+        * jit/CallFrameShuffleData.cpp:
+        (JSC::CallFrameShuffleData::setupCalleeSaveRegisters):
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::snapshot const):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::emitEnterOptimizationCheck):
+        (JSC::JIT::emitNotifyWriteWatchpoint):
+        (JSC::JIT::emitVarReadOnlyCheck):
+        (JSC::JIT::assertStackPointerOffset):
+        (JSC::JIT::resetSP):
+        (JSC::JIT::emitPutCodeBlockToFrameInPrologue):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::emitMaterializeMetadataAndConstantPoolRegisters):
+        (JSC::JIT::emitRestoreCalleeSaves):
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::link):
+        (JSC::JIT::finalizeOnMainThread):
+        (JSC::JIT::privateCompile):
+        (JSC::JIT::frameRegisterCountFor):
+        (JSC::JIT::stackPointerOffsetFor):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_compareAndJumpSlowImpl):
+        (JSC::JIT::emit_compareAndJumpSlow):
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_sub):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileTailCall):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITCode.h:
+        (JSC::JITCode::useDataIC):
+        (JSC::JITCode::pcToCodeOriginMap):
+        * jit/JITCompilationKey.cpp:
+        (JSC::JITCompilationKey::dump const):
+        * jit/JITCompilationKey.h:
+        (JSC::JITCompilationKey::JITCompilationKey):
+        (JSC::JITCompilationKey::operator! const):
+        (JSC::JITCompilationKey::isHashTableDeletedValue const):
+        (JSC::JITCompilationKey::operator== const):
+        (JSC::JITCompilationKey::hash const):
+        (JSC::JITCompilationKey::profiledBlock const): Deleted.
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITInlineCacheGenerator::finalize):
+        (JSC::JITInlineCacheGenerator::generateBaselineDataICFastPath):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::generateGetByIdInlineAccess):
+        (JSC::JITGetByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITGetByIdWithThisGenerator::generateBaselineDataICFastPath):
+        (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITDelByValGenerator::generateFastPath):
+        (JSC::JITDelByIdGenerator::generateFastPath):
+        (JSC::JITInByValGenerator::generateFastPath):
+        (JSC::JITInByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITInstanceOfGenerator::generateFastPath):
+        (JSC::JITGetByValGenerator::generateFastPath):
+        (JSC::JITPutByValGenerator::generateFastPath):
+        (JSC::JITPrivateBrandAccessGenerator::generateFastPath):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::isOperandConstantDouble):
+        (JSC::JIT::isOperandConstantInt):
+        (JSC::JIT::isKnownCell):
+        (JSC::JIT::getConstantOperand):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        (JSC::JIT::linkSlowCaseIfNotJSCell):
+        (JSC::JIT::advanceToNextCheckpoint):
+        (JSC::JIT::emitJumpSlowToHotForCheckpoint):
+        (JSC::JIT::isOperandConstantChar):
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::emitValueProfilingSiteIfProfiledOpcode):
+        (JSC::JIT::emitArrayProfilingSiteWithCell):
+        (JSC::JIT::emitLoadDouble):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::emitGetVirtualRegister):
+        (JSC::JIT::jumpTarget):
+        (JSC::JIT::loadPtrFromMetadata):
+        (JSC::JIT::load32FromMetadata):
+        (JSC::JIT::load8FromMetadata):
+        (JSC::JIT::store8ToMetadata):
+        (JSC::JIT::store32ToMetadata):
+        (JSC::JIT::materializePointerIntoMetadata):
+        (JSC::JIT::loadConstant):
+        (JSC::JIT::loadGlobalObject):
+        (JSC::JIT::loadCodeBlockConstant):
+        (JSC::JIT::copiedGetPutInfo): Deleted.
+        (JSC::JIT::copiedArithProfile): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emit_op_typeof_is_undefined):
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_set_function_name):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::valueIsFalseyGenerator):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jeq_ptr):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::valueIsTruthyGenerator):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_to_numeric):
+        (JSC::JIT::emit_op_to_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_debug):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emitSlow_op_jeq):
+        (JSC::JIT::emitSlow_op_jneq):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_check_traps):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        (JSC::JIT::emit_op_new_regexp):
+        (JSC::JIT::emitNewFuncCommon):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emit_op_new_array_with_size):
+        (JSC::JIT::emit_op_profile_type):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        (JSC::JIT::emit_op_profile_control_flow):
+        (JSC::JIT::emit_op_get_argument):
+        (JSC::JIT::emit_op_get_prototype_of):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof_custom):
+        (JSC::JIT::emit_op_typeof_is_undefined):
+        (JSC::JIT::emit_op_set_function_name):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::compileOpEqJumpSlow):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emitSlow_op_jstricteq):
+        (JSC::JIT::emitSlow_op_jnstricteq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_to_numeric):
+        (JSC::JIT::emit_op_to_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_create_this):
+        (JSC::JIT::emit_op_to_this):
+        (JSC::JIT::emit_op_profile_type):
+        (JSC::JIT::emit_op_log_shadow_chicken_tail):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * jit/JITPlan.cpp:
+        (JSC::JITPlan::key):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::generateGetByValSlowCase):
+        (JSC::JIT::slow_op_get_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::slow_op_get_private_name_prepareCallGenerator):
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_by_val):
+        (JSC::JIT::emit_op_put_setter_by_val):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::slow_op_del_by_id_prepareCallGenerator):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::slow_op_del_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::slow_op_get_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::slow_op_get_by_id_with_this_prepareCallGenerator):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::slow_op_put_by_id_prepareCallGenerator):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        (JSC::JIT::emitHasPrivate):
+        (JSC::JIT::emitHasPrivateSlow):
+        (JSC::JIT::emitSlow_op_has_private_name):
+        (JSC::JIT::emitSlow_op_has_private_brand):
+        (JSC::JIT::emitVarInjectionCheck):
+        (JSC::JIT::emitResolveClosure):
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::generateOpResolveScopeThunk):
+        (JSC::JIT::slow_op_resolve_scopeGenerator):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::generateOpGetFromScopeThunk):
+        (JSC::JIT::slow_op_get_from_scopeGenerator):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_get_internal_field):
+        (JSC::JIT::emit_op_enumerator_next):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        (JSC::JIT::emit_enumerator_has_propertyImpl):
+        (JSC::JIT::emitWriteBarrier):
+        (JSC::JIT::emitPutGlobalVariable): Deleted.
+        (JSC::JIT::emitPutGlobalVariableIndirect): Deleted.
+        (JSC::JIT::emitPutClosureVar): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter_by_id):
+        (JSC::JIT::emit_op_put_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_setter_by_id):
+        (JSC::JIT::emit_op_put_getter_by_val):
+        (JSC::JIT::emit_op_put_setter_by_val):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        (JSC::JIT::emitHasPrivate):
+        (JSC::JIT::emitHasPrivateSlow):
+        (JSC::JIT::emitVarInjectionCheck):
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitSlow_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::emit_op_get_from_arguments):
+        (JSC::JIT::emit_op_get_internal_field):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::tryCachePutBy):
+        (JSC::tryCacheInBy):
+        (JSC::unlinkCall):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CacheableIdentifier.h:
+        * runtime/CacheableIdentifierInlines.h:
+        (JSC::CacheableIdentifier::createFromIdentifierOwnedByCodeBlock):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCodeBlock::numBinaryArithProfiles const):
+        (JSC::CachedCodeBlock::numUnaryArithProfiles const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::updateArithProfileForUnaryArithOp):
+        * runtime/FunctionExecutable.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * wasm/WasmLLIntTierUpCounter.h:
+        (JSC::Wasm::LLIntTierUpCounter::optimizeAfterWarmUp):
+        (JSC::Wasm::LLIntTierUpCounter::optimizeSoon):
+        * wasm/WasmTierUpCount.cpp:
+        (JSC::Wasm::TierUpCount::TierUpCount):
+        * wasm/WasmTierUpCount.h:
+        (JSC::Wasm::TierUpCount::optimizeAfterWarmUp):
+        (JSC::Wasm::TierUpCount::optimizeNextInvocation):
+        (JSC::Wasm::TierUpCount::optimizeSoon):
+
 2021-09-27  Xan López  <xan@igalia.com>
 
         [JSC][32bit] Fix build after r283098

@@ -863,7 +863,7 @@ def runFTLNoCJITNoAccessInlining(*optionalTestSpecificOptions)
 end
 
 def runFTLNoCJITSmallPool(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=102400", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=202400", *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runNoCJIT(*optionalTestSpecificOptions)
@@ -1171,7 +1171,7 @@ def defaultRunModules(noLLInt: true)
     run("ftl-no-cjit-no-inline-validate-modules", "-m", "--validateGraph=true", "--maximumInliningDepth=1", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
     run("ftl-eager-modules", "-m", *(FTL_OPTIONS + EAGER_OPTIONS))
     run("ftl-eager-no-cjit-modules", "-m", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS))
-    run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=102400", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+    run("ftl-no-cjit-small-pool-modules", "-m", "--jitMemoryReservationSize=202400", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
 end
 
 def noNoLLIntRunModules

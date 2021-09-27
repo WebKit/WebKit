@@ -43,9 +43,11 @@ class JSFunction;
 enum OpcodeID : unsigned;
 struct CallFrameShuffleData;
 
+struct UnlinkedCallLinkInfo;
+
 class CallLinkInfo : public PackedRawSentinelNode<CallLinkInfo> {
 public:
-    enum CallType {
+    enum CallType : uint8_t {
         None,
         Call,
         CallVarargs,
@@ -165,6 +167,8 @@ public:
         m_calleeGPR = calleeGPR;
     }
 
+    void initializeDataIC(VM&, UnlinkedCallLinkInfo&, GPRReg calleeGPR, GPRReg callLinkInfoGPR);
+
     GPRReg calleeGPR() const { return m_calleeGPR; }
     
     enum class UseDataIC : uint8_t {
@@ -173,13 +177,16 @@ public:
     };
 
 private:
-    MacroAssembler::JumpList emitFastPathImpl(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
+    static MacroAssembler::JumpList emitFastPathImpl(CallLinkInfo*, CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, bool isTailCall, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
 public:
+    static MacroAssembler::JumpList emitDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    static MacroAssembler::JumpList emitTailCallDataICFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
     MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC) WARN_UNUSED_RETURN;
-    MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
+    MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, WTF::Function<void()> prepareForTailCall) WARN_UNUSED_RETURN;
     void emitDirectFastPath(CCallHelpers&);
     void emitDirectTailCallFastPath(CCallHelpers&, WTF::Function<void()> prepareForTailCall);
     void emitSlowPath(VM&, CCallHelpers&);
+    static void emitDataICSlowPath(VM&, CCallHelpers&, GPRReg callLinkInfoGPR);
     void revertCallToStub();
 
     bool isDataIC() const { return static_cast<UseDataIC>(m_useDataIC) == UseDataIC::Yes; }
@@ -203,7 +210,6 @@ public:
         m_allowStubs = false;
     }
 
-    CodeLocationLabel<JSInternalPtrTag> fastPathStart();
     CodeLocationLabel<JSInternalPtrTag> slowPathStart();
     CodeLocationLabel<JSInternalPtrTag> doneLocation();
 
@@ -241,11 +247,6 @@ public:
     void clearSlowStub()
     {
         m_slowStub = nullptr;
-    }
-
-    JITStubRoutine* slowStub()
-    {
-        return m_slowStub.get();
     }
 
     bool seenOnce()
@@ -308,9 +309,9 @@ public:
         return static_cast<CallType>(m_callType);
     }
 
-    uint32_t* addressOfMaxArgumentCountIncludingThis()
+    static ptrdiff_t offsetOfMaxArgumentCountIncludingThis()
     {
-        return &m_maxArgumentCountIncludingThis;
+        return OBJECT_OFFSETOF(CallLinkInfo, m_maxArgumentCountIncludingThis);
     }
 
     uint32_t maxArgumentCountIncludingThis()
@@ -381,7 +382,9 @@ public:
     }
 
 private:
-    CodeLocationLabel<JSInternalPtrTag> m_fastPathStart;
+
+    CodeLocationLabel<JSInternalPtrTag> fastPathStart();
+
     CodeLocationLabel<JSInternalPtrTag> m_doneLocation;
     MacroAssemblerCodePtr<JSEntryPtrTag> m_slowPathCallDestination;
     union UnionType {
@@ -397,6 +400,7 @@ private:
             CodeLocationNearCall<JSInternalPtrTag> m_callLocation;
             CodeLocationDataLabelPtr<JSInternalPtrTag> m_calleeLocation;
             CodeLocationLabel<JSInternalPtrTag> m_slowPathStart;
+            CodeLocationLabel<JSInternalPtrTag> m_fastPathStart;
         } codeIC;
     } u;
 
@@ -423,6 +427,13 @@ inline CodeOrigin getCallLinkInfoCodeOrigin(CallLinkInfo& callLinkInfo)
 {
     return callLinkInfo.codeOrigin();
 }
+
+struct UnlinkedCallLinkInfo {
+    BytecodeIndex bytecodeIndex; // Currently, only used by baseline, so this can trivially produce a CodeOrigin.
+    CallLinkInfo::CallType callType;
+    CodeLocationLabel<JSInternalPtrTag> doneLocation;
+    std::unique_ptr<CallFrameShuffleData> frameShuffleData;
+};
 
 #endif // ENABLE(JIT)
 

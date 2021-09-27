@@ -84,7 +84,7 @@ void printSuperSamplerState()
     double percentage = 100.0 * in / (in + out);
     if (percentage != percentage)
         percentage = 0.0;
-    dataLog("Percent time behind super sampler flag: ", percentage, "\n");
+    dataLog("Percent time behind super sampler flag: ", percentage, "%\n");
 }
 
 void enableSuperSampler()

@@ -87,7 +87,12 @@ auto JITPlan::tier() const -> Tier
 
 JITCompilationKey JITPlan::key()
 {
-    return JITCompilationKey(m_codeBlock->baselineAlternative(), m_mode);
+    JSCell* codeBlock;
+    if (m_mode == JITCompilationMode::Baseline)
+        codeBlock = m_codeBlock->unlinkedCodeBlock();
+    else
+        codeBlock = m_codeBlock->baselineAlternative();
+    return JITCompilationKey(codeBlock, m_mode);
 }
 
 bool JITPlan::isKnownToBeLiveAfterGC()

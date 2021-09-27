@@ -38,13 +38,13 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
     : m_jit(jit)
     , m_oldFrame(data.numLocals + CallerFrameAndPC::sizeInRegisters, nullptr)
     , m_newFrame(data.args.size() + CallFrame::headerSizeInRegisters, nullptr)
-    , m_alignedOldFrameSize(CallFrame::headerSizeInRegisters
-        + roundArgumentCountToAlignFrame(jit.codeBlock()->numParameters()))
+    , m_alignedOldFrameSize(CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(data.numParameters))
     , m_alignedNewFrameSize(CallFrame::headerSizeInRegisters
         + roundArgumentCountToAlignFrame(data.args.size()))
     , m_frameDelta(m_alignedNewFrameSize - m_alignedOldFrameSize)
     , m_lockedRegisters(RegisterSet::allRegisters())
     , m_numPassedArgs(data.numPassedArgs)
+    , m_numParameters(data.numParameters)
 {
     // We are allowed all the usual registers...
     for (unsigned i = GPRInfo::numberOfRegisters; i--; )
@@ -421,7 +421,7 @@ void CallFrameShuffler::prepareForTailCall()
     m_jit.load32(MacroAssembler::Address(GPRInfo::callFrameRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset), m_newFrameBase);
     MacroAssembler::Jump argumentCountOK =
         m_jit.branch32(MacroAssembler::BelowOrEqual, m_newFrameBase,
-            MacroAssembler::TrustedImm32(m_jit.codeBlock()->numParameters()));
+            MacroAssembler::TrustedImm32(m_numParameters));
     m_jit.add32(MacroAssembler::TrustedImm32(stackAlignmentRegisters() - 1 + CallFrame::headerSizeInRegisters), m_newFrameBase);
     m_jit.and32(MacroAssembler::TrustedImm32(-stackAlignmentRegisters()), m_newFrameBase);
     m_jit.mul32(MacroAssembler::TrustedImm32(sizeof(Register)), m_newFrameBase, m_newFrameBase);

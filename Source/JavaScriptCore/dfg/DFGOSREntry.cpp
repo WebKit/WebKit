@@ -97,7 +97,6 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
     ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
-    ASSERT(!codeBlock->jitCodeMap());
     ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid);
 
     if (!Options::useOSREntryToDFG())

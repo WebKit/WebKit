@@ -68,6 +68,8 @@ public:
     DFG::CommonData* dfgCommon() override;
     static ptrdiff_t commonDataOffset() { return OBJECT_OFFSETOF(JITCode, common); }
     void shrinkToFit(const ConcurrentJSLocker&) override;
+
+    PCToCodeOriginMap* pcToCodeOriginMap() override { return common.m_pcToCodeOriginMap.get(); }
     
     DFG::CommonData common;
     Vector<OSRExit> m_osrExit;

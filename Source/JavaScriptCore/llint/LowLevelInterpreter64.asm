@@ -431,27 +431,47 @@ macro callTrapHandler(throwHandler)
     loadi LLIntReturnPC[cfr], PC
 end
 
-macro checkSwitchToJITForLoop()
-    checkSwitchToJIT(
-        1,
-        macro()
-            storePC()
-            prepareStateForCCall()
-            move cfr, a0
-            move PC, a1
-            cCall2(_llint_loop_osr)
-            btpz r0, .recover
+if JIT
+    macro checkSwitchToJITForLoop()
+        checkSwitchToJIT(
+            1,
+            macro()
+                storePC()
+                prepareStateForCCall()
+                move cfr, a0
+                move PC, a1
+                cCall2(_llint_loop_osr)
+                btpz r0, .recover
+                move r1, sp
 
-            move r1, sp
-            if ARM64E
-                leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
-                jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
-            else
-                jmp r0, JSEntryPtrTag
-            end
-        .recover:
-            loadPC()
-        end)
+                # Baseline uses LLInt's PB register for its JIT constant pool.
+                loadp CodeBlock[cfr], PB
+                loadp CodeBlock::m_jitData[PB], PB
+                loadp CodeBlock::JITData::m_jitConstantPool[PB], PB
+
+                if ARM64E
+                    leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
+                    jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+                else
+                    jmp r0, JSEntryPtrTag
+                end
+            .recover:
+                loadPC()
+            end)
+    end
+else
+    macro checkSwitchToJITForLoop()
+        checkSwitchToJIT(
+            1,
+            macro()
+                storePC()
+                prepareStateForCCall()
+                move cfr, a0
+                move PC, a1
+                cCall2(_llint_loop_osr)
+                loadPC()
+            end)
+    end
 end
 
 macro cage(basePtr, mask, ptr, scratch)
@@ -1056,10 +1076,6 @@ strictEqualityJumpOp(jnstricteq, OpJnstricteq,
 
 macro preOp(opcodeName, opcodeStruct, integerOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
-        macro updateArithProfile(type)
-            orh type, %opcodeStruct%::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t2]
-        end
-
         get(m_srcDst, t0)
         loadq [cfr, t0, 8], t1
         metadata(t2, t3)
@@ -1069,7 +1085,7 @@ macro preOp(opcodeName, opcodeStruct, integerOperation)
         integerOperation(t1, .slow)
         orq numberTag, t1
         storeq t1, [cfr, t0, 8]
-        updateArithProfile(ArithProfileInt)
+        updateUnaryArithProfile(opcodeStruct, ArithProfileInt, t2, t3)
         dispatch()
 
     .slow:
@@ -1134,11 +1150,6 @@ end)
 
 
 llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, return)
-
-    macro updateArithProfile(type)
-        orh type, OpNegate::Metadata::m_arithProfile + UnaryArithProfile::m_bits[t1]
-    end
-
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t3)
     metadata(t1, t2)
@@ -1146,12 +1157,12 @@ llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, r
     btiz t3, 0x7fffffff, .opNegateSlow
     negi t3
     orq numberTag, t3
-    updateArithProfile(ArithProfileInt)
+    updateUnaryArithProfile(OpNegate, ArithProfileInt, t1, t2)
     return(t3)
 .opNegateNotInt:
     btqz t3, numberTag, .opNegateSlow
     xorq 0x8000000000000000, t3
-    updateArithProfile(ArithProfileNumber)
+    updateUnaryArithProfile(OpNegate, ArithProfileNumber, t1, t2)
     return(t3)
 
 .opNegateSlow:
@@ -1164,10 +1175,6 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         metadata(t5, t0)
 
-        macro profile(type)
-            orh type, %opcodeStruct%::Metadata::m_arithProfile + BinaryArithProfile::m_bits[t5]
-        end
-
         get(m_rhs, t0)
         get(m_lhs, t2)
         loadConstantOrVariable(size, t0, t1)
@@ -1177,7 +1184,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         get(m_dst, t2)
         integerOperationAndStore(t1, t0, .slow, t2)
 
-        profile(ArithProfileIntInt)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileIntInt, t5, t2)
         dispatch()
 
     .op1NotInt:
@@ -1187,10 +1194,10 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         btqz t1, numberTag, .slow
         addq numberTag, t1
         fq2d t1, ft1
-        profile(ArithProfileNumberNumber)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileNumberNumber, t5, t2)
         jmp .op1NotIntReady
     .op1NotIntOp2Int:
-        profile(ArithProfileNumberInt)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileNumberInt, t5, t2)
         ci2ds t1, ft1
     .op1NotIntReady:
         get(m_dst, t2)
@@ -1204,9 +1211,9 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
 
     .op2NotInt:
         # First operand is definitely an int, the second is definitely not.
-        get(m_dst, t2)
         btqz t1, numberTag, .slow
-        profile(ArithProfileIntNumber)
+        updateBinaryArithProfile(opcodeStruct, ArithProfileIntNumber, t5, t2)
+        get(m_dst, t2)
         ci2ds t0, ft0
         addq numberTag, t1
         fq2d t1, ft1

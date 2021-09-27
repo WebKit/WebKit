@@ -42,6 +42,9 @@ namespace JSC {
 
 class TrackedReferences;
 
+struct SimpleJumpTable;
+struct StringJumpTable;
+
 namespace DFG {
 
 class JITCompiler;
@@ -101,6 +104,8 @@ public:
     std::optional<CodeOrigin> findPC(CodeBlock*, void* pc) final;
 
     using DirectJITCode::initializeCodeRefForDFG;
+
+    PCToCodeOriginMap* pcToCodeOriginMap() override { return common.m_pcToCodeOriginMap.get(); }
     
 private:
     friend class JITCompiler; // Allow JITCompiler to call setCodeRef().
@@ -110,6 +115,8 @@ public:
     FixedVector<DFG::OSREntryData> m_osrEntry;
     FixedVector<DFG::OSRExit> m_osrExit;
     FixedVector<DFG::SpeculationRecovery> m_speculationRecovery;
+    FixedVector<SimpleJumpTable> m_switchJumpTables;
+    FixedVector<StringJumpTable> m_stringSwitchJumpTables;
     DFG::VariableEventStream variableEventStream;
     DFG::MinifiedGraph minifiedDFG;
 

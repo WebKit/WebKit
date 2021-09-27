@@ -1,3 +1,13 @@
+2021-09-27  Saam Barati  <sbarati@apple.com>
+
+        Build an unlinked baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=229223
+        <rdar://problem/82321772>
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-09-27  Sam Sneddon  <gsnedders@apple.com>
 
         Port._natural_sort_key should sort a01 before a001

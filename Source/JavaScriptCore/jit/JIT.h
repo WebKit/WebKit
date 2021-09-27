@@ -37,6 +37,7 @@
 
 #define ASSERT_JIT_OFFSET(actual, expected) ASSERT_WITH_MESSAGE(actual == expected, "JIT Offset \"%s\" should be %d, not %d.\n", #expected, static_cast<int>(expected), static_cast<int>(actual));
 
+#include "BaselineJITCode.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
 #include "JITDisassembler.h"
@@ -44,6 +45,7 @@
 #include "JITMathIC.h"
 #include "JITRightShiftGenerator.h"
 #include "JSInterfaceJIT.h"
+#include "LLIntData.h"
 #include "PCToCodeOriginMap.h"
 #include "UnusedPointer.h"
 #include <wtf/UniqueRef.h>
@@ -149,14 +151,19 @@ namespace JSC {
     };
 
     struct CallCompilationInfo {
-        MacroAssembler::Label slowPathStart;
         MacroAssembler::Label doneLocation;
+#if USE(JSVALUE64)
+        UnlinkedCallLinkInfo* unlinkedCallLinkInfo;
+        JITConstantPool::Constant callLinkInfoConstant;
+#else
+        MacroAssembler::Label slowPathStart;
         CallLinkInfo* callLinkInfo;
+#endif
     };
 
     void ctiPatchCallByReturnAddress(ReturnAddressPtr, FunctionPtr<CFunctionPtrTag> newCalleeFunction);
 
-    class JIT_CLASS_ALIGNMENT JIT : private JSInterfaceJIT {
+    class JIT_CLASS_ALIGNMENT JIT : public JSInterfaceJIT {
         friend class JITSlowPathCall;
         friend class JITStubCall;
         friend class JITThunks;
@@ -171,6 +178,8 @@ namespace JSC {
         // will compress the displacement, and we may not be able to fit a patched offset.
         static constexpr int patchPutByIdDefaultOffset = 256;
 
+        using Base = JSInterfaceJIT;
+
     public:
         JIT(VM&, CodeBlock* = nullptr, BytecodeIndex loopOSREntryBytecodeOffset = BytecodeIndex(0));
         ~JIT();
@@ -178,28 +187,33 @@ namespace JSC {
         VM& vm() { return *JSInterfaceJIT::vm(); }
 
         void compileAndLinkWithoutFinalizing(JITCompilationEffort);
-        CompilationResult finalizeOnMainThread();
+        CompilationResult finalizeOnMainThread(CodeBlock*);
         size_t codeSize() const;
 
         void doMainThreadPreparationBeforeCompile();
         
         static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort, BytecodeIndex bytecodeOffset = BytecodeIndex(0))
         {
-            return JIT(vm, codeBlock, bytecodeOffset).privateCompile(effort);
+            return JIT(vm, codeBlock, bytecodeOffset).privateCompile(codeBlock, effort);
         }
 
+        static unsigned frameRegisterCountFor(UnlinkedCodeBlock*);
         static unsigned frameRegisterCountFor(CodeBlock*);
+        static int stackPointerOffsetFor(UnlinkedCodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
         JS_EXPORT_PRIVATE static HashMap<CString, Seconds> compileTimeStats();
         JS_EXPORT_PRIVATE static Seconds totalCompileTime();
+
+        static constexpr GPRReg s_metadataGPR = LLInt::Registers::metadataTableGPR;
+        static constexpr GPRReg s_constantsGPR = LLInt::Registers::pbGPR;
 
     private:
         void privateCompileMainPass();
         void privateCompileLinkPass();
         void privateCompileSlowCases();
         void link();
-        CompilationResult privateCompile(JITCompilationEffort);
+        CompilationResult privateCompile(CodeBlock*, JITCompilationEffort);
 
         // Add a call out from JIT code, without an exception check.
         Call appendCall(const FunctionPtr<CFunctionPtrTag> function)
@@ -222,6 +236,32 @@ namespace JSC {
             return functionCall;
         }
 #endif
+
+        template <typename Bytecode>
+        void loadPtrFromMetadata(const Bytecode&, size_t offset, GPRReg);
+
+        template <typename Bytecode>
+        void load32FromMetadata(const Bytecode&, size_t offset, GPRReg);
+
+        template <typename Bytecode>
+        void load8FromMetadata(const Bytecode&, size_t offset, GPRReg);
+
+        template <typename ValueType, typename Bytecode>
+        void store8ToMetadata(ValueType, const Bytecode&, size_t offset);
+
+        template <typename Bytecode>
+        void store32ToMetadata(GPRReg, const Bytecode&, size_t offset);
+
+        template <typename Bytecode>
+        void materializePointerIntoMetadata(const Bytecode&, size_t offset, GPRReg);
+
+    public:
+        void loadConstant(unsigned constantIndex, GPRReg);
+    private:
+        void loadGlobalObject(GPRReg);
+        void loadCodeBlockConstant(VirtualRegister, GPRReg);
+
+        void emitPutCodeBlockToFrameInPrologue(GPRReg result = regT0);
 
         void exceptionCheck(Jump jumpToHandler)
         {
@@ -254,6 +294,19 @@ namespace JSC {
         void compileOpCall(const Instruction*, unsigned callLinkInfoIndex);
         template<typename Op>
         void compileOpCallSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
+#if USE(JSVALUE64)
+        template<typename Op>
+        std::enable_if_t<
+            Op::opcodeID != op_call_varargs && Op::opcodeID != op_construct_varargs
+            && Op::opcodeID != op_tail_call_varargs && Op::opcodeID != op_tail_call_forward_arguments
+        , void> compileSetupFrame(const Op&, JITConstantPool::Constant callLinkInfoConstant);
+
+        template<typename Op>
+        std::enable_if_t<
+            Op::opcodeID == op_call_varargs || Op::opcodeID == op_construct_varargs
+            || Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments
+        , void> compileSetupFrame(const Op&, JITConstantPool::Constant callLinkInfoConstant);
+#else
         template<typename Op>
         std::enable_if_t<
             Op::opcodeID != op_call_varargs && Op::opcodeID != op_construct_varargs
@@ -265,9 +318,10 @@ namespace JSC {
             Op::opcodeID == op_call_varargs || Op::opcodeID == op_construct_varargs
             || Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments
         , void> compileSetupFrame(const Op&, CallLinkInfo*);
+#endif
 
         template<typename Op>
-        bool compileTailCall(const Op&, CallLinkInfo*, unsigned callLinkInfoIndex);
+        bool compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex, JITConstantPool::Constant);
         template<typename Op>
         bool compileCallEval(const Op&);
         void compileCallEvalSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -287,14 +341,13 @@ namespace JSC {
         void emitWriteBarrier(VirtualRegister owner, VirtualRegister value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner, VirtualRegister value, WriteBarrierMode);
         void emitWriteBarrier(JSCell* owner);
+        void emitWriteBarrier(GPRReg owner);
 
         // This assumes that the value to profile is in regT0 and that regT3 is available for
         // scratch.
 #if USE(JSVALUE64)
-        void emitValueProfilingSite(ValueProfile&, GPRReg);
-        void emitValueProfilingSite(ValueProfile&, JSValueRegs);
-        template<typename Metadata> void emitValueProfilingSite(Metadata&, GPRReg);
-        template<typename Metadata> void emitValueProfilingSite(Metadata&, JSValueRegs);
+        template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, GPRReg);
+        template<typename Bytecode> void emitValueProfilingSite(const Bytecode&, JSValueRegs);
 #else
         void emitValueProfilingSite(ValueProfile&, JSValueRegs);
         template<typename Metadata> void emitValueProfilingSite(Metadata&, JSValueRegs);
@@ -305,8 +358,10 @@ namespace JSC {
         std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValueProfile>::value, void>
         emitValueProfilingSiteIfProfiledOpcode(Op bytecode);
 
-        void emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile*, RegisterID scratchGPR);
-        void emitArrayProfilingSiteWithCell(RegisterID cellGPR, RegisterID arrayProfileGPR, RegisterID scratchGPR);
+        template <typename Bytecode>
+        void emitArrayProfilingSiteWithCell(const Bytecode&, RegisterID cellGPR, RegisterID scratchGPR);
+        template <typename Bytecode>
+        void emitArrayProfilingSiteWithCell(const Bytecode&, ptrdiff_t, RegisterID cellGPR, RegisterID scratchGPR);
 
         template<typename Op>
         ECMAMode ecmaMode(Op);
@@ -594,7 +649,6 @@ namespace JSC {
         void emitSlow_op_jneq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jstricteq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnstricteq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jtrue(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_hint(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_check_traps(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -628,14 +682,14 @@ namespace JSC {
         void emitRightShiftSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
 
         void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
-        void emitHasPrivateSlow(VirtualRegister dst, AccessType);
+        void emitHasPrivateSlow(VirtualRegister dst, VirtualRegister base, VirtualRegister property, AccessType);
 
         template<typename Op>
         void emitNewFuncCommon(const Instruction*);
         template<typename Op>
         void emitNewFuncExprCommon(const Instruction*);
-        void emitVarInjectionCheck(bool needsVarInjectionChecks);
-        void emitVarReadOnlyCheck(ResolveType);
+        void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
+        void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
         void emitResolveClosure(VirtualRegister dst, VirtualRegister scope, bool needsVarInjectionChecks, unsigned depth);
         void emitLoadWithStructureCheck(VirtualRegister scope, Structure** structureSlot);
 #if USE(JSVALUE64)
@@ -647,7 +701,7 @@ namespace JSC {
 #endif
         void emitGetClosureVar(VirtualRegister scope, uintptr_t operand);
         void emitNotifyWrite(WatchpointSet*);
-        void emitNotifyWrite(GPRReg pointerToSet);
+        void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
         void emitPutGlobalVariable(JSValue* operand, VirtualRegister value, WatchpointSet*);
         void emitPutGlobalVariableIndirect(JSValue** addressOfOperand, VirtualRegister value, WatchpointSet**);
         void emitPutClosureVar(VirtualRegister scope, uintptr_t operand, VirtualRegister value, WatchpointSet*);
@@ -656,6 +710,7 @@ namespace JSC {
 
         void emitPutIntToCallFrameHeader(RegisterID from, VirtualRegister);
 
+        bool isKnownCell(VirtualRegister);
         JSValue getConstantOperand(VirtualRegister);
         bool isOperandConstantInt(VirtualRegister);
         bool isOperandConstantChar(VirtualRegister);
@@ -677,13 +732,11 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_with_this_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_val_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_id_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_val_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_private_name_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_to_scopeGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
 
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
@@ -697,30 +750,13 @@ namespace JSC {
             return !(resolveType == GlobalVar || resolveType == ResolvedClosureVar || resolveType == ModuleVar);
         }
 
-#define DECLARE_GET_FROM_SCOPE_GENERATOR(resolveType) \
-        static MacroAssemblerCodeRef<JITThunkPtrTag> op_get_from_scope_##resolveType##Generator(VM&);
-        FOR_EACH_RESOLVE_TYPE(DECLARE_GET_FROM_SCOPE_GENERATOR)
-#undef DECLARE_GET_FROM_SCOPE_GENERATOR
-
-        MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(ResolveType, const char* thunkName);
-
-        static constexpr bool thunkIsUsedForOpResolveScope(ResolveType resolveType)
-        {
-            // ModuleVar because it is more efficient to emit inline than use a thunk.
-            // ResolvedClosureVar because we don't use these types with op_resolve_scope.
-            return !(resolveType == ResolvedClosureVar || resolveType == ModuleVar);
-        }
-
-#define DECLARE_RESOLVE_SCOPE_GENERATOR(resolveType) \
-        static MacroAssemblerCodeRef<JITThunkPtrTag> op_resolve_scope_##resolveType##Generator(VM&);
-        FOR_EACH_RESOLVE_TYPE(DECLARE_RESOLVE_SCOPE_GENERATOR)
-#undef DECLARE_RESOLVE_SCOPE_GENERATOR
-
-        MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(ResolveType, const char* thunkName);
-
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsFalseyGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsTruthyGenerator(VM&);
 
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&, std::optional<ResolveType>, const char* thunkName);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&, std::optional<ResolveType>, const char* thunkName);
 #endif // ENABLE(EXTRA_CTI_THUNKS)
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
@@ -761,10 +797,10 @@ namespace JSC {
         MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag>);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr<CFunctionPtrTag>, VirtualRegister result);
         void appendCallWithExceptionCheckSetJSValueResult(Address, VirtualRegister result);
-        template<typename Metadata>
-        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(Metadata&, const FunctionPtr<CFunctionPtrTag>, VirtualRegister result);
-        template<typename Metadata>
-        void appendCallWithExceptionCheckSetJSValueResultWithProfile(Metadata&, Address, VirtualRegister result);
+        template<typename Bytecode>
+        MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode&, const FunctionPtr<CFunctionPtrTag>, VirtualRegister result);
+        template<typename Bytecode>
+        void appendCallWithExceptionCheckSetJSValueResultWithProfile(const Bytecode&, Address, VirtualRegister result);
         
         template<typename OperationType, typename... Args>
         std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
@@ -822,20 +858,20 @@ namespace JSC {
             appendCallWithExceptionCheck(Address(GPRInfo::nonArgGPR0, target.offset));
         }
 
-        template<typename Metadata, typename OperationType, typename... Args>
+        template<typename Bytecode, typename OperationType, typename... Args>
         std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
-        callOperationWithProfile(Metadata& metadata, OperationType operation, VirtualRegister result, Args... args)
+        callOperationWithProfile(const Bytecode& bytecode, OperationType operation, VirtualRegister result, Args... args)
         {
             setupArguments<OperationType>(args...);
-            return appendCallWithExceptionCheckSetJSValueResultWithProfile(metadata, operation, result);
+            return appendCallWithExceptionCheckSetJSValueResultWithProfile(bytecode, operation, result);
         }
 
-        template<typename OperationType, typename Metadata, typename... Args>
+        template<typename OperationType, typename Bytecode, typename... Args>
         std::enable_if_t<FunctionTraits<OperationType>::hasResult, void>
-        callOperationWithProfile(Metadata& metadata, Address target, VirtualRegister result, Args... args)
+        callOperationWithProfile(const Bytecode& bytecode, Address target, VirtualRegister result, Args... args)
         {
             setupArgumentsForIndirectCall<OperationType>(target, args...);
-            return appendCallWithExceptionCheckSetJSValueResultWithProfile(metadata, Address(GPRInfo::nonArgGPR0, target.offset), result);
+            return appendCallWithExceptionCheckSetJSValueResultWithProfile(bytecode, Address(GPRInfo::nonArgGPR0, target.offset), result);
         }
 
         template<typename OperationType, typename... Args>
@@ -920,25 +956,22 @@ namespace JSC {
 
 #if ENABLE(DFG_JIT)
         bool canBeOptimized() { return m_canBeOptimized; }
-        bool canBeOptimizedOrInlined() { return m_canBeOptimizedOrInlined; }
         bool shouldEmitProfiling() { return m_shouldEmitProfiling; }
 #else
         bool canBeOptimized() { return false; }
-        bool canBeOptimizedOrInlined() { return false; }
         // Enables use of value profiler with tiered compilation turned off,
         // in which case all code gets profiled.
         bool shouldEmitProfiling() { return false; }
 #endif
 
+        void emitMaterializeMetadataAndConstantPoolRegisters();
+
+        void emitRestoreCalleeSaves();
+
         static bool reportCompileTimes();
         static bool computeCompileTimes();
-        
-        // If you need to check a value from the metadata table and you need it to
-        // be consistent across the fast and slow path, then you want to use this.
-        // It will give the slow path the same value read by the fast path.
-        GetPutInfo copiedGetPutInfo(OpPutToScope);
-        template<typename BinaryOp>
-        BinaryArithProfile copiedArithProfile(BinaryOp);
+
+        void resetSP();
 
         Interpreter* m_interpreter;
 
@@ -964,9 +997,6 @@ namespace JSC {
         BytecodeIndex m_bytecodeIndex;
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
-
-        HashMap<unsigned, unsigned> m_copiedGetPutInfos;
-        HashMap<uint64_t, BinaryArithProfile> m_copiedArithProfiles;
 
         JumpList m_exceptionChecks;
         JumpList m_exceptionChecksWithCallFrameRollback;
@@ -1001,11 +1031,26 @@ namespace JSC {
         HashMap<const Instruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
 
         bool m_canBeOptimized;
-        bool m_canBeOptimizedOrInlined;
         bool m_shouldEmitProfiling;
         BytecodeIndex m_loopOSREntryBytecodeIndex;
 
-        RefPtr<DirectJITCode> m_jitCode;
+        CodeBlock* m_profiledCodeBlock { nullptr };
+        UnlinkedCodeBlock* m_unlinkedCodeBlock { nullptr };
+
+        MathICHolder m_mathICs;
+        RefPtr<BaselineJITCode> m_jitCode;
+
+        JITConstantPool m_constantPool;
+        JITConstantPool::Constant m_globalObjectConstant { std::numeric_limits<unsigned>::max() };
+        Bag<UnlinkedCallLinkInfo> m_unlinkedCalls;
+        Bag<CallLinkInfo> m_evalCallLinkInfos;
+        Bag<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
+        FixedVector<SimpleJumpTable> m_switchJumpTables;
+        FixedVector<StringJumpTable> m_stringSwitchJumpTables;
+
+        struct NotACodeBlock { } m_codeBlock;
+
+        bool m_isShareable { true };
     };
 
 } // namespace JSC
