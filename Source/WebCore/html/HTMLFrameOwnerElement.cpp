@@ -120,7 +120,7 @@ void HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition()
 {
     if (Style::postResolutionCallbacksAreSuspended()) {
         RefPtr<HTMLFrameOwnerElement> element = this;
-        Style::queuePostResolutionCallback([element] {
+        Style::deprecatedQueuePostResolutionCallback([element] {
             element->invalidateStyleAndLayerComposition();
         });
     } else

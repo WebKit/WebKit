@@ -112,7 +112,8 @@ private:
     std::unique_ptr<Update> m_update;
 };
 
-void queuePostResolutionCallback(Function<void ()>&&);
+// Integrate with the HTML5 event loop instead, see EventLoop.cpp and consumers.
+void deprecatedQueuePostResolutionCallback(Function<void()>&&);
 bool postResolutionCallbacksAreSuspended();
 
 class PostResolutionCallbackDisabler {

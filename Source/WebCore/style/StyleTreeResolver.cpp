@@ -648,7 +648,7 @@ static Vector<RefPtr<Frame>>& memoryCacheClientCallsResumeQueue()
     return vector;
 }
 
-void queuePostResolutionCallback(Function<void ()>&& callback)
+void deprecatedQueuePostResolutionCallback(Function<void()>&& callback)
 {
     postResolutionCallbackQueue().append(WTFMove(callback));
 }

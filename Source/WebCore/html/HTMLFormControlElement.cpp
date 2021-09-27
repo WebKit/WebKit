@@ -258,7 +258,7 @@ void HTMLFormControlElement::didAttachRenderers()
                 element->focus({ SelectionRestorationMode::PlaceCaretAtStart });
             });
         } else {
-            Style::queuePostResolutionCallback([element] {
+            Style::deprecatedQueuePostResolutionCallback([element] {
                 element->focus({ SelectionRestorationMode::PlaceCaretAtStart });
             });
         }
@@ -366,7 +366,7 @@ void HTMLFormControlElement::didRecalcStyle(Style::Change)
     // trigger synchronous layout, so it must not be called during style recalc.
     if (renderer()) {
         RefPtr<HTMLFormControlElement> element = this;
-        Style::queuePostResolutionCallback([element]{
+        Style::deprecatedQueuePostResolutionCallback([element] {
             if (auto* renderer = element->renderer())
                 renderer->updateFromElement();
         });
