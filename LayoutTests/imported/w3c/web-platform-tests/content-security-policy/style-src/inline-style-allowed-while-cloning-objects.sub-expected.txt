@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 This test ensures that styles can be set by object.cloneNode()
 
 This is a div (nodes)
@@ -9,9 +8,7 @@ Node #4
 Yet another div.
 Yet another div.
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Test that violation report event was fired
+FAIL Test that violation report event was fired assert_equals: expected "style-src-attr" but got "style-src"
 PASS inline-style-allowed-while-cloning-objects
 FAIL inline-style-allowed-while-cloning-objects 1 null is not an object (evaluating 'node2.style.background.match(/yellow/)[0]')
 PASS inline-style-allowed-while-cloning-objects 2
@@ -34,4 +31,5 @@ FAIL inline-style-allowed-while-cloning-objects 18 assert_equals: expected "rgb(
 FAIL inline-style-allowed-while-cloning-objects 19 assert_equals: expected "rgb(238, 130, 238) none repeat scroll 0% 0% / auto padding-box border-box" but got "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box"
 PASS inline-style-allowed-while-cloning-objects 20
 PASS inline-style-allowed-while-cloning-objects 21
+FAIL non-HTML namespace assert_equals: expected "" but got "background: rgb(238, 130, 238)"
 Yet another div.

@@ -2,7 +2,5 @@ The origin of an URL is called "unique" when it is considered to be different fr
 
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Iframe's url must not match with 'self'. It must be blocked. Test timed out
+PASS Iframe's url must not match with 'self'. It must be blocked.
 

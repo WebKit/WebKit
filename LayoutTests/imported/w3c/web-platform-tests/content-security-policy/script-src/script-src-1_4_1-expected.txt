@@ -1,11 +1,7 @@
-CONSOLE MESSAGE: Refused to execute a script because 'unsafe-eval' does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to execute a script because 'unsafe-eval' does not appear in the script-src directive of the Content Security Policy.
 setTimeout() and setInterval() should not run without 'unsafe-eval' script-src directive.
 
 
-Harness Error (TIMEOUT), message = null
-
 PASS window.setTimeout()
 PASS window.setInterval()
-NOTRUN Test that securitypolicyviolation event is fired
+FAIL Test that securitypolicyviolation event is fired assert_equals: expected "script-src" but got "script-src 'self' 'unsafe-inline'"
 

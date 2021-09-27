@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 This tests that a valid nonce disables inline JavaScript, even if 'unsafe-inline' is present.
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Expecting alerts: ["PASS (1/2)","PASS (2/2)", "violated-directive=script-src-elem"] Test timed out
+FAIL Expecting alerts: ["PASS (1/2)","PASS (2/2)", "violated-directive=script-src-elem"] assert_unreached: unexpected alert: violated-directive=script-src Reached unreachable code
 

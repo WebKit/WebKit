@@ -1,9 +1,8 @@
-
-
-Harness Error (TIMEOUT), message = null
+ 
+ 
 
 PASS Test that image does not load
-TIMEOUT Event is fired Test timed out
+PASS Event is fired
 FAIL Report is observable to ReportingObserver Can't find variable: ReportingObserver
 FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
 

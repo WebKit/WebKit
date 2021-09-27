@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Refused to load http://www1.localhost:8800/content-security-policy/frame-src/support/frame.html#0 because it does not appear in the frame-src directive of the Content Security Policy.
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Same-document navigation in an iframe blocked by CSP frame-src Test timed out
+PASS Same-document navigation in an iframe blocked by CSP frame-src
 

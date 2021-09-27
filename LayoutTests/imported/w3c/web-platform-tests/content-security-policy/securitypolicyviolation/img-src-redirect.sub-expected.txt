@@ -1,6 +1,4 @@
+ 
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT The blocked URI in the security policy violation event should be the original URI before redirects. Test timed out
+FAIL The blocked URI in the security policy violation event should be the original URI before redirects. assert_equals: expected "http://localhost:8800/common/redirect.py?location=http%3A%2F%2F127.0.0.1%3A8800%2Fcontent-security-policy%2Fsupport%2Ffail.png" but got "http://127.0.0.1:8800"
 

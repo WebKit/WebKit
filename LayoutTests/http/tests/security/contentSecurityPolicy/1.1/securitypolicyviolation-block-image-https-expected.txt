@@ -13,7 +13,7 @@ Kicking off the tests:
 PASS window.e.documentURI is "https://127.0.0.1:8443/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html"
 PASS window.e.referrer is "http://127.0.0.1:8000/"
 FAIL window.e.blockedURI should be http://127.0.0.1:8000/security/resources/abe.png. Was http://127.0.0.1:8000.
-PASS window.e.violatedDirective is "img-src 'none'"
+PASS window.e.violatedDirective is "img-src"
 PASS window.e.effectiveDirective is "img-src"
 PASS window.e.originalPolicy is "img-src 'none'"
 PASS window.e.sourceFile is "https://127.0.0.1:8443/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image.html"

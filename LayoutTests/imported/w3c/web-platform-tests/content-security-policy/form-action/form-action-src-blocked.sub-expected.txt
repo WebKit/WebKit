@@ -1,8 +1,7 @@
-CONSOLE MESSAGE: Refused to load http://localhost:8800/common/redirect.py?location=/content-security-policy/support/postmessage-fail.html because it does not appear in the form-action directive of the Content Security Policy.
 
 
 Tests that blocking form actions works correctly.
 
 
-FAIL Expecting logs: ["violated-directive=form-action","TEST COMPLETE"] assert_unreached: Logging timeout, expected logs violated-directive=form-action not sent. Reached unreachable code
+PASS Expecting logs: ["violated-directive=form-action","TEST COMPLETE"]
 

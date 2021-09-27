@@ -1,3 +1,59 @@
+2021-09-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        Send CSP violation reports to the DOM window
+        https://bugs.webkit.org/show_bug.cgi?id=230728
+
+        Reviewed by Brent Fulgham.
+
+        Unskip tests that are no longer timing out after this fix. Rebaseline
+        tests that previously expected a different violated directive text.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-cross-origin-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/report-frame-ancestors-same-origin-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/report-uri-effective-directive-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/script-blocked-sends-multiple-reports-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy2-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked-by-enforced-policy-and-allowed-by-report-policy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image-from-script-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-from-script-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-image-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-child-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-default-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securityviolationpolicy-block-frame-using-frame-src-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-data-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-and-do-not-follow-redirect-when-sending-report-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-01-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-multiple-violations-02-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-only-upgrade-insecure-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-status-code-zero-when-using-https-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-child-frame-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-inline-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-from-javascript-expected.txt:
+        * http/tests/security/contentSecurityPolicy/report-uri-scheme-relative-expected.txt:
+        * http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report-expected.txt:
+
 2021-09-27  Eric Hutchison  <ehutchison@apple.com>
 
         [ Catalina BigSur wk1 Debug ] Assertion Failure: WebGL tests are flaky crashes.

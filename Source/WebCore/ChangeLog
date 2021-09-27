@@ -1,3 +1,25 @@
+2021-09-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        Send CSP violation reports to the DOM window
+        https://bugs.webkit.org/show_bug.cgi?id=230728
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. This will fix numerous test timeouts.
+
+        Many imported CSP tests are timing out because they wait for security
+        violation events to be sent to the DOM window. This patch bubbles up
+        violation reports so attached documents will also report violations
+        to the window.
+
+        * dom/Document.cpp:
+        (WebCore::Document::enqueueSecurityPolicyViolationEvent):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        We should only report the name of the violated directive to match
+        the spec, which specifies this should be "a non-empty string
+        representing the directive whose enforcement caused the violation."
+
 2021-09-27  Tim Nguyen  <ntim@apple.com>
 
         Replace Node::isInert() with RenderStyle::effectiveInert()

@@ -672,7 +672,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirective& violatedDirective, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, const URL& preRedirectURL, JSC::JSGlobalObject* state) const
 {
-    return reportViolation(effectiveViolatedDirective, violatedDirective.text(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourcePosition, state, preRedirectURL);
+    return reportViolation(effectiveViolatedDirective, violatedDirective.name().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourcePosition, state, preRedirectURL);
 }
 
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL) const
@@ -732,6 +732,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.statusCode = httpStatusCode;
     violationEventInit.lineNumber =  info.lineNumber;
     violationEventInit.columnNumber = info.columnNumber;
+    violationEventInit.bubbles = true;
     if (m_client)
         m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
     else

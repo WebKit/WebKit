@@ -1,3 +1,141 @@
+2021-09-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        Send CSP violation reports to the DOM window
+        https://bugs.webkit.org/show_bug.cgi?id=230728
+
+        Reviewed by Brent Fulgham.
+
+        Rebaseline CSP tests now that many are no longer timing out. In some
+        cases this will require removing console logging because in general
+        for CSP tests we dump console logging to stderr to avoid flakiness.
+
+        * web-platform-tests/content-security-policy/base-uri/report-uri-does-not-respect-base-uri.sub-expected.txt:
+        * web-platform-tests/content-security-policy/blob/blob-urls-do-not-match-self.sub-expected.txt:
+        * web-platform-tests/content-security-policy/blob/self-doesnt-match-blob.sub-expected.txt:
+        * web-platform-tests/content-security-policy/blob/star-doesnt-match-blob.sub-expected.txt:
+        * web-platform-tests/content-security-policy/child-src/child-src-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/child-src/child-src-conflicting-frame-src.sub-expected.txt:
+        * web-platform-tests/content-security-policy/child-src/child-src-redirect-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/child-src/child-src-worker-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-beacon-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-beacon-redirect-to-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-redirect-to-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-websocket-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-xmlhttprequest-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/connect-src/connect-src-xmlhttprequest-redirect-to-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/default-src/default-src-inline-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/font-src/font-stylesheet-font-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/form-action/form-action-src-get-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/form-action/form-action-src-javascript-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-cross-origin-load.sub-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-redirect-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document-meta.sub-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-same-document.sub-expected.txt:
+        * web-platform-tests/content-security-policy/frame-src/frame-src-self-unique-origin-expected.txt:
+        * web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/directive-name-case-insensitive.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_1-img-src-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_1-script-src-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_10_1.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_2_2.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_2_3-expected.txt:
+        * web-platform-tests/content-security-policy/generic/generic-0_8_1.sub-expected.txt:
+        * web-platform-tests/content-security-policy/generic/only-valid-whitespaces-are-allowed-expected.txt:
+        * web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate-expected.txt:
+        * web-platform-tests/content-security-policy/img-src/img-src-self-unique-origin-expected.txt:
+        * web-platform-tests/content-security-policy/img-src/report-blocked-data-uri.sub-expected.txt:
+        * web-platform-tests/content-security-policy/inheritance/document-write-iframe-expected.txt:
+        * web-platform-tests/content-security-policy/inheritance/frame-src-javascript-url-expected.txt:
+        * web-platform-tests/content-security-policy/inheritance/iframe-srcdoc-inheritance-expected.txt:
+        * web-platform-tests/content-security-policy/inheritance/inherited-csp-list-modifications-are-local-expected.txt:
+        * web-platform-tests/content-security-policy/inheritance/javascript-url-srcdoc-cross-origin-iframe-inheritance-expected.txt:
+        * web-platform-tests/content-security-policy/inheritance/location-reload-expected.txt:
+        * web-platform-tests/content-security-policy/media-src/media-src-7_1_2.sub-expected.txt:
+        * web-platform-tests/content-security-policy/media-src/media-src-7_2_2.sub-expected.txt:
+        * web-platform-tests/content-security-policy/media-src/media-src-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/meta/combine-header-and-meta-policies.sub-expected.txt:
+        * web-platform-tests/content-security-policy/navigate-to/form-action/form-action-blocks-navigate-to-allows.sub-expected.txt:
+        * web-platform-tests/content-security-policy/navigate-to/form-action/form-action-blocks-navigate-to-blocks.sub-expected.txt:
+        * web-platform-tests/content-security-policy/navigation/javascript-url-navigation-inherits-csp-expected.txt:
+        * web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-parent-csp-expected.txt:
+        * web-platform-tests/content-security-policy/object-src/object-src-no-url-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting-api/reporting-api-report-only-sends-reports-on-violation.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-overrides-report-uri-1.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-overrides-report-uri-2.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-src.https.sub-expected.txt:
+        * web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies-expected.txt:
+        * web-platform-tests/content-security-policy/reporting/report-uri-effective-directive-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/hash-always-converted-to-utf-8/iso-8859-1-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/hash-always-converted-to-utf-8/iso-8859-3-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/hash-always-converted-to-utf-8/iso-8859-7-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/hash-always-converted-to-utf-8/iso-8859-9-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/hash-always-converted-to-utf-8/utf-8-lone-surrogate-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/injected-inline-script-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/javascript-window-open-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_1-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_10-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_2-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_2_1-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-1_4_1-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-hash-policy-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-and-scripthash.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-basic-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/scriptnonce-ignore-unsafeinline.sub-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/srcdoc-doesnt-bypass-script-src.sub-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect.sub-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/inside-dedicated-worker-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-cross-origin-image.sub-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image-from-script.sub-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image.sub-expected.txt:
+        * web-platform-tests/content-security-policy/securitypolicyviolation/upgrade-insecure-requests-reporting.https-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/injected-inline-style-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/inline-style-allowed-while-cloning-objects.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/inline-style-attribute-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-error-event-fires-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-hash-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-imported-style-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-injected-inline-style-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-injected-stylesheet-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-attribute-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-error-event-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-inline-style-nonce-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-none-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/style-src-stylesheet-nonce-blocked-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/stylehash-basic-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/stylenonce-allowed.sub-expected.txt:
+        * web-platform-tests/content-security-policy/style-src/stylenonce-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/svg/object-in-svg-foreignobject.sub-expected.txt:
+        * web-platform-tests/content-security-policy/svg/svg-inline.sub-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-eval/eval-scripts-setInterval-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-eval/eval-scripts-setTimeout-blocked.sub-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href_blank-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_location-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_open-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href_blank-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-window_location-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-window_open-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href_blank-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-window_location-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-window_open-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_allowed-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_denied_missing_unsafe_hashes-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/script_event_handlers_denied_wrong_hash-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_denied_missing_unsafe_hashes-expected.txt:
+        * web-platform-tests/content-security-policy/unsafe-hashes/style_attribute_denied_wrong_hash-expected.txt:
+        * web-platform-tests/content-security-policy/worker-src/dedicated-worker-src-child-fallback-blocked.sub-expected.txt:
+
 2021-09-26  Cameron McCormack  <heycam@apple.com>
 
         Remove old test files from canvas WPTs that were moved

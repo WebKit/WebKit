@@ -1,11 +1,8 @@
-CONSOLE MESSAGE: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-src directive of the Content Security Policy.
 This text should be green.
 
 Style that does not match a 'nonce-*' expression in 'style-src' should not be applied to the page.
 
 
-Harness Error (TIMEOUT), message = null
-
-NOTRUN Should fire securitypolicyviolation
+FAIL Should fire securitypolicyviolation assert_equals: expected "style-src-elem" but got "style-src"
 PASS stylenonce-blocked
 
