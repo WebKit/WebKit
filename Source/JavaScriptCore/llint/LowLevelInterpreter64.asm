@@ -440,19 +440,21 @@ macro checkSwitchToJITForLoop()
             move cfr, a0
             move PC, a1
             cCall2(_llint_loop_osr)
-            btpz r0, .recover
-            move r1, sp
+            if not JIT
+                btpz r0, .recover
+                move r1, sp
 
-            # Baseline uses LLInt's PB register for its JIT constant pool.
-            loadp CodeBlock[cfr], PB
-            loadp CodeBlock::m_jitData[PB], PB
-            loadp CodeBlock::JITData::m_jitConstantPool[PB], PB
+                # Baseline uses LLInt's PB register for its JIT constant pool.
+                loadp CodeBlock[cfr], PB
+                loadp CodeBlock::m_jitData[PB], PB
+                loadp CodeBlock::JITData::m_jitConstantPool[PB], PB
 
-            if ARM64E
-                leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
-                jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
-            else
-                jmp r0, JSEntryPtrTag
+                if ARM64E
+                    leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
+                    jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+                else
+                    jmp r0, JSEntryPtrTag
+                end
             end
         .recover:
             loadPC()
