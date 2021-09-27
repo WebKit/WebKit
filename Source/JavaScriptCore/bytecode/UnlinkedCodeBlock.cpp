@@ -27,7 +27,6 @@
 
 #include "UnlinkedCodeBlock.h"
 
-#include "BaselineJITCode.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "BytecodeStructs.h"
 #include "ClassInfo.h"
@@ -79,8 +78,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
         createRareDataIfNecessary(locker);
         m_rareData->m_privateBrandRequirement = static_cast<unsigned>(PrivateBrandRequirement::Needed);
     }
-
-    m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITAfterWarmUp()));
 }
 
 template<typename Visitor>
@@ -319,48 +316,6 @@ int UnlinkedCodeBlock::outOfLineJumpOffset(InstructionStream::Offset bytecodeOff
     return m_outOfLineJumpTargets.get(bytecodeOffset);
 }
 
-#if ASSERT_ENABLED
-bool UnlinkedCodeBlock::hasIdentifier(UniquedStringImpl* uid)
-{
-    if (numberOfIdentifiers() > 100) {
-        if (numberOfIdentifiers() != m_cachedIdentifierUids.size()) {
-            Locker locker(m_cachedIdentifierUidsLock);
-            HashSet<UniquedStringImpl*> cachedIdentifierUids;
-            for (unsigned i = 0; i < numberOfIdentifiers(); ++i) {
-                const Identifier& identifier = this->identifier(i);
-                cachedIdentifierUids.add(identifier.impl());
-            }
-
-            WTF::storeStoreFence();
-            m_cachedIdentifierUids = WTFMove(cachedIdentifierUids);
-        }
-
-        return m_cachedIdentifierUids.contains(uid);
-    }
-
-    for (unsigned i = 0; i < numberOfIdentifiers(); ++i) {
-        if (identifier(i).impl() == uid)
-            return true;
-    }
-    return false;
-}
-#endif
-
-int32_t UnlinkedCodeBlock::thresholdForJIT(int32_t threshold)
-{
-    switch (didOptimize()) {
-    case TriState::Indeterminate:
-        return threshold;
-    case TriState::False:
-        return threshold * 4;
-    case TriState::True:
-        return threshold / 2;
-    }
-    ASSERT_NOT_REACHED();
-    return threshold;
-}
-
-
 void UnlinkedCodeBlock::allocateSharedProfiles()
 {
     RELEASE_ASSERT(!m_metadata->isFinalized());
@@ -382,25 +337,15 @@ void UnlinkedCodeBlock::allocateSharedProfiles()
     if (m_metadata->hasMetadata()) {
         unsigned numberOfArrayProfiles = 0;
 
-#define COUNT(__op) numberOfArrayProfiles += m_metadata->numEntries<__op>();
+#define COUNT(__op) \
+        numberOfArrayProfiles += m_metadata->numEntries<__op>();
         FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(COUNT)
         FOR_EACH_OPCODE_WITH_LLINT_CALL_LINK_INFO(COUNT)
 #undef COUNT
         numberOfArrayProfiles += m_metadata->numEntries<OpIteratorNext>();
         numberOfArrayProfiles += m_metadata->numEntries<OpGetById>();
+
         m_arrayProfiles = FixedVector<UnlinkedArrayProfile>(numberOfArrayProfiles);
-
-        unsigned numberOfBinaryArithProfiles = 0;
-#define COUNT(__op) numberOfBinaryArithProfiles += m_metadata->numEntries<__op>();
-        FOR_EACH_OPCODE_WITH_BINARY_ARITH_PROFILE(COUNT)
-#undef COUNT
-        m_binaryArithProfiles = FixedVector<BinaryArithProfile>(numberOfBinaryArithProfiles);
-
-        unsigned numberOfUnaryArithProfiles = 0;
-#define COUNT(__op) numberOfUnaryArithProfiles += m_metadata->numEntries<__op>();
-        FOR_EACH_OPCODE_WITH_UNARY_ARITH_PROFILE(COUNT)
-#undef COUNT
-        m_unaryArithProfiles = FixedVector<UnaryArithProfile>(numberOfUnaryArithProfiles);
     }
 }
 

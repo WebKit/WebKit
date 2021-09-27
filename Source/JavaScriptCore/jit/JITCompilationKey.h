@@ -30,56 +30,57 @@
 
 namespace JSC {
 
-class JSCell;
+class CodeBlock;
+class CodeBlockSet;
 
 class JITCompilationKey {
 public:
     JITCompilationKey()
-        : m_codeBlock(nullptr)
+        : m_profiledBlock(nullptr)
         , m_mode(JITCompilationMode::InvalidCompilation)
     {
     }
     
     JITCompilationKey(WTF::HashTableDeletedValueType)
-        : m_codeBlock(nullptr)
+        : m_profiledBlock(nullptr)
         , m_mode(JITCompilationMode::DFG)
     {
     }
     
-    JITCompilationKey(JSCell* profiledBlock, JITCompilationMode mode)
-        : m_codeBlock(profiledBlock)
+    JITCompilationKey(CodeBlock* profiledBlock, JITCompilationMode mode)
+        : m_profiledBlock(profiledBlock)
         , m_mode(mode)
     {
     }
     
     bool operator!() const
     {
-        return !m_codeBlock && m_mode == JITCompilationMode::InvalidCompilation;
+        return !m_profiledBlock && m_mode == JITCompilationMode::InvalidCompilation;
     }
     
     bool isHashTableDeletedValue() const
     {
-        return !m_codeBlock && m_mode != JITCompilationMode::InvalidCompilation;
+        return !m_profiledBlock && m_mode != JITCompilationMode::InvalidCompilation;
     }
     
+    CodeBlock* profiledBlock() const { return m_profiledBlock; }
     JITCompilationMode mode() const { return m_mode; }
     
     bool operator==(const JITCompilationKey& other) const
     {
-        return m_codeBlock == other.m_codeBlock
+        return m_profiledBlock == other.m_profiledBlock
             && m_mode == other.m_mode;
     }
     
     unsigned hash() const
     {
-        return WTF::pairIntHash(WTF::PtrHash<JSCell*>::hash(m_codeBlock), static_cast<std::underlying_type<JITCompilationMode>::type>(m_mode));
+        return WTF::pairIntHash(WTF::PtrHash<CodeBlock*>::hash(m_profiledBlock), static_cast<std::underlying_type<JITCompilationMode>::type>(m_mode));
     }
     
     void dump(PrintStream&) const;
 
 private:
-    // Either CodeBlock* or UnlinkedCodeBlock* for basleline JIT.
-    JSCell* m_codeBlock;
+    CodeBlock* m_profiledBlock;
     JITCompilationMode m_mode;
 };
 

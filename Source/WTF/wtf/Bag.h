@@ -66,20 +66,6 @@ public:
         other.m_head = nullptr;
     }
 
-    template<typename U>
-    Bag& operator=(Bag<T, U>&& other)
-    {
-        if (unwrappedHead() == other.unwrappedHead())
-            return *this;
-
-        Bag destroy;
-        destroy.m_head = unwrappedHead();
-        m_head = other.unwrappedHead();
-        other.m_head = nullptr;
-
-        return *this;
-    }
-
     ~Bag()
     {
         clear();

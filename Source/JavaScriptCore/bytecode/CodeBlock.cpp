@@ -279,6 +279,8 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
+    , m_hasLinkedOSRExit(false)
+    , m_isEligibleForLLIntDowngrade(false)
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
     , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
@@ -306,8 +308,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
 
     ASSERT(source().provider());
     setNumParameters(other.numParameters());
-
-    m_llintExecuteCounter = &m_unlinkedCode->llintExecuteCounter();
     
     vm.heap.codeBlockSet().add(this);
 }
@@ -318,6 +318,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
     finishCreationCommon(vm);
 
     optimizeAfterWarmUp();
+    jitAfterWarmUp();
 
     if (other.m_rareData) {
         createRareDataIfNecessary();
@@ -335,6 +336,8 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
+    , m_hasLinkedOSRExit(false)
+    , m_isEligibleForLLIntDowngrade(false) 
     , m_numCalleeLocals(unlinkedCodeBlock->numCalleeLocals())
     , m_numVars(unlinkedCodeBlock->numVars())
     , m_hasDebuggerStatement(false)
@@ -356,9 +359,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
 
     ASSERT(source().provider());
     setNumParameters(unlinkedCodeBlock->numParameters());
-
-    m_llintExecuteCounter = &m_unlinkedCode->llintExecuteCounter();
-
+    
     vm.heap.codeBlockSet().add(this);
 }
 
@@ -369,8 +370,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
 // we can't generate during unlinked bytecode generation. This process is not allowed to generate control
 // flow or introduce new locals. The reason for this is we rely on liveness analysis to be the same for
 // all the CodeBlocks of an UnlinkedCodeBlock. We rely on this fact by caching the liveness analysis
-// inside UnlinkedCodeBlock. Also, Baseline JIT code is shared between all CodeBlocks of an UnlinkedCodeBlock,
-// so the bytecode must remain the same between CodeBlocks sharing an UnlinkedCodeBlock.
+// inside UnlinkedCodeBlock.
 bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock,
     JSScope* scope)
 {
@@ -471,21 +471,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
-    unsigned binaryProfileIndex = 0;
-    unsigned unaryProfileIndex = 0;
-#define LINK_WITH_BINARY_ARITH_PROFILE(__op) \
-    CASE(__op): { \
-        INITIALIZE_METADATA(__op) \
-        metadata.m_arithProfile = &m_unlinkedCode->binaryArithProfile(binaryProfileIndex++); \
-        break; \
-    }
-#define LINK_WITH_UNARY_ARITH_PROFILE(__op) \
-    CASE(__op): { \
-        INITIALIZE_METADATA(__op) \
-        metadata.m_arithProfile = &m_unlinkedCode->unaryArithProfile(unaryProfileIndex++); \
-        break; \
-    }
-
     const InstructionStream& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
@@ -548,14 +533,14 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpCreatePromise)
         LINK(OpCreateGenerator)
 
-        LINK_WITH_BINARY_ARITH_PROFILE(OpAdd)
-        LINK_WITH_BINARY_ARITH_PROFILE(OpMul)
-        LINK_WITH_BINARY_ARITH_PROFILE(OpDiv)
-        LINK_WITH_BINARY_ARITH_PROFILE(OpSub)
+        LINK(OpAdd)
+        LINK(OpMul)
+        LINK(OpDiv)
+        LINK(OpSub)
 
-        LINK_WITH_UNARY_ARITH_PROFILE(OpNegate)
-        LINK_WITH_UNARY_ARITH_PROFILE(OpInc)
-        LINK_WITH_UNARY_ARITH_PROFILE(OpDec)
+        LINK(OpNegate)
+        LINK(OpInc)
+        LINK(OpDec)
 
         LINK(OpJneqPtr)
 
@@ -784,6 +769,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // rely on the instruction count (and are in theory permitted to also inspect the
     // instruction stream to more accurate assess the cost of tier-up).
     optimizeAfterWarmUp();
+    jitAfterWarmUp();
 
     // If the concurrent thread will want the code block's hash, then compute it here
     // synchronously.
@@ -806,78 +792,6 @@ void CodeBlock::finishCreationCommon(VM& vm)
 {
     m_ownerEdge.set(vm, this, ExecutableToCodeBlockEdge::create(vm, this));
 }
-
-#if ENABLE(JIT)
-void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
-{
-    setJITCode(jitCode.copyRef());
-
-    {
-        const auto& jitCodeMap = this->jitCodeMap();
-        for (size_t i = 0; i < numberOfExceptionHandlers(); ++i) {
-            HandlerInfo& handler = exceptionHandler(i);
-            // FIXME: <rdar://problem/39433318>.
-            handler.nativeCode = jitCodeMap.find(BytecodeIndex(handler.target)).retagged<ExceptionHandlerPtrTag>();
-        }
-    }
-
-    {
-        ConcurrentJSLocker locker(m_lock);
-        auto& jitData = ensureJITData(locker);
-
-        RELEASE_ASSERT(jitData.m_jitConstantPool.isEmpty());
-        jitData.m_jitConstantPool = FixedVector<void*>(jitCode->m_constantPool.size());
-        for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {
-            auto entry = jitCode->m_constantPool.at(i);
-            switch (entry.type) {
-            case JITConstantPool::Type::GlobalObject:
-                jitData.m_jitConstantPool[i] = m_globalObject.get();
-                break;
-            case JITConstantPool::Type::CallLinkInfo: {
-                UnlinkedCallLinkInfo& unlinkedCallLinkInfo = *static_cast<UnlinkedCallLinkInfo*>(entry.payload.get());
-                CallLinkInfo* callLinkInfo = jitData.m_callLinkInfos.add(CodeOrigin(unlinkedCallLinkInfo.bytecodeIndex));
-                callLinkInfo->initializeDataIC(vm(), unlinkedCallLinkInfo, GPRInfo::regT0, GPRInfo::regT2);
-                jitData.m_jitConstantPool[i] = callLinkInfo;
-                break;
-            }
-            case JITConstantPool::Type::StructureStubInfo: {
-                UnlinkedStructureStubInfo& unlinkedStubInfo = *static_cast<UnlinkedStructureStubInfo*>(entry.payload.get());
-                StructureStubInfo* stubInfo = jitData.m_stubInfos.add(unlinkedStubInfo.accessType, CodeOrigin(unlinkedStubInfo.bytecodeIndex));
-                stubInfo->initializeFromUnlinkedStructureStubInfo(this, unlinkedStubInfo);
-                jitData.m_jitConstantPool[i] = stubInfo;
-                break;
-            }
-            case JITConstantPool::Type::FunctionDecl: {
-                unsigned index = bitwise_cast<uintptr_t>(entry.payload.get());
-                jitData.m_jitConstantPool[i] = functionDecl(index);
-                break;
-            }
-            case JITConstantPool::Type::FunctionExpr: {
-                unsigned index = bitwise_cast<uintptr_t>(entry.payload.get());
-                jitData.m_jitConstantPool[i] = functionExpr(index);
-                break;
-            }
-            }
-        }
-    }
-
-    switch (codeType()) {
-    case GlobalCode:
-    case ModuleCode:
-    case EvalCode:
-        m_shouldAlwaysBeInlined = false;
-        break;
-    case FunctionCode:
-        // We could have already set it to false because we detected an uninlineable call.
-        // Don't override that observation.
-        m_shouldAlwaysBeInlined &= canInline(capabilityLevel()) && DFG::mightInlineFunction(this);
-        break;
-    }
-
-    if (jitCode->m_isShareable && !unlinkedCodeBlock()->m_unlinkedBaselineCode && Options::useBaselineJITCodeSharing())
-        unlinkedCodeBlock()->m_unlinkedBaselineCode = WTFMove(jitCode);
-}
-#endif // ENABLE(JIT)
 
 CodeBlock::~CodeBlock()
 {
@@ -959,27 +873,6 @@ CodeBlock::~CodeBlock()
 #endif // ENABLE(JIT)
 }
 
-bool CodeBlock::isConstantOwnedByUnlinkedCodeBlock(VirtualRegister reg) const
-{
-    // This needs to correspond to what we do inside setConstantRegisters.
-    switch (unlinkedCodeBlock()->constantSourceCodeRepresentation(reg)) {
-    case SourceCodeRepresentation::Integer:
-    case SourceCodeRepresentation::Double:
-        return true;
-    case SourceCodeRepresentation::Other: {
-        JSValue value = unlinkedCodeBlock()->getConstant(reg);
-        if (!value || !value.isCell())
-            return true;
-        JSCell* cell = value.asCell();
-        if (cell->inherits<SymbolTable>(vm()) || cell->inherits<JSTemplateObjectDescriptor>(vm()))
-            return false;
-        return true;
-    }
-    case SourceCodeRepresentation::LinkTimeConstant:
-        return false;
-    }
-}
-
 Vector<unsigned> CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
 {
     VM& vm = *m_vm;
@@ -999,7 +892,6 @@ Vector<unsigned> CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<
         switch (representation) {
         case SourceCodeRepresentation::LinkTimeConstant:
             constant = globalObject->linkTimeConstant(static_cast<LinkTimeConstant>(constant.asInt32AsAnyInt()));
-            ASSERT(constant.isCell()); // Unlinked Baseline JIT requires this.
             break;
         case SourceCodeRepresentation::Other:
         case SourceCodeRepresentation::Integer:
@@ -1622,7 +1514,7 @@ CodeBlock::JITData& CodeBlock::ensureJITDataSlow(const ConcurrentJSLocker&)
     return *m_jitData;
 }
 
-void CodeBlock::finalizeJITInlineCaches()
+void CodeBlock::finalizeBaselineJITInlineCaches()
 {
     if (auto* jitData = m_jitData.get()) {
         for (CallLinkInfo* callLinkInfo : jitData->m_callLinkInfos)
@@ -1633,20 +1525,6 @@ void CodeBlock::finalizeJITInlineCaches()
             stubInfo->visitWeakReferences(locker, this);
         }
     }
-
-
-#if ASSERT_ENABLED
-    if (jitType() == JITType::BaselineJIT) {
-        // Verify we don't need to finalize these since they're virtual calls.
-        for (CallLinkInfo* callLinkInfo : static_cast<BaselineJITCode*>(m_jitCode.get())->m_evalCallLinkInfos) {
-            ASSERT(!callLinkInfo->isLinked());
-            callLinkInfo->forEachDependentCell([] (JSCell*) {
-                ASSERT_NOT_REACHED();
-            });
-        }
-
-    }
-#endif
 }
 #endif
 
@@ -1656,12 +1534,46 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
 
     updateAllPredictions();
 
+#if ENABLE(JIT)
+    bool isEligibleForLLIntDowngrade = m_isEligibleForLLIntDowngrade;
+    m_isEligibleForLLIntDowngrade = false;
+    // If BaselineJIT code is not executing, and an optimized replacement exists, we attempt
+    // to discard baseline JIT code and reinstall LLInt code to save JIT memory.
+    if (Options::useLLInt() && !m_hasLinkedOSRExit && jitType() == JITType::BaselineJIT && !m_vm->heap.codeBlockSet().isCurrentlyExecuting(this)) {
+        if (CodeBlock* optimizedCodeBlock = optimizedReplacement()) {
+            if (!optimizedCodeBlock->m_osrExitCounter) {
+                if (isEligibleForLLIntDowngrade) {
+                    m_jitCode = nullptr;
+                    LLInt::setEntrypoint(this);
+                    RELEASE_ASSERT(jitType() == JITType::InterpreterThunk);
+
+                    for (size_t i = 0; i < m_unlinkedCode->numberOfExceptionHandlers(); i++) {
+                        const UnlinkedHandlerInfo& unlinkedHandler = m_unlinkedCode->exceptionHandler(i);
+                        HandlerInfo& handler = m_rareData->m_exceptionHandlers[i];
+                        auto& instruction = *instructions().at(unlinkedHandler.target).ptr();
+                        handler.initialize(unlinkedHandler, CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleCatch(instruction.width()).code()));
+                    }
+
+                    unlinkIncomingCalls();
+
+                    // It's safe to clear these out here because in finalizeUnconditionally all compiler threads
+                    // are safepointed, meaning they're running either before or after bytecode parser, and bytecode
+                    // parser is the only data structure pointing into the various *infos.
+                    resetJITData();
+                } else
+                    m_isEligibleForLLIntDowngrade = true;
+            }
+        }
+    }
+
+#endif
+    
     if (JITCode::couldBeInterpreted(jitType()))
         finalizeLLIntInlineCaches();
 
 #if ENABLE(JIT)
     if (!!jitCode())
-        finalizeJITInlineCaches();
+        finalizeBaselineJITInlineCaches();
 #endif
 
 #if ENABLE(DFG_JIT)
@@ -1682,7 +1594,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
         case JITType::HostCallThunk:
             return;
         case JITType::InterpreterThunk:
-            count = m_llintExecuteCounter->count();
+            count = m_llintExecuteCounter.count();
             break;
         case JITType::BaselineJIT:
             count = m_jitExecuteCounter.count();
@@ -1761,6 +1673,30 @@ StructureStubInfo* CodeBlock::addStubInfo(AccessType accessType, CodeOrigin code
 {
     ConcurrentJSLocker locker(m_lock);
     return ensureJITData(locker).m_stubInfos.add(accessType, codeOrigin);
+}
+
+JITAddIC* CodeBlock::addJITAddIC(BinaryArithProfile* arithProfile)
+{
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_addICs.add(arithProfile);
+}
+
+JITMulIC* CodeBlock::addJITMulIC(BinaryArithProfile* arithProfile)
+{
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_mulICs.add(arithProfile);
+}
+
+JITSubIC* CodeBlock::addJITSubIC(BinaryArithProfile* arithProfile)
+{
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_subICs.add(arithProfile);
+}
+
+JITNegIC* CodeBlock::addJITNegIC(UnaryArithProfile* arithProfile)
+{
+    ConcurrentJSLocker locker(m_lock);
+    return ensureJITData(locker).m_negICs.add(arithProfile);
 }
 
 StructureStubInfo* CodeBlock::findStubInfo(CodeOrigin codeOrigin)
@@ -3197,7 +3133,7 @@ unsigned CodeBlock::frameRegisterCount()
 
 #if ENABLE(JIT)
     case JITType::BaselineJIT:
-        return JIT::frameRegisterCountFor(this->unlinkedCodeBlock());
+        return JIT::frameRegisterCountFor(this);
 #endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT)
@@ -3413,13 +3349,13 @@ BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const Instruction* pc)
 {
     switch (pc->opcodeID()) {
     case op_add:
-        return pc->as<OpAdd>().metadata(this).m_arithProfile;
+        return &pc->as<OpAdd>().metadata(this).m_arithProfile;
     case op_mul:
-        return pc->as<OpMul>().metadata(this).m_arithProfile;
+        return &pc->as<OpMul>().metadata(this).m_arithProfile;
     case op_sub:
-        return pc->as<OpSub>().metadata(this).m_arithProfile;
+        return &pc->as<OpSub>().metadata(this).m_arithProfile;
     case op_div:
-        return pc->as<OpDiv>().metadata(this).m_arithProfile;
+        return &pc->as<OpDiv>().metadata(this).m_arithProfile;
     default:
         break;
     }
@@ -3431,11 +3367,11 @@ UnaryArithProfile* CodeBlock::unaryArithProfileForPC(const Instruction* pc)
 {
     switch (pc->opcodeID()) {
     case op_negate:
-        return pc->as<OpNegate>().metadata(this).m_arithProfile;
+        return &pc->as<OpNegate>().metadata(this).m_arithProfile;
     case op_inc:
-        return pc->as<OpInc>().metadata(this).m_arithProfile;
+        return &pc->as<OpInc>().metadata(this).m_arithProfile;
     case op_dec:
-        return pc->as<OpDec>().metadata(this).m_arithProfile;
+        return &pc->as<OpDec>().metadata(this).m_arithProfile;
     default:
         break;
     }
@@ -3536,16 +3472,22 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
 }
 
 #if ENABLE(JIT)
+void CodeBlock::setPCToCodeOriginMap(std::unique_ptr<PCToCodeOriginMap>&& map) 
+{ 
+    ConcurrentJSLocker locker(m_lock);
+    ensureJITData(locker).m_pcToCodeOriginMap = WTFMove(map);
+}
+
 std::optional<CodeOrigin> CodeBlock::findPC(void* pc)
 {
-    if (auto* pcToCodeOriginMap = m_jitCode->pcToCodeOriginMap()) {
-        if (std::optional<CodeOrigin> codeOrigin = pcToCodeOriginMap->findPC(pc))
-            return codeOrigin;
-    }
-
     {
         ConcurrentJSLocker locker(m_lock);
         if (auto* jitData = m_jitData.get()) {
+            if (jitData->m_pcToCodeOriginMap) {
+                if (std::optional<CodeOrigin> codeOrigin = jitData->m_pcToCodeOriginMap->findPC(pc))
+                    return codeOrigin;
+            }
+
             for (StructureStubInfo* stubInfo : jitData->m_stubInfos) {
                 if (stubInfo->containsPC(pc))
                     return std::optional<CodeOrigin>(stubInfo->codeOrigin);
@@ -3579,14 +3521,28 @@ std::optional<BytecodeIndex> CodeBlock::bytecodeIndexFromCallSiteIndex(CallSiteI
     return bytecodeIndex;
 }
 
-void CodeBlock::jitSoon()
+int32_t CodeBlock::thresholdForJIT(int32_t threshold)
 {
-    m_llintExecuteCounter->setNewThreshold(unlinkedCodeBlock()->thresholdForJIT(Options::thresholdForJITSoon()), this);
+    switch (unlinkedCodeBlock()->didOptimize()) {
+    case TriState::Indeterminate:
+        return threshold;
+    case TriState::False:
+        return threshold * 4;
+    case TriState::True:
+        return threshold / 2;
+    }
+    ASSERT_NOT_REACHED();
+    return threshold;
 }
 
-void CodeBlock::jitNextInvocation()
+void CodeBlock::jitAfterWarmUp()
 {
-    m_llintExecuteCounter->setNewThreshold(0, this);
+    m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITAfterWarmUp()), this);
+}
+
+void CodeBlock::jitSoon()
+{
+    m_llintExecuteCounter.setNewThreshold(thresholdForJIT(Options::thresholdForJITSoon()), this);
 }
 
 bool CodeBlock::hasInstalledVMTrapBreakpoints() const
@@ -3632,8 +3588,28 @@ void CodeBlock::dumpMathICStats()
     double numSubs = 0.0;
     double totalSubSize = 0.0;
 
-    auto countICs = [&] (CodeBlock*) {
-        // FIXME: We need to re-implement this using JITCode.
+    auto countICs = [&] (CodeBlock* codeBlock) {
+        if (auto* jitData = codeBlock->m_jitData.get()) {
+            for (JITAddIC* addIC : jitData->m_addICs) {
+                numAdds++;
+                totalAddSize += addIC->codeSize();
+            }
+
+            for (JITMulIC* mulIC : jitData->m_mulICs) {
+                numMuls++;
+                totalMulSize += mulIC->codeSize();
+            }
+
+            for (JITNegIC* negIC : jitData->m_negICs) {
+                numNegs++;
+                totalNegSize += negIC->codeSize();
+            }
+
+            for (JITSubIC* subIC : jitData->m_subICs) {
+                numSubs++;
+                totalSubSize += subIC->codeSize();
+            }
+        }
     };
     heap()->forEachCodeBlock(countICs);
 

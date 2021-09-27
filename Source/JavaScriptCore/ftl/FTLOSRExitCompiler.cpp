@@ -413,16 +413,28 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
     RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
     const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->calleeSaveRegisters();
+    RegisterAtOffsetList* vmCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
+    RegisterSet vmCalleeSavesToSkip = RegisterSet::stackRegisters();
+    if (exit.isExceptionHandler()) {
+        jit.loadPtr(&vm.topEntryFrame, GPRInfo::regT1);
+        jit.addPtr(CCallHelpers::TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), GPRInfo::regT1);
+    }
 
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
         if (!allFTLCalleeSaves.get(reg)) {
+            if (exit.isExceptionHandler())
+                RELEASE_ASSERT(!vmCalleeSaves->find(reg));
             continue;
         }
         unsigned unwindIndex = codeBlock->calleeSaveRegisters()->indexOf(reg);
         const RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
+        RegisterAtOffset* vmCalleeSave = nullptr; 
+        if (exit.isExceptionHandler())
+            vmCalleeSave = vmCalleeSaves->find(reg);
 
         if (reg.isGPR()) {
             GPRReg regToLoad = baselineRegisterOffset ? GPRInfo::regT0 : reg.gpr();
+            RELEASE_ASSERT(regToLoad != GPRInfo::regT1);
 
             if (unwindIndex == UINT_MAX) {
                 // The FTL compilation didn't preserve this register. This means that it also
@@ -440,6 +452,8 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
             if (baselineRegisterOffset)
                 jit.store64(regToLoad, MacroAssembler::Address(MacroAssembler::framePointerRegister, baselineRegisterOffset->offset()));
+            if (vmCalleeSave && !vmCalleeSavesToSkip.get(vmCalleeSave->reg()))
+                jit.store64(regToLoad, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
         } else {
             FPRReg fpRegToLoad = baselineRegisterOffset ? FPRInfo::fpRegT0 : reg.fpr();
 
@@ -450,7 +464,17 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
             if (baselineRegisterOffset)
                 jit.storeDouble(fpRegToLoad, MacroAssembler::Address(MacroAssembler::framePointerRegister, baselineRegisterOffset->offset()));
+            if (vmCalleeSave && !vmCalleeSavesToSkip.get(vmCalleeSave->reg()))
+                jit.storeDouble(fpRegToLoad, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
         }
+    }
+
+    if (exit.isExceptionHandler()) {
+        RegisterAtOffset* vmCalleeSave = vmCalleeSaves->find(GPRInfo::numberTagRegister);
+        jit.store64(GPRInfo::numberTagRegister, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
+
+        vmCalleeSave = vmCalleeSaves->find(GPRInfo::notCellMaskRegister);
+        jit.store64(GPRInfo::notCellMaskRegister, MacroAssembler::Address(GPRInfo::regT1, vmCalleeSave->offset()));
     }
 
     size_t baselineVirtualRegistersForCalleeSaves = baselineCodeBlock->calleeSaveSpaceAsVirtualRegisters();

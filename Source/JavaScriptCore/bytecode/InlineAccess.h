@@ -99,14 +99,14 @@ public:
         return std::max(size, sizeForPropertyAccess());
     }
 
-    static bool generateSelfPropertyAccess(CodeBlock*, StructureStubInfo&, Structure*, PropertyOffset);
-    static bool canGenerateSelfPropertyReplace(CodeBlock*, StructureStubInfo&, PropertyOffset);
-    static bool generateSelfPropertyReplace(CodeBlock*, StructureStubInfo&, Structure*, PropertyOffset);
-    static bool isCacheableArrayLength(CodeBlock*, StructureStubInfo&, JSArray*);
-    static bool isCacheableStringLength(CodeBlock*, StructureStubInfo&);
-    static bool generateArrayLength(CodeBlock*, StructureStubInfo&, JSArray*);
-    static bool generateSelfInAccess(CodeBlock*, StructureStubInfo&, Structure*);
-    static bool generateStringLength(CodeBlock*, StructureStubInfo&);
+    static bool generateSelfPropertyAccess(StructureStubInfo&, Structure*, PropertyOffset);
+    static bool canGenerateSelfPropertyReplace(StructureStubInfo&, PropertyOffset);
+    static bool generateSelfPropertyReplace(StructureStubInfo&, Structure*, PropertyOffset);
+    static bool isCacheableArrayLength(StructureStubInfo&, JSArray*);
+    static bool isCacheableStringLength(StructureStubInfo&);
+    static bool generateArrayLength(StructureStubInfo&, JSArray*);
+    static bool generateSelfInAccess(StructureStubInfo&, Structure*);
+    static bool generateStringLength(StructureStubInfo&);
 
     static void rewireStubAsJumpInAccessNotUsingInlineAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
     static void rewireStubAsJumpInAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);

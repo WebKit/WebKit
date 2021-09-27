@@ -292,7 +292,7 @@ op_group :ProfiledBinaryOp,
         operandTypes: OperandTypes,
     },
     metadata: {
-        arithProfile: BinaryArithProfile.*
+        arithProfile: BinaryArithProfile
     }
 
 op_group :ValueProfiledBinaryOp,
@@ -353,7 +353,7 @@ op_group :UnaryInPlaceProfiledOp,
         srcDst: VirtualRegister,
     },
     metadata: {
-        arithProfile: UnaryArithProfile.*
+        arithProfile: UnaryArithProfile
     }
 
 op :to_object,
@@ -386,7 +386,7 @@ op :negate,
         resultType: ResultType,
     },
     metadata: {
-        arithProfile: UnaryArithProfile.*
+        arithProfile: UnaryArithProfile,
     }
 
 op :not,

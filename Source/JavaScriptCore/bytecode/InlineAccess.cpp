@@ -176,15 +176,10 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
     return false;
 }
 
-bool InlineAccess::generateSelfPropertyAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
+bool InlineAccess::generateSelfPropertyAccess(StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
     if (!stubInfo.hasConstantIdentifier)
         return false;
-
-    if (codeBlock->useDataIC()) {
-        // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
-        return true;
-    }
 
     CCallHelpers jit;
     
@@ -238,13 +233,10 @@ ALWAYS_INLINE static bool hasFreeRegister(StructureStubInfo& stubInfo)
     return getScratchRegister(stubInfo) != InvalidGPRReg;
 }
 
-bool InlineAccess::canGenerateSelfPropertyReplace(CodeBlock* codeBlock, StructureStubInfo& stubInfo, PropertyOffset offset)
+bool InlineAccess::canGenerateSelfPropertyReplace(StructureStubInfo& stubInfo, PropertyOffset offset)
 {
     if (!stubInfo.hasConstantIdentifier)
         return false;
-
-    if (codeBlock->useDataIC())
-        return true;
 
     if (isInlineOffset(offset))
         return true;
@@ -252,17 +244,12 @@ bool InlineAccess::canGenerateSelfPropertyReplace(CodeBlock* codeBlock, Structur
     return hasFreeRegister(stubInfo);
 }
 
-bool InlineAccess::generateSelfPropertyReplace(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
+bool InlineAccess::generateSelfPropertyReplace(StructureStubInfo& stubInfo, Structure* structure, PropertyOffset offset)
 {
     if (!stubInfo.hasConstantIdentifier)
         return false;
 
-    ASSERT(canGenerateSelfPropertyReplace(codeBlock, stubInfo, offset));
-
-    if (codeBlock->useDataIC()) {
-        // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
-        return true;
-    }
+    ASSERT(canGenerateSelfPropertyReplace(stubInfo, offset));
 
     CCallHelpers jit;
 
@@ -292,14 +279,11 @@ bool InlineAccess::generateSelfPropertyReplace(CodeBlock* codeBlock, StructureSt
     return linkedCodeInline;
 }
 
-bool InlineAccess::isCacheableArrayLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo, JSArray* array)
+bool InlineAccess::isCacheableArrayLength(StructureStubInfo& stubInfo, JSArray* array)
 {
     ASSERT(array->indexingType() & IsArray);
 
     if (!stubInfo.hasConstantIdentifier)
-        return false;
-
-    if (codeBlock->jitType() == JITType::BaselineJIT)
         return false;
 
     if (!hasFreeRegister(stubInfo))
@@ -308,9 +292,9 @@ bool InlineAccess::isCacheableArrayLength(CodeBlock* codeBlock, StructureStubInf
     return !hasAnyArrayStorage(array->indexingType()) && array->indexingType() != ArrayClass;
 }
 
-bool InlineAccess::generateArrayLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo, JSArray* array)
+bool InlineAccess::generateArrayLength(StructureStubInfo& stubInfo, JSArray* array)
 {
-    ASSERT_UNUSED(codeBlock, isCacheableArrayLength(codeBlock, stubInfo, array));
+    ASSERT(isCacheableArrayLength(stubInfo, array));
 
     if (!stubInfo.hasConstantIdentifier)
         return false;
@@ -335,20 +319,17 @@ bool InlineAccess::generateArrayLength(CodeBlock* codeBlock, StructureStubInfo& 
     return linkedCodeInline;
 }
 
-bool InlineAccess::isCacheableStringLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+bool InlineAccess::isCacheableStringLength(StructureStubInfo& stubInfo)
 {
     if (!stubInfo.hasConstantIdentifier)
-        return false;
-
-    if (codeBlock->jitType() == JITType::BaselineJIT)
         return false;
 
     return hasFreeRegister(stubInfo);
 }
 
-bool InlineAccess::generateStringLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+bool InlineAccess::generateStringLength(StructureStubInfo& stubInfo)
 {
-    ASSERT_UNUSED(codeBlock, isCacheableStringLength(codeBlock, stubInfo));
+    ASSERT(isCacheableStringLength(stubInfo));
 
     if (!stubInfo.hasConstantIdentifier)
         return false;
@@ -382,17 +363,12 @@ bool InlineAccess::generateStringLength(CodeBlock* codeBlock, StructureStubInfo&
 }
 
 
-bool InlineAccess::generateSelfInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, Structure* structure)
+bool InlineAccess::generateSelfInAccess(StructureStubInfo& stubInfo, Structure* structure)
 {
     CCallHelpers jit;
 
     if (!stubInfo.hasConstantIdentifier)
         return false;
-
-    if (codeBlock->useDataIC()) {
-        // These dynamic slots get filled in by StructureStubInfo. Nothing else to do.
-        return true;
-    }
 
     GPRReg base = stubInfo.baseGPR;
     JSValueRegs value = stubInfo.valueRegs();
@@ -430,13 +406,13 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
     if (codeBlock->useDataIC()) {
         // If it is not GetById-like-thing, we do not emit nop sled (e.g. GetByVal).
         // The code is already an indirect jump, and only thing we should do is replacing m_codePtr.
-        if (codeBlock->jitType() != JITType::BaselineJIT && stubInfo.hasConstantIdentifier) {
+        if (stubInfo.hasConstantIdentifier) {
             // If m_codePtr is pointing to stubInfo.slowPathStartLocation, this means that InlineAccess code is not a stub one.
             // We rewrite this with the stub-based dispatching code once, and continue using it until we reset the code.
             if (stubInfo.m_codePtr.executableAddress() == stubInfo.slowPathStartLocation.executableAddress()) {
                 CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
                     jit.move(CCallHelpers::TrustedImmPtr(&stubInfo), stubInfo.m_stubInfoGPR);
-                    jit.farJump(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+                    jit.call(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
                     auto jump = jit.jump();
                     auto doneLocation = stubInfo.doneLocation;
                     jit.addLinkTask([=](LinkBuffer& linkBuffer) {
@@ -445,9 +421,7 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
                 }), "InlineAccess: linking stub call");
             }
         }
-
         stubInfo.m_codePtr = target;
-        stubInfo.m_inlineAccessBaseStructure = 0; // Clear out the inline access code.
         return;
     }
 
@@ -460,14 +434,8 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
     }), "InlineAccess: linking constant jump");
 }
 
-void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+void InlineAccess::resetStubAsJumpInAccess(CodeBlock*, StructureStubInfo& stubInfo)
 {
-    if (codeBlock->useDataIC() && codeBlock->jitType() == JITType::BaselineJIT) {
-        stubInfo.m_codePtr = stubInfo.slowPathStartLocation;
-        stubInfo.m_inlineAccessBaseStructure = 0; // Clear out the inline access code.
-        return;
-    }
-
     CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
         // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
         auto jump = jit.jump();

@@ -31,7 +31,6 @@
 #include "ArithProfile.h"
 #include "ArrayConstructor.h"
 #include "CacheableIdentifierInlines.h"
-#include "CodeBlockInlines.h"
 #include "CommonSlowPathsInlines.h"
 #include "DFGDriver.h"
 #include "DFGOSREntry.h"
@@ -2856,7 +2855,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobal
     JSValue key = JSValue::decode(encodedKey);
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    const SimpleJumpTable& linkedTable = codeBlock->baselineSwitchJumpTable(tableIndex);
+    const SimpleJumpTable& linkedTable = codeBlock->switchJumpTable(tableIndex);
     ASSERT(codeBlock->unlinkedSwitchJumpTable(tableIndex).m_min == min);
     void* result = linkedTable.m_ctiDefault.executableAddress();
 
@@ -2881,7 +2880,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM* vmPoi
     JSValue key = JSValue::decode(encodedKey);
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    const SimpleJumpTable& linkedTable = codeBlock->baselineSwitchJumpTable(tableIndex);
+    const SimpleJumpTable& linkedTable = codeBlock->switchJumpTable(tableIndex);
     ASSERT(codeBlock->unlinkedSwitchJumpTable(tableIndex).m_min == min);
     void* result;
     if (key.isInt32())
@@ -2904,7 +2903,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     void* result;
-    const StringJumpTable& linkedTable = codeBlock->baselineStringSwitchJumpTable(tableIndex);
+    const StringJumpTable& linkedTable = codeBlock->stringSwitchJumpTable(tableIndex);
 
     if (key.isString()) {
         StringImpl* value = asString(key)->value(globalObject).impl();
@@ -2920,6 +2919,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     return reinterpret_cast<char*>(result);
 }
 
+#if ENABLE(EXTRA_CTI_THUNKS)
 JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject* globalObject, const Instruction* pc))
 {
     VM& vm = globalObject->vm();
@@ -2971,6 +2971,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGl
 
     return JSValue::encode(resolvedScope);
 }
+#endif
 
 JSC_DEFINE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject* globalObject, const Instruction* pc))
 {

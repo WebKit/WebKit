@@ -396,19 +396,10 @@ void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSS
     if (Options::validateBytecode())
         codeBlock->validate();
 
-    bool installedUnlinkedBaselineCode = false;
-#if ENABLE(JIT)
-    if (RefPtr<BaselineJITCode> baselineRef = codeBlock->unlinkedCodeBlock()->m_unlinkedBaselineCode) {
-        codeBlock->setupWithUnlinkedBaselineCode(baselineRef.releaseNonNull());
-        installedUnlinkedBaselineCode = true;
-    }
-#endif
-    if (!installedUnlinkedBaselineCode) {
-        if (Options::useLLInt())
-            setupLLInt(codeBlock);
-        else
-            setupJIT(vm, codeBlock);
-    }
+    if (Options::useLLInt())
+        setupLLInt(codeBlock);
+    else
+        setupJIT(vm, codeBlock);
 
     installCode(vm, codeBlock, codeBlock->codeType(), codeBlock->specializationKind());
 }

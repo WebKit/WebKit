@@ -32,7 +32,6 @@
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "InlineAccess.h"
-#include "JIT.h"
 #include "LinkBuffer.h"
 #include "StructureStubInfo.h"
 
@@ -47,9 +46,10 @@ static StructureStubInfo* garbageStubInfo()
 JITInlineCacheGenerator::JITInlineCacheGenerator(
     CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, AccessType accessType,
     const RegisterSet& usedRegisters)
-    : m_jitType(jitType)
+    : m_codeBlock(codeBlock)
+    , m_jitType(jitType)
 {
-    m_stubInfo = codeBlock ? codeBlock->addStubInfo(accessType, codeOrigin) : garbageStubInfo();
+    m_stubInfo = m_codeBlock ? m_codeBlock->addStubInfo(accessType, codeOrigin) : garbageStubInfo();
     m_stubInfo->callSiteIndex = callSite;
 
     m_stubInfo->usedRegisters = usedRegisters;
@@ -59,20 +59,12 @@ void JITInlineCacheGenerator::finalize(
     LinkBuffer& fastPath, LinkBuffer& slowPath, CodeLocationLabel<JITStubRoutinePtrTag> start)
 {
     m_stubInfo->start = start;
+
     m_stubInfo->doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
 
     if (!JITCode::useDataIC(m_jitType))
         m_stubInfo->m_slowPathCallLocation = slowPath.locationOf<JSInternalPtrTag>(m_slowPathCall);
     m_stubInfo->slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
-}
-
-void JITInlineCacheGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stubInfo, GPRReg stubInfoGPR)
-{
-    m_start = jit.label();
-    RELEASE_ASSERT(JITCode::useDataIC(m_jitType));
-    jit.loadConstant(stubInfo, stubInfoGPR);
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
-    m_done = jit.label();
 }
 
 JITByIdGenerator::JITByIdGenerator(
@@ -118,7 +110,7 @@ JITGetByIdGenerator::JITGetByIdGenerator(
     CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
     CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, AccessType accessType)
     : JITByIdGenerator(codeBlock, jitType, codeOrigin, callSite, accessType, usedRegisters, base, value, stubInfoGPR)
-    , m_isLengthAccess(codeBlock && propertyName.uid() == codeBlock->vm().propertyNames->length.impl())
+    , m_isLengthAccess(propertyName.uid() == codeBlock->vm().propertyNames->length.impl())
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
 }
@@ -127,37 +119,6 @@ void JITGetByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
     generateFastCommon(jit, m_isLengthAccess ? InlineAccess::sizeForLengthAccess() : InlineAccess::sizeForPropertyAccess());
 }
-
-
-#if USE(JSVALUE64)
-static void generateGetByIdInlineAccess(JIT& jit, GPRReg stubInfoGPR, GPRReg base, GPRReg scratch, GPRReg result)
-{
-    CCallHelpers::JumpList done;
-
-    jit.load32(CCallHelpers::Address(base, JSCell::structureIDOffset()), scratch);
-    auto skipInlineAccess = jit.branch32(CCallHelpers::NotEqual, scratch, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructure()));
-    jit.load32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfByIdSelfOffset()), scratch);
-    jit.loadProperty(base, scratch, JSValueRegs { result });
-    auto finished = jit.jump();
-
-    skipInlineAccess.link(&jit);
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
-
-    finished.link(&jit);
-}
-
-void JITGetByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stubInfo, GPRReg stubInfoGPR)
-{
-    RELEASE_ASSERT(JITCode::useDataIC(m_jitType));
-
-    m_start = jit.label();
-
-    jit.loadConstant(stubInfo, stubInfoGPR);
-    generateGetByIdInlineAccess(jit, stubInfoGPR, BaselineGetByIdRegisters::base, BaselineGetByIdRegisters::scratch, BaselineGetByIdRegisters::result);
-
-    m_done = jit.label();
-}
-#endif
 
 JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
     CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
@@ -177,20 +138,6 @@ void JITGetByIdWithThisGenerator::generateFastPath(MacroAssembler& jit)
     generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
 }
 
-#if USE(JSVALUE64)
-void JITGetByIdWithThisGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stubInfo, GPRReg stubInfoGPR)
-{
-    RELEASE_ASSERT(JITCode::useDataIC(m_jitType));
-
-    m_start = jit.label();
-
-    jit.loadConstant(stubInfo, stubInfoGPR);
-    generateGetByIdInlineAccess(jit, stubInfoGPR, BaselineGetByIdWithThisRegisters::base, BaselineGetByIdWithThisRegisters::scratch, BaselineGetByIdWithThisRegisters::result);
-
-    m_done = jit.label();
-}
-#endif
-
 JITPutByIdGenerator::JITPutByIdGenerator(
     CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters, CacheableIdentifier,
     JSValueRegs base, JSValueRegs value, GPRReg stubInfoGPR, GPRReg scratch, 
@@ -201,36 +148,6 @@ JITPutByIdGenerator::JITPutByIdGenerator(
 {
     m_stubInfo->usedRegisters.clear(scratch);
 }
-
-#if USE(JSVALUE64)
-void JITPutByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stubInfo, GPRReg stubInfoGPR)
-{
-    RELEASE_ASSERT(JITCode::useDataIC(m_jitType));
-
-    m_start = jit.label();
-
-    jit.loadConstant(stubInfo, stubInfoGPR);
-
-    GPRReg base = BaselinePutByIdRegisters::base;
-    GPRReg scratch = BaselinePutByIdRegisters::scratch;
-    GPRReg scratch2 = BaselinePutByIdRegisters::scratch2;
-    GPRReg value = BaselinePutByIdRegisters::value;
-
-    CCallHelpers::JumpList done;
-
-    jit.load32(CCallHelpers::Address(base, JSCell::structureIDOffset()), scratch);
-    auto skipInlineAccess = jit.branch32(CCallHelpers::NotEqual, scratch, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructure()));
-    jit.load32(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfByIdSelfOffset()), scratch);
-    jit.storeProperty(JSValueRegs { value }, base, scratch, scratch2);
-    auto finished = jit.jump();
-
-    skipInlineAccess.link(&jit);
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
-
-    finished.link(&jit);
-    m_done = jit.label();
-}
-#endif
 
 void JITPutByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
@@ -283,7 +200,7 @@ void JITDelByValGenerator::generateFastPath(MacroAssembler& jit)
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+        jit.call(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
     m_done = jit.label();
@@ -319,7 +236,7 @@ void JITDelByIdGenerator::generateFastPath(MacroAssembler& jit)
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+        jit.call(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
     m_done = jit.label();
@@ -353,7 +270,7 @@ void JITInByValGenerator::generateFastPath(MacroAssembler& jit)
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+        jit.call(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
     m_done = jit.label();
@@ -382,34 +299,6 @@ void JITInByIdGenerator::generateFastPath(MacroAssembler& jit)
 {
     generateFastCommon(jit, InlineAccess::sizeForPropertyAccess());
 }
-
-#if USE(JSVALUE64)
-void JITInByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stubInfo, GPRReg stubInfoGPR)
-{
-    RELEASE_ASSERT(JITCode::useDataIC(m_jitType));
-
-    m_start = jit.label();
-
-    jit.loadConstant(stubInfo, stubInfoGPR);
-
-    GPRReg base = BaselineInByIdRegisters::base;
-    GPRReg result = BaselineInByIdRegisters::result;
-    GPRReg scratch = BaselineInByIdRegisters::scratch;
-
-    CCallHelpers::JumpList done;
-
-    jit.load32(CCallHelpers::Address(base, JSCell::structureIDOffset()), scratch);
-    auto skipInlineAccess = jit.branch32(CCallHelpers::NotEqual, scratch, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructure()));
-    jit.boxBoolean(true, JSValueRegs { result });
-    auto finished = jit.jump();
-
-    skipInlineAccess.link(&jit);
-    jit.farJump(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
-
-    finished.link(&jit);
-    m_done = jit.label();
-}
-#endif
 
 JITInstanceOfGenerator::JITInstanceOfGenerator(
     CodeBlock* codeBlock, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex,
@@ -443,7 +332,7 @@ void JITInstanceOfGenerator::generateFastPath(MacroAssembler& jit)
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+        jit.call(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
     m_done = jit.label();
@@ -479,7 +368,7 @@ void JITGetByValGenerator::generateFastPath(MacroAssembler& jit)
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+        jit.call(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
     m_done = jit.label();
@@ -516,7 +405,7 @@ void JITPutByValGenerator::generateFastPath(MacroAssembler& jit)
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+        jit.call(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
     m_done = jit.label();
@@ -551,7 +440,7 @@ void JITPrivateBrandAccessGenerator::generateFastPath(MacroAssembler& jit)
     m_start = jit.label();
     if (JITCode::useDataIC(m_jitType)) {
         jit.move(CCallHelpers::TrustedImmPtr(m_stubInfo), m_stubInfo->m_stubInfoGPR);
-        jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
+        jit.call(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
     m_done = jit.label();

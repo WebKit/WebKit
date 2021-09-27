@@ -52,7 +52,7 @@ namespace JSC {
 template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
-    emitValueProfilingSite(bytecode.metadata(m_profiledCodeBlock), JSValueRegs(regT1, regT0));
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
     emitStore(destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister(), regT1, regT0);
 }
 
@@ -157,7 +157,7 @@ std::enable_if_t<
 JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo*)
 {
     unsigned checkpoint = m_bytecodeIndex.checkpoint();
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
+    auto& metadata = bytecode.metadata(m_codeBlock);
     int argCount = argumentCountIncludingThisFor(bytecode, checkpoint);
     int registerOffset = -static_cast<int>(stackOffsetInRegistersForCall(bytecode, checkpoint));
 
@@ -192,7 +192,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
         sizeOperation = operationSizeFrameForForwardArguments;
     else
         sizeOperation = operationSizeFrameForVarargs;
-    callOperation(sizeOperation, m_profiledCodeBlock->globalObject(), JSValueRegs(regT1, regT0), -firstFreeRegister, firstVarArgOffset);
+    callOperation(sizeOperation, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), -firstFreeRegister, firstVarArgOffset);
     move(TrustedImm32(-firstFreeRegister), regT1);
     emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
     addPtr(TrustedImm32(-(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf(stackAlignmentBytes(), 6 * sizeof(void*)))), regT1, stackPointerRegister);
@@ -202,7 +202,7 @@ JIT::compileSetupFrame(const Op& bytecode, CallLinkInfo* info)
         setupOperation = operationSetupForwardArgumentsFrame;
     else
         setupOperation = operationSetupVarargsFrame;
-    callOperation(setupOperation, m_profiledCodeBlock->globalObject(), regT1, JSValueRegs(regT2, regT4), firstVarArgOffset, regT0);
+    callOperation(setupOperation, m_codeBlock->globalObject(), regT1, JSValueRegs(regT2, regT4), firstVarArgOffset, regT0);
     move(returnValueGPR, regT1);
 
     // Profile the argument count.
@@ -232,10 +232,10 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
     addPtr(TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), stackPointerRegister, regT1);
     storePtr(callFrameRegister, Address(regT1, CallFrame::callerFrameOffset()));
 
-    addPtr(TrustedImm32(stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
+    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
     move(TrustedImm32(bytecode.m_ecmaMode.value()), regT2);
-    callOperation(operationCallEval, m_profiledCodeBlock->globalObject(), regT1, regT2);
+    callOperation(operationCallEval, m_codeBlock->globalObject(), regT1, regT2);
 
     addSlowCase(branchIfEmpty(regT1));
 
@@ -249,7 +249,7 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     linkAllSlowCases(iter);
 
     auto bytecode = instruction->as<OpCallEval>();
-    CallLinkInfo* info = m_profiledCodeBlock->addCallLinkInfo(CodeOrigin(m_bytecodeIndex));
+    CallLinkInfo* info = m_codeBlock->addCallLinkInfo(CodeOrigin(m_bytecodeIndex));
     info->setUpCall(CallLinkInfo::Call, regT0);
 
     int registerOffset = -bytecode.m_argv;
@@ -258,8 +258,8 @@ void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCas
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     emitLoad(callee, regT1, regT0);
-    emitVirtualCall(*m_vm, m_profiledCodeBlock->globalObject(), info);
-    addPtr(TrustedImm32(stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
+    emitVirtualCall(*m_vm, m_codeBlock->globalObject(), info);
+    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
     emitPutCallResult(bytecode);
@@ -286,11 +286,11 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     */
     CallLinkInfo* info = nullptr;
     if (opcodeID != op_call_eval)
-        info = m_profiledCodeBlock->addCallLinkInfo(CodeOrigin(m_bytecodeIndex));
+        info = m_codeBlock->addCallLinkInfo(CodeOrigin(m_bytecodeIndex));
     compileSetupFrame(bytecode, info);
     // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
     
-    auto bytecodeIndex = m_profiledCodeBlock->bytecodeIndex(instruction);
+    auto bytecodeIndex = m_codeBlock->bytecodeIndex(instruction);
     uint32_t locationBits = CallSiteIndex(bytecodeIndex).bits();
     store32(TrustedImm32(locationBits), tagFor(CallFrameSlot::argumentCountIncludingThis));
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.
@@ -324,7 +324,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
     addSlowCase(slowPaths);
     m_callCompilationInfo[callLinkInfoIndex].doneLocation = label();
 
-    addPtr(TrustedImm32(stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
+    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
     emitPutCallResult(bytecode);
@@ -341,11 +341,12 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
     }
 
     linkAllSlowCases(iter);
+    m_callCompilationInfo[callLinkInfoIndex].slowPathStart = label();
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         emitRestoreCalleeSaves();
 
-    move(TrustedImmPtr(m_profiledCodeBlock->globalObject()), regT3);
+    move(TrustedImmPtr(m_codeBlock->globalObject()), regT3);
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo->emitSlowPath(*m_vm, *this);
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
@@ -353,7 +354,7 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
         return;
     }
 
-    addPtr(TrustedImm32(stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
+    addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
     auto bytecode = instruction->as<Op>();
@@ -394,7 +395,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     JSValueRegs nextRegs = JSValueRegs(tagNextGPR, payloadNextGPR);
 
     JITGetByIdGenerator gen(
-        m_profiledCodeBlock,
+        m_codeBlock,
         JITType::BaselineJIT,
         CodeOrigin(m_bytecodeIndex),
         CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())),
@@ -409,7 +410,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     addSlowCase(gen.slowPathJump());
     m_getByIds.append(gen);
 
-    emitValueProfilingSite(bytecode.metadata(m_profiledCodeBlock), nextRegs);
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock), nextRegs);
     emitPutVirtualRegister(bytecode.m_next, nextRegs);
 
     fastCase.link(this);
@@ -439,10 +440,10 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
     Label coldPathBegin = label();
 
     Call call = callOperationWithProfile(
-        bytecode.metadata(m_profiledCodeBlock), // metadata
+        bytecode.metadata(m_codeBlock), // metadata
         operationGetByIdOptimize, // operation
         nextVReg, // result
-        TrustedImmPtr(m_profiledCodeBlock->globalObject()), // arg1
+        TrustedImmPtr(m_codeBlock->globalObject()), // arg1
         gen.stubInfo(), // arg2
         JSValueRegs(tagIteratorGPR, payloadIteratorGPR), // arg3
         CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits()); // arg4
@@ -451,7 +452,7 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
     auto done = jump();
 
     notObject.link(this);
-    callOperation(operationThrowIteratorResultIsNotObject, TrustedImmPtr(m_profiledCodeBlock->globalObject()));
+    callOperation(operationThrowIteratorResultIsNotObject, TrustedImmPtr(m_codeBlock->globalObject()));
 
     done.link(this);
 }
@@ -459,7 +460,7 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
 void JIT::emit_op_iterator_next(const Instruction* instruction)
 {
     auto bytecode = instruction->as<OpIteratorNext>();
-    auto& metadata = bytecode.metadata(m_profiledCodeBlock);
+    auto& metadata = bytecode.metadata(m_codeBlock);
     auto* tryFastFunction = ([&] () {
         switch (instruction->width()) {
         case Narrow: return iterator_next_try_fast_narrow;
@@ -505,7 +506,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         preservedRegs.add(tagValueGPR);
         preservedRegs.add(payloadValueGPR);
         JITGetByIdGenerator gen(
-            m_profiledCodeBlock,
+            m_codeBlock,
             JITType::BaselineJIT,
             CodeOrigin(m_bytecodeIndex),
             CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())),
@@ -532,10 +533,10 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         GPRReg scratch1 = regT6;
         GPRReg scratch2 = regT7;
         const bool shouldCheckMasqueradesAsUndefined = false;
-        JumpList iterationDone = branchIfTruthy(vm(), JSValueRegs(tagDoneGPR, payloadDoneGPR), scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_profiledCodeBlock->globalObject());
+        JumpList iterationDone = branchIfTruthy(vm(), JSValueRegs(tagDoneGPR, payloadDoneGPR), scratch1, scratch2, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
 
         JITGetByIdGenerator gen(
-            m_profiledCodeBlock,
+            m_codeBlock,
             JITType::BaselineJIT,
             CodeOrigin(m_bytecodeIndex),
             CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())),
@@ -587,10 +588,10 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
         Label coldPathBegin = label();
 
         Call call = callOperationWithProfile(
-            bytecode.metadata(m_profiledCodeBlock), // metadata
+            bytecode.metadata(m_codeBlock), // metadata
             operationGetByIdOptimize, // operation
             doneVReg, // result
-            TrustedImmPtr(m_profiledCodeBlock->globalObject()), // arg1
+            TrustedImmPtr(m_codeBlock->globalObject()), // arg1
             gen.stubInfo(), // arg2
             JSValueRegs(tagIterResultGPR, payloadIterResultGPR), // arg3
             CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits()); // arg4
@@ -601,7 +602,7 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
         emitJumpSlowToHotForCheckpoint(jump());
 
         notObject.link(this);
-        callOperation(operationThrowIteratorResultIsNotObject, TrustedImmPtr(m_profiledCodeBlock->globalObject()));
+        callOperation(operationThrowIteratorResultIsNotObject, TrustedImmPtr(m_codeBlock->globalObject()));
     }
 
     {   
@@ -617,10 +618,10 @@ void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowC
         Label coldPathBegin = label();
 
         Call call = callOperationWithProfile(
-            bytecode.metadata(m_profiledCodeBlock), // metadata
+            bytecode.metadata(m_codeBlock), // metadata
             operationGetByIdOptimize, // operation
             valueVReg, // result
-            TrustedImmPtr(m_profiledCodeBlock->globalObject()), // arg1
+            TrustedImmPtr(m_codeBlock->globalObject()), // arg1
             gen.stubInfo(), // arg2
             JSValueRegs(tagIterResultGPR, payloadIterResultGPR), // arg3
             CacheableIdentifier::createFromImmortalIdentifier(ident).rawBits()); // arg4

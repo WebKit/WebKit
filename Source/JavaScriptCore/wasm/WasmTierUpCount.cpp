@@ -34,7 +34,7 @@ namespace JSC { namespace Wasm {
 
 TierUpCount::TierUpCount()
 {
-    setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
+    setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp(), nullptr);
 }
 
 TierUpCount::~TierUpCount() = default;

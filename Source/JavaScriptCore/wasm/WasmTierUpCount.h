@@ -73,7 +73,7 @@ public:
     void optimizeAfterWarmUp(uint32_t functionIndex)
     {
         dataLogLnIf(Options::verboseOSR(), functionIndex, ": OMG-optimizing after warm-up.");
-        setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp());
+        setNewThreshold(Options::thresholdForOMGOptimizeAfterWarmUp(), nullptr);
     }
 
     bool checkIfOptimizationThresholdReached()
@@ -90,14 +90,14 @@ public:
     void optimizeNextInvocation(uint32_t functionIndex)
     {
         dataLogLnIf(Options::verboseOSR(), functionIndex, ": OMG-optimizing next invocation.");
-        setNewThreshold(0);
+        setNewThreshold(0, nullptr);
     }
 
     void optimizeSoon(uint32_t functionIndex)
     {
         dataLogLnIf(Options::verboseOSR(), functionIndex, ": OMG-optimizing soon.");
         // FIXME: Need adjustment once we get more information about wasm functions.
-        setNewThreshold(Options::thresholdForOMGOptimizeSoon());
+        setNewThreshold(Options::thresholdForOMGOptimizeSoon(), nullptr);
     }
 
     void setOptimizationThresholdBasedOnCompilationResult(uint32_t functionIndex, CompilationResult result)

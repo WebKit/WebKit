@@ -30,7 +30,6 @@
 #include "CacheableIdentifierInlines.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
-#include "CodeBlockInlines.h"
 #include "CommonSlowPaths.h"
 #include "DFGDriver.h"
 #include "DFGJITCode.h"
@@ -2870,7 +2869,7 @@ JSC_DEFINE_JIT_OPERATION(operationFindSwitchImmTargetForDouble, char*, (VM* vmPo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     CodeBlock* codeBlock = callFrame->codeBlock();
-    const SimpleJumpTable& linkedTable = codeBlock->dfgSwitchJumpTable(tableIndex);
+    const SimpleJumpTable& linkedTable = codeBlock->switchJumpTable(tableIndex);
     JSValue value = JSValue::decode(encodedValue);
     ASSERT(value.isDouble());
     double asDouble = value.asDouble();
@@ -2891,7 +2890,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchString, char*, (JSGlobalObject* globalOb
 
     RETURN_IF_EXCEPTION(throwScope, nullptr);
     CodeBlock* codeBlock = callFrame->codeBlock();
-    const StringJumpTable& linkedTable = codeBlock->dfgStringSwitchJumpTable(tableIndex);
+    const StringJumpTable& linkedTable = codeBlock->stringSwitchJumpTable(tableIndex);
     return linkedTable.ctiForValue(*unlinkedTable, strImpl).executableAddress<char*>();
 }
 

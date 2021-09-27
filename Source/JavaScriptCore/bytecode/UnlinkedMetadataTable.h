@@ -64,15 +64,6 @@ public:
         return adoptRef(*new UnlinkedMetadataTable);
     }
 
-    template <typename Opcode>
-    uintptr_t offsetInMetadataTable(const Opcode& opcode)
-    {
-        ASSERT(m_isFinalized);
-        uintptr_t baseTypeOffset = m_is32Bit ? offsetTable32()[Opcode::opcodeID] : offsetTable16()[Opcode::opcodeID];
-        baseTypeOffset = roundUpToMultipleOf(alignof(typename Opcode::Metadata), baseTypeOffset);
-        return baseTypeOffset + sizeof(typename Opcode::Metadata) * opcode.m_metadataID;
-    }
-
     template <typename Bytecode>
     unsigned numEntries();
 
@@ -115,7 +106,6 @@ private:
             return s_offset16TableSize + s_offset32TableSize;
         return s_offset16TableSize;
     }
-
 
     using Offset32 = uint32_t;
     using Offset16 = uint16_t;

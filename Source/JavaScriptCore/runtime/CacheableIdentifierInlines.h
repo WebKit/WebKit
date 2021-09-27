@@ -35,14 +35,12 @@
 
 namespace JSC {
 
-template <typename CodeBlockType>
-inline CacheableIdentifier CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(CodeBlockType* codeBlock, const Identifier& i)
+inline CacheableIdentifier CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(CodeBlock* codeBlock, const Identifier& i)
 {
     return createFromIdentifierOwnedByCodeBlock(codeBlock, i.impl());
 }
 
-template <typename CodeBlockType>
-inline CacheableIdentifier CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(CodeBlockType* codeBlock, UniquedStringImpl* uid)
+inline CacheableIdentifier CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(CodeBlock* codeBlock, UniquedStringImpl* uid)
 {
     ASSERT_UNUSED(codeBlock, codeBlock->hasIdentifier(uid));
     return CacheableIdentifier(uid);

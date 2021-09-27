@@ -772,6 +772,9 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
     // The tag registers are needed to materialize recoveries below.
     jit.emitMaterializeTagCheckRegisters();
 
+    if (exit.isExceptionHandler())
+        jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
+
     if (inlineStackContainsActiveCheckpoint) {
         EncodedJSValue* tmpScratch = scratch + operands.tmpIndex(0);
         jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(&vm, &exit, tmpScratch);

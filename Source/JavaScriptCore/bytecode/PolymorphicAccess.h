@@ -251,7 +251,7 @@ struct AccessGenerationState {
     const RegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
 
     SpillState preserveLiveRegistersToStackForCall(const RegisterSet& extra = { });
-    SpillState preserveLiveRegistersToStackForCallWithoutExceptions();
+    SpillState preserveLiveRegistersToStackForCallWithoutExceptions(const RegisterSet& extra = { });
 
     void restoreLiveRegistersFromStackForCallWithThrownException(const SpillState&);
     void restoreLiveRegistersFromStackForCall(const SpillState&, const RegisterSet& dontRestore = { });
