@@ -14,6 +14,7 @@ class SummaryPage extends PageWithHeading {
         this._renderQueue = [];
         this._configGroups = [];
         this._excludedConfigurations = summarySettings.excludedConfigurations;
+        this._weightedConfigurations = summarySettings.weightedConfigurations;
 
         for (var metricGroup of summarySettings.metricGroups) {
             var group = {name: metricGroup.name, rows: []};
@@ -59,7 +60,7 @@ class SummaryPage extends PageWithHeading {
     {
         var platforms = platformIdList.map(function (id) { return Platform.findById(id); }).filter(function (obj) { return !!obj; });
         var metrics = metricIdList.map(function (id) { return Metric.findById(id); }).filter(function (obj) { return !!obj; });
-        var configGroup = new SummaryPageConfigurationGroup(platforms, metrics, this._excludedConfigurations);
+        var configGroup = new SummaryPageConfigurationGroup(platforms, metrics, this._excludedConfigurations, this._weightedConfigurations);
         this._configGroups.push(configGroup);
         return configGroup;
     }
@@ -247,7 +248,7 @@ class SummaryPage extends PageWithHeading {
 }
 
 class SummaryPageConfigurationGroup {
-    constructor(platforms, metrics, excludedConfigurations)
+    constructor(platforms, metrics, excludedConfigurations, weightedConfigurations)
     {
         this._measurementSets = [];
         this._configurationList = [];
@@ -258,6 +259,7 @@ class SummaryPageConfigurationGroup {
         this._platformsWithoutBaseline = new Set;
         this._isFetching = false;
         this._smallerIsBetter = metrics.length ? metrics[0].isSmallerBetter() : null;
+        this._weightedConfigurations = weightedConfigurations;
 
         for (const platform of platforms) {
             console.assert(platform instanceof Platform);
@@ -320,12 +322,13 @@ class SummaryPageConfigurationGroup {
     {
         var ratios = [];
         for (var set of this._measurementSets) {
-            var ratio = this._setToRatio.get(set);
+            const ratio = this._setToRatio.get(set);
+            const weight = this._weightForMeasurementSet(set);
             if (!isNaN(ratio))
-                ratios.push(ratio);
+                ratios.push({value: ratio, weight});
         }
 
-        var averageRatio = Statistics.mean(ratios);
+        var averageRatio = Statistics.weightedMean(ratios);
         if (isNaN(averageRatio))
             return;
 
@@ -336,6 +339,22 @@ class SummaryPageConfigurationGroup {
         this._ratio = averageRatio * (changeType == 'better' ? 1 : -1);
         this._label = (averageRatio * 100).toFixed(1) + '%';
         this._changeType = changeType;
+    }
+
+    _weightForMeasurementSet(measurementSet)
+    {
+        if (!this._weightedConfigurations)
+            return 1;
+        const platformId = measurementSet.platformId();
+        const weightForPlatform = this._weightedConfigurations[platformId];
+        if (!weightForPlatform)
+            return 1;
+        if (!isNaN(+weightForPlatform))
+            return +weightForPlatform;
+        const metricId = measurementSet.metricId();
+        if (typeof weightForPlatform != 'object' || isNaN(+weightForPlatform[metricId]))
+            return 1
+        return +weightForPlatform[metricId];
     }
 
     _fetchAndComputeRatio(set, timeRange)

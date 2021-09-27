@@ -1,3 +1,20 @@
+2021-09-26  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Summary page should support calculating summary using weighted mean.
+        https://bugs.webkit.org/show_bug.cgi?id=230810
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a way to specify weight for a platform or (plafform, metric) which will be used while calculating a summary.
+
+        * public/shared/statistics.js: Added 'weightedMean' function.
+        (Statistics.new.this.weightedMean):
+        * public/v3/pages/summary-page.js: Added support for specifying a weight for platform or (platform, metric).
+        (SummaryPage):
+        (SummaryPage.prototype._createConfigurationGroup):
+        (SummaryPageConfigurationGroup):
+        * unit-tests/statistics-tests.js: Added unit tests.
+
 2021-07-20  Dewei Zhu  <dewei_zhu@apple.com>
 
         Use bigint for 'commit_order' field in 'commits' table to support larger range.

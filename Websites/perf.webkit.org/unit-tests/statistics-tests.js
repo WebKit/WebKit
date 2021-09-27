@@ -62,6 +62,16 @@ describe('Statistics', function () {
         });
     });
 
+
+    describe('weightedMean',() => {
+        it('should return mean with weight', () => {
+            assert.equal(Statistics.weightedMean([{value: 1, weight: 1}, {value: 2, weight: 2},
+                {value: 3, weight: 3}, {value: 4, weight: 4}]), 3);
+            assert.equal(Statistics.weightedMean([{value: 1, weight: 1}, {value: 2, weight: 0},
+                {value: 3, weight: 0}, {value: 4, weight: 0}]), 1);
+        });
+    });
+
     describe('squareSum', function () {
         it('should find the square sum of values', function () {
             assert.equal(Statistics.squareSum([1, 2, 3, 4]), 30);
