@@ -1,3 +1,16 @@
+2021-09-27  Tyler Wilcock  <tyler_w@apple.com>
+
+        [ MacOS ] inspector/dom/getAccessibilityPropertiesForNode.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=230840
+
+        Reviewed by Ryan Haddad.
+
+        Remove `expanded` property from expected output for this test.
+        Following https://trac.webkit.org/changeset/283078/webkit, we don't
+        expose expanded in this case anymore.
+
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2021-09-27  Eric Hutchison  <ehutchison@apple.com>
 
         [ Catalina BigSur wk1 Debug ] webrtc/datachannel/datachannel-gc.html is a flaky crash.
