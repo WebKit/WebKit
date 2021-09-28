@@ -2,8 +2,8 @@ kind: meson
 sources:
 - kind: git_tag
   url: github_com:Igalia/WPEBackend-fdo.git
-  track: 1.8.4
-  ref: 1.8.4-0-gfe0665f101f40ef51b8b075c03cf45b5dfcfed08
+  track: 1.10.0
+  ref: 1.10.0-0-ga908c630483bc99d0c87d4086af183c9a4cafde2
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:

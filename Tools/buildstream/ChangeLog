@@ -1,3 +1,15 @@
+2021-09-28  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update libsoup3 and friends
+        https://bugs.webkit.org/show_bug.cgi?id=230891
+
+        Reviewed by Michael Catanzaro.
+
+        * elements/sdk/glib.bst: Bump to 2.70, the most recent stable version.
+        * elements/sdk/libsoup3.bst: Bump to 3.0.0.
+        * elements/sdk/rr.bst: Drive-by update to latest master.
+        * elements/sdk/wpebackend-fdo.bst: Update to 1.10.0.
+
 2021-09-11  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to FDO 21.08
