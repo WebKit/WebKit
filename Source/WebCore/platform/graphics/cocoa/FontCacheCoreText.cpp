@@ -452,13 +452,13 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
     case FontPalette::Type::Normal:
         break;
     case FontPalette::Type::Light: {
-        auto light = kCTFontPaletteLight;
+        CFIndex light = kCTFontPaletteLight;
         auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &light));
         CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
         break;
     }
     case FontPalette::Type::Dark: {
-        auto dark = kCTFontPaletteDark;
+        CFIndex dark = kCTFontPaletteDark;
         auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &dark));
         CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
         break;

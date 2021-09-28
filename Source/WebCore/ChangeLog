@@ -1,3 +1,18 @@
+2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Negative integers in @font-palette-values are invalid
+        https://bugs.webkit.org/show_bug.cgi?id=230788
+
+        Reviewed by Simon Fraser.
+        <rdar://problem/83528806>
+
+        Addressing post-commit review.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::addAttributesForFontPalettes):
+
 2021-09-28  Cameron McCormack  <heycam@apple.com>
 
         Preserve color space when structured cloning ImageBitmaps
