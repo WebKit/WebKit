@@ -171,7 +171,6 @@ CurlShareHandle::CurlShareHandle()
     m_shareHandle = curl_share_init();
     curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
     curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
-    curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
     curl_share_setopt(m_shareHandle, CURLSHOPT_LOCKFUNC, lockCallback);
     curl_share_setopt(m_shareHandle, CURLSHOPT_UNLOCKFUNC, unlockCallback);
 }

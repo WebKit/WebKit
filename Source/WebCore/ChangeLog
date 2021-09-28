@@ -1,3 +1,16 @@
+2021-09-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed, reverting r283136.
+
+        An assertion failure for WinCairo Debug
+
+        Reverted changeset:
+
+        "[Curl] Set CURL_LOCK_DATA_SSL_SESSION option to reduce
+        SSL/TLS handshake time"
+        https://bugs.webkit.org/show_bug.cgi?id=230818
+        https://commits.webkit.org/r283136
+
 2021-09-28  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r283158): TestWebKitAPI.WebKit.AddAndRemoveDataDetectors is crashing on iOS
