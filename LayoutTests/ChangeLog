@@ -1,5 +1,14 @@
 2021-09-28  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Catalina BigSur wk1 Debug ] storage/websql/multiple-databases-garbage-collection.html is a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230910.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-09-28  Eric Hutchison  <ehutchison@apple.com>
+
         [ iOS, Mac ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=230905.
 
