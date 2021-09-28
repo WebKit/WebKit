@@ -71,12 +71,12 @@ public:
 
     DerivedTime operator+=(Seconds other)
     {
-        return *this = *this + other;
+        return *static_cast<DerivedTime*>(this) = *static_cast<DerivedTime*>(this) + other;
     }
 
     DerivedTime operator-=(Seconds other)
     {
-        return *this = *this - other;
+        return *static_cast<DerivedTime*>(this) = *static_cast<DerivedTime*>(this) - other;
     }
 
     constexpr Seconds operator-(DerivedTime other) const
