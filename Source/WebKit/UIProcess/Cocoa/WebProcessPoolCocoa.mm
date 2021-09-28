@@ -43,6 +43,8 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKMouseDeviceObserver.h"
 #import "WKStylusDeviceObserver.h"
+#import "WebAuthnProcessMessages.h"
+#import "WebAuthnProcessProxy.h"
 #import "WebBackForwardCache.h"
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
@@ -1059,8 +1061,18 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
     if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->send(Messages::GPUProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 #endif
-}
+    
+    WebsiteDataStore::forEachWebsiteDataStore([domain, key, encodedValue] (WebsiteDataStore& dataStore) {
+        if (auto* networkProcess = dataStore.networkProcessIfExists())
+            networkProcess->send(Messages::NetworkProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
+    });
+    
+#if ENABLE(WEB_AUTHN)
+    if (auto webAuthnProcess = WebAuthnProcessProxy::singletonIfCreated())
+        webAuthnProcess->send(Messages::WebAuthnProcess::NotifyPreferencesChanged(domain, key, encodedValue), 0);
 #endif
+}
+#endif // ENABLE(CFPREFS_DIRECT_MODE)
 
 #if PLATFORM(MAC)
 static void webProcessPoolHighDynamicRangeDidChangeCallback(CMNotificationCenterRef, const void*, CFStringRef notificationName, const void*, CFTypeRef)

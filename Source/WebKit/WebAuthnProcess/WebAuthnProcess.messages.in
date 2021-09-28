@@ -28,6 +28,10 @@ messages -> WebAuthnProcess {
 
     # Creates a connection for communication with a WebProcess
     CreateWebAuthnConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier) -> (std::optional<IPC::Attachment> connectionIdentifier) Async
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
+#endif
 }
 
 #endif // ENABLE(WEB_AUTHN)

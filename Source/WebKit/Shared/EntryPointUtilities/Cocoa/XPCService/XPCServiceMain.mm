@@ -169,35 +169,15 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMi
 
 #endif // PLATFORM(MAC)
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-static bool shouldEnableCFPrefsDirectMode(int argc, const char** argv)
+int XPCServiceMain(int, const char**)
 {
-    if (argc <= 0 || !argv[0])
-        return false;
-    if (strstr(argv[0], "com.apple.WebKit.WebContent"))
-        return true;
-    if (strstr(argv[0], "com.apple.WebKit.GPU"))
-        return true;
-    return false;
-}
-#endif
-
-int XPCServiceMain(int argc, const char** argv)
-{
-    ASSERT(argc >= 1);
-    ASSERT(argv[0]);
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    if (shouldEnableCFPrefsDirectMode(argc, argv)) {
-        // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
-        _CFPrefsSetDirectModeEnabled(YES);
+    // Enable CFPrefs direct mode to avoid unsuccessfully attempting to connect to the daemon and getting blocked by the sandbox.
+    _CFPrefsSetDirectModeEnabled(YES);
 #if HAVE(CF_PREFS_SET_READ_ONLY)
-        _CFPrefsSetReadOnly(YES);
+    _CFPrefsSetReadOnly(YES);
 #endif
-    }
-#else
-    UNUSED_PARAM(argc);
-    UNUSED_PARAM(argv);
-#endif
+#endif // ENABLE(CFPREFS_DIRECT_MODE)
 
     WTF::initializeMainThread();
 

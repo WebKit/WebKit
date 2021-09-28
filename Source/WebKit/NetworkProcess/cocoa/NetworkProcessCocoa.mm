@@ -249,4 +249,11 @@ void NetworkProcess::platformFlushCookies(PAL::SessionID sessionID, CompletionHa
         completionHandler();
 }
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+void NetworkProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
+{
+    preferenceDidUpdate(domain, key, encodedValue);
+}
+#endif
+
 } // namespace WebKit

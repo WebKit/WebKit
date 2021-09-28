@@ -320,7 +320,9 @@
 #endif
     (global-name "com.apple.audio.AudioComponentRegistrar")
     (global-name "com.apple.awdd")
+#if !ENABLE(CFPREFS_DIRECT_MODE)
     (global-name "com.apple.cfprefsd.agent")
+#endif
     (global-name "com.apple.cookied")
     (global-name "com.apple.diagnosticd")
     (global-name "com.apple.iconservices")
@@ -339,7 +341,9 @@
        (global-name "com.apple.assertiond.processassertionconnection")
        (global-name "com.apple.audio.SystemSoundServer-OSX")
        (global-name "com.apple.audio.audiohald")
+#if !ENABLE(CFPREFS_DIRECT_MODE)
        (global-name "com.apple.cfprefsd.daemon")
+#endif
        (global-name "com.apple.coreservices.launchservicesd")
        (global-name "com.apple.fonts")
        (global-name "com.apple.mediaremoted.xpc")

@@ -401,18 +401,6 @@
     (global-name "com.apple.logd")
     (global-name "com.apple.logd.events"))
 
-(allow mach-lookup (with report) (with telemetry)
-    (global-name "com.apple.cfprefsd.agent")
-    (local-name "com.apple.cfprefsd.agent")
-)
-
-(allow mach-lookup
-    (global-name "com.apple.cfprefsd.daemon") ;; Needed by _CFPreferencesGetAppBooleanValueWithContainer and others.
-)
-
-(allow ipc-posix-shm-read*
-    (ipc-posix-name-prefix "apple.cfprefs."))
-
 (allow mach-lookup
     (global-name "com.apple.runningboard")) ;; Needed by process assertion code (ProcessTaskStateObserver).
 

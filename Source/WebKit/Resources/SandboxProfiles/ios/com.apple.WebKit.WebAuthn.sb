@@ -230,7 +230,6 @@
 
 (allow mach-lookup
     (global-name
-        "com.apple.cfprefsd.daemon"
         "com.apple.logd"
         "com.apple.logd.events"
         "com.apple.system.notification_center"

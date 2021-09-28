@@ -134,6 +134,13 @@ void WebAuthnProcess::platformInitializeWebAuthnProcess(const WebAuthnProcessCre
 }
 #endif
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+void WebAuthnProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
+{
+    preferenceDidUpdate(domain, key, encodedValue);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

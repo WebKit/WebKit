@@ -1,3 +1,33 @@
+2021-09-28  Per Arne Vollan  <pvollan@apple.com>
+
+        Enable CFPrefs direct mode in all WebKit processes
+        https://bugs.webkit.org/show_bug.cgi?id=230771
+        <rdar://problem/83510055>
+
+        Reviewed by Brent Fulgham.
+
+        We currently enable CFPrefs direct mode in the WebContent and GPU Process, and we should enable it in all WebKit processes.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::notifyPreferencesChanged):
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        (WebKit::shouldEnableCFPrefsDirectMode): Deleted.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::notifyPreferencesChanged):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+        (WebKit::WebAuthnProcessProxy::singletonIfCreated):
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.h:
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::notifyPreferencesChanged):
+        * WebAuthnProcess/WebAuthnProcess.h:
+        * WebAuthnProcess/WebAuthnProcess.messages.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+
 2021-09-28  Per Arne  <pvollan@apple.com>
 
         [GPUP] Add sandbox telemetry

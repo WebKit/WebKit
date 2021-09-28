@@ -77,6 +77,11 @@ WebAuthnProcessProxy& WebAuthnProcessProxy::singleton()
     return *sharedProcess();
 }
 
+WebAuthnProcessProxy* WebAuthnProcessProxy::singletonIfCreated()
+{
+    return sharedProcess().get();
+}
+
 WebAuthnProcessProxy::WebAuthnProcessProxy()
     : AuxiliaryProcessProxy()
     , m_throttler(*this, false)
