@@ -270,7 +270,7 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
     auto& boxes = formattingState.boxes();
 
     for (auto& outOfFlowBox : outOfFlowBoxes) {
-        auto& outOfFlowGeometry = formattingState.boxGeometry(*outOfFlowBox);
+        auto& outOfFlowGeometry = formattingState.boxGeometry(outOfFlowBox);
         // Both previous float and out-of-flow boxes are skipped here. A series of adjoining out-of-flow boxes should all be placed
         // at the same static position (they don't affect next-sibling positions) and while floats do participate in the inline layout
         // their positions have already been taken into account during the inline layout.

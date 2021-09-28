@@ -29,8 +29,8 @@
 
 #include "LayoutUnits.h"
 #include "RenderStyle.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -42,7 +42,7 @@ class InitialContainingBlock;
 class LayoutState;
 class TreeBuilder;
 
-class Box : public CanMakeWeakPtr<Box> {
+class Box : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
     enum class ElementType {

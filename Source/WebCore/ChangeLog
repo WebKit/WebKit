@@ -1,3 +1,78 @@
+2021-09-27  Antti Koivisto  <antti@apple.com>
+
+        [LFC] Use CheckedRef/Ptr instead of WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=230821
+
+        Reviewed by Alan Bujtas.
+
+        WeakPtrs are used for layout boxes for safety only. Replace with simpler, faster CheckedPtr.
+
+        * display/DisplayTreeBuilder.cpp:
+        (WebCore::Display::TreeBuilder::build):
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::replace):
+
+        This was leaving a text iterator in stack while mutating the render tree.
+
+        * layout/FormattingState.h:
+        (WebCore::Layout::FormattingState::addOutOfFlowBox):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        (WebCore::Layout::LayoutState::formattingStateForFormattingContext const):
+        (WebCore::Layout::LayoutState::formattingStateForInlineFormattingContext const):
+        (WebCore::Layout::LayoutState::ensureInlineFormattingState):
+        * layout/LayoutState.h:
+        (WebCore::Layout::LayoutState::root const):
+        (WebCore::Layout::LayoutState::hasRoot const): Deleted.
+        * layout/floats/FloatAvoider.h:
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::FloatItem::FloatItem):
+        (WebCore::Layout::FloatingState::FloatingState):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::root const):
+        * layout/formattingContexts/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::FormattingContext):
+        (WebCore::Layout::FormattingContext::layoutOutOfFlowContent):
+        * layout/formattingContexts/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::root const):
+        * layout/formattingContexts/block/BlockFormattingState.h:
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeStaticPositionForOutOfFlowContent):
+        * layout/formattingContexts/inline/InlineLevelBox.h:
+        (WebCore::Layout::InlineLevelBox::layoutBox const):
+        (WebCore::Layout::InlineLevelBox::InlineLevelBox):
+        * layout/formattingContexts/inline/InlineLineBox.h:
+        * layout/formattingContexts/inline/display/InlineDisplayBox.h:
+        (WebCore::InlineDisplay::Box::layoutBox const):
+        (WebCore::InlineDisplay::Box::Box):
+        * layout/formattingContexts/table/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::Column::Column):
+        (WebCore::Layout::TableGrid::Row::Row):
+        (WebCore::Layout::TableGrid::Cell::Cell):
+        * layout/formattingContexts/table/TableGrid.h:
+        (WebCore::Layout::TableGrid::Row::box const):
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        (WebCore::LayoutIntegration::BoxTree::appendChild):
+        (WebCore::LayoutIntegration::BoxTree::layoutBoxForRenderer):
+        (WebCore::LayoutIntegration::BoxTree::rendererForLayoutBox):
+        * layout/integration/LayoutIntegrationBoxTree.h:
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::InlineContent):
+        (WebCore::LayoutIntegration::InlineContent::rendererForLayoutBox const):
+        (WebCore::LayoutIntegration::InlineContent::containingBlock const):
+        (WebCore::LayoutIntegration::InlineContent::lineLayout const): Deleted.
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        (WebCore::LayoutIntegration::InlineContent::lineLayout const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::constructContent):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::setCachedGeometryForLayoutState const):
+        * layout/layouttree/LayoutBox.h:
+        * layout/layouttree/LayoutReplacedBox.h:
+        * layout/layouttree/LayoutTreeBuilder.h:
+
 2021-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add support for CSSFontPaletteValuesRule.name

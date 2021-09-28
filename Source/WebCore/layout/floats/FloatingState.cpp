@@ -41,7 +41,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
 FloatingState::FloatItem::FloatItem(const Box& layoutBox, BoxGeometry absoluteBoxGeometry)
-    : m_layoutBox(makeWeakPtr(layoutBox))
+    : m_layoutBox(layoutBox)
     , m_position(layoutBox.isLeftFloatingPositioned() ? Position::Left : Position::Right)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
 {
@@ -55,7 +55,7 @@ FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGe
 
 FloatingState::FloatingState(LayoutState& layoutState, const ContainerBox& formattingContextRoot)
     : m_layoutState(layoutState)
-    , m_formattingContextRoot(makeWeakPtr(formattingContextRoot))
+    , m_formattingContextRoot(formattingContextRoot)
 {
 }
 

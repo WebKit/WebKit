@@ -114,14 +114,14 @@ void BoxTree::buildTree()
             continue;
         auto& childRenderer = *walker.current();
         auto childBox = createChildBox(childRenderer);
-        appendChild(WTFMove(childBox), childRenderer);
+        appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(childBox)), childRenderer);
     }
 }
 
-void BoxTree::appendChild(std::unique_ptr<Layout::Box> childBox, RenderObject& childRenderer)
+void BoxTree::appendChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer)
 {
     auto& parentBox = downcast<Layout::ContainerBox>(layoutBoxForRenderer(*childRenderer.parent()));
-    parentBox.appendChild(*childBox);
+    parentBox.appendChild(childBox.get());
 
     m_boxes.append({ WTFMove(childBox), &childRenderer });
 
@@ -161,7 +161,7 @@ Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
             return entry.renderer == &renderer;
         });
         RELEASE_ASSERT(index != notFound);
-        return *m_boxes[index].box;
+        return m_boxes[index].box;
     }
 
     return *m_rendererToBoxMap.get(&renderer);
@@ -179,7 +179,7 @@ RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
 
     if (m_boxes.size() <= smallTreeThreshold) {
         auto index = m_boxes.findMatching([&](auto& entry) {
-            return entry.box.get() == &box;
+            return entry.box.ptr() == &box;
         });
         RELEASE_ASSERT(index != notFound);
         return *m_boxes[index].renderer;

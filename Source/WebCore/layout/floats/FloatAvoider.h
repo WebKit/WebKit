@@ -32,7 +32,6 @@
 #include "LayoutPoint.h"
 #include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

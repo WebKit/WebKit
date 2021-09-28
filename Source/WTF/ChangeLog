@@ -1,3 +1,18 @@
+2021-09-27  Antti Koivisto  <antti@apple.com>
+
+        [LFC] Use CheckedRef/Ptr instead of WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=230821
+
+        Reviewed by Alan Bujtas.
+
+        * wtf/CheckedRef.h:
+        (WTF::CanMakeCheckedPtrBase::incrementPtrCount const):
+        (WTF::CanMakeCheckedPtrBase::decrementPtrCount const):
+        (WTF::CanMakeCheckedPtrBase::incrementPtrCount): Deleted.
+        (WTF::CanMakeCheckedPtrBase::decrementPtrCount): Deleted.
+
+        Make const so CheckedPtr<const Foo> works.
+
 2021-09-27  Jean-Yves Avenard  <jya@apple.com>
 
         Vorbis decoder can't be instantiated - Remove workaround added in bug 228139

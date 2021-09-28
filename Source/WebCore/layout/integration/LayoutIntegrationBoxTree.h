@@ -29,6 +29,7 @@
 
 #include "LayoutInitialContainingBlock.h"
 #include <wtf/HashMap.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -59,21 +60,21 @@ public:
     size_t boxCount() const { return m_boxes.size(); }
 
     struct BoxAndRenderer {
-        std::unique_ptr<Layout::Box> box;
+        UniqueRef<Layout::Box> box;
         RenderObject* renderer { nullptr };
     };
     const auto& boxAndRendererList() const { return m_boxes; }
 
 private:
     void buildTree();
-    void appendChild(std::unique_ptr<Layout::Box>, RenderObject&);
+    void appendChild(UniqueRef<Layout::Box>, RenderObject&);
 
     RenderBlockFlow& m_flow;
     Layout::InitialContainingBlock m_root;
     Vector<BoxAndRenderer, 1> m_boxes;
 
-    HashMap<const RenderObject*, Layout::Box*> m_rendererToBoxMap;
-    HashMap<const Layout::Box*, RenderObject*> m_boxToRendererMap;
+    HashMap<const RenderObject*, CheckedRef<Layout::Box>> m_rendererToBoxMap;
+    HashMap<CheckedRef<const Layout::Box>, RenderObject*> m_boxToRendererMap;
 };
 
 }

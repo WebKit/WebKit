@@ -107,7 +107,7 @@ struct Box {
     };
     Expansion expansion() const { return m_expansion; }
 
-    const Layout::Box& layoutBox() const { return *m_layoutBox; }
+    const Layout::Box& layoutBox() const { return m_layoutBox; }
     const RenderStyle& style() const { return m_style; }
 
     size_t lineIndex() const { return m_lineIndex; }
@@ -115,7 +115,7 @@ struct Box {
 private:
     const size_t m_lineIndex { 0 };
     const Type m_type { Type::GenericInlineLevelBox };
-    WeakPtr<const Layout::Box> m_layoutBox;
+    CheckedRef<const Layout::Box> m_layoutBox;
     const RenderStyle& m_style;
     Layout::InlineRect m_logicalRect;
     Layout::InlineRect m_inkOverflow;
@@ -127,7 +127,7 @@ private:
 inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, const RenderStyle& style, const Layout::InlineRect& logicalRect, const Layout::InlineRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent)
     : m_lineIndex(lineIndex)
     , m_type(type)
-    , m_layoutBox(makeWeakPtr(layoutBox))
+    , m_layoutBox(layoutBox)
     , m_style(style)
     , m_logicalRect(logicalRect)
     , m_inkOverflow(inkOverflow)

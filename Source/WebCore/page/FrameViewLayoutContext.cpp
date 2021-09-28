@@ -62,6 +62,9 @@ void FrameViewLayoutContext::layoutUsingFormattingContext()
     if (m_disableSetNeedsLayoutCount)
         return;
 
+    m_layoutState = nullptr;
+    m_layoutTree = nullptr;
+
     auto& renderView = *this->renderView();
     m_layoutTree = Layout::TreeBuilder::buildLayoutTree(renderView);
     m_layoutState = makeUnique<Layout::LayoutState>(*document(), m_layoutTree->root());

@@ -230,11 +230,11 @@ public:
     ~CanMakeCheckedPtrBase() { RELEASE_ASSERT(!m_count); }
 
     PtrCounterType ptrCount() const { return m_count; }
-    void incrementPtrCount() { ++m_count; }
-    void decrementPtrCount() { ASSERT(m_count); --m_count; }
+    void incrementPtrCount() const { ++m_count; }
+    void decrementPtrCount() const { ASSERT(m_count); --m_count; }
 
 private:
-    StorageType m_count { 0 };
+    mutable StorageType m_count { 0 };
 };
 
 template <typename IntegralType>

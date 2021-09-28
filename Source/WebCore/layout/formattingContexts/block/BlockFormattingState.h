@@ -28,8 +28,8 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FormattingState.h"
+#include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 namespace Layout {
@@ -41,17 +41,17 @@ public:
     BlockFormattingState(Ref<FloatingState>&&, LayoutState&);
     ~BlockFormattingState();
 
-    void setUsedVerticalMargin(const Box& layoutBox, const UsedVerticalMargin& usedVerticalMargin) { m_usedVerticalMargins.set(&layoutBox, usedVerticalMargin); }
-    UsedVerticalMargin usedVerticalMargin(const Box& layoutBox) const { return m_usedVerticalMargins.get(&layoutBox); }
-    bool hasUsedVerticalMargin(const Box& layoutBox) const { return m_usedVerticalMargins.contains(&layoutBox); }
+    void setUsedVerticalMargin(const Box& layoutBox, const UsedVerticalMargin& usedVerticalMargin) { m_usedVerticalMargins.set(layoutBox, usedVerticalMargin); }
+    UsedVerticalMargin usedVerticalMargin(const Box& layoutBox) const { return m_usedVerticalMargins.get(layoutBox); }
+    bool hasUsedVerticalMargin(const Box& layoutBox) const { return m_usedVerticalMargins.contains(layoutBox); }
 
     void setHasClearance(const Box& layoutBox) { m_clearanceSet.add(layoutBox); }
     void clearHasClearance(const Box& layoutBox) { m_clearanceSet.remove(layoutBox); }
     bool hasClearance(const Box& layoutBox) const { return m_clearanceSet.contains(layoutBox); }
 
 private:
-    HashMap<const Box*, UsedVerticalMargin> m_usedVerticalMargins;
-    WeakHashSet<const Box> m_clearanceSet;
+    HashMap<CheckedRef<const Box>, UsedVerticalMargin> m_usedVerticalMargins;
+    HashSet<CheckedRef<const Box>> m_clearanceSet;
 };
 
 }

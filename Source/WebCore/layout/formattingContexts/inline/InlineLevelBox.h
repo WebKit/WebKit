@@ -31,7 +31,6 @@
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace Layout {
@@ -90,7 +89,7 @@ public:
     };
     Type type() const { return m_type; }
 
-    const Box& layoutBox() const { return *m_layoutBox; }
+    const Box& layoutBox() const { return m_layoutBox; }
 
     InlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutSize, Type);
 
@@ -115,7 +114,7 @@ private:
     void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
 
 private:
-    WeakPtr<const Box> m_layoutBox;
+    CheckedRef<const Box> m_layoutBox;
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
     LayoutBounds m_layoutBounds;
@@ -134,7 +133,7 @@ private:
 };
 
 inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type)
-    : m_layoutBox(makeWeakPtr(layoutBox))
+    : m_layoutBox(layoutBox)
     , m_logicalRect({ }, logicalLeft, logicalSize.width(), logicalSize.height())
     , m_type(type)
     , m_style({ style.fontCascade().primaryFont().fontMetrics(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })

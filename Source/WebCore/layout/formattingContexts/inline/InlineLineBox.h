@@ -32,7 +32,6 @@
 #include "InlineRect.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 namespace Layout {

@@ -29,10 +29,9 @@
 
 #include "InlineDisplayBox.h"
 #include "LayoutIntegrationLine.h"
+#include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakHashMap.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -69,7 +68,7 @@ struct InlineContent : public RefCounted<InlineContent> {
     WTF::IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
     void shrinkToFit();
 
-    const LineLayout& lineLayout() const;
+    const LineLayout& lineLayout() const { return m_lineLayout; }
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& containingBlock() const;
 
@@ -86,12 +85,12 @@ struct InlineContent : public RefCounted<InlineContent> {
 private:
     InlineContent(const LineLayout&);
 
-    WeakPtr<const LineLayout> m_lineLayout;
+    CheckedRef<const LineLayout> m_lineLayout;
 
-    using FirstBoxIndexCache = WeakHashMap<Layout::Box, size_t>;
+    using FirstBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, size_t>;
     mutable std::unique_ptr<FirstBoxIndexCache> m_firstBoxIndexCache;
 
-    using InlineBoxIndexCache = WeakHashMap<Layout::Box, Vector<size_t>>;
+    using InlineBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, Vector<size_t>>;
     mutable std::unique_ptr<InlineBoxIndexCache> m_inlineBoxIndexCache;
 };
 

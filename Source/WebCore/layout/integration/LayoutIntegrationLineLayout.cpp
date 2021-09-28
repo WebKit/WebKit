@@ -239,7 +239,7 @@ void LineLayout::constructContent()
 
     auto& boxAndRendererList = m_boxTree.boxAndRendererList();
     for (auto& boxAndRenderer : boxAndRendererList) {
-        auto& layoutBox = *boxAndRenderer.box;
+        auto& layoutBox = boxAndRenderer.box.get();
         if (!layoutBox.isReplacedBox())
             continue;
 

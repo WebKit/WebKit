@@ -790,8 +790,8 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     RefPtr<Node> firstContentNode;
     RefPtr<Node> lastChildOfCommonAncestorInRange;
     HashSet<Ref<Node>> nodesToRemove;
-    ParagraphContentIterator iterator { item.start, item.end };
-    for (; !iterator.atEnd(); iterator.advance()) {
+    
+    for (ParagraphContentIterator iterator { item.start, item.end }; !iterator.atEnd(); iterator.advance()) {
         auto content = iterator.currentContent();
         ASSERT(content.node);
 

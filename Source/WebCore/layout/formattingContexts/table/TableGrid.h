@@ -82,7 +82,7 @@ public:
         LayoutUnit m_usedLogicalWidth;
         LayoutUnit m_usedLogicalLeft;
         Length m_computedLogicalWidth;
-        WeakPtr<const ContainerBox> m_layoutBox;
+        CheckedPtr<const ContainerBox> m_layoutBox;
 
 #if ASSERT_ENABLED
         bool m_hasUsedWidth { false };
@@ -120,13 +120,13 @@ public:
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
         InlineLayoutUnit baseline() const { return m_baseline; }
 
-        const ContainerBox& box() const { return *m_layoutBox.get(); }
+        const ContainerBox& box() const { return m_layoutBox; }
 
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
         InlineLayoutUnit m_baseline { 0 };
-        WeakPtr<const ContainerBox> m_layoutBox;
+        CheckedRef<const ContainerBox> m_layoutBox;
     };
 
     class Rows {
@@ -167,7 +167,7 @@ public:
         const ContainerBox& box() const { return *m_layoutBox.get(); }
 
     private:
-        WeakPtr<const ContainerBox> m_layoutBox;
+        CheckedPtr<const ContainerBox> m_layoutBox;
         SlotPosition m_position;
         CellSpan m_span;
         InlineLayoutUnit m_baseline { 0 };

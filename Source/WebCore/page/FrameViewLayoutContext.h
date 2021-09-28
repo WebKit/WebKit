@@ -188,8 +188,8 @@ private:
     unsigned m_paintOffsetCacheDisableCount { 0 };
     LayoutStateStack m_layoutStateStack;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    std::unique_ptr<Layout::LayoutState> m_layoutState;
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;
+    std::unique_ptr<Layout::LayoutState> m_layoutState;
 #endif
 };
 

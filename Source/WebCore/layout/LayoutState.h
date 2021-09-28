@@ -84,8 +84,7 @@ public:
     bool inLimitedQuirksMode() const { return m_quirksMode == QuirksMode::Limited; }
     bool inStandardsMode() const { return m_quirksMode == QuirksMode::No; }
 
-    bool hasRoot() const { return !!m_rootContainer; }
-    const ContainerBox& root() const { return *m_rootContainer; }
+    const ContainerBox& root() const { return m_rootContainer; }
 
     // LFC integration only. Full LFC has proper ICB access.
     void setViewportSize(const LayoutSize&);
@@ -113,7 +112,7 @@ private:
     HashMap<const Box*, std::unique_ptr<BoxGeometry>> m_layoutBoxToBoxGeometry;
     QuirksMode m_quirksMode { QuirksMode::No };
 
-    WeakPtr<const ContainerBox> m_rootContainer;
+    CheckedRef<const ContainerBox> m_rootContainer;
 
     // LFC integration only.
     LayoutSize m_viewportSize;

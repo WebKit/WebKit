@@ -119,8 +119,6 @@ TreeBuilder::~TreeBuilder() = default;
 
 std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
 {
-    ASSERT(layoutState.hasRoot());
-
     auto& rootLayoutBox = layoutState.root();
 
 #if ENABLE(TREE_DEBUGGING)

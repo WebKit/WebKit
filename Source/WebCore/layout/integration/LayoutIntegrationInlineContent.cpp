@@ -37,7 +37,7 @@ namespace WebCore {
 namespace LayoutIntegration {
 
 InlineContent::InlineContent(const LineLayout& lineLayout)
-    : m_lineLayout(makeWeakPtr(lineLayout))
+    : m_lineLayout(lineLayout)
 {
 }
 
@@ -63,19 +63,14 @@ InlineContent::~InlineContent()
     }
 }
 
-const LineLayout& InlineContent::lineLayout() const
-{
-    return *m_lineLayout;
-}
-
 const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layoutBox) const
 {
-    return m_lineLayout->rendererForLayoutBox(layoutBox);
+    return lineLayout().rendererForLayoutBox(layoutBox);
 }
 
 const RenderBlockFlow& InlineContent::containingBlock() const
 {
-    return m_lineLayout->flow();
+    return lineLayout().flow();
 }
 
 size_t InlineContent::indexForBox(const InlineDisplay::Box& box) const

@@ -34,7 +34,7 @@
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
-#include <wtf/WeakPtr.h>
+#include <wtf/CheckedPtr.h>
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ namespace LayoutIntegration {
 
 struct InlineContent;
 
-class LineLayout : public CanMakeWeakPtr<LineLayout> {
+class LineLayout : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LineLayout(RenderBlockFlow&);

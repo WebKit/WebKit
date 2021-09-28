@@ -29,7 +29,6 @@
 
 #include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

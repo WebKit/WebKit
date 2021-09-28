@@ -46,7 +46,7 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
 LayoutState::LayoutState(const Document& document, const ContainerBox& rootContainer)
-    : m_rootContainer(makeWeakPtr(rootContainer))
+    : m_rootContainer(rootContainer)
 {
     // It makes absolutely no sense to construct a dedicated layout state for a non-formatting context root (layout would be a no-op).
     ASSERT(root().establishesFormattingContext());
@@ -101,7 +101,7 @@ FormattingState& LayoutState::formattingStateForFormattingContext(const Containe
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        ASSERT(&formattingContextRoot == m_rootContainer.get());
+        ASSERT(&formattingContextRoot == m_rootContainer.ptr());
         return *m_rootInlineFormattingStateForIntegration;
     }
 
@@ -125,7 +125,7 @@ InlineFormattingState& LayoutState::formattingStateForInlineFormattingContext(co
     ASSERT(inlineFormattingContextRoot.establishesInlineFormattingContext());
 
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
-        ASSERT(&inlineFormattingContextRoot == m_rootContainer.get());
+        ASSERT(&inlineFormattingContextRoot == m_rootContainer.ptr());
         return *m_rootInlineFormattingStateForIntegration;
     }
 
@@ -171,7 +171,7 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerB
 
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
         if (!m_rootInlineFormattingStateForIntegration) {
-            ASSERT(&formattingContextRoot == m_rootContainer.get());
+            ASSERT(&formattingContextRoot == m_rootContainer.ptr());
             m_rootInlineFormattingStateForIntegration = create();
         }
         return *m_rootInlineFormattingStateForIntegration;
