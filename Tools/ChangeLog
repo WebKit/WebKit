@@ -1,3 +1,14 @@
+2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add ApproximateTime
+        https://bugs.webkit.org/show_bug.cgi?id=230876
+
+        Reviewed by Filip Pizlo.
+
+        * TestWebKitAPI/Tests/WTF/Time.cpp:
+        (WTF::operator<<):
+        (TestWebKitAPI::TEST):
+
 2021-09-27  Saam Barati  <sbarati@apple.com>
 
         Build an unlinked baseline JIT

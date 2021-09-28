@@ -31,7 +31,8 @@ class PrintStream;
 
 enum class ClockType {
     Wall,
-    Monotonic
+    Monotonic,
+    Approximate,
 };
 
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, ClockType);

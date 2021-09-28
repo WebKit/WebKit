@@ -1,3 +1,44 @@
+2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add ApproximateTime
+        https://bugs.webkit.org/show_bug.cgi?id=230876
+
+        Reviewed by Filip Pizlo.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ApproximateTime.cpp: Copied from Source/WTF/wtf/ClockType.cpp.
+        (WTF::ApproximateTime::approximateWallTime const):
+        (WTF::ApproximateTime::approximateMonotonicTime const):
+        (WTF::ApproximateTime::dump const):
+        * wtf/ApproximateTime.h: Copied from Source/WTF/wtf/MonotonicTime.h.
+        (WTF::ApproximateTime::MarkableTraits::isEmptyValue):
+        (WTF::ApproximateTime::MarkableTraits::emptyValue):
+        (std::isnan):
+        (std::isinf):
+        (std::isfinite):
+        * wtf/CMakeLists.txt:
+        * wtf/ClockType.cpp:
+        (WTF::printInternal):
+        * wtf/ClockType.h:
+        * wtf/CurrentTime.cpp:
+        (WTF::MonotonicTime::fromMachAbsoluteTime):
+        (WTF::MonotonicTime::toMachAbsoluteTime const):
+        (WTF::ApproximateTime::fromMachApproximateTime):
+        (WTF::ApproximateTime::toMachApproximateTime const):
+        (WTF::ApproximateTime::now):
+        * wtf/MonotonicTime.h:
+        * wtf/Seconds.cpp:
+        (WTF::Seconds::operator+ const):
+        (WTF::Seconds::operator- const):
+        * wtf/Seconds.h:
+        * wtf/TimeWithDynamicClockType.cpp:
+        (WTF::TimeWithDynamicClockType::now):
+        (WTF::TimeWithDynamicClockType::approximateTime const):
+        (WTF::TimeWithDynamicClockType::approximateWallTime const):
+        (WTF::TimeWithDynamicClockType::approximateMonotonicTime const):
+        * wtf/TimeWithDynamicClockType.h:
+        * wtf/WallTime.h:
+
 2021-09-27  Antti Koivisto  <antti@apple.com>
 
         [LFC] Use CheckedRef/Ptr instead of WeakPtr

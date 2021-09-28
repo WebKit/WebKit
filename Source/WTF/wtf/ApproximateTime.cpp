@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,31 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
-#include <wtf/ClockType.h>
+#include <wtf/ApproximateTime.h>
 
+#include <wtf/MonotonicTime.h>
 #include <wtf/PrintStream.h>
+#include <wtf/WallTime.h>
 
 namespace WTF {
 
-void printInternal(PrintStream& out, ClockType type)
+WallTime ApproximateTime::approximateWallTime() const
 {
-    switch (type) {
-    case ClockType::Wall:
-        out.print("Wall");
-        return;
-    case ClockType::Monotonic:
-        out.print("Monotonic");
-        return;
-    case ClockType::Approximate:
-        out.print("Approximate");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    return *this - now() + WallTime::now();
+}
+
+MonotonicTime ApproximateTime::approximateMonotonicTime() const
+{
+    return *this - now() + MonotonicTime::now();
+}
+
+void ApproximateTime::dump(PrintStream& out) const
+{
+    out.print("Approximate(", m_value, " sec)");
 }
 
 } // namespace WTF
+
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -30,72 +30,73 @@
 
 namespace WTF {
 
-class MonotonicTime;
+class WallTime;
 class PrintStream;
 
-// The current time according to a wall clock (aka real time clock). This uses floating point
-// internally so that you can reason about infinity and other things that arise in math. It's
-// acceptable to use this to wrap NaN times, negative times, and infinite times, so long as they
-// are relative to the same clock. Use this only if wall clock time is needed. For elapsed time
-// measurement use MonotonicTime instead.
-class WallTime final : public GenericTimeMixin<WallTime> {
+// The current time according to an approximate monotonic clock. Similar to MonotonicTime, but its resolution is
+// coarse, instead ApproximateTime::now() is much faster than MonotonicTime::now().
+class ApproximateTime final : public GenericTimeMixin<ApproximateTime> {
 public:
-    static constexpr ClockType clockType = ClockType::Wall;
-    
-    // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - WallTime().
-    constexpr WallTime() = default;
+    static constexpr ClockType clockType = ClockType::Approximate;
 
-    WTF_EXPORT_PRIVATE static WallTime now();
-    
-    WallTime approximateWallTime() const { return *this; }
+    // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - ApproximateTime().
+    constexpr ApproximateTime() = default;
+
+#if OS(DARWIN)
+    WTF_EXPORT_PRIVATE static ApproximateTime fromMachApproximateTime(uint64_t);
+    WTF_EXPORT_PRIVATE uint64_t toMachApproximateTime() const;
+#endif
+
+    WTF_EXPORT_PRIVATE static ApproximateTime now();
+
+    ApproximateTime approximateApproximateTime() const { return *this; }
+    WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
     WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;
-    
+
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
-    
+
     struct MarkableTraits;
 
 private:
-    friend class GenericTimeMixin<WallTime>;
-    constexpr WallTime(double rawValue)
-        : GenericTimeMixin<WallTime>(rawValue)
+    friend class GenericTimeMixin<ApproximateTime>;
+    constexpr ApproximateTime(double rawValue)
+        : GenericTimeMixin<ApproximateTime>(rawValue)
     {
     }
 };
-static_assert(sizeof(WallTime) == sizeof(double));
+static_assert(sizeof(ApproximateTime) == sizeof(double));
 
-struct WallTime::MarkableTraits {
-    static bool isEmptyValue(WallTime time)
+struct ApproximateTime::MarkableTraits {
+    static bool isEmptyValue(ApproximateTime time)
     {
         return std::isnan(time.m_value);
     }
 
-    static constexpr WallTime emptyValue()
+    static constexpr ApproximateTime emptyValue()
     {
-        return WallTime::nan();
+        return ApproximateTime::nan();
     }
 };
-
-WTF_EXPORT_PRIVATE void sleep(WallTime);
 
 } // namespace WTF
 
 namespace std {
 
-inline bool isnan(WTF::WallTime time)
+inline bool isnan(WTF::ApproximateTime time)
 {
     return std::isnan(time.secondsSinceEpoch().value());
 }
 
-inline bool isinf(WTF::WallTime time)
+inline bool isinf(WTF::ApproximateTime time)
 {
     return std::isinf(time.secondsSinceEpoch().value());
 }
 
-inline bool isfinite(WTF::WallTime time)
+inline bool isfinite(WTF::ApproximateTime time)
 {
     return std::isfinite(time.secondsSinceEpoch().value());
 }
 
 } // namespace std
 
-using WTF::WallTime;
+using WTF::ApproximateTime;

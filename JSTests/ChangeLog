@@ -1,3 +1,14 @@
+2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add ApproximateTime
+        https://bugs.webkit.org/show_bug.cgi?id=230876
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/approximate-time-now.js: Added.
+        * microbenchmarks/monotonic-time-now.js: Added.
+        * microbenchmarks/wall-time-now.js: Added.
+
 2021-09-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Optimize PutByVal with for-in

@@ -1,3 +1,26 @@
+2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add ApproximateTime
+        https://bugs.webkit.org/show_bug.cgi?id=230876
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds ApproximateTime, which offers monotonically increasing time but with coarse-grained resolution.
+        ApproximateTime::now() is faster than normal MonotonicTime::now(), so that we can use this when we do not care
+        about high resolution. For example, in Darwin x64, it is ~4x faster.
+        Internally, it is using mach_approximate_time() in Darwin, clock_gettime+CLOCK_MONOTONIC_COARSE in Linux, and
+        clock_gettime+CLOCK_MONOTONIC_FAST in FreeBSD. On the other platforms, we simply use the same source to MonotonicTime.
+
+            wall-time-now             102.2614+-0.2449
+            approximate-time-now       23.2583+-0.4083
+            monotonic-time-now         88.8518+-2.4106
+
+        We would like to use it in some places in JavaScriptCore in a subsequent patch: CodeBlock's creation time, GC time etc.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
 2021-09-28  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Tweak isCallable() to early return `true` for InternalFunction instances

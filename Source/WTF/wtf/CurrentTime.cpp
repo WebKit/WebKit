@@ -32,6 +32,7 @@
  */
 
 #include "config.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/MonotonicTime.h>
 
 #include <wtf/WallTime.h>
@@ -266,12 +267,26 @@ static mach_timebase_info_data_t& machTimebaseInfo()
 
 MonotonicTime MonotonicTime::fromMachAbsoluteTime(uint64_t machAbsoluteTime)
 {
-    return fromRawSeconds((machAbsoluteTime * machTimebaseInfo().numer) / (1.0e9 * machTimebaseInfo().denom));
+    auto& info = machTimebaseInfo();
+    return fromRawSeconds((machAbsoluteTime * info.numer) / (1.0e9 * info.denom));
 }
 
 uint64_t MonotonicTime::toMachAbsoluteTime() const
 {
-    return static_cast<uint64_t>((m_value * 1.0e9 * machTimebaseInfo().denom) / machTimebaseInfo().numer);
+    auto& info = machTimebaseInfo();
+    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
+}
+
+ApproximateTime ApproximateTime::fromMachApproximateTime(uint64_t machApproximateTime)
+{
+    auto& info = machTimebaseInfo();
+    return fromRawSeconds((machApproximateTime * info.numer) / (1.0e9 * info.denom));
+}
+
+uint64_t ApproximateTime::toMachApproximateTime() const
+{
+    auto& info = machTimebaseInfo();
+    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
 }
 #endif
 
@@ -294,6 +309,23 @@ MonotonicTime MonotonicTime::now()
         return lastTime;
     lastTime = currentTimeNow;
     return fromRawSeconds(currentTimeNow);
+#endif
+}
+
+ApproximateTime ApproximateTime::now()
+{
+#if OS(DARWIN)
+    return fromMachApproximateTime(mach_approximate_time());
+#elif OS(LINUX)
+    struct timespec ts { };
+    clock_gettime(CLOCK_MONOTONIC_COARSE, &ts);
+    return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+#elif OS(FREEBSD)
+    struct timespec ts { };
+    clock_gettime(CLOCK_MONOTONIC_FAST, &ts);
+    return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+#else
+    return ApproximateTime::fromRawSeconds(MonotonicTime::now().secondsSinceEpoch().value());
 #endif
 }
 

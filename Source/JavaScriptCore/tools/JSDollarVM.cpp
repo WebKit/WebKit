@@ -54,6 +54,7 @@
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
 #include <unicode/uversion.h>
+#include <wtf/ApproximateTime.h>
 #include <wtf/Atomics.h>
 #include <wtf/CPUTime.h>
 #include <wtf/DataLog.h>
@@ -2122,6 +2123,9 @@ static JSC_DECLARE_HOST_FUNCTION(functionToCacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionIsPrivateSymbol);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum);
+static JSC_DECLARE_HOST_FUNCTION(functionMonotonicTimeNow);
+static JSC_DECLARE_HOST_FUNCTION(functionWallTimeNow);
+static JSC_DECLARE_HOST_FUNCTION(functionApproximateTimeNow);
 #if ENABLE(JIT)
 static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpJITSizeStatistics);
@@ -3765,6 +3769,21 @@ JSC_DEFINE_HOST_FUNCTION(functionDumpAndResetPasDebugSpectrum, (JSGlobalObject*,
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionMonotonicTimeNow, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsNumber(MonotonicTime::now().secondsSinceEpoch().milliseconds()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionWallTimeNow, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsNumber(WallTime::now().secondsSinceEpoch().milliseconds()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionApproximateTimeNow, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsNumber(ApproximateTime::now().secondsSinceEpoch().milliseconds()));
+}
+
 #if ENABLE(JIT)
 JSC_DEFINE_HOST_FUNCTION(functionJITSizeStatistics, (JSGlobalObject* globalObject, CallFrame*))
 {
@@ -3966,6 +3985,10 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "isPrivateSymbol", functionIsPrivateSymbol, 1);
     addFunction(vm, "dumpAndResetPasDebugSpectrum", functionDumpAndResetPasDebugSpectrum, 0);
+
+    addFunction(vm, "monotonicTimeNow", functionMonotonicTimeNow, 0);
+    addFunction(vm, "wallTimeNow", functionWallTimeNow, 0);
+    addFunction(vm, "approximateTimeNow", functionApproximateTimeNow, 0);
 
 #if ENABLE(JIT)
     addFunction(vm, "jitSizeStatistics", functionJITSizeStatistics, 0);
