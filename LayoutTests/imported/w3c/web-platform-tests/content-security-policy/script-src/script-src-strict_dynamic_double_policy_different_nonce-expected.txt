@@ -1,0 +1,6 @@
+A separate policy with more nonces works correctly with `strict-dynamic` in the script-src directive.
+
+
+PASS Unnonced script injected via `appendChild` is not allowed with `strict-dynamic` + a nonce-only double policy.
+PASS Script injected via `appendChild` with a correct nonce is allowed with `strict-dynamic` + a nonce-only double policy.
+

@@ -1,0 +1,16 @@
+Parser-inserted scripts without a correct nonce are not allowed with `strict-dynamic` in the script-src directive.
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Parser-inserted script via `document.write` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted script via `document.writeln` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted deferred script via `document.write` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted deferred script via `document.writeln` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted async script via `document.write` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted async script via `document.writeln` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted deferred async script via `document.write` without a correct nonce is not allowed with `strict-dynamic`.
+PASS Parser-inserted deferred async script via `document.writeln` without a correct nonce is not allowed with `strict-dynamic`.
+TIMEOUT Script injected via `innerHTML` is not allowed with `strict-dynamic`. Test timed out
+TIMEOUT Script injected via `insertAdjacentHTML` is not allowed with `strict-dynamic`. Test timed out
+

@@ -59,6 +59,8 @@ class SecurityOrigin;
 class TextEncoding;
 struct ContentSecurityPolicyClient;
 
+enum class ParserInserted : bool { No, Yes };
+
 typedef Vector<std::unique_ptr<ContentSecurityPolicyDirectiveList>> CSPDirectiveListVector;
 
 class ContentSecurityPolicy {
@@ -93,6 +95,7 @@ public:
     bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy = false) const;
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, bool overrideContentSecurityPolicy = false) const;
     bool allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, StringView scriptContent, bool overrideContentSecurityPolicy = false) const;
+    bool allowNonParserInsertedScripts(const URL&, const String&, const StringView&, ParserInserted) const;
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, StringView styleContent, bool overrideContentSecurityPolicy = false) const;
 
     bool allowEval(JSC::JSGlobalObject*, bool overrideContentSecurityPolicy = false) const;
@@ -204,7 +207,9 @@ private:
 
     template<typename Predicate, typename... Args>
     bool allPoliciesAllow(ViolatedDirectiveCallback&&, Predicate&&, Args&&...) const WARN_UNUSED_RETURN;
-
+    bool allScriptPoliciesAllow(ViolatedDirectiveCallback&&, const URL&, const String&, const StringView&, ParserInserted) const;
+    bool shouldPerformEarlyCSPCheck() const;
+    
     using ResourcePredicate = const ContentSecurityPolicyDirective *(ContentSecurityPolicyDirectiveList::*)(const URL &, bool) const;
     bool allowResourceFromSource(const URL&, RedirectResponseReceived, const char*, ResourcePredicate) const;
 

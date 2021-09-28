@@ -506,7 +506,6 @@ imported/w3c/web-platform-tests/content-security-policy/inside-worker/servicewor
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-blocked-by-default.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-blob-scheme.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-data-scheme.html [ Skip ]
@@ -951,6 +950,7 @@ imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/
 imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/frame-src/frame-src-cross-origin-load.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions.sub.html [ Skip ]
 
 # FIXME: Skip Content Security Policy tests whose output is non-deterministic
 imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html [ Skip ]
@@ -961,23 +961,10 @@ imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/style_attr
 # Content Security Policy: Embedded Enforcement is not supported
 imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement
 
-# Skip Content Security Policy script-dynamic tests as we do not support this directive
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_eval.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_new_function.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_different_nonce.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_report_only.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_eval.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_hashes.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_in_img-src.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_javascript_uri.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_meta_tag.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_new_function.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted_incorrect_nonce.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_correct_nonce.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker-importScripts.https.html
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html
+# Skip some Content Security Policy script-dynamic tests as we do not fully support the feature
+imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_eval.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_new_function.html [ Skip ]
+imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted.html [ Skip ]
 
 # Skip Content Security Policy shared workers tests as we do not support shared workers
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html
@@ -5232,3 +5219,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 # Awaiting official CSSWG resolution making these tests irrelevant: https://lists.w3.org/Archives/Public/www-style/2021Sep/0004.html
 imported/w3c/web-platform-tests/inert/inert-retargeting.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/inert/inert-retargeting-iframe.tentative.html [ Skip ]
+
+imported/w3c/web-platform-tests/content-security-policy/script-src/ [ DumpJSConsoleLogInStdErr ]
+

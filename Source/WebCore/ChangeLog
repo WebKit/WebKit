@@ -1,3 +1,84 @@
+2021-09-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: Implement 'strict-dynamic' source expression
+        https://bugs.webkit.org/show_bug.cgi?id=184031
+        <rdar://problem/38900632>
+
+        Reviewed by Brent Fulgham.
+
+        Partially implements 'strict-dynamic' CSP source expression. strict-dynamic
+        allows scripts with specified nonces and hashes to run, as well as
+        descendents of those scripts, or "non parser inserted" scripts.
+        It ignores unsafe-inline and self source expressions.
+
+        This patch creates a new algorithm ContentSecurityPolicy::allScriptPoliciesAllow
+        which makes sure each loaded script is allowed by some part of the
+        policy. If it violates each of the script policies, then we block it
+        and report a violation.
+
+        We only have access to whether a script is parser-inserted in ScriptElement.
+        To avoid having to pass that value and the script nonce through a lot of
+        places, we check for script violations in
+        ScriptElement::requestClassicScript. To avoid unnecessarily blocking
+        scripts with correct nonces or non-parser inserted scripts in
+        ContentSecurityPolicy::allowScriptFromSource which is called later on,
+        we skip the extra check if strictDynamic is enabled. This is not
+        ideal and in the future we should figure out a way to put all checks
+        in one place. 
+
+        * dom/ScriptElement.cpp:
+        Update m_parserInserted to be an enum.
+
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::didFinishInsertingNode):
+        (WebCore::ScriptElement::childrenChanged):
+        (WebCore::ScriptElement::prepareScript):
+        (WebCore::ScriptElement::requestClassicScript):
+        (WebCore::ScriptElement::executeClassicScript):
+        strict-dynamic checks happen here.
+
+        (WebCore::ScriptElement::ignoresLoadRequest const):
+        * dom/ScriptElement.h:
+        (WebCore::ScriptElement::isParserInserted const):
+        (WebCore::ScriptElement::insertedIntoAncestor const):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allScriptPoliciesAllow const):
+        Algorithm to check for policy violations. Here we check if the script
+        is non-parser inserted AND it does not have a recognized nonce or hash 
+        AND it is not listed in the URL list of the policy. If it fails all
+        checks then the policy does not support it and we refuse to load it.
+
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs const):
+        (WebCore::ContentSecurityPolicy::shouldPerformEarlyCSPCheck const):
+        (WebCore::ContentSecurityPolicy::allowNonParserInsertedScripts const):
+        (WebCore::ContentSecurityPolicy::allowInlineScript const):
+        To avoid blocking scripts that are OK with strict-dynamic, we should
+        skip unsafe-inline checks (which should be ignored per the spec).
+
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource const):
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::checkNonParserInsertedScripts):
+        (WebCore::ContentSecurityPolicyDirectiveList::violatedDirectiveForParserInsertedScript const):
+        (WebCore::ContentSecurityPolicyDirectiveList::strictDynamicIncluded):
+        A separate function to tell us if strict-dynamic is included in the
+        CSP policies.
+
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicyDirectiveNames.cpp:
+        * page/csp/ContentSecurityPolicyDirectiveNames.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::matches const):
+        (WebCore::ContentSecurityPolicySourceList::parseSource):
+        Ignore 'self' and 'unsafe-inline' directives if 'strict-dynamic' is
+        specified.
+
+        * page/csp/ContentSecurityPolicySourceList.h:
+        (WebCore::ContentSecurityPolicySourceList::allowNonParserInsertedScripts const):
+        * page/csp/ContentSecurityPolicySourceListDirective.h:
+        (WebCore::ContentSecurityPolicySourceListDirective::allowNonParserInsertedScripts const):
+
 2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Negative integers in @font-palette-values are invalid

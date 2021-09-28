@@ -47,6 +47,7 @@ extern const char* const pluginTypes;
 extern const char* const reportURI;
 extern const char* const sandbox;
 extern const char* const scriptSrc;
+extern const char* const scriptSrcElem;
 extern const char* const styleSrc;
 extern const char* const upgradeInsecureRequests;
 extern const char* const blockAllMixedContent;

@@ -47,6 +47,7 @@ public:
 
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeEval() const;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineScript() const;
+    const ContentSecurityPolicyDirective* violatedDirectiveForParserInsertedScript(ParserInserted) const;
     const ContentSecurityPolicyDirective* violatedDirectiveForUnsafeInlineStyle() const;
 
     const ContentSecurityPolicyDirective* violatedDirectiveForScriptHash(const ContentSecurityPolicyHash&) const;
@@ -85,6 +86,8 @@ public:
 
     // FIXME: Remove this once we teach ContentSecurityPolicyDirectiveList how to log an arbitrary console message.
     const ContentSecurityPolicy& policy() const { return m_policy; }
+
+    bool strictDynamicIncluded();
 
 private:
     void parse(const String&, ContentSecurityPolicy::PolicyFrom);

@@ -1,3 +1,13 @@
+2021-09-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: Implement 'strict-dynamic' source expression
+        https://bugs.webkit.org/show_bug.cgi?id=184031
+        <rdar://problem/38900632>
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations:
+
 2021-09-28  Eric Hutchison  <ehutchison@apple.com>
 
         [ Catalina BigSur wk1 Debug ] storage/websql/multiple-databases-garbage-collection.html is a flaky crash.

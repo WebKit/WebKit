@@ -53,6 +53,7 @@ public:
     bool allowEval() const { return m_allowEval; }
     bool allowSelf() const { return m_allowSelf; }
     bool isNone() const { return m_isNone; }
+    bool allowNonParserInsertedScripts() const { return m_allowNonParserInsertedScripts; }
 
 private:
     struct Host {
@@ -92,6 +93,7 @@ private:
     bool m_allowInline { false };
     bool m_allowEval { false };
     bool m_isNone { false };
+    bool m_allowNonParserInsertedScripts { false };
 };
 
 } // namespace WebCore

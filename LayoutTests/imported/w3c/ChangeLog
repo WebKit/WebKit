@@ -1,3 +1,43 @@
+2021-09-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP: Implement 'strict-dynamic' source expression
+        https://bugs.webkit.org/show_bug.cgi?id=184031
+        <rdar://problem/38900632>
+
+        Reviewed by Brent Fulgham.
+
+        Included passing tests and also expectations for partially passing
+        tests where the failures are unrelated to strict-dynamic because it
+        will help prevent regressions to the passing components.
+
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_eval-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_and_unsafe_eval_new_function-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_discard_source_expressions-expected.txt:
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_different_nonce-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions-expected.txt: Removed.
+        This doesn't go with a corresponding html file, so I deleted it.
+
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_honor_source_expressions.sub-expected.txt:
+        We strip cross origin blocked URIs before reporting them, so this test
+        times out because it never receives the correct blockedURI in the
+        report.
+
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_double_policy_report_only-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_hashes-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_in_img-src-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_javascript_uri-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_meta_tag-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_non_parser_inserted_incorrect_nonce-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted-expected.txt: Added.
+        Timing out because we don't specify the violation target ID in our
+        report. Tracking in rdar://83425187.
+
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_parser_inserted_correct_nonce-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker-importScripts.https-expected.txt: Added.
+        * web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https-expected.txt: Added.
+        Test failure related to workers, not strict-dynamic.
+
 2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Negative integers in @font-palette-values are invalid

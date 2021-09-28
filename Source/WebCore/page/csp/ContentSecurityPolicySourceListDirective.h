@@ -43,6 +43,7 @@ public:
     bool allows(const String& nonce) const;
     bool allowInline() const { return m_sourceList.allowInline(); }
     bool allowEval() const { return m_sourceList.allowEval(); }
+    bool allowNonParserInsertedScripts() const { return m_sourceList.allowNonParserInsertedScripts(); }
 
     OptionSet<ContentSecurityPolicyHashAlgorithm> hashAlgorithmsUsed() const { return m_sourceList.hashAlgorithmsUsed(); }
 

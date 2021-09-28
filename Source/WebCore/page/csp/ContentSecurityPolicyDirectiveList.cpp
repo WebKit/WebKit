@@ -56,6 +56,14 @@ static inline bool checkInline(ContentSecurityPolicySourceListDirective* directi
     return !directive || directive->allowInline();
 }
 
+static inline bool checkNonParserInsertedScripts(ContentSecurityPolicySourceListDirective* directive, ParserInserted parserInserted)
+{
+    if (!directive)
+        return true;
+
+    return directive->allowNonParserInsertedScripts() && parserInserted == ParserInserted::No;
+}
+
 static inline bool checkSource(ContentSecurityPolicySourceListDirective* directive, const URL& url, bool didReceiveRedirectResponse = false, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone shouldAllowEmptyURLIfSourceListEmpty = ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No)
 {
     return !directive || directive->allows(url, didReceiveRedirectResponse, shouldAllowEmptyURLIfSourceListEmpty);
@@ -156,6 +164,15 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_scriptSrc.get());
     if (checkInline(operativeDirective))
         return nullptr;
+    return operativeDirective;
+}
+
+const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForParserInsertedScript(ParserInserted parserInserted) const
+{
+    ContentSecurityPolicySourceListDirective* operativeDirective = this->operativeDirective(m_scriptSrc.get());
+    if (checkNonParserInsertedScripts(operativeDirective, parserInserted))
+        return nullptr;
+
     return operativeDirective;
 }
 
@@ -542,6 +559,12 @@ void ContentSecurityPolicyDirectiveList::addDirective(ParsedDirective&& directiv
         setBlockAllMixedContentEnabled(WTFMove(directive));
     else
         m_policy.reportUnsupportedDirective(WTFMove(directive.name));
+}
+
+bool ContentSecurityPolicyDirectiveList::strictDynamicIncluded()
+{
+    ContentSecurityPolicySourceListDirective* directive = this->operativeDirective(m_scriptSrc.get());
+    return directive && directive->allowNonParserInsertedScripts();
 }
 
 } // namespace WebCore

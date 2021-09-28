@@ -152,6 +152,9 @@ bool ContentSecurityPolicySourceList::matches(const ContentSecurityPolicyHash& h
 
 bool ContentSecurityPolicySourceList::matches(const String& nonce) const
 {
+    if (nonce.isEmpty())
+        return false;
+
     return m_nonces.contains(nonce);
 }
 
@@ -210,6 +213,13 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
 
     if (buffer.lengthRemaining() == 1 && *buffer == '*') {
         m_allowStar = true;
+        return source;
+    }
+
+    if (skipExactlyIgnoringASCIICase(buffer, "'strict-dynamic'")) {
+        m_allowNonParserInsertedScripts = true;
+        m_allowSelf = false;
+        m_allowInline = false;
         return source;
     }
 

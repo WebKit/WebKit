@@ -64,7 +64,7 @@ static const auto maxUserGesturePropagationTime = 1_s;
 ScriptElement::ScriptElement(Element& element, bool parserInserted, bool alreadyStarted)
     : m_element(element)
     , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
-    , m_parserInserted(parserInserted)
+    , m_parserInserted(parserInserted ? ParserInserted::Yes : ParserInserted::No)
     , m_isExternalScript(false)
     , m_alreadyStarted(alreadyStarted)
     , m_haveFiredLoad(false)
@@ -84,13 +84,13 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
 
 void ScriptElement::didFinishInsertingNode()
 {
-    ASSERT(!m_parserInserted);
+    ASSERT(m_parserInserted == ParserInserted::No);
     prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
 void ScriptElement::childrenChanged(const ContainerNode::ChildChange& childChange)
 {
-    if (!m_parserInserted && childChange.isInsertion() && m_element.isConnected())
+    if (m_parserInserted == ParserInserted::No && childChange.isInsertion() && m_element.isConnected())
         prepareScript(); // FIXME: Provide a real starting line number here.
 }
 
@@ -174,9 +174,9 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         return false;
 
     bool wasParserInserted;
-    if (m_parserInserted) {
+    if (m_parserInserted == ParserInserted::Yes) {
         wasParserInserted = true;
-        m_parserInserted = false;
+        m_parserInserted = ParserInserted::No;
     } else
         wasParserInserted = false;
 
@@ -198,7 +198,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     m_isModuleScript = scriptType == ScriptType::Module;
 
     if (wasParserInserted) {
-        m_parserInserted = true;
+        m_parserInserted = ParserInserted::Yes;
         m_forceAsync = false;
     }
 
@@ -248,11 +248,11 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
 
     bool isClassicExternalScript = scriptType == ScriptType::Classic && hasSourceAttribute();
     bool isParserInsertedDeferredScript = ((isClassicExternalScript && hasDeferAttribute()) || scriptType == ScriptType::Module)
-        && m_parserInserted && !hasAsyncAttribute();
+        && m_parserInserted == ParserInserted::Yes && !hasAsyncAttribute();
     if (isParserInsertedDeferredScript) {
         m_willExecuteWhenDocumentFinishedParsing = true;
         m_willBeParserExecuted = true;
-    } else if (isClassicExternalScript && m_parserInserted && !hasAsyncAttribute()) {
+    } else if (isClassicExternalScript && m_parserInserted == ParserInserted::Yes && !hasAsyncAttribute()) {
         ASSERT(scriptType == ScriptType::Classic);
         m_willBeParserExecuted = true;
     } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !hasAsyncAttribute() && !m_forceAsync) {
@@ -263,7 +263,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         ASSERT(m_loadableScript);
         ASSERT(hasAsyncAttribute() || m_forceAsync);
         document.scriptRunner().queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
-    } else if (!hasSourceAttribute() && m_parserInserted && !document.haveStylesheetsLoaded()) {
+    } else if (!hasSourceAttribute() && m_parserInserted == ParserInserted::Yes && !document.haveStylesheetsLoaded()) {
         ASSERT(scriptType == ScriptType::Classic);
         m_willBeParserExecuted = true;
         m_readyToBeParserExecuted = true;
@@ -299,6 +299,10 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 
         auto scriptURL = m_element.document().completeURL(sourceURL);
         m_element.document().willLoadScriptElement(scriptURL);
+
+        const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(scriptURL, m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), String(), m_parserInserted))
+            return false;
 
         if (script->load(m_element.document(), scriptURL)) {
             m_loadableScript = WTFMove(script);
@@ -390,6 +394,9 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     if (!m_isExternalScript) {
         ASSERT(m_element.document().contentSecurityPolicy());
         const ContentSecurityPolicy& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(m_element.document().url(), m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), sourceCode.source(), m_parserInserted))
+            return;
+
         bool hasKnownNonce = contentSecurityPolicy.allowScriptWithNonce(m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr), m_element.isInUserAgentShadowTree());
         if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), hasKnownNonce))
             return;
@@ -470,7 +477,7 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
 
 bool ScriptElement::ignoresLoadRequest() const
 {
-    return m_alreadyStarted || m_isExternalScript || m_parserInserted || !m_element.isConnected();
+    return m_alreadyStarted || m_isExternalScript || m_parserInserted == ParserInserted::Yes || !m_element.isConnected();
 }
 
 bool ScriptElement::isScriptForEventSupported() const

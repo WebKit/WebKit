@@ -332,6 +332,28 @@ bool ContentSecurityPolicy::allPoliciesAllow(ViolatedDirectiveCallback&& callbac
     return isAllowed;
 }
 
+bool ContentSecurityPolicy::allScriptPoliciesAllow(ViolatedDirectiveCallback&& callback, const URL& url, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
+{
+    bool isAllowed = true;
+    for (auto& policy : m_policies) {
+        auto violatedDirectiveForNonParserInsertedScript = policy.get()->violatedDirectiveForParserInsertedScript(parserInserted);
+        auto violatedDirectiveForScriptNonce = policy.get()->violatedDirectiveForScriptNonce(nonce);
+        auto violatedDirectiveForScriptSrc = policy.get()->violatedDirectiveForScript(url, false);
+        auto [foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies] = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash, scriptContent, m_hashAlgorithmsForInlineScripts);
+
+        if (violatedDirectiveForNonParserInsertedScript && violatedDirectiveForScriptNonce && violatedDirectiveForScriptSrc && !foundHashInEnforcedPolicies) {
+            if (!violatedDirectiveForNonParserInsertedScript->directiveList().isReportOnly()
+                || !violatedDirectiveForScriptNonce->directiveList().isReportOnly()
+                || !violatedDirectiveForScriptSrc->directiveList().isReportOnly()
+                || foundHashInReportOnlyPolicies)
+                isAllowed = false;
+
+            callback(*violatedDirectiveForScriptSrc);
+        }
+    }
+    return isAllowed;
+}
+
 template<typename Predicate>
 ContentSecurityPolicy::HashInEnforcedAndReportOnlyPoliciesPair ContentSecurityPolicy::findHashOfContentInPolicies(Predicate&& predicate, StringView content, OptionSet<ContentSecurityPolicyHashAlgorithm> algorithms) const
 {
@@ -368,7 +390,8 @@ bool ContentSecurityPolicy::allowJavaScriptURLs(const String& contextURL, const 
     bool didNotifyInspector = false;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
         String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), "Refused to execute a script", "its hash, its nonce, or 'unsafe-inline'");
-        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrc, violatedDirective, URL(), consoleMessage, contextURL, TextPosition(contextLine, WTF::OrdinalNumber()));
+        // FIXME (rdar://83332874) implement scriptSrcElem properly.
+        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, URL(), consoleMessage, contextURL, TextPosition(contextLine, WTF::OrdinalNumber()));
         if (!didNotifyInspector && violatedDirective.directiveList().isReportOnly()) {
             reportBlockedScriptExecutionToInspector(violatedDirective.text());
             didNotifyInspector = true;
@@ -415,9 +438,35 @@ bool ContentSecurityPolicy::allowStyleWithNonce(const String& nonce, bool overri
     return allPoliciesWithDispositionAllow(ContentSecurityPolicy::Disposition::Enforce, &ContentSecurityPolicyDirectiveList::violatedDirectiveForStyleNonce, strippedNonce);
 }
 
+bool ContentSecurityPolicy::shouldPerformEarlyCSPCheck() const
+{
+    // We perform checks early if strict-dynamic is included in the CSP policy because
+    // we have access to necessary information about the script that we do not have later on.
+    for (auto& policy : m_policies) {
+        if (policy.get()->strictDynamicIncluded())
+            return true;
+    }
+    return false;
+}
+
+bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& url, const String& nonce, const StringView& scriptContent, ParserInserted parserInserted) const
+{
+    if (!shouldPerformEarlyCSPCheck())
+        return true;
+
+    auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
+        TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
+        String consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, url, "Refused to load");
+        // FIXME: (rdar://83332874) implement scriptSrcElem properly.
+        reportViolation(ContentSecurityPolicyDirectiveNames::scriptSrcElem, violatedDirective, url, consoleMessage, String(), sourcePosition);
+    };
+
+    return allScriptPoliciesAllow(handleViolatedDirective, url, nonce, scriptContent, parserInserted);
+}
+
 bool ContentSecurityPolicy::allowInlineScript(const String& contextURL, const WTF::OrdinalNumber& contextLine, StringView scriptContent, bool overrideContentSecurityPolicy) const
 {
-    if (overrideContentSecurityPolicy)
+    if (overrideContentSecurityPolicy || shouldPerformEarlyCSPCheck())
         return true;
     bool didNotifyInspector = false;
     auto [foundHashInEnforcedPolicies, foundHashInReportOnlyPolicies] = findHashOfContentInPolicies(&ContentSecurityPolicyDirectiveList::violatedDirectiveForScriptHash, scriptContent, m_hashAlgorithmsForInlineScripts);
@@ -581,6 +630,9 @@ bool ContentSecurityPolicy::allowChildContextFromSource(const URL& url, Redirect
 
 bool ContentSecurityPolicy::allowScriptFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived) const
 {
+    if (shouldPerformEarlyCSPCheck())
+        return true;
+
     return allowResourceFromSource(url, redirectResponseReceived, ContentSecurityPolicyDirectiveNames::scriptSrc, &ContentSecurityPolicyDirectiveList::violatedDirectiveForScript);
 }
 
