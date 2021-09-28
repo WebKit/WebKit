@@ -1,3 +1,15 @@
+2021-09-28  Per Arne  <pvollan@apple.com>
+
+        [macOS] Allow access to mach service for root in the Networking process
+        https://bugs.webkit.org/show_bug.cgi?id=230843
+        <rdar://problem/83576091>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow access to the mach service com.apple.trustd for root in the Networking process on macOS.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2021-09-28  Youenn Fablet  <youenn@apple.com>
 
         Validate DeviceIdHashSaltStorage persistent data

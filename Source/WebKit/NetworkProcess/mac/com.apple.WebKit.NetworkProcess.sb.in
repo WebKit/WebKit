@@ -118,6 +118,10 @@
        (global-name "com.apple.system.opendirectoryd.libinfo")
        (global-name "com.apple.trustd.agent"))
 
+(with-filter (uid 0)
+    (allow mach-lookup
+       (global-name "com.apple.trustd")))
+
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup (global-name "com.apple.internal.objc_trace")))
 
