@@ -51,6 +51,7 @@
 		0713704A265320E500CA2C9A /* AudioBufferSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07137049265320E500CA2C9A /* AudioBufferSize.mm */; };
 		07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */; };
 		07492B3C1DF8B86600633DE1 /* enumerateMediaDevices.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */; };
+		074994421EA5034B000DA44D /* invalidDeviceIDHashSalts in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */; };
 		074994421EA5034B000DA44E /* getUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */; };
 		074994421EA5034B000DA44F /* ondevicechange.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */; };
 		074994421EA5034B000DA45E /* getUserMediaAudioVideoCapture.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAC5 /* getUserMediaAudioVideoCapture.html */; };
@@ -1515,6 +1516,7 @@
 				07E1F6A21FFC44FA0096C7EC /* getDisplayMedia.html in Copy Resources */,
 				467C565321B5ED130057516D /* GetSessionCookie.html in Copy Resources */,
 				41661C662355E85E00D33C27 /* getUserMedia-webaudio.html in Copy Resources */,
+				074994421EA5034B000DA44D /* invalidDeviceIDHashSalts in Copy Resources */,
 				074994421EA5034B000DA44E /* getUserMedia.html in Copy Resources */,
 				074994521EA5034B000DA44E /* getUserMedia2.html in Copy Resources */,
 				074994421EA5034B000DA45E /* getUserMediaAudioVideoCapture.html in Copy Resources */,
@@ -2143,6 +2145,7 @@
 		49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "in-app-browser-privacy-local-file.html"; sourceTree = "<group>"; };
 		49EF6AD42677C0BE007967DC /* AppPrivacyReport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppPrivacyReport.mm; sourceTree = "<group>"; };
 		4A410F4B19AF7BD6002EBAB5 /* UserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMedia.cpp; sourceTree = "<group>"; };
+		4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.bplist; path = invalidDeviceIDHashSalts; sourceTree = "<group>"; };
 		4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMedia.html; sourceTree = "<group>"; };
 		4A410F4D19AF7BEF002EBAB6 /* ondevicechange.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ondevicechange.html; sourceTree = "<group>"; };
 		4A410F4D19AF7BEF002EBAC5 /* getUserMediaAudioVideoCapture.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = getUserMediaAudioVideoCapture.html; sourceTree = "<group>"; };
@@ -4615,6 +4618,7 @@
 				BCBD372E125ABBE600D2C29F /* icon.png */,
 				1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */,
 				CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */,
+				4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */,
 				C9B4AD2B1ECA6F7600F5FEA0 /* js-autoplay-audio.html */,
 				C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */,
 				55226A2E1EB969B600C36AD0 /* large-red-square-image.html */,

@@ -41,9 +41,11 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -897,6 +899,43 @@ TEST(WebKit, AutoplayOnVisibilityChange)
     TestWebKitAPI::Util::run(&done);
 }
 #endif // PLATFORM(MAC)
+
+TEST(WebKit, InvalidDeviceIdHashSalts)
+{
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"InvalidDeviceIdHashSaltsPathsTest"] isDirectory:YES];
+    NSURL *hashSaltLocation = [tempDir URLByAppendingPathComponent:@"1"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtURL:hashSaltLocation withIntermediateDirectories:YES attributes:nil error:nil];
+
+    NSString *fileName = @"CBF3087F32B7E19D13F683C9973060819F869CA9298B405E";
+    NSURL *filePath = [hashSaltLocation URLByAppendingPathComponent:fileName];
+
+    // Prepare invalid data.
+    if ([fileManager fileExistsAtPath:filePath.path])
+        [fileManager removeItemAtPath:filePath.path error:nil];
+    auto *fileData = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"invalidDeviceIDHashSalts" withExtension:@"" subdirectory:@"TestWebKitAPI.resources"]];
+    EXPECT_TRUE([fileManager createFileAtPath:filePath.path contents:fileData attributes: nil]);
+    while (![fileManager fileExistsAtPath:filePath.path])
+        Util::spinRunLoop();
+
+    // Prepare web view to use the invalid data
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [websiteDataStoreConfiguration setDeviceIdHashSaltsStorageDirectory:tempDir];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+    auto preferences = [configuration preferences];
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mockCaptureDevicesEnabled = YES;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    // Wait for invalid data to be loaded.
+    [webView loadTestPageNamed:@"getUserMedia"];
+    [delegate waitUntilPrompted];
+}
 
 } // namespace TestWebKitAPI
 
