@@ -1,3 +1,22 @@
+2021-09-28  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Add SPI to select a tab created by _WKInspectorExtension
+        https://bugs.webkit.org/show_bug.cgi?id=230580
+        <rdar://problem/83372851>
+
+        Reviewed by Devin Rousso.
+
+        Add a method to look up a WebInspectorExtensionTabContentView
+        by its extensionTabID and then show it with WI.tabBrowser.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.reloadForExtension):
+        Remove extra newlines.
+        (WI.WebInspectorExtensionController.prototype.showExtensionTab): Added.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showExtensionTab): Added.
+
 2021-09-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Web Inspector support for font-palette

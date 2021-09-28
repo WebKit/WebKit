@@ -230,4 +230,10 @@ InspectorFrontendAPI = {
     {
         return WI.sharedApp.extensionController.reloadForExtension(extensionID, {ignoreCache, userAgent, injectedScript});
     },
+
+    // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise nothing.
+    showExtensionTab(extensionTabID)
+    {
+        return WI.sharedApp.extensionController.showExtensionTab(extensionTabID);
+    }
 };

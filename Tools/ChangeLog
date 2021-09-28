@@ -1,3 +1,25 @@
+2021-09-28  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] Add SPI to select a tab created by _WKInspectorExtension
+        https://bugs.webkit.org/show_bug.cgi?id=230580
+        <rdar://problem/83372851>
+
+        Reviewed by Devin Rousso.
+
+        Create a new test file for _WKInspectorExtensionDelegate. Add a
+        new test case that exercises creating an extension tab, showing an
+        extension tab, and uses delegate callbacks for didShowTab/didHideTab.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/InspectorExtension-TabIcon-30x30.png: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/InspectorExtension-basic-tab.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorExtensionDelegate.mm: Added.
+        (resetGlobalState):
+        (-[UIDelegateForTestingInspectorExtensionDelegate _webView:didAttachLocalInspector:]):
+        (-[InspectorExtensionDelegateForTesting inspectorExtension:didShowTabWithIdentifier:]):
+        (-[InspectorExtensionDelegateForTesting inspectorExtension:didHideTabWithIdentifier:]):
+        (TEST):
+
 2021-09-28  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: different bundleID entries will override each other

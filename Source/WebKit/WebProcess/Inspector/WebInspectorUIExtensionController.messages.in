@@ -22,6 +22,10 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
+// FIXME: some completion handlers with a parameter type of Expected<bool, Inspector::ExtensionError>
+// should actually be Expected<void, Inspector::ExtensionError>, but this does not compile as-is without
+// changes to argument coders. This cleanup is tracked by <https://bugs.webkit.org/b/230907>.
+
 messages -> WebInspectorUIExtensionController NotRefCounted {
     RegisterExtension(String extensionID, String displayName) -> (Expected<bool, Inspector::ExtensionError> result) Async
     UnregisterExtension(String extensionID) -> (Expected<bool, Inspector::ExtensionError> result) Async
@@ -29,6 +33,7 @@ messages -> WebInspectorUIExtensionController NotRefCounted {
     CreateTabForExtension(String extensionID, String tabName, URL tabIconURL, URL sourceURL) -> (Expected<String, Inspector::ExtensionError> result) Async
     EvaluateScriptForExtension(String extensionID, String scriptSource, std::optional<URL> frameURL, std::optional<URL> contextSecurityOrigin, std::optional<bool> useContentScriptContext) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details, std::optional<Inspector::ExtensionError> error) Async
     ReloadForExtension(String extensionID, std::optional<bool> ignoreCache, std::optional<String> userAgent, std::optional<String> injectedScript) -> (std::optional<Inspector::ExtensionError> error) Async
+    ShowExtensionTab(String extensionTabIdentifier) -> (Expected<bool, Inspector::ExtensionError> result) Async
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

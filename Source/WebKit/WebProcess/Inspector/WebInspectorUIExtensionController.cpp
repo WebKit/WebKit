@@ -326,6 +326,39 @@ void WebInspectorUIExtensionController::reloadForExtension(const Inspector::Exte
     });
 }
 
+void WebInspectorUIExtensionController::showExtensionTab(const Inspector::ExtensionTabID& extensionTabIdentifier, CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&& completionHandler)
+{
+    if (!m_frontendClient) {
+        completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
+        return;
+    }
+
+    Vector<Ref<JSON::Value>> arguments {
+        JSON::Value::create(extensionTabIdentifier),
+    };
+
+    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("showExtensionTab"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
+        if (!weakThis) {
+            completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
+            return;
+        }
+
+        auto* frontendGlobalObject = weakThis->m_frontendClient->frontendAPIDispatcher().frontendGlobalObject();
+        if (!frontendGlobalObject) {
+            completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
+            return;
+        }
+
+        if (auto parsedError = weakThis->parseExtensionErrorFromEvaluationResult(result)) {
+            LOG(Inspector, "Internal error encountered while evaluating upon the frontend: %s", Inspector::extensionErrorToString(*parsedError).utf8().data());
+            completionHandler(makeUnexpected(*parsedError));
+            return;
+        }
+
+        completionHandler(true);
+    });
+}
+
 void WebInspectorUIExtensionController::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::DidShowExtensionTab { extensionID, extensionTabID }, m_inspectorPageIdentifier);

@@ -151,8 +151,24 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
         
         return target.PageAgent.reload.invoke({ignoreCache});
-        
-        
+    }
+    
+    showExtensionTab(extensionTabID)
+    {
+        let tabContentView = this._extensionTabContentViewForExtensionTabIDMap.get(extensionTabID);
+        if (!tabContentView) {
+            WI.reportInternalError("Unable to show extension tab with unknown extensionTabID: " + extensionTabID);
+            return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
+        }
+
+        let success = WI.tabBrowser.showTabForContentView(tabContentView, {
+            initiatorHint: WI.TabBrowser.TabNavigationInitiator.FrontendAPI,
+        });
+
+        if (!success) {
+            WI.reportInternalError("Unable to show extension tab with extensionTabID: " + extensionTabID);
+            return WI.WebInspectorExtension.ErrorCode.InternalError;
+        }
     }
 };
 

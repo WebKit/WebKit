@@ -893,6 +893,9 @@
 		9999108B1F393C96008AD455 /* Copying.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9999108A1F393C8B008AD455 /* Copying.mm */; };
 		999B7EE32551C63B00F450A4 /* WKInspectorExtensionHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = 999B7EE22551C63B00F450A4 /* WKInspectorExtensionHost.mm */; };
 		99B4F9C624EDED9700022B82 /* WKInspectorDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */; };
+		99E2846426F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99E2846326F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm */; };
+		99E2846626F93DB50003F1FA /* InspectorExtension-TabIcon-30x30.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = 99E2846526F93D760003F1FA /* InspectorExtension-TabIcon-30x30.png */; };
+		99E2846826F941540003F1FA /* InspectorExtension-basic-tab.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 99E2846726F9413B0003F1FA /* InspectorExtension-basic-tab.html */; };
 		9B02E0D6235FA47D004044B2 /* TextManipulation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B02E0D5235FA47D004044B2 /* TextManipulation.mm */; };
 		9B0786A51C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */; };
 		9B0C051924FDFB7D00F2FE31 /* CompactUniquePtrTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0C051824FDFB7000F2FE31 /* CompactUniquePtrTuple.cpp */; };
@@ -1573,6 +1576,8 @@
 				2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */,
 				CE3524FA1B1443890028A7C5 /* input-focus-blur.html in Copy Resources */,
 				CE6D0EE32426B932002AD901 /* insert-text.html in Copy Resources */,
+				99E2846826F941540003F1FA /* InspectorExtension-basic-tab.html in Copy Resources */,
+				99E2846626F93DB50003F1FA /* InspectorExtension-TabIcon-30x30.png in Copy Resources */,
 				57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */,
 				C9B4AD2C1ECA6F7F00F5FEA0 /* js-autoplay-audio.html in Copy Resources */,
 				C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */,
@@ -2619,6 +2624,9 @@
 		9999108A1F393C8B008AD455 /* Copying.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Copying.mm; sourceTree = "<group>"; };
 		999B7EE22551C63B00F450A4 /* WKInspectorExtensionHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorExtensionHost.mm; sourceTree = "<group>"; };
 		99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorDelegate.mm; sourceTree = "<group>"; };
+		99E2846326F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorExtensionDelegate.mm; sourceTree = "<group>"; };
+		99E2846526F93D760003F1FA /* InspectorExtension-TabIcon-30x30.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "InspectorExtension-TabIcon-30x30.png"; sourceTree = "<group>"; };
+		99E2846726F9413B0003F1FA /* InspectorExtension-basic-tab.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "InspectorExtension-basic-tab.html"; sourceTree = "<group>"; };
 		9B02E0D5235FA47D004044B2 /* TextManipulation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextManipulation.mm; sourceTree = "<group>"; };
 		9B0786A21C58830F00D159E3 /* InjectedBundleMakeAllShadowRootsOpen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMakeAllShadowRootsOpen.cpp; sourceTree = "<group>"; };
 		9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp; sourceTree = "<group>"; };
@@ -3473,7 +3481,6 @@
 				6B25A75125DC8D4E0070744F /* EventAttribution.mm */,
 				CDA29B2820FD2A9900F15CED /* ExitFullscreenOnEnterPiP.mm */,
 				1D12BEBF245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm */,
-				51819F2926EAC98200E47375 /* FTP.mm */,
 				2D8104CB1BEC13E70020DA46 /* FindInPage.mm */,
 				51242CD42374E61E00EED9C1 /* FindInPageAPI.mm */,
 				118153472208BADF00B2CCD2 /* FirstVisuallyNonEmptyMilestone.mm */,
@@ -3481,6 +3488,7 @@
 				2E92B8F8216490EA005B64F0 /* FontAttributes.mm */,
 				F4FA282924CD012700618A46 /* FormValidation.mm */,
 				5CB5B3BD1FFC517E00C27BB0 /* FrameHandleSerialization.mm */,
+				51819F2926EAC98200E47375 /* FTP.mm */,
 				CDCF78A7244A2EDB00480311 /* FullscreenAlert.mm */,
 				CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */,
 				3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */,
@@ -3658,6 +3666,7 @@
 				370CE2291F57343400E7410B /* WKContentViewTargetForAction.mm */,
 				51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */,
 				99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */,
+				99E2846326F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm */,
 				999B7EE22551C63B00F450A4 /* WKInspectorExtensionHost.mm */,
 				A5A729F01F622A9A00DE5A28 /* WKNavigationResponse.mm */,
 				DF4B273821A47727009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm */,
@@ -4090,6 +4099,8 @@
 				93A274A1252163D600A1B6D4 /* IndexUpgradeWithMultipleIndices.sqlite3 */,
 				93A274A4252241D000A1B6D4 /* IndexUpgradeWithMultipleIndicesHaveSameID.sqlite3 */,
 				2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */,
+				99E2846726F9413B0003F1FA /* InspectorExtension-basic-tab.html */,
+				99E2846526F93D760003F1FA /* InspectorExtension-TabIcon-30x30.png */,
 				937A6C8824357BF300C3A6B0 /* KillWebProcessWithOpenConnection-1.html */,
 				937A6C8924357BF300C3A6B0 /* KillWebProcessWithOpenConnection-2.html */,
 				F4538EF01E846B4100B5C953 /* large-red-square.png */,
@@ -5541,6 +5552,7 @@
 				7CCE7EC01A411A7E00447C4C /* FragmentNavigation.mm in Sources */,
 				7CCE7EF61A411AE600447C4C /* FrameMIMETypeHTML.cpp in Sources */,
 				7CCE7EF71A411AE600447C4C /* FrameMIMETypePNG.cpp in Sources */,
+				51819F2A26EAC98300E47375 /* FTP.mm in Sources */,
 				CDCF78A8244A32F700480311 /* FullscreenAlert.mm in Sources */,
 				CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */,
 				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
@@ -5798,7 +5810,6 @@
 				7CCE7F141A411AE600447C4C /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
 				37BCA61C1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm in Sources */,
 				7C83E0C51D0A654600FEBCF3 /* ShrinkToFit.mm in Sources */,
-				51819F2A26EAC98300E47375 /* FTP.mm in Sources */,
 				7CCE7ECD1A411A7E00447C4C /* SimplifyMarkup.mm in Sources */,
 				C149D550242E98DF003EBB12 /* SleepDisabler.mm in Sources */,
 				2DFF7B6D1DA487AF00814614 /* SnapshotStore.mm in Sources */,
@@ -5936,6 +5947,7 @@
 				51D124981E763B02002B2820 /* WKHTTPCookieStore.mm in Sources */,
 				7CCE7F1D1A411AE600447C4C /* WKImageCreateCGImageCrash.cpp in Sources */,
 				99B4F9C624EDED9700022B82 /* WKInspectorDelegate.mm in Sources */,
+				99E2846426F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm in Sources */,
 				999B7EE32551C63B00F450A4 /* WKInspectorExtensionHost.mm in Sources */,
 				A5A729F11F622AA700DE5A28 /* WKNavigationResponse.mm in Sources */,
 				DF4B273921A47728009BD1CA /* WKNSDictionaryEmptyDictionaryCrash.mm in Sources */,
@@ -6018,6 +6030,7 @@
 				5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */,
+				5175C7A226F876230003AF5C /* BundlePageConsoleMessage.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
 				5C75716122124C5200B9E5AC /* BundleRetainPagePlugIn.mm in Sources */,
@@ -6035,7 +6048,6 @@
 				2D3CA3A8221DF4B40088E803 /* PageOverlayPlugin.mm in Sources */,
 				F44C7A0020F9EEBF0014478C /* ParserYieldTokenPlugIn.mm in Sources */,
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
-				5175C7A226F876230003AF5C /* BundlePageConsoleMessage.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */,
 				5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */,

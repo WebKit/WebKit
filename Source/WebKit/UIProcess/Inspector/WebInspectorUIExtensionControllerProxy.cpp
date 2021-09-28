@@ -187,6 +187,19 @@ void WebInspectorUIExtensionControllerProxy::reloadForExtension(const Inspector:
     });
 }
 
+void WebInspectorUIExtensionControllerProxy::showExtensionTab(const Inspector::ExtensionTabID& extensionTabIdentifier, CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&& completionHandler)
+{
+    whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionTabIdentifier, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis || !weakThis->m_inspectorPage) {
+            completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
+            return;
+        }
+
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::ShowExtensionTab { extensionTabIdentifier }, WTFMove(completionHandler));
+    });
+}
+
+
 // WebInspectorUIExtensionControllerProxy IPC messages.
 
 void WebInspectorUIExtensionControllerProxy::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
