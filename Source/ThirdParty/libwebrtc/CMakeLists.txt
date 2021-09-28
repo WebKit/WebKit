@@ -1418,6 +1418,8 @@ endif()
 
 if (APPLE)
     list(APPEND webrtc_SOURCES
+        Source/third_party/libyuv/source/scale.cc
+
         Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm
         Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.mm
         Source/webrtc/sdk/objc/components/video_codec/RTCCodecSpecificInfoH265.mm
@@ -1425,8 +1427,6 @@ if (APPLE)
         Source/webrtc/common_video/h265/h265_pps_parser.cc
         Source/webrtc/common_video/h265/h265_vps_parser.cc
         Source/webrtc/common_video/h265/h265_sps_parser.cc
-        Source/webrtc/modules/rtp_rtcp/source/h265_sps_parser.h
-        Source/webrtc/modules/rtp_rtcp/source/h265_sps_parser.cc
         Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH265.mm
         Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
         Source/webrtc/modules/video_coding/h265_vps_sps_pps_tracker.cc
@@ -1442,7 +1442,7 @@ if (APPLE)
         Source/webrtc/rtc_base/mac_ifaddrs_converter.cc
 
         Source/webrtc/rtc_base/system/cocoa_threading.mm
-        
+
         Source/webrtc/sdk/WebKit/WebKitUtilities.mm
         Source/webrtc/sdk/WebKit/WebKitVP8Decoder.cpp
         Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp
@@ -1485,6 +1485,18 @@ if (APPLE)
         Source/webrtc/sdk/objc/native/src/objc_video_encoder_factory.mm
         Source/webrtc/sdk/objc/native/src/objc_video_frame.mm
     )
+    if (NOT WTF_CPU_X86_64)
+        list(APPEND webrtc_SOURCES
+            Source/third_party/libyuv/source/row_neon.cc
+            Source/third_party/libyuv/source/rotate_neon64.cc
+            Source/third_party/libyuv/source/row_neon64.cc
+            Source/third_party/libyuv/source/compare_neon.cc
+            Source/third_party/libyuv/source/scale_neon64.cc
+            Source/third_party/libyuv/source/scale_neon.cc
+            Source/third_party/libyuv/source/rotate_neon.cc
+            Source/third_party/libyuv/source/compare_neon64.cc
+        )
+    endif ()
 
     set(webm_SOURCES
         Source/third_party/libwebm/m2ts/vpxpes_parser.cc
@@ -1558,7 +1570,7 @@ if (APPLE)
         Source/third_party/libwebm/webm_parser/include/webm/reader.h
         Source/third_party/libwebm/webm_parser/include/webm/webm_parser.h
         DESTINATION ${webm_PRIVATE_HEADERS_DIR})
-        
+
     set(libwebrtc_PRIVATE_HEADERS_DIR "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders/libwebrtc")
     file(MAKE_DIRECTORY ${libwebrtc_PRIVATE_HEADERS_DIR})
     file(COPY
@@ -1597,7 +1609,7 @@ else ()
         Source/third_party/libyuv/source/scale.cc
         Source/third_party/libyuv/source/scale_neon.cc
         Source/third_party/libyuv/source/scale_neon64.cc
-        
+
         Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c
         Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c
         Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c
@@ -1750,6 +1762,7 @@ set(webrtc_INCLUDE_DIRECTORIES PRIVATE
 
 if (APPLE)
     list(APPEND webrtc_INCLUDE_DIRECTORIES PRIVATE
+        Source/third_party/libvpx/source/libvpx
         Source/webrtc/sdk/objc
         Source/webrtc/sdk/objc/base
         Source/webrtc/sdk/objc/Framework/Classes
@@ -1866,7 +1879,7 @@ if (APPLE)
         SCTP_USE_OPENSSL_SHA1
     )
 
-    add_library(opus STATIC
+    set(opus_SOURCES
         Source/third_party/opus/src/celt/kiss_fft.c
         Source/third_party/opus/src/celt/rate.c
         Source/third_party/opus/src/celt/mdct.c
@@ -1879,12 +1892,6 @@ if (APPLE)
         Source/third_party/opus/src/celt/mathops.c
         Source/third_party/opus/src/celt/celt_lpc.c
         Source/third_party/opus/src/celt/celt_encoder.c
-        Source/third_party/opus/src/celt/x86/vq_sse2.c
-        Source/third_party/opus/src/celt/x86/pitch_sse4_1.c
-        Source/third_party/opus/src/celt/x86/pitch_sse2.c
-        Source/third_party/opus/src/celt/x86/x86cpu.c
-        Source/third_party/opus/src/celt/x86/x86_celt_map.c
-        Source/third_party/opus/src/celt/x86/pitch_sse.c
         Source/third_party/opus/src/celt/pitch.c
         Source/third_party/opus/src/celt/laplace.c
         Source/third_party/opus/src/celt/entenc.c
@@ -1955,7 +1962,6 @@ if (APPLE)
         Source/third_party/opus/src/silk/fixed/process_gains_FIX.c
         Source/third_party/opus/src/silk/fixed/encode_frame_FIX.c
         Source/third_party/opus/src/silk/fixed/LTP_analysis_filter_FIX.c
-        Source/third_party/opus/src/silk/fixed/x86/prefilter_FIX_sse.c
         Source/third_party/opus/src/silk/fixed/regularize_correlations_FIX.c
         Source/third_party/opus/src/silk/fixed/autocorr_FIX.c
         Source/third_party/opus/src/silk/fixed/find_LTP_FIX.c
@@ -1971,7 +1977,6 @@ if (APPLE)
         Source/third_party/opus/src/silk/HP_variable_cutoff.c
         Source/third_party/opus/src/silk/code_signs.c
         Source/third_party/opus/src/silk/log2lin.c
-        Source/third_party/opus/src/silk/x86/x86_silk_map.c
         Source/third_party/opus/src/silk/biquad_alt.c
         Source/third_party/opus/src/silk/tables_LTP.c
         Source/third_party/opus/src/silk/float/LPC_analysis_filter_FLP.c
@@ -2038,6 +2043,22 @@ if (APPLE)
         Source/third_party/opus/src/src/mlp_data.c
         Source/third_party/opus/src/src/opus_multistream.c
     )
+
+    if (WTF_CPU_X86_64)
+      list(APPEND opus_SOURCES
+          Source/third_party/opus/src/celt/x86/vq_sse2.c
+          Source/third_party/opus/src/celt/x86/pitch_sse4_1.c
+          Source/third_party/opus/src/celt/x86/pitch_sse2.c
+          Source/third_party/opus/src/celt/x86/x86cpu.c
+          Source/third_party/opus/src/celt/x86/x86_celt_map.c
+          Source/third_party/opus/src/celt/x86/pitch_sse.c
+          Source/third_party/opus/src/silk/fixed/x86/prefilter_FIX_sse.c
+          Source/third_party/opus/src/silk/x86/x86_silk_map.c
+      )
+    endif ()
+
+    add_library(opus STATIC ${opus_SOURCES})
+
     target_include_directories(opus PRIVATE
         Source/third_party/opus/src
         Source/third_party/opus/src/celt
@@ -2053,9 +2074,8 @@ if (APPLE)
         "-DOPUS_EXPORT="
         "-DHAVE_LRINT HAVE_LRINTF"
     )
-    
+
     set(vpx_SOURCES
-        Source/third_party/libvpx/source/config/mac/x64/vpx_config.c
         Source/third_party/libvpx/source/libvpx/vp9/decoder/vp9_job_queue.c
         Source/third_party/libvpx/source/libvpx/vpxstats.c
         Source/third_party/libvpx/source/libvpx/args.c
@@ -2082,10 +2102,6 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/vp9/common/vp9_tile_common.c
         Source/third_party/libvpx/source/libvpx/vp9/common/vp9_pred_common.c
         Source/third_party/libvpx/source/libvpx/vp9/common/vp9_loopfilter.c
-        Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_highbd_iht16x16_add_sse4.c
-        Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_highbd_iht8x8_add_sse4.c
-        Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_idct_intrin_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_highbd_iht4x4_add_sse4.c
         Source/third_party/libvpx/source/libvpx/vp9/common/vp9_idct.c
         Source/third_party/libvpx/source/libvpx/vp9/common/vp9_scale.c
         Source/third_party/libvpx/source/libvpx/vp9/common/vp9_reconintra.c
@@ -2118,11 +2134,6 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/vp8/encoder/onyx_if.c
         Source/third_party/libvpx/source/libvpx/vp8/encoder/encodemv.c
         Source/third_party/libvpx/source/libvpx/vp8/encoder/dct.c
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/vp8_enc_stubs_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/vp8_quantize_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/denoising_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/quantize_sse4.c
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/vp8_quantize_ssse3.c
         Source/third_party/libvpx/source/libvpx/vp8/encoder/picklpf.c
         Source/third_party/libvpx/source/libvpx/vp8/encoder/encodeframe.c
         Source/third_party/libvpx/source/libvpx/vp8/encoder/ratectrl.c
@@ -2155,11 +2166,6 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/vp8/common/dequantize.c
         Source/third_party/libvpx/source/libvpx/vp8/common/swapyv12buffer.c
         Source/third_party/libvpx/source/libvpx/vp8/common/reconinter.c
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/bilinear_filter_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_mmx.c
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_x86.c
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/vp8_asm_stubs.c
         Source/third_party/libvpx/source/libvpx/vp8/common/reconintra4x4.c
         Source/third_party/libvpx/source/libvpx/vp8/common/generic
         Source/third_party/libvpx/source/libvpx/vp8/common/generic/systemdependent.c
@@ -2193,31 +2199,6 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/vpx_dsp/bitreader_buffer.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/deblock.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/psnrhvs.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse4.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct4x4_add_sse4.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct32x32_add_sse4.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct16x16_add_sse4.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct4x4_add_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_quantize_intrin_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_intrin_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sum_squares_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/quantize_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/loopfilter_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_intrin_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_loopfilter_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_variance_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_pred_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_txfm_ssse3.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/quantize_ssse3.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_intrin_ssse3.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_txfm_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct32x32_add_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/post_proc_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/variance_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/fwd_txfm_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_intrin_ssse3.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct16x16_add_sse2.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/bitwriter_buffer.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/intrapred.c
         Source/third_party/libvpx/source/libvpx/vpx_dsp/avg.c
@@ -2242,22 +2223,7 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/vpx/src/vpx_codec.c
         Source/third_party/libvpx/source/libvpx/ivfdec.c
         Source/third_party/libvpx/source/libvpx/tools_common.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_intrin_avx2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_4t_intrin_sse2.c
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_intrin_ssse3.c
-        
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/highbd_temporal_filter_sse4.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/temporal_filter_sse4.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_dct_intrin_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_denoiser_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_diamond_search_sad_avx.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_error_avx2.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_frame_scale_ssse3.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_highbd_block_error_intrin_sse2.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_avx2.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_sse2.c
-        
-        Source/third_party/libvpx/source/libvpx/vpx_ports/emms_mmx.c
+
         Source/third_party/libvpx/source/libvpx/vp9/vp9_dx_iface.c
         Source/third_party/libvpx/source/libvpx/vp9/vp9_cx_iface.c
         Source/third_party/libvpx/source/libvpx/vp9/vp9_iface_common.c
@@ -2304,78 +2270,252 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_treewriter.c
     )
 
-    set(vpx_ASSEMBLY_SOURCES
-        Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_mfqe_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_dct_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_error_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_ssse3_x86_64.asm
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse3.asm
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/block_error_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/bitdepth_conversion_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/add_noise_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_sad_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_wht_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_sad4d_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_variance_impl_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_ssse3.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_subpel_variance_impl_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse4.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_ssse3_x86_64.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_ssse3.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse3.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad4d_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/subtract_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/fwd_txfm_ssse3_x86_64.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_convolve_copy_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/subpel_variance_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/ssim_opt_x86_64.asm
-        Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/deblock_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_mmx.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/iwalsh_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/mfqe_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/dequantize_mmx.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/recon_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_ssse3.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_block_sse2_x86_64.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_mmx.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/recon_mmx.asm
-        Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/temporal_filter_apply_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/dct_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/fwalsh_sse2.asm
-        Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse2.asm
-    )
-    foreach(_file ${vpx_ASSEMBLY_SOURCES})
-        get_filename_component(_name ${_file} NAME_WE)
-        add_custom_command(
-            OUTPUT ${libwebrtc_DERIVED_SOURCES_DIR}/${_name}.o
-            MAIN_DEPENDENCY ${_file}
-            DEPENDS yasm
-            COMMAND ${CMAKE_BINARY_DIR}/bin/yasm -fmacho64 ${CMAKE_CURRENT_SOURCE_DIR}/${_file} -I ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/libvpx/source/libvpx -I ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/libvpx/source/config/mac/x64 -o ${libwebrtc_DERIVED_SOURCES_DIR}/${_name}.o
-            VERBATIM)
-        list(APPEND vpx_SOURCES ${libwebrtc_DERIVED_SOURCES_DIR}/${_name}.o)
-    endforeach()
+    if (WTF_CPU_X86_64)
+        list(APPEND vpx_SOURCES
+            Source/third_party/libvpx/source/config/mac/x64/vpx_config.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_highbd_iht16x16_add_sse4.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_highbd_iht8x8_add_sse4.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_idct_intrin_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_highbd_iht4x4_add_sse4.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/vp8_enc_stubs_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/vp8_quantize_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/denoising_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/quantize_sse4.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/vp8_quantize_ssse3.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/bilinear_filter_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_mmx.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_x86.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/vp8_asm_stubs.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse4.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct4x4_add_sse4.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct32x32_add_sse4.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct16x16_add_sse4.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct4x4_add_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_quantize_intrin_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_intrin_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sum_squares_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/quantize_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/loopfilter_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_intrin_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_loopfilter_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_variance_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_pred_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_txfm_ssse3.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/quantize_ssse3.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_intrin_ssse3.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_txfm_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct32x32_add_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/post_proc_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/variance_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/fwd_txfm_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_intrin_ssse3.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct16x16_add_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_intrin_avx2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_4t_intrin_sse2.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_intrin_ssse3.c
+            Source/third_party/libvpx/source/libvpx/vpx_ports/emms_mmx.c
+
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/highbd_temporal_filter_sse4.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/temporal_filter_sse4.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_dct_intrin_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_denoiser_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_diamond_search_sad_avx.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_error_avx2.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_frame_scale_ssse3.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_highbd_block_error_intrin_sse2.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_avx2.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_sse2.c
+        )
+
+        set(vpx_ASSEMBLY_SOURCES
+            Source/third_party/libvpx/source/libvpx/vp9/common/x86/vp9_mfqe_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_dct_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_error_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_ssse3_x86_64.asm
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse3.asm
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/block_error_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/bitdepth_conversion_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/add_noise_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_sad_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_wht_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_sad4d_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_variance_impl_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_ssse3.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_subpel_variance_impl_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse4.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_ssse3_x86_64.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_ssse3.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse3.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/sad4d_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/subtract_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/fwd_txfm_ssse3_x86_64.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_convolve_copy_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/subpel_variance_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/ssim_opt_x86_64.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/deblock_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_mmx.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/iwalsh_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/mfqe_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/dequantize_mmx.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/recon_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_ssse3.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_block_sse2_x86_64.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_mmx.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/recon_mmx.asm
+            Source/third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/temporal_filter_apply_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/dct_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/fwalsh_sse2.asm
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse2.asm
+        )
+        foreach(_file ${vpx_ASSEMBLY_SOURCES})
+            get_filename_component(_name ${_file} NAME_WE)
+            add_custom_command(
+                OUTPUT ${libwebrtc_DERIVED_SOURCES_DIR}/${_name}.o
+                MAIN_DEPENDENCY ${_file}
+                DEPENDS yasm
+                COMMAND ${CMAKE_BINARY_DIR}/bin/yasm -fmacho64 ${CMAKE_CURRENT_SOURCE_DIR}/${_file} -I ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/libvpx/source/libvpx -I ${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/libvpx/source/config/mac/x64 -o ${libwebrtc_DERIVED_SOURCES_DIR}/${_name}.o
+                VERBATIM)
+            list(APPEND vpx_SOURCES ${libwebrtc_DERIVED_SOURCES_DIR}/${_name}.o)
+        endforeach()
+    else ()
+        list(APPEND vpx_SOURCES
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/arm/neon/vp9_denoiser_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/arm/neon/vp9_error_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/arm/neon/vp9_quantize_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/arm/neon/vp9_frame_scale_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_iht4x4_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_highbd_iht4x4_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_iht_neon.h
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_iht16x16_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_iht8x8_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_highbd_iht8x8_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp9/common/arm/neon/vp9_highbd_iht16x16_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/arm/neon/shortfdct_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/arm/neon/vp8_shortwalsh4x4_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/arm/neon/fastquantizeb_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/encoder/arm/neon/denoising_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/shortidct4x4llm_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/copymem_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/idct_blk_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/dequantizeb_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/vp8_loopfilter_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/mbloopfilter_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/sixtappredict_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/loopfiltersimplehorizontaledge_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/bilinearpredict_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/loopfiltersimpleverticaledge_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/iwalsh_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/dequant_idct_neon.c
+            Source/third_party/libvpx/source/libvpx/vp8/common/arm/neon/dc_only_idct_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sad4d_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/loopfilter_16_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_scaled_convolve8_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_horiz_filter_type2_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sum_squares_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sum_neon.h
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/quantize_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/loopfilter_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_vpx_convolve_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_avg_vert_filter_type2_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/fdct32x32_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/transpose_neon.h
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/loopfilter_8_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct8x8_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sad_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/fdct_partial_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct4x4_add_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve_copy_neon_asm.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/fdct_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/loopfilter_4_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct_neon.h
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/subpel_variance_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_vpx_convolve_copy_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct32x32_135_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_avg_horiz_filter_type1_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_neon_asm.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_idct_neon.h
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_vert_filter_type1_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/fwd_txfm_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_intrapred_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/save_reg_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_avg_vert_filter_type1_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_idct32x32_34_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_horiz_filter_type1_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/variance_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve_avg_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/subtract_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/deblock_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/avg_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/hadamard_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_neon_asm.h
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct16x16_1_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct32x32_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_neon.h
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/fdct16x16_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/intrapred_neon_asm.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_vert_filter_type2_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_vpx_convolve_avg_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct4x4_1_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/mem_neon.h
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct8x8_1_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct32x32_1_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct4x4_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/intrapred_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct16x16_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_idct32x32_135_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_avg_horiz_filter_type2_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve_avg_neon_asm.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_loopfilter_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct32x32_34_add_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/idct4x4_1_add_neon.asm
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/avg_pred_neon.c
+            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve_copy_neon.c
+            Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/row_neon.cc
+            Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/rotate_neon64.cc
+            Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/compare_neon.cc
+            Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/scale_neon64.cc
+            Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/scale_neon.cc
+            Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/rotate_neon.cc
+            Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/compare_neon64.cc
+            Source/third_party/libvpx/source/libvpx/vpx_ports/arm_cpudetect.c
+        )
+    endif ()
 
     add_library(vpx ${vpx_SOURCES})
-    target_include_directories(vpx PRIVATE
+    set(vpx_INCLUDE_DIRECTORIES
         Source/third_party/libvpx/source/config
-        Source/third_party/libvpx/source/config/mac/x64
         Source/third_party/libvpx/source/libvpx
         Source/third_party/libyuv/include
         Source/third_party/libvpx/source/libvpx/third_party/libwebm
     )
-    target_compile_options(vpx PRIVATE -mavx2)
+    if (WTF_CPU_X86_64)
+        list(APPEND vpx_INCLUDE_DIRECTORIES
+            Source/third_party/libvpx/source/config/mac/x64
+        )
+        target_compile_options(vpx PRIVATE -mavx2)
+    else ()
+        list(APPEND vpx_INCLUDE_DIRECTORIES
+            Source/third_party/libvpx/source/config/ios/arm64
+        )
+    endif ()
+    target_include_directories(vpx PRIVATE ${vpx_INCLUDE_DIRECTORIES})
 
     add_library(yuv STATIC
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/scale.cc
@@ -2388,7 +2528,6 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/planar_functions.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/row_common.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/scale_any.cc
-        Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/scale_uv.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/rotate_gcc.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/convert.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/convert_from.cc
@@ -2409,7 +2548,7 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/include
         Source/third_party/libyuv/include
     )
-    
+
     add_executable(yasm
         Source/third_party/yasm/x86cpu.c
         Source/third_party/yasm/nasm-version.c

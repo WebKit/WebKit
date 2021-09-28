@@ -55,6 +55,8 @@ list(APPEND WebCore_LIBRARIES
     ${SYSTEMCONFIGURATION_LIBRARY}
     ${VIDEOTOOLBOX_LIBRARY}
     ${XML2_LIBRARY}
+    WTF
+    bmalloc
     opus
     usrsctp
     vpx
@@ -129,6 +131,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mac"
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/mediarecorder/cocoa"
+    "${WEBCORE_DIR}/platform/mediastream/cocoa"
     "${WEBCORE_DIR}/platform/mediastream/mac"
     "${WEBCORE_DIR}/platform/network/cocoa"
     "${WEBCORE_DIR}/platform/network/cf"
@@ -192,7 +195,6 @@ list(APPEND WebCore_SOURCES
     page/mac/WheelEventDeltaFilterMac.mm
 
     page/scrolling/mac/ScrollingCoordinatorMac.mm
-    page/scrolling/mac/ScrollingMomentumCalculatorMac.mm
     page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
     page/scrolling/mac/ScrollingTreeMac.mm
 
@@ -329,7 +331,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/WebCoreCALayerExtras.mm
     platform/graphics/cocoa/WebCoreDecompressionSession.mm
     platform/graphics/cocoa/WebGLLayer.mm
-    platform/graphics/cocoa/WebGPULayer.mm
     platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm
 
     platform/graphics/coretext/FontCascadeCoreText.cpp
@@ -536,6 +537,12 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/webauthn/fido/Pin.h
 
+    page/CaptionUserPreferencesMediaAF.h
+
+    page/cocoa/DataDetectionResultsStorage.h
+    page/cocoa/DataDetectorElementInfo.h
+    page/cocoa/ImageOverlayDataDetectionResultIdentifier.h
+
     page/mac/TextIndicatorWindow.h
     page/mac/WebCoreFrameView.h
 
@@ -550,15 +557,17 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.h
     page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h
 
+    platform/CaptionPreferencesDelegate.h
     platform/FrameRateMonitor.h
-    platform/ImageExtractionResult.h
     platform/MainThreadSharedTimer.h
     platform/PictureInPictureSupport.h
     platform/PlatformContentFilter.h
+    platform/ScrollAnimation.h
     platform/ScrollingEffectsController.h
     platform/ScrollSnapAnimatorState.h
     platform/SharedTimer.h
     platform/SystemSoundManager.h
+    platform/TextRecognitionResult.h
 
     platform/audio/cocoa/AudioDestinationCocoa.h
     platform/audio/cocoa/AudioOutputUnitAdaptor.h
@@ -571,6 +580,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/audio/ios/MediaSessionManagerIOS.h
 
+    platform/audio/mac/SharedRoutingArbitrator.h
+
+    platform/cf/MediaAccessibilitySoftLink.h
     platform/cf/RunLoopObserver.h
 
     platform/cocoa/AGXCompilerService.h
@@ -650,6 +662,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/WebCoreCALayerExtras.h
     platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h
 
+    platform/graphics/cv/CVUtilities.h
     platform/graphics/cv/GraphicsContextGLCV.h
     platform/graphics/cv/ImageRotationSessionVT.h
     platform/graphics/cv/PixelBufferConformerCV.h
@@ -700,6 +713,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/AudioMediaStreamTrackRenderer.h
     platform/mediastream/RealtimeIncomingVideoSource.h
     platform/mediastream/RealtimeMediaSourceIdentifier.h
+
+    platform/mediastream/cocoa/AudioMediaStreamTrackRendererInternalUnit.h
+    platform/mediastream/cocoa/AudioMediaStreamTrackRendererUnit.h
 
     platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.h
     platform/mediastream/mac/RealtimeVideoUtilities.h
@@ -900,23 +916,6 @@ add_custom_command(
     DEPENDS ${MODERN_MEDIA_CONTROLS_SCRIPTS}
     COMMAND cat ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     VERBATIM)
-
-add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibraryFunctionMap.cpp
-    MAIN_DEPENDENCY Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
-    DEPENDS Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLBuildStandardLibraryFunctionMap.py ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibraryFunctionMap.cpp
-    VERBATIM)
-add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.h
-    DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
-    COMMAND gzip -cn ${WEBCORE_DIR}/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt > ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.gz
-    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl WHLSLStandardLibrary ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.gz ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.h
-    VERBATIM)
-list(APPEND WebCore_SOURCES
-    ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibrary.h
-    ${WebCore_DERIVED_SOURCES_DIR}/WHLSLStandardLibraryFunctionMap.cpp
-)
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
 list(APPEND WebCoreTestSupport_SOURCES

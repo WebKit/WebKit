@@ -174,7 +174,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, std::optio
 
     auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, dataSize, nullptr));
     if (!dataProvider)
-        return nullptr;
+        return false;
 
     auto imageSize = source.size();
     auto image = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), source.format().colorSpace.platformColorSpace(), kCGBitmapByteOrderDefault | dataAlphaInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault));

@@ -36,6 +36,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     spi/cocoa/SecuritySPI.h
     spi/cocoa/objcSPI.h
 
+    spi/darwin/CodeSignSPI.h
     spi/darwin/DataVaultSPI.h
     spi/darwin/OSVariantSPI.h
     spi/darwin/ProcessMemoryFootprint.h
@@ -51,6 +52,7 @@ list(APPEND WTF_PUBLIC_HEADERS
 
 list(APPEND WTF_SOURCES
     BlockObjCExceptions.mm
+    ProcessPrivilege.cpp
     TranslatedProcess.cpp
 
     cf/CFURLExtras.cpp
@@ -61,7 +63,6 @@ list(APPEND WTF_SOURCES
     cf/URLCF.cpp
 
     cocoa/AutodrainedPool.cpp
-    cocoa/CPUTimeCocoa.cpp
     cocoa/CrashReporter.cpp
     cocoa/Entitlements.mm
     cocoa/FileSystemCocoa.mm
@@ -81,6 +82,7 @@ list(APPEND WTF_SOURCES
     mac/FileSystemMac.mm
     mac/SchedulePairMac.mm
 
+    posix/CPUTimePOSIX.cpp
     posix/FileSystemPOSIX.cpp
     posix/OSAllocatorPOSIX.cpp
     posix/ThreadingPOSIX.cpp

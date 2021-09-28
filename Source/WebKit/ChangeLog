@@ -1,3 +1,12 @@
+2021-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Mostly fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=230868
+
+        Reviewed by Don Olmstead.
+
+        * PlatformMac.cmake:
+
 2021-09-28  Youenn Fablet  <youenn@apple.com>
 
         applyConstraints throws OverconstrainedError if specify exact for deviceId

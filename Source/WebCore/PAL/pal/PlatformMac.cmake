@@ -21,6 +21,8 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/UsageTrackingSoftLink.h
     cocoa/VisionKitCoreSoftLink.h
 
+    ios/SystemStatusSoftLink.h
+
     mac/DataDetectorsSoftLink.h
     mac/LookupSoftLink.h
     mac/QuickLookUISoftLink.h
@@ -28,6 +30,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cf/CFLocaleSPI.h
     spi/cf/CFNetworkConnectionCacheSPI.h
     spi/cf/CFNetworkSPI.h
+    spi/cf/CFNotificationCenterSPI.h
     spi/cf/CFUtilitiesSPI.h
     spi/cf/CoreAudioSPI.h
     spi/cf/CoreMediaSPI.h
@@ -153,7 +156,6 @@ list(APPEND PAL_SOURCES
 
     cocoa/AppSSOSoftLink.mm
     cocoa/AVFoundationSoftLink.mm
-    cocoa/CryptoKitCBridgingSoftLink.mm
     cocoa/DataDetectorsCoreSoftLink.mm
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/Gunzip.cpp

@@ -1,3 +1,13 @@
+2021-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Mostly fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=230868
+
+        Reviewed by Don Olmstead.
+
+        * Compiler.cmake:
+        * Metal.cmake:
+
 2021-09-23  Kyle Piddington  <kpiddington@apple.com>
 
         [WebGL2, Safari 15 - iOS15] Problems with drawElements in some conditions

@@ -1,5 +1,14 @@
 2021-09-28  Alex Christensen  <achristensen@webkit.org>
 
+        Mostly fix Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=230868
+
+        Reviewed by Don Olmstead.
+
+        * pal/PlatformMac.cmake:
+
+2021-09-28  Alex Christensen  <achristensen@webkit.org>
+
         Fix build with non-internal Monterey SDK
         https://bugs.webkit.org/show_bug.cgi?id=230872
 

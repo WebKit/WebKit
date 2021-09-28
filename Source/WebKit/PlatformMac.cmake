@@ -21,6 +21,7 @@ add_definitions(-iframework ${CORESERVICES_LIBRARY}/Versions/Current/Frameworks)
 include(Headers.cmake)
 
 list(APPEND WebKit_PRIVATE_LIBRARIES
+    Accessibility
     PAL
     WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
@@ -47,6 +48,9 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
 
     NetworkProcess/webrtc/NetworkRTCProvider.mm
+    NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm
+    NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
+    NetworkProcess/webrtc/NetworkRTCUtilitiesCocoa.mm
 
     NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm
 
@@ -90,8 +94,10 @@ list(APPEND WebKit_SOURCES
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders"
     "${ICU_INCLUDE_DIRS}"
+    "${WEBKIT_DIR}/GPUProcess/mac"
     "${WEBKIT_DIR}/NetworkProcess/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/mac"
+    "${WEBKIT_DIR}/NetworkProcess/PrivateClickMeasurement/cocoa"
     "${WEBKIT_DIR}/PluginProcess/mac"
     "${WEBKIT_DIR}/UIProcess/mac"
     "${WEBKIT_DIR}/UIProcess/API/C/mac"
@@ -107,6 +113,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Media/cocoa"
     "${WEBKIT_DIR}/UIProcess/PDF"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/cocoa"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
     "${WEBKIT_DIR}/UIProcess/WebAuthentication/Cocoa"
@@ -132,6 +139,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/ios"
     "${WEBKIT_DIR}/Shared/cf"
     "${WEBKIT_DIR}/Shared/Cocoa"
+    "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon"
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/XPCService"
     "${WEBKIT_DIR}/Shared/mac"
     "${WEBKIT_DIR}/Shared/mac/MediaFormatReader"
@@ -444,6 +452,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.h
     UIProcess/API/Cocoa/_WKSessionState.h
+    UIProcess/API/Cocoa/_WKTapHandlingResult.h
     UIProcess/API/Cocoa/_WKTextInputContext.h
     UIProcess/API/Cocoa/_WKTextManipulationConfiguration.h
     UIProcess/API/Cocoa/_WKTextManipulationDelegate.h
@@ -467,7 +476,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKWebsiteDataStore.h
     UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h
     UIProcess/API/Cocoa/_WKWebsiteDataStoreDelegate.h
-    UIProcess/API/Cocoa/_WKWebsitePolicies.h
 
     UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h
 
@@ -776,10 +784,10 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
 
     set(WebKit_RESOURCES_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions/A/Resources)
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb COMMAND
-        grep -o "^[^;]*" ${WEBKIT_DIR}/WebProcess/com.apple.WebProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb
+        grep -o "^[^;]*" ${WEBKIT_DIR}/WebProcess/com.apple.WebProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb
         VERBATIM)
     add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb COMMAND
-        grep -o "^[^;]*" ${WEBKIT_DIR}/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb
+        grep -o "^[^;]*" ${WEBKIT_DIR}/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb
         VERBATIM)
     add_custom_target(WebKitSandboxProfiles ALL DEPENDS ${WebKit_RESOURCES_DIR}/com.apple.WebProcess.sb ${WebKit_RESOURCES_DIR}/com.apple.WebKit.NetworkProcess.sb)
     add_dependencies(WebKit WebKitSandboxProfiles)

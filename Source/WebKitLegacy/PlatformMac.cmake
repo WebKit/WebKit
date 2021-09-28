@@ -1,13 +1,19 @@
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(QUARTZ_LIBRARY Quartz)
+find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
+
+list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
+    ${SECURITYINTERFACE_LIBRARY}
+)
 
 list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_FRAMEWORK_HEADERS_DIR}"
     "${WEBKITLEGACY_DIR}"
     "${WEBKITLEGACY_DIR}/mac"
+    "${WEBKITLEGACY_DIR}/mac/Misc"
     "${WEBKITLEGACY_DIR}/mac/WebView"
     "${WEBKITLEGACY_DIR}/mac/WebCoreSupport"
     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
@@ -42,6 +48,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Misc/WebElementDictionary.mm
     mac/Misc/WebIconDatabase.mm
     mac/Misc/WebKitErrors.m
+    mac/Misc/WebKitLogInitialization.mm
     mac/Misc/WebKitLogging.m
     mac/Misc/WebKitNSStringExtras.mm
     mac/Misc/WebKitStatistics.m

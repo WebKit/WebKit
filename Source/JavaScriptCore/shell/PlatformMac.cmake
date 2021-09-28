@@ -7,4 +7,5 @@ set(testapi_OBJC_SOURCES
     ../API/tests/testapi.mm
 )
 list(APPEND testapi_SOURCES ${testapi_OBJC_SOURCES})
+list(APPEND jsc_LIBRARIES WTF)
 set_source_files_properties(${testapi_OBJC_SOURCES} PROPERTIES COMPILE_FLAGS -fobjc-arc)
