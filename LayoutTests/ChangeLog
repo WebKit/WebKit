@@ -1,5 +1,14 @@
 2021-09-27  Eric Hutchison  <ehutchison@apple.com>
 
+        [ Catalina BigSur wk2 ] imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html is a flaky failure and crash.
+        https://bugs.webkit.org/show_bug.cgi?id=230866.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-09-27  Eric Hutchison  <ehutchison@apple.com>
+
         [BigSur wk2 Debug iOS14 ] webrtc/video-mute.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=230865.
 
