@@ -681,6 +681,7 @@ css/CSSInheritedValue.cpp
 css/CSSInitialValue.cpp
 css/CSSKeyframeRule.cpp
 css/CSSKeyframesRule.cpp
+css/CSSLayerRule.cpp
 css/CSSLineBoxContainValue.cpp
 css/CSSMarkup.cpp
 css/CSSMediaRule.cpp
@@ -2833,6 +2834,7 @@ JSCSSGroupingRule.cpp
 JSCSSImportRule.cpp
 JSCSSKeyframeRule.cpp
 JSCSSKeyframesRule.cpp
+JSCSSLayerRule.cpp
 JSCSSMediaRule.cpp
 JSCSSNamespaceRule.cpp
 JSCSSPageRule.cpp

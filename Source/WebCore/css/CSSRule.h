@@ -36,7 +36,7 @@ class CSSRule : public RefCounted<CSSRule> {
 public:
     virtual ~CSSRule() = default;
 
-    // WebIDL enum
+    // FIXME: Remove pointless duplication by replacing with StyleRuleType.
     enum Type {
         UNKNOWN_RULE = 0,
         STYLE_RULE = 1,
@@ -51,7 +51,8 @@ public:
         NAMESPACE_RULE = 10,
         COUNTER_STYLE_RULE = 11,
         SUPPORTS_RULE = 12,
-        FONT_PALETTE_VALUES_RULE = 19
+        LAYER_RULE = 16,
+        FONT_PALETTE_VALUES_RULE = 19,
     };
 
     enum DeprecatedType {

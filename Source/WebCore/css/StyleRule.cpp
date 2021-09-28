@@ -29,6 +29,7 @@
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
+#include "CSSLayerRule.h"
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
 #include "CSSPageRule.h"
@@ -177,7 +178,8 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         rule = CSSCounterStyleRule::create(downcast<StyleRuleCounterStyle>(self), parentSheet);
         break;
     case StyleRuleType::Layer:
-        // FIXME: Implement.
+        rule = CSSLayerRule::create(downcast<StyleRuleLayer>(self), parentSheet);
+        break;
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Keyframe:

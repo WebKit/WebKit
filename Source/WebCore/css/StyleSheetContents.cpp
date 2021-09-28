@@ -243,9 +243,11 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
         if (!is<StyleRuleLayer>(rule))
             return false;
         auto& layerRule = downcast<StyleRuleLayer>(rule.get());
-        if (layerRule.isStatement())
+        if (layerRule.isStatement()) {
             m_layerRulesBeforeImportRules.insert(childVectorIndex, &layerRule);
-        else if (childVectorIndex < m_layerRulesBeforeImportRules.size())
+            return true;
+        }
+        if (childVectorIndex < m_layerRulesBeforeImportRules.size())
             return false;
     }
     childVectorIndex -= m_layerRulesBeforeImportRules.size();

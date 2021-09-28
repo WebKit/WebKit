@@ -696,6 +696,7 @@ $(PROJECT_DIR)/css/CSSGroupingRule.idl
 $(PROJECT_DIR)/css/CSSImportRule.idl
 $(PROJECT_DIR)/css/CSSKeyframeRule.idl
 $(PROJECT_DIR)/css/CSSKeyframesRule.idl
+$(PROJECT_DIR)/css/CSSLayerRule.idl
 $(PROJECT_DIR)/css/CSSMediaRule.idl
 $(PROJECT_DIR)/css/CSSNamespaceRule.idl
 $(PROJECT_DIR)/css/CSSPageRule.idl

@@ -1,5 +1,14 @@
 2021-09-28  Antti Koivisto  <antti@apple.com>
 
+        [CSS Cascade Layers] Add CSSOM interface
+        https://bugs.webkit.org/show_bug.cgi?id=230882
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-cascade/parsing/layer-expected.txt: Added.
+
+2021-09-28  Antti Koivisto  <antti@apple.com>
+
         [CSS Cascade Layers] Import more WPT tests
         https://bugs.webkit.org/show_bug.cgi?id=230883
 

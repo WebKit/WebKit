@@ -37,12 +37,11 @@ enum class StyleRuleType : uint8_t {
     Page = 6,
     Keyframes = 7,
     Keyframe = 8, // Not used. These are internally non-rule StyleRuleKeyframe objects.
-    // Margin = 9, FIXME: Why is this missing?
     Namespace = 10,
     CounterStyle = 11,
     Supports = 12,
+    Layer = 16,
     FontPaletteValues = 19,
-    Layer = 20
 };
 
 } // namespace WebCore
