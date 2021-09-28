@@ -40,7 +40,7 @@ Ref<WebStorageConnection> WebStorageConnection::create()
     return adoptRef(*new WebStorageConnection);
 }
 
-void WebStorageConnection::getPersisted(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void WebStorageConnection::getPersisted(const WebCore::ClientOrigin& origin, StorageConnection::PersistCallback&& completionHandler)
 {
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persisted(origin), WTFMove(completionHandler));
 }

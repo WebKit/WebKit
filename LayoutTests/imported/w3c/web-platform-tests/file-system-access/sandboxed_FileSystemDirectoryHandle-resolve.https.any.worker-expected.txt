@@ -1,6 +1,6 @@
 
-FAIL Resolve returns empty array for same directory promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
-FAIL Resolve returns correct path promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
-FAIL Resolve returns correct path with non-ascii characters promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
-FAIL Resolve returns null when entry is not a child promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storage.getDirectory')"
+FAIL Resolve returns empty array for same directory promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Resolve returns correct path promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Resolve returns correct path with non-ascii characters promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Resolve returns null when entry is not a child promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

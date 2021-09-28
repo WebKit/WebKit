@@ -1,3 +1,15 @@
+2021-09-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Make StorageManager available in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=230675
+        <rdar://problem/83448115>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebCoreSupport/WebStorageConnection.cpp:
+        (WebKit::WebStorageConnection::getPersisted):
+        * WebProcess/WebCoreSupport/WebStorageConnection.h:
+
 2021-09-28  Per Arne Vollan  <pvollan@apple.com>
 
         Enable CFPrefs direct mode in all WebKit processes

@@ -56,6 +56,7 @@
 #include "WorkerReportingProxy.h"
 #include "WorkerSWClientConnection.h"
 #include "WorkerScriptLoader.h"
+#include "WorkerStorageConnection.h"
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/IsoMallocInlines.h>
@@ -138,6 +139,9 @@ void WorkerGlobalScope::prepareForDestruction()
 
     if (m_cacheStorageConnection)
         m_cacheStorageConnection->clearPendingRequests();
+
+    if (m_storageConnection)
+        m_storageConnection->scopeClosed();
 }
 
 void WorkerGlobalScope::removeAllEventListeners()
@@ -212,6 +216,14 @@ void WorkerGlobalScope::resume()
 {
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, false);
+}
+
+WorkerStorageConnection& WorkerGlobalScope::storageConnection()
+{
+    if (!m_storageConnection)
+        m_storageConnection = WorkerStorageConnection::create(*this);
+
+    return *m_storageConnection;
 }
 
 WorkerLocation& WorkerGlobalScope::location() const

@@ -706,7 +706,7 @@ public:
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     RefPtr<PermissionController> permissionController() final;
-    StorageConnection* storageConnection() final;
+    StorageConnection* storageConnection();
     SocketProvider* socketProvider() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
 

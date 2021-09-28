@@ -43,9 +43,9 @@ public:
     static Ref<WebStorageConnection> create();
 
 private:
-    void getPersisted(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&) final;
-    void persist(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&) final;
-    void fileSystemGetDirectory(const WebCore::ClientOrigin&, CompletionHandler<void(WebCore::ExceptionOr<Ref<WebCore::FileSystemHandleImpl>>&&)>&&) final;
+    void getPersisted(const WebCore::ClientOrigin&, StorageConnection::PersistCallback&&) final;
+    void persist(const WebCore::ClientOrigin&, StorageConnection::PersistCallback&&) final;
+    void fileSystemGetDirectory(const WebCore::ClientOrigin&, StorageConnection::GetDirectoryCallback&&) final;
 
     IPC::Connection& connection();
 };

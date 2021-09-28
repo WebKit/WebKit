@@ -27,6 +27,7 @@
 #include "StorageManager.h"
 
 #include "ClientOrigin.h"
+#include "Document.h"
 #include "ExceptionOr.h"
 #include "FileSystemDirectoryHandle.h"
 #include "FileSystemHandleImpl.h"
@@ -34,6 +35,8 @@
 #include "JSFileSystemDirectoryHandle.h"
 #include "NavigatorBase.h"
 #include "SecurityOrigin.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerStorageConnection.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -68,11 +71,17 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
     if (!origin)
         return Exception { InvalidStateError, "Origin is invalid"_s };
     
-    auto connection = context->storageConnection();
-    if (!connection)
-        return Exception { InvalidStateError, "Connection is invalid"_s };
+    if (is<Document>(context)) {
+        if (auto* connection = downcast<Document>(context)->storageConnection())
+            return ConnectionInfo { *connection, { context->topOrigin().data(), origin->data() } };
 
-    return ConnectionInfo { *connection, { context->topOrigin().data(), origin->data() } };
+        return Exception { InvalidStateError, "Connection is invalid"_s };
+    }
+
+    if (is<WorkerGlobalScope>(context))
+        return ConnectionInfo { downcast<WorkerGlobalScope>(context)->storageConnection(), { context->topOrigin().data(), origin->data() } };
+
+    return Exception { NotSupportedError };
 }
 
 void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)

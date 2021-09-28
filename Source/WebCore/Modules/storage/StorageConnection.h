@@ -26,7 +26,7 @@
 #pragma once
 
 #include <wtf/CompletionHandler.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -34,12 +34,14 @@ class FileSystemHandleImpl;
 template<typename> class ExceptionOr;
 struct ClientOrigin;
 
-class StorageConnection : public RefCounted<StorageConnection> {
+class StorageConnection : public ThreadSafeRefCounted<StorageConnection> {
 public:
     virtual ~StorageConnection() = default;
-    virtual void getPersisted(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
-    virtual void persist(const ClientOrigin&, CompletionHandler<void(bool)>&&) = 0;
-    virtual void fileSystemGetDirectory(const ClientOrigin&, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleImpl>>&&)>&&) = 0;
+    using PersistCallback = CompletionHandler<void(bool)>;
+    virtual void getPersisted(const ClientOrigin&, PersistCallback&&) = 0;
+    virtual void persist(const ClientOrigin&, PersistCallback&& completionHandler) { completionHandler(false); }
+    using GetDirectoryCallback = CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleImpl>>&&)>;
+    virtual void fileSystemGetDirectory(const ClientOrigin&, GetDirectoryCallback&&) = 0;
 };
 
 } // namespace WebCore

@@ -1,3 +1,47 @@
+2021-09-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Make StorageManager available in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=230675
+        <rdar://problem/83448115>
+
+        Reviewed by Youenn Fablet.
+
+        Introduce WorkerStorageConnection class, which dispatches StorageManager task to main-thread StorageConnection
+        and dispatches result back to worker thread.
+
+        Rebaselined existing test.
+
+        * Modules/storage/DummyStorageProvider.h:
+        * Modules/storage/StorageConnection.h:
+        (WebCore::StorageConnection::persist):
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::connectionInfo):
+        * Modules/storage/WorkerStorageConnection.cpp: Added.
+        (WebCore::WorkerStorageConnection::create):
+        (WebCore::WorkerStorageConnection::WorkerStorageConnection):
+        (WebCore::WorkerStorageConnection::scopeClosed):
+        (WebCore::WorkerStorageConnection::getPersisted):
+        (WebCore::WorkerStorageConnection::didGetPersisted):
+        (WebCore::WorkerStorageConnection::fileSystemGetDirectory):
+        * Modules/storage/WorkerStorageConnection.h: Copied from Source/WebCore/Modules/storage/StorageConnection.h.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::permissionController):
+        (WebCore::ScriptExecutionContext::storageConnection): Deleted.
+        * page/NavigatorStorage.idl:
+        * page/WorkerNavigator.idl:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::prepareForDestruction):
+        (WebCore::WorkerGlobalScope::storageConnection):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerLoaderProxy.h:
+        (WebCore::WorkerLoaderProxy::storageConnection):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::storageConnection):
+        * workers/WorkerMessagingProxy.h:
+
 2021-09-28  Chris Dumez  <cdumez@apple.com>
 
         Move Cross-Origin-Opener-Policy handling to the NetworkProcess

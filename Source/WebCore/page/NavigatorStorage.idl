@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
- // https://storage.spec.whatwg.org/#navigatorstorage
+// https://storage.spec.whatwg.org/#navigatorstorage
  
- [
+[
     EnabledBySetting=StorageAPI,
     SecureContext
 ] interface mixin NavigatorStorage {
