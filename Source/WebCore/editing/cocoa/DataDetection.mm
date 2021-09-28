@@ -485,47 +485,49 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
     }
 
     Vector<Vector<SimpleRange>> allResultRanges;
-    TextIterator iterator(contextRange);
-    CFIndex iteratorCount = 0;
+    {
+        TextIterator iterator(contextRange);
+        CFIndex iteratorCount = 0;
 
-    // Iterate through the array of the expanded results to create a vector of Range objects that indicate
-    // where the DOM needs to be modified.
-    // Each result can be contained all in one text node or can span multiple text nodes.
-    for (auto& result : allResults) {
-        DDQueryRange queryRange = PAL::softLink_DataDetectorsCore_DDResultGetQueryRangeForURLification(result.get());
-        CFIndex iteratorTargetAdvanceCount = (CFIndex)PAL::softLink_DataDetectorsCore_DDScanQueryGetFragmentMetaData(scanQuery.get(), queryRange.start.queryIndex);
-        for (; iteratorCount < iteratorTargetAdvanceCount; ++iteratorCount)
-            iterator.advance();
-
-        Vector<SimpleRange> fragmentRanges;
-        CFIndex fragmentIndex = queryRange.start.queryIndex;
-        if (fragmentIndex == queryRange.end.queryIndex) {
-            CharacterRange fragmentRange;
-            fragmentRange.location = queryRange.start.offset;
-            fragmentRange.length = queryRange.end.offset - queryRange.start.offset;
-            fragmentRanges.append(resolveCharacterRange(iterator.range(), fragmentRange));
-        } else {
-            auto range = iterator.range();
-            range.start.offset += queryRange.start.offset;
-            fragmentRanges.append(range);
-        }
-        
-        while (fragmentIndex < queryRange.end.queryIndex) {
-            ++fragmentIndex;
-            iteratorTargetAdvanceCount = (CFIndex)PAL::softLink_DataDetectorsCore_DDScanQueryGetFragmentMetaData(scanQuery.get(), fragmentIndex);
+        // Iterate through the array of the expanded results to create a vector of Range objects that indicate
+        // where the DOM needs to be modified.
+        // Each result can be contained all in one text node or can span multiple text nodes.
+        for (auto& result : allResults) {
+            DDQueryRange queryRange = PAL::softLink_DataDetectorsCore_DDResultGetQueryRangeForURLification(result.get());
+            CFIndex iteratorTargetAdvanceCount = (CFIndex)PAL::softLink_DataDetectorsCore_DDScanQueryGetFragmentMetaData(scanQuery.get(), queryRange.start.queryIndex);
             for (; iteratorCount < iteratorTargetAdvanceCount; ++iteratorCount)
                 iterator.advance();
 
-            auto fragmentRange = iterator.range();
-            if (fragmentIndex == queryRange.end.queryIndex)
-                fragmentRange.end.offset = fragmentRange.start.offset + queryRange.end.offset;
-            auto& previousRange = fragmentRanges.last();
-            if (previousRange.start.container.ptr() == fragmentRange.start.container.ptr())
-                previousRange.end = fragmentRange.end;
-            else
-                fragmentRanges.append(fragmentRange);
+            Vector<SimpleRange> fragmentRanges;
+            CFIndex fragmentIndex = queryRange.start.queryIndex;
+            if (fragmentIndex == queryRange.end.queryIndex) {
+                CharacterRange fragmentRange;
+                fragmentRange.location = queryRange.start.offset;
+                fragmentRange.length = queryRange.end.offset - queryRange.start.offset;
+                fragmentRanges.append(resolveCharacterRange(iterator.range(), fragmentRange));
+            } else {
+                auto range = iterator.range();
+                range.start.offset += queryRange.start.offset;
+                fragmentRanges.append(range);
+            }
+
+            while (fragmentIndex < queryRange.end.queryIndex) {
+                ++fragmentIndex;
+                iteratorTargetAdvanceCount = (CFIndex)PAL::softLink_DataDetectorsCore_DDScanQueryGetFragmentMetaData(scanQuery.get(), fragmentIndex);
+                for (; iteratorCount < iteratorTargetAdvanceCount; ++iteratorCount)
+                    iterator.advance();
+
+                auto fragmentRange = iterator.range();
+                if (fragmentIndex == queryRange.end.queryIndex)
+                    fragmentRange.end.offset = fragmentRange.start.offset + queryRange.end.offset;
+                auto& previousRange = fragmentRanges.last();
+                if (previousRange.start.container.ptr() == fragmentRange.start.container.ptr())
+                    previousRange.end = fragmentRange.end;
+                else
+                    fragmentRanges.append(fragmentRange);
+            }
+            allResultRanges.append(WTFMove(fragmentRanges));
         }
-        allResultRanges.append(WTFMove(fragmentRanges));
     }
 
     auto tz = adoptCF(CFTimeZoneCopyDefault());
