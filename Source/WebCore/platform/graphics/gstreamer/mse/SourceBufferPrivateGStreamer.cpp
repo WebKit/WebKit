@@ -209,17 +209,20 @@ void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(SourceBufferP
     for (auto& trackInfo : initializationSegment.videoTracks) {
         GRefPtr<GstCaps> initialCaps = static_cast<VideoTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
         ASSERT(initialCaps);
-        m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, trackInfo.track->id(), WTFMove(initialCaps)));
+        if (!m_tracks.contains(trackInfo.track->id()))
+            m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, trackInfo.track->id(), WTFMove(initialCaps)));
     }
     for (auto& trackInfo : initializationSegment.audioTracks) {
         GRefPtr<GstCaps> initialCaps = static_cast<AudioTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
         ASSERT(initialCaps);
-        m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, trackInfo.track->id(), WTFMove(initialCaps)));
+        if (!m_tracks.contains(trackInfo.track->id()))
+            m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, trackInfo.track->id(), WTFMove(initialCaps)));
     }
     for (auto& trackInfo : initializationSegment.textTracks) {
         GRefPtr<GstCaps> initialCaps = static_cast<InbandTextTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
         ASSERT(initialCaps);
-        m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, trackInfo.track->id(), WTFMove(initialCaps)));
+        if (!m_tracks.contains(trackInfo.track->id()))
+            m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, trackInfo.track->id(), WTFMove(initialCaps)));
     }
 
     m_mediaSource->startPlaybackIfHasAllTracks();

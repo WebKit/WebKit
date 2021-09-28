@@ -1,3 +1,25 @@
+2021-09-28  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Don't create MediaSourceTrackGStreamer objects twice for the same track
+        https://bugs.webkit.org/show_bug.cgi?id=230829
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The existing code in
+        SourceBufferPrivateGStreamer::didReceiveInitializationSegment()
+        was not checking if the track already existing, creating and
+        immediately destroying a MediaSourceTrackGStreamer, which then crashed
+        on an assertion (ASSERTION FAILED: m_isRemoved).
+
+        This fixes the following two tests which were crashing with the former
+        assertion when running in Debug:
+
+        - media/media-source/media-mp4-h264-partial-abort.html
+        - media/media-source/media-source-abort-resets-parser.html
+
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveInitializationSegment):
+
 2021-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Mostly fix Mac CMake build
