@@ -1,3 +1,12 @@
+2021-09-28  Geza Lore  <gezalore@gmail.com>
+
+        Fix rounding issue in run-jsc-stress-tests
+        https://bugs.webkit.org/show_bug.cgi?id=230889
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add ApproximateTime

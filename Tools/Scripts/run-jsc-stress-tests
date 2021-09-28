@@ -2020,10 +2020,12 @@ def parallelEach(array, &block)
 
     # Chunks 1 to nWorkers-1 run in the worker processes
     for i in 1...nWorkers do
+      chunkStart = i*chunkSize
+      break if chunkStart >= array.size
       pid = Process.fork
       if pid.nil?
         # Worker process. Process chunk i.
-        array.slice(i*chunkSize, chunkSize).each(&block)
+        array.slice(chunkStart, chunkSize).each(&block)
         Process.exit!(true)
       else
         childPIDs << pid
