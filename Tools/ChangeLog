@@ -1,3 +1,12 @@
+2021-09-28  Eddy Wong  <eddy_wong@apple.com>
+
+        Added GlobalSign R3/R5 Root CA cert to webkitcorepy to resolve certain pip module download SSL error.
+        https://bugs.webkit.org/show_bug.cgi?id=230904
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/cacert.pem:
+
 2021-09-28  Youenn Fablet  <youenn@apple.com>
 
         Validate DeviceIdHashSaltStorage persistent data
