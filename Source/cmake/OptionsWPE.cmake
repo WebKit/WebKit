@@ -127,7 +127,7 @@ if (USE_SOUP2)
     set(WPE_API_VERSION 1.0)
     set(WPE_API_DOC_VERSION 1.0)
 else ()
-    set(SOUP_MINIMUM_VERSION 2.99.9)
+    set(SOUP_MINIMUM_VERSION 3.0.0)
     set(SOUP_API_VERSION 3.0)
     set(WPE_API_VERSION 1.1)
     # No API changes in 1.1, so keep using the same API documentation.

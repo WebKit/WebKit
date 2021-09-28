@@ -1,3 +1,13 @@
+2021-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump libsoup3 version to 3.0.0
+        https://bugs.webkit.org/show_bug.cgi?id=230601
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-09-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [MSVC] The "/Zc:lambda" switch is recommended to use the new lambda processor.
