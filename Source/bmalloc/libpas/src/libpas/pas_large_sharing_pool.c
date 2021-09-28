@@ -287,13 +287,39 @@ successor(pas_large_sharing_node* node)
 static bool states_match(pas_large_sharing_node* left,
                          pas_large_sharing_node* right)
 {
-    return left->is_committed == right->is_committed
-        && left->synchronization_style == right->synchronization_style
-        && ((!left->num_live_bytes && !right->num_live_bytes) ||
-            (pas_range_size(left->range) == left->num_live_bytes &&
-             pas_range_size(right->range) == right->num_live_bytes))
-        && (left->use_epoch == right->use_epoch
-            || (!left->is_committed && !left->num_live_bytes));
+    bool both_empty;
+    bool both_full;
+    
+    if (left->is_committed != right->is_committed)
+        return false;
+
+    if (left->synchronization_style != right->synchronization_style)
+        return false;
+
+    both_empty =
+        !left->num_live_bytes &&
+        !right->num_live_bytes;
+    
+    both_full =
+        pas_range_size(left->range) == left->num_live_bytes &&
+        pas_range_size(right->range) == right->num_live_bytes;
+
+    if (!both_empty && !both_full)
+        return false;
+
+    /* Right now: both sides have identical commit states and identical synchronization styes. And
+       either both sides are empty or both sides are full.
+    
+       The only reason why we wouldn't want to coalesce is if epochs didn't match. But that only
+       matters when the memory is free and committed. */
+
+    if (!left->is_committed)
+        return true;
+
+    if (both_full)
+        return true;
+
+    return left->use_epoch == right->use_epoch;
 }
 
 static bool is_eligible(pas_large_sharing_node* node)

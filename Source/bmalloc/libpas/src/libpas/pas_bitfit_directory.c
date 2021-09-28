@@ -46,6 +46,10 @@ void pas_bitfit_directory_construct(pas_bitfit_directory* directory,
 {
     static const bool verbose = false;
 
+    /* NOTE - this works even if the config is disabled, and produces a directory that is empty and
+       does nothing. This makes sense because it makes it easy to iterate over the directories in a heap
+       without knowing what your config is. */
+
     if (verbose)
         pas_log("Creating directory %p\n", directory);
     
@@ -54,7 +58,7 @@ void pas_bitfit_directory_construct(pas_bitfit_directory* directory,
     pas_bitfit_directory_max_free_vector_construct(&directory->max_frees);
     pas_bitfit_directory_view_vector_construct(&directory->views);
     pas_compact_atomic_bitfit_size_class_ptr_store(&directory->largest_size_class, NULL);
-    directory->config_kind = config->kind;
+    directory->config_kind = config->base.is_enabled ? config->kind : pas_bitfit_page_config_kind_null;
 
     directory->heap = heap;
     pas_bitfit_directory_segmented_bitvectors_construct(&directory->bitvectors);
@@ -62,7 +66,7 @@ void pas_bitfit_directory_construct(pas_bitfit_directory* directory,
 
     /* We could have been lazy about this - but it's probably not super necessary since the point
        of bitfit global directories is that there won't be too many of them. */
-    if (pas_bitfit_directory_does_sharing(directory)) {
+    if (config->base.is_enabled && pas_bitfit_directory_does_sharing(directory)) {
         pas_page_sharing_pool_add(
             &pas_physical_page_sharing_pool,
             pas_page_sharing_participant_create(
@@ -102,6 +106,8 @@ pas_bitfit_directory_get_first_free_view(pas_bitfit_directory* directory,
                                          pas_bitfit_page_config* page_config)
 {
     static const bool verbose = false;
+
+    PAS_ASSERT(page_config->base.is_enabled);
     
     for (;;) {
         pas_found_index found_index;

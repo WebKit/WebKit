@@ -49,6 +49,10 @@ int malloc_engaged_nano(void);
 }
 #endif
 
+#if BUSE(LIBPAS)
+#include "pas_status_reporter.h"
+#endif
+
 namespace bmalloc {
 
 static bool isMallocEnvironmentVariableSet()
@@ -136,6 +140,14 @@ DEFINE_STATIC_PER_PROCESS_STORAGE(Environment);
 Environment::Environment(const LockHolder&)
     : m_isDebugHeapEnabled(computeIsDebugHeapEnabled())
 {
+#if BUSE(LIBPAS)
+    const char* statusReporter = getenv("WebKitPasStatusReporter");
+    if (statusReporter) {
+        unsigned enabled;
+        if (sscanf(statusReporter, "%u", &enabled) == 1)
+            pas_status_reporter_enabled = enabled;
+    }
+#endif
 }
 
 bool Environment::computeIsDebugHeapEnabled()

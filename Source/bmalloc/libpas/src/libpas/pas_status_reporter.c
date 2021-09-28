@@ -45,6 +45,7 @@
 #include "pas_heap_table.h"
 #include "pas_large_heap.h"
 #include "pas_large_map.h"
+#include "pas_large_sharing_pool.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_log.h"
 #include "pas_page_sharing_pool.h"
@@ -196,6 +197,9 @@ static void report_bitfit_directory_contents(
 void pas_status_reporter_dump_bitfit_directory(
     pas_stream* stream, pas_bitfit_directory* directory)
 {
+    if (directory->config_kind == pas_bitfit_page_config_kind_null)
+        return;
+    
     pas_stream_printf(stream, "            %s Global Dir (%p): ",
                       pas_bitfit_page_config_variant_get_capitalized_string(
                           pas_bitfit_page_config_kind_get_config(directory->config_kind)->variant),
@@ -644,6 +648,39 @@ void pas_status_reporter_dump_all_heaps_non_utility_summaries(pas_stream* stream
     pas_stream_printf(stream, "\n");
 }
 
+static bool dump_large_sharing_pool_node_callback(pas_large_sharing_node* node,
+                                                  void* arg)
+{
+    pas_stream* stream;
+
+    stream = arg;
+
+    pas_stream_printf(stream, "        %p...%p: %s, %zu/%zu live (%.0lf%%), %llu",
+                      (void*)node->range.begin,
+                      (void*)node->range.end,
+                      pas_commit_mode_get_string(node->is_committed),
+                      node->num_live_bytes,
+                      pas_range_size(node->range),
+                      100. * (double)node->num_live_bytes / (double)pas_range_size(node->range),
+                      node->use_epoch);
+
+    if (node->synchronization_style != pas_physical_memory_is_locked_by_virtual_range_common_lock) {
+        pas_stream_printf(
+            stream, ", %s",
+            pas_physical_memory_synchronization_style_get_string(node->synchronization_style));
+    }
+
+    pas_stream_printf(stream, "\n");
+
+    return true;
+}
+
+void pas_status_reporter_dump_large_sharing_pool(pas_stream* stream)
+{
+    pas_stream_printf(stream, "    Large sharing pool contents:\n");
+    pas_large_sharing_pool_for_each(dump_large_sharing_pool_node_callback, stream, pas_lock_is_held);
+}
+
 void pas_status_reporter_dump_utility_heap(pas_stream* stream)
 {
     pas_stream_printf(stream, "    Utility Heap:\n");
@@ -958,6 +995,10 @@ void pas_status_reporter_dump_everything(pas_stream* stream)
     pas_status_reporter_dump_all_heaps(stream);
     pas_status_reporter_dump_all_shared_page_directories(stream);
     pas_status_reporter_dump_all_heaps_non_utility_summaries(stream);
+    
+    if (pas_status_reporter_enabled >= 3)
+        pas_status_reporter_dump_large_sharing_pool(stream);
+    
     pas_status_reporter_dump_utility_heap(stream);
 
     if (pas_status_reporter_enabled >= 3) {

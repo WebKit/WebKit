@@ -1,3 +1,64 @@
+2021-09-27  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] Fix coalescing of the large sharing pool and make it easy to introspect it (update to e4d20851ee9ff00f2962b349a9ff8465695a83d7)
+        https://bugs.webkit.org/show_bug.cgi?id=230867
+
+        Reviewed by Yusuke Suzuki.
+
+        This adds the ability to enable the libpas status reporter, adds a large sharing pool dump to
+        the status report, and fixes a large sharing pool coalescing bug found by doing that. Previously
+        we weren't coalescing things that are not free+committed.
+
+        Also updates the export script that I use to keep the libpas git repo in sync with what's in WK.
+
+        The large sharing pool is the mechanism by which libpas can find memory that can be decommitted
+        across isolated large heaps, even if those large heaps share pages with one another. The main
+        data structure is a red-black tree of nodes that represent memory ranges. If there are two
+        adjacent ranges of memory that are both fully live and committed or both decommitted, then we
+        want those to be represented using a single node. That wasn't quite working right. Even the
+        libpas test for this was testing the wrong thing. This fixes the behavior and the test. It's
+        perf-neutral since large heaps usually have a small number of objects in them anyway.
+
+        The new status reporting functionality can be enabled with the WebKitPasStatusReporter
+        environment variable. This takes an integer that tells the amount of data in the report. Here
+        are the recognized values:
+
+        1 - just report number of heaps
+        2 - something in between 1 and 3
+        3 - report everything that the status reporter can report right now (per-page data for
+            segregated/bitfit heaps, lots of details for large heaps)
+
+        If the status reporter ever reported per-object information, it would be at level 4 or higher.
+        It's safe to pass 9999 or whatever if you just want the maximum report that libpas supports.
+        TL;DR for now you usually want WebKitPasStatusReporter=3.
+
+        * bmalloc/Environment.cpp:
+        (bmalloc::Environment::Environment):
+        * libpas/export.rb: Added.
+        * libpas/export.sh: Removed.
+        * libpas/src/libpas/pas_bitfit_directory.c:
+        (pas_bitfit_directory_construct): I needed to rationalize how we initialize disabled directories to make status reporting work.
+        (pas_bitfit_directory_get_first_free_view):
+        * libpas/src/libpas/pas_large_sharing_pool.c:
+        (states_match):
+        * libpas/src/libpas/pas_status_reporter.c:
+        (pas_status_reporter_dump_bitfit_directory):
+        (dump_large_sharing_pool_node_callback):
+        (pas_status_reporter_dump_large_sharing_pool):
+        (pas_status_reporter_dump_everything):
+        * libpas/src/libpas/pas_status_reporter.h:
+        * libpas/src/test/LargeSharingPoolDump.cpp:
+        * libpas/src/test/LargeSharingPoolDump.h:
+        * libpas/src/test/LargeSharingPoolTests.cpp:
+        (std::Range::Range):
+        (std::Range::operator== const):
+        (std::Range::operator!= const):
+        (std::operator<<):
+        (std::assertState):
+        (std::testGoodCoalesceEpochUpdate):
+        (addLargeSharingPoolTests):
+        (std::testBadCoalesceEpochUpdate): Deleted.
+
 2021-09-22  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] fix DebugHeap
