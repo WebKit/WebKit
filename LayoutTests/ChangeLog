@@ -1,3 +1,14 @@
+2021-09-28  Cameron McCormack  <heycam@apple.com>
+
+        Preserve color space when structured cloning ImageBitmaps
+        https://bugs.webkit.org/show_bug.cgi?id=230429
+        <rdar://problem/83293533>
+
+        Reviewed by Sam Weinig.
+
+        * fast/storage/serialized-script-value.html: Bump the current version
+        number.
+
 2021-09-28  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP: Implement 'strict-dynamic' source expression
