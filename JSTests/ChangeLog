@@ -1,3 +1,14 @@
+2021-09-28  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Speed up setting JSFunction's "prototype" property
+        https://bugs.webkit.org/show_bug.cgi?id=230864
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/class-creation.js: Added.
+        * microbenchmarks/function-prototype-put-non-reified.js: Added.
+        * microbenchmarks/function-prototype-put-reified.js: Added.
+
 2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add ApproximateTime

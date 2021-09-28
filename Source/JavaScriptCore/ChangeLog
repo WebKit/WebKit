@@ -1,3 +1,28 @@
+2021-09-28  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Speed up setting JSFunction's "prototype" property
+        https://bugs.webkit.org/show_bug.cgi?id=230864
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch:
+
+          1. Removes "prototype" lookup from put(), which was non-inlineable and created an
+             interim object with "constructor" field. Instead, the new value is put directly,
+             with correct attributes, and respecting an altered receiver. This results in 2.8X
+             perf boost for very common case of setting "prototype": `Cat.prototype = new Animal`.
+
+          2. Simplifies initialization of class constructor's prototype object, removing tentacles
+             from getOwnPropertySlot() and extracting constructPrototypeObject() helper. Provides
+             a fast path for op_define_data_property, speeding up `class` creation by ~40%, while
+             reifies normal function's prototype with correct attributes for Object.defineProperty().
+
+        * runtime/JSFunction.cpp:
+        (JSC::constructPrototypeObject):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+
 2021-09-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Add ApproximateTime
