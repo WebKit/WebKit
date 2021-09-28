@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DisplayListDrawGlyphsRecorder.h"
+#include "DrawGlyphsRecorder.h"
 
 #include "BitmapImage.h"
 #include "Color.h"
@@ -44,8 +44,6 @@
 #endif
 
 namespace WebCore {
-
-namespace DisplayList {
 
 static CGContextDelegateRef beginLayer(CGContextDelegateRef delegate, CGRenderingStateRef rstate, CGGStateRef gstate, CGRect rect, CFDictionaryRef, CGContextDelegateRef)
 {
@@ -82,13 +80,13 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     auto contextDelegate = adoptCF(CGContextDelegateCreate(this));
     CGContextDelegateSetCallback(contextDelegate.get(), deBeginLayer, reinterpret_cast<CGContextDelegateCallback>(&beginLayer));
     CGContextDelegateSetCallback(contextDelegate.get(), deEndLayer, reinterpret_cast<CGContextDelegateCallback>(&endLayer));
-    CGContextDelegateSetCallback(contextDelegate.get(), deDrawGlyphs, reinterpret_cast<CGContextDelegateCallback>(&WebCore::DisplayList::drawGlyphs));
+    CGContextDelegateSetCallback(contextDelegate.get(), deDrawGlyphs, reinterpret_cast<CGContextDelegateCallback>(&WebCore::drawGlyphs));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawImage, reinterpret_cast<CGContextDelegateCallback>(&drawImage));
     auto context = adoptCF(CGContextCreateWithDelegate(contextDelegate.get(), kCGContextTypeUnknown, nullptr, nullptr));
     return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner, DrawGlyphsDeconstruction drawGlyphsDeconstruction)
+DrawGlyphsRecorder::DrawGlyphsRecorder(DisplayList::Recorder& owner, DrawGlyphsDeconstruction drawGlyphsDeconstruction)
     : m_owner(owner)
     , m_drawGlyphsDeconstruction(drawGlyphsDeconstruction)
     , m_internalContext(createInternalContext())
@@ -430,7 +428,5 @@ void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* gl
     FontCascade::drawGlyphs(m_internalContext, font, glyphsAndAdvancesWithoutOTSVGGlyphs.glyphs, glyphsAndAdvancesWithoutOTSVGGlyphs.advances, glyphsAndAdvancesWithoutOTSVGGlyphs.numGlyphs, startPoint + size(glyphsAndAdvancesWithoutOTSVGGlyphs.initialAdvance), smoothingMode);
     concludeInternalContext();
 }
-
-} // namespace DisplayList
 
 } // namespace WebCore

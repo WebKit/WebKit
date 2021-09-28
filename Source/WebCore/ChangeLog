@@ -1,3 +1,34 @@
+2021-09-28  Devin Rousso  <drousso@apple.com>
+
+        Move `DrawGlyphsRecorder` outside of `DisplayList`
+        https://bugs.webkit.org/show_bug.cgi?id=230912
+
+        Reviewed by Myles Maxfield.
+
+        There's really nothing about `DrawGlyphsRecorder` that's specific to display lists other
+        than it's currently only being used by `DisplayList::Recorder`.
+
+        This patch moves `DrawGlyphsRecorder` outside of `namespace DisplayList` (and the related
+        folder in the source tree). The next patch (<https://webkit.org/b/230913>) will generalize
+        it to allow any `GraphicsContext` instead of just `DisplayList::Recorder`. This is being
+        done to make `<attachment>` drawing work in the GPUProcess (<https://webkit.org/b/230781>).
+
+        * platform/graphics/DrawGlyphsRecorder.h: Renamed from Source/WebCore/platform/graphics/displaylists/DisplayListDrawGlyphsRecorder.h.
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp: Renamed from Source/WebCore/platform/graphics/displaylists/DisplayListDrawGlyphsRecorderCoreText.cpp.
+        * platform/graphics/harfbuzz/DrawGlyphsRecorderHarfBuzz.cpp: Renamed from Source/WebCore/platform/graphics/displaylists/DisplayListDrawGlyphsRecorderHarfBuzz.cpp.
+        * platform/graphics/win/DrawGlyphsRecorderWin.cpp: Renamed from Source/WebCore/platform/graphics/displaylists/DisplayListDrawGlyphsRecorderWin.cpp.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::displayListForTextRun const):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
+        * Headers.cmake:
+        * PlatformAppleWin.cmake:
+        * PlatformWinCairo.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FreeType.cmake:
+
 2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Negative integers in @font-palette-values are invalid

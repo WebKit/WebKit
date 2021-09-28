@@ -30,8 +30,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp
     platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp
 
-    platform/graphics/displaylists/DisplayListDrawGlyphsRecorderWin.cpp
-
+    platform/graphics/win/DrawGlyphsRecorderWin.cpp
     platform/graphics/win/FontCustomPlatformData.cpp
 
     platform/network/cf/AuthenticationCF.cpp

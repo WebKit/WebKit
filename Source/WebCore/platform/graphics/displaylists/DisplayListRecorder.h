@@ -26,8 +26,8 @@
 #pragma once
 
 #include "DisplayList.h"
-#include "DisplayListDrawGlyphsRecorder.h"
 #include "DisplayListItems.h"
+#include "DrawGlyphsRecorder.h"
 #include "GraphicsContext.h"
 #include "Image.h" // For Image::TileRule.
 #include "TextFlags.h"
@@ -77,7 +77,7 @@ public:
     void flushContext(FlushIdentifier identifier) { append<FlushContext>(identifier); }
 
 private:
-    friend class DrawGlyphsRecorder;
+    friend class WebCore::DrawGlyphsRecorder;
     Recorder(Recorder& parent, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
 
     bool hasPlatformContext() const final { return false; }

@@ -46,8 +46,8 @@ class GlyphBuffer;
 class GraphicsContext;
 
 namespace DisplayList {
-
 class Recorder;
+}
 
 class DrawGlyphsRecorder {
 public:
@@ -55,7 +55,7 @@ public:
         Deconstruct,
         DontDeconstruct
     };
-    explicit DrawGlyphsRecorder(Recorder&, DrawGlyphsDeconstruction);
+    explicit DrawGlyphsRecorder(DisplayList::Recorder&, DrawGlyphsDeconstruction);
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 
@@ -92,7 +92,7 @@ private:
     void updateShadow(CGStyleRef);
 #endif
 
-    Recorder& m_owner;
+    DisplayList::Recorder& m_owner;
     DrawGlyphsDeconstruction m_drawGlyphsDeconstruction;
 
 #if USE(CORE_TEXT) && !PLATFORM(WIN)
@@ -127,6 +127,4 @@ private:
     State m_currentState;
 };
 
-}
-
-}
+} // namespace WebCore
