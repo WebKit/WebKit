@@ -55,7 +55,7 @@ Ref<RealtimeVideoCaptureSource> RemoteRealtimeVideoSource::create(const CaptureD
 }
 
 RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeVideoCaptureSource(WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
+    : RealtimeVideoCaptureSource(WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt))
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {

@@ -1,3 +1,21 @@
+2021-09-28  Youenn Fablet  <youenn@apple.com>
+
+        applyConstraints throws OverconstrainedError if specify exact for deviceId
+        https://bugs.webkit.org/show_bug.cgi?id=230819
+        <rdar://problem/83577361>
+
+        Reviewed by Eric Carlson.
+
+        We were not setting properly the persistent device ID of remote sources.
+        Set values according provided device.
+
+        Test: fast/mediastream/applyConstraints-deviceId.html
+
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::RemoteRealtimeAudioSource):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::RemoteRealtimeVideoSource):
+
 2021-09-27  Cameron McCormack  <heycam@apple.com>
 
         Avoid building log messages when IPCMessages log stream is off

@@ -53,7 +53,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& 
 }
 
 RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), String::number(identifier.toUInt64()), WTFMove(hashSalt))
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt))
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {

@@ -1,3 +1,14 @@
+2021-09-28  Youenn Fablet  <youenn@apple.com>
+
+        applyConstraints throws OverconstrainedError if specify exact for deviceId
+        https://bugs.webkit.org/show_bug.cgi?id=230819
+        <rdar://problem/83577361>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/applyConstraints-deviceId-expected.txt: Added.
+        * fast/mediastream/applyConstraints-deviceId.html: Added.
+
 2021-09-28  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Add CSSOM interface
