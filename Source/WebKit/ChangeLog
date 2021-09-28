@@ -1,3 +1,39 @@
+2021-09-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: different bundleID entries will override each other
+        https://bugs.webkit.org/show_bug.cgi?id=230839
+
+        Reviewed by Alex Christensen.
+
+        We recently added a bundleID column to PCM tables. We want to make
+        sure entries with different bundleIDs do not override each other,
+        so we should make it a part of the unique constraint on both PCM
+        tables that contain it. This requires creating new tables and
+        migrating existing data to them. Luckily this code already exists
+        in the ITP database, and we can just move it to the shared
+        DatabaseUtilities class.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::expectedTableAndIndexQueries):
+        (WebKit::stripIndexQueryToMatchStoredValue): Deleted.
+        (WebKit::expectedTableAndIndexQueries): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries): Deleted.
+        (WebKit::insertDistinctValuesInTableStatement): Deleted.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary): Deleted.
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/DatabaseUtilities.cpp:
+        (WebKit::DatabaseUtilities::stripIndexQueryToMatchStoredValue):
+        (WebKit::DatabaseUtilities::currentTableAndIndexQueries):
+        (WebKit::insertDistinctValuesInTableStatement):
+        (WebKit::DatabaseUtilities::migrateDataToNewTablesIfNecessary):
+        * NetworkProcess/DatabaseUtilities.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::Database):
+        (WebKit::PCM::Database::expectedTableAndIndexQueries):
+        (WebKit::PCM::Database::createUniqueIndices):
+        (WebKit::PCM::Database::needsUpdatedSchema):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.h:
+
 2021-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         Explicitly deny 'system-privilege' in the sandbox profile as a hardening measure 

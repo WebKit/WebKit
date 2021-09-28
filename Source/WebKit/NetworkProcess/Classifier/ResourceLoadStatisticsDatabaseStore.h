@@ -48,8 +48,6 @@ static constexpr size_t numberOfBucketsPerStatistic = 5;
 static constexpr size_t numberOfStatistics = 7;
 static constexpr std::array<unsigned, numberOfBucketsPerStatistic> bucketSizes {{ 1, 3, 10, 50, 100 }};
 
-typedef std::pair<String, std::optional<String>> TableAndIndexPair;
-
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore, public DatabaseUtilities {
 public:
@@ -118,6 +116,8 @@ public:
     static void interruptAllDatabases();
 
 private:
+    const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
+    const Vector<String>& sortedTables() final;
     void includeTodayAsOperatingDateIfNecessary() override;
     void clearOperatingDates() override { }
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const override;
@@ -126,10 +126,8 @@ private:
     void openITPDatabase();
     void addMissingTablesIfNecessary();
     bool missingUniqueIndices();
-    bool needsUpdatedSchema();
-    TableAndIndexPair currentTableAndIndexQueries(const String&);
+    bool needsUpdatedSchema() final;
     bool missingReferenceToObservedDomains();
-    void migrateDataToNewTablesIfNecessary();
     void migrateDataToPCMDatabaseIfNecessary();
     bool tableExists(StringView);
     void deleteTable(StringView);
@@ -206,7 +204,7 @@ private:
     RegistrableDomainsToDeleteOrRestrictWebsiteDataFor registrableDomainsToDeleteOrRestrictWebsiteDataFor() override;
     bool isDatabaseStore() const final { return true; }
 
-    bool createUniqueIndices();
+    bool createUniqueIndices() final;
     bool createSchema() final;
     String ensureAndMakeDomainList(const HashSet<RegistrableDomain>&);
     std::optional<WallTime> mostRecentUserInteractionTime(const DomainData&);

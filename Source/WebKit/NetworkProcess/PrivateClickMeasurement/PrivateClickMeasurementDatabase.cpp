@@ -68,8 +68,8 @@ constexpr auto createAttributedPrivateClickMeasurement = "CREATE TABLE Attribute
     "earliestTimeToSendToSource REAL, token TEXT, signature TEXT, keyID TEXT, earliestTimeToSendToDestination REAL, sourceApplicationBundleID TEXT, "
     "FOREIGN KEY(sourceSiteDomainID) REFERENCES PCMObservedDomains(domainID) ON DELETE CASCADE, FOREIGN KEY(destinationSiteDomainID) REFERENCES "
     "PCMObservedDomains(domainID) ON DELETE CASCADE)"_s;
-constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID )"_s;
-constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID )"_s;
+constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID_sourceApplicationBundleID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID, sourceApplicationBundleID )"_s;
+constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID_sourceApplicationBundleID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID, sourceApplicationBundleID )"_s;
 constexpr auto createPCMObservedDomain = "CREATE TABLE PCMObservedDomains ("
     "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL)"_s;
 constexpr auto insertObservedDomainQuery = "INSERT INTO PCMObservedDomains (registrableDomain) VALUES (?)"_s;
@@ -89,6 +89,7 @@ Database::Database(const String& storageDirectory)
     openDatabaseAndCreateSchemaIfNecessary();
     enableForeignKeys();
     addBundleIDColumnIfNecessary();
+    migrateDataToNewTablesIfNecessary();
     allDatabases().add(this);
 }
 
@@ -99,11 +100,43 @@ Database::~Database()
     allDatabases().remove(this);
 }
 
+const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Database::expectedTableAndIndexQueries()
+{
+    static auto expectedTableAndIndexQueries = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
+        { "PCMObservedDomains"_s, std::make_pair<String, std::optional<String>>(createPCMObservedDomain, std::nullopt) },
+        { "UnattributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
+        { "AttributedPrivateClickMeasurement"_s, std::make_pair<String, std::optional<String>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) },
+    });
+
+    return expectedTableAndIndexQueries;
+}
+
+const Vector<String>& Database::sortedTables()
+{
+    static auto sortedTables = makeNeverDestroyed(Vector<String> {
+        "PCMObservedDomains"_s,
+        "UnattributedPrivateClickMeasurement"_s,
+        "AttributedPrivateClickMeasurement"_s
+    });
+
+    return sortedTables;
+}
+
 void Database::interruptAllDatabases()
 {
     ASSERT(!RunLoop::isMain());
     for (auto database : allDatabases())
         database->interrupt();
+}
+
+bool Database::createUniqueIndices()
+{
+    if (!m_database.executeCommand(createUniqueIndexUnattributedPrivateClickMeasurement)
+        || !m_database.executeCommand(createUniqueIndexAttributedPrivateClickMeasurement)) {
+        LOG_ERROR("Error creating indexes");
+        return false;
+    }
+    return true;
 }
 
 bool Database::createSchema()
@@ -673,6 +706,16 @@ void Database::addBundleIDColumnIfNecessary()
     };
     checkColumns(attributedTableName);
     checkColumns(unattributedTableName);
+}
+bool Database::needsUpdatedSchema()
+{
+    // FIXME: Remove this at the end of 2021. No public release was made with the schema missing sourceApplicationBundleID, so this is only needed to migrate internal users who updated in September 2021.
+    for (auto& table : expectedTableAndIndexQueries().keys()) {
+        if (currentTableAndIndexQueries(table) != expectedTableAndIndexQueries().get(table))
+            return true;
+    }
+
+    return false;
 }
 
 Vector<String> Database::columnsForTable(const String& tableName)
