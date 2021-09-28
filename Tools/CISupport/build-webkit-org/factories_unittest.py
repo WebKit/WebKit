@@ -544,7 +544,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'perf-test'
         ],
-        'Apple-iOS-14-Release-Build': [
+        'Apple-iOS-15-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -554,7 +554,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-iOS-14-Simulator-Release-Build': [
+        'Apple-iOS-15-Simulator-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -570,7 +570,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
-        'Apple-iOS-14-Simulator-Debug-Build': [
+        'Apple-iOS-15-Simulator-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -586,7 +586,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
-        'Apple-iOS-14-Simulator-Release-WK2-Tests': [
+        'Apple-iOS-15-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -610,7 +610,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iOS-14-Simulator-Debug-WK2-Tests': [
+        'Apple-iOS-15-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -634,7 +634,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-14-Simulator-Release-WK2-Tests': [
+        'Apple-iPadOS-15-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -658,7 +658,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-14-Simulator-Debug-WK2-Tests': [
+        'Apple-iPadOS-15-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -682,7 +682,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-tvOS-14-Release-Build': [
+        'Apple-tvOS-15-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -692,7 +692,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-tvOS-Simulator-14-Release-Build': [
+        'Apple-tvOS-Simulator-15-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -702,7 +702,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-7-Release-Build': [
+        'Apple-watchOS-8-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -712,7 +712,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-watchOS-Simulator-7-Release-Build': [
+        'Apple-watchOS-Simulator-8-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

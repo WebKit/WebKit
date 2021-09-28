@@ -1,3 +1,23 @@
+2021-09-28  Matt Lewis  <jlewis3@apple.com>
+
+        Move iOS, watchOS, and tvOS queues to latest releases
+        https://bugs.webkit.org/show_bug.cgi?id=230837
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        * CISupport/build-webkit-org/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * CISupport/build-webkit-org/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.ios-simulator-14 img.logo): Deleted.
+        (table.queue-grid tr.platform.ios-14 img.logo): Deleted.
+        (table.queue-grid tr.platform.tvos-simulator-14 img.logo): Deleted.
+        (table.queue-grid tr.platform.tvos-14 img.logo): Deleted.
+        (table.queue-grid tr.platform.watchos-simulator-7 img.logo): Deleted.
+        (table.queue-grid tr.platform.watchos-7 img.logo): Deleted.
+
 2021-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Mostly fix Mac CMake build
