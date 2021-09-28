@@ -31,8 +31,13 @@
 
 namespace WebCore {
 
+class ContentSecurityPolicy;
 class ResourceResponse;
 class ScriptExecutionContext;
+
+struct NavigationRequester;
+
+typedef int SandboxFlags;
 
 // https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy-value
 enum class CrossOriginOpenerPolicyValue : uint8_t {
@@ -42,6 +47,8 @@ enum class CrossOriginOpenerPolicyValue : uint8_t {
     SameOriginAllowPopups
 };
 
+enum class COOPDisposition : bool { Reporting , Enforce };
+
 // https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy
 struct CrossOriginOpenerPolicy {
     CrossOriginOpenerPolicyValue value { CrossOriginOpenerPolicyValue::UnsafeNone };
@@ -49,10 +56,23 @@ struct CrossOriginOpenerPolicy {
     CrossOriginOpenerPolicyValue reportOnlyValue { CrossOriginOpenerPolicyValue::UnsafeNone };
     String reportOnlyReportingEndpoint;
 
+    const String& reportingEndpointForDisposition(COOPDisposition) const;
+    bool hasReportingEndpoint(COOPDisposition) const;
+
     CrossOriginOpenerPolicy isolatedCopy() const;
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<CrossOriginOpenerPolicy> decode(Decoder&);
 };
+
+inline const String& CrossOriginOpenerPolicy::reportingEndpointForDisposition(COOPDisposition disposition) const
+{
+    return disposition == COOPDisposition::Enforce ? reportingEndpoint : reportOnlyReportingEndpoint;
+}
+
+inline bool CrossOriginOpenerPolicy::hasReportingEndpoint(COOPDisposition disposition) const
+{
+    return !reportingEndpointForDisposition(disposition).isEmpty();
+}
 
 inline bool operator==(const CrossOriginOpenerPolicy& a, const CrossOriginOpenerPolicy& b)
 {
@@ -98,20 +118,21 @@ std::optional<CrossOriginOpenerPolicy> CrossOriginOpenerPolicy::decode(Decoder& 
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-enforcement-result
 struct CrossOriginOpenerPolicyEnforcementResult {
-    bool needsBrowsingContextGroupSwitch { false };
-    bool needsBrowsingContextGroupSwitchDueToReportOnly { false };
+    WEBCORE_EXPORT static CrossOriginOpenerPolicyEnforcementResult from(const URL& currentURL, Ref<SecurityOrigin>&& currentOrigin, const CrossOriginOpenerPolicy&, std::optional<NavigationRequester>, const URL& openerURL);
+
     URL url;
     Ref<SecurityOrigin> currentOrigin;
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     bool isCurrentContextNavigationSource { true };
+    bool needsBrowsingContextGroupSwitch { false };
+    bool needsBrowsingContextGroupSwitchDueToReportOnly { false };
 };
 
-enum class COOPDisposition : bool { Reporting , Enforce };
-
-CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&, const ScriptExecutionContext&);
+CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
 WEBCORE_EXPORT void addCrossOriginOpenerPolicyHeaders(ResourceResponse&, const CrossOriginOpenerPolicy&);
-void sendViolationReportWhenNavigatingToCOOPResponse(Frame&, CrossOriginOpenerPolicy, COOPDisposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, const String& referrer, const String& userAgent);
-void sendViolationReportWhenNavigatingAwayFromCOOPResponse(Frame&, CrossOriginOpenerPolicy, COOPDisposition, const URL& coopURL, const URL& nextResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& nextResponseOrigin, bool isCOOPResponseNavigationSource, const String& userAgent);
+WEBCORE_EXPORT void sendViolationReportWhenNavigatingToCOOPResponse(Frame&, CrossOriginOpenerPolicy, COOPDisposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, const String& referrer, const String& userAgent);
+WEBCORE_EXPORT void sendViolationReportWhenNavigatingAwayFromCOOPResponse(Frame&, CrossOriginOpenerPolicy, COOPDisposition, const URL& coopURL, const URL& nextResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& nextResponseOrigin, bool isCOOPResponseNavigationSource, const String& userAgent);
+WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult, const Function<void(COOPDisposition disposition, const CrossOriginOpenerPolicy& responseCOOP, const SecurityOrigin& responseOrigin)>& sendViolationReports);
 
 } // namespace WebCore
 

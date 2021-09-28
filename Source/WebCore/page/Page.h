@@ -285,7 +285,7 @@ public:
     WEBCORE_EXPORT void setBroadcastChannelRegistry(Ref<BroadcastChannelRegistry>&&); // Only used by WebKitLegacy.
 
     WEBCORE_EXPORT static void forEachPage(const WTF::Function<void(Page&)>&);
-    static unsigned nonUtilityPageCount();
+    WEBCORE_EXPORT static unsigned nonUtilityPageCount();
 
     unsigned subframeCount() const;
 

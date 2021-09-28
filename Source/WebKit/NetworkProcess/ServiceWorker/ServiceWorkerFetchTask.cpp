@@ -160,8 +160,13 @@ void ServiceWorkerFetchTask::didReceiveResponse(ResourceResponse&& response, boo
         }
     }
 
+    if (auto error = m_loader.doCrossOriginOpenerHandlingOfResponse(response)) {
+        didFail(*error);
+        return;
+    }
+
     response.setSource(ResourceResponse::Source::ServiceWorker);
-    sendToClient(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
+    m_loader.sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, needsContinueDidReceiveResponseMessage);
     if (needsContinueDidReceiveResponseMessage)
         m_loader.setResponse(WTFMove(response));
 }

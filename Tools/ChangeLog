@@ -1,3 +1,19 @@
+2021-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Move Cross-Origin-Opener-Policy handling to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=230812
+        <rdar://83504842>
+
+        Reviewed by Youenn Fablet.
+
+        Port COOP API tests from PSONSchemeHandler to HTTPServer. This was necessary since custom scheme handler
+        loads do not go via the networkProcess (Where COOP handling is now implemented).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONNavigationDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[PSONScheme webView:startURLSchemeTask:]):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+
 2021-09-28  Matt Lewis  <jlewis3@apple.com>
 
         Move iOS, watchOS, and tvOS queues to latest releases

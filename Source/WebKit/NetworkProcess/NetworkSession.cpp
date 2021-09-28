@@ -425,10 +425,7 @@ void NetworkSession::CachedNetworkResourceLoader::expirationTimerFired()
     if (!session)
         return;
 
-    auto loader = session->takeLoaderAwaitingWebProcessTransfer(m_loader->identifier());
-    ASSERT(loader);
-    if (loader)
-        loader->abort();
+    session->removeLoaderWaitingWebProcessTransfer(m_loader->identifier());
 }
 
 void NetworkSession::addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&& loader)
@@ -443,6 +440,12 @@ RefPtr<NetworkResourceLoader> NetworkSession::takeLoaderAwaitingWebProcessTransf
 {
     auto cachedResourceLoader = m_loadersAwaitingWebProcessTransfer.take(identifier);
     return cachedResourceLoader ? cachedResourceLoader->takeLoader() : nullptr;
+}
+
+void NetworkSession::removeLoaderWaitingWebProcessTransfer(NetworkResourceLoadIdentifier identifier)
+{
+    if (auto cachedResourceLoader = m_loadersAwaitingWebProcessTransfer.take(identifier))
+        cachedResourceLoader->takeLoader()->abort();
 }
 
 std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol)

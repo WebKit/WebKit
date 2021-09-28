@@ -1561,6 +1561,7 @@ loader/LoaderStrategy.cpp
 loader/MediaResourceLoader.cpp
 loader/MixedContentChecker.cpp
 loader/NavigationAction.cpp
+loader/NavigationRequester.cpp
 loader/NavigationScheduler.cpp
 loader/NetscapePlugInStreamLoader.cpp
 loader/PingLoader.cpp

@@ -146,6 +146,7 @@ public:
     void removeKeptAliveLoad(NetworkResourceLoader&);
 
     void addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&&);
+    void removeLoaderWaitingWebProcessTransfer(NetworkResourceLoadIdentifier);
     RefPtr<NetworkResourceLoader> takeLoaderAwaitingWebProcessTransfer(NetworkResourceLoadIdentifier);
 
     NetworkCache::Cache* cache() { return m_cache.get(); }

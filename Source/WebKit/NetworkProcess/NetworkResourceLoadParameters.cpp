@@ -114,7 +114,16 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << crossOriginAccessControlCheckEnabled;
 
     encoder << documentURL;
-    
+
+    encoder << isCrossOriginOpenerPolicyEnabled;
+    encoder << isDisplayingInitialEmptyDocument;
+    encoder << effectiveSandboxFlags;
+    encoder << openerURL;
+    encoder << sourceCrossOriginOpenerPolicy;
+
+    encoder << navigationID;
+    encoder << navigationRequester;
+
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkersMode;
     encoder << serviceWorkerRegistrationIdentifier;
@@ -291,6 +300,49 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
     if (!documentURL)
         return std::nullopt;
     result.documentURL = *documentURL;
+
+    std::optional<bool> isCrossOriginOpenerPolicyEnabled;
+    decoder >> isCrossOriginOpenerPolicyEnabled;
+    if (!isCrossOriginOpenerPolicyEnabled)
+        return std::nullopt;
+    result.isCrossOriginOpenerPolicyEnabled = *isCrossOriginOpenerPolicyEnabled;
+
+    std::optional<bool> isDisplayingInitialEmptyDocument;
+    decoder >> isDisplayingInitialEmptyDocument;
+    if (!isDisplayingInitialEmptyDocument)
+        return std::nullopt;
+    result.isDisplayingInitialEmptyDocument = *isDisplayingInitialEmptyDocument;
+
+    std::optional<SandboxFlags> effectiveSandboxFlags;
+    decoder >> effectiveSandboxFlags;
+    if (!effectiveSandboxFlags)
+        return std::nullopt;
+    result.effectiveSandboxFlags = *effectiveSandboxFlags;
+
+    std::optional<URL> openerURL;
+    decoder >> openerURL;
+    if (!openerURL)
+        return std::nullopt;
+    result.openerURL = WTFMove(*openerURL);
+
+    std::optional<CrossOriginOpenerPolicy> sourceCrossOriginOpenerPolicy;
+    decoder >> sourceCrossOriginOpenerPolicy;
+    if (!sourceCrossOriginOpenerPolicy)
+        return std::nullopt;
+    result.sourceCrossOriginOpenerPolicy = WTFMove(*sourceCrossOriginOpenerPolicy);
+
+    std::optional<uint64_t> navigationID;
+    decoder >> navigationID;
+    if (!navigationID)
+        return std::nullopt;
+    result.navigationID = *navigationID;
+
+    std::optional<std::optional<NavigationRequester>> navigationRequester;
+    decoder >> navigationRequester;
+    if (!navigationRequester)
+        return std::nullopt;
+
+    result.navigationRequester = WTFMove(*navigationRequester);
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkersMode> serviceWorkersMode;

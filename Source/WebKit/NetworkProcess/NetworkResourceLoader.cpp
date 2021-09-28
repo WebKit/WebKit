@@ -58,6 +58,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/SecurityPolicy.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
@@ -652,6 +653,47 @@ bool NetworkResourceLoader::shouldInterruptWorkerLoadForCrossOriginEmbedderPolic
     return false;
 }
 
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#process-a-navigate-fetch (Step 12.5.6)
+std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingOfResponse(const ResourceResponse& response)
+{
+    // COOP only applies to top-level browsing contexts.
+    if (!isMainFrameLoad())
+        return std::nullopt;
+
+    if (!m_parameters.isCrossOriginOpenerPolicyEnabled)
+        return std::nullopt;
+
+    std::unique_ptr<ContentSecurityPolicy> contentSecurityPolicy;
+    if (!response.httpHeaderField(HTTPHeaderName::ContentSecurityPolicy).isNull()) {
+        contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { response.url() }, nullptr);
+        contentSecurityPolicy->didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer(), ContentSecurityPolicy::ReportParsingErrors::No);
+    }
+
+    if (!m_currentCoopEnforcementResult) {
+        auto sourceOrigin = m_parameters.sourceOrigin ? Ref { *m_parameters.sourceOrigin } : SecurityOrigin::createUnique();
+        m_currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_parameters.documentURL, WTFMove(sourceOrigin), m_parameters.sourceCrossOriginOpenerPolicy, m_parameters.navigationRequester, m_parameters.openerURL);
+    }
+
+    m_currentCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(response, m_parameters.navigationRequester, contentSecurityPolicy.get(), m_parameters.effectiveSandboxFlags, m_parameters.isDisplayingInitialEmptyDocument, *m_currentCoopEnforcementResult, [&](COOPDisposition disposition, const CrossOriginOpenerPolicy& responseCOOP, const SecurityOrigin& responseOrigin) {
+        if (responseCOOP.hasReportingEndpoint(disposition))
+            send(Messages::WebPage::SendViolationReportWhenNavigatingToCOOPResponse { m_parameters.webFrameID, responseCOOP, disposition, response.url(), m_currentCoopEnforcementResult->url, responseOrigin.data(), m_currentCoopEnforcementResult->currentOrigin->data(), originalRequest().httpReferrer(), originalRequest().httpUserAgent(), response.httpHeaderField(HTTPHeaderName::ReportTo) }, m_parameters.webPageID);
+        if (m_currentCoopEnforcementResult->crossOriginOpenerPolicy.hasReportingEndpoint(disposition))
+            send(Messages::WebPage::SendViolationReportWhenNavigatingAwayFromCOOPResponse { m_parameters.webFrameID, m_currentCoopEnforcementResult->crossOriginOpenerPolicy, disposition, m_currentCoopEnforcementResult->url, response.url(), m_currentCoopEnforcementResult->currentOrigin->data(), responseOrigin.data(), m_currentCoopEnforcementResult->isCurrentContextNavigationSource, originalRequest().httpUserAgent() }, m_parameters.webPageID);
+    });
+    if (!m_currentCoopEnforcementResult)
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Navigation was blocked by Cross-Origin-Opener-Policy"_s, ResourceError::Type::AccessControl };
+    return std::nullopt;
+}
+
+static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(const std::optional<CrossOriginOpenerPolicyEnforcementResult>& currentCoopEnforcementResult)
+{
+    if (!currentCoopEnforcementResult || !currentCoopEnforcementResult->needsBrowsingContextGroupSwitch)
+        return BrowsingContextGroupSwitchDecision::StayInGroup;
+    if (currentCoopEnforcementResult->crossOriginOpenerPolicy.value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP)
+        return BrowsingContextGroupSwitchDecision::NewIsolatedGroup;
+    return BrowsingContextGroupSwitchDecision::NewSharedGroup;
+}
+
 void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, ResponseCompletionHandler&& completionHandler)
 {
     LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%" PRId64 ", hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
@@ -740,6 +782,15 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         return completionHandler(PolicyAction::Ignore);
     }
 
+    if (auto error = doCrossOriginOpenerHandlingOfResponse(m_response)) {
+        LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting load due to Cross-Origin-Opener-Policy");
+        RunLoop::main().dispatch([protectedThis = Ref { *this }, error = WTFMove(*error)] {
+            if (protectedThis->m_networkLoad)
+                protectedThis->didFailLoading(error);
+        });
+        return completionHandler(PolicyAction::Ignore);
+    }
+
     auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
     if (isSynchronous()) {
         LOADER_RELEASE_LOG("didReceiveResponse: Using response for synchronous load");
@@ -761,7 +812,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     // a main resource because the embedding client must decide whether to allow the load.
     bool willWaitForContinueDidReceiveResponse = isMainResource();
     LOADER_RELEASE_LOG("didReceiveResponse: Sending WebResourceLoader::DidReceiveResponse IPC (willWaitForContinueDidReceiveResponse=%d)", willWaitForContinueDidReceiveResponse);
-    send(Messages::WebResourceLoader::DidReceiveResponse { response, willWaitForContinueDidReceiveResponse });
+    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, willWaitForContinueDidReceiveResponse);
 
     if (m_parameters.pageHasResourceLoadClient)
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(m_parameters.webPageProxyID, resourceLoadInfo, response), 0);
@@ -778,6 +829,27 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
 
     LOADER_RELEASE_LOG("didReceiveResponse: Using response");
     completionHandler(PolicyAction::Use);
+}
+
+void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse& response, bool needsContinueDidReceiveResponseMessage)
+{
+    auto browsingContextGroupSwitchDecision = toBrowsingContextGroupSwitchDecision(m_currentCoopEnforcementResult);
+    if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::StayInGroup) {
+        send(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
+        return;
+    }
+
+    auto loader = m_connection->takeNetworkResourceLoader(coreIdentifier());
+    ASSERT(loader == this);
+    auto existingNetworkResourceLoadIdentifierToResume = loader->identifier();
+    m_connection->networkSession()->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
+    RegistrableDomain responseDomain { response.url() };
+    m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerBrowsingContextGroupSwitchForNavigation(m_parameters.webPageProxyID, m_parameters.navigationID, browsingContextGroupSwitchDecision, responseDomain, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = makeWeakPtr(connectionToWebProcess().networkSession())](bool success) {
+        if (success)
+            return;
+        if (session)
+            session->removeLoaderWaitingWebProcessTransfer(existingNetworkResourceLoadIdentifierToResume);
+    });
 }
 
 void NetworkResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
@@ -940,6 +1012,11 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 
     if (isMainResource() && shouldInterruptNavigationForCrossOriginEmbedderPolicy(redirectResponse)) {
         this->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, redirectRequest.url(), "Redirection was blocked by Cross-Origin-Embedder-Policy"_s, ResourceError::Type::AccessControl });
+        return;
+    }
+
+    if (auto error = doCrossOriginOpenerHandlingOfResponse(redirectResponse)) {
+        didFailLoading(*error);
         return;
     }
 
@@ -1249,6 +1326,12 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
         }
     }
 
+    if (auto error = doCrossOriginOpenerHandlingOfResponse(response)) {
+        LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Interrupting load due to Cross-Origin-Opener-Policy");
+        didFailLoading(*error);
+        return;
+    }
+
     response = sanitizeResponseIfPossible(WTFMove(response), ResourceResponse::SanitizationType::CrossOriginSafe);
     if (isSynchronous()) {
         m_synchronousLoadData->response = WTFMove(response);
@@ -1259,7 +1342,7 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
     bool needsContinueDidReceiveResponseMessage = isMainResource();
     LOADER_RELEASE_LOG("didRetrieveCacheEntry: Sending WebResourceLoader::DidReceiveResponse IPC (needsContinueDidReceiveResponseMessage=%d)", needsContinueDidReceiveResponseMessage);
-    send(Messages::WebResourceLoader::DidReceiveResponse { response, needsContinueDidReceiveResponseMessage });
+    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, needsContinueDidReceiveResponseMessage);
 
     if (needsContinueDidReceiveResponseMessage) {
         m_response = WTFMove(response);

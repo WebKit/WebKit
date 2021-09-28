@@ -38,6 +38,7 @@ class Connection;
 struct HTTPResponse;
 
 class HTTPServer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct RequestData;
     enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2 };

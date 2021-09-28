@@ -1,3 +1,94 @@
+2021-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Move Cross-Origin-Opener-Policy handling to the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=230812
+        <rdar://83504842>
+
+        Reviewed by Youenn Fablet.
+
+        Previous, COOP handling was fully implemented in the WebContent process. This meant that a
+        WebProcess for origin A could get a network response with COOP header from origin B, decide
+        that cross-origin isolation is needed and ask the UIProcess to process-swap. This was not a
+        good design given that the WebContent process is not a trusted process. We should not trust
+        the WebProcess for origin A to make the swap on behavior of origin B. Also, the network
+        response from origin B may contain sensitive headers that we don't want origin A's WebProcess
+        to see.
+
+        To address these issues, I have moved COOP handling from the WebContent process to the
+        NetworkProcess. As soon as the NetworkProcess gets the network response, it makes the decision
+        whether or not cross-origin isolation is needed. If isolation is needed, the network process
+        asks the UIProcess directly to continue the load in a new WebProcess instead of sending the
+        network response to the currently associated WebProcess. When the new WebProcess resumes the
+        load, the network process sends it the network response it already has.
+
+        I moved most of the COOP specification implementation from DocumentLoader.cpp/h to
+        CrossOriginOpenerPolicy.cpp/h so that we can leverage it from the NetworkResourceLoader in
+        the network process. We still have to do *some* COOP handling at DocumentLoader level
+        currently for non-initial navigations to about:blank given that those can trigger a browsing
+        context group switch but currently do not involve the network process. I also had to add
+        more information to NetworkResourceLoadParameters so that we are able to make appropriate
+        COOP decisions in the NetworkProcess.
+
+        No new tests, covered by existing COOP tests that are still passing.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.h:
+
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::checkIfCOOPValuesRequireBrowsingContextGroupSwitch):
+        (WebCore::checkIfEnforcingReportOnlyCOOPWouldRequireBrowsingContextGroupSwitch):
+        (WebCore::computeResponseOriginAndCOOP):
+        (WebCore::enforceResponseCrossOriginOpenerPolicy):
+        (WebCore::obtainCrossOriginOpenerPolicy):
+        (WebCore::sendViolationReportWhenNavigatingToCOOPResponse):
+        (WebCore::sendViolationReportWhenNavigatingAwayFromCOOPResponse):
+        (WebCore::doCrossOriginOpenerHandlingOfResponse):
+        (WebCore::CrossOriginOpenerPolicyEnforcementResult::from):
+        * loader/CrossOriginOpenerPolicy.h:
+        (WebCore::CrossOriginOpenerPolicy::reportingEndpointForDisposition const):
+        (WebCore::CrossOriginOpenerPolicy::hasReportingEndpoint const):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::doCrossOriginOpenerHandlingOfResponse):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        (WebCore::DocumentLoader::clearMainResource):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::crossOriginOpenerPolicy const):
+        (WebCore::DocumentLoader::isContinuingLoadAfterProvisionalLoadStarted const):
+        (WebCore::DocumentLoader::setIsContinuingLoadAfterProvisionalLoadStarted):
+        Move most of the COOP logic from DocumentLoader.cpp to CrossOriginOpenerPolicy.cpp, so that
+        it can be reused by NetworkResourceLoader in the network process.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkContentPolicy):
+        (WebCore::FrameLoader::load):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::NavigationAction):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::requester const):
+        (WebCore::NavigationAction::isEmpty const):
+        * loader/NavigationRequester.cpp: Added.
+        * loader/NavigationRequester.h: Added.
+        Extracted NavigationAction::Requester to its own header and rename it to NavigationRequester,
+        so that its implementation can be shared between NavigationAction, NetworkResourceLoadParameters
+        and COOP.
+
+        * loader/ReportingEndpointsCache.cpp:
+        (WebCore::ReportingEndpointsCache::addEndPointsFromResponse):
+        (WebCore::ReportingEndpointsCache::addEndPointsFromReportToHeader):
+        * loader/ReportingEndpointsCache.h:
+        * loader/ShouldTreatAsContinuingLoad.h:
+        * page/Page.h:
+
 2021-09-28  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Don't create MediaSourceTrackGStreamer objects twice for the same track

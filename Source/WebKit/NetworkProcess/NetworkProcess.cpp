@@ -2844,29 +2844,6 @@ RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy()
 }
 #endif
 
-void NetworkProcess::prepareLoadForWebProcessTransfer(WebCore::ProcessIdentifier sourceProcessIdentifier, std::optional<WebCore::ResourceLoaderIdentifier> resourceLoadIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&& completionHandler)
-{
-    if (!resourceLoadIdentifier) {
-        ASSERT_NOT_REACHED();
-        return completionHandler(std::nullopt);
-    }
-    auto* connection = webProcessConnection(sourceProcessIdentifier);
-    if (!connection)
-        return completionHandler(std::nullopt);
-
-    auto session = connection->networkSession();
-    if (!session)
-        return completionHandler(std::nullopt);
-
-    auto loader = connection->takeNetworkResourceLoader(*resourceLoadIdentifier);
-    if (!loader)
-        return completionHandler(std::nullopt);
-
-    auto identifier = loader->identifier();
-    session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
-    completionHandler(identifier);
-}
-
 void NetworkProcess::addWebPageNetworkParameters(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
 {
     auto session = networkSession(sessionID);
