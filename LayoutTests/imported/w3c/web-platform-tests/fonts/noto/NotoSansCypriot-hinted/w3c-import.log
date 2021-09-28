@@ -14,6 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/all-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/all-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/layer.html
+/LayoutTests/imported/w3c/web-platform-tests/fonts/noto/NotoSansCypriot-hinted/LICENSE_OFL.txt
+/LayoutTests/imported/w3c/web-platform-tests/fonts/noto/NotoSansCypriot-hinted/NotoSansCypriot-Regular.ttf
+/LayoutTests/imported/w3c/web-platform-tests/fonts/noto/NotoSansCypriot-hinted/README

@@ -44,7 +44,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-color-background-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/initial-color-background-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-font-face-override.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-import.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-keyframes-override.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-property-override.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-scroll-timeline-override.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-stylesheet-sharing-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-stylesheet-sharing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/layer-vs-inline-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/presentational-hints-cascade.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/revert-val-002-expected.xht

@@ -1,0 +1,7 @@
+Test
+
+FAIL @font-face layered overrides unlayered assert_equals: expected "80px" but got "38.515625px"
+FAIL @font-face override between layers assert_equals: expected "80px" but got "38.515625px"
+FAIL @font-face override update with appended sheet 1 assert_equals: expected "80px" but got "38.515625px"
+PASS @font-face override update with appended sheet 2
+
