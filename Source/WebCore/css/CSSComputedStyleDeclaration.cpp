@@ -4073,7 +4073,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         // Unimplemented @font-palette-values properties
         case CSSPropertyBasePalette:
-        case CSSPropertyOverrideColor:
+        case CSSPropertyOverrideColors:
             break;
 
         /* Other unimplemented properties */

@@ -38,7 +38,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
-#include "CSSFontPaletteValuesOverrideColorValue.h"
+#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #if ENABLE(VARIATION_FONTS)
 #include "CSSFontVariationValue.h"
 #endif
@@ -4853,7 +4853,7 @@ static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRang
     return consumeInteger(range);
 }
 
-static RefPtr<CSSValueList> consumeOverrideColorDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     do {
@@ -4869,7 +4869,7 @@ static RefPtr<CSSValueList> consumeOverrideColorDescriptor(CSSParserTokenRange& 
         if (!color)
             return nullptr;
 
-        RefPtr<CSSValue> value = CSSFontPaletteValuesOverrideColorValue::create(key.releaseNonNull(), color.releaseNonNull());
+        RefPtr<CSSValue> value = CSSFontPaletteValuesOverrideColorsValue::create(key.releaseNonNull(), color.releaseNonNull());
         list->append(value.releaseNonNull());
     } while (consumeCommaIncludingWhitespace(range));
     
@@ -4889,8 +4889,8 @@ bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID propId)
     case CSSPropertyBasePalette:
         parsedValue = consumeBasePaletteDescriptor(m_range);
         break;
-    case CSSPropertyOverrideColor:
-        parsedValue = consumeOverrideColorDescriptor(m_range, m_context);
+    case CSSPropertyOverrideColors:
+        parsedValue = consumeOverrideColorsDescriptor(m_range, m_context);
         break;
     default:
         break;

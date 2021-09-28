@@ -1,3 +1,54 @@
+2021-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        override-color has been renamed to override-colors
+        https://bugs.webkit.org/show_bug.cgi?id=230789
+        <rdar://problem/83529354>
+
+        Reviewed by Devin Rousso.
+
+        The spec was changed in
+        https://github.com/w3c/csswg-drafts/commit/9de250d6692d07ddb8af3e3face37b909e5aad7b.
+        No browser has shipped the old name, so this is just a mechanical find/replace.
+
+        Updated existing tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSFontPaletteValuesOverrideColorsValue.cpp: Renamed from Source/WebCore/css/CSSFontPaletteValuesOverrideColorValue.cpp.
+        (WebCore::CSSFontPaletteValuesOverrideColorsValue::customCSSText const):
+        (WebCore::CSSFontPaletteValuesOverrideColorsValue::equals const):
+        * css/CSSFontPaletteValuesOverrideColorsValue.h: Renamed from Source/WebCore/css/CSSFontPaletteValuesOverrideColorValue.h.
+        * css/CSSFontPaletteValuesRule.cpp:
+        (WebCore::CSSFontPaletteValuesRule::initializeMapLike):
+        (WebCore::CSSFontPaletteValuesRule::cssText const):
+        * css/CSSProperties.json:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals const):
+        (WebCore::CSSValue::cssText const):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontPaletteValuesOverrideColorsValue const):
+        (WebCore::CSSValue::isFontPaletteValuesOverrideColorValue const): Deleted.
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleFontPaletteValues::StyleRuleFontPaletteValues):
+        * css/StyleRule.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeFontPaletteValuesRule):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeOverrideColorsDescriptor):
+        (WebCore::CSSPropertyParser::parseFontPaletteValuesDescriptor):
+        (WebCore::consumeOverrideColorDescriptor): Deleted.
+        * platform/graphics/FontPaletteValues.h:
+        (WebCore::FontPaletteValues::FontPaletteValues):
+        (WebCore::FontPaletteValues::overrideColors const):
+        (WebCore::FontPaletteValues::operator== const):
+        (WebCore::add):
+        (WebCore::FontPaletteValues::overrideColor const): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::addAttributesForFontPalettes):
+
 2021-09-27  Antti Koivisto  <antti@apple.com>
 
         [LFC] Use CheckedRef/Ptr instead of WeakPtr

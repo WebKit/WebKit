@@ -4107,7 +4107,7 @@
                 "url": "https://drafts.csswg.org/css-fonts-4/#base-palette-desc"
             }
         },
-        "override-color": {
+        "override-colors": {
             "codegen-properties": {
                 "skip-builder": true,
                 "descriptor-only": true

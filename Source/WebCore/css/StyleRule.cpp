@@ -328,11 +328,11 @@ MutableStyleProperties& StyleRuleFontFace::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const AtomString& name, const AtomString& fontFamily, const FontPaletteValues::PaletteIndex& basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColor)
+StyleRuleFontPaletteValues::StyleRuleFontPaletteValues(const AtomString& name, const AtomString& fontFamily, const FontPaletteValues::PaletteIndex& basePalette, Vector<FontPaletteValues::OverriddenColor>&& overrideColors)
     : StyleRuleBase(StyleRuleType::FontPaletteValues)
     , m_name(name)
     , m_fontFamily(fontFamily)
-    , m_fontPaletteValues(basePalette, WTFMove(overrideColor))
+    , m_fontPaletteValues(basePalette, WTFMove(overrideColors))
 {
 }
 

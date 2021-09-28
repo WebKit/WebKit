@@ -40,7 +40,7 @@
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
-#include "CSSFontPaletteValuesOverrideColorValue.h"
+#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSFontStyleRangeValue.h"
 #include "CSSFontStyleValue.h"
 #include "CSSFontValue.h"
@@ -166,8 +166,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSFontValue>(*this, other);
         case FontFaceSrcClass:
             return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
-        case FontPaletteValuesOverrideColorClass:
-            return compareCSSValues<CSSFontPaletteValuesOverrideColorValue>(*this, other);
+        case FontPaletteValuesOverrideColorsClass:
+            return compareCSSValues<CSSFontPaletteValuesOverrideColorsValue>(*this, other);
         case FontFeatureClass:
             return compareCSSValues<CSSFontFeatureValue>(*this, other);
         case FontVariationClass:
@@ -268,8 +268,8 @@ String CSSValue::cssText() const
         return downcast<CSSFontValue>(*this).customCSSText();
     case FontFaceSrcClass:
         return downcast<CSSFontFaceSrcValue>(*this).customCSSText();
-    case FontPaletteValuesOverrideColorClass:
-        return downcast<CSSFontPaletteValuesOverrideColorValue>(*this).customCSSText();
+    case FontPaletteValuesOverrideColorsClass:
+        return downcast<CSSFontPaletteValuesOverrideColorsValue>(*this).customCSSText();
     case FontFeatureClass:
         return downcast<CSSFontFeatureValue>(*this).customCSSText();
     case FontVariationClass:
@@ -383,8 +383,8 @@ void CSSValue::destroy()
     case FontFaceSrcClass:
         delete downcast<CSSFontFaceSrcValue>(this);
         return;
-    case FontPaletteValuesOverrideColorClass:
-        delete downcast<CSSFontPaletteValuesOverrideColorValue>(this);
+    case FontPaletteValuesOverrideColorsClass:
+        delete downcast<CSSFontPaletteValuesOverrideColorsValue>(this);
         return;
     case FontFeatureClass:
         delete downcast<CSSFontFeatureValue>(this);

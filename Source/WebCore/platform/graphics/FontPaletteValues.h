@@ -42,9 +42,9 @@ public:
 
     FontPaletteValues() = default;
 
-    FontPaletteValues(const PaletteIndex& basePalette, Vector<OverriddenColor>&& overrideColor)
+    FontPaletteValues(const PaletteIndex& basePalette, Vector<OverriddenColor>&& overrideColors)
         : m_basePalette(basePalette)
-        , m_overrideColor(WTFMove(overrideColor))
+        , m_overrideColors(WTFMove(overrideColors))
     {
     }
 
@@ -53,14 +53,14 @@ public:
         return m_basePalette;
     }
 
-    const Vector<OverriddenColor>& overrideColor() const
+    const Vector<OverriddenColor>& overrideColors() const
     {
-        return m_overrideColor;
+        return m_overrideColors;
     }
 
     bool operator==(const FontPaletteValues& other) const
     {
-        return m_basePalette == other.m_basePalette && m_overrideColor == other.m_overrideColor;
+        return m_basePalette == other.m_basePalette && m_overrideColors == other.m_overrideColors;
     }
 
     bool operator!=(const FontPaletteValues& other) const
@@ -70,13 +70,13 @@ public:
 
 private:
     PaletteIndex m_basePalette;
-    Vector<OverriddenColor> m_overrideColor;
+    Vector<OverriddenColor> m_overrideColors;
 };
 
 inline void add(Hasher& hasher, const FontPaletteValues& fontPaletteValues)
 {
     add(hasher, fontPaletteValues.basePalette());
-    add(hasher, fontPaletteValues.overrideColor());
+    add(hasher, fontPaletteValues.overrideColors());
 }
 
 } // namespace WebCore

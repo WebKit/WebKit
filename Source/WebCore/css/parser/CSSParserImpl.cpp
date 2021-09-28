@@ -35,7 +35,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSDeferredParser.h"
 #include "CSSFontFamily.h"
-#include "CSSFontPaletteValuesOverrideColorValue.h"
+#include "CSSFontPaletteValuesOverrideColorsValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSParserObserver.h"
@@ -689,12 +689,12 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
             basePalette = primitiveValue.value<int64_t>();
     }
 
-    Vector<FontPaletteValues::OverriddenColor> overrideColor;
-    if (auto overrideColorValue = properties->getPropertyCSSValue(CSSPropertyOverrideColor)) {
-        const auto& list = downcast<CSSValueList>(*overrideColorValue);
+    Vector<FontPaletteValues::OverriddenColor> overrideColors;
+    if (auto overrideColorsValue = properties->getPropertyCSSValue(CSSPropertyOverrideColors)) {
+        const auto& list = downcast<CSSValueList>(*overrideColorsValue);
         for (const auto& item : list) {
             FontPaletteValues::PaletteColorIndex key(nullAtom());
-            const auto& pair = downcast<CSSFontPaletteValuesOverrideColorValue>(item.get());
+            const auto& pair = downcast<CSSFontPaletteValuesOverrideColorsValue>(item.get());
             if (pair.key().isString())
                 key = pair.key().stringValue();
             else if (pair.key().isNumber())
@@ -702,11 +702,11 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
             else
                 continue;
             Color color = pair.color().isRGBColor() ? pair.color().color() : StyleColor::colorFromKeyword(pair.color().valueID(), { });
-            overrideColor.append(std::make_pair(key, color));
+            overrideColors.append(std::make_pair(key, color));
         }
     }
 
-    return StyleRuleFontPaletteValues::create(name->stringValue(), fontFamily, basePalette, WTFMove(overrideColor));
+    return StyleRuleFontPaletteValues::create(name->stringValue(), fontFamily, basePalette, WTFMove(overrideColors));
 }
 
 RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefixed, CSSParserTokenRange prelude, CSSParserTokenRange block)

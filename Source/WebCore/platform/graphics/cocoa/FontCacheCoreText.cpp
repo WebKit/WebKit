@@ -470,9 +470,9 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
         }, [](const AtomString&) {
             // This is unimplementable in Core Text.
         });
-        if (!fontPaletteValues.overrideColor().isEmpty()) {
+        if (!fontPaletteValues.overrideColors().isEmpty()) {
             auto overrideDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            for (const auto& pair : fontPaletteValues.overrideColor()) {
+            for (const auto& pair : fontPaletteValues.overrideColors()) {
                 const auto& paletteColorIndex = pair.first;
                 const auto& color = pair.second;
                 WTF::switchOn(paletteColorIndex, [](const AtomString&) {

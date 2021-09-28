@@ -69,7 +69,7 @@ String CSSFontPaletteValuesRule::basePalette() const
 
 void CSSFontPaletteValuesRule::initializeMapLike(DOMMapAdapter& map)
 {
-    for (auto& pair : m_fontPaletteValuesRule->overrideColor()) {
+    for (auto& pair : m_fontPaletteValuesRule->overrideColors()) {
         if (!WTF::holds_alternative<int64_t>(pair.first))
             continue;
         map.set<IDLUnsignedLong, IDLUSVString>(WTF::get<int64_t>(pair.first), serializationForCSS(pair.second));
@@ -88,18 +88,18 @@ String CSSFontPaletteValuesRule::cssText() const
         if (!basePalette.isNull())
             builder.append("base-palette: ", serializeString(basePalette.string()), "; ");
     });
-    if (!m_fontPaletteValuesRule->overrideColor().isEmpty()) {
-        builder.append("override-color:");
-        for (size_t i = 0; i < m_fontPaletteValuesRule->overrideColor().size(); ++i) {
+    if (!m_fontPaletteValuesRule->overrideColors().isEmpty()) {
+        builder.append("override-colors:");
+        for (size_t i = 0; i < m_fontPaletteValuesRule->overrideColors().size(); ++i) {
             if (i)
                 builder.append(',');
             builder.append(' ');
-            WTF::switchOn(m_fontPaletteValuesRule->overrideColor()[i].first, [&](const AtomString& name) {
+            WTF::switchOn(m_fontPaletteValuesRule->overrideColors()[i].first, [&](const AtomString& name) {
                 builder.append(serializeString(name.string()));
             }, [&](int64_t index) {
                 builder.append(index);
             });
-            builder.append(' ', serializationForCSS(m_fontPaletteValuesRule->overrideColor()[i].second));
+            builder.append(' ', serializationForCSS(m_fontPaletteValuesRule->overrideColors()[i].second));
         }
         builder.append("; ");
     }

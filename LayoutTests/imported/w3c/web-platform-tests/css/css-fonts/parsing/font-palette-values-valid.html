@@ -24,9 +24,9 @@
     base-palette: 1;
     base-palette: "baz";
     base-palette: 2;
-    override-color: "a" #123;
-    override-color: 3 #123;
-    override-color: "b" #123;
+    override-colors: "a" #123;
+    override-colors: 3 #123;
+    override-colors: "b" #123;
 }
 
 /* 3 */
@@ -34,15 +34,15 @@
     base-palette: "foo";
     base-palette: 1;
     base-palette: "bar";
-    override-color: 3 #123;
-    override-color: "baz" #123;
-    override-color: 4 #123;
+    override-colors: 3 #123;
+    override-colors: "baz" #123;
+    override-colors: 4 #123;
 }
 
 /* 4 */
 @font-palette-values E {
-    override-color: 3 rgb(17, 34, 51);
-    override-color: 3 rgb(68, 85, 102);
+    override-colors: 3 rgb(17, 34, 51);
+    override-colors: 3 rgb(68, 85, 102);
 }
 
 /* 5 */
@@ -52,12 +52,12 @@
 
 /* 6 */
 @font-palette-values G {
-    override-color: 3 rgb(17, 34, 51), 4 rgb(68, 85, 102);
+    override-colors: 3 rgb(17, 34, 51), 4 rgb(68, 85, 102);
 }
 
 /* 7 */
 @font-palette-values H {
-    override-color: 3 rgb(17, 34, 51), 3 rgb(68, 85, 102);
+    override-colors: 3 rgb(17, 34, 51), 3 rgb(68, 85, 102);
 }
 
 /* 8 */
@@ -67,37 +67,37 @@
 
 /* 9 */
 @font-palette-values J {
-    override-color: -3 rgb(17, 34, 51);
+    override-colors: -3 rgb(17, 34, 51);
 }
 
 /* 10 */
 @font-palette-values K {
-    override-color: 0 #0000FF;
+    override-colors: 0 #0000FF;
 }
 
 /* 11 */
 @font-palette-values L {
-    override-color: 0 green;
+    override-colors: 0 green;
 }
 
 /* 12 */
 @font-palette-values M {
-    override-color: 0 transparent;
+    override-colors: 0 transparent;
 }
 
 /* 13 */
 @font-palette-values N {
-    override-color: 0 rgba(1 2 3 / 4);
+    override-colors: 0 rgba(1 2 3 / 4);
 }
 
 /* 14 */
 @font-palette-values O {
-    override-color: 0 lab(29.2345% 39.3825 20.0664);
+    override-colors: 0 lab(29.2345% 39.3825 20.0664);
 }
 
 /* 15 */
 @font-palette-values P {
-    override-color: 0 color(display-p3 100% 100% 100%);
+    override-colors: 0 color(display-p3 100% 100% 100%);
 }
 </style>
 </head>
@@ -112,7 +112,7 @@ test(function() {
     assert_not_equals(text.indexOf("}"), -1);
     assert_equals(text.indexOf("font-family"), -1);
     assert_equals(text.indexOf("base-palette"), -1);
-    assert_equals(text.indexOf("override-color"), -1);
+    assert_equals(text.indexOf("override-colors"), -1);
 });
 
 test(function() {
@@ -144,9 +144,9 @@ test(function() {
     assert_equals(text.indexOf("base-palette: 1;"), -1);
     assert_equals(text.indexOf("base-palette: \"baz\""), -1);
     assert_not_equals(text.indexOf("base-palette: 2;"), -1);
-    assert_equals(text.indexOf("override-color: \"a\""), -1);
-    assert_equals(text.indexOf("override-color: 3"), -1);
-    assert_not_equals(text.indexOf("override-color: \"b\""), -1);
+    assert_equals(text.indexOf("override-colors: \"a\""), -1);
+    assert_equals(text.indexOf("override-colors: 3"), -1);
+    assert_not_equals(text.indexOf("override-colors: \"b\""), -1);
 });
 
 test(function() {
@@ -162,9 +162,9 @@ test(function() {
     assert_equals(text.indexOf("base-palette: \"foo\";"), -1);
     assert_equals(text.indexOf("base-palette: 1"), -1);
     assert_not_equals(text.indexOf("base-palette: \"bar\";"), -1);
-    assert_equals(text.indexOf("override-color: 3"), -1);
-    assert_equals(text.indexOf("override-color: \"baz\""), -1);
-    assert_not_equals(text.indexOf("override-color: 4"), -1);
+    assert_equals(text.indexOf("override-colors: 3"), -1);
+    assert_equals(text.indexOf("override-colors: \"baz\""), -1);
+    assert_not_equals(text.indexOf("override-colors: 4"), -1);
 });
 
 test(function() {
@@ -255,7 +255,7 @@ test(function() {
 
 test(function() {
     let text = rules[9].cssText;
-    assert_not_equals(text.indexOf("override-color"), -1);
+    assert_not_equals(text.indexOf("override-colors"), -1);
 });
 
 test(function() {
@@ -270,7 +270,7 @@ test(function() {
 
 test(function() {
     let text = rules[10].cssText;
-    assert_not_equals(text.indexOf("override-color"), -1);
+    assert_not_equals(text.indexOf("override-colors"), -1);
     assert_not_equals(text.indexOf("rgb(0, 0, 255)"), -1);
 });
 
@@ -285,7 +285,7 @@ test(function() {
 
 test(function() {
     let text = rules[11].cssText;
-    assert_not_equals(text.indexOf("override-color"), -1);
+    assert_not_equals(text.indexOf("override-colors"), -1);
     assert_not_equals(text.indexOf("rgb(0, 128, 0)"), -1);
 });
 
@@ -300,7 +300,7 @@ test(function() {
 
 test(function() {
     let text = rules[12].cssText;
-    assert_not_equals(text.indexOf("override-color"), -1);
+    assert_not_equals(text.indexOf("override-colors"), -1);
     assert_not_equals(text.indexOf("rgba(0, 0, 0, 0)"), -1);
 });
 
@@ -315,7 +315,7 @@ test(function() {
 
 test(function() {
     let text = rules[13].cssText;
-    assert_not_equals(text.indexOf("override-color"), -1);
+    assert_not_equals(text.indexOf("override-colors"), -1);
     assert_not_equals(text.indexOf("2"), -1);
 });
 
@@ -330,7 +330,7 @@ test(function() {
 
 test(function() {
     let text = rules[14].cssText;
-    assert_not_equals(text.indexOf("override-color"), -1);
+    assert_not_equals(text.indexOf("override-colors"), -1);
     assert_not_equals(text.indexOf("29"), -1);
 });
 
@@ -345,7 +345,7 @@ test(function() {
 
 test(function() {
     let text = rules[15].cssText;
-    assert_not_equals(text.indexOf("override-color"), -1);
+    assert_not_equals(text.indexOf("override-colors"), -1);
     assert_not_equals(text.indexOf("display-p3"), -1);
 });
 

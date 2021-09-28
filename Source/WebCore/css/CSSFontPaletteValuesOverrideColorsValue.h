@@ -39,11 +39,11 @@ class FontLoadRequest;
 class SVGFontFaceElement;
 class ScriptExecutionContext;
 
-class CSSFontPaletteValuesOverrideColorValue final : public CSSValue {
+class CSSFontPaletteValuesOverrideColorsValue final : public CSSValue {
 public:
-    static Ref<CSSFontPaletteValuesOverrideColorValue> create(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
+    static Ref<CSSFontPaletteValuesOverrideColorsValue> create(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
     {
-        return adoptRef(*new CSSFontPaletteValuesOverrideColorValue(WTFMove(key), WTFMove(color)));
+        return adoptRef(*new CSSFontPaletteValuesOverrideColorsValue(WTFMove(key), WTFMove(color)));
     }
 
     const CSSPrimitiveValue& key() const
@@ -58,11 +58,11 @@ public:
 
     String customCSSText() const;
 
-    bool equals(const CSSFontPaletteValuesOverrideColorValue&) const;
+    bool equals(const CSSFontPaletteValuesOverrideColorsValue&) const;
 
 private:
-    CSSFontPaletteValuesOverrideColorValue(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
-        : CSSValue(FontPaletteValuesOverrideColorClass)
+    CSSFontPaletteValuesOverrideColorsValue(Ref<CSSPrimitiveValue>&& key, Ref<CSSPrimitiveValue>&& color)
+        : CSSValue(FontPaletteValuesOverrideColorsClass)
         , m_key(WTFMove(key))
         , m_color(WTFMove(color))
     {
@@ -74,4 +74,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontPaletteValuesOverrideColorValue, isFontPaletteValuesOverrideColorValue())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontPaletteValuesOverrideColorsValue, isFontPaletteValuesOverrideColorsValue())

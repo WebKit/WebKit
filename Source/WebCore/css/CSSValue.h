@@ -97,7 +97,7 @@ public:
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
     bool isFontVariationValue() const { return m_classType == FontVariationClass; }
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
-    bool isFontPaletteValuesOverrideColorValue() const { return m_classType == FontPaletteValuesOverrideColorClass; }
+    bool isFontPaletteValuesOverrideColorsValue() const { return m_classType == FontPaletteValuesOverrideColorsClass; }
     bool isFontValue() const { return m_classType == FontClass; }
     bool isFontStyleValue() const { return m_classType == FontStyleClass; }
     bool isFontStyleRangeValue() const { return m_classType == FontStyleRangeClass; }
@@ -188,7 +188,7 @@ protected:
         FontStyleClass,
         FontStyleRangeClass,
         FontFaceSrcClass,
-        FontPaletteValuesOverrideColorClass,
+        FontPaletteValuesOverrideColorsClass,
         FunctionClass,
 
         InheritedClass,

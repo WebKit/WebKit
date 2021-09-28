@@ -24,16 +24,16 @@
  */
 
 #include "config.h"
-#include "CSSFontPaletteValuesOverrideColorValue.h"
+#include "CSSFontPaletteValuesOverrideColorsValue.h"
 
 namespace WebCore {
 
-String CSSFontPaletteValuesOverrideColorValue::customCSSText() const
+String CSSFontPaletteValuesOverrideColorsValue::customCSSText() const
 {
     return makeString(m_key->cssText(), " ", m_color->cssText());
 }
 
-bool CSSFontPaletteValuesOverrideColorValue::equals(const CSSFontPaletteValuesOverrideColorValue& other) const
+bool CSSFontPaletteValuesOverrideColorsValue::equals(const CSSFontPaletteValuesOverrideColorsValue& other) const
 {
     return m_key->equals(other.key()) && m_color->equals(other.color());
 }
