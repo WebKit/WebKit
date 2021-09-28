@@ -507,12 +507,6 @@
                                     "com.apple.mediaserverd.read-write"))))
 
     ;; <rdar://problem/16079361>
-    (with-filter (global-name-prefix "")
-        (allow mach-register (with telemetry)
-               (extension "com.apple.security.exception.mach-register.global-name")))
-    (with-filter (local-name-prefix "")
-        (allow mach-register (with telemetry)
-               (extension "com.apple.security.exception.mach-register.local-name")))
     (allow-read-and-issue-generic-extensions
            (extension "com.apple.security.exception.files.absolute-path.read-only")
            (extension "com.apple.security.exception.files.home-relative-path.read-only"))
