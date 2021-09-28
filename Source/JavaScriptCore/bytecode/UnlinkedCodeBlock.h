@@ -352,7 +352,7 @@ public:
         // Some builtins are required to always complete the loops they run.
         return !isBuiltinFunction();
     }
-    void allocateSharedProfiles();
+    void allocateSharedProfiles(unsigned numBinaryArithProfiles, unsigned numUnaryArithProfiles);
     UnlinkedValueProfile& unlinkedValueProfile(unsigned index) { return m_valueProfiles[index]; }
     UnlinkedArrayProfile& unlinkedArrayProfile(unsigned index) { return m_arrayProfiles[index]; }
 

@@ -361,7 +361,7 @@ int32_t UnlinkedCodeBlock::thresholdForJIT(int32_t threshold)
 }
 
 
-void UnlinkedCodeBlock::allocateSharedProfiles()
+void UnlinkedCodeBlock::allocateSharedProfiles(unsigned numBinaryArithProfiles, unsigned numUnaryArithProfiles)
 {
     RELEASE_ASSERT(!m_metadata->isFinalized());
 
@@ -389,19 +389,10 @@ void UnlinkedCodeBlock::allocateSharedProfiles()
         numberOfArrayProfiles += m_metadata->numEntries<OpIteratorNext>();
         numberOfArrayProfiles += m_metadata->numEntries<OpGetById>();
         m_arrayProfiles = FixedVector<UnlinkedArrayProfile>(numberOfArrayProfiles);
-
-        unsigned numberOfBinaryArithProfiles = 0;
-#define COUNT(__op) numberOfBinaryArithProfiles += m_metadata->numEntries<__op>();
-        FOR_EACH_OPCODE_WITH_BINARY_ARITH_PROFILE(COUNT)
-#undef COUNT
-        m_binaryArithProfiles = FixedVector<BinaryArithProfile>(numberOfBinaryArithProfiles);
-
-        unsigned numberOfUnaryArithProfiles = 0;
-#define COUNT(__op) numberOfUnaryArithProfiles += m_metadata->numEntries<__op>();
-        FOR_EACH_OPCODE_WITH_UNARY_ARITH_PROFILE(COUNT)
-#undef COUNT
-        m_unaryArithProfiles = FixedVector<UnaryArithProfile>(numberOfUnaryArithProfiles);
     }
+
+    m_binaryArithProfiles = FixedVector<BinaryArithProfile>(numBinaryArithProfiles);
+    m_unaryArithProfiles = FixedVector<UnaryArithProfile>(numUnaryArithProfiles);
 }
 
 } // namespace JSC

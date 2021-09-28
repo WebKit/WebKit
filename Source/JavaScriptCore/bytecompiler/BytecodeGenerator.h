@@ -682,7 +682,7 @@ namespace JSC {
             RegisterID*>
         emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)
         {
-            BinaryOp::emit(this, dst, src1, src2, types);
+            BinaryOp::emit(this, dst, src1, src2, m_codeBlock->addBinaryArithProfile(), types);
             return dst;
         }
 

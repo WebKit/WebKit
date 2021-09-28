@@ -471,21 +471,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
-    unsigned binaryProfileIndex = 0;
-    unsigned unaryProfileIndex = 0;
-#define LINK_WITH_BINARY_ARITH_PROFILE(__op) \
-    CASE(__op): { \
-        INITIALIZE_METADATA(__op) \
-        metadata.m_arithProfile = &m_unlinkedCode->binaryArithProfile(binaryProfileIndex++); \
-        break; \
-    }
-#define LINK_WITH_UNARY_ARITH_PROFILE(__op) \
-    CASE(__op): { \
-        INITIALIZE_METADATA(__op) \
-        metadata.m_arithProfile = &m_unlinkedCode->unaryArithProfile(unaryProfileIndex++); \
-        break; \
-    }
-
     const InstructionStream& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
@@ -547,15 +532,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpCreateThis)
         LINK(OpCreatePromise)
         LINK(OpCreateGenerator)
-
-        LINK_WITH_BINARY_ARITH_PROFILE(OpAdd)
-        LINK_WITH_BINARY_ARITH_PROFILE(OpMul)
-        LINK_WITH_BINARY_ARITH_PROFILE(OpDiv)
-        LINK_WITH_BINARY_ARITH_PROFILE(OpSub)
-
-        LINK_WITH_UNARY_ARITH_PROFILE(OpNegate)
-        LINK_WITH_UNARY_ARITH_PROFILE(OpInc)
-        LINK_WITH_UNARY_ARITH_PROFILE(OpDec)
 
         LINK(OpJneqPtr)
 
@@ -3413,13 +3389,13 @@ BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const Instruction* pc)
 {
     switch (pc->opcodeID()) {
     case op_add:
-        return pc->as<OpAdd>().metadata(this).m_arithProfile;
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpAdd>().m_profileIndex);
     case op_mul:
-        return pc->as<OpMul>().metadata(this).m_arithProfile;
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpMul>().m_profileIndex);
     case op_sub:
-        return pc->as<OpSub>().metadata(this).m_arithProfile;
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpSub>().m_profileIndex);
     case op_div:
-        return pc->as<OpDiv>().metadata(this).m_arithProfile;
+        return &unlinkedCodeBlock()->binaryArithProfile(pc->as<OpDiv>().m_profileIndex);
     default:
         break;
     }
@@ -3431,11 +3407,11 @@ UnaryArithProfile* CodeBlock::unaryArithProfileForPC(const Instruction* pc)
 {
     switch (pc->opcodeID()) {
     case op_negate:
-        return pc->as<OpNegate>().metadata(this).m_arithProfile;
+        return &unlinkedCodeBlock()->unaryArithProfile(pc->as<OpNegate>().m_profileIndex);
     case op_inc:
-        return pc->as<OpInc>().metadata(this).m_arithProfile;
+        return &unlinkedCodeBlock()->unaryArithProfile(pc->as<OpInc>().m_profileIndex);
     case op_dec:
-        return pc->as<OpDec>().metadata(this).m_arithProfile;
+        return &unlinkedCodeBlock()->unaryArithProfile(pc->as<OpDec>().m_profileIndex);
     default:
         break;
     }
