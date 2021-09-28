@@ -1,3 +1,16 @@
+2021-09-28  Youenn Fablet  <youenn@apple.com>
+
+        [BigSur wk2 Debug iOS14 ] webrtc/video-mute.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=230865
+        <rdar://problem/83594770>
+
+        Reviewed by Eric Carlson.
+
+        Covered by webrtc/video-mute.html being no longer flaky.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCIceTransportBackend.cpp:
+        (WebCore::LibWebRTCIceTransportBackendObserver::start):
+
 2021-09-28  Sihui Liu  <sihui_liu@apple.com>
 
         Make StorageManager available in Worker

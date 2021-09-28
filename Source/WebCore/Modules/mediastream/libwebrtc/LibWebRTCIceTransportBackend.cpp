@@ -108,6 +108,12 @@ void LibWebRTCIceTransportBackendObserver::start()
             return;
         internal->SignalIceTransportStateChanged.connect(this, &LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged);
         internal->SignalGatheringState.connect(this, &LibWebRTCIceTransportBackendObserver::onGatheringStateChanged);
+        callOnMainThread([protectedThis = Ref { *this }, transportState = internal->GetIceTransportState(), gatheringState = internal->gathering_state()] {
+            if (!protectedThis->m_client)
+                return;
+            protectedThis->m_client->onStateChanged(toRTCIceTransportState(transportState));
+            protectedThis->m_client->onGatheringStateChanged(toRTCIceGatheringState(gatheringState));
+        });
     });
 }
 
