@@ -2100,3 +2100,5 @@ webkit.org/b/230773 imported/w3c/web-platform-tests/css/css-flexbox/fixed-table-
 webkit.org/b/230773 imported/w3c/web-platform-tests/css/css-flexbox/flex-item-compressible-001.html [ Pass Failure ]
 
 webkit.org/b/230850 remote-layer-tree/ios/uiview-tree-basic.html [ Pass Failure ] 
+
+webkit.org/b/230905 imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]

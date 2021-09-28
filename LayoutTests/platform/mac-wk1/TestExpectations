@@ -1479,3 +1479,4 @@ webkit.org/b/230846 [ Catalina Debug ] svg/filters/big-height-filter.svg [ Pass 
 
 webkit.org/b/230848 [ Catalina BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
 
+webkit.org/b/230905 [ Catalina BigSur Release ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]

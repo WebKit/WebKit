@@ -1,3 +1,13 @@
+2021-09-28  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS, Mac ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230905.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2021-09-28  Youenn Fablet  <youenn@apple.com>
 
         applyConstraints throws OverconstrainedError if specify exact for deviceId
