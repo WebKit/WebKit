@@ -393,7 +393,10 @@ TEST(WebKit2, CaptureIndicatorDelay)
     [webView loadTestPageNamed:@"getUserMedia"];
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
-    [delegate waitUntilPrompted];
+    int retryCount = 1000;
+    while (--retryCount && ![webView stringByEvaluatingJavaScript:@"haveStream()"].boolValue)
+        TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_TRUE(!!retryCount);
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
 
