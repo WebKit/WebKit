@@ -36,8 +36,8 @@ namespace WebCore {
 
 class FontPaletteValues {
 public:
-    using PaletteIndex = Variant<int64_t, AtomString>;
-    using PaletteColorIndex = Variant<AtomString, int64_t>;
+    using PaletteIndex = Variant<unsigned, AtomString>;
+    using PaletteColorIndex = Variant<AtomString, unsigned>;
     using OverriddenColor = std::pair<PaletteColorIndex, Color>;
 
     FontPaletteValues() = default;

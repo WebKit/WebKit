@@ -1,3 +1,18 @@
+2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Negative integers in @font-palette-values are invalid
+        https://bugs.webkit.org/show_bug.cgi?id=230788
+        <rdar://problem/83528806>
+
+        Reviewed by Simon Fraser.
+
+        This is being upstreamed at https://github.com/web-platform-tests/wpt/pull/30961.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html:
+
 2021-09-28  Sihui Liu  <sihui_liu@apple.com>
 
         Make StorageManager available in Worker

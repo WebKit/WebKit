@@ -686,7 +686,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
         if (primitiveValue.isString())
             basePalette = primitiveValue.stringValue();
         else if (primitiveValue.isNumber())
-            basePalette = primitiveValue.value<int64_t>();
+            basePalette = primitiveValue.value<unsigned>();
     }
 
     Vector<FontPaletteValues::OverriddenColor> overrideColors;
@@ -698,7 +698,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
             if (pair.key().isString())
                 key = pair.key().stringValue();
             else if (pair.key().isNumber())
-                key = pair.key().value<int64_t>();
+                key = pair.key().value<unsigned>();
             else
                 continue;
             Color color = pair.color().isRGBColor() ? pair.color().color() : StyleColor::colorFromKeyword(pair.color().valueID(), { });

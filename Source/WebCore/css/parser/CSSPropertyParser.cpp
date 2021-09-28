@@ -4850,7 +4850,7 @@ static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRang
 {
     if (range.peek().type() == StringToken)
         return consumeString(range);
-    return consumeInteger(range);
+    return consumeInteger(range, 0);
 }
 
 static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -4861,7 +4861,7 @@ static RefPtr<CSSValueList> consumeOverrideColorsDescriptor(CSSParserTokenRange&
         if (range.peek().type() == StringToken)
             key = consumeString(range);
         else
-            key = consumeInteger(range);
+            key = consumeInteger(range, 0);
         if (!key)
             return nullptr;
 

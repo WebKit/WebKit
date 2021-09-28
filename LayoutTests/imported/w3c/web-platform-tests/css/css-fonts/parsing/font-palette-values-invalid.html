@@ -101,13 +101,19 @@
     base-palette: unset;
     override-colors: unset;
 }
+
+/* 17 */
+@font-palette-values A {
+    base-palette: -1;
+    override-color: -1 #123;
+}
 </style>
 </head>
 <body>
 <script>
 let rules = document.getElementById("style").sheet.cssRules;
 test(function() {
-    assert_equals(rules.length, 17);
+    assert_equals(rules.length, 18);
 });
 
 test(function() {
@@ -251,6 +257,15 @@ test(function() {
 
 test(function() {
     assert_equals(CSSRule.FONT_PALETTE_VALUES_RULE, undefined);
+});
+
+test(function() {
+    let text = rules[17].cssText;
+    let rule = rules[17];
+    assert_equals(text.indexOf("base-palette"), -1);
+    assert_equals(text.indexOf("override-color"), -1);
+    assert_equals(rule.size, 0);
+    assert_equals(rule.basePalette, "");
 });
 </script>
 </body>

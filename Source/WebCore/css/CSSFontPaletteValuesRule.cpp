@@ -58,7 +58,7 @@ String CSSFontPaletteValuesRule::fontFamily() const
 
 String CSSFontPaletteValuesRule::basePalette() const
 {
-    return WTF::switchOn(m_fontPaletteValuesRule->basePalette(), [&](int64_t index) {
+    return WTF::switchOn(m_fontPaletteValuesRule->basePalette(), [&](unsigned index) {
         return makeString(index);
     }, [&](const AtomString& basePalette) -> String {
         if (!basePalette.isNull())
@@ -70,9 +70,9 @@ String CSSFontPaletteValuesRule::basePalette() const
 void CSSFontPaletteValuesRule::initializeMapLike(DOMMapAdapter& map)
 {
     for (auto& pair : m_fontPaletteValuesRule->overrideColors()) {
-        if (!WTF::holds_alternative<int64_t>(pair.first))
+        if (!WTF::holds_alternative<unsigned>(pair.first))
             continue;
-        map.set<IDLUnsignedLong, IDLUSVString>(WTF::get<int64_t>(pair.first), serializationForCSS(pair.second));
+        map.set<IDLUnsignedLong, IDLUSVString>(WTF::get<unsigned>(pair.first), serializationForCSS(pair.second));
     }
 }
 
@@ -82,7 +82,7 @@ String CSSFontPaletteValuesRule::cssText() const
     builder.append("@font-palette-values ", m_fontPaletteValuesRule->name(), " { ");
     if (!m_fontPaletteValuesRule->fontFamily().isNull())
         builder.append("font-family: ", m_fontPaletteValuesRule->fontFamily(), "; ");
-    WTF::switchOn(m_fontPaletteValuesRule->basePalette(), [&](int64_t index) {
+    WTF::switchOn(m_fontPaletteValuesRule->basePalette(), [&](unsigned index) {
         builder.append("base-palette: ", index, "; ");
     }, [&](const AtomString& basePalette) {
         if (!basePalette.isNull())
@@ -96,7 +96,7 @@ String CSSFontPaletteValuesRule::cssText() const
             builder.append(' ');
             WTF::switchOn(m_fontPaletteValuesRule->overrideColors()[i].first, [&](const AtomString& name) {
                 builder.append(serializeString(name.string()));
-            }, [&](int64_t index) {
+            }, [&](unsigned index) {
                 builder.append(index);
             });
             builder.append(' ', serializationForCSS(m_fontPaletteValuesRule->overrideColors()[i].second));

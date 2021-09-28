@@ -453,7 +453,7 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
         break;
     case FontPalette::Type::Light: {
         auto light = kCTFontPaletteLight;
-        auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &light));
+        auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &light));
         CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
         break;
     }
@@ -464,12 +464,14 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
         break;
     }
     case FontPalette::Type::Custom: {
-        WTF::switchOn(fontPaletteValues.basePalette(), [&](int64_t index) {
-            auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &index));
+        WTF::switchOn(fontPaletteValues.basePalette(), [&](unsigned index) {
+            int64_t rawIndex = index; // There is no kCFNumberUIntType.
+            auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
             CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
         }, [](const AtomString&) {
             // This is unimplementable in Core Text.
         });
+
         if (!fontPaletteValues.overrideColors().isEmpty()) {
             auto overrideDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             for (const auto& pair : fontPaletteValues.overrideColors()) {
@@ -477,8 +479,9 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
                 const auto& color = pair.second;
                 WTF::switchOn(paletteColorIndex, [](const AtomString&) {
                     // This is unimplementable in Core Text.
-                }, [&](int64_t index) {
-                    auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &index));
+                }, [&](unsigned index) {
+                    int64_t rawIndex = index; // There is no kCFNumberUIntType.
+                    auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
                     auto colorObject = cachedCGColor(color);
                     CFDictionaryAddValue(overrideDictionary.get(), number.get(), colorObject);
                 });

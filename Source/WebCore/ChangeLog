@@ -1,3 +1,29 @@
+2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Negative integers in @font-palette-values are invalid
+        https://bugs.webkit.org/show_bug.cgi?id=230788
+        <rdar://problem/83528806>
+
+        Reviewed by Simon Fraser.
+
+        The spec made it illegal in
+        https://github.com/w3c/csswg-drafts/commit/09b3c45238feb6c0e8526e010cd3780f4fc4900b.
+
+        Test: web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html
+
+        * css/CSSFontPaletteValuesRule.cpp:
+        (WebCore::CSSFontPaletteValuesRule::basePalette const):
+        (WebCore::CSSFontPaletteValuesRule::initializeMapLike):
+        (WebCore::CSSFontPaletteValuesRule::cssText const):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeFontPaletteValuesRule):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasePaletteDescriptor):
+        (WebCore::consumeOverrideColorDescriptor):
+        * platform/graphics/FontPaletteValues.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::addAttributesForFontPalettes):
+
 2021-09-28  Youenn Fablet  <youenn@apple.com>
 
         [BigSur wk2 Debug iOS14 ] webrtc/video-mute.html is a flaky failure
