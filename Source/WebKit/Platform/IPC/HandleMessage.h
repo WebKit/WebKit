@@ -74,6 +74,9 @@ template<typename ArgsTuple, size_t... ArgsIndex>
 void logMessageImpl(const Connection& connection, MessageName messageName, const ArgsTuple& args, std::index_sequence<ArgsIndex...>)
 {
 #if !LOG_DISABLED
+    if (LOG_CHANNEL(IPCMessages).state != WTFLogChannelState::On)
+        return;
+
     auto stream = textStreamForLogging(connection, messageName, ForReply::No);
 
     if (auto argumentDescriptions = messageArgumentDescriptions(messageName))

@@ -1,3 +1,14 @@
+2021-09-27  Cameron McCormack  <heycam@apple.com>
+
+        Avoid building log messages when IPCMessages log stream is off
+        https://bugs.webkit.org/show_bug.cgi?id=230878
+        <rdar://problem/83605670>
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::logMessageImpl):
+
 2021-09-27  Jean-Yves Avenard  <jya@apple.com>
 
         Vorbis decoder can't be instantiated - Remove workaround added in bug 228139
