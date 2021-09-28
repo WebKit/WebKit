@@ -1,3 +1,13 @@
+2021-09-27  Jean-Yves Avenard  <jya@apple.com>
+
+        Vorbis decoder can't be instantiated - Remove workaround added in bug 228139
+        https://bugs.webkit.org/show_bug.cgi?id=230742
+        rdar://83484414
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformUse.h: Add USE_VORBIS_AUDIOCOMPONENT_WORKAROUND
+
 2021-09-27  Saam Barati  <sbarati@apple.com>
 
         Build an unlinked baseline JIT
