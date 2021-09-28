@@ -24,7 +24,7 @@
 (version 1)
 (deny default (with partial-symbolication))
 (deny nvram*)
-(allow system-audit file-read-metadata)
+(allow system-audit file-read-metadata (with telemetry))
 
 #include "Shared/Sandbox/preferences.sb"
 
@@ -34,10 +34,10 @@
 ;;;
 
 ;;; Allow registration of per-pid services.
-(allow mach-register (local-name-prefix ""))
+(allow mach-register (with telemetry) (local-name-prefix ""))
 
 ;;; Allow read access to standard system paths.
-(allow file-read*
+(allow file-read* (with telemetry)
     (require-all (file-mode #o0004)
     (require-any (subpath "/Library/Filesystems/NetFSPlugins")
     (subpath "/Library/Apple/System")
@@ -49,13 +49,13 @@
     (subpath "/usr/share"))))
 
 ;;; Allow reading internal profiles on development builds
-(allow file-read*
+(allow file-read* (with telemetry)
     (require-all (file-mode #o0004)
     (subpath "/AppleInternal/Library/Preferences/Logging")
     (system-attribute apple-internal)))
 
 ;;; Allow mapping of system frameworks + dylibs
-(allow file-map-executable
+(allow file-map-executable (with telemetry)
     (subpath "/Library/Apple/System/Library/Frameworks")
     (subpath "/Library/Apple/System/Library/PrivateFrameworks")
     (subpath "/System/Library/Frameworks")
@@ -64,7 +64,7 @@
     (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
 )
 
-(allow file-read-metadata
+(allow file-read-metadata (with telemetry)
     (literal "/etc")
     (literal "/tmp")
     (literal "/var")
@@ -72,7 +72,7 @@
 
 
 ;;; Allow access to standard special files.
-(allow file-read*
+(allow file-read* (with telemetry)
     (literal "/dev/autofs_nowait")
     (literal "/dev/random")
     (literal "/dev/urandom")
@@ -80,22 +80,22 @@
     (literal "/private/etc/passwd"))
 
 (allow file-read*
-       file-write-data
+       file-write-data (with telemetry)
     (literal "/dev/null")
     (literal "/dev/zero"))
 
 (allow file-read*
        file-write-data
-       file-ioctl
+       file-ioctl (with telemetry)
     (literal "/dev/dtracehelper"))
 
 ;;; Allow creation of core dumps.
-(allow file-write-create
+(allow file-write-create (with telemetry)
     (require-all (prefix "/cores/")
         (vnode-type REGULAR-FILE)))
 
 ;;; Allow IPC to standard system agents.
-(allow ipc-posix-shm-read*
+(allow ipc-posix-shm-read* (with telemetry)
     (ipc-posix-name "apple.shm.notification_center")
     (ipc-posix-name-prefix "apple.cfprefs."))
 
@@ -106,41 +106,41 @@
         (preference-domain "com.apple.opengl")
         (preference-domain "com.nvidia.OpenGL"))
     ;; CVMS
-    (allow mach-lookup
+    (allow mach-lookup (with telemetry)
         (global-name "com.apple.cvmsServ"))
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
-    (allow file-read*
+    (allow file-read* (with telemetry)
         (prefix "/private/var/db/CVMS/cvmsCodeSignObj"))
 #endif
     ;; OpenCL
-    (allow iokit-open
+    (allow iokit-open (with telemetry)
         (iokit-connection "IOAccelerator")
         (iokit-registry-entry-class "IOAccelerationUserClient")
         (iokit-registry-entry-class "IOSurfaceRootUserClient")
         (iokit-registry-entry-class "IOSurfaceSendRight"))
     ;; CoreVideo CVCGDisplayLink
-    (allow iokit-open
+    (allow iokit-open (with telemetry)
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
 
     ;; These are needed for Encrypted Media on some hardware (MacMini8,1 for example)
-    (allow iokit-open
+    (allow iokit-open (with telemetry)
         (iokit-registry-entry-class "AppleIntelMEUserClient")
         (iokit-registry-entry-class "AppleSNBFBUserClient")
     )
 
     ;; QuartzCore
-    (allow iokit-open
+    (allow iokit-open (with telemetry)
         (iokit-registry-entry-class "AGPMClient")
         (iokit-registry-entry-class "AppleGraphicsControlClient")
         (iokit-registry-entry-class "AppleGraphicsPolicyClient"))
     ;; OpenGL
-    (allow iokit-open
+    (allow iokit-open (with telemetry)
         (iokit-registry-entry-class "AppleMGPUPowerControlClient"))
     ;; GPU bundles
-    (allow file-read*
+    (allow file-read* (with telemetry)
         (subpath "/Library/GPUBundles"))
     ;; DisplayServices
-    (allow iokit-set-properties
+    (allow iokit-set-properties (with telemetry)
         (require-all (iokit-connection "IODisplay")
         (require-any (iokit-property "brightness")
         (iokit-property "linear-brightness")
@@ -161,7 +161,7 @@
 (allow process-codesigning-status*)
 
 (deny sysctl*)
-(allow sysctl-read
+(allow sysctl-read (with telemetry)
     (sysctl-name
         "hw.activecpu" ;; <rdar://problem/56795575>
         "hw.byteorder"
@@ -213,7 +213,7 @@
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76783596>
 )
 
-(allow sysctl-write
+(allow sysctl-write (with telemetry)
     (sysctl-name
         "kern.tcsm_enable"))
 
@@ -482,7 +482,7 @@
                             "display-scale"))))
 
 (deny mach-lookup (xpc-service-name-prefix ""))
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
     (xpc-service-name "com.apple.PerformanceAnalysis.animationperfd")
     (xpc-service-name "com.apple.audio.SandboxHelper")
     (xpc-service-name "com.apple.coremedia.videodecoder")
@@ -490,7 +490,7 @@
     (xpc-service-name "com.apple.hiservices-xpcservice")
 )
 
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
     (global-name "com.apple.accessibility.mediaaccessibilityd")
 )
 
@@ -507,13 +507,13 @@
 (define (allow-read-directory-and-issue-read-extensions path)
     (if path
         (begin
-            (allow file-read* (subpath path))
+            (allow file-read* (with telemetry) (subpath path))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
 
 (define (allow-read-write-directory-and-issue-read-write-extensions path)
     (if path
         (begin
-            (allow file-read* file-write* (subpath path))
+            (allow file-read* file-write* (with telemetry) (subpath path))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path)))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") (subpath path))))))
 
@@ -544,7 +544,7 @@
     *uuid-pattern*)
 
 ;; Read-only preferences and data
-(allow file-read*
+(allow file-read* (with telemetry)
     ;; Basic system paths
     (subpath "/Library/Dictionaries")
     (subpath "/Library/Fonts")
@@ -563,7 +563,7 @@
 
     (home-subpath "/Library/Dictionaries"))
 
-(allow file-read-data
+(allow file-read-data (with telemetry)
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
     ;; Needed for AES3 support
     (subpath "/Library/Audio/Plug-Ins/Components"))
@@ -611,10 +611,10 @@
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
-    (op file-read* path-filter)
+    (op file-read* (with telemetry) path-filter)
     (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
 (define (apply-write-and-issue-extension op path-filter)
-    (op file-write* path-filter)
+    (op file-write* (with telemetry) path-filter)
     (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
 (define (read-only-and-issue-extensions path-filter)
     (apply-read-and-issue-extension allow path-filter))
@@ -623,11 +623,11 @@
     (apply-write-and-issue-extension allow path-filter))
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
-(allow mach-lookup (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
+(allow mach-lookup (with telemetry) (extension "com.apple.app-sandbox.mach")) ;; FIXME: Should be removed when <rdar://problem/13066206> is fixed.
 
 ;; Allow the OpenGL Profiler to attach.
 (if (defined? 'mach-register)
-    (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
+    (allow mach-register (with telemetry) (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
@@ -636,7 +636,7 @@
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients
-(allow iokit-open
+(allow iokit-open (with telemetry)
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "AppleUpstreamUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
@@ -648,16 +648,16 @@
 
 ;; cookied.
 ;; FIXME: Update for <rdar://problem/13642852>.
-(allow ipc-posix-shm-read-data
+(allow ipc-posix-shm-read-data (with telemetry)
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name-regex #"\.PrivateBrowsing-")
     (ipc-posix-name-regex #"^WebKit Test-"))
 
 ;; Audio
-(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data (with telemetry)
     (ipc-posix-name-regex #"^AudioIO"))
 
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
     (global-name "com.apple.audio.AudioComponentRegistrar")
 #if !ENABLE(CFPREFS_DIRECT_MODE)
     (global-name "com.apple.cfprefsd.agent")
@@ -676,7 +676,7 @@
 )
 
 ;; Various services required by AppKit and other frameworks
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
        (global-name "com.apple.FontObjectsServer")
 #endif
@@ -708,7 +708,7 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
 ;; <rdar://problem/47268166>
-(allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
+(allow mach-lookup (with telemetry) (xpc-service-name "com.apple.MTLCompilerService"))
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
@@ -720,42 +720,42 @@
 #endif
 
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
     (global-name "com.apple.SecurityServer")
     (global-name "com.apple.ocspd"))
 
-(allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
+(allow file-read* (with telemetry) (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
-    (allow file-write*
+    (allow file-write* (with telemetry)
         (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 )
 
-(allow file-read*
+(allow file-read* (with telemetry)
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures"))
 
-(allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create (with telemetry)
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
     (global-name-regex #"^com.apple.distributed_notifications")
 #if !HAVE(CSCHECKFIXDISABLE)
     (global-name "com.apple.CoreServices.coreservicesd")
 #endif
 )
 
-(allow file-read-data
+(allow file-read-data (with telemetry)
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
-(allow ipc-posix-shm
+(allow ipc-posix-shm (with telemetry)
     (ipc-posix-name-regex #"^CFPBS:")) ; <rdar://problem/13757475>
-(allow system-fsctl (fsctl-command (_IO "h" 47)))
+(allow system-fsctl (with telemetry) (fsctl-command (_IO "h" 47)))
 
 ;; Graphics
 (system-graphics)
 
 ;; Networking
-(allow network-outbound
+(allow network-outbound (with telemetry)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101500
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
        ;; Note: This is needed for some media playback features. <rdar://problem/38191574>
@@ -770,11 +770,11 @@
 )
 
 ;; CFNetwork
-(allow file-read-data (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
+(allow file-read-data (with telemetry) (path "/private/var/db/nsurlstoraged/dafsaData.bin"))
 
 #if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
        (global-name "com.apple.system.logger")
        (global-name "com.apple.system.notification_center"))
 #endif
@@ -803,7 +803,7 @@
        (global-name "com.apple.speech.recognitionserver"))
 #if PLATFORM(MAC)
 ;; Also part of unnecessary NSApplication initialization, but we can't block access to these yet, see <rdar://problem/13869765>.
-(allow file-read*
+(allow file-read* (with telemetry)
        (subpath "/Library/Components")
        (subpath "/Library/Keyboard Layouts")
        (subpath "/Library/Input Methods")
@@ -813,7 +813,7 @@
 #endif
 
 ;; AirPlay
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
     (global-name "com.apple.coremedia.endpoint.xpc")
     (global-name "com.apple.coremedia.endpointstream.xpc")
     (global-name "com.apple.coremedia.endpointstreamaudioengine.xpc") ;; <rdar://76029596>
@@ -826,7 +826,7 @@
 )
 
 ;; Data Detectors
-(allow file-read* (subpath "/private/var/db/datadetectors/sys"))
+(allow file-read* (with telemetry) (subpath "/private/var/db/datadetectors/sys"))
 
 #if PLATFORM(MAC)
 ;; Media capture, utilities
@@ -877,9 +877,9 @@
 (with-filter (extension "com.apple.webkit.camera")
     (shared-preferences-read "com.apple.cmio")
     (shared-preferences-read "com.apple.coremedia")
-    (allow file-read* (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
-    (allow mach-lookup (extension "com.apple.app-sandbox.mach"))
-    (allow mach-lookup
+    (allow file-read* (with telemetry) (subpath "/Library/CoreMediaIO/Plug-Ins/DAL"))
+    (allow mach-lookup (with telemetry) (extension "com.apple.app-sandbox.mach"))
+    (allow mach-lookup (with telemetry)
         (global-name "com.apple.cmio.AppleCameraAssistant")
         (global-name "com.apple.cmio.registerassistantservice")
         (global-name "com.apple.cmio.registerassistantservice.system-extensions")
@@ -901,23 +901,23 @@
         )
 #endif
         )
-    (allow iokit-open
+    (allow iokit-open (with telemetry)
         ;; QuickTimeUSBVDCDigitizer
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
     (allow device-camera))
 #endif // PLATFORM(MAC)
 
-(allow mach-lookup
+(allow mach-lookup (with telemetry)
     (global-name "com.apple.relatived.tempest")
 )
 
-(allow iokit-open
+(allow iokit-open (with telemetry)
     (iokit-user-client-class "AppleAVDUserClient")
 )
 
 (when (equal? (param "CPU") "arm64")
-    (allow iokit-open
+    (allow iokit-open (with telemetry)
         (iokit-user-client-class "IOMobileFramebufferUserClient")
         ;; VideoToolbox VTImageRotationSession
         (iokit-user-client-class "IOSurfaceAcceleratorClient")
