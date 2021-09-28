@@ -1,3 +1,13 @@
+2021-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build with non-internal Monterey SDK
+        https://bugs.webkit.org/show_bug.cgi?id=230872
+
+        Reviewed by Jonathan Bedard.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::speechSynthesisGetDefaultVoiceIdentifierForLocale):
+
 2021-09-28  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Add CSSOM interface

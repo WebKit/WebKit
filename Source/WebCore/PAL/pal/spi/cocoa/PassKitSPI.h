@@ -23,6 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+#import <PassKit/PKRecurringPaymentSummaryItem.h>
+#endif
+
+#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
+#import <PassKit/PKDeferredPaymentSummaryItem.h>
+#endif
+
 #if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 // FIXME: PassKit does not declare its NSString constant symbols with C linkage, so we end up with
@@ -33,7 +41,7 @@ WTF_EXTERN_C_BEGIN
 #import <PassKit/PKError.h>
 WTF_EXTERN_C_END
 
-#endif
+#endif // !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #if USE(APPLE_INTERNAL_SDK)
 
@@ -63,17 +71,13 @@ WTF_EXTERN_C_END
 #import <PassKitCore/PKRecurringPaymentSummaryItem.h>
 #endif
 
-#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
-#import <PassKitCore/PKDeferredPaymentSummaryItem.h>
-#endif
-
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 #import <PassKitCore/PKDateComponentsRange.h>
 #endif
 
 #import <WebKitAdditions/PassKitSPIAdditions.h>
 
-#else
+#else // USE(APPLE_INTERNAL_SDK)
 
 #import <Foundation/Foundation.h>
 
@@ -156,6 +160,7 @@ typedef NS_OPTIONS(NSUInteger, PKMerchantCapability) {
     PKMerchantCapabilityDebit = 1UL << 3
 };
 
+#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 typedef NS_ENUM(NSInteger, PKPaymentAuthorizationStatus) {
     PKPaymentAuthorizationStatusSuccess,
     PKPaymentAuthorizationStatusFailure,
@@ -166,6 +171,7 @@ typedef NS_ENUM(NSInteger, PKPaymentAuthorizationStatus) {
     PKPaymentAuthorizationStatusPINIncorrect,
     PKPaymentAuthorizationStatusPINLockout,
 };
+#endif
 
 typedef NS_ENUM(NSUInteger, PKPaymentMethodType) {
     PKPaymentMethodTypeUnknown = 0,
@@ -183,10 +189,12 @@ typedef NS_ENUM(NSUInteger, PKPaymentPassActivationState) {
     PKPaymentPassActivationStateDeactivated
 };
 
+#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 typedef NS_ENUM(NSUInteger, PKPaymentSummaryItemType) {
     PKPaymentSummaryItemTypeFinal,
     PKPaymentSummaryItemTypePending
 };
+#endif
 
 typedef NS_ENUM(NSUInteger, PKShippingType) {
     PKShippingTypeShipping,
@@ -241,12 +249,14 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @property (nonatomic, strong, readonly, nullable) PKContact *shippingContact;
 @end
 
+#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 @interface PKPaymentSummaryItem : NSObject
 + (instancetype)summaryItemWithLabel:(NSString *)label amount:(NSDecimalNumber *)amount;
 + (instancetype)summaryItemWithLabel:(NSString *)label amount:(NSDecimalNumber *)amount type:(PKPaymentSummaryItemType)type;
 @property (nonatomic, copy) NSString *label;
 @property (nonatomic, copy) NSDecimalNumber *amount;
 @end
+#endif
 
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 @interface PKDateComponentsRange : NSObject <NSCopying, NSSecureCoding>
@@ -419,6 +429,7 @@ NS_ASSUME_NONNULL_END
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
+#if !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 typedef NS_ENUM(NSInteger, PKPaymentButtonStyle) {
     PKPaymentButtonStyleWhite = 0,
     PKPaymentButtonStyleWhiteOutline,
@@ -437,9 +448,7 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
     PKPaymentButtonTypeSubscribe,
 #endif
 };
-#endif
-
-#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
+#endif // !HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
 
 NS_ASSUME_NONNULL_BEGIN
 

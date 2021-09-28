@@ -29,7 +29,9 @@
 #import <AssetViewer/ASVInlinePreview.h>
 #endif
 
-#else
+#else // USE(APPLE_INTERNAL_SDK)
+
+NS_ASSUME_NONNULL_BEGIN
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
@@ -48,6 +50,8 @@
 
 @end
 
-#endif
+#endif // ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 
-#endif
+NS_ASSUME_NONNULL_END
+
+#endif // USE(APPLE_INTERNAL_SDK)

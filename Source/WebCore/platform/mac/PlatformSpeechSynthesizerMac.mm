@@ -227,7 +227,7 @@ static RetainPtr<CFStringRef> speechSynthesisGetDefaultVoiceIdentifierForLocale(
     if (!userLocale)
         return nil;
 
-#if HAVE(SPEECHSYNTHESIS_MONTEREY_SPI) && USE(APPLE_INTERNAL_SDK)
+#if HAVE(SPEECHSYNTHESIS_MONTEREY_SPI)
     return adoptCF(CopyIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale));
 #else
     return GetIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale);
