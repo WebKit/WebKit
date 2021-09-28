@@ -1,3 +1,17 @@
+2021-09-28  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Tweak isCallable() to early return `true` for InternalFunction instances
+        https://bugs.webkit.org/show_bug.cgi?id=230869
+
+        Reviewed by Yusuke Suzuki.
+
+        With this change, isCallable() avoids calling into InternalFunction::getCallData(),
+        which is concurrency-aware and guaranteed to never return CallData::Type::None.
+        We have a similar optimization for JSFunction.
+
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isCallableWithConcurrency):
+
 2021-09-27  Saam Barati  <sbarati@apple.com>
 
         Build an unlinked baseline JIT

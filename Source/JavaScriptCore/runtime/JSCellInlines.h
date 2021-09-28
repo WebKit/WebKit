@@ -254,14 +254,12 @@ ALWAYS_INLINE TriState JSCell::isCallableWithConcurrency(VM& vm)
 {
     if (!isObject())
         return TriState::False;
-    if (type() == JSFunctionType)
+    // JSFunction and InternalFunction assert during construction that derived classes don't override getCallData,
+    // which guarantees that CallData::Type::None is never returned.
+    if (type() == JSFunctionType || type() == InternalFunctionType)
         return TriState::True;
     if (inlineTypeFlags() & OverridesGetCallData) {
         if constexpr (concurrency == Concurrency::MainThread)
-            return (methodTable(vm)->getCallData(this).type != CallData::Type::None) ? TriState::True : TriState::False;
-        // We know that InternalFunction::getCallData is concurrency aware. Plus, derived classes of InternalFunction never
-        // override getCallData (this is ensured by ASSERT in InternalFunction).
-        if (type() == InternalFunctionType)
             return (methodTable(vm)->getCallData(this).type != CallData::Type::None) ? TriState::True : TriState::False;
         return TriState::Indeterminate;
     }
