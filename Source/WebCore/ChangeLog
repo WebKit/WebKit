@@ -1,3 +1,22 @@
+2021-09-29  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Pass in the first-line style to the InlineContentBreaker::ContinuousContent runs if applicable
+        https://bugs.webkit.org/show_bug.cgi?id=230924
+
+        Reviewed by Antti Koivisto.
+
+        Now the inline content breaker has the correct set of style values when first-line style is set.
+
+        * layout/formattingContexts/inline/InlineItem.h:
+        (WebCore::Layout::InlineItem::firstLineStyle const):
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineCandidate::InlineContent::appendInlineItem):
+        (WebCore::Layout::LineBuilder::layoutInlineContent):
+        (WebCore::Layout::LineBuilder::computedIntrinsicWidth):
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::candidateContentForLine):
+        * layout/formattingContexts/inline/InlineLineBuilder.h:
+
 2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
 
         Remove references to '-webkit-clear-button'

@@ -140,7 +140,7 @@ struct LineCandidate {
         const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
         const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
 
-        void appendInlineItem(const InlineItem&, InlineLayoutUnit logicalWidth);
+        void appendInlineItem(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void appendTrailingLineBreak(const InlineItem& lineBreakItem) { m_trailingLineBreak = &lineBreakItem; }
         void appendtrailingWordBreakOpportunity(const InlineItem& wordBreakItem) { m_trailingWordBreakOpportunity = &wordBreakItem; }
         void reset();
@@ -175,7 +175,7 @@ LineCandidate::InlineContent::InlineContent(bool ignoreTrailingLetterSpacing)
 {
 }
 
-inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
+inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     ASSERT(inlineItem.isText() || inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
     auto collapsibleWidth = [&]() -> std::optional<InlineLayoutUnit> {
@@ -195,8 +195,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         ASSERT(logicalWidth > letterSpacing);
         return letterSpacing;
     };
-    // FIXME: While the line breaking related properties for atomic level boxes do not depend on the line index (first line style) it'd be great to figure out the correct style to pass in.
-    m_continuousContent.append(inlineItem, !inlineItem.isBox() ? inlineItem.style() : inlineItem.layoutBox().parent().style(), logicalWidth, collapsibleWidth());
+    m_continuousContent.append(inlineItem, style, logicalWidth, collapsibleWidth());
     m_hasInlineLevelBox = m_hasInlineLevelBox || inlineItem.isBox() || inlineItem.isInlineBoxStart();
 }
 
@@ -267,7 +266,7 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange& needsLayoutRange, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine)
 {
-    initialize(initialConstraintsForLine(initialLineLogicalRect, isFirstLine));
+    initialize(initialConstraintsForLine(initialLineLogicalRect, isFirstLine), isFirstLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange, partialLeadingContentLength, overflowLogicalWidth);
     auto committedRange = close(needsLayoutRange, committedContent);
@@ -284,14 +283,15 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
 
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, InlineLayoutUnit availableWidth)
 {
-    initialize({ { { }, { availableWidth, maxInlineLayoutUnit() } }, false });
+    initialize({ { { }, { availableWidth, maxInlineLayoutUnit() } }, false }, false);
     auto committedContent = placeInlineContent(needsLayoutRange, { }, { });
     auto committedRange = close(needsLayoutRange, committedContent);
     return { committedRange, m_line.contentLogicalWidth(), m_floats };
 }
 
-void LineBuilder::initialize(const UsedConstraints& lineConstraints)
+void LineBuilder::initialize(const UsedConstraints& lineConstraints, bool isFirstLine)
 {
+    m_isFirstLine = isFirstLine;
     m_floats.clear();
     m_partialLeadingTextItem = { };
     m_wrapOpportunityList.clear();
@@ -480,27 +480,38 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     ASSERT(softWrapOpportunityIndex <= layoutRange.end);
 
     if (partialLeadingContentLength) {
+        ASSERT(!m_isFirstLine);
         // Handle leading partial content first (overflowing text from the previous line).
         // Construct a partial leading inline item.
         m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[currentInlineItemIndex]).right(partialLeadingContentLength);
         auto itemWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, std::nullopt) : inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
-        lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, itemWidth);
+        lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, m_partialLeadingTextItem->style(), itemWidth);
         currentLogicalRight += itemWidth;
         ++currentInlineItemIndex;
     }
 
     for (auto index = currentInlineItemIndex; index < softWrapOpportunityIndex; ++index) {
         auto& inlineItem = m_inlineItems[index];
+        auto& style = [&] () -> const RenderStyle& {
+            return m_isFirstLine ? inlineItem.firstLineStyle() : inlineItem.style();
+        }();
         if (inlineItem.isFloat()) {
             lineCandidate.floatItem = &inlineItem;
             // This is a soft wrap opportunity, must be the only item in the list.
             ASSERT(currentInlineItemIndex + 1 == softWrapOpportunityIndex);
             continue;
         }
-        if (inlineItem.isText() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isBox()) {
+        if (inlineItem.isText() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             ASSERT(!leadingLogicalWidth || inlineItem.isText());
             auto logicalWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, std::nullopt) : inlineItemWidth(inlineItem, currentLogicalRight);
-            lineCandidate.inlineContent.appendInlineItem(inlineItem, logicalWidth);
+            lineCandidate.inlineContent.appendInlineItem(inlineItem, style, logicalWidth);
+            currentLogicalRight += logicalWidth;
+            continue;
+        }
+        if (inlineItem.isBox()) {
+            auto logicalWidth = inlineItemWidth(inlineItem, currentLogicalRight);
+            // FIXME: While the line breaking related properties for atomic level boxes do not depend on the line index (first line style) it'd be great to figure out the correct style to pass in.
+            lineCandidate.inlineContent.appendInlineItem(inlineItem, inlineItem.layoutBox().parent().style(), logicalWidth);
             currentLogicalRight += logicalWidth;
             continue;
         }

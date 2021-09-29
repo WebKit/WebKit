@@ -41,6 +41,7 @@ public:
     Type type() const { return m_type; }
     const Box& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }
+    const RenderStyle& firstLineStyle() const { return layoutBox().firstLineStyle(); }
 
     bool isText() const { return type() == Type::Text; }
     bool isBox() const { return type() == Type::Box; }
