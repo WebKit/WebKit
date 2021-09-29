@@ -1,3 +1,21 @@
+2021-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Migrate _WKDownload tests from TCPServer to HTTPServer
+        https://bugs.webkit.org/show_bug.cgi?id=230980
+        <rdar://82100878>
+
+        Reviewed by Chris Dumez.
+
+        The former is very picky when it comes to numbers of TCP connections, and causes tests to time out when
+        the number of connections changes.  The latter is more forgiving and runs code on the main thread.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::respondSlowly):
+        (TestWebKitAPI::downloadAtRate):
+        (TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::Connection::send const):
+
 2021-09-29  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed built trigger fix.
