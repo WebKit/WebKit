@@ -67,7 +67,6 @@ public:
     void setBuffersToAutoClear(GCGLbitfield) final;
     GCGLbitfield getBuffersToAutoClear() const final;
     void markLayerComposited() final;
-    void enablePreserveDrawingBuffer() final;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     GraphicsContextGLCV* asCV() final;
@@ -82,6 +81,9 @@ public:
     void readnPixelsEXT(GCGLint, GCGLint, GCGLsizei, GCGLsizei, GCGLenum, GCGLenum, GCGLsizei, GCGLvoid*) final;
     void getnUniformfvEXT(GCGLuint, GCGLint, GCGLsizei, GCGLfloat*) final;
     void getnUniformivEXT(GCGLuint, GCGLint, GCGLsizei, GCGLint*) final;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
 #endif
 
 protected:

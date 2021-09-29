@@ -128,6 +128,10 @@ using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanv
 using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+class MediaSample;
+#endif
+
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
@@ -233,10 +237,6 @@ public:
     bool extensionIsEnabled(const String&);
 
     bool isPreservingDrawingBuffer() const { return m_attributes.preserveDrawingBuffer; }
-    // Concession to canvas capture API, which must dynamically enable
-    // preserveDrawingBuffer. This can only be called once, when
-    // isPreservingDrawingBuffer() returns false.
-    void enablePreserveDrawingBuffer();
 
     bool preventBufferClearForInspector() const { return m_preventBufferClearForInspector; }
     void setPreventBufferClearForInspector(bool value) { m_preventBufferClearForInspector = value; }
@@ -392,6 +392,9 @@ public:
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
     std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer();
+#if ENABLE(MEDIA_STREAM)
+    RefPtr<MediaSample> paintCompositedResultsToMediaSample();
+#endif
 
     void removeSharedObject(WebGLSharedObject&);
     void removeContextObject(WebGLContextObject&);

@@ -95,24 +95,33 @@ RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(PixelBuffer&& p
         return nullptr;
     }
     ASSERT_UNUSED(status, !status);
+    return createImageSample(WTFMove(cvPixelBuffer), VideoRotation::None, false);
+}
 
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(RetainPtr<CVPixelBufferRef>&& pixelBuffer, VideoRotation rotation, bool mirrored)
+{
     CMVideoFormatDescriptionRef formatDescriptionRaw = nullptr;
-    status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, cvPixelBuffer.get(), &formatDescriptionRaw);
-    ASSERT(!status);
+    auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &formatDescriptionRaw);
+    if (status || !formatDescriptionRaw) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
     auto formatDescription = adoptCF(formatDescriptionRaw);
 
     CMSampleTimingInfo sampleTimingInformation = { PAL::kCMTimeInvalid, PAL::kCMTimeInvalid, PAL::kCMTimeInvalid };
     CMSampleBufferRef sampleBufferRaw = nullptr;
-    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, cvPixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
-    ASSERT(!status);
+    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
+    if (status || !sampleBufferRaw) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
     auto sampleBuffer = adoptCF(sampleBufferRaw);
-
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
     for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
         CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
         CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
-    return create(sampleBuffer.get());
+    return create(sampleBuffer.get(), rotation, mirrored);
 }
 
 MediaTime MediaSampleAVFObjC::presentationTime() const

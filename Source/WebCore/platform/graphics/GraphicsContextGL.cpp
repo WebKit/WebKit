@@ -362,12 +362,6 @@ GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs, Graphics
 {
 }
 
-void GraphicsContextGL::enablePreserveDrawingBuffer()
-{
-    // Canvas capture should not call this unless necessary.
-    ASSERT(!m_attrs.preserveDrawingBuffer);
-    m_attrs.preserveDrawingBuffer = true;
-}
 
 bool GraphicsContextGL::computeFormatAndTypeParameters(GCGLenum format, GCGLenum type, unsigned* componentsPerPixel, unsigned* bytesPerComponent)
 {

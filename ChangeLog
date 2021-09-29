@@ -1,3 +1,17 @@
+2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        MediaStream canvas.captureStream() fails for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=230613
+        <rdar://82307293>
+
+        Reviewed by Youenn Fablet.
+
+        Add a manual test to interact with media stream
+        captureStream() behavior until the implementation is
+        testable.
+
+        * ManualTests/mediastream/mediastream-canvas-to-video.html: Added.
+
 2021-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 3.0.0

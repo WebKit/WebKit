@@ -59,7 +59,9 @@ class PixelBuffer;
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 class GraphicsContextGLCV;
 #endif
-
+#if ENABLE(MEDIA_STREAM)
+class MediaSample;
+#endif
 
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
@@ -1244,13 +1246,6 @@ public:
     GraphicsContextGLAttributes contextAttributes() const { return m_attrs; }
     void setContextAttributes(const GraphicsContextGLAttributes& attrs) { m_attrs = attrs; }
 
-    // FIXME: The calling site should be fixed, this breaks the WebGL spec
-    // wrt preserveDrawingBuffer == false behavior.
-    // Concession to Canvas captureStream, which needs to dynamically set
-    // preserveDrawingBuffer to true in order to avoid implicit clears.
-    // Implementations generally do not support toggling this bit arbitrarily.
-    virtual void enablePreserveDrawingBuffer();
-
     // Support for extensions. Returns a non-null object, though not
     // all methods it contains may necessarily be supported on the
     // current hardware. Must call ExtensionsGL::supports() to
@@ -1294,6 +1289,9 @@ public:
     virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
     virtual std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
+#if ENABLE(MEDIA_STREAM)
+    virtual RefPtr<MediaSample> paintCompositedResultsToMediaSample() = 0;
+#endif
 
     // FIXME: this should be removed. The layer should be marked composited by
     // preparing for display, so that canvas image buffer and the layer agree
