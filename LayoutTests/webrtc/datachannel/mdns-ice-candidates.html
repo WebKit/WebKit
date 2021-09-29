@@ -68,6 +68,7 @@ promise_test(async (test) => {
     });
 
     assert_true(connection.localDescription.sdp.includes(".local "));
+    closeConnections();
 }, "Getting some MDNS candidates");
 
 var finishTest;
@@ -86,6 +87,7 @@ promise_test((test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from offerer to receiver");
 
 promise_test((test) => {
@@ -103,6 +105,7 @@ promise_test((test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from receiver to offerer");
 
 
@@ -121,6 +124,7 @@ promise_test((test) => {
         }, { filterOutICECandidate: (candidate) => { return candidate && candidate.candidate.toLowerCase().indexOf("udp") == -1; } });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from offerer to receiver using UDP only");
 
 promise_test((test) => {
@@ -149,6 +153,7 @@ promise_test((test) => {
         });
         setTimeout(() => { reject("Test timed out"); }, 5000);
     });
+    closeConnections();
 }, "Basic data channel exchange from offerer to receiver 2");
 
 promise_test(async (test) => {

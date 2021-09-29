@@ -1,3 +1,15 @@
+2021-09-29  Youenn Fablet  <youenn@apple.com>
+
+        [ iOS macOS wk2 ] webrtc/datachannel/mdns-ice-candidates.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=230700
+        <rdar://problem/83456565>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+        * webrtc/datachannel/mdns-ice-candidates.html:
+        Close connections test after test.
+
 2021-09-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ iOS ] fast/scrolling/ios/click-events-after-long-press-during-momentum-scroll-in-overflow.html is a flaky timeout.
