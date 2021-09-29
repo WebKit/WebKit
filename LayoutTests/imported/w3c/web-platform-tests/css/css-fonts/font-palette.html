@@ -13,29 +13,29 @@
     src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
 }
 
-@font-palette-values Palette1 {
+@font-palette-values --Palette1 {
     font-family: "WebFont";
     base-palette: 0;
 }
 
-@font-palette-values Palette2 {
+@font-palette-values --Palette2 {
     font-family: "WebFont";
     base-palette: 1;
 }
 
-@font-palette-values Palette3 {
+@font-palette-values --Palette3 {
     font-family: "WebFont";
     base-palette: 1;
     override-colors: 1 #FFFF00;
 }
 
-@font-palette-values Palette4 {
+@font-palette-values --Palette4 {
     font-family: "WebFont";
     base-palette: 1;
     override-colors: 0 #00FF00, 1 #000000;
 }
 
-@font-palette-values Palette5 {
+@font-palette-values --Palette5 {
     font-family: "WebFont";
     base-palette: 1;
     override-colors: 1 #000000, 0 #00FF00;
@@ -44,6 +44,6 @@
 </head>
 <body>
 <p>Test passes if you see particular rectangles of particular colors.</p>
-<div style="display: inline-block; font: 100px 'WebFont'; font-palette: Palette1;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: Palette2;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: Palette3;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: Palette4;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: Palette5;">A</div>
+<div style="display: inline-block; font: 100px 'WebFont'; font-palette: --Palette1;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: --Palette2;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: --Palette3;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: --Palette4;">A</div><div style="display: inline-block; font: 100px 'WebFont'; font-palette: --Palette5;">A</div>
 </body>
 </html>

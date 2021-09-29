@@ -3,5 +3,5 @@ PASS Property font-palette value 'none'
 PASS Property font-palette value 'normal'
 PASS Property font-palette value 'light'
 PASS Property font-palette value 'dark'
-PASS Property font-palette value 'pitchfork'
+PASS Property font-palette value '--pitchfork'
 

@@ -931,7 +931,7 @@ static RefPtr<CSSPrimitiveValue> consumeFontPalette(CSSParserTokenRange& range)
 {
     if (auto result = consumeIdent<CSSValueNone, CSSValueNormal, CSSValueLight, CSSValueDark>(range))
         return result;
-    return consumeCustomIdent(range);
+    return consumeDashedIdent(range);
 }
 
 static RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range)

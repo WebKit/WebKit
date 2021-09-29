@@ -1,5 +1,28 @@
 2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Font palette names have to start with two hyphens
+        https://bugs.webkit.org/show_bug.cgi?id=230790
+        <rdar://problem/83530013>
+
+        Reviewed by Dean Jackson.
+
+        The spec changed in
+        https://github.com/w3c/csswg-drafts/commit/9ddf9388a2fe0ac300c41b7244e10c0a40fe0cae.
+
+        Font palettes now have to be named with a <dashed-ident>.
+
+        Updated existing tests.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeFontPaletteValuesRule):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontPalette):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeDashedCustomIdent):
+        * css/parser/CSSPropertyParserHelpers.h:
+
+2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
         CSSFontPaletteValuesRule should not be maplike
         https://bugs.webkit.org/show_bug.cgi?id=230793
         <rdar://problem/83530242>

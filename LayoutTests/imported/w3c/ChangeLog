@@ -1,5 +1,47 @@
 2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Font palette names have to start with two hyphens
+        https://bugs.webkit.org/show_bug.cgi?id=230790
+        <rdar://problem/83530013>
+
+        Reviewed by Dean Jackson.
+
+        Tests are being upstreamed at https://github.com/web-platform-tests/wpt/pull/30963.
+
+        * web-platform-tests/css/css-fonts/font-palette-add-2-expected.html:
+        * web-platform-tests/css/css-fonts/font-palette-add-2.html:
+        * web-platform-tests/css/css-fonts/font-palette-add-expected-mismatch.html:
+        * web-platform-tests/css/css-fonts/font-palette-add.html:
+        * web-platform-tests/css/css-fonts/font-palette-empty-font-family-expected-mismatch.html:
+        * web-platform-tests/css/css-fonts/font-palette-empty-font-family.html:
+        * web-platform-tests/css/css-fonts/font-palette-modify-2-expected.html:
+        * web-platform-tests/css/css-fonts/font-palette-modify-2.html:
+        * web-platform-tests/css/css-fonts/font-palette-modify-expected-mismatch.html:
+        * web-platform-tests/css/css-fonts/font-palette-modify.html:
+        * web-platform-tests/css/css-fonts/font-palette-remove-2-expected.html:
+        * web-platform-tests/css/css-fonts/font-palette-remove-2.html:
+        * web-platform-tests/css/css-fonts/font-palette-remove-expected-mismatch.html:
+        * web-platform-tests/css/css-fonts/font-palette-remove.html:
+        * web-platform-tests/css/css-fonts/font-palette.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-add-2-expected.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-add-2.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-add-expected-mismatch.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-add.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete-2-expected.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete-2.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete-expected-mismatch.html:
+        * web-platform-tests/css/css-fonts/palette-values-rule-delete.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-computed.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-invalid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-invalid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-valid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html:
+
+2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
         CSSFontPaletteValuesRule should not be maplike
         https://bugs.webkit.org/show_bug.cgi?id=230793
         <rdar://problem/83530242>

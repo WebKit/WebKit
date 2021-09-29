@@ -1,4 +1,5 @@
 
 PASS e.style['font-palette'] = "normal none" should not set the property value
 PASS e.style['font-palette'] = "none, light" should not set the property value
+PASS e.style['font-palette'] = "A" should not set the property value
 

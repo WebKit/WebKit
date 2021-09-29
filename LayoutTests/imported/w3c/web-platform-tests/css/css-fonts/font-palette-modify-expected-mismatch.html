@@ -11,12 +11,12 @@
     src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
 }
 
-@font-palette-values MyPalette {
+@font-palette-values --MyPalette {
     font-family: "Ahem-COLR";
     base-palette: 1;
 }
 
-@font-palette-values MyPalette2 {
+@font-palette-values --MyPalette2 {
     font-family: "Ahem-COLR";
     base-palette: 0;
     override-colors: 1 #00FF00;
@@ -24,6 +24,6 @@
 </style>
 </head>
 <body>
-<div id="target" style="font: 48px 'Ahem-COLR'; font-palette: MyPalette;">A</div>
+<div id="target" style="font: 48px 'Ahem-COLR'; font-palette: --MyPalette;">A</div>
 </body>
 </html>

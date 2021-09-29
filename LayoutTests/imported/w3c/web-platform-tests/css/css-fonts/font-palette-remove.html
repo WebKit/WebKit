@@ -12,14 +12,14 @@
     src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
 }
 
-@font-palette-values MyPalette {
+@font-palette-values --MyPalette {
     font-family: "Ahem-COLR";
     base-palette: 1;
 }
 </style>
 </head>
 <body>
-<div id="target" style="font: 48px 'Ahem-COLR'; font-palette: MyPalette;">A</div>
+<div id="target" style="font: 48px 'Ahem-COLR'; font-palette: --MyPalette;">A</div>
 <script>
 let count = 0;
 function tick() {
