@@ -1,3 +1,16 @@
+2021-09-29  Youenn Fablet  <youenn@apple.com>
+
+        WPT importer should create serviceworker template for templated test that have worker as global
+        https://bugs.webkit.org/show_bug.cgi?id=230943
+
+        Reviewed by Jonathan Bedard.
+
+        Tests with a worker global should run in all worker global scope (dedicated worker, shared worker and service worker).
+        Let's add service worker by default for now.
+
+        * Scripts/webkitpy/w3c/test_importer.py:
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+
 2021-09-28  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Add SPI to select a tab created by _WKInspectorExtension
