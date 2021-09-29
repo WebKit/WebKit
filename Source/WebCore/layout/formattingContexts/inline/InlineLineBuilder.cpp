@@ -217,9 +217,11 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
 {
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        auto& fontCascade = inlineTextItem.layoutBox().style().fontCascade();
-        if (auto contentWidth = inlineTextItem.width())
+        if (auto contentWidth = inlineTextItem.width()) {
+            ASSERT(inlineTextItem.firstLineStyle() == inlineTextItem.style());
             return *contentWidth;
+        }
+        auto& fontCascade = m_isFirstLine ? inlineTextItem.firstLineStyle().fontCascade() : inlineTextItem.style().fontCascade();
         if (!inlineTextItem.isWhitespace() || InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return TextUtil::width(inlineTextItem, fontCascade, contentLogicalLeft);
         return TextUtil::width(inlineTextItem, fontCascade, inlineTextItem.start(), inlineTextItem.start() + 1, contentLogicalLeft);

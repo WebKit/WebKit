@@ -88,6 +88,8 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> std::optional<InlineLayoutUnit> {
         if (!inlineTextBox.canUseSimplifiedContentMeasuring())
             return { };
+        if (inlineTextBox.style() != inlineTextBox.firstLineStyle())
+            return { };
         return TextUtil::width(inlineTextBox, fontCascade, startPosition, startPosition + length, { });
     };
 
