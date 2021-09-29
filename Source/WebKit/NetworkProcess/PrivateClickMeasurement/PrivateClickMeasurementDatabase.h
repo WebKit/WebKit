@@ -80,7 +80,7 @@ private:
     bool needsUpdatedSchema() final;
     bool createUniqueIndices() final;
     const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() final;
-    const Vector<String>& sortedTables() final;
+    Span<const ASCIILiteral> sortedTables() final;
 
     Vector<String> columnsForTable(const String& tableName);
     void addMissingColumnToTable(const String& tableName, const String& columnName);

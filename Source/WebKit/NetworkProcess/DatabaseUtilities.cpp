@@ -280,7 +280,7 @@ void DatabaseUtilities::migrateDataToNewTablesIfNecessary()
     for (auto& table : sortedTables()) {
         auto migrateTableData = insertDistinctValuesInTableStatement(m_database, table);
         if (!migrateTableData || migrateTableData->step() != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary (table %s) failed to migrate schema, error message: %s", this, table.utf8().data(), m_database.lastErrorMsg());
+            RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::migrateDataToNewTablesIfNecessary (table %s) failed to migrate schema, error message: %s", this, table.characters(), m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
         }

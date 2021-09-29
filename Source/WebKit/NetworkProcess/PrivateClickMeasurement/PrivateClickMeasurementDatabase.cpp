@@ -111,15 +111,15 @@ const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Databa
     return expectedTableAndIndexQueries;
 }
 
-const Vector<String>& Database::sortedTables()
+Span<const ASCIILiteral> Database::sortedTables()
 {
-    static auto sortedTables = makeNeverDestroyed(Vector<String> {
+    static std::array sortedTables {
         "PCMObservedDomains"_s,
         "UnattributedPrivateClickMeasurement"_s,
         "AttributedPrivateClickMeasurement"_s
-    });
+    };
 
-    return sortedTables;
+    return { sortedTables.data(), sortedTables.size() };
 }
 
 void Database::interruptAllDatabases()

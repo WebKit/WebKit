@@ -273,9 +273,9 @@ const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& Resour
     return expectedTableAndIndexQueries;
 }
 
-const Vector<String>& ResourceLoadStatisticsDatabaseStore::sortedTables()
+Span<const ASCIILiteral> ResourceLoadStatisticsDatabaseStore::sortedTables()
 {
-    static auto sortedTables = makeNeverDestroyed(Vector<String> {
+    static constexpr std::array sortedTables {
         "ObservedDomains"_s,
         "TopLevelDomains"_s,
         "StorageAccessUnderTopFrameDomains"_s,
@@ -289,9 +289,9 @@ const Vector<String>& ResourceLoadStatisticsDatabaseStore::sortedTables()
         "SubresourceUniqueRedirectsTo"_s,
         "SubresourceUniqueRedirectsFrom"_s,
         "OperatingDates"_s
-    });
+    };
 
-    return sortedTables;
+    return { sortedTables.data(), sortedTables.size() };
 }
 
 template <typename ContainerType>

@@ -60,7 +60,7 @@ protected:
     virtual String getDomainStringFromDomainID(unsigned) const = 0;
     virtual bool needsUpdatedSchema() = 0;
     virtual const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries() = 0;
-    virtual const Vector<String>& sortedTables() = 0;
+    virtual Span<const ASCIILiteral> sortedTables() = 0;
     TableAndIndexPair currentTableAndIndexQueries(const String&);
     String stripIndexQueryToMatchStoredValue(const char* originalQuery);
     void migrateDataToNewTablesIfNecessary();
