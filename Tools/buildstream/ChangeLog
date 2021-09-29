@@ -1,3 +1,15 @@
+2021-09-29  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] rr unable to locate librrpage.so
+        https://bugs.webkit.org/show_bug.cgi?id=230942
+
+        Reviewed by Sergio Villar Senin.
+
+        Look for resources in cmake's install lib dir.
+
+        * elements/sdk/rr.bst:
+        * patches/rr/0001-cmake-Look-for-resources-in-cmake-s-install-lib-dir.patch: Added.
+
 2021-09-28  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update libsoup3 and friends
