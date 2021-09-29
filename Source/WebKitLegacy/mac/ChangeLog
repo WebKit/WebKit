@@ -1,3 +1,40 @@
+2021-09-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283225. rdar://problem/83683557
+
+    Make WebLocalizedString() thread-safe
+    https://bugs.webkit.org/show_bug.cgi?id=230954
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    Make WebLocalizedString() thread-safe. It takes minimal effort to make it thread-safe given
+    that the NSBundle API is thread-safe [1] and clients keep calling it on the background thread.
+    
+    [1] https://developer.apple.com/documentation/foundation/nslocalizedstringwithdefaultvalue
+    "As of OS X 10.11 and iOS 9, NSBundle is thread-safe. As such, you can safely call
+     NSLocalizedStringWithDefaultValue from any execution context."
+    
+    * Misc/WebLocalizableStrings.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283225 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-29  Chris Dumez  <cdumez@apple.com>
+
+            Make WebLocalizedString() thread-safe
+            https://bugs.webkit.org/show_bug.cgi?id=230954
+
+            Reviewed by Alexey Proskuryakov.
+
+            Make WebLocalizedString() thread-safe. It takes minimal effort to make it thread-safe given
+            that the NSBundle API is thread-safe [1] and clients keep calling it on the background thread.
+
+            [1] https://developer.apple.com/documentation/foundation/nslocalizedstringwithdefaultvalue
+            "As of OS X 10.11 and iOS 9, NSBundle is thread-safe. As such, you can safely call
+             NSLocalizedStringWithDefaultValue from any execution context."
+
+            * Misc/WebLocalizableStrings.mm:
+
 2021-09-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r282707. rdar://problem/83429953
