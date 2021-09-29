@@ -1,3 +1,30 @@
+2021-09-29  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Add fonts and keyframes in cascade layer order
+        https://bugs.webkit.org/show_bug.cgi?id=230947
+
+        Reviewed by Simon Fraser.
+
+        Ensure font and keyframe rules respect cascade layer ordering.
+
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::Builder::addChildRules):
+
+        Collect resolver mutating rules instead of processing them immediately.
+
+        (WebCore::Style::RuleSet::Builder::~Builder):
+        (WebCore::Style::RuleSet::Builder::addMutatingRulesToResolver):
+
+        Process the rules in correct order after cascade layer order has been established.
+
+        In additive case we need to also re-process rules added from earlier stylesheets as they might
+        have higher priority than the newly added ones.
+
+        (WebCore::Style::RuleSet::shrinkToFit):
+        * style/RuleSet.h:
+        (WebCore::Style::RuleSet::cascadeLayerOrderForIdentifier const):
+        (WebCore::Style::RuleSet::cascadeLayerOrderFor const):
+
 2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Factor out rare members of FontCreationContext into FontCreationContextRareData

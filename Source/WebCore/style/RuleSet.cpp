@@ -346,27 +346,13 @@ void RuleSet::Builder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             popCascadeLayer(layerRule.name());
             continue;
         }
-        if (is<StyleRuleFontFace>(*rule)) {
-            // Add this font face to our set.
-            if (resolver) {
-                resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(*rule.get()), false);
-                resolver->invalidateMatchedDeclarationsCache();
+        if (is<StyleRuleFontFace>(*rule) || is<StyleRuleFontPaletteValues>(*rule) || is<StyleRuleKeyframes>(*rule)) {
+            if (mode == Mode::ResolverMutationScan) {
+                mediaQueryCollector.didMutateResolver();
+                continue;
             }
-            mediaQueryCollector.didMutateResolver();
-            continue;
-        }
-        if (is<StyleRuleFontPaletteValues>(*rule)) {
-            if (resolver) {
-                resolver->document().fontSelector().addFontPaletteValuesRule(downcast<StyleRuleFontPaletteValues>(*rule.get()));
-                resolver->invalidateMatchedDeclarationsCache();
-            }
-            mediaQueryCollector.didMutateResolver();
-            continue;
-        }
-        if (is<StyleRuleKeyframes>(*rule)) {
             if (resolver)
-                resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(*rule));
-            mediaQueryCollector.didMutateResolver();
+                collectedResolverMutatingRules.append({ *rule, currentCascadeLayerIdentifier });
             continue;
         }
         if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported()) {
@@ -403,8 +389,11 @@ void RuleSet::Builder::addRulesFromSheet(const StyleSheetContents& sheet)
 
 RuleSet::Builder::~Builder()
 {
-    if (mode == Mode::Normal && !cascadeLayerIdentifierMap.isEmpty())
-        updateCascadeLayerOrder();
+    if (mode == Mode::ResolverMutationScan)
+        return;
+
+    updateCascadeLayerOrder();
+    addMutatingRulesToResolver();
 }
 
 void RuleSet::Builder::addStyleRule(const StyleRule& rule)
@@ -470,6 +459,9 @@ void RuleSet::Builder::popCascadeLayer(const CascadeLayerName& name)
 
 void RuleSet::Builder::updateCascadeLayerOrder()
 {
+    if (cascadeLayerIdentifierMap.isEmpty())
+        return;
+
     auto compare = [&](CascadeLayerIdentifier a, CascadeLayerIdentifier b) {
         while (a && b) {
             // Identifiers are in parse order which almost corresponds to the layer priority order.
@@ -497,6 +489,46 @@ void RuleSet::Builder::updateCascadeLayerOrder()
 
     for (unsigned i = 0; i < orderVector.size(); ++i)
         ruleSet->cascadeLayerForIdentifier(orderVector[i]).order = i + 1;
+}
+
+void RuleSet::Builder::addMutatingRulesToResolver()
+{
+    if (!resolver)
+        return;
+
+    auto compareLayers = [&](const ResolverMutatingRule& a, const ResolverMutatingRule& b) {
+        auto aOrder = ruleSet->cascadeLayerOrderForIdentifier(a.layerIdentifier);
+        auto bOrder = ruleSet->cascadeLayerOrderForIdentifier(b.layerIdentifier);
+        return aOrder < bOrder;
+    };
+
+    // The order may change so we need to reprocess resolver mutating rules from earlier stylesheets.
+    auto rulesToAdd = std::exchange(ruleSet->m_resolverMutatingRulesInLayers, { });
+    rulesToAdd.appendVector(WTFMove(collectedResolverMutatingRules));
+
+    if (!cascadeLayerIdentifierMap.isEmpty())
+        std::stable_sort(rulesToAdd.begin(), rulesToAdd.end(), compareLayers);
+
+    for (auto& collectedRule : rulesToAdd) {
+        if (collectedRule.layerIdentifier)
+            ruleSet->m_resolverMutatingRulesInLayers.append(collectedRule);
+
+        auto& rule = collectedRule.rule;
+        if (is<StyleRuleFontFace>(rule)) {
+            resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(rule.get()), false);
+            resolver->invalidateMatchedDeclarationsCache();
+            continue;
+        }
+        if (is<StyleRuleFontPaletteValues>(rule)) {
+            resolver->document().fontSelector().addFontPaletteValuesRule(downcast<StyleRuleFontPaletteValues>(rule.get()));
+            resolver->invalidateMatchedDeclarationsCache();
+            continue;
+        }
+        if (is<StyleRuleKeyframes>(rule)) {
+            resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(rule.get()));
+            continue;
+        }
+    }
 }
 
 template<typename Function>
@@ -635,6 +667,7 @@ void RuleSet::shrinkToFit()
 
     m_cascadeLayers.shrinkToFit();
     m_cascadeLayerIdentifierForRulePosition.shrinkToFit();
+    m_resolverMutatingRulesInLayers.shrinkToFit();
 }
 
 RuleSet::MediaQueryCollector::~MediaQueryCollector() = default;
