@@ -307,8 +307,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     ASSERT(source().provider());
     setNumParameters(other.numParameters());
 
-    m_llintExecuteCounter = &m_unlinkedCode->llintExecuteCounter();
-    
     vm.heap.codeBlockSet().add(this);
 }
 
@@ -356,8 +354,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
 
     ASSERT(source().provider());
     setNumParameters(unlinkedCodeBlock->numParameters());
-
-    m_llintExecuteCounter = &m_unlinkedCode->llintExecuteCounter();
 
     vm.heap.codeBlockSet().add(this);
 }
@@ -1658,7 +1654,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm)
         case JITType::HostCallThunk:
             return;
         case JITType::InterpreterThunk:
-            count = m_llintExecuteCounter->count();
+            count = m_unlinkedCode->llintExecuteCounter().count();
             break;
         case JITType::BaselineJIT:
             count = m_jitExecuteCounter.count();
@@ -3557,12 +3553,12 @@ std::optional<BytecodeIndex> CodeBlock::bytecodeIndexFromCallSiteIndex(CallSiteI
 
 void CodeBlock::jitSoon()
 {
-    m_llintExecuteCounter->setNewThreshold(unlinkedCodeBlock()->thresholdForJIT(Options::thresholdForJITSoon()), this);
+    m_unlinkedCode->llintExecuteCounter().setNewThreshold(unlinkedCodeBlock()->thresholdForJIT(Options::thresholdForJITSoon()), this);
 }
 
 void CodeBlock::jitNextInvocation()
 {
-    m_llintExecuteCounter->setNewThreshold(0, this);
+    m_unlinkedCode->llintExecuteCounter().setNewThreshold(0, this);
 }
 
 bool CodeBlock::hasInstalledVMTrapBreakpoints() const

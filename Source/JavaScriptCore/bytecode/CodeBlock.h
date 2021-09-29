@@ -599,12 +599,12 @@ public:
 
     bool checkIfJITThresholdReached()
     {
-        return m_llintExecuteCounter->checkIfThresholdCrossedAndSet(this);
+        return m_unlinkedCode->llintExecuteCounter().checkIfThresholdCrossedAndSet(this);
     }
 
     void dontJITAnytimeSoon()
     {
-        m_llintExecuteCounter->deferIndefinitely();
+        m_unlinkedCode->llintExecuteCounter().deferIndefinitely();
     }
 
     void jitSoon();
@@ -612,7 +612,7 @@ public:
 
     const BaselineExecutionCounter& llintExecuteCounter() const
     {
-        return *m_llintExecuteCounter;
+        return m_unlinkedCode->llintExecuteCounter();
     }
 
     typedef HashMap<std::tuple<StructureID, unsigned>, FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint>> StructureWatchpointMap;
@@ -660,11 +660,6 @@ public:
     int32_t codeTypeThresholdMultiplier() const;
 
     int32_t adjustedCounterValue(int32_t desiredThreshold);
-
-    int32_t* addressOfJITExecuteCounter()
-    {
-        return &m_jitExecuteCounter.m_counter;
-    }
 
     static ptrdiff_t offsetOfJITExecuteCounter() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_counter); }
     static ptrdiff_t offsetOfJITExecutionActiveThreshold() { return OBJECT_OFFSETOF(CodeBlock, m_jitExecuteCounter) + OBJECT_OFFSETOF(BaselineExecutionCounter, m_activeThreshold); }
@@ -984,7 +979,7 @@ private:
     FixedVector<ValueProfile> m_argumentValueProfiles;
 
     // Constant Pool
-    COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);
+    static_assert(sizeof(Register) == sizeof(WriteBarrier<Unknown>), "Register must be same size as WriteBarrier Unknown");
     // TODO: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
     // it, so we're stuck with it for now.
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
@@ -992,8 +987,6 @@ private:
     FixedVector<WriteBarrier<FunctionExecutable>> m_functionExprs;
 
     WriteBarrier<CodeBlock> m_alternative;
-    
-    BaselineExecutionCounter* m_llintExecuteCounter { nullptr };
 
     BaselineExecutionCounter m_jitExecuteCounter;
     uint32_t m_osrExitCounter;
@@ -1013,6 +1006,9 @@ private:
     HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
 #endif
 };
+#if !ASSERT_ENABLED && COMPILER(GCC_COMPATIBLE)
+static_assert(sizeof(CodeBlock) <= 256, "Keep it small for memory saving");
+#endif
 
 template <typename ExecutableType>
 void ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)

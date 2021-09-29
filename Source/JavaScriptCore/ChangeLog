@@ -1,3 +1,27 @@
+2021-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove CodeBlock::m_llintExecuteCounter
+        https://bugs.webkit.org/show_bug.cgi?id=230938
+
+        Reviewed by Keith Miller.
+
+        CodeBlock::m_llintExecuteCounter is a pointer pointing the middle of UnlinkedCodeBlock.
+        So this is not necessary to have this pointer separately to access to that from LLInt,
+        since loading UnlinkedCodeBlock and accessing to the middle of that do the same number
+        of loads.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::jitSoon):
+        (JSC::CodeBlock::jitNextInvocation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::checkIfJITThresholdReached):
+        (JSC::CodeBlock::dontJITAnytimeSoon):
+        (JSC::CodeBlock::llintExecuteCounter const):
+        (JSC::CodeBlock::addressOfJITExecuteCounter): Deleted.
+        * llint/LowLevelInterpreter.asm:
+
 2021-09-29  Saam Barati  <sbarati@apple.com>
 
         Code inside strength reduction can incorrectly prove that we know what lastIndex is

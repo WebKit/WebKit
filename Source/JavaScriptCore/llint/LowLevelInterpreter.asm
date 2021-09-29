@@ -1420,8 +1420,8 @@ end
 
 macro checkSwitchToJIT(increment, action)
     loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_llintExecuteCounter[t0], t0
-    baddis increment, BaselineExecutionCounter::m_counter[t0], .continue
+    loadp CodeBlock::m_unlinkedCode[t0], t0
+    baddis increment, (UnlinkedCodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter)[t0], .continue
     action()
     .continue:
 end
@@ -1504,8 +1504,8 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     codeBlockGetter(t1)
     codeBlockSetter(t1)
     if not (C_LOOP or C_LOOP_WIN)
-        loadp CodeBlock::m_llintExecuteCounter[t1], t0
-        baddis 5, BaselineExecutionCounter::m_counter[t0], .continue
+        loadp CodeBlock::m_unlinkedCode[t1], t0
+        baddis 5, (UnlinkedCodeBlock::m_llintExecuteCounter + BaselineExecutionCounter::m_counter)[t0], .continue
         if JSVALUE64
             move cfr, a0
             move PC, a1
