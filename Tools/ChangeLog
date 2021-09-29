@@ -1,3 +1,16 @@
+2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [webkitpy] LOG_CHANNEL is widely used in the codebase and shouldn't be treated as error
+        https://bugs.webkit.org/show_bug.cgi?id=230995
+
+        Reviewed by Jonathan Bedard.
+
+        LOG_CHANNEL is the macro which is defined in each framework to define list of all channels
+        in the framework.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+
 2021-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Update PCM Daemon name
