@@ -353,7 +353,7 @@ public:
     bool useDarkAppearance() const { return m_state.useDarkAppearance; }
 #endif
 
-    const GraphicsContextState& state() const { return m_state; }
+    virtual const GraphicsContextState& state() const { return m_state; }
 
     virtual void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) = 0;
 
@@ -469,6 +469,11 @@ public:
     WEBCORE_EXPORT virtual void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode);
     WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt);
     WEBCORE_EXPORT virtual void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
+
+    virtual void drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
+    {
+        drawGlyphs(font, glyphs, advances, numGlyphs, point, fontSmoothingMode);
+    }
 
     WEBCORE_EXPORT FloatRect computeUnderlineBoundsForText(const FloatRect&, bool printing);
     WEBCORE_EXPORT virtual void drawLineForText(const FloatRect&, bool printing, bool doubleLines = false, StrokeStyle = SolidStroke);

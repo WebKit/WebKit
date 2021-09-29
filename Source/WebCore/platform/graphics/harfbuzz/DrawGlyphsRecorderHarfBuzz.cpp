@@ -26,22 +26,20 @@
 #include "config.h"
 #include "DrawGlyphsRecorder.h"
 
-#include "DisplayListItems.h"
-#include "DisplayListRecorder.h"
 #include "FloatPoint.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
 
 namespace WebCore {
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(DisplayList::Recorder& owner, DrawGlyphsDeconstruction)
+DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DrawGlyphsDeconstruction)
     : m_owner(owner)
 {
 }
 
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    m_owner.appendDrawGlyphsItemWithCachedFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+    m_owner.drawGlyphsAndCacheFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
 } // namespace WebCore

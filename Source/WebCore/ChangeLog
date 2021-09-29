@@ -1,3 +1,46 @@
+2021-09-29  Devin Rousso  <drousso@apple.com>
+
+        Allow `DrawGlyphsRecorder` to be used with any `GraphicsContext` instead of just `DisplayList::Recorder`
+        https://bugs.webkit.org/show_bug.cgi?id=230913
+
+        Reviewed by Myles Maxfield.
+
+        There's really nothing about `DrawGlyphsRecorder` that's specific to display lists other
+        than it's currently only being used by `DisplayList::Recorder`.
+
+        This patch replaces `DisplayList::Recorder` with `GraphicsContext` in `DrawGlyphsRecorder`.
+        It also requires that new methods be added to `GraphicsContext` that are overridden by
+        `DisplayList::Recorder`. This is being done to make `<attachment>` drawing work in the
+        GPUProcess (<https://webkit.org/b/230781>).
+
+        * platform/graphics/DrawGlyphsRecorder.h:
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::DrawGlyphsRecorder):
+        (WebCore::DrawGlyphsRecorder::populateInternalState):
+        (WebCore::DrawGlyphsRecorder::prepareInternalContext):
+        (WebCore::DrawGlyphsRecorder::recordDrawGlyphs):
+        (WebCore::DrawGlyphsRecorder::drawGlyphs):
+        * platform/graphics/harfbuzz/DrawGlyphsRecorderHarfBuzz.cpp:
+        (WebCore::DrawGlyphsRecorder::DrawGlyphsRecorder):
+        (WebCore::DrawGlyphsRecorder::drawGlyphs):
+        * platform/graphics/win/DrawGlyphsRecorderWin.cpp:
+        (WebCore::DrawGlyphsRecorder::DrawGlyphsRecorder):
+        (WebCore::DrawGlyphsRecorder::drawGlyphs):
+
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::drawGlyphsAndCacheFont): Added.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::state const): Added.
+        (WebCore::DisplayList::Recorder::drawGlyphsAndCacheFont): Renamed from `appendDrawGlyphsItemWithCachedFont`.
+        AFAICT it seems like the `m_state` in `GraphicsContext` has the same values (but is a
+        different object) as the `currentState().stateChange.m_state` in `DisplayList::Recorder`.
+        Many of the non-overriden methods on `GraphicsContext` (e.g. `setStrokeColor`) both modify
+        the `m_state` and call `updateState`, which `DisplayList::Recorder` uses to modify its
+        `currentState().stateChange.m_state`. As such, we should be able to expose it as an override
+        for the `state` "getter" so that `DrawGlyphsRecorder` is able to access the current state in
+        a `GraphicsContext`-subclass agnostic way.
+
 2021-09-29  Sihui Liu  <sihui_liu@apple.com>
 
         Replace FileSystemHandleImpl with FileSystemStorageConnection

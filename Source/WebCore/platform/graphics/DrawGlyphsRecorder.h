@@ -45,17 +45,13 @@ class Font;
 class GlyphBuffer;
 class GraphicsContext;
 
-namespace DisplayList {
-class Recorder;
-}
-
 class DrawGlyphsRecorder {
 public:
     enum class DrawGlyphsDeconstruction {
         Deconstruct,
         DontDeconstruct
     };
-    explicit DrawGlyphsRecorder(DisplayList::Recorder&, DrawGlyphsDeconstruction);
+    explicit DrawGlyphsRecorder(GraphicsContext&, DrawGlyphsDeconstruction);
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode);
 
@@ -92,7 +88,7 @@ private:
     void updateShadow(CGStyleRef);
 #endif
 
-    DisplayList::Recorder& m_owner;
+    GraphicsContext& m_owner;
     DrawGlyphsDeconstruction m_drawGlyphsDeconstruction;
 
 #if USE(CORE_TEXT) && !PLATFORM(WIN)

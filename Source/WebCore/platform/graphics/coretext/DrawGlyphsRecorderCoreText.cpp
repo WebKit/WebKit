@@ -28,8 +28,6 @@
 
 #include "BitmapImage.h"
 #include "Color.h"
-#include "DisplayListItems.h"
-#include "DisplayListRecorder.h"
 #include "FloatPoint.h"
 #include "Font.h"
 #include "FontCascade.h"
@@ -86,7 +84,7 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     return makeUniqueRef<GraphicsContextCG>(context.get());
 }
 
-DrawGlyphsRecorder::DrawGlyphsRecorder(DisplayList::Recorder& owner, DrawGlyphsDeconstruction drawGlyphsDeconstruction)
+DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DrawGlyphsDeconstruction drawGlyphsDeconstruction)
     : m_owner(owner)
     , m_drawGlyphsDeconstruction(drawGlyphsDeconstruction)
     , m_internalContext(createInternalContext())
@@ -105,7 +103,7 @@ void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& conte
     m_originalState.strokeStyle.gradientSpaceTransform = contextState.strokeGradientSpaceTransform;
     m_originalState.strokeStyle.pattern = contextState.strokePattern;
 
-    m_originalState.ctm = m_owner.currentState().ctm; // FIXME: Deal with base CTM.
+    m_originalState.ctm = m_owner.getCTM(); // FIXME: Deal with base CTM.
 
     m_originalState.shadow.offset = contextState.shadowOffset;
     m_originalState.shadow.blur = contextState.shadowBlur;
@@ -156,7 +154,7 @@ void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingM
     if (font.platformData().orientation() == FontOrientation::Vertical)
         m_originalTextMatrix = computeVerticalTextMatrix(font, m_originalTextMatrix);
 
-    auto& contextState = m_owner.currentState().stateChange.m_state;
+    auto& contextState = m_owner.state();
     populateInternalState(contextState);
     populateInternalContext(contextState);
 }
@@ -335,7 +333,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     updateStrokeColor(Color::createAndPreserveColorSpace(strokeColor));
     updateShadow(CGGStateGetStyle(gstate));
 
-    m_owner.appendDrawGlyphsItemWithCachedFont(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
+    m_owner.drawGlyphsAndCacheFont(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }
@@ -413,7 +411,7 @@ static GlyphsAndAdvances filterOutOTSVGGlyphs(const Font& font, const GlyphBuffe
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     if (m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::DontDeconstruct) {
-        m_owner.appendDrawGlyphsItemWithCachedFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+        m_owner.drawGlyphsAndCacheFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
         return;
     }
 

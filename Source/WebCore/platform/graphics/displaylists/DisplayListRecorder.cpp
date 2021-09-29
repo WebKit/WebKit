@@ -150,6 +150,11 @@ void Recorder::appendStateChangeItemIfNecessary()
     currentState().lastDrawingState = stateChanges.m_state;
 }
 
+const GraphicsContextState& Recorder::state() const
+{
+    return currentState().stateChange.m_state;
+}
+
 void Recorder::updateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     currentState().stateChange.accumulate(state, flags);
@@ -190,7 +195,7 @@ void Recorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, cons
     m_drawGlyphsRecorder.drawGlyphs(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
-void Recorder::appendDrawGlyphsItemWithCachedFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+void Recorder::drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {
     if (m_delegate)
         m_delegate->recordFontUse(const_cast<Font&>(font));
