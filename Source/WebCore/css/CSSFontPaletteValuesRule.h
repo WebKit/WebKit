@@ -45,8 +45,7 @@ public:
     String name() const;
     String fontFamily() const;
     String basePalette() const;
-
-    void initializeMapLike(DOMMapAdapter&);
+    String overrideColors() const;
 
 private:
     CSSFontPaletteValuesRule(StyleRuleFontPaletteValues&, CSSStyleSheet* parent);

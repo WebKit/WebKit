@@ -1,3 +1,16 @@
+2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontPaletteValuesRule should not be maplike
+        https://bugs.webkit.org/show_bug.cgi?id=230793
+        <rdar://problem/83530242>
+
+        Reviewed by Wenson Hsieh.
+
+        The tests are being upstreamed in https://github.com/web-platform-tests/wpt/pull/30966.
+
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html:
+
 2021-09-29  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Add fonts and keyframes in cascade layer order

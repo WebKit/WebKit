@@ -111,7 +111,7 @@ test(function() {
     assert_equals(rule.name, "A");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
@@ -124,7 +124,7 @@ test(function() {
     assert_equals(rule.name, "B");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
@@ -144,7 +144,7 @@ test(function() {
     assert_equals(rule.name, "C");
     assert_equals(rule.fontFamily, "bar");
     assert_equals(rule.basePalette, "2");
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "\"b\" rgb(17, 34, 51)");
 });
 
 test(function() {
@@ -162,9 +162,9 @@ test(function() {
     assert_equals(rule.name, "D");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "bar");
-    assert_equals(rule.size, 1);
-    assert_equals(rule.get(7), undefined);
-    assert_not_equals(rule.get(4).indexOf("rgb"), -1);
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_equals(rule.overrideColors.indexOf("4 "), 0);
+    assert_not_equals(rule.overrideColors.indexOf("rgb"), -1);
 });
 
 test(function() {
@@ -178,9 +178,9 @@ test(function() {
     assert_equals(rule.name, "E");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_equals(rule.get(7), undefined);
-    assert_not_equals(rule.get(3).indexOf("102"), -1);
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_equals(rule.overrideColors.indexOf("3 "), 0);
+    assert_not_equals(rule.overrideColors.indexOf("102"), -1);
 });
 
 test(function() {
@@ -193,7 +193,7 @@ test(function() {
     assert_equals(rule.name, "F");
     assert_equals(rule.fontFamily, "foo");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
@@ -207,10 +207,11 @@ test(function() {
     assert_equals(rule.name, "G");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 2);
-    assert_equals(rule.get(7), undefined);
-    assert_not_equals(rule.get(3).indexOf("51"), -1);
-    assert_not_equals(rule.get(4).indexOf("102"), -1);
+    assert_equals(rule.overrideColors.split("),").length, 2);
+    assert_equals(rule.overrideColors.indexOf("3 "), 0);
+    assert_not_equals(rule.overrideColors.indexOf("), 4 "), -1);
+    assert_not_equals(rule.overrideColors.indexOf("51"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("102"), -1);
 });
 
 test(function() {
@@ -224,10 +225,11 @@ test(function() {
     assert_equals(rule.name, "H");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_equals(rule.get(7), undefined);
-    assert_not_equals(rule.get(3).indexOf("102"), -1);
-    assert_equals(rule.get(4), undefined);
+    assert_not_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_equals(rule.overrideColors.indexOf("3 "), 0);
+    assert_not_equals(rule.overrideColors.indexOf("), 3 "), -1);
+    assert_not_equals(rule.overrideColors.indexOf("51"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("102"), -1);
 });
 
 test(function() {
@@ -241,8 +243,8 @@ test(function() {
     assert_equals(rule.name, "I");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_equals(rule.get(0), "rgb(0, 0, 255)");
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("rgb(0, 0, 255)"), -1);
 });
 
 test(function() {
@@ -256,8 +258,8 @@ test(function() {
     assert_equals(rule.name, "J");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_equals(rule.get(0), "rgb(0, 128, 0)");
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("rgb(0, 128, 0)"), -1);
 });
 
 test(function() {
@@ -271,8 +273,8 @@ test(function() {
     assert_equals(rule.name, "K");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_equals(rule.get(0), "rgba(0, 0, 0, 0)");
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("rgba(0, 0, 0, 0)"), -1);
 });
 
 test(function() {
@@ -286,8 +288,8 @@ test(function() {
     assert_equals(rule.name, "L");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_not_equals(rule.get(0).indexOf("2"), -1);
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("2"), -1);
 });
 
 test(function() {
@@ -301,8 +303,8 @@ test(function() {
     assert_equals(rule.name, "M");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_not_equals(rule.get(0).indexOf("lab"), -1);
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("lab"), -1);
 });
 
 test(function() {
@@ -316,8 +318,8 @@ test(function() {
     assert_equals(rule.name, "N");
     assert_equals(rule.fontFamily, "");
     assert_equals(rule.basePalette, "");
-    assert_equals(rule.size, 1);
-    assert_not_equals(rule.get(0).indexOf("display-p3"), -1);
+    assert_equals(rule.overrideColors.indexOf("),"), -1);
+    assert_not_equals(rule.overrideColors.indexOf("display-p3"), -1);
 });
 </script>
 </body>

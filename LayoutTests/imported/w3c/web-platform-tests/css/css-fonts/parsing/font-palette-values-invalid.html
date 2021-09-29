@@ -183,42 +183,42 @@ test(function() {
     let text = rules[7].cssText;
     let rule = rules[7];
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
     let text = rules[8].cssText;
     let rule = rules[8];
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
     let text = rules[9].cssText;
     let rule = rules[9];
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
     let text = rules[10].cssText;
     let rule = rules[10];
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
     let text = rules[11].cssText;
     let rule = rules[11];
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
     let text = rules[12].cssText;
     let rule = rules[12];
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
@@ -233,8 +233,8 @@ test(function() {
     let rule = rules[14];
     assert_equals(text.indexOf("base-palette"), -1);
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
     assert_equals(rule.basePalette, "");
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
@@ -242,8 +242,8 @@ test(function() {
     let rule = rules[15];
     assert_equals(text.indexOf("base-palette"), -1);
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
     assert_equals(rule.basePalette, "");
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
@@ -251,8 +251,8 @@ test(function() {
     let rule = rules[16];
     assert_equals(text.indexOf("base-palette"), -1);
     assert_equals(text.indexOf("override-colors"), -1);
-    assert_equals(rule.size, 0);
     assert_equals(rule.basePalette, "");
+    assert_equals(rule.overrideColors, "");
 });
 
 test(function() {
@@ -264,8 +264,8 @@ test(function() {
     let rule = rules[17];
     assert_equals(text.indexOf("base-palette"), -1);
     assert_equals(text.indexOf("override-color"), -1);
-    assert_equals(rule.size, 0);
     assert_equals(rule.basePalette, "");
+    assert_equals(rule.overrideColors, "");
 });
 </script>
 </body>

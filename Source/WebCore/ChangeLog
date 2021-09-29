@@ -1,3 +1,26 @@
+2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontPaletteValuesRule should not be maplike
+        https://bugs.webkit.org/show_bug.cgi?id=230793
+        <rdar://problem/83530242>
+
+        Reviewed by Wenson Hsieh.
+
+        The spec changed in
+        https://github.com/w3c/csswg-drafts/commit/c10855a2c65f51a09697613b977059fae78ff0bc
+        from "maplike<unsigned long, CSSOMString>" to "attribute CSSOMString overrideColor".
+
+        Tests: imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-values-invalid.html
+               imported/w3c/web-platform-tests/css/css-fonts/parsing/font-palette-values-valid.html
+
+        * css/CSSFontPaletteValuesRule.cpp:
+        (WebCore::CSSFontPaletteValuesRule::basePalette const):
+        (WebCore::CSSFontPaletteValuesRule::overrideColor const):
+        (WebCore::CSSFontPaletteValuesRule::cssText const):
+        (WebCore::CSSFontPaletteValuesRule::initializeMapLike): Deleted.
+        * css/CSSFontPaletteValuesRule.h:
+        * css/CSSFontPaletteValuesRule.idl:
+
 2021-09-29  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Support in-band chapter tracks
