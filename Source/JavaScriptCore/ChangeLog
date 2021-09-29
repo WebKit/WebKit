@@ -1,3 +1,34 @@
+2021-09-28  Saam Barati  <sbarati@apple.com>
+
+        DoesGCCheck does not use enough bits for nodeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=230915
+        <rdar://83297515>
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGDoesGCCheck.h:
+        (JSC::DFG::DoesGCCheck::DoesGCCheck):
+        (JSC::DFG::DoesGCCheck::encode):
+        (JSC::DFG::DoesGCCheck::set):
+        (JSC::DFG::DoesGCCheck::expectDoesGC const):
+        (JSC::DFG::DoesGCCheck::isSpecial const):
+        (JSC::DFG::DoesGCCheck::special):
+        (JSC::DFG::DoesGCCheck::nodeOp):
+        (JSC::DFG::DoesGCCheck::nodeIndex):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileLoopHint):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
 2021-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Mostly fix Mac CMake build

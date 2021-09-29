@@ -1,3 +1,15 @@
+2021-09-28  Saam Barati  <sbarati@apple.com>
+
+        DoesGCCheck does not use enough bits for nodeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=230915
+        <rdar://83297515>
+
+        Reviewed by Mark Lam.
+
+        * stress/verify-can-gc-node-index.js: Added.
+        (gen):
+        (f):
+
 2021-09-28  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Speed up setting JSFunction's "prototype" property

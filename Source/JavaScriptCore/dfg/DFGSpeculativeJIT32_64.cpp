@@ -2149,7 +2149,10 @@ void SpeculativeJIT::compile(Node* node)
     if constexpr (validateDFGDoesGC) {
         if (Options::validateDoesGC()) {
             bool expectDoesGC = doesGC(m_jit.graph(), node);
-            m_jit.store32(TrustedImm32(DoesGCCheck::encode(expectDoesGC, node->index(), node->op())), vm().heap.addressOfDoesGC());
+            DoesGCCheck check;
+            check.u.encoded = DoesGCCheck::encode(expectDoesGC, node->index(), node->op());
+            m_jit.store32(CCallHelpers::TrustedImm32(check.u.other), &vm().heap.addressOfDoesGC()->u.other);
+            m_jit.store32(CCallHelpers::TrustedImm32(check.u.nodeIndex), &vm().heap.addressOfDoesGC()->u.nodeIndex);
         }
     }
 

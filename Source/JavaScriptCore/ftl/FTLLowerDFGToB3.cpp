@@ -718,7 +718,7 @@ private:
         if constexpr (validateDFGDoesGC) {
             if (Options::validateDoesGC()) {
                 bool expectDoesGC = doesGC(m_graph, m_node);
-                m_out.store(m_out.constInt32(DoesGCCheck::encode(expectDoesGC, m_node->index(), m_node->op())), m_out.absolute(vm().heap.addressOfDoesGC()));
+                m_out.store(m_out.constInt64(DoesGCCheck::encode(expectDoesGC, m_node->index(), m_node->op())), m_out.absolute(vm().heap.addressOfDoesGC()));
             }
         }
 
@@ -16022,8 +16022,8 @@ private:
                 if (Options::validateDoesGC()) {
                     // We need to mock what a Return does: claims to GC.
                     jit.move(CCallHelpers::TrustedImmPtr(vm->heap.addressOfDoesGC()), GPRInfo::regT0);
-                    jit.move(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized)), GPRInfo::regT1);
-                    jit.store32(GPRInfo::regT1, CCallHelpers::Address(GPRInfo::regT0));
+                    jit.move(CCallHelpers::TrustedImm64(DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized)), GPRInfo::regT1);
+                    jit.store64(GPRInfo::regT1, CCallHelpers::Address(GPRInfo::regT0));
                 }
             }
             restore();

@@ -2701,7 +2701,7 @@ void SpeculativeJIT::compile(Node* node)
     if constexpr (validateDFGDoesGC) {
         if (Options::validateDoesGC()) {
             bool expectDoesGC = doesGC(m_jit.graph(), node);
-            m_jit.store32(TrustedImm32(DoesGCCheck::encode(expectDoesGC, node->index(), node->op())), vm().heap.addressOfDoesGC());
+            m_jit.store64(TrustedImm64(DoesGCCheck::encode(expectDoesGC, node->index(), node->op())), vm().heap.addressOfDoesGC());
         }
     }
 
