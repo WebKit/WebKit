@@ -602,6 +602,7 @@ webkit.org/b/87919 fast/repaint/hidpi-transform-on-subpixel-repaintrect.html [ F
 webkit.org/b/87919 fast/repaint/hidpi-wrong-repaint-rect-when-parent-has-noncompositing-transform.html [ Failure ]
 
 webkit.org/b/151754 fast/borders/hidpi-border-clipping-right-after-move.html [ ImageOnlyFailure ]
+fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
 
 # Skip because this platform does not support a paging mouse wheel event
 fast/events/wheel/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Skip ]

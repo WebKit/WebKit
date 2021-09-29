@@ -1,3 +1,14 @@
+2021-09-29  Alan Bujtas  <zalan@apple.com>
+
+        Thin hairline gap displayed for subpixel sized inset box-shadows
+        https://bugs.webkit.org/show_bug.cgi?id=230814
+
+        Reviewed by Simon Fraser.
+
+        * fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position-expected.html: Added.
+        * fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html: Added.
+        * platform/win/TestExpectations:
+
 2021-09-29  Eric Hutchison  <ehutchison@apple.com>
 
         Fixed incorrect test expectations for imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-default-feature-policy.https.html.
