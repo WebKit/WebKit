@@ -31,7 +31,7 @@ typedef struct FT_FaceRec_*  FT_Face;
 
 namespace WebCore {
 
-struct FontCreationContext;
+class FontCreationContext;
 class FontDescription;
 class FontPlatformData;
 class SharedBuffer;

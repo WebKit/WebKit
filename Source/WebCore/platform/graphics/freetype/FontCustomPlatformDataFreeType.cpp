@@ -81,11 +81,13 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     RefPtr<FcPattern> pattern = defaultFontconfigOptions();
     FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(freeTypeFace->family_name));
 
-    for (auto& fontFaceFeature : fontCreationContext.fontFaceFeatures) {
-        if (fontFaceFeature.enabled()) {
-            const auto& tag = fontFaceFeature.tag();
-            const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };
-            FcPatternAddString(pattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer));
+    if (fontCreationContext.fontFaceFeatures()) {
+        for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures()) {
+            if (fontFaceFeature.enabled()) {
+                const auto& tag = fontFaceFeature.tag();
+                const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };
+                FcPatternAddString(pattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer));
+            }
         }
     }
 

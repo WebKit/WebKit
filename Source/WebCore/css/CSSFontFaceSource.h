@@ -36,7 +36,7 @@ class CSSFontFace;
 class CSSFontSelector;
 class Document;
 class Font;
-struct FontCreationContext;
+class FontCreationContext;
 struct FontCustomPlatformData;
 class FontDescription;
 struct FontSelectionSpecifiedCapabilities;

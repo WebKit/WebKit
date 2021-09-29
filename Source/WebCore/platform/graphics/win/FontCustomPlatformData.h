@@ -36,7 +36,7 @@ typedef struct CGFont* CGFontRef;
 
 namespace WebCore {
 
-struct FontCreationContext;
+class FontCreationContext;
 class FontDescription;
 class FontMemoryResource;
 class SharedBuffer;

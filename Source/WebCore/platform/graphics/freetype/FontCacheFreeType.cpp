@@ -573,8 +573,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool fixedWidth, syntheticBold, syntheticOblique;
     getFontPropertiesFromPattern(resultPattern.get(), fontDescription, fixedWidth, syntheticBold, syntheticOblique);
 
-    if (!fontCreationContext.fontFaceFeatures.isEmpty()) {
-        for (auto& fontFaceFeature : fontCreationContext.fontFaceFeatures) {
+    if (fontCreationContext.fontFaceFeatures() && !fontCreationContext.fontFaceFeatures()->isEmpty()) {
+        for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures()) {
             if (fontFaceFeature.enabled()) {
                 const auto& tag = fontFaceFeature.tag();
                 const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };

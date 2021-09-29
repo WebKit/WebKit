@@ -47,7 +47,7 @@ class CSSSegmentedFontFace;
 class CSSValue;
 class CSSValueList;
 class FontCache;
-struct FontCreationContext;
+class FontCreationContext;
 class FontDescription;
 class Font;
 class FontFace;

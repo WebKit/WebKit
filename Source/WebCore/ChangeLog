@@ -1,3 +1,50 @@
+2021-09-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Factor out rare members of FontCreationContext into FontCreationContextRareData
+        https://bugs.webkit.org/show_bug.cgi?id=230800
+        <rdar://problem/83538227>
+
+        Reviewed by Alan Bujtas.
+
+        FontCreationContext is used inside HashMap keys in font caches, so we want the type to be
+        small. Palettes and font features are rare, so we can move those into a heap-allocated
+        rare data object, thereby decreasing the size of FontCreationContext for most fonts.
+        Importantly, if palettes and font features aren't used, the RefPtr will just be null, and
+        no allocation is performed.
+
+        No new tests because there is no behavior change.
+
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.h:
+        * css/CSSSegmentedFontFace.h:
+        * loader/FontLoadRequest.h:
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedFontLoadRequest.h:
+        * loader/cache/CachedSVGFont.h:
+        * platform/graphics/FontCreationContext.h:
+        (WebCore::FontCreationContextRareData::create):
+        (WebCore::FontCreationContextRareData::fontFaceFeatures const):
+        (WebCore::FontCreationContextRareData::fontPaletteValues const):
+        (WebCore::FontCreationContextRareData::operator== const):
+        (WebCore::FontCreationContextRareData::operator!= const):
+        (WebCore::FontCreationContextRareData::FontCreationContextRareData):
+        (WebCore::FontCreationContext::FontCreationContext):
+        (WebCore::FontCreationContext::fontFaceFeatures const):
+        (WebCore::FontCreationContext::fontFaceCapabilities const):
+        (WebCore::FontCreationContext::fontPaletteValues const):
+        (WebCore::FontCreationContext::operator== const):
+        (WebCore::add):
+        * platform/graphics/FontPaletteValues.h:
+        (WebCore::FontPaletteValues::operator bool const):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::addAttributesForFontPalettes):
+        (WebCore::preparePlatformFont):
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        * workers/WorkerFontLoadRequest.h:
+
 2021-09-28  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Set CURL_LOCK_DATA_SSL_SESSION option to reduce SSL/TLS handshake time

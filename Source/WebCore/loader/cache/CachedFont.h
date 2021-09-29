@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class CachedResourceLoader;
-struct FontCreationContext;
+class FontCreationContext;
 class FontDescription;
 class FontPlatformData;
 struct FontSelectionSpecifiedCapabilities;

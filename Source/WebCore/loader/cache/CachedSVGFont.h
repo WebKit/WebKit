@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-struct FontCreationContext;
+class FontCreationContext;
 class SVGFontFaceElement;
 class Settings;
 

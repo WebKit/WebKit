@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-struct FontCreationContext;
+class FontCreationContext;
 class ScriptExecutionContext;
 class SharedBuffer;
 class WorkerGlobalScope;

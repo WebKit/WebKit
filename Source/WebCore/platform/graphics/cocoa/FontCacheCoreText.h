@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-struct FontCreationContext;
+class FontCreationContext;
 
 struct SynthesisPair {
     explicit SynthesisPair(bool needsSyntheticBold, bool needsSyntheticOblique)

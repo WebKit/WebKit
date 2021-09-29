@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class CSSFontSelector;
-struct FontCreationContext;
+class FontCreationContext;
 class FontDescription;
 class FontPaletteValues;
 class FontRanges;

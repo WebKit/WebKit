@@ -58,6 +58,15 @@ public:
         return m_overrideColors;
     }
 
+    operator bool() const
+    {
+        return WTF::switchOn(m_basePalette, [] (int64_t) {
+            return true;
+        }, [] (const AtomString& string) {
+            return !string.isNull();
+        }) || !m_overrideColors.isEmpty();
+    }
+
     bool operator==(const FontPaletteValues& other) const
     {
         return m_basePalette == other.m_basePalette && m_overrideColors == other.m_overrideColors;

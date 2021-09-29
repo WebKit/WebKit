@@ -443,7 +443,7 @@ struct FontType {
     bool aatShaping { false };
 };
 
-static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, const FontPalette& fontPalette, const FontPaletteValues& fontPaletteValues)
+static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, const FontPalette& fontPalette, const FontPaletteValues* fontPaletteValues)
 {
     switch (fontPalette.type) {
     case FontPalette::Type::None:
@@ -464,7 +464,9 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
         break;
     }
     case FontPalette::Type::Custom: {
-        WTF::switchOn(fontPaletteValues.basePalette(), [&](unsigned index) {
+        if (!fontPaletteValues)
+            break; 
+        WTF::switchOn(fontPaletteValues->basePalette(), [&](int64_t index) {
             int64_t rawIndex = index; // There is no kCFNumberUIntType.
             auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
             CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
@@ -472,9 +474,9 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
             // This is unimplementable in Core Text.
         });
 
-        if (!fontPaletteValues.overrideColors().isEmpty()) {
+        if (!fontPaletteValues->overrideColors().isEmpty()) {
             auto overrideDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            for (const auto& pair : fontPaletteValues.overrideColors()) {
+            for (const auto& pair : fontPaletteValues->overrideColors()) {
                 const auto& paletteColorIndex = pair.first;
                 const auto& color = pair.second;
                 WTF::switchOn(paletteColorIndex, [](const AtomString&) {
@@ -523,7 +525,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool textRenderingModeIsAuto = textRenderingMode == TextRenderingMode::AutoTextRendering;
     bool variantSettingsIsNormal = variantSettings.isAllNormal();
     bool dontNeedToApplyOpticalSizing = fontOpticalSizing == FontOpticalSizing::Enabled && !forceOpticalSizingOn;
-    bool fontFaceDoesntSpecifyFeatures = fontCreationContext.fontFaceFeatures.isEmpty();
+    bool fontFaceDoesntSpecifyFeatures = !fontCreationContext.fontFaceFeatures() || fontCreationContext.fontFaceFeatures()->isEmpty();
     if (noFontFeatureSettings && noFontVariationSettings && textRenderingModeIsAuto && variantSettingsIsNormal && dontNeedToApplyOpticalSizing && fontFaceDoesntSpecifyFeatures && !shouldDisableLigaturesForSpacing && dontNeedToApplyFontPalettes) {
 #if HAVE(CTFONTCREATEFORCHARACTERSWITHLANGUAGEANDOPTION)
         return originalFont;
@@ -569,11 +571,11 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         float weight = fontSelectionRequest.weight;
         float width = fontSelectionRequest.width;
         float slope = fontSelectionRequest.slope.value_or(normalItalicValue());
-        if (auto weightValue = fontCreationContext.fontFaceCapabilities.weight)
+        if (auto weightValue = fontCreationContext.fontFaceCapabilities().weight)
             weight = std::max(std::min(weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
-        if (auto widthValue = fontCreationContext.fontFaceCapabilities.width)
+        if (auto widthValue = fontCreationContext.fontFaceCapabilities().width)
             width = std::max(std::min(width, static_cast<float>(widthValue->maximum)), static_cast<float>(widthValue->minimum));
-        if (auto slopeValue = fontCreationContext.fontFaceCapabilities.weight)
+        if (auto slopeValue = fontCreationContext.fontFaceCapabilities().weight)
             slope = std::max(std::min(slope, static_cast<float>(slopeValue->maximum)), static_cast<float>(slopeValue->minimum));
         if (needsConversion) {
             weight = denormalizeWeight(weight);
@@ -593,8 +595,8 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     // FIXME: Implement Step 6: the font-variation-settings descriptor inside @font-face
 
     // Step 7: Consult with font-feature-settings inside @font-face
-    if (!fontCreationContext.fontFaceFeatures.isEmpty()) {
-        for (auto& fontFaceFeature : fontCreationContext.fontFaceFeatures)
+    if (fontCreationContext.fontFaceFeatures() && !fontCreationContext.fontFaceFeatures()->isEmpty()) {
+        for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures())
             applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
     }
 
@@ -674,7 +676,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 #endif
     }
 
-    addAttributesForFontPalettes(attributes.get(), fontDescription.fontPalette(), fontCreationContext.fontPaletteValues);
+    addAttributesForFontPalettes(attributes.get(), fontDescription.fontPalette(), fontCreationContext.fontPaletteValues());
 
     addAttributesForInstalledFonts(attributes.get(), fontDescription.shouldAllowUserInstalledFonts());
 

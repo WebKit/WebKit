@@ -32,7 +32,7 @@
 namespace WebCore {
 
 class Font;
-struct FontCreationContext;
+class FontCreationContext;
 class FontDescription;
 class FontLoadRequest;
 struct FontSelectionSpecifiedCapabilities;

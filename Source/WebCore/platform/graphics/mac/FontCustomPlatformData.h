@@ -33,7 +33,7 @@ typedef const struct __CTFontDescriptor* CTFontDescriptorRef;
 
 namespace WebCore {
 
-struct FontCreationContext;
+class FontCreationContext;
 class FontDescription;
 struct FontSelectionSpecifiedCapabilities;
 class SharedBuffer;

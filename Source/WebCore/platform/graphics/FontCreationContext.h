@@ -28,15 +28,80 @@
 #include "FontPaletteValues.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
-struct FontCreationContext {
+class FontCreationContextRareData : public RefCounted<FontCreationContextRareData> {
+public:
+    static Ref<FontCreationContextRareData> create(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues)
+    {
+        return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues));
+    }
+
+    const FontFeatureSettings& fontFaceFeatures() const
+    {
+        return m_fontFaceFeatures;
+    }
+
+    const FontPaletteValues& fontPaletteValues() const
+    {
+        return m_fontPaletteValues;
+    }
+
+    bool operator==(const FontCreationContextRareData& other) const
+    {
+        return m_fontFaceFeatures == other.m_fontFaceFeatures
+            && m_fontPaletteValues == other.m_fontPaletteValues;
+    }
+
+    bool operator!=(const FontCreationContextRareData& other) const
+    {
+        return !(*this == other);
+    }
+
+private:
+    FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues)
+        : m_fontFaceFeatures(fontFaceFeatures)
+        , m_fontPaletteValues(fontPaletteValues)
+    {
+    }
+
+    FontFeatureSettings m_fontFaceFeatures;
+    FontPaletteValues m_fontPaletteValues;
+    // FIXME: Add support for font-feature-values.
+};
+
+class FontCreationContext {
+public:
+    FontCreationContext() = default;
+
+    FontCreationContext(const FontFeatureSettings& fontFaceFeatures, const FontSelectionSpecifiedCapabilities& fontFaceCapabilities, const FontPaletteValues& fontPaletteValues)
+        : m_fontFaceCapabilities(fontFaceCapabilities)
+    {
+        if (!fontFaceFeatures.isEmpty() || fontPaletteValues)
+            m_rareData = FontCreationContextRareData::create(fontFaceFeatures, fontPaletteValues);
+    }
+
+    const FontFeatureSettings* fontFaceFeatures() const
+    {
+        return m_rareData ? &m_rareData->fontFaceFeatures() : nullptr;
+    }
+
+    const FontSelectionSpecifiedCapabilities& fontFaceCapabilities() const
+    {
+        return m_fontFaceCapabilities;
+    }
+
+    const FontPaletteValues* fontPaletteValues() const
+    {
+        return m_rareData ? &m_rareData->fontPaletteValues() : nullptr;
+    }
+
     bool operator==(const FontCreationContext& other) const
     {
-        return fontFaceFeatures == other.fontFaceFeatures
-            && fontFaceCapabilities == other.fontFaceCapabilities
-            && fontPaletteValues == other.fontPaletteValues;
+        return m_fontFaceCapabilities == other.m_fontFaceCapabilities
+            && arePointingToEqualData(m_rareData, other.m_rareData);
     }
 
     bool operator!=(const FontCreationContext& other) const
@@ -44,17 +109,18 @@ struct FontCreationContext {
         return !(*this == other);
     }
 
-    FontFeatureSettings fontFaceFeatures;
-    FontSelectionSpecifiedCapabilities fontFaceCapabilities;
-    FontPaletteValues fontPaletteValues;
-    // FIXME: Add support for font-feature-values.
+private:
+    FontSelectionSpecifiedCapabilities m_fontFaceCapabilities;
+    RefPtr<FontCreationContextRareData> m_rareData;
 };
 
 inline void add(Hasher& hasher, const FontCreationContext& fontCreationContext)
 {
-    add(hasher, fontCreationContext.fontFaceFeatures);
-    add(hasher, fontCreationContext.fontFaceCapabilities.tied());
-    add(hasher, fontCreationContext.fontPaletteValues);
+    if (fontCreationContext.fontFaceFeatures())
+        add(hasher, *fontCreationContext.fontFaceFeatures());
+    add(hasher, fontCreationContext.fontFaceCapabilities().tied());
+    if (fontCreationContext.fontPaletteValues())
+        add(hasher, *fontCreationContext.fontPaletteValues());
 }
 
 }
