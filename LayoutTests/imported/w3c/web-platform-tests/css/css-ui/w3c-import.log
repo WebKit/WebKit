@@ -9,14 +9,31 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-appearance
+None
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-invalidation-currentcolor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-invalidation-currentcolor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-parent-currentcolor-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-parent-currentcolor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-visited.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/accent-color-visited.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-input-non-widget-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-input-non-widget-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-non-html-namespace-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-non-html-namespace-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-button-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-button-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-checkbox-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-checkbox-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001.html
@@ -27,8 +44,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-meter-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-meter-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-parsing.html
@@ -110,6 +127,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/caret-color-020.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/caret-color-021.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-auto-sensitive-text-input-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-auto-sensitive-text-input.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-non-sensitive-elements-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-non-sensitive-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-none-sensitive-text-input-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-none-sensitive-text-input.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/input-security-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/outline-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/outline-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/outline-002-expected.xht
@@ -188,6 +213,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/outline-with-padding-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/resize-change-margin-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/resize-change-margin.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/resize-generated-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/resize-generated-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/text-overflow-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/text-overflow-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/text-overflow-002-expected.html
@@ -255,8 +284,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/text-overflow-ruby-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/text-overflow-ruby.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/text-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/translucent-outline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/translucent-outline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-auto-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-auto-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-auto-input-non-widget-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-auto-input-non-widget-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-button-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-button-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-checkbox-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-checkbox-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-listbox-001-expected.html
@@ -265,13 +300,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-001.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-meter-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-meter-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-progress-bar-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-progress-bar-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-progress-bar-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-progress-bar-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-push-button-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-push-button-001.html

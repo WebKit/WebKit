@@ -1,3 +1,19 @@
+2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        Update css-ui WPT
+        https://bugs.webkit.org/show_bug.cgi?id=230900
+        rdar://83641111
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
+        Remove deleted tests.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
 2021-09-29  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [iOS] http/tests/appcache/fail-on-update.html is a flaky timeout.

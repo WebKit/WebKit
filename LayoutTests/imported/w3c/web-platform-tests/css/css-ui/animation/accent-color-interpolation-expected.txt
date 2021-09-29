@@ -1,0 +1,178 @@
+
+FAIL CSS Transitions: property <accent-color> from neutral to [green] at (-0.3) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from neutral to [green] at (0) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from neutral to [green] at (0.3) should be [rgb(179, 217, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from neutral to [green] at (0.6) should be [rgb(102, 179, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from neutral to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from neutral to [green] at (1.5) should be [rgb(0, 65, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from neutral to [green] at (-0.3) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from neutral to [green] at (0) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from neutral to [green] at (0.3) should be [rgb(179, 217, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from neutral to [green] at (0.6) should be [rgb(102, 179, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from neutral to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from neutral to [green] at (1.5) should be [rgb(0, 65, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from neutral to [green] at (-0.3) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from neutral to [green] at (0) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from neutral to [green] at (0.3) should be [rgb(179, 217, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from neutral to [green] at (0.6) should be [rgb(102, 179, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from neutral to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from neutral to [green] at (1.5) should be [rgb(0, 65, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from neutral to [green] at (-0.3) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from neutral to [green] at (0) should be [rgb(255, 255, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from neutral to [green] at (0.3) should be [rgb(179, 217, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from neutral to [green] at (0.6) should be [rgb(102, 179, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from neutral to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from neutral to [green] at (1.5) should be [rgb(0, 65, 0)] assert_true: 'to' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [initial] to [green] at (-0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [initial] to [green] at (0) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [initial] to [green] at (0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [initial] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [initial] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [initial] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [initial] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [initial] to [green] at (-0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [initial] to [green] at (0) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [initial] to [green] at (0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [initial] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [initial] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [initial] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [initial] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [initial] to [green] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [initial] to [green] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [initial] to [green] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [initial] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [initial] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [initial] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [initial] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [initial] to [green] at (-0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [initial] to [green] at (0) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [initial] to [green] at (0.3) should be [initial] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [initial] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [initial] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [initial] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [initial] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [auto] to [green] at (-0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [auto] to [green] at (0) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [auto] to [green] at (0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [auto] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [auto] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [auto] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [auto] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [auto] to [green] at (-0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [auto] to [green] at (0) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [auto] to [green] at (0.3) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [auto] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [auto] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [auto] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [auto] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [auto] to [green] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [auto] to [green] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [auto] to [green] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [auto] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [auto] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [auto] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [auto] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [auto] to [green] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [auto] to [green] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [auto] to [green] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [auto] to [green] at (0.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [auto] to [green] at (0.6) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [auto] to [green] at (1) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [auto] to [green] at (1.5) should be [green] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [currentColor] to [green] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [currentColor] to [green] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [currentColor] to [green] at (0.3) should be [rgb(0, 38, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [currentColor] to [green] at (0.6) should be [rgb(0, 77, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [currentColor] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [currentColor] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [currentColor] to [green] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [currentColor] to [green] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [currentColor] to [green] at (0.3) should be [rgb(0, 38, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [currentColor] to [green] at (0.6) should be [rgb(0, 77, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [currentColor] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [currentColor] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [currentColor] to [green] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [currentColor] to [green] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [currentColor] to [green] at (0.3) should be [rgb(0, 38, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [currentColor] to [green] at (0.6) should be [rgb(0, 77, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [currentColor] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [currentColor] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [currentColor] to [green] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [currentColor] to [green] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [currentColor] to [green] at (0.3) should be [rgb(0, 38, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [currentColor] to [green] at (0.6) should be [rgb(0, 77, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [currentColor] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [currentColor] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [inherit] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [inherit] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [inherit] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [inherit] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [inherit] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [inherit] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [inherit] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [inherit] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [inherit] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [inherit] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [inherit] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [inherit] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [inherit] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [inherit] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [inherit] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [inherit] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [inherit] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [inherit] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [inherit] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [inherit] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [inherit] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [inherit] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [inherit] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [inherit] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [unset] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [unset] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [unset] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [unset] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [unset] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [unset] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [unset] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [unset] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [unset] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [unset] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [unset] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [unset] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [unset] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [unset] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [unset] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [unset] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [unset] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [unset] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [unset] to [green] at (-0.3) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [unset] to [green] at (0) should be [rgb(0, 0, 255)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [unset] to [green] at (0.3) should be [rgb(0, 38, 179)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [unset] to [green] at (0.6) should be [rgb(0, 77, 102)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [unset] to [green] at (1) should be [rgb(0, 128, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [unset] to [green] at (1.5) should be [rgb(0, 192, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [black] to [orange] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [black] to [orange] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [black] to [orange] at (0.3) should be [rgb(77, 50, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [black] to [orange] at (0.6) should be [rgb(153, 99, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [black] to [orange] at (1) should be [rgb(255, 165, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <accent-color> from [black] to [orange] at (1.5) should be [rgb(255, 248, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [black] to [orange] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [black] to [orange] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [black] to [orange] at (0.3) should be [rgb(77, 50, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [black] to [orange] at (0.6) should be [rgb(153, 99, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [black] to [orange] at (1) should be [rgb(255, 165, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <accent-color> from [black] to [orange] at (1.5) should be [rgb(255, 248, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [black] to [orange] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [black] to [orange] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [black] to [orange] at (0.3) should be [rgb(77, 50, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [black] to [orange] at (0.6) should be [rgb(153, 99, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [black] to [orange] at (1) should be [rgb(255, 165, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <accent-color> from [black] to [orange] at (1.5) should be [rgb(255, 248, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [black] to [orange] at (-0.3) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [black] to [orange] at (0) should be [rgb(0, 0, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [black] to [orange] at (0.3) should be [rgb(77, 50, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [black] to [orange] at (0.6) should be [rgb(153, 99, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [black] to [orange] at (1) should be [rgb(255, 165, 0)] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <accent-color> from [black] to [orange] at (1.5) should be [rgb(255, 248, 0)] assert_true: 'from' value should be supported expected true got false
+

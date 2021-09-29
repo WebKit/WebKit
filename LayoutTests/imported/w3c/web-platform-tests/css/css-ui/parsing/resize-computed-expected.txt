@@ -3,4 +3,6 @@ PASS Property resize value 'none'
 PASS Property resize value 'both'
 PASS Property resize value 'horizontal'
 PASS Property resize value 'vertical'
+PASS Property resize value 'both' in ::before
+PASS Property resize value 'vertical' in ::after
 

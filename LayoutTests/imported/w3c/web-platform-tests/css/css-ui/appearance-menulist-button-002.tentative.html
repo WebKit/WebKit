@@ -6,8 +6,20 @@
 <link rel="mismatch" href="appearance-auto-ref.html">
 <style>
  #container { width: 500px; }
- #container > #drop-down-select { -webkit-appearance: none; -webkit-appearance: menulist-button; }
+ #container > #drop-down-select { appearance: none; appearance: menulist-button; }
 </style>
+<!--
+  Test marked as tentative since although css-ui says:
+
+    For drop-down box select elements, the element is rendered as a drop-down
+    box, including a "drop-down button", but not necessarily using a native
+    control of the host operating system. For such elements, CSS properties
+    such as color, background-color, and border (that can be disregarded for
+    auto) should not be disregarded.
+
+  there is no requirement that this rendering is any different from the
+  automatic widget appearance of a drop-down select.
+  -->
 <div id="container">
 	<a>a</a>
 	<button>button</button>

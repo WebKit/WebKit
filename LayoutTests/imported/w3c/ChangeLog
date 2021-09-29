@@ -1,3 +1,108 @@
+2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        Update css-ui WPT
+        https://bugs.webkit.org/show_bug.cgi?id=230900
+        rdar://83641111
+
+        Reviewed by Simon Fraser.
+
+        Update css/css-ui from WPT 016d2ddbb67ad29f36d175320e99986e7ad2571a.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-ui/accent-color-checkbox-checked-001-notref.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative-expected.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.tentative.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-computed-expected.txt: Added.
+        * web-platform-tests/css/css-ui/accent-color-computed.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-invalidation-currentcolor-expected.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-invalidation-currentcolor.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-parent-currentcolor-expected.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-parent-currentcolor.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-ui/accent-color-parsing.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-visited.tentative-expected.html: Added.
+        * web-platform-tests/css/css-ui/accent-color-visited.tentative.html: Added.
+        * web-platform-tests/css/css-ui/animation/accent-color-interpolation-expected.txt: Added.
+        * web-platform-tests/css/css-ui/animation/accent-color-interpolation.html: Added.
+        * web-platform-tests/css/css-ui/animation/w3c-import.log:
+        * web-platform-tests/css/css-ui/appearance-auto-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-auto-001.html:
+        * web-platform-tests/css/css-ui/appearance-auto-input-non-widget-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-auto-input-non-widget-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-auto-non-html-namespace-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/appearance-auto-non-html-namespace-001.html: Added.
+        * web-platform-tests/css/css-ui/appearance-button-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-001-expected.html.
+        * web-platform-tests/css/css-ui/appearance-button-001.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html.
+        * web-platform-tests/css/css-ui/appearance-checkbox-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-checkbox-001.html:
+        * web-platform-tests/css/css-ui/appearance-cssom-001.html:
+        * web-platform-tests/css/css-ui/appearance-initial-value-001.html:
+        * web-platform-tests/css/css-ui/appearance-listbox-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-listbox-001.html:
+        * web-platform-tests/css/css-ui/appearance-menulist-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-menulist-001.html:
+        * web-platform-tests/css/css-ui/appearance-menulist-button-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-menulist-button-001.html:
+        * web-platform-tests/css/css-ui/appearance-menulist-button-002-expected.html: Removed.
+        * web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-001-expected.html.
+        * web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.html.
+        * web-platform-tests/css/css-ui/appearance-meter-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-meter-001.html:
+        * web-platform-tests/css/css-ui/appearance-progress-bar-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-progress-bar-001.html:
+        * web-platform-tests/css/css-ui/appearance-progress-bar-002-expected.html:
+        * web-platform-tests/css/css-ui/appearance-progress-bar-002.html:
+        * web-platform-tests/css/css-ui/appearance-push-button-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-push-button-001.html:
+        * web-platform-tests/css/css-ui/appearance-radio-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-radio-001.html:
+        * web-platform-tests/css/css-ui/appearance-searchfield-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-searchfield-001.html:
+        * web-platform-tests/css/css-ui/appearance-slider-horizontal-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-slider-horizontal-001.html:
+        * web-platform-tests/css/css-ui/appearance-square-button-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-square-button-001.html:
+        * web-platform-tests/css/css-ui/appearance-textarea-001-expected.html:
+        * web-platform-tests/css/css-ui/appearance-textarea-001.html:
+        * web-platform-tests/css/css-ui/appearance-textfield-001.html:
+        * web-platform-tests/css/css-ui/outline-005.html:
+        * web-platform-tests/css/css-ui/outline-006.html:
+        * web-platform-tests/css/css-ui/parsing/resize-computed-expected.txt:
+        * web-platform-tests/css/css-ui/parsing/resize-computed.html:
+        * web-platform-tests/css/css-ui/resize-child-will-change-transform-expected.html: Added.
+        * web-platform-tests/css/css-ui/resize-child-will-change-transform.html: Added.
+        * web-platform-tests/css/css-ui/resize-generated-content-expected.html: Added.
+        * web-platform-tests/css/css-ui/resize-generated-content.html: Added.
+        * web-platform-tests/css/css-ui/text-overflow-002-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-004-expected.html:
+        * web-platform-tests/css/css-ui/text-overflow-022-expected.html:
+        * web-platform-tests/css/css-ui/translucent-outline-expected.html: Added.
+        * web-platform-tests/css/css-ui/translucent-outline.html: Added.
+        * web-platform-tests/css/css-ui/w3c-import.log:
+        * web-platform-tests/css/css-ui/webkit-appearance-auto-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-auto-input-non-widget-001-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-auto-input-non-widget-001.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-button-001-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-001-expected.html.
+        * web-platform-tests/css/css-ui/webkit-appearance-button-001.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-auto-001.html.
+        * web-platform-tests/css/css-ui/webkit-appearance-checkbox-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-listbox-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002-expected.html: Removed.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative-expected.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-001-expected.html.
+        * web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.html.
+        * web-platform-tests/css/css-ui/webkit-appearance-meter-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-progress-bar-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-progress-bar-002-expected.html: Added.
+        * web-platform-tests/css/css-ui/webkit-appearance-progress-bar-002.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-ui/appearance-progress-bar-002.html.
+        * web-platform-tests/css/css-ui/webkit-appearance-push-button-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-radio-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-searchfield-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-slider-horizontal-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-square-button-001-expected.html:
+        * web-platform-tests/css/css-ui/webkit-appearance-textarea-001-expected.html:
+
 2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font palette names have to start with two hyphens
