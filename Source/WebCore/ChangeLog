@@ -1,3 +1,25 @@
+2021-09-29  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Align property order of DOM constructors with ECMA-262 counterparts
+        https://bugs.webkit.org/show_bug.cgi?id=230584
+
+        Reviewed by Alex Christensen.
+
+        This patch implements spec proposal [1] on matching property order of DOM constructors
+        with ECMA-262 functions: "length", "name", "prototype". Aligns WebKit with Blink and Gecko.
+        Also, groups property puts to remove 2 extra `$interface->isNamespaceObject` checks.
+
+        No behavior change except for enumeration order.
+
+        [1] https://github.com/heycam/webidl/pull/914
+
+        Tests: imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/builtin-function-properties.any.html
+               imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/builtin-function-properties.any.worker.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/*: Updated.
+
 2021-09-29  Olivier Blin  <olivier.blin@softathome.com>
 
         Fix typo in RenderSVGBlock::updateFromStyle comment

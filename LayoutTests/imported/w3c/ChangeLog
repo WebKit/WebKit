@@ -1,3 +1,18 @@
+2021-09-29  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Align property order of DOM constructors with ECMA-262 counterparts
+        https://bugs.webkit.org/show_bug.cgi?id=230584
+
+        Reviewed by Alex Christensen.
+
+        This is being upstreamed at https://github.com/web-platform-tests/wpt/pull/30333.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/builtin-function-properties.any-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/builtin-function-properties.any.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/builtin-function-properties.any.js: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/builtin-function-properties.any.worker-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/builtin-function-properties.any.worker.html: Added.
+
 2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
 
         Update css-ui WPT

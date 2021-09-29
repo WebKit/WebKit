@@ -1,0 +1,5 @@
+
+PASS Constructor property enumeration order of "length", "name", and "prototype"
+PASS Method property enumeration order of "length" and "name"
+PASS Getter property enumeration order of "length" and "name"
+

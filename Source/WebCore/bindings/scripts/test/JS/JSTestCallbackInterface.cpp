@@ -163,11 +163,11 @@ template<> JSValue JSTestCallbackInterfaceDOMConstructor::prototypeForStructure(
 
 template<> void JSTestCallbackInterfaceDOMConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    UNUSED_PARAM(globalObject);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     JSString* nameString = jsNontrivialString(vm, "TestCallbackInterface"_s);
     m_originalName.set(vm, this, nameString);
     putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    UNUSED_PARAM(globalObject);
     reifyStaticProperties(vm, nullptr, JSTestCallbackInterfaceConstructorTableValues, *this);
 }
 

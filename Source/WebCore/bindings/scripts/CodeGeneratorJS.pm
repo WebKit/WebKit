@@ -7795,36 +7795,35 @@ sub GenerateConstructorHelperMethods
     push(@$outputArray, "template<> void ${constructorClassName}::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)\n");
     push(@$outputArray, "{\n");
 
-    # There must exist an interface prototype object for every non-callback interface defined, regardless
-    # of whether the interface was declared with the [LegacyNoInterfaceObject] extended attribute.
-    # https://heycam.github.io/webidl/#interface-prototype-object
-    if (ShouldUseGlobalObjectPrototype($interface)) {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
-    } elsif ($interface->isCallback) {
-        push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
-    } elsif ($interface->isNamespaceObject) {
+    assert("jsNontrivialString() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
+    if ($interface->isNamespaceObject) {
         push(@$outputArray, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
     } else {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
-    }
+        # FIXME: Remove TextTrackCue constructor along with [LegacyFactoryFunctionEnabledBySetting] extended attribute.
+        # https://bugs.webkit.org/show_bug.cgi?id=129615
+        if ($interface->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting}) {
+            my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $interface, "&globalObject");
+            push(@$outputArray, "    int constructorLength = ${leastConstructorLength};\n");
+            push(@$outputArray, "    if (!${runtimeEnableConditionalString})\n");
+            push(@$outputArray, "        constructorLength = 0;\n");
+            push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(constructorLength), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+        } else {
+            push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+        }
 
-    assert("jsNontrivialString() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
-    if (!$interface->isNamespaceObject) {
-        # FIXME: Align property order of DOM constructors with ECMA-262 counterparts
-        # https://bugs.webkit.org/show_bug.cgi?id=230584
         push(@$outputArray, "    JSString* nameString = jsNontrivialString(vm, \"$visibleInterfaceName\"_s);\n");
         push(@$outputArray, "    m_originalName.set(vm, this, nameString);\n");
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, nameString, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
-    }
 
-    if ($interface->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting}) {
-        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $interface, "&globalObject");
-        push(@$outputArray, "    int constructorLength = ${leastConstructorLength};\n");
-        push(@$outputArray, "    if (!${runtimeEnableConditionalString})\n");
-        push(@$outputArray, "        constructorLength = 0;\n");
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(constructorLength), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
-    } elsif (!$interface->isNamespaceObject) {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+        # There must exist an interface prototype object for every non-callback interface defined, regardless
+        # of whether the interface was declared with the [LegacyNoInterfaceObject] extended attribute.
+        # https://heycam.github.io/webidl/#interface-prototype-object
+        if ($interface->isCallback) {
+            push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
+        } else {
+            my $prototype = ShouldUseGlobalObjectPrototype($interface) ? "globalObject.getPrototypeDirect(vm)" : "${className}::prototype(vm, globalObject)";
+            push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${prototype}, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);\n");
+        }
     }
 
     my $classForThis = "${className}::info()";
