@@ -42,13 +42,15 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
+Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_style(WTFMove(style))
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags.toRaw())
     , m_hasRareData(false)
     , m_isAnonymous(false)
 {
+    if (firstLineStyle)
+        ensureRareData().firstLineStyle = WTFMove(firstLineStyle);
 }
 
 Box::~Box()
@@ -57,9 +59,11 @@ Box::~Box()
         removeRareData();
 }
 
-void Box::updateStyle(const RenderStyle& newStyle)
+void Box::updateStyle(const RenderStyle& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
 {
     m_style = RenderStyle::clone(newStyle);
+    if (newFirstLineStyle)
+        ensureRareData().firstLineStyle = WTFMove(newFirstLineStyle);
 }
 
 bool Box::establishesFormattingContext() const

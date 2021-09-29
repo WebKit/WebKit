@@ -39,7 +39,7 @@ namespace Layout {
 class ReplacedBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(ReplacedBox);
 public:
-    ReplacedBox(std::optional<ElementAttributes>, RenderStyle&&);
+    ReplacedBox(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~ReplacedBox() = default;
 
     void setCachedImage(CachedImage& cachedImage) { m_cachedImage = &cachedImage; }

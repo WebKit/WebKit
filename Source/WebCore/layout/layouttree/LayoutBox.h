@@ -159,8 +159,9 @@ public:
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
 
-    void updateStyle(const RenderStyle& newStyle);
+    void updateStyle(const RenderStyle& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle);
     const RenderStyle& style() const { return m_style; }
+    const RenderStyle& firstLineStyle() const { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
 
     // FIXME: Find a better place for random DOM things.
     void setRowSpan(size_t);
@@ -183,7 +184,7 @@ public:
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
 
 protected:
-    Box(std::optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag>);
+    Box(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
 
 private:
     class BoxRareData {
@@ -193,6 +194,7 @@ private:
 
         CellSpan tableCellSpan;
         std::optional<LayoutUnit> columnWidth;
+        std::unique_ptr<RenderStyle> firstLineStyle;
     };
 
     bool hasRareData() const { return m_hasRareData; }

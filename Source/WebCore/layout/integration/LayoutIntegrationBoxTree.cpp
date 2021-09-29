@@ -43,6 +43,9 @@ namespace LayoutIntegration {
 
 static constexpr size_t smallTreeThreshold = 8;
 
+// FIXME: see webkit.org/b/230964
+#define CAN_USE_FIRST_LINE_STYLE_RESOLVE 0
+
 static RenderStyle rootBoxStyle(const RenderStyle& style)
 {
     auto clonedStyle = RenderStyle::clone(style);
@@ -50,9 +53,24 @@ static RenderStyle rootBoxStyle(const RenderStyle& style)
     return clonedStyle;
 }
 
+static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlockFlow& root)
+{
+#if CAN_USE_FIRST_LINE_STYLE_RESOLVE
+    auto& firstLineStyle = root.firstLineStyle();
+    if (root.style() == firstLineStyle)
+        return { };
+    auto clonedStyle = RenderStyle::clonePtr(firstLineStyle);
+    clonedStyle->setEffectiveDisplay(DisplayType::Block);
+    return clonedStyle;
+#else
+    UNUSED_PARAM(root);
+    return { };
+#endif
+}
+
 BoxTree::BoxTree(RenderBlockFlow& flow)
     : m_flow(flow)
-    , m_root(rootBoxStyle(flow.style()))
+    , m_root(rootBoxStyle(flow.style()), rootBoxFirstLineStyle(flow))
 {
     if (flow.isAnonymous())
         m_root.setIsAnonymous();
@@ -63,27 +81,38 @@ BoxTree::BoxTree(RenderBlockFlow& flow)
 void BoxTree::buildTree()
 {
     auto createChildBox = [&](RenderObject& childRenderer) -> std::unique_ptr<Layout::Box> {
+        std::unique_ptr<RenderStyle> firstLineStyle;
+#if CAN_USE_FIRST_LINE_STYLE_RESOLVE
+        if (&childRenderer.style() != &childRenderer.firstLineStyle())
+            firstLineStyle = RenderStyle::clonePtr(childRenderer.firstLineStyle());
+#endif
         if (is<RenderText>(childRenderer)) {
             auto& textRenderer = downcast<RenderText>(childRenderer);
             auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
             return makeUnique<Layout::InlineTextBox>(
                 style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text())
-                , textRenderer.canUseSimplifiedTextMeasuring(), WTFMove(style));
+                , textRenderer.canUseSimplifiedTextMeasuring(), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         auto style = RenderStyle::clone(childRenderer.style());
         if (childRenderer.isLineBreak()) {
-            style.setDisplay(DisplayType::Inline);
-            style.setFloating(Float::None);
-            style.setPosition(PositionType::Static);
-            return makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(style));
+            auto adjustStyle = [&] (auto& styleToAdjust) {
+                styleToAdjust.setDisplay(DisplayType::Inline);
+                styleToAdjust.setFloating(Float::None);
+                styleToAdjust.setPosition(PositionType::Static);
+            };
+            adjustStyle(style);
+            if (firstLineStyle)
+                adjustStyle(*firstLineStyle);
+
+            return makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderReplaced>(childRenderer))
-            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style));
+            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
         if (is<RenderBlock>(childRenderer))
-            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style));
+            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
         if (is<RenderInline>(childRenderer)) {
             if (childRenderer.parent()->isAnonymousBlock()) {
@@ -91,18 +120,23 @@ void BoxTree::buildTree()
                 auto& renderInline = downcast<RenderInline>(childRenderer);
                 auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
                 auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
-                if (shouldNotRetainBorderPaddingAndMarginStart) {
-                    style.setMarginStart(RenderStyle::initialMargin());
-                    style.resetBorderLeft();
-                    style.setPaddingLeft(RenderStyle::initialPadding());
-                }
-                if (shouldNotRetainBorderPaddingAndMarginEnd) {
-                    style.setMarginEnd(RenderStyle::initialMargin());
-                    style.resetBorderRight();
-                    style.setPaddingRight(RenderStyle::initialPadding());
-                }
+                auto adjustStyleForContinuation = [&] (auto& styleToAdjust) {
+                    if (shouldNotRetainBorderPaddingAndMarginStart) {
+                        styleToAdjust.setMarginStart(RenderStyle::initialMargin());
+                        styleToAdjust.resetBorderLeft();
+                        styleToAdjust.setPaddingLeft(RenderStyle::initialPadding());
+                    }
+                    if (shouldNotRetainBorderPaddingAndMarginEnd) {
+                        styleToAdjust.setMarginEnd(RenderStyle::initialMargin());
+                        styleToAdjust.resetBorderRight();
+                        styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
+                    }
+                };
+                adjustStyleForContinuation(style);
+                if (firstLineStyle)
+                    adjustStyleForContinuation(*firstLineStyle);
             }
-            return makeUnique<Layout::ContainerBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style));
+            return makeUnique<Layout::ContainerBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         ASSERT_NOT_REACHED();
@@ -138,15 +172,25 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 {
     auto& layoutBox = layoutBoxForRenderer(renderer);
     auto& style = renderer.style();
+    auto firstLineStyle = [&] () -> std::unique_ptr<RenderStyle> {
+#if CAN_USE_FIRST_LINE_STYLE_RESOLVE
+        if (&renderer.style() != &renderer.firstLineStyle())
+            return RenderStyle::clonePtr(renderer.firstLineStyle());
+        return nullptr;
+#else
+        return nullptr;
+#endif
+    };
+
     if (&layoutBox == &rootLayoutBox())
-        layoutBox.updateStyle(rootBoxStyle(style));
+        layoutBox.updateStyle(rootBoxStyle(style), rootBoxFirstLineStyle(downcast<RenderBlockFlow>(renderer)));
     else
-        layoutBox.updateStyle(style);
+        layoutBox.updateStyle(style, firstLineStyle());
 
     if (is<Layout::ContainerBox>(layoutBox)) {
         for (auto* child = downcast<Layout::ContainerBox>(layoutBox).firstChild(); child; child = child->nextSibling()) {
             if (child->isInlineTextBox())
-                child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline));
+                child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline), firstLineStyle());
         }
     }
 }

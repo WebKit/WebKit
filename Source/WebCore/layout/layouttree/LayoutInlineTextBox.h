@@ -37,7 +37,7 @@ namespace Layout {
 class InlineTextBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
 public:
-    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, RenderStyle&&);
+    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
     String content() const { return m_content; }

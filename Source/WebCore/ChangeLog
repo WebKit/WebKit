@@ -1,3 +1,39 @@
+2021-09-29  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Layout::Box should be able to return the first-line style when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=230921
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting first-line style.
+
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::rootBoxFirstLineStyle):
+        (WebCore::LayoutIntegration::BoxTree::BoxTree):
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        (WebCore::LayoutIntegration::BoxTree::updateStyle):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::Box): Use the rare data to store first-line style.
+        (WebCore::Layout::Box::updateStyle):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::firstLineStyle const):
+        * layout/layouttree/LayoutContainerBox.cpp:
+        (WebCore::Layout::ContainerBox::ContainerBox):
+        * layout/layouttree/LayoutContainerBox.h:
+        (WebCore::Layout::ContainerBox::ContainerBox):
+        * layout/layouttree/LayoutInitialContainingBlock.cpp:
+        (WebCore::Layout::InitialContainingBlock::InitialContainingBlock):
+        * layout/layouttree/LayoutInitialContainingBlock.h:
+        * layout/layouttree/LayoutInlineTextBox.cpp:
+        (WebCore::Layout::InlineTextBox::InlineTextBox):
+        * layout/layouttree/LayoutInlineTextBox.h:
+        * layout/layouttree/LayoutLineBreakBox.cpp:
+        (WebCore::Layout::LineBreakBox::LineBreakBox):
+        * layout/layouttree/LayoutLineBreakBox.h:
+        * layout/layouttree/LayoutReplacedBox.cpp:
+        (WebCore::Layout::ReplacedBox::ReplacedBox):
+        * layout/layouttree/LayoutReplacedBox.h:
+
 2021-09-29  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Align property order of DOM constructors with ECMA-262 counterparts
