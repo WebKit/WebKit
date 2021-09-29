@@ -33,12 +33,25 @@ class TestPullRequest(unittest.TestCase):
         self.assertEqual('PR 123 | [scoping] Bug to fix', str(PullRequest(123, title='[scoping] Bug to fix')))
         self.assertEqual('PR 1234', str(PullRequest(1234)))
 
-    def test_create_body_single(self):
+    def test_create_body_single_linked(self):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
                 hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
                 message='[scoping] Bug to fix\n\nReviewed by Tim Contributor.\n',
             )]), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix
+
+Reviewed by Tim Contributor.
+</pre>''',
+        )
+
+    def test_create_body_single_no_link(self):
+        self.assertEqual(
+            PullRequest.create_body(None, [Commit(
+                hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
+                message='[scoping] Bug to fix\n\nReviewed by Tim Contributor.\n',
+            )], linkify=False), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 ```
 [scoping] Bug to fix
 
@@ -58,17 +71,43 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
-    def test_create_body_multiple(self):
+    def test_create_body_multiple_linked(self):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
                 hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
-                message='[scoping] Bug to fix (Part 2)\n\nReviewed by Tim Contributor.\n',
+                message='[scoping] Bug to fix (Part 2)\nhttps://bugs.webkit.org/1234\n\nReviewed by Tim Contributor.\n',
             ), Commit(
                 hash='53ea230fcedbce327eb1c45a6ab65a88de864505',
-                message='[scoping] Bug to fix (Part 1)\n\nReviewed by Tim Contributor.\n',
+                message='[scoping] Bug to fix (Part 1)\n<http://bugs.webkit.org/1234>\n\nReviewed by Tim Contributor.\n',
             )]), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix (Part 2)
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+
+Reviewed by Tim Contributor.
+</pre>
+----------------------------------------------------------------------
+#### 53ea230fcedbce327eb1c45a6ab65a88de864505
+<pre>
+[scoping] Bug to fix (Part 1)
+&lt;<a href="http://bugs.webkit.org/1234">http://bugs.webkit.org/1234</a> &gt;
+
+Reviewed by Tim Contributor.
+</pre>''',
+        )
+
+    def test_create_body_multiple_no_link(self):
+        self.assertEqual(
+            PullRequest.create_body(None, [Commit(
+                hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
+                message='[scoping] Bug to fix (Part 2)\nhttps://bugs.webkit.org/1234\n\nReviewed by Tim Contributor.\n',
+            ), Commit(
+                hash='53ea230fcedbce327eb1c45a6ab65a88de864505',
+                message='[scoping] Bug to fix (Part 1)\n<http://bugs.webkit.org/1234>\n\nReviewed by Tim Contributor.\n',
+            )], linkify=False), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 ```
 [scoping] Bug to fix (Part 2)
+https://bugs.webkit.org/1234
 
 Reviewed by Tim Contributor.
 ```
@@ -76,6 +115,7 @@ Reviewed by Tim Contributor.
 #### 53ea230fcedbce327eb1c45a6ab65a88de864505
 ```
 [scoping] Bug to fix (Part 1)
+<http://bugs.webkit.org/1234>
 
 Reviewed by Tim Contributor.
 ```''',
@@ -104,13 +144,39 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[1].hash, '53ea230fcedbce327eb1c45a6ab65a88de864505')
         self.assertEqual(commits[1].message, '[scoping] Bug to fix (Part 1)\n\nReviewed by Tim Contributor.')
 
+    def test_parse_html_body_multiple(self):
+        self.maxDiff = None
+        body, commits = PullRequest.parse_body('''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix (Part 2)
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+
+Reviewed by Tim Contributor.
+</pre>
+----------------------------------------------------------------------
+#### 53ea230fcedbce327eb1c45a6ab65a88de864505
+<pre>
+[scoping] Bug to fix (Part 1)
+&lt;<a href="http://bugs.webkit.org/1234">http://bugs.webkit.org/1234</a> &gt;
+
+Reviewed by Tim Contributor.
+</pre>''')
+        self.assertIsNone(body)
+        self.assertEqual(len(commits), 2)
+
+        self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
+        self.assertEqual(commits[0].message, '[scoping] Bug to fix (Part 2)\nhttps://bugs.webkit.org/1234\n\nReviewed by Tim Contributor.')
+
+        self.assertEqual(commits[1].hash, '53ea230fcedbce327eb1c45a6ab65a88de864505')
+        self.assertEqual(commits[1].message, '[scoping] Bug to fix (Part 1)\n<http://bugs.webkit.org/1234>\n\nReviewed by Tim Contributor.')
+
     def test_create_body_empty(self):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(hash='11aa76f9fc380e9fe06157154f32b304e8dc4749')]),
             '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
-```
+<pre>
 ???
-```''',
+</pre>''',
         )
 
     def test_parse_body_empty(self):
@@ -118,6 +184,16 @@ Reviewed by Tim Contributor.
 ```
 ???
 ```''')
+        self.assertIsNone(body)
+        self.assertEqual(len(commits), 1)
+        self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
+        self.assertEqual(commits[0].message, None)
+
+    def test_parse_html_body_empty(self):
+        body, commits = PullRequest.parse_body('''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+???
+</pre>''')
         self.assertIsNone(body)
         self.assertEqual(len(commits), 1)
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
@@ -132,11 +208,11 @@ Reviewed by Tim Contributor.
 
 ----------------------------------------------------------------------
 #### 11aa76f9fc380e9fe06157154f32b304e8dc4749
-```
+<pre>
 [scoping] Bug to fix
 
 Reviewed by Tim Contributor.
-```''',
+</pre>''',
         )
 
     def test_parse_body_single(self):
@@ -149,6 +225,21 @@ Reviewed by Tim Contributor.
 
 Reviewed by Tim Contributor.
 ```''')
+        self.assertEqual(body, 'Comment body')
+        self.assertEqual(len(commits), 1)
+        self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
+        self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
+
+    def test_parse_html_body_single(self):
+        body, commits = PullRequest.parse_body('''Comment body
+
+----------------------------------------------------------------------
+#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix
+
+Reviewed by Tim Contributor.
+</pre>''')
         self.assertEqual(body, 'Comment body')
         self.assertEqual(len(commits), 1)
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')

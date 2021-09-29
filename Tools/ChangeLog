@@ -1,3 +1,21 @@
+2021-09-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Linkify http urls in pull-requests
+        https://bugs.webkit.org/show_bug.cgi?id=230655
+
+        Reviewed by NOBODY (OOPS!).
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/pull_request.py:
+        (PullRequest): 
+        (PullRequest.escape_html): Escape any html and linkify http urls.
+        (PullRequest.unescape_html): Unescape escaped html and strip links from http urls.
+        (PullRequest.create_body): Use <pre> and escape html in commit messages.
+        (PullRequest.parse_body): Match both <pre> and ```, escape html if <pre> was used.
+        * Tools/Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.PRGenerator.create): Opt out of linkifying http in comment body.
+        (BitBucket.PRGenerator.update): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2021-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Update PCM Daemon name

@@ -74,7 +74,7 @@ class BitBucket(Scm):
 
             if len(title) > self.TITLE_CHAR_LIMIT:
                 raise ValueError('Title length too long. Limit is: {}'.format(self.TITLE_CHAR_LIMIT))
-            description = PullRequest.create_body(body, commits)
+            description = PullRequest.create_body(body, commits, linkify=False)
             if description and len(description) > self.BODY_CHAR_LIMIT:
                 raise ValueError('Body length too long. Limit is: {}'.format(self.BODY_CHAR_LIMIT))
             response = requests.post(
@@ -84,7 +84,7 @@ class BitBucket(Scm):
                     name=self.repository.name,
                 ), json=dict(
                     title=title,
-                    description=PullRequest.create_body(body, commits),
+                    description=PullRequest.create_body(body, commits, linkify=False),
                     fromRef=dict(
                         id='refs/heads/{}'.format(head),
                         repository=dict(
@@ -125,7 +125,7 @@ class BitBucket(Scm):
             if title:
                 to_change['title'] = title
             if body or commits:
-                to_change['description'] = PullRequest.create_body(body, commits)
+                to_change['description'] = PullRequest.create_body(body, commits, linkify=False)
             if head:
                 to_change['fromRef'] = dict(
                     id='refs/heads/{}'.format(head),
