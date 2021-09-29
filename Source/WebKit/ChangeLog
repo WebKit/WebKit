@@ -1,3 +1,16 @@
+2021-09-29  Per Arne  <pvollan@apple.com>
+
+        Add telemetry to the Networking process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=230919
+        <rdar://problem/83641392>
+
+        Reviewed by Brent Fulgham.
+
+        Add telemetry to the Networking process sandbox on iOS and macOS.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2021-09-29  Jer Noble  <jer.noble@apple.com>
 
         Build-time optimization: forward declare more things in MediaPlayer.h and HTMLMediaElement.h
