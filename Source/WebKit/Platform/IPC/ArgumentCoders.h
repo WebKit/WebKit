@@ -30,6 +30,7 @@
 #include <utility>
 #include <wtf/Box.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
@@ -663,6 +664,36 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
             Expected<ValueType, ErrorType> expected(WTFMove(*value));
             return expected;
         }
+        std::optional<ErrorType> error;
+        decoder >> error;
+        if (!error)
+            return std::nullopt;
+        return { makeUnexpected(WTFMove(*error)) };
+    }
+};
+
+template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
+    template<typename Encoder> static void encode(Encoder& encoder, const Expected<void, ErrorType>& expected)
+    {
+        if (!expected.has_value()) {
+            encoder << false;
+            encoder << expected.error();
+            return;
+        }
+
+        encoder << true;
+    }
+    
+    template<typename Decoder> static std::optional<Expected<void, ErrorType>> decode(Decoder& decoder)
+    {
+        std::optional<bool> hasValue;
+        decoder >> hasValue;
+        if (!hasValue)
+            return std::nullopt;
+
+        if (*hasValue)
+            return {{ }};
+
         std::optional<ErrorType> error;
         decoder >> error;
         if (!error)

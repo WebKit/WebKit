@@ -109,7 +109,7 @@ std::optional<Inspector::ExtensionError> WebInspectorUIExtensionController::pars
 
 // WebInspectorUIExtensionController IPC messages.
 
-void WebInspectorUIExtensionController::registerExtension(const Inspector::ExtensionID& extensionID, const String& displayName, CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionController::registerExtension(const Inspector::ExtensionID& extensionID, const String& displayName, CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
@@ -131,11 +131,11 @@ void WebInspectorUIExtensionController::registerExtension(const Inspector::Exten
             return;
         }
 
-        completionHandler(true);
+        completionHandler({ });
     });
 }
 
-void WebInspectorUIExtensionController::unregisterExtension(const Inspector::ExtensionID& extensionID, CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionController::unregisterExtension(const Inspector::ExtensionID& extensionID, CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
@@ -154,7 +154,7 @@ void WebInspectorUIExtensionController::unregisterExtension(const Inspector::Ext
             return;
         }
 
-        completionHandler(true);
+        completionHandler({ });
     });
 }
 
@@ -326,7 +326,7 @@ void WebInspectorUIExtensionController::reloadForExtension(const Inspector::Exte
     });
 }
 
-void WebInspectorUIExtensionController::showExtensionTab(const Inspector::ExtensionTabID& extensionTabIdentifier, CompletionHandler<void(Expected<bool, Inspector::ExtensionError>)>&& completionHandler)
+void WebInspectorUIExtensionController::showExtensionTab(const Inspector::ExtensionTabID& extensionTabIdentifier, CompletionHandler<void(Expected<void, Inspector::ExtensionError>)>&& completionHandler)
 {
     if (!m_frontendClient) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::InvalidRequest));
@@ -355,7 +355,7 @@ void WebInspectorUIExtensionController::showExtensionTab(const Inspector::Extens
             return;
         }
 
-        completionHandler(true);
+        completionHandler({ });
     });
 }
 
