@@ -1,3 +1,15 @@
+2021-09-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a default return value in convertToExceptionCode
+        https://bugs.webkit.org/show_bug.cgi?id=230989
+
+        Reviewed by Chris Dumez.
+
+        To fix non-Cocoa build.
+
+        * NetworkProcess/storage/FileSystemStorageError.h:
+        (WebKit::convertToExceptionCode):
+
 2021-09-29  BJ Burg  <bburg@apple.com>
 
         [Cocoa] add _WKInspectorExtension SPI to evaluate script on an extension tab

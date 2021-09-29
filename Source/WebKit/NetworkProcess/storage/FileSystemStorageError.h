@@ -50,8 +50,10 @@ inline WebCore::ExceptionCode convertToExceptionCode(FileSystemStorageError erro
     case FileSystemStorageError::InvalidName:
         return WebCore::ExceptionCode::UnknownError;
     case FileSystemStorageError::Unknown:
-        return WebCore::ExceptionCode::UnknownError;
+        break;
     }
+
+    return WebCore::ExceptionCode::UnknownError;
 }
 
 } // namespace WebKit
