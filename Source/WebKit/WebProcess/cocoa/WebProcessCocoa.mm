@@ -704,8 +704,10 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
     // Need to override the default, because service has a different bundle ID.
     auto webKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
 
+#if defined(USE_VORBIS_AUDIOCOMPONENT_WORKAROUND)
     // We need to initialize the Vorbis decoder before the sandbox gets setup; this is a one off action.
     WebCore::registerVorbisDecoderIfNeeded();
+#endif
 
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
 
