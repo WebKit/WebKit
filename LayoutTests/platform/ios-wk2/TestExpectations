@@ -2071,6 +2071,8 @@ webkit.org/b/168961 fast/events/wheelevent-in-frame.html [ Pass Timeout ]
 #rdar://82259067 ([iOS Debug]fast/events/ios/rotation/basic-rotation.html is a constant crash) 
 fast/events/ios/rotation/basic-rotation.html [ Pass Crash Failure ]
 
+webkit.org/b/230987 fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html [ Pass Timeout ]
+
 webkit.org/b/229558 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Pass Failure ]
 
 webkit.org/b/229561 http/tests/navigation/page-cache-video.html [ Pass Failure ]

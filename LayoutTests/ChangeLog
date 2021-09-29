@@ -1,3 +1,13 @@
+2021-09-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS ] fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html is flaky timing out.
+        https://bugs.webkit.org/show_bug.cgi?id=230987
+
+        Unreviewed test gardening.
+
+        * platform/ios-14/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2021-09-29  Eric Hutchison  <ehutchison@apple.com>
 
         [ BigSur Debug arm64 ] streams/readableStream-then.html is a flaky crash.
