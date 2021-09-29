@@ -2448,5 +2448,5 @@ webkit.org/b/230711 [ BigSur ] http/tests/inspector/network/resource-initiatorNo
 
 webkit.org/b/230780 [ Catalina BigSur Debug ] fast/workers/use-machine-stack.html [ Pass Crash ]
 
-webkit.org/b/230862 [ Catalina BigSur arm64 ] imported/w3c/web-platform-tests/resource-timing/sizes-redirect-img.html [ Pass Failure ]
+webkit.org/b/230862 [ Catalina BigSur ] imported/w3c/web-platform-tests/resource-timing/sizes-redirect-img.html [ Pass Failure ]
 
