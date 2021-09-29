@@ -1,5 +1,23 @@
 2021-09-29  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] LineBoxBuilder should use the first-line style when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=230930
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting first-line style.
+
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computeGeometryForLineContent):
+        * layout/formattingContexts/inline/InlineFormattingContext.h:
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::build):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.h:
+
+2021-09-29  Alan Bujtas  <zalan@apple.com>
+
         Thin hairline gap displayed for subpixel sized inset box-shadows
         https://bugs.webkit.org/show_bug.cgi?id=230814
 
