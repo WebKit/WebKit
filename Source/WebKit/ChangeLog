@@ -1,3 +1,22 @@
+2021-09-29  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Debug ] http/tests/xmlhttprequest/access-control-preflight-credential-sync.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=228305
+        <rdar://problem/81136891>
+
+        Reviewed by Alex Christensen.
+
+        When a NetworkResourceLoader for a synchronous XHR gets aborted (e.g. because the connection to
+        the WebProcess was severed), NetworkResourceLoader::abort() would fail to call
+        sendReplyToSynchronousRequest() (sendReplyToSynchronousRequest was only called in didFailLoading() and
+        didFinishLoading()). As a result, we would hit the following assertion in the NetworkResourceLoader
+        destructor later on: ASSERT(!isSynchronous() || !m_synchronousLoadData->delayedReply)
+
+        No new tests, covered by existing test that I am unskipping.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::abort):
+
 2021-09-29  Sihui Liu  <sihui_liu@apple.com>
 
         Add a default return value in convertToExceptionCode

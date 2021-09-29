@@ -523,6 +523,11 @@ void NetworkResourceLoader::abort()
         m_networkLoad->cancel();
     }
 
+    if (isSynchronous()) {
+        m_synchronousLoadData->error = ResourceError { ResourceError::Type::Cancellation };
+        sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr, { });
+    }
+
     cleanup(LoadResult::Cancel);
 }
 

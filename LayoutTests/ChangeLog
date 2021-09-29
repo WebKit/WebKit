@@ -1,3 +1,15 @@
+2021-09-29  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Debug ] http/tests/xmlhttprequest/access-control-preflight-credential-sync.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=228305
+        <rdar://problem/81136891>
+
+        Reviewed by Alex Christensen.
+
+        Unskip test that should no longer be flaky.
+
+        * platform/ios-wk2/TestExpectations:
+
 2021-09-29  Kiet Ho  <tho22@apple.com>
 
         Implement the 'ic' unit from CSS Values 4
