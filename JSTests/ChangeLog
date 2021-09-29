@@ -1,5 +1,18 @@
 2021-09-29  Saam Barati  <sbarati@apple.com>
 
+        Code inside strength reduction can incorrectly prove that we know what lastIndex is
+        https://bugs.webkit.org/show_bug.cgi?id=230802
+        <rdar://problem/83543699>
+
+        Reviewed by Mark Lam.
+
+        * stress/dont-fold-regexp-exec-when-we-dont-know-last-index-and-regexp-is-constant.js: Added.
+        (assert):
+        (let.reg.RegExp.foo.g.doExec):
+        (noInline.doExec):
+
+2021-09-29  Saam Barati  <sbarati@apple.com>
+
         DoesGCCheck does not use enough bits for nodeIndex
         https://bugs.webkit.org/show_bug.cgi?id=230915
         <rdar://83297515>
