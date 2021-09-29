@@ -2424,3 +2424,5 @@ webkit.org/b/230780 [ Catalina BigSur Debug ] fast/workers/use-machine-stack.htm
 
 webkit.org/b/230862 [ Catalina BigSur ] imported/w3c/web-platform-tests/resource-timing/sizes-redirect-img.html [ Pass Failure ]
 
+webkit.org/b/230984 [ BigSur Debug arm64 ] streams/readableStream-then.html [ Pass Crash ]
+
