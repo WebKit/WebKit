@@ -29,21 +29,13 @@
 
 #if ENABLE(VIDEO)
 
+#include "TrackPrivateBaseClient.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
-
-class TrackPrivateBaseClient {
-public:
-    virtual ~TrackPrivateBaseClient() = default;
-    virtual void idChanged(const AtomString&) = 0;
-    virtual void labelChanged(const AtomString&) = 0;
-    virtual void languageChanged(const AtomString&) = 0;
-    virtual void willRemove() = 0;
-};
 
 class WEBCORE_EXPORT TrackPrivateBase
     : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>

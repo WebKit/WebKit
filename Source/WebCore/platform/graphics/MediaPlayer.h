@@ -27,24 +27,17 @@
 
 #if ENABLE(VIDEO)
 
-#include "AudioTrackPrivate.h"
 #include "ContentType.h"
 #include "Cookie.h"
 #include "GraphicsTypesGL.h"
 #include "LayoutRect.h"
-#include "LegacyCDMSession.h"
 #include "MediaPlayerEnums.h"
 #include "MediaPlayerIdentifier.h"
-#include "NativeImage.h"
 #include "PlatformLayer.h"
-#include "PlatformMediaResourceLoader.h"
-#include "PlatformMediaSession.h"
-#include "PlatformScreen.h"
-#include "SecurityOriginHash.h"
+#include "SecurityOriginData.h"
 #include "Timer.h"
 #include "VideoPlaybackQualityMetrics.h"
 #include <wtf/URL.h>
-#include "VideoTrackPrivate.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
@@ -56,10 +49,6 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(AVF_CAPTIONS)
-#include "PlatformTextTrack.h"
-#endif
-
 OBJC_CLASS AVPlayer;
 OBJC_CLASS NSArray;
 
@@ -69,13 +58,18 @@ typedef struct __CVBuffer* CVPixelBufferRef;
 
 namespace WebCore {
 
+enum class AudioSessionCategory : uint8_t;
+enum class DynamicRangeMode : uint8_t;
+
 class AudioSourceProvider;
+class AudioTrackPrivate;
 class CDMInstance;
 class CachedResourceLoader;
 class GraphicsContextGL;
 class GraphicsContext;
 class InbandTextTrackPrivate;
 class LegacyCDM;
+class LegacyCDMSession;
 class LegacyCDMSessionClient;
 class MediaPlaybackTarget;
 class MediaPlayer;
@@ -84,8 +78,12 @@ class MediaPlayerPrivateInterface;
 class MediaPlayerRequestInstallMissingPluginsCallback;
 class MediaSourcePrivateClient;
 class MediaStreamPrivate;
+class NativeImage;
+class PlatformMediaResourceLoader;
+class PlatformTextTrack;
 class PlatformTimeRanges;
 class TextTrackRepresentation;
+class VideoTrackPrivate;
 
 struct GraphicsDeviceAdapter;
 struct SecurityOriginData;
@@ -203,7 +201,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const { return nullptr; }
+    virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const = 0;
     virtual void mediaPlayerKeyNeeded(Uint8Array*) { }
     virtual String mediaPlayerMediaKeysStorageDirectory() const { return emptyString(); }
 #endif
@@ -230,7 +228,7 @@ public:
     virtual bool mediaPlayerPlatformVolumeConfigurationRequired() const { return false; }
     virtual bool mediaPlayerIsLooping() const { return false; }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return nullptr; }
-    virtual RefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() { return nullptr; }
+    virtual RefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() = 0;
     virtual bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const { return false; }
     virtual bool mediaPlayerShouldUsePersistentCache() const { return true; }
     virtual const String& mediaPlayerMediaCacheDirectory() const { return emptyString(); }
@@ -710,7 +708,7 @@ private:
     bool m_shouldPrepareToRender { false };
     bool m_contentMIMETypeWasInferredFromExtension { false };
     bool m_initializingMediaEngine { false };
-    DynamicRangeMode m_preferredDynamicRangeMode { DynamicRangeMode::Standard };
+    DynamicRangeMode m_preferredDynamicRangeMode;
     PitchCorrectionAlgorithm m_pitchCorrectionAlgorithm { PitchCorrectionAlgorithm::BestAllAround };
 
 #if ENABLE(MEDIA_SOURCE)

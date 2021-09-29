@@ -315,9 +315,9 @@ static inline FilterOperations blendFilterOperations(const FilterOperations& fro
     size_t toSize = to.operations().size();
     size_t size = std::max(fromSize, toSize);
     for (size_t i = 0; i < size; i++) {
-        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
-        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
-        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), toOp.get(), context) : (fromOp ? blendFunc(0, fromOp.get(), context, true) : 0);
+        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : nullptr;
+        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : nullptr;
+        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), toOp.get(), context) : (fromOp ? blendFunc(0, fromOp.get(), context, true) : nullptr);
         if (blendedOp)
             result.operations().append(blendedOp);
         else {

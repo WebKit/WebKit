@@ -89,8 +89,8 @@ void ScriptProcessorNode::initialize()
     // These AudioBuffers will be directly accessed in the main thread by JavaScript.
     for (unsigned i = 0; i < bufferCount; ++i) {
         // We prevent detaching the AudioBuffers here since we pass those to JS and reuse them.
-        m_inputBuffers[i] = m_numberOfInputChannels ? AudioBuffer::create(m_numberOfInputChannels, bufferSize(), sampleRate, AudioBuffer::LegacyPreventDetaching::Yes) : 0;
-        m_outputBuffers[i] = m_numberOfOutputChannels ? AudioBuffer::create(m_numberOfOutputChannels, bufferSize(), sampleRate, AudioBuffer::LegacyPreventDetaching::Yes) : 0;
+        m_inputBuffers[i] = m_numberOfInputChannels ? AudioBuffer::create(m_numberOfInputChannels, bufferSize(), sampleRate, AudioBuffer::LegacyPreventDetaching::Yes) : nullptr;
+        m_outputBuffers[i] = m_numberOfOutputChannels ? AudioBuffer::create(m_numberOfOutputChannels, bufferSize(), sampleRate, AudioBuffer::LegacyPreventDetaching::Yes) : nullptr;
     }
 
     AudioNode::initialize();

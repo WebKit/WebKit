@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
- * 
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -23,46 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LegacyCDMPrivateClearKey.h"
+#pragma once
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(VIDEO)
 
-#include "LegacyCDM.h"
-#include "LegacyCDMSessionClearKey.h"
-#include "ContentType.h"
-#include "MediaPlayer.h"
-#include "PlatformMediaResourceLoader.h"
+#include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-bool LegacyCDMPrivateClearKey::supportsKeySystem(const String& keySystem)
-{
-    if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
-        return false;
-
-    // The MediaPlayer must also support the key system:
-    return MediaPlayer::supportsKeySystem(keySystem, emptyString());
-}
-
-bool LegacyCDMPrivateClearKey::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
-{
-    if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
-        return false;
-
-    // The MediaPlayer must also support the key system:
-    return MediaPlayer::supportsKeySystem(keySystem, mimeType);
-}
-
-bool LegacyCDMPrivateClearKey::supportsMIMEType(const String& mimeType)
-{
-    return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
-}
-
-std::unique_ptr<LegacyCDMSession> LegacyCDMPrivateClearKey::createSession(LegacyCDMSessionClient* client)
-{
-    return makeUnique<CDMSessionClearKey>(client);
-}
+class TrackPrivateBaseClient : public CanMakeWeakPtr<TrackPrivateBaseClient> {
+public:
+    virtual ~TrackPrivateBaseClient() = default;
+    virtual void idChanged(const AtomString&) = 0;
+    virtual void labelChanged(const AtomString&) = 0;
+    virtual void languageChanged(const AtomString&) = 0;
+    virtual void willRemove() = 0;
+};
 
 }
 

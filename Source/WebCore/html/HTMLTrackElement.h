@@ -30,11 +30,12 @@
 
 #include "ActiveDOMObject.h"
 #include "HTMLElement.h"
-#include "LoadableTextTrack.h"
+#include "TextTrackClient.h"
 
 namespace WebCore {
 
 class HTMLMediaElement;
+class LoadableTextTrack;
 
 class HTMLTrackElement final : public HTMLElement, public ActiveDOMObject, public TextTrackClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLTrackElement);
@@ -52,7 +53,7 @@ public:
     ReadyState readyState() const;
     void setReadyState(ReadyState);
 
-    LoadableTextTrack& track();
+    TextTrack& track();
 
     void scheduleLoad();
 
@@ -87,7 +88,7 @@ private:
 
     bool canLoadURL(const URL&);
 
-    RefPtr<LoadableTextTrack> m_track;
+    Ref<LoadableTextTrack> m_track;
     bool m_loadPending { false };
     bool m_hasRelevantLoadEventsListener { false };
 };

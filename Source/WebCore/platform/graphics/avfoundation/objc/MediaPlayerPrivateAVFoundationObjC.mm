@@ -53,6 +53,9 @@
 #import "MediaSessionManagerCocoa.h"
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "PixelBufferConformerCV.h"
+#import "PlatformMediaResourceLoader.h"
+#import "PlatformScreen.h"
+#import "PlatformTextTrack.h"
 #import "PlatformTimeRanges.h"
 #import "RuntimeApplicationChecks.h"
 #import "ScriptDisallowedScope.h"
@@ -104,6 +107,10 @@
 
 #if ENABLE(AVF_CAPTIONS)
 #import "TextTrack.h"
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#import "MediaPlaybackTarget.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)

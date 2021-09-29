@@ -364,7 +364,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     VisiblePosition end = endOfParagraph(start, CanSkipOverEditingBoundary);
     
     if (start.isNull() || end.isNull() || !start.deepEquivalent().containerNode()->hasEditableStyle() || !end.deepEquivalent().containerNode()->hasEditableStyle())
-        return 0;
+        return nullptr;
 
     // Check for adjoining lists.
     auto listItemElement = HTMLLIElement::create(document());
@@ -405,7 +405,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
             insertionPos = positionInParentBeforeNode(listChild.get());
 
         if (!isEditablePosition(insertionPos))
-            return 0;
+            return nullptr;
 
         insertNodeAt(*listElement, insertionPos);
 

@@ -385,7 +385,7 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(MAC)
     RetainPtr<AVOutputContext> m_outputContext;
-    RefPtr<MediaPlaybackTarget> m_playbackTarget { nullptr };
+    RefPtr<MediaPlaybackTarget> m_playbackTarget;
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

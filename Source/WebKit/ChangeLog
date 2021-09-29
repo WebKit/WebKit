@@ -1,3 +1,22 @@
+2021-09-29  Jer Noble  <jer.noble@apple.com>
+
+        Build-time optimization: forward declare more things in MediaPlayer.h and HTMLMediaElement.h
+        https://bugs.webkit.org/show_bug.cgi?id=230853
+
+        Reviewed by Eric Carlson.
+
+        Use new WeakPtr based client setters on TrackPrivates.
+
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::RemoteAudioTrackProxy):
+        (WebKit::RemoteAudioTrackProxy::~RemoteAudioTrackProxy):
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::RemoteTextTrackProxy):
+        (WebKit::RemoteTextTrackProxy::~RemoteTextTrackProxy):
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::RemoteVideoTrackProxy):
+        (WebKit::RemoteVideoTrackProxy::~RemoteVideoTrackProxy):
+
 2021-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Reduce allocations in DatabaseUtilities::sortedTables

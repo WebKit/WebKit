@@ -34,7 +34,9 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "AudioTrack.h"
 #include "AudioTrackList.h"
+#include "AudioTrackPrivate.h"
 #include "BufferSource.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -49,7 +51,9 @@
 #include "SourceBufferPrivate.h"
 #include "TextTrackList.h"
 #include "TimeRanges.h"
+#include "VideoTrack.h"
 #include "VideoTrackList.h"
+#include "VideoTrackPrivate.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VM.h>

@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "SourceBuffer.h"
+#include "TextTrackClient.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
 #include "VTTRegion.h"

@@ -450,7 +450,7 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject
 
 void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
 {
-    addMessage(source, level, message, sourceURL, lineNumber, columnNumber, 0, state, requestIdentifier);
+    addMessage(source, level, message, sourceURL, lineNumber, columnNumber, nullptr, state, requestIdentifier);
 }
 
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript)

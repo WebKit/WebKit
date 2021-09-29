@@ -2995,12 +2995,12 @@ RefPtr<Attr> Element::getAttributeNode(const AtomString& qualifiedName)
 RefPtr<Attr> Element::getAttributeNodeNS(const AtomString& namespaceURI, const AtomString& localName)
 {
     if (!elementData())
-        return 0;
+        return nullptr;
     QualifiedName qName(nullAtom(), localName, namespaceURI);
     synchronizeAttribute(qName);
     const Attribute* attribute = elementData()->findAttributeByName(qName);
     if (!attribute)
-        return 0;
+        return nullptr;
     return ensureAttr(attribute->name());
 }
 

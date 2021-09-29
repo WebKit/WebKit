@@ -35,6 +35,7 @@
 #include "VP9UtilitiesCocoa.h"
 #include <pal/avfoundation/OutputContext.h>
 #include <pal/avfoundation/OutputDevice.h>
+#include <wtf/Algorithms.h>
 
 #include "VideoToolboxSoftLink.h"
 

@@ -29,8 +29,13 @@
 
 #include "MediaPlayer.h"
 #include "MediaPlayerIdentifier.h"
+#include "NativeImage.h"
 #include "PlatformTimeRanges.h"
 #include <wtf/CompletionHandler.h>
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#include "LegacyCDMSession.h"
+#endif
 
 namespace WebCore {
 

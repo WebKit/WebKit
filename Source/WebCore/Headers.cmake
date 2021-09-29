@@ -761,11 +761,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/parser/HTMLParserScriptingFlagPolicy.h
 
     html/track/AudioTrack.h
+    html/track/AudioTrackClient.h
     html/track/TextTrack.h
+    html/track/TextTrackClient.h
     html/track/TextTrackCue.h
     html/track/TrackBase.h
     html/track/VTTCue.h
     html/track/VideoTrack.h
+    html/track/VideoTrackClient.h
 
     inspector/InspectorClient.h
     inspector/InspectorController.h
@@ -1220,6 +1223,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ANGLEWebKitBridge.h
     platform/graphics/AnimationFrameRate.h
     platform/graphics/AudioTrackPrivate.h
+    platform/graphics/AudioTrackPrivateClient.h
     platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
     platform/graphics/Color.h
@@ -1363,11 +1367,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TextTrackRepresentation.h
     platform/graphics/TiledBacking.h
     platform/graphics/TrackPrivateBase.h
+    platform/graphics/TrackPrivateBaseClient.h
     platform/graphics/VP9Utilities.h
     platform/graphics/VelocityData.h
     platform/graphics/VideoLayerManager.h
     platform/graphics/VideoPlaybackQualityMetrics.h
     platform/graphics/VideoTrackPrivate.h
+    platform/graphics/VideoTrackPrivateClient.h
     platform/graphics/WidthCache.h
     platform/graphics/WindRule.h
 

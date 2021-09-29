@@ -48,7 +48,7 @@ Ref<TextEvent> TextEvent::create(RefPtr<WindowProxy>&& view, const String& data,
 
 Ref<TextEvent> TextEvent::createForPlainTextPaste(RefPtr<WindowProxy>&& view, const String& data, bool shouldSmartReplace)
 {
-    return adoptRef(*new TextEvent(WTFMove(view), data, 0, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
+    return adoptRef(*new TextEvent(WTFMove(view), data, nullptr, shouldSmartReplace, false, MailBlockquoteHandling::RespectBlockquote));
 }
 
 Ref<TextEvent> TextEvent::createForFragmentPaste(RefPtr<WindowProxy>&& view, RefPtr<DocumentFragment>&& data, bool shouldSmartReplace, bool shouldMatchStyle, MailBlockquoteHandling mailBlockquoteHandling)

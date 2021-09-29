@@ -34,14 +34,14 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ActiveDOMObject.h"
-#include "AudioTrack.h"
+#include "AudioTrackClient.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
-#include "TextTrack.h"
+#include "TextTrackClient.h"
 #include "Timer.h"
-#include "VideoTrack.h"
+#include "VideoTrackClient.h"
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {

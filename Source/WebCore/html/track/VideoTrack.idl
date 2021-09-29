@@ -34,4 +34,5 @@
     [SettingsConditionallyReadWrite=MediaSource] attribute DOMString language;
 
     attribute boolean selected;
+
 };

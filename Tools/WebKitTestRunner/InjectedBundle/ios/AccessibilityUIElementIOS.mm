@@ -302,12 +302,12 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaOwnsElementAtIndex(un
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaFlowToElementAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaControlsElementAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
@@ -328,12 +328,12 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAt
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index)
 {
-    return 0;
+    return nullptr;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const

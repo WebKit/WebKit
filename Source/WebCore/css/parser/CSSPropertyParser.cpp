@@ -2671,8 +2671,8 @@ static RefPtr<CSSBasicShapeInset> consumeBasicShapeInset(CSSParserTokenRange& ar
         shape->updateShapeSize1Value(top.releaseNonNull());
 
     if (consumeIdent<CSSValueRound>(args)) {
-        RefPtr<CSSPrimitiveValue> horizontalRadii[4] = { 0 };
-        RefPtr<CSSPrimitiveValue> verticalRadii[4] = { 0 };
+        RefPtr<CSSPrimitiveValue> horizontalRadii[4] = { nullptr };
+        RefPtr<CSSPrimitiveValue> verticalRadii[4] = { nullptr };
         if (!consumeRadii(horizontalRadii, verticalRadii, args, context.mode, false))
             return nullptr;
         shape->setTopLeftRadius(createPrimitiveValuePair(horizontalRadii[0].releaseNonNull(), verticalRadii[0].releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce));
@@ -2881,7 +2881,7 @@ static RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange& range)
 static RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID property, CSSParserTokenRange& range)
 {
     bool fill = consumeIdent<CSSValueFill>(range);
-    RefPtr<CSSPrimitiveValue> slices[4] = { 0 };
+    RefPtr<CSSPrimitiveValue> slices[4] = { nullptr };
 
     for (size_t index = 0; index < 4; ++index) {
         RefPtr<CSSPrimitiveValue> value = consumePercent(range, ValueRange::NonNegative);
@@ -2918,7 +2918,7 @@ static RefPtr<CSSValue> consumeBorderImageSlice(CSSPropertyID property, CSSParse
 
 static RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange& range)
 {
-    RefPtr<CSSPrimitiveValue> outsets[4] = { 0 };
+    RefPtr<CSSPrimitiveValue> outsets[4] = { nullptr };
 
     RefPtr<CSSPrimitiveValue> value;
     for (size_t index = 0; index < 4; ++index) {

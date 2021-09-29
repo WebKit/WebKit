@@ -39,24 +39,10 @@ namespace WebCore {
 class ScriptExecutionContext;
 class TextTrack;
 class TextTrackList;
+class TextTrackClient;
 class TextTrackCueList;
 class VTTRegion;
 class VTTRegionList;
-
-class TextTrackClient : public CanMakeWeakPtr<TextTrackClient> {
-public:
-    virtual ~TextTrackClient() = default;
-    virtual void textTrackIdChanged(TextTrack&) { }
-    virtual void textTrackKindChanged(TextTrack&) { }
-    virtual void textTrackModeChanged(TextTrack&) { }
-    virtual void textTrackLabelChanged(TextTrack&) { }
-    virtual void textTrackLanguageChanged(TextTrack&) { }
-    virtual void textTrackAddCues(TextTrack&, const TextTrackCueList&) { }
-    virtual void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) { }
-    virtual void textTrackAddCue(TextTrack&, TextTrackCue&) { }
-    virtual void textTrackRemoveCue(TextTrack&, TextTrackCue&) { }
-    virtual void willRemoveTextTrack(TextTrack&) { }
-};
 
 class TextTrack : public TrackBase, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(TextTrack);

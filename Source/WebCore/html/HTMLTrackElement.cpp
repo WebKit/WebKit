@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "LoadableTextTrack.h"
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -60,17 +61,17 @@ static String urlForLoggingTrack(const URL& url)
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document)
+    , m_track(LoadableTextTrack::create(*this, attributeWithoutSynchronization(kindAttr).convertToASCIILowercase(), label(), srclang()))
 {
+    m_track->addClient(*this);
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
     ASSERT(hasTagName(trackTag));
 }
 
 HTMLTrackElement::~HTMLTrackElement()
 {
-    if (m_track) {
-        m_track->clearElement();
-        m_track->clearClient(*this);
-    }
+    m_track->clearElement();
+    m_track->clearClient(*this);
 }
 
 Ref<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document& document)
@@ -142,21 +143,9 @@ bool HTMLTrackElement::isDefault() const
     return hasAttributeWithoutSynchronization(defaultAttr);
 }
 
-LoadableTextTrack& HTMLTrackElement::track()
+TextTrack& HTMLTrackElement::track()
 {
-    // FIXME: There is no practical value in lazily initializing this.
-    // Instead this should be created in the constructor.
-    if (!m_track) {
-        // The kind attribute is an enumerated attribute, limited only to known values. It defaults to 'subtitles' if missing or invalid.
-        String kind = attributeWithoutSynchronization(kindAttr).convertToASCIILowercase();
-        if (!TextTrack::isValidKindKeyword(kind))
-            kind = TextTrack::subtitlesKeyword();
-        m_track = LoadableTextTrack::create(*this, kind, label(), srclang());
-        m_track->addClient(*this);
-    }
-    ASSERT(m_track->trackElement() == this);
-
-    return *m_track;
+    return m_track;
 }
 
 bool HTMLTrackElement::isURLAttribute(const Attribute& attribute) const
@@ -206,7 +195,7 @@ void HTMLTrackElement::scheduleLoad()
             return;
         }
 
-        track().scheduleLoad(trackURL);
+        m_track->scheduleLoad(trackURL);
     });
 }
 
@@ -283,13 +272,11 @@ void HTMLTrackElement::setReadyState(ReadyState state)
 {
     track().setReadinessState(static_cast<TextTrack::ReadinessState>(state));
     if (auto parent = mediaElement())
-        parent->textTrackReadyStateChanged(m_track.get());
+        parent->textTrackReadyStateChanged(m_track.ptr());
 }
 
 HTMLTrackElement::ReadyState HTMLTrackElement::readyState() const
 {
-    if (!m_track)
-        return HTMLTrackElement::NONE;
     return static_cast<ReadyState>(m_track->readinessState());
 }
 

@@ -45,12 +45,13 @@ RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connecti
     , m_trackPrivate(trackPrivate)
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
-    m_trackPrivate->setClient(this);
+    m_trackPrivate->setClient(*this);
     m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
 {
+    m_trackPrivate->clearClient();
 }
 
 TrackPrivateRemoteConfiguration& RemoteVideoTrackProxy::configuration()

@@ -28,19 +28,16 @@
 #if ENABLE(VIDEO)
 
 #include "TrackPrivateBase.h"
+#include "VideoTrackPrivateClient.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
 
-class VideoTrackPrivateClient : public TrackPrivateBaseClient {
-public:
-    virtual void selectedChanged(bool) = 0;
-};
-
 class VideoTrackPrivate : public TrackPrivateBase {
 public:
-    void setClient(VideoTrackPrivateClient* client) { m_client = client; }
-    VideoTrackPrivateClient* client() const override { return m_client; }
+    void setClient(VideoTrackPrivateClient& client) { m_client = makeWeakPtr(client); }
+    void clearClient() { m_client = nullptr; }
+    VideoTrackPrivateClient* client() const override { return m_client.get(); }
 
     virtual void setSelected(bool selected)
     {
@@ -68,7 +65,7 @@ protected:
     VideoTrackPrivate() = default;
 
 private:
-    VideoTrackPrivateClient* m_client { nullptr };
+    WeakPtr<VideoTrackPrivateClient> m_client { nullptr };
     bool m_selected { false };
     SelectedChangedCallback m_selectedChangedCallback;
 };

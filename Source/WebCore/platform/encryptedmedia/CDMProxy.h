@@ -32,7 +32,6 @@
 
 #include "CDMInstance.h"
 #include "CDMInstanceSession.h"
-#include "MediaPlayerPrivate.h"
 #include "SharedBuffer.h"
 #include <wtf/BoxPtr.h>
 #include <wtf/Condition.h>
@@ -43,6 +42,8 @@
 #endif
 
 namespace WebCore {
+
+class MediaPlayer;
 
 using KeyIDType = Vector<uint8_t>;
 using KeyHandleValueVariant = Variant<

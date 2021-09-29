@@ -33,6 +33,7 @@
 #import "CachedResourceRequest.h"
 #import "DataURLDecoder.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
+#import "PlatformMediaResourceLoader.h"
 #import "ResourceLoaderOptions.h"
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"

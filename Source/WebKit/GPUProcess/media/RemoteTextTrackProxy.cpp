@@ -49,12 +49,13 @@ RemoteTextTrackProxy::RemoteTextTrackProxy(GPUConnectionToWebProcess& connection
     , m_trackPrivate(trackPrivate)
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
-    m_trackPrivate->setClient(this);
+    m_trackPrivate->setClient(*this);
     m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteTextTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteTextTrackProxy::~RemoteTextTrackProxy()
 {
+    m_trackPrivate->clearClient();
 }
 
 TextTrackPrivateRemoteConfiguration& RemoteTextTrackProxy::configuration()

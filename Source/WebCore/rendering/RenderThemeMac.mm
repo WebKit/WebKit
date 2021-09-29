@@ -965,7 +965,7 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
     style.setLineHeight(RenderStyle::initialLineHeight());
 
     if (style.setFontDescription(WTFMove(fontDescription)))
-        style.fontCascade().update(0);
+        style.fontCascade().update(nullptr);
 }
 
 NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const

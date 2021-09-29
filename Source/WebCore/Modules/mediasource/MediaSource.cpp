@@ -50,6 +50,7 @@
 #include "SourceBufferPrivate.h"
 #include "TextTrackList.h"
 #include "TimeRanges.h"
+#include "VideoTrack.h"
 #include "VideoTrackList.h"
 #include <wtf/IsoMallocInlines.h>
 

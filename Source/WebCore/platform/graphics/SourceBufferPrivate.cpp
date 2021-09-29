@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "AudioTrackPrivate.h"
 #include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaSample.h"
@@ -36,6 +37,7 @@
 #include "SharedBuffer.h"
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
+#include "VideoTrackPrivate.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StringPrintStream.h>

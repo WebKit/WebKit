@@ -25,19 +25,13 @@
 
 #pragma once
 
+#include "AudioTrackPrivateClient.h"
 #include "TrackPrivateBase.h"
 #include <wtf/Function.h>
 
 #if ENABLE(VIDEO)
 
 namespace WebCore {
-
-class AudioTrackPrivate;
-
-class AudioTrackPrivateClient : public TrackPrivateBaseClient {
-public:
-    virtual void enabledChanged(bool) = 0;
-};
 
 class AudioTrackPrivate : public TrackPrivateBase {
 public:
@@ -46,8 +40,9 @@ public:
         return adoptRef(*new AudioTrackPrivate);
     }
 
-    void setClient(AudioTrackPrivateClient* client) { m_client = client; }
-    AudioTrackPrivateClient* client() const override { return m_client; }
+    void setClient(AudioTrackPrivateClient& client) { m_client = makeWeakPtr(client); }
+    void clearClient() { m_client = nullptr; }
+    AudioTrackPrivateClient* client() const override { return m_client.get(); }
 
     virtual void setEnabled(bool enabled)
     {
@@ -78,7 +73,7 @@ protected:
     AudioTrackPrivate() = default;
 
 private:
-    AudioTrackPrivateClient* m_client { nullptr };
+    WeakPtr<AudioTrackPrivateClient> m_client;
     bool m_enabled { false };
     EnabledChangedCallback m_enabledChangedCallback;
 };

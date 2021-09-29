@@ -29,25 +29,16 @@
 #if ENABLE(VIDEO)
 
 #include "TrackBase.h"
-#include "VideoTrackPrivate.h"
+#include "VideoTrackPrivateClient.h"
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
 class MediaDescription;
 class VideoTrack;
+class VideoTrackClient;
 class VideoTrackList;
-
-class VideoTrackClient : public CanMakeWeakPtr<VideoTrackClient> {
-public:
-    virtual ~VideoTrackClient() = default;
-    virtual void videoTrackIdChanged(VideoTrack&) { }
-    virtual void videoTrackKindChanged(VideoTrack&) { }
-    virtual void videoTrackLabelChanged(VideoTrack&) { }
-    virtual void videoTrackLanguageChanged(VideoTrack&) { }
-    virtual void videoTrackSelectedChanged(VideoTrack&) { }
-    virtual void willRemoveVideoTrack(VideoTrack&) { }
-};
+class VideoTrackPrivate;
 
 class VideoTrack final : public MediaTrackBase, private VideoTrackPrivateClient {
 public:

@@ -28,7 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
-#include "AudioTrack.h"
+#include "AudioTrackClient.h"
 #include "AutoplayEvent.h"
 #include "CaptionUserPreferences.h"
 #include "HTMLElement.h"
@@ -39,8 +39,8 @@
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "MediaUniqueIdentifier.h"
-#include "TextTrack.h"
-#include "VideoTrack.h"
+#include "TextTrackClient.h"
+#include "VideoTrackClient.h"
 #include "VisibilityChangeClient.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>

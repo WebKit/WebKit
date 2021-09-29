@@ -310,7 +310,7 @@ void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     fontDescription.setRenderingMode(settings().fontRenderingMode());
     fontDescription.setComputedSize(12);
     font = FontCascade(WTFMove(fontDescription), 0, 0);
-    font.update(0);
+    font.update(nullptr);
 
     run = TextRun(m_unavailablePluginReplacementText);
     textWidth = font.width(run);

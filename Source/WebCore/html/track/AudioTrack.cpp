@@ -31,10 +31,12 @@
 
 #include "config.h"
 #include "AudioTrack.h"
-#include "AudioTrackList.h"
 
 #if ENABLE(VIDEO)
 
+#include "AudioTrackClient.h"
+#include "AudioTrackList.h"
+#include "AudioTrackPrivate.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -80,13 +82,13 @@ AudioTrack::AudioTrack(ScriptExecutionContext* context, AudioTrackPrivate& track
     , m_private(trackPrivate)
     , m_enabled(trackPrivate.enabled())
 {
-    m_private->setClient(this);
+    m_private->setClient(*this);
     updateKindFromPrivate();
 }
 
 AudioTrack::~AudioTrack()
 {
-    m_private->setClient(nullptr);
+    m_private->clearClient();
 }
 
 void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
@@ -94,10 +96,10 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
     if (m_private.ptr() == &trackPrivate)
         return;
 
-    m_private->setClient(nullptr);
+    m_private->clearClient();
     m_private = trackPrivate;
     m_private->setEnabled(m_enabled);
-    m_private->setClient(this);
+    m_private->setClient(*this);
 #if !RELEASE_LOG_DISABLED
     m_private->setLogger(logger(), logIdentifier());
 #endif

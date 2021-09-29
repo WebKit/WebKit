@@ -34,7 +34,9 @@
 
 #if ENABLE(VIDEO)
 
+#include "VideoTrackClient.h"
 #include "VideoTrackList.h"
+#include "VideoTrackPrivate.h"
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(MEDIA_SOURCE)
@@ -84,13 +86,13 @@ VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& track
     , m_private(trackPrivate)
     , m_selected(trackPrivate.selected())
 {
-    m_private->setClient(this);
+    m_private->setClient(*this);
     updateKindFromPrivate();
 }
 
 VideoTrack::~VideoTrack()
 {
-    m_private->setClient(nullptr);
+    m_private->clearClient();
 }
 
 void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
@@ -98,9 +100,9 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
     if (m_private.ptr() == &trackPrivate)
         return;
 
-    m_private->setClient(nullptr);
+    m_private->clearClient();
     m_private = trackPrivate;
-    m_private->setClient(this);
+    m_private->setClient(*this);
 #if !RELEASE_LOG_DISABLED
     m_private->setLogger(logger(), logIdentifier());
 #endif

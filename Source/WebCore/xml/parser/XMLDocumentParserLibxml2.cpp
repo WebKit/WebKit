@@ -563,7 +563,7 @@ RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr h
     xmlParserCtxtPtr parser = xmlCreateMemoryParserCtxt(chunk.data(), chunk.length());
 
     if (!parser)
-        return 0;
+        return nullptr;
 
     memcpy(parser->sax, handlers, sizeof(xmlSAXHandler));
 

@@ -67,7 +67,7 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace
 StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota, PAL::SessionID sessionID)
     : m_storageType(storageType)
     , m_path(path.isolatedCopy())
-    , m_syncManager(0)
+    , m_syncManager(nullptr)
     , m_quota(quota)
     , m_isShutdown(false)
     , m_sessionID(sessionID)

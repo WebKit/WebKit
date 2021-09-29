@@ -32,6 +32,7 @@
 #include "ApplicationCacheResource.h"
 #include "Attribute.h"
 #include "AudioTrackList.h"
+#include "AudioTrackPrivate.h"
 #include "Blob.h"
 #include "BlobURL.h"
 #include "CSSPropertyNames.h"
@@ -68,6 +69,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSHTMLMediaElement.h"
 #include "JSMediaControlsHost.h"
+#include "LoadableTextTrack.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaController.h"
@@ -87,6 +89,7 @@
 #include "PageGroup.h"
 #include "PictureInPictureSupport.h"
 #include "PlatformMediaSessionManager.h"
+#include "PlatformTextTrack.h"
 #include "ProgressTracker.h"
 #include "Quirks.h"
 #include "RegistrableDomain.h"
@@ -111,7 +114,9 @@
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
 #include "VideoPlaybackQuality.h"
+#include "VideoTrack.h"
 #include "VideoTrackList.h"
+#include "VideoTrackPrivate.h"
 #include <JavaScriptCore/ScriptObject.h>
 #include <JavaScriptCore/Uint8Array.h>
 #include <limits>

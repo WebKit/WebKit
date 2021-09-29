@@ -28,25 +28,14 @@
 
 #if ENABLE(VIDEO)
 
-#include "AudioTrackPrivate.h"
+#include "AudioTrackPrivateClient.h"
 #include "TrackBase.h"
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
-class AudioTrack;
+class AudioTrackClient;
 class AudioTrackList;
-
-class AudioTrackClient : public CanMakeWeakPtr<AudioTrackClient> {
-public:
-    virtual ~AudioTrackClient() = default;
-    virtual void audioTrackEnabledChanged(AudioTrack&) { }
-    virtual void audioTrackIdChanged(AudioTrack&) { }
-    virtual void audioTrackKindChanged(AudioTrack&) { }
-    virtual void audioTrackLabelChanged(AudioTrack&) { }
-    virtual void audioTrackLanguageChanged(AudioTrack&) { }
-    virtual void willRemoveAudioTrack(AudioTrack&) { }
-};
 
 class AudioTrack final : public MediaTrackBase, private AudioTrackPrivateClient {
 public:
