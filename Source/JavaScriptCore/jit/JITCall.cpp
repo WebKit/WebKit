@@ -233,7 +233,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
         info->bytecodeIndex = m_bytecodeIndex;
         info->callType = CallLinkInfo::callTypeFor(opcodeID);
 
-        infoConstant = m_constantPool.add(JITConstantPool::Type::CallLinkInfo, info);
+        infoConstant = addToConstantPool(JITConstantPool::Type::CallLinkInfo, info);
 
         ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
         m_callCompilationInfo.append(CallCompilationInfo());
@@ -421,7 +421,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::GetById;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -518,7 +518,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
         stubInfo->accessType = AccessType::GetById;
         stubInfo->bytecodeIndex = m_bytecodeIndex;
-        JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+        JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
         gen.m_unlinkedStubInfo = stubInfo;
 
@@ -553,7 +553,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
         stubInfo->accessType = AccessType::GetById;
         stubInfo->bytecodeIndex = m_bytecodeIndex;
-        JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+        JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
         gen.m_unlinkedStubInfo = stubInfo;
 

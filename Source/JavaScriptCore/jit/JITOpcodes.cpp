@@ -180,7 +180,7 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::InstanceOf;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1612,7 +1612,7 @@ void JIT::emitNewFuncCommon(const Instruction* currentInstruction)
 #else
     emitLoadPayload(bytecode.m_scope, argumentGPR1);
 #endif
-    auto constant = m_constantPool.add(JITConstantPool::Type::FunctionDecl, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
+    auto constant = addToConstantPool(JITConstantPool::Type::FunctionDecl, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
     loadConstant(constant, argumentGPR2);
 
     OpcodeID opcodeID = Op::opcodeID;
@@ -1659,7 +1659,7 @@ void JIT::emitNewFuncExprCommon(const Instruction* currentInstruction)
     emitLoadPayload(bytecode.m_scope, argumentGPR1);
 #endif
 
-    auto constant = m_constantPool.add(JITConstantPool::Type::FunctionExpr, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
+    auto constant = addToConstantPool(JITConstantPool::Type::FunctionExpr, bitwise_cast<void*>(static_cast<uintptr_t>(bytecode.m_functionDecl)));
     loadConstant(constant, argumentGPR2);
     OpcodeID opcodeID = Op::opcodeID;
 

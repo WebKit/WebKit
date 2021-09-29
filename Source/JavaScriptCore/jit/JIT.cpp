@@ -77,13 +77,20 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     , m_shouldEmitProfiling(false)
     , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
 {
-    m_globalObjectConstant = m_constantPool.add(JITConstantPool::Type::GlobalObject);
+    m_globalObjectConstant = addToConstantPool(JITConstantPool::Type::GlobalObject);
     m_profiledCodeBlock = codeBlock;
     m_unlinkedCodeBlock = codeBlock->unlinkedCodeBlock();
 }
 
 JIT::~JIT()
 {
+}
+
+JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, void* payload)
+{
+    unsigned result = m_constantPool.size();
+    m_constantPool.append(JITConstantPool::Value { payload, type });
+    return result;
 }
 
 #if ENABLE(DFG_JIT)

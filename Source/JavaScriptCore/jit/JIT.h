@@ -973,6 +973,8 @@ namespace JSC {
 
         void resetSP();
 
+        JITConstantPool::Constant addToConstantPool(JITConstantPool::Type, void* payload = nullptr);
+
         Interpreter* m_interpreter;
 
         Vector<FarCallRecord> m_farCalls;
@@ -1040,7 +1042,7 @@ namespace JSC {
         MathICHolder m_mathICs;
         RefPtr<BaselineJITCode> m_jitCode;
 
-        JITConstantPool m_constantPool;
+        Vector<JITConstantPool::Value> m_constantPool;
         JITConstantPool::Constant m_globalObjectConstant { std::numeric_limits<unsigned>::max() };
         Bag<UnlinkedCallLinkInfo> m_unlinkedCalls;
         Bag<CallLinkInfo> m_evalCallLinkInfos;

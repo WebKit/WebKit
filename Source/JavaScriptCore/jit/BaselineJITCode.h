@@ -28,6 +28,7 @@
 #include "CallLinkInfo.h"
 #include "JITCode.h"
 #include "JITCodeMap.h"
+#include <wtf/CompactPointerTuple.h>
 
 #if ENABLE(JIT)
 
@@ -55,6 +56,7 @@ private:
 };
 
 class JITConstantPool {
+    WTF_MAKE_NONCOPYABLE(JITConstantPool);
 public:
     using Constant = unsigned;
 
@@ -66,27 +68,22 @@ public:
         FunctionExpr,
     };
 
-    struct Value {
-        Type type;
-        PackedPtr<void> payload;
-    };
+    using Value = CompactPointerTuple<void*, Type>;
 
     JITConstantPool() = default;
     JITConstantPool(JITConstantPool&&) = default;
     JITConstantPool& operator=(JITConstantPool&&) = default;
 
-    Constant add(Type type, void* payload = nullptr)
+    JITConstantPool(Vector<Value>&& constants)
+        : m_constants(WTFMove(constants))
     {
-        unsigned result = m_constants.size();
-        m_constants.append(Value { type, payload });
-        return result;
     }
 
     size_t size() const { return m_constants.size(); }
     Value at(size_t i) const { return m_constants[i]; }
 
 private:
-    Vector<Value> m_constants;
+    FixedVector<Value> m_constants;
 };
 
 

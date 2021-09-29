@@ -805,31 +805,31 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         jitData.m_jitConstantPool = FixedVector<void*>(jitCode->m_constantPool.size());
         for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {
             auto entry = jitCode->m_constantPool.at(i);
-            switch (entry.type) {
+            switch (entry.type()) {
             case JITConstantPool::Type::GlobalObject:
                 jitData.m_jitConstantPool[i] = m_globalObject.get();
                 break;
             case JITConstantPool::Type::CallLinkInfo: {
-                UnlinkedCallLinkInfo& unlinkedCallLinkInfo = *static_cast<UnlinkedCallLinkInfo*>(entry.payload.get());
+                UnlinkedCallLinkInfo& unlinkedCallLinkInfo = *static_cast<UnlinkedCallLinkInfo*>(entry.pointer());
                 CallLinkInfo* callLinkInfo = jitData.m_callLinkInfos.add(CodeOrigin(unlinkedCallLinkInfo.bytecodeIndex));
                 callLinkInfo->initializeDataIC(vm(), unlinkedCallLinkInfo, GPRInfo::regT0, GPRInfo::regT2);
                 jitData.m_jitConstantPool[i] = callLinkInfo;
                 break;
             }
             case JITConstantPool::Type::StructureStubInfo: {
-                UnlinkedStructureStubInfo& unlinkedStubInfo = *static_cast<UnlinkedStructureStubInfo*>(entry.payload.get());
+                UnlinkedStructureStubInfo& unlinkedStubInfo = *static_cast<UnlinkedStructureStubInfo*>(entry.pointer());
                 StructureStubInfo* stubInfo = jitData.m_stubInfos.add(unlinkedStubInfo.accessType, CodeOrigin(unlinkedStubInfo.bytecodeIndex));
                 stubInfo->initializeFromUnlinkedStructureStubInfo(this, unlinkedStubInfo);
                 jitData.m_jitConstantPool[i] = stubInfo;
                 break;
             }
             case JITConstantPool::Type::FunctionDecl: {
-                unsigned index = bitwise_cast<uintptr_t>(entry.payload.get());
+                unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
                 jitData.m_jitConstantPool[i] = functionDecl(index);
                 break;
             }
             case JITConstantPool::Type::FunctionExpr: {
-                unsigned index = bitwise_cast<uintptr_t>(entry.payload.get());
+                unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
                 jitData.m_jitConstantPool[i] = functionExpr(index);
                 break;
             }

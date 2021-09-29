@@ -83,7 +83,7 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
         UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
         stubInfo->accessType = AccessType::GetByVal;
         stubInfo->bytecodeIndex = m_bytecodeIndex;
-        JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+        JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
         gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
         gen.m_unlinkedStubInfo = stubInfo;
 
@@ -226,7 +226,7 @@ void JIT::emit_op_get_private_name(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::GetPrivateName;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -339,7 +339,7 @@ void JIT::emit_op_set_private_brand(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::SetPrivateBrand;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -415,7 +415,7 @@ void JIT::emit_op_check_private_brand(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::CheckPrivateBrand;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -502,7 +502,7 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     stubInfo->putKind = std::is_same_v<Op, OpPutByValDirect> ? PutKind::Direct : PutKind::NotDirect;
     stubInfo->ecmaMode = ecmaMode(bytecode);
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -651,7 +651,7 @@ void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
     stubInfo->accessType = AccessType::PutPrivateName;
     stubInfo->privateFieldPutKind = bytecode.m_putKind;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -817,7 +817,7 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::DeleteByID;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -942,7 +942,7 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::DeleteByVal;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1065,7 +1065,7 @@ void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::TryGetById;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1140,7 +1140,7 @@ void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::GetByIdDirect;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1224,7 +1224,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::GetById;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1304,7 +1304,7 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::GetByIdWithThis;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1469,7 +1469,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     stubInfo->putKind = direct ? PutKind::Direct : PutKind::NotDirect;
     stubInfo->ecmaMode = ecmaMode(bytecode);
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1585,7 +1585,7 @@ void JIT::emit_op_in_by_id(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::InById;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1664,7 +1664,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::InByVal;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -1741,7 +1741,7 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = type;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
@@ -3062,7 +3062,7 @@ void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
     UnlinkedStructureStubInfo* stubInfo = m_unlinkedStubInfos.add();
     stubInfo->accessType = AccessType::GetByVal;
     stubInfo->bytecodeIndex = m_bytecodeIndex;
-    JITConstantPool::Constant stubInfoIndex = m_constantPool.add(JITConstantPool::Type::StructureStubInfo, stubInfo);
+    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, stubInfo);
     gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
     gen.m_unlinkedStubInfo = stubInfo;
 
