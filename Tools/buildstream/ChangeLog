@@ -1,5 +1,16 @@
 2021-09-29  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] rr replay is broken
+        https://bugs.webkit.org/show_bug.cgi?id=230952
+
+        Reviewed by Sergio Villar Senin.
+
+        * patches/rr/0001-cmake-Look-for-resources-in-cmake-s-install-lib-dir.patch: As lib
+        resources and bin resources don't necessarily share the same parent directory, one lookup
+        function is needed for each use-case.
+
+2021-09-29  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] rr unable to locate librrpage.so
         https://bugs.webkit.org/show_bug.cgi?id=230942
 
