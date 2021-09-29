@@ -1,3 +1,15 @@
+2021-09-29  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r281602.
+
+        These tests are working now
+
+        Reverted changeset:
+
+        "25 webkit imported/w3c/web-platform-tests/css/ layout tests
+        failing with black bars"
+        https://commits.webkit.org/r281602
+
 2021-09-29  Eric Hutchison  <ehutchison@apple.com>
 
         Update test expectations to include x86 for imported/w3c/web-platform-tests/resource-timing/sizes-redirect-img.html.
