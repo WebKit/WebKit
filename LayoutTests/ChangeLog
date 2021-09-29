@@ -1,3 +1,12 @@
+2021-09-29  Ayumi Kojima  <ayumi_kojima@apple.com>
+
+        [ iOS BigSur ] http/tests/appcache/fail-on-update.html is a flaky timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=227891
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
 
         Update css-ui WPT
