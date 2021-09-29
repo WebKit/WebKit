@@ -109,8 +109,6 @@ fast/forms/ios/zoom-after-input-tap-wide-input.html [ Pass Failure Timeout Crash
 fast/forms/ios/zoom-after-input-tap.html [ Pass Failure Timeout Crash ]
 fast/events/ios/key-events-comprehensive/key-events-control-option.html [ Pass Timeout ]
 [ Debug ] fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Timeout ]
-[ Debug ] fast/selectors/is-backtracking.html [ Pass Timeout ]
-[ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]
 
 fast/forms/ios/dismiss-picker-using-keyboard.html [ Pass Timeout ]
 fast/forms/ios/drag-range-thumb.html [ Pass Timeout Crash Timeout ]

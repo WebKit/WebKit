@@ -1877,6 +1877,9 @@ webkit.org/b/230959 fast/scrolling/ios/click-events-after-long-press-during-mome
 
 webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ Pass Failure ]
 
+webkit.org/b/230988 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
+webkit.org/b/230988 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
+
 http/tests/in-app-browser-privacy/ [ Pass ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
