@@ -1,3 +1,17 @@
+2021-09-29  Eric Hutchison  <ehutchison@apple.com>
+
+        Unreviewed, reverting r282850.
+
+        Patch causing many crashes in
+        bmalloc::Heap::decommitLargeRange
+
+        Reverted changeset:
+
+        "[bmalloc] freeableMemory and footprint of Heap are completely
+        broken"
+        https://bugs.webkit.org/show_bug.cgi?id=230245
+        https://commits.webkit.org/r282850
+
 2021-09-27  Filip Pizlo  <fpizlo@apple.com>
 
         [libpas] Fix coalescing of the large sharing pool and make it easy to introspect it (update to e4d20851ee9ff00f2962b349a9ff8465695a83d7)

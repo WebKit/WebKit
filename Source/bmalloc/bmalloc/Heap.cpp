@@ -99,38 +99,6 @@ size_t Heap::footprint()
     return m_footprint;
 }
 
-BINLINE void Heap::adjustStat(size_t& value, ssize_t amount)
-{
-    auto result = value + amount;
-    BASSERT((amount >= 0 && result >= value) || (amount < 0 && result < value));
-    value = result;
-}
-
-BINLINE void Heap::logStat(size_t value, ssize_t amount, const char* label, const char* note)
-{
-    fprintf(stderr, "%s: %lu (%ld) %s\n", label, value, amount, note);
-}
-
-BINLINE void Heap::adjustFreeableMemory(UniqueLockHolder&, ssize_t amount, const char* note)
-{
-    constexpr bool verbose = false;
-
-    adjustStat(m_freeableMemory, amount);
-
-    if constexpr (verbose)
-        logStat(m_freeableMemory, amount, "freeableMemory", note);
-}
-
-BINLINE void Heap::adjustFootprint(UniqueLockHolder&, ssize_t amount, const char* note)
-{
-    constexpr bool verbose = false;
-
-    adjustStat(m_footprint, amount);
-
-    if constexpr (verbose)
-        logStat(m_footprint, amount, "footprint", note);
-}
-
 void Heap::markAllLargeAsEligibile(const LockHolder&)
 {
     m_largeFree.markAllAsEligibile();
@@ -138,12 +106,12 @@ void Heap::markAllLargeAsEligibile(const LockHolder&)
     m_condition.notify_all();
 }
 
-void Heap::decommitLargeRange(UniqueLockHolder& lock, LargeRange& range, BulkDecommit& decommitter)
+void Heap::decommitLargeRange(UniqueLockHolder&, LargeRange& range, BulkDecommit& decommitter)
 {
     BASSERT(range.hasPhysicalPages());
 
-    adjustFootprint(lock, -range.totalPhysicalSize(), "decommitLargeRange");
-    adjustFreeableMemory(lock, -range.totalPhysicalSize(), "decommitLargeRange");
+    m_footprint -= range.totalPhysicalSize();
+    m_freeableMemory -= range.totalPhysicalSize();
     decommitter.addLazy(range.begin(), range.physicalEnd() - range.begin());
     m_hasPendingDecommits = true;
     range.setStartPhysicalSize(0);
@@ -171,8 +139,8 @@ void Heap::scavenge(UniqueLockHolder& lock, BulkDecommit& decommitter, size_t& d
 
                 size_t pageSize = bmalloc::pageSize(&list - &m_freePages[0]);
                 size_t decommitSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
-                adjustFootprint(lock, -decommitSize, "scavenge");
-                adjustFreeableMemory(lock, -decommitSize, "scavenge");
+                m_freeableMemory -= decommitSize;
+                m_footprint -= decommitSize;
                 decommitter.addEager(page->begin()->begin(), pageSize);
                 page->setHasPhysicalPages(false);
 #if ENABLE_PHYSICAL_PAGE_MAP
@@ -237,7 +205,7 @@ void Heap::allocateSmallChunk(UniqueLockHolder& lock, size_t pageClass, FailureA
             chunk->freePages().push(page);
         });
 
-        adjustFreeableMemory(lock, chunkSize, "allocateSmallChunk");
+        m_freeableMemory += chunkSize;
 
         m_scavenger->schedule(0);
 
@@ -307,10 +275,10 @@ SmallPage* Heap::allocateSmallPage(UniqueLockHolder& lock, size_t sizeClass, Lin
         size_t pageSize = bmalloc::pageSize(pageClass);
         size_t physicalSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
         if (page->hasPhysicalPages())
-            adjustFreeableMemory(lock, -physicalSize, "allocateSmallPage");
+            m_freeableMemory -= physicalSize;
         else {
             m_scavenger->scheduleIfUnderMemoryPressure(pageSize);
-            adjustFootprint(lock, physicalSize, "allocateSmallPage");
+            m_footprint += physicalSize;
             vmAllocatePhysicalPagesSloppy(page->begin()->begin(), pageSize);
             page->setHasPhysicalPages(true);
 #if ENABLE_PHYSICAL_PAGE_MAP
@@ -346,7 +314,7 @@ void Heap::deallocateSmallLine(UniqueLockHolder& lock, Object object, LineCache&
 
     size_t pageClass = m_constants.pageClass(page->sizeClass());
 
-    adjustFreeableMemory(lock, physicalPageSizeSloppy(page->begin()->begin(), pageSize(pageClass)), "deallocateSmallLine");
+    m_freeableMemory += physicalPageSizeSloppy(page->begin()->begin(), pageSize(pageClass));
 
     List<SmallPage>::remove(page); // 'page' may be in any thread's line cache.
     
@@ -522,7 +490,7 @@ LargeRange Heap::splitAndAllocate(UniqueLockHolder& lock, LargeRange& range, siz
     
     if (range.startPhysicalSize() < range.size()) {
         m_scavenger->scheduleIfUnderMemoryPressure(range.size());
-        adjustFootprint(lock, range.size() - range.totalPhysicalSize(), "splitAndAllocate");
+        m_footprint += range.size() - range.totalPhysicalSize();
         vmAllocatePhysicalPagesSloppy(range.begin() + range.startPhysicalSize(), range.size() - range.startPhysicalSize());
         range.setStartPhysicalSize(range.size());
         range.setTotalPhysicalSize(range.size());
@@ -533,12 +501,12 @@ LargeRange Heap::splitAndAllocate(UniqueLockHolder& lock, LargeRange& range, siz
     }
     
     if (prev) {
-        adjustFreeableMemory(lock, prev.totalPhysicalSize(), "splitAndAllocate.prev");
+        m_freeableMemory += prev.totalPhysicalSize();
         m_largeFree.add(prev);
     }
 
     if (next) {
-        adjustFreeableMemory(lock, next.totalPhysicalSize(), "splitAndAllocate.next");
+        m_freeableMemory += next.totalPhysicalSize();
         m_largeFree.add(next);
     }
 
@@ -584,12 +552,10 @@ void* Heap::allocateLarge(UniqueLockHolder& lock, size_t alignment, size_t size,
         ASSERT_OR_RETURN_ON_FAILURE(range);
         
         m_largeFree.add(range);
-        adjustFreeableMemory(lock, range.totalPhysicalSize(), "allocateLarge");
-        adjustFootprint(lock, range.totalPhysicalSize(), "allocateLarge");
-
         range = m_largeFree.remove(alignment, size);
     }
-    adjustFreeableMemory(lock, -range.totalPhysicalSize(), "allocateLarge.reuse");
+
+    m_freeableMemory -= range.totalPhysicalSize();
 
     void* result = splitAndAllocate(lock, range, alignment, size).begin();
     ASSERT_OR_RETURN_ON_FAILURE(result);
@@ -639,11 +605,11 @@ void Heap::shrinkLarge(UniqueLockHolder& lock, const Range& object, size_t newSi
     m_scavenger->schedule(size);
 }
 
-void Heap::deallocateLarge(UniqueLockHolder& lock, void* object)
+void Heap::deallocateLarge(UniqueLockHolder&, void* object)
 {
     size_t size = m_largeAllocated.remove(object);
     m_largeFree.add(LargeRange(object, size, size, size, static_cast<char*>(object) + size));
-    adjustFreeableMemory(lock, size, "deallocateLarge");
+    m_freeableMemory += size;
     m_scavenger->schedule(size);
 }
 
@@ -653,11 +619,11 @@ void Heap::externalCommit(void* ptr, size_t size)
     externalCommit(lock, ptr, size);
 }
 
-void Heap::externalCommit(UniqueLockHolder& lock, void* ptr, size_t size)
+void Heap::externalCommit(UniqueLockHolder&, void* ptr, size_t size)
 {
     BUNUSED_PARAM(ptr);
 
-    adjustFootprint(lock, size, "externalCommit");
+    m_footprint += size;
 #if ENABLE_PHYSICAL_PAGE_MAP 
     m_physicalPageMap.commit(ptr, size);
 #endif
@@ -669,11 +635,11 @@ void Heap::externalDecommit(void* ptr, size_t size)
     externalDecommit(lock, ptr, size);
 }
 
-void Heap::externalDecommit(UniqueLockHolder& lock, void* ptr, size_t size)
+void Heap::externalDecommit(UniqueLockHolder&, void* ptr, size_t size)
 {
     BUNUSED_PARAM(ptr);
 
-    adjustFootprint(lock, -size, "externalDecommit");
+    m_footprint -= size;
 #if ENABLE_PHYSICAL_PAGE_MAP 
     m_physicalPageMap.decommit(ptr, size);
 #endif
