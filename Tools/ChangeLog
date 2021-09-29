@@ -1,3 +1,16 @@
+2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Make build-webkit configurable using environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=230958
+
+        Reviewed by Fujii Hironori.
+
+        The cmake toolchain file is hard coded in the script. Make it configurable using
+        environment variable.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2021-09-29  Youenn Fablet  <youenn@apple.com>
 
         WPT importer should create serviceworker template for templated test that have worker as global
