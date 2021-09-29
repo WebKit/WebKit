@@ -1,3 +1,16 @@
+2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update WPT's IDL for font palettes
+        https://bugs.webkit.org/show_bug.cgi?id=230794
+        <rdar://problem/83530497>
+
+        Reviewed by Tim Horton.
+
+        Updating to the latest spec.
+
+        * web-platform-tests/css/css-fonts/idlharness-expected.txt:
+        * web-platform-tests/interfaces/css-fonts.idl:
+
 2021-09-29  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Align property order of DOM constructors with ECMA-262 counterparts
