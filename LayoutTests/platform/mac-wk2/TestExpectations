@@ -1653,7 +1653,7 @@ webkit.org/b/230013 [ BigSur Debug ] http/tests/inspector/network/x-frame-option
 
 webkit.org/b/230027 [ BigSur Debug ] http/tests/media/media-document-referer.html [ Pass Failure ]
 
-webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Slow ]
+webkit.org/b/228209 fast/speechrecognition/start-recognition-after-gum.html [ Pass Timeout ]
 
 webkit.org/b/230070 media/track/track-cue-css.html [ Pass ImageOnlyFailure ]
 
