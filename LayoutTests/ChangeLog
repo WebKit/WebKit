@@ -1,3 +1,12 @@
+2021-09-29  Eric Hutchison  <ehutchison@apple.com>
+
+        [iOS EWS] imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=230979.
+
+        Unreviewed test gardening.
+
+        * platform/ios-14-wk2/TestExpectations:
+
 2021-09-29  Alan Bujtas  <zalan@apple.com>
 
         Thin hairline gap displayed for subpixel sized inset box-shadows

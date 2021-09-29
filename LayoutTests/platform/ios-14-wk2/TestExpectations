@@ -27,3 +27,4 @@ webkit.org/b/230696 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-close.
 
 webkit.org/b/230865 webrtc/video-mute.html [ Pass Failure ]
 
+webkit.org/b/230979 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html [ Pass Failure ]
