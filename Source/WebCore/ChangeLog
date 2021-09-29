@@ -1,3 +1,16 @@
+2021-09-29  Olivier Blin  <olivier.blin@softathome.com>
+
+        Fix typo in RenderSVGBlock::updateFromStyle comment
+        https://bugs.webkit.org/show_bug.cgi?id=230955
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a comment fix.
+
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::updateFromStyle): refactor instead of reactor.
+
+
 2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font palette names have to start with two hyphens

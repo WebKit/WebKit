@@ -46,7 +46,7 @@ void RenderSVGBlock::updateFromStyle()
     //
     // If we want to support overflow rules for <foreignObject> we can choose between two solutions:
     // a) make RenderSVGForeignObject require layers and SVG layer aware
-    // b) reactor overflow logic out of RenderLayer (as suggested by dhyatt), which is a large task
+    // b) refactor overflow logic out of RenderLayer (as suggested by dhyatt), which is a large task
     //
     // Until this is resolved, disable overflow support. Opera/FF don't support it as well at the moment (Feb 2010).
     //
