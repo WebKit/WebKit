@@ -66,7 +66,7 @@ AccessibilityOrientation AccessibilitySlider::orientation() const
     
     const RenderStyle& style = m_renderer->style();
 
-    ControlPart styleAppearance = style.appearance();
+    ControlPart styleAppearance = style.effectiveAppearance();
     switch (styleAppearance) {
     case SliderThumbHorizontalPart:
     case SliderHorizontalPart:

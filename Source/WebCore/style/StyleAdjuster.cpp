@@ -459,7 +459,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     // Menulists should have visible overflow
-    if (style.appearance() == MenulistPart) {
+    if (style.effectiveAppearance() == MenulistPart) {
         style.setOverflowX(Overflow::Visible);
         style.setOverflowY(Overflow::Visible);
     }

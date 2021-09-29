@@ -379,13 +379,13 @@ bool RenderThemeWin::supportsFocus(ControlPart appearance) const
 
 bool RenderThemeWin::supportsFocusRing(const RenderStyle& style) const
 {
-    return supportsFocus(style.appearance());
+    return supportsFocus(style.effectiveAppearance());
 }
 
 unsigned RenderThemeWin::determineClassicState(const RenderObject& o, ControlSubPart subPart)
 {
     unsigned state = 0;
-    switch (o.style().appearance()) {
+    switch (o.style().effectiveAppearance()) {
         case PushButtonPart:
         case ButtonPart:
         case DefaultButtonPart:
@@ -397,7 +397,7 @@ unsigned RenderThemeWin::determineClassicState(const RenderObject& o, ControlSub
             break;
         case RadioPart:
         case CheckboxPart:
-            state = (o.style().appearance() == RadioPart) ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK;
+            state = (o.style().effectiveAppearance() == RadioPart) ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK;
             if (isChecked(o))
                 state |= DFCS_CHECKED;
             if (!isEnabled(o))
@@ -432,7 +432,7 @@ unsigned RenderThemeWin::determineClassicState(const RenderObject& o, ControlSub
 unsigned RenderThemeWin::determineState(const RenderObject& o)
 {
     unsigned result = TS_NORMAL;
-    ControlPart appearance = o.style().appearance();
+    ControlPart appearance = o.style().effectiveAppearance();
     if (!isEnabled(o))
         result = TS_DISABLED;
     else if (isReadOnlyControl(o) && (TextFieldPart == appearance || TextAreaPart == appearance || SearchFieldPart == appearance))
@@ -455,7 +455,7 @@ unsigned RenderThemeWin::determineSliderThumbState(const RenderObject& o)
     unsigned result = TUS_NORMAL;
     if (!isEnabled(o))
         result = TUS_DISABLED;
-    else if (supportsFocus(o.style().appearance()) && isFocused(o))
+    else if (supportsFocus(o.style().effectiveAppearance()) && isFocused(o))
         result = TUS_FOCUSED;
     else if (isPressed(o))
         result = TUS_PRESSED;
@@ -471,7 +471,7 @@ unsigned RenderThemeWin::determineButtonState(const RenderObject& o)
         result = PBS_DISABLED;
     else if (isPressed(o))
         result = PBS_PRESSED;
-    else if (supportsFocus(o.style().appearance()) && isFocused(o))
+    else if (supportsFocus(o.style().effectiveAppearance()) && isFocused(o))
         result = PBS_DEFAULTED;
     else if (isHovered(o))
         result = PBS_HOT;
@@ -496,7 +496,7 @@ unsigned RenderThemeWin::determineSpinButtonState(const RenderObject& o, Control
 ThemeData RenderThemeWin::getClassicThemeData(const RenderObject& o, ControlSubPart subPart)
 {
     ThemeData result;
-    switch (o.style().appearance()) {
+    switch (o.style().effectiveAppearance()) {
         case PushButtonPart:
         case ButtonPart:
         case DefaultButtonPart:
@@ -551,7 +551,7 @@ ThemeData RenderThemeWin::getThemeData(const RenderObject& o, ControlSubPart sub
         return getClassicThemeData(o, subPart);
 
     ThemeData result;
-    switch (o.style().appearance()) {
+    switch (o.style().effectiveAppearance()) {
         case PushButtonPart:
         case ButtonPart:
         case DefaultButtonPart:
@@ -633,8 +633,8 @@ static void drawControl(GraphicsContext& context, const RenderObject& o, HANDLE 
         } else if (themeData.m_part == TKP_TRACK || themeData.m_part == TKP_TRACKVERT) {
             ::DrawEdge(hdc, &widgetRect, EDGE_SUNKEN, BF_RECT | BF_ADJUST);
             ::FillRect(hdc, &widgetRect, (HBRUSH)GetStockObject(GRAY_BRUSH));
-        } else if ((o.style().appearance() == SliderThumbHorizontalPart
-        || o.style().appearance() == SliderThumbVerticalPart)
+        } else if ((o.style().effectiveAppearance() == SliderThumbHorizontalPart
+        || o.style().effectiveAppearance() == SliderThumbVerticalPart)
         && (themeData.m_part == TKP_THUMBBOTTOM || themeData.m_part == TKP_THUMBTOP
         || themeData.m_part == TKP_THUMBLEFT || themeData.m_part == TKP_THUMBRIGHT)) {
             ::DrawEdge(hdc, &widgetRect, EDGE_RAISED, BF_RECT | BF_SOFT | BF_MIDDLE | BF_ADJUST);
@@ -658,7 +658,7 @@ static void drawControl(GraphicsContext& context, const RenderObject& o, HANDLE 
             }
         } else {
             // Push buttons, buttons, checkboxes and radios, and the dropdown arrow in menulists.
-            if (o.style().appearance() == DefaultButtonPart) {
+            if (o.style().effectiveAppearance() == DefaultButtonPart) {
                 HBRUSH brush = ::GetSysColorBrush(COLOR_3DDKSHADOW);
                 ::FrameRect(hdc, &widgetRect, brush);
                 ::InflateRect(&widgetRect, -1, -1);
@@ -810,10 +810,10 @@ bool RenderThemeWin::paintSliderTrack(const RenderObject& o, const PaintInfo& i,
 {
     IntRect bounds = r;
     
-    if (o.style().appearance() ==  SliderHorizontalPart) {
+    if (o.style().effectiveAppearance() ==  SliderHorizontalPart) {
         bounds.setHeight(trackWidth);
         bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
-    } else if (o.style().appearance() == SliderVerticalPart) {
+    } else if (o.style().effectiveAppearance() == SliderVerticalPart) {
         bounds.setWidth(trackWidth);
         bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
     }
@@ -833,7 +833,7 @@ const int sliderThumbHeight = 15;
 
 void RenderThemeWin::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    ControlPart part = style.appearance();
+    ControlPart part = style.effectiveAppearance();
     if (part == SliderThumbVerticalPart) {
         style.setWidth(Length(sliderThumbHeight, LengthType::Fixed));
         style.setHeight(Length(sliderThumbWidth, LengthType::Fixed));

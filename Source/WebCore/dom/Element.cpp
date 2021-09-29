@@ -709,7 +709,7 @@ void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalida
         return;
 
     bool reactsToPress = false;
-    if (renderer()->style().hasAppearance() && renderer()->theme().stateChanged(*renderer(), ControlStates::States::Pressed))
+    if (renderer()->style().hasEffectiveAppearance() && renderer()->theme().stateChanged(*renderer(), ControlStates::States::Pressed))
         reactsToPress = true;
 
     // The rest of this function implements a feature that only works if the
@@ -806,7 +806,7 @@ void Element::setHovered(bool flag, Style::InvalidationScope invalidationScope)
         document().userActionElements().setHovered(*this, flag);
     }
 
-    if (auto* style = renderStyle(); style && style->hasAppearance())
+    if (auto* style = renderStyle(); style && style->hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Hovered);
 }
 

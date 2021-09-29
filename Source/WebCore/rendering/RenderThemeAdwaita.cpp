@@ -111,7 +111,7 @@ RenderTheme& RenderTheme::singleton()
 
 bool RenderThemeAdwaita::supportsFocusRing(const RenderStyle& style) const
 {
-    switch (style.appearance()) {
+    switch (style.effectiveAppearance()) {
     case PushButtonPart:
     case ButtonPart:
     case TextFieldPart:
@@ -360,7 +360,7 @@ void RenderThemeAdwaita::adjustMenuListButtonStyle(RenderStyle& style, const Ele
 
 LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
 {
-    if (style.appearance() == NoControlPart)
+    if (style.effectiveAppearance() == NoControlPart)
         return { };
 
     int leftPadding = menuListButtonPadding + (style.direction() == TextDirection::RTL ? menuListButtonArrowSize : 0);
@@ -498,7 +498,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    ControlPart part = renderObject.style().appearance();
+    ControlPart part = renderObject.style().effectiveAppearance();
     ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
 
     FloatRect fieldRect = rect;
@@ -581,7 +581,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
 
 void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
-    ControlPart part = style.appearance();
+    ControlPart part = style.effectiveAppearance();
     if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
         return;
 
@@ -594,7 +594,7 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    ASSERT(renderObject.style().appearance() == SliderThumbHorizontalPart || renderObject.style().appearance() == SliderThumbVerticalPart);
+    ASSERT(renderObject.style().effectiveAppearance() == SliderThumbHorizontalPart || renderObject.style().effectiveAppearance() == SliderThumbVerticalPart);
 
     SRGBA<uint8_t> sliderThumbBackgroundColor;
     SRGBA<uint8_t> sliderThumbBackgroundHoveredColor;

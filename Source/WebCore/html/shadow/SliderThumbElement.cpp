@@ -77,11 +77,11 @@ inline static bool hasVerticalAppearance(HTMLInputElement& input)
     const RenderStyle& sliderStyle = input.renderer()->style();
 
 #if ENABLE(VIDEO)
-    if (sliderStyle.appearance() == MediaVolumeSliderPart && input.renderer()->theme().usesVerticalVolumeSlider())
+    if (sliderStyle.effectiveAppearance() == MediaVolumeSliderPart && input.renderer()->theme().usesVerticalVolumeSlider())
         return true;
 #endif
 
-    return sliderStyle.appearance() == SliderVerticalPart;
+    return sliderStyle.effectiveAppearance() == SliderVerticalPart;
 }
 
 // --------------------------------
@@ -93,17 +93,17 @@ RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element, RenderStyle&& 
 
 void RenderSliderThumb::updateAppearance(const RenderStyle* parentStyle)
 {
-    if (parentStyle->appearance() == SliderVerticalPart)
-        mutableStyle().setAppearance(SliderThumbVerticalPart);
-    else if (parentStyle->appearance() == SliderHorizontalPart)
-        mutableStyle().setAppearance(SliderThumbHorizontalPart);
-    else if (parentStyle->appearance() == MediaSliderPart)
-        mutableStyle().setAppearance(MediaSliderThumbPart);
-    else if (parentStyle->appearance() == MediaVolumeSliderPart)
-        mutableStyle().setAppearance(MediaVolumeSliderThumbPart);
-    else if (parentStyle->appearance() == MediaFullScreenVolumeSliderPart)
-        mutableStyle().setAppearance(MediaFullScreenVolumeSliderThumbPart);
-    if (style().hasAppearance()) {
+    if (parentStyle->effectiveAppearance() == SliderVerticalPart)
+        mutableStyle().setEffectiveAppearance(SliderThumbVerticalPart);
+    else if (parentStyle->effectiveAppearance() == SliderHorizontalPart)
+        mutableStyle().setEffectiveAppearance(SliderThumbHorizontalPart);
+    else if (parentStyle->effectiveAppearance() == MediaSliderPart)
+        mutableStyle().setEffectiveAppearance(MediaSliderThumbPart);
+    else if (parentStyle->effectiveAppearance() == MediaVolumeSliderPart)
+        mutableStyle().setEffectiveAppearance(MediaVolumeSliderThumbPart);
+    else if (parentStyle->effectiveAppearance() == MediaFullScreenVolumeSliderPart)
+        mutableStyle().setEffectiveAppearance(MediaFullScreenVolumeSliderThumbPart);
+    if (style().hasEffectiveAppearance()) {
         ASSERT(element());
         theme().adjustSliderThumbSize(mutableStyle(), element());
     }
@@ -595,7 +595,7 @@ std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const 
     if (!hostStyle)
         return std::nullopt;
 
-    switch (hostStyle->appearance()) {
+    switch (hostStyle->effectiveAppearance()) {
     case MediaSliderPart:
     case MediaSliderThumbPart:
     case MediaVolumeSliderPart:
@@ -649,7 +649,7 @@ std::optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(co
     if (!hostStyle)
         return std::nullopt;
 
-    switch (hostStyle->appearance()) {
+    switch (hostStyle->effectiveAppearance()) {
     case MediaSliderPart:
     case MediaSliderThumbPart:
     case MediaVolumeSliderPart:

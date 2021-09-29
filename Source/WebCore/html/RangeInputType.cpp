@@ -205,7 +205,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 
     bool isVertical = false;
     if (auto* renderer = element()->renderer()) {
-        ControlPart part = renderer->style().appearance();
+        ControlPart part = renderer->style().effectiveAppearance();
         isVertical = part == SliderVerticalPart || part == MediaVolumeSliderPart;
     }
 

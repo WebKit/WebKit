@@ -540,7 +540,7 @@ PopupMenuStyle RenderMenuList::menuStyle() const
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     return PopupMenuStyle(styleToUse.visitedDependentColorWithColorFilter(CSSPropertyColor), styleToUse.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor),
         styleToUse.fontCascade(), styleToUse.visibility() == Visibility::Visible, styleToUse.display() == DisplayType::None,
-        style().hasAppearance() && style().appearance() == MenulistPart, styleToUse.textIndent(),
+        style().hasEffectiveAppearance() && style().effectiveAppearance() == MenulistPart, styleToUse.textIndent(),
         style().direction(), isOverride(style().unicodeBidi()), PopupMenuStyle::DefaultBackgroundColor,
         PopupMenuStyle::SelectPopup, theme().popupMenuSize(styleToUse, absBounds));
 }
@@ -572,7 +572,7 @@ const int endOfLinePadding = 2;
 
 LayoutUnit RenderMenuList::clientPaddingLeft() const
 {
-    if ((style().appearance() == MenulistPart || style().appearance() == MenulistButtonPart) && style().direction() == TextDirection::RTL) {
+    if ((style().effectiveAppearance() == MenulistPart || style().effectiveAppearance() == MenulistButtonPart) && style().direction() == TextDirection::RTL) {
         // For these appearance values, the theme applies padding to leave room for the
         // drop-down button. But leaving room for the button inside the popup menu itself
         // looks strange, so we return a small default padding to avoid having a large empty
@@ -586,7 +586,7 @@ LayoutUnit RenderMenuList::clientPaddingLeft() const
 
 LayoutUnit RenderMenuList::clientPaddingRight() const
 {
-    if ((style().appearance() == MenulistPart || style().appearance() == MenulistButtonPart) && style().direction() == TextDirection::LTR)
+    if ((style().effectiveAppearance() == MenulistPart || style().effectiveAppearance() == MenulistButtonPart) && style().direction() == TextDirection::LTR)
         return endOfLinePadding;
 
     return paddingRight() + m_innerBlock->paddingRight();

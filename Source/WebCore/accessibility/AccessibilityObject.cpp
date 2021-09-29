@@ -786,7 +786,7 @@ IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector
     for (const auto& quad : quads) {
         FloatRect r = quad.enclosingBoundingBox();
         if (!r.isEmpty()) {
-            if (obj->style().hasAppearance())
+            if (obj->style().hasEffectiveAppearance())
                 obj->theme().adjustRepaintRect(*obj, r);
             result.unite(r);
         }

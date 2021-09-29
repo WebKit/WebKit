@@ -193,7 +193,7 @@ void RenderBoxModelObject::willBeDestroyed()
 
 bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
 {
-    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasAppearance() || style().boxShadow();
+    return hasBackground() || style().hasVisibleBorderDecoration() || style().hasEffectiveAppearance() || style().boxShadow();
 }
 
 void RenderBoxModelObject::updateFromStyle()
@@ -2331,7 +2331,7 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoin
     if (bleedAvoidance != BackgroundBleedNone)
         return false;
 
-    if (style().hasAppearance())
+    if (style().hasEffectiveAppearance())
         return false;
 
     bool hasOneNormalBoxShadow = false;

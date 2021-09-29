@@ -55,7 +55,7 @@ HTMLProgressElement* ProgressShadowElement::progressElement() const
 bool ProgressShadowElement::rendererIsNeeded(const RenderStyle& style)
 {
     RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style().hasAppearance() && HTMLDivElement::rendererIsNeeded(style);
+    return progressRenderer && !progressRenderer->style().hasEffectiveAppearance() && HTMLDivElement::rendererIsNeeded(style);
 }
 
 ProgressInnerElement::ProgressInnerElement(Document& document)
@@ -71,7 +71,7 @@ RenderPtr<RenderElement> ProgressInnerElement::createElementRenderer(RenderStyle
 bool ProgressInnerElement::rendererIsNeeded(const RenderStyle& style)
 {
     RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style().hasAppearance() && HTMLDivElement::rendererIsNeeded(style);    
+    return progressRenderer && !progressRenderer->style().hasEffectiveAppearance() && HTMLDivElement::rendererIsNeeded(style);    
 }
 
 ProgressBarElement::ProgressBarElement(Document& document)

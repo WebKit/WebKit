@@ -457,7 +457,7 @@ static inline unsigned computeFontHash(const FontCascade& font)
 unsigned RenderStyle::hashForTextAutosizing() const
 {
     // FIXME: Not a very smart hash. Could be improved upon. See <https://bugs.webkit.org/show_bug.cgi?id=121131>.
-    unsigned hash = m_rareNonInheritedData->appearance;
+    unsigned hash = m_rareNonInheritedData->effectiveAppearance;
     hash ^= m_rareNonInheritedData->marginBeforeCollapse;
     hash ^= m_rareNonInheritedData->marginAfterCollapse;
     hash ^= m_rareNonInheritedData->lineClamp.value();
@@ -479,7 +479,7 @@ unsigned RenderStyle::hashForTextAutosizing() const
 
 bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
 {
-    return m_rareNonInheritedData->appearance == other.m_rareNonInheritedData->appearance
+    return m_rareNonInheritedData->effectiveAppearance == other.m_rareNonInheritedData->effectiveAppearance
         && m_rareNonInheritedData->marginBeforeCollapse == other.m_rareNonInheritedData->marginBeforeCollapse
         && m_rareNonInheritedData->marginAfterCollapse == other.m_rareNonInheritedData->marginAfterCollapse
         && m_rareNonInheritedData->lineClamp == other.m_rareNonInheritedData->lineClamp
@@ -650,7 +650,7 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
 {
     ASSERT(&first != &second);
 
-    if (first.appearance != second.appearance
+    if (first.effectiveAppearance != second.effectiveAppearance
         || first.marginBeforeCollapse != second.marginBeforeCollapse
         || first.marginAfterCollapse != second.marginAfterCollapse
         || first.lineClamp != second.lineClamp

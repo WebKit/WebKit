@@ -3848,7 +3848,7 @@ bool AccessibilityRenderObject::isApplePayButton() const
 {
     if (!m_renderer)
         return false;
-    return m_renderer->style().appearance() == ApplePayButtonPart;
+    return m_renderer->style().effectiveAppearance() == ApplePayButtonPart;
 }
 
 ApplePayButtonType AccessibilityRenderObject::applePayButtonType() const

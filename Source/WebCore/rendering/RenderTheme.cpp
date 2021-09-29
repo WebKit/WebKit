@@ -90,16 +90,16 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
         switch (part) {
         case MenulistPart:
-            style.setAppearance(MenulistButtonPart);
+            style.setEffectiveAppearance(MenulistButtonPart);
             part = MenulistButtonPart;
             break;
         default:
-            style.setAppearance(NoControlPart);
+            style.setEffectiveAppearance(NoControlPart);
             break;
         }
     }
 
-    if (!style.hasAppearance())
+    if (!style.hasEffectiveAppearance())
         return;
 
     if (!supportsBoxShadow(style))
@@ -191,7 +191,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 #endif
 
     // Call the appropriate style adjustment method based off the appearance value.
-    switch (style.appearance()) {
+    switch (style.effectiveAppearance()) {
 #if !USE(NEW_THEME)
     case CheckboxPart:
         return adjustCheckboxStyle(style, element);
@@ -273,11 +273,11 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 void RenderTheme::adjustSearchFieldDecorationStyle(RenderStyle& style, const Element* element) const
 {
     if (is<SearchFieldResultsButtonElement>(element) && !downcast<SearchFieldResultsButtonElement>(*element).canAdjustStyleForAppearance()) {
-        style.setAppearance(NoControlPart);
+        style.setEffectiveAppearance(NoControlPart);
         return;
     }
 
-    switch (style.appearance()) {
+    switch (style.effectiveAppearance()) {
     case SearchFieldDecorationPart:
         return adjustSearchFieldDecorationPartStyle(style, element);
     case SearchFieldResultsDecorationPart:
@@ -305,7 +305,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     if (UNLIKELY(!canPaint(paintInfo, box.settings())))
         return false;
 
-    ControlPart part = box.style().appearance();
+    ControlPart part = box.style().effectiveAppearance();
     IntRect integralSnappedRect = snappedIntRect(rect);
     float deviceScaleFactor = box.document().deviceScaleFactor();
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
@@ -450,11 +450,11 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
 
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(rect);
-    return box.style().appearance() != NoControlPart;
+    return box.style().effectiveAppearance() != NoControlPart;
 #else
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
     // Call the appropriate paint method based off the appearance value.
-    switch (box.style().appearance()) {
+    switch (box.style().effectiveAppearance()) {
     case TextFieldPart:
         return paintTextField(box, paintInfo, devicePixelSnappedRect);
     case ListboxPart:
@@ -507,7 +507,7 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
 
     // Call the appropriate paint method based off the appearance value.
-    switch (box.style().appearance()) {
+    switch (box.style().effectiveAppearance()) {
     case MenulistButtonPart:
         paintMenuListButtonDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
@@ -720,7 +720,7 @@ Color RenderTheme::platformInactiveListBoxSelectionForegroundColor(OptionSet<Sty
 int RenderTheme::baselinePosition(const RenderBox& box) const
 {
 #if USE(NEW_THEME)
-    return box.height() + box.marginTop() + Theme::singleton().baselinePositionAdjustment(box.style().appearance()) * box.style().effectiveZoom();
+    return box.height() + box.marginTop() + Theme::singleton().baselinePositionAdjustment(box.style().effectiveAppearance()) * box.style().effectiveZoom();
 #else
     return box.height() + box.marginTop();
 #endif
@@ -735,7 +735,7 @@ bool RenderTheme::isControlContainer(ControlPart appearance) const
 
 bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
-    switch (style.appearance()) {
+    switch (style.effectiveAppearance()) {
     case PushButtonPart:
     case SquareButtonPart:
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -767,7 +767,7 @@ void RenderTheme::adjustRepaintRect(const RenderObject& renderer, FloatRect& rec
 {
 #if USE(NEW_THEME)
     ControlStates states(extractControlStatesForRenderer(renderer));
-    Theme::singleton().inflateControlPaintRect(renderer.style().appearance(), states, rect, renderer.style().effectiveZoom());
+    Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), states, rect, renderer.style().effectiveZoom());
 #else
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(rect);
@@ -776,7 +776,7 @@ void RenderTheme::adjustRepaintRect(const RenderObject& renderer, FloatRect& rec
 
 bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
 {
-    return (style.hasAppearance() && style.appearance() != TextFieldPart && style.appearance() != TextAreaPart && style.appearance() != MenulistButtonPart && style.appearance() != ListboxPart);
+    return (style.hasEffectiveAppearance() && style.effectiveAppearance() != TextFieldPart && style.effectiveAppearance() != TextAreaPart && style.effectiveAppearance() != MenulistButtonPart && style.effectiveAppearance() != ListboxPart);
 }
 
 bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States state) const
@@ -924,7 +924,7 @@ bool RenderTheme::isDefault(const RenderObject& o) const
     if (!isActive(o))
         return false;
 
-    return o.style().appearance() == DefaultButtonPart;
+    return o.style().effectiveAppearance() == DefaultButtonPart;
 }
 
 #if !USE(NEW_THEME)
@@ -1089,7 +1089,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
 
     double min = input.minimum();
     double max = input.maximum();
-    ControlPart part = o.style().appearance();
+    ControlPart part = o.style().effectiveAppearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
     if (part !=  SliderHorizontalPart && part != SliderVerticalPart)
         return;

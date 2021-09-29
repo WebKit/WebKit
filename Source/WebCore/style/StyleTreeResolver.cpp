@@ -246,7 +246,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     if (element.hasTagName(HTMLNames::meterTag)
         || is<HTMLProgressElement>(element)
         || (is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isSearchField())) {
-        if (existingStyle && update.style->appearance() != existingStyle->appearance()) {
+        if (existingStyle && update.style->effectiveAppearance() != existingStyle->effectiveAppearance()) {
             update.change = Change::Renderer;
             descendantsToResolve = DescendantsToResolve::All;
         }

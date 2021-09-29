@@ -92,6 +92,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , marginBeforeCollapse(static_cast<unsigned>(MarginCollapse::Collapse))
     , marginAfterCollapse(static_cast<unsigned>(MarginCollapse::Collapse))
     , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
+    , effectiveAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , borderFit(static_cast<unsigned>(RenderStyle::initialBorderFit()))
     , textCombine(static_cast<unsigned>(RenderStyle::initialTextCombine()))
     , textDecorationStyle(static_cast<unsigned>(RenderStyle::initialTextDecorationStyle()))
@@ -192,6 +193,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , marginBeforeCollapse(o.marginBeforeCollapse)
     , marginAfterCollapse(o.marginAfterCollapse)
     , appearance(o.appearance)
+    , effectiveAppearance(o.effectiveAppearance)
     , borderFit(o.borderFit)
     , textCombine(o.textCombine)
     , textDecorationStyle(o.textDecorationStyle)
@@ -296,6 +298,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && marginBeforeCollapse == o.marginBeforeCollapse
         && marginAfterCollapse == o.marginAfterCollapse
         && appearance == o.appearance
+        && effectiveAppearance == o.effectiveAppearance
         && borderFit == o.borderFit
         && textCombine == o.textCombine
         && textDecorationStyle == o.textDecorationStyle

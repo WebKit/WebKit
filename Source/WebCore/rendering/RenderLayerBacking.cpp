@@ -771,7 +771,7 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 
 void RenderLayerBacking::updateCustomAppearance(const RenderStyle& style)
 {
-    ControlPart appearance = style.appearance();
+    ControlPart appearance = style.effectiveAppearance();
     if (appearance == MediaControlsLightBarBackgroundPart)
         m_graphicsLayer->setCustomAppearance(GraphicsLayer::CustomAppearance::LightBackdrop);
     else if (appearance == MediaControlsDarkBarBackgroundPart)
@@ -2468,7 +2468,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
 // FIXME: Code is duplicated in RenderLayer. Also, we should probably not consider filters a box decoration here.
 static inline bool hasVisibleBoxDecorations(const RenderStyle& style)
 {
-    return style.hasVisibleBorder() || style.hasBorderRadius() || style.hasOutline() || style.hasAppearance() || style.boxShadow() || style.hasFilter();
+    return style.hasVisibleBorder() || style.hasBorderRadius() || style.hasOutline() || style.hasEffectiveAppearance() || style.boxShadow() || style.hasFilter();
 }
 
 static bool canDirectlyCompositeBackgroundBackgroundImage(const RenderStyle& style)

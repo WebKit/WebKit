@@ -1,3 +1,15 @@
+2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [css-ui] getComputedStyle() must return the specified value for '-webkit-appearance'
+        https://bugs.webkit.org/show_bug.cgi?id=230916
+        rdar://83640938
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-ui/appearance-cssom-001-expected.txt:
+
+        Rebaseline for progression.
+
 2021-09-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update WPT's IDL for font palettes

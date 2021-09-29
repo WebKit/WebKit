@@ -2,18 +2,18 @@ Test
 
 PASS -webkit-appearance: none
 FAIL -webkit-appearance: auto assert_equals: style.WebkitAppearance (uppercase W) expected "auto" but got ""
-FAIL -webkit-appearance: button assert_equals: style.WebkitAppearance (uppercase W) expected "button" but got "none"
+PASS -webkit-appearance: button
 PASS -webkit-appearance: checkbox
 PASS -webkit-appearance: listbox
-FAIL -webkit-appearance: menulist assert_equals: style.WebkitAppearance (uppercase W) expected "menulist" but got "menulist-button"
+PASS -webkit-appearance: menulist
 PASS -webkit-appearance: menulist-button
-FAIL -webkit-appearance: meter assert_equals: style.WebkitAppearance (uppercase W) expected "meter" but got "none"
-FAIL -webkit-appearance: progress-bar assert_equals: style.WebkitAppearance (uppercase W) expected "progress-bar" but got "none"
-FAIL -webkit-appearance: push-button assert_equals: style.WebkitAppearance (uppercase W) expected "push-button" but got "none"
+PASS -webkit-appearance: meter
+PASS -webkit-appearance: progress-bar
+PASS -webkit-appearance: push-button
 PASS -webkit-appearance: radio
 PASS -webkit-appearance: searchfield
 PASS -webkit-appearance: slider-horizontal
-FAIL -webkit-appearance: square-button assert_equals: style.WebkitAppearance (uppercase W) expected "square-button" but got "none"
+PASS -webkit-appearance: square-button
 PASS -webkit-appearance: textarea
 PASS -webkit-appearance: textfield
 FAIL -webkit-appearance: bogus-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected (undefined) undefined but got (string) "button"

@@ -749,7 +749,7 @@ bool RenderThemeMac::usesTestModeFocusRingColor() const
 
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
 {
-    auto appearance = style.appearance();
+    auto appearance = style.effectiveAppearance();
     if (appearance == TextFieldPart || appearance == TextAreaPart || appearance == SearchFieldPart || appearance == ListboxPart)
         return style.border() != userAgentStyle.border();
 
@@ -783,7 +783,7 @@ static FloatRect inflateRect(const FloatRect& rect, const IntSize& size, const i
 
 void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
 {
-    ControlPart part = renderer.style().appearance();
+    ControlPart part = renderer.style().effectiveAppearance();
 
 #if USE(NEW_THEME)
     switch (part) {
@@ -875,7 +875,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
         return false;
 
     // Checkboxes only have tint when checked.
-    if (o.style().appearance() == CheckboxPart)
+    if (o.style().effectiveAppearance() == CheckboxPart)
         return isChecked(o);
 
     // For now assume other controls have tint if enabled.
@@ -1154,7 +1154,7 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
 
 IntSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const IntRect& bounds) const
 {
-    if (NoControlPart == renderMeter.style().appearance())
+    if (NoControlPart == renderMeter.style().effectiveAppearance())
         return bounds.size();
 
     NSLevelIndicatorCell* cell = levelIndicatorFor(renderMeter);
@@ -1213,7 +1213,7 @@ NSLevelIndicatorStyle RenderThemeMac::levelIndicatorStyleFor(ControlPart part) c
 NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter& renderMeter) const
 {
     const RenderStyle& style = renderMeter.style();
-    ASSERT(style.appearance() != NoControlPart);
+    ASSERT(style.effectiveAppearance() != NoControlPart);
 
     if (!m_levelIndicator)
         m_levelIndicator = adoptNS([[NSLevelIndicatorCell alloc] initWithLevelIndicatorStyle:NSLevelIndicatorStyleContinuousCapacity]);
@@ -1242,7 +1242,7 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter& rende
         break;
     }
 
-    [cell setLevelIndicatorStyle:levelIndicatorStyleFor(style.appearance())];
+    [cell setLevelIndicatorStyle:levelIndicatorStyleFor(style.effectiveAppearance())];
     [cell setUserInterfaceLayoutDirection:style.isLeftToRightDirection() ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
     [cell setMinValue:element->min()];
     [cell setMaxValue:element->max()];
@@ -1274,7 +1274,7 @@ IntRect RenderThemeMac::progressBarRectForBounds(const RenderObject& renderObjec
     // Workaround until <rdar://problem/15855086> is fixed.
     int maxDimension = static_cast<int>(std::numeric_limits<ushort>::max());
     IntRect progressBarBounds(bounds.x(), bounds.y(), std::min(bounds.width(), maxDimension), std::min(bounds.height(), maxDimension));
-    if (NoControlPart == renderObject.style().appearance())
+    if (NoControlPart == renderObject.style().effectiveAppearance())
         return progressBarBounds;
 
     float zoomLevel = renderObject.style().effectiveZoom();
@@ -1589,7 +1589,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
 
 LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
 {
-    if (style.appearance() == MenulistPart) {
+    if (style.effectiveAppearance() == MenulistPart) {
         const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);
         return { static_cast<int>(padding[topPadding] * style.effectiveZoom()),
             static_cast<int>(padding[rightPadding] * style.effectiveZoom()),
@@ -1597,7 +1597,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, cons
             static_cast<int>(padding[leftPadding] * style.effectiveZoom()) };
     }
 
-    if (style.appearance() == MenulistButtonPart) {
+    if (style.effectiveAppearance() == MenulistButtonPart) {
         float arrowWidth = baseArrowWidth * (style.computedFontPixelSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
@@ -1694,10 +1694,10 @@ bool RenderThemeMac::paintSliderTrack(const RenderObject& o, const PaintInfo& pa
     float zoomLevel = o.style().effectiveZoom();
     float zoomedTrackWidth = trackWidth * zoomLevel;
 
-    if (o.style().appearance() ==  SliderHorizontalPart || o.style().appearance() ==  MediaSliderPart) {
+    if (o.style().effectiveAppearance() ==  SliderHorizontalPart || o.style().effectiveAppearance() ==  MediaSliderPart) {
         bounds.setHeight(zoomedTrackWidth);
         bounds.setY(r.y() + r.height() / 2 - zoomedTrackWidth / 2);
-    } else if (o.style().appearance() == SliderVerticalPart) {
+    } else if (o.style().effectiveAppearance() == SliderVerticalPart) {
         bounds.setWidth(zoomedTrackWidth);
         bounds.setX(r.x() + r.width() / 2 - zoomedTrackWidth / 2);
     }
@@ -1716,7 +1716,7 @@ bool RenderThemeMac::paintSliderTrack(const RenderObject& o, const PaintInfo& pa
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
-    if (o.style().appearance() == SliderVerticalPart)
+    if (o.style().effectiveAppearance() == SliderVerticalPart)
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.maxY()), CGPointMake(bounds.maxX(), bounds.maxY()), mainFunction.get(), false, false));
     else
         mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.maxY()), mainFunction.get(), false, false));
@@ -1739,7 +1739,7 @@ const float verticalSliderHeightPadding = 0.1f;
 
 bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    NSSliderCell* sliderThumbCell = o.style().appearance() == SliderThumbVerticalPart
+    NSSliderCell* sliderThumbCell = o.style().effectiveAppearance() == SliderThumbVerticalPart
         ? sliderThumbVertical()
         : sliderThumbHorizontal();
 
@@ -1754,14 +1754,14 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
 
     // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
     bool oldPressed;
-    if (o.style().appearance() == SliderThumbVerticalPart)
+    if (o.style().effectiveAppearance() == SliderThumbVerticalPart)
         oldPressed = m_isSliderThumbVerticalPressed;
     else
         oldPressed = m_isSliderThumbHorizontalPressed;
 
     bool pressed = isPressed(o);
 
-    if (o.style().appearance() == SliderThumbVerticalPart)
+    if (o.style().effectiveAppearance() == SliderThumbVerticalPart)
         m_isSliderThumbVerticalPressed = pressed;
     else
         m_isSliderThumbHorizontalPressed = pressed;
@@ -1777,7 +1777,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
 
     FloatRect bounds = r;
     // Make the height of the vertical slider slightly larger so NSSliderCell will draw a vertical slider.
-    if (o.style().appearance() == SliderThumbVerticalPart)
+    if (o.style().effectiveAppearance() == SliderThumbVerticalPart)
         bounds.setHeight(bounds.height() + verticalSliderHeightPadding * o.style().effectiveZoom());
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
@@ -2114,7 +2114,7 @@ constexpr int sliderThumbThickness = 15;
 void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) const
 {
     float zoomLevel = style.effectiveZoom();
-    if (style.appearance() == SliderThumbHorizontalPart || style.appearance() == SliderThumbVerticalPart) {
+    if (style.effectiveAppearance() == SliderThumbHorizontalPart || style.effectiveAppearance() == SliderThumbVerticalPart) {
         style.setWidth(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
         style.setHeight(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
     }

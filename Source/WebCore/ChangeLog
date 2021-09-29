@@ -1,3 +1,168 @@
+2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        [css-ui] getComputedStyle() must return the specified value for '-webkit-appearance'
+        https://bugs.webkit.org/show_bug.cgi?id=230916
+        rdar://83640938
+
+        Reviewed by Simon Fraser.
+
+        Currently, an element's appearance can be adjusted to "none" depending
+        on the applied CSS properties. For example, buttons that specify a
+        background-color lose their native appearance. The existing behavior is
+        implemented by modifying the appearance field on RenderStyle.
+
+        While the spec allows certain properties to affect appearance, it
+        also asserts that the computed value must be equal to the specific
+        value [1]. However, since the specified and adjusted values are stored
+        in the same field in RenderStyle, the computed value does not always
+        equal the specified value.
+
+        To fix, introduce an effectiveAppearance field to RenderStyle, which
+        stores the used appearance. The specified appearance remains in the
+        appearance field, ensuring the computed value adheres to the spec.
+
+        The new behavior matches Chrome and Firefox. This work is also necessary
+        for WebKit to support 'auto' as a valid appearance value, since the
+        used value will need to be adjusted depending on the element type, but
+        the computed value should remain 'auto'.
+
+        [1] https://www.w3.org/TR/css-ui-4/#appearance-switching
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::boundingBoxForQuads):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isApplePayButton const):
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::orientation const):
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        (WebCore::Element::setHovered):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::disabledStateChanged):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::createElementRenderer):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::createElementRenderer):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressShadowElement::rendererIsNeeded):
+        (WebCore::ProgressInnerElement::rendererIsNeeded):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::hasVerticalAppearance):
+        (WebCore::RenderSliderThumb::updateAppearance):
+        (WebCore::SliderThumbElement::resolveCustomStyle):
+        (WebCore::SliderContainerElement::resolveCustomStyle):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::resolveCustomStyle):
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::shouldDrawBorder const):
+        (WebCore::RenderAttachment::paintReplaced):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addVisualOverflowFromTheme):
+        (WebCore::RenderBlock::baselinePosition const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::determineBackgroundBleedAvoidance const):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::backgroundIsKnownToBeOpaqueInRect const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::hasVisibleBoxDecorationStyle const):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCustomAppearance):
+        (WebCore::hasVisibleBoxDecorations):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterStyleChange):
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterLayout):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::menuStyle const):
+        (RenderMenuList::clientPaddingLeft const):
+        (RenderMenuList::clientPaddingRight const):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::updateAnimationState):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+
+        Ensure the specified value is not modified by adjusting the
+        effectiveAppearance field instead of the appearance field.
+
+        (WebCore::RenderTheme::adjustSearchFieldDecorationStyle const):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorderOnly):
+        (WebCore::RenderTheme::paintDecorations):
+        (WebCore::RenderTheme::baselinePosition const):
+        (WebCore::RenderTheme::isControlStyled const):
+        (WebCore::RenderTheme::adjustRepaintRect):
+        (WebCore::RenderTheme::supportsFocusRing const):
+        (WebCore::RenderTheme::isDefault const):
+        (WebCore::RenderTheme::paintSliderTicks):
+        * rendering/RenderThemeAdwaita.cpp:
+        (WebCore::RenderThemeAdwaita::supportsFocusRing const):
+        (WebCore::RenderThemeAdwaita::popupInternalPaddingBox const):
+        (WebCore::RenderThemeAdwaita::paintSliderTrack):
+        (WebCore::RenderThemeAdwaita::adjustSliderThumbSize const):
+        (WebCore::RenderThemeAdwaita::paintSliderThumb):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustedPaintRect const):
+        (WebCore::RenderThemeIOS::baselinePosition const):
+        (WebCore::RenderThemeIOS::isControlStyled const):
+        (WebCore::RenderThemeIOS::popupInternalPaddingBox const):
+        (WebCore::RenderThemeIOS::adjustRoundBorderRadius):
+        (WebCore::RenderThemeIOS::paintSliderTrack):
+        (WebCore::RenderThemeIOS::adjustSliderThumbSize const):
+        (WebCore::RenderThemeIOS::adjustButtonStyle const):
+        (WebCore::RenderThemeIOS::supportsBoxShadow const):
+        (WebCore::RenderThemeIOS::paintSliderTicks):
+        (WebCore::RenderThemeIOS::paintSliderTrackWithFormControlRefresh):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::isControlStyled const):
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::controlSupportsTints const):
+        (WebCore::RenderThemeMac::meterSizeForBounds const):
+        (WebCore::RenderThemeMac::levelIndicatorFor const):
+        (WebCore::RenderThemeMac::progressBarRectForBounds const):
+        (WebCore::RenderThemeMac::popupInternalPaddingBox const):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize const):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::supportsFocusRing const):
+        (WebCore::RenderThemeWin::determineClassicState):
+        (WebCore::RenderThemeWin::determineState):
+        (WebCore::RenderThemeWin::determineSliderThumbState):
+        (WebCore::RenderThemeWin::determineButtonState):
+        (WebCore::RenderThemeWin::getClassicThemeData):
+        (WebCore::RenderThemeWin::getThemeData):
+        (WebCore::drawControl):
+        (WebCore::RenderThemeWin::paintSliderTrack):
+        (WebCore::RenderThemeWin::adjustSliderThumbSize const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hashForTextAutosizing const):
+        (WebCore::RenderStyle::equalForTextAutosizing const):
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasEffectiveAppearance const):
+        (WebCore::RenderStyle::effectiveAppearance const):
+        (WebCore::RenderStyle::setAppearance):
+        (WebCore::RenderStyle::setEffectiveAppearance):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/MatchedDeclarationsCache.cpp:
+        (WebCore::Style::MatchedDeclarationsCache::isCacheable):
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2021-09-29  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBoxBuilder should use the first-line style when applicable

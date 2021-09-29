@@ -53,7 +53,7 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     // content:attr() value depends on the element it is being applied to.
     if (style.hasAttrContent() || (style.styleType() != PseudoId::None && parentStyle.hasAttrContent()))
         return false;
-    if (style.hasAppearance())
+    if (style.hasEffectiveAppearance())
         return false;
     if (style.zoom() != RenderStyle::initialZoom())
         return false;

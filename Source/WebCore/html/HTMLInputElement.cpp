@@ -985,7 +985,7 @@ void HTMLInputElement::setChecked(bool nowChecked)
 
     if (RadioButtonGroups* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);
-    if (renderer() && renderer()->style().hasAppearance())
+    if (renderer() && renderer()->style().hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Checked);
     updateValidity();
 
@@ -1009,7 +1009,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
 
     invalidateStyleForSubtree();
 
-    if (renderer() && renderer()->style().hasAppearance())
+    if (renderer() && renderer()->style().hasEffectiveAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::States::Checked);
 }
 

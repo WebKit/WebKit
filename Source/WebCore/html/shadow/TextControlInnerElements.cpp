@@ -245,7 +245,7 @@ std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCusto
     if (input && input->maxResults() >= 0)
         return std::nullopt;
 
-    if (shadowHostStyle && shadowHostStyle->appearance() != SearchFieldPart) {
+    if (shadowHostStyle && shadowHostStyle->effectiveAppearance() != SearchFieldPart) {
         SetForScope<bool> canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
         return resolveStyle(&parentStyle);
     }

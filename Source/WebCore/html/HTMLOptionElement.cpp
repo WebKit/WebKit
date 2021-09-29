@@ -179,7 +179,7 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomStri
         m_disabled = !value.isNull();
         if (oldDisabled != m_disabled) {
             invalidateStyleForSubtree();
-            if (renderer() && renderer()->style().hasAppearance())
+            if (renderer() && renderer()->style().hasEffectiveAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
         }
     } else if (name == selectedAttr) {
