@@ -37,17 +37,13 @@ WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit
 
 NSString *WebLocalizedString(WebLocalizableStringsBundle *stringsBundle, const char *key)
 {
-    // This function is not thread-safe due at least to its unguarded use of the mainBundle static variable
-    // and its use of [NSBundle localizedStringForKey:::], which is not guaranteed to be thread-safe. If
-    // we decide we need to use this on background threads, we'll need to add locking here and make sure
-    // it doesn't affect performance.
-#if !PLATFORM(IOS_FAMILY)
-    ASSERT(isMainThread());
-#endif
-
     NSBundle *bundle;
     if (stringsBundle == NULL) {
-        static NeverDestroyed<RetainPtr<NSBundle>> mainBundle = [NSBundle mainBundle];
+        static LazyNeverDestroyed<RetainPtr<NSBundle>> mainBundle;
+        static std::once_flag flag;
+        std::call_once(flag, [] () {
+            mainBundle.construct([NSBundle mainBundle]);
+        });
         ASSERT(mainBundle.get());
         bundle = mainBundle.get().get();
     } else {
