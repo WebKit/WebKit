@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FileSystemHandleImpl.h"
+#include "FileSystemStorageConnection.h"
 #include "StorageProvider.h"
 
 namespace WebCore {

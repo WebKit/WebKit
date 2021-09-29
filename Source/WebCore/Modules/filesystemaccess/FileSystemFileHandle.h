@@ -34,11 +34,11 @@ class File;
 class FileSystemFileHandle final : public FileSystemHandle {
     WTF_MAKE_ISO_ALLOCATED(FileSystemFileHandle);
 public:
-    WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(String&&, Ref<FileSystemHandleImpl>&&);
+    WEBCORE_EXPORT static Ref<FileSystemFileHandle> create(String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
     void getFile(DOMPromiseDeferred<IDLInterface<File>>&&);
 
 private:
-    FileSystemFileHandle(String&&, Ref<FileSystemHandleImpl>&&);
+    FileSystemFileHandle(String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
 };
 
 } // namespace WebCore

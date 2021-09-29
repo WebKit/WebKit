@@ -164,14 +164,14 @@ void NetworkStorageManager::clearStorageForTesting(CompletionHandler<void()>&& c
     });
 }
 
-void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, const WebCore::ClientOrigin& origin, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     completionHandler(localOriginStorageManager(origin).fileSystemStorageManager(*m_fileSystemStorageHandleRegistry).getDirectory(connection.uniqueID()));
 }
 
-void NetworkStorageManager::isSameEntry(FileSystemStorageHandleIdentifier identifier, FileSystemStorageHandleIdentifier targetIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkStorageManager::isSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -182,7 +182,7 @@ void NetworkStorageManager::isSameEntry(FileSystemStorageHandleIdentifier identi
     completionHandler(handle->isSameEntry(targetIdentifier));
 }
 
-void NetworkStorageManager::getFileHandle(IPC::Connection& connection, FileSystemStorageHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -193,7 +193,7 @@ void NetworkStorageManager::getFileHandle(IPC::Connection& connection, FileSyste
     completionHandler(handle->getFileHandle(connection.uniqueID(), WTFMove(name), createIfNecessary));
 }
 
-void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, FileSystemStorageHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -204,7 +204,7 @@ void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, File
     completionHandler(handle->getDirectoryHandle(connection.uniqueID(), WTFMove(name), createIfNecessary));
 }
 
-void NetworkStorageManager::removeEntry(FileSystemStorageHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::removeEntry(WebCore::FileSystemHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -215,7 +215,7 @@ void NetworkStorageManager::removeEntry(FileSystemStorageHandleIdentifier identi
     completionHandler(handle->removeEntry(name, deleteRecursively));
 }
 
-void NetworkStorageManager::resolve(FileSystemStorageHandleIdentifier identifier, FileSystemStorageHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 

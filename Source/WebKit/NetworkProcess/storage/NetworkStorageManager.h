@@ -27,9 +27,9 @@
 
 #include "Connection.h"
 #include "FileSystemStorageError.h"
-#include "FileSystemStorageHandleIdentifier.h"
 #include "OriginStorageManager.h"
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/FileSystemHandleIdentifier.h>
 #include <pal/SessionID.h>
 
 namespace WebCore {
@@ -63,12 +63,12 @@ private:
     // Message handlers
     void persisted(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void persist(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
-    void fileSystemGetDirectory(IPC::Connection&, const WebCore::ClientOrigin&, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&&);
-    void isSameEntry(FileSystemStorageHandleIdentifier, FileSystemStorageHandleIdentifier, CompletionHandler<void(bool)>&&);
-    void getFileHandle(IPC::Connection&, FileSystemStorageHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&&);
-    void getDirectoryHandle(IPC::Connection&, FileSystemStorageHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError>)>&&);
-    void removeEntry(FileSystemStorageHandleIdentifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
-    void resolve(FileSystemStorageHandleIdentifier, FileSystemStorageHandleIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&&);
+    void fileSystemGetDirectory(IPC::Connection&, const WebCore::ClientOrigin&, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&&);
+    void isSameEntry(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(bool)>&&);
+    void getFileHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&&);
+    void getDirectoryHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&&);
+    void removeEntry(WebCore::FileSystemHandleIdentifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
+    void resolve(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&&);
 
     PAL::SessionID m_sessionID;
     Ref<WorkQueue> m_queue;

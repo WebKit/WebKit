@@ -1,3 +1,64 @@
+2021-09-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Replace FileSystemHandleImpl with FileSystemStorageConnection
+        https://bugs.webkit.org/show_bug.cgi?id=230861
+        <rdar://problem/83606465>
+
+        Reviewed by Youenn Fablet.
+
+        Replace FileSystemStorageHandleProxy with WebFileSystemStorageConnection.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::FileSystemStorageHandle):
+        (WebKit::FileSystemStorageHandle::isSameEntry):
+        (WebKit::FileSystemStorageHandle::requestCreateHandle):
+        (WebKit::FileSystemStorageHandle::getFileHandle):
+        (WebKit::FileSystemStorageHandle::getDirectoryHandle):
+        (WebKit::FileSystemStorageHandle::resolve):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        (WebKit::FileSystemStorageHandle::identifier const):
+        * NetworkProcess/storage/FileSystemStorageHandleRegistry.cpp:
+        (WebKit::FileSystemStorageHandleRegistry::registerHandle):
+        (WebKit::FileSystemStorageHandleRegistry::unregisterHandle):
+        (WebKit::FileSystemStorageHandleRegistry::getHandle):
+        * NetworkProcess/storage/FileSystemStorageHandleRegistry.h:
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::createHandle):
+        (WebKit::FileSystemStorageManager::getPath):
+        (WebKit::FileSystemStorageManager::getDirectory):
+        * NetworkProcess/storage/FileSystemStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::fileSystemGetDirectory):
+        (WebKit::NetworkStorageManager::isSameEntry):
+        (WebKit::NetworkStorageManager::getFileHandle):
+        (WebKit::NetworkStorageManager::getDirectoryHandle):
+        (WebKit::NetworkStorageManager::removeEntry):
+        (WebKit::NetworkStorageManager::resolve):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.cpp: Renamed from Source/WebKit/WebProcess/WebCoreSupport/FileSystemStorageHandleProxy.cpp.
+        (WebKit::WebFileSystemStorageConnection::create):
+        (WebKit::WebFileSystemStorageConnection::WebFileSystemStorageConnection):
+        (WebKit::WebFileSystemStorageConnection::connectionClosed):
+        (WebKit::WebFileSystemStorageConnection::isSameEntry):
+        (WebKit::WebFileSystemStorageConnection::getFileHandle):
+        (WebKit::WebFileSystemStorageConnection::getDirectoryHandle):
+        (WebKit::WebFileSystemStorageConnection::removeEntry):
+        (WebKit::WebFileSystemStorageConnection::resolve):
+        * WebProcess/WebCoreSupport/WebFileSystemStorageConnection.h: Renamed from Source/WebKit/WebProcess/WebCoreSupport/FileSystemStorageHandleProxy.h.
+        * WebProcess/WebCoreSupport/WebStorageConnection.cpp:
+        (WebKit::WebStorageConnection::persist):
+        (WebKit::WebStorageConnection::fileSystemGetDirectory):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed):
+        (WebKit::WebProcess::fileSystemStorageConnection):
+        * WebProcess/WebProcess.h:
+
 2021-09-29  Per Arne  <pvollan@apple.com>
 
         Add telemetry to the Networking process sandbox

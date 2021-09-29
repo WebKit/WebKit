@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FileSystemHandle.h"
 
-#include "FileSystemHandleImpl.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -34,10 +33,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FileSystemHandle);
 
-FileSystemHandle::FileSystemHandle(FileSystemHandle::Kind kind, String&& name, Ref<FileSystemHandleImpl>&& impl)
+FileSystemHandle::FileSystemHandle(FileSystemHandle::Kind kind, String&& name, FileSystemHandleIdentifier identifier, Ref<FileSystemStorageConnection>&& connection)
     : m_kind(kind)
     , m_name(WTFMove(name))
-    , m_impl(WTFMove(impl))
+    , m_identifier(identifier)
+    , m_connection(WTFMove(connection))
 {
 }
 
@@ -48,7 +48,7 @@ void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<
     if (m_kind != handle.kind() || m_name != handle.name())
         return promise.resolve(false);
 
-    m_impl->isSameEntry(handle.impl(), [promise = WTFMove(promise)](auto result) mutable {
+    m_connection->isSameEntry(m_identifier, handle.identifier(), [promise = WTFMove(promise)](auto result) mutable {
         promise.settle(WTFMove(result));
     });
 }

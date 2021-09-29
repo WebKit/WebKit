@@ -46,7 +46,7 @@ FileSystemStorageManager::~FileSystemStorageManager()
         m_registry.unregisterHandle(identifier);
 }
 
-Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
+Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -70,14 +70,14 @@ Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> FileSystemSt
     auto newHandle = makeUnique<FileSystemStorageHandle>(*this, type, WTFMove(path), WTFMove(name));
     auto newHandleIdentifier = newHandle->identifier();
     m_handlesByConnection.ensure(connection, [&] {
-        return HashSet<FileSystemStorageHandleIdentifier> { };
+        return HashSet<WebCore::FileSystemHandleIdentifier> { };
     }).iterator->value.add(newHandleIdentifier);
     m_registry.registerHandle(newHandleIdentifier, *newHandle);
     m_handles.add(newHandleIdentifier, WTFMove(newHandle));
     return newHandleIdentifier;
 }
 
-const String& FileSystemStorageManager::getPath(FileSystemStorageHandleIdentifier identifier)
+const String& FileSystemStorageManager::getPath(WebCore::FileSystemHandleIdentifier identifier)
 {
     auto handle = m_handles.find(identifier);
     return handle == m_handles.end() ? emptyString() : handle->value->path();
@@ -98,7 +98,7 @@ void FileSystemStorageManager::connectionClosed(IPC::Connection::UniqueID connec
     m_handlesByConnection.remove(handles);
 }
 
-Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::getDirectory(IPC::Connection::UniqueID connection)
+Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::getDirectory(IPC::Connection::UniqueID connection)
 {
     ASSERT(!RunLoop::isMain());
 

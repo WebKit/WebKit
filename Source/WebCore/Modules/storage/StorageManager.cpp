@@ -30,7 +30,7 @@
 #include "Document.h"
 #include "ExceptionOr.h"
 #include "FileSystemDirectoryHandle.h"
-#include "FileSystemHandleImpl.h"
+#include "FileSystemStorageConnection.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemDirectoryHandle.h"
 #include "NavigatorBase.h"
@@ -119,7 +119,8 @@ void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterfac
         if (result.hasException())
             return promise.reject(result.releaseException());
 
-        promise.resolve(FileSystemDirectoryHandle::create({ }, result.releaseReturnValue()));
+        auto identifierConnectionPair = result.releaseReturnValue();
+        promise.resolve(FileSystemDirectoryHandle::create({ }, identifierConnectionPair.first, Ref { * identifierConnectionPair.second }));
     });
 }
 

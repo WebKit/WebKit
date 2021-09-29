@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FileSystemHandleIdentifier.h"
 #include "IDLTypes.h"
 #include <wtf/IsoMalloc.h>
 
@@ -32,7 +33,7 @@ namespace WebCore {
 
 template<typename> class DOMPromiseDeferred;
 
-class FileSystemHandleImpl;
+class FileSystemStorageConnection;
 enum class PermissionState : uint8_t;
 
 class FileSystemHandle : public RefCounted<FileSystemHandle> {
@@ -46,17 +47,19 @@ public:
     };
     Kind kind() const { return m_kind; }
     const String& name() const { return m_name; }
-    FileSystemHandleImpl& impl() const { return m_impl.get(); }
+    FileSystemHandleIdentifier identifier() const { return m_identifier; }
 
     void isSameEntry(FileSystemHandle&, DOMPromiseDeferred<IDLBoolean>&&) const;
 
 protected:
-    FileSystemHandle(Kind, String&& name, Ref<FileSystemHandleImpl>&&);
+    FileSystemHandle(Kind, String&& name, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);
+    FileSystemStorageConnection& connection() { return m_connection.get(); }
 
 private:
     Kind m_kind { Kind::File };
     String m_name;
-    Ref<FileSystemHandleImpl> m_impl;
+    FileSystemHandleIdentifier m_identifier;
+    Ref<FileSystemStorageConnection> m_connection;
 };
 
 } // namespace WebCore

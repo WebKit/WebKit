@@ -1,3 +1,46 @@
+2021-09-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Replace FileSystemHandleImpl with FileSystemStorageConnection
+        https://bugs.webkit.org/show_bug.cgi?id=230861
+        <rdar://problem/83606465>
+
+        Reviewed by Youenn Fablet.
+
+        Introduce WorkerStorageConnection class, which dispatches StorageManager task to main-thread StorageConnection
+        and dispatches result back to worker thread.
+
+        Rebaselined existing test.
+
+        * Headers.cmake:
+        * Modules/filesystemaccess/FileSystemDirectoryHandle.cpp:
+        (WebCore::FileSystemDirectoryHandle::create):
+        (WebCore::FileSystemDirectoryHandle::FileSystemDirectoryHandle):
+        (WebCore::FileSystemDirectoryHandle::getFileHandle):
+        (WebCore::FileSystemDirectoryHandle::getDirectoryHandle):
+        (WebCore::FileSystemDirectoryHandle::removeEntry):
+        (WebCore::FileSystemDirectoryHandle::resolve):
+        * Modules/filesystemaccess/FileSystemDirectoryHandle.h:
+        * Modules/filesystemaccess/FileSystemFileHandle.cpp:
+        (WebCore::FileSystemFileHandle::create):
+        (WebCore::FileSystemFileHandle::FileSystemFileHandle):
+        * Modules/filesystemaccess/FileSystemFileHandle.h:
+        * Modules/filesystemaccess/FileSystemHandle.cpp:
+        (WebCore::FileSystemHandle::FileSystemHandle):
+        (WebCore::FileSystemHandle::isSameEntry const):
+        * Modules/filesystemaccess/FileSystemHandle.h:
+        (WebCore::FileSystemHandle::identifier const):
+        (WebCore::FileSystemHandle::connection):
+        (WebCore::FileSystemHandle::impl const): Deleted.
+        * Modules/filesystemaccess/FileSystemHandleIdentifier.h: Renamed from Source/WebKit/NetworkProcess/storage/FileSystemStorageHandleIdentifier.h.
+        * Modules/filesystemaccess/FileSystemStorageConnection.h: Renamed from Source/WebCore/Modules/filesystemaccess/FileSystemHandleImpl.h.
+        (WebCore::FileSystemStorageConnection::~FileSystemStorageConnection):
+        * Modules/storage/DummyStorageProvider.h:
+        * Modules/storage/StorageConnection.h:
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::StorageManager::fileSystemAccessGetDirectory):
+        * Modules/storage/WorkerStorageConnection.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
 
         [css-ui] getComputedStyle() must return the specified value for '-webkit-appearance'

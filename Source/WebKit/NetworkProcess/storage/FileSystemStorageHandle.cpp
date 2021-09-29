@@ -38,7 +38,7 @@ constexpr char pathSeparator = '/';
 #endif
 
 FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
-    : m_identifier(FileSystemStorageHandleIdentifier::generateThreadSafe())
+    : m_identifier(WebCore::FileSystemHandleIdentifier::generateThreadSafe())
     , m_manager(makeWeakPtr(manager))
     , m_type(type)
     , m_path(WTFMove(path))
@@ -58,7 +58,7 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
     }
 }
 
-bool FileSystemStorageHandle::isSameEntry(FileSystemStorageHandleIdentifier identifier)
+bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier identifier)
 {
     auto path = m_manager->getPath(identifier);
     if (path.isEmpty())
@@ -67,7 +67,7 @@ bool FileSystemStorageHandle::isSameEntry(FileSystemStorageHandleIdentifier iden
     return m_path == path;
 }
 
-Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::requestCreateHandle(IPC::Connection::UniqueID connection, Type type, String&& name, bool createIfNecessary)
+Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::requestCreateHandle(IPC::Connection::UniqueID connection, Type type, String&& name, bool createIfNecessary)
 {
     if (m_type != FileSystemStorageHandle::Type::Directory)
         return makeUnexpected(FileSystemStorageError::TypeMismatch);
@@ -83,12 +83,12 @@ Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> FileSystemSt
     return m_manager->createHandle(connection, type, WTFMove(path), WTFMove(name), createIfNecessary);
 }
 
-Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::getFileHandle(IPC::Connection::UniqueID connection, String&& name, bool createIfNecessary)
+Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::getFileHandle(IPC::Connection::UniqueID connection, String&& name, bool createIfNecessary)
 {
     return requestCreateHandle(connection, FileSystemStorageHandle::Type::File, WTFMove(name), createIfNecessary);
 }
 
-Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::getDirectoryHandle(IPC::Connection::UniqueID connection, String&& name, bool createIfNecessary)
+Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::getDirectoryHandle(IPC::Connection::UniqueID connection, String&& name, bool createIfNecessary)
 {
     return requestCreateHandle(connection, FileSystemStorageHandle::Type::Directory, WTFMove(name), createIfNecessary);
 }
@@ -123,7 +123,7 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::removeEntry(const
     return result;
 }
 
-Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::resolve(FileSystemStorageHandleIdentifier identifier)
+Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::resolve(WebCore::FileSystemHandleIdentifier identifier)
 {
     if (!m_manager)
         return makeUnexpected(FileSystemStorageError::Unknown);

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Connection.h"
-#include "FileSystemStorageHandleIdentifier.h"
+#include <WebCore/FileSystemHandleIdentifier.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -37,12 +37,12 @@ class FileSystemStorageHandleRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FileSystemStorageHandleRegistry();
-    void registerHandle(FileSystemStorageHandleIdentifier, FileSystemStorageHandle&);
-    void unregisterHandle(FileSystemStorageHandleIdentifier);
-    FileSystemStorageHandle* getHandle(FileSystemStorageHandleIdentifier);
+    void registerHandle(WebCore::FileSystemHandleIdentifier, FileSystemStorageHandle&);
+    void unregisterHandle(WebCore::FileSystemHandleIdentifier);
+    FileSystemStorageHandle* getHandle(WebCore::FileSystemHandleIdentifier);
 
 private:
-    HashMap<FileSystemStorageHandleIdentifier, WeakPtr<FileSystemStorageHandle>> m_handles;
+    HashMap<WebCore::FileSystemHandleIdentifier, WeakPtr<FileSystemStorageHandle>> m_handles;
 };
 
 } // namespace WebKit

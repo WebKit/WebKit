@@ -26,12 +26,13 @@
 #include "config.h"
 #include "WebStorageConnection.h"
 
-#include "FileSystemStorageHandleProxy.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkStorageManagerMessages.h"
+#include "WebFileSystemStorageConnection.h"
 #include "WebProcess.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/ExceptionOr.h>
+#include <WebCore/FileSystemHandleIdentifier.h>
 
 namespace WebKit {
 
@@ -45,23 +46,24 @@ void WebStorageConnection::getPersisted(const WebCore::ClientOrigin& origin, Sto
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persisted(origin), WTFMove(completionHandler));
 }
 
-void WebStorageConnection::persist(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+void WebStorageConnection::persist(const WebCore::ClientOrigin& origin, StorageConnection::PersistCallback&& completionHandler)
 {
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persist(origin), WTFMove(completionHandler));
 }
 
-void WebStorageConnection::fileSystemGetDirectory(const WebCore::ClientOrigin& origin, CompletionHandler<void(WebCore::ExceptionOr<Ref<WebCore::FileSystemHandleImpl>>&&)>&& completionHandler)
+void WebStorageConnection::fileSystemGetDirectory(const WebCore::ClientOrigin& origin, StorageConnection::GetDirectoryCallback&& completionHandler)
 {
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    connection.sendWithAsyncReply(Messages::NetworkStorageManager::FileSystemGetDirectory(origin), [weakConnection = makeWeakPtr(connection), completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection.sendWithAsyncReply(Messages::NetworkStorageManager::FileSystemGetDirectory(origin), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(WebCore::Exception { convertToExceptionCode(result.error()) });
 
-        if (!weakConnection || !result.value().isValid())
+        auto identifier = result.value();
+        if (!identifier.isValid())
             return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-        Ref<WebCore::FileSystemHandleImpl> impl = FileSystemStorageHandleProxy::create(result.value(), *weakConnection);
-        return completionHandler(WTFMove(impl));
+        auto connection = RefPtr<WebCore::FileSystemStorageConnection> { &WebProcess::singleton().fileSystemStorageConnection() };
+        return completionHandler(std::pair { identifier, WTFMove(connection) });
     });
 }
 

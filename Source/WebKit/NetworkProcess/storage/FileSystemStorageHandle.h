@@ -26,8 +26,7 @@
 #pragma once
 
 #include "Connection.h"
-#include "FileSystemStorageHandleIdentifier.h"
-
+#include <WebCore/FileSystemHandleIdentifier.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -41,19 +40,19 @@ public:
     enum class Type : bool { File, Directory };
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
 
-    FileSystemStorageHandleIdentifier identifier() const { return m_identifier; }
+    WebCore::FileSystemHandleIdentifier identifier() const { return m_identifier; }
     const String& path() const { return m_path; }
 
-    bool isSameEntry(FileSystemStorageHandleIdentifier);
-    Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
-    Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> getDirectoryHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
+    bool isSameEntry(WebCore::FileSystemHandleIdentifier);
+    Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getFileHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
+    Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getDirectoryHandle(IPC::Connection::UniqueID, String&& name, bool createIfNecessary);
     std::optional<FileSystemStorageError> removeEntry(const String& name, bool deleteRecursively);
-    Expected<Vector<String>, FileSystemStorageError> resolve(FileSystemStorageHandleIdentifier);
+    Expected<Vector<String>, FileSystemStorageError> resolve(WebCore::FileSystemHandleIdentifier);
 
 private:
-    Expected<FileSystemStorageHandleIdentifier, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
+    Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
 
-    FileSystemStorageHandleIdentifier m_identifier;
+    WebCore::FileSystemHandleIdentifier m_identifier;
     WeakPtr<FileSystemStorageManager> m_manager;
     Type m_type;
     String m_path;
