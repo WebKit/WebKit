@@ -465,6 +465,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowInternalObjectsInHeapSnapshot, WI.unlocalizedString("Show Internal Objects"));
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowPrivateSymbolsInHeapSnapshot, WI.unlocalizedString("Show Private Symbols"));
 
+        let extensionsGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Web Extensions:"));
+        extensionsGroup.addSetting(WI.settings.engineeringShowMockWebExtensionTab, WI.unlocalizedString("Show Mock Web Extension tab"));
+
         this.addSettingsView(engineeringSettingsView);
     }
 

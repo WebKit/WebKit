@@ -211,7 +211,7 @@ InspectorFrontendAPI = {
     },
 
     // Returns a WI.WebInspectorExtension.ErrorCode if an error occurred, otherwise an object
-    // with an 'inspectorExtensionID' key representing the tab identifier for the newly created tab.
+    // with an 'extensionTabID' key representing the tab identifier for the newly created tab.
     createTabForExtension(extensionID, tabName, tabIconURL, sourceURL)
     {
         return WI.sharedApp.extensionController.createTabForExtension(extensionID, tabName, tabIconURL, sourceURL);
