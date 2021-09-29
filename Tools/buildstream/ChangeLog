@@ -1,5 +1,18 @@
 2021-09-29  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Add bwrap and xdg-dbus-proxy
+        https://bugs.webkit.org/show_bug.cgi?id=230456
+
+        Reviewed by Sergio Villar Senin.
+
+        These are needed in order to enable the Bubblewrap launcher in WPE/GTK at build time.
+        
+        * elements/sdk-platform.bst:
+        * elements/sdk/bubblewrap.bst: Added.
+        * elements/sdk/xdg-dbus-proxy.bst: Added.
+
+2021-09-29  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] rr replay is broken
         https://bugs.webkit.org/show_bug.cgi?id=230952
 

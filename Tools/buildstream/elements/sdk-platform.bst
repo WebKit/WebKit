@@ -9,6 +9,7 @@ depends:
 
 # replaced (patched) elements:
 - sdk/adwaita-icon-theme.bst
+- sdk/bubblewrap.bst
 - sdk/capnp.bst
 - sdk/cargo-c.bst
 - sdk/ccls.bst
@@ -64,6 +65,7 @@ depends:
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst
 - sdk/x264.bst
+- sdk/xdg-dbus-proxy.bst
 - sdk/xorg-server.bst
 
 - freedesktop-sdk.bst:components/alsa-lib.bst
