@@ -1047,7 +1047,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     // to their left, which really makes for a new compound selector, yet it's consumed by
     // the selector parser as a single compound selector.
     //
-    // Example: input#x::-webkit-clear-button -> [ ::-webkit-clear-button, input, #x ]
+    // Example: input#x::-webkit-inner-spin-button -> [ ::-webkit-inner-spin-button, input, #x ]
     //
     CSSParserSelector* splitAfter = compoundSelector.get();
     while (splitAfter->tagHistory() && !splitAfter->tagHistory()->needsImplicitShadowCombinatorForMatching())

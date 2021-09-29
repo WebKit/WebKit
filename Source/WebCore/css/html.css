@@ -449,13 +449,6 @@ input::-webkit-textfield-decoration-container {
     content: none !important;
 }
 
-input::-webkit-clear-button {
-    -webkit-appearance: searchfield-cancel-button;
-    display: inline-block;
-    flex: none;
-    margin-left: 2px;
-}
-
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: searchfield-cancel-button;
     display: block;

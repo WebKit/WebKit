@@ -1,3 +1,18 @@
+2021-09-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        Remove references to '-webkit-clear-button'
+        https://bugs.webkit.org/show_bug.cgi?id=230971
+
+        Reviewed by Simon Fraser.
+
+        The pseudo-element was removed in r150876.
+
+        * css/html.css:
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator):
+
+        Updated comment to use a pseudo-element which exists.
+
 2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         MediaStream canvas.captureStream() fails for WebGL
