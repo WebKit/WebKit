@@ -475,7 +475,7 @@ TEST(EventAttribution, Daemon)
         [webView _addEventAttributionWithSourceID:42 destinationURL:exampleURL() sourceDescription:@"test source description" purchaser:@"test purchaser" reportEndpoint:server.request().URL optionalNonce:nil applicationBundleID:@"test.bundle.id"];
     });
 
-    system("killall TestPCMDaemon -9");
+    system("killall AdAttributionDaemon -9");
 #if HAVE(OS_LAUNCHD_JOB)
     // LaunchOnlyOnce takes care of cleanup with launchd.
 #else
