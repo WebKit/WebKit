@@ -1,3 +1,44 @@
+2021-09-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283156. rdar://problem/83648190
+
+    Vorbis decoder can't be instantiated - Remove workaround added in bug 228139
+    https://bugs.webkit.org/show_bug.cgi?id=230742
+    rdar://83484414
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebKit:
+    
+    This is already covered by test; however this will fail on Monterey without the updated
+    CoreMedia framework.
+    
+    * Scripts/process-entitlements.sh: Add new required entitlement.
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::initializeSandbox): Only have bug workaround on BigSur and earlier.
+    
+    Source/WTF:
+    
+    * wtf/PlatformUse.h: Add USE_VORBIS_AUDIOCOMPONENT_WORKAROUND
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283156 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-27  Jean-Yves Avenard  <jya@apple.com>
+
+            Vorbis decoder can't be instantiated - Remove workaround added in bug 228139
+            https://bugs.webkit.org/show_bug.cgi?id=230742
+            rdar://83484414
+
+            Reviewed by Eric Carlson.
+
+            This is already covered by test; however this will fail on Monterey without the updated
+            CoreMedia framework.
+
+            * Scripts/process-entitlements.sh: Add new required entitlement.
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::initializeSandbox): Only have bug workaround on BigSur and earlier.
+
 2021-09-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283081. rdar://problem/83584464

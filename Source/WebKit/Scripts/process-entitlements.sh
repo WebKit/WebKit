@@ -27,6 +27,10 @@ function mac_process_webcontent_entitlements()
             plistbuddy Add :com.apple.avfoundation.allow-system-wide-context bool YES
             plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
         fi
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
+        then
+            plistbuddy add :com.apple.coreaudio.allow-vorbis-decode YES
+        fi
     fi
 
     mac_process_webcontent_or_plugin_entitlements
