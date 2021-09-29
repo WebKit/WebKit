@@ -565,6 +565,14 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/transform
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/transforms-skewX.html [ ImageOnlyFailure ]
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/animations/font-palette-animation-3.html [ ImageOnlyFailure ]
+webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-add.html [ ImageOnlyFailure ]
+webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-modify.html [ ImageOnlyFailure ]
+webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-remove.html [ ImageOnlyFailure ]
+webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette.html [ ImageOnlyFailure ]
+webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
+webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

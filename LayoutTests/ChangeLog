@@ -1,3 +1,14 @@
+2021-09-28  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=230927
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/media-src/media-src-7_1-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/media-src/media-src-7_2-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/media-src/media-src-7_3.sub-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/media-src/media-src-redir-bug.sub-expected.txt: Added.
+
 2021-09-28  Truitt Savell  <tsavell@apple.com>
 
         Marking more tests crashing with uncaught exception 'NSInvalidArgumentException'
