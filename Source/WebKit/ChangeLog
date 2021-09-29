@@ -1,3 +1,25 @@
+2021-09-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash in WebKit::DisplayLink::displayLinkCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=230917
+        <rdar://82528370>
+
+        Reviewed by Tim Horton.
+
+        We have evidence of a divide-by-zero crash in DisplayLink::notifyObserversDisplayWasRefreshed()
+        where m_currentUpdate.updatesPerSecond is zero. The only way I can see this happening
+        is if DisplayLink::DisplayLink() returns early, which should log. Protect against
+        this by initializing m_displayNominalFramesPerSecond to 60, and do another check,
+        with a log, in DisplayLink::addObserver() before we use m_displayNominalFramesPerSecond
+        for the first time.
+
+        Convert the logging to RELEASE_LOG_FAULT reports.
+
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::addObserver):
+        * UIProcess/mac/DisplayLink.h:
+
 2021-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         Remove unused "com.apple.security.exception.file*" rules from WebKit sandboxes 

@@ -48,13 +48,13 @@ DisplayLink::DisplayLink(WebCore::PlatformDisplayID displayID)
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID, &m_displayLink);
     if (error) {
-        WTFLogAlways("Could not create a display link for display %u: error %d", displayID, error);
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a display link for display %u: error %d", displayID, error);
         return;
     }
     
     error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
     if (error) {
-        WTFLogAlways("Could not set the display link output callback for display %u: error %d", displayID, error);
+        RELEASE_LOG_FAULT(DisplayLink, "DisplayLink: Could not set the display link output callback for display %u: error %d", displayID, error);
         return;
     }
 
@@ -103,7 +103,12 @@ void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID
         LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " starting CVDisplayLink with fps " << m_displayNominalFramesPerSecond);
         CVReturn error = CVDisplayLinkStart(m_displayLink);
         if (error)
-            WTFLogAlways("Could not start the display link: %d", error);
+            RELEASE_LOG_FAULT(DisplayLink, "DisplayLink: Could not start the display link: %d", error);
+
+        if (!m_displayNominalFramesPerSecond) {
+            RELEASE_LOG_FAULT(DisplayLink, "DisplayLink: displayNominalFramesPerSecond is 0, using %d", WebCore::FullSpeedFramesPerSecond);
+            m_displayNominalFramesPerSecond = WebCore::FullSpeedFramesPerSecond;
+        };
 
         m_currentUpdate = { 0, m_displayNominalFramesPerSecond };
     }
