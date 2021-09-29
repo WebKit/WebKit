@@ -1,3 +1,13 @@
+2021-09-29  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed built trigger fix.
+
+        * CISupport/build-webkit-org/wkbuild.py:
+        (_should_file_trigger_build):
+        * CISupport/build-webkit-org/wkbuild_unittest.py:
+        (ShouldBuildTest):
+        (ShouldBuildTest.test_should_build):
+
 2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Make build-webkit configurable using environment variable
