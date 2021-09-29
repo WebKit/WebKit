@@ -171,6 +171,7 @@ CurlShareHandle::CurlShareHandle()
     m_shareHandle = curl_share_init();
     curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
     curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
+    curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
     curl_share_setopt(m_shareHandle, CURLSHOPT_LOCKFUNC, lockCallback);
     curl_share_setopt(m_shareHandle, CURLSHOPT_UNLOCKFUNC, unlockCallback);
 }
@@ -198,6 +199,7 @@ Lock* CurlShareHandle::mutexFor(curl_lock_data data)
     static Lock cookieMutex;
     static Lock dnsMutex;
     static Lock shareMutex;
+    static Lock sslSessionMutex;
 
     switch (data) {
     case CURL_LOCK_DATA_COOKIE:
@@ -206,6 +208,8 @@ Lock* CurlShareHandle::mutexFor(curl_lock_data data)
         return &dnsMutex;
     case CURL_LOCK_DATA_SHARE:
         return &shareMutex;
+    case CURL_LOCK_DATA_SSL_SESSION:
+        return &sslSessionMutex;
     default:
         ASSERT_NOT_REACHED();
         return nullptr;
