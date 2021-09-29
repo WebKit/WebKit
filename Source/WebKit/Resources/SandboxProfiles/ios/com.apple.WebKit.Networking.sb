@@ -366,12 +366,6 @@
         (allow mach-lookup
                (extension "com.apple.security.exception.mach-lookup.local-name"))
     )
-    (allow-read-and-issue-generic-extensions
-           (extension "com.apple.security.exception.files.absolute-path.read-only")
-           (extension "com.apple.security.exception.files.home-relative-path.read-only"))
-    (allow-read-write-and-issue-generic-extensions
-           (extension "com.apple.security.exception.files.absolute-path.read-write")
-           (extension "com.apple.security.exception.files.home-relative-path.read-write"))
     (allow managed-preference-read
            (extension "com.apple.security.exception.managed-preference.read-only"))
     (allow user-preference-read

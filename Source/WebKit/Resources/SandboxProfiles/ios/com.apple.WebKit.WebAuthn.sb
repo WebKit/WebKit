@@ -207,14 +207,6 @@
         (require-all
             (executable-bundle)
             (regex #"/[^/]+/SC_Info/")))
-
-    (allow file-issue-extension
-          (require-all
-              (extension-class "com.apple.nsurlstorage.extension-cache")
-              (extension "com.apple.security.exception.files.home-relative-path.read-write")
-              (require-any
-                  (prefix "/private/var/root/Library/Caches/")
-                  (front-user-home-prefix "/Library/Caches/"))))
 )
 
 (with-filter (system-attribute apple-internal)

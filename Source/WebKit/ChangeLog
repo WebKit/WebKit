@@ -1,3 +1,22 @@
+2021-09-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove unused "com.apple.security.exception.file*" rules from WebKit sandboxes 
+        https://bugs.webkit.org/show_bug.cgi?id=230918
+        <rdar://problem/66585844>
+
+        Reviewed by Per Arne Vollan.
+
+        The Sandbox implementation provides a mechanism where apps can extend the default app
+        sandbox with entitled extension properties attached to their binary at signing time.
+        WebKit does not need or use this feature. However, the rules were imported to our custom
+        sandbox when we stopped using the system one. We should remove these rules since we don't
+        need them, and they add to the size and complexity of the sandbox rule set.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2021-09-28  BJ Burg  <bburg@apple.com>
 
         [Cocoa] Add SPI to select a tab created by _WKInspectorExtension
