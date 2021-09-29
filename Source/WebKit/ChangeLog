@@ -1,5 +1,54 @@
 2021-09-29  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r283209. rdar://problem/83681911
+
+    Crash in WebKit::DisplayLink::displayLinkCallback()
+    https://bugs.webkit.org/show_bug.cgi?id=230917
+    <rdar://82528370>
+    
+    Reviewed by Tim Horton.
+    
+    We have evidence of a divide-by-zero crash in DisplayLink::notifyObserversDisplayWasRefreshed()
+    where m_currentUpdate.updatesPerSecond is zero. The only way I can see this happening
+    is if DisplayLink::DisplayLink() returns early, which should log. Protect against
+    this by initializing m_displayNominalFramesPerSecond to 60, and do another check,
+    with a log, in DisplayLink::addObserver() before we use m_displayNominalFramesPerSecond
+    for the first time.
+    
+    Convert the logging to RELEASE_LOG_FAULT reports.
+    
+    * UIProcess/mac/DisplayLink.cpp:
+    (WebKit::DisplayLink::DisplayLink):
+    (WebKit::DisplayLink::addObserver):
+    * UIProcess/mac/DisplayLink.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283209 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-28  Simon Fraser  <simon.fraser@apple.com>
+
+            Crash in WebKit::DisplayLink::displayLinkCallback()
+            https://bugs.webkit.org/show_bug.cgi?id=230917
+            <rdar://82528370>
+
+            Reviewed by Tim Horton.
+
+            We have evidence of a divide-by-zero crash in DisplayLink::notifyObserversDisplayWasRefreshed()
+            where m_currentUpdate.updatesPerSecond is zero. The only way I can see this happening
+            is if DisplayLink::DisplayLink() returns early, which should log. Protect against
+            this by initializing m_displayNominalFramesPerSecond to 60, and do another check,
+            with a log, in DisplayLink::addObserver() before we use m_displayNominalFramesPerSecond
+            for the first time.
+
+            Convert the logging to RELEASE_LOG_FAULT reports.
+
+            * UIProcess/mac/DisplayLink.cpp:
+            (WebKit::DisplayLink::DisplayLink):
+            (WebKit::DisplayLink::addObserver):
+            * UIProcess/mac/DisplayLink.h:
+
+2021-09-29  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r283156. rdar://problem/83681765
 
     Vorbis decoder can't be instantiated - Remove workaround added in bug 228139
