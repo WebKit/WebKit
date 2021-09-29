@@ -1,3 +1,19 @@
+2021-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Make WebLocalizedString() thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=230954
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make WebLocalizedString() thread-safe. It takes minimal effort to make it thread-safe given
+        that the NSBundle API is thread-safe [1] and clients keep calling it on the background thread.
+
+        [1] https://developer.apple.com/documentation/foundation/nslocalizedstringwithdefaultvalue
+        "As of OS X 10.11 and iOS 9, NSBundle is thread-safe. As such, you can safely call
+         NSLocalizedStringWithDefaultValue from any execution context."
+
+        * Misc/WebLocalizableStrings.mm:
+
 2021-09-28  Chris Dumez  <cdumez@apple.com>
 
         Move Cross-Origin-Opener-Policy handling to the NetworkProcess
