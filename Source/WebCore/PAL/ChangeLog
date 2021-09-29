@@ -1,3 +1,14 @@
+2021-09-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Support in-band chapter tracks
+        https://bugs.webkit.org/show_bug.cgi?id=230380
+        <rdar://problem/83218578>
+
+        Reviewed by Jer Noble.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2021-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Mostly fix Mac CMake build

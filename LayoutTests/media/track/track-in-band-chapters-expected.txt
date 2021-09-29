@@ -1,0 +1,35 @@
+
+EXPECTED (video.textTracks.length == '3') OK
+
+EXPECTED (track.cues.length == '6') OK
+EXPECTED (track.language == 'en') OK
+EXPECTED (track.kind == 'chapters') OK
+EXPECTED (track.cues[0].text == 'English Chapter 1') OK
+EXPECTED (track.cues[1].text == 'English Chapter 2') OK
+EXPECTED (track.cues[2].text == 'English Chapter 3') OK
+EXPECTED (track.cues[3].text == 'English Chapter 4') OK
+EXPECTED (track.cues[4].text == 'English Chapter 5') OK
+EXPECTED (track.cues[5].text == 'English Chapter 6') OK
+
+EXPECTED (track.cues.length == '6') OK
+EXPECTED (track.language == 'es') OK
+EXPECTED (track.kind == 'chapters') OK
+EXPECTED (track.cues[0].text == 'Spanish Chapter 1') OK
+EXPECTED (track.cues[1].text == 'Spanish Chapter 2') OK
+EXPECTED (track.cues[2].text == 'Spanish Chapter 3') OK
+EXPECTED (track.cues[3].text == 'Spanish Chapter 4') OK
+EXPECTED (track.cues[4].text == 'Spanish Chapter 5') OK
+EXPECTED (track.cues[5].text == 'Spanish Chapter 6') OK
+
+EXPECTED (track.cues.length == '6') OK
+EXPECTED (track.language == 'fr') OK
+EXPECTED (track.kind == 'chapters') OK
+EXPECTED (track.cues[0].text == 'French Chapter 1') OK
+EXPECTED (track.cues[1].text == 'French Chapter 2') OK
+EXPECTED (track.cues[2].text == 'French Chapter 3') OK
+EXPECTED (track.cues[3].text == 'French Chapter 4') OK
+EXPECTED (track.cues[4].text == 'French Chapter 5') OK
+EXPECTED (track.cues[5].text == 'French Chapter 6') OK
+
+END OF TEST
+

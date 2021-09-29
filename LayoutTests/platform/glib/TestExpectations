@@ -1624,6 +1624,7 @@ webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Fa
 webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
 webkit.org/b/131546 webkit.org/b/198830 media/track/track-in-band-legacy-api.html [ Failure Crash ]
 webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
+media/track/track-in-band-chapters.html [ Skip ]
 
 # DataCue.value not enabled
 http/tests/media/track-in-band-hls-metadata.html [ Skip ]

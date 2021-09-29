@@ -1,3 +1,20 @@
+2021-09-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Support in-band chapter tracks
+        https://bugs.webkit.org/show_bug.cgi?id=230380
+        <rdar://problem/83218578>
+
+        Reviewed by Jer Noble.
+
+        * media/content/multi-language-chapters.mp4: Added.
+        * media/track/track-in-band-chapters-expected.txt: Added.
+        * media/track/track-in-band-chapters.html: Added.
+        * media/track/track-manual-mode.html: Updated because the movie file this uses has
+        in-band chapter tracks.
+        * media/track/track-manual-mode-expected.txt: Ditto.
+        * platform/glib/TestExpectations: Skipped.
+        * platform/win/TestExpectations: Skipped.
+
 2021-09-28  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.

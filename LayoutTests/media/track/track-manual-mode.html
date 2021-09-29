@@ -10,7 +10,7 @@
             function testTracks()
             {
                 consoleWrite(`<br><i>** Forced tracks should be in .textTracks as well as in the menu`);
-                testExpected("video.textTracks.length", 9);
+                testExpected("video.textTracks.length", 11);
 
                 consoleWrite("<br><i>** No track should be enabled by default<" + "/i>");
                 testExpected("video.textTracks[0].language", "en");

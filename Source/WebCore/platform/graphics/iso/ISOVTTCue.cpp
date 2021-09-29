@@ -80,11 +80,11 @@ ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& d
 {
 }
 
-ISOWebVTTCue::ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& sourceID, String&& id, String&& originalStartTime, String&& settings, String&& cueText)
+ISOWebVTTCue::ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& cueID, String&& cueText, String&& settings, String&& sourceID, String&& originalStartTime)
     : m_presentationTime(WTFMove(presentationTime))
     , m_duration(WTFMove(duration))
     , m_sourceID(WTFMove(sourceID))
-    , m_identifier(WTFMove(id))
+    , m_identifier(WTFMove(cueID))
     , m_originalStartTime(WTFMove(originalStartTime))
     , m_settings(WTFMove(settings))
     , m_cueText(WTFMove(cueText))

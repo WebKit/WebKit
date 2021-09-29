@@ -43,6 +43,7 @@
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
 #import "ImageRotationSessionVT.h"
+#import "InbandChapterTrackPrivateAVFObjC.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
 #import "Logging.h"
@@ -179,6 +180,7 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)disconnect;
 -(void)metadataLoaded;
 -(void)didEnd:(NSNotification *)notification;
+-(void)chapterMetadataDidChange:(NSNotification *)notification;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
 - (void)legibleOutput:(id)output didOutputAttributedStrings:(NSArray *)strings nativeSampleBuffers:(NSArray *)nativeSamples forItemTime:(CMTime)itemTime;
 - (void)outputSequenceWasFlushed:(id)output;
@@ -544,6 +546,7 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     for (AVPlayerItemTrack *track in m_cachedTracks.get())
         [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
     m_cachedTracks = nullptr;
+    m_chapterTracks.clear();
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
     if (m_provider) {
@@ -979,6 +982,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
         if (mediaResourceLoader)
             resourceLoader.URLSession = (NSURLSession *)adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:*mediaResourceLoader delegate:resourceLoader.URLSessionDataDelegate delegateQueue:resourceLoader.URLSessionDataDelegateQueue]).get();
     }
+
+    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(chapterMetadataDidChange:) name:AVAssetChapterMetadataGroupsDidChangeNotification object:m_avAsset.get()];
 
     m_haveCheckedPlayability = false;
 
@@ -1741,6 +1746,7 @@ unsigned long long MediaPlayerPrivateAVFoundationObjC::totalBytes() const
 void MediaPlayerPrivateAVFoundationObjC::setAsset(RetainPtr<id>&& asset)
 {
     m_avAsset = WTFMove(asset);
+    processChapterTracks();
 }
 
 MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::assetStatus() const
@@ -2081,6 +2087,33 @@ static AVAssetTrack* firstEnabledTrack(NSArray* tracks)
     if (index == NSNotFound)
         return nil;
     return [tracks objectAtIndex:index];
+}
+
+void MediaPlayerPrivateAVFoundationObjC::metadataLoaded()
+{
+    MediaPlayerPrivateAVFoundation::metadataLoaded();
+    processChapterTracks();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::processChapterTracks()
+{
+    ASSERT(m_avAsset);
+
+    for (NSLocale *locale in [m_avAsset availableChapterLocales]) {
+
+        auto chapters = [m_avAsset chapterMetadataGroupsWithTitleLocale:locale containingItemsWithCommonKeys:@[AVMetadataCommonKeyArtwork]];
+        if (!chapters.count)
+            continue;
+
+        String language = [locale localeIdentifier];
+        auto track = m_chapterTracks.ensure(language, [&]() {
+            auto track = InbandChapterTrackPrivateAVFObjC::create(locale);
+            player()->addTextTrack(track.get());
+            return track;
+        }).iterator->value;
+
+        track->processChapters(chapters);
+    }
 }
 
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
@@ -3602,6 +3635,7 @@ NSArray* assetMetadataKeyNames()
         @"resolvedURL",
         @"tracks",
         @"availableMediaCharacteristicsWithMediaSelectionOptions",
+        @"availableChapterLocales",
     nil];
     return keys;
 }
@@ -3687,6 +3721,20 @@ NSArray* playerKVOProperties()
         m_player->queueTaskOnEventLoop([player = m_player] {
             if (player)
                 player->didEnd();
+        });
+    });
+}
+
+- (void)chapterMetadataDidChange:(NSNotification *)unusedNotification
+{
+    UNUSED_PARAM(unusedNotification);
+    ensureOnMainThread([self, strongSelf = retainPtr(self)] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player] {
+            if (player)
+                player->processChapterTracks();
         });
     });
 }

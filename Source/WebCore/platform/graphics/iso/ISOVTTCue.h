@@ -42,7 +42,7 @@ namespace WebCore {
 class WEBCORE_EXPORT ISOWebVTTCue final : public ISOBox {
 public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
-    ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& sourceID, String&& id, String&& originalStartTime, String&& settings, String&& cueText);
+    ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& cueID, String&& cueText, String&& settings = { }, String&& sourceID = { }, String&& originalStartTime = { });
 
     static FourCC boxTypeName() { return "vttc"; }
 
@@ -110,11 +110,11 @@ public:
         return {{
             WTFMove(*presentationTime),
             WTFMove(*duration),
-            WTFMove(*sourceID),
             WTFMove(*identifier),
-            WTFMove(*originalStartTime),
+            WTFMove(*cueText),
             WTFMove(*settings),
-            WTFMove(*cueText)
+            WTFMove(*sourceID),
+            WTFMove(*originalStartTime)
         }};
     }
 

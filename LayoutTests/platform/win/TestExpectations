@@ -984,6 +984,7 @@ media/audio-constructor-src.html [ Skip ] #  Timeout
 media/track/track-in-band-legacy-api.html [ Skip ]
 media/track/track-in-band-mode.html [ Skip ]
 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Skip ]
+media/track/track-in-band-chapters.html [ Skip ]
 #fast/media/mq-transform-02.html [ Pass ImageOnlyFailure ]
 #fast/media/mq-transform-03.html [ Pass ImageOnlyFailure ]
 

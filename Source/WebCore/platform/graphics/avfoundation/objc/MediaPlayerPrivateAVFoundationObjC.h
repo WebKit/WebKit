@@ -58,6 +58,7 @@ class AudioTrackPrivateAVFObjC;
 class CDMInstanceFairPlayStreamingAVFObjC;
 class CDMSessionAVFoundationObjC;
 class ImageRotationSessionVT;
+class InbandChapterTrackPrivateAVFObjC;
 class InbandMetadataTextTrackPrivateAVF;
 class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
@@ -76,6 +77,7 @@ public:
 
     void setAsset(RetainPtr<id>&&);
     void didEnd() final;
+    void metadataLoaded() final;
 
     void processCue(NSArray *, NSArray *, const MediaTime&);
     void flushCues();
@@ -118,6 +120,7 @@ public:
 
     MediaTime currentMediaTime() const final;
     void outputMediaDataWillChange();
+    void processChapterTracks();
 
 private:
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -378,6 +381,8 @@ private:
     RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
 #endif
 
+    HashMap<String, RefPtr<InbandChapterTrackPrivateAVFObjC>> m_chapterTracks;
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(MAC)
     RetainPtr<AVOutputContext> m_outputContext;
     RefPtr<MediaPlaybackTarget> m_playbackTarget { nullptr };
@@ -438,6 +443,7 @@ private:
     bool m_shouldPlayToPlaybackTarget { false };
 #endif
     bool m_runningModalPaint { false };
+    bool m_haveProcessedChapterTracks { false };
 };
 
 }

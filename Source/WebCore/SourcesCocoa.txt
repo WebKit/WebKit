@@ -305,6 +305,7 @@ platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm
 platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm
 platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm
 platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm
+platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
 platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
