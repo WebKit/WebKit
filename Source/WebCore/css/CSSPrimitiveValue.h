@@ -282,6 +282,7 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
         || type == CSSUnitType::CSS_RLHS
         || type == CSSUnitType::CSS_REMS
         || type == CSSUnitType::CSS_CHS
+        || type == CSSUnitType::CSS_IC
         || type == CSSUnitType::CSS_QUIRKY_EMS;
 }
 
@@ -297,6 +298,7 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_PC
         || type == CSSUnitType::CSS_REMS
         || type == CSSUnitType::CSS_CHS
+        || type == CSSUnitType::CSS_IC
         || type == CSSUnitType::CSS_Q
         || type == CSSUnitType::CSS_LHS
         || type == CSSUnitType::CSS_RLHS

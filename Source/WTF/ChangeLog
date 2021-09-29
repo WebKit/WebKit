@@ -1,3 +1,13 @@
+2021-09-29  Kiet Ho  <tho22@apple.com>
+
+        Implement the 'ic' unit from CSS Values 4
+        https://bugs.webkit.org/show_bug.cgi?id=204276
+        <rdar://problem/57256127>
+
+        Reviewed by Myles C. Maxfield.
+
+        * wtf/unicode/CharacterNames.h: add CJK water glyph (U+6C34) constant.
+
 2021-09-29  Antti Koivisto  <antti@apple.com>
 
         [CSS Cascade Layers] Enable by default

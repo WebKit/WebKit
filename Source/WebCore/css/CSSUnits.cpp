@@ -39,6 +39,7 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_PT:
     case CSSUnitType::CSS_PC:
     case CSSUnitType::CSS_Q:
+    case CSSUnitType::CSS_IC:
         return CSSUnitCategory::Length;
     case CSSUnitType::CSS_MS:
     case CSSUnitType::CSS_S:
@@ -150,6 +151,7 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_TURN: ts << "turn"; break;
     case CSSUnitType::CSS_REMS: ts << "rems"; break;
     case CSSUnitType::CSS_CHS: ts << "chs"; break;
+    case CSSUnitType::CSS_IC: ts << "ics"; break;
     case CSSUnitType::CSS_COUNTER_NAME: ts << "counter_name"; break;
     case CSSUnitType::CSS_SHAPE: ts << "shape"; break;
     case CSSUnitType::CSS_QUAD: ts << "quad"; break;

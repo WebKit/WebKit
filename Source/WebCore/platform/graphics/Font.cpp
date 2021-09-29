@@ -139,19 +139,12 @@ void Font::platformGlyphInit()
     auto* glyphPageZeroWidthSpace = glyphPage(0);
     UChar32 zeroWidthSpaceCharacter = 0;
 #endif
-    auto* glyphPageCharacterZero = glyphPage(GlyphPage::pageNumberForCodePoint('0'));
-    auto* glyphPageSpace = glyphPage(GlyphPage::pageNumberForCodePoint(space));
 
     if (glyphPageZeroWidthSpace)
         m_zeroWidthSpaceGlyph = glyphPageZeroWidthSpace->glyphDataForCharacter(zeroWidthSpaceCharacter).glyph;
 
-    // Nasty hack to determine if we should round or ceil space widths.
-    // If the font is monospace or fake monospace we ceil to ensure that 
-    // every character and the space are the same width. Otherwise we round.
-    if (glyphPageSpace)
-        m_spaceGlyph = glyphPageSpace->glyphDataForCharacter(space).glyph;
-    if (glyphPageCharacterZero)
-        m_zeroGlyph = glyphPageCharacterZero->glyphDataForCharacter('0').glyph;
+    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(space)))
+        m_spaceGlyph = page->glyphDataForCharacter(space).glyph;
 
     // Force the glyph for ZERO WIDTH SPACE to have zero width, unless it is shared with SPACE.
     // Helvetica is an example of a non-zero width ZERO WIDTH SPACE glyph.
@@ -159,14 +152,34 @@ void Font::platformGlyphInit()
     if (m_zeroWidthSpaceGlyph == m_spaceGlyph)
         m_zeroWidthSpaceGlyph = 0;
 
-    float width = widthForGlyph(m_spaceGlyph);
-    m_spaceWidth = width;
-    m_fontMetrics.setZeroWidth(widthForGlyph(m_zeroGlyph));
+    // widthForGlyph depends on m_zeroWidthSpaceGlyph having the correct value.
+    // Therefore all calls to widthForGlyph must happen after this point.
+
+    Glyph zeroGlyph = { 0 };
+    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint('0')))
+        zeroGlyph = page->glyphDataForCharacter('0').glyph;
+    m_fontMetrics.setZeroWidth(widthForGlyph(zeroGlyph));
+
+    // Use the width of the CJK water ideogram (U+6C34) as the
+    // approximated width of ideograms in the font, as mentioned in
+    // https://www.w3.org/TR/css-values-4/#ic. This is currently only used
+    // to support the ic unit. If the width is not available, falls back to
+    // 1em as specified.
+    if (auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(cjkWater))) {
+        auto glyph = page->glyphDataForCharacter(cjkWater).glyph;
+        m_fontMetrics.setIdeogramWidth(widthForGlyph(glyph));
+    } else
+        m_fontMetrics.setIdeogramWidth(platformData().size());
+
+    m_spaceWidth = widthForGlyph(m_spaceGlyph);
     auto amountToAdjustLineGap = std::min(m_fontMetrics.floatLineGap(), 0.0f);
     m_fontMetrics.setLineGap(m_fontMetrics.floatLineGap() - amountToAdjustLineGap);
     m_fontMetrics.setLineSpacing(m_fontMetrics.floatLineSpacing() - amountToAdjustLineGap);
     determinePitch();
-    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
+    // Nasty hack to determine if we should round or ceil space widths.
+    // If the font is monospace or fake monospace we ceil to ensure that
+    // every character and the space are the same width. Otherwise we round.
+    m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(m_spaceWidth) : roundf(m_spaceWidth);
 }
 
 Font::~Font()

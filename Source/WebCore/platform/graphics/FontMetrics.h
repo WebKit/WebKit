@@ -122,6 +122,9 @@ public:
     float zeroWidth() const { return m_zeroWidth; }
     void setZeroWidth(float zeroWidth) { m_zeroWidth = zeroWidth; }
 
+    float ideogramWidth() const { return m_ideogramWidth; }
+    void setIdeogramWidth(float ideogramWidth) { m_ideogramWidth = ideogramWidth; }
+
     float underlinePosition() const { return m_underlinePosition; }
     void setUnderlinePosition(float underlinePosition) { m_underlinePosition = underlinePosition; }
 
@@ -146,6 +149,7 @@ private:
         m_intCapHeight = 0;
         m_xHeight = 0;
         m_zeroWidth = 0;
+        m_ideogramWidth = 0;
         m_underlinePosition = 0;
         m_underlineThickness = 0;
     }
@@ -166,6 +170,7 @@ private:
     int m_intCapHeight { 0 };
 
     float m_zeroWidth { 0 };
+    float m_ideogramWidth { 0 };
     float m_xHeight { 0 };
     float m_underlinePosition { 0 };
     float m_underlineThickness { 0 };

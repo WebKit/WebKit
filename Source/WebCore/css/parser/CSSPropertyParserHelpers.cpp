@@ -473,6 +473,7 @@ static std::optional<LengthRaw> consumeLengthRawWithKnownTokenTypeDimension(CSSP
     case CSSUnitType::CSS_LHS:
     case CSSUnitType::CSS_RLHS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:

@@ -1,3 +1,47 @@
+2021-09-29  Kiet Ho  <tho22@apple.com>
+
+        Implement the 'ic' unit from CSS Values 4
+        https://bugs.webkit.org/show_bug.cgi?id=204276
+        <rdar://problem/57256127>
+
+        Reviewed by Myles C. Maxfield.
+
+        Fix ic-unit-{001..012} tests and references to use the IcTestFullWidth font,
+        which includes the CJK water glyph as a full width character. This avoids an
+        issue on macOS Catalina where the chosen fallback font renders the glyph
+        outside of the em box.
+
+        Fix ic-unit-{001..004} references to not use the ic unit.
+
+        Add two new tests where the CJK water glyph is half-width (ic-unit-013) and zero-width
+        (ic-unit-014).
+
+        * web-platform-tests/css/css-values/ic-unit-001-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-001.html:
+        * web-platform-tests/css/css-values/ic-unit-002-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-002.html:
+        * web-platform-tests/css/css-values/ic-unit-003-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-003.html:
+        * web-platform-tests/css/css-values/ic-unit-004-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-004.html:
+        * web-platform-tests/css/css-values/ic-unit-008-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-008.html:
+        * web-platform-tests/css/css-values/ic-unit-009-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-009.html:
+        * web-platform-tests/css/css-values/ic-unit-010-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-010.html:
+        * web-platform-tests/css/css-values/ic-unit-011-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-011.html:
+        * web-platform-tests/css/css-values/ic-unit-012-expected.html:
+        * web-platform-tests/css/css-values/ic-unit-012.html:
+        * web-platform-tests/css/css-values/ic-unit-013-expected.html: Added.
+        * web-platform-tests/css/css-values/ic-unit-013.html: Added.
+        * web-platform-tests/css/css-values/ic-unit-014-expected.html: Added.
+        * web-platform-tests/css/css-values/ic-unit-014.html: Added.
+        * web-platform-tests/css/css-values/resources/IcTestFullWidth.woff2: Added.
+        * web-platform-tests/css/css-values/resources/IcTestHalfWidth.woff2: Added.
+        * web-platform-tests/css/css-values/resources/IcTestZeroWidth.woff2: Added.
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         Use isolated NSURLSessions for each first party registrable domain

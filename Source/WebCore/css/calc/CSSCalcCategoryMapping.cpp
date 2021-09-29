@@ -49,6 +49,7 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_RLHS:
     case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_VW:
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
@@ -104,6 +105,7 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
     case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_RLHS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_VW:
     case CSSUnitType::CSS_VH:
     case CSSUnitType::CSS_VMIN:
@@ -139,6 +141,7 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:

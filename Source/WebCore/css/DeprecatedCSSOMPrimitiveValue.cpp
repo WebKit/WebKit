@@ -43,6 +43,7 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:  return 115;
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:  return 114;
     case CSSUnitType::CSS_CHS:                          return 109;
+    case CSSUnitType::CSS_IC:                           return CSS_UNKNOWN;
     case CSSUnitType::CSS_CM:                           return CSS_CM;
     case CSSUnitType::CSS_COUNTER:                      return CSS_COUNTER;
     case CSSUnitType::CSS_COUNTER_NAME:                 return 110;

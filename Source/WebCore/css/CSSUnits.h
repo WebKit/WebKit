@@ -75,6 +75,7 @@ enum class CSSUnitType : uint8_t {
     CSS_TURN,
     CSS_REMS,
     CSS_CHS,
+    CSS_IC,
 
     CSS_COUNTER_NAME,
 

@@ -4408,6 +4408,7 @@ inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int length
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_LHS:
         return lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
     default:

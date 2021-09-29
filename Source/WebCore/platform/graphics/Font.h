@@ -135,7 +135,6 @@ public:
     bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
     bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }
 
-    FontMetrics& fontMetrics() { return m_fontMetrics; }
     const FontMetrics& fontMetrics() const { return m_fontMetrics; }
     float sizePerUnit() const { return platformData().size() / (fontMetrics().unitsPerEm() ? fontMetrics().unitsPerEm() : 1); }
 
@@ -153,22 +152,12 @@ public:
     Path platformPathForGlyph(Glyph) const;
 
     float spaceWidth() const { return m_spaceWidth; }
-    float adjustedSpaceWidth() const { return m_adjustedSpaceWidth; }
-    void setSpaceWidths(float spaceWidth)
-    {
-        m_spaceWidth = spaceWidth;
-        m_adjustedSpaceWidth = spaceWidth;
-    }
 
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 
     Glyph spaceGlyph() const { return m_spaceGlyph; }
-    void setSpaceGlyph(Glyph spaceGlyph) { m_spaceGlyph = spaceGlyph; }
     Glyph zeroWidthSpaceGlyph() const { return m_zeroWidthSpaceGlyph; }
-    void setZeroWidthSpaceGlyph(Glyph spaceGlyph) { m_zeroWidthSpaceGlyph = spaceGlyph; }
     bool isZeroWidthSpaceGlyph(Glyph glyph) const { return glyph == m_zeroWidthSpaceGlyph && glyph; }
-    Glyph zeroGlyph() const { return m_zeroGlyph; }
-    void setZeroGlyph(Glyph zeroGlyph) { m_zeroGlyph = zeroGlyph; }
 
     GlyphData glyphDataForCharacter(UChar32) const;
     Glyph glyphForCharacter(UChar32) const;
@@ -327,7 +316,6 @@ private:
 #endif
 
     Glyph m_spaceGlyph { 0 };
-    Glyph m_zeroGlyph { 0 };
     Glyph m_zeroWidthSpaceGlyph { 0 };
 
     Origin m_origin; // Whether or not we are custom font loaded via @font-face

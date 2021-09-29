@@ -1,3 +1,17 @@
+2021-09-29  Kiet Ho  <tho22@apple.com>
+
+        Implement the 'ic' unit from CSS Values 4
+        https://bugs.webkit.org/show_bug.cgi?id=204276
+        <rdar://problem/57256127>
+
+        Reviewed by Myles C. Maxfield.
+
+        Added tests for behavior of CSSPrimitiveValue on ic unit.
+
+        * TestExpectations: remove ImageOnlyFailure expectations for ic-unit-* tests, now that they should pass.
+        * fast/css/CSSPrimitiveValue-ic-expected.txt: Added.
+        * fast/css/CSSPrimitiveValue-ic.html: Added.
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         Use isolated NSURLSessions for each first party registrable domain

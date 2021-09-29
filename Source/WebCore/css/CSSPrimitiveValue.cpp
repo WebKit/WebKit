@@ -56,6 +56,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_DEG:
     case CSSUnitType::CSS_DIMENSION:
@@ -130,6 +131,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_COUNTER:
     case CSSUnitType::CSS_DEG:
@@ -493,6 +495,7 @@ void CSSPrimitiveValue::cleanup()
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_MM:
@@ -613,6 +616,9 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
     case CSSUnitType::CSS_CHS:
         ASSERT(fontMetrics);
         return fontMetrics->zeroWidth() * value;
+    case CSSUnitType::CSS_IC:
+        ASSERT(fontMetrics);
+        return fontMetrics->ideogramWidth() * value;
     case CSSUnitType::CSS_PX:
         return value;
     case CSSUnitType::CSS_CM:
@@ -680,6 +686,7 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         break;
 
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
         ASSERT(conversionData.style());
         value = computeUnzoomedNonCalcLengthDouble(primitiveType, value, conversionData.propertyToCompute(), &conversionData.style()->fontMetrics());
         break;
@@ -982,6 +989,7 @@ String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_TURN: return "turn";
         case CSSUnitType::CSS_REMS: return "rem";
         case CSSUnitType::CSS_CHS: return "ch";
+        case CSSUnitType::CSS_IC: return "ic";
 
         case CSSUnitType::CSS_UNKNOWN:
         case CSSUnitType::CSS_NUMBER:
@@ -1030,6 +1038,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return formatNumberValue("rem");
     case CSSUnitType::CSS_CHS:
         return formatNumberValue("ch");
+    case CSSUnitType::CSS_IC:
+        return formatNumberValue("ic");
     case CSSUnitType::CSS_PX:
         return formatNumberValue("px");
     case CSSUnitType::CSS_CM:
@@ -1174,6 +1184,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_REMS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_DPPX:
@@ -1252,6 +1263,7 @@ void CSSPrimitiveValue::collectDirectComputationalDependencies(HashSet<CSSProper
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_EXS:
     case CSSUnitType::CSS_CHS:
+    case CSSUnitType::CSS_IC:
         values.add(CSSPropertyFontSize);
         break;
     case CSSUnitType::CSS_LHS:
