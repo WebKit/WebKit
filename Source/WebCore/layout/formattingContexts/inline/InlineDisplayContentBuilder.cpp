@@ -50,7 +50,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     rootInlineBoxRect.moveBy(lineBoxLogicalTopLeft);
-    boxes.append({ lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), root().style(), rootInlineBoxRect, rootInlineBoxRect, { }, { },  lineBox.rootInlineBox().hasContent()});
+    boxes.append({ lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), !lineIndex ? root().firstLineStyle() : root().style(), rootInlineBoxRect, rootInlineBoxRect, { }, { },  lineBox.rootInlineBox().hasContent()});
 
     createBoxesAndUpdateGeometryForLineSpanningInlineBoxes(lineBox, lineBoxLogicalTopLeft, lineIndex, boxes);
     createBoxesAndUpdateGeometryForLineContent(lineContent, lineBox, lineBoxLogicalTopLeft, lineIndex, boxes);
@@ -64,8 +64,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent(con
     // Create the inline boxes on the current line. This is mostly text and atomic inline boxes.
     for (auto& lineRun : lineContent.runs) {
         auto& layoutBox = lineRun.layoutBox();
-        // FIXME: This should be lineIndex dependent to support first-line style.
-        auto& style = layoutBox.style();
+        auto& style = [&] () -> const RenderStyle& {
+            return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
+        }();
 
         switch (lineRun.type()) {
         case InlineItem::Type::Text: {
@@ -195,8 +196,9 @@ void InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineSpanningInl
         if (!inlineLevelBox.isLineSpanningInlineBox())
             continue;
         auto& layoutBox = inlineLevelBox.layoutBox();
-        // FIXME: This should be lineIndex dependent to support first-line style.
-        auto& style = layoutBox.style();
+        auto& style = [&] () -> const RenderStyle& {
+            return !lineIndex ? layoutBox.firstLineStyle() : layoutBox.style();
+        }();
         auto& boxGeometry = formattingState.boxGeometry(layoutBox);
         // Inline boxes may or may not be wrapped and have boxes on multiple lines (e.g. <span>first line<br>second line<br>third line</span>)
         auto inlineBoxBorderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);

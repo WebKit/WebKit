@@ -1,5 +1,19 @@
 2021-09-29  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] InlineDisplayContentBuilder should use the first-line style when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=230932
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for supporting first-line style.
+
+        * layout/formattingContexts/inline/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::build):
+        (WebCore::Layout::InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::createBoxesAndUpdateGeometryForLineSpanningInlineBoxes):
+
+2021-09-29  Alan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Pass in the first-line style to the InlineContentBreaker::ContinuousContent runs if applicable
         https://bugs.webkit.org/show_bug.cgi?id=230924
 
