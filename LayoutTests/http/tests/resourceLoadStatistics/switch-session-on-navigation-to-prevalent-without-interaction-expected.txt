@@ -1,4 +1,4 @@
-Tests that the session is switched upon top frame navigation to a prevalent resource with user interaction.
+Tests that the session is switched upon top frame navigation to a prevalent resource without user interaction.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
