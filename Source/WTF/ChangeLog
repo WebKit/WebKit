@@ -1,3 +1,14 @@
+2021-09-29  Antti Koivisto  <antti@apple.com>
+
+        [CSS Cascade Layers] Enable by default
+        https://bugs.webkit.org/show_bug.cgi?id=230948
+
+        Reviewed by Simon Fraser.
+
+        Flip the switch.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-09-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         iOS simulator build should use PTHREAD_JIT_PERMISSIONS_API

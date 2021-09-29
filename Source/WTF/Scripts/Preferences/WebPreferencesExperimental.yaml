@@ -129,11 +129,11 @@ CSSCascadeLayersEnabled:
   humanReadableDescription: "Enable CSS Cascade Layers"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSColor4:
   type: bool
