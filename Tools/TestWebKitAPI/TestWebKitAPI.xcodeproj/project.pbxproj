@@ -893,6 +893,7 @@
 		9999108B1F393C96008AD455 /* Copying.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9999108A1F393C8B008AD455 /* Copying.mm */; };
 		999B7EE32551C63B00F450A4 /* WKInspectorExtensionHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = 999B7EE22551C63B00F450A4 /* WKInspectorExtensionHost.mm */; };
 		99B4F9C624EDED9700022B82 /* WKInspectorDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */; };
+		99C607ED26FB90AC00A0953F /* WKInspectorExtension.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99C607EC26FB90AC00A0953F /* WKInspectorExtension.mm */; };
 		99E2846426F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99E2846326F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm */; };
 		99E2846626F93DB50003F1FA /* InspectorExtension-TabIcon-30x30.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = 99E2846526F93D760003F1FA /* InspectorExtension-TabIcon-30x30.png */; };
 		99E2846826F941540003F1FA /* InspectorExtension-basic-tab.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 99E2846726F9413B0003F1FA /* InspectorExtension-basic-tab.html */; };
@@ -1519,7 +1520,6 @@
 				07E1F6A21FFC44FA0096C7EC /* getDisplayMedia.html in Copy Resources */,
 				467C565321B5ED130057516D /* GetSessionCookie.html in Copy Resources */,
 				41661C662355E85E00D33C27 /* getUserMedia-webaudio.html in Copy Resources */,
-				074994421EA5034B000DA44D /* invalidDeviceIDHashSalts in Copy Resources */,
 				074994421EA5034B000DA44E /* getUserMedia.html in Copy Resources */,
 				074994521EA5034B000DA44E /* getUserMedia2.html in Copy Resources */,
 				074994421EA5034B000DA45E /* getUserMediaAudioVideoCapture.html in Copy Resources */,
@@ -1578,6 +1578,7 @@
 				CE6D0EE32426B932002AD901 /* insert-text.html in Copy Resources */,
 				99E2846826F941540003F1FA /* InspectorExtension-basic-tab.html in Copy Resources */,
 				99E2846626F93DB50003F1FA /* InspectorExtension-TabIcon-30x30.png in Copy Resources */,
+				074994421EA5034B000DA44D /* invalidDeviceIDHashSalts in Copy Resources */,
 				57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */,
 				C9B4AD2C1ECA6F7F00F5FEA0 /* js-autoplay-audio.html in Copy Resources */,
 				C99B675D1E39722000FC6C80 /* js-play-with-controls.html in Copy Resources */,
@@ -2624,6 +2625,9 @@
 		9999108A1F393C8B008AD455 /* Copying.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Copying.mm; sourceTree = "<group>"; };
 		999B7EE22551C63B00F450A4 /* WKInspectorExtensionHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorExtensionHost.mm; sourceTree = "<group>"; };
 		99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorDelegate.mm; sourceTree = "<group>"; };
+		99C607EC26FB90AC00A0953F /* WKInspectorExtension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorExtension.mm; sourceTree = "<group>"; };
+		99C607F426FD5A1E00A0953F /* TestInspectorURLSchemeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestInspectorURLSchemeHandler.h; path = cocoa/TestInspectorURLSchemeHandler.h; sourceTree = "<group>"; };
+		99C607F526FD5A1F00A0953F /* TestInspectorURLSchemeHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestInspectorURLSchemeHandler.mm; path = cocoa/TestInspectorURLSchemeHandler.mm; sourceTree = "<group>"; };
 		99E2846326F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorExtensionDelegate.mm; sourceTree = "<group>"; };
 		99E2846526F93D760003F1FA /* InspectorExtension-TabIcon-30x30.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "InspectorExtension-TabIcon-30x30.png"; sourceTree = "<group>"; };
 		99E2846726F9413B0003F1FA /* InspectorExtension-basic-tab.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "InspectorExtension-basic-tab.html"; sourceTree = "<group>"; };
@@ -3323,6 +3327,8 @@
 				5CE7594722A883A500C12409 /* TestContextMenuDriver.mm */,
 				DF6BC4702534E120008F63CC /* TestDownloadDelegate.h */,
 				DF6BC46F2534E120008F63CC /* TestDownloadDelegate.mm */,
+				99C607F426FD5A1E00A0953F /* TestInspectorURLSchemeHandler.h */,
+				99C607F526FD5A1F00A0953F /* TestInspectorURLSchemeHandler.mm */,
 				5C72E8CD244FFCE300381EB7 /* TestLegacyDownloadDelegate.h */,
 				5C72E8CE244FFCE400381EB7 /* TestLegacyDownloadDelegate.mm */,
 				2D1C04A51D76298B000A6816 /* TestNavigationDelegate.h */,
@@ -3666,6 +3672,7 @@
 				370CE2291F57343400E7410B /* WKContentViewTargetForAction.mm */,
 				51D124971E763AF8002B2820 /* WKHTTPCookieStore.mm */,
 				99B4F9C524EDED9600022B82 /* WKInspectorDelegate.mm */,
+				99C607EC26FB90AC00A0953F /* WKInspectorExtension.mm */,
 				99E2846326F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm */,
 				999B7EE22551C63B00F450A4 /* WKInspectorExtensionHost.mm */,
 				A5A729F01F622A9A00DE5A28 /* WKNavigationResponse.mm */,
@@ -4581,6 +4588,7 @@
 		BC90977B125571AE00083756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */,
 				C045F9461385C2F800C0F3CD /* 18-characters.html */,
 				1C2B81851C89252300A5529F /* Ahem.ttf */,
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
@@ -4629,7 +4637,6 @@
 				BCBD372E125ABBE600D2C29F /* icon.png */,
 				1CC80CE92474F1F7004DC489 /* idempotent-mode-autosizing-only-honors-percentages.html */,
 				CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */,
-				4A410F4D19AF7BEF002EBAB4 /* invalidDeviceIDHashSalts */,
 				C9B4AD2B1ECA6F7600F5FEA0 /* js-autoplay-audio.html */,
 				C99B675B1E3971FC00FC6C80 /* js-play-with-controls.html */,
 				55226A2E1EB969B600C36AD0 /* large-red-square-image.html */,
@@ -5947,6 +5954,7 @@
 				51D124981E763B02002B2820 /* WKHTTPCookieStore.mm in Sources */,
 				7CCE7F1D1A411AE600447C4C /* WKImageCreateCGImageCrash.cpp in Sources */,
 				99B4F9C624EDED9700022B82 /* WKInspectorDelegate.mm in Sources */,
+				99C607ED26FB90AC00A0953F /* WKInspectorExtension.mm in Sources */,
 				99E2846426F91F7F0003F1FA /* WKInspectorExtensionDelegate.mm in Sources */,
 				999B7EE32551C63B00F450A4 /* WKInspectorExtensionHost.mm in Sources */,
 				A5A729F11F622AA700DE5A28 /* WKNavigationResponse.mm in Sources */,

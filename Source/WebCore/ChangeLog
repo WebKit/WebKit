@@ -1,3 +1,24 @@
+2021-09-29  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] add _WKInspectorExtension SPI to evaluate script on an extension tab
+        https://bugs.webkit.org/show_bug.cgi?id=230646
+        <rdar://problem/83420328>
+
+        Reviewed by Devin Rousso.
+
+        Exercised by new API test: WKInspectorExtension.CanEvaluateScriptInExtensionTab
+
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::evaluateScriptInExtensionTab):
+        Find the global object that corresponds to the passed-in <iframe> and
+        try to evaluate scriptSource in the mainThreadNormalWorld() of that <iframe>.
+
+        * html/HTMLIFrameElement.idl: Add [JSGenerateToNativeObject] so that
+        it's possible to pass HTMLIFrameElement to the IDL function and convert it
+        to the native object (HTMLIFrameElement&) from a JSValue.
+
 2021-09-29  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Use the first-line style when measuring text content when applicable

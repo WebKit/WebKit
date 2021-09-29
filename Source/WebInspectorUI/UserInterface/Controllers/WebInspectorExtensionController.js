@@ -170,6 +170,27 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.InternalError;
         }
     }
+
+    evaluateScriptInExtensionTab(extensionTabID, scriptSource)
+    {
+        let tabContentView = this._extensionTabContentViewForExtensionTabIDMap.get(extensionTabID);
+        if (!tabContentView) {
+            WI.reportInternalError("Unable to evaluate with unknown extensionTabID: " + extensionTabID);
+            return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
+        }
+
+        let iframe = tabContentView.iframeElement;
+        if (!(iframe instanceof HTMLIFrameElement)) {
+            WI.reportInternalError("Unable to evaluate without an <iframe> for extensionTabID: " + extensionTabID);
+            return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
+        }
+
+        try {
+            return {result: InspectorFrontendHost.evaluateScriptInExtensionTab(iframe, scriptSource)};
+        } catch (error) {
+            return {error: error.message};
+        }
+    }
 };
 
 WI.WebInspectorExtensionController.Event = {

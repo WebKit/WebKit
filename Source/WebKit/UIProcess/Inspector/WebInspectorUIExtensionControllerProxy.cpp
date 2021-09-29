@@ -199,6 +199,31 @@ void WebInspectorUIExtensionControllerProxy::showExtensionTab(const Inspector::E
     });
 }
 
+// API for testing.
+
+void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const String& scriptSource, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+{
+    whenFrontendHasLoaded([weakThis = makeWeakPtr(this), extensionTabID, scriptSource, completionHandler = WTFMove(completionHandler)] () mutable {
+        if (!weakThis || !weakThis->m_inspectorPage) {
+            completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
+            return;
+        }
+
+        weakThis->m_inspectorPage->sendWithAsyncReply(Messages::WebInspectorUIExtensionController::EvaluateScriptInExtensionTab {extensionTabID, scriptSource}, [completionHandler = WTFMove(completionHandler)](const IPC::DataReference& dataReference, const std::optional<WebCore::ExceptionDetails>& details, const std::optional<Inspector::ExtensionError>& error) mutable {
+            if (error) {
+                completionHandler(makeUnexpected(error.value()));
+                return;
+            }
+
+            if (details) {
+                Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails> returnedValue = makeUnexpected(details.value());
+                return completionHandler({ returnedValue });
+            }
+
+            completionHandler({ { API::SerializedScriptValue::adopt({ dataReference.data(), dataReference.size() }).ptr() } });
+        });
+    });
+}
 
 // WebInspectorUIExtensionControllerProxy IPC messages.
 

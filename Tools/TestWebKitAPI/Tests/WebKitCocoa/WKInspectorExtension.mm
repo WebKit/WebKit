@@ -27,7 +27,7 @@
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
-#import "Test.h"
+#import "TestCocoa.h"
 #import "TestInspectorURLSchemeHandler.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -36,6 +36,7 @@
 #import <WebKit/_WKInspectorConfiguration.h>
 #import <WebKit/_WKInspectorExtension.h>
 #import <WebKit/_WKInspectorExtensionDelegate.h>
+#import <WebKit/_WKInspectorExtensionPrivateForTesting.h>
 #import <WebKit/_WKInspectorPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
@@ -55,10 +56,10 @@ static void resetGlobalState()
     pendingCallbackWasCalled = false;
 }
 
-@interface UIDelegateForTestingInspectorExtensionDelegate : NSObject <WKUIDelegate>
+@interface UIDelegateForTestingInspectorExtension : NSObject <WKUIDelegate>
 @end
 
-@implementation UIDelegateForTestingInspectorExtensionDelegate
+@implementation UIDelegateForTestingInspectorExtension
 
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector
 {
@@ -79,10 +80,10 @@ static void resetGlobalState()
 @end
 
 
-@interface InspectorExtensionDelegateForTesting : NSObject <_WKInspectorExtensionDelegate>
+@interface InspectorExtensionDelegateForTestingInspectorExtension : NSObject <_WKInspectorExtensionDelegate>
 @end
 
-@implementation InspectorExtensionDelegateForTesting {
+@implementation InspectorExtensionDelegateForTestingInspectorExtension {
 }
 
 - (void)inspectorExtension:(_WKInspectorExtension *)extension didShowTabWithIdentifier:(NSString *)tabIdentifier
@@ -97,14 +98,14 @@ static void resetGlobalState()
 
 @end
 
-TEST(WKInspectorExtensionDelegate, ShowAndHideTabCallbacks)
+TEST(WKInspectorExtension, CanEvaluateScriptInExtensionTab)
 {
     resetGlobalState();
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    auto uiDelegate = adoptNS([UIDelegateForTestingInspectorExtensionDelegate new]);
+    auto uiDelegate = adoptNS([UIDelegateForTestingInspectorExtension new]);
 
     [webView setUIDelegate:uiDelegate.get()];
     [webView loadHTMLString:@"<head><title>Test page to be inspected</title></head><body><p>Filler content</p></body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
@@ -126,10 +127,10 @@ TEST(WKInspectorExtensionDelegate, ShowAndHideTabCallbacks)
     }];
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
-    auto extensionDelegate = adoptNS([InspectorExtensionDelegateForTesting new]);
+    auto extensionDelegate = adoptNS([InspectorExtensionDelegateForTestingInspectorExtension new]);
     [sharedInspectorExtension setDelegate:extensionDelegate.get()];
 
-    // Create an extension tab.
+    // Create and show an extension tab.
     auto iconURL = [NSURL URLWithString:@"test-resource://FirstExtension/InspectorExtension-TabIcon-30x30.png"];
     auto sourceURL = [NSURL URLWithString:@"test-resource://FirstExtension/InspectorExtension-basic-tab.html"];
 
@@ -144,6 +145,7 @@ TEST(WKInspectorExtensionDelegate, ShowAndHideTabCallbacks)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     pendingCallbackWasCalled = false;
+    didShowExtensionTabWasCalled = false;
     [[webView _inspector] showExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error) {
         EXPECT_NULL(error);
 
@@ -152,8 +154,29 @@ TEST(WKInspectorExtensionDelegate, ShowAndHideTabCallbacks)
     TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
     TestWebKitAPI::Util::run(&didShowExtensionTabWasCalled);
 
-    [[webView _inspector] showConsole];
-    TestWebKitAPI::Util::run(&didHideExtensionTabWasCalled);
+    // Read back a value that is set in the <iframe>'s script context.
+    pendingCallbackWasCalled = false;
+    auto scriptSource2 = @"window._secretValue";
+    [sharedInspectorExtension _evaluateScript:scriptSource2 inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_NS_EQUAL(result[@"answer"], @42);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
+
+    // Check to see that script is actually being evaluated in the <iframe>'s script context.
+    pendingCallbackWasCalled = false;
+    auto scriptSource3 = @"window.top !== window";
+    [sharedInspectorExtension _evaluateScript:scriptSource3 inExtensionTabWithIdentifier:sharedExtensionTabIdentifier.get() completionHandler:^(NSError * _Nullable error, NSDictionary * _Nullable result) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_NS_EQUAL(result, @YES);
+
+        pendingCallbackWasCalled = true;
+    }];
+    TestWebKitAPI::Util::run(&pendingCallbackWasCalled);
 
     // Unregister the test extension.
     pendingCallbackWasCalled = false;

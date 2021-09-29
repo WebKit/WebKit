@@ -24,55 +24,26 @@
  */
 
 #import "config.h"
-#import "WKInspectorResourceURLSchemeHandler.h"
+#import "TestInspectorURLSchemeHandler.h"
 
-#if PLATFORM(MAC)
-
-#import "Logging.h"
-#import "WKURLSchemeTask.h"
-#import "WebInspectorUIProxy.h"
-#import "WebURLSchemeHandlerCocoa.h"
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebKit/WKURLSchemeTask.h>
 #import <wtf/Assertions.h>
 
-@implementation WKInspectorResourceURLSchemeHandler {
+// Note: this class is a simplified version of WKResourceURLSchemeHandler for testing purposes.
+
+@implementation TestInspectorURLSchemeHandler {
     RetainPtr<NSMapTable<id <WKURLSchemeTask>, NSOperation *>> _fileLoadOperations;
     RetainPtr<NSBundle> _cachedBundle;
     RetainPtr<NSOperationQueue> _operationQueue;
-    
-    RetainPtr<NSSet<NSString *>> _allowedURLSchemesForCSP;
-    RetainPtr<NSSet<NSURL *>> _mainResourceURLsForCSP;
-}
-
-- (NSSet<NSString *> *)allowedURLSchemesForCSP
-{
-    return _allowedURLSchemesForCSP.get();
-}
-
-- (void)setAllowedURLSchemesForCSP:(NSSet<NSString *> *)allowedURLSchemes
-{
-    _allowedURLSchemesForCSP = adoptNS([allowedURLSchemes copy]);
-}
-
-- (NSSet<NSURL *> *)mainResourceURLsForCSP
-{
-    if (!_mainResourceURLsForCSP)
-        _mainResourceURLsForCSP = adoptNS([[NSSet alloc] initWithObjects:[NSURL URLWithString:WebKit::WebInspectorUIProxy::inspectorPageURL()], [NSURL URLWithString:WebKit::WebInspectorUIProxy::inspectorTestPageURL()], nil]);
-
-    return _mainResourceURLsForCSP.get();
 }
 
 // MARK - WKURLSchemeHandler Protocol
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
-    if (!_cachedBundle) {
-        _cachedBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-
-        // It is an error if WebInspectorUI has not already been soft-linked by the time
-        // we load resources from it. And if soft-linking fails, we shouldn't start loads.
-        RELEASE_ASSERT(_cachedBundle);
-    }
+    if (!_cachedBundle)
+        _cachedBundle = [NSBundle mainBundle];
 
     if (!_fileLoadOperations)
         _fileLoadOperations = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:5]);
@@ -93,9 +64,8 @@
         });
 
         NSURL *requestURL = urlSchemeTask.request.URL;
-        NSURL *fileURLForRequest = [_cachedBundle URLForResource:requestURL.relativePath withExtension:@""];
+        NSURL *fileURLForRequest = [_cachedBundle URLForResource:requestURL.relativePath withExtension:@"" subdirectory:@"TestWebKitAPI.resources"];
         if (!fileURLForRequest) {
-            LOG_ERROR("Unable to find Web Inspector resource: %@", requestURL.absoluteString);
             [urlSchemeTask didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]];
             return;
         }
@@ -103,7 +73,6 @@
         NSError *readError;
         NSData *fileData = [NSData dataWithContentsOfURL:fileURLForRequest options:0 error:&readError];
         if (!fileData) {
-            LOG_ERROR("Unable to read data for Web Inspector resource: %@", requestURL.absoluteString);
             [urlSchemeTask didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:NSURLErrorResourceUnavailable userInfo:@{
                 NSUnderlyingErrorKey: readError,
             }]];
@@ -119,13 +88,6 @@
             @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)fileData.length],
             @"Content-Type": mimeType,
         }.mutableCopy);
-
-        // Allow fetches for resources that use a registered custom URL scheme.
-        if (_allowedURLSchemesForCSP && [self.mainResourceURLsForCSP containsObject:requestURL]) {
-            NSString *listOfCustomProtocols = [NSString stringWithFormat:@"%@:", [_allowedURLSchemesForCSP.get().allObjects componentsJoinedByString:@": "]];
-            NSString *stringForCSPPolicy = [NSString stringWithFormat:@"connect-src * %@; img-src * file: blob: resource: %@", listOfCustomProtocols, listOfCustomProtocols];
-            [headerFields setObject:stringForCSPPolicy forKey:@"Content-Security-Policy"];
-        }
 
         RetainPtr<NSHTTPURLResponse> urlResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:urlSchemeTask.request.URL statusCode:200 HTTPVersion:nil headerFields:headerFields.get()]);
         [urlSchemeTask didReceiveResponse:urlResponse.get()];
@@ -149,5 +111,3 @@
 }
 
 @end
-
-#endif // PLATFORM(MAC)

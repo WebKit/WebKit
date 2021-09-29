@@ -42,6 +42,7 @@
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorDebuggableType.h"
@@ -69,6 +70,7 @@
 namespace WebCore {
 
 using namespace Inspector;
+using ValueOrException = Expected<JSC::JSValue, ExceptionDetails>;
 
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {
@@ -706,6 +708,28 @@ void InspectorFrontendHost::didHideExtensionTab(const String& extensionID, const
     
     m_client->didHideExtensionTab(extensionID, extensionTabID);
 }
+
+ExceptionOr<JSC::JSValue> InspectorFrontendHost::evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrameElement, const String& scriptSource)
+{
+    Frame* frame = extensionFrameElement.contentFrame();
+    if (!frame)
+        return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
+
+    Ref<Frame> protectedFrame(*frame);
+
+    JSDOMGlobalObject* frameGlobalObject = frame->script().globalObject(mainThreadNormalWorld());
+    if (!frameGlobalObject)
+        return Exception { InvalidStateError, "Unable to find global object for <iframe>"_s };
+
+    JSC::SuspendExceptionScope scope(&frameGlobalObject->vm());
+    ValueOrException result = frame->script().evaluateInWorld(ScriptSourceCode(scriptSource), mainThreadNormalWorld());
+    
+    if (!result)
+        return Exception { InvalidStateError, result.error().message };
+
+    return WTFMove(result.value());
+}
+
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
 

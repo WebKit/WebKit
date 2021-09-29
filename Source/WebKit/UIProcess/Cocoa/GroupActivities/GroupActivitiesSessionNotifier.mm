@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
 
+#import "GroupActivitiesCoordinator.h"
 #import "WKGroupSession.h"
 #import "WebPageProxy.h"
 

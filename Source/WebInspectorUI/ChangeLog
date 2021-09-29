@@ -1,3 +1,56 @@
+2021-09-29  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] add _WKInspectorExtension SPI to evaluate script on an extension tab
+        https://bugs.webkit.org/show_bug.cgi?id=230646
+        <rdar://problem/83420328>
+
+        Reviewed by Devin Rousso.
+
+        Add a new InspectorFrontendAPI method to evaluate script on an iframe within
+        Web Inspector. This in turn calls out to InspectorFrontendHost to do the actual evaluation.
+        Otherwise, the CSP policy set by the tab content may block any such evaluation
+        if the 'script-src' directive does not include 'unsafe-eval'.
+
+        * UserInterface/Protocol/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.showExtensionTab):
+        (InspectorFrontendAPI.evaluateScriptInExtensionTab):
+        Call through to the WebInspectorExtensionController method.
+
+        * UserInterface/Controllers/WebInspectorExtensionController.js:
+        (WI.WebInspectorExtensionController.prototype.evaluateScriptInExtensionTab): Added.
+        Try to get the <iframe> for a extensionTabID, and use InspectorFrontendHost to
+        evaluate script in the context of the <iframe>. Be sure to correctly wrap the result.
+
+        * UserInterface/Views/WebInspectorExtensionTabContentView.js:
+        (WI.WebInspectorExtensionTabContentView):
+        (WI.WebInspectorExtensionTabContentView.prototype.get iframeElement):
+        (WI.WebInspectorExtensionTabContentView.shouldSaveTab):
+        (WI.WebInspectorExtensionTabContentView.prototype.initialLayout): Deleted.
+        While writing the API test, I saw that the first evaluation frequently failed
+        because the <iframe> did not exist. Change this class so that the <iframe>
+        is created in the constructor. Add a getter for the <iframe> element.
+
+        (WI.WebInspectorExtensionTabContentView.prototype._extensionFrameDidLoad):
+        (WI.WebInspectorExtensionTabContentView.prototype._maybeDispatchDidShowExtensionTab):
+        While writing this patch, it became apparent that didShowExtensionTab() was being
+        called prior to the iframe actually completing its initial load. Then, the test
+        would try to evaluate script on about:blank instead of the actual tab content.
+        To fix this, require that the <iframe> be attached and have fired the `onload` event
+        before we notify clients that it has been 'shown'.
+
+        * UserInterface/Main.html:
+        Adjust the default CSP policy to not mention img-src. This allows ports such as
+        Cocoa to set their own img-src CSP directive. These changes are necessary to allow
+        images to load from custom URL schemes.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        The new API test exposes a bug in this assertion, namely, that it does not account
+        for the situation where a tab does not wish to be saved. In that case, the displayed
+        WebInspectorExtensionTabContentView is *not* at index 0 of WI.TabBrowser.recentTabContentViews.
+        This is correctly handled with a special case in WI.TabBrowser._tabBarItemSelected,
+        so incorporate that logic into the assertion.
+
 2021-09-28  BJ Burg  <bburg@apple.com>
 
         Web Inspector: add settings option for 'Show Mock Web Extension Tab' in engineering builds

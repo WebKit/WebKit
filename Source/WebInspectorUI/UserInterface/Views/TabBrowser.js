@@ -120,7 +120,8 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
     bestTabContentViewForRepresentedObject(representedObject, options = {})
     {
-        console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
+        let shouldSaveTab = this.selectedTabContentView?.constructor.shouldSaveTab() || this.selectedTabContentView?.constructor.shouldPinTab();
+        console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0] || !shouldSaveTab);
 
         let tabContentView = this._recentTabContentViews.find((tabContentView) => tabContentView.type === options.preferredTabType);
         if (tabContentView && tabContentView.canShowRepresentedObject(representedObject))

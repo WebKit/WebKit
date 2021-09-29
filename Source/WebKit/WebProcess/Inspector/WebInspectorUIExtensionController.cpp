@@ -59,7 +59,7 @@ WebInspectorUIExtensionController::~WebInspectorUIExtensionController()
     WebProcess::singleton().removeMessageReceiver(Messages::WebInspectorUIExtensionController::messageReceiverName(), m_inspectorPageIdentifier);
 }
 
-std::optional<Inspector::ExtensionError> WebInspectorUIExtensionController::parseExtensionErrorFromEvaluationResult(InspectorFrontendAPIDispatcher::EvaluationResult result)
+std::optional<Inspector::ExtensionError> WebInspectorUIExtensionController::parseExtensionErrorFromEvaluationResult(InspectorFrontendAPIDispatcher::EvaluationResult result) const
 {
     if (!result) {
         switch (result.error()) {
@@ -158,7 +158,7 @@ void WebInspectorUIExtensionController::unregisterExtension(const Inspector::Ext
     });
 }
 
-JSC::JSObject* WebInspectorUIExtensionController::unwrapEvaluationResultAsObject(InspectorFrontendAPIDispatcher::EvaluationResult result)
+JSC::JSObject* WebInspectorUIExtensionController::unwrapEvaluationResultAsObject(InspectorFrontendAPIDispatcher::EvaluationResult result) const
 {
     if (!result)
         return nullptr;
@@ -356,6 +356,74 @@ void WebInspectorUIExtensionController::showExtensionTab(const Inspector::Extens
         }
 
         completionHandler({ });
+    });
+}
+
+// WebInspectorUIExtensionController IPC messages for testing.
+
+void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspector::ExtensionTabID& extensionTabID, const String& scriptSource, CompletionHandler<void(const IPC::DataReference&, const std::optional<WebCore::ExceptionDetails>&, const std::optional<Inspector::ExtensionError>&)>&& completionHandler)
+{
+    if (!m_frontendClient) {
+        completionHandler({ }, std::nullopt, Inspector::ExtensionError::InvalidRequest);
+        return;
+    }
+
+    Vector<Ref<JSON::Value>> arguments {
+        JSON::Value::create(extensionTabID),
+        JSON::Value::create(scriptSource),
+    };
+
+    m_frontendClient->frontendAPIDispatcher().dispatchCommandWithResultAsync("evaluateScriptInExtensionTab"_s, WTFMove(arguments), [weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)](InspectorFrontendAPIDispatcher::EvaluationResult&& result) mutable {
+        if (!weakThis) {
+            completionHandler({ }, std::nullopt, Inspector::ExtensionError::ContextDestroyed);
+            return;
+        }
+
+        auto* frontendGlobalObject = weakThis->m_frontendClient->frontendAPIDispatcher().frontendGlobalObject();
+        if (!frontendGlobalObject) {
+            completionHandler({ }, std::nullopt, Inspector::ExtensionError::ContextDestroyed);
+            return;
+        }
+
+        if (auto parsedError = weakThis->parseExtensionErrorFromEvaluationResult(result)) {
+            if (!result.value().has_value()) {
+                auto exceptionDetails = result.value().error();
+                LOG(Inspector, "Internal error encountered while evaluating upon the frontend: at %s:%d:%d: %s", exceptionDetails.sourceURL.utf8().data(), exceptionDetails.lineNumber, exceptionDetails.columnNumber, exceptionDetails.message.utf8().data());
+            } else
+                LOG(Inspector, "Internal error encountered while evaluating upon the frontend.");
+
+            completionHandler({ }, std::nullopt, parsedError);
+            return;
+        }
+
+        // Expected result is either an ErrorString or {result: <any>} or {error: string}.
+        auto objectResult = weakThis->unwrapEvaluationResultAsObject(result);
+        if (!objectResult) {
+            LOG(Inspector, "Unexpected non-object value returned from InspectorFrontendAPI.createTabForExtension().");
+            completionHandler({ }, std::nullopt, Inspector::ExtensionError::InternalError);
+            return;
+        }
+        ASSERT(result.has_value());
+
+        JSC::JSValue errorPayload = objectResult->get(frontendGlobalObject, JSC::Identifier::fromString(frontendGlobalObject->vm(), "error"_s));
+        if (!errorPayload.isUndefined()) {
+            if (!errorPayload.isString()) {
+                completionHandler({ }, std::nullopt, Inspector::ExtensionError::InternalError);
+                return;
+            }
+
+            completionHandler({ }, ExceptionDetails { errorPayload.toWTFString(frontendGlobalObject) }, std::nullopt);
+            return;
+        }
+
+        JSC::JSValue resultPayload = objectResult->get(frontendGlobalObject, JSC::Identifier::fromString(frontendGlobalObject->vm(), "result"_s));
+        auto serializedResultValue = SerializedScriptValue::create(*frontendGlobalObject, resultPayload);
+        if (!serializedResultValue) {
+            completionHandler({ }, std::nullopt, Inspector::ExtensionError::InternalError);
+            return;
+        }
+
+        completionHandler(serializedResultValue->data(), std::nullopt, std::nullopt);
     });
 }
 

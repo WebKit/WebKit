@@ -39,11 +39,21 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
         this._extensionTabID = extensionTabID;
         this._tabInfo = tabInfo;
         this._sourceURL = sourceURL;
+
+        // FIXME: the <iframe>'s document is implicitly reloaded when this
+        // content view's element is detached and later re-attached to the DOM.
+        // This is a bug and will be addressed in <https://webkit.org/b/230758>.
+        this._iframeElement = this.element.appendChild(document.createElement("iframe"));
+        this._iframeElement.addEventListener("load", this._extensionFrameDidLoad.bind(this));
+        this._iframeElement.src = this._sourceURL;
+
+        this._frameContentDidLoad = false;
     }
 
     // Public
 
     get extensionTabID() { return this._extensionTabID; }
+    get iframeElement() { return this._iframeElement; }
 
     get type()
     {
@@ -59,8 +69,7 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
     {
         super.attached();
 
-        if (InspectorFrontendHost.supportsWebExtensions)
-            InspectorFrontendHost.didShowExtensionTab(this._extension.extensionID, this._extensionTabID);
+        this._maybeDispatchDidShowExtensionTab();
     }
 
     detached()
@@ -78,14 +87,21 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
 
     static shouldSaveTab() { return false; }
 
-    // Protected
+    // Private
 
-    initialLayout()
+    _extensionFrameDidLoad()
     {
-        super.initialLayout();
+        this._frameContentDidLoad = true;
+        this._maybeDispatchDidShowExtensionTab();
+    }
 
-        let iframeElement = this.element.appendChild(document.createElement("iframe"));
-        iframeElement.src = this._sourceURL;
+    _maybeDispatchDidShowExtensionTab()
+    {
+        if (!this._frameContentDidLoad || !this.element.isConnected)
+            return;
+
+        if (InspectorFrontendHost.supportsWebExtensions)
+            InspectorFrontendHost.didShowExtensionTab(this._extension.extensionID, this._extensionTabID);
     }
 };
 

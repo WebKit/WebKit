@@ -30,6 +30,7 @@
 
 #include "ContextMenu.h"
 #include "ContextMenuProvider.h"
+#include "ExceptionOr.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -39,6 +40,7 @@ namespace WebCore {
 class DOMWrapperWorld;
 class Event;
 class FrontendMenuProvider;
+class HTMLIFrameElement;
 class InspectorFrontendClient;
 class Page;
 
@@ -141,6 +143,7 @@ public:
 #if ENABLE(INSPECTOR_EXTENSIONS)
     void didShowExtensionTab(const String& extensionID, const String& extensionTabID);
     void didHideExtensionTab(const String& extensionID, const String& extensionTabID);
+    ExceptionOr<JSC::JSValue> evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrame, const String& scriptSource);
 #endif
 
 private:

@@ -1,3 +1,59 @@
+2021-09-29  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] add _WKInspectorExtension SPI to evaluate script on an extension tab
+        https://bugs.webkit.org/show_bug.cgi?id=230646
+        <rdar://problem/83420328>
+
+        Reviewed by Devin Rousso.
+
+        Add new testing API for evaluating script expressions in the context of a
+        tab created by _WKInspectorExtension. For the most part, this is implemented
+        in the same way as the -evaluateScript: method, but the script is evaluated
+        within the Web Inspector frontend itself rather than in the inspected page.
+
+        To avoid CSP issues, the actual evaluation is performed on subframes using a
+        new InspectorFrontendHost method which takes an <iframe> and script source.
+
+        Along the way, tweak Web Inspector's CSP policy to allow loading images from
+        custom URL schemes as specified using _WKInspectorConfiguration. This is so
+        that tab icons from the test-resource: scheme can be loaded in the main frame
+        of Web Inspector's WKWebView under testing situations.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * UIProcess/API/APIInspectorExtension.h:
+        * UIProcess/API/APIInspectorExtension.cpp:
+        (API::InspectorExtension::evaluateScriptInExtensionTab):
+        Based on evaluateScript(). Call through to the shared extension controller.
+
+        * UIProcess/API/Cocoa/_WKInspectorExtensionPrivateForTesting.h: Added.
+        * UIProcess/API/Cocoa/_WKInspectorExtensionTesting.mm: Added.
+        (-[_WKInspectorExtension _evaluateScript:inExtensionTabWithIdentifier:completionHandler:]):
+        Added. Call through to the shared extension controller.
+
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.h:
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab):
+        Based on evaluateScript(). Send IPC to the Inspector WebProcess.
+
+        * WebProcess/Inspector/WebInspectorUIExtensionController.h:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.messages.in:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptInExtensionTab):
+        Based on evaluateScriptForExtension. Call into the frontend API
+        which will perform the actual evaluation on the <iframe> contentWindow.
+
+        * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+        (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+        Specify the list of custom protocols as allowable sources for 'img-src'.
+        The 'img-src' directive also includes 'file: blob: resource:' as allowable
+        sources, since this was the previous CSP policy defined in Main.html.
+
+        * UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm:
+        Fix UnifiedSources fallout by including a missing header.
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         Use isolated NSURLSessions for each first party registrable domain
