@@ -1,3 +1,24 @@
+2021-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor cleanup of some rubber-banding code in ScrollingEffectsController
+        https://bugs.webkit.org/show_bug.cgi?id=230981
+
+        Reviewed by Tim Horton.
+
+        As a precursor to unraveling some of the complexity of the rubber-banding code,
+        tidy up naming and code in ScrollingEffectsController::handleWheelEvent(). No
+        behavior change.
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::unacceleratedScrollingDelta const):
+        (WebCore::PlatformWheelEvent::unacceleratedScrollingDeltaX const): Deleted.
+        (WebCore::PlatformWheelEvent::unacceleratedScrollingDeltaY const): Deleted.
+        * platform/ScrollingEffectsController.h:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::convertToProminentAxisFavoringVertical):
+        (WebCore::ScrollingEffectsController::handleWheelEvent):
+        (WebCore::ScrollingEffectsController::wheelDeltaBiasingTowardsVertical):
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         Add support for running service workers on the main thread

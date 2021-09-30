@@ -234,7 +234,7 @@ private:
 
 #if PLATFORM(MAC)
     WallTime m_lastMomentumScrollTimestamp;
-    FloatSize m_overflowScrollDelta;
+    FloatSize m_unappliedOverscrollDelta;
     FloatSize m_stretchScrollForce;
     FloatSize m_momentumVelocity;
 

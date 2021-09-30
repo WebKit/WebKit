@@ -150,8 +150,7 @@ public:
 
 #if PLATFORM(COCOA)
     unsigned scrollCount() const { return m_scrollCount; }
-    float unacceleratedScrollingDeltaX() const { return m_unacceleratedScrollingDeltaX; }
-    float unacceleratedScrollingDeltaY() const { return m_unacceleratedScrollingDeltaY; }
+    FloatSize unacceleratedScrollingDelta() const { return { m_unacceleratedScrollingDeltaX, m_unacceleratedScrollingDeltaY }; }
 #endif
 
 #if ENABLE(ASYNC_SCROLLING)
