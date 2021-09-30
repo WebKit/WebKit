@@ -342,12 +342,13 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
     m_networkLoad = makeUnique<NetworkLoad>(*this, &networkSession->blobRegistry(), WTFMove(parameters), *networkSession);
     
+    auto weakThis = makeWeakPtr(*this);
     if (isSynchronous())
-        m_networkLoad->start();
+        m_networkLoad->start(); // May delete this object
     else
         m_networkLoad->startWithScheduling();
 
-    if (m_networkLoad)
+    if (weakThis && m_networkLoad)
         LOADER_RELEASE_LOG("startNetworkLoad: Going to the network (description=%" PUBLIC_LOG_STRING ")", m_networkLoad->description().utf8().data());
 }
 
