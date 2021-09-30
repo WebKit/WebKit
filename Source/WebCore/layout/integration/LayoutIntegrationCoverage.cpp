@@ -473,6 +473,40 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
     return reasons;
 }
 
+static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline& renderInline, IncludeReasons includeReasons)
+{
+    OptionSet<AvoidanceReason> reasons;
+
+    if (renderInline.isSVGInline())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
+    if (renderInline.isRubyInline() || renderInline.isQuote())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+    if (renderInline.requiresLayer())
+        SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
+
+    auto& style = renderInline.style();
+    if (style.boxShadow() || !style.hangingPunctuation().isEmpty())
+        SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
+    if (style.hasBorder() || style.borderImage().hasImage())
+        SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBorderOrBorderImage, reasons, includeReasons);
+    if (style.hasBackground())
+        SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBackground, reasons, includeReasons);
+    if (style.hasOutline())
+        SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
+    if (renderInline.isInFlowPositioned())
+        SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
+    if (renderInline.containingBlock()->style().lineBoxContain() != RenderStyle::initialLineBoxContain())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
+    auto fontAndTextReasons = canUseForFontAndText(renderInline, includeReasons);
+    if (fontAndTextReasons)
+        ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
+    auto styleReasons = canUseForStyle(style, includeReasons);
+    if (styleReasons)
+        ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
+
+    return reasons;
+}
+
 static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
@@ -543,39 +577,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         return reasons;
     }
 
-    if (is<RenderInline>(child)) {
-        auto& renderInline = downcast<RenderInline>(child);
-        if (renderInline.isSVGInline())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsSVG, reasons, includeReasons);
-        if (renderInline.isRubyInline() || renderInline.isQuote())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-        if (renderInline.requiresLayer())
-            SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
-        if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
-
-        auto& style = renderInline.style();
-        if (!isSupportedStyle(style))
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxHasUnsupportedStyle, reasons, includeReasons)
-        if (style.hasBorder() || style.borderImage().hasImage())
-            SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBorderOrBorderImage, reasons, includeReasons);
-        if (style.hasBackground())
-            SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxHasBackground, reasons, includeReasons);
-        if (style.hasOutline())
-            SET_REASON_AND_RETURN_IF_NEEDED(ContentHasOutline, reasons, includeReasons);
-        if (renderInline.isInFlowPositioned())
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons);
-        if (renderInline.containingBlock()->style().lineBoxContain() != RenderStyle::initialLineBoxContain())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainProperty, reasons, includeReasons);
-        auto fontAndTextReasons = canUseForFontAndText(downcast<RenderInline>(child), includeReasons);
-        if (fontAndTextReasons)
-            ADD_REASONS_AND_RETURN_IF_NEEDED(fontAndTextReasons, reasons, includeReasons);
-        auto styleReasons = canUseForStyle(style, includeReasons);
-        if (styleReasons)
-            ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
-
-        return reasons;
-    }
+    if (is<RenderInline>(child))
+        return canUseForRenderInlineChild(downcast<RenderInline>(child), includeReasons);
 
     SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
     return reasons;
@@ -694,6 +697,11 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     }
     ASSERT_NOT_REACHED();
     return canUseForLineLayout(blockContainer);
+}
+
+bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, StyleDifference)
+{
+    return canUseForRenderInlineChild(renderer, IncludeReasons::First).isEmpty();
 }
 
 }

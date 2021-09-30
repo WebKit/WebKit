@@ -187,13 +187,14 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
-        if (diff >= StyleDifference::Repaint && selfNeedsLayout()) {
-            // FIXME: Add support for partial invalidation.
-            if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
-                container->invalidateLineLayoutPath();
-        } else
-            lineLayout->updateStyle(*this, *oldStyle);
+    if (diff >= StyleDifference::Repaint) {
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+            auto shouldInvalidateLineLayoutPath = selfNeedsLayout() || !LayoutIntegration::LineLayout::canUseForAfterInlineBoxStyleChange(*this, diff);
+            if (shouldInvalidateLineLayoutPath)
+                lineLayout->flow().invalidateLineLayoutPath();
+            else
+                lineLayout->updateStyle(*this, *oldStyle);
+        }
     }
 #endif
 }

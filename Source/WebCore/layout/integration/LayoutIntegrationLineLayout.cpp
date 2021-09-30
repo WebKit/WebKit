@@ -123,6 +123,12 @@ bool LineLayout::canUseForAfterStyleChange(const RenderBlockFlow& flow, StyleDif
     return canUseForLineLayoutAfterStyleChange(flow, diff);
 }
 
+bool LineLayout::canUseForAfterInlineBoxStyleChange(const RenderInline& inlineBox, StyleDifference diff)
+{
+    ASSERT(isEnabled());
+    return canUseForLineLayoutAfterInlineBoxStyleChange(inlineBox, diff);
+}
+
 bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
 {
     // FIXME: Support partial invalidation in LFC.

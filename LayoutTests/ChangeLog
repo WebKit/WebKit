@@ -1,3 +1,14 @@
+2021-09-30  Alan Bujtas  <zalan@apple.com>
+
+        (REGRESSION r282150) Missing background-color on inline box while hovering
+        https://bugs.webkit.org/show_bug.cgi?id=230977
+        <rdar://problem/83682736>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/inline-box-background-dynamic-expected.html: Added.
+        * fast/inline/inline-box-background-dynamic.html: Added.
+
 2021-09-30  Antti Koivisto  <antti@apple.com>
 
         Having unused TextIterator instance shouldn't crash if document is mutated

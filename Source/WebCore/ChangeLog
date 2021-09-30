@@ -1,3 +1,26 @@
+2021-09-30  Alan Bujtas  <zalan@apple.com>
+
+        (REGRESSION r282150) Missing background-color on inline box while hovering
+        https://bugs.webkit.org/show_bug.cgi?id=230977
+        <rdar://problem/83682736>
+
+        Reviewed by Antti Koivisto.
+
+        Check if the RenderInline is still eligible for the modern line layout codepath after style change. 
+
+        Test: fast/inline/inline-box-background-dynamic.html
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForRenderInlineChild):
+        (WebCore::LayoutIntegration::canUseForChild):
+        (WebCore::LayoutIntegration::canUseForLineLayoutAfterInlineBoxStyleChange):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::canUseForAfterInlineBoxStyleChange):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::styleDidChange):
+
 2021-09-30  Antti Koivisto  <antti@apple.com>
 
         Regression (283158): Having unused TextIterator instance shouldn't crash if document is mutated

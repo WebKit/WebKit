@@ -70,6 +70,7 @@ public:
     static bool isEnabled();
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
+    static bool canUseForAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
 
     bool shouldSwitchToLegacyOnInvalidation() const;
 
