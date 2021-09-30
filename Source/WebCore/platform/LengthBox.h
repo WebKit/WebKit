@@ -55,6 +55,7 @@ public:
     }
 
     LengthBox(const LengthBox&) = default;
+    LengthBox& operator=(const LengthBox&) = default;
 
     bool isZero() const
     {

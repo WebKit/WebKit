@@ -47,6 +47,7 @@ struct ImagePaintingOptions {
 
     ImagePaintingOptions() = default;
     ImagePaintingOptions(const ImagePaintingOptions&) = default;
+    ImagePaintingOptions& operator=(const ImagePaintingOptions&) = default;
 
     CompositeOperator compositeOperator() const { return m_compositeOperator; }
     BlendMode blendMode() const { return m_blendMode; }

@@ -68,6 +68,8 @@ public:
     }
     static Operand tmp(uint32_t index) { return Operand(OperandKind::Tmp, index); }
 
+    Operand& operator=(const Operand&) = default;
+
     OperandKind kind() const { return m_kind; }
     int value() const { return m_operand; }
     VirtualRegister virtualRegister() const

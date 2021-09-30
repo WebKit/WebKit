@@ -1,3 +1,20 @@
+2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Suppress warnings for implicit copy assignment operator/copy constructor with clang 13
+        https://bugs.webkit.org/show_bug.cgi?id=230963
+
+        Reviewed by Mark Lam.
+
+        No new tests because there is no behavior change.
+
+        Added default copy constructor / copy assignment operator to suppress warning.
+
+        * platform/LayoutUnit.h:
+        * platform/LengthBox.h:
+        * platform/RectEdges.h:
+        * platform/graphics/FontSelectionAlgorithm.h:
+        * platform/graphics/ImagePaintingOptions.h:
+
 2021-09-29  Kiet Ho  <tho22@apple.com>
 
         Implement the 'ic' unit from CSS Values 4
