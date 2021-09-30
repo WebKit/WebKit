@@ -62,7 +62,7 @@ GVariant* AccessibilityAtspi::nullReference() const
 void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&& interfaces, CompletionHandler<void(const String&)>&& completionHandler)
 {
     RELEASE_ASSERT(isMainThread());
-    m_queue->dispatch([this, rootObject = makeRef(rootObject), interfaces = WTFMove(interfaces), completionHandler = WTFMove(completionHandler)]() mutable {
+    m_queue->dispatch([this, rootObject = Ref { rootObject }, interfaces = WTFMove(interfaces), completionHandler = WTFMove(completionHandler)]() mutable {
         String reference;
         if (m_connection) {
             String path = makeString("/org/a11y/webkit/accessible/", createCanonicalUUIDString().replace('-', '_'));

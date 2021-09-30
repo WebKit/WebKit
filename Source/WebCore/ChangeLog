@@ -2,6 +2,13 @@
 
         Unreviewed GTK build fix after r283304
 
+        * accessibility/atspi/AccessibilityAtspi.cpp:
+        (WebCore::AccessibilityAtspi::registerRoot): Use Ref instead of makeRef.
+
+2021-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK build fix after r283304
+
         * accessibility/atspi/AccessibilityObjectAtspi.h: Move the final keyword to the right place.
 
 2021-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
