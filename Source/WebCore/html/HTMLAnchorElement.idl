@@ -21,9 +21,9 @@
 [
     Exposed=Window
 ] interface HTMLAnchorElement : HTMLElement {
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute unsigned long attributionsourceid;
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString attributiondestination;
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementFraudPrevention, Reflect] attribute DOMString attributionsourcenonce;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute unsigned long attributionSourceId;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString attributionDestination;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementFraudPrevention, Reflect] attribute DOMString attributionSourceNonce;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
     [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttribute, Reflect] attribute DOMString download;

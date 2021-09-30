@@ -1,3 +1,23 @@
+2021-09-30  John Wilander  <wilander@apple.com>
+
+        PCM: Change WebIDL attributes from all lowercase to camelcase to match spec and align with Attribution Reporting API
+        https://bugs.webkit.org/show_bug.cgi?id=230914
+        <rdar://problem/83639923>
+
+        Reviewed by Brent Fulgham.
+
+        This patch changes Private Click Measurement's WebIDL attributes from
+        all lowercase to camelcase to match the spec and align with the
+        Attribution Reporting API proposal.
+
+        References
+        - Private Click Measurement proposal: https://privacycg.github.io/private-click-measurement/#linkformat
+        - Attribution Reporting API proposal: https://wicg.github.io/conversion-measurement-api/#monkeypatch-anchor
+
+        Existing tests updated.
+
+        * html/HTMLAnchorElement.idl:
+
 2021-09-30  Rob Buis  <rbuis@igalia.com>
 
         Move canCompositeClipPath to RenderLayer

@@ -1,3 +1,23 @@
+2021-09-30  John Wilander  <wilander@apple.com>
+
+        PCM: Change WebIDL attributes from all lowercase to camelcase to match spec and align with Attribution Reporting API
+        https://bugs.webkit.org/show_bug.cgi?id=230914
+        <rdar://problem/83639923>
+
+        Reviewed by Brent Fulgham.
+
+        This patch changes Private Click Measurement's WebIDL attributes from
+        all lowercase to camelcase to match the spec and align with the
+        Attribution Reporting API proposal.
+
+        References
+        - Private Click Measurement proposal: https://privacycg.github.io/private-click-measurement/#linkformat
+        - Attribution Reporting API proposal: https://wicg.github.io/conversion-measurement-api/#monkeypatch-anchor
+
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect-expected.txt:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect.html:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-validation.html:
+
 2021-09-30  Ziran Sun  <zsun@igalia.com>
 
         [css-grid]  Transfer sizes from the aspect-ratio while resolving min-length for auto repetitions
