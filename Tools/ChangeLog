@@ -1,3 +1,38 @@
+2021-09-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283172. rdar://problem/83697127
+
+    REGRESSION (r283102): [ MacOS Debug ] TestWebKitAPI.WebKit2.CaptureIndicatorDelay is failing
+    https://bugs.webkit.org/show_bug.cgi?id=230847
+    <rdar://problem/83577251>
+    
+    Reviewed by Saam Barati.
+    
+    As identified by Saam, the promise resolution callback is racing with the stop function.
+    To prevent this, we check in a loop whether the page has a stream and call stop when that is the case.
+    
+    * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283172 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-28  Youenn Fablet  <youenn@apple.com>
+
+            REGRESSION (r283102): [ MacOS Debug ] TestWebKitAPI.WebKit2.CaptureIndicatorDelay is failing
+            https://bugs.webkit.org/show_bug.cgi?id=230847
+            <rdar://problem/83577251>
+
+            Reviewed by Saam Barati.
+
+            As identified by Saam, the promise resolution callback is racing with the stop function.
+            To prevent this, we check in a loop whether the page has a stream and call stop when that is the case.
+
+            * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WebKit/getUserMedia.html:
+
 2021-09-25  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Use less parallel webviews in the uri-scheme API test for WPE and debug builds
