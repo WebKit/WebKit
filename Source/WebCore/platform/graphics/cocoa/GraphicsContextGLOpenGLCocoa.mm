@@ -518,10 +518,12 @@ bool GraphicsContextGLOpenGL::reshapeDisplayBufferBacking()
         m_displayBufferPbuffer = EGL_NO_SURFACE;
     }
     // Reset the future recycled buffer now, because it most likely will not be reusable at the time it will be reused.
-    auto recycledBuffer = m_swapChain->recycleBuffer();
-    if (recycledBuffer.handle)
-        EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
-    recycledBuffer.surface.reset();
+    if (m_swapChain) {
+        auto recycledBuffer = m_swapChain->recycleBuffer();
+        if (recycledBuffer.handle)
+            EGL_DestroySurface(m_displayObj, recycledBuffer.handle);
+        recycledBuffer.surface.reset();
+    }
     return allocateAndBindDisplayBufferBacking();
 }
 

@@ -165,7 +165,6 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 
     // resize regular FBO
     gl::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    ASSERT(m_texture);
 
 #if PLATFORM(COCOA)
     if (!reshapeDisplayBufferBacking()) {
