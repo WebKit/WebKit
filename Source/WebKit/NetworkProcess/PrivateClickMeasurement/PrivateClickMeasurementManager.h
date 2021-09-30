@@ -45,8 +45,10 @@ public:
     explicit PrivateClickMeasurementManager(UniqueRef<PCM::Client>&&, const String& storageDirectory);
     ~PrivateClickMeasurementManager();
 
+    using ApplicationBundleIdentifier = String;
+
     void storeUnattributed(PrivateClickMeasurement&&) final;
-    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL) final;
+    void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) final;
     void clear(CompletionHandler<void()>&&) final;
     void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&) final;
     void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
@@ -61,6 +63,7 @@ public:
     void setEphemeralMeasurementForTesting(bool value) final { m_isRunningEphemeralMeasurementTest = value; }
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
     void startTimerImmediatelyForTesting() final;
+    void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&);
     void destroyStoreForTesting(CompletionHandler<void()>&&) final;
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) final;
 
@@ -72,7 +75,7 @@ private:
     void getSignedUnlinkableToken(PrivateClickMeasurement&&);
     void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
     void clearSentAttribution(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint);
-    void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&);
+    void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
     void fireConversionRequest(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
     void fireConversionRequestImpl(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
     void firePendingAttributionRequests();
@@ -86,6 +89,7 @@ private:
     bool m_isRunningEphemeralMeasurementTest { false };
     std::optional<URL> m_tokenPublicKeyURLForTesting;
     std::optional<URL> m_tokenSignatureURLForTesting;
+    std::optional<ApplicationBundleIdentifier> m_privateClickMeasurementAppBundleIDForTesting;
     mutable RefPtr<PCM::Store> m_store;
     String m_storageDirectory;
     UniqueRef<PCM::Client> m_client;

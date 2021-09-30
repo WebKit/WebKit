@@ -51,7 +51,7 @@ ARGUMENTS(WebCore::PrivateClickMeasurement)
 END
 
 FUNCTION(handleAttribution)
-ARGUMENTS(PrivateClickMeasurementManager::AttributionTriggerData, URL, WebCore::RegistrableDomain, URL)
+ARGUMENTS(PrivateClickMeasurementManager::AttributionTriggerData, URL, WebCore::RegistrableDomain, URL, String)
 END
 
 FUNCTION(clear)
@@ -110,6 +110,10 @@ FUNCTION(startTimerImmediatelyForTesting)
 ARGUMENTS()
 END
 
+FUNCTION(setPrivateClickMeasurementAppBundleIDForTesting)
+ARGUMENTS(String)
+END
+
 FUNCTION(destroyStoreForTesting)
 ARGUMENTS()
 REPLY()
@@ -154,6 +158,7 @@ bool messageTypeSendsReply(MessageType messageType)
     case MessageType::SetEphemeralMeasurementForTesting:
     case MessageType::SetPCMFraudPreventionValuesForTesting:
     case MessageType::StartTimerImmediatelyForTesting:
+    case MessageType::SetPrivateClickMeasurementAppBundleIDForTesting:
     case MessageType::AllowTLSCertificateChainForLocalPCMTesting:
         return false;
     case MessageType::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting:
@@ -263,6 +268,9 @@ void decodeMessageAndSendToManager(MessageType messageType, Vector<uint8_t>&& en
         break;
     case PCM::MessageType::StartTimerImmediatelyForTesting:
         handlePCMMessage<MessageInfo::startTimerImmediatelyForTesting>(WTFMove(encodedMessage));
+        break;
+    case PCM::MessageType::SetPrivateClickMeasurementAppBundleIDForTesting:
+        handlePCMMessage<MessageInfo::setPrivateClickMeasurementAppBundleIDForTesting>(WTFMove(encodedMessage));
         break;
     case PCM::MessageType::DestroyStoreForTesting:
         handlePCMMessageWithReply<MessageInfo::destroyStoreForTesting>(WTFMove(encodedMessage), WTFMove(replySender));

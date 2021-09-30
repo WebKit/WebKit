@@ -77,6 +77,9 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     clearExpired();
 
+    if (m_privateClickMeasurementAppBundleIDForTesting)
+        measurement.setSourceApplicationBundleIDForTesting(*m_privateClickMeasurementAppBundleIDForTesting);
+
     if (measurement.ephemeralSourceNonce()) {
         auto measurementCopy = measurement;
         // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
@@ -230,7 +233,7 @@ void PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacySto
     store().insertPrivateClickMeasurement(WTFMove(measurement), type);
 }
 
-void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL)
+void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
     if (!featureEnabled())
         return;
@@ -247,7 +250,7 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
 
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Triggering event accepted."_s);
 
-    attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData));
+    attribute(SourceSite { WTFMove(redirectDomain) }, AttributionDestinationSite { firstPartyURL }, WTFMove(attributionTriggerData), m_privateClickMeasurementAppBundleIDForTesting ? *m_privateClickMeasurementAppBundleIDForTesting : applicationBundleIdentifier);
 }
 
 void PrivateClickMeasurementManager::startTimerImmediatelyForTesting()
@@ -255,12 +258,20 @@ void PrivateClickMeasurementManager::startTimerImmediatelyForTesting()
     startTimer(0_s);
 }
 
+void PrivateClickMeasurementManager::setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&& appBundleID)
+{
+    if (appBundleID.isEmpty())
+        m_privateClickMeasurementAppBundleIDForTesting = std::nullopt;
+    else
+        m_privateClickMeasurementAppBundleIDForTesting = WTFMove(appBundleID);
+}
+
 void PrivateClickMeasurementManager::startTimer(Seconds seconds)
 {
     m_firePendingAttributionRequestsTimer.startOneShot(m_isRunningTest ? 0_s : seconds);
 }
 
-void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData)
+void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, const AttributionDestinationSite& destinationSite, AttributionTriggerData&& attributionTriggerData, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
     if (!featureEnabled())
         return;
@@ -273,7 +284,7 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
             return;
     }
         
-    store().attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
+    store().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
         if (!weakThis)
             return;
         
@@ -436,6 +447,7 @@ void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completio
     m_firePendingAttributionRequestsTimer.stop();
     m_ephemeralMeasurement = std::nullopt;
     m_isRunningEphemeralMeasurementTest = false;
+    m_privateClickMeasurementAppBundleIDForTesting = std::nullopt;
 
     if (!featureEnabled())
         return completionHandler();

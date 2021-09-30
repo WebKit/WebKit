@@ -39,8 +39,10 @@ class ManagerProxy : public ManagerInterface {
 public:
     ManagerProxy(const String& machServiceName);
 
+    using ApplicationBundleIdentifier = String;
+
     void storeUnattributed(WebCore::PrivateClickMeasurement&&) final;
-    void handleAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL) final;
+    void handleAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) final;
     void clear(CompletionHandler<void()>&&) final;
     void clearForRegistrableDomain(const WebCore::RegistrableDomain&, CompletionHandler<void()>&&) final;
     void migratePrivateClickMeasurementFromLegacyStorage(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) final;
@@ -55,6 +57,7 @@ public:
     void setEphemeralMeasurementForTesting(bool) final;
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
     void startTimerImmediatelyForTesting() final;
+    void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&) final;
     void destroyStoreForTesting(CompletionHandler<void()>&&) final;
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&) final;
 

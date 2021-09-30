@@ -355,6 +355,7 @@ public:
     void setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef destinationURL);
     void markPrivateClickMeasurementsAsExpiredForTesting();
     void setPCMFraudPreventionValuesForTesting(WKStringRef unlinkableToken, WKStringRef secretToken, WKStringRef signature, WKStringRef keyID);
+    void setPrivateClickMeasurementAppBundleIDForTesting(WKStringRef);
 
     void didSetAppBoundDomains() const;
 

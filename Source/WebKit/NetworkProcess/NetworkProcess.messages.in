@@ -171,6 +171,7 @@ messages -> NetworkProcess LegacyReceiver {
     SetPrivateClickMeasurementAttributionReportURLsForTesting(PAL::SessionID sessionID, URL sourceURL, URL destinationURL) -> () Async
     MarkPrivateClickMeasurementsAsExpiredForTesting(PAL::SessionID sessionID) -> () Async
     SetPCMFraudPreventionValuesForTesting(PAL::SessionID sessionID, String secretToken, String unlinkableToken, String signature, String keyID) -> () Async
+    SetPrivateClickMeasurementAppBundleIDForTesting(PAL::SessionID sessionID, String appBundleIDForTesting) -> () Async
     GetLocalStorageOriginDetails(PAL::SessionID sessionID) -> (Vector<WebKit::LocalStorageDatabaseTracker::OriginDetails> details) Async
 
     SetServiceWorkerFetchTimeoutForTesting(Seconds seconds) -> () Synchronous

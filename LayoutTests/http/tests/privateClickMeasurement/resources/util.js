@@ -15,6 +15,7 @@ function tearDownAndFinish() {
         testRunner.setPrivateClickMeasurementAttributionReportURLsForTesting("", "");
         testRunner.setPrivateClickMeasurementTokenSignatureURLForTesting("");
         testRunner.setPrivateClickMeasurementTokenPublicKeyURLForTesting("");
+        testRunner.setPrivateClickMeasurementAppBundleIDForTesting("");
         testRunner.notifyDone();
     }
 }

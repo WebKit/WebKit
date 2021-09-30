@@ -3138,6 +3138,14 @@ void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef pageRef, WKStringRef 
     });
 }
 
+void WKPageSetPrivateClickMeasurementAppBundleIDForTesting(WKPageRef pageRef, WKStringRef appBundleIDForTesting, WKPageSetPrivateClickMeasurementAppBundleIDForTestingFunction callback, void* callbackContext)
+{
+    CRASH_IF_SUSPENDED;
+    toImpl(pageRef)->setPrivateClickMeasurementAppBundleIDForTesting(toWTFString(appBundleIDForTesting), [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
 void WKPageSetMockCameraOrientation(WKPageRef pageRef, uint64_t orientation)
 {
     CRASH_IF_SUSPENDED;

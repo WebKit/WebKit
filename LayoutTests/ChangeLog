@@ -1,3 +1,20 @@
+2021-09-30  John Wilander  <wilander@apple.com>
+
+        PCM: Take app bundle ID into consideration when matching triggering events with pending clicks
+        https://bugs.webkit.org/show_bug.cgi?id=230778
+        <rdar://problem/83516528>
+
+        Reviewed by Alex Christensen.
+
+        https://commits.webkit.org/r282884 added app bundle IDs to unattributed
+        and attributed clicks in PCM. This patch makes sure we take those IDs
+        into consideration in PCM::Database::attributePrivateClickMeasurement().
+
+        * http/tests/privateClickMeasurement/multiple-app-bundle-ids-expected.txt: Added.
+        * http/tests/privateClickMeasurement/multiple-app-bundle-ids.html: Added.
+        * http/tests/privateClickMeasurement/resources/util.js:
+        (tearDownAndFinish):
+
 2021-09-30  Alan Bujtas  <zalan@apple.com>
 
         (REGRESSION r282150) Missing background-color on inline box while hovering

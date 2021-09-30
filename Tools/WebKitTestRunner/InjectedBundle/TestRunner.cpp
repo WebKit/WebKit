@@ -2114,6 +2114,12 @@ void TestRunner::setPrivateClickMeasurementFraudPreventionValuesForTesting(JSStr
     }));
 }
 
+void TestRunner::setPrivateClickMeasurementAppBundleIDForTesting(JSStringRef appBundleID)
+{
+    postSynchronousPageMessage("SetPrivateClickMeasurementAppBundleIDForTesting",
+        toWK(appBundleID));
+}
+
 bool TestRunner::hasAppBoundSession()
 {
     return postSynchronousPageMessageReturningBoolean("HasAppBoundSession");

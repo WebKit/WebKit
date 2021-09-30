@@ -329,6 +329,7 @@ public:
     const std::optional<AttributionTriggerData>& attributionTriggerData() const { return m_attributionTriggerData; }
     void setAttribution(AttributionTriggerData&& attributionTriggerData) { m_attributionTriggerData = WTFMove(attributionTriggerData); }
     const String& sourceApplicationBundleID() const { return m_sourceApplicationBundleID; }
+    WEBCORE_EXPORT void setSourceApplicationBundleIDForTesting(const String&);
 
     bool isEphemeral() const { return m_isEphemeral == AttributionEphemeral::Yes; }
     void setEphemeral(AttributionEphemeral isEphemeral) { m_isEphemeral = isEphemeral; }

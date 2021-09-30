@@ -192,6 +192,8 @@ typedef void (*WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction)(vo
 WK_EXPORT void WKPageMarkPrivateClickMeasurementsAsExpiredForTesting(WKPageRef page, WKPageMarkPrivateClickMeasurementsAsExpiredForTestingFunction callback, void* callbackContext);
 typedef void (*WKPageSetPCMFraudPreventionValuesForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef page, WKStringRef secretToken, WKStringRef unlinkableToken, WKStringRef signature, WKStringRef keyID, WKPageSetPCMFraudPreventionValuesForTestingFunction callback, void* callbackContext);
+typedef void (*WKPageSetPrivateClickMeasurementAppBundleIDForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetPrivateClickMeasurementAppBundleIDForTesting(WKPageRef pageRef, WKStringRef appBundleIDForTesting, WKPageSetPrivateClickMeasurementAppBundleIDForTestingFunction callback, void* callbackContext);
 
 WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);

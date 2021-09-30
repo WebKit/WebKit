@@ -80,9 +80,9 @@ void ManagerProxy::storeUnattributed(WebCore::PrivateClickMeasurement&& pcm)
     sendMessage<MessageType::StoreUnattributed>(pcm);
 }
 
-void ManagerProxy::handleAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData&& triggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL)
+void ManagerProxy::handleAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData&& triggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier& applicationBundleIdentifier)
 {
-    sendMessage<MessageType::HandleAttribution>(triggerData, requestURL, redirectDomain, firstPartyURL);
+    sendMessage<MessageType::HandleAttribution>(triggerData, requestURL, redirectDomain, firstPartyURL, applicationBundleIdentifier);
 }
 
 void ManagerProxy::clear(CompletionHandler<void()>&& completionHandler)
@@ -148,6 +148,11 @@ void ManagerProxy::setPCMFraudPreventionValuesForTesting(String&& unlinkableToke
 void ManagerProxy::startTimerImmediatelyForTesting()
 {
     sendMessage<MessageType::StartTimerImmediatelyForTesting>();
+}
+
+void ManagerProxy::setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&& appBundleID)
+{
+    sendMessage<MessageType::SetPrivateClickMeasurementAppBundleIDForTesting>(appBundleID);
 }
 
 void ManagerProxy::destroyStoreForTesting(CompletionHandler<void()>&& completionHandler)

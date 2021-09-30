@@ -95,9 +95,9 @@ void Store::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting()
     });
 }
 
-void Store::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, std::optional<WebCore::PrivateClickMeasurement>&& ephemeralMeasurement, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&& completionHandler)
+void Store::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite& sourceSite, const WebCore::PrivateClickMeasurement::AttributionDestinationSite& destinationSite, const ApplicationBundleIdentifier& applicationBundleIdentifier, WebCore::PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, std::optional<WebCore::PrivateClickMeasurement>&& ephemeralMeasurement, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&& completionHandler)
 {
-    postTask([this, protectedThis = Ref { *this }, sourceSite = sourceSite.isolatedCopy(), destinationSite = destinationSite.isolatedCopy(), attributionTriggerData = WTFMove(attributionTriggerData), ephemeralMeasurement = crossThreadCopy(ephemeralMeasurement), completionHandler = WTFMove(completionHandler)] () mutable {
+    postTask([this, protectedThis = Ref { *this }, sourceSite = sourceSite.isolatedCopy(), destinationSite = destinationSite.isolatedCopy(), applicationBundleIdentifier = applicationBundleIdentifier.isolatedCopy(), attributionTriggerData = WTFMove(attributionTriggerData), ephemeralMeasurement = crossThreadCopy(ephemeralMeasurement), completionHandler = WTFMove(completionHandler)] () mutable {
         if (!m_database) {
             return postTaskReply([completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(std::nullopt, { });
@@ -110,7 +110,7 @@ void Store::attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurem
             m_database->insertPrivateClickMeasurement(WTFMove(*ephemeralMeasurement), PrivateClickMeasurementAttributionType::Unattributed);
         }
 
-        auto [seconds, debugInfo] = m_database->attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData));
+        auto [seconds, debugInfo] = m_database->attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData));
 
         postTaskReply([seconds = WTFMove(seconds), debugInfo = debugInfo.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(seconds), WTFMove(debugInfo));

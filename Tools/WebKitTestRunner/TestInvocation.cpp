@@ -1423,6 +1423,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetPrivateClickMeasurementAppBundleIDForTesting")) {
+        TestController::singleton().setPrivateClickMeasurementAppBundleIDForTesting(stringValue(messageBody));
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SyncLocalStorage")) {
         TestController::singleton().syncLocalStorage();
         return nullptr;
