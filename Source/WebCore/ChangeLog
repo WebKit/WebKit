@@ -1,5 +1,11 @@
 2021-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK build fix after r283304
+
+        * accessibility/atspi/AccessibilityObjectAtspi.h: Move the final keyword to the right place.
+
+2021-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][a11y] Connect UI process a11y tree with the web process when building with ATSPI
         https://bugs.webkit.org/show_bug.cgi?id=230255
 

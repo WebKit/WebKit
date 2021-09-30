@@ -26,7 +26,7 @@
 namespace WebCore {
 class AXCoreObject;
 
-class AccessibilityObjectAtspi: final public ThreadSafeRefCounted<AccessibilityObjectAtspi> {
+class AccessibilityObjectAtspi final : public ThreadSafeRefCounted<AccessibilityObjectAtspi> {
 public:
     static Ref<AccessibilityObjectAtspi> create(AXCoreObject*);
     ~AccessibilityObjectAtspi() = default;
