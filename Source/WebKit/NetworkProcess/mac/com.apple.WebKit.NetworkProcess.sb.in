@@ -62,21 +62,24 @@
        (subpath "/usr/appleinternal/lib") ;; <rdar://problem/72317112>
 )
 
+(allow file-read-metadata
+       (literal "/var"))
 (allow file-read-metadata (with telemetry)
        (literal "/etc")
        (literal "/tmp")
-       (literal "/var")
        (literal "/private/etc/localtime"))
 
 (allow file-read-metadata (with telemetry) (path-ancestors "/System/Volumes/Data/private"))
 
-(allow file-read* (with telemetry) (literal "/"))
+(allow file-read* (literal "/"))
+
+(allow file-read*
+       (subpath "/System"))
 
 (allow file-read* (with telemetry)
        (subpath "/Library/Apple/System")
        (subpath "/Library/Filesystems/NetFSPlugins")
        (subpath "/Library/Preferences/Logging")      ; Logging Rethink
-       (subpath "/System")
        (subpath "/private/var/db/dyld")
        (subpath "/private/var/db/timezone")
        (subpath "/usr/lib")

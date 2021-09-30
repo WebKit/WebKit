@@ -1,3 +1,16 @@
+2021-09-30  Per Arne  <pvollan@apple.com>
+
+        [macOS] Reduce sandbox telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=231026
+        <rdar://83694937>
+
+        Reviewed by Brent Fulgham.
+
+        Remove sandbox telemetry for resources that we already see are in use.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2021-09-30  Eddy Wong  <eddy_wong@apple.com>
 
         Adopt presentationSceneIdentifierForPaymentAuthorizationController delegate call from PassKit
