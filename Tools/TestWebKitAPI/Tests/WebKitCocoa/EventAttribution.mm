@@ -452,6 +452,8 @@ TEST(EventAttribution, Daemon)
         [fileManager removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
 
+    system("killall AdAttributionDaemon -9 2> null");
+
     auto plist = testDaemonPList(tempDir);
 #if HAVE(OS_LAUNCHD_JOB)
     auto launchDJob = adoptNS([[OSLaunchdJob alloc] initWithPlist:plist.get()]);
@@ -476,11 +478,6 @@ TEST(EventAttribution, Daemon)
     });
 
     system("killall AdAttributionDaemon -9");
-#if HAVE(OS_LAUNCHD_JOB)
-    // LaunchOnlyOnce takes care of cleanup with launchd.
-#else
-    system([NSString stringWithFormat:@"launchctl unload %@", plistLocation.path].UTF8String);
-#endif
 
     EXPECT_TRUE([fileManager fileExistsAtPath:tempDir.path]);
     [fileManager removeItemAtURL:tempDir error:&error];

@@ -1,3 +1,15 @@
+2021-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Terminate PCM daemon before and after unit test that uses it
+        https://bugs.webkit.org/show_bug.cgi?id=230191
+
+        In r282368 I added a unit test that creates a daemon, uses it, then terminates it.
+        On some bots it has been timing out.  Once it starts timing out, it probably won't stop because
+        it won't get to the part of the test that terminates the problematic daemon.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         Add support for running service workers on the main thread
