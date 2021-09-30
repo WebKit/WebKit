@@ -51,6 +51,7 @@ using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUp
 
 @interface WKPaymentAuthorizationDelegate : NSObject {
     RetainPtr<PKPaymentRequest> _request;
+    WeakPtr<WebKit::PaymentAuthorizationPresenter> _presenter;
 }
 
 - (instancetype)init NS_UNAVAILABLE;

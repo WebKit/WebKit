@@ -49,6 +49,9 @@ private:
     void dismiss() final;
 #if PLATFORM(IOS_FAMILY)
     void present(UIViewController *, CompletionHandler<void(bool)>&&) final;
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    void presentInScene(const String&, CompletionHandler<void(bool)>&&) final;
+#endif
 #endif
 
     RetainPtr<PKPaymentAuthorizationViewController> m_viewController;

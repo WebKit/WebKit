@@ -85,6 +85,10 @@ public:
     virtual void dismiss() = 0;
 #if PLATFORM(IOS_FAMILY)
     virtual void present(UIViewController *, CompletionHandler<void(bool)>&&) = 0;
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    virtual void presentInScene(const String&, CompletionHandler<void(bool)>&&) = 0;
+    const String& sceneIdentifier() const { return m_sceneIdentifier; }
+#endif
 #endif
 
 protected:
@@ -94,6 +98,10 @@ protected:
     }
 
     virtual WKPaymentAuthorizationDelegate *platformDelegate() = 0;
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    String m_sceneIdentifier;
+#endif
 
 private:
     Client& m_client;

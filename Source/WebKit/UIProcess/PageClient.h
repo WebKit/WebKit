@@ -498,6 +498,7 @@ public:
 #endif
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;
+    virtual String sceneID() = 0;
 #endif
 
     // Auxiliary Client Creation

@@ -1,3 +1,12 @@
+2021-09-30  Eddy Wong  <eddy_wong@apple.com>
+
+        Adopt presentationSceneIdentifierForPaymentAuthorizationController delegate call from PassKit
+        https://bugs.webkit.org/show_bug.cgi?id=230874
+
+        Reviewed by Devin Rousso.
+
+        * wtf/PlatformEnableCocoa.h: Defines new flag ENABLE_APPLE_PAY_REMOTE_UI_USES_SCENE
+
 2021-09-30  Darin Adler  <darin@apple.com>
 
         Add StdLibExtras.h include to a file that uses bitwise_cast without including it

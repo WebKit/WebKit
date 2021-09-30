@@ -46,7 +46,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
     });
 }
 
-void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);
 
@@ -55,7 +55,24 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL
     if (!m_authorizationPresenter)
         return completionHandler(false);
 
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    m_client.getWindowSceneIdentifierForPaymentPresentation(webPageProxyID, [weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)](const String& sceneID) mutable {
+        if (!weakThis) {
+            completionHandler(false);
+            return;
+        }
+
+        if (!weakThis->m_authorizationPresenter) {
+            completionHandler(false);
+            return;
+        }
+
+        weakThis->m_authorizationPresenter->presentInScene(sceneID, WTFMove(completionHandler));
+    });
+#else
+    UNUSED_PARAM(webPageProxyID);
     m_authorizationPresenter->present(m_client.paymentCoordinatorPresentingViewController(*this), WTFMove(completionHandler));
+#endif
 }
 
 void WebPaymentCoordinatorProxy::platformHidePaymentUI()

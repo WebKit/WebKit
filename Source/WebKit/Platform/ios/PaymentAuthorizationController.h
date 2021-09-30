@@ -46,6 +46,9 @@ private:
     WKPaymentAuthorizationDelegate *platformDelegate() final;
     void dismiss() final;
     void present(UIViewController *, CompletionHandler<void(bool)>&&) final;
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    void presentInScene(const String&, CompletionHandler<void(bool)>&&) final;
+#endif
 
     RetainPtr<PKPaymentAuthorizationController> m_controller;
     RetainPtr<WKPaymentAuthorizationControllerDelegate> m_delegate;

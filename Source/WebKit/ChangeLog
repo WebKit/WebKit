@@ -1,3 +1,48 @@
+2021-09-30  Eddy Wong  <eddy_wong@apple.com>
+
+        Adopt presentationSceneIdentifierForPaymentAuthorizationController delegate call from PassKit
+        https://bugs.webkit.org/show_bug.cgi?id=230874
+
+        Reviewed by Devin Rousso.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm:         
+        (WebKit::NetworkConnectionToWebProcess::getWindowSceneIdentifierForPaymentPresentation): Implements getWindowSceneIdentifierForPaymentPresentation() by asking parent process (UIProcess) for scene ID via new XPC message.
+        * Platform/cocoa/PaymentAuthorizationPresenter.h:
+        (WebKit::PaymentAuthorizationPresenter::sceneIdentifier const): Holds temporarily the scene ID we'd like to use when presenting the payment sheet, to be read by WKPaymentAuthorizationControllerDelegate.
+        * Platform/cocoa/PaymentAuthorizationViewController.h: Declares presentInScene() which is just for conformance to PaymentAuthorizationPresenter
+        * Platform/cocoa/PaymentAuthorizationViewController.mm:
+        (WebKit::PaymentAuthorizationViewController::presentInScene): Provides a dummy implementation for presentInScene() for conformance.
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h: Surfaces _presenter for PaymentAuthorizationPresenter's use.
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm: Ditto.
+        * Platform/ios/PaymentAuthorizationController.h:
+        * Platform/ios/PaymentAuthorizationController.mm:
+        (-[WKPaymentAuthorizationControllerDelegate presentationSceneIdentifierForPaymentAuthorizationController:]): Implements the new PassKit delegate call returning the scene ID for the UIProcess.
+        (WebKit::PaymentAuthorizationController::dismiss): House keeping.
+        (WebKit::PaymentAuthorizationController::presentInScene): Stores the scene ID from the caller for WKPaymentAuthorizationControllerDelegate to read from.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp: 
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI): Relays webPageProxyID for use by UIProcess ultimately to look up the correct WebPageProxy.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h: Ditto.
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in: Ditto.
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Presents payment sheet with scene ID if applicable.
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI): Signature change.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getWindowSceneIdentifierForPaymentPresentation): Looks up the correct WebPageProxy and retrieve the scene ID for the caller (NetworkProcess).
+        * UIProcess/Network/NetworkProcessProxy.h: Ditto.
+        * UIProcess/Network/NetworkProcessProxy.messages.in: Ditto.
+        * UIProcess/PageClient.h: Adds ability to retrieve scene ID.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h: Ditto.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::sceneID): Ditto.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::getWindowSceneIdentifierForPaymentPresentation): Dummy implementation for conformance to WebPageProxy. WebProcess does not talk to UIProcess directly for this function.
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::showPaymentUI): Passes the WebPageProxyIdentifier along.
+
+
 2021-09-30  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Catalyst build fix; forward-declare in RemoteMediaPlayerProxy.h and include the correct file in RemoteMediaPlayerProxy.cpp.

@@ -300,6 +300,7 @@ private:
 #endif
 
     WebCore::Color contentViewBackgroundColor() final;
+    String sceneID() final;
 
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;

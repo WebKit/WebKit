@@ -1291,6 +1291,10 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 #endif
 
+@interface UIScene ()
+@property (nonatomic, readonly) NSString *_sceneIdentifier;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)

@@ -78,4 +78,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #if USE(SOUP)
     DidExceedMemoryLimit()
 #endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
+    GetWindowSceneIdentifierForPaymentPresentation(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String sceneID) Async
+#endif
 }

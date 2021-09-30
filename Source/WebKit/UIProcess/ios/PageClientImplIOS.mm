@@ -1023,6 +1023,11 @@ void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const Floa
     [m_contentView _scrollToRect:targetRect withOrigin:origin minimumScrollDistance:0];
 }
 
+String PageClientImpl::sceneID()
+{
+    return [m_contentView window].windowScene._sceneIdentifier;
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)
