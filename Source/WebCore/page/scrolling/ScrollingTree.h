@@ -173,7 +173,7 @@ public:
 
     // Can be called from any thread. Will update what edges allow rubber-banding.
     WEBCORE_EXPORT void setMainFrameCanRubberBand(RectEdges<bool>);
-    bool mainFrameCanRubberBandInDirection(ScrollDirection);
+    bool mainFrameCanRubberBandOnSide(BoxSide);
 
     bool isHandlingProgrammaticScroll() const { return m_isHandlingProgrammaticScroll; }
     void setIsHandlingProgrammaticScroll(bool isHandlingProgrammaticScroll) { m_isHandlingProgrammaticScroll = isHandlingProgrammaticScroll; }

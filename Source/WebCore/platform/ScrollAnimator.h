@@ -154,7 +154,7 @@ private:
 #if HAVE(RUBBER_BANDING)
     IntSize stretchAmount() const final;
     RectEdges<bool> edgePinnedState() const final;
-    bool isPinnedForScrollDelta(const FloatSize&) const final;
+    bool isPinnedOnSide(BoxSide) const final;
 #endif
 
 #if PLATFORM(MAC)

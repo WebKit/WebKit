@@ -578,41 +578,27 @@ void ScrollableArea::doPostThumbMoveSnapping(ScrollbarOrientation orientation)
     scrollAnimator->scrollToPositionWithAnimation(position);
 }
 
-bool ScrollableArea::isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis axis) const
+bool ScrollableArea::isPinnedOnSide(BoxSide side) const
 {
-    auto scrollPosition = this->scrollPosition();
-    switch (axis) {
-    case ScrollEventAxis::Vertical:
+    switch (side) {
+    case BoxSide::Top:
         if (!allowsVerticalScrolling())
             return true;
-
-        if (scrollDelta < 0) // top
-            return scrollPosition.y() <= minimumScrollPosition().y();
-
-        if (scrollDelta > 0) // bottom
-            return scrollPosition.y() >= maximumScrollPosition().y();
-
-        break;
-    case ScrollEventAxis::Horizontal:
+        return scrollPosition().y() <= minimumScrollPosition().y();
+    case BoxSide::Bottom:
+        if (!allowsVerticalScrolling())
+            return true;
+        return scrollPosition().y() >= maximumScrollPosition().y();
+    case BoxSide::Left:
         if (!allowsHorizontalScrolling())
             return true;
-
-        if (scrollDelta < 0) // left
-            return scrollPosition.x() <= minimumScrollPosition().x();
-
-        if (scrollDelta > 0) // right
-            return scrollPosition.x() >= maximumScrollPosition().x();
-
-        break;
+        return scrollPosition().x() <= minimumScrollPosition().x();
+    case BoxSide::Right:
+        if (!allowsHorizontalScrolling())
+            return true;
+        return scrollPosition().x() >= maximumScrollPosition().x();
     }
-
     return false;
-}
-
-bool ScrollableArea::isPinnedForScrollDelta(const FloatSize& scrollDelta) const
-{
-    return (!scrollDelta.width() || isPinnedForScrollDeltaOnAxis(scrollDelta.width(), ScrollEventAxis::Horizontal))
-        && (!scrollDelta.height() || isPinnedForScrollDeltaOnAxis(scrollDelta.height(), ScrollEventAxis::Vertical));
 }
 
 RectEdges<bool> ScrollableArea::edgePinnedState() const
@@ -795,6 +781,29 @@ void ScrollableArea::computeScrollbarValueAndOverhang(float currentPosition, flo
         else
             doubleValue = 0;
     }
+}
+
+std::optional<BoxSide> ScrollableArea::targetSideForScrollDelta(FloatSize delta, ScrollEventAxis axis)
+{
+    switch (axis) {
+    case ScrollEventAxis::Horizontal:
+        if (delta.width() < 0)
+            return BoxSide::Left;
+
+        if (delta.width() > 0)
+            return BoxSide::Right;
+        break;
+
+    case ScrollEventAxis::Vertical:
+        if (delta.height() < 0)
+            return BoxSide::Top;
+
+        if (delta.height() > 0)
+            return BoxSide::Bottom;
+        break;
+    }
+
+    return { };
 }
 
 TextStream& operator<<(TextStream& ts, const ScrollableArea& scrollableArea)

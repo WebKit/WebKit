@@ -31,6 +31,7 @@
 #import "Frame.h"
 #import "RenderLayer.h"
 #import "ScrollableArea.h"
+#import "ScrollingEffectsController.h"
 
 #if ENABLE(TOUCH_EVENTS)
 #import "PlatformTouchEventIOS.h"
@@ -163,12 +164,18 @@ void ScrollAnimatorIOS::determineScrollableAreaForTouchSequence(const IntSize& s
 {
     ASSERT(!m_scrollableAreaForTouchSequence);
 
-    ScrollableArea* scrollableArea = &m_scrollableArea;
+    auto horizontalEdge = ScrollableArea::targetSideForScrollDelta(scrollDelta, ScrollEventAxis::Horizontal);
+    auto verticalEdge = ScrollableArea::targetSideForScrollDelta(scrollDelta, ScrollEventAxis::Vertical);
+
+    auto* scrollableArea = &m_scrollableArea;
     while (true) {
-        if (!scrollableArea->isPinnedForScrollDelta(scrollDelta))
+        if (verticalEdge && !scrollableArea->isPinnedOnSide(*verticalEdge))
             break;
 
-        ScrollableArea* enclosingArea = scrollableArea->enclosingScrollableArea();
+        if (horizontalEdge && !scrollableArea->isPinnedOnSide(*horizontalEdge))
+            break;
+
+        auto* enclosingArea = scrollableArea->enclosingScrollableArea();
         if (!enclosingArea)
             break;
 

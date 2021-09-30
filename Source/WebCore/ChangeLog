@@ -1,3 +1,71 @@
+2021-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Replace the confusing isPinnedForScrollDelta() logic with code that uses BoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=231004
+
+        Reviewed by Tim Horton.
+
+        isPinnedForScrollDelta()/isPinnedForScrollDeltaOnAxis() are ambiguous because it's
+        easy to interpret them as looking at the magnitude of the delta to determine whether
+        the delta will cause stretching on an edge. However, they don't do this; they simply
+        use the delta to choose which edge to look at, and the "is pinned" refers to whether
+        the scroller is already scrolled to that edge or stretching at that edge.
+
+        To reduce ambiguity, rewrite the code in terms of BoxSides, separating the code
+        that determines which BoxSide to look at for a given event delta from the code that
+        computed pinned state. It's now clearer that it's the caller's responsibility to
+        do "dominant axis" delta transformations too.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::scrollableAreaCanHandleEvent):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::mainFrameCanRubberBandOnSide):
+        (WebCore::ScrollingTree::mainFrameCanRubberBandInDirection): Deleted.
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.h:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsHorizontalStretching const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::allowsVerticalStretching const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isPinnedOnSide const): Remove the old "scrollOffsetLimit" threshold. Our scroll offsets
+        are currently all integral so I don't think this did anything.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandOnSide const):
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDeltaOnAxis const): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::isPinnedForScrollDelta const): Deleted.
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::shouldRubberBandInDirection const): Deleted.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::isPinnedOnSide const):
+        (WebCore::ScrollAnimator::isPinnedForScrollDelta const): Deleted.
+        * platform/ScrollAnimator.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::isPinnedOnSide const):
+        (WebCore::ScrollableArea::targetSideForScrollDelta):
+        (WebCore::ScrollableArea::isPinnedForScrollDeltaOnAxis const): Deleted.
+        (WebCore::ScrollableArea::isPinnedForScrollDelta const): Deleted.
+        * platform/ScrollableArea.h:
+        * platform/ScrollingEffectsController.h:
+        * platform/ios/ScrollAnimatorIOS.mm:
+        (WebCore::ScrollAnimatorIOS::determineScrollableAreaForTouchSequence):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching const):
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching const):
+        (WebCore::ScrollAnimatorMac::shouldRubberBandOnSide const):
+        (WebCore::ScrollAnimatorMac::shouldRubberBandInDirection const): Deleted.
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::dominantAxisFavoringVertical):
+        (WebCore::deltaAlignedToAxis):
+        (WebCore::deltaAlignedToDominantAxis):
+        (WebCore::affectedSideOnDominantAxis):
+        (WebCore::isHorizontalSide):
+        (WebCore::isVerticalSide):
+        (WebCore::ScrollingEffectsController::handleWheelEvent):
+        (WebCore::ScrollingEffectsController::wheelDeltaBiasingTowardsVertical):
+        (WebCore::ScrollingEffectsController::shouldRubberBandOnSide const):
+        (WebCore::convertToProminentAxisFavoringVertical): Deleted.
+        (WebCore::ScrollingEffectsController::directionFromEvent): Deleted.
+        (WebCore::ScrollingEffectsController::shouldRubberBandInHorizontalDirection const): Deleted.
+        (WebCore::ScrollingEffectsController::shouldRubberBandInDirection const): Deleted.
+
 2021-09-30  Devin Rousso  <drousso@apple.com>
 
         [GPU Process] support rendering Apple Pay buttons

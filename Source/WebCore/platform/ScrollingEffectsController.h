@@ -85,6 +85,7 @@ public:
     virtual void setScrollBehaviorStatus(ScrollBehaviorStatus) = 0;
     virtual ScrollBehaviorStatus scrollBehaviorStatus() const = 0;
 
+    // FIXME: use ScrollClamping to collapse these to one.
     virtual void immediateScrollBy(const FloatSize&) = 0;
     virtual void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&) = 0;
 
@@ -97,13 +98,12 @@ public:
     virtual bool allowsVerticalStretching(const PlatformWheelEvent&) const = 0;
     virtual IntSize stretchAmount() const = 0;
 
-    virtual bool isPinnedForScrollDelta(const FloatSize&) const = 0;
-
+    // "Pinned" means scrolled at or beyond the edge.
+    virtual bool isPinnedOnSide(BoxSide) const = 0;
     virtual RectEdges<bool> edgePinnedState() const = 0;
 
-    virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
+    virtual bool shouldRubberBandOnSide(BoxSide) const = 0;
 
-    // FIXME: use ScrollClamping to collapse these to one.
     virtual void willStartRubberBandSnapAnimation() { }
     virtual void didStopRubberbandSnapAnimation() { }
 
@@ -167,8 +167,6 @@ public:
     // Returns true if handled.
     bool handleWheelEvent(const PlatformWheelEvent&);
 
-    enum class WheelAxisBias { None, Vertical };
-    static std::optional<ScrollDirection> directionFromEvent(const PlatformWheelEvent&, std::optional<ScrollEventAxis>, WheelAxisBias = WheelAxisBias::None);
     static FloatSize wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent&);
 
     bool isScrollSnapInProgress() const;
@@ -204,8 +202,7 @@ private:
     void stopSnapRubberbandAnimation();
 
     void snapRubberBand();
-    bool shouldRubberBandInHorizontalDirection(const PlatformWheelEvent&) const;
-    bool shouldRubberBandInDirection(ScrollDirection) const;
+    bool shouldRubberBandOnSide(BoxSide) const;
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
     void updateRubberBandingEdges(IntSize clientStretch);

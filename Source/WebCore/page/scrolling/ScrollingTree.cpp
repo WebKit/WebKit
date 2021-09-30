@@ -595,18 +595,10 @@ void ScrollingTree::setMainFrameCanRubberBand(RectEdges<bool> canRubberBand)
     m_swipeState.canRubberBand = canRubberBand;
 }
 
-bool ScrollingTree::mainFrameCanRubberBandInDirection(ScrollDirection direction)
+bool ScrollingTree::mainFrameCanRubberBandOnSide(BoxSide side)
 {
     Locker locker { m_swipeStateLock };
-
-    switch (direction) {
-    case ScrollUp: return m_swipeState.canRubberBand.top();
-    case ScrollDown: return m_swipeState.canRubberBand.bottom();
-    case ScrollLeft: return m_swipeState.canRubberBand.left();
-    case ScrollRight: return m_swipeState.canRubberBand.right();
-    };
-
-    return false;
+    return m_swipeState.canRubberBand.at(side);
 }
 
 void ScrollingTree::addPendingScrollUpdate(ScrollUpdate&& update)

@@ -83,13 +83,44 @@ void ScrollingEffectsController::stopAllTimers()
 #endif
 }
 
-
-static FloatSize convertToProminentAxisFavoringVertical(FloatSize delta)
+static ScrollEventAxis dominantAxisFavoringVertical(FloatSize delta)
 {
     if (fabsf(delta.height()) >= fabsf(delta.width()))
-        return { 0, delta.height() };
+        return ScrollEventAxis::Vertical;
 
-    return { delta.width(), 0 };
+    return ScrollEventAxis::Horizontal;
+}
+
+static FloatSize deltaAlignedToAxis(FloatSize delta, ScrollEventAxis axis)
+{
+    switch (axis) {
+    case ScrollEventAxis::Horizontal: return FloatSize { delta.width(), 0 };
+    case ScrollEventAxis::Vertical: return FloatSize { 0, delta.height() };
+    }
+
+    return { };
+}
+
+static FloatSize deltaAlignedToDominantAxis(FloatSize delta)
+{
+    auto dominantAxis = dominantAxisFavoringVertical(delta);
+    return deltaAlignedToAxis(delta, dominantAxis);
+}
+
+static std::optional<BoxSide> affectedSideOnDominantAxis(FloatSize delta)
+{
+    auto dominantAxis = dominantAxisFavoringVertical(delta);
+    return ScrollableArea::targetSideForScrollDelta(delta, dominantAxis);
+}
+
+static bool isHorizontalSide(std::optional<BoxSide> side)
+{
+    return side && (*side == BoxSide::Left || *side == BoxSide::Right);
+}
+
+static bool isVerticalSide(std::optional<BoxSide> side)
+{
+    return side && (*side == BoxSide::Top || *side == BoxSide::Bottom);
 }
 
 bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -102,12 +133,12 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Began) {
         // FIXME: Trying to decide if a gesture is horizontal or vertical at the "began" phase is very error-prone.
-        auto direction = directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
-        if (direction && m_client.isPinnedForScrollDelta(FloatSize(-wheelEvent.deltaX(), 0)) && !shouldRubberBandInDirection(direction.value()))
+        auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
+        if (horizontalSide && m_client.isPinnedOnSide(*horizontalSide) && !shouldRubberBandOnSide(*horizontalSide))
             return false;
 
-        direction = directionFromEvent(wheelEvent, ScrollEventAxis::Vertical);
-        if (direction && m_client.isPinnedForScrollDelta(FloatSize(0, -wheelEvent.deltaY())) && !shouldRubberBandInDirection(direction.value()))
+        auto verticalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Vertical);
+        if (verticalSide && m_client.isPinnedOnSide(*verticalSide) && !shouldRubberBandOnSide(*verticalSide))
             return false;
 
         m_momentumScrollInProgress = false;
@@ -155,7 +186,9 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     auto eventCoalescedDelta = (isVerticallyStretched || isHorizontallyStretched) ? -wheelEvent.unacceleratedScrollingDelta() : -wheelEvent.delta();
     delta += eventCoalescedDelta;
 
-    delta = convertToProminentAxisFavoringVertical(delta);
+    // FIXME: All of the code below could be simplified since predominantAxis is known, and we zero out the delta on the other axis.
+    auto affectedSide = affectedSideOnDominantAxis(delta);
+
     float deltaX = delta.width();
     float deltaY = delta.height();
 
@@ -177,7 +210,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         }
 
         if (isVerticallyStretched) {
-            if (!isHorizontallyStretched && m_client.isPinnedForScrollDelta(FloatSize(deltaX, 0))) {
+            if (!isHorizontallyStretched && isHorizontalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
                 // Stretching only in the vertical.
                 if (deltaY && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
                     deltaX = 0;
@@ -189,7 +222,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
             }
         } else if (isHorizontallyStretched) {
             // Stretching only in the horizontal.
-            if (m_client.isPinnedForScrollDelta(FloatSize(0, deltaY))) {
+            if (isVerticalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
                 if (deltaX && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
                     deltaY = 0;
                 else if (fabsf(deltaY) < rubberbandMinimumRequiredDeltaBeforeStretch) {
@@ -200,7 +233,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
             }
         } else {
             // Not stretching at all yet.
-            if (m_client.isPinnedForScrollDelta(FloatSize(deltaX, deltaY))) {
+            if (affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
                 if (fabsf(deltaY) >= fabsf(deltaX)) {
                     if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
                         m_unappliedOverscrollDelta.expand(deltaX, 0);
@@ -233,12 +266,13 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
                 m_client.immediateScrollBy(FloatSize(deltaX, 0));
             }
         } else {
+            affectedSide = affectedSideOnDominantAxis({ deltaX, deltaY });
             if (deltaX) {
                 if (!m_client.allowsHorizontalStretching(wheelEvent)) {
                     deltaX = 0;
                     eventCoalescedDelta.setWidth(0);
                     handled = false;
-                } else if (!isHorizontallyStretched && !m_client.isPinnedForScrollDelta(FloatSize(deltaX, 0))) {
+                } else if (!isHorizontallyStretched && !m_client.isPinnedOnSide(*affectedSide)) {
                     deltaX *= scrollWheelMultiplier();
 
                     m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
@@ -251,7 +285,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
                     deltaY = 0;
                     eventCoalescedDelta.setHeight(0);
                     handled = false;
-                } else if (!isVerticallyStretched && !m_client.isPinnedForScrollDelta(FloatSize(0, deltaY))) {
+                } else if (!isVerticallyStretched && !m_client.isPinnedOnSide(*affectedSide)) {
                     deltaY *= scrollWheelMultiplier();
 
                     m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
@@ -262,7 +296,8 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
             IntSize stretchAmount = m_client.stretchAmount();
 
             if (m_momentumScrollInProgress) {
-                if ((m_client.isPinnedForScrollDelta(eventCoalescedDelta) || eventCoalescedDelta.isZero()) && m_lastMomentumScrollTimestamp) {
+                auto sideAffectedByEventDelta = affectedSideOnDominantAxis(eventCoalescedDelta);
+                if ((!sideAffectedByEventDelta || m_client.isPinnedOnSide(*sideAffectedByEventDelta)) && m_lastMomentumScrollTimestamp) {
                     m_ignoreMomentumScrolls = true;
                     m_momentumScrollInProgress = false;
                     snapRubberBand();
@@ -293,53 +328,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
 
 FloatSize ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent& wheelEvent)
 {
-    return convertToProminentAxisFavoringVertical(wheelEvent.delta());
-}
-
-std::optional<ScrollDirection> ScrollingEffectsController::directionFromEvent(const PlatformWheelEvent& wheelEvent, std::optional<ScrollEventAxis> axis, WheelAxisBias bias)
-{
-    // FIXME: It's impossible to infer direction from a single event, since the start of a gesture is either zero or
-    // has small deltas on both axes.
-
-    auto wheelDelta = FloatSize { wheelEvent.deltaX(), wheelEvent.deltaY() };
-    if (bias == WheelAxisBias::Vertical)
-        wheelDelta = wheelDeltaBiasingTowardsVertical(wheelEvent);
-
-    if (axis) {
-        switch (axis.value()) {
-        case ScrollEventAxis::Vertical:
-            if (wheelDelta.height() < 0)
-                return ScrollDown;
-
-            if (wheelDelta.height() > 0)
-                return ScrollUp;
-            break;
-
-        case ScrollEventAxis::Horizontal:
-            if (wheelDelta.width() > 0)
-                return ScrollLeft;
-
-            if (wheelDelta.width() < 0)
-                return ScrollRight;
-        }
-
-        return std::nullopt;
-    }
-
-    // Check Y first because vertical scrolling dominates.
-    if (wheelDelta.height() < 0)
-        return ScrollDown;
-
-    if (wheelDelta.height() > 0)
-        return ScrollUp;
-
-    if (wheelDelta.width() > 0)
-        return ScrollLeft;
-
-    if (wheelDelta.width() < 0)
-        return ScrollRight;
-
-    return std::nullopt;
+    return deltaAlignedToDominantAxis(wheelEvent.delta());
 }
 
 static inline float roundTowardZero(float num)
@@ -493,18 +482,9 @@ void ScrollingEffectsController::snapRubberBand()
     startRubberbandAnimation();
 }
 
-bool ScrollingEffectsController::shouldRubberBandInHorizontalDirection(const PlatformWheelEvent& wheelEvent) const
+bool ScrollingEffectsController::shouldRubberBandOnSide(BoxSide side) const
 {
-    auto direction = directionFromEvent(wheelEvent, ScrollEventAxis::Horizontal);
-    if (direction)
-        return shouldRubberBandInDirection(direction.value());
-
-    return true;
-}
-
-bool ScrollingEffectsController::shouldRubberBandInDirection(ScrollDirection direction) const
-{
-    return m_client.shouldRubberBandInDirection(direction);
+    return m_client.shouldRubberBandOnSide(side);
 }
 
 bool ScrollingEffectsController::isRubberBandInProgressInternal() const

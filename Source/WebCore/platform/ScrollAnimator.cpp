@@ -308,16 +308,11 @@ RectEdges<bool> ScrollAnimator::edgePinnedState() const
     return m_scrollableArea.edgePinnedState();
 }
 
-bool ScrollAnimator::isPinnedForScrollDelta(const FloatSize& delta) const
+bool ScrollAnimator::isPinnedOnSide(BoxSide side) const
 {
-    if (fabsf(delta.height()) >= fabsf(delta.width()))
-        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.height(), ScrollEventAxis::Vertical);
-
-    if (delta.width())
-        return m_scrollableArea.isPinnedForScrollDeltaOnAxis(delta.width(), ScrollEventAxis::Horizontal);
-
-    return false;
+    return m_scrollableArea.isPinnedOnSide(side);
 }
+
 #endif
 
 void ScrollAnimator::adjustScrollPositionToBoundsIfNecessary()

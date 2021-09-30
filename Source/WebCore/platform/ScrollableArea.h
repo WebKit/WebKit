@@ -317,8 +317,10 @@ public:
     // This function is static so that it can be called from the main thread or the scrolling thread.
     WEBCORE_EXPORT static void computeScrollbarValueAndOverhang(float currentPosition, float totalSize, float visibleSize, float& doubleValue, float& overhangAmount);
 
-    bool isPinnedForScrollDeltaOnAxis(float scrollDelta, ScrollEventAxis) const;
-    bool isPinnedForScrollDelta(const FloatSize&) const;
+    static std::optional<BoxSide> targetSideForScrollDelta(FloatSize, ScrollEventAxis);
+
+    // "Pinned" means scrolled at or beyond the edge.
+    bool isPinnedOnSide(BoxSide) const;
     RectEdges<bool> edgePinnedState() const;
 
     // True if scrolling happens by moving compositing layers.
