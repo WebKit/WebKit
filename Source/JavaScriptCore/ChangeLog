@@ -1,3 +1,15 @@
+2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [JSC] Add objectTypeCounts to JSGetMemoryUsageStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=230957
+
+        Reviewed by Yusuke Suzuki.
+
+        * API/JSBase.cpp: Added objectTypeCounts property
+        (JSGetMemoryUsageStatistics):
+        * API/JSBasePrivate.h: Added description of objectTypeCounts property
+        * jsc.cpp: Added memoryUsageStatistics() function
+
 2021-09-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove CodeBlock::m_llintExecuteCounter

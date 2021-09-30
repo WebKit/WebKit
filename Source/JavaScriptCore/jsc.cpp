@@ -22,6 +22,7 @@
 
 #include "config.h"
 
+#include "APICast.h"
 #include "ArrayBuffer.h"
 #include "BigIntConstructor.h"
 #include "BytecodeCacheError.h"
@@ -44,6 +45,7 @@
 #include "JITSizeStatistics.h"
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
+#include "JSBasePrivate.h"
 #include "JSBigInt.h"
 #include "JSFinalizationRegistry.h"
 #include "JSFunction.h"
@@ -285,6 +287,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionGCAndSweep);
 static JSC_DECLARE_HOST_FUNCTION(functionFullGC);
 static JSC_DECLARE_HOST_FUNCTION(functionEdenGC);
 static JSC_DECLARE_HOST_FUNCTION(functionHeapSize);
+static JSC_DECLARE_HOST_FUNCTION(functionMemoryUsageStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateMemoryFootprint);
 static JSC_DECLARE_HOST_FUNCTION(functionResetMemoryPeak);
 static JSC_DECLARE_HOST_FUNCTION(functionAddressOf);
@@ -529,6 +532,7 @@ private:
         addFunction(vm, "fullGC", functionFullGC, 0);
         addFunction(vm, "edenGC", functionEdenGC, 0);
         addFunction(vm, "gcHeapSize", functionHeapSize, 0);
+        addFunction(vm, "memoryUsageStatistics", functionMemoryUsageStatistics, 0);
         addFunction(vm, "MemoryFootprint", functionCreateMemoryFootprint, 0);
         addFunction(vm, "resetMemoryPeak", functionResetMemoryPeak, 0);
         addFunction(vm, "addressOf", functionAddressOf, 1);
@@ -1460,6 +1464,12 @@ private:
 };
 
 const ClassInfo JSCMemoryFootprint::s_info = { "MemoryFootprint", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCMemoryFootprint) };
+
+JSC_DEFINE_HOST_FUNCTION(functionMemoryUsageStatistics, (JSGlobalObject* globalObject, CallFrame*))
+{
+    auto contextRef = toRef(globalObject);
+    return JSValue::encode(toJS(JSGetMemoryUsageStatistics(contextRef)));
+}
 
 JSC_DEFINE_HOST_FUNCTION(functionCreateMemoryFootprint, (JSGlobalObject* globalObject, CallFrame*))
 {

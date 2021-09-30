@@ -204,6 +204,11 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
+    auto typeCounts = vm.heap.objectTypeCounts();
+    JSObject* objectTypeCounts = constructEmptyObject(globalObject);
+    for (auto& it : *typeCounts)
+        objectTypeCounts->putDirect(vm, Identifier::fromString(vm, it.key), jsNumber(it.value));
+
     JSObject* object = constructEmptyObject(globalObject);
     object->putDirect(vm, Identifier::fromString(vm, "heapSize"), jsNumber(vm.heap.size()));
     object->putDirect(vm, Identifier::fromString(vm, "heapCapacity"), jsNumber(vm.heap.capacity()));
@@ -212,6 +217,7 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
     object->putDirect(vm, Identifier::fromString(vm, "protectedObjectCount"), jsNumber(vm.heap.protectedObjectCount()));
     object->putDirect(vm, Identifier::fromString(vm, "globalObjectCount"), jsNumber(vm.heap.globalObjectCount()));
     object->putDirect(vm, Identifier::fromString(vm, "protectedGlobalObjectCount"), jsNumber(vm.heap.protectedGlobalObjectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "objectTypeCounts"), objectTypeCounts);
 
     return toRef(object);
 }
