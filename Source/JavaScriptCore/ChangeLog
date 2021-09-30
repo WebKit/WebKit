@@ -1,5 +1,18 @@
 2021-09-30  Saam Barati  <sbarati@apple.com>
 
+        Regressions (r283288): [ macOS Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=231024
+        <rdar://problem/83723856>
+
+        Reviewed by Mark Lam.
+
+        Speed up our debug assert by not using a probe.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
+2021-09-30  Saam Barati  <sbarati@apple.com>
+
         The DFG/FTL need to be aware that Proxy's can produce "function" for typeof and might be callable
         https://bugs.webkit.org/show_bug.cgi?id=230804
         <rdar://problem/83543951>

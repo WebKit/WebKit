@@ -272,13 +272,18 @@ void JIT::privateCompileMainPass()
 
 #if ASSERT_ENABLED
         if (opcodeID != op_catch) {
-            probeDebug([=] (Probe::Context& ctx) {
-                CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
-                auto* constantPool = ctx.gpr<void*>(s_constantsGPR);
-                RELEASE_ASSERT(codeBlock->baselineJITConstantPool() == constantPool);
-                auto* metadata = ctx.gpr<void*>(s_metadataGPR);
-                RELEASE_ASSERT(codeBlock->metadataTable() == metadata);
-            });
+            loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
+            loadPtr(Address(regT0, CodeBlock::offsetOfMetadataTable()), regT1);
+            loadPtr(Address(regT0, CodeBlock::offsetOfJITData()), regT0);
+            loadPtr(Address(regT0, CodeBlock::JITData::offsetOfJITConstantPool()), regT2);
+
+            auto metadataOK = branchPtr(Equal, regT1, s_metadataGPR);
+            breakpoint();
+            metadataOK.link(this);
+
+            auto constantsOK = branchPtr(Equal, regT2, s_constantsGPR);
+            breakpoint();
+            constantsOK.link(this);
         }
 #endif
 
