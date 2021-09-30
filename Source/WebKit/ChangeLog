@@ -1,3 +1,13 @@
+2021-09-30  Christopher Reid  <chris.reid@sony.com>
+
+        Fix !ENABLE(WIRELESS_PLAYBACK_TARGET) build after r283319
+        https://bugs.webkit.org/show_bug.cgi?id=231036
+
+        Unreviewed build fix.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp: MediaPlaybackTargetContext.h is already included with WIRELESS_PLAYBACK_TARGET
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+
 2021-09-30  Per Arne  <pvollan@apple.com>
 
         [GPUP] Add syscall filter telemetry

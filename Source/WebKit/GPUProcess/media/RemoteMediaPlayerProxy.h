@@ -72,7 +72,9 @@ class MachSendRight;
 
 namespace WebCore {
 class AudioTrackPrivate;
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
 class MediaPlaybackTargetContext;
+#endif
 class VideoTrackPrivate;
 }
 
