@@ -1,3 +1,14 @@
+2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [bmalloc] ChunkHash is not used since r261667
+        https://bugs.webkit.org/show_bug.cgi?id=230762
+
+        Reviewed by Alex Christensen.
+
+        The structure is the leftover when ObjectTypeTable was introduced at r261667.
+
+        * bmalloc/Chunk.h:
+
 2021-09-29  Eric Hutchison  <ehutchison@apple.com>
 
         Unreviewed, reverting r282850.

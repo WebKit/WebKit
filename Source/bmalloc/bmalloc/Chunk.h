@@ -66,14 +66,6 @@ private:
     std::array<SmallPage, chunkSize / smallPageSize> m_pages { };
 };
 
-struct ChunkHash {
-    static unsigned hash(Chunk* key)
-    {
-        return static_cast<unsigned>(
-            reinterpret_cast<uintptr_t>(key) / chunkSize);
-    }
-};
-
 inline size_t Chunk::metadataSize(size_t pageSize)
 {
     // We align to at least the page size so we can service aligned allocations
