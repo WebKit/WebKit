@@ -987,9 +987,6 @@ webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navig
 
 webkit.org/b/199089 [ Debug ] plugins/window-open.html [ Skip ]
 
-# <rdar://problem/56506063> Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is a flaky failure (203256)
-webkit.org/b/203256 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html [ Pass Failure ]
-
 webkit.org/b/205808 fast/text/international/unicode-bidi-other-neutrals.html [ Pass Failure ]
 
 webkit.org/b/206864 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
@@ -1032,8 +1029,6 @@ webkit.org/b/207635 fast/events/before-input-prevent-insert-replacement.html [ P
 webkit.org/b/207728 [ Release ] accessibility/press-targets-center-point.html [ Pass Failure ]
 
 webkit.org/b/207796 [ Release ] fast/box-shadow/hidpi-box-shadow.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/207798 webrtc/connection-state.html [ Pass Failure ]
 
 webkit.org/b/207938 http/wpt/crypto/derive-hmac-key-crash.any.html [ Pass Crash ]
 

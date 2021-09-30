@@ -1,3 +1,30 @@
+2021-09-30  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203256
+        <rdar://problem/56506063>
+
+        Reviewed by Eric Carlson.
+
+        Test was flaky for a few reasons:
+        - Setting local/remote descriptions may change the ICE transports in use so we need to update the ice connection state when setting local/remote descriptions.
+        - We start observing ICE transport backend state asynchronously and we might miss the checking state which can happen very quickly. Synthesize it if needed.
+        - We were using the ICE connection state value from the backend as well as computing it from our RTCIceTransport objects. We now fully compute it from RTCIceTransport objects.
+          This ensures we have consistent state between RTCIceTransport and RTCPeerConnection objects with regards to ICE state.
+
+        Covered by no longer flaky test.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::updateIceGatheringState):
+        (WebCore::RTCPeerConnection::updateIceConnectionState):
+        (WebCore::RTCPeerConnection::computeIceConnectionStateFromIceTransports):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCIceTransportBackend.cpp:
+        (WebCore::LibWebRTCIceTransportBackendObserver::start):
+
 2021-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK build fix after r283304

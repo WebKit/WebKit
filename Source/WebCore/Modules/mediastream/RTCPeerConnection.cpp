@@ -670,12 +670,13 @@ void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
     });
 }
 
-void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState newState)
+void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, newState);
-
-    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, newState] {
-        if (isClosed() || m_iceConnectionState == newState)
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this] {
+        if (isClosed())
+            return;
+        auto newState = computeIceConnectionStateFromIceTransports();
+        if (m_iceConnectionState == newState)
             return;
 
         m_iceConnectionState = newState;
@@ -789,6 +790,16 @@ void RTCPeerConnection::processIceTransportStateChange(RTCIceTransport& iceTrans
         dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     if (connectionStateChanged && !isClosed())
         dispatchEvent(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+void RTCPeerConnection::processIceTransportChanges()
+{
+    auto newIceConnectionState = computeIceConnectionStateFromIceTransports();
+    bool iceConnectionStateChanged = m_iceConnectionState != newIceConnectionState;
+    m_iceConnectionState = newIceConnectionState;
+
+    if (iceConnectionStateChanged && !isClosed())
+        dispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void RTCPeerConnection::updateNegotiationNeededFlag(std::optional<uint32_t> eventId)

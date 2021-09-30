@@ -1,3 +1,16 @@
+2021-09-30  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=203256
+        <rdar://problem/56506063>
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        Mark webrtc/connection-state.html as flaky as it is probably too restrictive and should be reworked.
+        * platform/mac-wk2/TestExpectations:
+        Unflake test.
+
 2021-09-29  Youenn Fablet  <youenn@apple.com>
 
         Import WPT push api tests

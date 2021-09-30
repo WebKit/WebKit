@@ -192,6 +192,7 @@ public:
     void updateSctpBackend(std::unique_ptr<RTCSctpTransportBackend>&&);
 
     void processIceTransportStateChange(RTCIceTransport&);
+    void processIceTransportChanges();
 
     RTCSctpTransport* sctp() { return m_sctpTransport.get(); }
 

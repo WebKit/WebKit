@@ -177,7 +177,7 @@ void PeerConnectionBackend::setLocalDescriptionSucceeded(std::optional<Descripti
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
         m_peerConnection.updateTransceiversAfterSuccessfulLocalDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
-
+        m_peerConnection.processIceTransportChanges();
         callback({ });
     });
 }
@@ -235,6 +235,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
 
         m_peerConnection.updateTransceiversAfterSuccessfulRemoteDescription();
         m_peerConnection.updateSctpBackend(WTFMove(sctpBackend));
+        m_peerConnection.processIceTransportChanges();
         callback({ });
     });
 }

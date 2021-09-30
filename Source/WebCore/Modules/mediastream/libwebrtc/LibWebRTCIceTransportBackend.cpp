@@ -108,7 +108,15 @@ void LibWebRTCIceTransportBackendObserver::start()
             return;
         internal->SignalIceTransportStateChanged.connect(this, &LibWebRTCIceTransportBackendObserver::onIceTransportStateChanged);
         internal->SignalGatheringState.connect(this, &LibWebRTCIceTransportBackendObserver::onGatheringStateChanged);
-        callOnMainThread([protectedThis = Ref { *this }, transportState = internal->GetIceTransportState(), gatheringState = internal->gathering_state()] {
+        auto transportState = internal->GetIceTransportState();
+        // We start observing a bit late and might miss the checking state. Synthesize it as needed.
+        if (transportState > webrtc::IceTransportState::kChecking && transportState != webrtc::IceTransportState::kClosed) {
+            callOnMainThread([protectedThis = Ref { *this }] {
+                if (protectedThis->m_client)
+                    protectedThis->m_client->onStateChanged(RTCIceTransportState::Checking);
+            });
+        }
+        callOnMainThread([protectedThis = Ref { *this }, transportState, gatheringState = internal->gathering_state()] {
             if (!protectedThis->m_client)
                 return;
             protectedThis->m_client->onStateChanged(toRTCIceTransportState(transportState));
