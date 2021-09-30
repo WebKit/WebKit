@@ -2482,6 +2482,32 @@ op(llint_internal_function_construct_trampoline, macro ()
 end)
 
 
+if JIT
+    macro loadBaselineJITConstantPool()
+        # Baseline uses LLInt's PB register for its JIT constant pool.
+        loadp CodeBlock[cfr], PB
+        loadp CodeBlock::m_jitData[PB], PB
+        loadp CodeBlock::JITData::m_jitConstantPool[PB], PB
+    end
+
+    macro setupReturnToBaselineAfterCheckpointExitIfNeeded()
+        # DFG or FTL OSR exit could have compiled an OSR exit to LLInt code.
+        # That means it set up registers as if execution would happen in the
+        # LLInt. However, during OSR exit for checkpoints, we might return to
+        # JIT code if it's already compiled. After the OSR exit gets compiled,
+        # we can tier up to JIT code. And checkpoint exit will jump to it.
+        # That means we always need to set up our constant pool GPR, because the OSR
+        # exit code might not have done it.
+        bpneq r0, 1, .notBaselineJIT
+        loadBaselineJITConstantPool()
+    .notBaselineJIT:
+
+    end
+else
+    macro setupReturnToBaselineAfterCheckpointExitIfNeeded()
+    end
+end
+
 op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
     if (JSVALUE64 and not (C_LOOP or C_LOOP_WIN)) or ARMv7 or MIPS
         restoreStackPointerAfterCall()
@@ -2505,8 +2531,10 @@ op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
             cCall2(_llint_slow_path_checkpoint_osr_exit_from_inlined_call)
         end
 
+        setupReturnToBaselineAfterCheckpointExitIfNeeded()
         restoreStateAfterCCall()
         branchIfException(_llint_throw_from_slow_path_trampoline)
+
         if ARM64E
             move r1, a0
             leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
@@ -2528,6 +2556,7 @@ op(checkpoint_osr_exit_trampoline, macro ()
         move cfr, a0
         # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
         cCall2(_llint_slow_path_checkpoint_osr_exit)
+        setupReturnToBaselineAfterCheckpointExitIfNeeded()
         restoreStateAfterCCall()
         branchIfException(_llint_throw_from_slow_path_trampoline)
         if ARM64E

@@ -270,6 +270,18 @@ void JIT::privateCompileMainPass()
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
         }
 
+#if ASSERT_ENABLED
+        if (opcodeID != op_catch) {
+            probeDebug([=] (Probe::Context& ctx) {
+                CodeBlock* codeBlock = ctx.fp<CallFrame*>()->codeBlock();
+                auto* constantPool = ctx.gpr<void*>(s_constantsGPR);
+                RELEASE_ASSERT(codeBlock->baselineJITConstantPool() == constantPool);
+                auto* metadata = ctx.gpr<void*>(s_metadataGPR);
+                RELEASE_ASSERT(codeBlock->metadataTable() == metadata);
+            });
+        }
+#endif
+
         if (UNLIKELY(m_compilation)) {
             add64(
                 TrustedImm32(1),

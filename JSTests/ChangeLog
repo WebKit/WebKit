@@ -1,5 +1,18 @@
 2021-09-29  Saam Barati  <sbarati@apple.com>
 
+        We need to load the baseline JIT's constant pool register after OSR exit to checkpoints if we return to baseline code
+        https://bugs.webkit.org/show_bug.cgi?id=230972
+        <rdar://83659469>
+
+        Reviewed by Mark Lam and Yusuke Suzuki.
+
+        * stress/checkpoint-osr-exit-needs-to-reload-baseline-jit-constant-pool-gpr.js: Added.
+        (empty):
+        (empty2):
+        (test):
+
+2021-09-29  Saam Barati  <sbarati@apple.com>
+
         Code inside strength reduction can incorrectly prove that we know what lastIndex is
         https://bugs.webkit.org/show_bug.cgi?id=230802
         <rdar://problem/83543699>

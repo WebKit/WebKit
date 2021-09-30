@@ -444,10 +444,7 @@ if JIT
                 btpz r0, .recover
                 move r1, sp
 
-                # Baseline uses LLInt's PB register for its JIT constant pool.
-                loadp CodeBlock[cfr], PB
-                loadp CodeBlock::m_jitData[PB], PB
-                loadp CodeBlock::JITData::m_jitConstantPool[PB], PB
+                loadBaselineJITConstantPool()
 
                 if ARM64E
                     leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2

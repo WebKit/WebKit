@@ -1,3 +1,34 @@
+2021-09-29  Saam Barati  <sbarati@apple.com>
+
+        We need to load the baseline JIT's constant pool register after OSR exit to checkpoints if we return to baseline code
+        https://bugs.webkit.org/show_bug.cgi?id=230972
+        <rdar://83659469>
+
+        Reviewed by Mark Lam and Yusuke Suzuki.
+
+        Consider the following:
+        - We have a CodeBlock A.
+        - DFG or FTL compiles an exit to A when A is still LLInt code. This means
+          the OSR exit code will materialize registers as if A is LLInt.
+        - We tier up A to Baseline JIT code.
+        - Now, we take the exit to A as if it's LLInt. But the checkpoint OSR exit
+          code will actually jump to the tiered up baseline code when it's done,
+          because it determines where to jump at runtime. Because of this, when
+          we return from the checkpoint code, and if we are jumping into baseline
+          code, we must always load the constant pool register.
+        - There's no need to load the metadata register because that register is
+          shared with LLInt code, and will already contain the right value.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::dispatchToNextInstructionDuringExit):
+        (JSC::LLInt::llint_slow_path_checkpoint_osr_exit_from_inlined_call):
+        (JSC::LLInt::llint_slow_path_checkpoint_osr_exit):
+        (JSC::LLInt::dispatchToNextInstruction): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Suppress warnings for implicit copy assignment operator/copy constructor with clang 13
