@@ -1,3 +1,14 @@
+2021-09-30  Antti Koivisto  <antti@apple.com>
+
+        Having unused TextIterator instance shouldn't crash if document is mutated
+        https://bugs.webkit.org/show_bug.cgi?id=231013
+        rdar://83690985
+
+        Reviewed by Alan Bujtas.
+
+        * editing/text-iterator/text-iterator-document-mutation-expected.txt: Added.
+        * editing/text-iterator/text-iterator-document-mutation.html: Added.
+
 2021-09-30  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Rebaseline a number of text-only text-related failures

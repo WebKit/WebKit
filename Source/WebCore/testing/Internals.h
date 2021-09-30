@@ -102,6 +102,7 @@ class SerializedScriptValue;
 class SourceBuffer;
 class StringCallback;
 class StyleSheet;
+class TextIterator;
 class TextTrack;
 class TimeRanges;
 class TypeConversions;
@@ -1190,6 +1191,8 @@ public:
     };
     ExceptionOr<void> setDocumentAutoplayPolicy(Document&, AutoplayPolicy);
 
+    void retainTextIteratorForDocumentContent();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
@@ -1218,6 +1221,8 @@ private:
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
 
     HashMap<unsigned, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
+
+    std::unique_ptr<TextIterator> m_textIterator;
 
 #if ENABLE(WEBXR)
     RefPtr<WebXRTest> m_xrTest;

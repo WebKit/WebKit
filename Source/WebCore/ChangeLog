@@ -1,3 +1,42 @@
+2021-09-30  Antti Koivisto  <antti@apple.com>
+
+        Regression (283158): Having unused TextIterator instance shouldn't crash if document is mutated
+        https://bugs.webkit.org/show_bug.cgi?id=231013
+        rdar://83690985
+
+        Reviewed by Alan Bujtas.
+
+        By using bundle APIs it is possible to create a retained TextIterator and hit CheckedPtr assertion because layout
+        is torn down while iterator still exists. This is not dangerous in itself so can be supported.
+
+        This patch ensures LineLayout disconnects cleanly from (refcounted) InlineContent.
+
+        Test: editing/text-iterator/text-iterator-document-mutation.html
+
+        * layout/integration/LayoutIntegrationInlineContent.cpp:
+        (WebCore::LayoutIntegration::InlineContent::clearAndDetach):
+
+        Remove all content and clear the LineLayout pointer.
+
+        This is safe since iterators refer to content via indexes and any attempt to access
+        via them will hit nullptrs or vector asserts.
+
+        * layout/integration/LayoutIntegrationInlineContent.h:
+        (WebCore::LayoutIntegration::InlineContent::lineLayout const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::~LineLayout):
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        (WebCore::LayoutIntegration::LineLayout::clearInlineContent):
+
+        Clear InlineContent before nulling it as it can still be kept alive by iterators.
+
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::retainTextIteratorForDocumentContent):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-09-30  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE][GStreamer] Allow infinite duration on MSE

@@ -67,7 +67,10 @@ LineLayout::LineLayout(RenderBlockFlow& flow)
     m_layoutState.setIsIntegratedRootBoxFirstChild(flow.parent()->firstChild() == &flow);
 }
 
-LineLayout::~LineLayout() = default;
+LineLayout::~LineLayout()
+{
+    clearInlineContent();
+}
 
 RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
 {
@@ -218,7 +221,8 @@ void LineLayout::layout()
     prepareFloatingState();
 
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
-    m_inlineContent = nullptr;
+    clearInlineContent();
+
     auto& rootGeometry = m_layoutState.geometryForBox(rootLayoutBox);
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() };
 
@@ -570,6 +574,14 @@ void LineLayout::releaseCaches()
     m_inlineFormattingState.inlineItems().clear();
     if (m_inlineContent)
         m_inlineContent->releaseCaches();
+}
+
+void LineLayout::clearInlineContent()
+{
+    if (!m_inlineContent)
+        return;
+    m_inlineContent->clearAndDetach();
+    m_inlineContent = nullptr;
 }
 
 void LineLayout::paintTextBoxUsingPhysicalCoordinates(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const InlineDisplay::Box& textBox)

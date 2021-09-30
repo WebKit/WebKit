@@ -6537,4 +6537,15 @@ bool Internals::platformSupportsMetal(bool)
 }
 #endif
 
+void Internals::retainTextIteratorForDocumentContent()
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+
+    auto range = makeRangeSelectingNodeContents(*document);
+    m_textIterator = makeUnique<TextIterator>(range);
+}
+
+
 } // namespace WebCore

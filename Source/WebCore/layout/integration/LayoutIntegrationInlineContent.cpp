@@ -143,6 +143,14 @@ const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const L
     return it->value;
 }
 
+void InlineContent::clearAndDetach()
+{
+    releaseCaches();
+    boxes.clear();
+    lines.clear();
+    m_lineLayout = nullptr;
+}
+
 void InlineContent::releaseCaches()
 {
     m_firstBoxIndexCache = { };

@@ -68,7 +68,7 @@ struct InlineContent : public RefCounted<InlineContent> {
     WTF::IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
     void shrinkToFit();
 
-    const LineLayout& lineLayout() const { return m_lineLayout; }
+    const LineLayout& lineLayout() const { return *m_lineLayout; }
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     const RenderBlockFlow& containingBlock() const;
 
@@ -80,12 +80,13 @@ struct InlineContent : public RefCounted<InlineContent> {
     std::optional<size_t> firstBoxIndexForLayoutBox(const Layout::Box&) const;
     const Vector<size_t>& nonRootInlineBoxIndexesForLayoutBox(const Layout::Box&) const;
 
+    void clearAndDetach();
     void releaseCaches();
 
 private:
     InlineContent(const LineLayout&);
 
-    CheckedRef<const LineLayout> m_lineLayout;
+    CheckedPtr<const LineLayout> m_lineLayout;
 
     using FirstBoxIndexCache = HashMap<CheckedRef<const Layout::Box>, size_t>;
     mutable std::unique_ptr<FirstBoxIndexCache> m_firstBoxIndexCache;

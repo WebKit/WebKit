@@ -129,6 +129,7 @@ private:
 
     const Layout::ContainerBox& rootLayoutBox() const;
     Layout::ContainerBox& rootLayoutBox();
+    void clearInlineContent();
     void releaseCaches();
 
     BoxTree m_boxTree;
