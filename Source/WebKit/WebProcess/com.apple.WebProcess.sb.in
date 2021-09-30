@@ -1736,6 +1736,13 @@
     )
 )
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
+(allow mach-lookup
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.mach"))
+        (global-name "com.apple.audio.AudioComponentRegistrar")))
+#endif
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")

@@ -1,3 +1,15 @@
+2021-09-29  Per Arne Vollan <pvollan@apple.com>
+
+        [macOS] Allow audio service in the WebContent process on older versions
+        https://bugs.webkit.org/show_bug.cgi?id=230974
+        <rdar://82445437>
+
+        Reviewed by Brent Fulgham.
+
+        Older versions of macOS still need access to "com.apple.audio.AudioComponentRegistrar" in the WebContent process.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-09-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] REGRESSION(r280726): registry keys enabling GPU process mode don't work
