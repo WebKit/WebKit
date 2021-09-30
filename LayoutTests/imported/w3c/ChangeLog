@@ -1,5 +1,23 @@
 2021-09-29  Youenn Fablet  <youenn@apple.com>
 
+        Import WPT push api tests
+        https://bugs.webkit.org/show_bug.cgi?id=230945
+
+        Reviewed by Alex Christensen.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/push-api/META.yml: Added.
+        * web-platform-tests/push-api/idlharness.https.any-expected.txt: Added.
+        * web-platform-tests/push-api/idlharness.https.any.html: Added.
+        * web-platform-tests/push-api/idlharness.https.any.js: Added.
+        * web-platform-tests/push-api/idlharness.https.any.serviceworker-expected.txt: Added.
+        * web-platform-tests/push-api/idlharness.https.any.serviceworker.html: Added.
+        * web-platform-tests/push-api/idlharness.https.any.worker-expected.txt: Added.
+        * web-platform-tests/push-api/idlharness.https.any.worker.html: Added.
+        * web-platform-tests/push-api/w3c-import.log: Added.
+
+2021-09-29  Youenn Fablet  <youenn@apple.com>
+
         Import WPT notification service worker test
         https://bugs.webkit.org/show_bug.cgi?id=230944
 

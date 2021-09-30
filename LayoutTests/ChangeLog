@@ -1,5 +1,15 @@
 2021-09-29  Youenn Fablet  <youenn@apple.com>
 
+        Import WPT push api tests
+        https://bugs.webkit.org/show_bug.cgi?id=230945
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac-wk1/TestExpectations:
+        Skip tests in WK1
+
+2021-09-29  Youenn Fablet  <youenn@apple.com>
+
         Import WPT notification service worker test
         https://bugs.webkit.org/show_bug.cgi?id=230944
 
