@@ -64,7 +64,6 @@ struct GraphicsContextGLAttributes {
     bool forceRequestForHighPerformanceGPU { false };
 #if PLATFORM(COCOA)
     bool useMetal { true };
-    bool hasFenceSync { false };
 #endif
 #if ENABLE(WEBXR)
     bool xrCompatible { false };

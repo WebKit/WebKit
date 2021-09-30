@@ -356,12 +356,13 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         extensions.ensureEnabled(extension);
     }
     if (contextAttributes().useMetal) {
-        // The implementation uses GLsync objects. Enable the functionality for WebGL 1.0 contexts
-        // that use OpenGL ES 2.0.
+        // GraphicsContextGLOpenGL uses sync objects to throttle display on Metal implementations.
+        // OpenGL sync objects are not signaling upon completion on Catalina-era drivers, so
+        // OpenGL cannot use this method of throttling. OpenGL drivers typically implement
+        // some sort of internal throttling.
         if (extensions.supports("GL_ARB_sync"_s)) {
-            attrs.hasFenceSync = true;
+            m_useFenceSyncForDisplayRateLimit = true;
             extensions.ensureEnabled("GL_ARB_sync"_s);
-            setContextAttributes(attrs);
         }
     }
     validateAttributes();
@@ -838,9 +839,7 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 
     markLayerComposited();
 
-    if (contextAttributes().useMetal && contextAttributes().hasFenceSync) {
-        // OpenGL sync objects are not signaling upon completion on Catalina-era drivers.
-        // OpenGL drivers typically implement some sort of internal throttling.
+    if (m_useFenceSyncForDisplayRateLimit) {
         bool success = waitAndUpdateOldestFrame();
         UNUSED_VARIABLE(success); // FIXME: implement context lost.
     }

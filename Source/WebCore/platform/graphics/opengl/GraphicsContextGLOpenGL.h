@@ -796,6 +796,7 @@ private:
     std::unique_ptr<GraphicsContextGLCV> m_cv;
 #endif
 #if USE(ANGLE)
+    bool m_useFenceSyncForDisplayRateLimit = false;
     static constexpr size_t maxPendingFrames = 3;
     size_t m_oldestFrameCompletionFence { 0 };
     ScopedGLFence m_frameCompletionFences[maxPendingFrames];

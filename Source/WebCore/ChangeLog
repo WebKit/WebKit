@@ -1,3 +1,20 @@
+2021-09-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGLAttributes::hasFenceSync should be a property of GraphicsContextGLOpenGL
+        https://bugs.webkit.org/show_bug.cgi?id=230939
+
+        Reviewed by Antti Koivisto.
+
+        Move hasFenceSync from GraphicsContextGLAttributes to GraphicsContextGLOpenGL.
+
+        No new tests, a refactor.
+
+        * platform/graphics/GraphicsContextGLAttributes.h:
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::prepareForDisplay):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2021-09-30  Youenn Fablet  <youenn@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceConnectionState.https.html is a flaky failure
