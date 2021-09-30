@@ -1,3 +1,28 @@
+2021-09-30  Chris Dumez  <cdumez@apple.com>
+
+        Web Audio panner node quality deteriorates over time
+        https://bugs.webkit.org/show_bug.cgi?id=230950
+        <rdar://problem/83675934>
+
+        Reviewed by Eric Carlson.
+
+        When profiling the test case, I noticed what we were spending most of the CPU time
+        under AudioParamTimeline::valuesForFrameRangeImpl() / isEventCurrent() called from
+        PannerNode::process(). The reason for that is that the number of events in the
+        AudioParamTimeline would keep growing unboundedly and it would make the
+        valuesForFrameRangeImpl() implementation more and more expensive over time, since
+        it has to iterate over all events.
+
+        To address the issue, valuesForFrameRangeImpl() now keeps track of the events
+        that it had to skip because they were in the past. Then, at the end of the loop,
+        it removes the outdated events so it won't have to iterate over them the next
+        time around. This behavior is similar to what Blink does.
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::removeOldEvents):
+        (WebCore::AudioParamTimeline::valuesForFrameRangeImpl):
+        * Modules/webaudio/AudioParamTimeline.h:
+
 2021-09-30  Ziran Sun  <zsun@igalia.com>
 
         [css-grid]  Transfer sizes from the aspect-ratio while resolving min-length for auto repetitions
