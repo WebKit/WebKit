@@ -1619,7 +1619,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // Is the child's type an object that isn't an other-object (i.e. object that could
             // have masquaredes-as-undefined traps) and isn't a function? Then: we should fold
             // this to true.
-            if (!(child.m_type & ~(SpecObject - SpecObjectOther - SpecFunction))) {
+            if (!(child.m_type & ~(SpecObject - SpecTypeofMightBeFunction))) {
                 setConstant(node, jsBoolean(true));
                 constantWasSet = true;
                 break;
@@ -1732,7 +1732,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             
-            if (!(child.m_type & (SpecFunction | SpecObjectOther | SpecProxyObject))) {
+            if (!(child.m_type & SpecTypeofMightBeFunction)) {
                 setConstant(node, jsBoolean(false));
                 constantWasSet = true;
                 break;
@@ -1811,7 +1811,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         // FIXME: We could use the masquerades-as-undefined watchpoint here.
         // https://bugs.webkit.org/show_bug.cgi?id=144456
-        if (!(abstractChild.m_type & ~(SpecObject - SpecObjectOther - SpecFunction))) {
+        if (!(abstractChild.m_type & ~(SpecObject - SpecTypeofMightBeFunction))) {
             setConstant(node, *m_graph.freeze(m_vm.smallStrings.objectString()));
             break;
         }

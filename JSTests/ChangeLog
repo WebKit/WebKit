@@ -1,3 +1,23 @@
+2021-09-30  Saam Barati  <sbarati@apple.com>
+
+        The DFG/FTL need to be aware that Proxy's can produce "function" for typeof and might be callable
+        https://bugs.webkit.org/show_bug.cgi?id=230804
+        <rdar://problem/83543951>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/ai-typeof-needs-to-be-aware-of-proxy-2.js: Added.
+        (assert):
+        (builtin.vm.createBuiltin):
+        (builtin2.vm.createBuiltin):
+        (let.p.new.Proxy):
+        * stress/ai-typeof-needs-to-be-aware-of-proxy.js: Added.
+        (assert):
+        (builtin.vm.createBuiltin):
+        (let.p.new.Proxy):
+        * stress/is-callable-in-ftl-needs-to-be-aware-of-proxy.js: Added.
+        (main):
+
 2021-09-29  Mark Lam  <mark.lam@apple.com>
 
         DFG strength reduction on % operator should handle an INT_MIN divisor.
