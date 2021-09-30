@@ -4,7 +4,7 @@ PASS Test audio-only implicit changeType for audio/webm; codecs="vorbis" <-> aud
 PASS Test audio-only implicit changeType for audio/webm; codecs="vorbis" <-> audio/webm; codecs="vorbis" (using types without codecs parameters for addSourceBuffer)
 PASS Test audio-only implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2"
 PASS Test audio-only implicit changeType for audio/mp4; codecs="mp4a.40.2" <-> audio/mp4; codecs="mp4a.40.2" (using types without codecs parameters for addSourceBuffer)
-FAIL Test audio-only implicit changeType for audio/mpeg <-> audio/mpeg assert_less_than: expected a number less than 0 but got 2.1
+PASS Test audio-only implicit changeType for audio/mpeg <-> audio/mpeg
 PASS Test video-only implicit changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp8"
 PASS Test video-only implicit changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp8" (using types without codecs parameters for addSourceBuffer)
 FAIL Test video-only implicit changeType for video/webm; codecs="vp8" <-> video/webm; codecs="vp9" assert_unreached: Unexpected event 'error' Reached unreachable code

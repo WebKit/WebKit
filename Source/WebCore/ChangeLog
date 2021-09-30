@@ -1,3 +1,23 @@
+2021-09-30  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][GStreamer] Allow infinite duration on MSE
+        https://bugs.webkit.org/show_bug.cgi?id=231017
+
+        Reviewed by Alicia Boya Garcia.
+
+        Positive infinite duration isn't properly working on MSE in the glib (GStreamer) ports. When
+        such a duration is set, nothing happens and the default zero duration remains. This can break
+        some live streams, because the wrong duration has influence in the real seek target time
+        used[1], so the seek may end up being done to the wrong time (before the buffered ranges in
+        my case) and the playback never starts.
+
+        [1] https://github.com/WebKit/WebKit/blob/a12c487/Source/WebCore/html/HTMLMediaElement.cpp#L3153
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp:
+        (WebCore::MediaSourcePrivateGStreamer::durationChanged): Don't discard the change on infinite duration.
+
 2021-09-30  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GraphicsContextGLAttributes::hasFenceSync should be a property of GraphicsContextGLOpenGL
