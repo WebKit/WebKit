@@ -1,3 +1,18 @@
+2021-09-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Make File System Access API available in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=230805
+        <rdar://problem/83552511>
+
+        Reviewed by Youenn Fablet.
+
+        * storage/filesystemaccess/directory-handle-basics-worker-expected.txt: Added.
+        * storage/filesystemaccess/directory-handle-basics-worker.html: Added.
+        * storage/filesystemaccess/directory-handle-basics.html:
+        * storage/filesystemaccess/resources/directory-handle-basics.js: Copied from LayoutTests/storage/filesystemaccess/directory-handle-basics.html.
+        (finishTest):
+        (getDirectory):
+
 2021-09-30  John Wilander  <wilander@apple.com>
 
         PCM: Change WebIDL attributes from all lowercase to camelcase to match spec and align with Attribution Reporting API

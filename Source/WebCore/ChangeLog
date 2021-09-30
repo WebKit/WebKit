@@ -1,3 +1,50 @@
+2021-09-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Make File System Access API available in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=230805
+        <rdar://problem/83552511>
+
+        Reviewed by Youenn Fablet.
+
+        Introduce WorkerFileSystemStorageConnection to provide connection to storage backend for handles in Worker.
+        WorkerFileSystemStorageConnection sends request to FileSystemStorageConnection on the main thread, and
+        dispaches the result back to handes on worker thread.
+
+        Test: storage/filesystemaccess/directory-handle-basics-worker.html
+
+        * Headers.cmake:
+        * Modules/filesystemaccess/WorkerFileSystemStorageConnection.cpp: Added.
+        (WebCore::WorkerFileSystemStorageConnection::create):
+        (WebCore::WorkerFileSystemStorageConnection::WorkerFileSystemStorageConnection):
+        (WebCore::WorkerFileSystemStorageConnection::~WorkerFileSystemStorageConnection):
+        (WebCore::WorkerFileSystemStorageConnection::connectionClosed):
+        (WebCore::WorkerFileSystemStorageConnection::scopeClosed):
+        (WebCore::WorkerFileSystemStorageConnection::isSameEntry):
+        (WebCore::WorkerFileSystemStorageConnection::didIsSameEntry):
+        (WebCore::WorkerFileSystemStorageConnection::getFileHandle):
+        (WebCore::WorkerFileSystemStorageConnection::getDirectoryHandle):
+        (WebCore::WorkerFileSystemStorageConnection::didGetHandle):
+        (WebCore::WorkerFileSystemStorageConnection::removeEntry):
+        (WebCore::WorkerFileSystemStorageConnection::didRemoveEntry):
+        (WebCore::WorkerFileSystemStorageConnection::resolve):
+        (WebCore::WorkerFileSystemStorageConnection::didResolve):
+        * Modules/filesystemaccess/WorkerFileSystemStorageConnection.h: Added.
+        * Modules/filesystemaccess/WorkerFileSystemStorageConnectionCallbackIdentifier.h: Added.
+        * Modules/storage/StorageConnection.h:
+        * Modules/storage/WorkerStorageConnection.cpp:
+        (WebCore::WorkerStorageConnection::scopeClosed):
+        (WebCore::WorkerStorageConnection::fileSystemGetDirectory):
+        (WebCore::WorkerStorageConnection::didGetDirectory):
+        * Modules/storage/WorkerStorageConnection.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ExceptionOr.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::prepareForDestruction):
+        (WebCore::WorkerGlobalScope::getFileSystemStorageConnection):
+        (WebCore::WorkerGlobalScope::fileSystemStorageConnection):
+        * workers/WorkerGlobalScope.h:
+
 2021-09-30  John Wilander  <wilander@apple.com>
 
         PCM: Change WebIDL attributes from all lowercase to camelcase to match spec and align with Attribution Reporting API

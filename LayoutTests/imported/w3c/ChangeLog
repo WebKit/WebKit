@@ -1,3 +1,30 @@
+2021-09-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Make File System Access API available in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=230805
+        <rdar://problem/83552511>
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-IndexedDB.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-isSameEntry.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemBaseHandle-remove.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-iteration.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-resolve.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-getFile.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemFileHandle-sync-access-handle-lock.https.tentative.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-flush.https.tentative.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-getSize.https.tentative.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-read-write.https.tentative.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-truncate.https.tentative.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-piped.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream-write.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemWritableFileStream.https.any.worker-expected.txt:
+
 2021-09-29  Youenn Fablet  <youenn@apple.com>
 
         Import WPT push api tests

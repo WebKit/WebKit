@@ -41,7 +41,8 @@ public:
     using PersistCallback = CompletionHandler<void(bool)>;
     virtual void getPersisted(const ClientOrigin&, PersistCallback&&) = 0;
     virtual void persist(const ClientOrigin&, PersistCallback&& completionHandler) { completionHandler(false); }
-    using GetDirectoryCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemHandleIdentifier, RefPtr<FileSystemStorageConnection>>>)>;
+    using DirectoryInfo = std::pair<FileSystemHandleIdentifier, RefPtr<FileSystemStorageConnection>>;
+    using GetDirectoryCallback = CompletionHandler<void(ExceptionOr<DirectoryInfo>&&)>;
     virtual void fileSystemGetDirectory(const ClientOrigin&, GetDirectoryCallback&&) = 0;
 };
 

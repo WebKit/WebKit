@@ -61,6 +61,7 @@ Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp
 Modules/filesystemaccess/FileSystemDirectoryHandle.cpp
 Modules/filesystemaccess/FileSystemFileHandle.cpp
 Modules/filesystemaccess/FileSystemHandle.cpp
+Modules/filesystemaccess/WorkerFileSystemStorageConnection.cpp
 Modules/geolocation/GeoNotifier.cpp
 Modules/geolocation/Geolocation.cpp
 Modules/geolocation/GeolocationController.cpp

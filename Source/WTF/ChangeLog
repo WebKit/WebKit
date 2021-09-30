@@ -1,3 +1,13 @@
+2021-09-30  Sihui Liu  <sihui_liu@apple.com>
+
+        Make File System Access API available in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=230805
+        <rdar://problem/83552511>
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/CrossThreadCopier.h:
+
 2021-09-30  Eddy Wong  <eddy_wong@apple.com>
 
         Adopt presentationSceneIdentifierForPaymentAuthorizationController delegate call from PassKit

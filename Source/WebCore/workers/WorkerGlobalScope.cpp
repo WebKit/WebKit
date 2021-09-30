@@ -48,6 +48,7 @@
 #include "SecurityOriginPolicy.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
+#include "WorkerFileSystemStorageConnection.h"
 #include "WorkerFontLoadRequest.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
@@ -142,6 +143,9 @@ void WorkerGlobalScope::prepareForDestruction()
 
     if (m_storageConnection)
         m_storageConnection->scopeClosed();
+
+    if (m_fileSystemStorageConnection)
+        m_fileSystemStorageConnection->scopeClosed();
 }
 
 void WorkerGlobalScope::removeAllEventListeners()
@@ -224,6 +228,23 @@ WorkerStorageConnection& WorkerGlobalScope::storageConnection()
         m_storageConnection = WorkerStorageConnection::create(*this);
 
     return *m_storageConnection;
+}
+
+WorkerFileSystemStorageConnection& WorkerGlobalScope::getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&& mainThreadConnection)
+{
+    if (!m_fileSystemStorageConnection)
+        m_fileSystemStorageConnection = WorkerFileSystemStorageConnection::create(*this, WTFMove(mainThreadConnection));
+    else if (m_fileSystemStorageConnection->mainThreadConnection() != mainThreadConnection.ptr()) {
+        m_fileSystemStorageConnection->connectionClosed();
+        m_fileSystemStorageConnection = WorkerFileSystemStorageConnection::create(*this, WTFMove(mainThreadConnection));
+    }
+
+    return *m_fileSystemStorageConnection;
+}
+
+WorkerFileSystemStorageConnection* WorkerGlobalScope::fileSystemStorageConnection()
+{
+    return m_fileSystemStorageConnection.get();
 }
 
 WorkerLocation& WorkerGlobalScope::location() const
