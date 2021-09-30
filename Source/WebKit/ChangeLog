@@ -1,3 +1,40 @@
+2021-09-30  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283294. rdar://problem/83733571
+
+    Add weakThis check in addition to null check added in r282881
+    https://bugs.webkit.org/show_bug.cgi?id=231000
+    <rdar://83605614>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-09-29
+    Reviewed by Brady Eidson.
+    
+    r282881 made NetworkLoad::start call didCompleteWithError, which can cause the
+    NetworkResourceLoader to be deleted.  It added a null check on m_networkLoad which
+    sometimes reads freed memory.  This certainly isn't great, but luckily we have a way
+    to check if this object has been deleted.  Let's do that.
+    
+    * NetworkProcess/NetworkResourceLoader.cpp:
+    (WebKit::NetworkResourceLoader::startNetworkLoad):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283294 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-29  Alex Christensen  <achristensen@webkit.org>
+
+            Add weakThis check in addition to null check added in r282881
+            https://bugs.webkit.org/show_bug.cgi?id=231000
+            <rdar://83605614>
+
+            Reviewed by Brady Eidson.
+
+            r282881 made NetworkLoad::start call didCompleteWithError, which can cause the
+            NetworkResourceLoader to be deleted.  It added a null check on m_networkLoad which
+            sometimes reads freed memory.  This certainly isn't great, but luckily we have a way
+            to check if this object has been deleted.  Let's do that.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::startNetworkLoad):
+
 2021-09-29  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283156. rdar://problem/83648190
