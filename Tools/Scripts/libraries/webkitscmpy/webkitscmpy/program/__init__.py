@@ -104,7 +104,7 @@ def main(args=None, path=None, loggers=None, contributors=None, identifier_templ
         repository = local.Scm.from_path(path=parsed.repository, contributors=None if callable(contributors) else contributors)
 
     if callable(contributors):
-        repository.contributors = contributors(repository)
+        repository.contributors = contributors(repository) or repository.contributors
     if callable(identifier_template):
         identifier_template = identifier_template(repository)
     if callable(subversion):

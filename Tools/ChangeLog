@@ -1,3 +1,16 @@
+2021-09-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Contributors may be undefined
+        https://bugs.webkit.org/show_bug.cgi?id=230997
+        <rdar://problem/83693400>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Ensure that repositories always have defined contributors.
+
 2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [webkitpy] LOG_CHANNEL is widely used in the codebase and shouldn't be treated as error
