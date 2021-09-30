@@ -114,6 +114,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (app)
         parameters.applicationID = g_application_get_application_id(app);
     parameters.applicationName = g_get_application_name();
+
+#if USE(ATSPI)
+    static const char* accessibilityBusAddress = getenv("WEBKIT_A11Y_BUS_ADDRESS");
+    parameters.accessibilityBusAddress = accessibilityBusAddress ? String::fromUTF8(accessibilityBusAddress) : WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress();
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

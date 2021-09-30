@@ -84,6 +84,10 @@
 #include <lcms2.h>
 #endif
 
+#if USE(ATSPI)
+#include <wtf/glib/GUniquePtr.h>
+#endif
+
 namespace WebCore {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
@@ -92,12 +96,24 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
     if (gtk_init_check(nullptr, nullptr)) {
         GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
 #if PLATFORM(X11)
-        if (GDK_IS_X11_DISPLAY(display))
-            return PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(display));
+        if (GDK_IS_X11_DISPLAY(display)) {
+            auto platformDisplay = PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(display));
+#if USE(ATSPI) && USE(GTK4)
+            if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))
+                platformDisplay->m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
+#endif
+            return platformDisplay;
+        }
 #endif
 #if PLATFORM(WAYLAND)
-        if (GDK_IS_WAYLAND_DISPLAY(display))
-            return PlatformDisplayWayland::create(gdk_wayland_display_get_wl_display(display));
+        if (GDK_IS_WAYLAND_DISPLAY(display)) {
+            auto platformDisplay = PlatformDisplayWayland::create(gdk_wayland_display_get_wl_display(display));
+#if USE(ATSPI) && USE(GTK4)
+            if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))
+                platformDisplay->m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
+#endif
+            return platformDisplay;
+        }
 #endif
     }
 #endif // PLATFORM(GTK)
@@ -278,6 +294,50 @@ cmsHPROFILE PlatformDisplay::colorProfile() const
     if (!m_iccProfile)
         m_iccProfile = cmsCreate_sRGBProfile();
     return m_iccProfile;
+}
+#endif
+
+#if USE(ATSPI)
+const String& PlatformDisplay::accessibilityBusAddress() const
+{
+    if (m_accessibilityBusAddress)
+        return m_accessibilityBusAddress.value();
+
+    const char* address = g_getenv("AT_SPI_BUS_ADDRESS");
+    if (address && *address) {
+        m_accessibilityBusAddress = String::fromUTF8(address);
+        return m_accessibilityBusAddress.value();
+    }
+
+    auto platformAddress = plartformAccessibilityBusAddress();
+    if (!platformAddress.isEmpty()) {
+        m_accessibilityBusAddress = platformAddress;
+        return m_accessibilityBusAddress.value();
+    }
+
+    GRefPtr<GDBusConnection> sessionBus = adoptGRef(g_bus_get_sync(G_BUS_TYPE_SESSION, nullptr, nullptr));
+    if (sessionBus.get()) {
+        GRefPtr<GDBusMessage> message = adoptGRef(g_dbus_message_new_method_call("org.a11y.Bus", "/org/a11y/bus", "org.a11y.Bus", "GetAddress"));
+        g_dbus_message_set_body(message.get(), g_variant_new("()"));
+        GRefPtr<GDBusMessage> reply = adoptGRef(g_dbus_connection_send_message_with_reply_sync(sessionBus.get(), message.get(),
+            G_DBUS_SEND_MESSAGE_FLAGS_NONE, 30000, nullptr, nullptr, nullptr));
+        if (reply) {
+            GUniqueOutPtr<GError> error;
+            if (g_dbus_message_to_gerror(reply.get(), &error.outPtr())) {
+                if (!g_error_matches(error.get(), G_DBUS_ERROR, G_DBUS_ERROR_SERVICE_UNKNOWN))
+                    WTFLogAlways("Can't find a11y bus: %s", error->message);
+            } else {
+                GUniqueOutPtr<char> a11yAddress;
+                g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
+                m_accessibilityBusAddress = String::fromUTF8(a11yAddress.get());
+                return m_accessibilityBusAddress.value();
+            }
+        }
+    }
+
+    WTFLogAlways("Could not determine the accessibility bus address");
+    m_accessibilityBusAddress = String();
+    return m_accessibilityBusAddress.value();
 }
 #endif
 

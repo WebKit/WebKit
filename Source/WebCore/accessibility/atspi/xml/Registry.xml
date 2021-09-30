@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/node">
+<interface name="org.a11y.atspi.Registry">
+
+  <method name="RegisterEvent">
+    <arg direction="in" name="event" type="s">
+    </arg>
+  </method>
+
+  <method name="DeregisterEvent">
+    <arg direction="in" name="event" type="s">
+    </arg>
+  </method>
+
+  <method name="GetRegisteredEvents">
+    <arg direction="out" name="events" type="a(ss)"/>
+    <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QSpiEventListenerArray"/>
+  </method>
+
+  <signal name="EventListenerRegistered">
+    <arg direction="out" name="bus" type="s"/>
+    <arg direction="out" name="path" type="s"/>
+  </signal>
+
+  <signal name="EventListenerDeregistered">
+    <arg direction="out" name="bus" type="s"/>
+    <arg direction="out" name="path" type="s"/>
+  </signal>
+</interface>
+</node>

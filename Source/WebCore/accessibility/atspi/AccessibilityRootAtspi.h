@@ -20,19 +20,41 @@
 #pragma once
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
-#include <wtf/Atomics.h>
+#include "AccessibilityAtspi.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
+
+typedef struct _GVariant GVariant;
 
 namespace WebCore {
-class AXCoreObject;
+class AccessibilityObjectAtspi;
+class Page;
 
-class AccessibilityObjectAtspi: final public ThreadSafeRefCounted<AccessibilityObjectAtspi> {
+class AccessibilityRootAtspi final : public ThreadSafeRefCounted<AccessibilityRootAtspi> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<AccessibilityObjectAtspi> create(AXCoreObject*);
-    ~AccessibilityObjectAtspi() = default;
+    static Ref<AccessibilityRootAtspi> create(const Page&, AccessibilityAtspi&);
+    ~AccessibilityRootAtspi() = default;
+
+    void registerObject(CompletionHandler<void(const String&)>&&);
+    void setPath(String&&);
+    void setParentPath(String&&);
+
+    GVariant* reference() const;
+    GVariant* applicationReference() const;
+    AccessibilityAtspi& atspi() const { return m_atspi; }
 
 private:
-    explicit AccessibilityObjectAtspi(AXCoreObject*);
+    AccessibilityRootAtspi(const Page&, AccessibilityAtspi&);
+
+    static GDBusInterfaceVTable s_accessibleFunctions;
+
+    AccessibilityAtspi& m_atspi;
+    WeakPtr<Page> m_page;
+    String m_path;
+    String m_parentUniqueName;
+    String m_parentPath;
 };
 
 } // namespace WebCore

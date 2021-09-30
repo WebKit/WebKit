@@ -76,6 +76,10 @@
 #include <WebCore/CaptionUserPreferences.h>
 #endif
 
+#if USE(ATSPI)
+#include <WebCore/AccessibilityAtspi.h>
+#endif
+
 namespace API {
 class Object;
 }
@@ -398,6 +402,10 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     SpeechRecognitionRealtimeMediaSourceManager& ensureSpeechRecognitionRealtimeMediaSourceManager();
+#endif
+
+#if USE(ATSPI)
+    WebCore::AccessibilityAtspi& accessibilityAtspi() const { return *m_accessibility; }
 #endif
 
 private:
@@ -773,6 +781,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<SpeechRecognitionRealtimeMediaSourceManager> m_speechRecognitionRealtimeMediaSourceManager;
+#endif
+
+#if USE(ATSPI)
+    std::unique_ptr<WebCore::AccessibilityAtspi> m_accessibility;
 #endif
 };
 

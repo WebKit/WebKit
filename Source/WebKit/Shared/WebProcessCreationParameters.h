@@ -265,6 +265,10 @@ struct WebProcessCreationParameters {
     String applicationID;
     String applicationName;
 #endif
+
+#if USE(ATSPI)
+    String accessibilityBusAddress;
+#endif
 };
 
 } // namespace WebKit

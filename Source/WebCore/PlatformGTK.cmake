@@ -54,7 +54,9 @@ if (USE_WPE_RENDERER)
 endif ()
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    accessibility/atspi/AccessibilityAtspi.h
     accessibility/atspi/AccessibilityObjectAtspi.h
+    accessibility/atspi/AccessibilityRootAtspi.h
 
     platform/adwaita/ScrollbarThemeAdwaita.h
 
@@ -172,5 +174,43 @@ add_definitions(-DBUILDING_WEBKIT)
 if (ENABLE_SMOOTH_SCROLLING)
     list(APPEND WebCore_SOURCES
         platform/ScrollAnimationSmooth.cpp
+    )
+endif ()
+
+if (USE_ATSPI)
+    set(WebCore_AtspiInterfaceFiles
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Accessible.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Action.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Application.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Cache.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Collection.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Component.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/DeviceEventController.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/DeviceEventListener.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Document.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/EditableText.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Event.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Hyperlink.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Hypertext.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Image.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Registry.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Selection.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Socket.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/TableCell.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Table.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Text.xml
+        ${WEBCORE_DIR}/accessibility/atspi/xml/Value.xml
+    )
+
+    add_custom_command(
+        OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/AccessibilityAtspiInterfaces.h ${WebCore_DERIVED_SOURCES_DIR}/AccessibilityAtspiInterfaces.c
+        DEPENDS ${WebCore_AtspiInterfaceFiles}
+        COMMAND gdbus-codegen --interface-prefix=org.a11y.atspi --c-namespace=webkit --pragma-once --interface-info-header --output=${WebCore_DERIVED_SOURCES_DIR}/AccessibilityAtspiInterfaces.h ${WebCore_AtspiInterfaceFiles}
+        COMMAND gdbus-codegen --interface-prefix=org.a11y.atspi --c-namespace=webkit --interface-info-body --output=${WebCore_DERIVED_SOURCES_DIR}/AccessibilityAtspiInterfaces.c ${WebCore_AtspiInterfaceFiles}
+        VERBATIM
+    )
+
+    list(APPEND WebCore_SOURCES
+        ${WebCore_DERIVED_SOURCES_DIR}/AccessibilityAtspiInterfaces.c
     )
 endif ()

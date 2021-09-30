@@ -1,3 +1,69 @@
+2021-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Connect UI process a11y tree with the web process when building with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=230255
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add AccessibilityAtspi class to connect to the ATSPI DBus service using the address provided. Also add
+        AccessibilityRootAtspi class that will be the parent object of the accessibility root wrapper, and the children
+        of the UI process web view. In ATK the AtkSocket and AtkPlug use a private DBus message to send the unique name
+        of the UI process connection to the web process. That's not possible with GDBus, so we wait for the first
+        GetState message to be received (which is called right after atk_socket_embed() is called in the UI process) to
+        get the unique name of the UI process connection. PlatformDisplay has now API to get the DBus address of the
+        ATSPI service. This is used only in the UI process that sends the address to the web process, so that we don't
+        need to get it on every web process again.
+
+        * PlatformGTK.cmake:
+        * SourcesGTK.txt:
+        * accessibility/atspi/AccessibilityAtspi.cpp: Added.
+        (WebCore::AccessibilityAtspi::AccessibilityAtspi):
+        (WebCore::AccessibilityAtspi::uniqueName const):
+        (WebCore::AccessibilityAtspi::nullReference const):
+        (WebCore::AccessibilityAtspi::registerRoot):
+        * accessibility/atspi/AccessibilityAtspi.h: Added.
+        * accessibility/atspi/AccessibilityRootAtspi.cpp: Added.
+        (WebCore::AccessibilityRootAtspi::create):
+        (WebCore::AccessibilityRootAtspi::AccessibilityRootAtspi):
+        (WebCore::AccessibilityRootAtspi::registerObject):
+        (WebCore::AccessibilityRootAtspi::setPath):
+        (WebCore::AccessibilityRootAtspi::setParentPath):
+        (WebCore::AccessibilityRootAtspi::applicationReference const):
+        (WebCore::AccessibilityRootAtspi::reference const):
+        * accessibility/atspi/AccessibilityRootAtspi.h: Added.
+        (WebCore::AccessibilityRootAtspi::atspi const):
+        * accessibility/atspi/xml/Accessibility.xml: Added.
+        * accessibility/atspi/xml/Accessible.xml: Added.
+        * accessibility/atspi/xml/Action.xml: Added.
+        * accessibility/atspi/xml/Application.xml: Added.
+        * accessibility/atspi/xml/Cache.xml: Added.
+        * accessibility/atspi/xml/Collection.xml: Added.
+        * accessibility/atspi/xml/Component.xml: Added.
+        * accessibility/atspi/xml/DeviceEventController.xml: Added.
+        * accessibility/atspi/xml/DeviceEventListener.xml: Added.
+        * accessibility/atspi/xml/Document.xml: Added.
+        * accessibility/atspi/xml/EditableText.xml: Added.
+        * accessibility/atspi/xml/Event.xml: Added.
+        * accessibility/atspi/xml/Hyperlink.xml: Added.
+        * accessibility/atspi/xml/Hypertext.xml: Added.
+        * accessibility/atspi/xml/Image.xml: Added.
+        * accessibility/atspi/xml/Registry.xml: Added.
+        * accessibility/atspi/xml/Selection.xml: Added.
+        * accessibility/atspi/xml/Socket.xml: Added.
+        * accessibility/atspi/xml/Table.xml: Added.
+        * accessibility/atspi/xml/TableCell.xml: Added.
+        * accessibility/atspi/xml/Text.xml: Added.
+        * accessibility/atspi/xml/Value.xml: Added.
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay):
+        (WebCore::PlatformDisplay::accessibilityBusAddress const):
+        * platform/graphics/PlatformDisplay.h:
+        (WebCore::PlatformDisplay::setAccessibilityBusAddress):
+        (WebCore::PlatformDisplay::plartformAccessibilityBusAddress const):
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::plartformAccessibilityBusAddress const):
+        * platform/graphics/x11/PlatformDisplayX11.h:
+
 2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GPUP Cocoa GraphicsContextGLOpenGL should check for ANGLE presence

@@ -27,6 +27,7 @@
 #include "PlatformDisplayX11.h"
 
 #include "GLContext.h"
+#include "XErrorTrapper.h"
 
 #if PLATFORM(X11)
 #include <X11/Xatom.h>
@@ -217,6 +218,25 @@ cmsHPROFILE PlatformDisplayX11::colorProfile() const
         XFree(data);
 
     return m_iccProfile ? m_iccProfile : PlatformDisplay::colorProfile();
+}
+#endif
+
+#if USE(ATSPI)
+String PlatformDisplayX11::plartformAccessibilityBusAddress() const
+{
+    Atom atspiBusAtom = XInternAtom(m_display, "AT_SPI_BUS", False);
+    Atom type;
+    int format;
+    unsigned long itemCount, bytesAfter;
+    unsigned char* data = nullptr;
+    XErrorTrapper trapper(m_display, XErrorTrapper::Policy::Ignore);
+    XGetWindowProperty(m_display, RootWindowOfScreen(DefaultScreenOfDisplay(m_display)), atspiBusAtom, 0L, 8192, False, XA_STRING, &type, &format, &itemCount, &bytesAfter, &data);
+
+    String atspiBusAddress = String::fromUTF8(reinterpret_cast<char*>(data));
+    if (data)
+        XFree(data);
+
+    return atspiBusAddress;
 }
 #endif
 

@@ -106,9 +106,13 @@
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
 typedef struct _AtkObject AtkObject;
 #include <wtf/glib/GRefPtr.h>
+#elif USE(ATSPI)
+#include <WebCore/AccessibilityRootAtspi.h>
+#endif
 #endif
 
 #if PLATFORM(GTK)
@@ -1488,6 +1492,10 @@ public:
 
     void prepareToRunModalJavaScriptDialog();
 
+#if USE(ATSPI)
+    const WebCore::AccessibilityRootAtspi& accessibilityRootObject() const { return *m_accessibilityRootObject; }
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2015,8 +2023,12 @@ private:
     RetainPtr<NSDictionary> m_dataDetectionContext;
 #endif
 
-#if ENABLE(ACCESSIBILITY) && USE(ATK)
+#if ENABLE(ACCESSIBILITY)
+#if USE(ATK)
     GRefPtr<AtkObject> m_accessibilityObject;
+#elif USE(ATSPI)
+    RefPtr<WebCore::AccessibilityRootAtspi> m_accessibilityRootObject;
+#endif
 #endif
 
 #if PLATFORM(WIN)

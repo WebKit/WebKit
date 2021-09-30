@@ -115,6 +115,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (!parameters.applicationName.isEmpty())
         WebCore::setApplicationName(parameters.applicationName);
+
+#if USE(ATSPI)
+    m_accessibility = makeUnique<AccessibilityAtspi>(parameters.accessibilityBusAddress);
+#endif
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)

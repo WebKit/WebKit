@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/node">
+<interface name="org.a11y.atspi.Application">
+
+  <property name="ToolkitName" type="s" access="read"/>
+
+  <property name="Version" type="s" access="read"/>
+
+  <property name="AtspiVersion" type="s" access="read"/>
+  <property name="Id" type="i" access="readwrite"/>
+
+  <method name="GetLocale">
+    <arg direction="in" name="lctype" type="u"/>
+    <arg direction="out" type="s"/>
+  </method>
+
+  <method name="RegisterEventListener">
+    <arg direction="in" name="event" type="s"/>
+  </method>
+
+  <method name="DeregisterEventListener">
+    <arg direction="in" name="event" type="s"/>
+  </method>
+
+</interface>
+</node>

@@ -39,7 +39,9 @@ accessibility/atk/WebKitAccessibleInterfaceText.cpp
 accessibility/atk/WebKitAccessibleInterfaceValue.cpp
 accessibility/atk/WebKitAccessibleUtil.cpp
 
+accessibility/atspi/AccessibilityAtspi.cpp
 accessibility/atspi/AccessibilityObjectAtspi.cpp
+accessibility/atspi/AccessibilityRootAtspi.cpp
 accessibility/atspi/AXObjectCacheAtspi.cpp
 
 accessibility/isolatedtree/atspi/AXIsolatedObjectAtspi.cpp

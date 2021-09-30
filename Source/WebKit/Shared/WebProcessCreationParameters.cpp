@@ -214,9 +214,14 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(GTK) || PLATFORM(WPE)
     encoder << memoryPressureHandlerConfiguration;
 #endif
+
 #if USE(GLIB)
     encoder << applicationID;
     encoder << applicationName;
+#endif
+
+#if USE(ATSPI)
+    encoder << accessibilityBusAddress;
 #endif
 }
 
@@ -596,6 +601,14 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.applicationName))
         return false;
+#endif
+
+#if USE(ATSPI)
+    std::optional<String> accessibilityBusAddress;
+    decoder >> accessibilityBusAddress;
+    if (!accessibilityBusAddress)
+        return false;
+    parameters.accessibilityBusAddress = WTFMove(*accessibilityBusAddress);
 #endif
 
     return true;

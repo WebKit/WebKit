@@ -64,6 +64,10 @@ private:
     cmsHPROFILE colorProfile() const override;
 #endif
 
+#if USE(ATSPI)
+    String plartformAccessibilityBusAddress() const override;
+#endif
+
     ::Display* m_display { nullptr };
     mutable std::optional<bool> m_supportsXComposite;
     mutable std::optional<bool> m_supportsXDamage;

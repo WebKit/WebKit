@@ -185,7 +185,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     # Support for connecting the Accessibility worlds of the UI and the Web processes
-    BindAccessibilityTree(String plugID)
+    BindAccessibilityTree(String plugID) -> (String socketPath) Async
 
     SetInputMethodState(std::optional<WebKit::InputMethodState> state);
 #endif

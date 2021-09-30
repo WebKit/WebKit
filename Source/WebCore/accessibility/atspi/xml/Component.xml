@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/node">
+<interface name="org.a11y.atspi.Component">
+
+  <method name="Contains">
+    <arg direction="in" name="x" type="i"/>
+    <arg direction="in" name="y" type="i"/>
+    <arg direction="in" name="coord_type" type="u"/>
+    <arg direction="out" type="b"/>
+  </method>
+
+  <method name="GetAccessibleAtPoint">
+    <arg direction="in" name="x" type="i"/>
+    <arg direction="in" name="y" type="i"/>
+    <arg direction="in" name="coord_type" type="u"/>
+    <arg direction="out" type="(so)"/>
+    <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QSpiObjectReference"/>
+  </method>
+
+  <method name="GetExtents">
+    <arg direction="in" name="coord_type" type="u"/>
+    <arg direction="out" type="(iiii)"/>
+    <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QSpiRect"/>
+  </method>
+
+  <method name="GetPosition">
+    <arg direction="in" name="coord_type" type="u"/>
+    <arg direction="out" name="x" type="i"/>
+    <arg direction="out" name="y" type="i"/>
+  </method>
+
+  <method name="GetSize">
+    <arg direction="out" name="width" type="i"/>
+    <arg direction="out" name="height" type="i"/>
+  </method>
+
+  <method name="GetLayer">
+    <arg direction="out" type="u"/>
+  </method>
+
+  <method name="GetMDIZOrder">
+    <arg direction="out" type="n"/>
+  </method>
+
+  <method name="GrabFocus">
+    <arg direction="out" type="b"/>
+  </method>
+
+  <method name="GetAlpha">
+    <arg direction="out" type="d"/>
+  </method>
+
+  <method name="SetExtents">
+    <arg direction="in" name="x" type="i"/>
+    <arg direction="in" name="y" type="i"/>
+    <arg direction="in" name="width" type="i"/>
+    <arg direction="in" name="height" type="i"/>
+    <arg direction="in" name="coord_type" type="u"/>
+    <arg direction="out" type="b"/>
+  </method>
+
+  <method name="SetPosition">
+    <arg direction="in" name="x" type="i"/>
+    <arg direction="in" name="y" type="i"/>
+    <arg direction="in" name="coord_type" type="u"/>
+    <arg direction="out" type="b"/>
+  </method>
+
+  <method name="SetSize">
+    <arg direction="in" name="width" type="i"/>
+    <arg direction="in" name="height" type="i"/>
+    <arg direction="out" type="b"/>
+  </method>
+
+  <method name="ScrollTo">
+    <arg direction="in" name="type" type="u"/>
+  </method>
+
+  <method name="ScrollToPoint">
+    <arg direction="in" name="type" type="u"/>
+    <arg direction="in" name="x" type="i"/>
+    <arg direction="in" name="y" type="i"/>
+  </method>
+
+</interface>
+</node>

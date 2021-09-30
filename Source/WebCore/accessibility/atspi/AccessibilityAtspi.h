@@ -20,19 +20,36 @@
 #pragma once
 
 #if ENABLE(ACCESSIBILITY) && USE(ATSPI)
-#include <wtf/Atomics.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/WorkQueue.h>
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GDBusConnection GDBusConnection;
+typedef struct _GDBusInterfaceInfo GDBusInterfaceInfo;
+typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 
 namespace WebCore {
-class AXCoreObject;
+class AccessibilityObjectAtspi;
+class AccessibilityRootAtspi;
 
-class AccessibilityObjectAtspi: final public ThreadSafeRefCounted<AccessibilityObjectAtspi> {
+class AccessibilityAtspi {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<AccessibilityObjectAtspi> create(AXCoreObject*);
-    ~AccessibilityObjectAtspi() = default;
+    AccessibilityAtspi(const String&);
+    ~AccessibilityAtspi() = default;
+
+    const char* uniqueName() const;
+    GVariant* nullReference() const;
+
+    void registerRoot(AccessibilityRootAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&, CompletionHandler<void(const String&)>&&);
 
 private:
-    explicit AccessibilityObjectAtspi(AXCoreObject*);
+    Ref<WorkQueue> m_queue;
+    GRefPtr<GDBusConnection> m_connection;
+    HashMap<AccessibilityRootAtspi*, Vector<unsigned, 2>> m_rootObjects;
 };
 
 } // namespace WebCore

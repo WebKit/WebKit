@@ -974,9 +974,8 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
         registerWebProcessAccessibilityToken({ accessibilityToken.data(), accessibilityToken.size() });
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    auto accessibilityPlugID = provisionalPage->accessibilityPlugID();
-    if (!accessibilityPlugID.isEmpty())
-        bindAccessibilityTree(accessibilityPlugID);
+    if (auto completionHandler = provisionalPage->takeAccessibilityBindCompletionHandler())
+        bindAccessibilityTree(provisionalPage->accessibilityPlugID(), WTFMove(completionHandler));
 #endif
 }
 

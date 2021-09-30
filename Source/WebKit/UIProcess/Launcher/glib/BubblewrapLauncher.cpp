@@ -514,6 +514,9 @@ static void bindA11y(Vector<CString>& args)
                 GUniqueOutPtr<char> a11yAddress;
                 g_variant_get(g_dbus_message_get_body(reply.get()), "(s)", &a11yAddress.outPtr());
                 proxy.setAddress(a11yAddress.get(), DBusAddressType::Abstract);
+#if USE(ATSPI)
+                PlatformDisplay::sharedDisplay().setAccessibilityBusAddress(makeString("unix:path=", proxy.proxyPath().data()));
+#endif
             }
         }
 
