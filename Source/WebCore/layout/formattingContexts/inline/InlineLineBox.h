@@ -59,7 +59,7 @@ class LineBoxVerticalAligner;
 class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount);
+    LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount);
 
     // Note that the line can have many inline boxes and be "empty" the same time e.g. <div><span></span><span></span></div>
     bool hasContent() const { return m_hasContent; }

@@ -34,8 +34,8 @@
 namespace WebCore {
 namespace Layout {
 
-LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t nonSpanningInlineLevelBoxCount)
-    : m_rootInlineBox(rootLayoutBox, rootLayoutBox.style(), contentLogicalLeft, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox)
+LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, InlineLayoutUnit contentLogicalWidth, size_t lineIndex, size_t nonSpanningInlineLevelBoxCount)
+    : m_rootInlineBox(rootLayoutBox, !lineIndex ? rootLayoutBox.firstLineStyle() : rootLayoutBox.style(), contentLogicalLeft, InlineLayoutSize { contentLogicalWidth, { } }, InlineLevelBox::Type::RootInlineBox)
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
     m_nonRootInlineLevelBoxMap.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
