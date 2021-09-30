@@ -479,7 +479,10 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         }
 
         const Length& minSize = isRowAxis ? style().logicalMinWidth() : style().logicalMinHeight();
-        if (!availableMaxSize && !minSize.isSpecified())
+        const auto& minSizeForOrthogonalAxis = isRowAxis ? style().logicalMinHeight() : style().logicalMinWidth();
+        bool shouldComputeMinSizeFromAspectRatio = minSizeForOrthogonalAxis.isSpecified() && !shouldIgnoreAspectRatio();
+
+        if (!availableMaxSize && !minSize.isSpecified() && !shouldComputeMinSizeFromAspectRatio)
             return autoRepeatTrackListLength;
 
         std::optional<LayoutUnit> availableMinSize;
@@ -488,9 +491,12 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
                 containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
             LayoutUnit minSizeValue = valueForLength(minSize, containingBlockAvailableSize.value_or(LayoutUnit()));
             availableMinSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(minSizeValue, minSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(minSizeValue);
-            if (!maxSize.isSpecified())
-                needsToFulfillMinimumSize = true;
+        } else if (shouldComputeMinSizeFromAspectRatio) {
+            auto [logicalMinWidth, logicalMaxWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+            availableMinSize = logicalMinWidth;
         }
+        if (!maxSize.isSpecified())
+            needsToFulfillMinimumSize = true;
 
         availableSize = std::max(availableMinSize.value_or(LayoutUnit()), availableMaxSize.value_or(LayoutUnit()));
     }

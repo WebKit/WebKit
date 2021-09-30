@@ -1,3 +1,17 @@
+2021-09-30  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid]  Transfer sizes from the aspect-ratio while resolving min-length for auto repetitions
+        https://bugs.webkit.org/show_bug.cgi?id=230676
+
+        Reviewed by  Sergio Villar Senin.
+        
+        When resolving min-length for auto repetitions, if the min-length on the axis considered is not specified,
+        we need to check if the min-length on the other axis and the aspect ratio are specified. When both are
+        specified, we will fetch the transferred min-length for the axis we are considering.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount const):
+
 2021-09-30  John Wilander  <wilander@apple.com>
 
         PCM: Take app bundle ID into consideration when matching triggering events with pending clicks

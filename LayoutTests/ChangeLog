@@ -1,3 +1,14 @@
+2021-09-30  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid]  Transfer sizes from the aspect-ratio while resolving min-length for auto repetitions
+        https://bugs.webkit.org/show_bug.cgi?id=230676
+
+        Reviewed by Sergio Villar Senin.
+
+        Updated TestExpectations file as two tests with image failures are now passing.
+
+        * TestExpectations:
+
 2021-09-30  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Rebaseline a number of tests. Unreviewed test gardening.
