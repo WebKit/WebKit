@@ -277,7 +277,7 @@ void Recorder::setCTM(const AffineTransform& transform)
 
 AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale) const
 {
-    // FIXME: Respect the given value of IncludeDeviceScale.
+    // FIXME: <https://webkit.org/b/230647> ([GPU Process] add support for `IncludeDeviceScale` inside `DisplayList::Recorder::getCTM`)
     return currentState().ctm;
 }
 

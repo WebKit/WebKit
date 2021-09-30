@@ -28,6 +28,7 @@
 
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
+#import "ImageBuffer.h"
 #import "RenderText.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
@@ -151,10 +152,11 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
 
 bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
+    auto& destinationContext = paintInfo.context();
 
-    paintInfo.context().setShouldSmoothFonts(true);
-    paintInfo.context().scale(FloatSize(1, -1));
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(paintRect.size(), destinationContext);
+    if (!imageBuffer)
+        return false;
 
     auto& style = renderer.style();
     auto largestCornerRadius = std::max<CGFloat>({
@@ -168,7 +170,13 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
         floatValueForLength(style.borderBottomRightRadius().width, paintRect.width())
     });
 
-    PKDrawApplePayButtonWithCornerRadius(paintInfo.context().platformContext(), CGRectMake(paintRect.x(), -paintRect.maxY(), paintRect.width(), paintRect.height()), 1.0, largestCornerRadius, toPKPaymentButtonType(style.applePayButtonType()), toPKPaymentButtonStyle(style.applePayButtonStyle()), style.computedLocale());
+    auto& imageContext = imageBuffer->context();
+    imageContext.setShouldSmoothFonts(true);
+    imageContext.setShouldSubpixelQuantizeFonts(false);
+    imageContext.scale(FloatSize(1, -1));
+    PKDrawApplePayButtonWithCornerRadius(imageContext.platformContext(), CGRectMake(0, -paintRect.height(), paintRect.width(), paintRect.height()), 1.0, largestCornerRadius, toPKPaymentButtonType(style.applePayButtonType()), toPKPaymentButtonStyle(style.applePayButtonStyle()), style.computedLocale());
+
+    destinationContext.drawConsumingImageBuffer(WTFMove(imageBuffer), paintRect);
     return false;
 }
 
