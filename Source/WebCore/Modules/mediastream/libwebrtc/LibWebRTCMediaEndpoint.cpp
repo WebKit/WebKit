@@ -92,6 +92,8 @@ void LibWebRTCMediaEndpoint::restartIce()
 bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
 {
     configuration.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
+    configuration.crypto_options = webrtc::CryptoOptions { };
+    configuration.crypto_options->srtp.enable_gcm_crypto_suites = true;
 
     if (!m_backend) {
         auto& document = downcast<Document>(*m_peerConnectionBackend.connection().scriptExecutionContext());

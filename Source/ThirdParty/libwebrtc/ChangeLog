@@ -1,3 +1,15 @@
+2021-09-30  Youenn Fablet  <youenn@apple.com>
+
+        Support AES GCM ciphers in WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=214402
+        <rdar://problem/65700381>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2021-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Mostly fix Mac CMake build

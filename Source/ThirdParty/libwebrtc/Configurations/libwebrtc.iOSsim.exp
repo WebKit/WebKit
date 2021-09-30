@@ -327,3 +327,4 @@ __ZNK3rtc9IPAddress5IsNilEv
 __ZN3rtc12SSLCertChainD1Ev
 __ZN6webrtc24SctpTransportInformationD1Ev
 __ZNK3rtc9IPAddressneERKS0_
+__ZN6webrtc13CryptoOptionsC1Ev

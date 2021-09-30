@@ -1,3 +1,19 @@
+2021-09-30  Youenn Fablet  <youenn@apple.com>
+
+        Support AES GCM ciphers in WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=214402
+        <rdar://problem/65700381>
+
+        Reviewed by Eric Carlson.
+
+        Enable GCM ciphers in WebRTC as done by Chrome.
+        The default ciphers remain the same so use of these ciphers is opt-in by SFUs.
+
+        Manually tested.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::setConfiguration):
+
 2021-09-30  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] RootInlineBox should use the first-line style when applicable
