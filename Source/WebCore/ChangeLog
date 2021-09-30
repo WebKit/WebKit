@@ -1,3 +1,53 @@
+2021-09-29  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r283087. rdar://problem/83697121
+
+    Line iterator firstRun/lastRun may return runs from wrong lines
+    https://bugs.webkit.org/show_bug.cgi?id=230770
+    <rdar://problem/83509753>
+    
+    Reviewed by Alan Bujtas.
+    
+    Source/WebCore:
+    
+    In some situation line iterator firstRun/lastRun could return runs from different lines.
+    This could lead to inconsistencies like firstRun being non-null while lastRun is null.
+    
+    Test: editing/iterator-line-start-end.html
+    
+    * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+    (WebCore::LayoutIntegration::LineIteratorModernPath::firstRun const):
+    (WebCore::LayoutIntegration::LineIteratorModernPath::lastRun const):
+    
+    Take care to only return runs from this line.
+    
+    LayoutTests:
+    
+    * editing/iterator-line-start-end-expected.txt: Added.
+    * editing/iterator-line-start-end.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283087 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-09-26  Antti Koivisto  <antti@apple.com>
+
+            Line iterator firstRun/lastRun may return runs from wrong lines
+            https://bugs.webkit.org/show_bug.cgi?id=230770
+            <rdar://problem/83509753>
+
+            Reviewed by Alan Bujtas.
+
+            In some situation line iterator firstRun/lastRun could return runs from different lines.
+            This could lead to inconsistencies like firstRun being non-null while lastRun is null.
+
+            Test: editing/iterator-line-start-end.html
+
+            * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+            (WebCore::LayoutIntegration::LineIteratorModernPath::firstRun const):
+            (WebCore::LayoutIntegration::LineIteratorModernPath::lastRun const):
+
+            Take care to only return runs from this line.
+
 2021-09-25  Alan Bujtas  <zalan@apple.com>
 
         Fix win build.
