@@ -59,6 +59,11 @@ WTF_WEAK_LINK_FORCE_IMPORT(EGL_Initialize);
 
 namespace WebCore {
 
+static bool isANGLEAvailable()
+{
+    return !!EGL_Initialize;
+}
+
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
 // In isCurrentContextPredictable() == false case this variable is accessed from multiple threads but always sequentially
 // and it always contains nullptr and nullptr is always written to it.
@@ -113,8 +118,13 @@ static bool platformSupportsMetal(bool isWebGL2)
     return false;
 }
 
-static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
+static ScopedEGLDefaultDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 {
+    if (!isANGLEAvailable()) {
+        WTFLogAlways("Failed to load ANGLE shared library.");
+        return { };
+    }
+
     EGLint majorVersion = 0;
     EGLint minorVersion = 0;
     EGLDisplay display;
@@ -180,19 +190,8 @@ static bool needsEAGLOnMac()
 }
 #endif
 
-static bool isANGLEAvailable()
-{
-    return !!EGL_Initialize;
-}
-
 RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attrs, HostWindow* hostWindow)
 {
-    // If ANGLE is not loaded, we can fail immediately.
-    if (!isANGLEAvailable()) {
-        WTFLogAlways("ANGLE shared library was not loaded. Can't make GraphicsContextGL.");
-        return nullptr;
-    }
-
     // Make space for the incoming context if we're full.
     GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
     if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
@@ -245,7 +244,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     }
 #endif
 
-    m_displayObj = InitializeEGLDisplay(attrs);
+    m_displayObj = initializeEGLDisplay(attrs);
     if (!m_displayObj)
         return;
 
@@ -519,7 +518,7 @@ bool GraphicsContextGLOpenGL::makeContextCurrent()
         return false;
     if (currentContext == this)
         return true;
-    // Calling MakeCurrent is important to set volatile platform context. See InitializeEGLDisplay().
+    // Calling MakeCurrent is important to set volatile platform context. See initializeEGLDisplay().
     if (!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj))
         return false;
     if (isCurrentContextPredictable())

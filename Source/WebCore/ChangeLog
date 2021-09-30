@@ -1,5 +1,26 @@
 2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        GPUP Cocoa GraphicsContextGLOpenGL should check for ANGLE presence
+        https://bugs.webkit.org/show_bug.cgi?id=230946
+
+        Reviewed by Antti Koivisto.
+
+        For consistency, avoid crashing the GPUP mode when trying
+        to create GraphicsContextGLOpenGL when the ANGLE-shared dylib
+        is not present.
+
+        No new tests, refactor.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::isANGLEAvailable):
+        (WebCore::initializeEGLDisplay):
+        (WebCore::GraphicsContextGLOpenGL::create):
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::makeContextCurrent):
+        (WebCore::InitializeEGLDisplay): Deleted.
+
+2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Cocoa GraphicsContextGLOpenGL should be more robust in destruction
         https://bugs.webkit.org/show_bug.cgi?id=230940
 
