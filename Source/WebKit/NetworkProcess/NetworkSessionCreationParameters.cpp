@@ -83,6 +83,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << suppressesConnectionTerminationOnSystemChange;
     encoder << allowsServerPreconnect;
     encoder << requiresSecureHTTPSProxyConnection;
+    encoder << shouldRunServiceWorkersOnMainThreadForTesting;
     encoder << preventsSystemHTTPProxyAuthentication;
     encoder << appHasRequestedCrossWebsiteTrackingPermission;
     encoder << useNetworkLoader;
@@ -274,6 +275,11 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     decoder >> requiresSecureHTTPSProxyConnection;
     if (!requiresSecureHTTPSProxyConnection)
         return std::nullopt;
+
+    std::optional<bool> shouldRunServiceWorkersOnMainThreadForTesting;
+    decoder >> shouldRunServiceWorkersOnMainThreadForTesting;
+    if (!shouldRunServiceWorkersOnMainThreadForTesting)
+        return std::nullopt;
     
     std::optional<bool> preventsSystemHTTPProxyAuthentication;
     decoder >> preventsSystemHTTPProxyAuthentication;
@@ -349,6 +355,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*suppressesConnectionTerminationOnSystemChange)
         , WTFMove(*allowsServerPreconnect)
         , WTFMove(*requiresSecureHTTPSProxyConnection)
+        , *shouldRunServiceWorkersOnMainThreadForTesting
         , WTFMove(*preventsSystemHTTPProxyAuthentication)
         , WTFMove(*appHasRequestedCrossWebsiteTrackingPermission)
         , WTFMove(*useNetworkLoader)

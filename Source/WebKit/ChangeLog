@@ -1,3 +1,41 @@
+2021-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Add support for running service workers on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=230649
+
+        Reviewed by Alex Christensen.
+
+        Add support for running service workers on the main thread (off by default).
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::swServerForSession):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::shouldRunServiceWorkersOnMainThread const):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::installServiceWorkerContext):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration shouldRunServiceWorkersOnMainThread]):
+        (-[_WKWebsiteDataStoreConfiguration setShouldRunServiceWorkersOnMainThread:]):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::shouldRunServiceWorkersOnMainThread const):
+        (WebKit::WebsiteDataStoreConfiguration::setShouldRunServiceWorkersOnMainThread):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2021-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Add weakThis check in addition to null check added in r282881

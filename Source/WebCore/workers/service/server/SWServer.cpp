@@ -327,13 +327,14 @@ void SWServer::Connection::removeServiceWorkerRegistrationInServer(ServiceWorker
     m_server.removeClientServiceWorkerRegistration(*this, identifier);
 }
 
-SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool hasServiceWorkerEntitlement, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback, AppBoundDomainsCallback&& appBoundDomainsCallback)
+SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID sessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, SoftUpdateCallback&& softUpdateCallback, CreateContextConnectionCallback&& callback, AppBoundDomainsCallback&& appBoundDomainsCallback)
     : m_originStore(WTFMove(originStore))
     , m_sessionID(sessionID)
     , m_isProcessTerminationDelayEnabled(processTerminationDelayEnabled)
     , m_createContextConnectionCallback(WTFMove(callback))
     , m_softUpdateCallback(WTFMove(softUpdateCallback))
     , m_appBoundDomainsCallback(WTFMove(appBoundDomainsCallback))
+    , m_shouldRunServiceWorkersOnMainThreadForTesting(shouldRunServiceWorkersOnMainThreadForTesting)
     , m_hasServiceWorkerEntitlement(hasServiceWorkerEntitlement)
 {
     RELEASE_LOG_IF(registrationDatabaseDirectory.isEmpty(), ServiceWorker, "No path to store the service worker registrations");
@@ -726,7 +727,8 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, worker.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    connection->installServiceWorkerContext(data, worker->data(), userAgent);
+    auto workerThreadMode = m_shouldRunServiceWorkersOnMainThreadForTesting ? WorkerThreadMode::UseMainThread : WorkerThreadMode::CreateNewThread;
+    connection->installServiceWorkerContext(data, worker->data(), userAgent, workerThreadMode);
 }
 
 void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, RunServiceWorkerCallback&& callback)
@@ -794,7 +796,8 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
     auto* contextConnection = worker->contextConnection();
     ASSERT(contextConnection);
 
-    contextConnection->installServiceWorkerContext(worker->contextData(), worker->data(), worker->userAgent());
+    auto workerThreadMode = m_shouldRunServiceWorkersOnMainThreadForTesting ? WorkerThreadMode::UseMainThread : WorkerThreadMode::CreateNewThread;
+    contextConnection->installServiceWorkerContext(worker->contextData(), worker->data(), worker->userAgent(), workerThreadMode);
 
     return true;
 }

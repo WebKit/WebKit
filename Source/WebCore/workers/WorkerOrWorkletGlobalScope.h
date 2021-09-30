@@ -45,6 +45,9 @@ class WorkerOrWorkletGlobalScope : public ScriptExecutionContext, public RefCoun
 public:
     virtual ~WorkerOrWorkletGlobalScope();
 
+    using ScriptExecutionContext::weakPtrFactory;
+    using WeakValueType = ScriptExecutionContext::WeakValueType;
+
     bool isClosing() const { return m_isClosing; }
     WorkerOrWorkletThread* workerOrWorkletThread() const { return m_thread; }
 

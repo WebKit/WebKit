@@ -137,7 +137,7 @@ ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const Variant<
 
 ExceptionOr<double> PerformanceUserTiming::convertMarkToTimestamp(const String& mark) const
 {
-    if (!is<Document>(m_performance.scriptExecutionContext())) {
+    if (!isMainThread()) {
         if (isRestrictedMarkNameNonMainThread(mark))
             return Exception { TypeError };
     } else {

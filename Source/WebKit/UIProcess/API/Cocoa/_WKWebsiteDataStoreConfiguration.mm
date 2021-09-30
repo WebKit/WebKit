@@ -486,6 +486,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setRequiresSecureHTTPSProxyConnection(requires);
 }
 
+- (BOOL)shouldRunServiceWorkersOnMainThreadForTesting
+{
+    return _configuration->shouldRunServiceWorkersOnMainThreadForTesting();
+}
+
+- (void)setShouldRunServiceWorkersOnMainThreadForTesting:(BOOL)shouldRunOnMainThread
+{
+    _configuration->setShouldRunServiceWorkersOnMainThreadForTesting(shouldRunOnMainThread);
+}
+
 - (void)setProxyConfiguration:(NSDictionary *)configuration
 {
     _configuration->setProxyConfiguration((__bridge CFDictionaryRef)[configuration copy]);

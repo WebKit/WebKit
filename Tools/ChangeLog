@@ -1,3 +1,14 @@
+2021-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Add support for running service workers on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=230649
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2021-09-29  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Contributors may be undefined

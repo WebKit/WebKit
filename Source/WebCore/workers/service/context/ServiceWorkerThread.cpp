@@ -73,8 +73,28 @@ private:
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use valid runtime flags
 
-ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
-    : WorkerThread({ contextData.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), contextData.contentSecurityPolicy, false, contextData.crossOriginEmbedderPolicy, MonotonicTime::now(), { }, contextData.workerType, FetchRequestCredentials::Omit, settingsValues }, contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
+static WorkerParameters generateWorkerParameters(const ServiceWorkerContextData& contextData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues)
+{
+    return {
+        contextData.scriptURL,
+        emptyString(),
+        "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(),
+        WTFMove(userAgent),
+        platformStrategies()->loaderStrategy()->isOnLine(),
+        contextData.contentSecurityPolicy,
+        false,
+        contextData.crossOriginEmbedderPolicy,
+        MonotonicTime::now(),
+        { },
+        contextData.workerType,
+        FetchRequestCredentials::Omit,
+        settingsValues,
+        workerThreadMode
+    };
+}
+
+ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
+    : WorkerThread(generateWorkerParameters(contextData, WTFMove(userAgent), workerThreadMode, settingsValues), contextData.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, contextData.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
     , m_serviceWorkerIdentifier(contextData.serviceWorkerIdentifier)
     , m_jobDataIdentifier(contextData.jobDataIdentifier)
     , m_contextData(crossThreadCopy(WTFMove(contextData)))
@@ -194,7 +214,7 @@ void ServiceWorkerThread::queueTaskToFireActivateEvent()
 
 void ServiceWorkerThread::finishedEvaluatingScript()
 {
-    ASSERT(!isMainThread());
+    ASSERT(globalScope()->isContextThread());
     m_doesHandleFetch = globalScope()->hasEventListeners(eventNames().fetchEvent);
 }
 
@@ -226,6 +246,10 @@ void ServiceWorkerThread::startFetchEventMonitoring()
 
 void ServiceWorkerThread::startHeartBeatTimer()
 {
+    // We cannot detect responsiveness for service workers running on the main thread by using a main thread timer.
+    if (is<WorkerMainRunLoop>(runLoop()))
+        return;
+
     if (m_heartBeatTimer.isActive())
         return;
 

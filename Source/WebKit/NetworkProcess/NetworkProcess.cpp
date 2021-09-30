@@ -2486,7 +2486,10 @@ SWServer& NetworkProcess::swServerForSession(PAL::SessionID sessionID)
             completionHandler({ });
         };
 #endif
-        return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, parentProcessHasServiceWorkerEntitlement(), [this, sessionID](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
+        bool shouldRunServiceWorkersOnMainThreadForTesting = false;
+        if (auto* session = networkSession(sessionID))
+            shouldRunServiceWorkersOnMainThreadForTesting = session->shouldRunServiceWorkersOnMainThreadForTesting();
+        return makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), sessionID, shouldRunServiceWorkersOnMainThreadForTesting, parentProcessHasServiceWorkerEntitlement(), [this, sessionID](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
             ServiceWorkerSoftUpdateLoader::start(networkSession(sessionID), WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
         }, [this, sessionID](auto& registrableDomain, auto&& completionHandler) {
             ASSERT(!registrableDomain.isEmpty());

@@ -49,6 +49,7 @@ class FetchLoaderClient;
 class PageConfiguration;
 class ServiceWorkerInspectorProxy;
 struct ServiceWorkerContextData;
+enum class WorkerThreadMode : bool;
 
 class ServiceWorkerThreadProxy final : public ThreadSafeRefCounted<ServiceWorkerThreadProxy>, public WorkerLoaderProxy, public WorkerDebuggerProxy {
 public:
@@ -85,7 +86,7 @@ public:
     WEBCORE_EXPORT bool lastNavigationWasAppInitiated();
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, CacheStorageProvider&, StorageBlockingPolicy);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, StorageBlockingPolicy);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 

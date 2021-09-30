@@ -74,11 +74,11 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScop
     auto mode = makeString("loadResourceSynchronouslyMode", runLoop.createUniqueId());
 
     auto loader = WorkerThreadableLoader::create(workerOrWorkletGlobalScope, client, mode, WTFMove(request), options, String());
-    MessageQueueWaitResult result = MessageQueueMessageReceived;
-    while (!loader->done() && result != MessageQueueTerminated)
-        result = runLoop.runInMode(&workerOrWorkletGlobalScope, mode);
+    bool success = true;
+    while (!loader->done() && success)
+        success = runLoop.runInMode(&workerOrWorkletGlobalScope, mode);
 
-    if (!loader->done() && result == MessageQueueTerminated)
+    if (!loader->done() && !success)
         loader->cancel();
 }
 

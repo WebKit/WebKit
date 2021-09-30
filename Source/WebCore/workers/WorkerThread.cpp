@@ -60,7 +60,8 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         referrerPolicy,
         workerType,
         credentials,
-        settingsValues.isolatedCopy()
+        settingsValues.isolatedCopy(),
+        workerThreadMode
     };
 }
 
@@ -86,7 +87,7 @@ WorkerThreadStartupData::WorkerThreadStartupData(const WorkerParameters& other, 
 }
 
 WorkerThread::WorkerThread(const WorkerParameters& params, const ScriptBuffer& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerDebuggerProxy& workerDebuggerProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, JSC::RuntimeFlags runtimeFlags)
-    : WorkerOrWorkletThread(params.identifier.isolatedCopy())
+    : WorkerOrWorkletThread(params.identifier.isolatedCopy(), params.workerThreadMode)
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerDebuggerProxy(workerDebuggerProxy)
     , m_workerReportingProxy(workerReportingProxy)
@@ -106,6 +107,15 @@ WorkerThread::~WorkerThread()
 
 Ref<Thread> WorkerThread::createThread()
 {
+    if (is<WorkerMainRunLoop>(runLoop())) {
+        // This worker should run on the main thread.
+        RunLoop::main().dispatch([protectedThis = Ref { *this }] {
+            protectedThis->workerOrWorkletThread();
+        });
+        ASSERT(isMainThread());
+        return Thread::current();
+    }
+
     return Thread::create(isServiceWorkerThread() ? "WebCore: Service Worker" : "WebCore: Worker", [this] {
         workerOrWorkletThread();
     }, ThreadType::JavaScript);
@@ -136,8 +146,8 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
         auto scriptFetcher = WorkerScriptFetcher::create(globalScope()->credentials(), globalScope()->destination(), globalScope()->referrerPolicy());
         ScriptSourceCode sourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), { }, JSC::SourceProviderSourceType::Module, scriptFetcher.copyRef());
         sourceProvider = makeWeakPtr(static_cast<ScriptBufferSourceProvider&>(sourceCode.provider()));
-        MessageQueueWaitResult result = globalScope()->script()->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
-        if (result != MessageQueueTerminated) {
+        bool success = globalScope()->script()->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
+        if (success) {
             if (std::optional<LoadableScript::Error> error = scriptFetcher->error()) {
                 if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
                     exceptionMessage = message->message;

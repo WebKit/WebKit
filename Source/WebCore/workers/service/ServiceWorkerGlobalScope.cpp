@@ -114,7 +114,7 @@ void ServiceWorkerGlobalScope::removeServiceWorkerClient(ServiceWorkerClient& cl
 // https://w3c.github.io/ServiceWorker/#update-service-worker-extended-events-set-algorithm
 void ServiceWorkerGlobalScope::updateExtendedEventsSet(ExtendableEvent* newEvent)
 {
-    ASSERT(!isMainThread());
+    ASSERT(isContextThread());
     ASSERT(!newEvent || !newEvent->isBeingDispatched());
     bool hadPendingEvents = hasPendingEvents();
     m_extendedEvents.removeAllMatching([](auto& event) {

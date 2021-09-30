@@ -79,9 +79,13 @@ void WorkerDebugger::runEventLoopWhilePaused()
 
     TimerBase::fireTimersInNestedEventLoop();
 
+    // FIXME: Add support for pausing workers running on the main thread.
+    if (!is<WorkerDedicatedRunLoop>(m_globalScope.workerOrWorkletThread()->runLoop()))
+        return;
+
     MessageQueueWaitResult result;
     do {
-        result = m_globalScope.workerOrWorkletThread()->runLoop().runInDebuggerMode(m_globalScope);
+        result = downcast<WorkerDedicatedRunLoop>(m_globalScope.workerOrWorkletThread()->runLoop()).runInDebuggerMode(m_globalScope);
     } while (result != MessageQueueTerminated && !doneProcessingDebuggerEvents());
 }
 

@@ -42,6 +42,7 @@ struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerContextData;
 struct ServiceWorkerJobDataIdentifier;
+enum class WorkerThreadMode : bool;
 
 class SWServerToContextConnection {
     WTF_MAKE_FAST_ALLOCATED;
@@ -51,7 +52,7 @@ public:
     SWServerToContextConnectionIdentifier identifier() const { return m_identifier; }
 
     // Messages to the SW host process
-    virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const ServiceWorkerData&, const String& userAgent) = 0;
+    virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const ServiceWorkerData&, const String& userAgent, WorkerThreadMode) = 0;
     virtual void updateAppInitiatedValue(ServiceWorkerIdentifier, LastNavigationWasAppInitiated) = 0;
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;

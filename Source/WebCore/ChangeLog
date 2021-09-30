@@ -1,3 +1,91 @@
+2021-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Add support for running service workers on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=230649
+
+        Reviewed by Alex Christensen.
+
+        Add support for running service workers on the main thread (off by default).
+
+        This is to support use cases where the InjectedBundle needs to have access
+        to a service worker's JS global object and script it. It wouldn't be practical
+        in such cases to have the service worker running off the main thread. Note that
+        this is not meant to be used for service workers in general, only for some very
+        specific service workers that require interaction with WebKit's injected bundle.
+
+        * Headers.cmake:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::forgetActivityForCurrentThread):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::waitForMethodCompletion):
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/WorkerDebugger.cpp:
+        (WebCore::WorkerDebugger::runEventLoopWhilePaused):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::loadResourceSynchronously):
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::PerformanceUserTiming::convertMarkToTimestamp const):
+        * workers/WorkerOrWorkletGlobalScope.h:
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::loadModuleSynchronously):
+        * workers/WorkerOrWorkletScriptController.h:
+        * workers/WorkerOrWorkletThread.cpp:
+        (WebCore::constructRunLoop):
+        (WebCore::WorkerOrWorkletThread::WorkerOrWorkletThread):
+        (WebCore::WorkerOrWorkletThread::startRunningDebuggerTasks):
+        (WebCore::WorkerOrWorkletThread::runEventLoop):
+        (WebCore::WorkerOrWorkletThread::workerOrWorkletThread):
+        (WebCore::WorkerOrWorkletThread::stop):
+        (WebCore::WorkerOrWorkletThread::suspend):
+        (WebCore::WorkerOrWorkletThread::resume):
+        * workers/WorkerOrWorkletThread.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::ModePredicate::operator() const):
+        (WebCore::WorkerDedicatedRunLoop::WorkerDedicatedRunLoop):
+        (WebCore::WorkerDedicatedRunLoop::~WorkerDedicatedRunLoop):
+        (WebCore::RunLoopSetup::RunLoopSetup):
+        (WebCore::WorkerDedicatedRunLoop::run):
+        (WebCore::WorkerDedicatedRunLoop::runInDebuggerMode):
+        (WebCore::WorkerDedicatedRunLoop::runInMode):
+        (WebCore::WorkerDedicatedRunLoop::runCleanupTasks):
+        (WebCore::WorkerDedicatedRunLoop::terminate):
+        (WebCore::WorkerDedicatedRunLoop::postTaskAndTerminate):
+        (WebCore::WorkerDedicatedRunLoop::postTaskForMode):
+        (WebCore::WorkerDedicatedRunLoop::Task::performTask):
+        (WebCore::WorkerDedicatedRunLoop::Task::Task):
+        (WebCore::WorkerMainRunLoop::WorkerMainRunLoop):
+        (WebCore::WorkerMainRunLoop::setGlobalScope):
+        (WebCore::WorkerMainRunLoop::postTaskAndTerminate):
+        (WebCore::WorkerMainRunLoop::postTaskForMode):
+        (WebCore::WorkerMainRunLoop::runInMode):
+        * workers/WorkerRunLoop.h:
+        (WebCore::WorkerRunLoop::createUniqueId):
+        (isType):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerParameters::isolatedCopy const):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::createThread):
+        (WebCore::WorkerThread::evaluateScriptIfNecessary):
+        * workers/WorkerThread.h:
+        * workers/WorkerThreadMode.h: Added.
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::updateExtendedEventsSet):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::generateWorkerParameters):
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        (WebCore::ServiceWorkerThread::finishedEvaluatingScript):
+        (WebCore::ServiceWorkerThread::startHeartBeatTimer):
+        * workers/service/context/ServiceWorkerThread.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::installContextData):
+        (WebCore::SWServer::runServiceWorker):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.h:
+
 2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Suppress warnings for implicit copy assignment operator/copy constructor with clang 13

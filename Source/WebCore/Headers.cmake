@@ -1731,6 +1731,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/WorkerScriptLoader.h
     workers/WorkerScriptLoaderClient.h
     workers/WorkerThread.h
+    workers/WorkerThreadMode.h
     workers/WorkerThreadType.h
     workers/WorkerType.h
 

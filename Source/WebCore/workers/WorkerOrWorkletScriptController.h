@@ -99,7 +99,7 @@ public:
     JSC::JSValue evaluateModule(JSC::JSModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
     void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
-    MessageQueueWaitResult loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
+    bool loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);
 
     void loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(std::optional<Exception>&&)>&&);
 

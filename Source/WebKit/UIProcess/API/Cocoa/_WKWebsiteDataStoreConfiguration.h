@@ -52,6 +52,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, nullable, copy) NSString *dataConnectionServiceType WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) BOOL preventsSystemHTTPProxyAuthentication WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic) BOOL requiresSecureHTTPSProxyConnection WK_API_AVAILABLE(macos(11.0), ios(14.0));
+@property (nonatomic) BOOL shouldRunServiceWorkersOnMainThreadForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // These properties only make sense for persistent data stores, and will throw
 // an exception if set for non-persistent stores.

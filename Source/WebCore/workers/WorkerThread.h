@@ -72,6 +72,7 @@ public:
     WorkerType workerType;
     FetchRequestCredentials credentials;
     Settings::Values settingsValues;
+    WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
 
     WorkerParameters isolatedCopy() const;
 };

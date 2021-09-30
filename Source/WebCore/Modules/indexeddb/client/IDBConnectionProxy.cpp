@@ -609,8 +609,6 @@ void setMatchingItemsContextSuspended(ScriptExecutionContext& currentContext, Ha
 
 void IDBConnectionProxy::forgetActivityForCurrentThread()
 {
-    ASSERT(!isMainThread());
-
     {
         Locker locker { m_databaseConnectionMapLock };
         removeItemsMatchingCurrentThread(m_databaseConnectionMap);

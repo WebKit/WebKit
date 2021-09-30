@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WorkerRunLoop.h"
+#include "WorkerThreadMode.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
@@ -40,7 +41,6 @@ namespace WebCore {
 
 class WorkerDebuggerProxy;
 class WorkerLoaderProxy;
-class WorkerRunLoop;
 
 class WorkerOrWorkletThread : public ThreadSafeRefCounted<WorkerOrWorkletThread> {
 public:
@@ -70,7 +70,7 @@ public:
     static void releaseFastMallocFreeMemoryInAllThreads();
 
 protected:
-    explicit WorkerOrWorkletThread(const String& identifier);
+    explicit WorkerOrWorkletThread(const String& identifier, WorkerThreadMode = WorkerThreadMode::CreateNewThread);
     void workerOrWorkletThread();
 
     // Executes the event loop for the worker thread. Derived classes can override to perform actions before/after entering the event loop.
@@ -88,7 +88,7 @@ private:
     Lock m_threadCreationAndGlobalScopeLock;
     RefPtr<WorkerOrWorkletGlobalScope> m_globalScope;
     RefPtr<WTF::Thread> m_thread;
-    WorkerRunLoop m_runLoop;
+    UniqueRef<WorkerRunLoop> m_runLoop;
     Function<void(const String&)> m_evaluateCallback;
     Function<void()> m_stoppedCallback;
     BinarySemaphore m_suspensionSemaphore;
