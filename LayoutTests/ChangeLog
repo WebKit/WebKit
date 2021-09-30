@@ -1,3 +1,12 @@
+2021-09-29  Saam Barati  <sbarati@apple.com>
+
+        Print values in a nicer way in the jsc shell
+        https://bugs.webkit.org/show_bug.cgi?id=230931
+
+        Reviewed by Tadeu Zagallo.
+
+        * resources/standalone-pre.js:
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Debug ] http/tests/xmlhttprequest/access-control-preflight-credential-sync.html is a flaky crash
