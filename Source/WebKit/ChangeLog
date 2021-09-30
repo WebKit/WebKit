@@ -1,3 +1,10 @@
+2021-09-30  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Catalyst build fix; forward-declare in RemoteMediaPlayerProxy.h and include the correct file in RemoteMediaPlayerProxy.cpp.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+
 2021-09-30  John Wilander  <wilander@apple.com>
 
         PCM: Take app bundle ID into consideration when matching triggering events with pending clicks
