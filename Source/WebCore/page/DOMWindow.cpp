@@ -245,7 +245,7 @@ bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
         if (!set.contains(window.ptr()))
             continue;
 
-        Frame* frame = window->frame();
+        RefPtr frame = window->frame();
         if (!frame)
             continue;
 
@@ -2103,7 +2103,7 @@ void DOMWindow::failedToRegisterDeviceMotionEventListener()
     if (RegistrableDomain::uncheckedCreateFromRegistrableDomainString("chase.com"_s).matches(document()->url())) {
         // Fire a fake DeviceMotionEvent with acceleration data to unblock the site's login flow.
         document()->postTask([](auto& context) {
-            if (auto* window = downcast<Document>(context).domWindow()) {
+            if (RefPtr window = downcast<Document>(context).domWindow()) {
                 auto acceleration = DeviceMotionData::Acceleration::create();
                 window->dispatchEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, DeviceMotionData::create(acceleration.copyRef(), acceleration.copyRef(), DeviceMotionData::RotationRate::create(), WTF::nullopt).ptr()));
             }
@@ -2260,13 +2260,13 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     event.setEventPhase(Event::AT_TARGET);
     event.resetBeforeDispatch();
 
-    Frame* protectedFrame = nullptr;
+    RefPtr<Frame> protectedFrame;
     bool hasListenersForEvent = false;
     if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
         protectedFrame = frame();
         hasListenersForEvent = hasEventListeners(event.type());
         if (hasListenersForEvent)
-            InspectorInstrumentation::willDispatchEventOnWindow(protectedFrame, event, *this);
+            InspectorInstrumentation::willDispatchEventOnWindow(protectedFrame.get(), event, *this);
     }
 
     // FIXME: We should use EventDispatcher everywhere.
@@ -2274,7 +2274,7 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     fireEventListeners(event, EventInvokePhase::Bubbling);
 
     if (hasListenersForEvent)
-        InspectorInstrumentation::didDispatchEventOnWindow(protectedFrame, event);
+        InspectorInstrumentation::didDispatchEventOnWindow(protectedFrame.get(), event);
 
     event.resetAfterDispatch();
 }
