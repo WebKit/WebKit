@@ -37,13 +37,13 @@ PASS document.getElementById("hasP").offsetWidth is 46
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetWidth is 0
 
 Tests for offsetHeight:
-FAIL document.getElementById("productNo").parentNode.offsetHeight should be 108. Was 116.
-FAIL document.getElementById("productNo").offsetHeight should be 108. Was 116.
-FAIL document.getElementById("productName").offsetHeight should be 108. Was 116.
-FAIL document.getElementById("hasMAndHasNAndHasO").offsetHeight should be 108. Was 116.
-FAIL document.getElementById("hasMAndHasN").offsetHeight should be 108. Was 116.
-FAIL document.getElementById("hasO").offsetHeight should be 108. Was 116.
-FAIL document.getElementById("hasP").offsetHeight should be 108. Was 116.
+FAIL document.getElementById("productNo").parentNode.offsetHeight should be 111. Was 119.
+FAIL document.getElementById("productNo").offsetHeight should be 111. Was 119.
+FAIL document.getElementById("productName").offsetHeight should be 111. Was 119.
+FAIL document.getElementById("hasMAndHasNAndHasO").offsetHeight should be 111. Was 119.
+FAIL document.getElementById("hasMAndHasN").offsetHeight should be 111. Was 119.
+FAIL document.getElementById("hasO").offsetHeight should be 111. Was 119.
+FAIL document.getElementById("hasP").offsetHeight should be 111. Was 119.
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetHeight is 0
 
 When borderCollapse == "collapse"
@@ -79,13 +79,13 @@ PASS document.getElementById("hasP").offsetWidth is 44
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetWidth is 0
 
 Tests for offsetHeight:
-PASS document.getElementById("productNo").parentNode.offsetHeight is 88
-PASS document.getElementById("productNo").offsetHeight is 88
-PASS document.getElementById("productName").offsetHeight is 88
-PASS document.getElementById("hasMAndHasNAndHasO").offsetHeight is 88
-PASS document.getElementById("hasMAndHasN").offsetHeight is 88
-PASS document.getElementById("hasO").offsetHeight is 88
-PASS document.getElementById("hasP").offsetHeight is 88
+PASS document.getElementById("productNo").parentNode.offsetHeight is 91
+PASS document.getElementById("productNo").offsetHeight is 91
+PASS document.getElementById("productName").offsetHeight is 91
+PASS document.getElementById("hasMAndHasNAndHasO").offsetHeight is 91
+PASS document.getElementById("hasMAndHasN").offsetHeight is 91
+PASS document.getElementById("hasO").offsetHeight is 91
+PASS document.getElementById("hasP").offsetHeight is 91
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetHeight is 0
 PASS successfullyParsed is true
 

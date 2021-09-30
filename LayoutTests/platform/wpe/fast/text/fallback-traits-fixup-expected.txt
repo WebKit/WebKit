@@ -15,17 +15,17 @@ layer at (0,0) size 800x600
             text run at (211,0) width 349: "STIX glyphs not rendered on this stackoverflow answer"
         RenderText {#text} at (560,0) size 4x17
           text run at (560,0) width 4: "."
-      RenderBlock {P} at (0,34) size 784x37
-        RenderText {#text} at (0,15) size 96x17
-          text run at (0,15) width 96: "A black circle: "
+      RenderBlock {P} at (0,34) size 784x38
+        RenderText {#text} at (0,16) size 96x17
+          text run at (0,16) width 96: "A black circle: "
         RenderInline {SPAN} at (0,0) size 27x36
-          RenderText {#text} at (96,0) size 27x36
-            text run at (96,0) width 27: "\x{26AB}"
+          RenderText {#text} at (96,1) size 27x36
+            text run at (96,1) width 27: "\x{26AB}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,87) size 784x37
-        RenderText {#text} at (0,15) size 136x17
-          text run at (0,15) width 136: "Another black circle: "
+      RenderBlock {P} at (0,88) size 784x38
+        RenderText {#text} at (0,16) size 136x17
+          text run at (0,16) width 136: "Another black circle: "
         RenderInline {SPAN} at (0,0) size 27x36
-          RenderText {#text} at (136,0) size 27x36
-            text run at (136,0) width 27: "\x{26AB}"
+          RenderText {#text} at (136,1) size 27x36
+            text run at (136,1) width 27: "\x{26AB}"
         RenderText {#text} at (0,0) size 0x0

@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 100x50 [color=#008000] [bgcolor=#FF0000]
+      RenderBlock {DIV} at (0,0) size 100x58 [color=#008000] [bgcolor=#FF0000]
         RenderInline {SPAN} at (0,0) size 65x25
-          RenderText {#text} at (0,0) size 65x25
-            text run at (0,0) width 65: "x\x{C}x"
+          RenderText {#text} at (0,3) size 65x25
+            text run at (0,3) width 65: "x\x{C}x"
         RenderInline {SPAN} at (0,0) size 50x25
-          RenderText {#text} at (65,0) size 50x25
-            text run at (65,0) width 50: "xx"
+          RenderText {#text} at (65,3) size 50x25
+            text run at (65,3) width 50: "xx"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 65x25
-          RenderText {#text} at (0,25) size 65x25
-            text run at (0,25) width 65: "x\x{B}x"
+          RenderText {#text} at (0,32) size 65x25
+            text run at (0,32) width 65: "x\x{B}x"
         RenderInline {SPAN} at (0,0) size 50x25
-          RenderText {#text} at (65,25) size 50x25
-            text run at (65,25) width 50: "xx"
+          RenderText {#text} at (65,32) size 50x25
+            text run at (65,32) width 50: "xx"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,38 @@
+2021-09-30  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Rebaseline a number of text-only text-related failures
+
+        Unreviewed test gardening.
+
+        Also small spacing diffs like the previous gardening commit.
+
+        * platform/wpe/fast/encoding/invalid-UTF-8-expected.txt:
+        * platform/wpe/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/wpe/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/wpe/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/wpe/fast/table/col-and-colgroup-offsets-expected.txt:
+        * platform/wpe/fast/text/capitalize-boundaries-expected.txt:
+        * platform/wpe/fast/text/emoji-expected.txt:
+        * platform/wpe/fast/text/fallback-traits-fixup-expected.txt:
+        * platform/wpe/fast/text/fixed-pitch-control-characters-expected.txt:
+        * platform/wpe/fast/text/in-rendered-text-rtl-expected.txt:
+        * platform/wpe/fast/text/international/bidi-L2-run-reordering-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-CSS-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-HTML-expected.txt:
+        * platform/wpe/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt:
+        * platform/wpe/fast/text/international/bidi-european-terminators-expected.txt:
+        * platform/wpe/fast/text/international/bidi-ignored-for-first-child-inline-expected.txt:
+        * platform/wpe/fast/text/international/bidi-innertext-expected.txt:
+        * platform/wpe/fast/text/international/bidi-listbox-atsui-expected.txt:
+        * platform/wpe/fast/text/international/bidi-listbox-expected.txt:
+        * platform/wpe/fast/text/international/bidi-menulist-expected.txt:
+        * platform/wpe/fast/text/international/bidi-override-expected.txt:
+        * platform/wpe/fast/text/international/rtl-caret-expected.txt:
+        * platform/wpe/fast/text/midword-break-after-breakable-char-expected.txt:
+        * platform/wpe/fast/text/midword-break-before-surrogate-pair-expected.txt:
+        * platform/wpe/fast/text/orientation-sideways-expected.txt:
+        * platform/wpe/fast/text/whitespace/pre-wrap-overflow-selection-expected.txt:
+
 2021-09-30  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE][GStreamer] Allow infinite duration on MSE
