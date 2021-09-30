@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -197,8 +197,15 @@ private:
                 && m_node->child2()->isInt32Constant()
                 && m_node->child1()->op() == ArithMod
                 && m_node->child1()->binaryUseKind() == Int32Use
-                && m_node->child1()->child2()->isInt32Constant()
-                && std::abs(m_node->child1()->child2()->asInt32()) <= std::abs(m_node->child2()->asInt32())) {
+                && m_node->child1()->child2()->isInt32Constant()) {
+
+                int32_t const1 = m_node->child1()->child2()->asInt32();
+                int32_t const2 = m_node->child2()->asInt32();
+
+                if (const1 == INT_MIN || const2 == INT_MIN)
+                    break; // std::abs(INT_MIN) is undefined.
+
+                if (std::abs(const1) <= std::abs(const2))
                     convertToIdentityOverChild1();
             }
             break;

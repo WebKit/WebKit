@@ -1,3 +1,14 @@
+2021-09-29  Mark Lam  <mark.lam@apple.com>
+
+        DFG strength reduction on % operator should handle an INT_MIN divisor.
+        https://bugs.webkit.org/show_bug.cgi?id=230391
+        <rdar://problem/83229740>
+
+        Reviewed by Robin Morisset.
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2021-09-29  Saam Barati  <sbarati@apple.com>
 
         Print values in a nicer way in the jsc shell
