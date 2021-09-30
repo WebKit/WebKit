@@ -1,5 +1,19 @@
 2021-09-30  Per Arne  <pvollan@apple.com>
 
+        Add syscall filter telemetry for the Networking process
+        https://bugs.webkit.org/show_bug.cgi?id=230961
+        <rdar://problem/83674634>
+
+        Reviewed by Brent Fulgham.
+
+        Add syscall filter telemetry for the Networking process on iOS and macOS.
+        Syscalls that are known to be used are added without telemetry.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
+2021-09-30  Per Arne  <pvollan@apple.com>
+
         [macOS] Reduce sandbox telemetry
         https://bugs.webkit.org/show_bug.cgi?id=231026
         <rdar://83694937>

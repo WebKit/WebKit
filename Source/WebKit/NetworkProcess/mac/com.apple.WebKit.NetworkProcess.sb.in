@@ -519,3 +519,72 @@
 (allow file-read* (with telemetry)
     (prefix "/private/var/db/com.apple.networkextension.")
 )
+
+(when (defined? 'syscall-unix)
+    (allow syscall-unix (with telemetry))
+    (allow syscall-unix (syscall-number
+        SYS___channel_get_info
+        SYS___channel_sync
+        SYS___disable_threadsignal
+        SYS___mac_syscall
+        SYS_access
+        SYS_bsdthread_create
+        SYS_bsdthread_ctl
+        SYS_bsdthread_terminate
+        SYS_change_fdguard_np
+        SYS_csrctl
+        SYS_fcntl
+        SYS_fcntl_nocancel
+        SYS_fsgetpath
+        SYS_fstat
+        SYS_fstatat
+        SYS_fstatfs
+        SYS_fsync
+        SYS_ftruncate
+        SYS_getattrlist
+        SYS_getaudit_addr
+        SYS_getdirentries
+        SYS_getentropy
+        SYS_geteuid
+        SYS_getfsstat
+        SYS_getrlimit
+        SYS_gettimeofday
+        SYS_getuid
+        SYS_guarded_close_np
+        SYS_guarded_open_np
+        SYS_guarded_pwrite_np
+        SYS_iopolicysys
+        SYS_issetugid
+        SYS_kevent_id
+        SYS_kevent_qos
+        SYS_lseek
+        SYS_lstat
+        SYS_madvise
+        SYS_mkdirat
+        SYS_mmap
+        SYS_mprotect
+        SYS_msync
+        SYS_munmap
+        SYS_necp_client_action
+        SYS_necp_open
+        SYS_pathconf
+        SYS_pread
+        SYS_pread_nocancel
+        SYS_psynch_cvbroad
+        SYS_psynch_cvsignal
+        SYS_psynch_cvwait
+        SYS_psynch_mutexdrop
+        SYS_psynch_mutexwait
+        SYS_psynch_rw_unlock
+        SYS_psynch_rw_wrlock
+        SYS_read
+        SYS_rmdir
+        SYS_select
+        SYS_setattrlistat
+        SYS_setrlimit
+        SYS_stat
+        SYS_statfs
+        SYS_thread_selfid
+        SYS_ulock_wait
+        SYS_ulock_wake
+        SYS_workq_kernreturn)))
