@@ -1,3 +1,45 @@
+2021-09-30  Devin Rousso  <drousso@apple.com>
+
+        [iOS][GPU Process] support `<attachment>`
+        https://bugs.webkit.org/show_bug.cgi?id=230781
+        <rdar://problem/70884096>
+
+        Reviewed by Myles Maxfield.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderAttachmentInfo::addLine):
+        (WebCore::RenderAttachmentInfo::buildWrappedLines):
+        (WebCore::RenderAttachmentInfo::buildSingleLine):
+        (WebCore::paintAttachmentText):
+        Instead of drawing directly into the `GraphicsContext::platformContext` (which will not be
+        valid in the WebProcess when DOM rendering happens in the GPUProcess), use `DrawGlyphsRecorder`
+        to "translate" native `CTLineDraw` into a sequence of actions from which a `GraphicsContext`
+        method can be derived, thereby hooking into and benefiting from existing GPUProcess support.
+
+        * platform/graphics/DrawGlyphsRecorder.h:
+        (WebCore::DrawGlyphsRecorder::deconstructDrawGlyphs const): Renamed from `drawGlyphsDeconstruction`.
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::DrawGlyphsRecorder):
+        (WebCore::DrawGlyphsRecorder::recordDrawGlyphs):
+        (WebCore::DrawGlyphsRecorder::drawGlyphs):
+        (WebCore::DrawGlyphsRecorder::drawNativeText):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        * platform/graphics/harfbuzz/DrawGlyphsRecorderHarfBuzz.cpp:
+        (WebCore::DrawGlyphsRecorder::DrawGlyphsRecorder):
+        * platform/graphics/win/DrawGlyphsRecorderWin.cpp:
+        (WebCore::DrawGlyphsRecorder::DrawGlyphsRecorder):
+        Add a new parameter to `DrawGlyphsRenderer` that controls whether fonts other than the one
+        initially provided to `drawGlyphs`/`drawNativeText` can be used to draw glyphs. This is only
+        used by the above as we know that the initial font is a system font, and therefore that the
+        fallback list will also only contain system fonts, meaning that sending the font to the
+        GPUProcess is cheap (a file path instead of actual data).
+
+        (WebCore::DisplayList::Recorder::Recorder):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::displayListForTextRun const):
+        Drive-by: Rename `DrawGlyphsDeconstruction` to `DeconstructDrawGlyphs` as it reads better.
+
 2021-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         Replace the confusing isPinnedForScrollDelta() logic with code that uses BoxSide
