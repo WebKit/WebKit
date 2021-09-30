@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !PLATFORM(WIN)
 bool isFeatureFlagEnabled(const char*, bool defaultValue)
 {
     return defaultValue;

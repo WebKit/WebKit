@@ -1,3 +1,18 @@
+2021-09-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] REGRESSION(r280726): registry keys enabling GPU process mode don't work
+        https://bugs.webkit.org/show_bug.cgi?id=230871
+
+        Reviewed by Don Olmstead.
+
+        r270175 (Bug 219294) added registry keys to enable GPU process
+        mode for WinCairo port. But after r280726 (Bug 228803) changed the
+        function signature, they didn't work.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        * Shared/win/WebPreferencesDefaultValuesWin.cpp:
+        (WebKit::isFeatureFlagEnabled):
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Debug ] http/tests/xmlhttprequest/access-control-preflight-credential-sync.html is a flaky crash

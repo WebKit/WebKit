@@ -1,3 +1,14 @@
+2021-09-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] REGRESSION(r280726): registry keys enabling GPU process mode don't work
+        https://bugs.webkit.org/show_bug.cgi?id=230871
+
+        Reviewed by Don Olmstead.
+
+        * wtf/PlatformHave.h: r270175 defined HAVE_SYSTEM_FEATURE_FLAGS
+        for Windows to use WebKit::isFeatureFlagEnabled. But, it is no
+        longer needed.
+
 2021-09-29  Kiet Ho  <tho22@apple.com>
 
         Implement the 'ic' unit from CSS Values 4
