@@ -54,7 +54,6 @@ bool PrivateClickMeasurement::isValid() const
 {
     return m_attributionTriggerData
         && m_attributionTriggerData.value().isValid()
-        && m_sourceID.isValid()
         && !m_sourceSite.registrableDomain.isEmpty()
         && !m_destinationSite.registrableDomain.isEmpty()
         && (m_timesToSend.sourceEarliestTimeToSend || m_timesToSend.destinationEarliestTimeToSend);
@@ -88,20 +87,19 @@ PrivateClickMeasurement::SourceUnlinkableToken PrivateClickMeasurement::SourceUn
 
 PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const
 {
-    PrivateClickMeasurement copy;
-    copy.m_sourceID = m_sourceID;
-    copy.m_sourceSite = m_sourceSite.isolatedCopy();
-    copy.m_destinationSite = m_destinationSite.isolatedCopy();
-    copy.m_sourceDescription = m_sourceDescription.isolatedCopy();
-    copy.m_purchaser = m_purchaser.isolatedCopy();
-    copy.m_timeOfAdClick = m_timeOfAdClick.isolatedCopy();
-    copy.m_isEphemeral = m_isEphemeral;
+    PrivateClickMeasurement copy {
+        m_sourceID,
+        m_sourceSite.isolatedCopy(),
+        m_destinationSite.isolatedCopy(),
+        m_sourceApplicationBundleID.isolatedCopy(),
+        m_timeOfAdClick.isolatedCopy(),
+        m_isEphemeral,
+    };
     copy.m_attributionTriggerData = m_attributionTriggerData;
     copy.m_timesToSend = m_timesToSend;
     copy.m_ephemeralSourceNonce = crossThreadCopy(m_ephemeralSourceNonce);
     copy.m_sourceUnlinkableToken = m_sourceUnlinkableToken.isolatedCopy();
     copy.m_sourceSecretToken = crossThreadCopy(m_sourceSecretToken);
-    copy.m_sourceApplicationBundleID = m_sourceApplicationBundleID.isolatedCopy();
     return copy;
 }
 
@@ -121,7 +119,7 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
         if (!attributionTriggerDataUInt64 || *attributionTriggerDataUInt64 > AttributionTriggerData::MaxEntropy)
             return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the conversion data could not be parsed or was higher than the allowed maximum of "_s, AttributionTriggerData::MaxEntropy, "."_s));
 
-        return AttributionTriggerData { static_cast<uint32_t>(*attributionTriggerDataUInt64), Priority { 0 } };
+        return AttributionTriggerData { static_cast<uint8_t>(*attributionTriggerDataUInt64), Priority { 0 } };
     }
     
     if (path.length() == prefixLength + privateClickMeasurementAttributionTriggerDataPathSegmentSize + 1 + privateClickMeasurementPriorityPathSegmentSize) {
@@ -133,7 +131,7 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
         if (!attributionPriorityUInt64 || *attributionPriorityUInt64 > Priority::MaxEntropy)
             return makeUnexpected(makeString("[Private Click Measurement] Conversion was not accepted because the priority could not be parsed or was higher than the allowed maximum of "_s, Priority::MaxEntropy, "."_s));
 
-        return AttributionTriggerData { static_cast<uint32_t>(*attributionTriggerDataUInt64), Priority { static_cast<uint32_t>(*attributionPriorityUInt64) } };
+        return AttributionTriggerData { static_cast<uint8_t>(*attributionTriggerDataUInt64), Priority { static_cast<uint8_t>(*attributionPriorityUInt64) } };
     }
 
     return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL path contained unrecognized parts."_s);

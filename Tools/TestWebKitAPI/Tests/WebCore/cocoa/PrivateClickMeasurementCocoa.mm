@@ -42,7 +42,14 @@ TEST(PrivateClickMeasurement, ValidBlindedSecret)
     auto ephemeralNonce = PrivateClickMeasurement::EphemeralSourceNonce { "ABCDEFabcdef0123456789"_s };
     EXPECT_TRUE(ephemeralNonce.isValid());
 
-    PrivateClickMeasurement pcm;
+    WebCore::PrivateClickMeasurement pcm(
+        WebCore::PrivateClickMeasurement::SourceID({ }),
+        WebCore::PrivateClickMeasurement::SourceSite(URL()),
+        WebCore::PrivateClickMeasurement::AttributionDestinationSite(URL()),
+        { },
+        WallTime::now(),
+        WebCore::PrivateClickMeasurement::AttributionEphemeral::No
+    );
     pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
 
     // Generate the server key pair.

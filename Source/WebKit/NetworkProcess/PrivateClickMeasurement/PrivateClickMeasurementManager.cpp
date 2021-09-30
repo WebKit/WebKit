@@ -217,7 +217,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
 void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type)
 {
     if (m_isRunningEphemeralMeasurementTest)
-        measurement.setEphemeral(PrivateClickMeasurementAttributionEphemeral::Yes);
+        measurement.setEphemeral(PrivateClickMeasurement::AttributionEphemeral::Yes);
     if (measurement.isEphemeral()) {
         m_ephemeralMeasurement = WTFMove(measurement);
         return;

@@ -2633,10 +2633,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
             WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
             WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
             WebCore::applicationBundleIdentifier(),
-            attribution.sourceDescription,
-            attribution.purchaser
+            WallTime::now(),
+            WebCore::PrivateClickMeasurement::AttributionEphemeral::No
         );
-        _page->setPrivateClickMeasurement(WTFMove(measurement));
+        _page->setPrivateClickMeasurement({{ WTFMove(measurement), attribution.sourceDescription, attribution.purchaser }});
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif
@@ -2646,11 +2646,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
 #if HAVE(UI_EVENT_ATTRIBUTION)
     auto& measurement = _page->privateClickMeasurement();
-    if (!measurement || !measurement->sourceID().isValid())
+    if (!measurement)
         return nil;
 
-    auto destinationURL = URL(URL(), makeString("https://", measurement->destinationSite().registrableDomain.string()));
-    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->sourceID().id destinationURL:destinationURL sourceDescription:measurement->sourceDescription() purchaser:measurement->purchaser()]).autorelease();
+    auto destinationURL = URL(URL(), makeString("https://", measurement->pcm.destinationSite().registrableDomain.string()));
+    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->pcm.sourceID().id destinationURL:destinationURL sourceDescription:measurement->sourceDescription purchaser:measurement->purchaser]).autorelease();
 #else
     return nil;
 #endif
@@ -2671,12 +2671,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
             WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
             WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
             bundleID,
-            attribution.sourceDescription,
-            attribution.purchaser,
             WallTime::now(),
-            WebCore::PrivateClickMeasurementAttributionEphemeral::Yes
+            WebCore::PrivateClickMeasurement::AttributionEphemeral::Yes
         );
-        _page->setPrivateClickMeasurement(WTFMove(measurement));
+        _page->setPrivateClickMeasurement({{ WTFMove(measurement), attribution.sourceDescription, attribution.purchaser }});
     } else
         _page->setPrivateClickMeasurement(std::nullopt);
 #endif

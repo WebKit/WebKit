@@ -62,13 +62,13 @@
         WebCore::PrivateClickMeasurement::SourceSite(reportEndpoint),
         WebCore::PrivateClickMeasurement::AttributionDestinationSite(destination),
         bundleID,
-        sourceDescription,
-        purchaser
+        WallTime::now(),
+        WebCore::PrivateClickMeasurement::AttributionEphemeral::No
     );
     if (nonce)
         measurement.setEphemeralSourceNonce({ nonce });
 
-    _page->setPrivateClickMeasurement(WTFMove(measurement));
+    _page->setPrivateClickMeasurement({{ WTFMove(measurement), { }, { }}});
 }
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin

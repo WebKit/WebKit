@@ -1,3 +1,25 @@
+2021-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up PrivateClickMeasurement
+        https://bugs.webkit.org/show_bug.cgi?id=230978
+
+        Reviewed by Kate Cheney.
+
+        * NetworkProcess/DatabaseUtilities.cpp:
+        (WebKit::DatabaseUtilities::buildPrivateClickMeasurementFromDatabase const):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::insertPrivateClickMeasurement):
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _addEventAttributionWithSourceID:destinationURL:sourceDescription:purchaser:reportEndpoint:optionalNonce:applicationBundleID:]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _setUIEventAttribution:]):
+        (-[WKWebView _uiEventAttribution]):
+        (-[WKWebView _setEphemeralUIEventAttribution:forApplicationWithBundleID:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+
 2021-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Connect UI process a11y tree with the web process when building with ATSPI

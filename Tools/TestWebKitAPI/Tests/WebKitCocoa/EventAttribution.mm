@@ -493,6 +493,8 @@ TEST(EventAttribution, BasicWithIOSSPI)
     runBasicEventAttributionTest(nil, [](WKWebView *webView, const HTTPServer& server) {
         auto attribution = adoptNS([[MockEventAttribution alloc] initWithReportEndpoint:server.request().URL destinationURL:exampleURL()]);
         webView._uiEventAttribution = (UIEventAttribution *)attribution.get();
+        EXPECT_WK_STREQ(webView._uiEventAttribution.sourceDescription, "test source description");
+        EXPECT_WK_STREQ(webView._uiEventAttribution.purchaser, "test purchaser");
     });
 }
 

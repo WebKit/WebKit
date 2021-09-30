@@ -1,3 +1,46 @@
+2021-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up PrivateClickMeasurement
+        https://bugs.webkit.org/show_bug.cgi?id=230978
+
+        Reviewed by Kate Cheney.
+
+        In r270669 I added sourceDescription and purchaser to PrivateClickMeasurement,
+        but they're actually only needed for the UIEventAttribution getter on WKWebView.
+        I moved them to a new struct PrivateClickMeasurementAndMetadata which stores this additional
+        information only on WebPageProxy instead of all the PCM infrastructure.
+
+        I reduced the size of SourceID.id to 1 byte.  Now a SourceID is always valid, so we don't need
+        to check after it has been created.  We still check when creating one from parsing web content,
+        but everywhere else we know that it is valid because of its type.
+
+        I removed the default constructor of PrivateClickMeasurement and default parameter values.
+        There aren't very many places where we construct one except for the tests, and it's good to see
+        what values we are using so we don't forget anything.
+
+        No change in behavior.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parsePrivateClickMeasurement const):
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::PrivateClickMeasurement::isValid const):
+        (WebCore::PrivateClickMeasurement::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::parseAttributionRequest):
+        * loader/PrivateClickMeasurement.h:
+        (WebCore::PrivateClickMeasurement::SourceID::SourceID):
+        (WebCore::PrivateClickMeasurement::Priority::Priority):
+        (WebCore::PrivateClickMeasurement::AttributionTriggerData::AttributionTriggerData):
+        (WebCore::PrivateClickMeasurement::PrivateClickMeasurement):
+        (WebCore::PrivateClickMeasurement::isEphemeral const):
+        (WebCore::PrivateClickMeasurement::setEphemeral):
+        (WebCore::PrivateClickMeasurement::encode const):
+        (WebCore::PrivateClickMeasurement::decode):
+        (WebCore::PrivateClickMeasurement::AttributionTriggerData::decode):
+        (WTF::HashTraits<WebCore::PrivateClickMeasurement::SourceSite>::emptyValue):
+        (WebCore::PrivateClickMeasurement::SourceID::isValid const): Deleted.
+        (WebCore::PrivateClickMeasurement::sourceDescription const): Deleted.
+        (WebCore::PrivateClickMeasurement::purchaser const): Deleted.
+
 2021-09-30  Alan Bujtas  <zalan@apple.com>
 
         (REGRESSION r282150) Missing background-color on inline box while hovering

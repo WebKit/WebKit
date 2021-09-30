@@ -1,3 +1,18 @@
+2021-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up PrivateClickMeasurement
+        https://bugs.webkit.org/show_bug.cgi?id=230978
+
+        Reviewed by Kate Cheney.
+
+        I removed the InvalidSourceID test because it is now impossible to make an invalid source ID
+        because it uses a uint8_t and allows the values 0-255.
+
+        * TestWebKitAPI/Tests/WebCore/PrivateClickMeasurement.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+
 2021-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Terminate PCM daemon before and after unit test that uses it
