@@ -1,3 +1,21 @@
+2021-09-30  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Rebaseline a number of tests. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=230996
+
+        * platform/glib/http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window-expected.txt: Added.
+        * platform/glib/http/tests/security/contentSecurityPolicy/report-only-from-header-expected.txt:
+        * platform/glib/security/block-test-expected.txt:
+        * platform/gtk/fast/encoding/charset-replacement-expected.txt: Copied from LayoutTests/platform/glib/fast/encoding/charset-replacement-expected.txt.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/gtk/inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * platform/wpe/fast/encoding/charset-replacement-expected.txt: Renamed from LayoutTests/platform/glib/fast/encoding/charset-replacement-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2021-09-30  John Wilander  <wilander@apple.com>
 
         PCM: Take app bundle ID into consideration when matching triggering events with pending clicks

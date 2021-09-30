@@ -277,7 +277,6 @@ Total elements to be tested: 122.
     label:
     role: combobox
     controlledNodeIds.length: 1
-    expanded: false
     focused: false
     ownedNodeIds.length: 1
     required: false

@@ -6,4 +6,4 @@ HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-only-f
 REQUEST_METHOD: POST
 REQUEST_URI: /security/contentSecurityPolicy/resources/save-report.py
 === POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-only-from-header.py","referrer":"","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri resources/save-report.py","blocked-uri":"","status-code":200}}
+{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-only-from-header.py","referrer":"","violated-directive":"script-src","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri resources/save-report.py","blocked-uri":"","status-code":200}}

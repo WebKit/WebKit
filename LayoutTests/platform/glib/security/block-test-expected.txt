@@ -76,11 +76,17 @@ http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain g-io-
 http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain g-io-error-quark, code 38, failing URL "http://255.255.255.255/test.jpg">
 ftp://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 101, failing URL "ftp://255.255.255.255/test.jpg">
+CONSOLE MESSAGE: FTP URLs are disabled
+CONSOLE MESSAGE: Cannot load image ftp://255.255.255.255/test.jpg due to access control checks.
+ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain WebKitInternal, code 0, failing URL "ftp://255.255.255.255/test.jpg">
 ftp://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 101, failing URL "ftp://255.255.255.255/test.jpg">
+CONSOLE MESSAGE: FTP URLs are disabled
+CONSOLE MESSAGE: Cannot load image ftp://255.255.255.255/test.jpg due to access control checks.
+ftp://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain WebKitInternal, code 0, failing URL "ftp://255.255.255.255/test.jpg">
 ftp://255.255.255.255:22/test.jpg - willSendRequest <NSURLRequest URL ftp://255.255.255.255:22/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
-ftp://255.255.255.255:22/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 101, failing URL "ftp://255.255.255.255:22/test.jpg">
+CONSOLE MESSAGE: FTP URLs are disabled
+CONSOLE MESSAGE: Cannot load image ftp://255.255.255.255:22/test.jpg due to access control checks.
+ftp://255.255.255.255:22/test.jpg - didFailLoadingWithError: <NSError domain WebKitInternal, code 0, failing URL "ftp://255.255.255.255:22/test.jpg">
 This test attempts to change the src of an IMG tag to all blocked ports to confirm that WebKit returns the correct error for them - blocked instead of cannot find. It also tries the FTP ports for exemptions. Due to the nature of this test, the results can only be processed automatically via DumpRenderTree
 
 
