@@ -33,6 +33,8 @@ import optparse
 import os
 import sys
 
+sys.path.append(os.path.join(os.path.dirname(__file__), 'wkbuiltins'))
+
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.ERROR)
 log = logging.getLogger('global')
 
@@ -178,6 +180,6 @@ if __name__ == '__main__':
         generate_bindings_for_builtins_files(builtins_files=input_filepaths, **options)
     except ParseException as e:
         if arg_options.test:
-            log.error(e.message)
+            log.error(str(e))
         else:
             raise  # Force the build to fail.

@@ -1,3 +1,22 @@
+2021-09-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Python 3 fails to run run-builtins-generator-tests : ModuleNotFoundError: No module named 'builtins_model'
+        https://bugs.webkit.org/show_bug.cgi?id=230870
+
+        Reviewed by Jonathan Bedard.
+
+        BaseException.message has been deprecated as of Python 2.6. Use
+        str(e) instead.
+
+        Implicit relative imports have been deprecated in Python 3.
+        Basically, relative imports should be used. However, the scripts
+        in wkbuiltins directory are flattened when they are copied to
+        WebKitBuild directory. So, relative imports can't be used.
+
+        So, append wkbuiltins directory to sys.path as a workaround.
+
+        * Scripts/generate-js-builtins.py:
+
 2021-09-29  Mark Lam  <mark.lam@apple.com>
 
         DFG strength reduction on % operator should handle an INT_MIN divisor.

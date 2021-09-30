@@ -1,3 +1,23 @@
+2021-09-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Python 3 fails to run run-builtins-generator-tests : ModuleNotFoundError: No module named 'builtins_model'
+        https://bugs.webkit.org/show_bug.cgi?id=230870
+
+        Reviewed by Jonathan Bedard.
+
+        After r282424 (Bug 229879) switched to python3 for running
+        run-builtins-generator-tests on Buildbot, only WinCairo buildbot
+        was failing run-builtins-generator-tests.
+
+        run-builtins-generator-tests was invoking generate-js-builtins.py
+        explictly with 'python'. This is Python 2 on other bots.
+
+        Use sys.executable instead of 'python' to invoke
+        generate-js-builtins.py.
+
+        * Scripts/webkitpy/codegen/main.py:
+        (BuiltinsGeneratorTests.generate_from_js_builtins):
+
 2021-09-30  John Wilander  <wilander@apple.com>
 
         PCM: Take app bundle ID into consideration when matching triggering events with pending clicks
