@@ -1,3 +1,23 @@
+2021-09-30  Rob Buis  <rbuis@igalia.com>
+
+        Move canCompositeClipPath to RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=231014
+
+        Reviewed by Simon Fraser.
+
+        Move canCompositeClipPath to RenderLayer since the
+        code almost exclusively deals with layers. Also
+        remove unneeded ASSERTs.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::adjustStyleDifference const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::willCompositeClipPath const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::canCompositeClipPath): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
 2021-09-30  Devin Rousso  <drousso@apple.com>
 
         [iOS][GPU Process] support `<attachment>`

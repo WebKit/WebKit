@@ -238,6 +238,8 @@ public:
     void setLayerListMutationAllowed(bool flag) { m_layerListMutationAllowed = flag; }
 #endif
 
+    bool willCompositeClipPath() const;
+
 protected:
     void destroy();
 

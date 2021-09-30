@@ -245,8 +245,6 @@ public:
 
     void layerStyleChanged(StyleDifference, RenderLayer&, const RenderStyle* oldStyle);
 
-    static bool canCompositeClipPath(const RenderLayer&);
-
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
     RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
 

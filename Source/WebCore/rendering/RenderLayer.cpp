@@ -682,6 +682,21 @@ void RenderLayer::dirtyStackingContextZOrderLists()
         sc->dirtyZOrderLists();
 }
 
+bool RenderLayer::willCompositeClipPath() const
+{
+    if (!isComposited())
+        return false;
+
+    auto* clipPath = renderer().style().clipPath();
+    if (!clipPath)
+        return false;
+
+    if (renderer().hasMask())
+        return false;
+
+    return (clipPath->type() != ClipPathOperation::Shape || clipPath->type() == ClipPathOperation::Shape) && GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape);
+}
+
 void RenderLayer::dirtyNormalFlowList()
 {
     ASSERT(layerListMutationAllowed());

@@ -306,10 +306,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, Optio
     }
 
     if (contextSensitiveProperties & StyleDifferenceContextSensitiveProperty::ClipPath) {
-        if (hasLayer()
-            && downcast<RenderLayerModelObject>(*this).layer()->isComposited()
-            && hasClipPath()
-            && RenderLayerCompositor::canCompositeClipPath(*downcast<RenderLayerModelObject>(*this).layer()))
+        if (hasLayer() && downcast<RenderLayerModelObject>(*this).layer()->willCompositeClipPath())
             diff = std::max(diff, StyleDifference::RecompositeLayer);
         else
             diff = std::max(diff, StyleDifference::Repaint);

@@ -1760,18 +1760,6 @@ bool RenderLayerCompositor::needsCompositingUpdateForStyleChangeOnNonCompositedL
     return false;
 }
 
-bool RenderLayerCompositor::canCompositeClipPath(const RenderLayer& layer)
-{
-    ASSERT(layer.isComposited());
-    ASSERT(layer.renderer().style().clipPath());
-
-    if (layer.renderer().hasMask())
-        return false;
-
-    auto& clipPath = *layer.renderer().style().clipPath();
-    return (clipPath.type() != ClipPathOperation::Shape || clipPath.type() == ClipPathOperation::Shape) && GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape);
-}
-
 // FIXME: remove and never ask questions about reflection layers.
 static RenderLayerModelObject& rendererForCompositingTests(const RenderLayer& layer)
 {
