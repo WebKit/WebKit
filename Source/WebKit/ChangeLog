@@ -1,3 +1,16 @@
+2021-10-01  Per Arne Vollan <pvollan@apple.com>
+
+        [macOS] Remove obsolete sandbox rule
+        https://bugs.webkit.org/show_bug.cgi?id=231067
+
+        Reviewed by Brent Fulgham.
+
+        Remove sandbox rule that is no longer compiled on macOS.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy USE(LEGACY_CFNETWORK_DOWNLOADS) code paths

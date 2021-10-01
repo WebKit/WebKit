@@ -690,11 +690,7 @@
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
        (global-name "com.apple.audio.audiohald")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(MACCATALYST)
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
-#else
-       (global-name "com.apple.windowserver.active")
-#endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
        (global-name "com.apple.lsd.mapdb")
 #endif
