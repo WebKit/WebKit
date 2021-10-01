@@ -1,3 +1,21 @@
+2021-09-30  Cathie Chen  <cathiechen@igalia.com>
+
+        [Performance] Optimize RenderLayer::clipCrossesPaintingBoundary
+        https://bugs.webkit.org/show_bug.cgi?id=230885
+
+        Reviewed by Simon Fraser.
+
+        In RenderLayer::clipCrossesPaintingBoundary, to check if the layer and its parent layer are in the same
+        compositing layer, it calls enclosingCompositingLayerForRepaint() twice, which need to travel up the layer tree.
+        This patch adds RenderLayer::sharesCompositingLayerForRepaint, to check the repaintTargetForLayer and paintOrderParents.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::repaintTargetForLayer):
+        (WebCore::RenderLayer::enclosingCompositingLayerForRepaint const):
+        (WebCore::RenderLayer::sharesCompositingLayerForRepaint const):
+        (WebCore::RenderLayer::clipCrossesPaintingBoundary const):
+        * rendering/RenderLayer.h:
+
 2021-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify some scrolling-related code in WebKit with use of RectEdges<bool>
