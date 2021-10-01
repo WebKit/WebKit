@@ -9,9 +9,6 @@ make:
 	@xcopy /y /e "..\UserInterface\*" "%ConfigurationBuildDir%\bin%PlatformArchitecture%\WebKit.resources\WebInspectorUI"
 	if errorlevel 1 exit 1
 
-	@xcopy /y /e "%JAVASCRIPTCORE_PRIVATE_HEADERS_DIR%\inspector\InspectorBackendCommands.js" "%ConfigurationBuildDir%\bin%PlatformArchitecture%\WebKit.resources\WebInspectorUI\Protocol"
-	if errorlevel 1 exit 1
-
 	if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"
 
 clean:

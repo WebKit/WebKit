@@ -28,7 +28,8 @@
     <ProgramFilesAAS64>Program Files\Common Files\Apple\Apple Application Support</ProgramFilesAAS64>
     <ConfigurationBuildDir>$(OBJROOT)\$(CONFIG)</ConfigurationBuildDir>  
     <OutputDirectory>$(DSTROOT)</OutputDirectory>
-	<CMakeCommandCommon>cmake $(SRCROOT) -DPORT=AppleWin $(DebugSuffixDefinition) -DINTERNAL_BUILD=1 -DWEBKIT_LIBRARIES_DIR=$(WebKit_Libraries.Replace('\','/')) -DCMAKE_MODULE_PATH=$(SRCROOT.Replace('\','/'))/AppleInternal/tools/cmake -DCMAKE_BINARY_DIR=$(OBJROOT.Replace('\','/'))/$(CONFIG) -DCMAKE_BUILD_TYPE=$(CONFIGURATION) -DJAVASCRIPTCORE_DIR=$(SRCROOT.Replace('\','/'))</CMakeCommandCommon>
+    <SourceSubdirectory>\Source\JavaScriptCore</SourceSubdirectory>
+	<CMakeCommandCommon>cmake $(SRCROOT)$(SourceSubdirectory) -DPORT=AppleWin $(DebugSuffixDefinition) -DINTERNAL_BUILD=1 -DWEBKIT_LIBRARIES_DIR=$(WebKit_Libraries.Replace('\','/')) -DCMAKE_MODULE_PATH=$(SRCROOT.Replace('\','/'))/AppleInternal/tools/cmake -DCMAKE_BINARY_DIR=$(OBJROOT.Replace('\','/'))/$(CONFIG) -DCMAKE_BUILD_TYPE=$(CONFIGURATION) -DJAVASCRIPTCORE_DIR=$(SRCROOT.Replace('\','/'))$(SourceSubdirectory.Replace('\','/'))</CMakeCommandCommon>
   </PropertyGroup>
  
   <!-- Prepare for build -->
@@ -74,7 +75,7 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\JavaScriptCore\inspector\**\*.*">
       <Output TaskParameter="Include" ItemName="InspectorFiles" />
     </CreateItem>
-    <CreateItem Include="$(SRCROOT)\API\*.h">
+    <CreateItem Include="$(SRCROOT)$(SourceSubdirectory)\API\*.h">
       <Output TaskParameter="Include" ItemName="APIFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\*">
