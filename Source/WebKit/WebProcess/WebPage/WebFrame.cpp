@@ -234,6 +234,8 @@ void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
 
 void WebFrame::invalidatePolicyListeners()
 {
+    Ref protectedThis { *this };
+
     m_policyDownloadID = { };
 
     auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
