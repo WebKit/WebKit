@@ -1,3 +1,20 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy USE(LEGACY_CFNETWORK_DOWNLOADS) code paths
+        https://bugs.webkit.org/show_bug.cgi?id=231081
+
+        Reviewed by Alex Christensen.
+
+        Drop legacy USE(LEGACY_CFNETWORK_DOWNLOADS) code paths, as we no longer support Mac OS 14 Mojave.
+
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::resume):
+        (WebKit::Download::platformCancelNetworkLoad):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView resumeDownloadFromResumeData:completionHandler:]):
+
 2021-10-01  Per Arne Vollan  <pvollan@apple.com>
 
         Make sandbox rules for debug syscalls stricter

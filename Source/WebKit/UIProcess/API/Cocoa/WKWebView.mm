@@ -771,13 +771,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (!path)
         [NSException raise:NSInvalidArgumentException format:@"Invalid resume data"];
 
-#if USE(LEGACY_CFNETWORK_DOWNLOADS)
-    // Mojave CFNetwork fails to resume a download if the destination does not exist.
-    // If someone has removed the destination file, make an empty file at that location.
-    if (![[NSFileManager defaultManager] fileExistsAtPath:path])
-        [[NSData data] writeToFile:path atomically:YES];
-#endif
-
     _page->resumeDownload(API::Data::createWithoutCopying(resumeData), path, [completionHandler = makeBlockPtr(completionHandler)] (auto* download) {
         if (download)
             completionHandler(wrapper(download));

@@ -1,3 +1,14 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy USE(LEGACY_CFNETWORK_DOWNLOADS) code paths
+        https://bugs.webkit.org/show_bug.cgi?id=231081
+
+        Reviewed by Alex Christensen.
+
+        Drop legacy USE(LEGACY_CFNETWORK_DOWNLOADS) code paths, as we no longer support Mac OS 14 Mojave.
+
+        * wtf/PlatformUse.h:
+
 2021-09-30  Sihui Liu  <sihui_liu@apple.com>
 
         Make File System Access API available in Worker

@@ -1,3 +1,14 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy USE(LEGACY_CFNETWORK_DOWNLOADS) code paths
+        https://bugs.webkit.org/show_bug.cgi?id=231081
+
+        Reviewed by Alex Christensen.
+
+        Drop legacy USE(LEGACY_CFNETWORK_DOWNLOADS) code paths, as we no longer support Mac OS 14 Mojave.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+
 2021-10-01  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Linkify http urls in pull-requests

@@ -814,20 +814,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             }
         }
 
-#if USE(LEGACY_CFNETWORK_DOWNLOADS)
-        if (resumeData) {
-            // Mojave does not include the download location in the resume data from CFNetwork. Add it from the task.
-            auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:resumeData error:nil]);
-            [unarchiver setDecodingFailurePolicy:NSDecodingFailurePolicyRaiseException];
-            auto dictionary = adoptNS(static_cast<NSMutableDictionary *>([[unarchiver decodeObjectOfClasses:[NSSet setWithObjects:[NSDictionary class], [NSArray class], [NSString class], [NSNumber class], [NSData class], [NSURL class], [NSURLRequest class], nil] forKey:@"NSKeyedArchiveRootObjectKey"] mutableCopy]));
-            [unarchiver finishDecoding];
-            [dictionary setObject:task._pathToDownloadTaskFile forKey:@"NSURLSessionResumeInfoLocalPath"];
-            auto encoder = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
-            [encoder encodeObject:dictionary.get() forKey:@"NSKeyedArchiveRootObjectKey"];
-            resumeData = [encoder encodedData];
-        }
-#endif
-
         auto resumeDataReference = resumeData ? IPC::DataReference { static_cast<const uint8_t*>(resumeData.bytes), resumeData.length } : IPC::DataReference { };
         download->didFail(error, resumeDataReference);
     }
