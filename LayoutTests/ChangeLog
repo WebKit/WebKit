@@ -1,3 +1,18 @@
+2021-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix flaky test: fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html
+        https://bugs.webkit.org/show_bug.cgi?id=231093
+
+        Reviewed by Alan Bujtas.
+
+        This test dumped overlay scrollbar state, but that state is timing-dependent since
+        AppKit changes it via animations. Rather than printing the full state, just
+        print the expanded and enabled states, since those are the states necessary for
+        the test to pass.
+
+        * fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered-expected.txt:
+        * fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html:
+
 2021-10-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         Regression (r282210/r282211): [ macOS wk2 ] css3/filters/blur-various-radii.html is a flaky image failure.
