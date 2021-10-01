@@ -1,3 +1,24 @@
+2021-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove CodeBlock::m_numberOfNonArgumentValueProfiles since we can get the same value from UnlinkedCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=231066
+
+        Reviewed by Robin Morisset.
+
+        Since UnlinkedCodeBlock has UnlinkedValueProfile FixedVector, we can get CodeBlock::m_numberOfNonArgumentValueProfiles
+        from UnlinkedCodeBlock. So CodeBlock does not need to keep it in its member.
+        We also reorder some fields to shrink sizeof(CodeBlock) after this change.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfNonArgumentValueProfiles):
+        (JSC::CodeBlock::totalNumberOfValueProfiles):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::numberOfValueProfiles const):
+        (JSC::UnlinkedCodeBlock::numberOfArrayProfiles const):
+
 2021-10-01  Olivier Blin  <olivier.blin@softathome.com>
 
         [JSC][GLib] Fix typo in WrapperMap creation methods

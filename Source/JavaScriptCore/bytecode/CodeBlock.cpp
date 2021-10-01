@@ -295,9 +295,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_constantRegisters(other.m_constantRegisters)
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
-    , m_osrExitCounter(0)
-    , m_optimizationDelayCounter(0)
-    , m_reoptimizationRetryCounter(0)
     , m_metadata(other.m_metadata)
     , m_creationTime(MonotonicTime::now())
 {
@@ -343,9 +340,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_ownerExecutable(vm, this, ownerExecutable)
     , m_vm(&vm)
     , m_instructionsRawPointer(unlinkedCodeBlock->instructions().rawPointer())
-    , m_osrExitCounter(0)
-    , m_optimizationDelayCounter(0)
-    , m_reoptimizationRetryCounter(0)
     , m_metadata(unlinkedCodeBlock->metadata().link())
     , m_creationTime(MonotonicTime::now())
 {
@@ -437,7 +431,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
     auto link_profile = [&](const auto& /*instruction*/, auto /*bytecode*/, auto& metadata) {
         static_assert(std::is_same_v<ValueProfile, decltype(metadata.m_profile)>);
-        m_numberOfNonArgumentValueProfiles++;
     };
 
     auto link_objectAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
@@ -536,15 +529,11 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         case op_iterator_open: {
             INITIALIZE_METADATA(OpIteratorOpen)
-
-            m_numberOfNonArgumentValueProfiles += 3;
             break;
         }
 
         case op_iterator_next: {
             INITIALIZE_METADATA(OpIteratorNext)
-
-            m_numberOfNonArgumentValueProfiles += 3;
             break;
         }
 

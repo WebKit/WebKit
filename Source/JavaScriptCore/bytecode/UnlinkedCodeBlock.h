@@ -355,6 +355,8 @@ public:
     void allocateSharedProfiles(unsigned numBinaryArithProfiles, unsigned numUnaryArithProfiles);
     UnlinkedValueProfile& unlinkedValueProfile(unsigned index) { return m_valueProfiles[index]; }
     UnlinkedArrayProfile& unlinkedArrayProfile(unsigned index) { return m_arrayProfiles[index]; }
+    unsigned numberOfValueProfiles() const { return m_valueProfiles.size(); }
+    unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
 
 #if ASSERT_ENABLED
     bool hasIdentifier(UniquedStringImpl*);

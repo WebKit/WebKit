@@ -917,8 +917,8 @@ private:
     template<typename Visitor> void stronglyVisitWeakReferences(const ConcurrentJSLocker&, Visitor&);
     template<typename Visitor> void visitOSRExitTargets(const ConcurrentJSLocker&, Visitor&);
 
-    unsigned numberOfNonArgumentValueProfiles() { return m_numberOfNonArgumentValueProfiles; }
-    unsigned totalNumberOfValueProfiles() { return numberOfArgumentValueProfiles() + numberOfNonArgumentValueProfiles(); }
+    unsigned numberOfNonArgumentValueProfiles() { return totalNumberOfValueProfiles() - numberOfArgumentValueProfiles(); }
+    unsigned totalNumberOfValueProfiles() { return m_unlinkedCode->numberOfValueProfiles(); }
     ValueProfile* tryGetValueProfileForBytecodeIndex(BytecodeIndex);
 
     Seconds timeSinceCreation()
@@ -942,7 +942,7 @@ private:
     unsigned m_numVars;
     unsigned m_numParameters;
     unsigned m_numberOfArgumentsToSkip { 0 };
-    unsigned m_numberOfNonArgumentValueProfiles { 0 };
+    uint32_t m_osrExitCounter { 0 };
     union {
         unsigned m_debuggerRequests;
         struct {
@@ -989,10 +989,9 @@ private:
     WriteBarrier<CodeBlock> m_alternative;
 
     BaselineExecutionCounter m_jitExecuteCounter;
-    uint32_t m_osrExitCounter;
 
-    uint16_t m_optimizationDelayCounter;
-    uint16_t m_reoptimizationRetryCounter;
+    uint16_t m_optimizationDelayCounter { 0 };
+    uint16_t m_reoptimizationRetryCounter { 0 };
 
     RefPtr<MetadataTable> m_metadata;
 
