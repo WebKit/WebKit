@@ -1,3 +1,20 @@
+2021-10-01  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add a dedicated function to set the line break box's vertical geometry
+        https://bugs.webkit.org/show_bug.cgi?id=231080
+
+        Reviewed by Antti Koivisto.
+
+        Line break boxes should use the parent inline box's font-metrics when computing vertical geometry.
+        It also makes the code read better as we don't use a function called "setInitialVerticalGeometryForInlineBox()" to set vertical geometry on a non-inline box (line break box).
+
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::computedHeightAndLayoutBounds):
+        (WebCore::Layout::LineBoxBuilder::setVerticalGeometryForLineBreakBox const):
+        (WebCore::Layout::LineBoxBuilder::setInitialVerticalGeometryForInlineBox const):
+        (WebCore::Layout::LineBoxBuilder::constructAndAlignInlineLevelBoxes):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.h:
+
 2021-10-01  Youenn Fablet  <youenn@apple.com>
 
         Add support for PushEvent

@@ -52,6 +52,7 @@ public:
 
 private:
     void setInitialVerticalGeometryForInlineBox(InlineLevelBox&) const;
+    void setVerticalGeometryForLineBreakBox(InlineLevelBox& lineBreakBox, const InlineLevelBox& parentInlineBox) const;
     void adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList&) const;
     InlineLayoutUnit constructAndAlignInlineLevelBoxes(LineBox&, const Line::RunList&, size_t lineIndex);
 
