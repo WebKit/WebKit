@@ -1947,6 +1947,8 @@ webkit.org/b/216126 fast/encoding/charset-replacement.html [ Failure ]
 
 webkit.org/b/216156 http/tests/misc/script-async.html [ Pass Failure ]
 
+webkit.org/b/231097 [ Release ] http/tests/misc/repeat-open-cancel.html [ Pass Timeout ]
+
 webkit.org/b/216159 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure ]
 
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Pass Timeout ]
