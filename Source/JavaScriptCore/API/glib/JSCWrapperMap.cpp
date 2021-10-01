@@ -75,7 +75,7 @@ JSCClass* WrapperMap::registeredClass(JSClassRef jsClass) const
     return m_classMap.get(jsClass);
 }
 
-JSObject* WrapperMap::createJSWrappper(JSGlobalContextRef jsContext, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
+JSObject* WrapperMap::createJSWrapper(JSGlobalContextRef jsContext, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
 {
     ASSERT(toJSGlobalObject(jsContext)->wrapperMap() == this);
     JSGlobalObject* globalObject = toJS(jsContext);
@@ -93,7 +93,7 @@ JSObject* WrapperMap::createJSWrappper(JSGlobalContextRef jsContext, JSClassRef 
     return object;
 }
 
-JSGlobalContextRef WrapperMap::createContextWithJSWrappper(JSContextGroupRef jsGroup, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
+JSGlobalContextRef WrapperMap::createContextWithJSWrapper(JSContextGroupRef jsGroup, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
 {
     Ref<VM> vm(*toJS(jsGroup));
     JSLockHolder locker(vm.ptr());

@@ -235,12 +235,12 @@ JSC::JSObject* jscContextGetOrCreateJSWrapper(JSCContext* context, JSClassRef js
     if (auto* jsWrapper = jscContextGetJSWrapper(context, wrappedObject))
         return jsWrapper;
 
-    return wrapperMap(context).createJSWrappper(context->priv->jsContext.get(), jsClass, prototype, wrappedObject, destroyFunction);
+    return wrapperMap(context).createJSWrapper(context->priv->jsContext.get(), jsClass, prototype, wrappedObject, destroyFunction);
 }
 
 JSGlobalContextRef jscContextCreateContextWithJSWrapper(JSCContext* context, JSClassRef jsClass, JSValueRef prototype, gpointer wrappedObject, GDestroyNotify destroyFunction)
 {
-    return wrapperMap(context).createContextWithJSWrappper(jscVirtualMachineGetContextGroup(context->priv->vm.get()), jsClass, prototype, wrappedObject, destroyFunction);
+    return wrapperMap(context).createContextWithJSWrapper(jscVirtualMachineGetContextGroup(context->priv->vm.get()), jsClass, prototype, wrappedObject, destroyFunction);
 }
 
 gpointer jscContextWrappedObject(JSCContext* context, JSObjectRef jsObject)

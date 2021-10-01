@@ -1,3 +1,20 @@
+2021-10-01  Olivier Blin  <olivier.blin@softathome.com>
+
+        [JSC][GLib] Fix typo in WrapperMap creation methods
+        https://bugs.webkit.org/show_bug.cgi?id=231076
+
+        Reviewed by Michael Catanzaro.
+
+        * API/glib/JSCContext.cpp:
+        (jscContextGetOrCreateJSWrapper):
+        (jscContextCreateContextWithJSWrapper):
+        * API/glib/JSCWrapperMap.cpp:
+        (JSC::WrapperMap::createJSWrapper):
+        (JSC::WrapperMap::createContextWithJSWrapper):
+        (JSC::WrapperMap::createJSWrappper): Deleted.
+        (JSC::WrapperMap::createContextWithJSWrappper): Deleted.
+        * API/glib/JSCWrapperMap.h:
+
 2021-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Upgrade GCC requirement to 8.3.0
