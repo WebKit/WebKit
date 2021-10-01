@@ -455,6 +455,8 @@ enum TestConfidence { "high", "kinda-low" };
     boolean bigUint64(BigUint64Array destination);
     boolean bigInt64AllowShared([AllowShared] BigInt64Array destination);
     boolean bigUint64AllowShared([AllowShared] BigUint64Array destination);
+
+    [SetterCallWith=LegacyActiveWindowForAccessor&FirstWindow] attribute USVString href;
 };
 
 // The following comments should not generate any code.
