@@ -117,7 +117,7 @@ PAS_API void* iso_reallocate_primitive(void* old_ptr,
 
 PAS_API pas_heap* iso_primitive_heap_ref_get_heap(pas_primitive_heap_ref* heap_ref);
 
-PAS_API void* iso_try_allocate_for_objc(const void* cls, size_t size);
+PAS_API void* iso_try_allocate_for_flex(const void* cls, size_t size);
 
 PAS_API bool iso_has_object(void*);
 PAS_API size_t iso_get_allocation_size(void*);

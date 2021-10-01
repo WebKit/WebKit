@@ -55,6 +55,14 @@ PAS_API void* bmalloc_reallocate(void* old_ptr, size_t new_size,
 PAS_API void* bmalloc_try_iso_allocate(pas_heap_ref* heap_ref);
 PAS_API void* bmalloc_iso_allocate(pas_heap_ref* heap_ref);
 
+PAS_API void* bmalloc_try_iso_allocate_array(pas_heap_ref* heap_ref, size_t count);
+PAS_API void* bmalloc_iso_allocate_array(pas_heap_ref* heap_ref, size_t count);
+
+PAS_API void* bmalloc_try_iso_allocate_array_with_alignment(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment);
+PAS_API void* bmalloc_iso_allocate_array_with_alignment(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment);
+
 PAS_API pas_heap* bmalloc_heap_ref_get_heap(pas_heap_ref* heap_ref);
 
 PAS_API void* bmalloc_try_allocate_auxiliary(pas_primitive_heap_ref* heap_ref,

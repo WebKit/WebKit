@@ -41,7 +41,7 @@ pas_heap_config bmalloc_heap_config = BMALLOC_HEAP_CONFIG;
 PAS_BASIC_HEAP_CONFIG_DEFINITIONS(
     bmalloc, BMALLOC,
     .allocate_page_should_zero = false,
-    .intrinsic_primitive_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
+    .intrinsic_view_cache_capacity = pas_heap_runtime_config_aggressive_view_cache_capacity);
 
 void bmalloc_heap_config_activate(void)
 {

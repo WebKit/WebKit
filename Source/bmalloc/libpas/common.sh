@@ -24,7 +24,7 @@
 set -e
 set -x
 
-config=Debug
+config=Release
 sdk=macosx.internal
 archs=blank
 variants=all

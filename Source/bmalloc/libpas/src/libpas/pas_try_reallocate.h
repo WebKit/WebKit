@@ -33,7 +33,7 @@
 #include "pas_reallocate_heap_teleport_rule.h"
 #include "pas_try_allocate.h"
 #include "pas_try_allocate_array.h"
-#include "pas_try_allocate_intrinsic_primitive.h"
+#include "pas_try_allocate_intrinsic.h"
 #include "pas_try_allocate_primitive.h"
 
 PAS_BEGIN_EXTERN_C;
@@ -367,40 +367,40 @@ pas_try_reallocate(void* old_ptr,
 }
 
 typedef struct {
-    pas_try_allocate_intrinsic_primitive_for_realloc try_allocate_intrinsic_primitive;
-} pas_try_reallocate_intrinsic_primitive_allocate_data;
+    pas_try_allocate_intrinsic_for_realloc try_allocate_intrinsic;
+} pas_try_reallocate_intrinsic_allocate_data;
 
 static PAS_ALWAYS_INLINE pas_typed_allocation_result
-pas_try_reallocate_intrinsic_primitive_allocate_callback(
+pas_try_reallocate_intrinsic_allocate_callback(
     pas_heap* heap,
     size_t new_count,
     void* arg)
 {
-    pas_try_reallocate_intrinsic_primitive_allocate_data* data;
+    pas_try_reallocate_intrinsic_allocate_data* data;
 
     PAS_UNUSED_PARAM(heap);
     
-    data = (pas_try_reallocate_intrinsic_primitive_allocate_data*)arg;
+    data = (pas_try_reallocate_intrinsic_allocate_data*)arg;
     
     return pas_typed_allocation_result_create_with_intrinsic_allocation_result(
-        data->try_allocate_intrinsic_primitive(new_count),
+        data->try_allocate_intrinsic(new_count),
         NULL,
         new_count);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
-pas_try_reallocate_intrinsic_primitive(
+pas_try_reallocate_intrinsic(
     void* old_ptr,
     pas_heap* heap,
     size_t new_size,
     pas_heap_config config,
-    pas_try_allocate_intrinsic_primitive_for_realloc try_allocate_intrinsic_primitive,
+    pas_try_allocate_intrinsic_for_realloc try_allocate_intrinsic,
     pas_reallocate_heap_teleport_rule teleport_rule,
     pas_reallocate_free_mode free_mode)
 {
-    pas_try_reallocate_intrinsic_primitive_allocate_data data;
+    pas_try_reallocate_intrinsic_allocate_data data;
     
-    data.try_allocate_intrinsic_primitive = try_allocate_intrinsic_primitive;
+    data.try_allocate_intrinsic = try_allocate_intrinsic;
     
     return pas_typed_allocation_result_as_intrinsic_allocation_result(
         pas_try_reallocate(
@@ -410,7 +410,7 @@ pas_try_reallocate_intrinsic_primitive(
             config,
             teleport_rule,
             free_mode,
-            pas_try_reallocate_intrinsic_primitive_allocate_callback,
+            pas_try_reallocate_intrinsic_allocate_callback,
             &data));
 }
 

@@ -350,10 +350,10 @@ typedef struct {
     PAS_API extern pas_page_header_table name ## _medium_page_header_table; \
     PAS_API extern pas_page_header_table name ## _marge_page_header_table; \
     PAS_API extern pas_basic_heap_page_caches name ## _page_caches; \
-    PAS_API extern pas_basic_heap_runtime_config name ## _intrinsic_primitive_runtime_config; \
+    PAS_API extern pas_basic_heap_runtime_config name ## _intrinsic_runtime_config; \
     PAS_API extern pas_basic_heap_runtime_config name ## _primitive_runtime_config; \
     PAS_API extern pas_basic_heap_runtime_config name ## _typed_runtime_config; \
-    PAS_API extern pas_basic_heap_runtime_config name ## _objc_runtime_config; \
+    PAS_API extern pas_basic_heap_runtime_config name ## _flex_runtime_config; \
     \
     PAS_API extern pas_basic_heap_config_root_data name ## _root_data; \
     \

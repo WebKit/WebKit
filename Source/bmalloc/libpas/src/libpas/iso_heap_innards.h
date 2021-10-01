@@ -41,7 +41,7 @@ PAS_API extern pas_intrinsic_heap_support iso_common_primitive_heap_support;
 PAS_API extern pas_allocator_counts iso_allocator_counts;
 
 PAS_API extern pas_dynamic_primitive_heap_map iso_primitive_dynamic_heap_map;
-PAS_API extern pas_dynamic_primitive_heap_map iso_objc_dynamic_heap_map;
+PAS_API extern pas_dynamic_primitive_heap_map iso_flex_dynamic_heap_map;
 
 PAS_END_EXTERN_C;
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PAS_TRY_ALLOCATE_INTRINSIC_PRIMITIVE_H
-#define PAS_TRY_ALLOCATE_INTRINSIC_PRIMITIVE_H
+#ifndef PAS_TRY_ALLOCATE_INTRINSIC_H
+#define PAS_TRY_ALLOCATE_INTRINSIC_H
 
 #include "pas_designated_intrinsic_heap_inlines.h"
 #include "pas_heap.h"
@@ -32,6 +32,20 @@
 #include "pas_try_allocate_common.h"
 
 PAS_BEGIN_EXTERN_C;
+
+/* This is for global, singleton, process-wide heaps -- so the "not isoheaped" heap, the thing
+   you get from regular malloc.
+
+   It is possible for a heap_config to have multiple intrinsic heaps, but generally speaking, a
+   heap_config will have a fixed number of intrinsic heaps and they will all be known to libpas
+   ahead of time.
+
+   It is possible for libpas to be configured with multiple heap_configs, so we may also have
+   multiple intrinsic heaps that way (each heap_config may have one intrinsic).
+
+   It is also possible for a heap_config to have no intrinsics. From a functionality standpoint,
+   primitive heaps can do everything that intrinsic heaps do, though primitives are optimized for
+   the possibility that clients of libpas will create any number of them. */
 
 #define PAS_INTRINSIC_SEGREGATED_HEAP_INITIALIZER(parent_heap_ptr, support, passed_runtime_config) { \
         .runtime_config = (passed_runtime_config), \
@@ -42,13 +56,13 @@ PAS_BEGIN_EXTERN_C;
         .rare_data = PAS_COMPACT_ATOMIC_PTR_INITIALIZER, \
     }
 
-#define PAS_INTRINSIC_PRIMITIVE_HEAP_SEGREGATED_HEAP_FIELDS(heap_ptr, intrinsic_support, runtime_config) \
+#define PAS_INTRINSIC_HEAP_SEGREGATED_HEAP_FIELDS(heap_ptr, intrinsic_support, runtime_config) \
         .segregated_heap = PAS_INTRINSIC_SEGREGATED_HEAP_INITIALIZER( \
             heap_ptr, intrinsic_support, runtime_config), \
 
-#define PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(heap_ptr, primitive_type, intrinsic_support, passed_config, runtime_config) { \
+#define PAS_INTRINSIC_HEAP_INITIALIZER(heap_ptr, primitive_type, intrinsic_support, passed_config, runtime_config) { \
         .type = (pas_heap_type*)(primitive_type), \
-        PAS_INTRINSIC_PRIMITIVE_HEAP_SEGREGATED_HEAP_FIELDS(heap_ptr, intrinsic_support, runtime_config) \
+        PAS_INTRINSIC_HEAP_SEGREGATED_HEAP_FIELDS(heap_ptr, intrinsic_support, runtime_config) \
         .large_heap = { \
             .free_heap = PAS_FAST_LARGE_FREE_HEAP_INITIALIZER, \
             .table_state = pas_heap_table_state_uninitialized, \
@@ -60,7 +74,7 @@ PAS_BEGIN_EXTERN_C;
     }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
-pas_try_allocate_intrinsic_primitive_impl_medium_slow_case(
+pas_try_allocate_intrinsic_impl_medium_slow_case(
     pas_heap* heap,
     size_t size,
     size_t alignment,
@@ -173,7 +187,7 @@ pas_try_allocate_intrinsic_primitive_impl_medium_slow_case(
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
-pas_try_allocate_intrinsic_primitive_impl_inline_only(
+pas_try_allocate_intrinsic_impl_inline_only(
     size_t size,
     size_t alignment,
     pas_intrinsic_heap_support* intrinsic_support,
@@ -263,7 +277,7 @@ pas_try_allocate_intrinsic_primitive_impl_inline_only(
     return try_allocate_common_fast_inline_only(allocator);
 }
 
-#define PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(name, heap_config, runtime_config, allocator_counts, result_filter, heap, heap_support, designation_mode) \
+#define PAS_CREATE_TRY_ALLOCATE_INTRINSIC(name, heap_config, runtime_config, allocator_counts, result_filter, heap, heap_support, designation_mode) \
     PAS_CREATE_TRY_ALLOCATE_COMMON( \
         name ## _impl, \
         pas_fake_heap_ref_kind, \
@@ -276,14 +290,14 @@ pas_try_allocate_intrinsic_primitive_impl_inline_only(
     static PAS_NEVER_INLINE pas_allocation_result \
     name ## _medium_slow_case(size_t size, size_t alignment) \
     { \
-        return pas_try_allocate_intrinsic_primitive_impl_medium_slow_case( \
+        return pas_try_allocate_intrinsic_impl_medium_slow_case( \
             (heap), size, alignment, (heap_support), (heap_config), \
             name ## _impl_fast, name ## _impl_slow, (designation_mode)); \
     } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _inline_only(size_t size, size_t alignment) \
     { \
-        return pas_try_allocate_intrinsic_primitive_impl_inline_only( \
+        return pas_try_allocate_intrinsic_impl_inline_only( \
             size, alignment, (heap_support), (heap_config), \
             name ## _impl_fast_inline_only, (designation_mode)); \
     } \
@@ -313,12 +327,12 @@ pas_try_allocate_intrinsic_primitive_impl_inline_only(
     \
     struct pas_dummy
 
-typedef pas_allocation_result (*pas_try_allocate_intrinsic_primitive)(size_t size,
+typedef pas_allocation_result (*pas_try_allocate_intrinsic)(size_t size,
                                                                       size_t alignment);
 
-typedef pas_allocation_result (*pas_try_allocate_intrinsic_primitive_for_realloc)(size_t size);
+typedef pas_allocation_result (*pas_try_allocate_intrinsic_for_realloc)(size_t size);
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_TRY_ALLOCATE_INTRINSIC_PRIMITIVE_H */
+#endif /* PAS_TRY_ALLOCATE_INTRINSIC_H */
 

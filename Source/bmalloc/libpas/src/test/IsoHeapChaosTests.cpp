@@ -1063,7 +1063,7 @@ void addIsoHeapChaosTests()
                 selectedHeapConfig = &bmalloc_heap_config;
                 selectedAllocateCommonPrimitive = bmalloc_allocate;
                 selectedAllocate = bmalloc_iso_allocate;
-                selectedAllocateArray = nullptr;
+                selectedAllocateArray = bmalloc_iso_allocate_array_with_alignment;
                 selectedDeallocate = bmalloc_deallocate;
                 selectedCommonPrimitiveHeap = &bmalloc_common_primitive_heap;
                 selectedHeapRefGetHeap = bmalloc_heap_ref_get_heap;

@@ -39,12 +39,12 @@ pas_intrinsic_heap_support bmalloc_common_primitive_heap_support =
     PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER;
 
 pas_heap bmalloc_common_primitive_heap =
-    PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(
+    PAS_INTRINSIC_HEAP_INITIALIZER(
         &bmalloc_common_primitive_heap,
         PAS_SIMPLE_TYPE_CREATE(1, 1),
         bmalloc_common_primitive_heap_support,
         BMALLOC_HEAP_CONFIG,
-        &bmalloc_intrinsic_primitive_runtime_config.base);
+        &bmalloc_intrinsic_runtime_config.base);
 
 pas_allocator_counts bmalloc_allocator_counts;
 
@@ -103,6 +103,28 @@ void* bmalloc_try_iso_allocate(pas_heap_ref* heap_ref)
 void* bmalloc_iso_allocate(pas_heap_ref* heap_ref)
 {
     return bmalloc_iso_allocate_inline(heap_ref);
+}
+
+void* bmalloc_try_iso_allocate_array(pas_heap_ref* heap_ref, size_t count)
+{
+    return bmalloc_try_iso_allocate_array_inline(heap_ref, count);
+}
+
+void* bmalloc_iso_allocate_array(pas_heap_ref* heap_ref, size_t count)
+{
+    return bmalloc_iso_allocate_array_inline(heap_ref, count);
+}
+
+void* bmalloc_try_iso_allocate_array_with_alignment(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment)
+{
+    return bmalloc_try_iso_allocate_array_with_alignment_inline(heap_ref, count, alignment);
+}
+
+void* bmalloc_iso_allocate_array_with_alignment(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment)
+{
+    return bmalloc_iso_allocate_array_with_alignment_inline(heap_ref, count, alignment);
 }
 
 pas_heap* bmalloc_heap_ref_get_heap(pas_heap_ref* heap_ref)

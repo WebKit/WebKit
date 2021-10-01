@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,24 @@
 #include "pas_primitive_heap_ref.h"
 
 PAS_BEGIN_EXTERN_C;
+
+/* This header provides entrypoints for both primitive and flex heaps. You select the mode by passing
+   either the primitive heap_runtuime_config or the flex heap_runtime_config.
+   
+   Primitive heaps are for objects that should be kept separate from the main heap but that otherwise
+   don't have any interesting type. So, they are like intrinsic heaps, but the tuning has to be such
+   that we are efficient for lots of small heaps. But, there's no restriction on whether the data in
+   the heap is reused in any particular way -- we run this with a type size of 1.
+
+   These have all the functionality of intrinsic heaps but are tuned to allow for there to be a
+   variable number of heaps. While libpas knows about every intrinsic heap that a heap_config may
+   have, libpas allows primitive heaps to be created by libpas clients.
+
+   Flex heaps are for flexible array members. Currently we tune them almost exactly like primitive
+   heaps except that bitfit is disabled for flex.
+
+   FIXME: Flex heaps should provide stronger isolation in the large heap. That can be achieved while
+   still keeping these entrypoints. It's just a different large heap reuse policy. */
 
 static PAS_ALWAYS_INLINE pas_allocation_result
 pas_try_allocate_primitive_impl(pas_primitive_heap_ref* heap_ref,

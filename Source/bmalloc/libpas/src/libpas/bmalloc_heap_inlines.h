@@ -31,7 +31,8 @@
 #include "bmalloc_heap_innards.h"
 #include "pas_deallocate.h"
 #include "pas_try_allocate.h"
-#include "pas_try_allocate_intrinsic_primitive.h"
+#include "pas_try_allocate_array.h"
+#include "pas_try_allocate_intrinsic.h"
 #include "pas_try_allocate_primitive.h"
 #include "pas_try_reallocate.h"
 
@@ -39,10 +40,10 @@
 
 PAS_BEGIN_EXTERN_C;
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     bmalloc_try_allocate_impl,
     BMALLOC_HEAP_CONFIG,
-    &bmalloc_intrinsic_primitive_runtime_config.base,
+    &bmalloc_intrinsic_runtime_config.base,
     &bmalloc_allocator_counts,
     pas_allocation_result_identity,
     &bmalloc_common_primitive_heap,
@@ -51,30 +52,30 @@ PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
 
 /* Need to create a different set of allocation functions if we want to pass nontrivial alignment,
    since in that case we do not want to use the fancy lookup path. */
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     bmalloc_try_allocate_with_alignment_impl,
     BMALLOC_HEAP_CONFIG,
-    &bmalloc_intrinsic_primitive_runtime_config.base,
+    &bmalloc_intrinsic_runtime_config.base,
     &bmalloc_allocator_counts,
     pas_allocation_result_identity,
     &bmalloc_common_primitive_heap,
     &bmalloc_common_primitive_heap_support,
     pas_intrinsic_heap_is_not_designated);
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     bmalloc_allocate_impl,
     BMALLOC_HEAP_CONFIG,
-    &bmalloc_intrinsic_primitive_runtime_config.base,
+    &bmalloc_intrinsic_runtime_config.base,
     &bmalloc_allocator_counts,
     pas_allocation_result_crash_on_error,
     &bmalloc_common_primitive_heap,
     &bmalloc_common_primitive_heap_support,
     pas_intrinsic_heap_is_designated);
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     bmalloc_allocate_with_alignment_impl,
     BMALLOC_HEAP_CONFIG,
-    &bmalloc_intrinsic_primitive_runtime_config.base,
+    &bmalloc_intrinsic_runtime_config.base,
     &bmalloc_allocator_counts,
     pas_allocation_result_crash_on_error,
     &bmalloc_common_primitive_heap,
@@ -127,7 +128,7 @@ static PAS_ALWAYS_INLINE void*
 bmalloc_try_reallocate_inline(void* old_ptr, size_t new_size,
                               pas_reallocate_free_mode free_mode)
 {
-    return (void*)pas_try_reallocate_intrinsic_primitive(
+    return (void*)pas_try_reallocate_intrinsic(
         old_ptr,
         &bmalloc_common_primitive_heap,
         new_size,
@@ -141,7 +142,7 @@ static PAS_ALWAYS_INLINE void*
 bmalloc_reallocate_inline(void* old_ptr, size_t new_size,
                           pas_reallocate_free_mode free_mode)
 {
-    return (void*)pas_try_reallocate_intrinsic_primitive(
+    return (void*)pas_try_reallocate_intrinsic(
         old_ptr,
         &bmalloc_common_primitive_heap,
         new_size,
@@ -173,6 +174,44 @@ PAS_CREATE_TRY_ALLOCATE(
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_inline(pas_heap_ref* heap_ref)
 {
     return bmalloc_iso_allocate_impl(heap_ref).ptr;
+}
+
+PAS_CREATE_TRY_ALLOCATE_ARRAY(
+    bmalloc_try_iso_allocate_array_impl,
+    BMALLOC_HEAP_CONFIG,
+    &bmalloc_typed_runtime_config.base,
+    &bmalloc_allocator_counts,
+    pas_allocation_result_identity);
+
+static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_array_inline(
+    pas_heap_ref* heap_ref, size_t count)
+{
+    return bmalloc_try_iso_allocate_array_impl(heap_ref, count, 1).ptr;
+}
+
+static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_array_with_alignment_inline(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment)
+{
+    return bmalloc_try_iso_allocate_array_impl(heap_ref, count, alignment).ptr;
+}
+
+PAS_CREATE_TRY_ALLOCATE_ARRAY(
+    bmalloc_iso_allocate_array_impl,
+    BMALLOC_HEAP_CONFIG,
+    &bmalloc_typed_runtime_config.base,
+    &bmalloc_allocator_counts,
+    pas_allocation_result_crash_on_error);
+
+static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_array_inline(
+    pas_heap_ref* heap_ref, size_t count)
+{
+    return bmalloc_iso_allocate_array_impl(heap_ref, count, 1).ptr;
+}
+
+static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_array_with_alignment_inline(
+    pas_heap_ref* heap_ref, size_t count, size_t alignment)
+{
+    return bmalloc_iso_allocate_array_impl(heap_ref, count, alignment).ptr;
 }
 
 PAS_CREATE_TRY_ALLOCATE_PRIMITIVE(

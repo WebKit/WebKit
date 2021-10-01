@@ -75,6 +75,7 @@
 		0F5FE7F125B6210D001859FC /* pas_compact_biasing_directory_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5FE7DC25B6210D001859FC /* pas_compact_biasing_directory_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F74B93E1F89713E00B935D3 /* CryptoRandom.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F74B93C1F89713E00B935D3 /* CryptoRandom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F74B93F1F89713E00B935D3 /* CryptoRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F74B93D1F89713E00B935D3 /* CryptoRandom.cpp */; };
+		0F752D9227066FCB00ADF74D /* pas_try_allocate_intrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F752D9127066FCB00ADF74D /* pas_try_allocate_intrinsic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F75498224869740002A4C7D /* pas_allocator_index.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7549802486973C002A4C7D /* pas_allocator_index.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F75498324869742002A4C7D /* pas_compact_atomic_allocator_index_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7549812486973C002A4C7D /* pas_compact_atomic_allocator_index_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F7C92E226E57F75006AF012 /* pas_page_sharing_pool_scavenge_result.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7C92D226E57F74006AF012 /* pas_page_sharing_pool_scavenge_result.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -461,7 +462,6 @@
 		0FC40B602451499400876DA0 /* pas_random.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A842451498C00876DA0 /* pas_random.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC40B612451499400876DA0 /* pas_segregated_view_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A852451498C00876DA0 /* pas_segregated_view_kind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC40B622451499400876DA0 /* pas_reallocate_heap_teleport_rule.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A862451498C00876DA0 /* pas_reallocate_heap_teleport_rule.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FC40B632451499400876DA0 /* pas_try_allocate_intrinsic_primitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A872451498C00876DA0 /* pas_try_allocate_intrinsic_primitive.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC40B642451499400876DA0 /* pas_segregated_shared_view_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC40A882451498C00876DA0 /* pas_segregated_shared_view_inlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FC40B652451499400876DA0 /* pas_page_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40A892451498C00876DA0 /* pas_page_malloc.c */; };
 		0FC40B662451499400876DA0 /* pas_reserved_memory_provider.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40A8A2451498C00876DA0 /* pas_reserved_memory_provider.c */; };
@@ -722,6 +722,7 @@
 		0F5FE7DC25B6210D001859FC /* pas_compact_biasing_directory_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_biasing_directory_ptr.h; path = libpas/src/libpas/pas_compact_biasing_directory_ptr.h; sourceTree = "<group>"; };
 		0F74B93C1F89713E00B935D3 /* CryptoRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CryptoRandom.h; path = bmalloc/CryptoRandom.h; sourceTree = "<group>"; };
 		0F74B93D1F89713E00B935D3 /* CryptoRandom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoRandom.cpp; path = bmalloc/CryptoRandom.cpp; sourceTree = "<group>"; };
+		0F752D9127066FCB00ADF74D /* pas_try_allocate_intrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_try_allocate_intrinsic.h; path = libpas/src/libpas/pas_try_allocate_intrinsic.h; sourceTree = "<group>"; };
 		0F7549802486973C002A4C7D /* pas_allocator_index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_allocator_index.h; path = libpas/src/libpas/pas_allocator_index.h; sourceTree = "<group>"; };
 		0F7549812486973C002A4C7D /* pas_compact_atomic_allocator_index_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_compact_atomic_allocator_index_ptr.h; path = libpas/src/libpas/pas_compact_atomic_allocator_index_ptr.h; sourceTree = "<group>"; };
 		0F7C92D226E57F74006AF012 /* pas_page_sharing_pool_scavenge_result.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_page_sharing_pool_scavenge_result.h; path = libpas/src/libpas/pas_page_sharing_pool_scavenge_result.h; sourceTree = "<group>"; };
@@ -1112,7 +1113,6 @@
 		0FC40A842451498C00876DA0 /* pas_random.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_random.h; path = libpas/src/libpas/pas_random.h; sourceTree = "<group>"; };
 		0FC40A852451498C00876DA0 /* pas_segregated_view_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_segregated_view_kind.h; path = libpas/src/libpas/pas_segregated_view_kind.h; sourceTree = "<group>"; };
 		0FC40A862451498C00876DA0 /* pas_reallocate_heap_teleport_rule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_reallocate_heap_teleport_rule.h; path = libpas/src/libpas/pas_reallocate_heap_teleport_rule.h; sourceTree = "<group>"; };
-		0FC40A872451498C00876DA0 /* pas_try_allocate_intrinsic_primitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_try_allocate_intrinsic_primitive.h; path = libpas/src/libpas/pas_try_allocate_intrinsic_primitive.h; sourceTree = "<group>"; };
 		0FC40A882451498C00876DA0 /* pas_segregated_shared_view_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_segregated_shared_view_inlines.h; path = libpas/src/libpas/pas_segregated_shared_view_inlines.h; sourceTree = "<group>"; };
 		0FC40A892451498C00876DA0 /* pas_page_malloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_page_malloc.c; path = libpas/src/libpas/pas_page_malloc.c; sourceTree = "<group>"; };
 		0FC40A8A2451498C00876DA0 /* pas_reserved_memory_provider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_reserved_memory_provider.c; path = libpas/src/libpas/pas_reserved_memory_provider.c; sourceTree = "<group>"; };
@@ -1864,7 +1864,7 @@
 				0F8A801C25CF938A00790B4A /* pas_tri_state.h */,
 				0FC40A522451498800876DA0 /* pas_try_allocate_array.h */,
 				0FC40A392451498600876DA0 /* pas_try_allocate_common.h */,
-				0FC40A872451498C00876DA0 /* pas_try_allocate_intrinsic_primitive.h */,
+				0F752D9127066FCB00ADF74D /* pas_try_allocate_intrinsic.h */,
 				0FC40A2B2451498500876DA0 /* pas_try_allocate_primitive.h */,
 				0FC40A652451498900876DA0 /* pas_try_allocate.h */,
 				0FC40A302451498600876DA0 /* pas_try_reallocate.h */,
@@ -2109,6 +2109,7 @@
 				0F7EB8251F9541B000F1ABCB /* DeferredTriggerInlines.h in Headers */,
 				0F7EB8231F9541B000F1ABCB /* EligibilityResult.h in Headers */,
 				0F7EB8381F9541B000F1ABCB /* EligibilityResultInlines.h in Headers */,
+				0F752D9227066FCB00ADF74D /* pas_try_allocate_intrinsic.h in Headers */,
 				14895D921A3A319C0006235D /* Environment.h in Headers */,
 				FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */,
 				14DD78C818F48D7500950702 /* FixedVector.h in Headers */,
@@ -2497,7 +2498,6 @@
 				0FC40B422451499400876DA0 /* pas_try_allocate.h in Headers */,
 				0FC40B302451499400876DA0 /* pas_try_allocate_array.h in Headers */,
 				0FC40B182451499400876DA0 /* pas_try_allocate_common.h in Headers */,
-				0FC40B632451499400876DA0 /* pas_try_allocate_intrinsic_primitive.h in Headers */,
 				0FC40B0A2451499400876DA0 /* pas_try_allocate_primitive.h in Headers */,
 				0FC40B0F2451499400876DA0 /* pas_try_reallocate.h in Headers */,
 				0F5193F5266C42BF00483A2C /* pas_try_shrink.h in Headers */,

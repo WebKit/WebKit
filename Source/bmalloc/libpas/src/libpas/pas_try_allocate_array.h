@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,19 @@
 #include "pas_typed_allocation_result.h"
 
 PAS_BEGIN_EXTERN_C;
+
+/* This is for heaps that hold typed objects. These objects have a certain size. We may allocate
+   arrays of these objects. The type may tell us an alignment requirement in addition to a size.
+   The alignment requirement is taken together with the minalign argument (the allocator uses
+   whichever is bigger), but it's a bit more optimal to convey alignment using the alignment part
+   of the type than by passing it to minalign.
+
+   The entrypoints in this file are for the most general case of allocating in the typed heap. You
+   can pass any count that is >= 1 and any alignment that is >= 1. Note that these entrypoints have
+   optimizations for alignment == 1 and you get the most benefit from those optimizations if you
+   really pass the constant "1" for alignment (this causes the special memalign logic to be statically
+   killed off by the compiler). If you know that count == 1 and alignment == 1, then you're better off
+   using the pas_try_allocate.h entrypoints. */
 
 static PAS_ALWAYS_INLINE pas_typed_allocation_result
 pas_try_allocate_array_impl(pas_heap_ref* heap_ref,

@@ -48,7 +48,7 @@ PAS_API void* pas_heap_config_utils_prepare_to_enumerate(pas_enumerator* enumera
 
 typedef struct {
     bool allocate_page_should_zero;
-    pas_heap_runtime_config_view_cache_capacity_for_object_size_callback intrinsic_primitive_view_cache_capacity;
+    pas_heap_runtime_config_view_cache_capacity_for_object_size_callback intrinsic_view_cache_capacity;
 } pas_basic_heap_config_definitions_arguments;
 
 #define PAS_BASIC_HEAP_CONFIG_DEFINITIONS(name, upcase_name, ...) \
@@ -56,24 +56,24 @@ typedef struct {
         PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(PAS_SMALL_SHARED_PAGE_LOG_SHIFT, \
                                                PAS_MEDIUM_SHARED_PAGE_LOG_SHIFT); \
     \
-    pas_basic_heap_runtime_config name ## _intrinsic_primitive_runtime_config = { \
+    pas_basic_heap_runtime_config name ## _intrinsic_runtime_config = { \
         .base = { \
             .lookup_kind = pas_segregated_heap_lookup_primitive, \
             .sharing_mode = pas_share_pages, \
             .statically_allocated = true, \
             .is_part_of_heap = true, \
             .directory_size_bound_for_partial_views = \
-                PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_PARTIAL_VIEWS, \
+                PAS_INTRINSIC_BOUND_FOR_PARTIAL_VIEWS, \
             .directory_size_bound_for_baseline_allocators = \
-                PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_BASELINE_ALLOCATORS, \
+                PAS_INTRINSIC_BOUND_FOR_BASELINE_ALLOCATORS, \
             .directory_size_bound_for_no_view_cache = \
-                PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_NO_VIEW_CACHE, \
+                PAS_INTRINSIC_BOUND_FOR_NO_VIEW_CACHE, \
             .max_segregated_object_size = \
-                PAS_INTRINSIC_PRIMITIVE_MAX_SEGREGATED_OBJECT_SIZE, \
+                PAS_INTRINSIC_MAX_SEGREGATED_OBJECT_SIZE, \
             .max_bitfit_object_size = \
-                PAS_INTRINSIC_PRIMITIVE_MAX_BITFIT_OBJECT_SIZE, \
+                PAS_INTRINSIC_MAX_BITFIT_OBJECT_SIZE, \
             .view_cache_capacity_for_object_size = \
-                ((pas_basic_heap_config_definitions_arguments){__VA_ARGS__}).intrinsic_primitive_view_cache_capacity, \
+                ((pas_basic_heap_config_definitions_arguments){__VA_ARGS__}).intrinsic_view_cache_capacity, \
         }, \
         .page_caches = &name ## _page_caches \
     }; \
@@ -120,22 +120,22 @@ typedef struct {
         .page_caches = &name ## _page_caches \
     }; \
     \
-    pas_basic_heap_runtime_config name ## _objc_runtime_config = { \
+    pas_basic_heap_runtime_config name ## _flex_runtime_config = { \
         .base = { \
             .lookup_kind = pas_segregated_heap_lookup_primitive, \
             .sharing_mode = pas_share_pages, \
             .statically_allocated = false, \
             .is_part_of_heap = true, \
             .directory_size_bound_for_partial_views = \
-                PAS_OBJC_BOUND_FOR_PARTIAL_VIEWS, \
+                PAS_FLEX_BOUND_FOR_PARTIAL_VIEWS, \
             .directory_size_bound_for_baseline_allocators = \
-                PAS_OBJC_BOUND_FOR_BASELINE_ALLOCATORS, \
+                PAS_FLEX_BOUND_FOR_BASELINE_ALLOCATORS, \
             .directory_size_bound_for_no_view_cache = \
-                PAS_OBJC_BOUND_FOR_NO_VIEW_CACHE, \
+                PAS_FLEX_BOUND_FOR_NO_VIEW_CACHE, \
             .max_segregated_object_size = \
-                PAS_OBJC_MAX_SEGREGATED_OBJECT_SIZE, \
+                PAS_FLEX_MAX_SEGREGATED_OBJECT_SIZE, \
             .max_bitfit_object_size = \
-                PAS_OBJC_MAX_BITFIT_OBJECT_SIZE, \
+                PAS_FLEX_MAX_BITFIT_OBJECT_SIZE, \
             .view_cache_capacity_for_object_size = pas_heap_runtime_config_zero_view_cache_capacity, \
         }, \
         .page_caches = &name ## _page_caches \

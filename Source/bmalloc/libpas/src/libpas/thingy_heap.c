@@ -35,7 +35,7 @@
 #include "pas_get_allocation_size.h"
 #include "pas_try_allocate.h"
 #include "pas_try_allocate_array.h"
-#include "pas_try_allocate_intrinsic_primitive.h"
+#include "pas_try_allocate_intrinsic.h"
 #include "pas_try_reallocate.h"
 #include "thingy_heap_config.h"
 
@@ -44,29 +44,29 @@
 pas_intrinsic_heap_support thingy_primitive_heap_support = PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER;
 
 pas_heap thingy_primitive_heap =
-    PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(
+    PAS_INTRINSIC_HEAP_INITIALIZER(
         &thingy_primitive_heap,
         THINGY_TYPE_PRIMITIVE,
         thingy_primitive_heap_support,
         THINGY_HEAP_CONFIG,
-        &thingy_intrinsic_primitive_runtime_config.base);
+        &thingy_intrinsic_runtime_config.base);
 
 pas_intrinsic_heap_support thingy_utility_heap_support = PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER;
 
 pas_heap thingy_utility_heap =
-    PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(
+    PAS_INTRINSIC_HEAP_INITIALIZER(
         &thingy_utility_heap,
         THINGY_TYPE_PRIMITIVE,
         thingy_utility_heap_support,
         THINGY_HEAP_CONFIG,
-        &thingy_intrinsic_primitive_runtime_config.base);
+        &thingy_intrinsic_runtime_config.base);
 
 pas_allocator_counts thingy_allocator_counts;
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     try_allocate_primitive,
     THINGY_HEAP_CONFIG,
-    &thingy_intrinsic_primitive_runtime_config.base,
+    &thingy_intrinsic_runtime_config.base,
     &thingy_allocator_counts,
     pas_allocation_result_identity,
     &thingy_primitive_heap,
@@ -90,7 +90,7 @@ void* thingy_try_allocate_primitive_with_alignment(size_t size, size_t alignment
 
 void* thingy_try_reallocate_primitive(void* old_ptr, size_t new_size)
 {
-    return (void*)pas_try_reallocate_intrinsic_primitive(
+    return (void*)pas_try_reallocate_intrinsic(
         old_ptr,
         &thingy_primitive_heap,
         new_size,
@@ -165,10 +165,10 @@ pas_heap* thingy_heap_ref_get_heap(pas_heap_ref* heap_ref)
                            &thingy_typed_runtime_config.base);
 }
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     utility_heap_allocate,
     THINGY_HEAP_CONFIG,
-    &thingy_intrinsic_primitive_runtime_config.base,
+    &thingy_intrinsic_runtime_config.base,
     &thingy_allocator_counts,
     pas_allocation_result_crash_on_error,
     &thingy_utility_heap,

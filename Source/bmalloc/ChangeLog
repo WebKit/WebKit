@@ -1,3 +1,93 @@
+2021-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        [libpas] Change the names of libpas heap runtime configs to something simpler (intrinsic, primitive, typed, and flex) and add comments describing what they are (update to 32abc1fd5489e01aa1c504ae4654967047d3f072)
+        https://bugs.webkit.org/show_bug.cgi?id=231040
+
+        Reviewed by Saam Barati.
+
+        At some point a long time ago, libpas had sensible names for heap runtime configs: primitive
+        and typed. Then I added the "objc" category, not realizing that I was really adding support for
+        flexible array members. And then I added "intrinsic_primitive", but wow, what a mouthful.
+
+        This changes the heap names to:
+
+        intrinsic: singleton heaps for primitive data, like the normal fastMalloc heap
+        primitive: isoheaps for primitive data
+        typed: isoheaps for fixed-size types
+        flex: isoheaps for types with flexible array members
+
+        Also adds comments explaining the exact behaviors of these heaps.
+
+        Also exposes isoheaped array allocation through the bmalloc_heap API. That's not yet exposed
+        via the IsoHeap API, but the idea is that it will be -- just need to figure out a clean way to
+        do it.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::enableMiniMode):
+        * libpas/common.sh:
+        * libpas/src/chaos/Chaos.cpp:
+        (main):
+        * libpas/src/libpas/bmalloc_heap.c:
+        (bmalloc_try_iso_allocate_array):
+        (bmalloc_iso_allocate_array):
+        (bmalloc_try_iso_allocate_array_with_alignment):
+        (bmalloc_iso_allocate_array_with_alignment):
+        * libpas/src/libpas/bmalloc_heap.h:
+        * libpas/src/libpas/bmalloc_heap_config.c:
+        * libpas/src/libpas/bmalloc_heap_inlines.h:
+        (bmalloc_try_reallocate_inline):
+        (bmalloc_reallocate_inline):
+        (bmalloc_try_iso_allocate_array_inline):
+        (bmalloc_try_iso_allocate_array_with_alignment_inline):
+        (bmalloc_iso_allocate_array_inline):
+        (bmalloc_iso_allocate_array_with_alignment_inline):
+        * libpas/src/libpas/hotbit_heap.c:
+        * libpas/src/libpas/hotbit_heap_config.c:
+        * libpas/src/libpas/hotbit_heap_inlines.h:
+        (hotbit_try_reallocate_inline):
+        * libpas/src/libpas/iso_heap.c:
+        (iso_try_allocate_for_flex):
+        (iso_try_allocate_for_objc): Deleted.
+        * libpas/src/libpas/iso_heap.h:
+        * libpas/src/libpas/iso_heap_config.c:
+        * libpas/src/libpas/iso_heap_inlines.h:
+        (iso_try_reallocate_common_primitive_inline):
+        (iso_reallocate_common_primitive_inline):
+        (iso_try_allocate_for_flex_inline):
+        (iso_try_allocate_for_objc_inline): Deleted.
+        * libpas/src/libpas/iso_heap_innards.h:
+        * libpas/src/libpas/iso_test_heap.c:
+        * libpas/src/libpas/iso_test_heap_config.c:
+        * libpas/src/libpas/jit_heap.c:
+        * libpas/src/libpas/minalign32_heap.c:
+        * libpas/src/libpas/minalign32_heap_config.c:
+        * libpas/src/libpas/pagesize64k_heap.c:
+        * libpas/src/libpas/pagesize64k_heap_config.c:
+        * libpas/src/libpas/pas_heap_config_utils.h:
+        * libpas/src/libpas/pas_heap_config_utils_inlines.h:
+        * libpas/src/libpas/pas_internal_config.h:
+        * libpas/src/libpas/pas_large_heap.c:
+        (pas_large_heap_construct):
+        * libpas/src/libpas/pas_try_allocate.h:
+        * libpas/src/libpas/pas_try_allocate_array.h:
+        * libpas/src/libpas/pas_try_allocate_intrinsic.h: Added.
+        (pas_try_allocate_intrinsic_impl_medium_slow_case):
+        (pas_try_allocate_intrinsic_impl_inline_only):
+        * libpas/src/libpas/pas_try_allocate_intrinsic_primitive.h: Removed.
+        * libpas/src/libpas/pas_try_allocate_primitive.h:
+        * libpas/src/libpas/pas_try_reallocate.h:
+        (pas_try_reallocate_intrinsic_allocate_callback):
+        (pas_try_reallocate_intrinsic):
+        (pas_try_reallocate_intrinsic_primitive_allocate_callback): Deleted.
+        (pas_try_reallocate_intrinsic_primitive): Deleted.
+        * libpas/src/libpas/thingy_heap.c:
+        (thingy_try_reallocate_primitive):
+        * libpas/src/libpas/thingy_heap_config.c:
+        * libpas/src/test/IsoHeapChaosTests.cpp:
+        (addIsoHeapChaosTests):
+        * libpas/src/test/TestHarness.cpp:
+
 2021-09-29  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [bmalloc] ChunkHash is not used since r261667

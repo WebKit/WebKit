@@ -34,10 +34,10 @@
 #include "jit_heap_config.h"
 #include "pas_deallocate.h"
 #include "pas_get_allocation_size.h"
-#include "pas_try_allocate_intrinsic_primitive.h"
+#include "pas_try_allocate_intrinsic.h"
 #include "pas_try_shrink.h"
 
-pas_heap jit_common_primitive_heap = PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(
+pas_heap jit_common_primitive_heap = PAS_INTRINSIC_HEAP_INITIALIZER(
     &jit_common_primitive_heap,
     NULL,
     jit_common_primitive_heap_support,
@@ -60,7 +60,7 @@ void jit_heap_add_fresh_memory(pas_range range)
     pas_heap_lock_unlock();
 }
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     jit_try_allocate_common_primitive_impl,
     JIT_HEAP_CONFIG,
     &jit_heap_runtime_config,

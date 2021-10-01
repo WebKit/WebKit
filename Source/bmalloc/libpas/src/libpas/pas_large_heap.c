@@ -43,7 +43,7 @@
 void pas_large_heap_construct(pas_large_heap* heap)
 {
     /* Warning: anything you do here must be duplicated in
-       pas_try_allocate_intrinsic_primitive.h. */
+       pas_try_allocate_intrinsic.h. */
     
     pas_fast_large_free_heap_construct(&heap->free_heap);
     heap->table_state = pas_heap_table_state_uninitialized;

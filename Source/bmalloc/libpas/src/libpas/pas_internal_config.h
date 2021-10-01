@@ -152,29 +152,45 @@
 #define PAS_UTILITY_MAX_SEGREGATED_OBJECT_SIZE                  UINT_MAX
 #define PAS_UTILITY_MAX_BITFIT_OBJECT_SIZE                      0
 
-#define PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_PARTIAL_VIEWS         0
-#define PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_BASELINE_ALLOCATORS   0
-#define PAS_INTRINSIC_PRIMITIVE_BOUND_FOR_NO_VIEW_CACHE         0
-#define PAS_INTRINSIC_PRIMITIVE_MAX_SEGREGATED_OBJECT_SIZE      UINT_MAX
-#define PAS_INTRINSIC_PRIMITIVE_MAX_BITFIT_OBJECT_SIZE          UINT_MAX
+/* Intrinsic heaps are for global, singleton, process-wide heaps -- so the "not isoheaped" heap, the
+   thing you get from regular malloc. */
+#define PAS_INTRINSIC_BOUND_FOR_PARTIAL_VIEWS                   0
+#define PAS_INTRINSIC_BOUND_FOR_BASELINE_ALLOCATORS             0
+#define PAS_INTRINSIC_BOUND_FOR_NO_VIEW_CACHE                   0
+#define PAS_INTRINSIC_MAX_SEGREGATED_OBJECT_SIZE                UINT_MAX
+#define PAS_INTRINSIC_MAX_BITFIT_OBJECT_SIZE                    UINT_MAX
 
+/* This is for heaps that hold primitives but should be kept separate from the main heap. So, the
+   tuning has to be such that we are efficient for lots of small heaps. But, there's no restriction
+   on whether the data in the heap is reused in any particular way -- we run this with a type size
+   of 1. */
 #define PAS_PRIMITIVE_BOUND_FOR_PARTIAL_VIEWS                   0
 #define PAS_PRIMITIVE_BOUND_FOR_BASELINE_ALLOCATORS             0
 #define PAS_PRIMITIVE_BOUND_FOR_NO_VIEW_CACHE                   UINT_MAX
 #define PAS_PRIMITIVE_MAX_SEGREGATED_OBJECT_SIZE                UINT_MAX
 #define PAS_PRIMITIVE_MAX_BITFIT_OBJECT_SIZE                    UINT_MAX
 
+/* This is for heaps that hold typed objects. These objects have a certain size. We may allocate
+   arrays of these objects. The type may tell us an alignment requirement in addition to a size.
+   The alignment requirement is taken together with the minalign argument (the allocator uses
+   whichever is bigger), but it's a bit more optimal to convey alignment using the alignment part
+   of the type than by passing it to minalign. */
 #define PAS_TYPED_BOUND_FOR_PARTIAL_VIEWS                       10
 #define PAS_TYPED_BOUND_FOR_BASELINE_ALLOCATORS                 0
 #define PAS_TYPED_BOUND_FOR_NO_VIEW_CACHE                       UINT_MAX
 #define PAS_TYPED_MAX_SEGREGATED_OBJECT_SIZE                    UINT_MAX
 #define PAS_TYPED_MAX_BITFIT_OBJECT_SIZE                        0
 
-#define PAS_OBJC_BOUND_FOR_PARTIAL_VIEWS                        10
-#define PAS_OBJC_BOUND_FOR_BASELINE_ALLOCATORS                  10
-#define PAS_OBJC_BOUND_FOR_NO_VIEW_CACHE                        UINT_MAX
-#define PAS_OBJC_MAX_SEGREGATED_OBJECT_SIZE                     UINT_MAX
-#define PAS_OBJC_MAX_BITFIT_OBJECT_SIZE                         0
+/* This is for heaps of flexible array member objects. These are variable-sized objects of a certain
+   type. We should assume that different-sized instances can only be overlapped at the header.
+   Implementing these as segregated heaps is valid since sizes get segregated and different-sized
+   objects will only overlap at the header. However, FIXME: we need flex heaps to use a large heap
+   that won't overlap objects in these heaps as if they were arrays. */
+#define PAS_FLEX_BOUND_FOR_PARTIAL_VIEWS                        10
+#define PAS_FLEX_BOUND_FOR_BASELINE_ALLOCATORS                  10
+#define PAS_FLEX_BOUND_FOR_NO_VIEW_CACHE                        UINT_MAX
+#define PAS_FLEX_MAX_SEGREGATED_OBJECT_SIZE                     UINT_MAX
+#define PAS_FLEX_MAX_BITFIT_OBJECT_SIZE                         0
 
 #endif /* PAS_INTERNAL_CONFIG_H */
 

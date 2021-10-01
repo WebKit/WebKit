@@ -36,23 +36,23 @@
 #include "pas_deallocate.h"
 #include "pas_try_allocate.h"
 #include "pas_try_allocate_array.h"
-#include "pas_try_allocate_intrinsic_primitive.h"
+#include "pas_try_allocate_intrinsic.h"
 
 pas_intrinsic_heap_support minalign32_common_primitive_heap_support =
     PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER;
 
 pas_heap minalign32_common_primitive_heap =
-    PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(
+    PAS_INTRINSIC_HEAP_INITIALIZER(
         &minalign32_common_primitive_heap,
         PAS_SIMPLE_TYPE_CREATE(1, 1),
         minalign32_common_primitive_heap_support,
         MINALIGN32_HEAP_CONFIG,
-        &minalign32_intrinsic_primitive_runtime_config.base);
+        &minalign32_intrinsic_runtime_config.base);
 
-PAS_CREATE_TRY_ALLOCATE_INTRINSIC_PRIMITIVE(
+PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
     test_allocate_common_primitive,
     MINALIGN32_HEAP_CONFIG,
-    &minalign32_intrinsic_primitive_runtime_config.base,
+    &minalign32_intrinsic_runtime_config.base,
     &iso_allocator_counts,
     pas_allocation_result_crash_on_error,
     &minalign32_common_primitive_heap,

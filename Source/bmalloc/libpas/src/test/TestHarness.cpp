@@ -85,10 +85,10 @@ struct TestScopeImpl {
 };
 
 #define FOR_EACH_RUNTIME_CONFIG(name, callback) ({ \
-        (callback)(name ## _intrinsic_primitive_runtime_config.base); \
+        (callback)(name ## _intrinsic_runtime_config.base); \
         (callback)(name ## _primitive_runtime_config.base); \
         (callback)(name ## _typed_runtime_config.base); \
-        (callback)(name ## _objc_runtime_config.base); \
+        (callback)(name ## _flex_runtime_config.base); \
     })
 
 RuntimeConfigTestScope::RuntimeConfigTestScope(

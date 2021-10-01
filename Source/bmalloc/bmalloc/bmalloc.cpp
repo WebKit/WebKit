@@ -200,8 +200,8 @@ void enableMiniMode()
     pas_physical_page_sharing_pool_balancing_enabled_for_utility = true;
 
     // Switch to bitfit allocation for anything that isn't isoheaped.
-    bmalloc_intrinsic_primitive_runtime_config.base.max_segregated_object_size = 0;
-    bmalloc_intrinsic_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+    bmalloc_intrinsic_runtime_config.base.max_segregated_object_size = 0;
+    bmalloc_intrinsic_runtime_config.base.max_bitfit_object_size = UINT_MAX;
     bmalloc_primitive_runtime_config.base.max_segregated_object_size = 0;
     bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
 #endif

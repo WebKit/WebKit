@@ -38,12 +38,12 @@ pas_intrinsic_heap_support hotbit_common_primitive_heap_support =
     PAS_INTRINSIC_HEAP_SUPPORT_INITIALIZER;
 
 pas_heap hotbit_common_primitive_heap =
-    PAS_INTRINSIC_PRIMITIVE_HEAP_INITIALIZER(
+    PAS_INTRINSIC_HEAP_INITIALIZER(
         &hotbit_common_primitive_heap,
         PAS_SIMPLE_TYPE_CREATE(1, 1),
         hotbit_common_primitive_heap_support,
         HOTBIT_HEAP_CONFIG,
-        &hotbit_intrinsic_primitive_runtime_config.base);
+        &hotbit_intrinsic_runtime_config.base);
 
 pas_allocator_counts hotbit_allocator_counts;
 

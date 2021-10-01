@@ -40,6 +40,15 @@
 
 PAS_BEGIN_EXTERN_C;
 
+/* This is for heaps that hold typed objects. These objects have a certain size. We may allocate
+   arrays of these objects, but the entrypoints in this header are for the case where we are allocating
+   just a single instance. We my allocate these objects with any alignment, but the entrypoints in this
+   header are for the case where we are allocating with the alignment that was specified in the
+   heap_ref's type.
+
+   If you want to allocate with nontrivial count (i.e. an array) or nontrivial alignment (i.e. memalign)
+   then use the pas_try_allocate_array.h entrypoints. */
+
 typedef struct {
     pas_heap_ref* heap_ref;
     pas_heap_config config;
