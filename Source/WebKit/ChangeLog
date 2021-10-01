@@ -1,3 +1,30 @@
+2021-10-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Send Launch Services database to GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=225151
+        <rdar://74749122>
+
+        Reviewed by Brent Fulgham.
+
+        Send Launch Services database to the GPU process after it has finished launching, like we do for WebContent processes.
+        The Launch Services database is represented as an XPC object, and needs to be sent over a dedicated XPC channel.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        (WebKit::GPUProcessProxy::addSession):
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::XPCEventHandler::handleXPCEvent const):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::setWebsiteDataStore):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess const):
+        (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToAllProcesses):
+        (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToWebProcess): Deleted.
+        (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToAllWebProcesses): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-10-01  Youenn Fablet  <youenn@apple.com>
 
         Attribute IOSurfaces created by camera and decoders to responsible WebProcess

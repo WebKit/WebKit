@@ -49,6 +49,10 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
 
+#if ENABLE(GPU_PROCESS)
+#import "GPUProcessProxy.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIApplication.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
@@ -594,7 +598,7 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
     return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement.utf8().data());
 }
 
-void WebsiteDataStore::sendNetworkProcessXPCEndpointToWebProcess(WebProcessProxy& process)
+void WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess(AuxiliaryProcessProxy& process) const
 {
     if (process.state() != AuxiliaryProcessProxy::State::Running)
         return;
@@ -607,10 +611,14 @@ void WebsiteDataStore::sendNetworkProcessXPCEndpointToWebProcess(WebProcessProxy
     xpc_connection_send_message(connection->xpcConnection(), message);
 }
 
-void WebsiteDataStore::sendNetworkProcessXPCEndpointToAllWebProcesses()
+void WebsiteDataStore::sendNetworkProcessXPCEndpointToAllProcesses()
 {
     for (auto& process : m_processes)
-        sendNetworkProcessXPCEndpointToWebProcess(process);
+        sendNetworkProcessXPCEndpointToProcess(process);
+#if ENABLE(GPU_PROCESS)
+    if (GPUProcessProxy::singletonIfCreated())
+        sendNetworkProcessXPCEndpointToProcess(*GPUProcessProxy::singletonIfCreated());
+#endif
 }
 
 }
