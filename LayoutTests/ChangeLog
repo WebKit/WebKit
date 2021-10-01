@@ -1,3 +1,13 @@
+2021-10-01  Eric Hutchison  <ehutchison@apple.com>
+
+        [ iOS Mac wk2 Debug ] imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231083.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-10-01  Kevin Turner  <kevin_turner@apple.com>
 
         Add support for pow(), sqrt() and hypot() per https://drafts.csswg.org/css-values-4/#exponent-funcs. 
