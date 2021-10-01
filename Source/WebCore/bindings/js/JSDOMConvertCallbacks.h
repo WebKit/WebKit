@@ -45,11 +45,7 @@ template<typename T> struct Converter<IDLCallbackFunction<T>> : DefaultConverter
             return nullptr;
         }
 
-        JSDOMGlobalObject* incumbentGlobalObject = &globalObject;
-        if (auto* globalObject = JSC::CallFrame::globalObjectOfClosestCodeBlock(vm, vm.topCallFrame))
-            incumbentGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
-        
-        return T::create(JSC::asObject(value), incumbentGlobalObject);
+        return T::create(JSC::asObject(value), &callerGlobalObject(globalObject, vm.topCallFrame));
     }
 };
 
@@ -83,11 +79,7 @@ template<typename T> struct Converter<IDLCallbackInterface<T>> : DefaultConverte
             return nullptr;
         }
 
-        JSDOMGlobalObject* incumbentGlobalObject = &globalObject;
-        if (auto* globalObject = JSC::CallFrame::globalObjectOfClosestCodeBlock(vm, vm.topCallFrame))
-            incumbentGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
-
-        return T::create(JSC::asObject(value), incumbentGlobalObject);
+        return T::create(JSC::asObject(value), &callerGlobalObject(globalObject, vm.topCallFrame));
     }
 };
 
