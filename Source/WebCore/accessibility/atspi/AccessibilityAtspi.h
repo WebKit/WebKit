@@ -30,10 +30,12 @@
 typedef struct _GDBusConnection GDBusConnection;
 typedef struct _GDBusInterfaceInfo GDBusInterfaceInfo;
 typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
+typedef struct _GVariant GVariant;
 
 namespace WebCore {
 class AccessibilityObjectAtspi;
 class AccessibilityRootAtspi;
+enum class AccessibilityRole;
 
 class AccessibilityAtspi {
     WTF_MAKE_FAST_ALLOCATED;
@@ -45,11 +47,30 @@ public:
     GVariant* nullReference() const;
 
     void registerRoot(AccessibilityRootAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&, CompletionHandler<void(const String&)>&&);
+    void unregisterRoot(AccessibilityRootAtspi&);
+    String registerObject(AccessibilityObjectAtspi&, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&&);
+    void unregisterObject(AccessibilityObjectAtspi&);
+
+    enum class ChildrenChanged { Added, Removed };
+    void childrenChanged(AccessibilityObjectAtspi&, AccessibilityObjectAtspi&, ChildrenChanged);
+
+    void stateChanged(AccessibilityObjectAtspi&, const char*, bool);
+
+    static const char* localizedRoleName(AccessibilityRole);
 
 private:
+    void ensureCache();
+    void addAccessible(AccessibilityObjectAtspi&, const String&);
+    void removeAccessible(AccessibilityObjectAtspi&);
+
+    static GDBusInterfaceVTable s_cacheFunctions;
+
     Ref<WorkQueue> m_queue;
     GRefPtr<GDBusConnection> m_connection;
     HashMap<AccessibilityRootAtspi*, Vector<unsigned, 2>> m_rootObjects;
+    HashMap<AccessibilityObjectAtspi*, Vector<unsigned, 20>> m_atspiObjects;
+    unsigned m_cacheID { 0 };
+    HashMap<String, AccessibilityObjectAtspi*> m_cache;
 };
 
 } // namespace WebCore

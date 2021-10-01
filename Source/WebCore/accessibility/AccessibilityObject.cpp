@@ -2272,8 +2272,7 @@ bool AccessibilityObject::hasHighlighting() const
 #if !PLATFORM(MAC)
 String AccessibilityObject::rolePlatformString() const
 {
-    // FIXME: implement in other platforms.
-    return String();
+    return Accessibility::roleToPlatformString(roleValue());
 }
 
 String AccessibilityObject::rolePlatformDescription() const
@@ -3649,7 +3648,7 @@ String AccessibilityObject::outerHTML() const
 
 namespace Accessibility {
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !USE(ATSPI)
 // FIXME: implement in other platforms.
 PlatformRoleMap createPlatformRoleMap() { return PlatformRoleMap(); }
 #endif

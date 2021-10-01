@@ -55,6 +55,7 @@ endif ()
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/atspi/AccessibilityAtspi.h
+    accessibility/atspi/AccessibilityAtspiEnums.h
     accessibility/atspi/AccessibilityObjectAtspi.h
     accessibility/atspi/AccessibilityRootAtspi.h
 

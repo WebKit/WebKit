@@ -24,16 +24,28 @@
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectAtspi.h"
 #include "AccessibilityRenderObject.h"
-#include "Node.h"
+#include "Document.h"
+#include "Element.h"
+#include "HTMLSelectElement.h"
+#include "Range.h"
+#include "TextIterator.h"
 
 namespace WebCore {
 
-void AXObjectCache::detachWrapper(AXCoreObject* axObject, AccessibilityDetachmentType detachmentType)
-{
-}
-
 void AXObjectCache::attachWrapper(AXCoreObject* axObject)
 {
+    auto wrapper = AccessibilityObjectAtspi::create(axObject);
+    axObject->setWrapper(wrapper.ptr());
+
+    auto* axParent = axObject->parentObjectUnignored();
+    if (!axParent)
+        return;
+
+    auto* axParentWrapper = axParent->wrapper();
+    if (!axParentWrapper)
+        return;
+
+    wrapper->setParent(axParentWrapper);
 }
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
@@ -56,6 +68,121 @@ bool AXObjectCache::usedOnAXThread()
 
 void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotification notification)
 {
+    RELEASE_ASSERT(isMainThread());
+    auto* wrapper = coreObject->wrapper();
+    if (!wrapper)
+        return;
+
+    switch (notification) {
+    case AXCheckedStateChanged:
+        if (coreObject->isCheckboxOrRadio() || coreObject->isSwitch())
+            wrapper->stateChanged("checked", coreObject->isChecked());
+        break;
+    case AXSelectedStateChanged:
+        wrapper->stateChanged("selected", coreObject->isSelected());
+        break;
+    case AXSelectedChildrenChanged:
+    case AXMenuListValueChanged:
+        break;
+    case AXValueChanged:
+        break;
+    case AXInvalidStatusChanged:
+        wrapper->stateChanged("invalid-entry", coreObject->invalidStatus() != "false");
+        break;
+    case AXElementBusyChanged:
+        wrapper->stateChanged("busy", coreObject->isBusy());
+        break;
+    case AXCurrentStateChanged:
+        break;
+    case AXRowExpanded:
+        wrapper->stateChanged("expanded", true);
+        break;
+    case AXRowCollapsed:
+        wrapper->stateChanged("expanded", false);
+        break;
+    case AXExpandedChanged:
+        wrapper->stateChanged("expanded", coreObject->isExpanded());
+        break;
+    case AXDisabledStateChanged: {
+        bool enabledState = coreObject->isEnabled();
+        wrapper->stateChanged("enabled", enabledState);
+        wrapper->stateChanged("sensitive", enabledState);
+        break;
+    }
+    case AXPressedStateChanged:
+        wrapper->stateChanged("pressed", coreObject->isPressed());
+        break;
+    case AXReadOnlyStatusChanged:
+        wrapper->stateChanged("read-only", coreObject->canSetValueAttribute());
+        break;
+    case AXRequiredStatusChanged:
+        wrapper->stateChanged("required", coreObject->isRequired());
+        break;
+    case AXActiveDescendantChanged:
+        if (auto* descendant = coreObject->activeDescendant())
+            platformHandleFocusedUIElementChanged(nullptr, descendant->node());
+        break;
+    case AXAriaAttributeChanged:
+        break;
+    case AXAriaRoleChanged:
+        break;
+    case AXAutocorrectionOccured:
+        break;
+    case AXChildrenChanged:
+        break;
+    case AXFocusedUIElementChanged:
+        break;
+    case AXFrameLoadComplete:
+        break;
+    case AXIdAttributeChanged:
+        break;
+    case AXImageOverlayChanged:
+        break;
+    case AXLanguageChanged:
+        break;
+    case AXLayoutComplete:
+        break;
+    case AXLoadComplete:
+        break;
+    case AXNewDocumentLoadComplete:
+        break;
+    case AXPageScrolled:
+        break;
+    case AXSelectedTextChanged:
+        break;
+    case AXScrolledToAnchor:
+        break;
+    case AXLiveRegionCreated:
+        break;
+    case AXLiveRegionChanged:
+        break;
+    case AXMenuListItemSelected:
+        break;
+    case AXMenuClosed:
+        break;
+    case AXMenuOpened:
+        break;
+    case AXRowCountChanged:
+        break;
+    case AXPressDidSucceed:
+        break;
+    case AXPressDidFail:
+        break;
+    case AXSortDirectionChanged:
+        break;
+    case AXTextChanged:
+        break;
+    case AXDraggingStarted:
+        break;
+    case AXDraggingEnded:
+        break;
+    case AXDraggingEnteredDropZone:
+        break;
+    case AXDraggingDropped:
+        break;
+    case AXDraggingExitedDropZone:
+        break;
+    }
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
@@ -68,6 +195,14 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
 
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode)
 {
+    if (auto* axObject = get(oldFocusedNode)) {
+        if (auto* wrapper = axObject->wrapper())
+            wrapper->stateChanged("focused", false);
+    }
+    if (auto* axObject = getOrCreate(newFocusedNode)) {
+        if (auto* wrapper = axObject->wrapper())
+            wrapper->stateChanged("focused", true);
+    }
 }
 
 void AXObjectCache::handleScrolledToAnchor(const Node*)

@@ -31,11 +31,13 @@ void AXIsolatedObject::initializePlatformProperties(const AXCoreObject&, bool)
 
 void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper)
 {
+    wrapper->attach(this);
     setWrapper(wrapper);
 }
 
-void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
+void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType)
 {
+    wrapper()->detach();
 }
 
 } // namespace WebCore

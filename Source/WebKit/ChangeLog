@@ -1,3 +1,13 @@
+2021-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][a11y] Add initial implementation of accessible interface when building with ATSPI
+        https://bugs.webkit.org/show_bug.cgi?id=230256
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformDetach): Unregister the page accessible object.
+
 2021-09-30  Sam Weinig  <weinig@apple.com>
 
         Add dumping for UIViews with separated layers

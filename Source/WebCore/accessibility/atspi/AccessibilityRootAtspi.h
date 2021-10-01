@@ -38,12 +38,18 @@ public:
     ~AccessibilityRootAtspi() = default;
 
     void registerObject(CompletionHandler<void(const String&)>&&);
+    void unregisterObject();
     void setPath(String&&);
     void setParentPath(String&&);
 
+    const String& path() const { return m_path; }
+    const String& parentUniqueName() const { return m_parentUniqueName; }
     GVariant* reference() const;
     GVariant* applicationReference() const;
     AccessibilityAtspi& atspi() const { return m_atspi; }
+    AccessibilityObjectAtspi* child() const;
+
+    void serialize(GVariantBuilder*) const;
 
 private:
     AccessibilityRootAtspi(const Page&, AccessibilityAtspi&);

@@ -91,6 +91,10 @@ void WebPage::platformReinitialize()
 
 void WebPage::platformDetach()
 {
+#if USE(ATSPI)
+    if (m_accessibilityRootObject)
+        m_accessibilityRootObject->unregisterObject();
+#endif
 }
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
