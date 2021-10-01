@@ -12,13 +12,18 @@
     src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
 }
 
-@font-palette-values --MyPalette {
+@font-palette-values --MyPalette1 {
+    font-family: "Ahem-COLR";
+    base-palette: 5;
+}
+
+@font-palette-values --MyPalette2 {
     font-family: "Ahem-COLR";
     base-palette: 2;
 }
 </style>
 </head>
 <body>
-<div id="target" style="font: 48px 'Ahem-COLR'; font-palette: --MyPalette;">A</div>
+<div style="font: 48px 'Ahem-COLR';"><span style="font-palette: --MyPalette1;">A</span><span style="font-palette: --MyPalette2;">BCDEF</span></div>
 </body>
 </html>

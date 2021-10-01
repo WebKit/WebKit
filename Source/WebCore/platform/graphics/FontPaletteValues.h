@@ -34,21 +34,84 @@
 
 namespace WebCore {
 
+struct FontPaletteIndex {
+    enum class Type : uint8_t;
+
+    FontPaletteIndex() = default;
+
+    FontPaletteIndex(Type type)
+        : type(type)
+    {
+        ASSERT(type == Type::Light || type == Type::Dark);
+    }
+
+    FontPaletteIndex(unsigned integer)
+        : type(Type::Integer)
+        , integer(integer)
+    {
+    }
+
+    FontPaletteIndex(const AtomString& string)
+        : type(Type::String)
+        , string(string)
+    {
+    }
+
+    operator bool() const
+    {
+        return type != Type::String || !string.isNull();
+    }
+
+    bool operator==(const FontPaletteIndex& other) const
+    {
+        if (type != other.type)
+            return false;
+        if (type == Type::Integer)
+            return integer == other.integer;
+        if (type == Type::String)
+            return string == other.string;
+        return true;
+    }
+
+    bool operator!=(const FontPaletteIndex& other) const
+    {
+        return !(*this == other);
+    }
+
+    enum class Type : uint8_t {
+        Light,
+        Dark,
+        Integer,
+        String
+    } type { Type::String };
+
+    unsigned integer { 0 };
+    AtomString string;
+};
+
+inline void add(Hasher& hasher, const FontPaletteIndex& paletteIndex)
+{
+    add(hasher, paletteIndex.type);
+    if (paletteIndex.type == FontPaletteIndex::Type::Integer)
+        add(hasher, paletteIndex.integer);
+    else if (paletteIndex.type == FontPaletteIndex::Type::String)
+        add(hasher, paletteIndex.string);
+}
+
 class FontPaletteValues {
 public:
-    using PaletteIndex = Variant<unsigned, AtomString>;
     using PaletteColorIndex = Variant<AtomString, unsigned>;
     using OverriddenColor = std::pair<PaletteColorIndex, Color>;
 
     FontPaletteValues() = default;
 
-    FontPaletteValues(const PaletteIndex& basePalette, Vector<OverriddenColor>&& overrideColors)
+    FontPaletteValues(const FontPaletteIndex& basePalette, Vector<OverriddenColor>&& overrideColors)
         : m_basePalette(basePalette)
         , m_overrideColors(WTFMove(overrideColors))
     {
     }
 
-    const PaletteIndex& basePalette() const
+    const FontPaletteIndex& basePalette() const
     {
         return m_basePalette;
     }
@@ -60,11 +123,7 @@ public:
 
     operator bool() const
     {
-        return WTF::switchOn(m_basePalette, [] (int64_t) {
-            return true;
-        }, [] (const AtomString& string) {
-            return !string.isNull();
-        }) || !m_overrideColors.isEmpty();
+        return m_basePalette || !m_overrideColors.isEmpty();
     }
 
     bool operator==(const FontPaletteValues& other) const
@@ -78,7 +137,7 @@ public:
     }
 
 private:
-    PaletteIndex m_basePalette;
+    FontPaletteIndex m_basePalette;
     Vector<OverriddenColor> m_overrideColors;
 };
 

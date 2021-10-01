@@ -443,6 +443,59 @@ struct FontType {
     bool aatShaping { false };
 };
 
+static void addLightPalette(CFMutableDictionaryRef attributes)
+{
+    CFIndex light = kCTFontPaletteLight;
+    auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &light));
+    CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+}
+
+static void addDarkPalette(CFMutableDictionaryRef attributes)
+{
+    CFIndex dark = kCTFontPaletteDark;
+    auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &dark));
+    CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+}
+
+static void addAttributesForCustomFontPalettes(CFMutableDictionaryRef attributes, const FontPaletteIndex& basePalette, const Vector<FontPaletteValues::OverriddenColor>& overrideColors)
+{
+    switch (basePalette.type) {
+    case FontPaletteIndex::Type::Light:
+        addLightPalette(attributes);
+        break;
+    case FontPaletteIndex::Type::Dark:
+        addDarkPalette(attributes);
+        break;
+    case FontPaletteIndex::Type::Integer: {
+        int64_t rawIndex = basePalette.integer; // There is no kCFNumberUIntType.
+        auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
+        CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+        break;
+    }
+    case FontPaletteIndex::Type::String:
+        // This is unimplementable in Core Text.
+        break;
+    }
+
+    if (!overrideColors.isEmpty()) {
+        auto overrideDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        for (const auto& pair : overrideColors) {
+            const auto& paletteColorIndex = pair.first;
+            const auto& color = pair.second;
+            WTF::switchOn(paletteColorIndex, [] (const AtomString&) {
+                // This is unimplementable in Core Text.
+            }, [&] (unsigned index) {
+                int64_t rawIndex = index; // There is no kCFNumberUIntType.
+                auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
+                auto colorObject = cachedCGColor(color);
+                CFDictionaryAddValue(overrideDictionary.get(), number.get(), colorObject);
+            });
+        }
+        if (CFDictionaryGetCount(overrideDictionary.get()))
+            CFDictionaryAddValue(attributes, kCTFontPaletteColorsAttribute, overrideDictionary.get());
+    }
+}
+
 static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, const FontPalette& fontPalette, const FontPaletteValues* fontPaletteValues)
 {
     switch (fontPalette.type) {
@@ -451,46 +504,16 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
         break;
     case FontPalette::Type::Normal:
         break;
-    case FontPalette::Type::Light: {
-        CFIndex light = kCTFontPaletteLight;
-        auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &light));
-        CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+    case FontPalette::Type::Light:
+        addLightPalette(attributes);
         break;
-    }
-    case FontPalette::Type::Dark: {
-        CFIndex dark = kCTFontPaletteDark;
-        auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &dark));
-        CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
+    case FontPalette::Type::Dark:
+        addDarkPalette(attributes);
         break;
-    }
     case FontPalette::Type::Custom: {
-        if (!fontPaletteValues)
-            break; 
-        WTF::switchOn(fontPaletteValues->basePalette(), [&](int64_t index) {
-            int64_t rawIndex = index; // There is no kCFNumberUIntType.
-            auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
-            CFDictionaryAddValue(attributes, kCTFontPaletteAttribute, number.get());
-        }, [](const AtomString&) {
-            // This is unimplementable in Core Text.
-        });
-
-        if (!fontPaletteValues->overrideColors().isEmpty()) {
-            auto overrideDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            for (const auto& pair : fontPaletteValues->overrideColors()) {
-                const auto& paletteColorIndex = pair.first;
-                const auto& color = pair.second;
-                WTF::switchOn(paletteColorIndex, [](const AtomString&) {
-                    // This is unimplementable in Core Text.
-                }, [&](unsigned index) {
-                    int64_t rawIndex = index; // There is no kCFNumberUIntType.
-                    auto number = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &rawIndex));
-                    auto colorObject = cachedCGColor(color);
-                    CFDictionaryAddValue(overrideDictionary.get(), number.get(), colorObject);
-                });
-            }
-            if (CFDictionaryGetCount(overrideDictionary.get()))
-                CFDictionaryAddValue(attributes, kCTFontPaletteColorsAttribute, overrideDictionary.get());
-        }
+        if (fontPaletteValues)
+            addAttributesForCustomFontPalettes(attributes, fontPaletteValues->basePalette(), fontPaletteValues->overrideColors());
+        break;
     }
     }
 }

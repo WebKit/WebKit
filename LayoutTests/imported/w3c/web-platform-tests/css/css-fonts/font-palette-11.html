@@ -6,19 +6,15 @@
 <link rel="help" href="https://drafts.csswg.org/css-fonts/#font-palette-prop">
 <link rel="help" href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">
 <link rel="author" title="Myles C. Maxfield" href="mailto:mmaxfield@apple.com">
+<link rel="match" href="font-palette-11-ref.html">
 <style>
 @font-face {
     font-family: "Ahem-COLR";
     src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
 }
-
-@font-palette-values --MyPalette {
-    font-family: "Ahem-COLR";
-    base-palette: 2;
-}
 </style>
 </head>
 <body>
-<div id="target" style="font: 48px 'Ahem-COLR'; font-palette: --MyPalette;">A</div>
+<div id="target" style="font: 48px 'Ahem-COLR'; font-palette: light;">A</div>
 </body>
 </html>

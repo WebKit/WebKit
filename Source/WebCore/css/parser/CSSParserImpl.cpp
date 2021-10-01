@@ -680,13 +680,17 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     if (auto fontFamilyValue = properties->getPropertyCSSValue(CSSPropertyFontFamily))
         fontFamily = downcast<CSSPrimitiveValue>(*fontFamilyValue).fontFamily().familyName;
 
-    FontPaletteValues::PaletteIndex basePalette(nullAtom());
+    FontPaletteIndex basePalette;
     if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {
         const auto& primitiveValue = downcast<CSSPrimitiveValue>(*basePaletteValue);
         if (primitiveValue.isString())
-            basePalette = primitiveValue.stringValue();
+            basePalette = FontPaletteIndex(primitiveValue.stringValue());
         else if (primitiveValue.isNumber())
-            basePalette = primitiveValue.value<unsigned>();
+            basePalette = FontPaletteIndex(primitiveValue.value<int64_t>());
+        else if (primitiveValue.valueID() == CSSValueLight)
+            basePalette = FontPaletteIndex(FontPaletteIndex::Type::Light);
+        else if (primitiveValue.valueID() == CSSValueDark)
+            basePalette = FontPaletteIndex(FontPaletteIndex::Type::Dark);
     }
 
     Vector<FontPaletteValues::OverriddenColor> overrideColors;

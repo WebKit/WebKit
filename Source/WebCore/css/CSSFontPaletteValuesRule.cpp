@@ -58,13 +58,18 @@ String CSSFontPaletteValuesRule::fontFamily() const
 
 String CSSFontPaletteValuesRule::basePalette() const
 {
-    return WTF::switchOn(m_fontPaletteValuesRule->basePalette(), [&] (unsigned index) {
-        return makeString(index);
-    }, [&] (const AtomString& basePalette) -> String {
-        if (!basePalette.isNull())
-            return basePalette.string();
+    switch (m_fontPaletteValuesRule->basePalette().type) {
+    case FontPaletteIndex::Type::Light:
+        return "light"_s;
+    case FontPaletteIndex::Type::Dark:
+        return "dark"_s;
+    case FontPaletteIndex::Type::Integer:
+        return makeString(m_fontPaletteValuesRule->basePalette().integer);
+    case FontPaletteIndex::Type::String:
+        if (!m_fontPaletteValuesRule->basePalette().string.isNull())
+            return m_fontPaletteValuesRule->basePalette().string;
         return StringImpl::empty();
-    });
+    }
 }
 
 String CSSFontPaletteValuesRule::overrideColors() const
@@ -90,12 +95,23 @@ String CSSFontPaletteValuesRule::cssText() const
     builder.append("@font-palette-values ", m_fontPaletteValuesRule->name(), " { ");
     if (!m_fontPaletteValuesRule->fontFamily().isNull())
         builder.append("font-family: ", m_fontPaletteValuesRule->fontFamily(), "; ");
-    WTF::switchOn(m_fontPaletteValuesRule->basePalette(), [&] (unsigned index) {
-        builder.append("base-palette: ", index, "; ");
-    }, [&] (const AtomString& basePalette) {
-        if (!basePalette.isNull())
-            builder.append("base-palette: ", serializeString(basePalette.string()), "; ");
-    });
+
+    switch (m_fontPaletteValuesRule->basePalette().type) {
+    case FontPaletteIndex::Type::Light:
+        builder.append("base-palette: light; ");
+        break;
+    case FontPaletteIndex::Type::Dark:
+        builder.append("base-palette: dark; ");
+        break;
+    case FontPaletteIndex::Type::Integer:
+        builder.append("base-palette: ", m_fontPaletteValuesRule->basePalette().integer, "; ");
+        break;
+    case FontPaletteIndex::Type::String:
+        if (!m_fontPaletteValuesRule->basePalette().string.isNull())
+            builder.append("base-palette: ", serializeString(m_fontPaletteValuesRule->basePalette().string), "; ");
+        break;
+    }
+
     if (!m_fontPaletteValuesRule->overrideColors().isEmpty()) {
         builder.append("override-colors:");
         for (size_t i = 0; i < m_fontPaletteValuesRule->overrideColors().size(); ++i) {

@@ -1,3 +1,78 @@
+2021-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        base-palette can accept "light" or "dark"
+        https://bugs.webkit.org/show_bug.cgi?id=230792
+        <rdar://problem/83530228>
+
+        Reviewed by Simon Fraser.
+
+        These are being upstreamed at https://github.com/web-platform-tests/wpt/pull/31044.
+
+        * web-platform-tests/css/css-fonts/font-palette-10-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-10.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-11-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-11.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-12-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-12.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-13-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-13.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-14-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-14.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-15-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-15.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-16-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-16.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-17-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-17.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-18-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-18.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-19-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-19.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-2.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-20-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-20.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-21-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-21.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-22-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-22.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-23-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-23.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-24-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-24.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-25-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-25.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-26-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-26.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-27-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-27.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-28-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-28.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-29-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-29.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-3-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-3.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-30-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-30.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-31-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-31.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-4-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-4.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-5-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-5.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-6-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-6.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-7-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-7.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-8-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-8.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-9-expected-mismatch.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-9.html: Added.
+        * web-platform-tests/css/css-fonts/font-palette-expected.html:
+        * web-platform-tests/css/css-fonts/font-palette.html:
+        * web-platform-tests/css/css-fonts/resources/Ahem-COLR-palettes-no-light-dark.ttf: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/resources/Ahem-COLR-palettes.ttf.
+        * web-platform-tests/css/css-fonts/resources/Ahem-COLR-palettes.ttf:
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r283274.

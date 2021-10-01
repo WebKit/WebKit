@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tests for font-palette and @font-palette-values</title>
+<link rel="help" href="https://drafts.csswg.org/css-fonts/#font-palette-prop">
+<link rel="help" href="https://drafts.csswg.org/css-fonts-4/#font-palette-values">
+<link rel="author" title="Myles C. Maxfield" href="mailto:mmaxfield@apple.com">
+<style>
+@font-face {
+    font-family: "Ahem-COLR1";
+    src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Ahem-COLR2";
+    src: url("resources/Ahem-COLR-palettes.ttf") format("truetype");
+}
+
+@font-palette-values --MyPalette1 {
+    font-family: "Ahem-COLR1";
+    base-palette: 3;
+}
+
+@font-palette-values --MyPalette2 {
+    font-family: "Ahem-COLR2";
+    base-palette: 2;
+}
+</style>
+</head>
+<body>
+<div id="target" style="font-size: 48px;"><div style="display: inline-block; width: 1px; height: 100px;"></div><span style="font-family: 'Ahem-COLR1'; font-palette: --MyPalette1;">A</span><span style="font-family: 'Ahem-COLR2'; font-palette: --MyPalette2;">A</span></div>
+</body>
+</html>

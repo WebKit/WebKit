@@ -1,3 +1,92 @@
+2021-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        base-palette can accept "light" or "dark"
+        https://bugs.webkit.org/show_bug.cgi?id=230792
+        <rdar://problem/83530228>
+
+        Reviewed by Simon Fraser.
+
+        The spec was changed in
+        https://github.com/w3c/csswg-drafts/commit/1c74611151b452930609627a0de2412c0cb86175
+        to add this functionality. Luckily, the additional functionality doesn't
+        require any Core Text change.
+
+        The old grammar was "<<integer [0, ∞]>> | <<string>>". The new grammar is
+        "light | dark | <<integer [0, ∞]>> | <<string>>". Before "light" and
+        "dark" existed, we were representing this by Variant<int64_t, AtomString>. Now that
+        "light" and "dark" exist, this is being expanded so the form
+
+        struct FontPaletteIndex {
+            enum class Type {
+                Light,
+                Dark,
+                Integer,
+                String
+            } type;
+            unsigned integer;
+            AtomString string;
+        };
+
+        This seems to be in accordance with WebKit style, instead of doing something like
+        class FontPaletteLight { }; class FontPaletteDark { };
+        using FontPaletteIndex = Variant<FontPaletteLight, FontPaletteDark, unsigned, AtomString>;
+
+        Tests: imported/w3c/web-platform-tests/css/css-fonts/font-palette-10.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-11.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-12.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-13.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-14.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-15.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-16.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-17.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-18.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-19.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-2.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-20.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-21.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-22.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-23.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-24.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-25.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-26.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-27.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-28.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-29.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-3.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-30.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-31.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-4.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-5.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-6.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-7.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-8.html
+               imported/w3c/web-platform-tests/css/css-fonts/font-palette-9.html
+
+        * css/CSSFontPaletteValuesRule.cpp:
+        (WebCore::CSSFontPaletteValuesRule::basePalette const):
+        (WebCore::CSSFontPaletteValuesRule::cssText const):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleFontPaletteValues::StyleRuleFontPaletteValues):
+        * css/StyleRule.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeFontPaletteValuesRule):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasePaletteDescriptor):
+        * platform/graphics/FontPaletteValues.h:
+        (WebCore::FontPaletteIndex::FontPaletteIndex):
+        (WebCore::FontPaletteIndex::operator bool const):
+        (WebCore::FontPaletteIndex::operator== const):
+        (WebCore::FontPaletteIndex::operator!= const):
+        (WebCore::add):
+        (WebCore::FontPaletteValues::FontPaletteValues):
+        (WebCore::FontPaletteValues::basePalette const):
+        (WebCore::FontPaletteValues::operator bool const):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::addLightPalette):
+        (WebCore::addDarkPalette):
+        (WebCore::addAttributesForCustomFontPalettes):
+        (WebCore::addAttributesForFontPalettes):
+
 2021-10-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r283274.

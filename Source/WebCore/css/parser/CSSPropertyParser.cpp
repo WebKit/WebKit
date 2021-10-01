@@ -4848,8 +4848,10 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
 
 static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRange& range)
 {
-    if (range.peek().type() == StringToken)
-        return consumeString(range);
+    if (auto result = consumeIdent<CSSValueLight, CSSValueDark>(range))
+        return result;
+    if (auto result = consumeString(range))
+        return result;
     return consumeInteger(range, 0);
 }
 
