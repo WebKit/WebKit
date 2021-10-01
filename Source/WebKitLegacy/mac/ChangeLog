@@ -1,3 +1,18 @@
+2021-10-01  Ian Anderson  <iana@apple.com>
+
+        WebKitLegacy's module map files don't get installed
+        https://bugs.webkit.org/show_bug.cgi?id=230736
+
+        Reviewed by David Kilzer.
+
+        Revert r271607 because it doesn't work and isn't the right approach.
+
+        * Configurations/WebKitLegacy.xcconfig:
+        * History/WebBackForwardListPrivate.h:
+        * Misc/WebKitLegacy_Private.h: Removed.
+        * Misc/WebKitLegacy_iOS_Private.h: Removed.
+        * Misc/WebKitLegacy_macOS_Private.h: Removed.
+
 2021-09-29  Chris Dumez  <cdumez@apple.com>
 
         Make WebLocalizedString() thread-safe

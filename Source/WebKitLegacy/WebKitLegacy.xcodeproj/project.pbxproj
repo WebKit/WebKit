@@ -163,9 +163,6 @@
 		535E08CE225463B200DF00CA /* WebKitPluginClient.defs in Copy Mig Files into Private Framework Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588C0EDCCEA3008D883D /* WebKitPluginClient.defs */; };
 		535E08CF225463B200DF00CA /* WebKitPluginHost.defs in Copy Mig Files into Private Framework Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588D0EDCCEA3008D883D /* WebKitPluginHost.defs */; };
 		535E08D0225463B200DF00CA /* WebKitPluginHostTypes.defs in Copy Mig Files into Private Framework Headers */ = {isa = PBXBuildFile; fileRef = 1AAF588E0EDCCEA3008D883D /* WebKitPluginHostTypes.defs */; };
-		5365AEDB2566345800704679 /* WebKitLegacy_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 5365AED92566345800704679 /* WebKitLegacy_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		536A202A258B196700E39054 /* WebKitLegacy_macOS_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 536A2028258B196700E39054 /* WebKitLegacy_macOS_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		536A202B258B196700E39054 /* WebKitLegacy_iOS_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 536A2029258B196700E39054 /* WebKitLegacy_iOS_Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		598AD91A1201CEC900ABAE4E /* WebDeviceOrientationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */; };
 		598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */; };
 		598AD9201201CF0700ABAE4E /* WebDeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -925,11 +922,6 @@
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
 		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
-		5365AED92566345800704679 /* WebKitLegacy_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLegacy_Private.h; sourceTree = "<group>"; };
-		536A2028258B196700E39054 /* WebKitLegacy_macOS_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLegacy_macOS_Private.h; sourceTree = "<group>"; };
-		536A2029258B196700E39054 /* WebKitLegacy_iOS_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLegacy_iOS_Private.h; sourceTree = "<group>"; };
-		536A202C258B199500E39054 /* WebKitLegacy_iOS.private.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = WebKitLegacy_iOS.private.modulemap; sourceTree = "<group>"; };
-		536A202D258B199600E39054 /* WebKitLegacy_macOS.private.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = WebKitLegacy_macOS.private.modulemap; sourceTree = "<group>"; };
 		598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationClient.h; sourceTree = "<group>"; };
 		598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationClient.mm; sourceTree = "<group>"; };
 		598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientation.h; sourceTree = "<group>"; };
@@ -1652,7 +1644,6 @@
 				1C68F63F095B5F9C00C2984E /* WebInspector */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				7C02320E251B8E3A00BA7BB6 /* Scripts */,
-				534F75362578AAE8005BE7D8 /* Modules */,
 				0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1C904FCE0BA9DCF20081E9D0 /* Configurations */,
@@ -1785,9 +1776,6 @@
 				F5927D4E02D26C5E01CA2DBB /* WebKitErrors.h */,
 				83730F9803FB1E660004736E /* WebKitErrors.m */,
 				84CA5F7E042685E800CA2ACA /* WebKitErrorsPrivate.h */,
-				536A2029258B196700E39054 /* WebKitLegacy_iOS_Private.h */,
-				536A2028258B196700E39054 /* WebKitLegacy_macOS_Private.h */,
-				5365AED92566345800704679 /* WebKitLegacy_Private.h */,
 				93AEB17D032C1735008635CE /* WebKitLogging.h */,
 				93AEB17E032C1735008635CE /* WebKitLogging.m */,
 				1CF18F4226BB71D3004B1722 /* WebKitLogInitialization.h */,
@@ -1930,15 +1918,6 @@
 				51E94C3506C0321200A9B09E /* WebPDFView.mm */,
 			);
 			name = PDF;
-			sourceTree = "<group>";
-		};
-		534F75362578AAE8005BE7D8 /* Modules */ = {
-			isa = PBXGroup;
-			children = (
-				536A202C258B199500E39054 /* WebKitLegacy_iOS.private.modulemap */,
-				536A202D258B199600E39054 /* WebKitLegacy_macOS.private.modulemap */,
-			);
-			path = Modules;
 			sourceTree = "<group>";
 		};
 		6508A4A7099B375F00BCBF45 /* Default Delegates */ = {
@@ -3109,9 +3088,6 @@
 				9398101C0824BF01008DF038 /* WebKitErrors.h in Headers */,
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,
 				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
-				536A202B258B196700E39054 /* WebKitLegacy_iOS_Private.h in Headers */,
-				536A202A258B196700E39054 /* WebKitLegacy_macOS_Private.h in Headers */,
-				5365AEDB2566345800704679 /* WebKitLegacy_Private.h in Headers */,
 				9398101D0824BF01008DF038 /* WebKitLogging.h in Headers */,
 				9398101E0824BF01008DF038 /* WebKitNSStringExtras.h in Headers */,
 				1AAF5D090EDDE71D008D883D /* WebKitPluginHostTypes.h in Headers */,

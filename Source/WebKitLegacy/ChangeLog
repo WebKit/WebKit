@@ -1,3 +1,16 @@
+2021-10-01  Ian Anderson  <iana@apple.com>
+
+        WebKitLegacy's module map files don't get installed
+        https://bugs.webkit.org/show_bug.cgi?id=230736
+
+        Reviewed by David Kilzer.
+
+        Revert r271607 because it doesn't work and isn't the right approach.
+
+        * Modules/WebKitLegacy_iOS.private.modulemap: Removed.
+        * Modules/WebKitLegacy_macOS.private.modulemap: Removed.
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2021-09-29  Jer Noble  <jer.noble@apple.com>
 
         Build-time optimization: forward declare more things in MediaPlayer.h and HTMLMediaElement.h
