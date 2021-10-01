@@ -1,3 +1,19 @@
+2021-09-30  Sam Weinig  <weinig@apple.com>
+
+        Add dumping for UIViews with separated layers
+        https://bugs.webkit.org/show_bug.cgi?id=231056
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (allowListedClassToString):
+        Fix typo from previous patch where a comma was missed
+        and remove unnecessary assertion.
+
+        (dumpUIView):
+        Use the new dumpSeparatedLayerProperties when separated layers
+        are present.
+
 2021-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify some scrolling-related code in WebKit with use of RectEdges<bool>
