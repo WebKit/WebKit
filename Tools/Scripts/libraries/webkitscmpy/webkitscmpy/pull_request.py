@@ -26,20 +26,54 @@ from .commit import Commit
 
 
 class PullRequest(object):
-    COMMIT_BODY_RE = re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n```\n(?P<message>.+)\n```\n?\Z', flags=re.DOTALL)
+    COMMIT_BODY_RES = [
+        dict(
+            re=re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n```\n(?P<message>.+)\n```\n?\Z', flags=re.DOTALL),
+            escaped=False,
+        ), dict(
+            re=re.compile(r'\A#### (?P<hash>[0-9a-f]+)\n<pre>\n(?P<message>.+)\n</pre>\n?\Z', flags=re.DOTALL),
+            escaped=True,
+        ),
+    ]
     DIVIDER_LEN = 70
+    ESCAPE_TABLE = {
+        '"': '&quot;',
+        "'": '&apos;',
+        '>': ' &gt;',
+        '<': '&lt;',
+        '&': '&amp;',
+    }
 
     class State(object):
         OPENED = 'opened'
         CLOSED = 'closed'
 
     @classmethod
-    def create_body(cls, body, commits):
+    def escape_html(cls, message):
+        message = ''.join(cls.ESCAPE_TABLE.get(c, c) for c in message)
+        return re.sub(r'(https?://[^\s<>,:;]+)', r'<a href="\1">\1</a>', message)
+
+    @classmethod
+    def unescape_html(cls, message):
+        message = re.sub(r'<a href=".+">(https?://[^\s<>,:;]+)</a>', r'\1', message)
+        for c, escaped in cls.ESCAPE_TABLE.items():
+            message = message.replace(escaped, c)
+        return message
+
+    @classmethod
+    def create_body(cls, body, commits, linkify=True):
         body = body or ''
         if not commits:
             return body
         if body:
             body = '{}\n\n{}\n'.format(body.rstrip(), '-' * cls.DIVIDER_LEN)
+        if linkify:
+            return body + '\n{}\n'.format('-' * cls.DIVIDER_LEN).join([
+                '#### {}\n<pre>\n{}\n</pre>'.format(
+                    commit.hash,
+                    cls.escape_html(commit.message.rstrip() if commit.message else '???'),
+                ) for commit in commits
+            ])
         return body + '\n{}\n'.format('-' * cls.DIVIDER_LEN).join([
             '#### {}\n```\n{}\n```'.format(commit.hash, commit.message.rstrip() if commit.message else '???') for commit in commits
         ])
@@ -53,16 +87,20 @@ class PullRequest(object):
         commits = []
 
         for part in parts:
-            match = cls.COMMIT_BODY_RE.match(part)
-            if match:
-                commits.append(Commit(
-                    hash=match.group('hash'),
-                    message=match.group('message') if match.group('message') != '???' else None,
-                ))
-            elif body:
-                body = '{}\n{}\n{}\n'.format(body.rstrip(), '-' * cls.DIVIDER_LEN, part.rstrip().lstrip())
+            for obj in cls.COMMIT_BODY_RES:
+                match = obj['re'].match(part)
+                if match:
+                    message = cls.unescape_html(match.group('message')) if obj.get('escaped') else match.group('message')
+                    commits.append(Commit(
+                        hash=match.group('hash'),
+                        message=message if message != '???' else None,
+                    ))
+                    break
             else:
-                body = part.rstrip().lstrip()
+                if body:
+                    body = '{}\n{}\n{}\n'.format(body.rstrip(), '-' * cls.DIVIDER_LEN, part.rstrip().lstrip())
+                else:
+                    body = part.rstrip().lstrip()
         return body or None, commits
 
     def __init__(self, number, title=None, body=None, author=None, head=None, base=None):
