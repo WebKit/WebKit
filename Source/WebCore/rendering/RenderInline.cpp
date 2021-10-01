@@ -1118,4 +1118,20 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
     }
 }
 
+bool isEmptyInline(const RenderInline& renderer)
+{
+    for (auto& current : childrenOfType<RenderObject>(renderer)) {
+        if (current.isFloatingOrOutOfFlowPositioned())
+            continue;
+        if (is<RenderText>(current)) {
+            if (!downcast<RenderText>(current).isAllCollapsibleWhitespace())
+                return false;
+            continue;
+        }
+        if (!is<RenderInline>(current) || !isEmptyInline(downcast<RenderInline>(current)))
+            return false;
+    }
+    return true;
+}
+
 } // namespace WebCore

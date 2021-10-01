@@ -27,7 +27,7 @@
 #include "LayoutIntegrationCoverage.h"
 
 #include "HTMLTextFormControlElement.h"
-#include "InlineIterator.h"
+#include "InlineWalker.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"

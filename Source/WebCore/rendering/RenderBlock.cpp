@@ -39,7 +39,6 @@
 #include "HitTestLocation.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
-#include "InlineIterator.h"
 #include "InlineWalker.h"
 #include "LayoutRepainter.h"
 #include "LegacyInlineElementBox.h"

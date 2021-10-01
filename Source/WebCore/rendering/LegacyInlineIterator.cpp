@@ -25,11 +25,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "config.h"
-#include "InlineIterator.h"
+#include "LegacyInlineIterator.h"
 
 namespace WebCore {
 
-UCharDirection InlineIterator::surrogateTextDirection(UChar currentCodeUnit) const
+UCharDirection LegacyInlineIterator::surrogateTextDirection(UChar currentCodeUnit) const
 {
     RenderText& text = downcast<RenderText>(*m_renderer);
     UChar lead;

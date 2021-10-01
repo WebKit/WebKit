@@ -1,5 +1,87 @@
 2021-10-01  Antti Koivisto  <antti@apple.com>
 
+        Rename InlineIterator to LegacyInlineIterator
+        https://bugs.webkit.org/show_bug.cgi?id=231077
+
+        Reviewed by Alan Bujtas.
+
+        It is only used by the legacy line layout.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Position.cpp:
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        * rendering/LegacyInlineIterator.cpp: Renamed from Source/WebCore/rendering/InlineIterator.cpp.
+        (WebCore::LegacyInlineIterator::surrogateTextDirection const):
+        * rendering/LegacyInlineIterator.h: Renamed from Source/WebCore/rendering/InlineIterator.h.
+        (WebCore::LegacyInlineIterator::LegacyInlineIterator):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::nextInlineRendererSkippingEmpty):
+        (WebCore::firstInlineRendererSkippingEmpty):
+
+        Rename this to not say "bidi".
+
+        (WebCore::LegacyInlineIterator::fastIncrementInTextNode):
+        (WebCore::LegacyInlineIterator::incrementByCodePointInTextNode):
+        (WebCore::LegacyInlineIterator::setOffset):
+        (WebCore::LegacyInlineIterator::setRefersToEndOfPreviousNode):
+        (WebCore::LegacyInlineIterator::increment):
+        (WebCore::LegacyInlineIterator::fastDecrement):
+        (WebCore::LegacyInlineIterator::atEnd const):
+        (WebCore::LegacyInlineIterator::characterAt const):
+        (WebCore::LegacyInlineIterator::current const):
+        (WebCore::LegacyInlineIterator::previousInSameNode const):
+        (WebCore::LegacyInlineIterator::direction const):
+        (WebCore::numberOfIsolateAncestors):
+        (WebCore::InlineBidiResolver::appendRunInternal):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::determineDirectionality):
+        (WebCore::LegacyLineLayout::appendRunsForObject):
+        (WebCore::constructBidiRunsForSegment):
+        (WebCore::LegacyLineLayout::createLineBoxesFromBidiRuns):
+        (WebCore::LegacyLineLayout::layoutRunsAndFloats):
+        (WebCore::LegacyLineLayout::restartLayoutRunsAndFloatsInRange):
+        (WebCore::LegacyLineLayout::layoutRunsAndFloatsInRange):
+        (WebCore::LegacyLineLayout::determineStartPosition):
+        (WebCore::LegacyLineLayout::determineEndPosition):
+        (WebCore::LegacyLineLayout::matchedEndLine):
+        * rendering/LegacyLineLayout.h:
+        * rendering/LegacyRootInlineBox.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderInline.cpp:
+        (WebCore::isEmptyInline):
+        * rendering/RenderInline.h:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::lineBreak):
+        (WebCore::BreakingContext::initializeForCurrentObject):
+        (WebCore::BreakingContext::handleBR):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::iteratorIsBeyondEndOfRenderCombineText):
+        (WebCore::ensureCharacterGetsLineBox):
+        (WebCore::tryHyphenating):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::BreakingContext::trailingSpacesHang):
+        (WebCore::checkWhitespaceCollapsingTransitions):
+        (WebCore::BreakingContext::handleEndOfLine):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipTrailingWhitespace):
+        (WebCore::LineBreaker::nextLineBreak):
+        * rendering/line/LineBreaker.h:
+        * rendering/line/LineInlineHeaders.h:
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::requiresLineBox):
+        * rendering/line/TrailingObjects.cpp:
+        (WebCore::TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes):
+        * rendering/line/TrailingObjects.h:
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::generatesLineBoxesForInlineChild):
+
+2021-10-01  Antti Koivisto  <antti@apple.com>
+
         Move InlineWalker to a file of its own and make it use RenderIterator
         https://bugs.webkit.org/show_bug.cgi?id=231069
 

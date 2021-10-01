@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "InlineIterator.h"
+#include "LegacyInlineIterator.h"
 #include "LineInfo.h"
 #include "LineInlineHeaders.h"
 #include <wtf/Vector.h>
@@ -51,7 +51,7 @@ public:
         reset();
     }
 
-    InlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
+    LegacyInlineIterator nextLineBreak(InlineBidiResolver&, LineInfo&, RenderTextInfo&, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements&);
 
     bool lineWasHyphenated() { return m_hyphenated; }
     const Vector<RenderBox*>& positionedObjects() { return m_positionedObjects; }
@@ -60,7 +60,7 @@ public:
 private:
     void reset();
 
-    void skipTrailingWhitespace(InlineIterator&, const LineInfo&);
+    void skipTrailingWhitespace(LegacyInlineIterator&, const LineInfo&);
     void skipLeadingWhitespace(InlineBidiResolver&, LineInfo&, FloatingObject* lastFloatFromPreviousLine, LineWidth&);
 
     FloatingObject* insertFloatingObject(RenderBox& floatBox) { return m_block.insertFloatingObject(floatBox); }

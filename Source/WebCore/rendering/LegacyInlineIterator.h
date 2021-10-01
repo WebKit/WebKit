@@ -47,15 +47,15 @@ struct BidiIsolatedRun {
 };
 
 // This class is used to RenderInline subtrees, stepping by character within the
-// text children. InlineIterator will use bidiNext to find the next RenderText
+// text children. LegacyInlineIterator will use next to find the next RenderText
 // optionally notifying a BidiResolver every time it steps into/out of a RenderInline.
-class InlineIterator {
+class LegacyInlineIterator {
 public:
-    InlineIterator()
+    LegacyInlineIterator()
     {
     }
 
-    InlineIterator(RenderElement* root, RenderObject* o, unsigned p)
+    LegacyInlineIterator(RenderElement* root, RenderObject* o, unsigned p)
         : m_root(root)
         , m_renderer(o)
         , m_pos(p)
@@ -122,20 +122,20 @@ private:
     std::optional<unsigned> m_nextBreakablePosition;
     unsigned m_pos { 0 };
 
-    // There are a couple places where we want to decrement an InlineIterator.
+    // There are a couple places where we want to decrement an LegacyInlineIterator.
     // Usually this take the form of decrementing m_pos; however, m_pos might be 0.
-    // However, we shouldn't ever need to decrement an InlineIterator more than
+    // However, we shouldn't ever need to decrement an LegacyInlineIterator more than
     // once, so rather than implementing a decrement() function which traverses
     // nodes, we can simply keep track of this state and handle it.
     bool m_refersToEndOfPreviousNode { false };
 };
 
-inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
+inline bool operator==(const LegacyInlineIterator& it1, const LegacyInlineIterator& it2)
 {
     return it1.offset() == it2.offset() && it1.renderer() == it2.renderer();
 }
 
-inline bool operator!=(const InlineIterator& it1, const InlineIterator& it2)
+inline bool operator!=(const LegacyInlineIterator& it1, const LegacyInlineIterator& it2)
 {
     return it1.offset() != it2.offset() || it1.renderer() != it2.renderer();
 }
@@ -199,24 +199,8 @@ static inline bool isIteratorTarget(RenderObject* object)
     return object->isTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplaced();
 }
 
-static bool isEmptyInline(const RenderInline& renderer)
-{
-    for (auto& current : childrenOfType<RenderObject>(renderer)) {
-        if (current.isFloatingOrOutOfFlowPositioned())
-            continue;
-        if (is<RenderText>(current)) {
-            if (!downcast<RenderText>(current).isAllCollapsibleWhitespace())
-                return false;
-            continue;
-        }
-        if (!is<RenderInline>(current) || !isEmptyInline(downcast<RenderInline>(current)))
-            return false;
-    }
-    return true;
-}
-
 template <class Observer>
-static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, RenderObject* current, Observer* observer)
+static inline RenderObject* nextInlineRendererSkippingEmpty(RenderElement& root, RenderObject* current, Observer* observer)
 {
     RenderObject* next = nullptr;
 
@@ -253,13 +237,13 @@ static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, Re
 }
 
 // This makes callers cleaner as they don't have to specify a type for the observer when not providing one.
-static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, RenderObject* current)
+static inline RenderObject* nextInlineRendererSkippingEmpty(RenderElement& root, RenderObject* current)
 {
     InlineBidiResolver* observer = nullptr;
-    return bidiNextSkippingEmptyInlines(root, current, observer);
+    return nextInlineRendererSkippingEmpty(root, current, observer);
 }
 
-static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, InlineBidiResolver* resolver = nullptr)
+static inline RenderObject* firstInlineRendererSkippingEmpty(RenderElement& root, InlineBidiResolver* resolver = nullptr)
 {
     RenderObject* renderer = root.firstChild();
     if (!renderer)
@@ -268,7 +252,7 @@ static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, I
     if (is<RenderInline>(*renderer)) {
         notifyObserverEnteredObject(resolver, renderer);
         if (!isEmptyInline(downcast<RenderInline>(*renderer)))
-            renderer = bidiNextSkippingEmptyInlines(root, renderer, resolver);
+            renderer = nextInlineRendererSkippingEmpty(root, renderer, resolver);
         else {
             // Never skip empty inlines.
             if (resolver)
@@ -277,23 +261,23 @@ static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, I
         }
     }
 
-    // FIXME: Unify this with the bidiNext call above.
+    // FIXME: Unify this with the next call above.
     if (renderer && !isIteratorTarget(renderer))
-        renderer = bidiNextSkippingEmptyInlines(root, renderer, resolver);
+        renderer = nextInlineRendererSkippingEmpty(root, renderer, resolver);
 
     if (resolver)
         resolver->commitExplicitEmbedding();
     return renderer;
 }
 
-inline void InlineIterator::fastIncrementInTextNode()
+inline void LegacyInlineIterator::fastIncrementInTextNode()
 {
     ASSERT(m_renderer);
     ASSERT(m_pos <= downcast<RenderText>(*m_renderer).text().length());
     ++m_pos;
 }
 
-inline void InlineIterator::incrementByCodePointInTextNode()
+inline void LegacyInlineIterator::incrementByCodePointInTextNode()
 {
     ASSERT(m_renderer);
     const auto& text = downcast<RenderText>(*m_renderer).text();
@@ -306,13 +290,13 @@ inline void InlineIterator::incrementByCodePointInTextNode()
     U16_NEXT(text.characters16(), m_pos, text.length(), character);
 }
 
-inline void InlineIterator::setOffset(unsigned position)
+inline void LegacyInlineIterator::setOffset(unsigned position)
 {
     ASSERT(position <= UINT_MAX - 10); // Sanity check
     m_pos = position;
 }
 
-inline void InlineIterator::setRefersToEndOfPreviousNode()
+inline void LegacyInlineIterator::setRefersToEndOfPreviousNode()
 {
     ASSERT(!m_pos);
     ASSERT(!m_refersToEndOfPreviousNode);
@@ -320,7 +304,7 @@ inline void InlineIterator::setRefersToEndOfPreviousNode()
 }
 
 
-inline void InlineIterator::increment(InlineBidiResolver* resolver)
+inline void LegacyInlineIterator::increment(InlineBidiResolver* resolver)
 {
     if (!m_renderer)
         return;
@@ -329,15 +313,15 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
         if (m_pos < downcast<RenderText>(*m_renderer).text().length())
             return;
     }
-    // bidiNext can return nullptr
-    RenderObject* bidiNext = bidiNextSkippingEmptyInlines(*m_root, m_renderer, resolver);
-    if (bidiNext)
-        moveToStartOf(*bidiNext);
+    // next can return nullptr
+    RenderObject* next = nextInlineRendererSkippingEmpty(*m_root, m_renderer, resolver);
+    if (next)
+        moveToStartOf(*next);
     else
         clear();
 }
 
-inline void InlineIterator::fastDecrement()
+inline void LegacyInlineIterator::fastDecrement()
 {
     ASSERT(!refersToEndOfPreviousNode());
     if (m_pos)
@@ -346,12 +330,12 @@ inline void InlineIterator::fastDecrement()
         setRefersToEndOfPreviousNode();
 }
 
-inline bool InlineIterator::atEnd() const
+inline bool LegacyInlineIterator::atEnd() const
 {
     return !m_renderer;
 }
 
-inline UChar InlineIterator::characterAt(unsigned index) const
+inline UChar LegacyInlineIterator::characterAt(unsigned index) const
 {
     if (!is<RenderText>(m_renderer))
         return 0;
@@ -359,17 +343,17 @@ inline UChar InlineIterator::characterAt(unsigned index) const
     return downcast<RenderText>(*m_renderer).characterAt(index);
 }
 
-inline UChar InlineIterator::current() const
+inline UChar LegacyInlineIterator::current() const
 {
     return characterAt(m_pos);
 }
 
-inline UChar InlineIterator::previousInSameNode() const
+inline UChar LegacyInlineIterator::previousInSameNode() const
 {
     return characterAt(m_pos - 1);
 }
 
-ALWAYS_INLINE UCharDirection InlineIterator::direction() const
+ALWAYS_INLINE UCharDirection LegacyInlineIterator::direction() const
 {
     if (UNLIKELY(!m_renderer))
         return U_OTHER_NEUTRAL;
@@ -408,7 +392,7 @@ static inline RenderObject* highestContainingIsolateWithinRoot(RenderObject& ini
     return containingIsolateObject;
 }
 
-static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
+static inline unsigned numberOfIsolateAncestors(const LegacyInlineIterator& iter)
 {
     unsigned count = 0;
     typedef RenderObject* RenderObjectPtr;
@@ -490,9 +474,9 @@ inline void InlineBidiResolver::appendRunInternal()
                 isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
             else
                 LegacyLineLayout::appendRunsForObject(&m_runs, start, obj->length(), *obj, *this);
-            // FIXME: start/obj should be an InlineIterator instead of two separate variables.
+            // FIXME: start/obj should be an LegacyInlineIterator instead of two separate variables.
             start = 0;
-            obj = bidiNextSkippingEmptyInlines(*m_sor.root(), obj, &isolateTracker);
+            obj = nextInlineRendererSkippingEmpty(*m_sor.root(), obj, &isolateTracker);
         }
         if (obj) {
             unsigned pos = obj == m_eor.renderer() ? m_eor.offset() : UINT_MAX;

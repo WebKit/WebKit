@@ -35,7 +35,6 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLSpanElement.h"
-#include "InlineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LegacyInlineTextBox.h"
 #include "Logging.h"
