@@ -1,3 +1,49 @@
+2021-10-01  Antti Koivisto  <antti@apple.com>
+
+        Move InlineWalker to a file of its own and make it use RenderIterator
+        https://bugs.webkit.org/show_bug.cgi?id=231069
+
+        Reviewed by Alan Bujtas.
+
+        It is confusing and overly complicated.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForLineLayoutWithReason):
+        * rendering/InlineIterator.h:
+        (WebCore::bidiNextSkippingEmptyInlines):
+        (WebCore::bidiNextShared): Deleted.
+
+        There is no need to share anything here.
+
+        (WebCore::bidiNextIncludingEmptyInlines): Deleted.
+        (WebCore::bidiFirstIncludingEmptyInlines): Deleted.
+        (WebCore::InlineWalker::InlineWalker): Deleted.
+        (WebCore::InlineWalker::root): Deleted.
+        (WebCore::InlineWalker::current): Deleted.
+        (WebCore::InlineWalker::atEndOfInline): Deleted.
+
+        None of the clients cared about the functionality where the iterator would stop at the end of a RenderInline.
+
+        (WebCore::InlineWalker::atEnd const): Deleted.
+        (WebCore::InlineWalker::advance): Deleted.
+        * rendering/InlineWalker.h: Added.
+        (WebCore::InlineWalker::InlineWalker):
+        (WebCore::InlineWalker::current):
+        (WebCore::InlineWalker::atEnd const):
+        (WebCore::InlineWalker::advance):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::LegacyLineLayout::layoutLineBoxes):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        * rendering/RenderIterator.h:
+        (WebCore::RenderIterator::operator bool const):
+        (WebCore::RenderConstIterator::operator bool const):
+        (WebCore::RenderIterator<T>::traverseNextSkippingChildren):
+        (WebCore::RenderConstIterator<T>::traverseNextSkippingChildren):
+
 2021-10-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Cocoa GraphicsContextGLOpenGL should not be used by GraphicsContextGLCVANGLE

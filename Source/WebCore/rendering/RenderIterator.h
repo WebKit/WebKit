@@ -40,11 +40,14 @@ public:
     T& operator*();
     T* operator->();
 
+    operator bool() const { return m_current; }
+
     bool operator==(const RenderIterator& other) const;
     bool operator!=(const RenderIterator& other) const;
 
     RenderIterator& traverseNext();
     RenderIterator& traverseNextSibling();
+    RenderIterator& traverseNextSkippingChildren();
     RenderIterator& traversePreviousSibling();
     RenderIterator& traverseAncestor();
 
@@ -62,11 +65,14 @@ public:
     const T& operator*() const;
     const T* operator->() const;
 
+    operator bool() const { return m_current; }
+
     bool operator==(const RenderConstIterator& other) const;
     bool operator!=(const RenderConstIterator& other) const;
 
     RenderConstIterator& traverseNext();
     RenderConstIterator& traverseNextSibling();
+    RenderConstIterator& traverseNextSkippingChildren();
     RenderConstIterator& traversePreviousSibling();
     RenderConstIterator& traverseAncestor();
 
@@ -239,6 +245,14 @@ inline RenderIterator<T>& RenderIterator<T>::traverseNext()
 }
 
 template <typename T>
+inline RenderIterator<T>& RenderIterator<T>::traverseNextSkippingChildren()
+{
+    ASSERT(m_current);
+    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
 inline RenderIterator<T>& RenderIterator<T>::traversePreviousSibling()
 {
     ASSERT(m_current);
@@ -311,6 +325,14 @@ inline RenderConstIterator<T>& RenderConstIterator<T>::traverseNext()
 {
     ASSERT(m_current);
     m_current = RenderTraversal::next<T>(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
+inline RenderConstIterator<T>& RenderConstIterator<T>::traverseNextSkippingChildren()
+{
+    ASSERT(m_current);
+    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root);
     return *this;
 }
 

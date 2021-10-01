@@ -199,12 +199,6 @@ static inline bool isIteratorTarget(RenderObject* object)
     return object->isTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplaced();
 }
 
-// This enum is only used for bidiNextShared()
-enum EmptyInlineBehavior {
-    SkipEmptyInlines,
-    IncludeEmptyInlines,
-};
-
 static bool isEmptyInline(const RenderInline& renderer)
 {
     for (auto& current : childrenOfType<RenderObject>(renderer)) {
@@ -221,33 +215,19 @@ static bool isEmptyInline(const RenderInline& renderer)
     return true;
 }
 
-// FIXME: This function is misleadingly named. It has little to do with bidi.
-// This function will iterate over inlines within a block, optionally notifying
-// a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
 template <class Observer>
-static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* current, Observer* observer = nullptr, EmptyInlineBehavior emptyInlineBehavior = SkipEmptyInlines, bool* endOfInlinePtr = nullptr)
+static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, RenderObject* current, Observer* observer)
 {
     RenderObject* next = nullptr;
-    // oldEndOfInline denotes if when we last stopped iterating if we were at the end of an inline.
-    bool oldEndOfInline = endOfInlinePtr ? *endOfInlinePtr : false;
-    bool endOfInline = false;
 
     while (current) {
         next = nullptr;
-        if (!oldEndOfInline && !isIteratorTarget(current)) {
+        if (!isIteratorTarget(current)) {
             next = downcast<RenderElement>(*current).firstChild();
             notifyObserverEnteredObject(observer, next);
         }
 
-        // We hit this when either current has no children, or when current is not a renderer we care about.
         if (!next) {
-            // If it is a renderer we care about, and we're doing our inline-walk, return it.
-            if (emptyInlineBehavior == IncludeEmptyInlines && !oldEndOfInline && is<RenderInline>(*current)) {
-                next = current;
-                endOfInline = true;
-                break;
-            }
-
             while (current && current != &root) {
                 notifyObserverWillExitObject(observer, current);
 
@@ -258,34 +238,18 @@ static inline RenderObject* bidiNextShared(RenderElement& root, RenderObject* cu
                 }
 
                 current = current->parent();
-                if (emptyInlineBehavior == IncludeEmptyInlines && current && current != &root && is<RenderInline>(*current)) {
-                    next = current;
-                    endOfInline = true;
-                    break;
-                }
             }
         }
 
         if (!next)
             break;
 
-        if (isIteratorTarget(next)
-            || (is<RenderInline>(*next) && (emptyInlineBehavior == IncludeEmptyInlines || isEmptyInline(downcast<RenderInline>(*next)))))
+        if (isIteratorTarget(next) || (is<RenderInline>(*next) && isEmptyInline(downcast<RenderInline>(*next))))
             break;
         current = next;
     }
 
-    if (endOfInlinePtr)
-        *endOfInlinePtr = endOfInline;
-
     return next;
-}
-
-template <class Observer>
-static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, RenderObject* current, Observer* observer)
-{
-    // The SkipEmptyInlines callers never care about endOfInlinePtr.
-    return bidiNextShared(root, current, observer, SkipEmptyInlines);
 }
 
 // This makes callers cleaner as they don't have to specify a type for the observer when not providing one.
@@ -293,12 +257,6 @@ static inline RenderObject* bidiNextSkippingEmptyInlines(RenderElement& root, Re
 {
     InlineBidiResolver* observer = nullptr;
     return bidiNextSkippingEmptyInlines(root, current, observer);
-}
-
-static inline RenderObject* bidiNextIncludingEmptyInlines(RenderElement& root, RenderObject* current, bool* endOfInlinePtr = nullptr)
-{
-    InlineBidiResolver* observer = nullptr; // Callers who include empty inlines, never use an observer.
-    return bidiNextShared(root, current, observer, IncludeEmptyInlines, endOfInlinePtr);
 }
 
 static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, InlineBidiResolver* resolver = nullptr)
@@ -326,18 +284,6 @@ static inline RenderObject* bidiFirstSkippingEmptyInlines(RenderElement& root, I
     if (resolver)
         resolver->commitExplicitEmbedding();
     return renderer;
-}
-
-// FIXME: This method needs to be renamed when bidiNext finds a good name.
-static inline RenderObject* bidiFirstIncludingEmptyInlines(RenderElement& root)
-{
-    RenderObject* o = root.firstChild();
-    // If either there are no children to walk, or the first one is correct
-    // then just return it.
-    if (!o || o->isRenderInline() || isIteratorTarget(o))
-        return o;
-
-    return bidiNextIncludingEmptyInlines(root, o);
 }
 
 inline void InlineIterator::fastIncrementInTextNode()
@@ -373,36 +319,6 @@ inline void InlineIterator::setRefersToEndOfPreviousNode()
     m_refersToEndOfPreviousNode = true;
 }
 
-// FIXME: This is used by RenderBlock for simplified layout, and has nothing to do with bidi
-// it shouldn't use functions called bidiFirst and bidiNext.
-class InlineWalker {
-public:
-    InlineWalker(RenderElement& root)
-        : m_root(root)
-        , m_current(nullptr)
-        , m_atEndOfInline(false)
-    {
-        // FIXME: This class should be taught how to do the SkipEmptyInlines codepath as well.
-        m_current = bidiFirstIncludingEmptyInlines(m_root);
-    }
-
-    RenderElement& root() { return m_root; }
-    RenderObject* current() { return m_current; }
-
-    bool atEndOfInline() { return m_atEndOfInline; }
-    bool atEnd() const { return !m_current; }
-
-    RenderObject* advance()
-    {
-        // FIXME: Support SkipEmptyInlines and observer parameters.
-        m_current = bidiNextIncludingEmptyInlines(m_root, m_current, &m_atEndOfInline);
-        return m_current;
-    }
-private:
-    RenderElement& m_root;
-    RenderObject* m_current;
-    bool m_atEndOfInline;
-};
 
 inline void InlineIterator::increment(InlineBidiResolver* resolver)
 {

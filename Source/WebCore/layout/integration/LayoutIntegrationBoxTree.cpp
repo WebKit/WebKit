@@ -28,7 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineIterator.h"
+#include "InlineWalker.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
@@ -144,8 +144,6 @@ void BoxTree::buildTree()
     };
 
     for (auto walker = InlineWalker(m_flow); !walker.atEnd(); walker.advance()) {
-        if (walker.atEndOfInline())
-            continue;
         auto& childRenderer = *walker.current();
         auto childBox = createChildBox(childRenderer);
         appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(childBox)), childRenderer);

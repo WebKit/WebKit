@@ -32,6 +32,7 @@
 #include "HTMLParserIdioms.h"
 #include "InlineIterator.h"
 #include "InlineTextBoxStyle.h"
+#include "InlineWalker.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LegacyInlineElementBox.h"
 #include "LegacyInlineTextBox.h"
@@ -1767,7 +1768,7 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
                     else
                         box.layoutIfNeeded();
                 }
-            } else if (o.isTextOrLineBreak() || (is<RenderInline>(o) && !walker.atEndOfInline())) {
+            } else if (o.isTextOrLineBreak() || is<RenderInline>(o)) {
                 if (layoutState.isFullLayout() || o.selfNeedsLayout())
                     dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
                 o.clearNeedsLayout();
