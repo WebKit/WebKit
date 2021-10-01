@@ -251,7 +251,7 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
 {
     ResourceRequest originalRequest = request;
 
-    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, weakThis = makeWeakPtr(*this), client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest), preRedirectURL = WTFMove(preRedirectURL)](auto&& request) mutable {
+    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, weakThis = makeWeakPtr(*this), client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto&& request) mutable {
         if (!weakThis)
             return handler({ ResourceError { ResourceError::Type::Cancellation }});
 
@@ -314,14 +314,14 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
     case FetchOptions::Destination::Worker:
     case FetchOptions::Destination::Serviceworker:
     case FetchOptions::Destination::Sharedworker:
-        return contentSecurityPolicy->allowChildContextFromSource(request.url(), redirectResponseReceived);
+        return contentSecurityPolicy->allowChildContextFromSource(request.url(), redirectResponseReceived, preRedirectURL);
     case FetchOptions::Destination::Script:
         if (request.requester() == ResourceRequest::Requester::ImportScripts && !contentSecurityPolicy->allowScriptFromSource(request.url(), redirectResponseReceived))
             return false;
         // FIXME: Check CSP for non-importScripts() initiated loads.
         return true;
     case FetchOptions::Destination::EmptyString:
-        return contentSecurityPolicy->allowConnectToSource(request.url(), redirectResponseReceived, preRedirectURL);
+        return contentSecurityPolicy->allowConnectToSource(request.url(), redirectResponseReceived);
     case FetchOptions::Destination::Audio:
     case FetchOptions::Destination::Document:
     case FetchOptions::Destination::Embed:
