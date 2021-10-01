@@ -2504,6 +2504,9 @@ if JIT
 
     end
 else
+    macro loadBaselineJITConstantPool()
+    end
+
     macro setupReturnToBaselineAfterCheckpointExitIfNeeded()
     end
 end

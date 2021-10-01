@@ -334,6 +334,12 @@ inline void JIT::emitValueProfilingSite(ValueProfile& valueProfile, JSValueRegs 
     store32(value.payloadGPR(), &descriptor->asBits.payload);
     store32(value.tagGPR(), &descriptor->asBits.tag);
 }
+
+template<typename Metadata>
+std::enable_if_t<std::is_same<decltype(Metadata::m_profile), ValueProfile>::value, void> JIT::emitValueProfilingSite(Metadata& metadata, JSValueRegs value)
+{
+    emitValueProfilingSite(valueProfileFor(metadata, m_bytecodeIndex.checkpoint()), value);
+}
 #endif
 
 template<typename Op>
@@ -342,21 +348,26 @@ inline std::enable_if_t<std::is_same<decltype(Op::Metadata::m_profile), ValuePro
 #if USE(JSVALUE64)
     emitValueProfilingSite(bytecode, regT0);
 #else
-    emitValueProfilingSite(bytecode.metadata(m_codeBlock), JSValueRegs(regT1, regT0));
+    emitValueProfilingSite(bytecode, JSValueRegs(regT1, regT0));
 #endif
 }
 
 inline void JIT::emitValueProfilingSiteIfProfiledOpcode(...) { }
 
-#if USE(JSVALUE64)
 template<typename Bytecode>
 inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, JSValueRegs value)
 {
     if (!shouldEmitProfiling())
         return;
 
+#if USE(JSVALUE64)
     ptrdiff_t offset = m_unlinkedCodeBlock->metadata().offsetInMetadataTable(bytecode) + valueProfileOffsetFor<Bytecode>(m_bytecodeIndex.checkpoint()) + ValueProfile::offsetOfFirstBucket();
     store64(value.gpr(), Address(s_metadataGPR, offset));
+#else
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(bytecode);
+    // FIXME.
+#endif
 }
 
 template<typename Bytecode>
@@ -364,7 +375,6 @@ inline void JIT::emitValueProfilingSite(const Bytecode& bytecode, GPRReg resultR
 {
     emitValueProfilingSite(bytecode, JSValueRegs(resultReg));
 }
-#endif
 
 template <typename Bytecode>
 inline void JIT::emitArrayProfilingSiteWithCell(const Bytecode& bytecode, ptrdiff_t offsetOfArrayProfile, RegisterID cellGPR, RegisterID scratchGPR)
@@ -380,6 +390,24 @@ inline void JIT::emitArrayProfilingSiteWithCell(const Bytecode& bytecode, Regist
 {
     emitArrayProfilingSiteWithCell(bytecode, Bytecode::Metadata::offsetOfArrayProfile() + ArrayProfile::offsetOfLastSeenStructureID(), cellGPR, scratchGPR);
 }
+
+#if USE(JSVALUE32_64)
+inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cellGPR, ArrayProfile* arrayProfile, RegisterID scratchGPR)
+{
+    if (shouldEmitProfiling()) {
+        load32(MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
+        store32(scratchGPR, arrayProfile->addressOfLastSeenStructureID());
+    }
+}
+
+inline void JIT::emitArrayProfilingSiteWithCell(RegisterID cellGPR, RegisterID arrayProfileGPR, RegisterID scratchGPR)
+{
+    if (shouldEmitProfiling()) {
+        load32(MacroAssembler::Address(cellGPR, JSCell::structureIDOffset()), scratchGPR);
+        store32(scratchGPR, Address(arrayProfileGPR, ArrayProfile::offsetOfLastSeenStructureID()));
+    }
+}
+#endif
 
 ALWAYS_INLINE int32_t JIT::getOperandConstantInt(VirtualRegister src)
 {

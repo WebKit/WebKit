@@ -1466,10 +1466,12 @@ void JIT::emit_op_loop_hint(const Instruction* instruction)
 
 #if USE(JSVALUE64)
         JSValueRegs resultRegs(GPRInfo::returnValueGPR);
+        loadGlobalObject(resultRegs.gpr());
 #else
         JSValueRegs resultRegs(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
+        loadGlobalObject(resultRegs.payloadGPR());
+        move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
 #endif
-        loadGlobalObject(resultRegs.gpr());
         checkStackPointerAlignment();
         emitRestoreCalleeSaves();
         emitFunctionEpilogue();

@@ -499,6 +499,9 @@ macro checkSwitchToJITForLoop()
             cCall2(_llint_loop_osr)
             btpz r0, .recover
             move r1, sp
+
+            loadBaselineJITConstantPool()
+
             jmp r0
         .recover:
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC

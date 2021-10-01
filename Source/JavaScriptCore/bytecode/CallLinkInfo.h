@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallFrameShuffleData.h"
 #include "CallMode.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
@@ -41,7 +42,6 @@ class CCallHelpers;
 class FunctionCodeBlock;
 class JSFunction;
 enum OpcodeID : unsigned;
-struct CallFrameShuffleData;
 
 struct UnlinkedCallLinkInfo;
 
@@ -313,6 +313,13 @@ public:
     {
         return OBJECT_OFFSETOF(CallLinkInfo, m_maxArgumentCountIncludingThis);
     }
+
+#if USE(JSVALUE32_64)
+    uint32_t* addressOfMaxArgumentCountIncludingThis()
+    {
+        return &m_maxArgumentCountIncludingThis;
+    }
+#endif
 
     uint32_t maxArgumentCountIncludingThis()
     {

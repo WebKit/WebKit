@@ -846,9 +846,12 @@ void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegis
     emitStore(dst, regT1, regT0);
 }
 
-void JIT::emitHasPrivateSlow(VirtualRegister dst, AccessType type)
+void JIT::emitHasPrivateSlow(VirtualRegister dst, VirtualRegister base, VirtualRegister property, AccessType type)
 {
+    // FIXME: 64-bit seems to also ignore base/property.
     ASSERT(type == AccessType::HasPrivateName || type == AccessType::HasPrivateBrand);
+    UNUSED_PARAM(base);
+    UNUSED_PARAM(property);
 
     JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
     Label coldPathBegin = label();
@@ -869,7 +872,7 @@ void JIT::emitSlow_op_has_private_name(const Instruction* currentInstruction, Ve
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpHasPrivateName>();
-    emitHasPrivateSlow(bytecode.m_dst, AccessType::HasPrivateName);
+    emitHasPrivateSlow(bytecode.m_dst, bytecode.m_base, bytecode.m_property, AccessType::HasPrivateName);
 }
 
 void JIT::emit_op_has_private_brand(const Instruction* currentInstruction)
@@ -883,19 +886,12 @@ void JIT::emitSlow_op_has_private_brand(const Instruction* currentInstruction, V
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpHasPrivateBrand>();
-    emitHasPrivateSlow(bytecode.m_dst, AccessType::HasPrivateBrand);
-}
-
-void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
-{
-    if (!needsVarInjectionChecks)
-        return;
-    addSlowCase(branch8(Equal, AbsoluteAddress(m_profiledCodeBlock->globalObject()->varInjectionWatchpoint()->addressOfState()), TrustedImm32(IsInvalidated)));
+    emitHasPrivateSlow(bytecode.m_dst, bytecode.m_base, bytecode.m_brand, AccessType::HasPrivateBrand);
 }
 
 void JIT::emitResolveClosure(VirtualRegister dst, VirtualRegister scope, bool needsVarInjectionChecks, unsigned depth)
 {
-    emitVarInjectionCheck(needsVarInjectionChecks);
+    emitVarInjectionCheck(needsVarInjectionChecks, regT0);
     move(TrustedImm32(JSValue::CellTag), regT1);
     emitLoadPayload(scope, regT0);
     for (unsigned i = 0; i < depth; ++i)
@@ -918,7 +914,7 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
         case GlobalPropertyWithVarInjectionChecks: {
             JSScope* constantScope = JSScope::constantScopeForCodeBlock(resolveType, m_profiledCodeBlock);
             RELEASE_ASSERT(constantScope);
-            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT0);
             load32(&metadata.m_globalLexicalBindingEpoch, regT1);
             addSlowCase(branch32(NotEqual, AbsoluteAddress(m_profiledCodeBlock->globalObject()->addressOfGlobalLexicalBindingEpoch()), regT1));
             move(TrustedImm32(JSValue::CellTag), regT1);
@@ -933,7 +929,7 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
         case GlobalLexicalVarWithVarInjectionChecks: {
             JSScope* constantScope = JSScope::constantScopeForCodeBlock(resolveType, m_profiledCodeBlock);
             RELEASE_ASSERT(constantScope);
-            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT0);
             move(TrustedImm32(JSValue::CellTag), regT1);
             move(TrustedImmPtr(constantScope), regT0);
             emitStore(dst, regT1, regT0);
@@ -1073,7 +1069,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
         case GlobalVarWithVarInjectionChecks:
         case GlobalLexicalVar:
         case GlobalLexicalVarWithVarInjectionChecks:
-            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT0);
             if (indirectLoadForOperand)
                 emitGetVarFromIndirectPointer(bitwise_cast<JSValue**>(operandSlot), regT1, regT0);
             else
@@ -1083,7 +1079,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
             break;
         case ClosureVar:
         case ClosureVarWithVarInjectionChecks:
-            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT0);
             emitGetClosureVar(scope, *operandSlot);
             break;
         case Dynamic:
@@ -1172,7 +1168,7 @@ void JIT::emitPutGlobalVariableIndirect(JSValue** addressOfOperand, VirtualRegis
 {
     emitLoad(value, regT1, regT0);
     loadPtr(indirectWatchpointSet, regT2);
-    emitNotifyWrite(regT2);
+    emitNotifyWrite(*indirectWatchpointSet); // FIXME: ??
     loadPtr(addressOfOperand, regT2);
     store32(regT1, Address(regT2, TagOffset));
     store32(regT0, Address(regT2, PayloadOffset));
@@ -1193,7 +1189,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
     auto& metadata = bytecode.metadata(m_profiledCodeBlock);
     VirtualRegister scope = bytecode.m_scope;
     VirtualRegister value = bytecode.m_value;
-    GetPutInfo getPutInfo = copiedGetPutInfo(bytecode);
+    GetPutInfo getPutInfo = bytecode.metadata(m_profiledCodeBlock).m_getPutInfo;
     ResolveType resolveType = getPutInfo.resolveType();
     Structure** structureSlot = metadata.m_structure.slot();
     uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&metadata.m_operand);
@@ -1220,8 +1216,8 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
             JSScope* constantScope = JSScope::constantScopeForCodeBlock(resolveType, m_profiledCodeBlock);
             RELEASE_ASSERT(constantScope);
             emitWriteBarrier(constantScope, value, ShouldFilterValue);
-            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
-            emitVarReadOnlyCheck(resolveType);
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT0);
+            emitVarReadOnlyCheck(resolveType, regT0);
             if (!isInitialization(getPutInfo.initializationMode()) && (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)) {
                 // We need to do a TDZ check here because we can't always prove we need to emit TDZ checks statically.
                 if (indirectLoadForOperand)
@@ -1240,7 +1236,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
         case ClosureVar:
         case ClosureVarWithVarInjectionChecks:
             emitWriteBarrier(scope, value, ShouldFilterValue);
-            emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+            emitVarInjectionCheck(needsVarInjectionChecks(resolveType), regT0);
             emitPutClosureVar(scope, *operandSlot, value, metadata.m_watchpointSet);
             break;
         case ModuleVar:
@@ -1313,7 +1309,7 @@ void JIT::emitSlow_op_put_to_scope(const Instruction* currentInstruction, Vector
     linkAllSlowCases(iter);
 
     auto bytecode = currentInstruction->as<OpPutToScope>();
-    ResolveType resolveType = copiedGetPutInfo(bytecode).resolveType();
+    ResolveType resolveType = bytecode.metadata(m_profiledCodeBlock).m_getPutInfo.resolveType();
     if (resolveType == ModuleVar) {
         JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_throw_strict_mode_readonly_property_write_error);
         slowPathCall.call();

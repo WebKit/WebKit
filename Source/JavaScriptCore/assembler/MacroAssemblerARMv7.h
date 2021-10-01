@@ -1610,7 +1610,14 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, RegisterID right)
     {
-        m_assembler.cmp(left, right);
+        if (left == ARMRegisters::sp) {
+            move(left, dataTempRegister);
+            m_assembler.cmp(dataTempRegister, right);
+        } else if (right == ARMRegisters::sp) {
+            move(right, dataTempRegister);
+            m_assembler.cmp(left, dataTempRegister);
+        } else
+            m_assembler.cmp(left, right);
         return Jump(makeBranch(cond));
     }
 
@@ -1840,27 +1847,13 @@ public:
 
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
     {
-        // Move the high bits of the address into addressTempRegister,
-        // and load the value into dataTempRegister.
-        move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-        m_assembler.ldr(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
+        add32(imm, dest);
+        return Jump(makeBranch(cond));
+    }
 
-        // Do the add.
-        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
-        if (armImm.isValid())
-            m_assembler.add_S(dataTempRegister, dataTempRegister, armImm);
-        else {
-            // If the operand does not fit into an immediate then load it temporarily
-            // into addressTempRegister; since we're overwriting addressTempRegister
-            // we'll need to reload it with the high bits of the address afterwards.
-            move(imm, addressTempRegister);
-            m_assembler.add_S(dataTempRegister, dataTempRegister, addressTempRegister);
-            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-        }
-
-        // Store the result.
-        m_assembler.str(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
-
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, Address dest)
+    {
+        add32(imm, dest);
         return Jump(makeBranch(cond));
     }
 

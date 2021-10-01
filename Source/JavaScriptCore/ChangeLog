@@ -1,3 +1,49 @@
+2021-10-01  Xan López  <xan@igalia.com>
+
+        [JSC][32bit] Fix build after unlinked baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=230803
+
+        Reviewed by Saam Barati.
+
+        This is enough to make things build, but pretty much nothing works
+        yet. Will fix in a follow-up, this way we at least give people a
+        chance at not introducing more build regressions.
+
+        (With some code by Mikhail R. Gadelha and Geza Lore)
+
+        * CMakeLists.txt:
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branch32):
+        (JSC::MacroAssemblerARMv7::branchAdd32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::addressOfMaxArgumentCountIncludingThis):
+        * jit/JIT.h:
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::emitValueProfilingSiteIfProfiledOpcode):
+        (JSC::JIT::emitArrayProfilingSiteWithCell):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitVarInjectionCheck):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitHasPrivateSlow):
+        (JSC::JIT::emitSlow_op_has_private_name):
+        (JSC::JIT::emitSlow_op_has_private_brand):
+        (JSC::JIT::emitResolveClosure):
+        (JSC::JIT::emit_op_resolve_scope):
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emitPutGlobalVariableIndirect):
+        (JSC::JIT::emit_op_put_to_scope):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::emitVarInjectionCheck): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+
 2021-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove CodeBlock::m_numberOfNonArgumentValueProfiles since we can get the same value from UnlinkedCodeBlock

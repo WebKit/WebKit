@@ -1821,16 +1821,6 @@ void JIT::emitSlow_op_has_private_brand(const Instruction* currentInstruction, V
     emitHasPrivateSlow(bytecode.m_dst, bytecode.m_base, bytecode.m_brand, AccessType::HasPrivateBrand);
 }
 
-void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg scratchGPR)
-{
-    if (!needsVarInjectionChecks)
-        return;
-
-    loadGlobalObject(scratchGPR);
-    loadPtr(Address(scratchGPR, OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint)), scratchGPR);
-    addSlowCase(branch8(Equal, Address(scratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
-}
-
 void JIT::emitResolveClosure(VirtualRegister dst, VirtualRegister scope, bool needsVarInjectionChecks, unsigned depth)
 {
     emitVarInjectionCheck(needsVarInjectionChecks, regT0);
@@ -3189,6 +3179,16 @@ void JIT::emitWriteBarrier(GPRReg owner)
     Jump ownerIsRememberedOrInEden = barrierBranch(vm(), owner, selectScratchGPR(owner));
     callOperationNoExceptionCheck(operationWriteBarrierSlowPath, &vm(), owner);
     ownerIsRememberedOrInEden.link(this);
+}
+
+void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg scratchGPR)
+{
+    if (!needsVarInjectionChecks)
+        return;
+
+    loadGlobalObject(scratchGPR);
+    loadPtr(Address(scratchGPR, OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint)), scratchGPR);
+    addSlowCase(branch8(Equal, Address(scratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
 }
 
 } // namespace JSC

@@ -839,6 +839,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/AssemblyHelpers.h
     jit/AssemblyHelpersSpoolers.h
     jit/BaselineJITCode.h
+    jit/CallFrameShuffleData.h
     jit/CCallHelpers.h
     jit/ExecutableAllocator.h
     jit/ExecutableMemoryHandle.h
@@ -859,6 +860,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/Reg.h
     jit/RegisterAtOffset.h
     jit/RegisterAtOffsetList.h
+    jit/RegisterMap.h
     jit/RegisterSet.h
     jit/Snippet.h
     jit/SnippetParams.h

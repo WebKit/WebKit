@@ -310,7 +310,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 
     checkStackPointerAlignment();
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        auto slowPaths = info->emitTailCallFastPath(*this, regT0, regT2, CallLinkInfo::UseDataIC::Yes, [&] {
+        auto slowPaths = info->emitTailCallDataICFastPath(*this, regT0, regT2, [&] {
             emitRestoreCalleeSaves();
             prepareForTailCallSlow(regT2);
         });
