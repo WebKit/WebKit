@@ -75,9 +75,9 @@ void ManagerProxy::sendMessageWithReply(CompletionHandler<void(ReplyArgs...)>&& 
 ManagerProxy::ManagerProxy(const String& machServiceName)
     : m_connection(machServiceName.utf8()) { }
 
-void ManagerProxy::storeUnattributed(WebCore::PrivateClickMeasurement&& pcm)
+void ManagerProxy::storeUnattributed(WebCore::PrivateClickMeasurement&& pcm, CompletionHandler<void()>&& completionHandler)
 {
-    sendMessage<MessageType::StoreUnattributed>(pcm);
+    sendMessageWithReply<MessageType::StoreUnattributed>(WTFMove(completionHandler), pcm);
 }
 
 void ManagerProxy::handleAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData&& triggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier& applicationBundleIdentifier)
@@ -133,11 +133,6 @@ void ManagerProxy::markAllUnattributedAsExpiredForTesting()
 void ManagerProxy::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
 {
     sendMessageWithReply<MessageType::MarkAttributedPrivateClickMeasurementsAsExpiredForTesting>(WTFMove(completionHandler));
-}
-
-void ManagerProxy::setEphemeralMeasurementForTesting(bool value)
-{
-    sendMessage<MessageType::SetEphemeralMeasurementForTesting>(value);
 }
 
 void ManagerProxy::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)

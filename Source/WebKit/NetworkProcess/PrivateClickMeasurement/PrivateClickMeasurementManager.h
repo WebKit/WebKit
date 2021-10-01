@@ -47,7 +47,7 @@ public:
 
     using ApplicationBundleIdentifier = String;
 
-    void storeUnattributed(PrivateClickMeasurement&&) final;
+    void storeUnattributed(PrivateClickMeasurement&&, CompletionHandler<void()>&&) final;
     void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) final;
     void clear(CompletionHandler<void()>&&) final;
     void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&) final;
@@ -60,7 +60,6 @@ public:
     void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL) final;
     void markAllUnattributedAsExpiredForTesting() final;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) final;
-    void setEphemeralMeasurementForTesting(bool value) final { m_isRunningEphemeralMeasurementTest = value; }
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
     void startTimerImmediatelyForTesting() final;
     void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&);
@@ -73,7 +72,7 @@ private:
     void startTimer(Seconds);
     void getTokenPublicKey(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&&);
     void getSignedUnlinkableToken(PrivateClickMeasurement&&);
-    void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
+    void insertPrivateClickMeasurement(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&);
     void clearSentAttribution(PrivateClickMeasurement&&, PrivateClickMeasurement::AttributionReportEndpoint);
     void attribute(const SourceSite&, const AttributionDestinationSite&, AttributionTriggerData&&, const ApplicationBundleIdentifier&);
     void fireConversionRequest(const PrivateClickMeasurement&, PrivateClickMeasurement::AttributionReportEndpoint);
@@ -83,10 +82,8 @@ private:
     bool featureEnabled() const;
     bool debugModeEnabled() const;
 
-    std::optional<PrivateClickMeasurement> m_ephemeralMeasurement;
     WebCore::Timer m_firePendingAttributionRequestsTimer;
     bool m_isRunningTest { false };
-    bool m_isRunningEphemeralMeasurementTest { false };
     std::optional<URL> m_tokenPublicKeyURLForTesting;
     std::optional<URL> m_tokenSignatureURLForTesting;
     std::optional<ApplicationBundleIdentifier> m_privateClickMeasurementAppBundleIDForTesting;

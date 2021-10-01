@@ -52,8 +52,8 @@ public:
     static void prepareForProcessToSuspend(CompletionHandler<void()>&&);
     static void processDidResume();
 
-    void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType);
-    void attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, const ApplicationBundleIdentifier&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, std::optional<WebCore::PrivateClickMeasurement>&& ephemeralMeasurement, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&);
+    void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&);
+    void attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, const ApplicationBundleIdentifier&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&);
 
     void privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&&) const;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();

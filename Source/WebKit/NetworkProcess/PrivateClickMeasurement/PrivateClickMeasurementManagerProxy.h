@@ -41,7 +41,7 @@ public:
 
     using ApplicationBundleIdentifier = String;
 
-    void storeUnattributed(WebCore::PrivateClickMeasurement&&) final;
+    void storeUnattributed(WebCore::PrivateClickMeasurement&&, CompletionHandler<void()>&&) final;
     void handleAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) final;
     void clear(CompletionHandler<void()>&&) final;
     void clearForRegistrableDomain(const WebCore::RegistrableDomain&, CompletionHandler<void()>&&) final;
@@ -54,7 +54,6 @@ public:
     void setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL) final;
     void markAllUnattributedAsExpiredForTesting() final;
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&) final;
-    void setEphemeralMeasurementForTesting(bool) final;
     void setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID) final;
     void startTimerImmediatelyForTesting() final;
     void setPrivateClickMeasurementAppBundleIDForTesting(ApplicationBundleIdentifier&&) final;

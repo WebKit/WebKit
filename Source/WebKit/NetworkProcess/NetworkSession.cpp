@@ -321,7 +321,13 @@ void NetworkSession::resetCNAMEDomainData()
 
 void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& unattributedPrivateClickMeasurement)
 {
-    privateClickMeasurement().storeUnattributed(WTFMove(unattributedPrivateClickMeasurement));
+    if (m_isRunningEphemeralMeasurementTest)
+        unattributedPrivateClickMeasurement.setEphemeral(PrivateClickMeasurement::AttributionEphemeral::Yes);
+    if (unattributedPrivateClickMeasurement.isEphemeral()) {
+        m_ephemeralMeasurement = WTFMove(unattributedPrivateClickMeasurement);
+        return;
+    }
+    privateClickMeasurement().storeUnattributed(WTFMove(unattributedPrivateClickMeasurement), [] { });
 }
 
 void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
@@ -331,6 +337,28 @@ void NetworkSession::handlePrivateClickMeasurementConversion(PrivateClickMeasure
 #else
     auto appBundleID = String();
 #endif
+
+    if (m_ephemeralMeasurement) {
+        auto ephemeralMeasurement = *std::exchange(m_ephemeralMeasurement, std::nullopt);
+
+        auto redirectDomain = RegistrableDomain(redirectRequest.url());
+        auto firstPartyForCookies = redirectRequest.firstPartyForCookies();
+
+        // Ephemeral measurement can only have one pending click.
+        if (ephemeralMeasurement.sourceSite().registrableDomain != redirectDomain)
+            return;
+        if (ephemeralMeasurement.destinationSite().registrableDomain != RegistrableDomain(firstPartyForCookies))
+            return;
+
+        // Insert ephemeral measurement right before attribution.
+        privateClickMeasurement().storeUnattributed(WTFMove(ephemeralMeasurement), [this, weakThis = makeWeakPtr(*this), attributionTriggerData = WTFMove(attributionTriggerData), requestURL, redirectDomain = WTFMove(redirectDomain), firstPartyForCookies = WTFMove(firstPartyForCookies), appBundleID = WTFMove(appBundleID)] () mutable {
+            if (!weakThis)
+                return;
+            privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, WTFMove(redirectDomain), firstPartyForCookies, appBundleID);
+        });
+        return;
+    }
+
     privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyForCookies(), appBundleID);
 }
 
@@ -342,6 +370,8 @@ void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>
 void NetworkSession::clearPrivateClickMeasurement(CompletionHandler<void()>&& completionHandler)
 {
     privateClickMeasurement().clear(WTFMove(completionHandler));
+    m_ephemeralMeasurement = std::nullopt;
+    m_isRunningEphemeralMeasurementTest = false;
 }
 
 void NetworkSession::clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
@@ -381,7 +411,7 @@ void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
 
 void NetworkSession::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value)
 {
-    privateClickMeasurement().setEphemeralMeasurementForTesting(value);
+    m_isRunningEphemeralMeasurementTest = value;
 }
 
 // FIXME: Switch to non-mocked test data once the right cryptography library is available in open source.

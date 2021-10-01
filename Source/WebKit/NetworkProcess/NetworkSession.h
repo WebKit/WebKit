@@ -215,6 +215,8 @@ protected:
 #endif
     bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<PCM::ManagerInterface> m_privateClickMeasurement;
+    std::optional<WebCore::PrivateClickMeasurement> m_ephemeralMeasurement;
+    bool m_isRunningEphemeralMeasurementTest { false };
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 

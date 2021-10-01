@@ -1,3 +1,44 @@
+2021-10-01  Alex Christensen  <achristensen@webkit.org>
+
+        Move ephemeral PCM storage from PCM manager to NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=231025
+
+        Reviewed by Kate Cheney.
+
+        With the daemon, we want the network process to hang on to an ephemeral PCM instead of the daemon,
+        which is responsible for many network processes.  When attribution happens we insert the PCM then
+        attribute it like we did before, but from the NetworkSession instead of from the PCM manager.
+
+        Functionality covered by existing tests.
+        This just reduces state in the daemon.  All the other state in the PCM manager is only used for tests.
+
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::storePrivateClickMeasurement):
+        (WebKit::NetworkSession::handlePrivateClickMeasurementConversion):
+        (WebKit::NetworkSession::clearPrivateClickMeasurement):
+        (WebKit::NetworkSession::setPrivateClickMeasurementEphemeralMeasurementForTesting):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        (WebKit::PrivateClickMeasurementManager::insertPrivateClickMeasurement):
+        (WebKit::PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacyStorage):
+        (WebKit::PrivateClickMeasurementManager::attribute):
+        (WebKit::PrivateClickMeasurementManager::clear):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.cpp:
+        (WebKit::PCM::messageTypeSendsReply):
+        (WebKit::PCM::decodeMessageAndSendToManager):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        (WebKit::PCM::ManagerProxy::storeUnattributed):
+        (WebKit::PCM::ManagerProxy::setEphemeralMeasurementForTesting): Deleted.
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        (WebKit::PCM::Store::insertPrivateClickMeasurement):
+        (WebKit::PCM::Store::attributePrivateClickMeasurement):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.h:
+
 2021-10-01  Per Arne Vollan <pvollan@apple.com>
 
         [macOS] Remove obsolete sandbox rule

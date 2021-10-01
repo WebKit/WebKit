@@ -70,10 +70,10 @@ PrivateClickMeasurementManager::~PrivateClickMeasurementManager()
         m_store->close([] { });
 }
 
-void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&& measurement)
+void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&& measurement, CompletionHandler<void()>&& completionHandler)
 {
     if (!featureEnabled())
-        return;
+        return completionHandler();
 
     clearExpired();
 
@@ -109,7 +109,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Storing a click."_s);
 
-    insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed);
+    insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed, WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried pcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
@@ -212,25 +212,19 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
 
         m_client->broadcastConsoleMessage(MessageLevel::Log, "[Private Click Measurement] Storing a secret token."_s);
 
-        insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed);
+        insertPrivateClickMeasurement(WTFMove(measurement), PrivateClickMeasurementAttributionType::Unattributed, [] { });
     });
 
 }
 
-void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type)
+void PrivateClickMeasurementManager::insertPrivateClickMeasurement(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_isRunningEphemeralMeasurementTest)
-        measurement.setEphemeral(PrivateClickMeasurement::AttributionEphemeral::Yes);
-    if (measurement.isEphemeral()) {
-        m_ephemeralMeasurement = WTFMove(measurement);
-        return;
-    }
-    store().insertPrivateClickMeasurement(WTFMove(measurement), type);
+    store().insertPrivateClickMeasurement(WTFMove(measurement), type, WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&& measurement, PrivateClickMeasurementAttributionType type)
 {
-    store().insertPrivateClickMeasurement(WTFMove(measurement), type);
+    store().insertPrivateClickMeasurement(WTFMove(measurement), type, [] { });
 }
 
 void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& attributionTriggerData, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier& applicationBundleIdentifier)
@@ -276,15 +270,7 @@ void PrivateClickMeasurementManager::attribute(const SourceSite& sourceSite, con
     if (!featureEnabled())
         return;
 
-    if (m_ephemeralMeasurement) {
-        // Ephemeral measurement can only have one pending click.
-        if (m_ephemeralMeasurement->sourceSite() != sourceSite)
-            return;
-        if (m_ephemeralMeasurement->destinationSite() != destinationSite)
-            return;
-    }
-        
-    store().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), std::exchange(m_ephemeralMeasurement, std::nullopt), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
+    store().attributePrivateClickMeasurement(sourceSite, destinationSite, applicationBundleIdentifier, WTFMove(attributionTriggerData), [this, weakThis = makeWeakPtr(*this)] (auto attributionSecondsUntilSendData, auto debugInfo) {
         if (!weakThis)
             return;
         
@@ -445,8 +431,6 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
 void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completionHandler)
 {
     m_firePendingAttributionRequestsTimer.stop();
-    m_ephemeralMeasurement = std::nullopt;
-    m_isRunningEphemeralMeasurementTest = false;
     m_privateClickMeasurementAppBundleIDForTesting = std::nullopt;
 
     if (!featureEnabled())
