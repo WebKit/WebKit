@@ -151,14 +151,14 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(stretchAmount.height()));
         m_unappliedOverscrollDelta = { };
 
-        stopSnapRubberbandAnimation();
+        stopRubberbandAnimation();
         updateRubberBandingState();
         return true;
     }
 
     if (wheelEvent.phase() == PlatformWheelEventPhase::Ended) {
         // FIXME: This triggers the rubberband timer even when we don't start rubberbanding.
-        snapRubberBand();
+        startRubberbandAnimationIfNecessary();
         updateRubberBandingState();
         return true;
     }
@@ -300,7 +300,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
                 if ((!sideAffectedByEventDelta || m_client.isPinnedOnSide(*sideAffectedByEventDelta)) && m_lastMomentumScrollTimestamp) {
                     m_ignoreMomentumScrolls = true;
                     m_momentumScrollInProgress = false;
-                    snapRubberBand();
+                    startRubberbandAnimationIfNecessary();
                 }
             }
 
@@ -358,7 +358,7 @@ void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime cu
 
         if (m_startStretch.isZero()) {
             m_startStretch = m_client.stretchAmount();
-            if (m_startStretch == FloatSize()) {
+            if (m_startStretch.isZero()) {
                 stopRubberbanding();
                 return;
             }
@@ -406,7 +406,7 @@ void ScrollingEffectsController::updateRubberBandAnimatingState(MonotonicTime cu
         m_startTime = currentTime;
         m_startStretch = { };
         if (!isRubberBandInProgressInternal())
-            stopSnapRubberbandAnimation();
+            stopRubberbandAnimation();
     }
 
     updateRubberBandingState();
@@ -440,7 +440,7 @@ bool ScrollingEffectsController::isScrollSnapInProgress() const
 
 void ScrollingEffectsController::stopRubberbanding()
 {
-    stopSnapRubberbandAnimation();
+    stopRubberbandAnimation();
     m_stretchScrollForce = { };
     m_startTime = { };
     m_startStretch = { };
@@ -457,7 +457,7 @@ void ScrollingEffectsController::startRubberbandAnimation()
     m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
-void ScrollingEffectsController::stopSnapRubberbandAnimation()
+void ScrollingEffectsController::stopRubberbandAnimation()
 {
     m_client.didStopRubberbandSnapAnimation();
 
@@ -466,7 +466,7 @@ void ScrollingEffectsController::stopSnapRubberbandAnimation()
     m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
 }
 
-void ScrollingEffectsController::snapRubberBand()
+void ScrollingEffectsController::startRubberbandAnimationIfNecessary()
 {
     auto timeDelta = WallTime::now() - m_lastMomentumScrollTimestamp;
     if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)

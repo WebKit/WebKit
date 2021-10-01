@@ -1,3 +1,23 @@
+2021-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename snapRubberBand() to have a clearer name
+        https://bugs.webkit.org/show_bug.cgi?id=231051
+
+        Reviewed by Myles C. Maxfield.
+
+        It wasn't clear that snapRubberBand() started the timer, sometimes. Make that
+        more obvious.
+
+        * platform/ScrollingEffectsController.h:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::handleWheelEvent):
+        (WebCore::ScrollingEffectsController::updateRubberBandAnimatingState):
+        (WebCore::ScrollingEffectsController::stopRubberbanding):
+        (WebCore::ScrollingEffectsController::stopRubberbandAnimation):
+        (WebCore::ScrollingEffectsController::startRubberbandAnimationIfNecessary):
+        (WebCore::ScrollingEffectsController::stopSnapRubberbandAnimation): Deleted.
+        (WebCore::ScrollingEffectsController::snapRubberBand): Deleted.
+
 2021-09-30  Cathie Chen  <cathiechen@igalia.com>
 
         [Performance] Optimize RenderLayer::clipCrossesPaintingBoundary

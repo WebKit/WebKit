@@ -198,10 +198,10 @@ private:
     void startDeferringWheelEventTestCompletionDueToScrollSnapping();
     void stopDeferringWheelEventTestCompletionDueToScrollSnapping();
 
+    void startRubberbandAnimationIfNecessary();
     void startRubberbandAnimation();
-    void stopSnapRubberbandAnimation();
+    void stopRubberbandAnimation();
 
-    void snapRubberBand();
     bool shouldRubberBandOnSide(BoxSide) const;
     bool isRubberBandInProgressInternal() const;
     void updateRubberBandingState();
