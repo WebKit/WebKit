@@ -454,7 +454,7 @@ TEST(EventAttribution, Daemon)
         [fileManager removeItemAtURL:tempDir error:&error];
     EXPECT_NULL(error);
 
-    system("killall AdAttributionDaemon -9 2> null");
+    system("killall AdAttributionDaemon -9 2> /dev/null");
 
     auto plist = testDaemonPList(tempDir);
 #if HAVE(OS_LAUNCHD_JOB)

@@ -1,3 +1,13 @@
+2021-09-30  Alex Christensen  <achristensen@webkit.org>
+
+        Stop making a file named null when running API tests
+       ​https://bugs.webkit.org/show_bug.cgi?id=230191
+
+        r283298 did the trick, but I need to pipe stderr to /dev/null instead of null
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+
 2021-09-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Python 3 fails to run run-builtins-generator-tests : ModuleNotFoundError: No module named 'builtins_model'
