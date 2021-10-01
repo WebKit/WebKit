@@ -1,3 +1,62 @@
+2021-10-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r283410. rdar://problem/83784757
+
+    Disable new incumbent-window until it is fully implemented
+    https://bugs.webkit.org/show_bug.cgi?id=230261
+    <rdar://problem/83099726>
+    
+    Reviewed by Chris Dumez and Geoffrey Garen.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/webappapis/scripting/events/compile-event-handler-settings-objects-expected.txt:
+    * web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-job-queue/promise-job-incumbent-expected.txt:
+    
+    Source/JavaScriptCore:
+    
+    * interpreter/CallFrame.cpp:
+    (JSC::CallFrame::globalObjectOfClosestCodeBlock):
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::getOwnPropertyDescriptor):
+    * runtime/PropertySlot.h:
+    
+    Source/WebCore:
+    
+    This patch disables new incumbent-window until it is fully implemented to avoid compatibility issue.
+    
+    * bindings/js/JSDOMConvertCallbacks.h:
+    (WebCore::Converter<IDLCallbackFunction<T>>::convert):
+    (WebCore::Converter<IDLCallbackInterface<T>>::convert):
+    * bindings/js/JSDOMGlobalObject.cpp:
+    (WebCore::callerGlobalObject):
+    (WebCore::legacyActiveGlobalObjectForAccessor):
+    * bindings/js/JSDOMGlobalObject.h:
+    * bindings/js/JSDOMWindowBase.cpp:
+    (WebCore::incumbentDOMWindow):
+    (WebCore::legacyActiveDOMWindowForAccessor):
+    * bindings/js/JSDOMWindowBase.h:
+    * bindings/scripts/CodeGeneratorJS.pm:
+    (GetJSCAttributesForAttribute):
+    (GenerateCallWith):
+    * page/Location.idl:
+    
+    LayoutTests:
+    
+    * http/tests/security/frameNavigation/context-for-location-href-gopd-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@283410 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-10-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Disable new incumbent-window until it is fully implemented
+            https://bugs.webkit.org/show_bug.cgi?id=230261
+            <rdar://problem/83099726>
+
+            Reviewed by Chris Dumez and Geoffrey Garen.
+
+            * http/tests/security/frameNavigation/context-for-location-href-gopd-expected.txt:
+
 2021-09-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r283035. rdar://problem/83584492
