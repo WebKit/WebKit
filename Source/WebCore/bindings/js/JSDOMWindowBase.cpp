@@ -284,17 +284,12 @@ JSDOMWindow* toJSDOMWindow(Frame& frame, DOMWrapperWorld& world)
 
 DOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)
 {
-    if (auto* globalObject = CallFrame::globalObjectOfClosestCodeBlock(fallbackGlobalObject.vm(), &callFrame))
-        return asJSDOMWindow(globalObject)->wrapped();
-    return asJSDOMWindow(&fallbackGlobalObject)->wrapped();
+    return asJSDOMWindow(&callerGlobalObject(fallbackGlobalObject, &callFrame))->wrapped();
 }
 
 DOMWindow& incumbentDOMWindow(JSGlobalObject& fallbackGlobalObject)
 {
-    VM& vm = fallbackGlobalObject.vm();
-    if (auto* globalObject = CallFrame::globalObjectOfClosestCodeBlock(vm, vm.topCallFrame))
-        return asJSDOMWindow(globalObject)->wrapped();
-    return asJSDOMWindow(&fallbackGlobalObject)->wrapped();
+    return asJSDOMWindow(&callerGlobalObject(fallbackGlobalObject, fallbackGlobalObject.vm().topCallFrame))->wrapped();
 }
 
 DOMWindow& activeDOMWindow(JSGlobalObject& lexicalGlobalObject)
@@ -306,6 +301,16 @@ DOMWindow& firstDOMWindow(JSGlobalObject& lexicalGlobalObject)
 {
     VM& vm = lexicalGlobalObject.vm();
     return asJSDOMWindow(vm.deprecatedVMEntryGlobalObject(&lexicalGlobalObject))->wrapped();
+}
+
+DOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalObject, CallFrame& callFrame)
+{
+    return asJSDOMWindow(&legacyActiveGlobalObjectForAccessor(fallbackGlobalObject, &callFrame))->wrapped();
+}
+
+DOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalObject)
+{
+    return asJSDOMWindow(&legacyActiveGlobalObjectForAccessor(fallbackGlobalObject, fallbackGlobalObject.vm().topCallFrame))->wrapped();
 }
 
 Document* responsibleDocument(VM& vm, CallFrame& callFrame)
