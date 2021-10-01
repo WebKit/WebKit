@@ -91,19 +91,7 @@ public:
             Run& operator=(const Run&);
 
             const InlineItem& inlineItem;
-            struct Style {
-                WhiteSpace whiteSpace { WhiteSpace::Normal };
-                LineBreak lineBreak { LineBreak::Auto };
-                WordBreak wordBreak { WordBreak::Normal };
-                OverflowWrap overflowWrap { OverflowWrap::Normal };
-                Hyphens hyphens { Hyphens::None };
-                std::optional<unsigned> hyphenationLimitBefore;
-                std::optional<unsigned> hyphenationLimitAfter;
-                const FontCascade& fontCascade;
-                const AtomString& hyphenString;
-                const AtomString& locale;
-            };
-            Style style;
+            const RenderStyle& style;
             InlineLayoutUnit logicalWidth { 0 };
         };
         using RunList = Vector<Run, 3>;
@@ -138,7 +126,7 @@ private:
         AtArbitraryPosition        = 1 << 0,
         AtHyphenationOpportunities = 1 << 1
     };
-    OptionSet<WordBreakRule> wordBreakBehavior(const ContinuousContent::Run::Style&, bool hasWrapOpportunityAtPreviousPosition) const;
+    OptionSet<WordBreakRule> wordBreakBehavior(const RenderStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
     bool shouldKeepEndOfLineWhitespace(const ContinuousContent&) const;
 
     bool n_hyphenationIsDisabled { false };
@@ -146,16 +134,7 @@ private:
 
 inline InlineContentBreaker::ContinuousContent::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
     : inlineItem(inlineItem)
-    , style({ style.whiteSpace()
-        , style.lineBreak()
-        , style.wordBreak()
-        , style.overflowWrap()
-        , style.hyphens()
-        , style.hyphenationLimitBefore() != style.initialHyphenationLimitBefore() ? std::make_optional(style.hyphenationLimitBefore()) : std::nullopt
-        , style.hyphenationLimitAfter() != style.initialHyphenationLimitAfter() ? std::make_optional(style.hyphenationLimitAfter()) : std::nullopt
-        , style.fontCascade()
-        , (style.hyphens() == Hyphens::None ? nullAtom() : style.hyphenString())
-        , style.fontDescription().computedLocale() })
+    , style(style)
     , logicalWidth(logicalWidth)
 {
 }
