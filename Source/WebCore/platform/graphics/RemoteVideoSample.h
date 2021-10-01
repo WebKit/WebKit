@@ -48,6 +48,10 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<RemoteVideoSample> create(RetainPtr<CVPixelBufferRef>&&, MediaTime&& presentationTime, MediaSample::VideoRotation = MediaSample::VideoRotation::None);
     WEBCORE_EXPORT IOSurfaceRef surface() const;
 
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+    void setOwnershipIdentity(task_id_token_t newOwner);
+#endif
+
     const MediaTime& time() const { return m_time; }
     uint32_t videoFormat() const { return m_videoFormat; }
     IntSize size() const { return m_size; }
@@ -114,6 +118,14 @@ private:
     IntSize m_size;
     bool m_mirrored { false };
 };
+
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+inline void RemoteVideoSample::setOwnershipIdentity(task_id_token_t newOwner)
+{
+    if (m_ioSurface)
+        m_ioSurface->setOwnershipIdentity(newOwner);
+}
+#endif
 
 }
 

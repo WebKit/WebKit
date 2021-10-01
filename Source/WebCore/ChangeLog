@@ -1,3 +1,14 @@
+2021-10-01  Youenn Fablet  <youenn@apple.com>
+
+        Attribute IOSurfaces created by camera and decoders to responsible WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=231075
+
+        Reviewed by Chris Dumez.
+
+        Manually tested.
+
+        * platform/graphics/RemoteVideoSample.h:
+
 2021-10-01  Antti Koivisto  <antti@apple.com>
 
         Rename InlineIterator to LegacyInlineIterator

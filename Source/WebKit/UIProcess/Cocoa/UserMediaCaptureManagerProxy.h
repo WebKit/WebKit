@@ -58,6 +58,9 @@ public:
         virtual bool willStartCapture(WebCore::CaptureDevice::DeviceType) const = 0;
         virtual Logger& logger() = 0;
         virtual bool setCaptureAttributionString() { return true; }
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+        virtual std::optional<task_id_token_t> webProcessIdentityToken() const { return { }; };
+#endif
     };
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();

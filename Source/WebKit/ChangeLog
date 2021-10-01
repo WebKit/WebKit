@@ -1,3 +1,17 @@
+2021-10-01  Youenn Fablet  <youenn@apple.com>
+
+        Attribute IOSurfaces created by camera and decoders to responsible WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=231075
+
+        Reviewed by Chris Dumez.
+
+        Make sure to mark camera and decoder generated IOSurfaces as owned by the responsible WebProcess.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+
 2021-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Add initial implementation of accessible interface when building with ATSPI

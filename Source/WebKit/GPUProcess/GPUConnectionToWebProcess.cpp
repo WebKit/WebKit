@@ -188,6 +188,13 @@ private:
         return m_process.setCaptureAttributionString();
     }
 
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+    std::optional<task_id_token_t> webProcessIdentityToken() const final
+    {
+        return m_process.webProcessIdentityToken();
+    }
+#endif
+
     GPUConnectionToWebProcess& m_process;
 };
 

@@ -125,6 +125,9 @@ public:
     }
 
     void setShouldApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = true; }
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+    void setWebProcessIdentityToken(std::optional<task_id_token_t> token) { m_webProcessIdentityToken = token;}
+#endif
 
 private:
     void sourceStopped() final {
@@ -184,8 +187,13 @@ private:
             remoteSample = RemoteVideoSample::create(pixelBuffer.get(), sample.presentationTime());
         } else
             remoteSample = RemoteVideoSample::create(sample);
-        if (remoteSample)
+        if (remoteSample) {
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+            if (m_webProcessIdentityToken)
+                remoteSample->setOwnershipIdentity(*m_webProcessIdentityToken);
+#endif
             m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
+        }
     }
 
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(MediaSample& sample)
@@ -249,6 +257,9 @@ private:
     size_t m_frameChunkSize { 0 };
     MediaTime m_startTime;
     bool m_shouldReset { false };
+#if HAVE(TASK_IDENTITY_TOKEN)
+    std::optional<task_id_token_t> m_webProcessIdentityToken;
+#endif
 };
 
 UserMediaCaptureManagerProxy::UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&& connectionProxy)
@@ -312,10 +323,15 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         }
 
         ASSERT(!m_proxies.contains(id));
-        m_proxies.add(id, makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source)));
+        auto proxy = makeUnique<SourceProxy>(id, m_connectionProxy->connection(), WTFMove(source));
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+        if (device.type() != WebCore::CaptureDevice::DeviceType::Microphone)
+            proxy->setWebProcessIdentityToken(m_connectionProxy->webProcessIdentityToken());
+#endif
+
+        m_proxies.add(id, WTFMove(proxy));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
-
 
     completionHandler(succeeded, invalidConstraints, WTFMove(settings), WTFMove(capabilities), WTFMove(presets), size, frameRate);
 }

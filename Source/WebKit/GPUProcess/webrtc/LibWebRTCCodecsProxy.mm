@@ -74,15 +74,28 @@ void LibWebRTCCodecsProxy::close()
     });
 }
 
+static Function<void(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp)> createDecoderCallback(RTCDecoderIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess)
+{
+    return [connection = Ref { gpuConnectionToWebProcess.connection() },
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+        token = gpuConnectionToWebProcess.webProcessIdentityToken(),
+#endif
+        identifier](CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
+        if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1))) {
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
+            sample->setOwnershipIdentity(token);
+#endif
+            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
+        }
+    };
+}
+
 void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier)
 {
     ASSERT(!isMainRunLoop());
     Locker locker { m_lock };
     ASSERT(!m_decoders.contains(identifier));
-    m_decoders.add(identifier, webrtc::createLocalH264Decoder(makeBlockPtr([connection = Ref { m_gpuConnectionToWebProcess.connection() }, identifier](CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
-        if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
-            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
-    }).get()));
+    m_decoders.add(identifier, webrtc::createLocalH264Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess)).get()));
 }
 
 void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier)
@@ -90,10 +103,7 @@ void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier)
     ASSERT(!isMainRunLoop());
     Locker locker { m_lock };
     ASSERT(!m_decoders.contains(identifier));
-    m_decoders.add(identifier, webrtc::createLocalH265Decoder(makeBlockPtr([connection = Ref { m_gpuConnectionToWebProcess.connection() }, identifier](CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
-        if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
-            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
-    }).get()));
+    m_decoders.add(identifier, webrtc::createLocalH265Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess)).get()));
 }
 
 void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier)
@@ -101,10 +111,7 @@ void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier)
     ASSERT(!isMainRunLoop());
     Locker locker { m_lock };
     ASSERT(!m_decoders.contains(identifier));
-    m_decoders.add(identifier, webrtc::createLocalVP9Decoder(makeBlockPtr([connection = Ref { m_gpuConnectionToWebProcess.connection() }, identifier](CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) {
-        if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
-            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
-    }).get()));
+    m_decoders.add(identifier, webrtc::createLocalVP9Decoder(makeBlockPtr(createDecoderCallback(identifier, m_gpuConnectionToWebProcess)).get()));
 }
 
 void LibWebRTCCodecsProxy::releaseDecoder(RTCDecoderIdentifier identifier)
