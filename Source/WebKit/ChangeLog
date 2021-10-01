@@ -1,3 +1,16 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r283274.
+
+        Broke HSTS.CrossOriginRedirect API test
+
+        Reverted changeset:
+
+        "Use isolated NSURLSessions for each first party registrable
+        domain"
+        https://bugs.webkit.org/show_bug.cgi?id=230750
+        https://commits.webkit.org/r283274
+
 2021-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         Remove special treatment for /private/var/db/dyld on older macOS
