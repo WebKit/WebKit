@@ -37,6 +37,8 @@ public:
     static RefPtr<CSSCalcOperationNode> createSum(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createProduct(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createMinOrMaxOrClamp(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values, CalculationCategory destinationCategory);
+    static RefPtr<CSSCalcOperationNode> createPowOrSqrt(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
+    static RefPtr<CSSCalcOperationNode> createHypot(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createTrig(CalcOperator, Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createLog(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createExp(Vector<Ref<CSSCalcExpressionNode>>&& values);
@@ -63,11 +65,15 @@ public:
     bool isSteppedNode() const { return m_operator == CalcOperator::Mod || m_operator == CalcOperator::Rem || m_operator == CalcOperator::Round; }
     bool isRoundOperation() const { return m_operator == CalcOperator::Down || m_operator == CalcOperator::Up || m_operator == CalcOperator::ToZero || m_operator == CalcOperator::Nearest; }
     bool isRoundConstant() const { return (isRoundOperation()) && !m_children.size(); }
+    bool isHypotNode() const { return m_operator == CalcOperator::Hypot; }
+    bool isPowOrSqrtNode() const { return m_operator == CalcOperator::Pow || m_operator == CalcOperator::Sqrt; }
 
     void hoistChildrenWithOperator(CalcOperator);
     void combineChildren();
     
     bool canCombineAllChildren() const;
+
+    bool isIdentity() const { return m_children.size() == 1 && (m_operator == CalcOperator::Min || m_operator == CalcOperator::Max || m_operator == CalcOperator::Add || m_operator == CalcOperator::Multiply); }
 
     const Vector<Ref<CSSCalcExpressionNode>>& children() const { return m_children; }
     Vector<Ref<CSSCalcExpressionNode>>& children() { return m_children; }

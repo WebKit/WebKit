@@ -1347,6 +1347,9 @@ calc
 min
 max
 clamp
+pow
+sqrt
+hypot
 sin
 cos
 e

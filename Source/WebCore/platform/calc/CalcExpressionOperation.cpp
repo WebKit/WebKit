@@ -95,6 +95,30 @@ float CalcExpressionOperation::evaluate(float maxValue) const
         float max = m_children[2]->evaluate(maxValue);
         return std::max(min, std::min(value, max));
     }
+    case CalcOperator::Pow: {
+        if (m_children.size() != 2)
+            return std::numeric_limits<float>::quiet_NaN();
+        float base = m_children[0]->evaluate(maxValue);
+        float power = m_children[1]->evaluate(maxValue);
+        return std::pow(base, power);
+    }
+    case CalcOperator::Sqrt: {
+        if (m_children.size() != 1)
+            return std::numeric_limits<float>::quiet_NaN();
+        return std::sqrt(m_children[0]->evaluate(maxValue));
+    }
+    case CalcOperator::Hypot: {
+        if (m_children.isEmpty())
+            return std::numeric_limits<float>::quiet_NaN();
+        if (m_children.size() == 1)
+            return std::abs(m_children[0]->evaluate(maxValue));
+        float sum = 0;
+        for (auto& child : m_children) {
+            float value = child->evaluate(maxValue);
+            sum += (value * value);
+        }
+        return sum;
+    }
     case CalcOperator::Sin: {
         if (m_children.size() != 1)
             return std::numeric_limits<double>::quiet_NaN();

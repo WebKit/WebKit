@@ -42,6 +42,19 @@
                 testExpression('min(100px,0%)', 'min(100px, 0%)', propertyName == 'width' ? '0px' : "min(100px, 0%)");
                 testExpression('max(100px,0%)', 'max(100px, 0%)', propertyName == 'width' ? '100px' : "max(100px, 0%)");
                 testExpression('clamp(100px,0%,1%)', 'clamp(100px, 0%, 1%)', propertyName == 'width' ? '100px' : "clamp(100px, 0%, 1%)");
+                testExpression('calc(100px * pow(2, pow(2, 2)))', 'calc(1600px)', '1600px');
+                testExpression('calc(1px * pow(2, 3))', 'calc(8px)', '8px')
+                testExpression('calc(100px * sqrt(100))', 'calc(1000px)', '1000px');
+                testExpression('calc(1px * sqrt(999))', 'calc(31.606961258558215px)', propertyName == 'width' ? '31.59375px' : '31.606962203979492px');
+                testExpression('calc(1px * pow(2, sqrt(100))', 'calc(1024px)', '1024px');
+                testExpression('hypot(4px, 5px, 7px, 9px)', 'hypot(13.076696830622021px)', propertyName == 'width' ? '13.0625px' : '13.076696395874023px');
+                testExpression('hypot(3px, 4px)', 'hypot(5px)', '5px');
+                testExpression('calc(100px * hypot(3, 4))', 'calc(500px)', '500px');
+                testExpression('hypot(-5px)', 'hypot(5px)', '5px');
+                testExpression('calc(1px * hypot(-5))', 'calc(5px)', '5px');
+                testExpression('calc(1px * hypot(10000))', 'calc(10000px)', '10000px');
+                testExpression('calc(2px * sqrt(100000000))', 'calc(20000px)', '20000px');
+                testExpression('calc(3px * pow(200, 4))', 'calc(4800000000px)', '33554428px');
                 testValue('calc(sin(90deg) * 100px)', '100');
                 testValue('calc(sin(45deg  +  45deg ) * 100px)', '100');
                 testValue('calc(cos( 0 ) * 100px)', '100');
@@ -65,6 +78,18 @@
                 testExpression('clamp(200px,,300px)', '999px', '999px');
                 testExpression('clamp((),,300px)', '999px', '999px');
                 testExpression('clamp(1px,2px,2px,4px)', '999px', '999px');
+                testExpression('calc(1px * pow(1))', '999px', '999px');
+                testExpression('calc(1px * pow(2px, 3px))', '999px', '999px');
+                testExpression('calc(sqrt(100px)', '999px', '999px');
+                testExpression('hypot(2px, 40%)', '999px', '999px');
+                testExpression('hypot(2px, 3)', '999px', '999px');
+                testExpression('hypot(3, ,4)', '999px', '999px');
+                testExpression('calc(1px * pow(2 3))', '999px', '999px');
+                testExpression('hypot()', '999px', '999px');
+                testExpression('calc(pow(2))', '999px', '999px');
+                testExpression('pow())', '999px', '999px', '999px'); 
+                testExpression('calc(sqrt())', '999px', '999px');
+                testExpression('calc(sqrt(100, 200))', '999px', '999px');
                 testExpression('calc(sin(90px) * 100px)', '999px', '999px');
                 testExpression('calc(sin(30deg + 1.0471967rad, 0) * 100px)', '999px', '999px');
                 testExpression('calc(cos( 0 ,) * 100px)', '999px', '999px');

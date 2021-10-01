@@ -1,3 +1,14 @@
+2021-10-01  Kevin Turner  <kevin_turner@apple.com>
+
+        Add support for pow(), sqrt() and hypot() per https://drafts.csswg.org/css-values-4/#exponent-funcs. 
+        https://bugs.webkit.org/show_bug.cgi?id=203312
+
+        Reviewed by Simon Fraser.       
+
+        Tests performing CSS calculations with pow(), sqrt(), and hypot() with a range of inputs.
+        * fast/css/calc-parsing-expected.txt:
+        * fast/css/calc-parsing.html:
+
 2021-09-30  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some mediastream consistent failures

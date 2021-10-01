@@ -1,3 +1,38 @@
+2021-10-01  Kevin Turner  <kevin_turner@apple.com>
+
+        Add support for pow(), sqrt() and hypot()
+        https://bugs.webkit.org/show_bug.cgi?id=203312
+        <rdar://82640883>
+       
+        Reviewed by Simon Fraser.
+         
+        Implements pow(), sqrt() and hypot() functions as specified by https://drafts.csswg.org/css-values-4/#exponent-funcs. 
+
+        Test: fast/css/calc-parsing.html
+ 
+        * css/CSSValueKeywords.in: Adds pow, sqrt, and hypot keywords.
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        (WebCore::functionFromOperator):
+        (WebCore::CSSCalcOperationNode::createPowOrSqrt):
+        (WebCore::CSSCalcOperationNode::createHypot):
+        (WebCore::CSSCalcOperationNode::canCombineAllChildren const): Ensures nodes that are identity functions cannot have their children combined.
+        (WebCore::CSSCalcOperationNode::combineChildren): Early exit if node behaves as an identity function. Performs combine of children if node is an exponential function.
+        (WebCore::CSSCalcOperationNode::simplifyNode): Avoid simplifying if node does not behave as an identify function. Calls combineChildren() if node is an exponential function.
+        (WebCore::functionPrefixForOperator):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        * css/calc/CSSCalcOperationNode.h: Adds isExponentialFunction() and isIdentity() methods. Exponential functions include hypot, sqrt, and pow. Identity functions are min and max when they contain one child.
+        * css/calc/CSSCalcValue.cpp:
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        * platform/calc/CalcExpressionOperation.cpp:
+        (WebCore::CalcExpressionOperation::evaluate const):
+        * platform/calc/CalcOperator.cpp:
+        (WebCore::operator<<):
+        * platform/calc/CalcOperator.h:
+
 2021-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Rename snapRubberBand() to have a clearer name

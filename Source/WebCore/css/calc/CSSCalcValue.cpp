@@ -213,6 +213,19 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
                 return nullptr;
             return CSSCalcOperationNode::createSign(op, WTFMove(children));
         }
+        case CalcOperator::Sqrt:
+        case CalcOperator::Pow: {
+            auto children = createCSS(operationChildren, style);
+            if (children.isEmpty())
+                return nullptr;
+            return CSSCalcOperationNode::createPowOrSqrt(op, WTFMove(children));
+        }
+        case CalcOperator::Hypot: {
+            auto children = createCSS(operationChildren, style);
+            if (children.isEmpty())
+                return nullptr;
+            return CSSCalcOperationNode::createHypot(WTFMove(children));
+        }
         case CalcOperator::Mod:
         case CalcOperator::Rem:
         case CalcOperator::Round: {
@@ -338,6 +351,9 @@ bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
     case CSSValueMin:
     case CSSValueMax:
     case CSSValueClamp:
+    case CSSValuePow:
+    case CSSValueSqrt:
+    case CSSValueHypot:
     case CSSValueSin:
     case CSSValueCos:
     case CSSValueTan:
