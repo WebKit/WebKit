@@ -825,7 +825,9 @@
     (iokit-property "mt-device-id")
     (iokit-property "name")
     (iokit-property "nv-stats")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     (iokit-property "od-server-name") ;; Needed by LaunchServices
+#endif
     (iokit-property-regex #"^parser-(options|type)")
     (iokit-property-regex #"^pci(-aspm-default|debug)")
     (iokit-property "port-number")

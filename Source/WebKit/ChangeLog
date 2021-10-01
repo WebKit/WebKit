@@ -1,3 +1,17 @@
+2021-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove reference to od-server-name from sandbox profiles 
+        https://bugs.webkit.org/show_bug.cgi?id=231098
+        <rdar://problem/67766415>
+
+        Reviewed by Per Arne Vollan.
+
+        The code that used to read the od-server-name property was removed in Big Sur,
+        so WebKit no longer needs to allow reading that property in its sandbox profiles.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-01  Ian Anderson  <iana@apple.com>
 
         WebKitLegacy's module map files don't get installed
