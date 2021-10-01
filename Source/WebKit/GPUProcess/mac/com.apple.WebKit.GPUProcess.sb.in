@@ -51,7 +51,9 @@
     (require-any (subpath "/Library/Filesystems/NetFSPlugins")
     (subpath "/Library/Apple/System")
     (subpath "/Library/Preferences/Logging")      ; Logging Rethink
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     (subpath "/private/var/db/dyld")
+#endif
     (subpath "/private/var/db/timezone")
     (subpath "/usr/lib")
     (subpath "/usr/share"))))

@@ -1,3 +1,19 @@
+2021-10-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove special treatment for /private/var/db/dyld on older macOS
+        https://bugs.webkit.org/show_bug.cgi?id=231092
+        <rdar://problem/66580290>
+
+        Reviewed by Per Arne Vollan.
+
+        The dyld shared cache moved to /System/Library/dyld in Big Sur. We should remove access to the
+        old location from Big Sur (and beyond) since it isn't needed anymore.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-10-01  Kate Cheney  <katherine_cheney@apple.com>
 
         GPU Process microphone attribution SPI adoption
