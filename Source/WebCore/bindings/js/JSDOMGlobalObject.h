@@ -143,6 +143,8 @@ private:
 };
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext&, DOMWrapperWorld&);
+WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject&, JSC::CallFrame*);
+JSDOMGlobalObject& legacyActiveGlobalObjectForAccessor(JSC::JSGlobalObject&, JSC::CallFrame*);
 
 template<class JSClass>
 JSClass* toJSDOMGlobalObject(JSC::VM& vm, JSC::JSValue value)
