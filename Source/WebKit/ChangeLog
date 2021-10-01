@@ -1,5 +1,18 @@
 2021-10-01  Per Arne Vollan  <pvollan@apple.com>
 
+        Make sandbox rules for debug syscalls stricter
+        https://bugs.webkit.org/show_bug.cgi?id=230985
+        <rdar://49531420>
+
+        Reviewed by Brent Fulgham.
+
+        Make sandbox rules for debug syscalls stricter in the WebContent process on macOS and iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-10-01  Per Arne Vollan  <pvollan@apple.com>
+
         Send Launch Services database to GPU process
         https://bugs.webkit.org/show_bug.cgi?id=225151
         <rdar://74749122>

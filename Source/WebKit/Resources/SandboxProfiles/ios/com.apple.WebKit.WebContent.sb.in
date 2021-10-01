@@ -1294,7 +1294,6 @@
         (syscall-number SYS_necp_client_action)
         (syscall-number SYS_ulock_wait)
         (syscall-number SYS_ulock_wake)
-        (syscall-number SYS_kdebug_typefilter)
         (syscall-number SYS_shared_region_check_np)
         (syscall-number SYS_getpid)
         (syscall-number SYS_bsdthread_register)
@@ -1316,7 +1315,6 @@
         (syscall-number SYS_open_dprotected_np)
         (syscall-number SYS_pread_nocancel)
         (syscall-number SYS___semwait_signal_nocancel)
-        (syscall-number SYS_kdebug_trace_string) ;; Needed for performance sampling, see <rdar://problem/48829655>.
         (syscall-number SYS_fgetattrlist) ;; <rdar://problem/50266257>
         (syscall-number SYS_fsetxattr) ;; <rdar://problem/49795964>
         (syscall-number SYS_abort_with_payload) ;; <rdar://problem/50967271>
@@ -1331,6 +1329,12 @@
     (if (defined? 'SYS_objc_bp_assist_cfg_np)
         (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
 )
+
+(with-filter (system-attribute apple-internal)
+    (when (defined? 'syscall-unix)
+        (allow syscall-unix
+            (syscall-number SYS_kdebug_trace_string) ;; Needed for performance sampling, see <rdar://problem/48829655>.
+            (syscall-number SYS_kdebug_typefilter))))
 
 (when (defined? 'file-ioctl)
     (deny file-ioctl (with telemetry))
