@@ -43,7 +43,7 @@ dictionary RTCEncodedVideoFrameMetadata {
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCEncodedTransform,
+    EnabledBySetting=WebRTCInsertableStreams,
     Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface RTCEncodedVideoFrame {

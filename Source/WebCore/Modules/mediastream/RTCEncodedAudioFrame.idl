@@ -34,7 +34,7 @@ dictionary RTCEncodedAudioFrameMetadata {
 
 [
     Conditional=WEB_RTC,
-    EnabledBySetting=WebRTCEncodedTransform,
+    EnabledBySetting=WebRTCInsertableStreams,
     Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface RTCEncodedAudioFrame {
