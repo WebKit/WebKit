@@ -4943,23 +4943,14 @@ void WebPage::addMIMETypeWithCustomContentProvider(const String& mimeType)
 
 void WebPage::updateMainFrameScrollOffsetPinning()
 {
-    Frame& frame = m_page->mainFrame();
-    ScrollPosition scrollPosition = frame.view()->scrollPosition();
-    ScrollPosition maximumScrollPosition = frame.view()->maximumScrollPosition();
-    ScrollPosition minimumScrollPosition = frame.view()->minimumScrollPosition();
+    auto* frameView = mainFrameView();
+    if (!frameView)
+        return;
 
-    bool isPinnedToLeftSide = (scrollPosition.x() <= minimumScrollPosition.x());
-    bool isPinnedToRightSide = (scrollPosition.x() >= maximumScrollPosition.x());
-    bool isPinnedToTopSide = (scrollPosition.y() <= minimumScrollPosition.y());
-    bool isPinnedToBottomSide = (scrollPosition.y() >= maximumScrollPosition.y());
-
-    if (isPinnedToLeftSide != m_cachedMainFrameIsPinnedToLeftSide || isPinnedToRightSide != m_cachedMainFrameIsPinnedToRightSide || isPinnedToTopSide != m_cachedMainFrameIsPinnedToTopSide || isPinnedToBottomSide != m_cachedMainFrameIsPinnedToBottomSide) {
-        send(Messages::WebPageProxy::DidChangeScrollOffsetPinningForMainFrame(isPinnedToLeftSide, isPinnedToRightSide, isPinnedToTopSide, isPinnedToBottomSide));
-        
-        m_cachedMainFrameIsPinnedToLeftSide = isPinnedToLeftSide;
-        m_cachedMainFrameIsPinnedToRightSide = isPinnedToRightSide;
-        m_cachedMainFrameIsPinnedToTopSide = isPinnedToTopSide;
-        m_cachedMainFrameIsPinnedToBottomSide = isPinnedToBottomSide;
+    auto pinnedState = frameView->edgePinnedState();
+    if (pinnedState != m_cachedMainFramePinnedState) {
+        send(Messages::WebPageProxy::DidChangeScrollOffsetPinningForMainFrame(pinnedState));
+        m_cachedMainFramePinnedState = pinnedState;
     }
 }
 

@@ -104,6 +104,7 @@
 #include <WebCore/PlatformSpeechSynthesisUtterance.h>
 #include <WebCore/PlatformSpeechSynthesizer.h>
 #include <WebCore/PointerID.h>
+#include <WebCore/RectEdges.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/ScrollTypes.h>
@@ -1094,18 +1095,13 @@ public:
     void setSuppressScrollbarAnimations(bool);
     bool areScrollbarAnimationsSuppressed() const { return m_suppressScrollbarAnimations; }
 
-    bool isPinnedToLeftSide() const { return m_mainFrameIsPinnedToLeftSide; }
-    bool isPinnedToRightSide() const { return m_mainFrameIsPinnedToRightSide; }
-    bool isPinnedToTopSide() const { return m_mainFrameIsPinnedToTopSide; }
-    bool isPinnedToBottomSide() const { return m_mainFrameIsPinnedToBottomSide; }
+    WebCore::RectEdges<bool> pinnedState() const { return m_mainFramePinnedState; }
 
-    bool rubberBandsAtLeft() const;
+    WebCore::RectEdges<bool> rubberBandableEdges() const { return m_rubberBandableEdges; }
+    void setRubberBandableEdges(WebCore::RectEdges<bool> edges) { m_rubberBandableEdges = edges; }
     void setRubberBandsAtLeft(bool);
-    bool rubberBandsAtRight() const;
     void setRubberBandsAtRight(bool);
-    bool rubberBandsAtTop() const;
     void setRubberBandsAtTop(bool);
-    bool rubberBandsAtBottom() const;
     void setRubberBandsAtBottom(bool);
 
     void setShouldUseImplicitRubberBandControl(bool shouldUseImplicitRubberBandControl) { m_shouldUseImplicitRubberBandControl = shouldUseImplicitRubberBandControl; }
@@ -2152,7 +2148,7 @@ private:
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     void recommendedScrollbarStyleDidChange(int32_t newStyle);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
-    void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide);
+    void didChangeScrollOffsetPinningForMainFrame(WebCore::RectEdges<bool>);
     void didChangePageCount(unsigned);
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
@@ -2859,7 +2855,10 @@ private:
 #endif
 
     PageLoadState m_pageLoadState;
-    
+
+    WebCore::RectEdges<bool> m_mainFramePinnedState { true, true, true, true };
+    WebCore::RectEdges<bool> m_rubberBandableEdges { true, true, true, true };
+
     bool m_delegatesScrolling { false };
 
     bool m_mainFrameHasHorizontalScrollbar { false };
@@ -2868,16 +2867,7 @@ private:
     // Whether horizontal wheel events can be handled directly for swiping purposes.
     bool m_canShortCircuitHorizontalWheelEvents { true };
 
-    bool m_mainFrameIsPinnedToLeftSide { true };
-    bool m_mainFrameIsPinnedToRightSide { true };
-    bool m_mainFrameIsPinnedToTopSide { true };
-    bool m_mainFrameIsPinnedToBottomSide { true };
-
     bool m_shouldUseImplicitRubberBandControl { false };
-    bool m_rubberBandsAtLeft { true };
-    bool m_rubberBandsAtRight { true };
-    bool m_rubberBandsAtTop { true };
-    bool m_rubberBandsAtBottom { true };
         
     bool m_enableVerticalRubberBanding { true };
     bool m_enableHorizontalRubberBanding { true };

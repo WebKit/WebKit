@@ -5609,40 +5609,48 @@ void WebViewImpl::mouseMoved(NSEvent *event)
     mouseMovedInternal(event);
 }
 
+static _WKRectEdge toWKRectEdge(RectEdges<bool> edges)
+{
+    _WKRectEdge result = _WKRectEdgeNone;
+
+    if (edges.left())
+        result |= _WKRectEdgeLeft;
+
+    if (edges.right())
+        result |= _WKRectEdgeRight;
+
+    if (edges.top())
+        result |= _WKRectEdgeTop;
+
+    if (edges.bottom())
+        result |= _WKRectEdgeBottom;
+
+    return result;
+}
+
+static RectEdges<bool> toRectEdges(_WKRectEdge edges)
+{
+    return {
+        edges & _WKRectEdgeTop,
+        edges & _WKRectEdgeRight,
+        edges & _WKRectEdgeBottom,
+        edges & _WKRectEdgeLeft
+    };
+}
+
 _WKRectEdge WebViewImpl::pinnedState()
 {
-    _WKRectEdge state = _WKRectEdgeNone;
-    if (m_page->isPinnedToLeftSide())
-        state |= _WKRectEdgeLeft;
-    if (m_page->isPinnedToRightSide())
-        state |= _WKRectEdgeRight;
-    if (m_page->isPinnedToTopSide())
-        state |= _WKRectEdgeTop;
-    if (m_page->isPinnedToBottomSide())
-        state |= _WKRectEdgeBottom;
-    return state;
+    return toWKRectEdge(m_page->pinnedState());
 }
 
 _WKRectEdge WebViewImpl::rubberBandingEnabled()
 {
-    _WKRectEdge state = _WKRectEdgeNone;
-    if (m_page->rubberBandsAtLeft())
-        state |= _WKRectEdgeLeft;
-    if (m_page->rubberBandsAtRight())
-        state |= _WKRectEdgeRight;
-    if (m_page->rubberBandsAtTop())
-        state |= _WKRectEdgeTop;
-    if (m_page->rubberBandsAtBottom())
-        state |= _WKRectEdgeBottom;
-    return state;
+    return toWKRectEdge(m_page->rubberBandableEdges());
 }
 
 void WebViewImpl::setRubberBandingEnabled(_WKRectEdge state)
 {
-    m_page->setRubberBandsAtLeft(state & _WKRectEdgeLeft);
-    m_page->setRubberBandsAtRight(state & _WKRectEdgeRight);
-    m_page->setRubberBandsAtTop(state & _WKRectEdgeTop);
-    m_page->setRubberBandsAtBottom(state & _WKRectEdgeBottom);
+    m_page->setRubberBandableEdges(toRectEdges(state));
 }
 
 void WebViewImpl::mouseDown(NSEvent *event)

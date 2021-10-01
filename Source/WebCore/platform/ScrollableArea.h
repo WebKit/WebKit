@@ -321,7 +321,7 @@ public:
 
     // "Pinned" means scrolled at or beyond the edge.
     bool isPinnedOnSide(BoxSide) const;
-    RectEdges<bool> edgePinnedState() const;
+    WEBCORE_EXPORT RectEdges<bool> edgePinnedState() const;
 
     // True if scrolling happens by moving compositing layers.
     virtual bool usesCompositedScrolling() const { return false; }

@@ -83,6 +83,7 @@
 #include <WebCore/PluginData.h>
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/PointerID.h>
+#include <WebCore/RectEdges.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SimpleRange.h>
@@ -2166,10 +2167,7 @@ private:
     std::optional<WebCore::SimpleRange> m_rangeForDropSnapshot;
 #endif
 
-    bool m_cachedMainFrameIsPinnedToLeftSide { true };
-    bool m_cachedMainFrameIsPinnedToRightSide { true };
-    bool m_cachedMainFrameIsPinnedToTopSide { true };
-    bool m_cachedMainFrameIsPinnedToBottomSide { true };
+    WebCore::RectEdges<bool> m_cachedMainFramePinnedState { true, true, true, true };
     bool m_canShortCircuitHorizontalWheelEvents { false };
     bool m_hasWheelEventHandlers { false };
 

@@ -1,3 +1,56 @@
+2021-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify some scrolling-related code in WebKit with use of RectEdges<bool>
+        https://bugs.webkit.org/show_bug.cgi?id=231037
+
+        Reviewed by Tim Horton.
+
+        Use RectEdges<bool> in code that tracks rubber banding state, and edge pinned state.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<RectEdges<bool>>::encode):
+        (IPC::ArgumentCoder<RectEdges<bool>>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageIsPinnedToLeftSide):
+        (WKPageIsPinnedToRightSide):
+        (WKPageIsPinnedToTopSide):
+        (WKPageIsPinnedToBottomSide):
+        (WKPageRubberBandsAtLeft):
+        (WKPageRubberBandsAtRight):
+        (WKPageRubberBandsAtTop):
+        (WKPageRubberBandsAtBottom):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::toWKRectEdge):
+        (WebKit::toRectEdges):
+        (WebKit::WebViewImpl::pinnedState):
+        (WebKit::WebViewImpl::rubberBandingEnabled):
+        (WebKit::WebViewImpl::setRubberBandingEnabled):
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::setRubberBandsAtLeft):
+        (WebKit::WebPageProxy::setRubberBandsAtRight):
+        (WebKit::WebPageProxy::setRubberBandsAtTop):
+        (WebKit::WebPageProxy::setRubberBandsAtBottom):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::didChangeScrollOffsetPinningForMainFrame):
+        (WebKit::WebPageProxy::rubberBandsAtLeft const): Deleted.
+        (WebKit::WebPageProxy::rubberBandsAtRight const): Deleted.
+        (WebKit::WebPageProxy::rubberBandsAtTop const): Deleted.
+        (WebKit::WebPageProxy::rubberBandsAtBottom const): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateMainFrameScrollOffsetPinning):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-09-30  Christopher Reid  <chris.reid@sony.com>
 
         Fix !ENABLE(WIRELESS_PLAYBACK_TARGET) build after r283319

@@ -678,27 +678,27 @@ bool WKPageAreScrollbarAnimationsSuppressed(WKPageRef pageRef)
 
 bool WKPageIsPinnedToLeftSide(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->isPinnedToLeftSide();
+    return toImpl(pageRef)->pinnedState().left();
 }
 
 bool WKPageIsPinnedToRightSide(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->isPinnedToRightSide();
+    return toImpl(pageRef)->pinnedState().right();
 }
 
 bool WKPageIsPinnedToTopSide(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->isPinnedToTopSide();
+    return toImpl(pageRef)->pinnedState().top();
 }
 
 bool WKPageIsPinnedToBottomSide(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->isPinnedToBottomSide();
+    return toImpl(pageRef)->pinnedState().bottom();
 }
 
 bool WKPageRubberBandsAtLeft(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->rubberBandsAtLeft();
+    return toImpl(pageRef)->rubberBandableEdges().left();
 }
 
 void WKPageSetRubberBandsAtLeft(WKPageRef pageRef, bool rubberBandsAtLeft)
@@ -709,7 +709,7 @@ void WKPageSetRubberBandsAtLeft(WKPageRef pageRef, bool rubberBandsAtLeft)
 
 bool WKPageRubberBandsAtRight(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->rubberBandsAtRight();
+    return toImpl(pageRef)->rubberBandableEdges().right();
 }
 
 void WKPageSetRubberBandsAtRight(WKPageRef pageRef, bool rubberBandsAtRight)
@@ -720,7 +720,7 @@ void WKPageSetRubberBandsAtRight(WKPageRef pageRef, bool rubberBandsAtRight)
 
 bool WKPageRubberBandsAtTop(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->rubberBandsAtTop();
+    return toImpl(pageRef)->rubberBandableEdges().top();
 }
 
 void WKPageSetRubberBandsAtTop(WKPageRef pageRef, bool rubberBandsAtTop)
@@ -731,7 +731,7 @@ void WKPageSetRubberBandsAtTop(WKPageRef pageRef, bool rubberBandsAtTop)
 
 bool WKPageRubberBandsAtBottom(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->rubberBandsAtBottom();
+    return toImpl(pageRef)->rubberBandableEdges().bottom();
 }
 
 void WKPageSetRubberBandsAtBottom(WKPageRef pageRef, bool rubberBandsAtBottom)

@@ -321,6 +321,11 @@ template<> struct ArgumentCoder<WebCore::FloatBoxExtent> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatBoxExtent&);
 };
 
+template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
+    static void encode(Encoder&, const WebCore::RectEdges<bool>&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::RectEdges<bool>&);
+};
+
 template<> struct ArgumentCoder<WebCore::FloatSize> {
     static void encode(Encoder&, const WebCore::FloatSize&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FloatSize&);

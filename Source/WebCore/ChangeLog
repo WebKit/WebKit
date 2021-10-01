@@ -1,3 +1,14 @@
+2021-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify some scrolling-related code in WebKit with use of RectEdges<bool>
+        https://bugs.webkit.org/show_bug.cgi?id=231037
+
+        Reviewed by Tim Horton.
+
+        Export edgePinnedState().
+
+        * platform/ScrollableArea.h:
+
 2021-09-30  Sihui Liu  <sihui_liu@apple.com>
 
         Make File System Access API available in Worker

@@ -674,7 +674,18 @@ bool ArgumentCoder<FloatBoxExtent>::decode(Decoder& decoder, FloatBoxExtent& flo
 {
     return SimpleArgumentCoder<FloatBoxExtent>::decode(decoder, floatBoxExtent);
 }
+
+
+void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bool>& boxEdges)
+{
+    SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
+}
     
+bool ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder, RectEdges<bool>& boxEdges)
+{
+    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder, boxEdges);
+}
+
 
 void ArgumentCoder<FloatSize>::encode(Encoder& encoder, const FloatSize& floatSize)
 {

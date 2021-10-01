@@ -96,7 +96,7 @@ void EventDispatcher::initializeConnection(IPC::Connection* connection)
     connection->addWorkQueueMessageReceiver(Messages::EventDispatcher::messageReceiverName(), m_queue.get(), this);
 }
 
-void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom)
+void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
 #if PLATFORM(COCOA) || ENABLE(SCROLLING_THREAD)
     PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
@@ -137,7 +137,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         // scrolling tree can be notified.
         // We only need to do this at the beginning of the gesture.
         if (platformWheelEvent.phase() == PlatformWheelEventPhase::Began)
-            scrollingTree->setMainFrameCanRubberBand({ canRubberBandAtTop, canRubberBandAtRight, canRubberBandAtBottom, canRubberBandAtLeft });
+            scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
         auto processingSteps = scrollingTree->determineWheelEventProcessing(platformWheelEvent);
 
@@ -165,10 +165,7 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         });
     } while (false);
 #else
-    UNUSED_PARAM(canRubberBandAtLeft);
-    UNUSED_PARAM(canRubberBandAtRight);
-    UNUSED_PARAM(canRubberBandAtTop);
-    UNUSED_PARAM(canRubberBandAtBottom);
+    UNUSED_PARAM(rubberBandableEdges);
 
     dispatchWheelEventViaMainThread(pageID, wheelEvent, processingSteps);
 #endif
