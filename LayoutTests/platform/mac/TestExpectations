@@ -2213,6 +2213,8 @@ webkit.org/b/215397 media/modern-media-controls/media-controller/media-controlle
 
 webkit.org/b/224396 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Slow ]
 
+webkit.org/b/229472 [ BigSur Debug ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Slow ]
+
 webkit.org/b/224631 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ Pass ImageOnlyFailure ]
 
 # Buttons are not focusable on Mac so this test doesn't work as expected.
