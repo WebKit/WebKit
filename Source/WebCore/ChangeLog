@@ -1,3 +1,29 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        GC may not know about memory used by AudioBufferSourceNode's buffer
+        https://bugs.webkit.org/show_bug.cgi?id=230966
+
+        Reviewed by Darin Adler.
+
+        AudioBufferSourceNode has a 'buffer' attribute settable by JavaScript of type AudioBuffer.
+        An AudioBuffer may use a significant amount of memory and AudioBuffer.idl contains [ReportExtraMemoryCost]
+        extended attribute to report this memory to the GC. However, there is an issue if JS constructs a large
+        AudioBuffer, then sets it on an AudioBufferSourceNode and then the JSAudioBuffer wrapper gets garbage
+        collected. At this point, GC thinks it recovered the extra memory reported by the JSAudioBuffer but this
+        is not true since that AudioBuffer (and its internal memory) are still kept alive by AudioBufferSourceNode /
+        JSAudioBufferSourceNode. To address this issue, the proposal in this patch is to have JSAudioBufferSourceNode
+        mark its buffer when visiting childen during GC. As a result, the JSAudioBuffer wrapper will stay alive (and
+        report extra memory use) as long as its associated JSAudioBufferSourceNode wrapper is still alive.
+
+        Test: webaudio/AudioBufferSource/audiobuffersource-buffer-gc.html
+
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Sources.txt:
+        * bindings/js/JSAudioBufferSourceNodeCustom.cpp: Added.
+        (WebCore::JSAudioBufferSourceNode::visitAdditionalChildren):
+
 2021-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         base-palette can accept "light" or "dark"

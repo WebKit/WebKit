@@ -442,6 +442,7 @@ bindings/js/JSAnimationEffectCustom.cpp
 bindings/js/JSAnimationTimelineCustom.cpp
 bindings/js/JSAttrCustom.cpp
 bindings/js/JSAudioBufferCustom.cpp
+bindings/js/JSAudioBufferSourceNodeCustom.cpp
 bindings/js/JSAudioNodeCustom.cpp
 bindings/js/JSAudioWorkletProcessorCustom.cpp
 bindings/js/JSAuthenticatorResponseCustom.cpp

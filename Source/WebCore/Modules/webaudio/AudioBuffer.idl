@@ -28,6 +28,7 @@
 
 [
     Conditional=WEB_AUDIO,
+    GenerateIsReachable=Impl,
     ImplementationLacksVTable,
     JSCustomMarkFunction,
     JSGenerateToJSObject,

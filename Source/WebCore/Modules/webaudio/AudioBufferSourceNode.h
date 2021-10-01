@@ -52,6 +52,9 @@ public:
     // setBufferForBindings() is called on the main thread. This is the buffer we use for playback.
     ExceptionOr<void> setBufferForBindings(RefPtr<AudioBuffer>&&);
 
+    AudioBuffer* buffer() WTF_REQUIRES_LOCK(m_processLock) { return m_buffer.get(); }
+    Lock& processLock() WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
+
     // This function does not lock before accessing the buffer and should therefore only be called on the main thread.
     AudioBuffer* bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_buffer.get(); }
 

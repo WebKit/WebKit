@@ -1,3 +1,15 @@
+2021-10-01  Chris Dumez  <cdumez@apple.com>
+
+        GC may not know about memory used by AudioBufferSourceNode's buffer
+        https://bugs.webkit.org/show_bug.cgi?id=230966
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/AudioBufferSource/audiobuffersource-buffer-gc-expected.txt: Added.
+        * webaudio/AudioBufferSource/audiobuffersource-buffer-gc.html: Added.
+
 2021-10-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [ BigSur wk1 ] printing/css2.1/page-break-after-000.html is a flaky failure.
