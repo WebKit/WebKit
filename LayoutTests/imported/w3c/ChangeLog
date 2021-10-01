@@ -1,3 +1,13 @@
+2021-10-01  Youenn Fablet  <youenn@apple.com>
+
+        Rebase WebRTC perfect negotiation tests
+        https://bugs.webkit.org/show_bug.cgi?id=231018
+
+        Unreviewed, rebasing tests.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare-linear.https-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-perfect-negotiation-stress-glare.https-expected.txt:
+
 2021-09-30  Sihui Liu  <sihui_liu@apple.com>
 
         Make File System Access API available in Worker

@@ -1,4 +1,4 @@
 
 PASS Perfect negotiation stress glare linear
-FAIL Perfect negotiation stress glare linear with roles reversed Error processing ICE candidate
+PASS Perfect negotiation stress glare linear with roles reversed
 
