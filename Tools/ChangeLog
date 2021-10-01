@@ -1,3 +1,151 @@
+2021-10-01  Sam Sneddon  <gsnedders@apple.com>
+
+        Remove most deprecated webkit-patch commands
+        https://bugs.webkit.org/show_bug.cgi?id=231032
+
+        Reviewed by Jonathan Bedard.
+
+        This removes all currently deprecated commands except for
+        rebaseline-server (to be decided about) and land-cowhand (see
+        https://bugs.webkit.org/show_bug.cgi?id=227980).
+
+        This undoubtedly leaves dead code elsewhere in webkitpy, but tidying that is a task for the
+        future (due to dynamic typing, determining what is or is not dead is non-trivial).
+
+        * Scripts/webkitpy/tool/bot/retrylogic_unittest.py:
+        (MockJSCEarlyWarningSystem):
+        Rewrite to directly be a EarlyWarningSystemTaskDelegate subclass.
+        (MockJSCEarlyWarningSystem.__init__):
+        (MockJSCEarlyWarningSystem.group):
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/adduserstogroups.py: Removed.
+        * Scripts/webkitpy/tool/commands/analyzechangelog.py: Removed.
+        * Scripts/webkitpy/tool/commands/analyzechangelog_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/applywatchlistlocal.py:
+        * Scripts/webkitpy/tool/commands/bugfortest.py: Removed.
+        * Scripts/webkitpy/tool/commands/bugsearch.py: Removed.
+        * Scripts/webkitpy/tool/commands/download.py:
+        (Update): Deleted.
+        (Build): Deleted.
+        (Build._prepare_state): Deleted.
+        (CheckPatchRelevance): Deleted.
+        (LandCowboy): Deleted.
+        (LandCowboy._prepare_state): Deleted.
+        (BuildAttachment): Deleted.
+        (ApplyWatchList): Deleted.
+        (LandFromURL): Deleted.
+        (PrepareRollout): Deleted.
+        (PrepareRollout._prepare_state): Deleted.
+        (CreateRollout): Deleted.
+        (CreateRollout._prepare_state): Deleted.
+        (Rollout): Deleted.
+        (Rollout._prepare_state): Deleted.
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (DownloadCommandsTest.test_build): Deleted.
+        (DownloadCommandsTest.test_apply_watch_list): Deleted.
+        (test_land): Deleted.
+        (test_build_attachment): Deleted.
+        (test_land_from_url): Deleted.
+        (test_prepare_revert): Deleted.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py: Removed.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/findusers.py: Removed.
+        * Scripts/webkitpy/tool/commands/gardenomatic.py: Removed.
+        * Scripts/webkitpy/tool/commands/openbugs.py: Removed.
+        * Scripts/webkitpy/tool/commands/openbugs_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (BugsToCommit): Deleted.
+        (BugsToCommit.execute): Deleted.
+        (PatchesInCommitQueue): Deleted.
+        (PatchesInCommitQueue.execute): Deleted.
+        (PatchesToCommitQueue): Deleted.
+        (PatchesToCommitQueue.__init__): Deleted.
+        (PatchesToCommitQueue._needs_commit_queue): Deleted.
+        (PatchesToCommitQueue.execute): Deleted.
+        (PatchesToReview): Deleted.
+        (PatchesToReview.__init__): Deleted.
+        (PatchesToReview._print_report): Deleted.
+        (PatchesToReview._generate_report): Deleted.
+        (PatchesToReview.execute): Deleted.
+        (WhatBroke): Deleted.
+        (WhatBroke._print_builder_line): Deleted.
+        (WhatBroke._print_blame_information_for_builder): Deleted.
+        (WhatBroke.execute): Deleted.
+        (ResultsFor): Deleted.
+        (ResultsFor._print_layout_test_results): Deleted.
+        (ResultsFor.execute): Deleted.
+        (FailureReason): Deleted.
+        (FailureReason._blame_line_for_revision): Deleted.
+        (FailureReason._print_blame_information_for_transition): Deleted.
+        (FailureReason._explain_failures_for_builder): Deleted.
+        (FailureReason._builder_to_explain): Deleted.
+        (FailureReason._done_explaining): Deleted.
+        (FailureReason.execute): Deleted.
+        (FindFlakyTests): Deleted.
+        (FindFlakyTests._find_failures): Deleted.
+        (FindFlakyTests._increment_statistics): Deleted.
+        (FindFlakyTests._print_statistics): Deleted.
+        (FindFlakyTests._walk_backwards_from): Deleted.
+        (FindFlakyTests._builder_to_analyze): Deleted.
+        (FindFlakyTests.execute): Deleted.
+        (TreeStatus): Deleted.
+        (execute): Deleted.
+        (CrashLog): Deleted.
+        (PrintExpectations): Deleted.
+        (PrintExpectations.__init__): Deleted.
+        (PrintExpectations.execute): Deleted.
+        (PrintExpectations._filter_tests): Deleted.
+        (PrintExpectations._format_lines): Deleted.
+        (PrintExpectations._model): Deleted.
+        (PrintBaselines): Deleted.
+        (PrintBaselines.__init__): Deleted.
+        (PrintBaselines.execute): Deleted.
+        (PrintBaselines._print_baselines): Deleted.
+        (PrintBaselines._platform_for_path): Deleted.
+        (FindResolvedBugs): Deleted.
+        (FindResolvedBugs.execute): Deleted.
+        * Scripts/webkitpy/tool/commands/queries_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/rebaseline.py: Removed.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (CommitMessageForCurrentDiff): Deleted.
+        (CommitMessageForCurrentDiff.__init__): Deleted.
+        (CommitMessageForCurrentDiff.execute): Deleted.
+        (CleanPendingCommit): Deleted.
+        (CleanPendingCommit._flags_to_clear_on_patch): Deleted.
+        (CleanPendingCommit.execute): Deleted.
+        (CleanReviewQueue): Deleted.
+        (CleanReviewQueue.execute): Deleted.
+        (AssignToCommitter): Deleted.
+        (AssignToCommitter._patches_have_commiters): Deleted.
+        (AssignToCommitter._assign_bug_to_last_patch_attacher): Deleted.
+        (AssignToCommitter.execute): Deleted.
+        (ObsoleteAttachments): Deleted.
+        (ObsoleteAttachments._prepare_state): Deleted.
+        (AttachToBug): Deleted.
+        (AttachToBug._prepare_state): Deleted.
+        (HasLanded): Deleted.
+        (PostCommits): Deleted.
+        (PostCommits.__init__): Deleted.
+        (PostCommits._comment_text_for_commit): Deleted.
+        (PostCommits.execute): Deleted.
+        (CreateBug): Deleted.
+        (CreateBug.__init__): Deleted.
+        (CreateBug.create_bug_from_commit): Deleted.
+        (CreateBug.create_bug_from_patch): Deleted.
+        (CreateBug.prompt_for_bug_title_and_comment): Deleted.
+        (CreateBug.execute): Deleted.
+        (WPTChangeExport): Deleted.
+        (WPTChangeExport._prepare_state): Deleted.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (UploadCommandsTest.test_commit_message_for_current_diff): Deleted.
+        (UploadCommandsTest.test_clean_pending_commit): Deleted.
+        (UploadCommandsTest.test_assign_to_committer): Deleted.
+        (test_obsolete_attachments): Deleted.
+        (test_post): Deleted.
+        (test_attach_to_bug): Deleted.
+        (test_attach_to_bug_no_description_or_comment): Deleted.
+
 2021-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Add initial implementation of accessible interface when building with ATSPI
