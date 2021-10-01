@@ -176,142 +176,56 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         return false;
     }
 
-    // Reset unapplied overscroll because we may decide to remove delta at various points and put it into this value.
-    auto delta = std::exchange(m_unappliedOverscrollDelta, { });
-
     IntSize stretchAmount = m_client.stretchAmount();
     bool isVerticallyStretched = stretchAmount.height();
     bool isHorizontallyStretched = stretchAmount.width();
 
-    auto eventCoalescedDelta = (isVerticallyStretched || isHorizontallyStretched) ? -wheelEvent.unacceleratedScrollingDelta() : -wheelEvent.delta();
-    delta += eventCoalescedDelta;
+    // Much of this code, including this use of unaccelerated deltas when stretched, is based on AppKit behavior.
+    auto eventDelta = (isVerticallyStretched || isHorizontallyStretched) ? -wheelEvent.unacceleratedScrollingDelta() : -wheelEvent.delta();
 
-    // FIXME: All of the code below could be simplified since predominantAxis is known, and we zero out the delta on the other axis.
-    auto affectedSide = affectedSideOnDominantAxis(delta);
-
-    float deltaX = delta.width();
-    float deltaY = delta.height();
-
-    bool shouldStretch = false;
+    // Reset unapplied overscroll because we may decide to remove delta at various points and put it into this value.
+    auto delta = std::exchange(m_unappliedOverscrollDelta, { });
+    delta += eventDelta;
 
     auto momentumPhase = wheelEvent.momentumPhase();
-
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
         m_momentumScrollInProgress = true;
 
+    bool shouldStretch = false;
     auto timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
     if (m_inScrollGesture || m_momentumScrollInProgress) {
         if (m_lastMomentumScrollTimestamp && timeDelta > 0_s && timeDelta < scrollVelocityZeroingTimeout) {
-            m_momentumVelocity = eventCoalescedDelta / timeDelta.seconds();
+            m_momentumVelocity = eventDelta / timeDelta.seconds();
             m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
         } else {
             m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
             m_momentumVelocity = { };
         }
 
-        if (isVerticallyStretched) {
-            if (!isHorizontallyStretched && isHorizontalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
-                // Stretching only in the vertical.
-                if (deltaY && (fabsf(deltaX / deltaY) < rubberbandDirectionLockStretchRatio))
-                    deltaX = 0;
-                else if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
-                    m_unappliedOverscrollDelta.expand(deltaX, 0);
-                    deltaX = 0;
-                } else
-                    m_unappliedOverscrollDelta.expand(deltaX, 0);
-            }
-        } else if (isHorizontallyStretched) {
-            // Stretching only in the horizontal.
-            if (isVerticalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
-                if (deltaX && (fabsf(deltaY / deltaX) < rubberbandDirectionLockStretchRatio))
-                    deltaY = 0;
-                else if (fabsf(deltaY) < rubberbandMinimumRequiredDeltaBeforeStretch) {
-                    m_unappliedOverscrollDelta.expand(0, deltaY);
-                    deltaY = 0;
-                } else
-                    m_unappliedOverscrollDelta.expand(0, deltaY);
-            }
-        } else {
-            // Not stretching at all yet.
-            if (affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
-                if (fabsf(deltaY) >= fabsf(deltaX)) {
-                    if (fabsf(deltaX) < rubberbandMinimumRequiredDeltaBeforeStretch) {
-                        m_unappliedOverscrollDelta.expand(deltaX, 0);
-                        deltaX = 0;
-                    } else
-                        m_unappliedOverscrollDelta.expand(deltaX, 0);
-                }
-
-                if (!m_client.allowsHorizontalStretching(wheelEvent))
-                    deltaX = 0;
-
-                if (!m_client.allowsVerticalStretching(wheelEvent))
-                    deltaY = 0;
-
-                shouldStretch = deltaX || deltaY;
-            }
-        }
+        shouldStretch = modifyScrollDeltaForStretching(wheelEvent, delta, isHorizontallyStretched, isVerticallyStretched);
     }
 
     bool handled = true;
 
-    if (deltaX || deltaY) {
-        if (!(shouldStretch || isVerticallyStretched || isHorizontallyStretched)) {
-            if (deltaY) {
-                deltaY *= scrollWheelMultiplier();
-                m_client.immediateScrollBy(FloatSize(0, deltaY));
-            }
-            if (deltaX) {
-                deltaX *= scrollWheelMultiplier();
-                m_client.immediateScrollBy(FloatSize(deltaX, 0));
-            }
-        } else {
-            affectedSide = affectedSideOnDominantAxis({ deltaX, deltaY });
-            if (deltaX) {
-                if (!m_client.allowsHorizontalStretching(wheelEvent)) {
-                    deltaX = 0;
-                    eventCoalescedDelta.setWidth(0);
-                    handled = false;
-                } else if (!isHorizontallyStretched && !m_client.isPinnedOnSide(*affectedSide)) {
-                    deltaX *= scrollWheelMultiplier();
+    if (!delta.isZero()) {
+        if (shouldStretch || isVerticallyStretched || isHorizontallyStretched) {
+            if (delta.width() && !m_client.allowsHorizontalStretching(wheelEvent))
+                handled = false;
 
-                    m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
-                    deltaX = 0;
-                }
-            }
+            if (delta.height() && !m_client.allowsVerticalStretching(wheelEvent))
+                handled = false;
 
-            if (deltaY) {
-                if (!m_client.allowsVerticalStretching(wheelEvent)) {
-                    deltaY = 0;
-                    eventCoalescedDelta.setHeight(0);
-                    handled = false;
-                } else if (!isVerticallyStretched && !m_client.isPinnedOnSide(*affectedSide)) {
-                    deltaY *= scrollWheelMultiplier();
-
-                    m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
-                    deltaY = 0;
-                }
-            }
-
-            IntSize stretchAmount = m_client.stretchAmount();
-
+            bool canStartAnimation = applyScrollDeltaWithStretching(wheelEvent, delta, isHorizontallyStretched, isVerticallyStretched);
             if (m_momentumScrollInProgress) {
-                auto sideAffectedByEventDelta = affectedSideOnDominantAxis(eventCoalescedDelta);
-                if ((!sideAffectedByEventDelta || m_client.isPinnedOnSide(*sideAffectedByEventDelta)) && m_lastMomentumScrollTimestamp) {
+                if (canStartAnimation && m_lastMomentumScrollTimestamp) {
                     m_ignoreMomentumScrolls = true;
                     m_momentumScrollInProgress = false;
                     startRubberbandAnimationIfNecessary();
                 }
             }
-
-            m_stretchScrollForce.setWidth(m_stretchScrollForce.width() + deltaX);
-            m_stretchScrollForce.setHeight(m_stretchScrollForce.height() + deltaY);
-
-            FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height())));
-
-            LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::handleWheelEvent() - stretchScrollForce " << m_stretchScrollForce << " move delta " << FloatSize(deltaX, deltaY) << " dampedDelta " << dampedDelta);
-
-            m_client.immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
+        } else {
+            delta.scale(scrollWheelMultiplier());
+            m_client.immediateScrollBy(delta);
         }
     }
 
@@ -324,6 +238,114 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     updateRubberBandingState();
 
     return handled;
+}
+
+bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWheelEvent& wheelEvent, FloatSize& delta, bool isHorizontallyStretched, bool isVerticallyStretched)
+{
+    auto affectedSide = affectedSideOnDominantAxis(delta);
+    if (isVerticallyStretched) {
+        if (!isHorizontallyStretched && isHorizontalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
+            // Stretching only in the vertical.
+            if (delta.height() && (fabsf(delta.width() / delta.height()) < rubberbandDirectionLockStretchRatio))
+                delta.setWidth(0);
+            else if (fabsf(delta.width()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+                m_unappliedOverscrollDelta.expand(delta.width(), 0);
+                delta.setWidth(0);
+            } else
+                m_unappliedOverscrollDelta.expand(delta.width(), 0);
+        }
+
+        return false;
+    }
+
+    if (isHorizontallyStretched) {
+        // Stretching only in the horizontal.
+        if (isVerticalSide(affectedSide) && m_client.isPinnedOnSide(*affectedSide)) {
+            if (delta.width() && (fabsf(delta.height() / delta.width()) < rubberbandDirectionLockStretchRatio))
+                delta.setHeight(0);
+            else if (fabsf(delta.height()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+                m_unappliedOverscrollDelta.expand(0, delta.height());
+                delta.setHeight(0);
+            } else
+                m_unappliedOverscrollDelta.expand(0, delta.height());
+        }
+
+        return false;
+    }
+
+    // Not stretching at all yet.
+    if (affectedSide && m_client.isPinnedOnSide(*affectedSide)) {
+        if (fabsf(delta.height()) >= fabsf(delta.width())) {
+            if (fabsf(delta.width()) < rubberbandMinimumRequiredDeltaBeforeStretch) {
+                m_unappliedOverscrollDelta.expand(delta.width(), 0);
+                delta.setWidth(0);
+            } else
+                m_unappliedOverscrollDelta.expand(delta.width(), 0);
+        }
+
+        if (!m_client.allowsHorizontalStretching(wheelEvent))
+            delta.setWidth(0);
+
+        if (!m_client.allowsVerticalStretching(wheelEvent))
+            delta.setHeight(0);
+
+        return !delta.isZero();
+    }
+    
+    return false;
+}
+
+bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWheelEvent& wheelEvent, FloatSize delta, bool isHorizontallyStretched, bool isVerticallyStretched)
+{
+    auto eventDelta = (isVerticallyStretched || isHorizontallyStretched) ? -wheelEvent.unacceleratedScrollingDelta() : -wheelEvent.delta();
+    auto affectedSide = affectedSideOnDominantAxis(delta);
+
+    FloatSize deltaToScroll;
+
+    if (delta.width()) {
+        if (!m_client.allowsHorizontalStretching(wheelEvent)) {
+            delta.setWidth(0);
+            eventDelta.setWidth(0);
+        } else if (!isHorizontallyStretched && !m_client.isPinnedOnSide(*affectedSide)) {
+            delta.scale(scrollWheelMultiplier(), 1);
+            deltaToScroll += FloatSize { delta.width(), 0 };
+            delta.setWidth(0);
+        }
+    }
+
+    if (delta.height()) {
+        if (!m_client.allowsVerticalStretching(wheelEvent)) {
+            delta.setHeight(0);
+            eventDelta.setHeight(0);
+        } else if (!isVerticallyStretched && !m_client.isPinnedOnSide(*affectedSide)) {
+            delta.scale(1, scrollWheelMultiplier());
+            deltaToScroll += FloatSize { 0, delta.height() };
+            delta.setHeight(0);
+        }
+    }
+
+    if (!deltaToScroll.isZero())
+        m_client.immediateScrollByWithoutContentEdgeConstraints(deltaToScroll);
+
+    bool canStartAnimation = false;
+    if (m_momentumScrollInProgress) {
+        // Compute canStartAnimation, which looks at isPinnedOnSide(), before applying the stretch delta.
+        auto sideAffectedByEventDelta = affectedSideOnDominantAxis(eventDelta);
+        canStartAnimation = !sideAffectedByEventDelta || m_client.isPinnedOnSide(*sideAffectedByEventDelta);
+    }
+
+    m_stretchScrollForce += delta;
+    auto dampedDelta = FloatSize {
+        ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())),
+        ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height()))
+    };
+
+    LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::applyScrollDeltaWithStretching() - stretchScrollForce " << m_stretchScrollForce << " move delta " << delta << " dampedDelta " << dampedDelta);
+
+    auto stretchAmount = m_client.stretchAmount();
+    m_client.immediateScrollByWithoutContentEdgeConstraints(dampedDelta - stretchAmount);
+
+    return canStartAnimation;
 }
 
 FloatSize ScrollingEffectsController::wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent& wheelEvent)

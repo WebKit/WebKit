@@ -198,6 +198,9 @@ private:
     void startDeferringWheelEventTestCompletionDueToScrollSnapping();
     void stopDeferringWheelEventTestCompletionDueToScrollSnapping();
 
+    bool modifyScrollDeltaForStretching(const PlatformWheelEvent&, FloatSize&, bool isHorizontallyStretched, bool isVerticallyStretched);
+    bool applyScrollDeltaWithStretching(const PlatformWheelEvent&, FloatSize, bool isHorizontallyStretched, bool isVerticallyStretched);
+
     void startRubberbandAnimationIfNecessary();
     void startRubberbandAnimation();
     void stopRubberbandAnimation();

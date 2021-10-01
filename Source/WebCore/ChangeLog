@@ -1,3 +1,19 @@
+2021-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Further cleanup of macOS rubberbanding code
+        https://bugs.webkit.org/show_bug.cgi?id=231087
+
+        Reviewed by Alan Bujtas.
+
+        Split chunks of rubber-banding logic into their own functions for clarity,
+        separating the "compute the delta" and "apply the delta" parts.
+
+        * platform/ScrollingEffectsController.h:
+        * platform/mac/ScrollingEffectsController.mm:
+        (WebCore::ScrollingEffectsController::handleWheelEvent):
+        (WebCore::ScrollingEffectsController::modifyScrollDeltaForStretching):
+        (WebCore::ScrollingEffectsController::applyScrollDeltaWithStretching):
+
 2021-10-01  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r283047): PerformanceTests/Layout/line-layout-simple.html regressed by ~10%
