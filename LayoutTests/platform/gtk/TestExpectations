@@ -1686,10 +1686,6 @@ webkit.org/b/153698 imported/w3c/web-platform-tests/css/css-multicol/multicol-ru
 
 webkit.org/b/94952 platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html [ Failure ]
 
-webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ Failure ]
-webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ Failure ]
-webkit.org/b/158928 svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Failure ]
-
 webkit.org/b/160251 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
 webkit.org/b/161587 css3/font-feature-settings-rendering.html [ ImageOnlyFailure ]

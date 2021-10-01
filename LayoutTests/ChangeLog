@@ -1,3 +1,25 @@
+2021-10-01  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] A few more rebaselines
+
+        Unreviewed test gardening.
+
+        svg/zoom/page manually tested and working on GTK.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * platform/wpe/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/wpe/svg/hixie/intrinsic/003-expected.txt:
+        * platform/wpe/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/wpe/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/wpe/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+
 2021-10-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
         [BigSur wk2 Debug] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html is a flaky timeout.
