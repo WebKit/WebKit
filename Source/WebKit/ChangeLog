@@ -1,3 +1,21 @@
+2021-10-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        GPU Process microphone attribution SPI adoption
+        https://bugs.webkit.org/show_bug.cgi?id=231034
+        <rdar://problem/83732537>
+
+        Reviewed by Youenn Fablet.
+
+        Adopt SPI for App Privacy Report that attributes mic capture to the
+        host app.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::audioSessionProxy):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::addProxy):
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+        * Scripts/process-entitlements.sh:
+
 2021-10-01  Brent Fulgham  <bfulgham@apple.com>
 
         Protect WebFrame during invalidatePolicyListener()

@@ -55,11 +55,14 @@ RemoteAudioSessionProxyManager::~RemoteAudioSessionProxyManager()
     AudioSession::sharedSession().removeConfigurationChangeObserver(*this);
 }
 
-void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy)
+void RemoteAudioSessionProxyManager::addProxy(RemoteAudioSessionProxy& proxy, std::optional<audit_token_t> auditToken)
 {
     ASSERT(!m_proxies.contains(proxy));
     m_proxies.add(proxy);
     updateCategory();
+
+    if (auditToken)
+        AudioSession::sharedSession().setHostProcessAttribution(*auditToken);
 }
 
 void RemoteAudioSessionProxyManager::removeProxy(RemoteAudioSessionProxy& proxy)

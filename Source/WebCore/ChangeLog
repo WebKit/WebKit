@@ -1,3 +1,18 @@
+2021-10-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        GPU Process microphone attribution SPI adoption
+        https://bugs.webkit.org/show_bug.cgi?id=231034
+        <rdar://problem/83732537>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests. Tested manually by inspecting APR JSON files.
+
+        * platform/audio/AudioSession.h:
+        * platform/audio/ios/AudioSessionIOS.h:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSessionIOS::setHostProcessAttribution):
+
 2021-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         Further cleanup of macOS rubberbanding code

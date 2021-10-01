@@ -42,6 +42,8 @@ public:
     AudioSessionIOS();
     virtual ~AudioSessionIOS();
 
+    void setHostProcessAttribution(audit_token_t) final;
+
 private:
     // AudioSession
     CategoryType category() const final;
