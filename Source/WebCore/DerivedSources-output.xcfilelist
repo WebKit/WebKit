@@ -1695,6 +1695,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialRequestOptions
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialRequestOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPublicKeyCredentialType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushEventInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPushMessageData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuickTimePluginReplacement.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuickTimePluginReplacement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCAnswerOptions.cpp

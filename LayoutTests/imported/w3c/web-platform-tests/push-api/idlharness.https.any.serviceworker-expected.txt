@@ -45,26 +45,26 @@ FAIL PushSubscription interface: attribute options assert_own_property: self doe
 FAIL PushSubscription interface: operation getKey(PushEncryptionKeyName) assert_own_property: self does not have own property "PushSubscription" expected property "PushSubscription" missing
 FAIL PushSubscription interface: operation unsubscribe() assert_own_property: self does not have own property "PushSubscription" expected property "PushSubscription" missing
 FAIL PushSubscription interface: operation toJSON() assert_own_property: self does not have own property "PushSubscription" expected property "PushSubscription" missing
-FAIL PushMessageData interface: existence and properties of interface object assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface object length assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface object name assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface: operation arrayBuffer() assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface: operation blob() assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface: operation json() assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushMessageData interface: operation text() assert_own_property: self does not have own property "PushMessageData" expected property "PushMessageData" missing
-FAIL PushEvent interface: existence and properties of interface object assert_own_property: self does not have own property "PushEvent" expected property "PushEvent" missing
-FAIL PushEvent interface object length assert_own_property: self does not have own property "PushEvent" expected property "PushEvent" missing
-FAIL PushEvent interface object name assert_own_property: self does not have own property "PushEvent" expected property "PushEvent" missing
-FAIL PushEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "PushEvent" expected property "PushEvent" missing
-FAIL PushEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "PushEvent" expected property "PushEvent" missing
-FAIL PushEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "PushEvent" expected property "PushEvent" missing
-FAIL PushEvent interface: attribute data assert_own_property: self does not have own property "PushEvent" expected property "PushEvent" missing
-FAIL PushEvent must be primary interface of new PushEvent("type") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushEvent"
-FAIL Stringification of new PushEvent("type") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushEvent"
-FAIL PushEvent interface: new PushEvent("type") must inherit property "data" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: PushEvent"
+PASS PushMessageData interface: existence and properties of interface object
+PASS PushMessageData interface object length
+PASS PushMessageData interface object name
+PASS PushMessageData interface: existence and properties of interface prototype object
+PASS PushMessageData interface: existence and properties of interface prototype object's "constructor" property
+PASS PushMessageData interface: existence and properties of interface prototype object's @@unscopables property
+PASS PushMessageData interface: operation arrayBuffer()
+PASS PushMessageData interface: operation blob()
+PASS PushMessageData interface: operation json()
+PASS PushMessageData interface: operation text()
+PASS PushEvent interface: existence and properties of interface object
+PASS PushEvent interface object length
+PASS PushEvent interface object name
+PASS PushEvent interface: existence and properties of interface prototype object
+PASS PushEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS PushEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS PushEvent interface: attribute data
+PASS PushEvent must be primary interface of new PushEvent("type")
+PASS Stringification of new PushEvent("type")
+PASS PushEvent interface: new PushEvent("type") must inherit property "data" with the proper type
 FAIL PushSubscriptionChangeEvent interface: existence and properties of interface object assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
 FAIL PushSubscriptionChangeEvent interface object length assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing
 FAIL PushSubscriptionChangeEvent interface object name assert_own_property: self does not have own property "PushSubscriptionChangeEvent" expected property "PushSubscriptionChangeEvent" missing

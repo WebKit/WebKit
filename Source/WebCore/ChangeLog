@@ -1,5 +1,41 @@
 2021-10-01  Youenn Fablet  <youenn@apple.com>
 
+        Add support for PushEvent
+        https://bugs.webkit.org/show_bug.cgi?id=231007
+        <rdar://problem/83707470>
+
+        Reviewed by Chris Dumez.
+
+        Implement PushEvent and PushMessageData as per specification.
+        https://w3c.github.io/push-api/#pushevent-interface and
+        https://w3c.github.io/push-api/#pushmessagedata-interface.
+
+        We model PushMessageData as a Vector<uint8_t> following the spec which tells us that it has an associated byte sequence.
+
+        Put them behind a runtime flag, off by default.
+
+        Test: http/wpt/push-api/pushEvent.any.serviceworker.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/push-api/PushEvent.cpp: Added.
+        * Modules/push-api/PushEvent.h: Added.
+        * Modules/push-api/PushEvent.idl: Added.
+        * Modules/push-api/PushEventInit.h: Added.
+        * Modules/push-api/PushEventInit.idl: Added.
+        * Modules/push-api/PushMessageData.cpp: Added.
+        * Modules/push-api/PushMessageData.h: Added.
+        * Modules/push-api/PushMessageData.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.in:
+        * page/RuntimeEnabledFeatures.h:
+
+2021-10-01  Youenn Fablet  <youenn@apple.com>
+
         Attribute IOSurfaces created by camera and decoders to responsible WebProcess
         https://bugs.webkit.org/show_bug.cgi?id=231075
 

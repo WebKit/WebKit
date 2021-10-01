@@ -421,6 +421,9 @@ $(PROJECT_DIR)/Modules/pictureinpicture/PictureInPictureWindow.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.css
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.idl
 $(PROJECT_DIR)/Modules/plugins/QuickTimePluginReplacement.js
+$(PROJECT_DIR)/Modules/push-api/PushEvent.idl
+$(PROJECT_DIR)/Modules/push-api/PushEventInit.idl
+$(PROJECT_DIR)/Modules/push-api/PushMessageData.idl
 $(PROJECT_DIR)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
@@ -1440,6 +1443,9 @@ $(PROJECT_DIR)/workers/service/ExtendableEvent.idl
 $(PROJECT_DIR)/workers/service/ExtendableEventInit.idl
 $(PROJECT_DIR)/workers/service/ExtendableMessageEvent.idl
 $(PROJECT_DIR)/workers/service/FetchEvent.idl
+$(PROJECT_DIR)/workers/service/PushEvent.idl
+$(PROJECT_DIR)/workers/service/PushEventInit.idl
+$(PROJECT_DIR)/workers/service/PushMessageData.idl
 $(PROJECT_DIR)/workers/service/ServiceWorker.idl
 $(PROJECT_DIR)/workers/service/ServiceWorkerClient.idl
 $(PROJECT_DIR)/workers/service/ServiceWorkerClientType.idl

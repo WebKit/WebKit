@@ -219,6 +219,8 @@ Modules/pictureinpicture/DocumentPictureInPicture.cpp
 Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
+Modules/push-api/PushEvent.cpp
+Modules/push-api/PushMessageData.cpp
 Modules/remoteplayback/RemotePlayback.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
@@ -3352,6 +3354,9 @@ JSPublicKeyCredentialCreationOptions.cpp
 JSPublicKeyCredentialDescriptor.cpp
 JSPublicKeyCredentialRequestOptions.cpp
 JSPublicKeyCredentialType.cpp
+JSPushEvent.cpp
+JSPushEventInit.cpp
+JSPushMessageData.cpp
 JSRTCAnswerOptions.cpp
 JSRTCCertificate.cpp
 JSRTCConfiguration.cpp

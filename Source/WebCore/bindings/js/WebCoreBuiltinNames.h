@@ -207,6 +207,8 @@ namespace WebCore {
     macro(Permissions) \
     macro(PointerEvent) \
     macro(PublicKeyCredential) \
+    macro(PushEvent) \
+    macro(PushMessageData) \
     macro(ResizeObserver) \
     macro(ResizeObserverEntry) \
     macro(RTCCertificate) \

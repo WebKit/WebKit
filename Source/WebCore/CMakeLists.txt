@@ -52,6 +52,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/permissions"
     "${WEBCORE_DIR}/Modules/pictureinpicture"
     "${WEBCORE_DIR}/Modules/plugins"
+    "${WEBCORE_DIR}/Modules/push-api"
     "${WEBCORE_DIR}/Modules/remoteplayback"
     "${WEBCORE_DIR}/Modules/speech"
     "${WEBCORE_DIR}/Modules/storage"
@@ -209,6 +210,7 @@ set(WebCore_IDL_INCLUDES
     Modules/notifications
     Modules/paymentrequest
     Modules/permissions
+    Modules/push-api
     Modules/speech
     Modules/storage
     Modules/streams
@@ -495,6 +497,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/pictureinpicture/EnterPictureInPictureEvent.idl
     Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
+
+    Modules/push-api/PushEvent.idl
+    Modules/push-api/PushEventInit.idl
+    Modules/push-api/PushMessageData.idl
 
     Modules/remoteplayback/RemotePlayback.idl
     Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl

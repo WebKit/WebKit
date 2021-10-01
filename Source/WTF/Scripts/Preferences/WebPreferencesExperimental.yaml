@@ -997,6 +997,18 @@ ProcessSwapOnCrossSiteNavigationEnabled:
       "PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+PushAPIEnabled:
+  type: bool
+  condition: ENABLE(SERVICE_WORKER)
+  humanReadableName: "Push API"
+  humanReadableDescription: "Enable Push API"
+  webcoreBinding: RuntimeEnabledFeatures
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+
 ReadableByteStreamAPIEnabled:
   type: bool
   humanReadableName: "ReadableByteStream"

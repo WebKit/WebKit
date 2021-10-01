@@ -180,6 +180,8 @@ public:
     bool transformStreamAPIEnabled() const { return m_isTransformStreamAPIEnabled; }
 
 #if ENABLE(SERVICE_WORKER)
+    bool pushAPIEnabled() const { return m_pushAPIEnabled; }
+    void setPushAPIEnabled(bool isEnabled) { m_pushAPIEnabled = isEnabled; }
     bool serviceWorkerEnabled() const { return m_serviceWorkerEnabled; }
     void setServiceWorkerEnabled(bool isEnabled) { m_serviceWorkerEnabled = isEnabled; }
 #endif
@@ -336,6 +338,7 @@ private:
     bool m_isTransformStreamAPIEnabled { false };
 
 #if ENABLE(SERVICE_WORKER)
+    bool m_pushAPIEnabled { false };
     bool m_serviceWorkerEnabled { false };
 #endif
 

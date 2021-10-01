@@ -346,6 +346,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl \
     $(WebCore)/Modules/pictureinpicture/PictureInPictureWindow.idl \
     $(WebCore)/Modules/plugins/QuickTimePluginReplacement.idl \
+    $(WebCore)/Modules/push-api/PushEvent.idl \
+    $(WebCore)/Modules/push-api/PushEventInit.idl \
+    $(WebCore)/Modules/push-api/PushMessageData.idl \
     $(WebCore)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
