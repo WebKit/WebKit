@@ -1,3 +1,12 @@
+2021-09-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some mediastream consistent failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-09-30  Sihui Liu  <sihui_liu@apple.com>
 
         Make File System Access API available in Worker

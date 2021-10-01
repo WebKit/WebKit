@@ -232,6 +232,9 @@ webkit.org/b/212083 loader/navigation-policy/should-open-external-urls/user-gest
 webkit.org/b/212145 http/tests/navigation/no-referrer-reset.html [ Timeout ]
 webkit.org/b/212145 http/tests/navigation/no-referrer-target-blank.html [ Timeout ]
 
+# Mediastream
+webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
+
 # Media Queries
 webkit.org/b/226521 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass Failure ]
 webkit.org/b/226521 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass ]
