@@ -1,3 +1,69 @@
+2021-10-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r281725. rdar://problem/83776284
+
+    .:
+    Land Windows build fixes from safari-612.1.29.14-branch.
+    https://bugs.webkit.org/show_bug.cgi?id=229627
+    
+    Reviewed by Per Arne Vollan.
+    
+    * Source/Makefile:
+    * Source/cmake/WinTools.make:
+    
+    Source/JavaScriptCore:
+    Land Windows build fixes from safari-612.1.29.14-branch.
+    https://bugs.webkit.org/show_bug.cgi?id=229627.
+    
+    Reviewed by Per Arne Vollan.
+    
+    * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+    
+    Source/WebCore:
+    Land Windows build fixes from safari-612.1.29.14-branch.
+    https://bugs.webkit.org/show_bug.cgi?id=229627.
+    
+    Reviewed by Per Arne Vollan.
+    
+    * WebCore.vcxproj/WebCore.proj:
+    
+    Source/WebInspectorUI:
+    Land Windows build fixes from safari-612.1.29.14-branch.
+    https://bugs.webkit.org/show_bug.cgi?id=229627
+    
+    Reviewed by Per Arne Vollan.
+    
+    * WebInspectorUI.vcxproj/WebInspectorUI.make:
+    * WebInspectorUI.vcxproj/WebInspectorUI.proj:
+    
+    Source/WebKitLegacy:
+    Land Windows build fixes from safari-612.1.29.14-branch.
+    https://bugs.webkit.org/show_bug.cgi?id=229627.
+    
+    Reviewed by Per Arne Vollan.
+    
+    * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+    
+    Source/WTF:
+    Land Windows build fixes from safari-612.1.29.14-branch
+    https://bugs.webkit.org/show_bug.cgi?id=229627
+    
+    Reviewed by Per Arne Vollan.
+    
+    * WTF.vcxproj/WTF.proj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@281725 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-08-27  Russell Epstein  <repstein@apple.com>
+
+            Land Windows build fixes from safari-612.1.29.14-branch.
+            https://bugs.webkit.org/show_bug.cgi?id=229627.
+
+            Reviewed by Per Arne Vollan.
+
+            * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+
 2021-08-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Deduplicate logging channel algorithms
