@@ -1,3 +1,103 @@
+2021-10-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Cocoa GraphicsContextGLOpenGL should not be used by GraphicsContextGLCVANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=231010
+
+        Reviewed by Kenneth Russell.
+
+        GraphicsContextGLOpenGL creates a GraphicsContextGLCVANGLE helper to do
+        do YUV texture uploads. This GraphicsContextGLCVANGLE creates a OpenGL ES context that
+        shares the OpenGL state by the caller.
+
+        Previously the new context would be a GraphicsContextGLOpenGL. This would be a problem
+        since GraphicsContextGLOpenGL has compositor related logic and objects, for example
+        the WebGL layer as well as resources for default framebuffer operation. Shared context
+        would also go to the GraphicsContextGLOpenGLManager context list even though
+        they could not be deleted behind the owners back during context recycling.
+
+        Instead, create just a normal ANGLE context and call ANGLE directly from
+        GraphicsContextGLCVANGLE. This is more consistent with software layers:
+        GraphicsContextGLOpenGL and GraphicsContextGLCVANGLE are at the same software
+        level, part of the same GraphicsContextGLOpenGL implementation.
+
+        Makes it possible to remove otherwise unused and unfitting "shared context"
+        related functionality from WebGL level from GraphicsContextGL.
+
+        No new tests, refactor.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContextGL.cpp:
+        (WebCore::GraphicsContextGL::GraphicsContextGL):
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::asCV): Deleted.
+        * platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp: Added.
+        (WebCore::createPbufferAndAttachIOSurface):
+        (WebCore::destroyPbufferAndDetachIOSurface):
+        * platform/graphics/cocoa/ANGLEUtilitiesCocoa.h: Added.
+        Move the createPbufferAndAttachIOSurface to Cocoa specific
+        ANGLE utility file.
+        See also bug 226504 - Adopt createPbufferAndAttachIOSurface/destroyPbufferAndDetachIOSurface
+        in GraphicsContextGLCVANGLE.cpp and GraphicsContextGLOpenGLCocoa.mm
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::create):
+        (WebCore::GraphicsContextGLOpenGL::createForGPUProcess):
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        (WebCore::GraphicsContextGLOpenGL::checkGPUStatus):
+        (WebCore::GraphicsContextGLOpenGL::makeCurrent):
+        Add a new function to make the EGL context current and maintain
+        the GraphicsContextGLOpenGL::currentContext cache value correctly.
+        Cache needs to be invalidated always when EGL context changes.
+        The cache value is reset always, and then set only when needed
+        during GraphicsContextGLOpenGL::makeContextCurrent().
+
+        Make GraphicsContextGLCVANGLE friend of GraphicsContextGLOpenGL, since
+        essentially the former is part of the implementation of latter.
+
+        (WebCore::GraphicsContextGLOpenGL::createPbufferAndAttachIOSurface):
+        (WebCore::GraphicsContextGLOpenGL::destroyPbufferAndDetachIOSurface):
+        Move the implementation to a ANGLE related helper files above.
+
+        (WebCore::GraphicsContextGLOpenGL::asCV):
+        Move the asCV to the implementaton file for Cococa, as that is
+        the platform which uses the implementation.
+
+        (WebCore::GraphicsContextGLOpenGL::createShared): Deleted.
+        (WebCore::GraphicsContextGLOpenGL::clearCurrentContext): Deleted.
+        Replace with GraphicsContextGLOpenGL::makeCurrent().
+
+        * platform/graphics/cv/GraphicsContextGLCVANGLE.cpp:
+        (WebCore::YCbCrMatrix::operator const GLfloat* const):
+        (WebCore::YCbCrToRGBMatrixForRangeAndTransferFunction):
+        (WebCore::GraphicsContextGLCVANGLE::create):
+        (WebCore::GraphicsContextGLCVANGLE::~GraphicsContextGLCVANGLE):
+        (WebCore::GraphicsContextGLCVANGLE::GraphicsContextGLCVANGLE):
+        Reorder the resource initialization with ScopeExit cleanup functions.
+        Avoid storing the yuvProgram, instead just use the program as program
+        binary and delete the program.
+
+        (WebCore::GraphicsContextGLCVANGLE::copyPixelBufferToTexture):
+        (WebCore::YCbCrMatrix::operator GCGLSpan<const GLfloat, 16> const): Deleted.
+        (WebCore::GraphicsContextGLCVANGLE::initializeUVContextObjects): Deleted.
+        Move the resource initialization into the constructor. The object
+        itself is already initialized only on demand.
+        (WebCore::GraphicsContextGLCVANGLE::attachIOSurfaceToTexture): Deleted.
+        (WebCore::GraphicsContextGLCVANGLE::detachIOSurfaceFromTexture): Deleted.
+        Share the implementation with the existing implementation from
+        WebCore::GraphicsContextGLOpenGL::createPbufferAndAttachIOSurface that
+        was moved to WebCore::createPbufferAndAttachIOSurface.
+
+        * platform/graphics/cv/GraphicsContextGLCVANGLE.h:
+        Remove the m_yuvProgram, rather use just the program binary.
+
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+        Remove the redundant sharedContext parameter.
+
 2021-10-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][a11y] Add initial implementation of accessible interface when building with ATSPI

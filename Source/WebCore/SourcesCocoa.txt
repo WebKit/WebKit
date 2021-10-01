@@ -359,6 +359,7 @@ platform/graphics/cg/PatternCG.cpp
 platform/graphics/cg/SubimageCacheWithTimer.cpp
 platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.cpp
+platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp
 platform/graphics/cocoa/AudioTrackPrivateWebM.cpp
 platform/graphics/cocoa/ColorCocoa.mm
 platform/graphics/cocoa/FloatRectCocoa.mm

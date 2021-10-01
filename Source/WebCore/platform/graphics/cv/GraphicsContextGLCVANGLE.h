@@ -27,39 +27,39 @@
 
 #if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#import "GraphicsContextGLCV.h"
-#import "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGLCV.h"
 
-#import <wtf/UnsafePointer.h>
+#include <memory>
+#include <wtf/UnsafePointer.h>
 
 namespace WebCore {
+class GraphicsContextGLOpenGL;
 
 // GraphicsContextGLCV implementation for ANGLE flavour of GraphicsContextGLOpenGL.
+// This class is part of the internal implementation of GraphicsContextGLOpenGL for ANGLE Cocoa.
 class GraphicsContextGLCVANGLE final : public GraphicsContextGLCV {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphicsContextGLCVANGLE(GraphicsContextGLOpenGL&);
+    static std::unique_ptr<GraphicsContextGLCVANGLE> create(GraphicsContextGLOpenGL&);
+
     ~GraphicsContextGLCVANGLE() final;
 
     bool copyPixelBufferToTexture(CVPixelBufferRef, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
 
 private:
-    bool initializeUVContextObjects();
+    GraphicsContextGLCVANGLE(GraphicsContextGLOpenGL&);
 
     unsigned lastTextureSeed(GCGLuint texture)
     {
         return m_lastTextureSeed.get(texture);
     }
 
-    // Returns a handle which, if non-null, must be released via the
-    // detach call below.
-    void* attachIOSurfaceToTexture(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
-    void detachIOSurfaceFromTexture(void* handle);
-
-    Ref<GraphicsContextGLOpenGL> m_context;
+    GraphicsContextGLOpenGL& m_owner;
+    PlatformGraphicsContextGLDisplay m_display { nullptr };
+    PlatformGraphicsContextGL m_context { nullptr };
+    PlatformGraphicsContextGLConfig m_config { nullptr };
 
     PlatformGLObject m_framebuffer { 0 };
-    PlatformGLObject m_yuvProgram { 0 };
     PlatformGLObject m_yuvVertexBuffer { 0 };
     GCGLint m_yTextureUniformLocation { -1 };
     GCGLint m_uvTextureUniformLocation { -1 };

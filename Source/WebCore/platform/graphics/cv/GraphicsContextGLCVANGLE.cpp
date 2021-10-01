@@ -28,12 +28,14 @@
 
 #if ENABLE(WEBGL) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#include "ANGLEHeaders.h"
+#include "ANGLEUtilitiesCocoa.h"
 #include "FourCC.h"
+#include "GraphicsContextGLOpenGL.h"
 #include "Logging.h"
 #include <pal/spi/cf/CoreVideoSPI.h>
 #include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/StdMap.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/StringBuilder.h>
@@ -230,9 +232,9 @@ struct YCbCrMatrix {
 
     constexpr YCbCrMatrix(PixelRange, GLfloat cbCoefficient, GLfloat crCoefficient);
 
-    operator GCGLSpan<const GLfloat, 16>() const
+    operator const GLfloat*() const
     {
-        return makeGCGLSpan<16>(&rows[0][0]);
+        return &rows[0][0];
     }
 
     constexpr GLfloatColor operator*(const GLfloatColor&) const;
@@ -304,7 +306,7 @@ constexpr GLfloatColor YCbCrMatrix::operator*(const GLfloatColor& color) const
     );
 }
 
-static GCGLSpan<const GLfloat, 16> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange range, TransferFunctionCV transferFunction)
+static const GLfloat* YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange range, TransferFunctionCV transferFunction)
 {
     using MapKey = std::pair<PixelRange, TransferFunctionCV>;
     using MatrixMap = StdMap<MapKey, const YCbCrMatrix&>;
@@ -430,168 +432,134 @@ static GCGLSpan<const GLfloat, 16> YCbCrToRGBMatrixForRangeAndTransferFunction(P
     return iterator->second;
 }
 
-namespace {
-
-// Scoped holder of a cleanup function. Calls the function at the end of the scope.
-// Note: Releases the reference to the function only after the scope, not
-// at the time of `reset()` call.
-template <typename F>
-class ScopedCleanup {
-public:
-    explicit ScopedCleanup(F&& function)
-        : m_function(WTFMove(function))
-    {
-    }
-    ~ScopedCleanup()
-    {
-        if (m_shouldCall)
-            m_function();
-    }
-    void reset() { m_shouldCall = false; }
-private:
-    bool m_shouldCall = true;
-    const F m_function;
-};
-
-}
-
-GraphicsContextGLCVANGLE::GraphicsContextGLCVANGLE(GraphicsContextGLOpenGL& context)
-    : m_context(GraphicsContextGLOpenGL::createShared(context))
-    , m_framebuffer(m_context->createFramebuffer())
+std::unique_ptr<GraphicsContextGLCVANGLE> GraphicsContextGLCVANGLE::create(GraphicsContextGLOpenGL& context)
 {
+    std::unique_ptr<GraphicsContextGLCVANGLE> cv { new GraphicsContextGLCVANGLE(context) };
+    if (!cv->m_context)
+        return nullptr;
+    return cv;
 }
 
 GraphicsContextGLCVANGLE::~GraphicsContextGLCVANGLE()
 {
-    if (m_yuvVertexBuffer)
-        m_context->deleteBuffer(m_yuvVertexBuffer);
-    if (m_yuvProgram)
-        m_context->deleteProgram(m_yuvProgram);
-    m_context->deleteFramebuffer(m_framebuffer);
+    if (!m_context || !GraphicsContextGLOpenGL::makeCurrent(m_display, m_context))
+        return;
+    gl::DeleteBuffers(1, &m_yuvVertexBuffer);
+    gl::DeleteFramebuffers(1, &m_framebuffer);
+    EGL_DestroyContext(m_display, m_context);
 }
 
-bool GraphicsContextGLCVANGLE::initializeUVContextObjects()
+GraphicsContextGLCVANGLE::GraphicsContextGLCVANGLE(GraphicsContextGLOpenGL& owner)
+    : m_owner(owner)
 {
-    const bool useTexture2D = GraphicsContextGLOpenGL::drawingBufferTextureTarget() == GraphicsContextGL::TEXTURE_2D;
-
-    PlatformGLObject vertexShader = m_context->createShader(GraphicsContextGL::VERTEX_SHADER);
-    if (useTexture2D)
-        m_context->shaderSource(vertexShader, s_yuvVertexShaderTexture2D);
-    else
-        m_context->shaderSource(vertexShader, s_yuvVertexShaderTextureRectangle);
-
-    m_context->compileShaderDirect(vertexShader);
-
-    GCGLint status = m_context->getShaderi(vertexShader, GraphicsContextGL::COMPILE_STATUS);
-    if (!status) {
-        LOG(WebGL, "GraphicsContextGLCVANGLE::initializeUVContextObjects(%p) - Vertex shader failed to compile.", this);
-        m_context->deleteShader(vertexShader);
-        return false;
-    }
-
-    PlatformGLObject fragmentShader = m_context->createShader(GraphicsContextGL::FRAGMENT_SHADER);
-    if (useTexture2D)
-        m_context->shaderSource(fragmentShader, s_yuvFragmentShaderTexture2D);
-    else
-        m_context->shaderSource(fragmentShader, s_yuvFragmentShaderTextureRectangle);
-
-    m_context->compileShaderDirect(fragmentShader);
-
-    status = m_context->getShaderi(fragmentShader, GraphicsContextGL::COMPILE_STATUS);
-    if (!status) {
-        LOG(WebGL, "GraphicsContextGLCVANGLE::initializeUVContextObjects(%p) - Fragment shader failed to compile.", this);
-        m_context->deleteShader(vertexShader);
-        m_context->deleteShader(fragmentShader);
-        return false;
-    }
-
-    m_yuvProgram = m_context->createProgram();
-    m_context->attachShader(m_yuvProgram, vertexShader);
-    m_context->attachShader(m_yuvProgram, fragmentShader);
-    m_context->linkProgram(m_yuvProgram);
-
-    status = m_context->getProgrami(m_yuvProgram, GraphicsContextGL::LINK_STATUS);
-    if (!status) {
-        LOG(WebGL, "GraphicsContextGLCVANGLE::initializeUVContextObjects(%p) - Program failed to link.", this);
-        m_context->deleteShader(vertexShader);
-        m_context->deleteShader(fragmentShader);
-        m_context->deleteProgram(m_yuvProgram);
-        m_yuvProgram = 0;
-        return false;
-    }
-
-    m_yTextureUniformLocation = m_context->getUniformLocation(m_yuvProgram, "u_yTexture"_s);
-    m_uvTextureUniformLocation = m_context->getUniformLocation(m_yuvProgram, "u_uvTexture"_s);
-    m_colorMatrixUniformLocation = m_context->getUniformLocation(m_yuvProgram, "u_colorMatrix"_s);
-    m_yuvFlipYUniformLocation = m_context->getUniformLocation(m_yuvProgram, "u_flipY"_s);
-    m_yTextureSizeUniformLocation = m_context->getUniformLocation(m_yuvProgram, "u_yTextureSize"_s);
-    m_uvTextureSizeUniformLocation = m_context->getUniformLocation(m_yuvProgram, "u_uvTextureSize"_s);
-    m_yuvPositionAttributeLocation = m_context->getAttribLocationDirect(m_yuvProgram, "a_position"_s);
-
-    m_context->detachShader(m_yuvProgram, vertexShader);
-    m_context->detachShader(m_yuvProgram, fragmentShader);
-    m_context->deleteShader(vertexShader);
-    m_context->deleteShader(fragmentShader);
-
-    m_yuvVertexBuffer = m_context->createBuffer();
-    float vertices[12] = { -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1 };
-
-    m_context->bindBuffer(GraphicsContextGL::ARRAY_BUFFER, m_yuvVertexBuffer);
-    m_context->bufferData(GraphicsContextGL::ARRAY_BUFFER, GCGLSpan<const GCGLvoid>(vertices, sizeof(vertices)), GraphicsContextGL::STATIC_DRAW);
-    m_context->enableVertexAttribArray(m_yuvPositionAttributeLocation);
-    m_context->vertexAttribPointer(m_yuvPositionAttributeLocation, 2, GraphicsContextGL::FLOAT, false, 0, 0);
-
-    return true;
-}
-
-void* GraphicsContextGLCVANGLE::attachIOSurfaceToTexture(GCGLenum target, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
-{
-    auto display = m_context->platformDisplay();
-    EGLint eglTextureTarget = 0;
-
-    if (target == GraphicsContextGL::TEXTURE_RECTANGLE_ARB)
-        eglTextureTarget = EGL_TEXTURE_RECTANGLE_ANGLE;
-    else if (target == GraphicsContextGL::TEXTURE_2D)
-        eglTextureTarget = EGL_TEXTURE_2D;
-    else {
-        LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
-        return nullptr;
-    }
-    if (eglTextureTarget != GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget()) {
-        LOG(WebGL, "Mismatch in EGL texture target %d.", static_cast<int>(target));
-        return nullptr;
-    }
-
-    const EGLint surfaceAttributes[] = {
-        EGL_WIDTH, width,
-        EGL_HEIGHT, height,
-        EGL_IOSURFACE_PLANE_ANGLE, static_cast<EGLint>(plane),
-        EGL_TEXTURE_TARGET, static_cast<EGLint>(eglTextureTarget),
-        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
-        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
-        EGL_TEXTURE_TYPE_ANGLE, static_cast<EGLint>(type),
-        // Only has an effect on the iOS Simulator.
-        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_READ_HINT_ANGLE,
-        EGL_NONE, EGL_NONE
+    // Create compatible context that shares state with owner, but one that does not
+    // have robustness or WebGL compatibility.
+    const EGLint contextAttributes[] = {
+        EGL_CONTEXT_CLIENT_VERSION,
+        owner.m_isForWebGL2 ? 3 : 2,
+        EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE,
+        EGL_FALSE,
+        EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE,
+        EGL_FALSE,
+        EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM,
+        EGL_FALSE,
+        EGL_NONE
     };
-    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, surface, m_context->platformConfig(), surfaceAttributes);
-    if (!pbuffer)
-        return nullptr;
-    if (!EGL_BindTexImage(display, pbuffer, EGL_BACK_BUFFER)) {
-        EGL_DestroySurface(display, pbuffer);
-        return nullptr;
+    EGLDisplay display = owner.platformDisplay();
+    EGLConfig config = owner.platformConfig();
+    EGLContext context = EGL_CreateContext(display, config, owner.m_contextObj, contextAttributes);
+    if (context == EGL_NO_CONTEXT)
+        return;
+    GraphicsContextGLOpenGL::makeCurrent(display, context);
+
+    auto contextCleanup = makeScopeExit([display, context] {
+        GraphicsContextGLOpenGL::makeCurrent(display, EGL_NO_CONTEXT);
+        EGL_DestroyContext(display, context);
+    });
+
+    const bool useTexture2D = GraphicsContextGLOpenGL::drawingBufferTextureTarget() == GL_TEXTURE_2D;
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    if (!useTexture2D) {
+        gl::RequestExtensionANGLE("GL_ANGLE_texture_rectangle");
+        gl::RequestExtensionANGLE("GL_EXT_texture_format_BGRA8888");
+        if (gl::GetError() != GL_NO_ERROR)
+            return;
     }
-    return pbuffer;
+#endif
+
+    GLint vertexShader = gl::CreateShader(GL_VERTEX_SHADER);
+    GLint fragmentShader = gl::CreateShader(GL_FRAGMENT_SHADER);
+    GLuint yuvProgram = gl::CreateProgram();
+    auto programCleanup = makeScopeExit([vertexShader, fragmentShader, yuvProgram] {
+        gl::DeleteShader(vertexShader);
+        gl::DeleteShader(fragmentShader);
+        gl::DeleteProgram(yuvProgram);
+    });
+    // These are written so strlen might be compile-time.
+    GLint vsLength = useTexture2D ? s_yuvVertexShaderTexture2D.length() : s_yuvVertexShaderTextureRectangle.length();
+    GLint fsLength = useTexture2D ? s_yuvFragmentShaderTexture2D.length() : s_yuvFragmentShaderTextureRectangle.length();
+    const char* vertexShaderSource = useTexture2D ? s_yuvVertexShaderTexture2D : s_yuvVertexShaderTextureRectangle;
+    const char* fragmentShaderSource = useTexture2D ? s_yuvFragmentShaderTexture2D : s_yuvFragmentShaderTextureRectangle;
+
+    gl::ShaderSource(vertexShader, 1, &vertexShaderSource, &vsLength);
+    gl::ShaderSource(fragmentShader, 1, &fragmentShaderSource, &fsLength);
+    gl::CompileShader(vertexShader);
+    gl::CompileShader(fragmentShader);
+    gl::AttachShader(yuvProgram, vertexShader);
+    gl::AttachShader(yuvProgram, fragmentShader);
+    gl::LinkProgram(yuvProgram);
+    // Link status is checked afterwards for theoretical parallel compilation benefit.
+
+    GLuint yuvVertexBuffer = 0;
+    gl::GenBuffers(1, &yuvVertexBuffer);
+    auto yuvVertexBufferCleanup = makeScopeExit([yuvVertexBuffer] {
+        gl::DeleteBuffers(1, &yuvVertexBuffer);
+    });
+    float vertices[12] = { -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1 };
+    gl::BindBuffer(GL_ARRAY_BUFFER, yuvVertexBuffer);
+    gl::BufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLuint framebuffer = 0;
+    gl::GenFramebuffers(1, &framebuffer);
+    auto framebufferCleanup = makeScopeExit([framebuffer] {
+        gl::DeleteFramebuffers(1, &framebuffer);
+    });
+
+    GLint status = 0;
+    gl::GetProgramivRobustANGLE(yuvProgram, GL_LINK_STATUS, 1, nullptr, &status);
+    if (!status) {
+        GLint vsStatus = 0;
+        gl::GetShaderivRobustANGLE(vertexShader, GL_COMPILE_STATUS, 1, nullptr, &vsStatus);
+        GLint fsStatus = 0;
+        gl::GetShaderivRobustANGLE(fragmentShader, GL_COMPILE_STATUS, 1, nullptr, &fsStatus);
+        LOG(WebGL, "GraphicsContextGLCVANGLE(%p) - YUV program failed to link: %d, %d, %d.", this, status, vsStatus, fsStatus);
+        return;
+    }
+    contextCleanup.release();
+    yuvVertexBufferCleanup.release();
+    framebufferCleanup.release();
+    m_display = display;
+    m_context = context;
+    m_config = config;
+    m_yuvVertexBuffer = yuvVertexBuffer;
+    m_framebuffer = framebuffer;
+    m_yTextureUniformLocation = gl::GetUniformLocation(yuvProgram, "u_yTexture");
+    m_uvTextureUniformLocation = gl::GetUniformLocation(yuvProgram, "u_uvTexture");
+    m_colorMatrixUniformLocation = gl::GetUniformLocation(yuvProgram, "u_colorMatrix");
+    m_yuvFlipYUniformLocation = gl::GetUniformLocation(yuvProgram, "u_flipY");
+    m_yTextureSizeUniformLocation = gl::GetUniformLocation(yuvProgram, "u_yTextureSize");
+    m_uvTextureSizeUniformLocation = gl::GetUniformLocation(yuvProgram, "u_uvTextureSize");
+    m_yuvPositionAttributeLocation = gl::GetAttribLocation(yuvProgram, "a_position");
+    // Program is deleted by the cleanup while the program binary stays in use.
+    gl::UseProgram(yuvProgram);
+    gl::EnableVertexAttribArray(m_yuvPositionAttributeLocation);
+    gl::VertexAttribPointer(m_yuvPositionAttributeLocation, 2, GL_FLOAT, false, 0, 0);
+    gl::ClearColor(0, 0, 0, 0);
+    gl::BindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 }
 
-void GraphicsContextGLCVANGLE::detachIOSurfaceFromTexture(void* handle)
-{
-    auto display = m_context->platformDisplay();
-    EGL_ReleaseTexImage(display, handle, EGL_BACK_BUFFER);
-    EGL_DestroySurface(display, handle);
-}
-
-bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY flipY)
+bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, PlatformGLObject outputTexture, GLint level, GLenum internalFormat, GLenum format, GLenum type, FlipY flipY)
 {
     // FIXME: This currently only supports '420v' and '420f' pixel formats. Investigate supporting more pixel formats.
     OSType pixelFormat = CVPixelBufferGetPixelFormatType(image);
@@ -611,52 +579,43 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
 
     auto newSurfaceSeed = IOSurfaceGetSeed(surface);
     if (flipY == m_lastFlipY
-        && surface == m_lastSurface 
+        && surface == m_lastSurface
         && newSurfaceSeed == m_lastSurfaceSeed
-        && lastTextureSeed(outputTexture) == m_context->textureSeed(outputTexture)) {
+        && lastTextureSeed(outputTexture) == m_owner.textureSeed(outputTexture)) {
         // If the texture hasn't been modified since the last time we copied to it, and the
         // image hasn't been modified since the last time it was copied, this is a no-op.
         return true;
     }
+    if (!m_context || !GraphicsContextGLOpenGL::makeCurrent(m_display, m_context))
+        return false;
 
-    if (!m_yuvProgram) {
-        if (!initializeUVContextObjects()) {
-            LOG(WebGL, "GraphicsContextGLCVANGLE::copyVideoTextureToPlatformTexture(%p) - Unable to initialize OpenGL context objects.", this);
-            return false;
-        }
-    }
     size_t width = CVPixelBufferGetWidth(image);
     size_t height = CVPixelBufferGetHeight(image);
 
-    m_context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer);
+    gl::Viewport(0, 0, width, height);
 
     // The outputTexture might contain uninitialized content on early-outs. Clear it in cases
     // autoClearTextureOnError is not reset.
-    auto autoClearTextureOnError = ScopedCleanup {
-        [outputTexture, level, internalFormat, format, type, context = m_context.ptr()] {
-            context->bindTexture(GraphicsContextGL::TEXTURE_2D, outputTexture);
-            context->texImage2DDirect(GL_TEXTURE_2D, level, internalFormat, 0, 0, 0, format, type, nullptr);
-            context->bindTexture(GraphicsContextGL::TEXTURE_2D, 0);
-        }
-    };
+    auto autoClearTextureOnError = makeScopeExit([outputTexture, level, internalFormat, format, type] {
+        gl::BindTexture(GL_TEXTURE_2D, outputTexture);
+        gl::TexImage2D(GL_TEXTURE_2D, level, internalFormat, 0, 0, 0, format, type, nullptr);
+        gl::BindTexture(GL_TEXTURE_2D, 0);
+    });
     // Allocate memory for the output texture.
-    m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, outputTexture);
-    m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_MAG_FILTER, GraphicsContextGL::LINEAR);
-    m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_MIN_FILTER, GraphicsContextGL::LINEAR);
-    m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_WRAP_S, GraphicsContextGL::CLAMP_TO_EDGE);
-    m_context->texParameteri(GraphicsContextGL::TEXTURE_2D, GraphicsContextGL::TEXTURE_WRAP_T, GraphicsContextGL::CLAMP_TO_EDGE);
-    m_context->texImage2DDirect(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
+    gl::BindTexture(GL_TEXTURE_2D, outputTexture);
+    gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    gl::TexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
 
-    m_context->framebufferTexture2D(GraphicsContextGL::FRAMEBUFFER, GraphicsContextGL::COLOR_ATTACHMENT0, GraphicsContextGL::TEXTURE_2D, outputTexture, level);
-    GCGLenum status = m_context->checkFramebufferStatus(GraphicsContextGL::FRAMEBUFFER);
-    if (status != GraphicsContextGL::FRAMEBUFFER_COMPLETE) {
+    gl::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, outputTexture, level);
+    GLenum status = gl::CheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
         LOG(WebGL, "GraphicsContextGLCVANGLE::copyVideoTextureToPlatformTexture(%p) - Unable to create framebuffer for outputTexture.", this);
         return false;
     }
-    m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, 0);
-
-    m_context->useProgram(m_yuvProgram);
-    m_context->viewport(0, 0, width, height);
+    gl::BindTexture(GL_TEXTURE_2D, 0);
 
     // Bind and set up the textures for the video source.
     auto yPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 0);
@@ -664,61 +623,64 @@ bool GraphicsContextGLCVANGLE::copyPixelBufferToTexture(CVPixelBufferRef image, 
     auto uvPlaneWidth = IOSurfaceGetWidthOfPlane(surface, 1);
     auto uvPlaneHeight = IOSurfaceGetHeightOfPlane(surface, 1);
 
-    GCGLenum videoTextureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();
+    GLenum videoTextureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();
 
-    auto uvTexture = m_context->createTexture();
-    m_context->activeTexture(GraphicsContextGL::TEXTURE1);
-    m_context->bindTexture(videoTextureTarget, uvTexture);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_MAG_FILTER, GraphicsContextGL::LINEAR);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_MIN_FILTER, GraphicsContextGL::LINEAR);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_S, GraphicsContextGL::CLAMP_TO_EDGE);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_T, GraphicsContextGL::CLAMP_TO_EDGE);
-    auto uvHandle = attachIOSurfaceToTexture(videoTextureTarget, GraphicsContextGL::RG, uvPlaneWidth, uvPlaneHeight, GraphicsContextGL::UNSIGNED_BYTE, surface, 1);
-    if (!uvHandle) {
-        m_context->deleteTexture(uvTexture);
+    GLuint uvTexture = 0;
+    gl::GenTextures(1, &uvTexture);
+    auto uvTextureCleanup = makeScopeExit([uvTexture] {
+        gl::DeleteTextures(1, &uvTexture);
+    });
+    gl::ActiveTexture(GL_TEXTURE1);
+    gl::BindTexture(videoTextureTarget, uvTexture);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    auto uvHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RG, uvPlaneWidth, uvPlaneHeight, GL_UNSIGNED_BYTE, surface, 1);
+    if (!uvHandle)
         return false;
-    }
+    auto uvHandleCleanup = makeScopeExit([display = m_display, uvHandle] {
+        WebCore::destroyPbufferAndDetachIOSurface(display, uvHandle);
+    });
 
-    auto yTexture = m_context->createTexture();
-    m_context->activeTexture(GraphicsContextGL::TEXTURE0);
-    m_context->bindTexture(videoTextureTarget, yTexture);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_MAG_FILTER, GraphicsContextGL::LINEAR);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_MIN_FILTER, GraphicsContextGL::LINEAR);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_S, GraphicsContextGL::CLAMP_TO_EDGE);
-    m_context->texParameteri(videoTextureTarget, GraphicsContextGL::TEXTURE_WRAP_T, GraphicsContextGL::CLAMP_TO_EDGE);
-    auto yHandle = attachIOSurfaceToTexture(videoTextureTarget, GraphicsContextGL::RED, yPlaneWidth, yPlaneHeight, GraphicsContextGL::UNSIGNED_BYTE, surface, 0);
-    if (!yHandle) {
-        m_context->deleteTexture(yTexture);
-        m_context->deleteTexture(uvTexture);
+    GLuint yTexture = 0;
+    gl::GenTextures(1, &yTexture);
+    auto yTextureCleanup = makeScopeExit([yTexture] {
+        gl::DeleteTextures(1, &yTexture);
+    });
+    gl::ActiveTexture(GL_TEXTURE0);
+    gl::BindTexture(videoTextureTarget, yTexture);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl::TexParameteri(videoTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    auto yHandle = WebCore::createPbufferAndAttachIOSurface(m_display, m_config, videoTextureTarget, EGL_IOSURFACE_READ_HINT_ANGLE, GL_RED, yPlaneWidth, yPlaneHeight, GL_UNSIGNED_BYTE, surface, 0);
+    if (!yHandle)
         return false;
-    }
+    auto yHandleCleanup = makeScopeExit([display = m_display, yHandle] {
+        destroyPbufferAndDetachIOSurface(display, yHandle);
+    });
 
     // Configure the drawing parameters.
-    m_context->uniform1i(m_yTextureUniformLocation, 0);
-    m_context->uniform1i(m_uvTextureUniformLocation, 1);
-    m_context->uniform1i(m_yuvFlipYUniformLocation, flipY == FlipY::Yes ? 1 : 0);
-    m_context->uniform2f(m_yTextureSizeUniformLocation, yPlaneWidth, yPlaneHeight);
-    m_context->uniform2f(m_uvTextureSizeUniformLocation, uvPlaneWidth, uvPlaneHeight);
+    gl::Uniform1i(m_yTextureUniformLocation, 0);
+    gl::Uniform1i(m_uvTextureUniformLocation, 1);
+    gl::Uniform1i(m_yuvFlipYUniformLocation, flipY == FlipY::Yes ? 1 : 0);
+    gl::Uniform2f(m_yTextureSizeUniformLocation, yPlaneWidth, yPlaneHeight);
+    gl::Uniform2f(m_uvTextureSizeUniformLocation, uvPlaneWidth, uvPlaneHeight);
 
     auto range = pixelRangeFromPixelFormat(pixelFormat);
     auto transferFunction = transferFunctionFromString(dynamic_cf_cast<CFStringRef>(CVBufferGetAttachment(image, kCVImageBufferYCbCrMatrixKey, nil)));
     auto colorMatrix = YCbCrToRGBMatrixForRangeAndTransferFunction(range, transferFunction);
-    m_context->uniformMatrix4fv(m_colorMatrixUniformLocation, GL_FALSE, colorMatrix);
+    gl::UniformMatrix4fv(m_colorMatrixUniformLocation, 1, GL_FALSE, colorMatrix);
 
     // Do the actual drawing.
-    m_context->drawArrays(GraphicsContextGL::TRIANGLES, 0, 6);
-
-    // Clean-up.
-    m_context->deleteTexture(yTexture);
-    m_context->deleteTexture(uvTexture);
-    detachIOSurfaceFromTexture(yHandle);
-    detachIOSurfaceFromTexture(uvHandle);
+    gl::DrawArrays(GL_TRIANGLES, 0, 6);
 
     m_lastSurface = surface;
     m_lastSurfaceSeed = newSurfaceSeed;
-    m_lastTextureSeed.set(outputTexture, m_context->textureSeed(outputTexture));
+    m_lastTextureSeed.set(outputTexture, m_owner.textureSeed(outputTexture));
     m_lastFlipY = flipY;
-    autoClearTextureOnError.reset();
+    autoClearTextureOnError.release();
     return true;
 }
 

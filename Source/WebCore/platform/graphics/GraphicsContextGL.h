@@ -914,7 +914,7 @@ public:
     // HostWindow might affect the decision which backend is to be used.
     WEBCORE_EXPORT static RefPtr<GraphicsContextGL> create(const GraphicsContextGLAttributes&, HostWindow*);
 
-    GraphicsContextGL(GraphicsContextGLAttributes, GraphicsContextGL* sharedContext = nullptr);
+    GraphicsContextGL(GraphicsContextGLAttributes);
     virtual ~GraphicsContextGL() = default;
 
     void addClient(Client& client) { m_clients.add(&client); }

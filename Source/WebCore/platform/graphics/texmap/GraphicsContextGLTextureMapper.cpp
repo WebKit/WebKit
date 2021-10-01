@@ -104,10 +104,9 @@ Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createForGPUProcess(const 
 }
 
 #if USE(ANGLE)
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext)
-    : GraphicsContextGL(attributes, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*)
+    : GraphicsContextGL(attributes)
 {
-    ASSERT_UNUSED(sharedContext, !sharedContext);
 #if ENABLE(WEBGL2)
     m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 #endif
@@ -174,10 +173,9 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     gl::ClearColor(0, 0, 0, 0);
 }
 #else
-GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext)
-    : GraphicsContextGL(attributes, sharedContext)
+GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*)
+    : GraphicsContextGL(attributes)
 {
-    ASSERT_UNUSED(sharedContext, !sharedContext);
 #if USE(NICOSIA)
     m_nicosiaLayer = makeUnique<Nicosia::GCGLLayer>(*this);
 #else

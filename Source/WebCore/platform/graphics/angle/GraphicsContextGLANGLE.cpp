@@ -2842,15 +2842,6 @@ void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum mode, GCG
     gl::MultiDrawElementsInstancedANGLE(mode, counts.data, type, pointers.data(), instanceCounts.data, drawcount);
 }
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION)
-GraphicsContextGLCV* GraphicsContextGLOpenGL::asCV()
-{
-    if (!m_cv)
-        m_cv = makeUnique<GraphicsContextGLCVANGLE>(*this);
-    return m_cv.get();
-}
-#endif
-
 bool GraphicsContextGLOpenGL::waitAndUpdateOldestFrame()
 {
     size_t oldestFrameCompletionFence = m_oldestFrameCompletionFence++ % maxPendingFrames;
