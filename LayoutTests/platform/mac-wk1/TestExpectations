@@ -1417,6 +1417,8 @@ webkit.org/b/228211 css2.1/20110323/replaced-intrinsic-003.htm [ Pass Failure ]
 
 webkit.org/b/230425 printing/allowed-breaks.html [ Pass Failure ]
 
+webkit.org/b/231102 [ BigSur ] printing/css2.1/page-break-after-000.html [ Pass Failure ]
+
 # webkit.org/b/214448 Web Share API is not implemented for mac-wk1
 http/tests/webshare/ [ Skip ]
 

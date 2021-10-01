@@ -1,5 +1,14 @@
 2021-10-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        [ BigSur wk1 ] printing/css2.1/page-break-after-000.html is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231102
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-10-01  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ macOS wk2 Release ] http/tests/loading/preload-slow-loading.py is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=231088
 
