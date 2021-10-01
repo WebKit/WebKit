@@ -1,5 +1,14 @@
 2021-10-01  Ayumi Kojima  <ayumi_kojima@apple.com>
 
+        Regression (r282210/r282211): [ macOS wk2 ] css3/filters/blur-various-radii.html is a flaky image failure.
+        https://bugs.webkit.org/show_bug.cgi?id=231090
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-10-01  Ayumi Kojima  <ayumi_kojima@apple.com>
+
         [ macOS ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html is a flaky failure.
         https://bugs.webkit.org/show_bug.cgi?id=231084
 
