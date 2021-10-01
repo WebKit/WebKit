@@ -1,3 +1,14 @@
+2021-10-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add Kimmo Kinnunen as reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=231072
+
+        Unreviewed.
+
+        Add myself as a reviewer
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-10-01  Sam Sneddon  <gsnedders@apple.com>
 
         Remove most deprecated webkit-patch commands
