@@ -920,8 +920,6 @@ webkit.org/b/207066 editing/execCommand/insert-nested-lists.html [ Pass Failure 
 
 webkit.org/b/214558 editing/execCommand/typing-should-not-trigger-scrolling-when-selection-is-visible.html [ Failure ]
 
-webkit.org/b/230719 [ Debug ] editing/selection/navigation-clears-editor-state.html [ Pass Crash ]
-
 webkit.org/b/181085 svg/custom/object-sizing-explicit-width.xhtml [ Pass Failure ]
 
 webkit.org/b/185332 animations/duplicate-keys.html [ Pass ImageOnlyFailure ]
@@ -1424,11 +1422,7 @@ http/tests/webshare/ [ Skip ]
 
 webkit.org/b/230701 [ Catalina Debug ] performance-api/performance-observer-callback-after-gc.html [ Pass Crash ]
 
-webkit.org/b/230717 [ Catalina BigSur Debug ] resize-observer/delete-observers-in-callbacks.html [ Pass Crash ]
-
 webkit.org/b/230729 [ Catalina Release ] imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ Pass Failure ]
-
-webkit.org/b/230756 [ Catalina Debug ] svg/dom/SVGAnimatedListPropertyTearOff-crash-2.html [ Pass Crash ]
 
 webkit.org/b/230765 [ Catalina Debug ] storage/indexeddb/mozilla/cursors-private.html [ Pass Crash ]
 
@@ -1462,9 +1456,6 @@ webkit.org/b/230765 [ Catalina Debug ] storage/indexeddb/mozilla/cursors-private
 
 webkit.org/b/230777 [ Catalina Debug ] transitions/transition-end-event-destroy-renderer.html [ Pass Crash ]
 
-webkit.org/b/230807 [ Catalina Debug ] media/media-source/media-source-append-before-last-range-no-quota-exceeded.html [ Pass Crash ]
-webkit.org/b/230807 [ Catalina Debug ] media/media-source/media-source-remove.html [ Pass Crash ]
-
 webkit.org/b/230808 [ Catalina Debug ] media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html [ Pass Crash ]
 
 webkit.org/b/230831 [ Catalina Debug ] storage/websql/multiple-transactions-on-different-handles.html [ Pass Crash ]
@@ -1484,5 +1475,3 @@ webkit.org/b/230846 [ Catalina Debug ] svg/filters/big-height-filter.svg [ Pass 
 webkit.org/b/230848 [ Catalina BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
 
 webkit.org/b/230905 [ Catalina BigSur Release ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
-
-webkit.org/b/230910 [ Catalina BigSur Debug ] storage/websql/multiple-databases-garbage-collection.html [ Pass Crash ]
