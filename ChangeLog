@@ -1,3 +1,17 @@
+2021-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Upgrade GCC requirement to 8.3.0
+        https://bugs.webkit.org/show_bug.cgi?id=231042
+
+        Reviewed by Darin Adler.
+
+        Based on the roadmap[1], we upgrade GCC requirement to 8.3.0, which is default GCC in Debian one-old-stable (buster) right now.
+        This paves the way to enabling some of useful C++20 features, e.g. default initializer for bitfields.
+
+        [1]: https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+
+        * Source/cmake/WebKitCommon.cmake:
+
 2021-09-29  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         MediaStream canvas.captureStream() fails for WebGL

@@ -1,3 +1,13 @@
+2021-09-30  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Upgrade GCC requirement to 8.3.0
+        https://bugs.webkit.org/show_bug.cgi?id=231042
+
+        Reviewed by Darin Adler.
+
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFile::canonicalizePaths):
+
 2021-09-30  Saam Barati  <sbarati@apple.com>
 
         Regressions (r283288): [ macOS Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html is timing out

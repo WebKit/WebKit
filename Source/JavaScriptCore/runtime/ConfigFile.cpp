@@ -487,17 +487,9 @@ void ConfigFile::canonicalizePaths()
             if (sizeof(filenameBuffer) - 1  >= pathnameLength + shouldAddPathSeparator) {
                 if (shouldAddPathSeparator)
                     strncat(filenameBuffer, "/", 2); // Room for '/' plus NUL
-#if COMPILER(GCC)
-#if GCC_VERSION_AT_LEAST(8, 0, 0)
-                IGNORE_WARNINGS_BEGIN("stringop-truncation")
-#endif
-#endif
+                IGNORE_GCC_WARNINGS_BEGIN("stringop-truncation")
                 strncat(filenameBuffer, m_filename, sizeof(filenameBuffer) - strlen(filenameBuffer) - 1);
-#if COMPILER(GCC)
-#if GCC_VERSION_AT_LEAST(8, 0, 0)
-                IGNORE_WARNINGS_END
-#endif
-#endif
+                IGNORE_GCC_WARNINGS_END
                 strncpy(m_filename, filenameBuffer, s_maxPathLength);
                 m_filename[s_maxPathLength] = '\0';
             }
