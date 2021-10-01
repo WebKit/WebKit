@@ -1,3 +1,17 @@
+2021-09-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Clamp negative offset values
+        https://bugs.webkit.org/show_bug.cgi?id=230707
+
+        Reviewed by Simon Fraser.
+
+        ScrollOffsets are the values used by scrollbars and thus should be always positive. Under some circumstances
+        the value returned by maximumScrollOffset()|minimumScrollOffset() could be negative. For those cases we should
+        just clamp them to zero.
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::updateSnapOffsetsForScrollableArea):
+
 2021-10-01  Kevin Turner  <kevin_turner@apple.com>
 
         Add support for pow(), sqrt() and hypot()

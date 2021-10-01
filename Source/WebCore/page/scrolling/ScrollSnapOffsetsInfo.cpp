@@ -305,6 +305,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     Vector<LayoutRect> snapAreas;
 
     auto maxScrollOffset = scrollableArea.maximumScrollOffset();
+    maxScrollOffset.clampNegativeToZero();
     auto scrollPosition = LayoutPoint { scrollableArea.scrollPosition() };
 
     auto [scrollerXAxisFlipped, scrollerYAxisFlipped] = axesFlippedForWritingModeAndDirection(writingMode, textDirection);
