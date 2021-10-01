@@ -1545,6 +1545,8 @@ webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailu
 
 webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Timeout Pass ]
 
+webkit.org/b/231084 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Pass Failure ]
+
 # The test runner is failing in an unrelated, unexplained, invisible to the human eye, 2 pixels difference.
 webkit.org/b/201401 imported/w3c/web-platform-tests/media-source/mediasource-video-is-visible.html [ Skip ]
 
