@@ -189,7 +189,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         // Check for partially collapsible content.
         if (m_ignoreTrailingLetterSpacing)
             return { };
-        auto letterSpacing = inlineItem.style().letterSpacing();
+        auto letterSpacing = style.letterSpacing();
         if (letterSpacing <= 0)
             return { };
         ASSERT(logicalWidth > letterSpacing);
@@ -705,7 +705,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
         // This continuous content can be fully placed on the current line.
         m_lineLogicalRect = lineLogicalRectForCandidateContent;
         for (auto& run : candidateRuns)
-            m_line.append(run.inlineItem, run.inlineItem.style(), run.logicalWidth);
+            m_line.append(run.inlineItem, run.style, run.logicalWidth);
         if (lineCandidate.inlineContent.hasTrailingSoftWrapOpportunity()) {
             // Check if we are allowed to wrap at this position.
             auto& trailingRun = candidateRuns.last();
@@ -804,10 +804,10 @@ void LineBuilder::commitPartialContent(const InlineContentBreaker::ContinuousCon
                 return;
             }
             // The partial run is the last content to commit.
-            m_line.append(run.inlineItem, run.inlineItem.style(), run.logicalWidth);
+            m_line.append(run.inlineItem, run.style, run.logicalWidth);
             return;
         }
-        m_line.append(run.inlineItem, run.inlineItem.style(), run.logicalWidth);
+        m_line.append(run.inlineItem, run.style, run.logicalWidth);
     }
 }
 
@@ -826,7 +826,8 @@ size_t LineBuilder::rebuildLine(const InlineItemRange& layoutRange, const Inline
     }
     for (; currentItemIndex < layoutRange.end; ++currentItemIndex) {
         auto& inlineItem = m_inlineItems[currentItemIndex];
-        m_line.append(inlineItem, inlineItem.style(), inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
+        auto& style = m_isFirstLine ? inlineItem.firstLineStyle() : inlineItem.style();
+        m_line.append(inlineItem, style, inlineItemWidth(inlineItem, m_line.contentLogicalRight()));
         if (&inlineItem == &lastInlineItemToAdd)
             return currentItemIndex - layoutRange.start + 1;
     }
