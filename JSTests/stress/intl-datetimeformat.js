@@ -759,3 +759,10 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric
 {
     shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), "上午一二:〇〇:〇〇.〇〇");
 }
+{
+    const dtf = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Melbourne', year: 'numeric' });
+    const date = new Date(2021, 9, 2);
+    const parts = dtf.formatToParts(date);
+    const year = parts.find(part => part.type === 'year')
+    shouldBe(year.value, "2021")
+}
